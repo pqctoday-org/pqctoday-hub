@@ -27,7 +27,7 @@ export const AVAILABILITY_LABELS: Record<AvailabilityFilter, string> = {
   'no-commercial': 'No commercial',
   'has-playground': 'Has playground',
   'has-deployment': 'Has live deployment',
-  'no-deployment': 'No live deployment',
+  'no-deployment': 'No reviewed deployment evidence',
 }
 
 export const SORT_LABELS: Record<SortKey, string> = {

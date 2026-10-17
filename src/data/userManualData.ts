@@ -57,7 +57,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   algorithms: {
     title: 'PQC Algorithms',
     summary:
-      'Compare post-quantum cryptographic algorithms side-by-side, explore transition paths from classical to quantum-safe, and analyze performance characteristics.',
+      'Learn how post-quantum algorithms differ, explore candidate transition paths, inspect evidence, and run scoped implementation checks.',
     sections: [
       {
         heading: 'Transition Tab',
@@ -65,7 +65,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Detailed Comparison Tab',
-        body: 'Deep-dive into individual PQC algorithms in a single flat, sortable table covering performance benchmarks, security levels, key/ciphertext/signature sizes, and recommended use cases. Toggle Browse ↔ Compare mode. A baseline algorithm is auto-selected for comparison (ECDH P-256 for KEM, RSA-2048 for Signatures). Filter by crypto family, function group, or security level.',
+        body: 'Deep-dive into algorithms in a sortable table covering security levels, key/ciphertext/signature sizes, catalogue estimates, and reviewed use cases. Toggle Browse ↔ Compare mode. Baselines help explain size differences; they are not universal performance rankings. Filter by crypto family, function group, or security level.',
       },
       {
         heading: 'Compare Panel',

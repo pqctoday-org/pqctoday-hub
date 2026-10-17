@@ -123,7 +123,7 @@ function MarketSizeBadge({ m }: { m: IndustryMarketSize }) {
     // library is for — so attribution stays visible without an outbound link.
     <span
       title={`${m.figureAsStated} — ${m.mainSource} (${m.regionScope} ${metric}, ${m.marketSizeYear})`}
-      className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+      className="inline-flex max-w-full flex-wrap items-center gap-x-1 rounded-full bg-primary/10 px-2 py-0.5 text-left text-xs font-medium leading-snug text-primary"
     >
       {formatMarketSize(m.marketSizeUsd)}
       <span className="font-normal">
@@ -724,7 +724,7 @@ function UseCaseCard({
         </div>
       )}
 
-      <div className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground max-md:min-w-0">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 text-xs text-muted-foreground max-md:min-w-0">
         {/* WS8a: hub-only routing. The cited document when the Library holds
             it, otherwise the sector's threats evidence — these citations ARE
             threats-corpus rows. Never an outbound link. */}
@@ -1175,7 +1175,7 @@ export function IndustryLandscapeView() {
   }, [standards, selectedMechanism])
 
   return (
-    <div data-workshop-target="section-algorithm-industry-landscape">
+    <div>
       {usecaseParam && !linkedUseCase && (
         <DeepLinkNotice
           kind="not-found"
@@ -1308,7 +1308,7 @@ export function IndustryLandscapeView() {
                     data-testid="lens-replacement"
                   >
                     <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                      {mechanismDef.classical ? 'Replaced by' : 'Replaces'}
+                      {mechanismDef.classical ? 'Candidate migration path' : 'May replace'}
                     </span>
                     {list.map((f) => (
                       <MechanismChip key={f} family={f} onSelect={pickMechanism} />
@@ -1375,7 +1375,7 @@ export function IndustryLandscapeView() {
       )}
 
       {mode === 'industry' && !selectedIndustry && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {industries.map((ind) => {
             const IndIcon = INDUSTRY_ICONS[ind] ?? Globe
             const market = marketByIndustry.get(ind)

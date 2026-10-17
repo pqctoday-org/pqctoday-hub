@@ -4,6 +4,35 @@ import type { AlgorithmStatusTier } from './algorithmStatusTier'
 
 export const RESEARCH_NEEDED = 'Research needed'
 
+export type EvidenceFieldState =
+  'stated' | 'not-applicable' | 'not-specified' | 'not-measured' | 'not-researched'
+
+export interface AlgorithmEvidenceStates {
+  publicKey: EvidenceFieldState
+  privateKey: EvidenceFieldState
+  signatureOrCiphertext: EvidenceFieldState
+  sharedSecret: EvidenceFieldState
+  keyGeneration: EvidenceFieldState
+  signOrEncapsulate: EvidenceFieldState
+  verifyOrDecapsulate: EvidenceFieldState
+  stackRam: EvidenceFieldState
+}
+
+export function evidenceStateLabel(state: EvidenceFieldState): string {
+  switch (state) {
+    case 'not-applicable':
+      return 'Not applicable'
+    case 'not-specified':
+      return 'Not specified by the source'
+    case 'not-measured':
+      return 'Not measured'
+    case 'not-researched':
+      return RESEARCH_NEEDED
+    default:
+      return ''
+  }
+}
+
 export interface AlgorithmDetail {
   /** Stable kebab-case slug of `name` (CSV `algorithm_id`, e.g. 'ml-kem-768') —
    *  the key `?algo=` deep links use, so a link survives a display-name tweak. */
@@ -27,6 +56,10 @@ export interface AlgorithmDetail {
   region: string
   status: string
   statusUrl?: string
+  trustedSourceId?: string
+  peerReviewed?: string
+  vettingBody?: string
+  statusUrlQuality?: string
   /** Normalized status-maturity tier — see WORKSTREAMS.md §WS-A / algorithmStatusTier.ts. */
   statusTier: AlgorithmStatusTier
   type:
@@ -46,6 +79,45 @@ export interface AlgorithmDetail {
   /** True when the cycle/perf strings contain "Research needed". */
   perfUnknown: boolean
   confidenceScore?: number
+  /** Why a blank/zero cell is blank. Prevents N/A, unmeasured and missing research
+   * from being presented as the same thing. */
+  evidenceStates?: AlgorithmEvidenceStates
+}
+
+export type CatalogueFreshnessState = 'current' | 'review-due' | 'stale' | 'missing' | 'future'
+
+export interface CatalogueFreshness {
+  state: CatalogueFreshnessState
+  ageDays: number | null
+  label: string
+}
+
+/**
+ * Snapshot freshness is deliberately not row freshness. The current catalogue
+ * has no row-level verification date, reviewer, method, locator or next-review
+ * columns, so callers must describe this as the age of the imported file only.
+ */
+export function getCatalogueFreshness(
+  snapshotDate: Date | null | undefined,
+  now = new Date(),
+  reviewDays = 90,
+  staleDays = 180
+): CatalogueFreshness {
+  if (!snapshotDate || Number.isNaN(snapshotDate.getTime())) {
+    return { state: 'missing', ageDays: null, label: 'Snapshot date not recorded' }
+  }
+
+  const ageDays = Math.floor((now.getTime() - snapshotDate.getTime()) / 86_400_000)
+  if (ageDays < 0) {
+    return { state: 'future', ageDays, label: 'Snapshot date is in the future' }
+  }
+  if (ageDays > staleDays) {
+    return { state: 'stale', ageDays, label: `Snapshot is ${ageDays} days old` }
+  }
+  if (ageDays > reviewDays) {
+    return { state: 'review-due', ageDays, label: `Snapshot review is due (${ageDays} days old)` }
+  }
+  return { state: 'current', ageDays, label: `Snapshot is ${ageDays} days old` }
 }
 
 /**
@@ -55,6 +127,18 @@ export interface AlgorithmDetail {
 export function isResearchNeeded(rawValue: string | undefined | null): boolean {
   if (!rawValue) return false
   return rawValue.trim().toLowerCase() === RESEARCH_NEEDED.toLowerCase()
+}
+
+/** Blank evidence is missing evidence too. Keep this separate from
+ * isResearchNeeded because some blank CSV cells are legitimately not
+ * applicable and need family-aware handling in the loader. */
+export function isMissingEvidence(rawValue: string | undefined | null): boolean {
+  return !rawValue?.trim() || isResearchNeeded(rawValue)
+}
+
+function statedOr(raw: string | undefined, missing: EvidenceFieldState): EvidenceFieldState {
+  if (isResearchNeeded(raw)) return 'not-researched'
+  return raw?.trim() ? 'stated' : missing
 }
 
 interface RawAlgorithmRow {
@@ -359,6 +443,15 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
     csvModule,
     /pqc_complete_algorithm_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
     (row) => {
+      // A nameless or unclassified row cannot teach a defensible comparison.
+      // Withhold it instead of rendering an apparently valid zero-filled row.
+      if (
+        isMissingEvidence(row.algorithm) ||
+        isMissingEvidence(row.algorithm_family) ||
+        isMissingEvidence(row.cryptographic_family)
+      ) {
+        return null
+      }
       const statusTier = mapReferenceStatusToTier(row.status || '', row.fips_standard || '')
       // NGCC-BC/NGCC-CH are a program track name with no algorithm selected
       // yet (confirmed by the CSV's own data-quality note) — not a real
@@ -366,17 +459,45 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
       // than badge it, per WORKSTREAMS.md §WS-A step 4.
       if (statusTier === 'placeholder') return null
 
+      const carriesAsymmetricObjects = [
+        'KEM',
+        'Signature',
+        'Hybrid KEM',
+        'Classical KEM',
+        'Classical Sig',
+      ].includes(row.algorithm_family)
+      const carriesSharedSecret = ['KEM', 'Hybrid KEM', 'Classical KEM'].includes(
+        row.algorithm_family
+      )
+      const evidenceStates: AlgorithmEvidenceStates = {
+        publicKey: carriesAsymmetricObjects
+          ? statedOr(row.public_key_bytes, 'not-researched')
+          : 'not-applicable',
+        privateKey: carriesAsymmetricObjects
+          ? statedOr(row.private_key_bytes, 'not-researched')
+          : 'not-applicable',
+        signatureOrCiphertext: carriesAsymmetricObjects
+          ? statedOr(row.signature_ciphertext_bytes, 'not-researched')
+          : 'not-applicable',
+        sharedSecret: carriesSharedSecret
+          ? statedOr(row.shared_secret_bytes, 'not-specified')
+          : 'not-applicable',
+        keyGeneration: statedOr(row.keygen_cycles_relative, 'not-measured'),
+        signOrEncapsulate: statedOr(row.sign_encaps_cycles_relative, 'not-measured'),
+        verifyOrDecapsulate: statedOr(row.verifydecaps_cycles_relative, 'not-measured'),
+        stackRam: statedOr(row.stack_ram_bytes, 'not-measured'),
+      }
       const sizesUnknown =
-        isResearchNeeded(row.public_key_bytes) ||
-        isResearchNeeded(row.private_key_bytes) ||
-        isResearchNeeded(row.signature_ciphertext_bytes)
+        carriesAsymmetricObjects &&
+        (isMissingEvidence(row.public_key_bytes) ||
+          isMissingEvidence(row.private_key_bytes) ||
+          isMissingEvidence(row.signature_ciphertext_bytes))
       const perfUnknown =
-        isResearchNeeded(row.keygen_cycles_relative) ||
-        isResearchNeeded(row.sign_encaps_cycles_relative) ||
-        isResearchNeeded(row.verifydecaps_cycles_relative)
+        isMissingEvidence(row.keygen_cycles_relative) ||
+        isMissingEvidence(row.sign_encaps_cycles_relative) ||
+        isMissingEvidence(row.verifydecaps_cycles_relative)
       const hasResearchGap =
-        sizesUnknown ||
-        perfUnknown ||
+        Object.values(evidenceStates).includes('not-researched') ||
         isResearchNeeded(row.nist_security_level) ||
         isResearchNeeded(row.aes_equivalent) ||
         isResearchNeeded(row.stack_ram_bytes) ||
@@ -411,12 +532,17 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         region: row.region || '',
         status: row.status || '',
         statusUrl: row.status_url || undefined,
+        trustedSourceId: row.trusted_source_id || undefined,
+        peerReviewed: row.peer_reviewed || undefined,
+        vettingBody: row.vetting_body || undefined,
+        statusUrlQuality: row.status_url_quality || undefined,
         statusTier,
         type: row.algorithm_family as AlgorithmDetail['type'],
         hasResearchGap,
         sizesUnknown,
         perfUnknown,
         confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+        evidenceStates,
       }
     }
   )
@@ -445,23 +571,22 @@ export function isClassical(algo: AlgorithmDetail): boolean {
   )
 }
 
-/** "Baseline" → 1, "Nx" / "Nx Sign" / "Nx Verify" → N. Non-multiplier forms
- * (an absolute cycle count, "Research needed") fall back to 1 — same
- * simplification the desktop comparison table has always used for this. */
-export function getPerformanceMultiplier(cycles: string): number {
+/** "Baseline" → 1, "Nx" / "Nx Sign" / "Nx Verify" → N. Incompatible or
+ * missing forms return null; they must never become a successful baseline. */
+export function getPerformanceMultiplier(cycles: string): number | null {
   if (cycles === 'Baseline' || cycles.includes('Baseline')) return 1
   // eslint-disable-next-line security/detect-unsafe-regex
   const match = cycles.match(/(\d+(?:\.\d+)?)x/)
-  return match ? parseFloat(match[1]) : 1
+  return match ? parseFloat(match[1]) : null
 }
 
 export function getPerformanceCategory(cycles: string): 'Fast' | 'Moderate' | 'Slow' | 'Unknown' {
-  if (isResearchNeeded(cycles)) return 'Unknown'
+  if (!cycles.trim() || isResearchNeeded(cycles)) return 'Unknown'
   if (cycles === 'Baseline' || cycles.includes('Baseline')) return 'Moderate'
 
   // eslint-disable-next-line security/detect-unsafe-regex
   const match = cycles.match(/(\d+(?:\.\d+)?)x/)
-  if (!match) return 'Moderate'
+  if (!match) return 'Unknown'
 
   const multiplier = parseFloat(match[1])
 

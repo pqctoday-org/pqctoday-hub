@@ -27,6 +27,12 @@ export interface AlgorithmTransition {
   dataQualityNotes?: string
   /** Normalized status-maturity tier — see WORKSTREAMS.md §WS-A / algorithmStatusTier.ts. */
   statusTier: AlgorithmStatusTier
+  evidenceStates?: {
+    replacement: 'stated' | 'not-researched'
+    deprecationDate: 'stated' | 'not-specified'
+    standardizationDate: 'stated' | 'not-specified'
+    source: 'stated' | 'not-specified'
+  }
 }
 
 interface RawTransitionRow {
@@ -175,6 +181,18 @@ const { data, metadata } = loadLatestCSV<RawTransitionRow, AlgorithmTransition>(
     statusUrl: row.status_url || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
     statusTier: mapTransitionStatusToTier(row.Status || '', row.pqc_replacement || ''),
+    evidenceStates: {
+      replacement: row.pqc_replacement?.trim() ? 'stated' : 'not-researched',
+      deprecationDate:
+        row.Deprecation_Date_Label?.trim() || row.Deprecation_Date_ISO?.trim()
+          ? 'stated'
+          : 'not-specified',
+      standardizationDate:
+        row.Standardization_Date_Label?.trim() || row.Standardization_Date_ISO?.trim()
+          ? 'stated'
+          : 'not-specified',
+      source: row.status_url?.trim() ? 'stated' : 'not-specified',
+    },
   })
 )
 

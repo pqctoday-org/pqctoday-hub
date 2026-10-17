@@ -92,14 +92,14 @@ function StatusBadge({
   if (status === 'yes') {
     return (
       <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-error/80 text-primary-foreground font-medium">
-        Vulnerable
+        Recorded evidence
       </span>
     )
   }
   if (status === 'no') {
     return (
       <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-success/80 text-primary-foreground font-medium">
-        Not Found
+        No recorded evidence
       </span>
     )
   }
@@ -136,7 +136,8 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
               side-channel leakage, fault injection, RNG failures, and API misuse. These are{' '}
               <span className="font-medium text-foreground">implementation vulnerabilities</span>,
               not weaknesses in the underlying mathematics. Each tile links to peer-reviewed
-              research and authoritative sources.
+              research and authoritative sources. The catalogue is not exhaustive: “no recorded
+              evidence” means this reviewed corpus has no entry, not that an implementation is safe.
             </p>
           </div>
         </div>
@@ -157,7 +158,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
         </div>
         <div className="flex flex-wrap gap-3 justify-center border-t border-border pt-3">
           <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-            Severity:
+            Reported impact (PQC Today qualitative reading, not CVSS):
           </span>
           {(
             Object.entries(SEVERITY_LABELS) as [
@@ -176,7 +177,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
             </span>
           ))}
           <span className="inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-medium bg-status-success/80 text-primary-foreground">
-            Not Found
+            No recorded evidence
           </span>
           <span className="inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted text-muted-foreground">
             Unknown

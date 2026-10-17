@@ -9,7 +9,7 @@ import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
 
-type Priority = 'speed' | 'keysize' | 'standardization'
+type Priority = 'keysize' | 'standardization'
 
 interface MobileTransitionWizardProps {
   data: AlgorithmTransition[]
@@ -18,7 +18,6 @@ interface MobileTransitionWizardProps {
 }
 
 const PRIORITY_OPTS: Array<{ id: Priority; label: string; description: string }> = [
-  { id: 'speed', label: 'Speed', description: 'Fastest key gen & signing' },
   { id: 'keysize', label: 'Smaller keys', description: 'Lowest bandwidth overhead' },
   {
     id: 'standardization',
@@ -44,15 +43,6 @@ function sortByPriority(
     const cleanB = b.pqc.split(/\s*\(/)[0].trim().toLowerCase()
     const da = detailMap.get(cleanA)
     const db = detailMap.get(cleanB)
-
-    if (priority === 'speed') {
-      // Lattice-based (ML-KEM, ML-DSA, Falcon) are fastest — proxy via cycleCount or family
-      const latticeFamilies = ['ml-kem', 'ml-dsa', 'falcon', 'kyber', 'dilithium']
-      const aLattice = latticeFamilies.some((f) => cleanA.includes(f))
-      const bLattice = latticeFamilies.some((f) => cleanB.includes(f))
-      if (aLattice !== bLattice) return aLattice ? -1 : 1
-      return 0
-    }
 
     if (priority === 'keysize') {
       const aPk = da?.publicKeySize ?? Infinity

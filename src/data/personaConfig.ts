@@ -221,7 +221,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/business',
     '/assess',
     '/report',
-    // /algorithms fits ops: the Certified filter + deployment-relevant status hints are
+    // /algorithms fits ops: the published-standard filter + deployment-relevant status hints are
     // directly useful (see ALGORITHM_PERSONA_DEFAULTS.ops below). /patents deliberately
     // stays excluded — IP research isn't an ops task (07-19 follow-up remediation, O1).
     // NOTE (2026-08-01 persona-journeys redesign): the design handoff's ops rail
@@ -441,50 +441,50 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
     // Business-relevant default: the classical→PQC mapping (Transition Guide),
     // not the developer parameter comparison. Specialist tabs are one click away.
     tab: 'transition',
-    filters: { status: 'Certified' },
+    filters: { status: 'published-standard' },
     openSections: [],
     highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s', 'FN-DSA-512'],
   },
   ops: {
     tab: 'transition',
-    filters: { status: 'Certified' },
+    filters: { status: 'published-standard' },
     openSections: [],
   },
-  // Plan §5: reuse the standard transition view with certified-status
-  // defaults; certified status alone must not imply compliance is settled.
+  // Plan §5: reuse the standard transition view with published-standard
+  // defaults; an algorithm standard alone must not imply compliance is settled.
   grc: {
     tab: 'transition',
-    filters: { status: 'Certified' },
+    filters: { status: 'published-standard' },
     openSections: [],
   },
   developer: {
     tab: 'transition',
-    filters: { status: 'Certified' },
+    filters: { status: 'All' },
     openSections: [],
   },
   architect: {
     tab: 'transition',
-    filters: { status: 'Certified' },
+    filters: { status: 'All' },
     openSections: [],
   },
   researcher: {
     // "All sections open" — both Validation-tab sections, not just KAT.
     tab: 'detailed',
-    filters: { status: 'Certified' },
+    filters: { status: 'All' },
     openSections: ['attacks', 'kat'],
   },
   // Plan §4.2: open straight onto the Validation tab — known-answer tests and
   // implementation-attack notes are this role's first question.
   'cert-engineer': {
     tab: 'validation',
-    filters: { status: 'Certified' },
+    filters: { status: 'All' },
     openSections: ['attacks', 'kat'],
   },
   curious: {
     tab: 'transition',
     // No function filter: the three highlighted schemes are one KEM and two
     // signatures, and a KEM filter hid two of them (curious journey review).
-    filters: { status: 'Certified' },
+    filters: { status: 'published-standard' },
     openSections: [],
     highlight: ['ML-KEM-768', 'ML-DSA-65', 'SLH-DSA-SHA2-128s'],
   },
@@ -492,7 +492,7 @@ export const ALGORITHM_PERSONA_DEFAULTS: Record<PersonaId, AlgorithmDefaults> = 
 
 const ALGORITHM_FALLBACK_DEFAULTS: AlgorithmDefaults = {
   tab: 'transition',
-  filters: { status: 'Certified' },
+  filters: { status: 'All' },
   openSections: [],
 }
 

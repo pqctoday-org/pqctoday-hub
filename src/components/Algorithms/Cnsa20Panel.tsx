@@ -97,9 +97,13 @@ export function Cnsa20Panel() {
         </h4>
         <ul className="mt-1.5 space-y-1 text-xs text-muted-foreground leading-relaxed">
           <li>
-            <strong className="text-foreground">BSI / ANSSI (Europe):</strong> recommend hybrid (PQC
-            + classical) during the transition; ANSSI makes it mandatory in the French regulated
-            perimeter.
+            <strong className="text-foreground">BSI (Germany):</strong> lists suitable standalone
+            ML-KEM and ML-DSA parameter sets; its transition guidance must be read for the specific
+            protocol and assurance context.
+          </li>
+          <li>
+            <strong className="text-foreground">ANSSI (France):</strong> requires hybridization of
+            ML-KEM and ML-DSA in its regulated perimeter during the transition.
           </li>
           <li>
             <strong className="text-foreground">NSA / CNSA 2.0 (US NSS):</strong> mandate pure

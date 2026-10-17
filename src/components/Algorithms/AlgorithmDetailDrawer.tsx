@@ -18,8 +18,10 @@ import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import {
   type AlgorithmDetail,
-  getPerformanceCategory,
-  getPerformanceColor,
+  type EvidenceFieldState,
+  evidenceStateLabel,
+  getCatalogueFreshness,
+  loadedFileMetadata,
   getSecurityLevelColor,
   getCryptoFamilyColor,
   RESEARCH_NEEDED,
@@ -64,35 +66,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-function bytes(value: number | null, unknown: boolean) {
+function bytes(value: number | null, state?: EvidenceFieldState, unknown = false) {
+  if (state && state !== 'stated') {
+    return <span className="italic text-muted-foreground">{evidenceStateLabel(state)}</span>
+  }
   if (unknown || value === null || value === 0) {
     return <span className="italic text-muted-foreground">{RESEARCH_NEEDED}</span>
   }
   return <span className="font-mono">{value.toLocaleString()} B</span>
-}
-
-function Perf({ cycles }: { cycles: string }) {
-  const category = getPerformanceCategory(cycles)
-  return (
-    <span className="flex flex-wrap items-center gap-1.5">
-      <span
-        className={clsx(
-          'rounded border px-1.5 py-0.5 text-[11px] font-medium',
-          getPerformanceColor(category)
-        )}
-      >
-        {category}
-      </span>
-      <span
-        className={clsx(
-          'font-mono text-[11.5px] text-muted-foreground',
-          isResearchNeeded(cycles) && 'italic'
-        )}
-      >
-        {isResearchNeeded(cycles) ? RESEARCH_NEEDED : cycles}
-      </span>
-    </span>
-  )
 }
 
 function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => void }) {
@@ -112,6 +93,7 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
   const cnsa = classifyCnsa20(algo)
   const showCnsa =
     cnsa.status === 'required' || cnsa.status === 'approved-limited' || cnsa.status === 'excluded'
+  const catalogueFreshness = getCatalogueFreshness(loadedFileMetadata?.date)
 
   return (
     <FocusLock returnFocus>
@@ -231,28 +213,42 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
 
             <Section title="Sizes">
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <Fact label="Public key">{bytes(algo.publicKeySize, algo.sizesUnknown)}</Fact>
-                <Fact label="Private key">{bytes(algo.privateKeySize, algo.sizesUnknown)}</Fact>
-                <Fact label="Signature / ciphertext">
-                  {bytes(algo.signatureCiphertextSize, algo.sizesUnknown)}
+                <Fact label="Public key">
+                  {bytes(
+                    algo.publicKeySize,
+                    algo.evidenceStates?.publicKey,
+                    !algo.evidenceStates && algo.sizesUnknown
+                  )}
                 </Fact>
-                {algo.sharedSecretSize !== null && (
-                  <Fact label="Shared secret">{bytes(algo.sharedSecretSize, false)}</Fact>
+                <Fact label="Private key">
+                  {bytes(
+                    algo.privateKeySize,
+                    algo.evidenceStates?.privateKey,
+                    !algo.evidenceStates && algo.sizesUnknown
+                  )}
+                </Fact>
+                <Fact label="Signature / ciphertext">
+                  {bytes(
+                    algo.signatureCiphertextSize,
+                    algo.evidenceStates?.signatureOrCiphertext,
+                    !algo.evidenceStates && algo.sizesUnknown
+                  )}
+                </Fact>
+                {algo.evidenceStates?.sharedSecret !== 'not-applicable' && (
+                  <Fact label="Shared secret">
+                    {bytes(algo.sharedSecretSize, algo.evidenceStates?.sharedSecret)}
+                  </Fact>
                 )}
               </dl>
             </Section>
 
-            <Section title="Performance (relative)">
+            <Section title="Implementation resources">
+              <p className="mb-3 text-[12px] leading-relaxed text-muted-foreground">
+                Legacy catalogue speed estimates are withheld because they combine different
+                platforms, implementations, and measurement methods. Use the controlled hardware
+                case study or run the same operation and implementation on your target.
+              </p>
               <dl className="grid grid-cols-1 gap-y-2.5">
-                <Fact label="Key generation">
-                  <Perf cycles={algo.keyGenCycles} />
-                </Fact>
-                <Fact label="Sign / encapsulate">
-                  <Perf cycles={algo.signEncapsCycles} />
-                </Fact>
-                <Fact label="Verify / decapsulate">
-                  <Perf cycles={algo.verifyDecapsCycles} />
-                </Fact>
                 <Fact label="Stack RAM (approx.)">
                   {algo.stackRAM > 0 ? (
                     <span className="font-mono">~{(algo.stackRAM / 1000).toFixed(1)} KB</span>
@@ -264,6 +260,33 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
                   <Fact label="Optimized for">{algo.optimizationTarget}</Fact>
                 )}
               </dl>
+            </Section>
+
+            <Section title="Evidence provenance">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <Fact label="Source record">{algo.trustedSourceId || 'No source id recorded'}</Fact>
+                <Fact label="Vetting body">{algo.vettingBody || 'Not recorded'}</Fact>
+                <Fact label="Peer review">{algo.peerReviewed || 'Not recorded'}</Fact>
+                <Fact label="Link quality">{algo.statusUrlQuality || 'Not assessed'}</Fact>
+                <Fact label="Confidence">
+                  {algo.confidenceScore === undefined ? 'Not scored' : `${algo.confidenceScore}`}
+                </Fact>
+                <Fact label="Catalogue snapshot">
+                  {loadedFileMetadata
+                    ? `${loadedFileMetadata.filename}${loadedFileMetadata.date ? ` (${loadedFileMetadata.date.toISOString().slice(0, 10)})` : ''}`
+                    : 'Not recorded'}
+                </Fact>
+                <Fact label="Snapshot freshness">{catalogueFreshness.label}</Fact>
+                <Fact label="Row last verified">Not recorded in this catalogue</Fact>
+                <Fact label="Row reviewer">Not recorded in this catalogue</Fact>
+                <Fact label="Verification method">Not recorded in this catalogue</Fact>
+                <Fact label="Next review">Not recorded in this catalogue</Fact>
+              </dl>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                The snapshot date describes the imported file, not a row-by-row review. These fields
+                describe the catalogue record, not a product certificate or an independent
+                validation of an implementation.
+              </p>
             </Section>
 
             {algo.useCaseNotes && (

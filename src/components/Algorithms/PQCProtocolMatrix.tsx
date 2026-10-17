@@ -1201,7 +1201,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
         {showStageHelp && (
           <div className="mt-1 space-y-1.5 rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
             <p className="font-semibold text-foreground">
-              How an IETF spec progresses — official order, earliest → latest
+              PQC Today&apos;s IETF maturity synthesis — earliest → latest
             </p>
             <ol className="list-decimal space-y-0.5 pl-4">
               <li>
@@ -1285,7 +1285,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
             { id: 'no-commercial', label: 'No commercial' },
             { id: 'has-playground', label: 'Has playground' },
             { id: 'has-deployment', label: 'Has live deployment' },
-            { id: 'no-deployment', label: 'No live deployment' },
+            { id: 'no-deployment', label: 'No reviewed deployment evidence' },
           ]}
           selectedId={availabilityFilter}
           onSelect={(id) => handleAvailabilityFilterChange(id as AvailabilityFilter)}

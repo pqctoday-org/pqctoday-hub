@@ -271,17 +271,17 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/algorithms': {
     executive:
-      'The "What you\'re required to adopt" box states that CNSA 2.0 requires ML-KEM-1024 and ML-DSA-87 for US National Security Systems; "View Top 4 →" highlights the four to know, and the "CNSA 2.0" lens filters the tables to that suite.',
-    grc: 'The Transition Guide tab lists each classical algorithm, its PQC alternative, region, status and transition or deprecation; filter Status to Certified — the page hint reminds you that certified is not the same as compliant.',
+      'The “What one high-assurance profile specifies” box explains that CNSA 2.0 names ML-KEM-1024 and ML-DSA-87 for US National Security Systems without presenting that profile as a universal federal mandate.',
+    grc: 'The Transition Guide lists candidate PQC migration paths, region, publication status, and transition timing. It is educational evidence—not a compliance determination—so confirm applicability in the primary policy and product documentation.',
     developer:
-      'Detailed Comparison sorts on Pub key, Sig / CT, KeyGen, Sign / Enc, Verify / Dec and RAM, with "Compare side-by-side"; Validation › "KAT Validation" runs pinned known-answer tests in your browser.',
+      'Detailed Comparison sorts objective size and RAM fields, labels heterogeneous catalogue performance text as illustrative, and includes a same-harness hardware case study. Validation › “Known-answer checks” runs pinned vectors in your browser.',
     architect:
       'The Protocol Support tab tracks 28 protocols across pure-KEM, hybrid-KEM, pure-Sig and hybrid-Sig, each marked RFC, Draft, Experimental or None, with filters for OSS, commercial and live deployment.',
     researcher:
       'The "Research needed" toggle narrows to algorithms with an incomplete data row; Validation › "Implementation Attacks" gives side-channel and fault-injection notes per family; the Region filter includes KpqC, CACR and CRYPTREC.',
     'cert-engineer':
       'The page opens on the Validation tab: "Implementation Attacks" gives side-channel and fault-injection notes per family, and the known-answer tests run in the browser; the hint keeps a CAVP validation apart from a module certificate.',
-    ops: 'The "FIPS-validated" quick preset shows only algorithms that completed FIPS validation; on Protocol Support each row carries a Production, Pilot or Experimental deployment posture and a "Has OSS" filter.',
+    ops: 'The “Final NIST standards” preset shows algorithms published in final NIST FIPS standards; it does not mean your implementation is validated. Protocol Support separates specification maturity from reviewed deployment evidence.',
     curious:
       'You get a short preview — "three you actually need to know": ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s — then "Show full algorithm comparison" or "Learn the basics first".',
   },

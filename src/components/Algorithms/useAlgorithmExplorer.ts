@@ -16,7 +16,7 @@ import {
   getCryptoFamilyFromPQCName,
   getTransitionFunctionGroup,
 } from '../../data/algorithmsData'
-import { isStatusFilterTier, type AlgorithmStatusTier } from '../../data/algorithmStatusTier'
+import type { AlgorithmStatusTier } from '../../data/algorithmStatusTier'
 import { passesCnsa20Filter } from './cnsa20'
 import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
@@ -136,7 +136,7 @@ function resolveClassicalAlgoName(
   return algos.find((a) => a.name === classical)?.name ?? null
 }
 
-export type QuickViewId = 'none' | 'nist-picks' | 'fips-validated'
+export type QuickViewId = 'none' | 'nist-picks' | 'final-nist-standards'
 
 /** Every filter that can hide an algorithm/transition row. */
 export interface ExplorerFilterState {
@@ -164,27 +164,20 @@ export const WIDE_OPEN_FILTERS: ExplorerFilterState = {
   q: '',
 }
 
-// Status filter helper. "Certified" reads the normalized status-maturity
-// enum (WORKSTREAMS.md §WS-A) instead of comparing the raw status string —
-// the whitelist is ['final', 'regional', 'fips-draft'] (isStatusFilterTier,
-// algorithmStatusTier.ts). The 'Candidate' / 'To Be Checked' dropdown
-// options remain raw-string matches since those are literal values the
-// CSVs still use verbatim.
-//
-// NOTE: 'regional' means "final within its own jurisdiction (KpqC/BSI
-// winners), not FIPS-Certified" (algorithmStatusTier.ts) — e.g. AIMer,
-// HAETAE, SMAUG-T, NTRU+ (KpqC), Classic-McEliece (BSI TR-02102-1).
-// 'fips-draft' means "NIST-selected, FIPS text not yet published" — e.g.
-// HQC, FN-DSA — included here so the default view doesn't hide NIST's own
-// picks, even though they're not final. This "Certified" bucket is
-// deliberately broader than FIPS and is fine for a plain Status dropdown
-// labeled "Certified" — but it must never back anything claiming to be
-// "FIPS-validated" (see isFipsValidated() below) or suppress the "Draft"
-// badge (isCertifiedTier/isDraftTier stay strict — see
-// algorithmStatusTier.ts).
 function matchesStatus(filterStatus: string, status: string, tier: AlgorithmStatusTier): boolean {
   if (filterStatus === 'All') return true
-  if (filterStatus === 'Certified') return isStatusFilterTier(tier)
+  // Backward compatibility for old shared links. New links use the explicit
+  // maturity ids below; the legacy bucket is intentionally not offered.
+  if (filterStatus === 'Certified') return ['final', 'regional', 'fips-draft'].includes(tier)
+  if (filterStatus === 'published-standard') return tier === 'final'
+  if (filterStatus === 'selected-for-standardization') return tier === 'fips-draft'
+  if (filterStatus === 'standards-draft') return tier === 'sp-draft' || tier === 'ietf-draft'
+  if (filterStatus === 'candidate') return tier === 'round2-candidate'
+  if (filterStatus === 'regional-standard') return tier === 'regional'
+  if (filterStatus === 'not-selected')
+    return tier === 'round4-not-selected' || tier === 'eliminated'
+  if (filterStatus === 'non-standardized') return tier === 'non-standardized'
+  if (filterStatus === 'unverified') return tier === 'unverified'
   return status === filterStatus
 }
 
@@ -201,7 +194,7 @@ export function passesAlgoFilterState(
   if (f.cnsa && !passesCnsa20Filter(algo)) return false
   if (f.gap && !algo.hasResearchGap) return false
   if (f.quickView === 'nist-picks' && !isNistPick(algo.fipsStandard)) return false
-  if (f.quickView === 'fips-validated' && !isFipsValidated(algo.fipsStandard)) return false
+  if (f.quickView === 'final-nist-standards' && !isFipsValidated(algo.fipsStandard)) return false
   if (f.family !== 'All' && algo.cryptoFamily !== f.family) return false
   if (f.fn !== 'All') {
     const group = getFunctionGroup(algo)
@@ -233,7 +226,7 @@ export function passesTransitionFilterState(
 ): boolean {
   if (f.cnsa && !passesCnsa20Filter({ name: t.pqc, family: '' })) return false
   if (f.quickView === 'nist-picks' && !isNistPick(t.status)) return false
-  if (f.quickView === 'fips-validated' && !isFipsValidated(t.status)) return false
+  if (f.quickView === 'final-nist-standards' && !isFipsValidated(t.status)) return false
   if (f.fn !== 'All') {
     const group = getTransitionFunctionGroup(t.function)
     if (group !== f.fn) return false
@@ -443,9 +436,10 @@ export function useAlgorithmExplorer(
   const [filterRegion, setFilterRegion] = useState(
     () => searchParams.get('region') || personaDefaults.filters.region || 'All'
   )
-  const [filterStatus, setFilterStatus] = useState(
-    () => searchParams.get('status') || personaDefaults.filters.status || 'All'
-  )
+  const [filterStatus, setFilterStatus] = useState(() => {
+    const status = searchParams.get('status') || personaDefaults.filters.status || 'All'
+    return status === 'Certified' ? 'published-standard' : status
+  })
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
 
   // Detailed-tab view mode: Browse (unified table) ↔ Compare (transposed
@@ -480,7 +474,8 @@ export function useAlgorithmExplorer(
   // reload/share instead of snapping back to the 'nist-picks' default.
   const [quickView, setQuickView] = useState<QuickViewId>(() => {
     const qv = searchParams.get('quickview')
-    return qv === 'nist-picks' || qv === 'fips-validated' || qv === 'none' ? qv : 'nist-picks'
+    if (qv === 'fips-validated') return 'final-nist-standards'
+    return qv === 'nist-picks' || qv === 'final-nist-standards' || qv === 'none' ? qv : 'nist-picks'
   })
 
   // Follow ?cnsa / ?gap / ?quickview when the URL changes under a mounted
@@ -497,10 +492,11 @@ export function useAlgorithmExplorer(
     setResearchGapOnly(gapParam === '1')
     if (
       quickviewParam === 'nist-picks' ||
+      quickviewParam === 'final-nist-standards' ||
       quickviewParam === 'fips-validated' ||
       quickviewParam === 'none'
     ) {
-      setQuickView(quickviewParam)
+      setQuickView(quickviewParam === 'fips-validated' ? 'final-nist-standards' : quickviewParam)
     }
   }, [cnsaParam, gapParam, quickviewParam])
 
@@ -603,6 +599,15 @@ export function useAlgorithmExplorer(
     },
     [setSearchParams]
   )
+
+  // Normalize legacy links once mounted, so copied URLs no longer perpetuate
+  // terminology that confuses algorithm standards with module validation.
+  useEffect(() => {
+    const updates: Record<string, string | null> = {}
+    if (quickviewParam === 'fips-validated') updates.quickview = 'final-nist-standards'
+    if (searchParams.get('status') === 'Certified') updates.status = 'published-standard'
+    if (Object.keys(updates).length > 0) updateSearchParams(updates)
+  }, [quickviewParam, searchParams, updateSearchParams])
 
   const arrivalCmpDone = useRef(false)
   // Every open/close goes through here so ?cmp stays in step (replace).
@@ -721,13 +726,13 @@ export function useAlgorithmExplorer(
   // family); FIPS-validated narrows to status=Certified across all families;
   // Everything resets all filters back to "All".
   const handleQuickView = useCallback(
-    (preset: 'nist-picks' | 'fips-validated' | 'everything') => {
+    (preset: 'nist-picks' | 'final-nist-standards' | 'everything') => {
       // Family/Function/Status are cleared for either real preset — they'd
       // otherwise combine with the new quickView gate in ways the button
       // never promised (e.g. a leftover Region/Status pick silently hiding
       // FIPS-validated rows). Region and Level are left alone; combining
       // e.g. "NIST picks" with a Level filter is a legitimate refinement.
-      if (preset === 'nist-picks' || preset === 'fips-validated') {
+      if (preset === 'nist-picks' || preset === 'final-nist-standards') {
         setQuickView(preset)
         setFilterCryptoFamily('All')
         setFilterFunction('All')
@@ -1134,9 +1139,43 @@ export function useAlgorithmExplorer(
 
   // --- CSV export ---
   const handleExportCsv = useCallback(() => {
-    const csv = generateCsv(algorithmData, ALGORITHM_CSV_COLUMNS)
+    const csvLine = (value: string) => JSON.stringify(value)
+    const snapshotDate = metadata?.date
+      ? metadata.date.toISOString().slice(0, 10)
+      : 'date not recorded'
+    const preamble = [
+      csvLine(
+        'Educational algorithm catalogue export — not an approved-algorithm list, product validation, compliance determination, or deployment recommendation.'
+      ),
+      csvLine(`Scope: ${filteredAlgorithms.length} rows visible under the active filters.`),
+      csvLine(
+        `Source snapshot: ${metadata?.filename ?? 'not recorded'}; snapshot date: ${snapshotDate}.`
+      ),
+      csvLine(
+        'The snapshot date is not a row-level verification date. Row reviewer, verification method, source locator, and next-review date are not recorded in the current source catalogue.'
+      ),
+      csvLine(
+        `Filters: quick view=${quickView}; family=${filterCryptoFamily}; function=${filterFunction}; level=${filterSecurityLevel}; region=${filterRegion}; maturity=${filterStatus}; CNSA lens=${cnsaLens ? 'on' : 'off'}; research gaps=${researchGapOnly ? 'only' : 'all'}; search=${searchQuery || 'none'}.`
+      ),
+      csvLine(
+        'Legacy catalogue speed estimates are omitted because their platforms and measurement methods are not comparable.'
+      ),
+    ]
+    const csv = [...preamble, generateCsv(filteredAlgorithms, ALGORITHM_CSV_COLUMNS)].join('\n')
     downloadCsv(csv, csvFilename('pqc-algorithms'))
-  }, [algorithmData])
+  }, [
+    filteredAlgorithms,
+    metadata,
+    quickView,
+    filterCryptoFamily,
+    filterFunction,
+    filterSecurityLevel,
+    filterRegion,
+    filterStatus,
+    cnsaLens,
+    researchGapOnly,
+    searchQuery,
+  ])
 
   // Total counts for filter bar
   const totalAlgoCount = activeTab === 'transition' ? transitionData.length : algorithmData.length

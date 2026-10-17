@@ -8,9 +8,6 @@ import { transitionConsequence } from '@/data/algorithmConsequence'
 import { INTENTS, type Intent } from '@/data/algorithmEntryIntents'
 import {
   loadPQCAlgorithmsData,
-  getPerformanceMultiplier,
-  getPerformanceCategory,
-  isResearchNeeded,
   algorithmIdFromName,
   findAlgorithmByRef,
   type AlgorithmDetail,
@@ -149,63 +146,6 @@ function SecurityBar({
   )
 }
 
-interface PerfRow {
-  label: string
-  cycles: string
-  algo: AlgorithmProps
-}
-
-/** Log-scale, not linear: the real values span 0.1x to 500x (Ed25519 to
- * SLH-DSA-128s). A linear scale crushes every algorithm except the one
- * outlier to an indistinguishable sliver — logs are the natural scale for
- * a multiplicative "how many times slower" metric anyway, which is exactly
- * what these figures already are. */
-function PerfBar({
-  row,
-  minMultiplier,
-  maxMultiplier,
-  onSelect,
-}: {
-  row: PerfRow
-  minMultiplier: number
-  maxMultiplier: number
-  onSelect: (algo: AlgorithmProps) => void
-}) {
-  const value = getPerformanceMultiplier(row.cycles)
-  const logRange = Math.log10(maxMultiplier / minMultiplier) || 1
-  const pct = Math.max(4, Math.round((Math.log10(value / minMultiplier) / logRange) * 100))
-  const category = getPerformanceCategory(row.cycles)
-  // getPerformanceColor() returns translucent badge classes (bg-x/10 + text
-  // + border), meant for a label chip — not a solid bar fill. Same
-  // Fast/Moderate/Slow semantic tokens, opaque instead.
-  const barColor =
-    category === 'Fast' ? 'bg-success' : category === 'Slow' ? 'bg-destructive' : 'bg-warning'
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      onClick={() => onSelect(row.algo)}
-      className="flex h-auto w-full items-center justify-start gap-2 rounded-md p-0 font-normal"
-    >
-      <span className="w-[104px] shrink-0 truncate text-left text-[11px] font-medium text-foreground">
-        {row.label}
-      </span>
-      <div className="h-4 flex-1 overflow-hidden rounded bg-muted/30">
-        <div className={`h-full rounded ${barColor}`} style={{ width: `${pct}%` }} />
-      </div>
-      <span className="w-[52px] shrink-0 truncate text-right font-mono text-[10.5px] text-muted-foreground">
-        {/* Every row here uses signEncapsCycles, so a trailing "Sign"/"Verify"
-            qualifier (present on some raw CSV values to disambiguate a
-            classical signature algorithm's own column from a KEM's) is
-            redundant with the section's own "signing/encapsulation speed"
-            title — stripped for display, not from the value passed to
-            getPerformanceMultiplier/getPerformanceCategory above. */}
-        {row.cycles === 'Baseline' ? '1x' : row.cycles.replace(/ (Sign|Verify|Encaps)$/, '')}
-      </span>
-    </Button>
-  )
-}
-
 /**
  * Mobile Algorithms (handoff Phase 7 — Reference set, design handoff §19).
  * Source: algorithmEntryIntents.tsx (E-3, already pure-moved for exactly
@@ -295,13 +235,9 @@ export function MobileAlgorithmsView() {
     })
     .filter((r): r is SecurityRow => r !== null)
 
-  // Real relative-performance data (keygen_cycles_relative etc. in the
-  // source CSV) loads async via pqcAlgorithmsData.ts -- same module, same
-  // loader, same helpers the desktop Detailed Comparison tab already uses.
-  // Sign/encapsulation cost is the one dimension shown here (not keygen or
-  // verify/decaps too): one real, graphical comparison beats three, and
-  // every algorithm already featured on this screen has a real, populated
-  // value for exactly this field.
+  // Load the full catalogue so a deep-linked algorithm can open in the detail
+  // sheet. Heterogeneous catalogue performance estimates are intentionally
+  // not charted as a mobile ranking.
   const [perfDetails, setPerfDetails] = useState<Map<string, AlgorithmDetail> | null>(null)
   useEffect(() => {
     let cancelled = false
@@ -354,29 +290,6 @@ export function MobileAlgorithmsView() {
       },
       { replace: true }
     )
-
-  const perfRows: PerfRow[] = [
-    'RSA-2048',
-    'ML-KEM-768',
-    'Ed25519',
-    'ML-DSA-65',
-    'SLH-DSA-SHA2-128s',
-  ]
-    .map((name) => {
-      // eslint-disable-next-line security/detect-object-injection -- name is one of a fixed set of literal string constants above, not user input
-      const algo = ALGORITHM_REGISTRY[name]
-      const detail = perfDetails?.get(name.toLowerCase())
-      if (!algo || !detail || isResearchNeeded(detail.signEncapsCycles)) return null
-      return {
-        label: name === 'SLH-DSA-SHA2-128s' ? 'SLH-DSA-128s' : name,
-        cycles: detail.signEncapsCycles,
-        algo,
-      }
-    })
-    .filter((r): r is PerfRow => r !== null)
-  const perfMultipliers = perfRows.map((r) => getPerformanceMultiplier(r.cycles))
-  const minMultiplier = perfMultipliers.length ? Math.min(...perfMultipliers) : 1
-  const maxMultiplier = perfMultipliers.length ? Math.max(...perfMultipliers) : 1
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -473,32 +386,9 @@ export function MobileAlgorithmsView() {
         </section>
       )}
 
-      {perfRows.length > 0 && (
-        <section className="mb-5 rounded-xl border border-border bg-card p-4">
-          <p className="mb-1 text-[13px] font-bold text-foreground">
-            What actually changes: signing/encapsulation speed
-          </p>
-          <p className="mb-3 text-[10.5px] text-muted-foreground">
-            Relative to RSA-2048's baseline. Log scale — SLH-DSA-128s is genuinely hundreds of times
-            slower, not a rounding difference.
-          </p>
-          <div className="flex flex-col gap-1.5">
-            {perfRows.map((row) => (
-              <PerfBar
-                key={row.label}
-                row={row}
-                minMultiplier={minMultiplier}
-                maxMultiplier={maxMultiplier}
-                onSelect={setSelected}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
       <p className="border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
         Family, region (NIST/BSI/ANSSI), and security-level filters and the full transition table
-        are on a laptop. Protocol readiness and live KAT validation are reached through the options
+        are on a laptop. Protocol readiness and known-answer checks are reached through the options
         above.
       </p>
 

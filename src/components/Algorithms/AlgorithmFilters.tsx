@@ -37,7 +37,10 @@ export {
   LEVEL_ITEMS,
 } from './algorithmFilterOptions'
 
-export type QuickViewPreset = 'nist-picks' | 'fips-validated' | 'everything'
+// Keep the legacy `fips-validated` id for existing URLs. The learner-facing
+// label is deliberately "Final NIST standards": FIPS standardizes algorithms;
+// CMVP validates concrete cryptographic modules.
+export type QuickViewPreset = 'nist-picks' | 'final-nist-standards' | 'everything'
 
 interface AlgorithmFiltersProps {
   cryptoFamily: string
@@ -58,7 +61,7 @@ interface AlgorithmFiltersProps {
   /** Active persona — drives QuickView surface (binary personas hide the 5-dropdown bar by default). */
   persona?: PersonaId | null
   /** Which QuickView preset (if any) is currently applied. Owned by useAlgorithmExplorer. */
-  quickView?: 'none' | 'nist-picks' | 'fips-validated'
+  quickView?: 'none' | 'nist-picks' | 'final-nist-standards'
   /** Called when a QuickView preset is selected. Implementation lives in AlgorithmsView. */
   onQuickView?: (preset: QuickViewPreset) => void
   /** CNSA 2.0 lens state — rendered as a Row-1 toggle inside the deck. */
@@ -85,7 +88,7 @@ function QuickViewSegmented({
   quickView,
   onQuickView,
 }: {
-  quickView: 'none' | 'nist-picks' | 'fips-validated'
+  quickView: 'none' | 'nist-picks' | 'final-nist-standards'
   onQuickView: (preset: QuickViewPreset) => void
 }) {
   // quickView is tracked directly (see useAlgorithmExplorer.ts) rather than
@@ -102,13 +105,14 @@ function QuickViewSegmented({
       id: 'nist-picks',
       label: 'NIST picks',
       icon: Star,
-      title: 'FIPS 203/204/205 — ML-KEM, ML-DSA, SLH-DSA (Lattice-based standardized)',
+      title: 'FIPS 203/204/205 — ML-KEM, ML-DSA, and hash-based SLH-DSA',
     },
     {
-      id: 'fips-validated',
-      label: 'FIPS-validated',
+      id: 'final-nist-standards',
+      label: 'Final NIST standards',
       icon: BadgeCheck,
-      title: 'All algorithms that have completed FIPS validation',
+      title:
+        'Algorithms published in final NIST FIPS standards; this does not validate a product or module',
     },
     {
       id: 'everything',

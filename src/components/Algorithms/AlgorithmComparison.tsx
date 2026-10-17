@@ -247,6 +247,13 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
         <Shield className="text-primary" />
         Algorithm Transition
       </h2>
+      <div className="mb-4 rounded-lg border border-status-info/30 bg-status-info/5 p-3 text-sm leading-relaxed text-foreground/85">
+        <strong className="text-foreground">A migration path is not a drop-in replacement.</strong>{' '}
+        A KEM establishes key material; it does not encrypt application data by itself. Use these
+        rows to start a comparison, then check the protocol construction, API and object model, key
+        lifecycle, message and certificate sizes, implementation support, and validation needs.
+        Empty cells mean no reviewed path or date is recorded—not “no change required.”
+      </div>
 
       {isLoading ? (
         <div className="glass-panel p-12 flex items-center justify-center">
@@ -272,7 +279,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       { id: 'deprecation-desc', label: 'Urgency (Latest first)' },
                       { id: 'function-asc', label: 'Function (A-Z)' },
                       { id: 'classical-asc', label: 'Classical Algorithm (A-Z)' },
-                      { id: 'pqc-asc', label: 'PQC Alternative (A-Z)' },
+                      { id: 'pqc-asc', label: 'Candidate PQC path (A-Z)' },
                     ]}
                     selectedId={`${sortColumn || 'none'}-${sortDirection || 'none'}`}
                     onSelect={(value) => {
@@ -395,10 +402,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         variant="ghost"
                         type="button"
                         onClick={() => handleSort('pqc')}
-                        aria-label={`PQC Alternative column, ${sortColumn === 'pqc' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
+                        aria-label={`Candidate PQC path column, ${sortColumn === 'pqc' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
                         className="w-full h-full py-8 flex items-center justify-center gap-2 px-4 bg-transparent border-none text-inherit font-inherit cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary/50"
                       >
-                        <span>PQC Alternative</span>
+                        <span>Candidate PQC path</span>
                         {renderSortIcon('pqc')}
                       </Button>
                       <div
@@ -598,7 +605,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         <td className="px-4 py-3" style={{ width: `${columnWidths.pqc}px` }}>
                           <div className="flex flex-col gap-1.5">
                             <span className="text-status-success font-semibold text-sm truncate">
-                              {algo.pqc}
+                              {algo.pqc || 'No reviewed replacement recorded'}
                             </span>
                             {/* B+ remediation 3.2 (2026-08-10): the consequence
                                 line. Without it this table is a list of names —
@@ -720,7 +727,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                     : 'bg-muted border-border text-muted-foreground'
                               )}
                             >
-                              {algo.deprecationDate}
+                              {algo.deprecationDate || 'No reviewed transition date recorded'}
                             </span>
                             {isTransitionGuidanceDate(algo.deprecationDate) && (
                               <span
@@ -732,7 +739,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             )}
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <ArrowRight size={14} className="opacity-50" />
-                              <span className="font-mono">Std: {algo.standardizationDate}</span>
+                              <span className="font-mono">
+                                Standard published:{' '}
+                                {algo.standardizationDate || 'not recorded in this catalogue'}
+                              </span>
                             </div>
                           </div>
                         </td>

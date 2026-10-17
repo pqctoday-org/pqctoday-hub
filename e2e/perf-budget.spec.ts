@@ -24,6 +24,7 @@ interface Budget {
   name: string
   jsKB: number
   loadMs: number
+  warmLoadMs?: number
 }
 
 const BUDGETS: Budget[] = [
@@ -33,6 +34,13 @@ const BUDGETS: Budget[] = [
   { path: '/library', name: 'Library', jsKB: 55000, loadMs: 2000 },
   { path: '/threats', name: 'Threats', jsKB: 48000, loadMs: 2000 },
   { path: '/report', name: 'Report', jsKB: 33000, loadMs: 2000 },
+  {
+    path: '/algorithms?tab=detailed&quickview=none',
+    name: 'Algorithms',
+    jsKB: 55000,
+    loadMs: 2000,
+    warmLoadMs: 1500,
+  },
 ]
 
 const ENFORCE = process.env.PERF_BUDGET_ENFORCE === '1'
@@ -86,10 +94,22 @@ for (const budget of BUDGETS) {
     if (budget.loadMs > 0 && measured.loadMs > budget.loadMs)
       over.push(`loadMs ${measured.loadMs} > ${budget.loadMs}`)
 
-    const line = `[perf-budget] ${budget.name.padEnd(8)} jsKB=${measured.jsKB} dclMs=${measured.dclMs} loadMs=${measured.loadMs} lcpMs=${measured.lcpMs ?? 'n/a'} ${over.length ? 'OVER: ' + over.join(', ') : 'ok'}`
+    let warmLoadMs: number | null = null
+    if (budget.warmLoadMs !== undefined) {
+      await page.reload({ waitUntil: 'load' })
+      warmLoadMs = await page.evaluate(() => {
+        const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+        return Math.round(nav.loadEventEnd)
+      })
+      if (warmLoadMs > budget.warmLoadMs) {
+        over.push(`warmLoadMs ${warmLoadMs} > ${budget.warmLoadMs}`)
+      }
+    }
+
+    const line = `[perf-budget] ${budget.name.padEnd(10)} jsKB=${measured.jsKB} dclMs=${measured.dclMs} coldLoadMs=${measured.loadMs} warmLoadMs=${warmLoadMs ?? 'n/a'} lcpMs=${measured.lcpMs ?? 'n/a'} ${over.length ? 'OVER: ' + over.join(', ') : 'ok'}`
     console.log(line)
     await testInfo.attach(`perf-${budget.name}`, {
-      body: JSON.stringify({ path: budget.path, budget, measured, over }, null, 2),
+      body: JSON.stringify({ path: budget.path, budget, measured, warmLoadMs, over }, null, 2),
       contentType: 'application/json',
     })
 

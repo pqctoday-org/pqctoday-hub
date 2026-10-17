@@ -2,7 +2,7 @@
 import type { CsvColumnConfig } from './csvExport'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { LibraryItem } from '@/data/libraryData'
-import type { AlgorithmDetail } from '@/data/pqcAlgorithmsData'
+import { evidenceStateLabel, type AlgorithmDetail } from '@/data/pqcAlgorithmsData'
 import type { TimelineEvent } from '@/types/timeline'
 import type { ComplianceRecord } from '@/components/Compliance/types'
 import {
@@ -53,25 +53,55 @@ export const ALGORITHM_CSV_COLUMNS: CsvColumnConfig<AlgorithmDetail>[] = [
   { header: 'AES Equivalent', accessor: (i) => i.aesEquivalent },
   {
     header: 'Public Key Size (bytes)',
-    accessor: (i) => (i.sizesUnknown ? 'Research needed' : i.publicKeySize),
+    accessor: (i) =>
+      i.evidenceStates?.publicKey && i.evidenceStates.publicKey !== 'stated'
+        ? evidenceStateLabel(i.evidenceStates.publicKey)
+        : i.sizesUnknown
+          ? 'Research needed'
+          : i.publicKeySize,
   },
   {
     header: 'Private Key Size (bytes)',
-    accessor: (i) => (i.sizesUnknown ? 'Research needed' : i.privateKeySize),
+    accessor: (i) =>
+      i.evidenceStates?.privateKey && i.evidenceStates.privateKey !== 'stated'
+        ? evidenceStateLabel(i.evidenceStates.privateKey)
+        : i.sizesUnknown
+          ? 'Research needed'
+          : i.privateKeySize,
   },
   {
     header: 'Sig/Ciphertext Size (bytes)',
-    accessor: (i) => (i.sizesUnknown ? 'Research needed' : i.signatureCiphertextSize),
+    accessor: (i) =>
+      i.evidenceStates?.signatureOrCiphertext && i.evidenceStates.signatureOrCiphertext !== 'stated'
+        ? evidenceStateLabel(i.evidenceStates.signatureOrCiphertext)
+        : i.sizesUnknown
+          ? 'Research needed'
+          : i.signatureCiphertextSize,
   },
-  { header: 'Shared Secret Size (bytes)', accessor: (i) => i.sharedSecretSize },
-  { header: 'KeyGen Cycles', accessor: (i) => i.keyGenCycles },
-  { header: 'Sign/Encaps Cycles', accessor: (i) => i.signEncapsCycles },
-  { header: 'Verify/Decaps Cycles', accessor: (i) => i.verifyDecapsCycles },
+  {
+    header: 'Shared Secret Size (bytes)',
+    accessor: (i) =>
+      i.evidenceStates?.sharedSecret && i.evidenceStates.sharedSecret !== 'stated'
+        ? evidenceStateLabel(i.evidenceStates.sharedSecret)
+        : i.sharedSecretSize,
+  },
   {
     header: 'Stack RAM (bytes)',
     accessor: (i) => (i.stackRAM > 0 ? i.stackRAM : 'Research needed'),
   },
   { header: 'FIPS Standard', accessor: (i) => i.fipsStandard },
+  { header: 'Maturity Tier', accessor: (i) => i.statusTier },
+  { header: 'Status Source URL', accessor: (i) => i.statusUrl },
+  { header: 'Trusted Source ID', accessor: (i) => i.trustedSourceId },
+  { header: 'Peer Reviewed', accessor: (i) => i.peerReviewed },
+  { header: 'Vetting Body', accessor: (i) => i.vettingBody },
+  { header: 'Source Link Quality', accessor: (i) => i.statusUrlQuality },
+  { header: 'Confidence Score', accessor: (i) => i.confidenceScore },
+  { header: 'Row Last Verified', accessor: () => 'Not recorded in source catalogue' },
+  { header: 'Row Reviewer', accessor: () => 'Not recorded in source catalogue' },
+  { header: 'Verification Method', accessor: () => 'Not recorded in source catalogue' },
+  { header: 'Next Review', accessor: () => 'Not recorded in source catalogue' },
+  { header: 'Has Research Gap', accessor: (i) => i.hasResearchGap },
   { header: 'Use Case Notes', accessor: (i) => i.useCaseNotes },
 ]
 

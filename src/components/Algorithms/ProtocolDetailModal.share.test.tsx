@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,8 @@ describe('ProtocolDetailModal — Share inside the modal', () => {
   })
 
   it('Copy link copies the clean protocol link; Esc closes only the menu', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText')
     const onClose = vi.fn()
     render(
       <MemoryRouter initialEntries={['/algorithms?tab=support&matrixQ=tls&protocol=x']}>
@@ -31,18 +34,18 @@ describe('ProtocolDetailModal — Share inside the modal', () => {
     const share = within(dialog).getByRole('button', {
       name: new RegExp(`^Share ${protocol.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`),
     })
-    fireEvent.click(share)
+    await user.click(share)
     const menu = screen.getByRole('menu')
     expect(dialog.contains(menu)).toBe(false)
 
-    fireEvent.keyDown(document, { key: 'Escape' })
+    await user.keyboard('{Escape}')
     expect(screen.queryByRole('menu')).toBeNull()
     expect(onClose).not.toHaveBeenCalled()
 
-    fireEvent.click(share)
-    fireEvent.click(within(screen.getByRole('menu')).getByRole('button', { name: /Copy link/ }))
+    await user.click(share)
+    await user.click(within(screen.getByRole('menu')).getByRole('button', { name: /Copy link/ }))
     await vi.waitFor(() =>
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect(writeText).toHaveBeenCalledWith(
         `${window.location.origin}/algorithms?tab=support&protocol=${encodeURIComponent(protocol.id)}`
       )
     )

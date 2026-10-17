@@ -7,7 +7,6 @@ import {
   type AlgorithmDetail,
   getCryptoFamilyColor,
   isClassical,
-  isResearchNeeded,
   RESEARCH_NEEDED,
 } from '../../data/pqcAlgorithmsData'
 import {
@@ -56,22 +55,6 @@ const DETAIL_FIELDS: ComparisonField[] = [
     label: 'Sig / Ciphertext',
     getValue: (a) => (a.sizesUnknown ? RESEARCH_NEEDED : a.signatureCiphertextSize),
     compare: 'lower-better',
-  },
-  {
-    key: 'keygen',
-    label: 'KeyGen Cycles',
-    getValue: (a) => (isResearchNeeded(a.keyGenCycles) ? RESEARCH_NEEDED : a.keyGenCycles),
-  },
-  {
-    key: 'signEncaps',
-    label: 'Sign / Encaps Cycles',
-    getValue: (a) => (isResearchNeeded(a.signEncapsCycles) ? RESEARCH_NEEDED : a.signEncapsCycles),
-  },
-  {
-    key: 'verifyDecaps',
-    label: 'Verify / Decaps Cycles',
-    getValue: (a) =>
-      isResearchNeeded(a.verifyDecapsCycles) ? RESEARCH_NEEDED : a.verifyDecapsCycles,
   },
   {
     key: 'stackRam',
@@ -132,6 +115,13 @@ export function AlgorithmComparisonPanel({
           <X size={14} />
         </Button>
       </div>
+
+      <p className="mb-3 rounded border border-status-info/25 bg-status-info/5 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+        Size values can be compared for the named parameter sets. Legacy catalogue performance
+        estimates are withheld because their platforms and measurement methods are not comparable.
+        Use the live benchmark below for a same-browser observation, or the measured hardware case
+        study in Browse for a controlled shared-harness dataset.
+      </p>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

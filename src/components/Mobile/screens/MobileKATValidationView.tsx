@@ -577,6 +577,11 @@ export function MobileKATValidationView({
         )}
         {attacksOpen && (
           <div className="mt-2 flex flex-col gap-2">
+            <p className="rounded-md border border-status-warning/30 bg-status-warning/10 p-2 text-[10.5px] leading-relaxed text-muted-foreground">
+              These records describe attacks demonstrated against particular implementations or
+              conditions—not a break of every implementation in the algorithm family. “No recorded
+              evidence” would describe only this reviewed corpus, not proof of safety.
+            </p>
             {ATTACK_PROFILES.map((p) => (
               <div
                 key={p.algorithm}
@@ -605,6 +610,35 @@ export function MobileKATValidationView({
                       </span>
                     ))}
                 </div>
+                {p.attacks
+                  .filter((a) => a.status === 'yes' && a.detail)
+                  .map((a) => (
+                    <p
+                      key={`${a.category}-detail`}
+                      className="mt-1.5 text-[10.5px] leading-relaxed text-muted-foreground"
+                    >
+                      <strong className="text-foreground">{a.category}:</strong> {a.detail}
+                    </p>
+                  ))}
+                {p.references.length > 0 && (
+                  <div className="mt-2 border-t border-border pt-2">
+                    <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                      Reviewed sources
+                    </p>
+                    {p.references.map((reference) => (
+                      <a
+                        key={reference.referenceId}
+                        href={reference.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 flex min-w-0 items-start gap-1 text-[10.5px] leading-snug text-primary"
+                      >
+                        <ExternalLink size={10} className="mt-0.5 shrink-0" aria-hidden="true" />
+                        <span className="break-words">{reference.title}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
