@@ -48,14 +48,32 @@ describe('stageCollapse — persona-aware tier mapping', () => {
     }
   })
 
-  it('binary personas (executive/ops/curious) only emit tiers {0, 7}', () => {
-    const binaryPersonas: PersonaId[] = ['executive', 'ops', 'curious']
+  it('binary personas (executive/grc/ops/curious) emit three tones {0, 4, 7}', () => {
+    const binaryPersonas: PersonaId[] = ['executive', 'grc', 'ops', 'curious']
     for (const persona of binaryPersonas) {
       for (const stage of ALL_STAGES) {
         const tier = stageCollapse(stage, persona)
-        expect([0, 7]).toContain(tier)
+        expect([0, 4, 7]).toContain(tier)
       }
     }
+  })
+
+  it('binary palette keeps draft/experimental work distinct from none and N/A', () => {
+    expect(stageCollapseAt('none', 'binary')).toBe(0)
+    expect(stageCollapseAt('na', 'binary')).toBe(0)
+    for (const stage of [
+      'identified',
+      'experimental',
+      'individual-draft',
+      'wg-document',
+      'wg-last-call',
+      'ietf-last-call',
+      'iesg-submitted',
+      'rfc-editor-queue',
+    ] as DraftStage[]) {
+      expect(stageCollapseAt(stage, 'binary'), stage).toBe(4)
+    }
+    expect(stageCollapseAt('rfc-published', 'binary')).toBe(7)
   })
 
   it('ternary personas (developer/architect) only emit tiers {0, 1, 4, 7}', () => {
@@ -76,10 +94,10 @@ describe('stageCollapse — persona-aware tier mapping', () => {
     }
   })
 
-  it('individual-draft collapses to tier 0 for binary, tier 1 for ternary, tier 3 for full', () => {
-    expect(stageCollapse('individual-draft', 'executive')).toBe(0)
-    expect(stageCollapse('individual-draft', 'ops')).toBe(0)
-    expect(stageCollapse('individual-draft', 'curious')).toBe(0)
+  it('individual-draft collapses to tier 4 for binary, tier 1 for ternary, tier 3 for full', () => {
+    expect(stageCollapse('individual-draft', 'executive')).toBe(4)
+    expect(stageCollapse('individual-draft', 'ops')).toBe(4)
+    expect(stageCollapse('individual-draft', 'curious')).toBe(4)
     expect(stageCollapse('individual-draft', 'developer')).toBe(1)
     expect(stageCollapse('individual-draft', 'architect')).toBe(1)
     expect(stageCollapse('individual-draft', 'researcher')).toBe(3)

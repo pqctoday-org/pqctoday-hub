@@ -489,7 +489,7 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                   )}
                   {protocol.inheritedBy && protocol.inheritedBy.length > 0 && (
                     <span
-                      className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] text-accent"
+                      className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] text-accent-legible"
                       title={`Same PQC posture also covers: ${protocol.inheritedBy.join(', ')}`}
                     >
                       <GitBranch size={11} />
@@ -653,7 +653,8 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
               {!protocol.liveDeployments || protocol.liveDeployments.length === 0 ? (
                 <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
                   <div className="inline-flex items-center gap-1.5">
-                    <Globe2 size={12} className="shrink-0" /> No known production deployment
+                    <Globe2 size={12} className="shrink-0" /> No reviewed production-deployment
+                    evidence
                     {parent && (
                       <span className="ml-1">
                         — see <span className="font-medium text-foreground">{parent.name}</span> for

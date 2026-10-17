@@ -103,15 +103,16 @@ export const DRAFT_STAGE_LEVEL: Record<DraftStage, number> = {
 import type { PersonaId } from './learningPersonas'
 
 /** Persona granularity tiers for the Protocol Support heatmap palette.
- *  - `binary`  collapses to {RFC | everything else} — executive/grc/ops/curious
+ *  - `binary`  collapses to {RFC | draft or experimental | none / N/A} —
+ *              executive/grc/ops/curious (the "Simple" palette)
  *  - `ternary` collapses to {RFC | WG+ | early} — developer/architect
  *  - `full`    keeps the graduated 0–7 palette — researcher (current behaviour)
  */
 export type PersonaStageGranularity = 'binary' | 'ternary' | 'full'
 
 /** Effective tier rendered by `dimensionStageTone()`. The full set (0..7) is
- *  used only for researcher / no-persona; binary and ternary personas land on
- *  a strict subset of {0, 1, 4, 7}. */
+ *  used only for researcher / no-persona; binary personas land on {0, 4, 7}
+ *  and ternary personas on {0, 1, 4, 7}. */
 export type StageTier = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 export const PERSONA_STAGE_GRANULARITY: Record<PersonaId, PersonaStageGranularity> = {
@@ -133,7 +134,7 @@ export const PERSONA_STAGE_GRANULARITY: Record<PersonaId, PersonaStageGranularit
  * non-applicable cells.
  *
  * Tier mapping per granularity:
- *   binary  → {0, 7}                    RFC vs everything else
+ *   binary  → {0, 4, 7}                 none or N/A / any pre-RFC work / RFC
  *   ternary → {0, 1, 4, 7}              early / WG+ / RFC
  *   full    → DRAFT_STAGE_LEVEL[stage]  graduated 0..7 (current behaviour)
  */
@@ -151,7 +152,11 @@ export function stageCollapseAt(
     if (raw === 0) return 0
     return 1
   }
-  return raw === 7 ? 7 : 0
+  // Simple palette: three tones so a draft or experimental spec never reads
+  // the same as "no work at all".
+  if (raw >= 7) return 7
+  if (raw === 0) return 0
+  return 4
 }
 
 /** Resolve the persona's effective granularity (full when no persona). */

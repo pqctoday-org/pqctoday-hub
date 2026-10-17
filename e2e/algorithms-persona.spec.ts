@@ -150,11 +150,11 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
       return Array.from(values).sort()
     })
 
-    // Binary palette emits at most tiers {0, 7}. The plan's acceptance check #6
-    // permits ≤ 2 distinct tier values for executive/ops/curious.
-    expect(tiers.length).toBeLessThanOrEqual(2)
+    // The Simple palette emits at most three tiers {0, 4, 7}: none or N/A,
+    // draft or experimental, RFC.
+    expect(tiers.length).toBeLessThanOrEqual(3)
     for (const t of tiers) {
-      expect(['0', '7']).toContain(t)
+      expect(['0', '4', '7']).toContain(t)
     }
   })
 

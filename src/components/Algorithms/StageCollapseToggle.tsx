@@ -42,7 +42,7 @@ export function StageCollapseToggle({ persona, value, onChange }: StageCollapseT
             id: 'binary',
             label: 'Simple',
             icon: Sparkles,
-            title: 'Two-tone palette — RFC-published vs everything else',
+            title: 'Three-tone palette — RFC / draft or experimental / none or N/A',
           },
           {
             id: 'ternary',
