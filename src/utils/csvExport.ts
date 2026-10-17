@@ -5,12 +5,36 @@ export interface CsvColumnConfig<T> {
   accessor: (item: T) => string | number | boolean | null | undefined
 }
 
-/** RFC 4180 compliant CSV field escaping */
-function escapeCsvField(value: string): string {
-  if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
-    return `"${value.replace(/"/g, '""')}"`
+/**
+ * Characters that make a spreadsheet treat a cell as a formula (or, for tab
+ * and carriage return, can shift the cell into one). A leading apostrophe
+ * keeps the text as text without changing what a reader sees.
+ */
+const FORMULA_TRIGGERS = ['=', '+', '-', '@', '\t', '\r']
+
+/**
+ * RFC 4180 field escaping plus a formula-injection guard: a text cell that
+ * starts with = + - @ tab or CR gets a leading apostrophe. Numbers pass
+ * through unchanged, so a negative number stays a number.
+ */
+export function escapeCsvField(value: string | number | boolean): string {
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+  let text = value
+  if (text.length > 0 && FORMULA_TRIGGERS.includes(text[0])) text = `'${text}`
+  if (text.includes(',') || text.includes('"') || text.includes('\n') || text.includes('\r')) {
+    return `"${text.replace(/"/g, '""')}"`
   }
-  return value
+  return text
+}
+
+/**
+ * One free-text preamble line for the top of an export: a single quoted CSV
+ * cell, with the same formula guard as data cells, so text a reader typed
+ * (a search query, say) cannot break the file or run as a formula.
+ */
+export function csvPreambleLine(text: string): string {
+  const cell = escapeCsvField(text.replace(/\r?\n/g, ' '))
+  return cell.startsWith('"') ? cell : `"${cell}"`
 }
 
 /** Generate a CSV string from an array of objects and column definitions */
@@ -21,7 +45,7 @@ export function generateCsv<T>(data: T[], columns: CsvColumnConfig<T>[]): string
       .map((col) => {
         const value = col.accessor(item)
         if (value === null || value === undefined) return ''
-        return escapeCsvField(String(value))
+        return escapeCsvField(value)
       })
       .join(',')
   )
@@ -43,7 +67,11 @@ export function downloadCsv(csvContent: string, filename: string): void {
 }
 
 /** Get a date-stamped filename: `{prefix}-YYYY-MM-DD.csv` */
-export function csvFilename(prefix: string): string {
-  const date = new Date().toISOString().slice(0, 10)
-  return `${prefix}-${date}.csv`
+export function csvFilename(prefix: string, now = new Date()): string {
+  // The reader's own calendar date, not UTC (toISOString shifts it a day
+  // either side of midnight depending on time zone).
+  const y = now.getFullYear()
+  const m = String(now.getMonth() + 1).padStart(2, '0')
+  const d = String(now.getDate()).padStart(2, '0')
+  return `${prefix}-${y}-${m}-${d}.csv`
 }
