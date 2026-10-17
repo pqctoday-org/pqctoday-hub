@@ -47,67 +47,36 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
     expect((titleVal ?? '').length).toBeGreaterThan(0)
   })
 
-  // QUARANTINED 2026-06-25 (e2e triage): the Detailed tab was redesigned
-  // (AlgorithmDetailedComparison) and no longer exposes #section-*/#section-body-*
-  // ids; KAT moved to a separate Validation tab. These two tests assert the old DOM.
-  test.skip('Detailed tab — 6 collapsible sections, 3 open by default', async ({ page }) => {
+  test('Detailed tab — comparison guidance and measured hardware case study are present', async ({
+    page,
+  }) => {
     await page.goto('/algorithms?tab=detailed')
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForSelector('#section-performance', { timeout: 30000 })
-
-    // Dismiss disclaimer if present
-    const disclaimer = page
-      .locator('[role="alert"]')
-      .filter({ hasText: /educational/i })
-      .first()
-    if (await disclaimer.isVisible({ timeout: 2000 }).catch(() => false)) {
-      const dismissBtn = disclaimer.locator('button').first()
-      if (await dismissBtn.isVisible()) await dismissBtn.click()
-      await page.waitForTimeout(300)
-    }
-
-    // The 3 default-open sections should have expanded content
-    await expect(page.locator('#section-body-performance')).toBeVisible({ timeout: 10000 })
-    await expect(page.locator('#section-body-security')).toBeVisible({ timeout: 5000 })
-    await expect(page.locator('#section-body-sizes')).toBeVisible({ timeout: 5000 })
-
-    // The 3 collapsed sections should NOT have visible body
-    await expect(page.locator('#section-body-usecases')).not.toBeVisible()
-    await expect(page.locator('#section-body-attacks')).not.toBeVisible()
-    await expect(page.locator('#section-body-kat')).not.toBeVisible()
+    await expect(page.getByText('How to compare responsibly.')).toBeVisible({ timeout: 30000 })
+    await expect(page.getByText(/Measured hardware case study: signing throughput/)).toBeVisible()
+    await expect(page.getByRole('button', { name: /Browse all/i })).toBeVisible()
+    await expect(
+      page
+        .getByRole('group', { name: 'Detailed comparison view mode' })
+        .getByRole('button', { name: /Compare side-by-side/i })
+    ).toBeVisible()
   })
 
-  test.skip('Detailed tab — clicking collapsed KAT section header opens it', async ({ page }) => {
-    await page.goto('/algorithms?tab=detailed')
+  test('Validation tab — Known-answer checks opens and states its evidence boundary', async ({
+    page,
+  }) => {
+    await page.goto('/algorithms?tab=validation')
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForSelector('#section-kat', { timeout: 30000 })
-
-    // Dismiss disclaimer
-    const disclaimer = page
-      .locator('[role="alert"]')
-      .filter({ hasText: /educational/i })
-      .first()
-    if (await disclaimer.isVisible({ timeout: 2000 }).catch(() => false)) {
-      const dismissBtn = disclaimer.locator('button').first()
-      if (await dismissBtn.isVisible()) {
-        await dismissBtn.click()
-        await page.waitForTimeout(400)
-      }
-    }
-
-    // KAT body should be collapsed initially
-    await expect(page.locator('#section-body-kat')).not.toBeVisible()
-
-    // Click the KAT section header (direct child button)
-    const katHeader = page.locator('#section-kat > button[type="button"]')
-    await katHeader.scrollIntoViewIfNeeded()
+    const katHeader = page.getByRole('button', { name: /Known-answer checks/i })
+    await expect(katHeader).toBeVisible({ timeout: 30000 })
+    await expect(katHeader).toHaveAttribute('aria-expanded', 'false')
     await katHeader.click()
-
-    // KAT body should now be visible
-    await expect(page.locator('#section-body-kat')).toBeVisible({ timeout: 5000 })
-
-    // aria-expanded should reflect open state
     await expect(katHeader).toHaveAttribute('aria-expanded', 'true')
+    await expect(page.getByText('Known-answer and functional tests')).toBeVisible({
+      timeout: 15000,
+    })
+    await page.getByText('Why KATs matter').click()
+    await expect(page.getByText(/neither happens here/)).toBeVisible()
   })
 
   test('AlgorithmEntryStrip — appears on fresh session, dismisses on X click', async ({ page }) => {

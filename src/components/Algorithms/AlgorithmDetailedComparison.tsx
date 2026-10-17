@@ -3,13 +3,10 @@ import { useState, useMemo } from 'react'
 import React from 'react'
 import {
   type AlgorithmDetail,
-  getPerformanceCategory,
-  getPerformanceColor,
-  getPerformanceMultiplier,
+  type EvidenceFieldState,
   getSecurityLevelColor,
   getFunctionGroup,
   RESEARCH_NEEDED,
-  isResearchNeeded,
 } from '../../data/pqcAlgorithmsData'
 import {
   Info,
@@ -23,7 +20,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { resolveAlgoXrefs } from '../../data/algoProductXrefData'
-import { isDraftTier } from '../../data/algorithmStatusTier'
+import { tierBadge, tierBadgeClasses } from '../../data/algorithmStatusTier'
 import { getAlgorithmAdvisory } from '../../data/algorithmAdvisories'
 import { Button } from '@/components/ui/button'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
@@ -32,6 +29,7 @@ import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
 import { MAX_COMPARE } from './useAlgorithmExplorer'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { algoMatchesHighlight } from './highlightMatch'
+import { HardwareBenchmarkEvidence } from './HardwareBenchmarkEvidence'
 
 /**
  * What the RAM column can and cannot tell a reader.
@@ -53,7 +51,7 @@ const RAM_CAVEAT =
   'qualifier, and for lattice signatures those differ by roughly an order of magnitude. ' +
   'Measure on your own target before sizing hardware.'
 
-type SortField = 'name' | 'type' | 'pubkey' | 'sig' | 'keygen' | 'sign' | 'verify' | 'ram'
+type SortField = 'name' | 'type' | 'pubkey' | 'sig' | 'ram'
 type SortDir = 'asc' | 'desc'
 
 interface AlgorithmDetailedComparisonProps {
@@ -63,6 +61,7 @@ interface AlgorithmDetailedComparisonProps {
   compareSet: Set<string>
   compareType: 'KEM' | 'Signature' | null
   maxCompareReached: boolean
+  selectionLimit?: number
   onToggleCompare: (name: string) => void
   /** Browse (unified table) ↔ Compare (transposed matrix). */
   detailMode: 'browse' | 'compare'
@@ -91,6 +90,7 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
   compareSet,
   compareType,
   maxCompareReached,
+  selectionLimit = MAX_COMPARE,
   onToggleCompare,
   detailMode,
   onDetailModeChange,
@@ -104,6 +104,13 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
 
   return (
     <div className="space-y-3">
+      <section className="rounded-lg border border-status-info/30 bg-status-info/5 p-3 text-xs leading-relaxed text-foreground/85">
+        <strong className="text-foreground">How to compare responsibly.</strong> Start with function
+        and security level, then compare serialized sizes and protocol fit. Catalogue performance
+        text is historical and heterogeneous; it is not a fair ranking. Use a shared-harness dataset
+        or measure the exact operation and implementation on your target.
+      </section>
+      <HardwareBenchmarkEvidence />
       {/* Mode switch + About */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         {!hideCompareToggle && (
@@ -175,6 +182,7 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             compareSet={compareSet}
             compareType={compareType}
             maxCompareReached={maxCompareReached}
+            selectionLimit={selectionLimit}
             onToggleCompare={onToggleCompare}
             selectedAlgoId={selectedAlgoId}
             onOpenAlgorithm={onOpenAlgorithm}
@@ -182,6 +190,7 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
           <SelectionBar
             count={selectedCount}
             compareType={compareType}
+            selectionLimit={selectionLimit}
             onCompare={() => onDetailModeChange('compare')}
           />
         </>
@@ -226,12 +235,65 @@ function CompareView({
           Edit picks
         </Button>
       </div>
-      <AlgorithmComparisonPanel
-        algorithms={comparisonAlgos}
-        baseline={baselineAlgo}
-        activeTab="detailed"
-        onClose={onBrowse}
-      />
+      <div className="md:hidden overflow-x-auto rounded-lg border border-border bg-card p-3">
+        <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+          Swipe across up to three picks. Compare function, maturity, security level and serialized
+          sizes first; performance depends on the implementation and device.
+        </p>
+        <div
+          className="grid min-w-max gap-2"
+          style={{
+            gridTemplateColumns: `repeat(${Math.min(comparisonAlgos.length, 3)}, minmax(9rem, 1fr))`,
+          }}
+        >
+          {comparisonAlgos.slice(0, 3).map((algo) => (
+            <article key={algo.id} className="rounded-md border border-border bg-background p-3">
+              <h4 className="text-sm font-semibold text-foreground">{algo.name}</h4>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">{algo.family}</p>
+              <dl className="mt-3 space-y-2 text-xs">
+                <Fact label="Maturity">{algo.statusTier}</Fact>
+                <Fact label="Security">
+                  {algo.securityLevel === null
+                    ? 'Not specified'
+                    : `NIST level ${algo.securityLevel}`}
+                </Fact>
+                <Fact label="Public key">
+                  <ByteSize
+                    value={algo.publicKeySize}
+                    state={algo.evidenceStates?.publicKey}
+                    unknown={!algo.evidenceStates && algo.sizesUnknown}
+                  />
+                </Fact>
+                <Fact label="Signature / ciphertext">
+                  <ByteSize
+                    value={algo.signatureCiphertextSize}
+                    state={algo.evidenceStates?.signatureOrCiphertext}
+                    unknown={!algo.evidenceStates && algo.sizesUnknown}
+                  />
+                </Fact>
+                <Fact label="Standard">{algo.fipsStandard || 'Not recorded'}</Fact>
+              </dl>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="hidden md:block">
+        <AlgorithmComparisonPanel
+          algorithms={comparisonAlgos}
+          baseline={baselineAlgo}
+          activeTab="detailed"
+          onClose={onBrowse}
+        />
+      </div>
+    </div>
+  )
+}
+
+function Fact({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="mt-0.5 text-foreground">{children}</dd>
     </div>
   )
 }
@@ -242,16 +304,18 @@ function CompareView({
 function SelectionBar({
   count,
   compareType,
+  selectionLimit,
   onCompare,
 }: {
   count: number
   compareType: 'KEM' | 'Signature' | null
+  selectionLimit: number
   onCompare: () => void
 }) {
   return (
     <div className="glass-panel p-3 flex items-center justify-between gap-3 flex-wrap">
       <span className="text-sm text-muted-foreground">
-        <strong className="text-foreground">{count}</strong> of {MAX_COMPARE} selected
+        <strong className="text-foreground">{count}</strong> of {selectionLimit} selected
         {compareType && (
           <>
             {' · '}
@@ -289,6 +353,7 @@ interface BrowseTableProps {
   compareSet: Set<string>
   compareType: 'KEM' | 'Signature' | null
   maxCompareReached: boolean
+  selectionLimit: number
   onToggleCompare: (name: string) => void
   selectedAlgoId?: string | null
   onOpenAlgorithm?: (algo: AlgorithmDetail) => void
@@ -322,6 +387,7 @@ function CompareCheckbox({
   compareSet,
   compareType,
   maxCompareReached,
+  selectionLimit,
   onToggleCompare,
 }: BrowseTableProps & { algo: AlgorithmDetail }) {
   const algoGroup = getFunctionGroup(algo)
@@ -335,7 +401,7 @@ function CompareCheckbox({
     ? 'Remove from comparison'
     : !canToggle
       ? maxCompareReached
-        ? `Max ${MAX_COMPARE} reached`
+        ? `Max ${selectionLimit} reached`
         : `${compareType} only`
       : 'Add to comparison'
   return (
@@ -356,18 +422,18 @@ function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean
   return Array.from(highlights).some((h) => algoMatchesHighlight(algo.name, h))
 }
 
-function isDraftCandidate(algo: AlgorithmDetail): boolean {
-  return isDraftTier(algo.statusTier)
-}
-
 function DraftBadge({ algo }: { algo: AlgorithmDetail }) {
-  if (!isDraftCandidate(algo)) return null
+  const badge = tierBadge(algo.statusTier)
+  if (!badge) return null
   return (
     <span
-      className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning border border-status-warning/30 font-medium"
-      title="Draft or candidate standard — sizes and parameters may change before finalization"
+      className={clsx(
+        'inline-flex items-center text-[10px] px-1.5 py-0.5 rounded border font-medium',
+        tierBadgeClasses(badge.tone)
+      )}
+      title={badge.tooltip}
     >
-      Draft
+      {badge.label}
     </span>
   )
 }
@@ -446,8 +512,20 @@ function NoImplementationBadge({ algo }: { algo: AlgorithmDetail }) {
 }
 
 /** Render either the formatted byte count or the literal "Research needed" placeholder. */
-function ByteSize({ value, unknown }: { value: number | null; unknown: boolean }) {
-  if (unknown || value === null || value === undefined) {
+function ByteSize({
+  value,
+  unknown,
+  state,
+}: {
+  value: number | null
+  unknown?: boolean
+  state?: EvidenceFieldState
+}) {
+  if (state === 'not-applicable') return <span className="text-muted-foreground">N/A</span>
+  if (state === 'not-specified') {
+    return <span className="text-muted-foreground">Not specified</span>
+  }
+  if (unknown || state === 'not-researched' || value === null || value === undefined) {
     return (
       <span className="italic text-muted-foreground" title="Not yet researched">
         {RESEARCH_NEEDED}
@@ -455,18 +533,6 @@ function ByteSize({ value, unknown }: { value: number | null; unknown: boolean }
     )
   }
   return <>{value.toLocaleString()} B</>
-}
-
-/** Render either the cycles string or the literal "Research needed" placeholder. */
-function CyclesValue({ value }: { value: string }) {
-  if (isResearchNeeded(value)) {
-    return (
-      <span className="italic text-muted-foreground" title="Not yet benchmarked">
-        {RESEARCH_NEEDED}
-      </span>
-    )
-  }
-  return <>{value}</>
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -479,6 +545,7 @@ function BrowseTable({
   compareSet,
   compareType,
   maxCompareReached,
+  selectionLimit,
   onToggleCompare,
   selectedAlgoId,
   onOpenAlgorithm,
@@ -495,8 +562,30 @@ function BrowseTable({
     }
   }
 
-  const sizeForSort = (algo: AlgorithmDetail, key: 'publicKeySize' | 'signatureCiphertextSize') =>
-    algo.sizesUnknown ? Number.MAX_SAFE_INTEGER : (algo[key] ?? Number.MAX_SAFE_INTEGER)
+  // A field's own value, or null when it is missing; each field is judged on
+  // its own evidence state, not on whether any other size is missing.
+  const sizeForSort = (
+    algo: AlgorithmDetail,
+    key: 'publicKeySize' | 'signatureCiphertextSize' | 'stackRAM'
+  ): number | null => {
+    const state =
+      key === 'publicKeySize'
+        ? algo.evidenceStates?.publicKey
+        : key === 'signatureCiphertextSize'
+          ? algo.evidenceStates?.signatureOrCiphertext
+          : algo.evidenceStates?.stackRam
+    if (state && state !== 'stated') return null
+    if (!algo.evidenceStates && algo.sizesUnknown && key !== 'stackRAM') return null
+    const value = algo[key]
+    return value === null || value === 0 ? null : value
+  }
+  // Missing values always sort last, whichever direction is chosen.
+  const compareSizes = (a: number | null, b: number | null, dir: number) => {
+    if (a === null && b === null) return 0
+    if (a === null) return 1
+    if (b === null) return -1
+    return dir * (a - b)
+  }
 
   const sorted = useMemo(() => {
     return [...algorithms].sort((a, b) => {
@@ -507,59 +596,22 @@ function BrowseTable({
         case 'type':
           return dir * a.family.localeCompare(b.family)
         case 'pubkey':
-          return dir * (sizeForSort(a, 'publicKeySize') - sizeForSort(b, 'publicKeySize'))
+          return compareSizes(sizeForSort(a, 'publicKeySize'), sizeForSort(b, 'publicKeySize'), dir)
         case 'sig':
-          return (
-            dir *
-            (sizeForSort(a, 'signatureCiphertextSize') - sizeForSort(b, 'signatureCiphertextSize'))
-          )
-        case 'keygen':
-          return (
-            dir *
-            (getPerformanceMultiplier(a.keyGenCycles) - getPerformanceMultiplier(b.keyGenCycles))
-          )
-        case 'sign':
-          return (
-            dir *
-            (getPerformanceMultiplier(a.signEncapsCycles) -
-              getPerformanceMultiplier(b.signEncapsCycles))
-          )
-        case 'verify':
-          return (
-            dir *
-            (getPerformanceMultiplier(a.verifyDecapsCycles) -
-              getPerformanceMultiplier(b.verifyDecapsCycles))
+          return compareSizes(
+            sizeForSort(a, 'signatureCiphertextSize'),
+            sizeForSort(b, 'signatureCiphertextSize'),
+            dir
           )
         case 'ram':
-          return dir * (a.stackRAM - b.stackRAM)
+          return compareSizes(sizeForSort(a, 'stackRAM'), sizeForSort(b, 'stackRAM'), dir)
         default:
           return 0
       }
     })
   }, [algorithms, sortField, sortDir])
 
-  // Max values for normalizing inline bar widths (relative across visible rows).
-  const maxValues = useMemo(() => {
-    const maxKeygen = Math.max(...sorted.map((a) => getPerformanceMultiplier(a.keyGenCycles)), 1)
-    const maxSign = Math.max(...sorted.map((a) => getPerformanceMultiplier(a.signEncapsCycles)), 1)
-    const maxVerify = Math.max(
-      ...sorted.map((a) => getPerformanceMultiplier(a.verifyDecapsCycles)),
-      1
-    )
-    const maxRam = Math.max(...sorted.map((a) => a.stackRAM), 1)
-    return { maxKeygen, maxSign, maxVerify, maxRam }
-  }, [sorted])
-
-  const PerfBar = ({ value, max, color }: { value: number; max: number; color: string }) => {
-    const pct = Math.min((value / max) * 100, 100)
-    return (
-      <div className="w-full h-1 rounded-full bg-border/50 mt-1" aria-hidden="true">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
-      </div>
-    )
-  }
-
-  const SortIcon = ({ field }: { field: SortField }) => {
+  const renderSortIcon = (field: SortField) => {
     if (sortField !== field) return <ArrowUpDown size={14} className="text-muted-foreground/50" />
     return sortDir === 'asc' ? (
       <ArrowUp size={14} className="text-primary" />
@@ -575,34 +627,7 @@ function BrowseTable({
     ['type', 'Family'],
     ['pubkey', 'Pub key'],
     ['sig', 'Sig / CT'],
-    ['keygen', 'KeyGen'],
-    ['sign', 'Sign / Enc'],
-    ['verify', 'Verify / Dec'],
-    ['ram', 'RAM'],
   ]
-
-  const perfCell = (
-    category: ReturnType<typeof getPerformanceCategory>,
-    cycles: string,
-    multiplier: number,
-    max: number,
-    barColor: string
-  ) => (
-    <div className="flex flex-col gap-0.5">
-      <span
-        className={clsx(
-          'text-xs px-2 py-1 rounded border font-medium w-fit',
-          getPerformanceColor(category)
-        )}
-      >
-        {category}
-      </span>
-      <span className="text-xs text-muted-foreground font-mono">
-        <CyclesValue value={cycles} />
-      </span>
-      {!isResearchNeeded(cycles) && <PerfBar value={multiplier} max={max} color={barColor} />}
-    </div>
-  )
 
   return (
     <div className="glass-panel overflow-hidden">
@@ -624,18 +649,24 @@ function BrowseTable({
                     className="flex items-center gap-1.5 hover:text-foreground transition-colors h-auto p-0 text-xs uppercase tracking-wider"
                   >
                     {label}
-                    <SortIcon field={field} />
+                    {renderSortIcon(field)}
                   </Button>
                 </th>
               ))}
+              <th className="p-3 font-semibold" title={RAM_CAVEAT}>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleSort('ram')}
+                  className="flex h-auto items-center gap-1.5 p-0 text-xs uppercase tracking-wider"
+                >
+                  RAM {renderSortIcon('ram')}
+                </Button>
+              </th>
               <th className="p-3 font-semibold">Standard</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/50">
             {sorted.map((algo, index) => {
-              const keyGenPerf = getPerformanceCategory(algo.keyGenCycles)
-              const signPerf = getPerformanceCategory(algo.signEncapsCycles)
-              const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
               const highlighted =
                 algo.id === selectedAlgoId || isHighlighted(algo, highlightAlgorithms)
               const checked = compareSet.has(algo.name)
@@ -663,6 +694,7 @@ function BrowseTable({
                         compareSet={compareSet}
                         compareType={compareType}
                         maxCompareReached={maxCompareReached}
+                        selectionLimit={selectionLimit}
                         onToggleCompare={onToggleCompare}
                       />
                     </div>
@@ -698,37 +730,18 @@ function BrowseTable({
                   </td>
                   <td className="p-3 align-top text-sm text-muted-foreground">{algo.family}</td>
                   <td className="p-3 align-top text-xs font-mono text-foreground whitespace-nowrap">
-                    <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
+                    <ByteSize
+                      value={algo.publicKeySize}
+                      state={algo.evidenceStates?.publicKey}
+                      unknown={!algo.evidenceStates && algo.sizesUnknown}
+                    />
                   </td>
                   <td className="p-3 align-top text-xs font-mono text-foreground whitespace-nowrap">
-                    <ByteSize value={algo.signatureCiphertextSize} unknown={algo.sizesUnknown} />
-                  </td>
-                  <td className="p-3 align-top min-w-[110px]">
-                    {perfCell(
-                      keyGenPerf,
-                      algo.keyGenCycles,
-                      getPerformanceMultiplier(algo.keyGenCycles),
-                      maxValues.maxKeygen,
-                      'bg-primary/50'
-                    )}
-                  </td>
-                  <td className="p-3 align-top min-w-[110px]">
-                    {perfCell(
-                      signPerf,
-                      algo.signEncapsCycles,
-                      getPerformanceMultiplier(algo.signEncapsCycles),
-                      maxValues.maxSign,
-                      'bg-accent/50'
-                    )}
-                  </td>
-                  <td className="p-3 align-top min-w-[110px]">
-                    {perfCell(
-                      verifyPerf,
-                      algo.verifyDecapsCycles,
-                      getPerformanceMultiplier(algo.verifyDecapsCycles),
-                      maxValues.maxVerify,
-                      'bg-secondary/50'
-                    )}
+                    <ByteSize
+                      value={algo.signatureCiphertextSize}
+                      state={algo.evidenceStates?.signatureOrCiphertext}
+                      unknown={!algo.evidenceStates && algo.sizesUnknown}
+                    />
                   </td>
                   <td className="p-3 align-top min-w-[80px]">
                     {algo.stackRAM > 0 ? (
@@ -736,11 +749,6 @@ function BrowseTable({
                         <span className="text-sm font-mono text-muted-foreground">
                           ~{(algo.stackRAM / 1000).toFixed(1)}KB
                         </span>
-                        <PerfBar
-                          value={algo.stackRAM}
-                          max={maxValues.maxRam}
-                          color="bg-muted-foreground/40"
-                        />
                       </div>
                     ) : (
                       <span
@@ -767,9 +775,6 @@ function BrowseTable({
       {/* Mobile cards */}
       <div className="md:hidden divide-y divide-border/50">
         {sorted.map((algo, index) => {
-          const keyGenPerf = getPerformanceCategory(algo.keyGenCycles)
-          const signPerf = getPerformanceCategory(algo.signEncapsCycles)
-          const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
           const checked = compareSet.has(algo.name)
 
           return (
@@ -795,6 +800,7 @@ function BrowseTable({
                       compareSet={compareSet}
                       compareType={compareType}
                       maxCompareReached={maxCompareReached}
+                      selectionLimit={selectionLimit}
                       onToggleCompare={onToggleCompare}
                     />
                   </label>
@@ -825,45 +831,21 @@ function BrowseTable({
                 <div>
                   <span className="text-muted-foreground block">Pub key</span>
                   <span className="font-mono text-foreground">
-                    <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
+                    <ByteSize
+                      value={algo.publicKeySize}
+                      state={algo.evidenceStates?.publicKey}
+                      unknown={!algo.evidenceStates && algo.sizesUnknown}
+                    />
                   </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground block">Sig / CT</span>
                   <span className="font-mono text-foreground">
-                    <ByteSize value={algo.signatureCiphertextSize} unknown={algo.sizesUnknown} />
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div>
-                  <span className="text-muted-foreground block">KeyGen</span>
-                  <span
-                    className={clsx(
-                      'px-1.5 py-0.5 rounded border',
-                      getPerformanceColor(keyGenPerf)
-                    )}
-                  >
-                    {keyGenPerf}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block">Sign/Enc</span>
-                  <span
-                    className={clsx('px-1.5 py-0.5 rounded border', getPerformanceColor(signPerf))}
-                  >
-                    {signPerf}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block">Verify/Dec</span>
-                  <span
-                    className={clsx(
-                      'px-1.5 py-0.5 rounded border',
-                      getPerformanceColor(verifyPerf)
-                    )}
-                  >
-                    {verifyPerf}
+                    <ByteSize
+                      value={algo.signatureCiphertextSize}
+                      state={algo.evidenceStates?.signatureOrCiphertext}
+                      unknown={!algo.evidenceStates && algo.sizesUnknown}
+                    />
                   </span>
                 </div>
               </div>

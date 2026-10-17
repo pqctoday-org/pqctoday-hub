@@ -30,7 +30,8 @@ vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
   getFunctionGroup: () => 'KEM',
   isClassical: () => false,
 }))
-vi.mock('../../data/algorithmsData', () => ({
+vi.mock('../../data/algorithmsData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../data/algorithmsData')>()),
   loadAlgorithmsData: vi.fn().mockResolvedValue([]),
   loadedTransitionMetadata: { filename: 'x.csv', date: null },
   getCryptoFamilyFromPQCName: () => 'Lattice',
@@ -76,11 +77,17 @@ describe('AlgorithmsView — URL-sync characterization (pre-refactor net)', () =
     expect(urlSearch()).not.toContain('status=')
   })
 
-  it('the FIPS-validated quick view writes quickview=fips-validated with no family', async () => {
+  it('the final-NIST-standards quick view writes the canonical URL id and no family', async () => {
     renderAt()
-    fireEvent.click(await screen.findByRole('button', { name: /FIPS-validated/i }))
-    await waitFor(() => expect(urlSearch()).toContain('quickview=fips-validated'))
+    fireEvent.click(await screen.findByRole('button', { name: /Final NIST standards/i }))
+    await waitFor(() => expect(urlSearch()).toContain('quickview=final-nist-standards'))
     expect(urlSearch()).not.toContain('family=')
+  })
+
+  it('normalizes the legacy FIPS-validated URL id', async () => {
+    renderAt('/algorithms?quickview=fips-validated')
+    await waitFor(() => expect(urlSearch()).toContain('quickview=final-nist-standards'))
+    expect(urlSearch()).not.toContain('quickview=fips-validated')
   })
 
   // 2026-09-28 deep-link remediation: "Everything" now writes quickview=none

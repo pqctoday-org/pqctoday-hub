@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act, type RenderResult } from '@testing-library/react'
+import type { ReactElement } from 'react'
 import { MemoryRouter } from 'react-router'
 import { AlgorithmsView } from './AlgorithmsView'
 import '@testing-library/jest-dom'
@@ -18,6 +19,12 @@ vi.mock('@/services/search/useSemanticSearch', async () => {
   }
 })
 
+// PersonaPageNote has its own asynchronous content lookup. This suite tests
+// AlgorithmsView state and routing, not that shared note's loading lifecycle.
+vi.mock('@/components/shared/PersonaPageNote', () => ({
+  PersonaPageNote: () => <div data-testid="persona-page-note" />,
+}))
+
 // Mock child components
 vi.mock('./AlgorithmComparison', () => ({
   AlgorithmComparison: () => <div data-testid="algorithm-comparison">Algorithm Comparison</div>,
@@ -29,6 +36,15 @@ vi.mock('./AlgorithmDetailedComparison', () => ({
   ),
 }))
 
+vi.mock('./AlgorithmValidationView', () => ({
+  AlgorithmValidationView: () => (
+    <div>
+      <div>Implementation Attacks</div>
+      <div>Known-answer checks</div>
+    </div>
+  ),
+}))
+
 // Mock async data loaders so the component resolves immediately in tests
 vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../data/pqcAlgorithmsData')>()),
@@ -36,10 +52,23 @@ vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
   loadedFileMetadata: { filename: 'pqc_complete_algorithm_reference.csv', date: null },
 }))
 
-vi.mock('../../data/algorithmsData', () => ({
+vi.mock('../../data/algorithmsData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../data/algorithmsData')>()),
   loadAlgorithmsData: vi.fn().mockResolvedValue([]),
   loadedTransitionMetadata: { filename: 'algorithms_transitions.csv', date: null },
 }))
+
+async function renderSettled(ui: ReactElement): Promise<RenderResult> {
+  const view = render(ui)
+  await act(async () => {
+    // useAlgorithmExplorer resolves both catalogue promises and then applies
+    // URL/persona defaults in follow-up effects.
+    await Promise.resolve()
+    await Promise.resolve()
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+  })
+  return view
+}
 
 describe('AlgorithmsView', () => {
   beforeEach(() => {
@@ -57,7 +86,7 @@ describe('AlgorithmsView', () => {
       // full AlgorithmsView mount cost to assert one static-content node.
       // Single mount + all assertions catches mount-doesn't-crash + every
       // header/tab/default-view check at once.
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -79,7 +108,7 @@ describe('AlgorithmsView', () => {
     })
 
     it('switches to detailed view when tab is clicked', async () => {
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -90,7 +119,7 @@ describe('AlgorithmsView', () => {
     })
 
     it('highlights active tab', async () => {
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -112,7 +141,7 @@ describe('AlgorithmsView', () => {
       // full AlgorithmsView mount cost. Same pattern as the desktop test
       // above; the value of the describe block is the `innerWidth=375`
       // setup, not the per-element assertions which duplicate desktop's.
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -125,7 +154,7 @@ describe('AlgorithmsView', () => {
 
   describe('Tab switching', () => {
     it('switches between views correctly', async () => {
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -166,7 +195,7 @@ describe('AlgorithmsView', () => {
         mode: 'lexical',
         loading: false,
       })
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -212,12 +241,12 @@ describe('AlgorithmsView', () => {
     })
 
     afterEach(() => {
-      usePersonaStore.getState().clearPersona()
+      act(() => usePersonaStore.getState().clearPersona())
     })
 
     it('renders the teaser card and hides the tabs for curious in preview mode', async () => {
       usePersonaStore.getState().setPersona('curious')
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -240,7 +269,7 @@ describe('AlgorithmsView', () => {
 
     it('shows the full comparison when curious clicks Unlock', async () => {
       usePersonaStore.getState().setPersona('curious')
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -258,7 +287,7 @@ describe('AlgorithmsView', () => {
 
     it('does NOT show the teaser for a non-curious persona', async () => {
       usePersonaStore.getState().setPersona('developer')
-      render(
+      await renderSettled(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
@@ -278,12 +307,12 @@ describe('AlgorithmsView', () => {
     })
 
     afterEach(() => {
-      usePersonaStore.getState().clearPreferences()
+      act(() => usePersonaStore.getState().clearPreferences())
     })
 
     it('executive lands on the Transition Guide tab on first paint', async () => {
       usePersonaStore.getState().setPersona('executive')
-      render(
+      await renderSettled(
         <MemoryRouter initialEntries={['/algorithms']}>
           <AlgorithmsView />
         </MemoryRouter>
@@ -295,7 +324,7 @@ describe('AlgorithmsView', () => {
 
     it('ops lands on the Transition tab on first paint', async () => {
       usePersonaStore.getState().setPersona('ops')
-      render(
+      await renderSettled(
         <MemoryRouter initialEntries={['/algorithms']}>
           <AlgorithmsView />
         </MemoryRouter>
@@ -305,7 +334,7 @@ describe('AlgorithmsView', () => {
 
     it('URL ?tab=detailed wins over the developer persona default', async () => {
       usePersonaStore.getState().setPersona('developer')
-      render(
+      await renderSettled(
         <MemoryRouter initialEntries={['/algorithms?tab=detailed']}>
           <AlgorithmsView />
         </MemoryRouter>
@@ -317,18 +346,18 @@ describe('AlgorithmsView', () => {
       const personas = ['executive', 'developer', 'architect', 'researcher', 'ops'] as const
       for (const persona of personas) {
         usePersonaStore.getState().setPersona(persona)
-        const { unmount } = render(
+        const { unmount } = await renderSettled(
           <MemoryRouter initialEntries={['/algorithms']}>
             <AlgorithmsView />
           </MemoryRouter>
         )
         // Every persona hint contains at least one of these stable, persona-specific phrases.
         const hintMarkers: Record<typeof persona, RegExp> = {
-          executive: /FIPS-standardized picks/,
-          developer: /performance varies 10×/,
+          executive: /published NIST standards/,
+          developer: /explicit maturity filters/,
           architect: /Use the Transition tab/,
           researcher: /Switch to the Detailed tab/,
-          ops: /Production deployment chips/,
+          ops: /Start with Published standard/,
         }
         expect(await screen.findByText(hintMarkers[persona])).toBeInTheDocument()
         unmount()
@@ -341,7 +370,7 @@ describe('AlgorithmsView', () => {
       usePersonaStore.getState().setPersona('curious')
       usePersonaStore.getState().setAdvancedViewsUnlocked(true)
 
-      render(
+      await renderSettled(
         <MemoryRouter initialEntries={['/algorithms']}>
           <AlgorithmsView />
         </MemoryRouter>
@@ -364,10 +393,12 @@ describe('AlgorithmsView', () => {
       usePersonaStore.getState().setPersona('developer')
       global.innerWidth = 1024
     })
-    afterEach(() => usePersonaStore.getState().clearPreferences())
+    afterEach(() => {
+      act(() => usePersonaStore.getState().clearPreferences())
+    })
 
     it('renders a Validation tab alongside the other tabs', async () => {
-      render(
+      await renderSettled(
         <MemoryRouter initialEntries={['/algorithms']}>
           <AlgorithmsView />
         </MemoryRouter>
@@ -377,14 +408,14 @@ describe('AlgorithmsView', () => {
     })
 
     it('shows the Implementation Attacks + KAT sections when the Validation tab is opened', async () => {
-      render(
+      await renderSettled(
         <MemoryRouter initialEntries={['/algorithms']}>
           <AlgorithmsView />
         </MemoryRouter>
       )
       fireEvent.click(await screen.findByText('Validation'))
       expect(await screen.findByText('Implementation Attacks')).toBeInTheDocument()
-      expect(screen.getByText('KAT Validation')).toBeInTheDocument()
+      expect(screen.getByText('Known-answer checks')).toBeInTheDocument()
     })
   })
 })

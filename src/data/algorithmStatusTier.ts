@@ -51,6 +51,85 @@ export function isCertifiedTier(tier: AlgorithmStatusTier): boolean {
   return CERTIFIED_TIERS.has(tier)
 }
 
+export interface TierBadge {
+  label: string
+  tooltip: string
+  /** 'pending' = still moving through a standards process; 'inactive' = not on one. */
+  tone: 'pending' | 'inactive'
+}
+
+/**
+ * The badge a non-final tier shows. Uses the same vocabulary as the status
+ * filter, so a withdrawn, broken or unverified scheme is never labelled as a
+ * draft on its way to becoming a standard. Final and regional tiers return
+ * null (they show no warning badge).
+ */
+export function tierBadge(tier: AlgorithmStatusTier): TierBadge | null {
+  switch (tier) {
+    case 'final':
+    case 'regional':
+      return null
+    case 'fips-draft':
+      return {
+        label: 'Selected; standard pending',
+        tooltip:
+          'Selected for standardization; the standard is not yet published, so sizes and parameters may change.',
+        tone: 'pending',
+      }
+    case 'sp-draft':
+    case 'ietf-draft':
+      return {
+        label: 'Draft',
+        tooltip: 'Draft standard: sizes and parameters may change before finalization.',
+        tone: 'pending',
+      }
+    case 'round2-candidate':
+      return {
+        label: 'Candidate',
+        tooltip: 'Active candidate in a selection round: it may change or be dropped.',
+        tone: 'pending',
+      }
+    case 'round4-not-selected':
+      return {
+        label: 'Not selected',
+        tooltip: 'The selection round concluded without selecting this scheme.',
+        tone: 'inactive',
+      }
+    case 'eliminated':
+      return {
+        label: 'Withdrawn or eliminated',
+        tooltip:
+          'Withdrawn, broken, or eliminated from its competition; not on a path to a standard.',
+        tone: 'inactive',
+      }
+    case 'placeholder':
+      return {
+        label: 'Placeholder',
+        tooltip: 'A programme track with no algorithm selected yet.',
+        tone: 'inactive',
+      }
+    case 'unverified':
+      return {
+        label: 'Not verified',
+        tooltip: 'This status has not yet been checked against an authoritative source.',
+        tone: 'inactive',
+      }
+    case 'non-standardized':
+      return {
+        label: 'Outside a standards track',
+        tooltip: 'Used in practice but not part of a formal standards process.',
+        tone: 'inactive',
+      }
+  }
+}
+
+/** Badge classes for a tier badge tone. */
+export function tierBadgeClasses(tone: TierBadge['tone']): string {
+  return tone === 'pending'
+    ? 'bg-status-warning/15 text-status-warning border-status-warning/30'
+    : 'bg-muted text-foreground border-border'
+}
+
 /** Draft/Candidate badge condition — anything not whitelisted as Certified. */
 export function isDraftTier(tier: AlgorithmStatusTier): boolean {
   return !isCertifiedTier(tier)

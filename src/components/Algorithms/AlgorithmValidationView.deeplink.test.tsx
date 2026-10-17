@@ -52,9 +52,9 @@ describe('AlgorithmValidationView — deep links', () => {
   it('opening a section writes ?section; closing it clears the param', () => {
     const onUpdateParams = vi.fn()
     render(<AlgorithmValidationView onUpdateParams={onUpdateParams} />)
-    fireEvent.click(sectionButton(/KAT Validation/))
+    fireEvent.click(sectionButton(/Known-answer checks/))
     expect(onUpdateParams).toHaveBeenLastCalledWith({ section: 'kat' })
-    fireEvent.click(sectionButton(/KAT Validation/))
+    fireEvent.click(sectionButton(/Known-answer checks/))
     // Closing KAT also drops its variant (?kat) so it can't reopen the section.
     expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null, kat: null })
   })
@@ -63,15 +63,16 @@ describe('AlgorithmValidationView — deep links', () => {
     const onUpdateParams = vi.fn()
     render(<AlgorithmValidationView sectionParam="kat" onUpdateParams={onUpdateParams} />)
     fireEvent.click(sectionButton(/Implementation Attacks/))
-    fireEvent.click(sectionButton(/KAT Validation/))
+    fireEvent.click(sectionButton(/Known-answer checks/))
     expect(onUpdateParams).toHaveBeenLastCalledWith({ section: 'attacks', kat: null })
   })
 
-  it('re-reads ?section on same-route change', () => {
+  it('re-reads ?section on same-route change', async () => {
     const { rerender } = render(<AlgorithmValidationView sectionParam={null} />)
     expect(sectionButton(/Coverage Matrix/)).toHaveAttribute('aria-expanded', 'false')
     rerender(<AlgorithmValidationView sectionParam="coverage" />)
     expect(sectionButton(/Coverage Matrix/)).toHaveAttribute('aria-expanded', 'true')
+    expect(await screen.findByText('coverage -')).toBeInTheDocument()
   })
 
   it('?attack opens Implementation Attacks and marks the matching profile', () => {
@@ -100,7 +101,7 @@ describe('AlgorithmValidationView — deep links', () => {
 
   it('?kat opens KAT Validation and passes the variant through', () => {
     render(<AlgorithmValidationView katParam="SHAKE-256f" />)
-    expect(sectionButton(/KAT Validation/)).toHaveAttribute('aria-expanded', 'true')
+    expect(sectionButton(/Known-answer checks/)).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText('kat SHAKE-256f')).toBeInTheDocument()
   })
 
@@ -110,19 +111,20 @@ describe('AlgorithmValidationView — deep links', () => {
     expect(await screen.findByText('coverage negative')).toBeInTheDocument()
   })
 
-  it('re-reads ?kat / ?polarity on same-route change', () => {
+  it('re-reads ?kat / ?polarity on same-route change', async () => {
     const { rerender } = render(<AlgorithmValidationView />)
-    expect(sectionButton(/KAT Validation/)).toHaveAttribute('aria-expanded', 'false')
+    expect(sectionButton(/Known-answer checks/)).toHaveAttribute('aria-expanded', 'false')
     expect(sectionButton(/Coverage Matrix/)).toHaveAttribute('aria-expanded', 'false')
     rerender(<AlgorithmValidationView katParam="SHA2-256s" polarityParam="boundary" />)
-    expect(sectionButton(/KAT Validation/)).toHaveAttribute('aria-expanded', 'true')
+    expect(sectionButton(/Known-answer checks/)).toHaveAttribute('aria-expanded', 'true')
     expect(sectionButton(/Coverage Matrix/)).toHaveAttribute('aria-expanded', 'true')
+    expect(await screen.findByText('coverage boundary')).toBeInTheDocument()
   })
 
   it('closing KAT Validation also clears ?kat', () => {
     const onUpdateParams = vi.fn()
     render(<AlgorithmValidationView katParam="SHA2-256s" onUpdateParams={onUpdateParams} />)
-    fireEvent.click(sectionButton(/KAT Validation/))
+    fireEvent.click(sectionButton(/Known-answer checks/))
     expect(onUpdateParams).toHaveBeenLastCalledWith({ section: null, kat: null })
   })
 

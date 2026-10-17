@@ -8,7 +8,15 @@
  * depending on a component file. AlgorithmEntryStrip.tsx re-imports all three
  * from here under the same names.
  */
-import { ArrowRight, FlaskConical, Network, ShieldAlert, Shuffle } from 'lucide-react'
+import {
+  ArrowRight,
+  BarChart3,
+  Factory,
+  FlaskConical,
+  Network,
+  ShieldAlert,
+  Shuffle,
+} from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 
 export interface Intent {
@@ -24,8 +32,8 @@ export interface Intent {
 // filter enum recognised, silently producing a zero-result CTA.
 export const INTENTS: Intent[] = [
   {
-    label: 'Replace a classical algorithm',
-    description: 'Find the PQC replacement for RSA or ECC, and what changes when you switch',
+    label: 'Plan a migration path',
+    description: 'Find candidate PQC paths for RSA or ECC and learn what must change around them',
     icon: <Shuffle size={15} />,
     params: { tab: 'transition' },
   },
@@ -37,17 +45,29 @@ export const INTENTS: Intent[] = [
   },
   {
     label: 'Run a live test',
-    description: 'Execute KAT vectors against real WASM implementations',
+    description: 'Run known-answer checks against real WASM implementations',
     icon: <FlaskConical size={15} />,
-    // KAT Validation lives on the Validation tab (moved from Detailed
+    // Known-answer checks live on the Validation tab (moved from Detailed
     // Comparison) — see AlgorithmValidationView.tsx.
     params: { tab: 'validation', section: 'kat' },
+  },
+  {
+    label: 'Compare algorithm properties',
+    description: 'Compare key and output sizes, security levels, and evidence quality',
+    icon: <BarChart3 size={15} />,
+    params: { tab: 'detailed' },
+  },
+  {
+    label: 'Explore industry use cases',
+    description: 'Learn where cryptography is used before assessing possible migration paths',
+    icon: <Factory size={15} />,
+    params: { tab: 'landscape' },
   },
 ]
 
 export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
   executive: {
-    label: 'View top compliance picks',
+    label: 'View common NIST examples',
     description:
       'ML-KEM-768 and ML-DSA-65 — NIST’s general-purpose defaults; US national security systems (CNSA 2.0) need ML-KEM-1024 and ML-DSA-87',
     icon: <ArrowRight size={15} />,
@@ -58,13 +78,13 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
   },
   developer: {
     label: 'Find a replacement and what changes',
-    description: 'Transition table with key sizes, performance, and standardization status',
+    description: 'Transition table with sizes, catalogue evidence, and publication status',
     icon: <Shuffle size={15} />,
     // ACCURACY-0705: 'Standardized' is not a value in STATUS_ITEMS
     // (AlgorithmFilters.tsx) — this was a zero-result dead end for every
     // Developer-persona user, since it's the persona's default entry CTA.
     // 'Certified' is the closest existing status (FIPS 203/204/205 finalized).
-    params: { tab: 'transition', status: 'Certified' },
+    params: { tab: 'transition', status: 'published-standard' },
   },
   architect: {
     label: 'See protocol readiness',
@@ -73,8 +93,8 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
     params: { tab: 'support' },
   },
   researcher: {
-    label: 'Run KAT validation',
-    description: 'Execute ACVP-style vectors and cross-validate against WASM implementations',
+    label: 'Run known-answer checks',
+    description: 'Execute ACVP-style vectors against the included WASM implementations',
     icon: <FlaskConical size={15} />,
     params: { tab: 'validation', section: 'kat' },
   },

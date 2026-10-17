@@ -9,7 +9,7 @@ import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
 
-type Priority = 'speed' | 'keysize' | 'standardization'
+type Priority = 'keysize' | 'standardization'
 
 interface MobileTransitionWizardProps {
   data: AlgorithmTransition[]
@@ -18,14 +18,29 @@ interface MobileTransitionWizardProps {
 }
 
 const PRIORITY_OPTS: Array<{ id: Priority; label: string; description: string }> = [
-  { id: 'speed', label: 'Speed', description: 'Fastest key gen & signing' },
   { id: 'keysize', label: 'Smaller keys', description: 'Lowest bandwidth overhead' },
   {
     id: 'standardization',
     label: 'Standardization',
-    description: 'Published as a NIST FIPS standard',
+    description: 'Published or regional standards first, then higher security level',
   },
 ]
+
+type FunctionGroup = 'KEM' | 'Signature' | 'Other'
+
+// One grouping for Step 1 (what the learner picks) and Step 3 (which rows are
+// offered), so a key-establishment choice can never surface signature rows.
+function groupOf(fn: AlgorithmTransition['function']): FunctionGroup {
+  if (fn.includes('Signature')) return 'Signature'
+  if (fn === 'Encryption/KEM' || fn.includes('KEM')) return 'KEM'
+  return 'Other'
+}
+
+const GROUP_LABELS: Record<FunctionGroup, string> = {
+  KEM: 'key establishment',
+  Signature: 'signatures',
+  Other: 'other functions',
+}
 
 function functionIcon(fn: AlgorithmTransition['function']) {
   if (fn.includes('Signature')) return <FileSignature size={18} />
@@ -44,15 +59,6 @@ function sortByPriority(
     const cleanB = b.pqc.split(/\s*\(/)[0].trim().toLowerCase()
     const da = detailMap.get(cleanA)
     const db = detailMap.get(cleanB)
-
-    if (priority === 'speed') {
-      // Lattice-based (ML-KEM, ML-DSA, Falcon) are fastest — proxy via cycleCount or family
-      const latticeFamilies = ['ml-kem', 'ml-dsa', 'falcon', 'kyber', 'dilithium']
-      const aLattice = latticeFamilies.some((f) => cleanA.includes(f))
-      const bLattice = latticeFamilies.some((f) => cleanB.includes(f))
-      if (aLattice !== bLattice) return aLattice ? -1 : 1
-      return 0
-    }
 
     if (priority === 'keysize') {
       const aPk = da?.publicKeySize ?? Infinity
@@ -76,7 +82,7 @@ export function MobileTransitionWizard({
   onShowFullTable,
 }: MobileTransitionWizardProps) {
   const [step, setStep] = useState<1 | 2 | 3>(1)
-  const [selectedClassical, setSelectedClassical] = useState<string | null>(null)
+  const [selected, setSelected] = useState<{ classical: string; group: FunctionGroup } | null>(null)
   const [priority, setPriority] = useState<Priority | null>(null)
 
   // 2026-08-24 (live phone testing): the real CSV carries 17 distinct KEM
@@ -110,11 +116,7 @@ export function MobileTransitionWizard({
       const key = `${row.classical}|${row.function}`
       if (seen.has(key)) continue
       seen.add(key)
-      const group = row.function.includes('Signature')
-        ? 'Signature'
-        : row.function === 'Encryption/KEM' || row.function.includes('KEM')
-          ? 'KEM'
-          : 'Other'
+      const group = groupOf(row.function)
       if (!groups[group]) groups[group] = []
       groups[group].push({ classical: row.classical, fn: row.function })
     }
@@ -131,16 +133,22 @@ export function MobileTransitionWizard({
   const GROUP_CAP = 6
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
 
-  // Candidates for the selected classical algo
+  // Candidates for the selected classical algorithm *and* function group
   const candidates = useMemo(() => {
-    if (!selectedClassical || !priority) return []
-    const matches = data.filter((r) => r.classical === selectedClassical)
+    if (!selected || !priority) return []
+    const matches = data.filter(
+      (r) =>
+        r.classical === selected.classical &&
+        groupOf(r.function) === selected.group &&
+        // Rows with no reviewed replacement are not candidate paths.
+        r.pqc.trim() !== ''
+    )
     return sortByPriority(matches, priority, pqcDetailMap).slice(0, 2)
-  }, [selectedClassical, priority, data, pqcDetailMap])
+  }, [selected, priority, data, pqcDetailMap])
 
   const reset = () => {
     setStep(1)
-    setSelectedClassical(null)
+    setSelected(null)
     setPriority(null)
   }
 
@@ -179,7 +187,7 @@ export function MobileTransitionWizard({
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        setSelectedClassical(classical)
+                        setSelected({ classical, group: groupOf(fn) })
                         setStep(2)
                       }}
                       className="flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2.5 py-1.5 text-xs font-medium text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors h-auto"
@@ -219,8 +227,8 @@ export function MobileTransitionWizard({
               <ChevronLeft size={16} />
             </Button>
             <p className="text-sm font-medium text-foreground">
-              What matters most for replacing{' '}
-              <span className="text-primary">{selectedClassical}</span>?
+              What matters most when moving {selected ? GROUP_LABELS[selected.group] : ''} away from{' '}
+              <span className="text-primary">{selected?.classical}</span>?
             </p>
           </div>
           <div className="flex flex-col gap-2">
@@ -259,14 +267,22 @@ export function MobileTransitionWizard({
               <ChevronLeft size={16} />
             </Button>
             <p className="text-xs text-muted-foreground">
-              Top picks for <span className="font-medium text-foreground">{selectedClassical}</span>{' '}
-              · {PRIORITY_OPTS.find((o) => o.id === priority)?.label}
+              Candidate paths for{' '}
+              <span className="font-medium text-foreground">{selected?.classical}</span> (
+              {selected ? GROUP_LABELS[selected.group] : ''}) ·{' '}
+              {PRIORITY_OPTS.find((o) => o.id === priority)?.label}
             </p>
           </div>
+          <p className="px-1 text-[11px] leading-snug text-muted-foreground">
+            A migration path is not a drop-in replacement: protocols, APIs, key lifecycle,
+            interoperability and validation still need checking.
+          </p>
 
           {candidates.length === 0 ? (
             <div className="glass-panel p-4 text-center text-sm text-muted-foreground">
-              No matches found. Try a different priority.
+              No reviewed candidate path is recorded for {selected?.classical} (
+              {selected ? GROUP_LABELS[selected.group] : ''}). That means no reviewed record, not
+              that no change is required.
             </div>
           ) : (
             candidates.map((row) => {
@@ -279,7 +295,7 @@ export function MobileTransitionWizard({
                       <p className="text-sm font-semibold text-status-success">{pqcName}</p>
                       <div className="flex items-center gap-1 mt-0.5 text-[10px] text-muted-foreground">
                         <ArrowRight size={10} />
-                        <span>replaces {row.classical}</span>
+                        <span>candidate path from {row.classical}</span>
                       </div>
                     </div>
                     {detail && (

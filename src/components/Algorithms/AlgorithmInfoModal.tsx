@@ -66,38 +66,37 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Performance is expressed as{' '}
-                        <span className="font-medium text-foreground">relative cycle counts</span>{' '}
-                        (e.g., 1x, 10x, 50x) benchmarked against{' '}
-                        <span className="font-medium text-foreground">RSA-2048</span> as the
-                        universal baseline across all algorithm families. Classical algorithms like
-                        ECDSA P-256 appear at fractional multipliers (e.g., 0.3x) because they are
-                        faster than the RSA-2048 baseline.
+                        The catalogue contains historical relative estimates from several sources.
+                        They do not share one implementation, platform, compiler, operation, or
+                        measurement method, so they are shown only as{' '}
+                        <span className="font-medium text-foreground">
+                          illustrative source text
+                        </span>
+                        —not as a ranking or prediction.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Values are compiled from NIST PQC submission documents, Round 3 evaluation
-                        reports, and published benchmarks on x86-64 reference platforms.
+                        Compare performance only within a dataset that fixes the algorithm parameter
+                        set, operation, implementation commit, platform, build flags, units, sample
+                        method, and date. Run a representative benchmark on the target system before
+                        sizing or procurement decisions.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Three categories: <span className="font-medium text-foreground">Fast</span>{' '}
-                        (&le;1x baseline),{' '}
-                        <span className="font-medium text-foreground">Moderate</span> (&le;10x), and{' '}
-                        <span className="font-medium text-foreground">Slow</span> (&gt;10x). In
-                        practice, ML-KEM-768 at 1.5x means key exchange takes only ~50% longer than
-                        RSA-2048 &mdash; while providing quantum resistance.
+                        The Hardware Acceleration learn module contains PQC Today measurements that
+                        do meet a shared-harness boundary. Those results remain a platform-specific
+                        case study and are visually separated from catalogue estimates.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Stack RAM figures are taken from algorithm authors&apos; reference
-                        implementations.
+                        Stack RAM entries are coarse catalogue estimates. Some are family-level and
+                        lack an operation qualifier; do not treat them as device requirements.
                       </p>
                     </div>
                   </div>
@@ -139,9 +138,9 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Public key, private key, signature/ciphertext, and shared secret sizes are
-                        shown in <span className="font-medium text-foreground">exact bytes</span>{' '}
-                        &mdash; not estimates.
+                        Where the cited standard or parameter table defines a serialized object,
+                        sizes are shown in bytes. Blank or incomplete catalogue fields are reported
+                        as unavailable rather than converted to zero.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
@@ -163,8 +162,8 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                     </p>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed mb-3 pl-1">
-                    You can independently verify both performance and sizes using two tools built
-                    into this app:
+                    You can inspect sizes and collect local timings using two tools built into this
+                    app. Browser timings describe that browser, build, device, and run only:
                   </p>
                   <div className="space-y-2 pl-1">
                     <div className="flex items-start gap-3">

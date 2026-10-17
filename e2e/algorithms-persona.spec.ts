@@ -63,10 +63,10 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
     )
 
     // Persona hint specific to executive is present.
-    await expect(page.getByText(/FIPS-standardized picks/)).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText(/published NIST standards/)).toBeVisible({ timeout: 10000 })
   })
 
-  test('ops lands on Transition with status=Certified preset', async ({ page }) => {
+  test('ops lands on Transition with the published-standard preset', async ({ page }) => {
     await seedPersona(page, 'ops')
     await page.goto('/algorithms')
     await page.waitForLoadState('domcontentloaded')
@@ -79,7 +79,11 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
     )
 
     // Persona hint specific to ops is present.
-    await expect(page.getByText(/Production deployment chips/)).toBeVisible({ timeout: 10000 })
+    await expect(
+      page.getByText(/specification maturity from reviewed deployment evidence/)
+    ).toBeVisible({
+      timeout: 10000,
+    })
   })
 
   test('developer sees the 5-dropdown filter bar inline (no More-filters disclosure)', async ({
@@ -121,7 +125,7 @@ test.describe('Algorithms — persona-aware defaults (plan §P0.2 / P1.2)', () =
     await expect(moreFilters).toBeVisible({ timeout: 10000 })
     // Quick-view presets are rendered above the (collapsed) dropdown bar.
     await expect(page.getByRole('button', { name: /NIST picks/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /FIPS-validated/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /Final NIST standards/i })).toBeVisible()
     await expect(page.getByRole('button', { name: /^Everything$/i })).toBeVisible()
   })
 

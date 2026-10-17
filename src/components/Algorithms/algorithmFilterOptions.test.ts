@@ -79,8 +79,17 @@ describe('Algorithms filter values — level', () => {
 })
 
 describe('Algorithms filter values — status', () => {
-  it('are Certified, Candidate and To Be Checked', () => {
-    expect(ids(STATUS_ITEMS)).toEqual(['Certified', 'Candidate', 'To Be Checked'])
+  it('separates standards maturity from evidence quality', () => {
+    expect(ids(STATUS_ITEMS)).toEqual([
+      'published-standard',
+      'selected-for-standardization',
+      'standards-draft',
+      'candidate',
+      'regional-standard',
+      'not-selected',
+      'non-standardized',
+      'unverified',
+    ])
   })
 
   it('each one selects algorithms', () => {

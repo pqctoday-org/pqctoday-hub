@@ -624,7 +624,7 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
             <Pkcs11LogPanel
               log={hsm.log}
               onClear={hsm.clearLog}
-              title="PKCS#11 Call Log — KAT Validation"
+              title="PKCS#11 Call Log — Known-answer checks"
               defaultOpen
               showBeginnerMode
               defaultBeginnerMode={!certificationView}

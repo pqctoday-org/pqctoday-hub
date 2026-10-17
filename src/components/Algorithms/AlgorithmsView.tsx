@@ -33,6 +33,7 @@ import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATVa
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { getCatalogueFreshness } from '@/data/pqcAlgorithmsData'
 import {
   algoMatchesHighlight,
   highlightRowSelector,
@@ -43,21 +44,17 @@ import {
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
-    'Start with FIPS-standardized picks: ML-KEM-768 and ML-DSA-65 — the required choices for US federal compliance.',
+    'Start with published NIST standards. ML-KEM-768 and ML-DSA-65 are common general-purpose examples; CNSA 2.0 separately specifies stronger parameter sets for US National Security Systems.',
   developer:
-    // ACCURACY-0705: 'Standardized' isn't a real filter value (see
-    // AlgorithmFilters.tsx STATUS_ITEMS) — this instructed users into a
-    // zero-result filter. 'Certified' is the status id; its label reads
-    // 'Standardised or selected'.
-    'Filter Status = Standardised or selected and compare key/signature sizes — performance varies 10× across families.',
+    'Use the explicit maturity filters to separate published standards, pending selections, drafts, and candidates. Compare sizes, then measure the same operation on your target.',
   architect:
-    'Use the Transition tab to find your classical algorithms and their recommended PQC replacements.',
-  grc: 'Use the Transition tab to see certified replacements for your classical algorithms — certified status alone does not establish compliance; confirm applicability against your obligations register.',
+    'Use the Transition tab to explore candidate paths from classical algorithms, then check protocol, API, key-lifecycle, and validation constraints.',
+  grc: 'Use the Transition tab to learn which standards and candidate migration paths may be relevant. This educational view does not determine applicability or product compliance.',
   researcher:
     'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
   'cert-engineer':
     'The Validation tab opens first: known-answer tests you can run, and implementation-attack notes per family. A CAVP algorithm validation is the prerequisite for a module certificate, not the certificate itself.',
-  ops: "Filter Status = Standardised or selected, then look for Production deployment chips on Protocol Support. That bucket also holds FIPS-pending and non-US picks, so check each row's standard before you deploy it, and check your product's own validation for approved use.",
+  ops: "Start with Published standard, then inspect reviewed deployment evidence. Check your exact product's documentation and validation status before deployment.",
   curious:
     'You unlocked the full comparison. The three NIST picks (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; everything else is for specialists.',
 }
@@ -135,6 +132,15 @@ export function AlgorithmsView() {
     closeTransition,
   } = useAlgorithmExplorer(personaDefaults)
 
+  const catalogueFreshness = getCatalogueFreshness(metadata?.date)
+  const catalogueQuality = useMemo(
+    () => ({
+      missingSource: algorithmData.filter((row) => !row.trustedSourceId || !row.statusUrl).length,
+      researchGaps: algorithmData.filter((row) => row.hasResearchGap).length,
+    }),
+    [algorithmData]
+  )
+
   // Mobile UX layer (Phase 7). Only the bare landing state (no explicit
   // ?tab=/?highlight=) gets the distilled mobile screen — every entry-strip
   // intent (including "Replace a classical algorithm", whose params target
@@ -203,6 +209,7 @@ export function AlgorithmsView() {
   const isMobileTransition =
     isMobile && (tabParam === 'transition' || (!tabParam && !!transitionParam))
   const isMobileDetailed = isMobile && tabParam === 'detailed'
+  const isMobileLandscape = isMobile && tabParam === 'landscape'
 
   const [infoOpen, setInfoOpen] = useState(false)
   const [hintDismissed, setHintDismissed] = useState(false)
@@ -481,7 +488,11 @@ export function AlgorithmsView() {
     )
   }
   if (isMobileCoverage) {
-    return <div className="px-4 pb-4 pt-4">{validationEl}</div>
+    return (
+      <div className="w-full min-w-0 max-w-full overflow-x-hidden px-4 pb-4 pt-4">
+        {validationEl}
+      </div>
+    )
   }
   if (isMobileTransition) {
     return (
@@ -509,7 +520,7 @@ export function AlgorithmsView() {
           Detailed Comparison
         </h1>
         <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
-          Key sizes, performance, and standardization status for every algorithm.
+          Key sizes, security levels, publication status, and scoped evidence for each algorithm.
         </p>
         <div className="mt-3">
           {algoNotFoundEl}
@@ -520,19 +531,33 @@ export function AlgorithmsView() {
             filteredAlgorithms={filteredAlgorithms}
             compareSet={compareSet}
             compareType={compareType}
-            maxCompareReached={compareKeys.length >= MAX_COMPARE}
+            maxCompareReached={compareKeys.length >= 3}
+            selectionLimit={3}
             onToggleCompare={handleToggleCompare}
-            detailMode="browse"
-            onDetailModeChange={() => {}}
+            detailMode={detailMode}
+            onDetailModeChange={handleDetailModeChange}
             comparisonAlgos={comparisonAlgos}
             baselineAlgo={baselineAlgo}
-            hideCompareToggle
             selectedAlgoId={selectedAlgo?.id ?? null}
             onOpenAlgorithm={openAlgorithm}
           />
         </div>
         <AlgorithmInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />
         {algoDrawerEl}
+      </div>
+    )
+  }
+  if (isMobileLandscape) {
+    return (
+      <div className="px-4 pb-4 pt-4">
+        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
+          Industry use cases
+        </h1>
+        <p className="mb-3 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
+          Learn where cryptography appears and which migration questions to ask. Market estimates
+          and candidate paths are context, not recommendations or compliance conclusions.
+        </p>
+        <IndustryLandscapeView />
       </div>
     )
   }
@@ -546,6 +571,28 @@ export function AlgorithmsView() {
       />
 
       <PersonaPageNote route="/algorithms" className="mb-4" />
+
+      <aside className="mb-4 rounded-lg border border-status-info/30 bg-status-info/5 px-4 py-3 text-sm leading-relaxed text-foreground/85">
+        <strong className="text-foreground">Educational boundary.</strong> This explorer compares
+        algorithm standards, catalogue records, protocol maturity, and tests included in PQC Today.
+        It does not certify an algorithm, validate a product, establish compliance, or predict
+        performance on your system. Follow each source and measure your own implementation before
+        making a deployment decision.
+      </aside>
+
+      <aside className="mb-4 rounded-lg border border-border bg-muted/20 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+        <p>
+          <strong className="text-foreground">Catalogue evidence health:</strong>{' '}
+          {catalogueFreshness.label}. This is the imported file date, not proof that every row was
+          reviewed on that date. The source file does not yet record a row reviewer, verification
+          method, source locator, or next-review date.
+        </p>
+        <p className="mt-1">
+          Of {algorithmData.length} published catalogue rows, {catalogueQuality.missingSource} lack
+          either a source identifier or status link and {catalogueQuality.researchGaps} contain an
+          explicit research gap. Open a row to inspect its available provenance.
+        </p>
+      </aside>
 
       <AlgorithmEntryStrip
         persona={selectedPersona}
@@ -621,15 +668,16 @@ export function AlgorithmsView() {
                 <Shield size={18} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
                 <div className="flex-1 text-sm">
                   <p className="font-semibold text-foreground mb-1">
-                    What you&apos;re required to adopt
+                    What one high-assurance profile specifies
                   </p>
                   <p className="text-muted-foreground leading-relaxed mb-2">
                     For US National Security Systems, CNSA 2.0 requires{' '}
                     <strong className="text-foreground">ML-KEM-1024</strong> for key establishment
                     and <strong className="text-foreground">ML-DSA-87</strong> for signatures.
-                    Federal civilian systems commonly deploy ML-KEM-768 / ML-DSA-65 under NIST
-                    guidance. The tables below are the engineering detail — for the deadlines that
-                    apply to your sector and region, see the compliance timeline.
+                    ML-KEM-768 / ML-DSA-65 are useful general-purpose NIST examples, but publication
+                    in a FIPS does not itself create a universal federal mandate. The tables below
+                    teach the engineering differences; consult the primary policy for the system,
+                    agency, sector, and region in scope.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <Link to="/compliance">
@@ -746,12 +794,20 @@ export function AlgorithmsView() {
           {/* View Tabs */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
             <TabsList className="mb-6 bg-muted/50 border border-border">
-              <TabsTrigger value="transition" className="flex items-center gap-2">
+              <TabsTrigger
+                value="transition"
+                className="flex items-center gap-2"
+                data-workshop-target="tab-transition"
+              >
                 <ArrowRight size={18} />
                 <span className="hidden sm:inline">Transition Guide</span>
                 <span className="sm:hidden">Transition</span>
               </TabsTrigger>
-              <TabsTrigger value="detailed" className="flex items-center gap-2">
+              <TabsTrigger
+                value="detailed"
+                className="flex items-center gap-2"
+                data-workshop-target="tab-detailed"
+              >
                 <BarChart3 size={18} />
                 <span className="hidden sm:inline">Detailed Comparison</span>
                 <span className="sm:hidden">Comparison</span>
@@ -759,6 +815,7 @@ export function AlgorithmsView() {
               <TabsTrigger
                 value="support"
                 className="flex items-center gap-2"
+                data-workshop-target="tab-support"
                 title="Tracks 28 protocols across IETF, TCG, OASIS, 3GPP, IEEE, UEFI, and vendor specs — pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. IETF stages refresh weekly from datatracker; other standards bodies are refreshed manually."
               >
                 <Network size={18} />
@@ -768,13 +825,18 @@ export function AlgorithmsView() {
               <TabsTrigger
                 value="landscape"
                 className="flex items-center gap-2"
+                data-workshop-target="tab-landscape"
                 title="Cross-references 22 industries and their use cases with the classical crypto mechanisms in use, PQC replacements, applicable technical standards (linked to the Library), and official-statistics market sizes."
               >
                 <Factory size={18} />
                 <span className="hidden sm:inline">Industry Landscape</span>
                 <span className="sm:hidden">Industries</span>
               </TabsTrigger>
-              <TabsTrigger value="validation" className="flex items-center gap-2">
+              <TabsTrigger
+                value="validation"
+                className="flex items-center gap-2"
+                data-workshop-target="tab-validation"
+              >
                 <FlaskConical size={18} />
                 Validation
               </TabsTrigger>

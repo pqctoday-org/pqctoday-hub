@@ -592,10 +592,10 @@ function ProtocolCard({
             {p.recommended && (
               <span
                 className="inline-flex items-center gap-0.5 rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0 text-[9px] font-medium text-status-warning"
-                title={p.recommendedReason ?? 'Recommended for production use'}
+                title={p.recommendedReason ?? 'Reviewed deployment evidence (PQC Today synthesis)'}
               >
-                <Star size={8} />
-                Rec
+                <Star size={8} aria-hidden="true" />
+                Deployed
               </span>
             )}
             {parent && (
@@ -1026,15 +1026,20 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
           onDismiss={dismissUnknownProtocol}
         />
       )}
-      {/* Recommended for production — detailed view only */}
+      {/* Reviewed deployment evidence — detailed view only */}
       {!isHeatmap && RECOMMENDED_ROWS.length > 0 && (
         <div className="glass-panel p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Star size={15} className="text-status-warning shrink-0" />
             <h3 className="text-sm font-semibold text-foreground">
-              Recommended for production use today
+              Reviewed deployment evidence (PQC Today synthesis)
             </h3>
           </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Protocols with published PQC support and public production deployments that PQC Today
+            has reviewed. This summarises evidence; it is not a recommendation for any organisation
+            or product.
+          </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {RECOMMENDED_ROWS.map((row) => (
               <div
@@ -1051,8 +1056,8 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                     {row.name}
                   </Button>
                   <span className="inline-flex items-center gap-1 rounded border border-status-warning/30 bg-status-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-status-warning shrink-0">
-                    <Star size={9} />
-                    Recommended
+                    <Star size={9} aria-hidden="true" />
+                    Deployment evidence
                   </span>
                 </div>
                 {row.recommendedReason && (
@@ -1201,7 +1206,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
         {showStageHelp && (
           <div className="mt-1 space-y-1.5 rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
             <p className="font-semibold text-foreground">
-              How an IETF spec progresses — official order, earliest → latest
+              PQC Today&apos;s IETF maturity synthesis — earliest → latest
             </p>
             <ol className="list-decimal space-y-0.5 pl-4">
               <li>
@@ -1285,7 +1290,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
             { id: 'no-commercial', label: 'No commercial' },
             { id: 'has-playground', label: 'Has playground' },
             { id: 'has-deployment', label: 'Has live deployment' },
-            { id: 'no-deployment', label: 'No live deployment' },
+            { id: 'no-deployment', label: 'No reviewed deployment evidence' },
           ]}
           selectedId={availabilityFilter}
           onSelect={(id) => handleAvailabilityFilterChange(id as AvailabilityFilter)}
@@ -1467,10 +1472,13 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                           {isRecommended && (
                             <span
                               className="inline-flex items-center gap-0.5 rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0 text-[9px] font-medium text-status-warning shrink-0"
-                              title={p.recommendedReason ?? 'Recommended for production use'}
+                              title={
+                                p.recommendedReason ??
+                                'Reviewed deployment evidence (PQC Today synthesis)'
+                              }
                             >
-                              <Star size={8} />
-                              Rec
+                              <Star size={8} aria-hidden="true" />
+                              Deployed
                             </span>
                           )}
                         </div>

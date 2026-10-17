@@ -5,6 +5,8 @@ import {
   isCnsa20Required,
   passesCnsa20Filter,
   jurisdictionStanceForRegion,
+  CNSA20_TIMELINE,
+  CNSA20_DONT_DEPLOY_PRE_STANDARD,
   moduleValidationNote,
 } from './cnsa20'
 
@@ -66,8 +68,8 @@ describe('passesCnsa20Filter', () => {
 })
 
 describe('jurisdictionStanceForRegion', () => {
-  it('returns require for BSI/ANSSI and prefer-pure for NIST', () => {
-    expect(jurisdictionStanceForRegion('BSI/ANSSI')?.stance).toBe('require')
+  it('returns recommend for BSI/ANSSI and prefer-pure for NIST', () => {
+    expect(jurisdictionStanceForRegion('BSI/ANSSI')?.stance).toBe('recommend')
     expect(jurisdictionStanceForRegion('NIST')?.stance).toBe('prefer-pure')
     expect(jurisdictionStanceForRegion('IETF')?.stance).toBe('interim')
   })
@@ -89,5 +91,30 @@ describe('moduleValidationNote', () => {
   it('returns null for non-FIPS rows', () => {
     expect(moduleValidationNote({ fipsStandard: '' })).toBeNull()
     expect(moduleValidationNote({ fipsStandard: 'ISO 18033-2 Amd2' })).toBeNull()
+  })
+})
+
+// CNSA 2.0 FAQ Ver. 2.2 (Oct 2026): CNSSP 15 dates set the mandate; NSA does
+// not describe hybrids as an interim permission, and 2033 is not "final".
+describe('CNSA 2.0 timeline and hybrid wording', () => {
+  it('lists the CNSSP 15 milestones in date order', () => {
+    const years = CNSA20_TIMELINE.map((m) => m.year)
+    expect(years).toEqual([...years].sort())
+    for (const y of ['2027-01-01', '2030-12-31', '2031-12-31', '2035']) {
+      expect(years).toContain(y)
+    }
+  })
+
+  it('does not call 2033 the final deadline or hybrids an interim permission', () => {
+    const text = JSON.stringify(CNSA20_TIMELINE) + CNSA20_DONT_DEPLOY_PRE_STANDARD
+    expect(text).not.toMatch(/final CNSA 2\.0 deadline/)
+    expect(jurisdictionStanceForRegion('NIST')?.note).not.toMatch(/interim/)
+    expect(jurisdictionStanceForRegion('NIST')?.note).toMatch(/specifically identified/)
+  })
+
+  it('keeps BSI (recommends hybrid) distinct from ANSSI (requires hybrid)', () => {
+    const note = jurisdictionStanceForRegion('BSI/ANSSI')?.note ?? ''
+    expect(note).toMatch(/BSI .*recommends PQC only in hybrid use/)
+    expect(note).toMatch(/ANSSI .*mandatory/)
   })
 })

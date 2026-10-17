@@ -91,7 +91,7 @@ describe('mechanism lens — replacement chips', () => {
   it('a classical signature family lists its PQC successors', () => {
     renderAt('&mechanism=ECDSA')
     const box = screen.getByTestId('lens-replacement')
-    expect(within(box).getByText('Replaced by')).toBeInTheDocument()
+    expect(within(box).getByText('Candidate migration path')).toBeInTheDocument()
     for (const f of ['ML-DSA', 'SLH-DSA', 'FN-DSA', 'LMS', 'XMSS']) {
       expect(within(box).getByText(f)).toBeInTheDocument()
     }
@@ -101,7 +101,7 @@ describe('mechanism lens — replacement chips', () => {
   it('a PQC KEM lists the classical key-exchange families it replaces', () => {
     renderAt('&mechanism=ML-KEM')
     const box = screen.getByTestId('lens-replacement')
-    expect(within(box).getByText('Replaces')).toBeInTheDocument()
+    expect(within(box).getByText('May replace')).toBeInTheDocument()
     for (const f of ['ECDH', 'X25519', 'RSA-kex'])
       expect(within(box).getByText(f)).toBeInTheDocument()
     expect(within(box).queryByText('ECDSA')).toBeNull()

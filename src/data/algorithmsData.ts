@@ -27,6 +27,12 @@ export interface AlgorithmTransition {
   dataQualityNotes?: string
   /** Normalized status-maturity tier — see WORKSTREAMS.md §WS-A / algorithmStatusTier.ts. */
   statusTier: AlgorithmStatusTier
+  evidenceStates?: {
+    replacement: 'stated' | 'not-researched'
+    deprecationDate: 'stated' | 'not-specified'
+    standardizationDate: 'stated' | 'not-specified'
+    source: 'stated' | 'not-specified'
+  }
 }
 
 interface RawTransitionRow {
@@ -66,7 +72,9 @@ const TRANSITION_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'ETSI TS 104 015': 'final', // Covercrypt
   'BSI TR-02102-1': 'regional', // Classic McEliece
   'KpqC Round 2': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — final KpqC winners (Jan 2025)
-  'Round 2': 'round2-candidate', // MAYO, HAWK
+  'Round 2': 'round2-candidate', // MAYO
+  Withdrawn: 'eliminated', // HAWK — withdrawn by its submitters, 29 Jul 2026
+  'RFC 10024': 'final', // TLS 1.3 hybrid groups (X25519MLKEM768 etc.), Aug 2026
   'Round 4': 'round4-not-selected', // BIKE, Classic-McEliece (NIST-track view)
   // This file's Region column tags all 'Draft' rows 'IETF', including the
   // SLH-DSA-*-24 rows the reference CSV correctly attributes to SP 800-230
@@ -175,6 +183,18 @@ const { data, metadata } = loadLatestCSV<RawTransitionRow, AlgorithmTransition>(
     statusUrl: row.status_url || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
     statusTier: mapTransitionStatusToTier(row.Status || '', row.pqc_replacement || ''),
+    evidenceStates: {
+      replacement: row.pqc_replacement?.trim() ? 'stated' : 'not-researched',
+      deprecationDate:
+        row.Deprecation_Date_Label?.trim() || row.Deprecation_Date_ISO?.trim()
+          ? 'stated'
+          : 'not-specified',
+      standardizationDate:
+        row.Standardization_Date_Label?.trim() || row.Standardization_Date_ISO?.trim()
+          ? 'stated'
+          : 'not-specified',
+      source: row.status_url?.trim() ? 'stated' : 'not-specified',
+    },
   })
 )
 

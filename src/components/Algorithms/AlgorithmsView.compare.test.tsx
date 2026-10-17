@@ -92,7 +92,8 @@ vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
   getFunctionGroup: () => 'KEM',
   isClassical: () => false,
 }))
-vi.mock('../../data/algorithmsData', () => ({
+vi.mock('../../data/algorithmsData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../data/algorithmsData')>()),
   loadAlgorithmsData: vi.fn().mockResolvedValue([]),
   loadedTransitionMetadata: { filename: 'x.csv', date: null },
   getCryptoFamilyFromPQCName: () => 'Lattice',

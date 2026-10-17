@@ -2,7 +2,11 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { type AlgorithmTransition } from '../../data/algorithmsData'
-import { loadPQCAlgorithmsData, type AlgorithmDetail } from '../../data/pqcAlgorithmsData'
+import {
+  formatByteField,
+  loadPQCAlgorithmsData,
+  type AlgorithmDetail,
+} from '../../data/pqcAlgorithmsData'
 import {
   Shield,
   Lock,
@@ -25,9 +29,13 @@ import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
-import { isCertifiedTier } from '../../data/algorithmStatusTier'
+import { isCertifiedTier, tierBadge, tierBadgeClasses } from '../../data/algorithmStatusTier'
 import { transitionConsequence } from '@/data/algorithmConsequence'
-import { isTransitionGuidanceDate, TRANSITION_GUIDANCE_NOTE } from './transitionGuidance'
+import {
+  DATE_SOURCE_NOT_RECORDED_NOTE,
+  TRANSITION_GUIDANCE_NOTE,
+  transitionDateSource,
+} from './transitionGuidance'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -37,6 +45,8 @@ function jurisdictionStanceLabel(stance: JurisdictionStance): string {
   switch (stance) {
     case 'require':
       return 'Hybrid expected'
+    case 'recommend':
+      return 'Hybrid recommended'
     case 'prefer-pure':
       return 'Prefers pure'
     case 'interim':
@@ -50,6 +60,7 @@ function jurisdictionStanceLabel(stance: JurisdictionStance): string {
 function jurisdictionStanceChip(stance: JurisdictionStance): string {
   switch (stance) {
     case 'require':
+    case 'recommend':
       return 'bg-status-warning/10 text-status-warning border-status-warning/30'
     case 'prefer-pure':
       return 'bg-status-success/10 text-status-success border-status-success/30'
@@ -247,6 +258,13 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
         <Shield className="text-primary" />
         Algorithm Transition
       </h2>
+      <div className="mb-4 rounded-lg border border-status-info/30 bg-status-info/5 p-3 text-sm leading-relaxed text-foreground/85">
+        <strong className="text-foreground">A migration path is not a drop-in replacement.</strong>{' '}
+        A KEM establishes key material; it does not encrypt application data by itself. Use these
+        rows to start a comparison, then check the protocol construction, API and object model, key
+        lifecycle, message and certificate sizes, implementation support, and validation needs.
+        Empty cells mean no reviewed path or date is recorded—not “no change required.”
+      </div>
 
       {isLoading ? (
         <div className="glass-panel p-12 flex items-center justify-center">
@@ -272,7 +290,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       { id: 'deprecation-desc', label: 'Urgency (Latest first)' },
                       { id: 'function-asc', label: 'Function (A-Z)' },
                       { id: 'classical-asc', label: 'Classical Algorithm (A-Z)' },
-                      { id: 'pqc-asc', label: 'PQC Alternative (A-Z)' },
+                      { id: 'pqc-asc', label: 'Candidate PQC path (A-Z)' },
                     ]}
                     selectedId={`${sortColumn || 'none'}-${sortDirection || 'none'}`}
                     onSelect={(value) => {
@@ -395,10 +413,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         variant="ghost"
                         type="button"
                         onClick={() => handleSort('pqc')}
-                        aria-label={`PQC Alternative column, ${sortColumn === 'pqc' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
+                        aria-label={`Candidate PQC path column, ${sortColumn === 'pqc' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
                         className="w-full h-full py-8 flex items-center justify-center gap-2 px-4 bg-transparent border-none text-inherit font-inherit cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary/50"
                       >
-                        <span>PQC Alternative</span>
+                        <span>Candidate PQC path</span>
                         {renderSortIcon('pqc')}
                       </Button>
                       <div
@@ -598,7 +616,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         <td className="px-4 py-3" style={{ width: `${columnWidths.pqc}px` }}>
                           <div className="flex flex-col gap-1.5">
                             <span className="text-status-success font-semibold text-sm truncate">
-                              {algo.pqc}
+                              {algo.pqc || 'No reviewed replacement recorded'}
                             </span>
                             {/* B+ remediation 3.2 (2026-08-10): the consequence
                                 line. Without it this table is a list of names —
@@ -626,9 +644,12 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                   </span>
                                 )}
                                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border bg-muted border-border text-muted-foreground">
-                                  {pqcDetail.sizesUnknown
-                                    ? 'pk: Research needed'
-                                    : `${pqcDetail.publicKeySize.toLocaleString()}B pk`}
+                                  pk:{' '}
+                                  {formatByteField(
+                                    pqcDetail.publicKeySize,
+                                    pqcDetail.evidenceStates?.publicKey,
+                                    !pqcDetail.evidenceStates && pqcDetail.sizesUnknown
+                                  )}
                                 </span>
                               </div>
                             )}
@@ -695,13 +716,15 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                   {algo.status}
                                 </span>
                               )
-                            ) : algo.status === 'Candidate' ? (
-                              <span className="text-xs px-1.5 py-0.5 rounded border bg-status-warning/10 text-status-warning border-status-warning/30">
-                                {algo.status}
-                              </span>
                             ) : (
-                              <span className="text-xs px-1.5 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30">
-                                {algo.status}
+                              <span
+                                className={clsx(
+                                  'text-xs px-1.5 py-0.5 rounded border',
+                                  tierBadgeClasses(tierBadge(algo.statusTier)?.tone ?? 'inactive')
+                                )}
+                                title={`Catalogue status: ${algo.status}`}
+                              >
+                                {tierBadge(algo.statusTier)?.label ?? algo.status}
                               </span>
                             ))}
                         </td>
@@ -720,9 +743,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                     : 'bg-muted border-border text-muted-foreground'
                               )}
                             >
-                              {algo.deprecationDate}
+                              {algo.deprecationDate || 'No reviewed transition date recorded'}
                             </span>
-                            {isTransitionGuidanceDate(algo.deprecationDate) && (
+                            {transitionDateSource(algo.deprecationDate, algo.region) ===
+                              'nist-ir-8547' && (
                               <span
                                 className="text-[10px] text-muted-foreground"
                                 title={TRANSITION_GUIDANCE_NOTE}
@@ -730,9 +754,23 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 Proposed: NIST IR 8547 (draft), US federal
                               </span>
                             )}
+                            {transitionDateSource(algo.deprecationDate, algo.region) ===
+                              'not-recorded' && (
+                              <span
+                                className="text-[10px] text-muted-foreground"
+                                title={DATE_SOURCE_NOT_RECORDED_NOTE}
+                              >
+                                Date source not recorded for {algo.region}
+                              </span>
+                            )}
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <ArrowRight size={14} className="opacity-50" />
-                              <span className="font-mono">Std: {algo.standardizationDate}</span>
+                              <span className="font-mono">
+                                {algo.statusTier === 'final'
+                                  ? 'Standard published:'
+                                  : 'Standards status:'}{' '}
+                                {algo.standardizationDate || 'not recorded in this catalogue'}
+                              </span>
                             </div>
                           </div>
                         </td>

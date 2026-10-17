@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- wide evidence tables use named, keyboard-focusable scroll viewports */
 /**
  * CoverageMatrixView — the public capability coverage matrix and open-gaps
  * register (plan WS-C C-6, J-7; decision Q7: public on the Hub).
@@ -297,7 +298,7 @@ export function CoverageMatrixView({
   }
 
   return (
-    <div className="space-y-4" data-testid="coverage-matrix-view">
+    <div className="min-w-0 max-w-full space-y-4" data-testid="coverage-matrix-view">
       <ValidationDisclaimer />
       {caseNotFound && (
         <DeepLinkNotice
@@ -313,9 +314,10 @@ export function CoverageMatrixView({
           Capability coverage matrix
         </h3>
         <p className="text-xs text-muted-foreground">
-          Every capability each shipped PKCS#11 engine advertises at runtime, joined to the
-          registered tests that exercise it. A status names the strongest kind of registered
-          evidence; it is not a pass. Recorded run results are shown separately. Exports:{' '}
+          Every capability each PQC Today PKCS#11 engine advertises at runtime, joined to this
+          project&apos;s registered tests that exercise it. A status names the strongest kind of
+          registered evidence; it is not a pass, general algorithm coverage, or evidence about
+          another product. Recorded run results are shown separately. Exports:{' '}
           {(['html', 'md', 'json'] as const).map((ext, i) => (
             <span key={ext}>
               {i > 0 && ' · '}
@@ -323,7 +325,7 @@ export function CoverageMatrixView({
                 href={dataUrl(`coverage-matrix.${ext}`)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-0.5 text-primary underline-offset-2 hover:underline"
+                className="inline-flex items-center gap-0.5 text-primary underline underline-offset-2"
               >
                 {ext.toUpperCase()}
                 <ExternalLink size={10} aria-hidden="true" />
@@ -334,12 +336,16 @@ export function CoverageMatrixView({
       </div>
 
       {/* Totals — numerator / denominator per engine and polarity */}
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid min-w-0 max-w-full gap-3 md:grid-cols-2">
         {ENGINES.map((e) => {
           const t = matrix.totals.byEngine[e] // eslint-disable-line security/detect-object-injection
           const id = matrix.engines[e] // eslint-disable-line security/detect-object-injection
           return (
-            <section key={e} className="glass-panel p-3" aria-label={`${ENGINE_LABEL[e]} totals`}>
+            <section
+              key={e}
+              className="glass-panel min-w-0 max-w-full p-3"
+              aria-label={`${ENGINE_LABEL[e]} totals`}
+            >
               <h4 className="text-sm font-semibold text-foreground">
                 {ENGINE_LABEL[e] /* eslint-disable-line security/detect-object-injection */} engine
               </h4>
@@ -347,7 +353,12 @@ export function CoverageMatrixView({
                 {id.mechanismCount} mechanisms · {t.advertisedCells} advertised capability cells
                 (denominator) · {t.unsupportedCells} unsupported cells shown separately
               </p>
-              <div className="mt-2 overflow-x-auto">
+              <div
+                className="mt-2 w-full min-w-0 max-w-full overflow-x-auto"
+                role="region"
+                aria-label={`${ENGINE_LABEL[e]} coverage totals; scroll horizontally for all columns`}
+                tabIndex={0}
+              >
                 <table className="w-full text-xs">
                   <caption className="sr-only">
                     {
@@ -510,7 +521,12 @@ export function CoverageMatrixView({
       </div>
 
       {/* Matrix */}
-      <div className="glass-panel overflow-x-auto">
+      <div
+        className="glass-panel w-full min-w-0 max-w-full overflow-x-auto"
+        role="region"
+        aria-label="Capability coverage matrix; scroll horizontally for all columns"
+        tabIndex={0}
+      >
         <table className="w-full text-xs">
           <caption className="px-3 py-2 text-left text-muted-foreground">
             {`${visible.length} mechanism × operation groups — ${ENGINE_LABEL[engine]}, ${POLARITY_LABEL[polarity]} polarity`}

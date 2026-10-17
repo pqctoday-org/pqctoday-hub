@@ -3,7 +3,7 @@
 // CNSA 2.0 classification engine for the Algorithms page (Wave-5 gap-closers).
 //
 // The NSA Commercial National Security Algorithm Suite 2.0 (CNSA 2.0,
-// announced 2022, advisory updated 2024) names a small, exact set of
+// algorithm advisory Ver. 1.0 of 2022; FAQ Ver. 2.2 of October 2026) names a small, exact set of
 // parameter choices that are *required* for U.S. National Security Systems,
 // and explicitly *excludes* the others NIST standardized. This module turns
 // those facts into a per-algorithm verdict so the page can surface a CNSA 2.0
@@ -12,7 +12,7 @@
 // the same identifier already present in the reference CSV.
 //
 // Sources (also linked from the panel UI):
-//  - NSA CNSA 2.0 advisory (CNSA_2.0_Algorithms_.pdf)
+//  - NSA CNSA 2.0 advisory (CNSA_2.0_Algorithms_.pdf) and CNSA 2.0 FAQ Ver. 2.2 (Oct 2026)
 //  - FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), SP 800-208 (LMS/XMSS)
 //
 // CNSA 2.0 algorithm selections:
@@ -179,45 +179,73 @@ export interface Cnsa20Milestone {
   detail: string
 }
 
-export const CNSA20_TIMELINE: Cnsa20Milestone[] = [
-  {
-    year: '2024',
-    title: 'Standards published',
-    detail:
-      'NIST finalizes FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA). CNSA 2.0 selections — ML-KEM-1024 and ML-DSA-87 — are now standardized and deployable.',
-  },
-  {
-    year: '2025',
-    title: 'Signing, browsers & cloud: support and prefer',
-    detail:
-      'Software/firmware signing and web browsers, servers, and cloud services must support and prefer CNSA 2.0 algorithms.',
-  },
-  {
-    year: '2026',
-    title: 'Networking equipment: support and prefer',
-    detail: 'Traditional networking equipment (VPNs, routers) must support and prefer CNSA 2.0.',
-  },
-  {
-    year: '2027',
-    title: 'Operating systems: support and prefer',
-    detail: 'Operating systems must support and prefer CNSA 2.0.',
-  },
-  {
-    year: '2030',
-    title: 'Signing & networking: exclusive use',
-    detail:
-      'Software/firmware signing and traditional networking equipment must use CNSA 2.0 exclusively. Niche equipment (constrained devices, large PKI systems) reaches its support-and-prefer date.',
-  },
-  {
-    year: '2033',
-    title: 'Exclusive use — National Security Systems-wide',
-    detail:
-      'Web browsers/servers/cloud services, operating systems, niche equipment, and custom/legacy applications must use CNSA 2.0 exclusively — the final CNSA 2.0 deadline; classical RSA/ECC disallowed.',
-  },
-]
+// NSA's 2022 category chart and the CNSSP 15 dates from the CNSA 2.0 FAQ
+// (Ver. 2.2, Oct 2026), kept in date order.
+export const CNSA20_TIMELINE: Cnsa20Milestone[] = (
+  [
+    {
+      year: '2024',
+      title: 'Standards published',
+      detail:
+        'NIST finalizes FIPS 203 (ML-KEM), 204 (ML-DSA), 205 (SLH-DSA). CNSA 2.0 selections — ML-KEM-1024 and ML-DSA-87 — are now standardized and deployable.',
+    },
+    {
+      year: '2025',
+      title: 'Signing, browsers & cloud: support and prefer',
+      detail:
+        'Software/firmware signing and web browsers, servers, and cloud services must support and prefer CNSA 2.0 algorithms.',
+    },
+    {
+      year: '2026',
+      title: 'Networking equipment: support and prefer',
+      detail: 'Traditional networking equipment (VPNs, routers) must support and prefer CNSA 2.0.',
+    },
+    {
+      year: '2027',
+      title: 'Operating systems: support and prefer',
+      detail: 'Operating systems must support and prefer CNSA 2.0.',
+    },
+    {
+      year: '2030',
+      title: 'Signing & networking: exclusive use',
+      detail:
+        'Software/firmware signing and traditional networking equipment must use CNSA 2.0 exclusively. Niche equipment (constrained devices, large PKI systems) reaches its support-and-prefer date.',
+    },
+    {
+      year: '2027-01-01',
+      title: 'New NSS acquisitions (CNSSP 15)',
+      detail:
+        'CNSA 2.0 algorithms are required in all new acquisitions for National Security Systems.',
+    },
+    {
+      year: '2030-12-31',
+      title: 'Phase-out (CNSSP 15)',
+      detail:
+        'NSS equipment and services that cannot support CNSA 2.0 must be phased out unless granted an exception; NSA expects encryption to be broadly quantum-resistant by default from this date.',
+    },
+    {
+      year: '2031-12-31',
+      title: 'CNSA 2.0 mandated (CNSSP 15)',
+      detail:
+        'CNSA 2.0 algorithms are mandated for use, unless otherwise noted, to achieve full quantum resistance for NSS.',
+    },
+    {
+      year: '2033',
+      title: 'Last category date in the 2022 chart',
+      detail:
+        "Web browsers/servers/cloud services, operating systems, niche equipment, and custom/legacy applications reach exclusive use in NSA's original 2022 category chart; the CNSSP 15 dates above now set the overall mandate.",
+    },
+    {
+      year: '2035',
+      title: 'NSM-10 goal',
+      detail:
+        'The government-wide goal for quantum resistance; NSA intends NSS to be quantum-resistant well ahead of it.',
+    },
+  ] satisfies Cnsa20Milestone[]
+).sort((a, b) => a.year.localeCompare(b.year))
 
 export const CNSA20_DONT_DEPLOY_PRE_STANDARD =
-  "Don't deploy pre-standard: only the finalized parameter sets (ML-KEM-1024, ML-DSA-87) count toward CNSA 2.0. Candidates and draft composites are not yet CNSA 2.0-eligible — use them for piloting, not production NSS."
+  'Only the finalized parameter sets (ML-KEM-1024, ML-DSA-87) count toward CNSA 2.0. Candidates and composites are not CNSA 2.0 solutions: NSA advises NSS PKI to stand up a parallel PKI rather than combine algorithms in one certificate, and warns that solutions used only in testing are unlikely to carry into deployable ones.'
 
 export const CNSA20_ADVISORY_URL =
   'https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF'
@@ -231,12 +259,12 @@ export const CNSA20_ADVISORY_URL =
 
 export const HYBRID_COMPOSITE_GUIDANCE = {
   whenComposite:
-    'Prefer a composite (PQC + classical, e.g. X25519+ML-KEM-768 or RSA-PSS+ML-DSA) when you need defense-in-depth during the transition, when a regulator mandates hybrid, or when the PQC implementation is not yet validated. The classical half guards against an undiscovered flaw in the new scheme.',
+    'Outside US National Security Systems, a composite (PQC + classical, e.g. X25519+ML-KEM-768 or RSA-PSS+ML-DSA) is a common transition choice where defense-in-depth is wanted or a regulator recommends or requires hybrid (BSI, ANSSI). The classical half guards against an undiscovered flaw in the new scheme, at the cost of extra protocol and implementation complexity.',
   whenPure:
-    'Prefer pure ML-KEM / ML-DSA once the implementation is validated and your jurisdiction permits non-hybrid — it is simpler, faster, and is what CNSA 2.0 mandates (CNSA 2.0 requires the pure ML-KEM-1024 / ML-DSA-87, not a hybrid).',
+    'Pure ML-KEM / ML-DSA is simpler and is what CNSA 2.0 requires for NSS (ML-KEM-1024 / ML-DSA-87; NSA does not require hybrids and counts only hybrids it has specifically identified). Where a jurisdiction recommends hybrid (BSI) or requires it (ANSSI), pure use may not fit that context.',
 } as const
 
-export type JurisdictionStance = 'require' | 'prefer-pure' | 'interim' | 'permit'
+export type JurisdictionStance = 'require' | 'recommend' | 'prefer-pure' | 'interim' | 'permit'
 
 export interface JurisdictionPosition {
   body: string
@@ -254,20 +282,20 @@ export function jurisdictionStanceForRegion(region: string): JurisdictionPositio
     case 'BSI/ANSSI':
       return {
         body: 'BSI / ANSSI',
-        stance: 'require',
-        note: 'German BSI (TR-02102-1) currently recommends PQC only in hybrid use; French ANSSI recommends hybrid and makes it mandatory in its regulated perimeter (hash-based signatures excepted).',
+        stance: 'recommend',
+        note: 'German BSI (TR-02102-1) recommends PQC only in hybrid use; French ANSSI goes further and makes hybrid mandatory in its regulated perimeter (hash-based signatures excepted). The two positions differ — check which applies.',
       }
     case 'NIST':
       return {
         body: 'NSA / CNSA 2.0',
         stance: 'prefer-pure',
-        note: 'CNSA 2.0 mandates pure ML-KEM-1024 / ML-DSA-87 for NSS; hybrids are permitted as an interim but not required.',
+        note: 'CNSA 2.0 requires ML-KEM-1024 / ML-DSA-87 for NSS. NSA does not require hybrids; only hybrids NSA has specifically identified (for example its IKEv2 profile) count as CNSA 2.0 compliant, and NSA advises against other non-standardized quantum-resistant solutions on NSS mission systems.',
       }
     case 'IETF':
       return {
         body: 'IETF',
         stance: 'interim',
-        note: 'IETF specifies hybrid/composite constructions (e.g. X25519MLKEM768) as transition mechanisms; standardization is in progress.',
+        note: 'IETF specifies hybrid/composite constructions as transition mechanisms; some are published (e.g. X25519MLKEM768 in RFC 10024), others are still drafts.',
       }
     case 'ETSI':
       return {

@@ -399,7 +399,9 @@ export interface ProtocolMatrixRow {
    * recommendations panel in detailed view, and the ?highlight=recommended param.
    */
   recommended?: boolean
-  /** One-sentence rationale for `recommended: true`, shown in the panel and modal. */
+  /** One-sentence summary of the reviewed deployment evidence behind `recommended: true`,
+   *  shown in the panel and modal. Cite the standard and independent deployments; a
+   *  PQC Today playground is a place to try it, not deployment evidence. */
   recommendedReason?: string
   /**
    * Authoritative "Sources & further reading" links that back this row's
@@ -652,7 +654,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     recommended: true,
     recommendedReason:
-      'RFC 9941 published (April 2026) standardizes sntrup761x25519 — the hybrid GitHub SSH runs; mlkem768x25519 ships by default in OpenSSH 10.0 and is offered by AWS Transfer Family — the most deployment-ready PQC protocol today.',
+      'RFC 9941 published (April 2026) standardizes sntrup761x25519 — the hybrid GitHub SSH runs; mlkem768x25519 ships by default in OpenSSH 10.0 and is offered by AWS Transfer Family.',
     sources: [
       {
         label: 'OpenSSH release notes',
@@ -1000,7 +1002,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     supersedes: ['tls-1-2', 'tls-1-0-1-1', 'ssl-3-0'],
     recommended: true,
     recommendedReason:
-      'X25519MLKEM768 hybrid group already in production at Cloudflare, Google, and AWS; spec is in the RFC Editor queue (EDIT) — the de-facto standard for TLS PQC migration today.',
+      'X25519MLKEM768 hybrid group in production at Cloudflare, Google, and AWS; specified in RFC 10024 (August 2026).',
     sources: [
       {
         label: 'IETF TLS working group documents',
@@ -3826,7 +3828,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     recommended: true,
     recommendedReason:
-      'PKCS#11 v3.2 (full OASIS Standard) fully supports ML-KEM + ML-DSA and is already implemented (our SoftHSM v3 + vendor HSMs); exercisable live in the HSM playground.',
+      'PKCS#11 v3.2 (OASIS Standard) specifies ML-KEM and ML-DSA mechanisms, and vendor HSMs implement them. You can try the mechanisms in the HSM playground.',
   },
   {
     id: 'kmip',
@@ -3927,9 +3929,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         referenceUrl: 'https://github.com/pqctoday-org/pqctoday-hsm',
       },
     ],
-    recommended: true,
-    recommendedReason:
-      'KMIP 3.0 fully supports ML-KEM + ML-DSA; we ship a working Rust KMIP 3.0 control plane (pqctoday-kmip) exercisable live in the CACP playground.',
   },
   {
     id: 'signal-pqxdh',

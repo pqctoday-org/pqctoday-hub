@@ -106,7 +106,8 @@ vi.mock('../../data/pqcAlgorithmsData', async (importOriginal) => ({
   getFunctionGroup: () => 'KEM',
   isClassical: () => false,
 }))
-vi.mock('../../data/algorithmsData', () => ({
+vi.mock('../../data/algorithmsData', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../data/algorithmsData')>()),
   loadAlgorithmsData: vi.fn().mockResolvedValue([]),
   loadedTransitionMetadata: { filename: 'x.csv', date: null },
   getCryptoFamilyFromPQCName: () => 'Lattice',
@@ -167,7 +168,7 @@ describe('AlgorithmsView — deep links', () => {
   })
 
   it('clears the status filter too when the quick view alone is not enough', async () => {
-    renderAt('/algorithms?highlight=Obscure-Candidate')
+    renderAt('/algorithms?highlight=Obscure-Candidate&status=published-standard')
     expect(await screen.findByTestId('deeplink-notice-widened')).toHaveTextContent(
       /Filters were cleared/
     )

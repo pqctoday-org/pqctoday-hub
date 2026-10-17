@@ -6,9 +6,13 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
-import { isCertifiedTier } from '../../data/algorithmStatusTier'
+import { isCertifiedTier, tierBadge, tierBadgeClasses } from '../../data/algorithmStatusTier'
 import { transitionMatchesHighlight, transitionRowId } from './highlightMatch'
-import { isTransitionGuidanceDate, TRANSITION_GUIDANCE_NOTE } from './transitionGuidance'
+import {
+  DATE_SOURCE_NOT_RECORDED_NOTE,
+  TRANSITION_GUIDANCE_NOTE,
+  transitionDateSource,
+} from './transitionGuidance'
 
 interface MobileAlgorithmListProps {
   data: AlgorithmTransition[]
@@ -113,13 +117,15 @@ export const MobileAlgorithmList = ({
                       <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30">
                         {algo.status}
                       </span>
-                    ) : algo.status === 'Candidate' ? (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-warning/10 text-status-warning border-status-warning/30">
-                        {algo.status}
-                      </span>
                     ) : (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30">
-                        {algo.status}
+                      <span
+                        className={clsx(
+                          'text-[10px] px-1.5 py-0.5 rounded border',
+                          tierBadgeClasses(tierBadge(algo.statusTier)?.tone ?? 'inactive')
+                        )}
+                        title={`Catalogue status: ${algo.status}`}
+                      >
+                        {tierBadge(algo.statusTier)?.label ?? algo.status}
                       </span>
                     ))}
                 </div>
@@ -130,7 +136,7 @@ export const MobileAlgorithmList = ({
             <div className="flex flex-col items-end gap-2 shrink-0">
               <span
                 className={clsx(
-                  'text-xs px-2 py-1 rounded border font-medium whitespace-nowrap',
+                  'text-xs px-2 py-1 rounded border font-medium whitespace-normal',
                   algo.deprecationDate.includes('Deprecated')
                     ? 'bg-status-warning border-status-warning text-status-warning'
                     : algo.deprecationDate.includes('Disallowed')
@@ -138,14 +144,22 @@ export const MobileAlgorithmList = ({
                       : 'bg-muted/10 border-border text-muted-foreground'
                 )}
               >
-                {algo.deprecationDate.split(' ')[0]} {/* simplified date */}
+                {algo.deprecationDate || 'No reviewed transition date recorded'}
               </span>
-              {isTransitionGuidanceDate(algo.deprecationDate) && (
+              {transitionDateSource(algo.deprecationDate, algo.region) === 'nist-ir-8547' && (
                 <span
                   className="text-[10px] text-muted-foreground"
                   title={TRANSITION_GUIDANCE_NOTE}
                 >
                   Proposed (NIST IR 8547 draft)
+                </span>
+              )}
+              {transitionDateSource(algo.deprecationDate, algo.region) === 'not-recorded' && (
+                <span
+                  className="text-[10px] text-muted-foreground"
+                  title={DATE_SOURCE_NOT_RECORDED_NOTE}
+                >
+                  Date source not recorded
                 </span>
               )}
               {pqcDetail && <AlgorithmCheckButton algorithm={pqcDetail} />}

@@ -41,7 +41,7 @@ interface AlgorithmValidationViewProps {
 /**
  * "Validation" tab — houses the two interactive reference views that used to be
  * buried as the 5th/6th accordion sections of the Detailed Comparison tab:
- * Implementation Attacks (side-channel / fault reference) and KAT Validation
+ * Implementation Attacks (side-channel / fault reference) and known-answer checks
  * (live in-browser known-answer-test vectors). Each is a collapsible section so
  * the heavy KAT runner only mounts when opened. Which sections open by default
  * comes from ALGORITHM_PERSONA_DEFAULTS.openSections (researcher: both), plus
@@ -166,8 +166,9 @@ export function AlgorithmValidationView({
     {
       id: 'kat',
       icon: <FlaskConical size={16} />,
-      label: 'KAT Validation',
-      caption: 'Run pinned known-answer-test vectors live in your browser via WASM.',
+      label: 'Known-answer checks',
+      caption:
+        'Run pinned vectors in your browser. Passing checks is evidence, not a CAVP or CMVP validation.',
       content: <KATView katParam={katParam} onUpdateParams={onUpdateParams} />,
     },
     {
@@ -175,7 +176,7 @@ export function AlgorithmValidationView({
       icon: <Grid3x3 size={16} />,
       label: 'Coverage Matrix',
       caption:
-        'Every advertised PKCS#11 capability per engine vs. the registered tests, with open gaps.',
+        "PQC Today's PKCS#11 engine capabilities vs. its registered tests—not general algorithm or product coverage.",
       content: (
         <Suspense fallback={<p className="text-xs text-muted-foreground">Loading…</p>}>
           <CoverageMatrixView
@@ -190,13 +191,13 @@ export function AlgorithmValidationView({
   ]
 
   return (
-    <div className="space-y-3">
+    <div className="min-w-0 max-w-full space-y-3">
       {sections.map(({ id, icon, label, caption, content }) => {
         const isOpen = open.has(id)
         return (
           <section
             key={id}
-            className="glass-panel overflow-hidden scroll-mt-28"
+            className="glass-panel min-w-0 max-w-full overflow-hidden scroll-mt-28"
             data-workshop-target={`section-validation-${id}`}
             data-deeplink-id={`validation-${id}`}
           >
@@ -204,13 +205,15 @@ export function AlgorithmValidationView({
               variant="ghost"
               onClick={() => toggle(id)}
               aria-expanded={isOpen}
-              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/30 h-auto rounded-none"
+              className="flex h-auto w-full min-w-0 max-w-full items-center justify-between gap-3 overflow-hidden rounded-none px-4 py-3 text-left transition-colors hover:bg-muted/30"
             >
-              <span className="flex items-center gap-2.5">
-                <span className="text-primary">{icon}</span>
-                <span className="flex flex-col">
-                  <span className="text-sm font-semibold text-foreground">{label}</span>
-                  <span className="text-xs text-muted-foreground font-normal">{caption}</span>
+              <span className="flex min-w-0 flex-1 items-center gap-2.5">
+                <span className="shrink-0 text-primary">{icon}</span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="break-words text-sm font-semibold text-foreground">{label}</span>
+                  <span className="whitespace-normal break-words text-xs font-normal text-muted-foreground">
+                    {caption}
+                  </span>
                 </span>
               </span>
               <ChevronDown
@@ -221,7 +224,9 @@ export function AlgorithmValidationView({
                 )}
               />
             </Button>
-            {isOpen && <div className="border-t border-border p-4">{content}</div>}
+            {isOpen && (
+              <div className="min-w-0 max-w-full border-t border-border p-4">{content}</div>
+            )}
           </section>
         )
       })}

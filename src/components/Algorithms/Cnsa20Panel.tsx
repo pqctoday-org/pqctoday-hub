@@ -40,7 +40,8 @@ export function Cnsa20Panel() {
             <strong>required</strong>; stateful{' '}
             <strong className="text-status-info">LMS / XMSS</strong> are approved for
             software/firmware signing only; and <strong>SLH-DSA is not selected</strong>. Lower
-            parameter sets (ML-KEM-512/768, ML-DSA-44/65) sit below the CNSA 2.0 floor.
+            parameter sets (ML-KEM-512/768, ML-DSA-44/65) sit below the CNSA 2.0 floor. AES-256 and
+            SHA-384/512 cover symmetric encryption and hashing.
           </p>
         </div>
       </div>
@@ -53,8 +54,8 @@ export function Cnsa20Panel() {
         </h4>
         <ol className="mt-2 space-y-2">
           {CNSA20_TIMELINE.map((m) => (
-            <li key={m.year} className="flex gap-3 text-sm">
-              <span className="shrink-0 font-mono font-semibold text-primary w-20">{m.year}</span>
+            <li key={`${m.year}-${m.title}`} className="flex gap-3 text-sm">
+              <span className="shrink-0 font-mono font-semibold text-primary w-24">{m.year}</span>
               <span className="text-foreground/90">
                 <strong className="text-foreground">{m.title}.</strong>{' '}
                 <span className="text-muted-foreground">{m.detail}</span>
@@ -97,13 +98,26 @@ export function Cnsa20Panel() {
         </h4>
         <ul className="mt-1.5 space-y-1 text-xs text-muted-foreground leading-relaxed">
           <li>
-            <strong className="text-foreground">BSI / ANSSI (Europe):</strong> recommend hybrid (PQC
-            + classical) during the transition; ANSSI makes it mandatory in the French regulated
-            perimeter.
+            <strong className="text-foreground">BSI (Germany):</strong> recommends ML-KEM-768/1024,
+            FrodoKEM-976/1344 and ML-DSA-65/87 only in combination with a classical scheme (hybrid);
+            stateful hash-based signatures may be used alone (TR-02102-1, 2026-01).
           </li>
           <li>
-            <strong className="text-foreground">NSA / CNSA 2.0 (US NSS):</strong> mandate pure
-            ML-KEM-1024 / ML-DSA-87; hybrid is interim, not required.
+            <strong className="text-foreground">ANSSI (France):</strong> requires hybridization of
+            ML-KEM and ML-DSA in its regulated perimeter during the transition; hash-based
+            signatures such as SLH-DSA may be used alone.
+          </li>
+          <li>
+            <strong className="text-foreground">NSA / CNSA 2.0 (US NSS):</strong> requires
+            ML-KEM-1024 / ML-DSA-87; hybrids are not required and count only where NSA has
+            specifically identified them (CNSA 2.0 FAQ, Oct 2026).
+          </li>
+          <li>
+            <strong className="text-foreground">US federal, non-NSS:</strong> Executive Order 14412
+            (June 2026) directs agencies to move high-value assets and high-impact systems to
+            post-quantum key establishment by 31 Dec 2030 and post-quantum signatures by 31 Dec
+            2031. NIST IR 8547 (draft) proposes deprecating quantum-vulnerable algorithms after 2030
+            and disallowing them after 2035.
           </li>
           <li>
             <strong className="text-foreground">IETF / ETSI:</strong> specify hybrid/composite
@@ -122,8 +136,8 @@ export function Cnsa20Panel() {
         <p className="text-xs text-foreground/85 leading-relaxed">
           <strong className="text-foreground">Algorithm standard ≠ validated module.</strong> A FIPS
           203/204/205 (or SP 800-208) label means the <em>algorithm</em> is standardized — not that
-          any product implementing it is FIPS 140-3 validated. For regulated deployment you still
-          need a CMVP-validated cryptographic module; check the CMVP list, not just the algorithm
+          any product implementing it is FIPS 140-3 validated. Where a validated module is required
+          (for example US federal systems and NSS), check the CMVP list, not just the algorithm
           standard.
         </p>
       </div>

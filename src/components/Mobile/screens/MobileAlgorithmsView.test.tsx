@@ -7,7 +7,6 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { ALGORITHM_REGISTRY } from '@/data/algorithmProperties'
 import { transitionConsequence } from '@/data/algorithmConsequence'
 import { INTENTS, PERSONA_INTENTS, EU_EXECUTIVE_INTENTS } from '@/data/algorithmEntryIntents'
-import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 
 const mockNavigate = vi.hoisted(() => vi.fn())
 vi.mock('react-router', async () => {
@@ -146,13 +145,10 @@ describe('MobileAlgorithmsView', () => {
     expect(ALGORITHM_REGISTRY['Ed25519'].securityLevel).toBeNull()
   })
 
-  it('the performance chart loads real relative-cycle data async and renders all 5 featured algorithms', async () => {
+  it('does not turn heterogeneous catalogue estimates into a mobile performance ranking', () => {
     renderView()
-    expect(
-      await screen.findByText('What actually changes: signing/encapsulation speed')
-    ).toBeInTheDocument()
-    const detail = (await loadPQCAlgorithmsData()).find((d) => d.name === 'SLH-DSA-SHA2-128s')!
-    expect(await screen.findByText(detail.signEncapsCycles)).toBeInTheDocument()
+    expect(screen.queryByText('What actually changes: signing/encapsulation speed')).toBeNull()
+    expect(screen.queryByText(/Relative to RSA-2048/)).toBeNull()
   })
 
   it('tapping a byte-bar row opens the real per-algorithm detail sheet, and Close dismisses it', () => {

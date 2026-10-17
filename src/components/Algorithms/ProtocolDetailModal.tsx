@@ -503,7 +503,7 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                     <Star size={12} className="mt-0.5 shrink-0 text-status-warning" />
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       <span className="font-medium text-status-warning">
-                        Recommended for production —{' '}
+                        Reviewed deployment evidence —{' '}
                       </span>
                       {protocol.recommendedReason}
                     </p>
