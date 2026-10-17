@@ -356,13 +356,13 @@ describe('FHE evidence manifest (fhe-evidence.v1)', () => {
       stepIds: ['party-a-keygen'],
     }
     expect(validationsFor('openfhe-threshold', 'party-a-keygen', [r])[0].label).toBe(
-      'reference-validated (OpenFHE v1.6.0)'
+      'reproduced reference run (OpenFHE v1.6.0)'
     )
     expect(
       validationsFor('openfhe-threshold', 'party-a-keygen', [
         { ...r, platformLabel: 'KV260 Cortex-A53' },
       ])[0].label
-    ).toBe('reference-validated (OpenFHE v1.6.0, KV260 Cortex-A53)')
+    ).toBe('reproduced reference run (OpenFHE v1.6.0, KV260 Cortex-A53)')
   })
 
   it.each([
