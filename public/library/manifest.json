@@ -22801,6 +22801,21 @@
       "unified": "converted",
       "admittedAt": "2026-10-16T05:33:35.591884+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "ANSSI-s-views-on-crypto-agility",
+      "title": "ANSSI’s views on crypto-agility",
+      "url": "https://messervices.cyber.gouv.fr/documents-guides/ANSSI-views-on-crypto-agility.pdf",
+      "status": "downloaded",
+      "filename": "ANSSI-s-views-on-crypto-agility.pdf",
+      "sizeBytes": 292647,
+      "contentType": "application/pdf",
+      "sha256": "3358f58e50dd09047055cf68ac03cdd061e66657f2475d7063d7ee4ed61bc017",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-17T21:05:29.496014+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
