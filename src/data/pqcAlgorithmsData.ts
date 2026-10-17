@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { loadLatestCSVAsync, parseIntOrNull } from './csvUtils'
-import type { AlgorithmStatusTier } from './algorithmStatusTier'
+import { tierBadge, type AlgorithmStatusTier } from './algorithmStatusTier'
 
 export const RESEARCH_NEEDED = 'Research needed'
 
@@ -16,6 +16,9 @@ export interface AlgorithmEvidenceStates {
   signOrEncapsulate: EvidenceFieldState
   verifyOrDecapsulate: EvidenceFieldState
   stackRam: EvidenceFieldState
+  /** NIST security category. Optional so older fixtures stay valid. */
+  securityLevel?: EvidenceFieldState
+  aesEquivalent?: EvidenceFieldState
 }
 
 export function evidenceStateLabel(state: EvidenceFieldState): string {
@@ -64,6 +67,8 @@ export interface AlgorithmDetail {
   signEncapsCycles: string
   verifyDecapsCycles: string
   stackRAM: number
+  /** True when the catalogue gives the stack RAM as an estimate ("~6000"). */
+  stackRAMApprox?: boolean
   optimizationTarget: string
   fipsStandard: string
   useCaseNotes: string
@@ -125,13 +130,27 @@ export function getCatalogueFreshness(
   if (ageDays < 0) {
     return { state: 'future', ageDays, label: 'Snapshot date is in the future' }
   }
+  const age = `${ageDays} ${ageDays === 1 ? 'day' : 'days'} old`
   if (ageDays > staleDays) {
-    return { state: 'stale', ageDays, label: `Snapshot is ${ageDays} days old` }
+    return { state: 'stale', ageDays, label: `Snapshot is ${age}` }
   }
   if (ageDays > reviewDays) {
-    return { state: 'review-due', ageDays, label: `Snapshot review is due (${ageDays} days old)` }
+    return { state: 'review-due', ageDays, label: `Snapshot review is due (${age})` }
   }
-  return { state: 'current', ageDays, label: `Snapshot is ${ageDays} days old` }
+  return { state: 'current', ageDays, label: `Snapshot is ${age}` }
+}
+
+/**
+ * A snapshot date as YYYY-MM-DD in the calendar it was parsed in. Snapshot
+ * dates are built at local midnight from the file name, so toISOString()
+ * would move them a day earlier east of UTC. Null when there is no date.
+ */
+export function formatSnapshotDate(date: Date | null | undefined): string | null {
+  if (!date || Number.isNaN(date.getTime())) return null
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
 /**
@@ -449,6 +468,130 @@ export function mapReferenceStatusToTier(
   return tier
 }
 
+const POST_QUANTUM_FAMILIES = new Set(['KEM', 'Signature', 'Hybrid KEM'])
+
+// ── One text per field, for every surface ────────────────────────────────
+// The table, drawer, compare views and CSV export all read these helpers so
+// a field shows the same value, or the same missing-data words, everywhere.
+
+export type AlgorithmSizeField =
+  'publicKey' | 'privateKey' | 'signatureOrCiphertext' | 'sharedSecret'
+
+function sizeValue(algo: AlgorithmDetail, field: AlgorithmSizeField): number | null {
+  switch (field) {
+    case 'publicKey':
+      return algo.publicKeySize
+    case 'privateKey':
+      return algo.privateKeySize
+    case 'signatureOrCiphertext':
+      return algo.signatureCiphertextSize
+    case 'sharedSecret':
+      return algo.sharedSecretSize
+  }
+}
+
+/** The evidence state of one size field, judged on that field alone. */
+export function algorithmSizeState(
+  algo: AlgorithmDetail,
+  field: AlgorithmSizeField
+): EvidenceFieldState {
+  // eslint-disable-next-line security/detect-object-injection -- field is a typed union, not user input
+  const state = algo.evidenceStates?.[field]
+  if (state && state !== 'stated') return state
+  const value = sizeValue(algo, field)
+  // Records built without evidence states fall back to the row-level flag.
+  if (!algo.evidenceStates && algo.sizesUnknown && field !== 'sharedSecret') {
+    return 'not-researched'
+  }
+  if (value === null || value === 0) {
+    return field === 'sharedSecret' ? 'not-specified' : 'not-researched'
+  }
+  return 'stated'
+}
+
+/** The stated size in bytes, or null when the field is missing. */
+export function algorithmSizeBytes(
+  algo: AlgorithmDetail,
+  field: AlgorithmSizeField
+): number | null {
+  return algorithmSizeState(algo, field) === 'stated' ? sizeValue(algo, field) : null
+}
+
+/** "1,184 B", or the field's missing-data words. */
+export function formatAlgorithmSize(algo: AlgorithmDetail, field: AlgorithmSizeField): string {
+  const state = algorithmSizeState(algo, field)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return formatByteField(sizeValue(algo, field), 'stated')
+}
+
+/** Export cell: the number of bytes, or the field's missing-data words. */
+export function exportAlgorithmSize(
+  algo: AlgorithmDetail,
+  field: AlgorithmSizeField
+): string | number {
+  const state = algorithmSizeState(algo, field)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return sizeValue(algo, field) ?? RESEARCH_NEEDED
+}
+
+export function stackRamState(algo: AlgorithmDetail): EvidenceFieldState {
+  const state = algo.evidenceStates?.stackRam
+  if (state && state !== 'stated') return state
+  if (algo.stackRAM > 0) return 'stated'
+  // A cell that was filled in but held no usable number is still a gap.
+  return state === 'stated' ? 'not-researched' : 'not-measured'
+}
+
+/** "~6,000 B" (estimate), "6,000 B", or the field's missing-data words. */
+export function formatStackRam(algo: AlgorithmDetail): string {
+  const state = stackRamState(algo)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return `${algo.stackRAMApprox ? '~' : ''}${algo.stackRAM.toLocaleString()} B`
+}
+
+/** Export cell: "~6000" for an estimate, 6000 when exact, or the missing-data words. */
+export function exportStackRam(algo: AlgorithmDetail): string | number {
+  const state = stackRamState(algo)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return algo.stackRAMApprox ? `~${algo.stackRAM}` : algo.stackRAM
+}
+
+export function securityLevelState(algo: AlgorithmDetail): EvidenceFieldState {
+  if (algo.securityLevel !== null) return 'stated'
+  const state = algo.evidenceStates?.securityLevel
+  return state && state !== 'stated' ? state : 'not-specified'
+}
+
+/** "Level 3", or the field's missing-data words. */
+export function formatSecurityLevel(algo: AlgorithmDetail): string {
+  const state = securityLevelState(algo)
+  return state === 'stated' ? `Level ${algo.securityLevel}` : evidenceStateLabel(state)
+}
+
+/** The AES-equivalent text, or the field's missing-data words. */
+export function formatAesEquivalent(algo: AlgorithmDetail): string {
+  const state = algo.evidenceStates?.aesEquivalent
+  if (state && state !== 'stated') return evidenceStateLabel(state)
+  if (isResearchNeeded(algo.aesEquivalent)) return RESEARCH_NEEDED
+  return algo.aesEquivalent?.trim() || evidenceStateLabel('not-specified')
+}
+
+export const LINK_QUALITY_NOT_ASSESSED = 'Not assessed'
+
+export function formatLinkQuality(algo: AlgorithmDetail): string {
+  return algo.statusUrlQuality?.trim() || LINK_QUALITY_NOT_ASSESSED
+}
+
+/**
+ * Reader-facing words for a maturity tier — the status filter's own labels,
+ * never the internal id (e.g. 'round2-candidate').
+ */
+export function statusTierLabel(tier: AlgorithmStatusTier): string {
+  if (tier === 'final') return 'Published standard'
+  if (tier === 'regional') return 'Regional recommendation or selection'
+  return tierBadge(tier)?.label ?? tier
+}
+
 // Import CSV data dynamically (lazy glob)
 const csvModule = import.meta.glob('./pqc_complete_algorithm_reference_*.csv', {
   query: '?raw',
@@ -514,6 +657,16 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
       const carriesSharedSecret = ['KEM', 'Hybrid KEM', 'Classical KEM'].includes(
         row.algorithm_family
       )
+      // Classical key agreement (ECDH, X25519, X448, DH) has no ciphertext:
+      // each side sends a public key. A blank cell there is "not applicable",
+      // not a research gap. RSA rows in the same family state a ciphertext.
+      const ciphertextMissingMeans: EvidenceFieldState =
+        row.algorithm_family === 'Classical KEM' ? 'not-applicable' : 'not-researched'
+      // NIST security categories are defined for post-quantum schemes; the
+      // catalogue leaves them blank for classical and symmetric primitives.
+      const levelMissingMeans: EvidenceFieldState = POST_QUANTUM_FAMILIES.has(row.algorithm_family)
+        ? 'not-specified'
+        : 'not-applicable'
       const evidenceStates: AlgorithmEvidenceStates = {
         publicKey: carriesAsymmetricObjects
           ? statedOr(row.public_key_bytes, 'not-researched')
@@ -522,7 +675,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
           ? statedOr(row.private_key_bytes, 'not-researched')
           : 'not-applicable',
         signatureOrCiphertext: carriesAsymmetricObjects
-          ? statedOr(row.signature_ciphertext_bytes, 'not-researched')
+          ? statedOr(row.signature_ciphertext_bytes, ciphertextMissingMeans)
           : 'not-applicable',
         sharedSecret: carriesSharedSecret
           ? statedOr(row.shared_secret_bytes, 'not-specified')
@@ -531,12 +684,15 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         signOrEncapsulate: statedOr(row.sign_encaps_cycles_relative, 'not-measured'),
         verifyOrDecapsulate: statedOr(row.verifydecaps_cycles_relative, 'not-measured'),
         stackRam: statedOr(row.stack_ram_bytes, 'not-measured'),
+        securityLevel: statedOr(row.nist_security_level, levelMissingMeans),
+        aesEquivalent: statedOr(row.aes_equivalent, 'not-specified'),
       }
       const sizesUnknown =
         carriesAsymmetricObjects &&
-        (isMissingEvidence(row.public_key_bytes) ||
-          isMissingEvidence(row.private_key_bytes) ||
-          isMissingEvidence(row.signature_ciphertext_bytes))
+        (evidenceStates.publicKey !== 'stated' ||
+          evidenceStates.privateKey !== 'stated' ||
+          (evidenceStates.signatureOrCiphertext !== 'stated' &&
+            evidenceStates.signatureOrCiphertext !== 'not-applicable'))
       const perfUnknown =
         isMissingEvidence(row.keygen_cycles_relative) ||
         isMissingEvidence(row.sign_encaps_cycles_relative) ||
@@ -571,6 +727,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         signEncapsCycles: row.sign_encaps_cycles_relative,
         verifyDecapsCycles: row.verifydecaps_cycles_relative,
         stackRAM: parseInt((row.stack_ram_bytes || '0').replace(/[~,]/g, ''), 10) || 0,
+        stackRAMApprox: /^\s*~/.test(row.stack_ram_bytes || ''),
         optimizationTarget: row.optimization_target,
         fipsStandard: row.fips_standard,
         useCaseNotes: row.use_case_notes || '',
