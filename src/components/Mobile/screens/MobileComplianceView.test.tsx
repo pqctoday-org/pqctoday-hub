@@ -10,6 +10,7 @@ import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import {
   buildObligations,
   groupObligations,
+  COLLAPSED_BY_DEFAULT,
 } from '@/components/Compliance/obligations/obligationsModel'
 import { documentsFor, citationIndex } from '@/components/Compliance/requirements/requirementsModel'
 import { CSWP39_STEPS } from '@/components/Compliance/cswp39Data'
@@ -75,7 +76,12 @@ describe('MobileComplianceView', () => {
       industry: 'Finance & Banking',
       region: null,
     })
-    const target = rows.find((r) => r.framework.description)
+    const visibleIds = new Set(
+      groupObligations(rows)
+        .filter((group) => !COLLAPSED_BY_DEFAULT.has(group.tier))
+        .flatMap((group) => group.rows.map((r) => r.framework.id))
+    )
+    const target = rows.find((r) => visibleIds.has(r.framework.id) && r.framework.description)
     expect(target).toBeTruthy()
     fireEvent.click(screen.getByText(target!.framework.label).closest('button')!)
     // The sheet shows the framework's real description — not a filtered
@@ -96,10 +102,15 @@ describe('MobileComplianceView', () => {
       industry: 'Finance & Banking',
       region: null,
     })
-    const target = rows.find((r) => r.framework.label)
+    const visibleIds = new Set(
+      groupObligations(rows)
+        .filter((group) => !COLLAPSED_BY_DEFAULT.has(group.tier))
+        .flatMap((group) => group.rows.map((r) => r.framework.id))
+    )
+    const target = rows.find((r) => visibleIds.has(r.framework.id) && r.framework.label)
     expect(target).toBeTruthy()
     fireEvent.click(screen.getByText(target!.framework.label).closest('button')!)
-    fireEvent.click(screen.getByText('View extracted requirements'))
+    fireEvent.click(screen.getByText('View extracted practices'))
     // Requirements section is now active — the framework's own reason text
     // (verbatim from the applicability engine) appears in the reading pane.
     expect(screen.getAllByText(target!.reason).length).toBeGreaterThan(0)
@@ -112,7 +123,7 @@ describe('MobileComplianceView', () => {
         <MobileComplianceView />
       </MemoryRouter>
     )
-    fireEvent.click(screen.getByText('Requirements'))
+    fireEvent.click(screen.getByText('Sources & Practices'))
     const rows = buildObligations({
       country: 'United States',
       industry: 'Finance & Banking',
@@ -199,13 +210,16 @@ describe('MobileComplianceView', () => {
     expect(screen.queryByText(/§5\.1/)).not.toBeInTheDocument()
   })
 
-  it('states what was cut rather than silently dropping it', () => {
+  it('offers compact Dates, Evidence and For You views and states the larger-screen boundary', () => {
     render(
       <MemoryRouter>
         <MobileComplianceView />
       </MemoryRouter>
     )
-    expect(screen.getByText(/Progress tracking, the full Products catalogue/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Dates' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Evidence' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'For You' })).toBeInTheDocument()
+    expect(screen.getByText(/phone provides compact learning views/i)).toBeInTheDocument()
   })
 })
 
@@ -241,7 +255,7 @@ describe('MobileComplianceView — ?tab= deep links', () => {
 
   it('falls back to Rules & Standards for an unrecognized ?tab= value', () => {
     render(
-      <MemoryRouter initialEntries={['/compliance?tab=foryou']}>
+      <MemoryRouter initialEntries={['/compliance?tab=unknown-view']}>
         <MobileComplianceView />
       </MemoryRouter>
     )

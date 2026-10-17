@@ -34,14 +34,15 @@ const expectsPqc = (row: ObligationRow) =>
   row.framework.pqcRequirement === 'partial'
 
 const DEFAULT_READING: RoleReading = {
-  framing: 'Every instrument that applies to your country and sector, strongest obligation first.',
+  framing:
+    'Every instrument associated with the selected country and sector, strongest reviewed binding classification first.',
   rank: () => 0,
   note: () => null,
 }
 
 const ROLE_READINGS: Record<PersonaId, RoleReading> = {
   executive: {
-    framing: 'Dated obligations first — what binds you, and when it starts to bite.',
+    framing: 'Dated sources first — what may affect the scenario, and when its stated dates occur.',
     // Soonest stated date leads. The coarser "dated before undated" test tied
     // across a whole tier band — almost everything there is dated — so the
     // list never actually reordered for this reader.
@@ -64,7 +65,7 @@ const ROLE_READINGS: Record<PersonaId, RoleReading> = {
     note: (row) =>
       row.requirementCount > 0
         ? `${row.requirementCount} extracted requirement${row.requirementCount === 1 ? '' : 's'} from ${row.requirementSources.length} cited source${row.requirementSources.length === 1 ? '' : 's'}`
-        : 'No requirements extracted yet — review the source directly before recording a treatment decision',
+        : 'No practices extracted yet — compare the catalogue entry with the primary source',
   },
 
   architect: {
@@ -117,7 +118,8 @@ const ROLE_READINGS: Record<PersonaId, RoleReading> = {
   },
 
   curious: {
-    framing: 'What actually binds an organisation like yours, and who says so.',
+    framing:
+      'Which sources may matter to an organisation like the example, and what evidence says so.',
     // Clearest case first: a named regulator, then whatever is best explained.
     // A flat mandatory/not test tied inside the mandatory band, which is where
     // a newcomer spends their attention.
@@ -127,7 +129,7 @@ const ROLE_READINGS: Record<PersonaId, RoleReading> = {
       (row.framework.notes ? 0.5 : 0),
     note: (row) =>
       row.tier === 'mandatory'
-        ? 'A regulator in your country enforces this one'
+        ? 'The catalogue records a binding basis for the source’s stated scope'
         : row.tier === 'advisory'
           ? 'A global standard for your sector — widely adopted, not enforced on you'
           : null,

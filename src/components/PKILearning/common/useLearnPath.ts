@@ -11,11 +11,12 @@
  * picked path is shareable. A bare URL (no `?path=`) does not clear a stored
  * choice — it carries no instruction.
  */
-import { createContext, useCallback, useContext, useEffect } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { MANIFEST_BY_ID } from '../manifest/registry'
-import { filterByLearnPath, resolveLearnPath, validLearnPathId } from '../manifest/learnPathScope'
+import { filterByLearnPath, resolveLearnPath } from '../manifest/learnPathScope'
 import type { LearnPath, ModuleManifest, PathScoped } from '../manifest/types'
 import { useEmbeddedLearn } from '../embeddedLearnContext'
 
@@ -41,7 +42,12 @@ export function useActiveLearnPathId(
   manifest?: ModuleManifest
 ): string | undefined {
   const stored = useModuleStore((s) => s.modules[moduleId]?.activeLearnPath)
-  return validLearnPathId(manifest ?? MANIFEST_BY_ID[moduleId], stored)
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const resolvedManifest = manifest ?? MANIFEST_BY_ID[moduleId]
+  const path = resolveLearnPath(resolvedManifest, stored)
+  if (!path) return undefined
+  if (path.personas && (!persona || !path.personas.includes(persona))) return undefined
+  return path.id
 }
 
 /**
@@ -77,7 +83,14 @@ export interface LearnPathSelection {
  */
 export function useLearnPathSelection(manifest: ModuleManifest): LearnPathSelection {
   const moduleId = manifest.id
-  const paths = manifest.learnPaths ?? []
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const paths = useMemo(
+    () =>
+      (manifest.learnPaths ?? []).filter(
+        (path) => !path.personas || (persona !== null && path.personas.includes(persona))
+      ),
+    [manifest.learnPaths, persona]
+  )
   const setActiveLearnPath = useModuleStore((s) => s.setActiveLearnPath)
   const activePathId = useActiveLearnPathId(moduleId, manifest)
   const location = useLocation()
@@ -90,13 +103,13 @@ export function useLearnPathSelection(manifest: ModuleManifest): LearnPathSelect
   // Arrival: a valid ?path= wins over whatever was stored.
   useEffect(() => {
     if (!hasPaths || !urlPathId) return
-    if (!validLearnPathId(manifest, urlPathId)) return
+    if (!paths.some((path) => path.id === urlPathId)) return
     setActiveLearnPath(moduleId, urlPathId)
-  }, [hasPaths, manifest, moduleId, urlPathId, setActiveLearnPath])
+  }, [hasPaths, moduleId, paths, urlPathId, setActiveLearnPath])
 
   const selectPath = useCallback(
     (pathId: string | undefined) => {
-      const next = validLearnPathId(manifest, pathId) ?? ''
+      const next = paths.some((path) => path.id === pathId) ? pathId! : ''
       setActiveLearnPath(moduleId, next)
       if (isEmbed) return
       // window.location, not the router's location: useSyncDeepLink writes
@@ -110,7 +123,7 @@ export function useLearnPathSelection(manifest: ModuleManifest): LearnPathSelect
         { replace: true }
       )
     },
-    [isEmbed, location.hash, location.pathname, manifest, moduleId, navigate, setActiveLearnPath]
+    [isEmbed, location.hash, location.pathname, moduleId, navigate, paths, setActiveLearnPath]
   )
 
   return { paths, activePath: resolveLearnPath(manifest, activePathId), selectPath }

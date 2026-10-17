@@ -35,6 +35,7 @@ export const LearnPathPicker = ({ manifest, className, compact = false }: LearnP
   const headingId = `${useId()}-path-heading`
   const { paths, activePath, selectPath } = useLearnPathSelection(manifest)
   if (paths.length === 0) return null
+  const allPathsAvailable = paths.length === (manifest.learnPaths?.length ?? 0)
 
   const sectionCount = requiredLearnSectionIds(manifest, activePath?.id).length
   const stepCount = requiredWorkshopStepIds(manifest, activePath?.id).length
@@ -80,15 +81,17 @@ export const LearnPathPicker = ({ manifest, className, compact = false }: LearnP
             </Button>
           )
         })}
-        <Button
-          type="button"
-          variant="outline"
-          aria-pressed={!activePath}
-          onClick={() => selectPath(undefined)}
-          className={option(!activePath)}
-        >
-          <span className="font-semibold">All sections</span>
-        </Button>
+        {allPathsAvailable && (
+          <Button
+            type="button"
+            variant="outline"
+            aria-pressed={!activePath}
+            onClick={() => selectPath(undefined)}
+            className={option(!activePath)}
+          >
+            <span className="font-semibold">All sections</span>
+          </Button>
+        )}
       </div>
       <p
         className={cn('mt-2 text-xs text-muted-foreground', compact && 'sr-only')}

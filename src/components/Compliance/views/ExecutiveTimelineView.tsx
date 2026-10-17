@@ -21,6 +21,8 @@ import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
 import type { ComplianceFramework } from '../../../data/complianceData'
+import { csvFilename, downloadCsv } from '@/utils/csvExport'
+import { buildExecutiveSummaryCsv } from '../executiveSummaryExport'
 
 interface ExecutiveTimelineViewProps {
   /** Override the ambient profile — used for `?country=X&ind=Y` workshop deep-links. */
@@ -30,12 +32,6 @@ interface ExecutiveTimelineViewProps {
   onSelectThreat?: (item: ThreatData) => void
   onSelectTimeline?: (item: TimelineEvent) => void
   onSelectFramework?: (item: ComplianceFramework) => void
-  /**
-   * Triggers the audit-ready CSV export. When provided, a labelled button
-   * renders inside the body so executives don't have to hunt for the icon
-   * in the page header. Reuses the same callback the PageHeader fires.
-   */
-  onExportCsv?: () => void
 }
 
 /**
@@ -58,7 +54,6 @@ export function ExecutiveTimelineView({
   onSelectThreat,
   onSelectTimeline,
   onSelectFramework,
-  onExportCsv,
 }: ExecutiveTimelineViewProps) {
   const { profile, isEmpty, frameworks, library, threats, timeline, derivedFrameworks } =
     useApplicabilityWithPaths(profileOverride)
@@ -88,6 +83,13 @@ export function ExecutiveTimelineView({
     .sort((a, b) => b.item.startYear - a.item.startYear)
     .slice(0, 5)
 
+  const exportLearningWorksheet = () => {
+    downloadCsv(
+      buildExecutiveSummaryCsv(profile, frameworks),
+      csvFilename('pqc-applicability-learning-worksheet')
+    )
+  }
+
   return (
     <div className="space-y-4">
       <div data-section-id="profile-summary" className="scroll-mt-20">
@@ -98,31 +100,30 @@ export function ExecutiveTimelineView({
         <RegulatoryClock mandatoryFrameworks={mandatory} recognizedFrameworks={recognized} />
       </div>
 
-      {onExportCsv && (
-        <div
-          data-section-id="executive-csv-export"
-          className="flex items-start gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5"
-        >
-          <FileDown size={16} className="text-primary mt-0.5 shrink-0" aria-hidden="true" />
-          <div className="flex-1 min-w-0 space-y-1">
-            <p className="text-sm font-semibold text-foreground">Audit-ready compliance summary</p>
-            <p className="text-xs text-muted-foreground">
-              Generates a board-ready CSV of every mandate that applies to your profile.
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onExportCsv}
-            className="h-auto text-xs px-3 py-1.5 shrink-0"
-            data-workshop-target="compliance-executive-csv-export"
-          >
-            <FileDown size={12} />
-            Export audit-ready summary (CSV)
-          </Button>
+      <div
+        data-section-id="executive-csv-export"
+        className="flex items-start gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5"
+      >
+        <FileDown size={16} className="text-primary mt-0.5 shrink-0" aria-hidden="true" />
+        <div className="flex-1 min-w-0 space-y-1">
+          <p className="text-sm font-semibold text-foreground">Applicability learning worksheet</p>
+          <p className="text-xs text-muted-foreground">
+            Export the catalogue evidence and open study prompts for a classroom or tabletop
+            exercise. It is not an audit record, legal opinion, or compliance determination.
+          </p>
         </div>
-      )}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={exportLearningWorksheet}
+          className="h-auto text-xs px-3 py-1.5 shrink-0"
+          data-workshop-target="compliance-executive-csv-export"
+        >
+          <FileDown size={12} />
+          Export learning worksheet (CSV)
+        </Button>
+      </div>
 
       <ValidationGantt
         frameworks={frameworks.map((f) => f.item)}
@@ -133,7 +134,7 @@ export function ExecutiveTimelineView({
         {/* Left column — framework cards by tier */}
         <div className="lg:col-span-2 space-y-3">
           <FrameworkSection
-            title="Mandatory"
+            title="Binding"
             sectionId="frameworks-mandatory"
             frameworks={mandatory}
             linkedEvents={linkedTimeline.byFrameworkId}
@@ -142,7 +143,7 @@ export function ExecutiveTimelineView({
             emptyText="No domestic regulator framework matched — your country may not author its own PQC mandate yet."
           />
           <FrameworkSection
-            title="Recognized"
+            title="Relevant / recognized"
             sectionId="frameworks-recognized"
             frameworks={recognized}
             linkedEvents={linkedTimeline.byFrameworkId}

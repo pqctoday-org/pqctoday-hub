@@ -81,9 +81,9 @@ describe('GrcApplicabilityView', () => {
     expect(screen.getByText('Recent revisions')).toBeInTheDocument()
   })
 
-  it('renders the Applicable frameworks section', () => {
+  it('renders the applicability review queue', () => {
     renderView()
-    expect(screen.getByText('Applicable frameworks')).toBeInTheDocument()
+    expect(screen.getByText('Applicability review queue')).toBeInTheDocument()
   })
 
   it('renders both applicable frameworks', () => {

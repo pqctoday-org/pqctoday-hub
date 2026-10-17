@@ -136,17 +136,17 @@ describe('ExecutiveTimelineView', () => {
     expect(screen.getByText(/Transition plan due/)).toBeInTheDocument()
   })
 
-  it('renders Mandatory section with ASD-ISM and embedded card', () => {
+  it('renders Binding section with ASD-ISM and embedded card', () => {
     renderView()
-    expect(screen.getByText(/Mandatory \(1\)/)).toBeInTheDocument()
+    expect(screen.getByText(/Binding \(1\)/)).toBeInTheDocument()
     // ASD ISM also appears as a label in the new ValidationGantt bars
     // mounted below the Regulatory Clock — allow ≥1 match instead of exactly 1.
     expect(screen.getAllByText('ASD ISM').length).toBeGreaterThanOrEqual(1)
   })
 
-  it('renders Recognized section with FIPS-140-3 + Five Eyes reason', () => {
+  it('renders Relevant section with FIPS-140-3 + Five Eyes reason', () => {
     renderView()
-    expect(screen.getByText(/Recognized \(1\)/)).toBeInTheDocument()
+    expect(screen.getByText(/Relevant \/ recognized \(1\)/)).toBeInTheDocument()
     // FIPS 140-3 also appears as a ValidationGantt bar label.
     expect(screen.getAllByText('FIPS 140-3').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText(/Five Eyes affinity/)).toBeInTheDocument()

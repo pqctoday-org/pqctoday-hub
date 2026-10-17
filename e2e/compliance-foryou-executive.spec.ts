@@ -5,10 +5,10 @@ import { test, expect } from '@playwright/test'
  * Workshop deep-link smoke test for the Australian executive scenario.
  *
  * Hits the For-You tab with `country=Australia&ind=Government & Defense` and
- * verifies the ExecutiveTimelineView renders (regulatory clock, ASD-ISM as
- * Mandatory, FIPS-140-3 as Recognized with Five Eyes affinity, AUS-GOV-001
- * threat). This is the URL the presenter projects during the AU exec
- * workshop.
+ * verifies the ExecutiveTimelineView renders (learning worksheet, a binding
+ * Australian source, FIPS-140-3 as Recognized with Five Eyes affinity, and an
+ * AU-tagged threat). It deliberately avoids treating ASD guidance as binding:
+ * the catalogue must first record a reviewed binding basis for that claim.
  *
  * First-render `timeout: 25_000` (was 10_000, root-caused during a G9/W6
  * gate sweep): the underlying data and applicability logic were confirmed
@@ -50,20 +50,19 @@ test('AU exec workshop deep-link renders ExecutiveTimelineView', async ({ page }
     '/compliance?tab=foryou&country=Australia&ind=' + encodeURIComponent('Government & Defense')
   )
 
-  // Regulatory clock — 2030 cutover line is the loud anchor. Mobile + desktop
-  // both render the same component, so multiple elements is fine; assert the
-  // first is visible.
-  // Both mobile + desktop containers render the view; only the desktop one
-  // is visible at chromium default viewport. Locator filtered to visible.
+  // The education-only export is the view's stable anchor. Both mobile and
+  // desktop containers can render, so use the visible desktop instance.
   await expect(
     page
-      .getByText(/ASD ISM cutover/i)
+      .getByText(/Applicability learning worksheet/i)
       .locator('visible=true')
       .first()
   ).toBeVisible({ timeout: 25_000 })
 
-  // Mandatory framework section — ASD-ISM lives here.
-  await expect(page.getByText('ASD ISM').locator('visible=true').first()).toBeVisible()
+  // Binding framework section — the Privacy Act row has a reviewed basis.
+  await expect(
+    page.getByText('Australian Privacy Act (APPs)').locator('visible=true').first()
+  ).toBeVisible()
 
   // Recognized framework section — FIPS-140-3 with Five Eyes affinity reason.
   await expect(page.getByText('FIPS 140-3').locator('visible=true').first()).toBeVisible()

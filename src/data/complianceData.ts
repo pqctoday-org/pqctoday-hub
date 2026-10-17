@@ -17,6 +17,7 @@ export type BodyType =
   | 'compliance_framework'
   | 'industry_alliance'
   | 'regulatory_body'
+  | 'executive_order'
 
 export type DeadlinePhase = 'active' | 'imminent' | 'near' | 'mid' | 'long' | 'ongoing'
 
@@ -38,7 +39,7 @@ export type DeadlineKind = 'fixed' | 'phased' | 'ongoing' | 'none' | 'unknown'
  * - `guidance` framework publishes PQC guidance but does not mandate adoption
  * - `expected` PQC mandate anticipated but not yet codified (e.g. CRA, FedRAMP)
  */
-export type PQCRequirement = 'yes' | 'no' | 'partial' | 'guidance' | 'expected'
+export type PQCRequirement = 'yes' | 'no' | 'partial' | 'guidance' | 'expected' | 'unknown'
 
 // Display label for each PQCRequirement value. Pure-moved out of
 // ObligationsTab.tsx (2026-08-24 audit R3.5) — that file also exports the
@@ -51,6 +52,7 @@ export const PQC_REQUIREMENT_LABEL: Record<PQCRequirement, string> = {
   expected: 'Expected',
   guidance: 'Guidance',
   no: 'None',
+  unknown: 'Unreviewed',
 }
 
 export interface ComplianceFramework {
@@ -208,6 +210,7 @@ const validBodyTypes: BodyType[] = [
   'compliance_framework',
   'industry_alliance',
   'regulatory_body',
+  'executive_order',
 ]
 
 // ISO alpha-2 → full country name, derived from the canonical jurisdictions CSV.
@@ -288,9 +291,12 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
 >(modules, /compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/, (row) => {
   if (!row.id || !row.label) return null
 
-  const bodyType: BodyType = validBodyTypes.includes(row.body_type as BodyType)
-    ? (row.body_type as BodyType)
-    : 'compliance_framework'
+  if (row.body_type && !validBodyTypes.includes(row.body_type as BodyType)) {
+    throw new Error(`Invalid compliance body_type "${row.body_type}" for ${row.id}`)
+  }
+  // A blank is legacy "not classified", not an invalid enum token. Keep it in
+  // the general framework bucket until the source row is reviewed.
+  const bodyType = row.body_type ? (row.body_type as BodyType) : 'compliance_framework'
 
   const deadline = row.deadline || 'Ongoing'
 
@@ -339,10 +345,18 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     requiresPQC: parseBoolYesNo(row.requires_pqc),
     pqcRequirement: ((): PQCRequirement => {
       const v = (row.requires_pqc || '').trim().toLowerCase()
-      if (v === 'yes' || v === 'no' || v === 'partial' || v === 'guidance' || v === 'expected') {
+      if (!v) return 'unknown'
+      if (
+        v === 'yes' ||
+        v === 'no' ||
+        v === 'partial' ||
+        v === 'guidance' ||
+        v === 'expected' ||
+        v === 'unknown'
+      ) {
         return v
       }
-      return 'no'
+      throw new Error(`Invalid requires_pqc "${row.requires_pqc}" for ${row.id}`)
     })(),
     deadline,
     deadlineYear,

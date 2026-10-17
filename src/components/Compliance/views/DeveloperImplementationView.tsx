@@ -55,10 +55,10 @@ interface DeveloperImplementationViewProps {
 
 // Algorithm family → /algorithms deep-link highlight token. Reuses the same
 // highlight schema as the executive "View Top 5" button in AlgorithmsView.
-const CI_GATE_YAML = `# .github/workflows/pqc-compliance.yml
-# Fail the build if any classical-only algorithm appears in your CBOM.
-# Drop this into a new repo or extend an existing CI workflow.
-name: PQC Compliance Gate
+export const CI_GATE_YAML = `# .github/workflows/pqc-inventory-policy.yml
+# Example inventory policy. A finding requires review; it is not, by itself,
+# a legal compliance determination.
+name: PQC Inventory Policy
 
 on:
   pull_request:
@@ -77,15 +77,18 @@ jobs:
             --required-only \\
             -o cbom.json .
 
-      - name: Fail if classical-only algorithms detected
+      - name: Evaluate the inventory policy
         run: |
-          jq -e '.components[]
+          if jq -e '.components[]
             | select(.cryptoProperties.algorithmProperties.executionEnvironment == "software")
             | select(.cryptoProperties.algorithmProperties.implementationPlatform | test("rsa|ecdsa|ecdh"; "i"))
             | select((.cryptoProperties.algorithmProperties.cryptoFunctions // [])
-              | map(test("ml-kem|ml-dsa|slh-dsa|hybrid"; "i")) | any | not)' cbom.json \\
-            && (echo "::error::Classical-only algorithm found without hybrid/PQC pair" && exit 1) \\
-            || echo "PQC compliance gate passed"
+              | map(test("ml-kem|ml-dsa|slh-dsa|hybrid"; "i")) | any | not)' cbom.json >/dev/null; then
+            echo "::error::Inventory policy finding: classical implementation has no recorded PQC/hybrid companion"
+            exit 1
+          else
+            echo "No inventory-policy findings detected"
+          fi
 `
 
 function DevModuleCertSummary() {
@@ -110,10 +113,11 @@ function CIGateSnippet() {
     <section data-section-id="developer-ci-gate" className="glass-panel p-4 space-y-3 scroll-mt-20">
       <header className="flex items-center gap-2 flex-wrap">
         <Terminal size={16} className="text-primary" />
-        <h3 className="text-base font-semibold text-foreground">Wire a PQC gate into CI</h3>
+        <h3 className="text-base font-semibold text-foreground">
+          Wire an inventory policy into CI
+        </h3>
         <span className="text-xs text-muted-foreground">
-          Drop this GitHub Actions snippet into your repo to fail builds that ship classical-only
-          crypto
+          Example review gate; tailor it to your architecture and obligations
         </span>
         <Button
           variant="outline"
@@ -130,7 +134,8 @@ function CIGateSnippet() {
         <code>{CI_GATE_YAML}</code>
       </pre>
       <p className="text-xs text-muted-foreground">
-        Pairs with the algorithm coverage strip above — anything missing here is a blocker. Uses{' '}
+        A failure is an inventory finding, not a compliance verdict. Confirm the component, protocol
+        context, migration plan and applicable obligation before blocking release. Uses{' '}
         <a
           href="https://github.com/CycloneDX/cdxgen"
           target="_blank"

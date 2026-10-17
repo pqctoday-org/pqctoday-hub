@@ -100,7 +100,7 @@ describe('For You framework pop-up', () => {
   }, 15000)
 })
 
-describe('Requirements / Products params through the page', () => {
+describe('Sources & Practices / Products params through the page', () => {
   beforeEach(() => {
     window.localStorage.clear()
     usePersonaStore.setState({
@@ -110,9 +110,9 @@ describe('Requirements / Products params through the page', () => {
     })
   })
 
-  it('?reqfw= alone opens the Requirements tab; leaving the tab drops it', () => {
+  it('?reqfw= alone opens the Sources & Practices tab; leaving the tab drops it', () => {
     renderAt(`/compliance?reqfw=${encodeURIComponent(FW.id)}`)
-    expect(screen.getByRole('tab', { name: /Requirements/ })).toHaveAttribute(
+    expect(screen.getByRole('tab', { name: /Sources & Practices/ })).toHaveAttribute(
       'aria-selected',
       'true'
     )

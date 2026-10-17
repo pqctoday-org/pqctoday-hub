@@ -79,16 +79,14 @@ describe('buildObligations', () => {
     const rows = buildObligations(EU_FINANCE)
     expect(rows.length).toBeGreaterThan(20)
     const anssi = rows.find((r) => r.framework.id === 'ANSSI')
-    expect(anssi?.tier).toBe('mandatory')
-    expect(anssi?.reason).toBe('Your regulator: ANSSI')
+    expect(anssi?.tier).toBe('advisory')
+    expect(anssi?.reason).toMatch(/not a binding obligation/)
   })
 
-  it('tiers national regulators carried as regulatory_body as mandatory', () => {
-    // Regression companion to the regulatorMap fix: ACPR and AMF are French
-    // regulators and must not read as foreign authorities here.
+  it('does not turn a national regulator into a mandate when the reviewed row is informational', () => {
     const rows = buildObligations(EU_FINANCE)
     for (const id of ['ACPR', 'AMF-FR']) {
-      expect(rows.find((r) => r.framework.id === id)?.tier).toBe('mandatory')
+      expect(rows.find((r) => r.framework.id === id)?.tier).toBe('advisory')
     }
   })
 

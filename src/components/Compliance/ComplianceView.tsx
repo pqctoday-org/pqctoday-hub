@@ -93,9 +93,11 @@ import { ProgressTab } from './progress/ProgressTab'
 import { RequirementsTab } from './requirements/RequirementsTab'
 import { ProductsTab } from './products/ProductsTab'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
+import { LearningFrameBanner } from './LearningFrameBanner'
+import { EvidenceClassLegend } from './EvidenceClassLegend'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
-// Four tabs, same order for every persona. Persona is a LENS (it tunes content
+// Eight tabs, same order for every persona. Persona is a LENS (it tunes content
 // in place via the shared control deck) — it never reorders the bar.
 // StableTab / STABLE_TABS moved to '@/data/complianceStableTabs' (pure-move
 // extraction E-2, IMPLEMENTATION-PLAN.md §5.4) so the mobile layer can read
@@ -168,12 +170,10 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  * output and only the rendering differs.
  */
 function ForYouSection({
-  onExportCsv,
   framework,
   onOpenFramework,
   onCloseFramework,
 }: {
-  onExportCsv?: () => void
   /** The `?framework=` framework — the popover IS the URL param (see below). */
   framework: ComplianceFramework | null
   onOpenFramework: (fw: ComplianceFramework) => void
@@ -227,7 +227,7 @@ function ForYouSection({
   return (
     <>
       {persona === 'executive' ? (
-        <ExecutiveTimelineView {...callbacks} onExportCsv={onExportCsv} />
+        <ExecutiveTimelineView {...callbacks} />
       ) : persona === 'grc' ? (
         <GrcApplicabilityView {...callbacks} />
       ) : persona === 'architect' ? (
@@ -793,7 +793,7 @@ export const ComplianceView = ({
         <PageHeader
           icon={ShieldCheck}
           title="Standardization, Certification & Compliance"
-          description="Which standards, certification schemes and regulations apply to your context — who defines the algorithms, who validates the products, and who mandates adoption by a date. A reference to find what binds you, not a workspace."
+          description="Learn who defines algorithms, how products are validated or evaluated, and how to investigate which regulatory sources may matter in a real engagement."
         />
       )}
 
@@ -895,31 +895,46 @@ export const ComplianceView = ({
           phone — ScrollFadeContainer adds that cue without changing the
           scroll behavior itself. */}
       <div id="compliance-tabs">
+        {!simEmbed && (
+          <div className="mb-3">
+            <LearningFrameBanner />
+          </div>
+        )}
         <ScrollFadeContainer
           className="mb-4"
           scrollClassName="flex items-center gap-1 border-b border-border"
           scrollProps={{ role: 'tablist', 'aria-label': 'Compliance views' }}
         >
-          {STABLE_TABS.map(({ id, label, icon: Icon }) => {
+          {STABLE_TABS.map(({ id, label, icon: Icon, group }, index) => {
             const active = activeStableTab === id
             return (
-              <Button
-                key={id}
-                type="button"
-                variant="ghost"
-                role="tab"
-                aria-selected={active}
-                data-workshop-target={id === 'foryou' ? 'compliance-tab-foryou' : undefined}
-                onClick={() => handleStableTabSelect(id)}
-                className={`h-auto shrink-0 gap-1.5 rounded-none border-b-2 px-4 py-2.5 text-sm font-semibold ${
-                  active
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Icon size={14} />
-                {label}
-              </Button>
+              <div key={id} className="contents">
+                {(index === 0 || STABLE_TABS[index - 1].group !== group) && (
+                  <span
+                    className="shrink-0 border-l border-border pl-3 text-[9px] font-bold uppercase tracking-wide text-muted-foreground first:border-l-0 first:pl-0"
+                    aria-hidden="true"
+                  >
+                    {group}
+                  </span>
+                )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  role="tab"
+                  aria-selected={active}
+                  aria-label={`${group}: ${label}`}
+                  data-workshop-target={id === 'foryou' ? 'compliance-tab-foryou' : undefined}
+                  onClick={() => handleStableTabSelect(id)}
+                  className={`h-auto shrink-0 gap-1.5 rounded-none border-b-2 px-3 py-2.5 text-sm font-semibold ${
+                    active
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <Icon size={14} />
+                  {label}
+                </Button>
+              </div>
             )
           })}
         </ScrollFadeContainer>
@@ -946,7 +961,7 @@ export const ComplianceView = ({
             <SectionHeader
               icon={<ShieldCheck size={20} className="text-primary" />}
               title="Rules & Standards"
-              description="The instruments that bind your country and sector, why each one applies, and what it says about post-quantum cryptography. Tiers come from the same applicability engine For You uses."
+              description="Explore instruments associated with the selected country and sector, why the catalogue included them, and what their sources say about post-quantum cryptography. Inclusion is not an applicability determination."
             />
             <ObligationsTab
               profile={forYouProfile}
@@ -964,8 +979,8 @@ export const ComplianceView = ({
           <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<BookOpen size={20} className="text-primary" />}
-              title="Requirements"
-              description="What each obligation requires, taken from the documents it cites — with the verbatim quote, where it appears, and which model extracted it. A reading list, not a checklist."
+              title="Sources & Practices"
+              description="Study machine-extracted passages from cited documents, where they appear, and which model extracted them. Verify the primary source; this is a reading exercise, not a legal checklist."
             />
             <RequirementsTab
               profile={forYouProfile}
@@ -981,7 +996,7 @@ export const ComplianceView = ({
             <SectionHeader
               icon={<CalendarClock size={20} className="text-primary" />}
               title="Progress"
-              description="Every date the instruments in your scope actually state, in one ordered list — replacing the three separate timelines this page used to draw."
+              description="Compare dates stated by sources associated with the selected profile. A past or upcoming date does not determine your organisation's implementation status."
             />
             <ProgressTab profile={forYouProfile} onOpenDetail={(fw) => openDrawer(fw)} />
           </div>
@@ -993,7 +1008,7 @@ export const ComplianceView = ({
             <SectionHeader
               icon={<PackageSearch size={20} className="text-primary" />}
               title="Products"
-              description="Which of the things you run hold a certificate, under which scheme, and whether it covers post-quantum algorithms or only classical ones. Inventory comes from the list you keep on Migrate."
+              description="Learn to distinguish algorithm validation, module validation, and evaluated-product claims using products selected in Migrate. A record does not prove that a deployment is compliant."
             />
             <ProductsTab
               openProductId={prodParam}
@@ -1024,7 +1039,12 @@ export const ComplianceView = ({
               description="Certification records snapshot from NIST CMVP (FIPS 140-3), NIST CAVP and Common Criteria sources (CC Portal, ANSSI, ENISA EUCC) — searchable FIPS 140-3 module validations, NIST CAVP algorithm validations, Common Criteria / EUCC certificates and ANSSI CSPN certificates."
             />
             <RecordsGlossaryStrip />
-            <PqcCertificationTrendChart data={scopedRecords} asOf={lastUpdated} />
+            <EvidenceClassLegend />
+            <PqcCertificationTrendChart
+              data={scopedRecords}
+              asOf={lastUpdated}
+              recordScope={recScope}
+            />
             <ComplianceTable
               data={data}
               onRefresh={refresh}
@@ -1070,7 +1090,6 @@ export const ComplianceView = ({
               description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by your role (top bar) and your assessment profile."
             />
             <ForYouSection
-              onExportCsv={handleExportCsv}
               framework={drawerFramework}
               onOpenFramework={(fw) => {
                 if (fw.id !== frameworkParam) openFrameworkParam(fw.id)

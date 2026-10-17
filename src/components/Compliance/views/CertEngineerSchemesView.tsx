@@ -22,8 +22,11 @@ import { ArrowRight, BadgeCheck, FlaskConical, Landmark } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useComplianceRefresh } from '../services'
 import { ModuleCertificationStatus } from './parts/ModuleCertificationStatus'
-import { complianceFrameworks, type ComplianceFramework } from '../../../data/complianceData'
+import type { ComplianceFramework } from '../../../data/complianceData'
 import type { UserProfile } from '../../../utils/applicabilityEngine'
+import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
+import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
+import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
@@ -72,6 +75,15 @@ const TEST_LINKS = [
   },
 ] as const
 
+const READINESS_ITEMS = [
+  'Can you identify the module boundary and approved mode?',
+  'Can you distinguish the software, firmware, hardware and operational environments?',
+  'Can you trace each claimed approved algorithm to the relevant ACVP/CAVP evidence?',
+  'Can you explain the entropy-source and ESV evidence boundary?',
+  'Can you compare the security policy, caveats and evidence with the target configuration?',
+  'Can you identify which questions require a laboratory, vendor or CMVP interpretation?',
+] as const
+
 function CertRecordsSummary() {
   const { data } = useComplianceRefresh()
   return (
@@ -89,21 +101,76 @@ function CertRecordsSummary() {
 }
 
 export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
+  profileOverride,
   onSelectFramework,
 }) => {
+  const { profile, isEmpty, frameworks } = useApplicabilityWithPaths(profileOverride)
   const { expecting, others } = useMemo(() => {
-    const schemes = complianceFrameworks.filter((fw) => fw.bodyType === 'certification_body')
+    const schemes = frameworks
+      .map((result) => result.item)
+      .filter((fw) => fw.bodyType === 'certification_body')
     const expectsPqc = (fw: ComplianceFramework) =>
       Boolean(fw.pqcRequirement && fw.pqcRequirement in PQC_EXPECTATION)
     return {
       expecting: schemes.filter(expectsPqc),
       others: schemes.filter((fw) => !expectsPqc(fw)),
     }
-  }, [])
+  }, [frameworks])
+
+  if (isEmpty) {
+    return (
+      <ProfileEditor
+        profile={profile}
+        message="Set your industry and country to scope certification schemes and submission evidence."
+      />
+    )
+  }
 
   return (
     <div className="space-y-4">
+      <ProfileSummary profile={profile} editable />
       <CertRecordsSummary />
+
+      <section className="glass-panel p-4 space-y-3" aria-labelledby="cert-readiness-heading">
+        <header className="flex flex-wrap items-center gap-2">
+          <BadgeCheck size={16} className="text-primary" />
+          <h3 id="cert-readiness-heading" className="text-base font-semibold text-foreground">
+            Learn the submission evidence chain
+          </h3>
+          <span className="text-xs text-muted-foreground">
+            Guided questions — not a readiness assessment or submission tracker
+          </span>
+        </header>
+        <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
+          {READINESS_ITEMS.map((item) => (
+            <li key={item} className="rounded-lg border border-border bg-card/30 p-2.5 text-xs">
+              <span className="font-semibold text-status-warning">Verify</span>{' '}
+              <span className="text-foreground">{item}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs text-muted-foreground">
+          Use the current{' '}
+          <a
+            href="https://csrc.nist.gov/projects/cryptographic-module-validation-program/cmvp-fips-140-3-management-manual"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            CMVP Management Manual
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://csrc.nist.gov/Projects/cryptographic-module-validation-program/fips-140-3-ig-announcements"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            FIPS 140-3 Implementation Guidance
+          </a>
+          ; do not rely on a cached checklist alone.
+        </p>
+      </section>
 
       <section
         data-section-id="cert-engineer-schemes"
@@ -113,32 +180,39 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
           <Landmark size={16} className="text-primary" />
           <h3 className="text-base font-semibold text-foreground">Certification schemes</h3>
           <span className="text-xs text-muted-foreground">
-            Schemes that already expect post-quantum cryptography, first
+            In-scope schemes with recorded PQC requirements or guidance, first
           </span>
         </header>
-        <ul className="space-y-2">
-          {expecting.map((fw) => (
-            <li
-              key={fw.id}
-              className="flex flex-wrap items-baseline justify-between gap-2 rounded-lg border border-border bg-card/30 p-3"
-            >
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => onSelectFramework?.(fw)}
-                className="h-auto px-0 py-0 text-sm font-semibold text-foreground hover:text-primary"
+        {expecting.length === 0 ? (
+          <p className="text-xs text-muted-foreground">
+            No certification-body framework matched this profile. Broaden the profile or review the
+            complete Landscape without treating it as applicable by default.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {expecting.map((fw) => (
+              <li
+                key={fw.id}
+                className="flex flex-wrap items-baseline justify-between gap-2 rounded-lg border border-border bg-card/30 p-3"
               >
-                {fw.label}
-              </Button>
-              <span className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                <span className="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-primary">
-                  {PQC_EXPECTATION[fw.pqcRequirement ?? '']}
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => onSelectFramework?.(fw)}
+                  className="h-auto px-0 py-0 text-sm font-semibold text-foreground hover:text-primary"
+                >
+                  {fw.label}
+                </Button>
+                <span className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                  <span className="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-primary">
+                    {PQC_EXPECTATION[fw.pqcRequirement ?? '']}
+                  </span>
+                  {fw.deadline || 'no date recorded'}
                 </span>
-                {fw.deadline || 'no date recorded'}
-              </span>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        )}
         {others.length > 0 && (
           <p className="text-xs text-muted-foreground">
             {others.length} more certification schemes record no PQC requirement yet.{' '}

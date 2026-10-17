@@ -335,7 +335,11 @@ export const FheFundamentalsSection: React.FC = () => (
               'Hardness of lattice problems',
             ],
             ['Data inside the server', 'Plaintext, inside the enclave', 'Always ciphertext'],
-            ['Side channels', 'Main attack surface', 'Nothing to leak on the server'],
+            [
+              'Side channels',
+              'Main attack surface',
+              'Plaintext is absent, but timing, traffic, access patterns, circuit shape, dimensions and implementation leakage remain',
+            ],
             ['Speed', 'Near native', '10³–10⁶× slower; needs GPU/FPGA at scale'],
             [
               'Integrity of the result',
@@ -356,6 +360,22 @@ export const FheFundamentalsSection: React.FC = () => (
           ))}
         </tbody>
       </table>
+    </div>
+
+    <div className="rounded-lg border border-warning/30 bg-warning/5 p-4 space-y-2">
+      <h3 className="text-sm font-bold text-foreground">Threat model before scheme choice</h3>
+      <p className="text-xs text-muted-foreground">
+        FHE primarily hides plaintext from the evaluator. It does not automatically prove that the
+        evaluator ran the right circuit, authenticate ciphertexts, hide request timing or size,
+        conceal every access pattern, protect a compromised client, or authorize who may receive a
+        decrypted result. Record the evaluator, client, custodian and result recipient separately,
+        then state which may be malicious or collude.
+      </p>
+      <p className="text-xs text-muted-foreground">
+        If correctness against a malicious evaluator matters, add an integrity mechanism such as a
+        verifiable-computation proof or an application-specific check. Circuit privacy and model
+        privacy are separate requirements from input confidentiality.
+      </p>
     </div>
 
     <FhePromiseBox />
@@ -409,6 +429,23 @@ export const FheSchemesSection: React.FC = () => (
     </div>
 
     <FheFixedPointAndFit />
+
+    <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
+      <h3 className="text-sm font-bold text-foreground">Parameter-selection checklist</h3>
+      <ol className="list-decimal pl-5 text-xs text-muted-foreground space-y-1">
+        <li>Define plaintext type, range, packing and required output precision.</li>
+        <li>
+          Compile or estimate multiplicative depth, rotations, comparisons and refresh points.
+        </li>
+        <li>Choose classical and quantum security targets and the secret distribution.</li>
+        <li>Set decryption-failure probability and the permitted precision or error budget.</li>
+        <li>Run the estimator used by the selected library; do not infer security from N alone.</li>
+        <li>Pin the scheme, parameters, library version and compiler settings in the evidence.</li>
+        <li>
+          Benchmark the complete circuit, including key generation, transfer and bootstrapping.
+        </li>
+      </ol>
+    </div>
 
     <FheOperationsBox />
 
@@ -1119,9 +1156,12 @@ export const FheCustodySection: React.FC<{ onOpenLifecycleView?: OpenLifecycleVi
       </h3>
       <p className="text-xs text-muted-foreground">
         Decryption computes <span className="font-mono">c0 + c1·s</span> on whatever ciphertext it
-        receives, and it cannot tell a genuine result from a crafted input. So{' '}
-        <strong>whoever may ask the token to decrypt can recover the FHE secret key</strong>. In
-        CKKS one crafted request is enough: <span className="font-mono">c0 = 0, c1 = Δ</span>{' '}
+        receives, and it cannot tell a genuine result from a crafted input. So an{' '}
+        <strong>
+          unrestricted or insufficiently checked decryption interface can become a key-recovery
+          oracle
+        </strong>
+        . In CKKS one crafted request is enough: <span className="font-mono">c0 = 0, c1 = Δ</span>{' '}
         returns <span className="font-mono">Δ·s</span>. In exact schemes such as TFHE, BFV and BGV
         the key comes out bit by bit over many requests (Loftus et al. 2010; Chenal &amp; Tang
         2014). A crafted input need not look odd: a fresh encryption of a known value plus a small,
@@ -1350,6 +1390,7 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
           <thead>
             <tr className="border-b border-border">
               <th className="text-left p-2 text-muted-foreground font-medium">Library</th>
+              <th className="text-left p-2 text-muted-foreground font-medium">Version</th>
               <th className="text-left p-2 text-muted-foreground font-medium">License</th>
               <th className="text-left p-2 text-muted-foreground font-medium">Schemes</th>
               <th className="text-left p-2 text-muted-foreground font-medium">WebAssembly</th>
@@ -1368,6 +1409,13 @@ export const FheImplementationsSection: React.FC<{ onOpenLifecycleView?: OpenLif
                     {lib.name}
                   </a>
                   <div className="text-[10px] text-muted-foreground">{lib.maintainer}</div>
+                </td>
+                <td className="p-2 text-muted-foreground whitespace-nowrap">
+                  <div>Current: {lib.currentVersion}</div>
+                  <div className="text-[10px]">
+                    Tested: {lib.testedVersion ?? 'not tested here'}
+                  </div>
+                  <div className="text-[10px]">Checked {lib.checkedOn}</div>
                 </td>
                 <td className="p-2 text-muted-foreground font-mono">{lib.license}</td>
                 <td className="p-2 text-muted-foreground">{lib.schemes}</td>

@@ -140,11 +140,12 @@ export function CSWP39AgilityExplorer({
           </span>
           <div>
             <h2 className="text-base font-bold text-foreground">
-              NIST CSWP.39 — Achieving Cryptographic Agility
+              Operational playbook based on NIST CSWP 39
             </h2>
             <p className="text-xs text-muted-foreground">
-              A continuously repeated 5-step process · 4-tier maturity model ·{' '}
-              {CSWP39_SOURCE_METADATA.documentVersion} · {CSWP39_SOURCE_METADATA.publicationDate}
+              PQC Today synthesis — not NIST&apos;s section structure · 5-step cycle · 4-tier
+              self-check · {CSWP39_SOURCE_METADATA.documentVersion} ·{' '}
+              {CSWP39_SOURCE_METADATA.publicationDate}
             </p>
           </div>
         </div>
@@ -317,7 +318,7 @@ function CycleView({
           {/* What it requires */}
           <div>
             <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              What it requires
+              What the playbook recommends
             </h4>
             <ul className="space-y-1.5">
               {sel.requirements.map((r, i) => (
@@ -600,7 +601,7 @@ function EvidenceView({
                 <tr>
                   <th className="px-4 py-2.5 font-semibold">Regulation</th>
                   <th className="px-4 py-2.5 font-semibold">Obligation</th>
-                  <th className="px-4 py-2.5 font-semibold">Deliverable that satisfies it</th>
+                  <th className="px-4 py-2.5 font-semibold">Example evidence that supports it</th>
                   <th className="px-4 py-2.5 font-semibold">Phase</th>
                 </tr>
               </thead>

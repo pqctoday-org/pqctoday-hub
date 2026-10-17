@@ -17,7 +17,7 @@ export const RECORDS_GLOSSARY: GlossaryTerm[] = [
   {
     term: 'FIPS 140-3',
     short: 'module validation',
-    def: 'NIST cryptographic module validation standard (supersedes 140-2). CMVP certifies the whole module. Required for US federal procurement.',
+    def: 'Security requirements for cryptographic modules. Under CMVP, a certificate applies to a defined module, version, operational environment and approved mode—not automatically to an entire product or deployment.',
   },
   {
     term: 'ACVP',
@@ -32,7 +32,7 @@ export const RECORDS_GLOSSARY: GlossaryTerm[] = [
   {
     term: 'CC',
     short: 'product evaluation',
-    def: 'Common Criteria (ISO/IEC 15408). Issued under national schemes, mutually recognised under CCRA up to EAL2/EAL4.',
+    def: 'Common Criteria (ISO/IEC 15408) security evaluation against a stated Security Target under a national scheme. Recognition depends on the CCRA arrangement, assurance components and scheme scope; it is not universal product approval.',
   },
   {
     term: 'CSPN',
@@ -42,12 +42,12 @@ export const RECORDS_GLOSSARY: GlossaryTerm[] = [
   {
     term: 'EUCC',
     short: 'EU CC scheme',
-    def: 'European Union Common Criteria scheme, operative 2024 under the Cybersecurity Act. Supersedes SOG-IS inside the EU.',
+    def: 'The EU cybersecurity certification scheme based on Common Criteria under the Cybersecurity Act. Certificates and assurance claims remain scoped to the evaluated product and its certification documentation.',
   },
   {
     term: 'CNSA 2.0',
     short: 'NSS mandate',
-    def: 'NSA Commercial National Security Algorithm suite v2.0 — binding PQC requirements for US National Security Systems, full transition by 2035.',
+    def: 'NSA algorithm and transition profile for US National Security Systems. Its practical mandate comes through applicable NSS policy and implementation direction; the suite is not a general private-sector regulation.',
   },
   {
     term: 'HNDL',
