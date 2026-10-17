@@ -58,27 +58,26 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // 3x sig+key sum for ML-DSA-44 — matches the "Sigs + Keys" traditional-chain figure
-    // (11,196 B) shown in MTCIntroduction.tsx's ML-DSA-44 Handshake Size Comparison table.
+    // 3 signatures + 2 public keys for ML-DSA-44 (leaf and intermediate certificates plus
+    // CertificateVerify; the root is not sent) — matches the 9,884 B "Sigs + Keys"
+    // traditional-chain figure in MTCIntroduction.tsx's ML-DSA-44 Handshake Size Comparison table.
     mlDsa44Chain: `${(
-      (3 *
-        (getAlgorithm('ML-DSA-44').signatureOrCiphertextBytes +
-          getAlgorithm('ML-DSA-44').publicKeyBytes)) /
+      (3 * getAlgorithm('ML-DSA-44').signatureOrCiphertextBytes +
+        2 * getAlgorithm('ML-DSA-44').publicKeyBytes) /
       1024
     ).toFixed(1)} KB`,
-    // 3x sig+key sum for SLH-DSA-SHA2-128s — same traditional-chain calculation, used for
-    // the "hash-based" comparison row in workshop/SizeComparison.tsx.
+    // 3 signatures + 2 public keys for SLH-DSA-SHA2-128s — same traditional-chain calculation,
+    // used for the "hash-based" comparison row in workshop/SizeComparison.tsx.
     slhDsaChain: `${(
-      (3 *
-        (getAlgorithm('SLH-DSA-SHA2-128s').signatureOrCiphertextBytes +
-          getAlgorithm('SLH-DSA-SHA2-128s').publicKeyBytes)) /
+      (3 * getAlgorithm('SLH-DSA-SHA2-128s').signatureOrCiphertextBytes +
+        2 * getAlgorithm('SLH-DSA-SHA2-128s').publicKeyBytes) /
       1024
     ).toFixed(0)} KB`,
     // Matches MTC_LANDMARK_PROOF_BYTES in data/mtcConstants.ts (23 sibling hashes x 32
-    // bytes) and the "736 bytes" figure quoted in MTCIntroduction.tsx for a ~4.4M-entry
+    // bytes) and the "736 bytes" figure quoted in MTCIntroduction.tsx for a ~5.4M-entry
     // LANDMARK subtree. A standalone certificate's proof is the smaller
-    // MTC_STANDALONE_PROOF_BYTES (384 B, 12 hashes over ~2,500 entries) — both are
-    // projected side by side in draft-ietf-plants-merkle-tree-certs-04 §6.4, and this
+    // MTC_STANDALONE_PROOF_BYTES (384 B, 12 hashes over ~3,000 entries) — both are
+    // projected side by side in draft-ietf-plants-merkle-tree-certs-07 §6.5, and this
     // module previously charged the landmark figure to both. Was originally an
     // unverifiable "900 bytes" approximation.
     mtcOverhead: '736 bytes (landmark) / 384 bytes (standalone)',

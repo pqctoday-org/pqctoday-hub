@@ -123,10 +123,10 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               <p className="text-xs text-muted-foreground">
                 Each certificate holder receives a compact <strong>inclusion proof</strong>: the
                 chain of sibling hashes from their leaf up to the root. Its size depends only on how
-                large the subtree is: 384 bytes for a standalone certificate&apos;s ~2,500-entry
+                large the subtree is: 384 bytes for a standalone certificate&apos;s ~3,000-entry
                 checkpoint subtree (12 hashes &times; 32 bytes), 736 bytes for a landmark subtree of
-                ~4.4 million (23 hashes &times; 32 bytes) &mdash; both projected in the spec&apos;s
-                own size estimates.
+                ~5.4 million (23 hashes &times; 32 bytes) &mdash; both projected in the draft&apos;s
+                own size estimates (section 6.5).
               </p>
             </div>
           </div>
@@ -308,8 +308,10 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               Landmark certificates carry <em>zero</em> embedded signatures. Instead of embedding
               cosignatures, relying parties periodically pre-sync &ldquo;landmark&rdquo; subtrees
               out-of-band (the spec suggests allocating landmarks at regular intervals, e.g. every
-              hour), then verify inclusion proofs against their cached landmark root &mdash; no
-              signature transmitted in the TLS handshake at all.
+              hour), then verify inclusion proofs against their cached landmark root &mdash; the
+              certificate carries no CA signature at all. The server still signs the handshake
+              itself (CertificateVerify), so that signature and the server&apos;s public key remain
+              in the handshake.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -317,7 +319,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                 <div className="text-xs font-bold text-primary mb-1">1. Landmark allocation</div>
                 <p className="text-xs text-muted-foreground">
                   Periodically (e.g., every hour), the CA designates its latest checkpoint tree size
-                  as a landmark. With projected short-lived certificate issuance rates (~4.4M
+                  as a landmark. With projected short-lived certificate issuance rates (~5.4M
                   certs/hour for a large CA), each landmark subtree spans millions of entries.
                 </p>
               </div>
@@ -333,9 +335,11 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               <div className="bg-muted/50 rounded-lg p-3 border border-border">
                 <div className="text-xs font-bold text-warning mb-1">3. Proof-only handshake</div>
                 <p className="text-xs text-muted-foreground">
-                  The TLS server presents only the certificate assertion + 23-hash inclusion proof
-                  (736 B). The client verifies against its cached landmark root. Total per-handshake
-                  overhead for ML-DSA-44: <strong>~936 bytes</strong>.
+                  The TLS server presents its certificate (including its 1,312 B public key) with a
+                  23-hash inclusion proof (736 B), then signs the handshake (2,420 B
+                  CertificateVerify). The client verifies the proof against its cached landmark
+                  root. Total for ML-DSA-44: <strong>~4,668 bytes</strong> with metadata, against
+                  ~10,522 for a leaf-plus-intermediate chain.
                 </p>
               </div>
             </div>
@@ -357,50 +361,56 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                 <tbody>
                   <tr className="border-b border-border/50">
                     <td className="py-2 pr-3 font-medium text-foreground">Traditional X.509</td>
-                    <td className="text-right py-2 px-2 font-mono">11,196 B</td>
+                    <td className="text-right py-2 px-2 font-mono">9,884 B</td>
                     <td className="text-right py-2 px-2 font-mono text-muted-foreground">—</td>
                     <td className="text-right py-2 px-2 font-mono text-destructive font-bold">
-                      12,034 B
+                      10,522 B
                     </td>
                     <td className="text-right py-2 pl-2 text-muted-foreground">baseline</td>
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="py-2 pr-3 font-medium text-foreground">Standalone MTC</td>
-                    <td className="text-right py-2 px-2 font-mono">3,860 B</td>
+                    <td className="text-right py-2 px-2 font-mono">6,152 B</td>
                     <td className="text-right py-2 px-2 font-mono">384 B</td>
                     <td className="text-right py-2 px-2 font-mono text-primary font-bold">
-                      4,444 B
+                      6,736 B
                     </td>
-                    <td className="text-right py-2 pl-2 text-success font-bold">63%</td>
+                    <td className="text-right py-2 pl-2 text-success font-bold">36%</td>
                   </tr>
                   <tr>
                     <td className="py-2 pr-3 font-medium text-foreground">
-                      Landmark MTC <span className="text-[10px] text-success">(no signatures)</span>
+                      Landmark MTC{' '}
+                      <span className="text-[10px] text-success">(no cosignatures)</span>
                     </td>
-                    <td className="text-right py-2 px-2 font-mono text-success font-bold">0 B</td>
+                    <td className="text-right py-2 px-2 font-mono">3,732 B</td>
                     <td className="text-right py-2 px-2 font-mono">736 B</td>
-                    <td className="text-right py-2 px-2 font-mono text-success font-bold">936 B</td>
-                    <td className="text-right py-2 pl-2 text-success font-bold">92%</td>
+                    <td className="text-right py-2 px-2 font-mono text-success font-bold">
+                      4,668 B
+                    </td>
+                    <td className="text-right py-2 pl-2 text-success font-bold">56%</td>
                   </tr>
                 </tbody>
               </table>
               <p className="text-[10px] text-muted-foreground mt-2">
-                Traditional: 3 sigs (7,260 B) + 3 keys (3,936 B) + 2 SCTs (238 B) + metadata (600
-                B). Standalone: 1 CA sig (2,420 B) + 1 key (1,312 B) + cosigner sigs (~128 B) + 384
-                B proof + 200 B metadata. Landmark: 736 B proof + 200 B metadata only &mdash; client
-                has trusted subtree cached. The two proofs differ because they reach different
-                subtrees: a standalone proof stops at the latest checkpoint (~2,500 entries), a
-                landmark proof at the last landmark (~4.4M). Cosigner overhead is policy-dependent
-                (minimum shown).
+                Same scenario in every row: a leaf-plus-intermediate chain, the root already in the
+                client&apos;s trust store. Traditional: 3 sigs (7,260 B: leaf cert, intermediate
+                cert, CertificateVerify) + 2 keys (2,624 B) + 2 SCTs (238 B) + metadata (400 B).
+                Standalone: server key (1,312 B) + CertificateVerify (2,420 B) + 1 CA cosignature
+                (2,420 B, the minimum) + 384 B proof + 200 B metadata. Landmark: server key +
+                CertificateVerify + 736 B proof + 200 B metadata; no cosignature because the client
+                has the trusted subtree cached. The two proofs differ because they reach different
+                subtrees: a standalone proof stops at the latest checkpoint (~3,000 entries), a
+                landmark proof at the last landmark (~5.4M). The number of cosignatures is relying
+                party policy; each extra one adds a signature.
               </p>
               <EstimateNote
                 className="mt-2"
-                what="the handshake byte counts in this table. Signature and key sizes are FIPS 204's; the proof, SCT and metadata sizes come from this module's own tree model (a checkpoint of about 2,500 entries, a landmark of about 4.4 million)."
+                what="the handshake byte counts in this table. Signature and key sizes are FIPS 204's; the proof, SCT and metadata sizes come from this module's own tree model (a checkpoint of about 3,000 entries, a landmark of about 5.4 million)."
               />
             </div>
 
             <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-xs text-muted-foreground">
-              <strong className="text-warning">Tradeoff:</strong> Signatureless certificates require
+              <strong className="text-warning">Tradeoff:</strong> Landmark certificates require
               relying parties to pre-sync landmark subtrees regularly (e.g., every few hours).
               Clients that miss a sync window cannot verify newer certificates without an update
               &mdash; acceptable for always-online clients (browsers, mobile) but unsuitable for

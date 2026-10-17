@@ -975,7 +975,7 @@
     "term": "Merkle Tree Certificate",
     "acronym": "MTC",
     "definition": "A certificate format that replaces individual per-certificate digital signatures with a compact inclusion proof in a Merkle tree. A single CA signature on the tree root covers the entire batch, dramatically reducing TLS handshake sizes for post-quantum algorithms.",
-    "technicalNote": "For a batch of ~4.4 million certificates, the inclusion proof is 736 bytes (23 sibling hashes × 32 bytes). This achieves 63–74% size reduction compared to traditional X.509 certificate chains with ML-DSA signatures.",
+    "technicalNote": "For a landmark subtree of ~5.4 million certificates, the inclusion proof is 736 bytes (23 sibling hashes × 32 bytes); a standalone certificate over ~3,000 certificates needs 384 bytes. The handshake still carries the server's public key and CertificateVerify signature. For ML-DSA-44 that is about 4,668 bytes with a landmark certificate and 6,736 bytes with a standalone one (one CA cosignature), against 10,522 bytes for a leaf-plus-intermediate chain: roughly 56% and 36% smaller.",
     "relatedModule": "/learn/merkle-tree-certs",
     "complexity": "advanced",
     "category": "concept"

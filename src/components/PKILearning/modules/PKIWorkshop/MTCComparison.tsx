@@ -6,6 +6,7 @@ import {
   ALGORITHM_SIZES,
   getSizeBreakdown,
   formatBytes,
+  describeSizeChange,
 } from '../MerkleTreeCerts/data/mtcConstants'
 import { Button } from '@/components/ui/button'
 
@@ -32,9 +33,10 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
           Traditional Chain vs Merkle Tree Certificates
         </h3>
         <p className="text-sm text-muted-foreground">
-          Compare the TLS handshake authentication size between a traditional X.509 certificate
-          chain and the Merkle Tree Certificate (MTC) approach. Select an algorithm to see how
-          signature size impacts both approaches.
+          Compare the TLS handshake authentication size between a traditional leaf-plus-intermediate
+          X.509 chain and a standalone Merkle Tree Certificate (MTC). Both include the server&apos;s
+          public key and its CertificateVerify signature. Select an algorithm to see how signature
+          size impacts both approaches.
         </p>
       </div>
 
@@ -132,8 +134,10 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
           </div>
         </div>
         <div className="mt-3 text-center">
-          <span className="text-lg font-bold text-success">{breakdown.reductionPercent}%</span>
-          <span className="text-sm text-muted-foreground ml-2">size reduction with MTC</span>
+          <span className="text-lg font-bold text-success">
+            {describeSizeChange(breakdown.reductionPercent).text}
+          </span>
+          <span className="text-sm text-muted-foreground ml-2">with a standalone MTC</span>
         </div>
       </div>
 
@@ -143,11 +147,12 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
           <Info size={16} className="text-primary mt-0.5 shrink-0" />
           <div className="text-xs text-muted-foreground">
             <strong className="text-foreground">How it works:</strong> Instead of each certificate
-            carrying its own CA signature, the MTCA batches ~4.4 million certificates (an
-            illustrative batch size) as leaves in a Merkle tree and signs only the root hash. Each
-            certificate then carries a compact inclusion proof (a chain of sibling hashes) that lets
-            any verifier confirm it belongs to the signed batch &mdash; without needing the full
-            chain of individual signatures.
+            carrying its own CA signature, the MTCA batches certificates (about 3,000 per checkpoint
+            in the draft&apos;s standalone estimate) as leaves in a Merkle tree and signs only the
+            root hash. Each certificate then carries a compact inclusion proof (a chain of sibling
+            hashes) that lets any verifier confirm it belongs to the signed batch &mdash; without
+            needing the full chain of individual signatures. The server still signs the handshake
+            itself, so its key and that signature stay in the count.
           </div>
         </div>
       </div>
@@ -184,7 +189,7 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
                   </td>
                   <td className="text-right py-2 px-2 font-mono">{formatBytes(b.mtcTotal)}</td>
                   <td className="text-right py-2 pl-2 font-bold text-success">
-                    {b.reductionPercent}%
+                    {describeSizeChange(b.reductionPercent).text}
                   </td>
                 </tr>
               )
