@@ -21,7 +21,11 @@ import {
   type KATResult,
   type SlhDsaVariant,
 } from '@/utils/katRunner'
-import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
+import {
+  ATTACK_CATEGORY_LABELS,
+  ATTACK_PROFILES,
+  ATTACK_SEVERITY_NOTE,
+} from '@/data/implementationAttackProfiles'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
@@ -621,7 +625,7 @@ export function MobileKATValidationView({
           <span className="flex flex-col items-start">
             <span className="text-[12.5px] font-bold text-foreground">Implementation Attacks</span>
             <span className="text-[10.5px] text-muted-foreground">
-              Side-channel and fault-injection reference, {ATTACK_PROFILES.length} algorithms
+              Side-channel and fault-injection reference, {ATTACK_PROFILES.length} profiles
             </span>
           </span>
           <ChevronDown
@@ -644,10 +648,17 @@ export function MobileKATValidationView({
         )}
         {attacksOpen && (
           <div className="mt-2 flex flex-col gap-2">
-            <p className="rounded-md border border-status-warning/30 bg-status-warning/10 p-2 text-[10.5px] leading-relaxed text-muted-foreground">
+            <p className="rounded-md border border-border bg-muted/40 p-2 text-[10.5px] leading-relaxed text-muted-foreground">
               These records describe attacks demonstrated against particular implementations or
               conditions—not a break of every implementation in the algorithm family. “No recorded
               evidence” would describe only this reviewed corpus, not proof of safety.
+            </p>
+            <p
+              data-testid="attack-severity-note"
+              className="text-[10.5px] leading-relaxed text-muted-foreground"
+            >
+              {ATTACK_SEVERITY_NOTE}: chip colour shows the reported impact — red for critical or
+              high, amber for medium, grey for low.
             </p>
             {ATTACK_PROFILES.map((p) => (
               <div
@@ -673,7 +684,8 @@ export function MobileKATValidationView({
                           a.severity ? SEVERITY_TONE[a.severity] : 'text-muted-foreground'
                         )}
                       >
-                        {a.category}
+                        {ATTACK_CATEGORY_LABELS[a.category]}
+                        {a.severity && <span className="sr-only"> ({a.severity} impact)</span>}
                       </span>
                     ))}
                 </div>
@@ -684,7 +696,10 @@ export function MobileKATValidationView({
                       key={`${a.category}-detail`}
                       className="mt-1.5 text-[10.5px] leading-relaxed text-muted-foreground"
                     >
-                      <strong className="text-foreground">{a.category}:</strong> {a.detail}
+                      <strong className="text-foreground">
+                        {ATTACK_CATEGORY_LABELS[a.category]}:
+                      </strong>{' '}
+                      {a.detail}
                     </p>
                   ))}
                 {p.references.length > 0 && (
@@ -698,7 +713,7 @@ export function MobileKATValidationView({
                         href={reference.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1 flex min-w-0 items-start gap-1 text-[10.5px] leading-snug text-primary"
+                        className="flex min-h-6 min-w-0 items-start gap-1 py-1 text-[10.5px] leading-snug text-primary"
                       >
                         <ExternalLink size={10} className="mt-0.5 shrink-0" aria-hidden="true" />
                         <span className="break-words">{reference.title}</span>

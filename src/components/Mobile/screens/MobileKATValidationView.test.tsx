@@ -21,7 +21,7 @@ vi.mock('@/utils/katRunner', async (importOriginal) => {
 })
 
 import { MobileKATValidationView } from './MobileKATValidationView'
-import { ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
+import { ATTACK_CATEGORY_LABELS, ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
 
 const result = (id: string, status: string) => ({
   id,
@@ -179,4 +179,13 @@ describe('MobileKATValidationView', () => {
     expect(document.activeElement).toBe(button)
   })
 
+  it('attack list counts profiles, uses reader-facing category names and states the severity basis', () => {
+    render(<MobileKATValidationView />)
+    expect(screen.getByText(new RegExp(`${ATTACK_PROFILES.length} profiles`))).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Implementation Attacks').closest('button')!)
+    expect(screen.getByTestId('attack-severity-note')).toHaveTextContent(/not CVSS/)
+    expect(screen.queryByText('side-channel')).not.toBeInTheDocument()
+    expect(screen.queryByText('fault-injection')).not.toBeInTheDocument()
+    expect(screen.getAllByText(ATTACK_CATEGORY_LABELS['side-channel']).length).toBeGreaterThan(0)
+  })
 })
