@@ -58,8 +58,10 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
     expect(ok, 'dual-engine HSM autoInit failed').toBeTruthy()
     await page.getByTestId('acvp-select-none').click()
     for (const c of categories) await page.getByTestId(`acvp-category-checkbox-${c}`).check()
-    await page.getByTestId('acvp-run-selected').click()
-    await expect(page.getByTestId('acvp-run-selected')).toHaveAttribute('aria-busy', 'false', {
+    const runSelected = page.getByTestId('acvp-run-selected')
+    await runSelected.click()
+    await expect(runSelected).toHaveAttribute('aria-busy', 'true', { timeout: 10000 })
+    await expect(runSelected).toHaveAttribute('aria-busy', 'false', {
       timeout: 360000,
     })
   }

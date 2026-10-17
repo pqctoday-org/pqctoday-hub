@@ -53,8 +53,10 @@ test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () =>
 
     await page.getByTestId('acvp-select-none').click()
     await page.getByTestId('acvp-category-checkbox-ml_dsa').check()
-    await page.getByTestId('acvp-run-selected').click()
-    await expect(page.getByTestId('acvp-run-selected')).toHaveAttribute('aria-busy', 'false', {
+    const runSelected = page.getByTestId('acvp-run-selected')
+    await runSelected.click()
+    await expect(runSelected).toHaveAttribute('aria-busy', 'true', { timeout: 10000 })
+    await expect(runSelected).toHaveAttribute('aria-busy', 'false', {
       timeout: 120000,
     })
 
