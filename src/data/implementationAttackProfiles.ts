@@ -102,7 +102,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Use masked implementations (first-order or higher-order masking of NTT operations)',
       'Enable constant-time polynomial arithmetic; avoid branch-dependent execution',
       'Draw all randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
-      'Module validation (FIPS 140-3, CAVP certificates) shows the algorithms are implemented correctly; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
+      'Module validation (FIPS 140-3, CAVP certificates) checks that the algorithms give correct results on the tested vectors; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
       'Source key-generation implementations only from vetted, reproducible builds — a kleptographic backdoor is invisible in the algorithm spec and only auditable in the actual code',
     ],
     references: [
@@ -176,7 +176,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Use masked implementations for NTT and rejection sampling',
       'Ensure deterministic nonce generation (hedged against bad RNG)',
       'Deploy redundancy checks to detect fault injection during signing',
-      'Module validation (FIPS 140-3, CAVP certificates) shows the algorithms are implemented correctly; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
+      'Module validation (FIPS 140-3, CAVP certificates) checks that the algorithms give correct results on the tested vectors; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
     ],
     references: [
       {
