@@ -10,6 +10,7 @@ import {
   getSecurityLevelColor,
   getPerformanceColor,
   loadPQCAlgorithmsData,
+  formatByteField,
 } from './pqcAlgorithmsData'
 import type { AlgorithmDetail } from './pqcAlgorithmsData'
 
@@ -90,5 +91,32 @@ describe('pqcAlgorithmsData helpers', () => {
     // Call again to verify cachedData is returned
     const data2 = await loadPQCAlgorithmsData()
     expect(data2).toBe(data)
+  })
+})
+
+// A blank size cell used to load as 0 and render as "0 B" on the phone
+// detail sheet (30 catalogue rows). Missing sizes must stay missing.
+describe('missing key sizes', () => {
+  it('load as null, never 0, and never format as "0 B"', async () => {
+    const data = await loadPQCAlgorithmsData()
+    expect(data.length).toBeGreaterThan(100)
+    for (const algo of data) {
+      expect(algo.publicKeySize === null || algo.publicKeySize > 0).toBe(true)
+      expect(algo.privateKeySize === null || algo.privateKeySize > 0).toBe(true)
+      const texts = [
+        formatByteField(algo.publicKeySize, algo.evidenceStates?.publicKey),
+        formatByteField(algo.privateKeySize, algo.evidenceStates?.privateKey),
+        formatByteField(algo.signatureCiphertextSize, algo.evidenceStates?.signatureOrCiphertext),
+      ]
+      for (const text of texts) expect(text, algo.name).not.toBe('0 B')
+    }
+    const missingPrivate = data.filter((a) => a.privateKeySize === null)
+    expect(missingPrivate.length).toBeGreaterThan(0)
+  })
+
+  it('formats a stated size and labels a missing one', () => {
+    expect(formatByteField(1184, 'stated')).toBe('1,184 B')
+    expect(formatByteField(null, 'not-applicable')).toBe('Not applicable')
+    expect(formatByteField(null)).not.toMatch(/\d/)
   })
 })

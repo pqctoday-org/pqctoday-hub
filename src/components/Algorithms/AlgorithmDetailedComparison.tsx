@@ -562,8 +562,30 @@ function BrowseTable({
     }
   }
 
-  const sizeForSort = (algo: AlgorithmDetail, key: 'publicKeySize' | 'signatureCiphertextSize') =>
-    algo.sizesUnknown ? Number.MAX_SAFE_INTEGER : (algo[key] ?? Number.MAX_SAFE_INTEGER)
+  // A field's own value, or null when it is missing; each field is judged on
+  // its own evidence state, not on whether any other size is missing.
+  const sizeForSort = (
+    algo: AlgorithmDetail,
+    key: 'publicKeySize' | 'signatureCiphertextSize' | 'stackRAM'
+  ): number | null => {
+    const state =
+      key === 'publicKeySize'
+        ? algo.evidenceStates?.publicKey
+        : key === 'signatureCiphertextSize'
+          ? algo.evidenceStates?.signatureOrCiphertext
+          : algo.evidenceStates?.stackRam
+    if (state && state !== 'stated') return null
+    if (!algo.evidenceStates && algo.sizesUnknown && key !== 'stackRAM') return null
+    const value = algo[key]
+    return value === null || value === 0 ? null : value
+  }
+  // Missing values always sort last, whichever direction is chosen.
+  const compareSizes = (a: number | null, b: number | null, dir: number) => {
+    if (a === null && b === null) return 0
+    if (a === null) return 1
+    if (b === null) return -1
+    return dir * (a - b)
+  }
 
   const sorted = useMemo(() => {
     return [...algorithms].sort((a, b) => {
@@ -574,14 +596,15 @@ function BrowseTable({
         case 'type':
           return dir * a.family.localeCompare(b.family)
         case 'pubkey':
-          return dir * (sizeForSort(a, 'publicKeySize') - sizeForSort(b, 'publicKeySize'))
+          return compareSizes(sizeForSort(a, 'publicKeySize'), sizeForSort(b, 'publicKeySize'), dir)
         case 'sig':
-          return (
-            dir *
-            (sizeForSort(a, 'signatureCiphertextSize') - sizeForSort(b, 'signatureCiphertextSize'))
+          return compareSizes(
+            sizeForSort(a, 'signatureCiphertextSize'),
+            sizeForSort(b, 'signatureCiphertextSize'),
+            dir
           )
         case 'ram':
-          return dir * (a.stackRAM - b.stackRAM)
+          return compareSizes(sizeForSort(a, 'stackRAM'), sizeForSort(b, 'stackRAM'), dir)
         default:
           return 0
       }

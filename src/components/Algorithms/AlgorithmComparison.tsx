@@ -2,7 +2,11 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { type AlgorithmTransition } from '../../data/algorithmsData'
-import { loadPQCAlgorithmsData, type AlgorithmDetail } from '../../data/pqcAlgorithmsData'
+import {
+  formatByteField,
+  loadPQCAlgorithmsData,
+  type AlgorithmDetail,
+} from '../../data/pqcAlgorithmsData'
 import {
   Shield,
   Lock,
@@ -640,9 +644,12 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                   </span>
                                 )}
                                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border bg-muted border-border text-muted-foreground">
-                                  {pqcDetail.sizesUnknown
-                                    ? 'pk: Research needed'
-                                    : `${pqcDetail.publicKeySize.toLocaleString()}B pk`}
+                                  pk:{' '}
+                                  {formatByteField(
+                                    pqcDetail.publicKeySize,
+                                    pqcDetail.evidenceStates?.publicKey,
+                                    !pqcDetail.evidenceStates && pqcDetail.sizesUnknown
+                                  )}
                                 </span>
                               </div>
                             )}

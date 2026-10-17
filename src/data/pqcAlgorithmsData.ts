@@ -33,6 +33,20 @@ export function evidenceStateLabel(state: EvidenceFieldState): string {
   }
 }
 
+/**
+ * Text for a byte-size field: the stated value, or the field's evidence
+ * state. A missing value is never shown as 0 B.
+ */
+export function formatByteField(
+  value: number | null,
+  state?: EvidenceFieldState,
+  unknown = false
+): string {
+  if (state && state !== 'stated') return evidenceStateLabel(state)
+  if (unknown || value === null || value === 0) return RESEARCH_NEEDED
+  return `${value.toLocaleString()} B`
+}
+
 export interface AlgorithmDetail {
   /** Stable kebab-case slug of `name` (CSV `algorithm_id`, e.g. 'ml-kem-768') —
    *  the key `?algo=` deep links use, so a link survives a display-name tweak. */
@@ -42,8 +56,8 @@ export interface AlgorithmDetail {
   cryptoFamily: string
   securityLevel: number | null
   aesEquivalent: string
-  publicKeySize: number
-  privateKeySize: number
+  publicKeySize: number | null
+  privateKeySize: number | null
   signatureCiphertextSize: number | null
   sharedSecretSize: number | null
   keyGenCycles: string
@@ -518,8 +532,8 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
           row.cryptographic_family === 'Hybrid' ? 'Composite' : row.cryptographic_family || '',
         securityLevel: parseIntOrNull(row.nist_security_level),
         aesEquivalent: row.aes_equivalent,
-        publicKeySize: parseInt(row.public_key_bytes, 10) || 0,
-        privateKeySize: parseInt(row.private_key_bytes, 10) || 0,
+        publicKeySize: parseIntOrNull(row.public_key_bytes),
+        privateKeySize: parseIntOrNull(row.private_key_bytes),
         signatureCiphertextSize: parseIntOrNull(row.signature_ciphertext_bytes),
         sharedSecretSize: parseIntOrNull(row.shared_secret_bytes),
         keyGenCycles: row.keygen_cycles_relative,

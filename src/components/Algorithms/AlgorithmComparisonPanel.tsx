@@ -8,6 +8,8 @@ import {
   getCryptoFamilyColor,
   isClassical,
   RESEARCH_NEEDED,
+  evidenceStateLabel,
+  type EvidenceFieldState,
 } from '../../data/pqcAlgorithmsData'
 import {
   resolveEngine,
@@ -29,6 +31,21 @@ interface ComparisonField {
   compare?: 'lower-better' | 'higher-better'
 }
 
+/**
+ * A size field's own value, or its own evidence state. Each field is judged
+ * on its own (one missing size no longer hides the others), and a non-numeric
+ * state is never treated as the smallest value.
+ */
+function sizeOrState(
+  value: number | null,
+  state: EvidenceFieldState | undefined,
+  legacyUnknown: boolean
+): number | string {
+  if (state && state !== 'stated') return evidenceStateLabel(state)
+  if (state === undefined && legacyUnknown) return RESEARCH_NEEDED
+  return value === null || value === 0 ? RESEARCH_NEEDED : value
+}
+
 const DETAIL_FIELDS: ComparisonField[] = [
   { key: 'cryptoFamily', label: 'Crypto Family', getValue: (a) => a.cryptoFamily },
   {
@@ -41,25 +58,41 @@ const DETAIL_FIELDS: ComparisonField[] = [
   {
     key: 'publicKeySize',
     label: 'Public Key',
-    getValue: (a) => (a.sizesUnknown ? RESEARCH_NEEDED : a.publicKeySize),
+    getValue: (a) =>
+      sizeOrState(
+        a.publicKeySize,
+        a.evidenceStates?.publicKey,
+        !a.evidenceStates && a.sizesUnknown
+      ),
     compare: 'lower-better',
   },
   {
     key: 'privateKeySize',
     label: 'Private Key',
-    getValue: (a) => (a.sizesUnknown ? RESEARCH_NEEDED : a.privateKeySize),
+    getValue: (a) =>
+      sizeOrState(
+        a.privateKeySize,
+        a.evidenceStates?.privateKey,
+        !a.evidenceStates && a.sizesUnknown
+      ),
     compare: 'lower-better',
   },
   {
     key: 'sigCt',
     label: 'Sig / Ciphertext',
-    getValue: (a) => (a.sizesUnknown ? RESEARCH_NEEDED : a.signatureCiphertextSize),
+    getValue: (a) =>
+      sizeOrState(
+        a.signatureCiphertextSize,
+        a.evidenceStates?.signatureOrCiphertext,
+        !a.evidenceStates && a.sizesUnknown
+      ),
     compare: 'lower-better',
   },
   {
     key: 'stackRam',
     label: 'Stack RAM',
-    getValue: (a) => (a.stackRAM > 0 ? a.stackRAM : RESEARCH_NEEDED),
+    getValue: (a) =>
+      sizeOrState(a.stackRAM > 0 ? a.stackRAM : null, a.evidenceStates?.stackRam, false),
     compare: 'lower-better',
   },
   { key: 'fips', label: 'FIPS Standard', getValue: (a) => a.fipsStandard },

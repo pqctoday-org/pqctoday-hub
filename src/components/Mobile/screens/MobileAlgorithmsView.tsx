@@ -11,6 +11,7 @@ import {
   algorithmIdFromName,
   findAlgorithmByRef,
   type AlgorithmDetail,
+  formatByteField,
 } from '@/data/pqcAlgorithmsData'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { MobileSheet } from '../primitives/Sheet'
@@ -21,10 +22,12 @@ interface SheetAlgo {
   family: string
   fipsStandard: string | null
   securityLevel: number | null
-  publicKeyBytes: number
-  privateKeyBytes: number
+  publicKeyBytes: number | null
+  privateKeyBytes: number | null
   signatureOrCiphertextBytes: number | null
   sharedSecretBytes?: number | null
+  /** Per-field evidence states from the catalogue; absent for registry entries. */
+  evidence?: AlgorithmDetail['evidenceStates']
 }
 
 function sheetFromDetail(d: AlgorithmDetail): SheetAlgo {
@@ -37,6 +40,7 @@ function sheetFromDetail(d: AlgorithmDetail): SheetAlgo {
     privateKeyBytes: d.privateKeySize,
     signatureOrCiphertextBytes: d.signatureCiphertextSize,
     sharedSecretBytes: d.sharedSecretSize,
+    evidence: d.evidenceStates,
   }
 }
 
@@ -432,7 +436,7 @@ export function MobileAlgorithmsView() {
                 Public key
               </dt>
               <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                {selected.publicKeyBytes.toLocaleString()} B
+                {formatByteField(selected.publicKeyBytes, selected.evidence?.publicKey)}
               </dd>
             </div>
             <div>
@@ -440,7 +444,7 @@ export function MobileAlgorithmsView() {
                 Private key
               </dt>
               <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                {selected.privateKeyBytes.toLocaleString()} B
+                {formatByteField(selected.privateKeyBytes, selected.evidence?.privateKey)}
               </dd>
             </div>
             <div>
@@ -448,9 +452,10 @@ export function MobileAlgorithmsView() {
                 Signature / ciphertext
               </dt>
               <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                {selected.signatureOrCiphertextBytes != null
-                  ? `${selected.signatureOrCiphertextBytes.toLocaleString()} B`
-                  : '—'}
+                {formatByteField(
+                  selected.signatureOrCiphertextBytes,
+                  selected.evidence?.signatureOrCiphertext
+                )}
               </dd>
             </div>
             {selected.sharedSecretBytes != null && (
