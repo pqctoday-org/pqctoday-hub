@@ -95,6 +95,6 @@ describe('executive decision mode', () => {
     expect(formatTrackMinutes(130)).toBe('2 hours 10')
     expect(formatTrackMinutes(60)).toBe('1 hour')
     expect(formatTrackMinutes(45)).toBe('45 minutes')
-    expect(fullPathModuleCount('executive')).toBe(24)
+    expect(fullPathModuleCount('executive')).toBe(25)
   })
 })

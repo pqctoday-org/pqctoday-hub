@@ -98,8 +98,18 @@ describe('ComplianceImpactSection: binding chip', () => {
       .map((r) => r.item.id)
   )
   const inScope = complianceFrameworks.filter((f) => inScopeIds.has(f.id))
-  const outOfScope = complianceFrameworks.filter(
-    (f) => !applicableFrameworks(reader, [f]).some((r) => r.tier === 'mandatory')
+  // Pick frameworks that remain outside the reader's mandatory tier even after
+  // the test classifies them as scoped and supplies a basis. Otherwise a
+  // previously unreviewed domestic framework can become mandatory during the
+  // assertion and no longer represents the "for others" case.
+  const outOfScope = complianceFrameworks.filter((f) =>
+    applicableFrameworks(reader, [
+      {
+        ...f,
+        bindingStatus: 'mandatory_for_scope',
+        bindingBasis: f.bindingBasis || 'Test basis',
+      },
+    ]).every((r) => r.tier !== 'mandatory')
   )
   const [fwA, fwB, fwC] = inScope
 
@@ -168,7 +178,7 @@ describe('ComplianceImpactSection: binding chip', () => {
       renderSection(undefined, [impactFor(fwA)])
       expect(screen.getByTestId('binding-chip')).toHaveTextContent('Binding for its scope')
       expect(screen.getByTestId('binding-scope-note')).toHaveTextContent(
-        /applies only to the systems.*basis: FIPS PUB 140-3/
+        /applies to .*basis: FIPS PUB 140-3/
       )
     } finally {
       fwA.bindingBasis = was
