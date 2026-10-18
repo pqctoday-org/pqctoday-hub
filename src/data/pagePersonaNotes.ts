@@ -287,19 +287,19 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/migrate': {
     executive:
-      '"Which of your suppliers have committed" counts the vendors with a published PQC roadmap we hold a copy of against those with nothing public; the "Vendor roadmaps" and "Vendor risk" tabs give the detail per supplier.',
-    grc: 'Product rows on "Replace what you own" carry a PQC status (GA, Partial, Roadmap, No PQC), a FIPS 140-3 badge and a verification badge (Verified, Pending Verification); the "Vendor risk" tab scores a "Certification gap".',
+      '"Which vendors have published evidence" summarizes the tracked catalog; compare it with your own supplier list rather than treating it as an assessment of your supply chain.',
+    grc: 'Product rows show recorded availability, FIPS evidence and verification freshness; "Evidence gaps" highlights catalog questions and does not score risk or determine compliance.',
     developer:
       'Under "Replace what you own", the "Crypto libraries & frameworks" domain lists the libraries; use "Filter products…" to narrow, and a product\'s detail shows its CPE and PURL identifiers.',
     architect:
-      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Upgrade / configure, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
+      '"Replace what you own" lists common cryptographic areas with illustrative actions; "Plan & sequence" offers a teaching order that you must adapt to inventory, dependencies and policy.',
     researcher:
       '"This catalog as a corpus of claims" states how many products are backed by a dated document versus the vendor\'s word; every product row shows its verification status and evidence warnings.',
     'cert-engineer':
       "Product rows carry a PQC status, a FIPS 140-3 badge and a verification badge; a product's detail names the stage and flags PQC that is CAVP-validated but outside the module certificate.",
-    ops: 'The readiness panel shows the share of your assets with a GA path, the "HNDL-urgent" count, the "Nearest CNSA deadline" and your "Next move" with its wave; "Export plan + CBOM" on "Plan & sequence" downloads the plan.',
+    ops: 'Planning coverage counts selected catalog examples, not readiness. "Plan & sequence" shows illustrative waves, and its JSON export is an educational draft—not an inventory or CBOM.',
     curious:
-      '"Who has already moved" says how many tracked products support post-quantum cryptography with a document proving it, and where it landed first; "Add what you run" starts a plan of your own.',
+      '"Who has already moved" introduces documented catalog examples; "Add what you run" builds an educational sequence, not a scan or readiness verdict.',
   },
   '/compliance': {
     executive:

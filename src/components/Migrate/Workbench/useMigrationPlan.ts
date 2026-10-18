@@ -8,7 +8,6 @@ import { useMemo } from 'react'
 import {
   REPLACE_ASSETS,
   DOMAINS,
-  DECISIONS,
   type ReplaceAsset,
   type ReplaceAssetId,
   type DomainId,
@@ -34,31 +33,30 @@ export interface NextMove {
 }
 
 export interface MigrationPosture {
-  /** assets in the plan, in canonical (wave, deadline) order */
+  /** assets in the plan, in canonical teaching-wave order */
   plannedAssets: ReplaceAsset[]
-  readyN: number
-  blockedN: number
-  readyPct: number
-  blockedPct: number
+  /** Selected domains with at least one catalogue product example chosen. */
+  productSelectedN: number
+  /** Selected domains that still have no catalogue product example chosen. */
+  needsProductN: number
+  /** Planning coverage, not technical or compliance readiness. */
+  planningPct: number
   hndlCount: number
-  /** nearest CNSA deadline year across the plan, or null when empty */
-  nearestYear: number | null
-  nearestAsset: ReplaceAsset | null
-  /** first ready planned asset by (wave, year); null if none ready */
+  /** first planned asset needing a product example, or the first asset */
   nextMove: NextMove | null
   /** waves that contain at least one planned asset, ordered 1→4 */
   waves: WaveGroup[]
-  /** planned assets with no GA path (decision === 'mitigate') */
-  gaps: ReplaceAsset[]
+  /** planned assets whose example action is an interim control. */
+  cautions: ReplaceAsset[]
   /** planned foundation/infrastructure domains (no wave) — shown separately */
   foundations: FoundationPlanEntry[]
 }
 
 const ASSET_BY_ID = new Map<string, ReplaceAsset>(REPLACE_ASSETS.map((a) => [a.id, a]))
 
-/** Canonical ordering: wave ascending, then CNSA year ascending. */
-function byWaveThenYear(a: ReplaceAsset, b: ReplaceAsset): number {
-  return a.wave - b.wave || a.cnsaYear - b.cnsaYear
+/** Canonical teaching order: wave ascending, then source-data order. */
+function byWave(a: ReplaceAsset, b: ReplaceAsset): number {
+  return a.wave - b.wave
 }
 
 /**
@@ -87,47 +85,40 @@ export function computePosture(
       foundations.push({ id: domain.id, label: domain.label })
     }
   }
-  plannedAssets.sort(byWaveThenYear)
+  plannedAssets.sort(byWave)
 
-  const total = plannedAssets.length
-  const readyAssets = plannedAssets.filter((a) => DECISIONS[a.decision].ready)
-  const readyN = readyAssets.length
-  const blockedN = total - readyN
-  const readyPct = total === 0 ? 0 : Math.round((readyN / total) * 100)
-  const blockedPct = total === 0 ? 0 : 100 - readyPct
+  const total = plannedAssets.length + foundations.length
+  const productSelectedN = [...plannedAssets.map((a) => a.id), ...foundations.map((f) => f.id)].filter(
+    (id) => (choice[id] ?? []).length > 0
+  ).length
+  const needsProductN = total - productSelectedN
+  const planningPct = total === 0 ? 0 : Math.round((productSelectedN / total) * 100)
 
   const hndlCount = plannedAssets.filter((a) => a.hndl).length
 
-  const nearestAsset =
-    plannedAssets.length === 0
-      ? null
-      : plannedAssets.reduce((min, a) => (a.cnsaYear < min.cnsaYear ? a : min))
-  const nearestYear = nearestAsset?.cnsaYear ?? null
-
-  // nextMove: first ready planned asset by (wave, year) — list is already sorted.
-  const firstReady = plannedAssets.find((a) => DECISIONS[a.decision].ready) ?? null
-  const nextMove: NextMove | null = firstReady
-    ? { asset: firstReady, product: (choice[firstReady.id] ?? []).join(', ') || undefined }
+  // nextMove: first selected asset without a product example, then the first
+  // teaching-wave asset. This is navigation help, not a readiness verdict.
+  const firstMove =
+    plannedAssets.find((a) => (choice[a.id] ?? []).length === 0) ?? plannedAssets[0] ?? null
+  const nextMove: NextMove | null = firstMove
+    ? { asset: firstMove, product: (choice[firstMove.id] ?? []).join(', ') || undefined }
     : null
 
   const waves: WaveGroup[] = ([1, 2, 3, 4] as const)
     .map((w) => ({ wave: w, assets: plannedAssets.filter((a) => a.wave === w) }))
     .filter((g) => g.assets.length > 0)
 
-  const gaps = plannedAssets.filter((a) => a.decision === 'mitigate')
+  const cautions = plannedAssets.filter((a) => a.decision === 'mitigate')
 
   return {
     plannedAssets,
-    readyN,
-    blockedN,
-    readyPct,
-    blockedPct,
+    productSelectedN,
+    needsProductN,
+    planningPct,
     hndlCount,
-    nearestYear,
-    nearestAsset,
     nextMove,
     waves,
-    gaps,
+    cautions,
     foundations,
   }
 }

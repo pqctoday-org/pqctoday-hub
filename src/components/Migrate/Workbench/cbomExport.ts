@@ -1,15 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
-// Export the user's migration plan as a CycloneDX-flavoured JSON document.
-// 07092026: this builds its OWN inline object shape (below) — it does NOT
-// call the shared, schema-validated emitter at services/cbom/cycloneDx.ts
-// (that emitter now targets CycloneDX 1.7; this file was never independently
-// validated against either version). Informally mirrors the shape used
-// elsewhere in the app (modules/CryptoAgility) rather than inventing a new
-// one, but "CycloneDX-flavoured" is the honest description, not a schema
-// conformance claim. This is a plan export, not a full scan — each planned
-// asset becomes a component carrying its classical→PQC target, decision,
-// wave, and chosen product (if any).
+// Export an educational planning draft. It deliberately does not claim to be
+// a CBOM or a CycloneDX document: the workbench has not discovered an estate,
+// and this local shape is not validated against the CycloneDX schema.
 
 import {
   REPLACE_ASSETS,
@@ -19,7 +12,7 @@ import {
   type DomainId,
 } from '@/data/migrationAssets'
 
-/** The catalogue fields a CBOM needs to pin a chosen product to a release. */
+/** Catalog fields used to identify a selected example. */
 export interface CbomProductRef {
   productId: string
   softwareName: string
@@ -51,42 +44,33 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
     for (const n of p.formerNames ?? []) if (!byName.has(n)) byName.set(n, p)
   }
   // One chosen product → its name, plus id / recorded version / release date
-  // when the catalogue knows them, so the CBOM says WHICH release was planned.
-  const productProps = (name: string) => {
+  // when the catalog knows them, so the draft identifies the recorded example.
+  const productRef = (name: string) => {
     const ref = byName.get(name)
-    return [
-      { name: 'pqc:chosenProduct', value: name },
-      ...(ref ? [{ name: 'pqc:chosenProductId', value: ref.productId }] : []),
-      ...(ref?.latestVersion
-        ? [{ name: 'pqc:chosenProductVersion', value: ref.latestVersion }]
-        : []),
-      ...(ref?.releaseDate
-        ? [{ name: 'pqc:chosenProductReleaseDate', value: ref.releaseDate }]
-        : []),
-    ]
+    return {
+      name,
+      ...(ref?.productId ? { productId: ref.productId } : {}),
+      ...(ref?.latestVersion ? { catalogVersion: ref.latestVersion } : {}),
+      ...(ref?.releaseDate ? { catalogReleaseDate: ref.releaseDate } : {}),
+    }
   }
   const assets = input.planIds
     .map((id) => ASSET_BY_ID.get(id))
     .filter((a): a is ReplaceAsset => !!a)
 
-  const components = assets.map((asset) => {
+  const items = assets.map((asset) => {
     const decision = DECISIONS[asset.decision]
     const chosen = input.choice[asset.id] ?? []
     return {
-      type: 'cryptographic-asset',
+      id: asset.id,
       name: asset.label,
-      description: asset.note,
-      properties: [
-        { name: 'pqc:classical', value: asset.classical },
-        { name: 'pqc:target', value: asset.target },
-        { name: 'pqc:decision', value: decision.label },
-        { name: 'pqc:gaPathExists', value: String(decision.ready) },
-        { name: 'pqc:wave', value: String(asset.wave) },
-        { name: 'pqc:cnsaYear', value: String(asset.cnsaYear) },
-        { name: 'pqc:hndl', value: String(asset.hndl) },
-        // one property per chosen product (multi-select)
-        ...chosen.flatMap(productProps),
-      ],
+      currentExample: asset.classical,
+      targetDiscussion: asset.target,
+      illustrativeAction: decision.label,
+      teachingWave: asset.wave,
+      hndlReviewCue: asset.hndl,
+      note: asset.note,
+      selectedCatalogExamples: chosen.map(productRef),
     }
   })
 
@@ -95,46 +79,41 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
   // libraries etc. have no ReplaceAsset — computePosture in
   // useMigrationPlan.ts already handles this split; this export never did,
   // so any product chosen for a foundation domain silently never appeared
-  // in the downloaded CBOM at all).
+  // in the downloaded planning draft at all).
   const knownAssetIds = new Set<string>(assets.map((a) => a.id))
-  const foundationComponents = input.planIds
+  const foundationItems = input.planIds
     .filter((id) => !knownAssetIds.has(id))
     .map((id) => DOMAINS[id as DomainId])
     .filter((d): d is NonNullable<typeof d> => !!d && d.kind === 'foundation')
     .map((domain) => {
       const chosen = input.choice[domain.id] ?? []
       return {
-        type: 'cryptographic-asset',
+        id: domain.id,
         name: domain.label,
-        description: `Foundation/infrastructure domain (no wave/CNSA-deadline model — see pqc:chosenProduct)`,
-        properties: [
-          { name: 'pqc:domainKind', value: 'foundation' },
-          ...chosen.flatMap(productProps),
-        ],
+        kind: 'foundation',
+        selectedCatalogExamples: chosen.map(productRef),
       }
     })
 
-  const allComponents = [...components, ...foundationComponents]
+  const allItems = [...items, ...foundationItems]
 
   return {
-    bomFormat: 'CycloneDX',
-    specVersion: '1.6',
-    metadata: {
-      timestamp: input.timestamp,
-      component: { type: 'application', name: 'PQC Migration Plan' },
-      properties: [
-        { name: 'pqc:standard', value: 'NIST IR 8547 (Initial Public Draft) / CNSA 2.0' },
-        ...(input.catalogSnapshot
-          ? [{ name: 'pqc:catalogSnapshot', value: input.catalogSnapshot }]
-          : []),
-        { name: 'pqc:assetCount', value: String(allComponents.length) },
-      ],
+    format: 'pqctoday-migration-planning-draft',
+    formatVersion: '1.0',
+    generatedAt: input.timestamp,
+    disclaimer:
+      'Educational planning draft only. It is not a discovered inventory, CBOM, readiness assessment, product recommendation or compliance determination.',
+    sources: {
+      nistIr8547Status: 'Initial Public Draft',
+      cnsaScope: 'CNSA 2.0 applies primarily to U.S. National Security Systems',
+      ...(input.catalogSnapshot ? { catalogSnapshot: input.catalogSnapshot } : {}),
     },
-    components: allComponents,
+    itemCount: allItems.length,
+    items: allItems,
   }
 }
 
-/** Trigger a browser download of the plan CBOM. No-op outside the browser. */
+/** Trigger a browser download of the planning draft. No-op outside the browser. */
 export function downloadPlanCbom(input: PlanExportInput): void {
   if (typeof document === 'undefined' || typeof URL.createObjectURL !== 'function') return
   const json = JSON.stringify(buildPlanCbom(input), null, 2)
@@ -142,7 +121,7 @@ export function downloadPlanCbom(input: PlanExportInput): void {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = 'pqc-migration-plan.cbom.json'
+  a.download = 'pqc-migration-planning-draft.json'
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)

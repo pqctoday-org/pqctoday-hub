@@ -17,7 +17,7 @@ export interface ProductStatusBadge {
 }
 
 const PQC_BADGE: Record<ProductPqcStatus, ProductStatusBadge> = {
-  ga: { status: 'ga', label: 'GA', tone: 'success' },
+  ga: { status: 'ga', label: 'Available', tone: 'success' },
   partial: { status: 'partial', label: 'Partial', tone: 'info' },
   roadmap: { status: 'roadmap', label: 'Roadmap', tone: 'warning' },
   none: { status: 'none', label: 'No PQC', tone: 'muted' },
@@ -30,7 +30,7 @@ const PQC_BADGE: Record<ProductPqcStatus, ProductStatusBadge> = {
   unknown: { status: 'unknown', label: 'Unknown', tone: 'muted' },
 }
 
-/** Rank for sorting: GA first, then Partial, Roadmap, None, Unknown. */
+/** Rank for sorting: available first, then Partial, Roadmap, None, Unknown. */
 export const PQC_STATUS_RANK: Record<ProductPqcStatus, number> = {
   ga: 0,
   partial: 1,
