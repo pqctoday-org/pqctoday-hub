@@ -16,7 +16,7 @@ function makeChunk(id: string, prov?: Partial<RAGChunk['prov']>): RAGChunk {
     title: id,
     content: 'content',
     category: 'algorithm',
-    metadata: {},
+    metadata: { url: 'https://example.gov/official.pdf' },
     prov: {
       entity_id: 'e1',
       was_generated_by: 'test',
@@ -48,7 +48,8 @@ describe('useSourcePassages', () => {
     const { result } = renderHook(() => useSourcePassages('library-FIPS 203'))
     expect(result.current.isLoading).toBe(false)
     expect(result.current.passages).toEqual(['Passage one.', 'Passage two.'])
-    expect(result.current.sourceDoc).toBe('public/library/FIPS_203.pdf')
+    expect(result.current.sourceTitle).toBe('library-FIPS 203')
+    expect(result.current.officialUrl).toBe('https://example.gov/official.pdf')
     expect(result.current.wasAttributedTo).toBe('qwen3.6:27b')
   })
 
@@ -58,7 +59,8 @@ describe('useSourcePassages', () => {
     const { result } = renderHook(() => useSourcePassages('library-DOES-NOT-EXIST'))
     expect(result.current.isLoading).toBe(false)
     expect(result.current.passages).toEqual([])
-    expect(result.current.sourceDoc).toBeUndefined()
+    expect(result.current.sourceTitle).toBeUndefined()
+    expect(result.current.officialUrl).toBeUndefined()
   })
 
   it('handles chunks with empty source_passages array', async () => {
@@ -67,6 +69,7 @@ describe('useSourcePassages', () => {
     const { result } = renderHook(() => useSourcePassages('library-empty'))
     await waitFor(() => expect(result.current.isLoading).toBe(false))
     expect(result.current.passages).toEqual([])
-    expect(result.current.sourceDoc).toBeUndefined()
+    expect(result.current.sourceTitle).toBe('library-empty')
+    expect(result.current.officialUrl).toBe('https://example.gov/official.pdf')
   })
 })

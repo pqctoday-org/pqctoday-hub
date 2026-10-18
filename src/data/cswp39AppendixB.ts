@@ -8,7 +8,8 @@
 // only ASCII sanitisation (smart quotes / em-dashes converted) so that the strings can
 // be safely embedded in source code and exported assets without encoding surprises.
 //
-// Source PDF: public/library/NIST_CSWP_39.pdf
+// Official source: https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf
+// Any downloaded verification copy belongs in the private evidence cache, not public/library.
 // Primary definition: Section 1 (Introduction), p.2
 // Alternative definitions: Appendix B "Definition of Crypto Agility in Other Literature", p.41
 

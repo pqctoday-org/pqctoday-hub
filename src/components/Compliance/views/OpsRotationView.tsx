@@ -11,7 +11,7 @@
  *     (active / imminent / near / mid / long / ongoing) to highlight what
  *     drives the next certificate-rotation window
  *   - Toolchain quick-jumps: openssl-studio, pki-workshop, migrate catalog
- *   - Framework → key timing fields table (deadline, enforcement body)
+ *   - Framework → key timing fields table (deadline, publisher / scheme body)
  *
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
@@ -322,7 +322,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
                 <tr className="text-muted-foreground border-b border-border">
                   <th className="text-left font-medium px-2 py-1.5">Framework</th>
                   <th className="text-left font-medium px-2 py-1.5 hidden md:table-cell">
-                    Enforcer
+                    Publisher / scheme body
                   </th>
                   <th className="text-left font-medium px-2 py-1.5">Deadline</th>
                 </tr>
