@@ -318,6 +318,7 @@ describe('MobileAssessView', () => {
       // Several frameworks can share the same deadline text (e.g. "Ongoing"),
       // so assert presence, not uniqueness.
       expect(screen.getAllByText(`Deadline: ${first.item.deadline}`).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(`Why shown: ${first.reason}`).length).toBeGreaterThan(0)
     })
   })
 

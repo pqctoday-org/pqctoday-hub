@@ -53,7 +53,7 @@ vi.mock('../../../hooks/useApplicability', () => ({
           bodyType: 'compliance_framework',
         },
         tier: 'recognized',
-        reason: 'Five Eyes affinity — NIST recognized in Australia',
+        reason: 'Five Eyes relevance — U.S. government source shown for Australia',
       },
     ],
     library: [
@@ -144,12 +144,12 @@ describe('ExecutiveTimelineView', () => {
     expect(screen.getAllByText('ASD ISM').length).toBeGreaterThanOrEqual(1)
   })
 
-  it('renders Relevant section with FIPS-140-3 + Five Eyes reason', () => {
+  it('renders Relevant section with FIPS-140-3 + explained Five Eyes relevance', () => {
     renderView()
     expect(screen.getByText(/Relevant \/ recognized \(1\)/)).toBeInTheDocument()
     // FIPS 140-3 also appears as a ValidationGantt bar label.
     expect(screen.getAllByText('FIPS 140-3').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText(/Five Eyes affinity/)).toBeInTheDocument()
+    expect(screen.getByText(/Five Eyes relevance/)).toBeInTheDocument()
   })
 
   it('renders sector threats list with AUS-GOV-001', () => {

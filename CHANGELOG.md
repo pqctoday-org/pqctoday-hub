@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.165.0] - 2026-10-17
+
+Compliance source labels now explain who published an item, why it appears for the selected profile, and what its evidence can establish. Official publications open at their publisher; copied third-party documents are excluded from the public Library.
+
+### Changed
+
+- **Compliance source relationships are explained instead of guessed** [view:/compliance] [persona:cert-engineer] [persona:grc] [persona:executive] [persona:developer] [persona:ops] [persona:curious]: domestic, foreign, international and unclassified sources now come from reviewed organization records. Government guidance, regulators, standards bodies, certification schemes, professional bodies and industry groups keep distinct labels, while legal force remains a separate fact. The same “Why this is shown” evidence is available in compact assessment, report and export views.
+- **Certification engineers have a tested evidence journey** [view:/] [view:/algorithms] [view:/learn] [view:/compliance] [persona:cert-engineer]: the role-specific path moves from local validation and known-answer tests through the product-certification workshop to jurisdiction-aware guidance and product records. Recorder instructions identify every click, wait and scroll for producing the matching explainer video.
+
+### Fixed
+
+- **U.S. organizations are no longer described as foreign in a U.S. profile** [view:/compliance] [persona:cert-engineer] [persona:grc] [persona:executive]: NIST NCCoE, CISA, NIAP and AICPA now use their reviewed U.S. organization type and relationship. CCRA is identified as an international recognition arrangement, and unresolved metadata uses a neutral prompt to verify the primary source rather than inventing a foreign authority.
+- **NIST CSWP 39 opens at its official source** [view:/compliance] [view:/library] [persona:cert-engineer] [persona:grc] [persona:architect]: the broken local PDF route is removed. Public Library builds retain official publisher URLs and educational extractions, and a release gate prevents third-party source documents from being copied into the deployable Library.
+
 ## [4.164.0] - 2026-10-17
 
 Algorithms now distinguish standards, validation, maturity and measured evidence; Compliance is framed as an educational reference with visible evidence limits; and the FHE module offers a general path plus optional advanced key custody. Current ANSSI and BSI material is included from official sources.

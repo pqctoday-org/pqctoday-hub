@@ -88,6 +88,9 @@ describe('MobileComplianceView', () => {
     // requirements jump.
     expect(screen.getByText(target!.framework.description)).toBeInTheDocument()
     expect(screen.getByText('What an auditor checks')).toBeInTheDocument()
+    expect(screen.getByText('Why this is shown')).toBeInTheDocument()
+    expect(screen.getAllByText(target!.reason).length).toBeGreaterThan(0)
+    expect(screen.getByText(/educational relevance explanation/i)).toBeInTheDocument()
   })
 
   it('the detail sheet\'s "View extracted requirements" jumps to Requirements with that framework selected', () => {

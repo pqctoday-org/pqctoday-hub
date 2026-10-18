@@ -3,8 +3,10 @@ export type ChatProvider = 'gemini' | 'local'
 
 /**
  * W3C PROV-DM block attached to every chunk by the corpus generator.
- * Carries the evidence chain back to the originating CSV row and the cached
- * source document. See trust-engine-explainability §13 for the full schema.
+ * Carries the evidence chain back to the originating CSV row and the private
+ * evidence-cache record. The cache path is lineage metadata only and must
+ * never be converted into a public document link. See
+ * trust-engine-explainability §13 for the full schema.
  *
  * All fields are optional in the type so consumers can safely narrow against
  * partial / historical corpus shapes. The current pipeline emits every field

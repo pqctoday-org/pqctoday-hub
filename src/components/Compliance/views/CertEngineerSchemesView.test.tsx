@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
+import { beforeEach, describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { CertEngineerSchemesView } from './CertEngineerSchemesView'
-import { complianceFrameworks } from '../../../data/complianceData'
-import { applicableFrameworks } from '../../../utils/applicabilityEngine'
+import { allApplicable } from '../../../utils/applicabilityEngine'
+import { applyLens } from '../../../utils/applicabilityLens'
+import { usePersonaStore } from '../../../store/usePersonaStore'
 
 // No records loaded: ModuleCertificationStatus renders nothing on empty data,
 // so this suite covers the schemes list and the links deterministically.
@@ -23,17 +24,20 @@ function renderView(onSelectFramework = vi.fn()) {
   )
 }
 
-const schemes = applicableFrameworks(
-  { country: 'United States', industry: 'Technology', region: 'americas' },
-  complianceFrameworks
+const schemes = applyLens(
+  allApplicable({ country: 'United States', industry: 'Technology', region: 'americas' }),
+  'cert-engineer'
 )
-  .map((result) => result.item)
+  .frameworks.map((result) => result.item)
   .filter((fw) => fw.bodyType === 'certification_body')
 const expecting = schemes.filter((fw) =>
   ['yes', 'expected', 'partial', 'guidance'].includes(fw.pqcRequirement ?? '')
 )
 
 describe('CertEngineerSchemesView', () => {
+  beforeEach(() => {
+    usePersonaStore.setState({ selectedPersona: 'cert-engineer', selectedRegion: 'americas' })
+  })
   it('lists in-scope certification schemes with PQC posture from the live framework set', () => {
     renderView()
     expect(expecting.length).toBeGreaterThan(0)
@@ -46,11 +50,15 @@ describe('CertEngineerSchemesView', () => {
   it('counts the remaining schemes instead of listing them', () => {
     renderView()
     const rest = schemes.length - expecting.length
-    expect(
-      screen.getByText((text) =>
-        text.includes(`${rest} more certification schemes record no PQC requirement`)
-      )
-    ).toBeInTheDocument()
+    if (rest > 0) {
+      expect(
+        screen.getByText((text) =>
+          text.includes(`${rest} more certification schemes record no PQC requirement`)
+        )
+      ).toBeInTheDocument()
+    } else {
+      expect(screen.queryByText(/more certification schemes record no PQC requirement/)).toBeNull()
+    }
   })
 
   it('opens a scheme through the shared framework callback', () => {
