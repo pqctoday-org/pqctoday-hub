@@ -152,6 +152,73 @@ describe('libraryData', () => {
     expect(opc?.shortDescription).toContain('does not define a post-quantum SecurityPolicy')
   })
 
+  it('uses official provenance and scoped claims for the remaining reviewed library records', () => {
+    const reviewedIds = [
+      'DO-178C-Costs-vs-Benefits-Analysis',
+      'EN-18031-1-2024',
+      'EN-18031-3-2024',
+      'PSA-Certified-Security-Model-v1-1',
+      'PSA-Certified-Level-2-PP-SESIP-v2-0',
+      'EN-17927-2023',
+      'ASHRAE-135-2016-Addendum-bj',
+      'Derbyshire-IChemE-Hazards26-2016',
+    ]
+
+    for (const referenceId of reviewedIds) {
+      const item = libraryData.find((candidate) => candidate.referenceId === referenceId)
+      expect(item?.lastVerified, referenceId).toBe('2026-10-17')
+    }
+
+    const do178c = libraryData.find(
+      (item) => item.referenceId === 'DO-178C-Costs-vs-Benefits-Analysis'
+    )
+    expect(do178c?.shortDescription).toContain('25–40%')
+    expect(do178c?.shortDescription).toContain('not regulator guidance')
+    expect(do178c?.shortDescription).not.toContain('states the real-world cost')
+
+    for (const referenceId of ['EN-18031-1-2024', 'EN-18031-3-2024']) {
+      const item = libraryData.find((candidate) => candidate.referenceId === referenceId)
+      expect(item?.downloadUrl, referenceId).toContain('cencenelec.eu')
+      expect(item?.freeSummaryUrl, referenceId).toContain('eur-lex.europa.eu')
+      expect(item?.shortDescription, referenceId).toContain(
+        'do not establish a post-quantum algorithm requirement'
+      )
+      expect(item?.downloadUrl, referenceId).not.toContain('iteh.ai')
+    }
+
+    const en180313 = libraryData.find((item) => item.referenceId === 'EN-18031-3-2024')
+    expect(en180313?.protocolOrToolImpact).not.toContain('SSH')
+
+    const sesip = libraryData.find((item) => item.referenceId === 'EN-17927-2023')
+    expect(sesip?.downloadUrl).toContain('standardsdevelopment.bsigroup.com')
+    expect(sesip?.downloadUrl).not.toContain('iteh.ai')
+    expect(sesip?.shortDescription).toContain('PQCtoday migration note:')
+
+    const psaModel = libraryData.find(
+      (item) => item.referenceId === 'PSA-Certified-Security-Model-v1-1'
+    )
+    expect(psaModel?.shortDescription).toContain('does not specify post-quantum algorithms')
+    expect(psaModel?.shortDescription).toContain('PQCtoday migration note:')
+
+    const psaLevel2 = libraryData.find(
+      (item) => item.referenceId === 'PSA-Certified-Level-2-PP-SESIP-v2-0'
+    )
+    expect(psaLevel2?.shortDescription).toContain('before the end of 2026')
+    expect(psaLevel2?.shortDescription).toContain('not itself a post-quantum requirement')
+
+    const bacnet = libraryData.find((item) => item.referenceId === 'ASHRAE-135-2016-Addendum-bj')
+    expect(bacnet?.shortDescription).toContain('must support TLS 1.3')
+    expect(bacnet?.shortDescription).toContain('does not define post-quantum algorithms')
+
+    const iecContext = libraryData.find(
+      (item) => item.referenceId === 'Derbyshire-IChemE-Hazards26-2016'
+    )
+    expect(iecContext?.shortDescription).toContain("author's interpretation")
+    expect(iecContext?.shortDescription).toContain(
+      'not a substitute for the normative IEC standard'
+    )
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
