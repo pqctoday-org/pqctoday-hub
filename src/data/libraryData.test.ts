@@ -219,6 +219,56 @@ describe('libraryData', () => {
     )
   })
 
+  it('keeps public-sector and certification records within their exact source scope', () => {
+    const nukib = libraryData.find(
+      (item) => item.referenceId === 'CZ-NUKIB-Crypto-Requirements-2023'
+    )
+    expect(nukib?.lastVerified).toBe('2026-10-17')
+    expect(nukib?.shortDescription).toContain('liable under the cited Czech')
+    expect(nukib?.shortDescription).toContain('states no 2027 migration deadline')
+
+    const cmmc = libraryData.find((item) => item.referenceId === 'CMMC-2.0-MODEL')
+    expect(cmmc?.downloadUrl).toContain('dodcio.defense.gov/Portals/0/Documents/CMMC')
+    expect(cmmc?.shortDescription).toContain('Level 1, Level 2 and Level 3')
+    expect(cmmc?.shortDescription).not.toContain('Foundational/Advanced/Expert')
+    expect(cmmc?.shortDescription).toContain('does not establish a post-quantum')
+
+    const nzism = libraryData.find((item) => item.referenceId === 'NZISM-V3-9')
+    expect(nzism?.initialPublicationDate).toBe('2025-04')
+    expect(nzism?.shortDescription).toContain('no post-quantum cryptographic systems')
+    expect(nzism?.shortDescription).toContain('Crown entities')
+
+    const onc7 = libraryData.find(
+      (item) => item.referenceId === 'ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D'
+    )
+    expect(onc7?.shortDescription).toContain('either to encrypt')
+    expect(onc7?.shortDescription).toContain('or to prevent')
+
+    const onc8 = libraryData.find(
+      (item) => item.referenceId === 'ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity'
+    )
+    expect(onc8?.shortDescription).toContain('create a message digest')
+    expect(onc8?.shortDescription).toContain('does not pin a digital-signature algorithm')
+
+    const onc9 = libraryData.find(
+      (item) => item.referenceId === 'ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co'
+    )
+    expect(onc9?.protocolOrToolImpact).not.toContain('TLS')
+    expect(onc9?.shortDescription).toContain('need not name HTTPS or SSL/TLS')
+
+    const qscdNotice = libraryData.find(
+      (item) => item.referenceId === 'CIR-EU-2025-1570-QSCD-Certification-Notification'
+    )
+    expect(qscdNotice?.documentStatus).toBe('In force')
+    expect(qscdNotice?.shortDescription).toContain('does not certify a product itself')
+
+    const unsigned = libraryData.find((item) => item.referenceId === 'RFC-9925')
+    expect(unsigned?.shortDescription).toContain(
+      'validators must reject it in a certification path'
+    )
+    expect(unsigned?.shortDescription).toContain('not a general way to bypass')
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
