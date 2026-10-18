@@ -326,8 +326,8 @@ describe('Regulations (E2/E3/E7/E13–E16)', () => {
     const c = (s: string) => CNSA_2_0_CATEGORIES.find((x) => x.category.startsWith(s))!
     expect([c('Software').prefer, c('Software').exclusive]).toEqual([2025, 2030])
     expect([c('Traditional').prefer, c('Traditional').exclusive]).toEqual([2026, 2030])
-    expect([c('Operating').prefer, c('Operating').exclusive]).toEqual([2027, 2033])
-    expect(c('All').exclusive).toBe(2035)
+    expect([c('Operating').prefer, c('Operating').exclusive]).toEqual([2027, 2031])
+    expect(c('All').exclusive).toBe(2031)
   })
 })
 

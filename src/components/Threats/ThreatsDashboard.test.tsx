@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ThreatsDashboard } from './ThreatsDashboard'
 import type { ThreatData } from '../../data/threatsData'
@@ -40,6 +40,7 @@ vi.mock('../../data/threatsData', () => ({
       cryptoAtRisk: 'ECC',
       pqcReplacement: 'ML-DSA',
       mainSource: 'HIPAA Guidance',
+      recordType: 'policy/deadline signal',
     },
     {
       industry: 'Automotive',
@@ -107,8 +108,8 @@ vi.mock('../common/FilterDropdown', () => ({
           {effectiveLabel}: {items.find((i) => i.id === selectedId)?.label || selectedId}
         </Button>
         <ul>
-          {items.map((item) => (
-            <li key={item.id}>
+          {items.map((item, index) => (
+            <li key={`${item.id}-${index}`}>
               <Button
                 onClick={() => {
                   if (isMulti) {
@@ -170,7 +171,9 @@ describe('ThreatsDashboard', () => {
       </MemoryRouter>
     )
     expect(screen.getByText('Quantum Threats')).toBeInTheDocument()
-    expect(screen.getAllByText(/Detailed analysis of quantum threats/)[0]).toBeInTheDocument()
+    expect(
+      screen.getAllByText(/Educational scenarios, policy signals and technical evidence/)[0]
+    ).toBeInTheDocument()
   })
 
   it('renders the table with data', () => {
@@ -250,7 +253,8 @@ describe('ThreatsDashboard', () => {
     )
 
     const industryHeader = screen.getByRole('columnheader', { name: /Industry/i })
-    fireEvent.click(industryHeader)
+    const industrySort = within(industryHeader).getByRole('button', { name: /Industry/i })
+    fireEvent.click(industrySort)
 
     // Checking logic is hard without checking order of elements.
     // But we can verify no crash and interaction works.
@@ -261,20 +265,20 @@ describe('ThreatsDashboard', () => {
     // Sorted Ascending by default.
 
     // Let's click again to sort descending
-    fireEvent.click(industryHeader)
+    fireEvent.click(industrySort)
 
     // Now should be H -> F -> A
     // We trust JS sort, just verifying interaction doesn't crash
   })
 
-  it('sorts by Criticality', () => {
+  it('sorts by site priority', () => {
     render(
       <MemoryRouter>
         <ThreatsDashboard />
       </MemoryRouter>
     )
-    const critHeader = screen.getByRole('columnheader', { name: /Criticality/i })
-    fireEvent.click(critHeader)
+    const critHeader = screen.getByRole('columnheader', { name: /Site priority/i })
+    fireEvent.click(within(critHeader).getByRole('button', { name: /Site priority/i }))
     // Should behave without error
     expect(critHeader).toBeInTheDocument()
   })
@@ -334,6 +338,18 @@ describe('ThreatsDashboard', () => {
       ).toBeInTheDocument()
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
+  })
+
+  it('filters unlike educational record types without treating them as one severity list', () => {
+    render(
+      <MemoryRouter initialEntries={['/threats?type=policy%2Fdeadline%20signal']}>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
+    const table = screen.getByRole('table')
+    expect(within(table).getByText('THR-002')).toBeInTheDocument()
+    expect(within(table).queryByText('THR-001')).not.toBeInTheDocument()
+    expect(screen.getByTestId('filter-Record type')).toHaveTextContent('Policy / deadline signal')
   })
 
   describe('deep links (UX-3)', () => {
@@ -455,7 +471,7 @@ describe('ThreatsDashboard', () => {
     })
 
     afterEach(() => {
-      usePersonaStore.getState().clearPersona()
+      act(() => usePersonaStore.getState().clearPersona())
     })
 
     it('renders a plain-language orientation card for the curious persona — even with no industries selected', () => {

@@ -140,7 +140,7 @@ export const ComplianceImpactSection = ({
                 )}
               >
                 {c.requiresPQC === true
-                  ? 'PQC Required'
+                  ? 'Source states PQC required'
                   : c.requiresPQC === null
                     ? 'Status unknown'
                     : 'No PQC mandate yet'}

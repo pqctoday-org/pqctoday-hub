@@ -84,16 +84,16 @@ describe('MobileReportView', () => {
     ).toBeInTheDocument()
   })
 
-  it('shows the real HNDL-not-quantified warning for high sensitivity on a quick assessment', () => {
+  it('shows that the HNDL window is not modelled for high sensitivity on a quick assessment', () => {
     completeQuick({ dataSensitivity: ['high'] })
     renderView()
-    expect(screen.getByText('HNDL Risk Not Quantified')).toBeInTheDocument()
+    expect(screen.getByText('HNDL Window Not Modelled')).toBeInTheDocument()
   })
 
   it('does not show the HNDL warning for low sensitivity', () => {
     completeQuick({ dataSensitivity: ['low'] })
     renderView()
-    expect(screen.queryByText('HNDL Risk Not Quantified')).not.toBeInTheDocument()
+    expect(screen.queryByText('HNDL Window Not Modelled')).not.toBeInTheDocument()
   })
 
   it('shows "Do this first" with the real top-3 recommended actions, not the mockup\'s invented strings', () => {

@@ -58,16 +58,14 @@ export interface Decision {
   label: string
   /** maps to a semantic status token (see src/styles/index.css) */
   tone: 'success' | 'primary' | 'info' | 'warning' | 'destructive'
-  /** true → a GA quantum-safe path exists (counts toward readiness %). */
-  ready: boolean
 }
 
 export const DECISIONS: Record<DecisionKey, Decision> = {
-  dropin: { key: 'dropin', label: 'Upgrade / configure', tone: 'success', ready: true },
-  hybrid: { key: 'hybrid', label: 'Hybrid config', tone: 'primary', ready: true },
-  rekey: { key: 'rekey', label: 'Re-key', tone: 'info', ready: true },
-  roadmap: { key: 'roadmap', label: 'Track roadmap', tone: 'warning', ready: false },
-  mitigate: { key: 'mitigate', label: 'Mitigate', tone: 'destructive', ready: false },
+  dropin: { key: 'dropin', label: 'Upgrade / configure', tone: 'success' },
+  hybrid: { key: 'hybrid', label: 'Evaluate transition mode', tone: 'primary' },
+  rekey: { key: 'rekey', label: 'Re-key / re-wrap', tone: 'info' },
+  roadmap: { key: 'roadmap', label: 'Check product evidence', tone: 'warning' },
+  mitigate: { key: 'mitigate', label: 'Use interim controls', tone: 'destructive' },
 }
 
 // ---------------------------------------------------------------------------
@@ -121,11 +119,8 @@ export interface ReplaceAsset {
   decision: DecisionKey
   /** sequencing wave (1 = external-facing first) */
   wave: 1 | 2 | 3 | 4
-  /** CNSA 2.0 deadline year driving urgency */
-  cnsaYear: number
   /** harvest-now-decrypt-later exposure */
   hndl: boolean
-  deadlineLabel: string
   note: string
   /** personas for whom this asset floats to the top of the list */
   focusPersonas: PersonaId[]
@@ -137,13 +132,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'TLS key exchange',
     where: 'Public web servers, load balancers, API gateways',
     classical: 'RSA-2048 / X25519',
-    target: 'ML-KEM-768',
+    target: 'X25519 + ML-KEM-768 (example)',
     decision: 'dropin',
     wave: 1,
-    cnsaYear: 2025,
     hndl: true,
-    deadlineLabel: 'External-facing — highest HNDL exposure',
-    note: 'Enable hybrid X25519+ML-KEM-768 key exchange on edge TLS terminators. On modern stacks (OpenSSL 3.5+, BoringSSL, recent CDNs) this is mostly a configuration change; test clients and middleboxes that cannot handle the larger key share, and keep a classical group only as a policy-controlled fallback.',
+    note: 'A current general-purpose path is hybrid X25519 + ML-KEM-768 where both endpoints support a standardized profile. Treat this as an implementation example, not a universal setting: test clients and middleboxes, document fallback policy, and verify the profile your authority or sector requires. CNSA 2.0 uses ML-KEM-1024 for NSS, not this example parameter set.',
     focusPersonas: ['architect', 'executive', 'grc'],
   },
   {
@@ -151,13 +144,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'IPsec / IKEv2 VPN',
     where: 'Site-to-site tunnels, remote-access VPN concentrators',
     classical: 'RSA + ECDH',
-    target: 'ML-KEM-1024',
+    target: 'RFC 9370 + a profiled PQ KEM',
     decision: 'dropin',
     wave: 1,
-    cnsaYear: 2030,
     hndl: true,
-    deadlineLabel: 'Long-lived tunnels — harvest-now risk',
-    note: 'Use IKEv2 multiple-key-exchange (RFC 9370) with ML-KEM-1024. Most enterprise VPN vendors ship or roadmap this; verify firmware level before relying on it.',
+    note: 'RFC 9370 defines how IKEv2 can perform multiple key exchanges; it does not itself assign ML-KEM transform identifiers or prove that a product implements a particular profile. Verify the applicable IETF/authority profile, both peers, firmware, validation boundary, and downgrade behavior. NSA has identified an IKE hybrid construction for CNSA 2.0 use.',
     focusPersonas: ['architect'],
   },
   {
@@ -165,13 +156,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'X.509 cert signatures',
     where: 'Internal PKI, TLS server/client certs, document signing',
     classical: 'RSA-2048 / ECDSA',
-    target: 'ML-DSA-65',
+    target: 'ML-DSA PKI (profile-dependent)',
     decision: 'hybrid',
     wave: 2,
-    cnsaYear: 2030,
     hndl: false,
-    deadlineLabel: 'CNSA 2.0 signature deadline',
-    note: 'Issue hybrid / composite certificates (ML-DSA-65 + ECDSA) during transition. Requires CA + relying-party support; plan a dual-trust period.',
+    note: 'Plan an application-specific PKI transition only after the certificate/profile standards and relying-party support are identified. NIST discusses dual-signature techniques but leaves their use to each application. For NSS, NSA FAQ v2.2 instead describes parallel classical and quantum-resistant PKIs and says not to invent multiple-algorithm certificates.',
     focusPersonas: ['architect'],
   },
   {
@@ -182,10 +171,8 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     target: 'mlkem768x25519',
     decision: 'dropin',
     wave: 2,
-    cnsaYear: 2030,
     hndl: false,
-    deadlineLabel: 'CNSA 2.0 deadline',
-    note: 'OpenSSH 10.0+ defaults to the hybrid mlkem768x25519-sha256 key exchange (9.x defaulted to sntrup761x25519-sha512; OpenSSH 9.9 added the ML-KEM option). Upgrade clients + servers; no key reissue needed for the KEX itself.',
+    note: 'OpenSSH 10.0 made mlkem768x25519-sha256 its default key exchange after OpenSSH 9.9 introduced it. Upgrade and test both endpoints, but assess host/user authentication separately: changing key exchange does not migrate signature credentials and is not a claim of CNSA 2.0 conformance.',
     focusPersonas: ['architect'],
   },
   {
@@ -193,13 +180,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'Code & firmware signing',
     where: 'Software releases, firmware images, package repositories',
     classical: 'RSA-3072 / ECDSA',
-    target: 'ML-DSA-65 / SLH-DSA',
+    target: 'ML-DSA / hash-based signatures (policy-dependent)',
     decision: 'hybrid',
     wave: 2,
-    cnsaYear: 2030,
     hndl: false,
-    deadlineLabel: 'Firmware outlives the signing key',
-    note: 'Adopt SLH-DSA (stateless, conservative) or ML-DSA for long-lived firmware. Verifiers in the field must understand the new algorithm before you switch — stage a hybrid signature period.',
+    note: 'Choose the signature scheme from the policy and verifier profile for the product. General NIST standards include ML-DSA and SLH-DSA; CNSA 2.0 instead specifies ML-DSA-87 for general signatures and allows LMS/XMSS for software or firmware, while FAQ v2.2 says SLH-DSA is not approved for NSS. Inventory immutable verifiers and update paths before changing signatures.',
     focusPersonas: ['architect', 'developer'],
   },
   {
@@ -210,10 +195,8 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     target: 'ML-DSA / ML-KEM',
     decision: 'roadmap',
     wave: 3,
-    cnsaYear: 2030,
     hndl: false,
-    deadlineLabel: 'Gated on vendor firmware',
-    note: 'PQC support depends on HSM firmware + PKCS#11 v3.2. Track your vendor roadmap; validate FIPS 140-3 PQC module status before committing migration timelines.',
+    note: 'PQC support depends on the device, firmware, API and validation boundary. PKCS#11 v3.2 mechanism definitions do not mean that a particular HSM implements them or that its FIPS 140-3 certificate covers PQC. Check the vendor evidence and certificate security policy before committing a timeline.',
     focusPersonas: ['ops'],
   },
   {
@@ -221,13 +204,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'Cloud KMS / key APIs',
     where: 'Cloud key-management services, envelope encryption',
     classical: 'RSA/ECDH TLS',
-    target: 'ML-KEM hybrid TLS',
+    target: 'PQC-capable transport and key services',
     decision: 'roadmap',
     wave: 3,
-    cnsaYear: 2030,
     hndl: true,
-    deadlineLabel: 'API transport carries HNDL risk',
-    note: 'The KMS API transport (TLS) is the near-term exposure; key-wrap algorithm support follows the provider roadmap. Prefer providers exposing hybrid KEM key-wrap.',
+    note: 'Separate the KMS API transport from the key operations performed by the service. A hybrid TLS endpoint does not establish PQC support for stored-key generation, wrapping, signing or the provider HSM. Verify each operation and its validation boundary in provider evidence.',
     focusPersonas: ['ops', 'executive', 'grc', 'developer'],
   },
   {
@@ -235,13 +216,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'Messaging E2EE',
     where: 'Secure messengers, real-time collaboration',
     classical: 'X25519 ratchet',
-    target: 'ML-KEM ratchet',
+    target: 'PQC-enhanced agreement (protocol-specific)',
     decision: 'dropin',
     wave: 3,
-    cnsaYear: 2033,
     hndl: false,
-    deadlineLabel: 'Forward-secret but harvestable',
-    note: 'Protocols like PQXDH add ML-KEM to the key agreement. If you run a platform, upgrade the protocol library; if you consume one, track the vendor’s PQC ratchet rollout.',
+    note: 'Messaging protocols are migrating through protocol-specific constructions, versions and staged rollouts. Identify which conversations and devices actually negotiate the documented PQC mode; a product announcement or one PQC handshake does not establish end-to-end coverage.',
     focusPersonas: [],
   },
   {
@@ -249,13 +228,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'Secure email (S/MIME, PGP)',
     where: 'Encrypted email, long-retention archives',
     classical: 'RSA',
-    target: 'ML-KEM + ML-DSA',
+    target: 'PQC mail profiles (still ecosystem-dependent)',
     decision: 'mitigate',
     wave: 4,
-    cnsaYear: 2033,
     hndl: true,
-    deadlineLabel: 'No GA quantum-safe product yet',
-    note: 'PQC S/MIME (LAMPS composite) is still draft-stage with no GA product. Mitigate: shorten retention of sensitive mail, gateway-encrypt with a hard sunset date, and track the LAMPS drafts.',
+    note: 'Do not infer deployable end-to-end PQC email from an algorithm implementation alone. Track the applicable S/MIME or OpenPGP profile, client and gateway interoperability, certificate support and product evidence. Use data-retention and compensating controls while the required ecosystem remains unavailable.',
     focusPersonas: [],
   },
   {
@@ -263,13 +240,11 @@ export const REPLACE_ASSETS: ReplaceAsset[] = [
     label: 'Data-at-rest encryption',
     where: 'Disk/DB encryption, backups, object stores',
     classical: 'AES-256 + RSA wrap',
-    target: 'AES-256 + ML-KEM wrap',
+    target: 'AES-256 + PQC-aware key establishment',
     decision: 'rekey',
     wave: 4,
-    cnsaYear: 2033,
     hndl: true,
-    deadlineLabel: 'Symmetric-safe; re-wrap the keys',
-    note: 'AES-256 itself is quantum-resistant — the exposure is the RSA/ECDH key-wrapping of the data-encryption keys. Re-wrap DEKs under an ML-KEM hybrid KEK; no bulk re-encryption needed.',
+    note: 'AES-256 is not the main Shor-algorithm exposure, but the surrounding key establishment, wrapping, recovery and access paths may use RSA or ECC. Whether re-wrapping is sufficient or data must be re-encrypted depends on the architecture, key hierarchy, retention and assurance requirements.',
     focusPersonas: ['ops', 'developer'],
   },
 ]

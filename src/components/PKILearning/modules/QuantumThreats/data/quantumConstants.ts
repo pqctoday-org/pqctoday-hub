@@ -412,16 +412,16 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     lastReviewed: '2026-07-30',
   },
   {
-    source: 'NSA CNSA 2.0 (2022; FAQ version 2.1, December 2024)',
-    claimId: 'crqc-nsa-cnsa2-dates',
+    source: 'NSA CNSA 2.0 FAQ version 2.2 (August 2026)',
+    claimId: 'crqc-nsa-cnsa2-faq-v22-dates',
     kind: 'migration-deadline',
     yearLow: 2030,
-    yearHigh: 2033,
+    yearHigh: 2031,
     confidence: 'Mandate',
     notes:
-      "Migration MANDATE dates (not a CRQC-arrival prediction). NSA's September 2022 announcement (version 1.0): support and prefer CNSA 2.0 from 2025 (software and firmware signing) and 2026 (networking); exclusive use by 2030 (software and firmware signing, traditional networking) and by 2033 (web browsers and servers, cloud services, operating systems). NSA's December 2024 FAQ (version 2.1, the newer document) updates this: by 31 December 2030 all equipment and services that cannot support CNSA 2.0 must be phased out, and by 31 December 2031 CNSA 2.0 algorithms are mandated for use, in both cases unless otherwise noted. The FAQ also states that all new acquisitions for national security systems are to be CNSA 2.0-compliant from 1 January 2027 (CNSSP 15). Both documents stand; where their dates differ, the December 2024 FAQ is the newer. NSM-10 targets all national security systems quantum-resistant by 2035.",
+      'Migration MANDATE dates, not a CRQC-arrival prediction. NSA FAQ version 2.2 states that new National Security System acquisitions must be CNSA 2.0-compliant from 1 January 2027, equipment and services that cannot support CNSA 2.0 must be phased out by 31 December 2030, and CNSA 2.0 algorithms are mandated by 31 December 2031, unless otherwise noted. The separate 2035 NSM-10 goal must not be presented as a CNSA 2.0 mandate.',
     url: 'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF',
-    lastReviewed: '2026-10-03',
+    lastReviewed: '2026-10-17',
   },
   {
     source: 'ANSSI France (2022 paper; current FAQ)',

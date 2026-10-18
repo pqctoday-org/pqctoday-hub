@@ -281,6 +281,21 @@ describe('MobileAssessView', () => {
       expect(screen.queryByText('Review your answers')).not.toBeInTheDocument()
       expect(useAssessmentFormStore.getState().assessmentStatus).not.toBe('complete')
     })
+
+    it('Edit opens the selected question and Save and return goes straight back to review', () => {
+      goToReview()
+      fireEvent.click(screen.getByRole('button', { name: `Edit ${STEP_META.industry.label}` }))
+
+      expect(screen.queryByText('Review your answers')).not.toBeInTheDocument()
+      expect(screen.getByText(STEP_META.industry.question)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Save and return/i })).toBeInTheDocument()
+
+      fireEvent.click(screen.getByText('Finance & Banking').closest('button')!)
+      fireEvent.click(screen.getByRole('button', { name: /Save and return/i }))
+
+      expect(screen.getByText('Review your answers')).toBeInTheDocument()
+      expect(screen.getByText('Finance & Banking')).toBeInTheDocument()
+    })
   })
 
   // 2026-08-24 Assess-step audit: the compliance step rendered a flat,
@@ -404,7 +419,7 @@ describe('MobileAssessView', () => {
       fireEvent.click(screen.getByText(LAYERS[0].label).closest('button')!)
       expect(useAssessmentFormStore.getState().infrastructure).toContain(LAYERS[0].id)
       // The one real remaining desktop-only cut is named honestly, not silently dropped.
-      expect(screen.getByText(/Step 11's finer-grained matrices/)).toBeInTheDocument()
+      expect(screen.getByText(/Step 12's finer-grained matrices/)).toBeInTheDocument()
     })
 
     it('timeline: United States has real country-specific deadlines, not the generic fallback', () => {

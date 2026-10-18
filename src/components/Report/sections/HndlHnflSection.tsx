@@ -35,11 +35,11 @@ export const HndlNotQuantifiedWarning = () => (
   <div className="glass-panel p-4 border-l-4 border-l-warning flex items-start gap-3">
     <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" />
     <div>
-      <p className="text-sm font-semibold text-foreground">HNDL Risk Not Quantified</p>
+      <p className="text-sm font-semibold text-foreground">HNDL Window Not Modelled</p>
       <p className="text-xs text-muted-foreground mt-1">
         This quick assessment did not include data retention information. Harvest-Now-Decrypt-Later
-        risk cannot be calculated. For sensitive long-lived data, run a Comprehensive Assessment to
-        quantify this exposure.
+        window cannot be modelled. For sensitive long-lived data, run a full assessment and replace
+        assumptions with documented retention evidence.
       </p>
     </div>
   </div>
@@ -49,11 +49,11 @@ export const HnflNotQuantifiedWarning = () => (
   <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
     <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
     <div>
-      <p className="text-sm font-semibold text-foreground">HNFL Risk Not Quantified</p>
+      <p className="text-sm font-semibold text-foreground">Signature Window Not Modelled</p>
       <p className="text-xs text-muted-foreground mt-1">
-        Your assessment includes signature algorithms vulnerable to Shor&apos;s algorithm.
-        Harvest-Now-Forge-Later risk cannot be calculated without credential lifetime data. Run a
-        Comprehensive Assessment to quantify signature key exposure.
+        Your assessment includes signature algorithms vulnerable to Shor&apos;s algorithm. A
+        signature-transition window cannot be modelled without credential lifetime data. Run a full
+        assessment, then verify certificate and signing-key lifecycles.
       </p>
     </div>
   </div>

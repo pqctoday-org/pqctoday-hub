@@ -39,13 +39,14 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
               '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive; NIST IR 8547 RSA/ECC deprecation (draft, dates subject to change)',
           },
           {
-            value: '2033',
-            label: '2033 — CNSA 2.0 web browsers / servers / cloud / operating systems exclusive',
+            value: '2031',
+            label:
+              '2031 — CNSA 2.0 algorithms mandated for NSS unless otherwise noted (FAQ version 2.2)',
           },
           {
             value: '2035',
             label:
-              '2035 — CNSA 2.0 full enforcement (all NSS); NIST IR 8547 RSA/ECC disallowed (draft, dates subject to change)',
+              '2035 — NSM-10 quantum-risk objective; NIST IR 8547 RSA/ECC disallowed (draft, dates subject to change)',
           },
         ],
       },

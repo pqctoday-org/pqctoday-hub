@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1296 documents, trust-tiered',
+          '1295 documents, trust-tiered',
           'Regulatory data verified 17 Oct 2026',
         ],
         sideCard: {
@@ -107,10 +107,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'CNSA 2.0 exclusive use (web, cloud, OS)', value: '2033' },
+            { label: 'CNSA 2.0 algorithms mandated for NSS', value: '2031' },
             { label: 'Planning year for a quantum computer (our own)', value: '2035 (2030–2041)' },
             { label: 'Your migration takes', value: '5 yrs' },
-            { label: 'All national-security systems', value: '2035' },
+            { label: 'Separate NSM-10 federal goal', value: '2035' },
           ],
           punchline: 'Three of these four are not yours to move.',
           footnote:
@@ -166,7 +166,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1296 documents, trust-tiered',
+          '1295 documents, trust-tiered',
           'Regulatory data verified 17 Oct 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -305,7 +305,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1296 documents, trust-tiered',
+          '1295 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -447,7 +447,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1296 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
+        proofChips: ['1295 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -519,7 +519,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1296 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1295 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -663,7 +663,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1296 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1295 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -733,7 +733,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1296 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
+        proofChips: ['1295 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -2508,7 +2508,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1296 documents, trust-tiered',
+          '1295 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -3073,82 +3073,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             title: 'Why the question is being asked',
             body: 'The threat landscape: the CRQC capability watch and the expert survey behind it, with the source behind each figure.',
             href: '/threats',
-          },
-        ] as [
-          { title: string; body: string; href?: string },
-          { title: string; body: string; href?: string },
-          { title: string; body: string; href?: string },
-        ],
-        trackTitle:
-          'Then, the background: 10 hours 40 minutes of essentials, not the full 19½ hours.',
-
-        trackChips: [
-          'Product certification',
-          'FIPS 140-3',
-          'ACVP lab workflow',
-          'Entropy',
-          'HSMs',
-          'Testing & validation',
-          'Common Criteria & EUCC',
-          'Hardware acceleration',
-        ],
-        capstoneChip: { label: 'Lab-Ready' },
-      },
-    },
-    {
-      id: 'contribute',
-      order: 6,
-      chipLabel: 'Review it, correct it',
-      chipDescription: 'Drafts awaiting practitioner review, and how a correction gets in.',
-      phaseId: 'verify-close',
-      cswp39Zone: 'assets',
-      moduleIds: ['acvp-lab-workflow', 'standards-bodies'],
-      workshopIds: [],
-      businessToolIds: [],
-      board: {
-        heroEyebrow: 'Certification & validation · built for you, reviewed by you',
-
-        headline: "The drafts here need a lab practitioner's review.",
-        sub: 'The ACVP lab-workflow module is a draft awaiting validation-lab practitioner review. Its contributing section sets out how to propose a source-backed test, and links a Data Suggestion issue if you would rather send the source and let the maintainer do the manifest work.',
-        ctaPrimary: 'Read how to contribute a test',
-        ctaPrimaryHref: '/learn/acvp-lab-workflow',
-        ctaSecondary: 'Ask to be listed in the community',
-        ctaSecondaryHref: '/leaders',
-        proofChips: [
-          'Every correction logged, with who reviewed it',
-          'Listed only with written consent',
-        ],
-        sideCard: {
-          title: 'What a contributed test needs',
-          tone: 'accent' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
-          rows: [
-            { label: 'Source', value: 'primary and immutable' },
-            { label: 'Licence', value: 'a redistribution note for copied values' },
-            { label: 'Review', value: 'two people: source, then implementation' },
-            { label: 'Never', value: 'vectors issued to a real ACVTS session' },
-          ],
-          punchline: 'A vector without provenance does not merge as trusted.',
-          footnote:
-            "The reviewer checklist from the ACVP lab-workflow module, which matches the repository's validation-contribution issue template.",
-        },
-        gridTitle: 'Where your review lands',
-        gridSub: 'Corrections are logged in public',
-        gridCards: [
-          {
-            title: 'See every correction already made',
-            body: 'The revisions feed logs each correction to the compliance, vendor and migration data, with who reviewed it — check whether a problem you spotted is already fixed.',
-            href: '/revisions',
-          },
-          {
-            title: 'Check the IP around an implementation',
-            body: 'The patents corpus tracks claims over specific PQC techniques — research context before code goes to a lab, and explicitly not legal advice.',
-            href: '/patents',
-          },
-          {
-            title: 'See what a closure gate asks for',
-            body: "The simulation's verify-and-close phase shows the evidence a closure gate demands before anyone may call a migration done.",
-            href: '/simulation?phase=verify-close',
           },
         ] as [
           { title: string; body: string; href?: string },

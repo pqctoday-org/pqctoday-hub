@@ -263,7 +263,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             },
             {
               org: 'NSA CNSA 2.0',
-              timeline: 'Exclusive use 2030/2033 by category; NSM-10: all NSS by 2035',
+              timeline:
+                'New NSS acquisitions 2027; unsupported equipment phase-out 2030; algorithms mandated 2031 unless otherwise noted (FAQ v2.2)',
               color: 'destructive',
             },
             {

@@ -128,7 +128,7 @@ describe('SectorExposureHero — Mosca migration-deadline card', () => {
 })
 
 describe('SectorExposureHero — one CRQC window (ruling R5)', () => {
-  it('states the forecast window with its one wording, and uses its planning year as Z', () => {
+  it('states the forecast window but does not calculate a personal deadline without scope', () => {
     mockGetCrqcForecast.mockReturnValue(forecast(2030, 2041, 2035))
     renderInRouter(
       <SectorExposureHero applicable={noThreats} scopedIndustries={[]} variant="horizon" />
@@ -136,7 +136,9 @@ describe('SectorExposureHero — one CRQC window (ruling R5)', () => {
     expect(
       screen.getByText('CRQC expert forecast: 2030–2041 (one expert survey)')
     ).toBeInTheDocument()
-    expect(screen.getByText(/Z 2035 −/)).toBeInTheDocument()
+    expect(screen.getByText('2035')).toBeInTheDocument()
+    expect(screen.getByText(/No personal deadline is calculated yet/)).toBeInTheDocument()
+    expect(screen.queryByText(/Z 2035 −/)).not.toBeInTheDocument()
     expect(screen.queryByText(/consensus|sources/i)).not.toBeInTheDocument()
   })
 })
@@ -159,7 +161,7 @@ describe('SectorExposureHero — HNDL/HNFL totals (UX-19)', () => {
     renderInRouter(
       <SectorExposureHero
         applicable={[t('hndl', 'A'), t('both', 'B')]}
-        scopedIndustries={[]}
+        scopedIndustries={['Insurance']}
         variant="exposure"
       />
     )

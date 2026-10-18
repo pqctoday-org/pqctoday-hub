@@ -121,6 +121,13 @@ import {
   protocolsForThreat,
   threatTouchesProtocol,
 } from '../../data/threatProtocolLens'
+import {
+  getThreatRecordType,
+  parseThreatRecordType,
+  THREAT_RECORD_TYPE_LABELS,
+  THREAT_RECORD_TYPES,
+  type ThreatRecordType,
+} from '@/data/threatRecordTypes'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
@@ -218,6 +225,9 @@ export const ThreatsDashboard: React.FC<{
   const [selectedClass, setSelectedClass] = useState<string>(
     () => searchParams.get('class') ?? 'All'
   )
+  const [selectedRecordType, setSelectedRecordType] = useState<ThreatRecordType | null>(() =>
+    parseThreatRecordType(searchParams.get('type'))
+  )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [sortField, setSortField] = useState<SortField>(
     () => (searchParams.get('sort') as SortField | null) ?? 'industry'
@@ -265,6 +275,7 @@ export const ThreatsDashboard: React.FC<{
     const idParam = threatIdParam(searchParams)
     const nextCrit = searchParams.get('criticality') ?? 'All'
     const nextClass = searchParams.get('class') ?? 'All'
+    const nextRecordType = parseThreatRecordType(searchParams.get('type'))
     const nextQ = searchParams.get('q') ?? ''
     const nextSort = (searchParams.get('sort') as SortField | null) ?? 'industry'
     const nextDir = (searchParams.get('dir') as SortDirection | null) ?? 'asc'
@@ -289,6 +300,7 @@ export const ThreatsDashboard: React.FC<{
     }
     setSelectedCriticality((prev) => (prev !== nextCrit ? nextCrit : prev))
     setSelectedClass((prev) => (prev !== nextClass ? nextClass : prev))
+    setSelectedRecordType((prev) => (prev !== nextRecordType ? nextRecordType : prev))
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortField((prev) => (prev !== nextSort ? nextSort : prev))
     setSortDirection((prev) => (prev !== nextDir ? nextDir : prev))
@@ -304,6 +316,7 @@ export const ThreatsDashboard: React.FC<{
         industry?: string[]
         criticality?: string
         threatClass?: string
+        recordType?: ThreatRecordType | null
         q?: string
         sort?: SortField
         dir?: SortDirection
@@ -319,6 +332,8 @@ export const ThreatsDashboard: React.FC<{
           const inds = overrides.industry ?? selectedIndustries
           const crit = overrides.criticality ?? selectedCriticality
           const cls = overrides.threatClass ?? selectedClass
+          const recordType =
+            overrides.recordType !== undefined ? overrides.recordType : selectedRecordType
           const q = overrides.q ?? searchQuery
           const sort = overrides.sort ?? sortField
           const dir = overrides.dir ?? sortDirection
@@ -332,6 +347,8 @@ export const ThreatsDashboard: React.FC<{
           else next.delete('criticality')
           if (cls !== 'All') next.set('class', cls)
           else next.delete('class')
+          if (recordType) next.set('type', recordType)
+          else next.delete('type')
           if (q) next.set('q', q)
           else next.delete('q')
           if (sort !== 'industry') next.set('sort', sort)
@@ -359,6 +376,7 @@ export const ThreatsDashboard: React.FC<{
       selectedIndustries,
       selectedCriticality,
       selectedClass,
+      selectedRecordType,
       searchQuery,
       sortField,
       sortDirection,
@@ -527,6 +545,10 @@ export const ThreatsDashboard: React.FC<{
       data = data.filter((item) => threatMatchesClass(item, selectedClass as ThreatClass))
     }
 
+    if (selectedRecordType) {
+      data = data.filter((item) => getThreatRecordType(item) === selectedRecordType)
+    }
+
     // Filter by Search Query — lexical floor + semantic supplement
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
@@ -586,6 +608,7 @@ export const ThreatsDashboard: React.FC<{
     selectedIndustries,
     selectedCriticality,
     selectedClass,
+    selectedRecordType,
     searchQuery,
     semanticIdSet,
     sortField,
@@ -757,6 +780,7 @@ export const ThreatsDashboard: React.FC<{
       personaScope: industries.length > 0 ? [] : personaDefaultThreatIndustries,
       criticality: searchParams.get('criticality'),
       threatClass: searchParams.get('class'),
+      recordType: parseThreatRecordType(searchParams.get('type')),
       query: searchParams.get('q') ?? '',
       onlyMine: showOnlyThreats ? myThreats : null,
       tierExcludes:
@@ -787,6 +811,9 @@ export const ThreatsDashboard: React.FC<{
       } else if (ex === 'class') {
         setSelectedClass('All')
         next.delete('class')
+      } else if (ex === 'record-type') {
+        setSelectedRecordType(null)
+        next.delete('type')
       } else if (ex === 'q') {
         setSearchQuery('')
         next.delete('q')
@@ -910,11 +937,33 @@ export const ThreatsDashboard: React.FC<{
         <PageHeader
           icon={AlertTriangle}
           title="Quantum Threats"
-          description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
+          description="Educational scenarios, policy signals and technical evidence for understanding quantum-era exposure and candidate responses."
         />
       )}
 
-      {!simEmbed && <PersonaPageNote route="/threats" className="mb-4" />}
+      {!simEmbed && selectedPersona && <PersonaPageNote route="/threats" className="mb-4" />}
+      {!simEmbed && !selectedPersona && (
+        <section
+          className="mb-4 rounded-lg border border-border bg-muted/20 p-3"
+          aria-label="Role guidance"
+        >
+          <p className="text-sm font-semibold text-foreground">
+            Choose a role for focused guidance
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            The catalog stays the same; role selection changes the explanation and suggested path,
+            not the evidence or severity of a record.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2"
+            onClick={() => setPersonaModalOpen(true)}
+          >
+            Choose your role
+          </Button>
+        </section>
+      )}
 
       {deepLinkNotice && (
         <DeepLinkNotice
@@ -933,6 +982,35 @@ export const ThreatsDashboard: React.FC<{
           retired={retiredLinked}
           onDismiss={() => syncFiltersToUrl({ id: null })}
         />
+      )}
+
+      {!simEmbed && (
+        <section
+          className="mb-4 rounded-lg border border-border bg-card p-4"
+          aria-labelledby="threat-primer-title"
+        >
+          <h2 id="threat-primer-title" className="text-sm font-semibold text-foreground">
+            Two exposure clocks, several kinds of record
+          </h2>
+          <div className="mt-2 grid gap-2 text-xs leading-relaxed text-muted-foreground md:grid-cols-2">
+            <p>
+              <strong className="text-foreground">HNDL — harvest now, decrypt later:</strong>{' '}
+              encrypted data collected today may become readable later if it must stay secret past
+              the assumed CRQC date.
+            </p>
+            <p>
+              <strong className="text-foreground">HNFL — harvest/tamper now, forge later:</strong>{' '}
+              long-lived signatures, identities or trust roots may become forgeable during their
+              validity period. HNFL is PQC Today&apos;s teaching label, not a standardized industry
+              term.
+            </p>
+          </div>
+          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+            The catalog mixes threat scenarios with policy signals, implementation vulnerabilities,
+            migration constraints, milestones, evidence and guidance. Use the record-type filter
+            before comparing the site teaching-priority labels.
+          </p>
+        </section>
       )}
 
       <>
@@ -1088,6 +1166,13 @@ export const ThreatsDashboard: React.FC<{
           icon={<List size={16} className="text-primary" aria-hidden="true" />}
           defaultOpen
         >
+          <div className="mb-4 rounded-lg border border-border bg-muted/20 p-3 text-xs leading-relaxed text-muted-foreground">
+            <span className="font-semibold text-foreground">What is in this catalog?</span>{' '}
+            Educational records drawn from threat scenarios, policy milestones, implementation
+            weaknesses and migration guidance. A record is not automatically an observed attack, a
+            prediction, or a requirement for your organisation; open its Evidence section to see
+            what the cited source actually supports.
+          </div>
           {/* Control deck — consolidated filters in the redesign language: sector + search
           (row 1); role lens + severity/class chips + trust + my + view (row 2). */}
           <div className="mb-8 space-y-3" data-testid="threats-control-deck">
@@ -1184,7 +1269,7 @@ export const ThreatsDashboard: React.FC<{
 
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-                    Severity
+                    Site priority
                   </span>
                   {criticalityItems.map((c) => {
                     const active = selectedCriticality === c.id
@@ -1211,6 +1296,11 @@ export const ThreatsDashboard: React.FC<{
                     )
                   })}
                 </div>
+
+                <span className="max-w-sm text-[10px] leading-snug text-muted-foreground">
+                  Editorial teaching priority based on consequence, exposure horizon and migration
+                  difficulty—not a probability or an assessment of your organisation.
+                </span>
 
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
@@ -1240,6 +1330,29 @@ export const ThreatsDashboard: React.FC<{
                       </Button>
                     )
                   })}
+                </div>
+
+                <div className="min-w-[190px]">
+                  <FilterDropdown
+                    items={[
+                      { id: 'All', label: 'All record types' },
+                      ...THREAT_RECORD_TYPES.map((type) => ({
+                        id: type,
+                        // `type` comes from the governed ThreatRecordType tuple.
+                        label: THREAT_RECORD_TYPE_LABELS[type], // eslint-disable-line security/detect-object-injection
+                      })),
+                    ]}
+                    selectedId={selectedRecordType ?? 'All'}
+                    onSelect={(id) => {
+                      const next = id === 'All' ? null : (id as ThreatRecordType)
+                      setSelectedRecordType(next)
+                      syncFiltersToUrl({ recordType: next })
+                    }}
+                    defaultLabel="Record type"
+                    opaque
+                    className="mb-0 w-full"
+                    noContainer
+                  />
                 </div>
 
                 {/* REMOVED 2026-08-11: the trust-tier control is gone from all

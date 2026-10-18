@@ -25,7 +25,7 @@ import type { SoftwareItem } from '@/types/MigrateTypes'
 // already-deleted legacy page — every assertion below is derived from the
 // SAME real modules the component reads (migrationAssets.ts, migrateData.ts,
 // vendorRoadmapData.ts), not from that stale prose or the mockup's 2 known-
-// wrong numbers (TLS's real cnsaYear is 2025, not the screenshot's 2035).
+// false asset-specific CNSA years formerly shown by the workbench.
 // Deep-link remediation PR 1: the view now reads/writes ?tab=/?product=, so it
 // needs a router. LocationProbe exposes the live query string to assertions.
 function LocationProbe() {
@@ -106,20 +106,18 @@ describe('MobileMigrateView', () => {
 
   it('renders all 4 real tabs', () => {
     renderMobile()
-    for (const label of ['Replace', 'Plan', 'Vendors', 'Risk']) {
+    for (const label of ['Replace', 'Plan', 'Vendors', 'Evidence']) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
   })
 
-  it("defaults to TLS with the real classical/target pair and cnsaYear, not the mockup's stale 2035", () => {
+  it('defaults to TLS with its teaching pair and no fabricated asset deadline', () => {
     renderMobile()
     const tls = REPLACE_ASSETS.find((a) => a.id === 'tls')!
     expect(screen.getByText(tls.classical)).toBeInTheDocument()
     expect(screen.getByText(tls.target)).toBeInTheDocument()
-    expect(
-      screen.getByText(new RegExp(`${tls.cnsaYear} · ${tls.deadlineLabel}`))
-    ).toBeInTheDocument()
-    expect(screen.queryByText(/2035/)).not.toBeInTheDocument()
+    expect(screen.getByText('Illustrative action')).toBeInTheDocument()
+    expect(screen.queryByText(/2025|2033|2035/)).not.toBeInTheDocument()
   })
 
   it('Secure email shows the real "Mitigate" decision, not the mockup\'s "Track roadmap"', () => {
@@ -169,14 +167,14 @@ describe('MobileMigrateView', () => {
     expect(screen.getByText(new RegExp(`${roadmapByVendorId.size}`))).toBeInTheDocument()
   })
 
-  it('Risk tab shows all 4 real risk signals, live-computed from the catalog', () => {
+  it('Evidence tab shows all 4 catalog review cues, live-computed from the catalog', () => {
     renderMobile()
-    fireEvent.click(screen.getByText('Risk').closest('button')!)
+    fireEvent.click(screen.getByText('Evidence').closest('button')!)
     for (const title of [
-      'Single-source domains',
-      'Vendor concentration',
-      'Certification gap',
-      'Geographic concentration',
+      'Single-source catalog coverage',
+      'Available-product concentration',
+      'FIPS evidence gap',
+      'Vendor HQ distribution',
     ]) {
       expect(screen.getByText(title)).toBeInTheDocument()
     }
@@ -185,14 +183,10 @@ describe('MobileMigrateView', () => {
     expect(vendorMap.size).toBeGreaterThan(0)
   })
 
-  // 2026-08-28: foundation-domain browsing shipped (see the "Foundation
-  // domain reach" describe block below) — the Supply Chain Risk Matrix is
-  // now the ONLY real stated cut, and the old claim must be gone, not just
-  // superseded, so a reader is never told two different things at once.
-  it('states what was cut rather than silently dropping it', () => {
+  it('states the educational boundary instead of presenting an estate score', () => {
     renderMobile()
-    expect(screen.getByText(/The Supply Chain Risk Matrix is on a laptop/i)).toBeInTheDocument()
-    expect(screen.queryByText(/8 foundation\/infrastructure domains/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/not a readiness or compliance assessment/i)).toBeInTheDocument()
+    expect(screen.queryByText(/score your own estate/i)).not.toBeInTheDocument()
   })
 
   it('Plan tab shows no foundation section when nothing but replace assets are planned', () => {
@@ -866,11 +860,14 @@ describe('MobileMigrateView', () => {
       expect(within(sheet).getAllByText(lib.softwareName).length).toBeGreaterThan(0)
     })
 
-    describe('Vendor risk ?open=', () => {
-      it('<productId> opens that product sheet over the risk tab; closing drops ?open', () => {
+    describe('Evidence gaps ?open=', () => {
+      it('<productId> opens that product sheet over the evidence tab; closing drops ?open', () => {
         const [hsm] = productsForDomain('hsm')
         renderMobile(`/migrate?tab=vendorrisk&open=${encodeURIComponent(hsm.productId)}`)
-        expect(screen.getByRole('button', { name: 'Risk' })).toHaveAttribute('aria-pressed', 'true')
+        expect(screen.getByRole('button', { name: 'Evidence' })).toHaveAttribute(
+          'aria-pressed',
+          'true'
+        )
         const sheet = screen.getByTestId('migrate-product-detail-sheet')
         expect(within(sheet).getAllByText(hsm.softwareName).length).toBeGreaterThan(0)
         fireEvent.click(within(sheet).getAllByRole('button', { name: /^close$/i })[0])

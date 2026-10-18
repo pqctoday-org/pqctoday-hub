@@ -140,17 +140,17 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
               <span>
-                <strong>2033:</strong> CNSA 2.0 exclusive for web browsers/servers, cloud services
-                and operating systems — also niche equipment and custom/legacy applications
+                <strong>2031:</strong> CNSA 2.0 algorithms mandated for NSS unless otherwise noted
+                under FAQ version 2.2
               </span>
             </li>
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-primary mt-0.5 shrink-0" />
               <span>
-                <strong>2035:</strong> NSA expects the transition to quantum-resistant algorithms
-                for <em>National Security Systems</em> to be complete, in line with NSM-10.
-                Separately, NIST IR 8547 targets disallowing classical public-key algorithms for
-                federal use after 2035 — neither is a global sunset of RSA and ECC
+                <strong>2035:</strong> NSM-10 sets a broader federal quantum-risk objective.
+                Separately, the initial public draft of NIST IR 8547 proposes disallowing affected
+                classical public-key algorithms after 2035 — neither is a global sunset of RSA and
+                ECC
               </span>
             </li>
           </ul>

@@ -70,14 +70,14 @@ function ExecSummary({ qra }: { qra: ReturnType<typeof buildQRA> }) {
       <div className="flex flex-wrap items-stretch gap-3">
         <div className="flex flex-col justify-center rounded-lg border border-border bg-muted/30 px-4 py-3 min-w-[8rem]">
           <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-            Risk Score
+            Priority Index
           </span>
           <span className="text-2xl font-bold text-foreground">
             {execSummary.riskScore}
             <span className="text-sm text-muted-foreground font-normal">/100</span>
           </span>
           <span className="text-xs text-muted-foreground capitalize">
-            {execSummary.riskLevel} risk
+            {execSummary.riskLevel} model band
           </span>
         </div>
         <div className="flex flex-col justify-center rounded-lg border border-border bg-muted/30 px-4 py-3 min-w-[10rem]">
@@ -92,6 +92,10 @@ function ExecSummary({ qra }: { qra: ReturnType<typeof buildQRA> }) {
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">{execSummary.text}</p>
       <p className="text-xs text-muted-foreground">{execSummary.tier.description}</p>
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        This worksheet organizes self-reported inputs. It does not verify deployed controls,
+        determine compliance, or establish a certification-ready evidence record.
+      </p>
     </div>
   )
 }
@@ -294,8 +298,9 @@ function RegulatoryGaps({ gaps }: { gaps: ReturnType<typeof buildQRA>['regulator
         <CrqcWindow />
         <p className="text-sm text-muted-foreground inline-flex items-center gap-2">
           <CheckCircle2 size={16} className="text-success" aria-hidden="true" />
-          Among the frameworks you selected that apply to you, none explicitly mandates PQC yet —
-          but track the regulatory horizon.
+          Among the selected frameworks retained by the profile filter, none is recorded as
+          explicitly requiring PQC yet. Verify scope and current source text before relying on this
+          result.
         </p>
       </div>
     )
@@ -304,8 +309,9 @@ function RegulatoryGaps({ gaps }: { gaps: ReturnType<typeof buildQRA>['regulator
     <div className="space-y-3">
       <CrqcWindow />
       <p className="text-sm text-muted-foreground">
-        {gaps.length} in-scope framework{gaps.length !== 1 ? 's' : ''} explicitly require
-        {gaps.length === 1 ? 's' : ''} PQC — these are gaps against current posture.
+        {gaps.length} selected framework{gaps.length !== 1 ? 's' : ''} retained by the profile
+        filter state{gaps.length === 1 ? 's' : ''} a PQC requirement. The assessment did not collect
+        implementation evidence, so these are review prompts—not proven compliance gaps.
       </p>
       <ul className="space-y-2">
         {gaps.map((g) => (
@@ -340,7 +346,7 @@ function ComplianceMapping({ rows }: { rows: ReturnType<typeof buildQRA>['compli
     if (requiresPQC === true)
       return (
         <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-semibold">
-          PQC Required
+          Source states PQC required
         </span>
       )
     if (requiresPQC === false)
@@ -394,7 +400,7 @@ export function QRASection({
     <div className="space-y-3" data-testid="qra-section">
       <CollapsibleSection
         id="report-section-qra"
-        title="Quantum Readiness Assessment (QRA)"
+        title="Quantum Readiness Learning Worksheet"
         icon={<FileCheck2 className="text-primary" size={20} />}
         defaultOpen={defaultOpen}
         className="border-l-4 border-l-primary"
@@ -417,7 +423,7 @@ export function QRASection({
               className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
             >
               <Grid3x3 size={16} className="text-primary" aria-hidden="true" />
-              Estate Heatmap
+              Answer-derived attention map
             </h3>
             <Heatmap cells={qra.heatmap} />
           </section>
@@ -454,7 +460,7 @@ export function QRASection({
               className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
             >
               <Scale size={16} className="text-primary" aria-hidden="true" />
-              Gap Analysis vs. Regulatory
+              Requirements to verify
             </h3>
             <RegulatoryGaps gaps={qra.regulatoryGaps} />
           </section>
@@ -465,7 +471,7 @@ export function QRASection({
               className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
             >
               <FileCheck2 size={16} className="text-primary" aria-hidden="true" />
-              Compliance Mapping
+              Selected source mapping
             </h3>
             <ComplianceMapping rows={qra.complianceMapping} />
           </section>

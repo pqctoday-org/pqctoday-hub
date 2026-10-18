@@ -197,27 +197,27 @@ export const PERSONA_LEADER_GUIDANCE: Record<string, LeaderGuidance[]> = {
   executive: [
     {
       category: 'Government',
-      why: 'They set the deadlines you will be held to — their statements become your dates.',
+      why: 'Use their cited publications to find policy signals; the profile alone does not establish an obligation or date for your organization.',
     },
     {
       category: 'Industry Adopter',
-      why: 'Organisations already mid-migration. Their published experience is the closest thing to a cost estimate you can cite.',
+      why: 'Their published experience can suggest questions for your own programme, but it is not a comparable cost estimate.',
     },
   ],
   grc: [
     {
       category: 'Government',
-      why: 'The regulators whose statements become your obligations register — track them at the source, not secondhand.',
+      why: 'Follow the cited agency sources as inputs to an obligations review; inclusion here does not determine applicability.',
     },
     {
       category: 'Standards',
-      why: 'The bodies whose drafts decide what a control checklist item actually cites once it moves from draft to adopted.',
+      why: 'Trace standards work to the issued document and version your programme actually references.',
     },
   ],
   developer: [
     {
       category: 'Open Source Maintainer',
-      why: 'They ship the libraries you will actually import — their release notes are your migration schedule.',
+      why: 'Find maintainers and then inspect the project release notes for implementation changes; your deployment schedule remains system-specific.',
     },
     {
       category: 'Algorithm Inventor',
@@ -227,11 +227,11 @@ export const PERSONA_LEADER_GUIDANCE: Record<string, LeaderGuidance[]> = {
   architect: [
     {
       category: 'Standards',
-      why: 'The editors whose drafts decide what interoperates. Following the draft beats reacting to the RFC.',
+      why: 'Use their cited work to follow interoperability discussions, while distinguishing drafts from issued standards.',
     },
     {
       category: 'Industry Vendor',
-      why: 'Whoever supplies your estate — their roadmap is a constraint on yours whether you track it or not.',
+      why: 'Use vendor profiles to find roadmap sources and questions for suppliers, not as proof of product readiness.',
     },
   ],
   researcher: [
@@ -247,31 +247,31 @@ export const PERSONA_LEADER_GUIDANCE: Record<string, LeaderGuidance[]> = {
   'cert-engineer': [
     {
       category: 'Government',
-      why: 'The agencies and national bodies behind the schemes — their guidance decides what a module has to show to be certified.',
+      why: 'Find scheme and agency publications, then verify the programme, module boundary, and effective version that apply.',
     },
     {
       category: 'Industry Vendor',
-      why: 'The module vendors taking PQC through validation — their announcements show which algorithms are reaching certificates first.',
+      why: 'Find vendor claims worth checking against official certificate and validation records.',
     },
   ],
   ops: [
     {
       category: 'Industry Vendor',
-      why: 'The people whose support timelines decide when you can actually upgrade what you run.',
+      why: 'Use cited vendor material to investigate support windows; confirm product, version, and platform coverage directly.',
     },
     {
       category: 'Open Source Maintainer',
-      why: 'Upstream for most of your estate — deprecations land here first, months before your distro.',
+      why: 'Follow upstream project evidence for deprecations and releases, then check when your own distribution adopts them.',
     },
   ],
   curious: [
     {
       category: 'Government',
-      why: 'The clearest signal that this is real: these are the bodies that have already set dates.',
+      why: 'Start with public-body sources to see which dates and policies have actually been published.',
     },
     {
       category: 'Algorithm Inventor',
-      why: 'The people who built the replacements. Their work is why there is a fix at all.',
+      why: 'Connect the standardized algorithm names to the researchers and cited work behind them.',
     },
   ],
 }

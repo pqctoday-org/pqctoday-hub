@@ -101,7 +101,7 @@ export const LeaderCard = ({
               title={`Affiliation last confirmed against public sources on ${leader.verifiedDate}`}
             >
               <ShieldCheck size={10} aria-hidden="true" />
-              Verified {leader.verifiedDate}
+              Profile checked {leader.verifiedDate}
             </span>
           )}
         </div>

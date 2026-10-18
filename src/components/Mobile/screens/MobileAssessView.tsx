@@ -345,6 +345,7 @@ export function MobileAssessView() {
   // last wizard step goes through (AssessReview.tsx) — this screen used to
   // call markComplete() directly from the last Next tap (an unlogged cut).
   const [showReview, setShowReview] = useState(false)
+  const [editingFromReview, setEditingFromReview] = useState(false)
 
   // Track choice, mirroring desktop's quick-vs-comprehensive choice
   // (TRACK_INFO). A fresh assessment (no industry answered yet) sees the
@@ -369,6 +370,10 @@ export function MobileAssessView() {
         <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Assess</h1>
         <p className="mb-5 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           Choose how much detail you want in your report.
+        </p>
+        <p className="mb-4 rounded-lg border border-primary/25 bg-primary/5 p-2.5 text-[10.5px] leading-relaxed text-muted-foreground">
+          Educational self-assessment: this uses your answers and stated defaults. It is not a scan,
+          audit, compliance determination, or certification result.
         </p>
         <div className="flex flex-col gap-3">
           <Button
@@ -410,7 +415,8 @@ export function MobileAssessView() {
         </div>
         <h1 className="text-[16px] font-extrabold text-foreground">Assessment complete</h1>
         <p className="max-w-xs text-[11.5px] leading-relaxed text-muted-foreground">
-          Your answers are saved. Open the report for your risk score, deadlines and roadmap.
+          Your answers are saved. Open the educational report to review its modelled score, sourced
+          milestones and suggested next steps.
         </p>
         <Link
           to="/report"
@@ -445,8 +451,8 @@ export function MobileAssessView() {
           Review your answers
         </h1>
         <p className="mb-4 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
-          Edit anything before we generate your fast-track report. {answered} of {flow.total}{' '}
-          answered.
+          Edit anything before we generate your {track === 'quick' ? 'fast-track' : 'full'} report.{' '}
+          {answered} of {flow.total} answered.
         </p>
 
         <div className="flex flex-col gap-2">
@@ -468,6 +474,20 @@ export function MobileAssessView() {
                     Recommended
                   </span>
                 )}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    flow.jumpTo(flow.renderIndexOf(k))
+                    setEditingFromReview(true)
+                    setShowReview(false)
+                  }}
+                  className="h-8 shrink-0 px-2.5 text-[11px]"
+                  aria-label={`Edit ${STEP_META[k].label}`}
+                >
+                  Edit
+                </Button>
               </div>
             )
           })}
@@ -934,8 +954,15 @@ export function MobileAssessView() {
           type="button"
           variant="outline"
           size="sm"
-          onClick={flow.back}
-          disabled={flow.stepIdx === 0}
+          onClick={() => {
+            if (editingFromReview) {
+              setEditingFromReview(false)
+              setShowReview(true)
+            } else {
+              flow.back()
+            }
+          }}
+          disabled={!editingFromReview && flow.stepIdx === 0}
           className="h-10 gap-1 text-[12px]"
         >
           <ArrowLeft size={14} aria-hidden="true" /> Back
@@ -944,11 +971,22 @@ export function MobileAssessView() {
           type="button"
           variant="gradient"
           size="sm"
-          onClick={flow.next}
+          onClick={() => {
+            if (editingFromReview && flow.canProceed) {
+              setEditingFromReview(false)
+              setShowReview(true)
+            } else {
+              flow.next()
+            }
+          }}
           disabled={!flow.canProceed}
           className="h-10 flex-1 gap-1 text-[12.5px]"
         >
-          {flow.stepIdx === flow.total - 1 ? 'Finish' : 'Next'}
+          {editingFromReview
+            ? 'Save and return'
+            : flow.stepIdx === flow.total - 1
+              ? 'Finish'
+              : 'Next'}
           <ArrowRight size={14} aria-hidden="true" />
         </Button>
       </div>
@@ -956,7 +994,7 @@ export function MobileAssessView() {
       {key === 'infra' && (
         <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
           Per-layer sub-categories, the crypto-library picker, the automation-tool picker and
-          vendor-dependency detail — Step 11&apos;s finer-grained matrices — stay on a laptop.
+          vendor-dependency detail — Step 12&apos;s finer-grained matrices — stay on a laptop.
         </p>
       )}
     </div>

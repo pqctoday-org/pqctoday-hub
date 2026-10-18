@@ -276,6 +276,10 @@ const RESOLVERS: Record<string, Resolver> = {
     requireArgs('cnsa2_year', args, 1)
     return mod.cnsa2Year(args[0])
   },
+  nsm10_goal_row: (mod, args) => {
+    requireArgs('nsm10_goal_row', args, 0)
+    return mod.NSM_10_GOAL_ROW
+  },
   crqc_window_row: (mod, args) => {
     requireArgs('crqc_window_row', args, 0)
     return mod.CRQC_WINDOW_ROW

@@ -22,6 +22,20 @@ const renderScreen = (mode: 'quick' | 'comprehensive' = 'comprehensive') =>
     </MemoryRouter>
   )
 
+const renderEditScreen = (onSaveEdit: () => void, onCancelEdit: () => void) =>
+  render(
+    <MemoryRouter>
+      <AssessWizardScreen
+        mode="comprehensive"
+        onComplete={vi.fn()}
+        onExitToChooser={vi.fn()}
+        onSwitchTrack={vi.fn()}
+        onSaveEdit={onSaveEdit}
+        onCancelEdit={onCancelEdit}
+      />
+    </MemoryRouter>
+  )
+
 describe('AssessWizardScreen (two-pane wizard, real step bodies)', () => {
   it('renders the rail + question pane and shows the first question once', () => {
     renderScreen()
@@ -53,5 +67,26 @@ describe('AssessWizardScreen (two-pane wizard, real step bodies)', () => {
     await user.click(screen.getByRole('button', { name: /^Continue/i }))
     expect(screen.getByText(/select an option to continue/i)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /what industry are you in/i })).toBeInTheDocument()
+  })
+
+  it('returns directly to review after saving an edited answer', async () => {
+    const user = userEvent.setup()
+    const onSaveEdit = vi.fn()
+    renderEditScreen(onSaveEdit, vi.fn())
+
+    await user.click(screen.getByRole('radio', { name: /Finance & Banking/i }))
+    await user.click(screen.getByRole('button', { name: /Save and return/i }))
+
+    expect(onSaveEdit).toHaveBeenCalledOnce()
+    expect(useAssessmentStore.getState().currentStep).toBe(0)
+  })
+
+  it('can cancel an edit and return to review without walking later questions', async () => {
+    const user = userEvent.setup()
+    const onCancelEdit = vi.fn()
+    renderEditScreen(vi.fn(), onCancelEdit)
+
+    await user.click(screen.getByRole('button', { name: /Back to review/i }))
+    expect(onCancelEdit).toHaveBeenCalledOnce()
   })
 })

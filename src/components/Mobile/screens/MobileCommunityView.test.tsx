@@ -36,11 +36,9 @@ describe('MobileCommunityView', () => {
     expect(screen.getByText(`${CURATED.length} hand-curated profiles`)).toBeInTheDocument()
   })
 
-  it('uses the real consent sentence verbatim from LeaderConsentModal.tsx, not an invented subtitle', () => {
+  it('states directory limits and preserves the written-consent rule', () => {
     renderView()
-    expect(
-      screen.getByText(/People contributing to the advances of post-quantum cryptography/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Inclusion is not an endorsement or ranking/i)).toBeInTheDocument()
     expect(screen.getByText(/only with written consent/i)).toBeInTheDocument()
   })
 
@@ -98,13 +96,13 @@ describe('MobileCommunityView', () => {
     expect(link).toHaveAttribute('href', withLinkedRef!.keyResourceUrl![0])
   })
 
-  it('shows peer-reviewed alongside verification, not as a mutually exclusive state', () => {
+  it('shows peer-reviewed alongside the profile-check date, not as a mutually exclusive state', () => {
     renderView()
     const both = CURATED.find((l) => l.peerReviewed === 'yes' && l.verifiedDate)
     if (both) {
       const card = screen.getByText(both.name).closest('button')
       expect(card).not.toBeNull()
-      expect(card!.textContent).toMatch(/verified/i)
+      expect(card!.textContent).toMatch(/profile checked/i)
       expect(card!.textContent).toMatch(/peer reviewed/i)
     }
   })

@@ -1,23 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
-// VendorConcentrationRiskPanel — "Vendor risk" tab addition, 2026-08-02
-// (design_handoff_2026_pages/IMPLEMENTATION-PLAN-MIGRATE-2026-08-01.md §3.3).
-//
-// The original design mockup for this tab described a 4-category risk grid
-// (concentration / single-source / geopolitical / certification-gap), one
-// card citing a specific wolfSSL counter-claim. That specific citation isn't
-// real — no migrate-typed counter-claim data exists yet (content authoring
-// is out of scope for this pass; see the Migrate plan §3.2/§7) — so this
-// panel implements the 4 real categories from data already in the catalog
-// instead of inventing an unsourced example. It supplements
-// SupplyChainRiskMatrix (a real, working, different-shaped view of the same
-// tab), rather than replacing it — the design program's own stated
-// invariant across all 10 pages is that no existing coverage gets dropped.
+// Educational catalog evidence cues. These statistics describe the tracked
+// rows only; they are not an estate, vendor-risk or compliance assessment.
 import { useMemo, useState } from 'react'
 import { AlertTriangle, Users, ShieldOff, Globe2 } from 'lucide-react'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { classifyProductDomain } from '@/data/migrationAssets'
-import { useScrollToDeepLinkTarget } from '@/hooks/useScrollToDeepLinkTarget'
 import { DeepLinkNotice } from '../../common/DeepLinkNotice'
 import { useVendorConcentrationRisks, type RiskCard } from './vendorConcentrationRisk'
 import { resolveDomainRef, resolveProductRef } from './workbenchCatalog'
@@ -35,11 +23,7 @@ export function VendorConcentrationRiskPanel({ openRef }: { openRef?: string } =
   const risks = useVendorConcentrationRisks()
   const selectedCount = useSelectedProductIds().length
 
-  // ?open=<domainId|productId> (deep-link PR 2): scroll to and ring the
-  // Supply Chain Risk Matrix layer card for that domain (a product → the
-  // domain it lives in). The matrix renders those cards with
-  // data-testid="layer-card-<domainId>"; opening a single product row inside
-  // one would need a change to SupplyChainRiskMatrix itself.
+  // Resolve a deep-linked product to its educational catalog domain.
   const openDomain = useMemo(() => {
     if (!openRef) return null
     const product = resolveProductRef(openRef)?.product
@@ -48,11 +32,6 @@ export function VendorConcentrationRiskPanel({ openRef }: { openRef?: string } =
       : resolveDomainRef(openRef)
   }, [openRef])
   const [dismissed, setDismissed] = useState<string | null>(null)
-  useScrollToDeepLinkTarget(
-    openDomain ? `open:${openRef}` : null,
-    openDomain ? `[data-testid="layer-card-${openDomain}"]` : null
-  )
-
   return (
     <div className="mb-4 space-y-3">
       {openRef && !openDomain && dismissed !== openRef && (
@@ -62,12 +41,24 @@ export function VendorConcentrationRiskPanel({ openRef }: { openRef?: string } =
           onDismiss={() => setDismissed(openRef)}
         />
       )}
+      {openRef && openDomain && (
+        <p
+          role="status"
+          className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
+        >
+          Showing catalog-wide evidence cues. The linked item maps to the{' '}
+          <strong className="text-foreground">{openDomain}</strong> category; inspect its product
+          evidence on the Replace tab.
+        </p>
+      )}
       <div>
-        <h3 className="text-sm font-semibold text-foreground">Concentration &amp; coverage risk</h3>
+        <h3 className="text-sm font-semibold text-foreground">
+          Catalog concentration &amp; evidence signals
+        </h3>
         <p className="text-xs text-muted-foreground">
           {selectedCount > 0
-            ? `Computed from the ${selectedCount} product${selectedCount !== 1 ? 's' : ''} you selected on the Replace tab — refreshes as your selection does.`
-            : 'Computed from the full product catalog (select products on the Replace tab to score your own estate) — refreshes as the catalog does.'}
+            ? `Describes the ${selectedCount} catalog example${selectedCount !== 1 ? 's' : ''} you selected; it is not an assessment of your estate or suppliers.`
+            : 'Describes the full tracked catalog. These review cues are not likelihood, vendor-risk, suitability or compliance scores.'}
         </p>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

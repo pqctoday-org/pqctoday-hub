@@ -93,16 +93,16 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                     <ShieldAlert size={16} className="text-primary mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-foreground">
-                        Risk Score (0 &ndash; 100)
+                        Educational Priority Index (0 &ndash; 100)
                       </p>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        A composite score derived from four weighted categories. Higher means more
-                        urgent action is needed. Each industry uses tailored category weights
-                        &mdash; for example, government and finance weight regulatory pressure
-                        higher, while telecom and energy weight migration complexity higher.
-                        Education and healthcare weight regulatory pressure proportionally to their
-                        compliance burden (FERPA, HIPAA). Compliance frameworks with nearer
-                        deadlines contribute more to regulatory pressure.
+                        An educational priority index derived from four weighted categories. Higher
+                        means the model suggests earlier investigation. It is not a measured risk
+                        probability, audit grade, or external benchmark. The model applies editorial
+                        category weights by industry profile; open the calculation details to
+                        inspect the exact weights. Selected framework rows with nearer dates add
+                        more modelled regulatory pressure, but selection does not establish legal
+                        applicability.
                       </p>
                     </div>
                   </div>
@@ -136,11 +136,10 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                         <span className="font-medium text-foreground">
                           Harvest Now, Decrypt Later (HNDL):
                         </span>{' '}
-                        Adversaries can capture encrypted data today and decrypt it once quantum
-                        computers arrive. Your risk window is the gap between how long your data
-                        must stay confidential and the planning horizon. Countries with earlier
-                        regulatory deadlines (e.g., US and France target 2030) use an accelerated
-                        horizon.
+                        Adversaries may capture encrypted data today for later decryption. The model
+                        compares the reported confidentiality lifetime with an explicit planning
+                        horizon. A jurisdiction milestone may provide an earlier planning target,
+                        but it is labelled separately from the uncertain CRQC estimate.
                       </p>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         <span className="font-medium text-foreground">
@@ -278,16 +277,40 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                     <CheckCircle size={16} className="text-success mt-0.5 shrink-0" />
                     <div>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Recommended actions are generated from your specific inputs: algorithms, use
-                        cases, infrastructure, compliance obligations, and migration status. Each
-                        action is categorized as{' '}
-                        <span className="font-medium text-foreground">Immediate</span>,{' '}
+                        Suggested actions are generated from your inputs: algorithms, use cases,
+                        infrastructure, selected requirement sources, and migration status. They are
+                        investigation prompts—not proof of a control gap. Each action is categorized
+                        as <span className="font-medium text-foreground">Immediate</span>,{' '}
                         <span className="font-medium text-foreground">Short-term</span>, or{' '}
                         <span className="font-medium text-foreground">Long-term</span> based on
                         urgency and estimated effort.
                       </p>
                     </div>
                   </div>
+                </div>
+
+                <div className="mb-6 rounded-lg border border-warning/30 bg-warning/5 px-4 py-3">
+                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-2">
+                    Limits of this report
+                  </p>
+                  <ul className="ml-4 list-disc space-y-1 text-xs leading-relaxed text-muted-foreground">
+                    <li>
+                      Answers are self-reported; no systems, products or controls are scanned.
+                    </li>
+                    <li>
+                      Framework selection and profile filtering do not determine legal applicability
+                      or compliance.
+                    </li>
+                    <li>
+                      Algorithm transitions, effort bands, roadmap dates and financial figures are
+                      educational starting assumptions that require engineering, legal and finance
+                      review.
+                    </li>
+                    <li>
+                      CRQC timing is uncertain; the report exposes a planning anchor rather than
+                      predicting an arrival date.
+                    </li>
+                  </ul>
                 </div>
 
                 {/* Cross-Module References */}

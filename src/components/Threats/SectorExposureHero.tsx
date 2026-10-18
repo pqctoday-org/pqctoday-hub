@@ -72,6 +72,7 @@ export const SectorExposureHero = ({
 }) => {
   const showExposure = variant === 'all' || variant === 'exposure'
   const showHorizon = variant === 'all' || variant === 'horizon'
+  const hasScope = scopedIndustries.length > 0
   const total = applicable.length
   const critical = applicable.filter((t) => t.criticality === 'Critical').length
   const high = applicable.filter((t) => t.criticality === 'High').length
@@ -131,45 +132,68 @@ export const SectorExposureHero = ({
             <Eyebrow>Your sector exposure</Eyebrow>
             <ShieldAlert size={14} className="text-primary" aria-hidden="true" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-extrabold text-foreground tabular-nums">{total}</span>
-            <span className="text-xs text-muted-foreground">
-              threat{total === 1 ? '' : 's'} apply to{' '}
-              <span className="font-semibold text-foreground">{sectorLabel}</span>
-            </span>
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <div className="rounded-lg border border-status-error/30 bg-status-error/5 px-3 py-2">
-              <div className="text-xl font-extrabold text-status-error tabular-nums">
-                {critical}
-              </div>
-              <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                Critical
-              </div>
+          {hasScope ? (
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-extrabold text-foreground tabular-nums">{total}</span>
+              <span className="text-xs text-muted-foreground">
+                threat{total === 1 ? '' : 's'} in the catalog match{' '}
+                <span className="font-semibold text-foreground">{sectorLabel}</span>
+              </span>
             </div>
-            <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2">
-              <div className="text-xl font-extrabold text-status-warning tabular-nums">{high}</div>
-              <div className="text-[10px] uppercase tracking-wide text-muted-foreground">High</div>
+          ) : (
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                Choose a sector to scope this view
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                The full catalog spans {total} records across many sectors. It does not mean every
+                record applies to your organisation.
+              </p>
             </div>
-          </div>
-          <div className="mt-3 flex items-center gap-4 border-t border-border pt-2 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-sm bg-secondary" aria-hidden="true" />
-              <span className="font-semibold text-foreground">{hndl}</span> decrypt-later
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span
-                className="inline-block h-2 w-2 rounded-sm bg-status-warning"
-                aria-hidden="true"
-              />
-              <span className="font-semibold text-foreground">{hnfl}</span> forge-later
-            </span>
-          </div>
-          {/* UX-19: the two totals overlap by design — say so, so they are
+          )}
+          {hasScope && (
+            <>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <div className="rounded-lg border border-status-error/30 bg-status-error/5 px-3 py-2">
+                  <div className="text-xl font-extrabold text-status-error tabular-nums">
+                    {critical}
+                  </div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    Critical
+                  </div>
+                </div>
+                <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2">
+                  <div className="text-xl font-extrabold text-status-warning tabular-nums">
+                    {high}
+                  </div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    High
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-4 border-t border-border pt-2 text-[11px] text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block h-2 w-2 rounded-sm bg-secondary"
+                    aria-hidden="true"
+                  />
+                  <span className="font-semibold text-foreground">{hndl}</span> decrypt-later
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block h-2 w-2 rounded-sm bg-status-warning"
+                    aria-hidden="true"
+                  />
+                  <span className="font-semibold text-foreground">{hnfl}</span> forge-later
+                </span>
+              </div>
+              {/* UX-19: the two totals overlap by design — say so, so they are
               never read as adding up to the sector total. */}
-          <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
-            Threats classed both (HNDL + HNFL) count in both totals.
-          </p>
+              <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
+                Threats classed both (HNDL + HNFL) count in both totals.
+              </p>
+            </>
+          )}
         </Card>
       )}
 
@@ -201,8 +225,31 @@ export const SectorExposureHero = ({
         </Card>
       )}
 
+      {showHorizon && !hasScope && (
+        <Card className="lg:col-span-1">
+          <div className="mb-1.5 flex items-center justify-between">
+            <Eyebrow>Mosca planning model</Eyebrow>
+            <Clock size={14} className="text-muted-foreground" aria-hidden="true" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">
+            No personal deadline is calculated yet
+          </p>
+          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+            Pick a sector, then replace the teaching assumptions with your own data lifetime (X),
+            migration time (Y), and CRQC planning year (Z). The result is a latest safe-start year,
+            not a compliance deadline or a prediction.
+          </p>
+          <Link
+            to="/business/tools/breach-simulator"
+            className="mt-2 inline-block text-xs text-primary underline"
+          >
+            Open the Mosca calculator
+          </Link>
+        </Card>
+      )}
+
       {/* C — your migration deadline (Mosca) */}
-      {showHorizon && (
+      {showHorizon && hasScope && (
         <Card>
           <div className="mb-1.5 flex items-center justify-between">
             <Eyebrow>{rem < 0 ? 'Your Mosca migration window' : 'Your migration deadline'}</Eyebrow>

@@ -123,7 +123,8 @@ describe('GanttDetailPopover — enrichment analysis click depth (Phase 8.5)', (
 
     // The full panel content is visible without any interaction, labeled per
     // the master plan's explicit wording (Phase 8, item 5).
-    expect(screen.getByText('8-Dimension Enrichment Analysis')).toBeInTheDocument()
+    expect(screen.getByText('Extracted study notes')).toBeInTheDocument()
+    expect(screen.getByText(/reading aids—not legal applicability findings/i)).toBeInTheDocument()
     expect(
       screen.getByText(
         'Classified as Discovery because the country published an initial assessment.'

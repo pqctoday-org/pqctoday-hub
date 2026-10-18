@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 // Pure extraction (2026-08-24 audit fix) from VendorConcentrationRiskPanel.tsx
-// — the "Vendor risk" tab's concentration/single-source/cert-gap/geographic
-// computation, so desktop and mobile compute the same 4 numbers and the same
+// — the Evidence tab's catalog concentration/coverage computation, so desktop
+// and mobile compute the same four numbers and the same
 // `severe` verdict from the same catalog data. Before this extraction,
 // MobileMigrateView.tsx carried its own copy of this computation with
 // different severity thresholds (25/50/40 vs this file's 40/30/50) —
 // identical vendor data could read "severe" on one device and calm on the
 // other.
 //
-// Selection-aware since 2026-08-27 (vendor-risk remediation, decision D4):
-// with a Replace-tab selection the four cards score YOUR products, matching
-// the matrix below them; with no selection they score the full catalog and
-// say so. Previously they always scored the full catalog while their copy
-// claimed "your" products. Severity thresholds are unchanged.
+// With a Replace-tab selection the four cards describe selected examples;
+// otherwise they describe the full catalog. Neither mode scores an estate.
 import { useMemo } from 'react'
 import { softwareData, vendorMap } from '@/data/migrateData'
 import { REPLACE_ASSETS } from '@/data/migrationAssets'
@@ -88,36 +85,36 @@ export function useVendorConcentrationRisks(): RiskCard[] {
     return [
       {
         key: 'single-source',
-        title: 'Single-source domains',
+        title: 'Single-source catalog coverage',
         headline: `${singleSource.length} of ${REPLACE_ASSETS.length}`,
         detail:
           singleSource.length > 0
-            ? `Only one GA ${scopeNoun} product covers: ${singleSource.map((a) => a.label).join(', ')}.`
-            : `Every domain has more than one GA-ready ${scopeNoun} product to choose from.`,
+            ? `Only one available ${scopeNoun} product is currently mapped to: ${singleSource.map((a) => a.label).join(', ')}.`
+            : `Every mapped domain has more than one available ${scopeNoun} product recorded.`,
         severe: singleSource.length > 0,
       },
       {
         key: 'vendor-concentration',
-        title: 'Vendor concentration',
+        title: 'Available-product concentration',
         headline: topVendor ? `${topVendorShare}%` : 'No data',
         detail: topVendor
-          ? `${topVendor.vendorDisplayName} supplies ${topVendorEntry![1]} of the ${gaProducts.length} GA-ready ${scopeNoun} products.`
-          : `No GA ${scopeNoun} products with a known vendor yet.`,
+          ? `${topVendor.vendorDisplayName} supplies ${topVendorEntry![1]} of the ${gaProducts.length} available ${scopeNoun} products.`
+          : `No available ${scopeNoun} products with a known vendor yet.`,
         severe: topVendorShare >= 40,
       },
       {
         key: 'cert-gap',
-        title: 'Certification gap',
+        title: 'FIPS evidence gap',
         headline: `${certGapPct}%`,
         detail:
           gaWithoutFips.length > 0
-            ? `${gaWithoutFips.length} of ${gaProducts.length} GA-ready ${scopeNoun} products carry no FIPS 140-3 validation on record.`
-            : `Every GA-ready ${scopeNoun} product has a FIPS 140-3 validation on record.`,
+            ? `${gaWithoutFips.length} of ${gaProducts.length} available ${scopeNoun} products have no linked FIPS 140-3 validation in this catalog.`
+            : `Every available ${scopeNoun} product has a linked FIPS 140-3 validation record.`,
         severe: certGapPct >= 30,
       },
       {
         key: 'geographic',
-        title: 'Geographic concentration',
+        title: 'Vendor HQ distribution',
         headline: topCountryEntry ? `${topCountryShare}%` : 'No data',
         detail: topCountryEntry
           ? `${topCountryEntry[1]} of ${usedVendors.length} ${scopeNoun} vendors are headquartered in ${topCountryEntry[0]}.`

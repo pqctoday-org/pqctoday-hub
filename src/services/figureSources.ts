@@ -185,7 +185,7 @@ export function buildFigureSourcesIndex(input: FigureSourcesInput): FigureSource
 
   // ── Executive summary ──────────────────────────────────────────────────
   add('risk-score', {
-    claim: 'Quantum risk score',
+    claim: 'Educational PQC priority index',
     value: `${result.riskScore} / 100 (${result.riskLevel})`,
     kind: 'estimate',
     method: riskScoreMethod(result, profile.industry),
@@ -274,7 +274,7 @@ export function buildFigureSourcesIndex(input: FigureSourcesInput): FigureSource
       value: 'Restates figures from this assessment',
       kind: 'estimate',
       method:
-        'Written from the same answers as the risk score; its counts are the answers given and its years are the planning horizon and deadlines listed in this ledger',
+        'Written from the same answers as the educational priority index; its counts are self-reported and its years are the disclosed planning anchor and selected-source dates',
       asOf: reportDate,
       caveat: NO_PUBLISHED_SOURCE,
     })

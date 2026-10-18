@@ -16,7 +16,7 @@ export interface LibraryDoor {
 }
 
 export const LIBRARY_DOORS: LibraryDoor[] = [
-  { id: 'all', label: 'Everything', hint: 'The full catalog', icon: LayoutGrid },
+  { id: 'all', label: 'Everything', hint: 'All sources in this view', icon: LayoutGrid },
   { id: 'education', label: 'Learn', hint: 'Research, analysis & explainers', icon: GraduationCap },
   { id: 'reference', label: 'Reference', hint: 'Standards, specs & policy', icon: BookMarked },
   { id: 'planning', label: 'Plan migration', hint: 'Guidance & report picks', icon: Route },

@@ -40,7 +40,7 @@ const QUESTIONS: Question[] = [
   {
     text: 'Is this system scheduled for a technology refresh within 3 years?',
     context:
-      'A scheduled refresh creates a natural migration window aligned to the CNSA 2.0 ladder — CNSSP 15 mandates the algorithms by 31 Dec 2031, and the per-class timetable runs 2030 for software/firmware signing, 2033 for web, cloud and operating systems.',
+      'A scheduled refresh creates a natural migration window aligned to current CNSA 2.0 milestones — new NSS acquisitions from 2027, unsupported equipment and services phased out by 2030, and the algorithms mandated by 31 Dec 2031 unless otherwise noted.',
     migrateIfYes: true,
   },
   {

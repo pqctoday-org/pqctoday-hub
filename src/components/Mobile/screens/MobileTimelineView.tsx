@@ -39,7 +39,7 @@ import { Button } from '@/components/ui/button'
 const MIGRATION_PLUS_PHASES = new Set(['Migration', 'Standardization'])
 
 /**
- * "Next 12 months" banner (design handoff §17). Same phase-sort/next-pick
+ * "Next recorded milestone" banner. Same phase-sort/next-pick
  * logic WhenDoesThisReachMe.tsx uses internally (`trackFor`, not exported —
  * copied rather than routed through a prop, to keep this file's boundary
  * with that component at just its public `{data, countryName}` props),
@@ -47,11 +47,8 @@ const MIGRATION_PLUS_PHASES = new Set(['Migration', 'Standardization'])
  * banner can honestly say how long the calm stretch afterward is.
  *
  * The real data is year-granular only (no month field anywhere in
- * types/timeline.ts) — "next 12 months" is a label, not a literal cutoff,
- * matching the design's own example (a phase landing next calendar year is
- * still called "next 12 months" there). Shown only when the next phase
- * starts this year or next — far-future phases get no urgent banner, so the
- * label is never claiming more precision or urgency than the data has.
+ * types/timeline.ts), so the interface deliberately avoids month-level
+ * precision. Shown only when the next phase starts this year or next.
  */
 function nextTwoPhases(country: GanttCountryData | undefined) {
   if (!country) return null
@@ -84,11 +81,8 @@ function nextTwoPhases(country: GanttCountryData | undefined) {
  * government+standards category scope desktop starts from; no tier filter,
  * since desktop's own tier control has been unmounted since 2026-08-11).
  *
- * The §17 "Next 12 months" banner (`nextTwoPhases`, above) is real data,
- * honestly bounded — the underlying CSV only carries `startYear` (no month
- * anywhere in types/timeline.ts), so this shows only when the next phase is
- * genuinely imminent (this year or next), never claiming month-level
- * precision the data doesn't have.
+ * The next-milestone banner (`nextTwoPhases`, above) uses the year-granular
+ * source data without turning a calendar year into a false 12-month window.
  *
  * Region scope: reader's stored region if set, else their persona's default
  * (`PERSONA_TIMELINE_REGION`), else every country — same precedence chain
@@ -288,7 +282,7 @@ export function MobileTimelineView() {
           <p className="text-[11.5px] text-muted-foreground">
             {listData.length} countr{listData.length === 1 ? 'y' : 'ies'} tracked
             {listData.length > 0 &&
-              ` · ${migrationPlusCount} of ${listData.length} already at Migration+`}
+              ` · ${migrationPlusCount} with a recorded migration or standardization phase`}
           </p>
         </div>
         {linkedCountry && !widened && (
@@ -346,16 +340,16 @@ export function MobileTimelineView() {
           <div className="mb-1.5 flex items-center gap-2">
             <CalendarClock size={15} className="shrink-0 text-destructive" aria-hidden="true" />
             <p className="text-[10px] font-bold uppercase tracking-wide text-destructive">
-              Next 12 months
+              Next recorded milestone
             </p>
           </div>
           <p className="text-[13px] font-semibold text-foreground">
-            One marker lands: {nextUp.next.title} ({nextUp.next.startYear}).
+            {nextUp.next.title} ({nextUp.next.startYear}).
           </p>
           <p className="mt-1 text-[11.5px] text-muted-foreground">
             {nextUp.afterNext
-              ? `Everything else in ${readerCountry} is ${nextUp.afterNext.startYear - nextUp.year} year${nextUp.afterNext.startYear - nextUp.year === 1 ? '' : 's'} out or already passed.`
-              : `Nothing else is scheduled for ${readerCountry} after this yet.`}
+              ? `The following recorded milestone starts in ${nextUp.afterNext.startYear}. These are year-level records, not a finding that either milestone applies to you.`
+              : `No later milestone is recorded for ${readerCountry} in this dataset. This is not a finding that the milestone applies to you.`}
           </p>
         </section>
       )}

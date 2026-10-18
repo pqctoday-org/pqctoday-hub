@@ -88,10 +88,11 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </div>
               <p className="text-xs text-muted-foreground">
                 NSA&apos;s Commercial National Security Algorithm Suite 2.0 mandates PQC adoption
-                (ML-KEM-1024 + ML-DSA-87) for national security systems, with exclusive-use
-                deadlines running to 2030&ndash;2033 by equipment class. CNSA 2.0 does not require
-                hybrid &mdash; it permits pure PQC (ANSSI and BSI recommend hybrid; ANSSI mandates
-                it only in its regulated perimeter).
+                (ML-KEM-1024 + ML-DSA-87) for national security systems. FAQ version 2.2 requires
+                compliant new acquisitions from 2027, phase-out of unsupported equipment and
+                services by 2030, and CNSA 2.0 algorithms by 2031 unless otherwise noted. CNSA 2.0
+                does not generally require hybrid constructions; ANSSI and BSI publish their own
+                transition guidance.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

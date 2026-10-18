@@ -12,11 +12,11 @@ export const LIBRARY_SORT_OPTIONS: { id: SortOption; label: string }[] = [
   // 'published' orders by the document's own publication date, which is what a
   // reader means by "newest" — see newestFirstMs vs publishedMs.
   { id: 'published', label: 'Publication date' },
-  { id: 'newest', label: 'Recently updated' },
+  { id: 'newest', label: 'Recent catalog activity' },
   { id: 'name', label: 'Name A-Z' },
   { id: 'referenceId', label: 'Reference ID' },
   { id: 'urgency', label: 'Urgency' },
-  { id: 'mostCited', label: 'Most cited' },
+  { id: 'mostCited', label: 'Most referenced in this catalog' },
 ]
 
 interface SortControlProps<T extends string = SortOption> {

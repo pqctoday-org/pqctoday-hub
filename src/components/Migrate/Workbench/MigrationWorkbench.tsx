@@ -40,10 +40,10 @@ import {
 } from './replaceTabParams'
 import { PlanTab } from './PlanTab'
 import { RoadmapsTab } from './RoadmapsTab'
-import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
 import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
 import { WhoHasMovedPanel } from './WhoHasMovedPanel'
 import { CatalogScopeNote } from './CatalogScopeNote'
+import { MigrationEducationScope } from '@/components/shared/MigrationEducationScope'
 import { VendorCommitmentPanel, ClaimsAndEvidencePanel } from './VendorCommitmentPanel'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileMigrateView } from '@/components/Mobile/screens/MobileMigrateView'
@@ -423,7 +423,7 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         <PageHeader
           icon={TrendingUp}
           title="PQC Migration Workbench"
-          description="Start from what you run — get a sequenced, quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) & CNSA 2.0."
+          description="Explore catalog evidence and build an illustrative post-quantum migration sequence."
           // NOTE (merge, 2026-08-02): this branch added viewType="Migrate"
           // and a dataSource prop here to give the catalog's 907
           // trusted_source_id-backed rows a Sources button and a visible
@@ -437,7 +437,9 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         />
       )}
 
-      {!embedded && <PersonaPageNote route="/migrate" className="mb-4" />}
+      {!embedded && persona && <PersonaPageNote route="/migrate" className="mb-4" />}
+
+      {!embedded && <MigrationEducationScope />}
 
       {!embedded && <CatalogScopeNote items={softwareData} />}
 
@@ -530,8 +532,8 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           </TabsTrigger>
           <TabsTrigger value="vendorrisk">
             <ShieldAlert size={15} className="mr-1.5" aria-hidden />
-            <span className="hidden sm:inline">Vendor risk</span>
-            <span className="sm:hidden">Risk</span>
+            <span className="hidden sm:inline">Evidence gaps</span>
+            <span className="sm:hidden">Evidence</span>
           </TabsTrigger>
         </TabsList>
 
@@ -571,7 +573,6 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         </TabsContent>
         <TabsContent value="vendorrisk" className="mt-4">
           <VendorConcentrationRiskPanel openRef={openParam ?? undefined} />
-          <SupplyChainRiskMatrix variant="flat" />
         </TabsContent>
       </Tabs>
     </div>

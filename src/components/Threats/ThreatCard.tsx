@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { NOT_YET_SPECIFIED } from '@/data/threatRowRules'
+import { ThreatRecordTypeBadge } from '@/components/common/ThreatRecordTypeBadge'
 
 interface ThreatCardProps {
   item: ThreatItem
@@ -108,18 +109,9 @@ export const ThreatCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
       className={clsx(
-        'group glass-panel relative flex h-full cursor-pointer overflow-hidden p-0 scroll-mt-20 transition-all hover:border-secondary/50',
+        'group glass-panel relative flex h-full overflow-hidden p-0 scroll-mt-20 transition-all hover:border-secondary/50',
         dimmed && 'opacity-40 hover:opacity-100'
       )}
-      onClick={() => onClick?.(item)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onClick?.(item)
-        }
-      }}
     >
       {/* severity bar */}
       <span className={clsx('w-1 shrink-0', tone.bar)} aria-hidden="true" />
@@ -137,6 +129,7 @@ export const ThreatCard = ({
             {item.criticality}
           </span>
           <span className="font-mono text-[11px] text-muted-foreground">{item.threatId}</span>
+          <ThreatRecordTypeBadge threat={item} />
           {item.status && <StatusBadge status={item.status} size="sm" />}
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
             <ThreatClassBadge threat={item} className="whitespace-normal" />
@@ -209,12 +202,20 @@ export const ThreatCard = ({
               className="mx-0.5 shrink-0 text-muted-foreground/50"
               aria-hidden="true"
             />
+            <span className="font-sans text-[10px] uppercase tracking-wide text-muted-foreground">
+              Candidate
+            </span>
             <Chips values={item.pqcReplacement} tone="pqc" />
           </div>
-          <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onClick?.(item)}
+            className="h-auto shrink-0 gap-1 p-1 text-xs font-medium text-primary"
+          >
             Open dossier
             <ArrowRight size={12} aria-hidden="true" />
-          </span>
+          </Button>
         </div>
       </div>
     </motion.article>

@@ -669,7 +669,7 @@ export const LeadersGrid = () => {
       <PageHeader
         icon={Users}
         title="Community"
-        description="People contributing to the advances of post-quantum cryptography."
+        description="An evidence-linked directory of people and organizations appearing in post-quantum research, standards, policy, and implementation sources. Inclusion is not an endorsement or a ranking."
       />
 
       <PersonaPageNote route="/leaders" />

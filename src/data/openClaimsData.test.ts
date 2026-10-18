@@ -194,7 +194,7 @@ describe('the published claims file', () => {
   })
 
   it('carries the point-by-point changes of an update, each side with its own quote', () => {
-    const newer = getOpenClaim('crqc-nsa-cnsa2-faq-v21-dates')
+    const newer = getOpenClaim('crqc-nsa-cnsa2-faq-v22-dates')
     const changes = newer?.earlier?.[0].changes ?? []
     expect(changes.length).toBeGreaterThan(0)
     for (const ch of changes) {
@@ -224,14 +224,19 @@ describe('the published claims file', () => {
     )
   })
 
-  it('every `estimate-update` claim is reached from an `estimates` claim', () => {
-    const rows = new Set(claimsWithTopic('estimates').map((c) => c.id))
-    for (const update of claimsWithTopic('estimate-update')) {
-      const parents = OPEN_CLAIMS.filter((c) =>
-        c.newerStatements?.some((n) => n.claim === update.id)
+  it('every `estimate-update` claim is in a lineage headed by an `estimates` claim', () => {
+    const reaches = (start: string, target: string, seen = new Set<string>()): boolean => {
+      if (start === target) return true
+      if (seen.has(start)) return false
+      seen.add(start)
+      return (getOpenClaim(start)?.newerStatements ?? []).some((next) =>
+        reaches(next.claim, target, seen)
       )
+    }
+    const rows = claimsWithTopic('estimates').map((c) => c.id)
+    for (const update of claimsWithTopic('estimate-update')) {
       expect(
-        parents.some((p) => rows.has(p.id)),
+        rows.some((id) => reaches(id, update.id)),
         update.id
       ).toBe(true)
     }

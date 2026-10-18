@@ -144,7 +144,7 @@ export function claimsCheckedText(lineage: ThreatLineage): string | null {
   const bySecond = lineage.supportedBySecondReader
     ? ` (${lineage.supportedBySecondReader} by an AI second reader)`
     : ''
-  return `Claims checked against the cited document: ${lineage.supported} supported${bySecond} · ${lineage.unconfirmed} could not be confirmed`
+  return `Maintenance-pipeline claims check: ${lineage.supported} supported${bySecond} · ${lineage.unconfirmed} could not be confirmed`
 }
 
 /**
@@ -154,9 +154,16 @@ export function claimsCheckedText(lineage: ThreatLineage): string | null {
  * number is derived from them.
  */
 export function sourceFactLines(
-  threat: Pick<ThreatData, 'peerReviewed' | 'vettingBody'>
-): { key: 'peer' | 'vetting'; text: string }[] {
-  const lines: { key: 'peer' | 'vetting'; text: string }[] = []
+  threat: Pick<ThreatData, 'peerReviewed' | 'vettingBody' | 'sourceUrlQuality'>
+): { key: 'peer' | 'vetting' | 'quality'; text: string }[] {
+  const lines: { key: 'peer' | 'vetting' | 'quality'; text: string }[] = []
+  if (threat.sourceUrlQuality === 'url_authoritative')
+    lines.push({ key: 'quality', text: 'Source class: official authority or original standard' })
+  else if (threat.sourceUrlQuality === 'partial')
+    lines.push({
+      key: 'quality',
+      text: 'Source class: supporting or publisher source; scope is limited',
+    })
   if (threat.peerReviewed)
     lines.push({ key: 'peer', text: `Peer reviewed: ${threat.peerReviewed}` })
   const bodies = (threat.vettingBody ?? []).map((b) => b.trim()).filter(Boolean)

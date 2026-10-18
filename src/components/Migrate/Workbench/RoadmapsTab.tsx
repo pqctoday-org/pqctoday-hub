@@ -205,9 +205,9 @@ export function RoadmapsTab({
         </p>
         {/* The ceiling, stated plainly — see COMMITTED_VENDOR_COUNT above. */}
         <p className="w-full text-xs text-muted-foreground">
-          Most vendors with a PQC commitment publish no roadmap at all. Every row here is backed by
-          a real published document, so this list is what the field has actually released — not a
-          complete picture of who is working on PQC.
+          Published-roadmap rows link to public evidence. Enrichment-only cards summarize extracted
+          context and are not themselves vendor roadmaps. Counts describe this catalog—not the whole
+          market—and source claims should be rechecked before use.
         </p>
         <div className="relative w-full sm:w-64">
           <Search

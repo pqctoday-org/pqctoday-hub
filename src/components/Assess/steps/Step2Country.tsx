@@ -26,8 +26,8 @@ const Step2Country = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
             Which jurisdiction applies to your organization?
           </h3>
           <p className="text-sm text-muted-foreground">
-            Your country&apos;s regulatory timeline will be used to align your migration deadline
-            recommendations.
+            Your selection shows the relevant public milestones. The report distinguishes guidance
+            targets from binding requirements where the source data supports it.
           </p>
         </>
       )}

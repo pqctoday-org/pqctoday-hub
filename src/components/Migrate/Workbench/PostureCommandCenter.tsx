@@ -18,13 +18,10 @@ export function PostureCommandCenter({
   const clearPlan = useMigrateSelectionStore((s) => s.clearPlan)
   const {
     plannedAssets,
-    readyN,
-    blockedN,
-    readyPct,
-    blockedPct,
+    productSelectedN,
+    needsProductN,
+    planningPct,
     hndlCount,
-    nearestYear,
-    nearestAsset,
     nextMove,
     foundations,
   } = posture
@@ -34,8 +31,8 @@ export function PostureCommandCenter({
       <div className="rounded-2xl border border-dashed border-border p-8 text-center">
         <p className="text-sm font-semibold text-foreground">Build your migration plan</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Pick the cryptography you run — TLS, VPN, SSH, certs and more — to get a sequenced,
-          quantum-safe plan aligned to NIST IR 8547 (Initial Public Draft) &amp; CNSA 2.0.
+          Pick a cryptographic area—TLS, VPN, SSH, certificates and more—to build an illustrative
+          sequence and compare catalog evidence. This does not assess your estate.
         </p>
         <Button variant="gradient" size="sm" className="mt-3" onClick={onGoToReplace}>
           Add what you run
@@ -47,21 +44,20 @@ export function PostureCommandCenter({
   return (
     <div className="rounded-2xl border border-secondary/30 bg-gradient-to-br from-primary/[0.06] to-secondary/[0.04] p-4">
       <div className="flex flex-col gap-4 lg:flex-row">
-        {/* readiness */}
+        {/* planning coverage — deliberately not a readiness score */}
         <div className="min-w-[188px]">
           <p className="font-mono text-[9.5px] uppercase tracking-wide text-muted-foreground">
-            Your readiness
+            Planning coverage
           </p>
-          <p className="text-[34px] font-extrabold leading-none text-foreground">{readyPct}%</p>
-          <p className="text-[11px] text-muted-foreground">have a GA path</p>
+          <p className="text-[34px] font-extrabold leading-none text-foreground">{planningPct}%</p>
+          <p className="text-[11px] text-muted-foreground">have a catalog example selected</p>
           <div className="mt-2 flex h-2.5 overflow-hidden rounded-full bg-muted" aria-hidden>
-            <div className="bg-status-success" style={{ width: `${readyPct}%` }} />
-            <div className="bg-status-warning" style={{ width: `${blockedPct}%` }} />
+            <div className="bg-primary" style={{ width: `${planningPct}%` }} />
           </div>
           <p className="mt-1 text-[10px]">
-            <span className="text-status-success">{readyN} ready to move</span>
+            <span className="text-primary">{productSelectedN} with examples</span>
             <span className="text-muted-foreground"> · </span>
-            <span className="text-status-warning">{blockedN} blocked</span>
+            <span className="text-muted-foreground">{needsProductN} to explore</span>
           </p>
         </div>
 
@@ -73,16 +69,15 @@ export function PostureCommandCenter({
             caption="assets"
           />
           <StatTile
-            label="HNDL-urgent"
+            label="HNDL review cues"
             value={String(hndlCount)}
-            caption="long-lived data exposed now"
+            caption="examples involving long-lived data"
             tone="text-status-error"
           />
           <StatTile
-            label="Nearest CNSA deadline"
-            value={nearestYear ? String(nearestYear) : '—'}
-            caption={nearestAsset?.label ?? 'add assets to see'}
-            tone="text-status-warning"
+            label="Teaching waves"
+            value={String(new Set(plannedAssets.map((asset) => asset.wave)).size)}
+            caption="illustrative sequencing groups"
           />
         </div>
       </div>
@@ -107,7 +102,7 @@ export function PostureCommandCenter({
         <div className="flex shrink-0 items-center gap-3">
           {nextMove && (
             <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-              Wave {nextMove.asset.wave} · {nextMove.asset.cnsaYear}
+              Example wave {nextMove.asset.wave}
             </span>
           )}
           <ConfirmButton

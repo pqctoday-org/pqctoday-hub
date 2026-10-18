@@ -80,7 +80,7 @@ describe('ThreatsDashboard deep-link params (PR 2)', () => {
   })
   afterEach(() => {
     vi.restoreAllMocks()
-    usePersonaStore.getState().setPersona(null)
+    act(() => usePersonaStore.getState().setPersona(null))
   })
 
   describe('?protocol=', () => {

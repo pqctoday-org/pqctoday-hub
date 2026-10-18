@@ -126,7 +126,7 @@ export const RiskBreakdownUnlocked = ({
       defaultOpen={defaultOpen}
       headerExtra={
         <AskAssistantButton
-          question={`Explain my PQC risk score of ${riskScore}/100 (${riskLevel}) for ${industry}`}
+          question={`Explain the educational PQC priority index of ${riskScore}/100 (${riskLevel}) for ${industry}, including its assumptions and limits`}
           className="print:hidden"
         />
       }

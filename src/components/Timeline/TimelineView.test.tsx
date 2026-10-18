@@ -73,7 +73,7 @@ describe('TimelineView', () => {
     it('renders the description on desktop', () => {
       render(<TimelineView />)
       expect(
-        screen.getAllByText(/Compare Post-Quantum Cryptography migration roadmaps/)[0]
+        screen.getAllByText(/Compare published post-quantum migration milestones/)[0]
       ).toBeInTheDocument()
     })
 
@@ -133,7 +133,7 @@ describe('TimelineView', () => {
     it('hides description on mobile', () => {
       render(<TimelineView />)
       const descriptions = screen.getAllByText(
-        /Compare Post-Quantum Cryptography migration roadmaps/
+        /Compare published post-quantum migration milestones/
       )
       // Both mobile (md:hidden) and desktop (hidden md:block) versions exist in DOM
       expect(descriptions.length).toBeGreaterThan(0)

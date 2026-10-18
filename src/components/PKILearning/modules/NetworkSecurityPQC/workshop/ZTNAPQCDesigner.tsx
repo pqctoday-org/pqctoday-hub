@@ -321,8 +321,9 @@ export const ZTNAPQCDesigner: React.FC = () => {
                   <AlertTriangle size={12} className="text-status-warning shrink-0 mt-0.5" />
                   <span>
                     Moderate risk — hybrid mode provides good interim protection. Plan complete
-                    migration before the NSM-10 all-NSS target (2035); CNSA 2.0 exclusive use lands
-                    2030/2033 by category.
+                    migration against the authority that applies. For NSS, CNSA 2.0 FAQ version 2.2
+                    records 2027, 2030 and 2031 milestones; NSM-10 separately sets a broader 2035
+                    objective.
                   </span>
                 </div>
               )}

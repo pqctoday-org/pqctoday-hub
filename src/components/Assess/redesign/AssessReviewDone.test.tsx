@@ -102,8 +102,14 @@ describe('AssessReview', () => {
     const user = userEvent.setup()
     const onEdit = vi.fn()
     render(<AssessReview mode="quick" onEdit={onEdit} onBack={vi.fn()} onGenerate={vi.fn()} />)
-    await user.click(screen.getAllByRole('button', { name: 'Edit' })[0])
+    await user.click(screen.getAllByRole('button', { name: /^Edit / })[0])
     expect(onEdit).toHaveBeenCalledWith('industry')
+  })
+
+  it('gives every Edit button a question-specific accessible name', () => {
+    render(<AssessReview mode="quick" onEdit={vi.fn()} onBack={vi.fn()} onGenerate={vi.fn()} />)
+    expect(screen.getByRole('button', { name: 'Edit Industry' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit Jurisdiction' })).toBeInTheDocument()
   })
 })
 
