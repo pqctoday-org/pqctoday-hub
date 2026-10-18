@@ -43,6 +43,12 @@ import {
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 import { AddToCollection } from '@/components/shared/research/AddToCollection'
 import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
+import {
+  MISSING_REVIEWED_SUMMARY,
+  SCOPE_VERIFICATION_NOTE,
+  needsScopeVerification,
+  paidSourceContext,
+} from '@/components/Library/libraryClaimSemantics'
 
 interface LibraryDetailDrawerProps {
   item: LibraryItem | null
@@ -249,7 +255,9 @@ function DrawerPanel({
               </h2>
               <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
                 <Building2 size={13} aria-hidden="true" />
-                <span className="truncate">{item.authorsOrOrganization || 'Unknown'}</span>
+                <span className="truncate">
+                  {item.authorsOrOrganization || 'Publisher not yet catalogued'}
+                </span>
                 {/* The document's own publication date is the primary signal here;
                   lastUpdateDate (catalog activity) is the fallback, matching the card. */}
                 {(item.initialPublicationDate || item.lastUpdateDate) && (
@@ -312,18 +320,31 @@ function DrawerPanel({
 
           {/* body */}
           <div className="flex-1 space-y-4 overflow-y-auto p-4">
-            {item.shortDescription && (
-              <p className="text-[13px] leading-relaxed text-muted-foreground">
-                {item.shortDescription}
+            <div className="space-y-1.5">
+              <p className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                pqctoday catalog summary
               </p>
-            )}
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                {item.shortDescription?.trim() || MISSING_REVIEWED_SUMMARY}
+              </p>
+              {needsScopeVerification(item) && (
+                <p className="rounded-lg border border-warning/40 bg-warning/10 p-2 text-[11.5px] leading-relaxed text-foreground">
+                  {SCOPE_VERIFICATION_NOTE}
+                </p>
+              )}
+              {paidSourceContext(item) && (
+                <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+                  {paidSourceContext(item)}
+                </p>
+              )}
+            </div>
 
             <SuccessionLinks item={item} onOpenRef={onOpenRef} />
 
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4">
               <KeyFact label="Type" value={item.documentType} />
-              <KeyFact label="Algorithm family" value={item.algorithmFamily} />
-              <KeyFact label="Security levels" value={item.securityLevels} />
+              <KeyFact label="Catalog algorithm classification" value={item.algorithmFamily} />
+              <KeyFact label="Catalog security-level tags" value={item.securityLevels} />
               <KeyFact label="Region" value={item.regionScope} />
               <KeyFact label="Migration urgency" value={item.migrationUrgency} />
               <KeyFact
@@ -331,6 +352,12 @@ function DrawerPanel({
                 value={item.citationCount != null ? String(item.citationCount) : undefined}
               />
             </dl>
+            {(item.algorithmFamily || item.securityLevels || item.protocolOrToolImpact) && (
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
+                Catalog classifications and impact tags are pqctoday analysis. They may not be
+                statements made by the publisher.
+              </p>
+            )}
 
             {item.categories?.length > 0 && (
               <Section title="Categories">

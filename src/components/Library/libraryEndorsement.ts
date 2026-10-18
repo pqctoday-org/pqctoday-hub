@@ -21,8 +21,10 @@ export function buildLibraryEndorsementUrl(item: LibraryItem, includeExtended = 
 
   if (includeExtended) {
     details.push(
-      item.algorithmFamily ? `**Algorithm Family:** ${item.algorithmFamily}` : '',
-      item.securityLevels ? `**Security Levels:** ${item.securityLevels}` : ''
+      item.algorithmFamily
+        ? `**pqctoday catalog algorithm classification:** ${item.algorithmFamily}`
+        : '',
+      item.securityLevels ? `**pqctoday catalog security-level tags:** ${item.securityLevels}` : ''
     )
   }
 
@@ -55,8 +57,10 @@ export function buildLibraryFlagUrl(item: LibraryItem, includeExtended = false):
 
   if (includeExtended) {
     details.push(
-      item.algorithmFamily ? `**Algorithm Family:** ${item.algorithmFamily}` : '',
-      item.securityLevels ? `**Security Levels:** ${item.securityLevels}` : ''
+      item.algorithmFamily
+        ? `**pqctoday catalog algorithm classification:** ${item.algorithmFamily}`
+        : '',
+      item.securityLevels ? `**pqctoday catalog security-level tags:** ${item.securityLevels}` : ''
     )
   }
 

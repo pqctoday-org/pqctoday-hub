@@ -19,6 +19,7 @@ import {
 } from './libraryPills'
 import { documentWeight } from '@/data/libraryDocumentWeight'
 import { resolveLibrarySourceAction } from '../librarySourceAction'
+import { MISSING_REVIEWED_SUMMARY, needsScopeVerification } from '../libraryClaimSemantics'
 
 interface LibraryDocumentCardProps {
   item: LibraryItem
@@ -104,9 +105,12 @@ export function LibraryDocumentCard({
           it from PDF bytes is a guess — so this reports the size we actually
           recorded and what that means for reading time, rather than an
           invented figure. */}
-      {item.shortDescription?.trim() && (
-        <p className="mt-1.5 line-clamp-2 text-[12px] leading-snug text-muted-foreground">
-          {item.shortDescription.trim()}
+      <p className="mt-1.5 line-clamp-2 text-[12px] leading-snug text-muted-foreground">
+        {item.shortDescription?.trim() || MISSING_REVIEWED_SUMMARY}
+      </p>
+      {needsScopeVerification(item) && (
+        <p className="mt-1 text-[10.5px] font-medium text-warning-foreground">
+          Scope-sensitive — verify the official source.
         </p>
       )}
       {weight && (

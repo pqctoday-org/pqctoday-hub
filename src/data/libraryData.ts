@@ -59,8 +59,11 @@ export interface LibraryItem {
   authorsOrOrganization: string
   dependencies: string
   regionScope: string
+  /** pqctoday catalog classification; it may be derived rather than stated by the source. */
   algorithmFamily: string
+  /** pqctoday catalog tags; they may be derived rather than stated by the source. */
   securityLevels: string
+  /** pqctoday analysis of potential downstream impact, not necessarily a source claim. */
   protocolOrToolImpact: string
   toolchainSupport: string
   migrationUrgency: string

@@ -33,6 +33,12 @@ import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { MobileSheet } from '../primitives/Sheet'
 import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
+import {
+  MISSING_REVIEWED_SUMMARY,
+  SCOPE_VERIFICATION_NOTE,
+  needsScopeVerification,
+  paidSourceContext,
+} from '@/components/Library/libraryClaimSemantics'
 import { LIBRARY_PERSONAS } from '@/data/libraryPersonaConfig'
 
 type QuickView = 'all' | 'new' | 'cert' | 'bookmarked'
@@ -471,24 +477,37 @@ export function MobileLibraryView() {
                 {selected.documentTitle}
               </h2>
               <p className="mt-1 text-[11px] text-muted-foreground">
-                {selected.authorsOrOrganization || 'Unknown'}
+                {selected.authorsOrOrganization || 'Publisher not yet catalogued'}
                 {' · '}
                 {lifecycleLabel(selected.lifecycleLabel)}
                 {selected.initialPublicationDate &&
                   ` · ${formatLibDate(selected.initialPublicationDate)}`}
               </p>
             </div>
-            {selected.shortDescription && (
-              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-                {selected.shortDescription}
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                pqctoday catalog summary
               </p>
-            )}
+              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+                {selected.shortDescription?.trim() || MISSING_REVIEWED_SUMMARY}
+              </p>
+              {needsScopeVerification(selected) && (
+                <p className="rounded-lg border border-warning/40 bg-warning/10 p-2 text-[11px] leading-relaxed text-foreground">
+                  {SCOPE_VERIFICATION_NOTE}
+                </p>
+              )}
+              {paidSourceContext(selected) && (
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  {paidSourceContext(selected)}
+                </p>
+              )}
+            </div>
             <SuccessionLinks item={selected} onOpenRef={setDetailRef} />
             <dl className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border pt-3">
               {[
                 ['Type', selected.documentType],
-                ['Algorithm family', selected.algorithmFamily],
-                ['Security levels', selected.securityLevels],
+                ['Catalog algorithm classification', selected.algorithmFamily],
+                ['Catalog security-level tags', selected.securityLevels],
                 ['Region', selected.regionScope],
                 ['Migration urgency', selected.migrationUrgency],
                 [
@@ -510,6 +529,14 @@ export function MobileLibraryView() {
                   </div>
                 ))}
             </dl>
+            {(selected.algorithmFamily ||
+              selected.securityLevels ||
+              selected.protocolOrToolImpact) && (
+              <p className="text-[10.5px] leading-relaxed text-muted-foreground">
+                Catalog classifications and impact tags are pqctoday analysis, not necessarily
+                publisher statements.
+              </p>
+            )}
             {selected.categories?.length > 0 && (
               <div className="flex flex-wrap gap-1.5 border-t border-border pt-3">
                 {selected.categories.map((c) => (

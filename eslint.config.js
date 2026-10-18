@@ -462,9 +462,11 @@ export default defineConfig([
                 // quick-view matching a second time.
                 '!@/components/Library',
                 '@/components/Library/*',
-                // librarySourceAction.ts — pure source-access policy, no JSX
-                // or rendering. Both shells must make the same label/URL decision.
+                // librarySourceAction.ts / libraryClaimSemantics.ts — pure
+                // source-access and claim-provenance policy, no JSX or rendering.
+                // Both shells must make the same label, URL and warning decision.
                 '!@/components/Library/librarySourceAction',
+                '!@/components/Library/libraryClaimSemantics',
                 '!@/components/Library/redesign',
                 '@/components/Library/redesign/*',
                 '!@/components/Library/redesign/useLibraryPipeline',

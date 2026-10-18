@@ -80,6 +80,40 @@ const reviewClaims = active.filter((row) =>
     row.short_description ?? ''
   )
 )
+const reviewClaimsNeedingScopeCheck = reviewClaims.filter(
+  (row) => Number(row.confidence_score || 0) < 85 || blank(row, 'last_verified')
+)
+
+const pickFiles = [
+  'libraryCuriousPicks.ts',
+  'libraryExecutivePicks.ts',
+  'libraryOpsPicks.ts',
+  'libraryCertEngineerPicks.ts',
+]
+const starterIds = new Set(
+  pickFiles.flatMap((pickFile) =>
+    [
+      ...readFileSync(path.join(DATA_DIR, pickFile), 'utf8').matchAll(/referenceId:\s*'([^']+)'/g),
+    ].map((match) => match[1])
+  )
+)
+const starterRows = [...starterIds].map((id) => active.find((row) => row.reference_id === id))
+const missingStarterRows = [...starterIds].filter(
+  (id) => !active.some((row) => row.reference_id === id)
+)
+const incompleteStarterRows = starterRows.filter(
+  (row): row is Row =>
+    Boolean(row) &&
+    ['download_url', 'last_verified', 'short_description', 'authors_or_organization'].some(
+      (field) => blank(row, field)
+    )
+)
+
+const knownUnsubstantiatedRows = active.filter((row) =>
+  /using generic .* (?:url|publisher)|pending direct .*url|left unresolved/i.test(
+    `${row.misc_info ?? ''} ${row.data_quality_notes ?? ''}`
+  )
+)
 
 const cnsa = active.find((row) => row.reference_id === 'NSA CNSA 2.0 FAQ')
 const cnsaText = `${cnsa?.document_status ?? ''} ${cnsa?.short_description ?? ''}`
@@ -95,6 +129,12 @@ if (duplicateActiveIds.length) blockers.push(`${duplicateActiveIds.length} dupli
 if (localPublicUrls.length) blockers.push(`${localPublicUrls.length} local/private public URLs`)
 if (malformedUrls.length) blockers.push(`${malformedUrls.length} malformed source URLs`)
 if (!cnsaCurrent) blockers.push('CNSA 2.0 FAQ Version 2.2 contract is stale')
+if (missingStarterRows.length)
+  blockers.push(`${missingStarterRows.length} curated starter ids do not resolve`)
+if (incompleteStarterRows.length)
+  blockers.push(`${incompleteStarterRows.length} curated starter records lack review metadata`)
+if (knownUnsubstantiatedRows.length)
+  blockers.push(`${knownUnsubstantiatedRows.length} active records admit an unsubstantiated source`)
 
 console.log(`Library corpus audit — ${filename}`)
 console.log(`Rows: ${rows.length} total · ${active.length} active · ${inactive.length} inactive`)
@@ -103,16 +143,27 @@ for (const item of missingFields) console.log(`- ${item.field}: ${pct(item.count
 console.log(`- explicit purpose: ${pct(explicitPurpose.length)}`)
 console.log('\nAccess and source review')
 console.log(`- paid: ${paid.length}`)
-console.log(`- paid without free summary: ${paidWithoutSummary.length}`)
+console.log(
+  `- paid sources whose publisher page is the only free official description: ${paidWithoutSummary.length}`
+)
 console.log(`- paid direct-PDF URLs requiring review: ${paidDirectPdf.length}`)
 console.log(`- non-HTTPS official URLs requiring review: ${nonHttps.length}`)
 console.log(
   `- descriptions with mandate/requirement/certification language: ${reviewClaims.length}`
 )
+console.log(
+  `- scope-sensitive descriptions below the review threshold: ${reviewClaimsNeedingScopeCheck.length}`
+)
 console.log(`- local/private public URLs: ${localPublicUrls.length}`)
 console.log(`- malformed URLs: ${malformedUrls.length}`)
 console.log(`- duplicate active ids: ${duplicateActiveIds.length}`)
 console.log(`- CNSA Version 2.2 milestone contract: ${cnsaCurrent ? 'PASS' : 'FAIL'}`)
+console.log(`- curated starter records: ${starterIds.size}`)
+console.log(`- unresolved curated starter ids: ${missingStarterRows.length}`)
+console.log(`- incomplete curated starter records: ${incompleteStarterRows.length}`)
+console.log(
+  `- active records admitting an unsubstantiated source: ${knownUnsubstantiatedRows.length}`
+)
 
 const sample = (label: string, list: Row[], max = 20) => {
   if (!list.length) return
@@ -121,10 +172,12 @@ const sample = (label: string, list: Row[], max = 20) => {
     console.log(`- ${row.reference_id}: ${row.download_url || '(no URL)'}`)
   }
 }
-sample('Paid sources without a free summary', paidWithoutSummary)
+sample('Paid sources with publisher-page description only', paidWithoutSummary)
 sample('Paid direct-PDF URLs', paidDirectPdf)
 sample('Non-HTTPS URLs', nonHttps)
 sample('Claims requiring primary-source review', reviewClaims)
+sample('Curated starter records missing review metadata', incompleteStarterRows)
+sample('Active records admitting an unsubstantiated source', knownUnsubstantiatedRows)
 
 if (blockers.length > 0) {
   console.error(`\nBLOCKERS: ${blockers.join('; ')}`)

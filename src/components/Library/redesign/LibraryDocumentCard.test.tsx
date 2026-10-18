@@ -98,6 +98,33 @@ describe('LibraryDocumentCard — source affordance', () => {
     )
   })
 
+  it('does not invent a summary when no reviewed summary is catalogued', () => {
+    render(
+      <LibraryDocumentCard
+        item={makeItem({ shortDescription: '' })}
+        bookmarked={false}
+        onToggleBookmark={noop}
+        onOpen={noop}
+      />
+    )
+    expect(screen.getByText(/no reviewed pqctoday summary yet/i)).toBeInTheDocument()
+  })
+
+  it('warns when low-confidence obligation language needs a source-scope check', () => {
+    render(
+      <LibraryDocumentCard
+        item={makeItem({
+          shortDescription: 'All products must implement this profile.',
+          confidenceScore: 60,
+        })}
+        bookmarked={false}
+        onToggleBookmark={noop}
+        onOpen={noop}
+      />
+    )
+    expect(screen.getByText(/scope-sensitive — verify the official source/i)).toBeInTheDocument()
+  })
+
   it('shows the lifecycle label, in the new wording', () => {
     for (const lifecycleLabel of [
       'Released',
