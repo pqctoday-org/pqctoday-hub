@@ -26,7 +26,8 @@ function RevisionAuditCollapsible() {
         <div className="flex-1">
           <h2 className="text-xl font-semibold">Content Audit Trail</h2>
           <p className="text-xs text-muted-foreground">
-            Every reviewed data update, linked to its affected modules and sources
+            Every recorded data update, with its reviewer, how it was approved and the records it
+            touched
           </p>
         </div>
         <ChevronDown
@@ -107,19 +108,22 @@ export function TrustEngineSection() {
           >
             <div className="prose prose-invert max-w-none pt-4">
               <p className="text-muted-foreground">
-                Every fact on PQC Today carries a{' '}
+                Records on PQC Today carry a{' '}
                 <strong className="text-foreground">trust score</strong>, a{' '}
-                <strong className="text-foreground">named reviewer</strong>, and a{' '}
-                <strong className="text-foreground">link to the original source document</strong>.
-                None of that is a one-time label — it comes out of a maintenance pipeline that runs
-                every time a piece of data changes, on every source the platform tracks.
+                <strong className="text-foreground">link to the original source document</strong>,
+                and — for every reviewed change — a{' '}
+                <strong className="text-foreground">named reviewer</strong> in a public, signed
+                audit trail. None of that is a one-time label: each claim is checked against the
+                exact words of its source, and every change passes through the same maintenance
+                flow. A person runs that flow; it does not run on a timer, so a record can lag its
+                source until the next pass — the freshness dimension of the score reflects that.
               </p>
 
               <h3 className="text-base font-semibold mt-5">How a record actually gets updated</h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 Nothing on PQC Today updates itself. Every change — a new standard, a corrected
-                date, a re-checked certification — moves through the same maintenance pipeline,
-                whichever source it touches:
+                date, a re-checked certification — moves through the same six steps, whichever
+                source it touches:
               </p>
               <ol className="mt-3 space-y-3 text-sm text-muted-foreground list-none pl-0">
                 <li className="flex items-start gap-3">
@@ -127,10 +131,12 @@ export function TrustEngineSection() {
                     1
                   </span>
                   <span>
-                    <strong className="text-foreground">Found and proposed.</strong> The pipeline
-                    watches every source for something worth acting on — a new document, a stale
-                    date, a broken link — and drafts a proposed change. Research and drafting are
-                    often AI-assisted; nothing is published from this step alone.
+                    <strong className="text-foreground">Found and proposed.</strong> The maintainer
+                    runs checks on a source — looking for a new document, a stale date, a broken
+                    link — and drafts a proposed change. Research and drafting are often
+                    AI-assisted; nothing is published from this step alone. A new document is
+                    admitted only from a trusted publisher, with its date read from the document
+                    itself.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -138,9 +144,13 @@ export function TrustEngineSection() {
                     2
                   </span>
                   <span>
-                    <strong className="text-foreground">Decided by a maintainer.</strong> Every
-                    proposal sits in a review queue until a named human approves it, rejects it, or
-                    holds it for closer judgment. Nothing moves forward without that decision.
+                    <strong className="text-foreground">Checked against the source.</strong> Each
+                    claim is tested against a saved copy of the document it cites, and must come
+                    back <em>supported</em>, <em>contradicted</em> or <em>can&rsquo;t tell</em>. A
+                    supporting passage has to appear in the document word for word — a paraphrase
+                    doesn&rsquo;t count. A verdict expires the moment the record or the document
+                    changes. Where one source is thin, a second, independent reader examines a
+                    different authoritative document without being shown the first verdict.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -148,10 +158,13 @@ export function TrustEngineSection() {
                     3
                   </span>
                   <span>
-                    <strong className="text-foreground">Applied and checked.</strong> Approved
-                    changes are written to the real data — but only if they pass the same automated
-                    checks (data validation, tests) that gate every other change to this site. A
-                    change that fails a check doesn't go through, approved or not.
+                    <strong className="text-foreground">Decided by a person.</strong> Every proposal
+                    waits in a review queue until the maintainer approves it, rejects it, or holds
+                    it for closer judgment. Two routes work differently, and both are visible: a
+                    Learn module citation where two independent readers agree and the quote is
+                    verified word for word may be accepted automatically (anything doubtful goes to
+                    a person), and the maintainer&rsquo;s own hand-curated edits skip the queue but
+                    still pass the checks below and are labelled as such in the audit trail.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -159,8 +172,13 @@ export function TrustEngineSection() {
                     4
                   </span>
                   <span>
-                    <strong className="text-foreground">Merged.</strong> Like any other update to
-                    PQC Today, it goes out through a reviewed pull request, not a direct edit.
+                    <strong className="text-foreground">Applied and checked.</strong> Approved
+                    changes are written to a new, dated copy of the data — earlier versions are kept
+                    — and only if they pass data validation before merge, plus the site&rsquo;s
+                    automated tests on the pull request. A change that fails a check doesn&rsquo;t
+                    go through, approved or not. Records are never silently dropped: retiring one
+                    needs a recorded decision, and marking it replaced needs a named successor and a
+                    word-for-word quote from the source saying so.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -168,21 +186,35 @@ export function TrustEngineSection() {
                     5
                   </span>
                   <span>
-                    <strong className="text-foreground">Recorded, automatically.</strong> The moment
-                    it merges, the reviewer, the date, and whether AI assisted the drafting in step
-                    1 are stamped into the public audit trail below — there's no separate step for
-                    anyone to forget, and no record that skips it.
+                    <strong className="text-foreground">Merged.</strong> Changes normally go out
+                    through a reviewed pull request, not a direct edit. When one doesn&rsquo;t — a
+                    direct commit, or a reviewer who also recorded their own approval — the audit
+                    trail says so with a <em>no-PR</em> or <em>self-recorded</em> chip. That is
+                    visibility, not blame.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    6
+                  </span>
+                  <span>
+                    <strong className="text-foreground">Recorded and signed.</strong> The maintainer
+                    writes the change into the public audit trail below: the reviewer, the date,
+                    which records changed, how it was approved, and whether AI assisted the drafting
+                    in step 1. Each entry is digitally signed (ML-DSA-65), and the site refuses to
+                    build if the signature stops verifying. The merge details are filled in after
+                    the merge, so an entry for a very recent change can briefly show as pending.
                   </span>
                 </li>
               </ol>
               <p className="mt-3 text-sm text-muted-foreground">
-                Same five steps whether the change is to a library document, a compliance deadline,
-                a migration guide entry, or a Learn module — one pipeline, not a different process
-                per page. All the rules behind the trust score itself are open source too — anyone
-                can read exactly how a score was computed.
+                Same flow whether the change is to a library document, a compliance deadline, a
+                migration guide entry, or a Learn module — one process, not a different one per
+                page. All the rules behind the trust score itself are open source too — anyone can
+                read exactly how a score was computed.
               </p>
 
-              <h3 className="text-base font-semibold mt-5">What you see on every record</h3>
+              <h3 className="text-base font-semibold mt-5">What you see on records</h3>
               <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground list-none pl-0">
                 <li className="flex items-start gap-2.5">
                   <span className="text-primary mt-1 shrink-0">&#9679;</span>
@@ -196,15 +228,37 @@ export function TrustEngineSection() {
                   <span className="text-primary mt-1 shrink-0">&#9679;</span>
                   <span>
                     <strong className="text-foreground">Reviewer pill</strong> — the maintainer who
-                    approved this record (step 2 above) and the date they signed off.
+                    recorded the review of this record (steps 3 and 6 above) and the date of that
+                    entry.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-primary mt-1 shrink-0">&#9679;</span>
                   <span>
                     <strong className="text-foreground">Source link</strong> — goes to the original
-                    NIST, IETF, ETSI, or vendor document. We cache local copies so the link never
-                    breaks.
+                    NIST, IETF, ETSI, or vendor document. Links are re-checked in rotating batches;
+                    a dead or redirected one is fixed through the same flow as any other correction.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-primary mt-1 shrink-0">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Evidence lines on Threats</strong> — in the
+                    detail view, whether the cited document was confirmed to be the one the record
+                    names, and how many of the record&rsquo;s claims it was found to state. If it
+                    doesn&rsquo;t state the record&rsquo;s description itself, you get a caveat.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-primary mt-1 shrink-0">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">
+                      Settled / Broken / Open / Superseded
+                    </strong>{' '}
+                    — where authorities disagree or a question is still open (for example CRQC
+                    capability estimates on Threats), we don&rsquo;t pick a winner. Each claim shows
+                    who said it, in the source&rsquo;s own words, and a newer statement links to the
+                    one it replaces or updates.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">
@@ -220,7 +274,7 @@ export function TrustEngineSection() {
                   <span>
                     <strong className="text-foreground">AI-assisted marker</strong> — in the audit
                     trail below, an icon marks every revision where step 1 had AI assistance. It
-                    still went through steps 2-5 like everything else.
+                    still went through the checks and review above.
                   </span>
                 </li>
               </ul>
@@ -240,15 +294,15 @@ export function TrustEngineSection() {
                   section for the full dimension table + formula.
                 </li>
                 <li>
-                  Want to see the pipeline's own paper trail for a specific record? Expand{' '}
-                  <em>Content Audit Trail</em> below and filter to it — every approval from step 2
-                  is there, with its reviewer and date.
+                  Want to see the paper trail for a specific record? Expand{' '}
+                  <em>Content Audit Trail</em> below and filter to it — every recorded change is
+                  there, with its reviewer, date and approval method.
                 </li>
               </ol>
 
               <h3 className="text-base font-semibold mt-5">Help us keep it accurate</h3>
               <p className="text-sm text-muted-foreground mt-2">
-                Two buttons live on every record:
+                Two buttons live on records across the site:
               </p>
               <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground list-none pl-0">
                 <li className="flex items-start gap-2.5">
@@ -262,8 +316,9 @@ export function TrustEngineSection() {
                   <Flag size={14} className="text-status-warning shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-foreground">Flag</strong> — report an inaccuracy or
-                    broken link. Opens a Discussion with an issue checklist. Maintainers see flags
-                    in CI; subsequent edits to the record have to acknowledge them.
+                    broken link. Opens a Discussion with an issue checklist. The maintainer collects
+                    flags by hand and works them into the next review pass; no flag blocks a change
+                    automatically.
                   </span>
                 </li>
               </ul>
