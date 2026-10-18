@@ -132,7 +132,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/business/tools/cost-of-inaction',
     title: 'Cost of Inaction Analyzer — PQC Business Tool | PQC Today',
     description:
-      'Model the discounted cost of delaying PQC migration — breach exposure, HNDL residual, and regulatory penalties',
+      'Compare the discounted cost of starting now with delaying PQC migration, with assumptions and uncertainty visible',
     kind: 'business-tool',
     index: true,
     sourceGlobs: [
