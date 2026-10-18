@@ -353,7 +353,7 @@ describe('libraryData', () => {
     const samsung = libraryData.find(
       (item) => item.referenceId === 'Samsung-Thales-ML-KEM-eSE-2026'
     )
-    expect(samsung?.documentType).toBe('Press Release')
+    expect(samsung?.documentType).toBe('Article')
     expect(samsung?.accessType).not.toBe('blocked')
     expect(samsung?.shortDescription).toContain('does not identify ML-KEM')
     expect(samsung?.shortDescription).toContain('vendor claims')
@@ -444,7 +444,7 @@ describe('libraryData', () => {
     expect(goose?.shortDescription).toContain('tests no cryptography or PQC overhead')
 
     const anssi = libraryData.find((item) => item.referenceId === 'ANSSI-CC-PP-2016-05-EN-419221-5')
-    expect(anssi?.documentType).toBe('Protection Profile')
+    expect(anssi?.documentType).toBe('Compliance Framework')
     expect(anssi?.lastUpdateDate).toBe('2016-12-16')
     expect(anssi?.shortDescription).toContain('does not certify a cryptographic module')
 
