@@ -139,3 +139,29 @@ test('a drawer connection the scene was not drawing is drawn and flown to', asyn
   // Only that one node was added; the cap itself is unchanged.
   await expect(page.getByText(new RegExp(`Nodes ${drawnBefore + 1} / `))).toBeVisible()
 })
+
+test('Reset view closes the drawer and flies back out to the whole graph', async ({ page }) => {
+  await openGraph(page)
+  await selectFromList(page, /liboqs/)
+  const drawer = page.locator('div[role="complementary"]')
+  await expect(drawer).toBeVisible()
+
+  // Following a connection zooms in on it (see the test above); category labels
+  // only show at the far zoom level, so counting them tells the two views apart.
+  const categoryLabels = page.getByRole('button', { name: /^Focus the .* category$/ })
+  const shown = async () =>
+    categoryLabels.evaluateAll(
+      (els) => els.filter((el) => getComputedStyle(el).opacity === '1').length
+    )
+  await drawer.locator('ul button').first().click()
+  await expect.poll(shown, { timeout: 10_000 }).toBeLessThan(12)
+
+  const home = page.getByRole('button', { name: 'Reset view' })
+  const homeBox = await home.boundingBox()
+  const drawerBox = await drawer.boundingBox()
+  expect(homeBox && drawerBox && homeBox.x + homeBox.width <= drawerBox.x).toBe(true)
+
+  await home.click()
+  await expect(drawer).toBeHidden()
+  await expect.poll(shown, { timeout: 10_000 }).toBe(12)
+})

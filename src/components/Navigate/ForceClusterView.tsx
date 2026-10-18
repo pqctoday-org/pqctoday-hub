@@ -14,7 +14,7 @@
  * directly instead.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, ChevronDown, Filter } from 'lucide-react'
+import { BookOpen, ChevronDown, Filter, Home } from 'lucide-react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
@@ -958,6 +958,9 @@ export function ForceClusterView() {
   // a node to fly to (and stops a running tour from flying away again).
   const focusNodeRef = useRef<((nodeId: string) => void) | null>(null)
 
+  // And for the Home button: flies the camera back to the overview.
+  const resetViewRef = useRef<(() => void) | null>(null)
+
   const [motionPrefs, setMotionPrefsState] = useState<MotionPrefs>(() => loadMotionPrefs())
   const motionMode = motionPrefs.mode
   const motionSpeed = motionPrefs.speed
@@ -1087,6 +1090,14 @@ export function ForceClusterView() {
    * draws the top slice of the graph — a connection the filters or the count
    * cap left out is drawn first (pinned), in place, so nothing else moves.
    */
+  /** Home: close the drawer, drop any category spotlight and fly back out to the whole graph. */
+  const resetView = () => {
+    selectedNodeIdRef.current = null // Spin reads this ref every frame; see focusNode
+    setSelectedNodeId(null)
+    setClusterSelection(null)
+    resetViewRef.current?.()
+  }
+
   const focusNode = (nodeId: string) => {
     const drawn = layoutSnapshotRef.current?.visibleNodes.some((n) => n.id === nodeId) ?? false
     if (!drawn) {
@@ -1321,6 +1332,11 @@ export function ForceClusterView() {
       focusNodeRef.current = (nodeId) => {
         pauseTourIfRunning()
         flyToNode(nodeId)
+      }
+
+      resetViewRef.current = () => {
+        pauseTourIfRunning()
+        flyToSpotlight(null) // null target = the default overview
       }
 
       const { scene, applyFilters, initialLayout } = buildScene(
@@ -1964,6 +1980,7 @@ export function ForceClusterView() {
       layoutSnapshotRef.current = null
       tourControlRef.current = null
       focusNodeRef.current = null
+      resetViewRef.current = null
     }
   }, [])
 
@@ -1997,6 +2014,20 @@ export function ForceClusterView() {
           onSelectSub={(type, sub) => breadcrumbSelectRef.current?.(type, sub)}
           onClose={() => setSelectedNodeId(null)}
         />
+      )}
+      {!loading && !error && (
+        <Button
+          variant="secondary"
+          size="icon"
+          className={`glass-panel absolute right-3 top-3 z-10 h-9 w-9 rounded-full ${
+            selectedNode ? 'sm:right-[372px]' : ''
+          }`}
+          onClick={resetView}
+          aria-label="Reset view"
+          title="Reset view"
+        >
+          <Home className="h-4 w-4" aria-hidden="true" />
+        </Button>
       )}
       {guideVisible && (
         <NavigateGuide
