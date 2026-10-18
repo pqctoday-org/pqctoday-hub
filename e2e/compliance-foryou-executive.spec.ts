@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test'
  *
  * Hits the For-You tab with `country=Australia&ind=Government & Defense` and
  * verifies the ExecutiveTimelineView renders (learning worksheet, a binding
- * Australian source, FIPS-140-3 as Recognized with Five Eyes affinity, and an
+ * Australian source, FIPS-140-3 as Recognized with Five Eyes relevance, and an
  * AU-tagged threat). It deliberately avoids treating ASD guidance as binding:
  * the catalogue must first record a reviewed binding basis for that claim.
  *
@@ -64,11 +64,11 @@ test('AU exec workshop deep-link renders ExecutiveTimelineView', async ({ page }
     page.getByText('Australian Privacy Act (APPs)').locator('visible=true').first()
   ).toBeVisible()
 
-  // Recognized framework section — FIPS-140-3 with Five Eyes affinity reason.
+  // Recognized framework section — FIPS-140-3 with its explained Five Eyes relevance.
   await expect(page.getByText('FIPS 140-3').locator('visible=true').first()).toBeVisible()
   await expect(
     page
-      .getByText(/Five Eyes affinity/i)
+      .getByText(/Five Eyes relevance/i)
       .locator('visible=true')
       .first()
   ).toBeVisible()
