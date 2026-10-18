@@ -72,8 +72,14 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
     <div className="mt-4 pt-4 border-t border-border space-y-4">
       <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
         <Tag size={12} aria-hidden="true" />
-        8-Dimension Enrichment Analysis
+        Extracted study notes
       </h4>
+
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        These fields summarize the linked material to support learning. Treat mandate, urgency,
+        sector, and date labels as reading aids—not legal applicability findings—and verify them in
+        the official source.
+      </p>
 
       {/* Phase Classification Rationale */}
       {phaseClassification && (
@@ -94,7 +100,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
                 <AlertTriangle size={10} aria-hidden="true" />
-                Mandate Level
+                Reported mandate characterization
               </p>
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${mandateBadgeClass(mandateLevel)}`}
@@ -107,7 +113,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
                 <Clock size={10} aria-hidden="true" />
-                Migration Urgency
+                Reported migration urgency
               </p>
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${urgencyBadgeClass(migrationUrgency)}`}
@@ -124,7 +130,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
         <div>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
             <Building2 size={10} aria-hidden="true" />
-            Sector Applicability
+            Possible sector relevance
           </p>
           <div className="flex flex-wrap gap-1.5">
             {sectorApplicability.map((sector) => (
@@ -166,7 +172,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
         <div>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
             <CalendarClock size={10} aria-hidden="true" />
-            Key Dates & Deadlines
+            Dates mentioned in the source
           </p>
           <ul className="space-y-1">
             {implementationDates.map((date, idx) => (

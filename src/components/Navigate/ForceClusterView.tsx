@@ -56,6 +56,8 @@ import {
 } from './MotionControls'
 import { TourCaption } from './TourCaption'
 import { Button } from '@/components/ui/button'
+import { NavigateGuide } from './NavigateGuide'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 function resolveGraphColor(varName: string, fallback: string): THREE.Color {
   const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
@@ -791,6 +793,7 @@ function buildScene(
 }
 
 export function ForceClusterView() {
+  const selectedPersona = usePersonaStore((state) => state.selectedPersona)
   const containerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -1824,6 +1827,19 @@ export function ForceClusterView() {
           onClose={() => setSelectedNodeId(null)}
         />
       )}
+      {!loading && !error && !selectedNode && (
+        <NavigateGuide
+          persona={selectedPersona}
+          onTour={() => {
+            setPanelOpen(true)
+            setMotionMode('tour')
+          }}
+          onList={() => {
+            setPanelOpen(true)
+            setListOpen(true)
+          }}
+        />
+      )}
       {!loading && !error && !panelOpen && (
         <Button
           variant="secondary"
@@ -1840,7 +1856,7 @@ export function ForceClusterView() {
       {!loading && !error && panelOpen && (
         <div
           id="navigate-filter-panel"
-          className="glass-panel absolute bottom-4 left-4 max-w-[440px] space-y-3 p-3"
+          className="glass-panel absolute bottom-4 left-3 right-3 max-h-[55vh] max-w-[440px] space-y-3 overflow-y-auto p-3 sm:left-4 sm:right-auto"
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground">Filter</span>
