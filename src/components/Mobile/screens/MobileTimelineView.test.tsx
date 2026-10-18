@@ -76,13 +76,13 @@ describe('MobileTimelineView', () => {
   it("shows the reader's-country panel for a region with a real representative country (americas -> United States)", () => {
     usePersonaStore.getState().setRegion('americas')
     renderView()
-    expect(screen.getByText(/When does this reach me, in United States\?/i)).toBeInTheDocument()
+    expect(screen.getByText(/What is recorded for United States\?/i)).toBeInTheDocument()
   })
 
   it("renders no reader's-country panel for a region with no single representative country (eu)", () => {
     usePersonaStore.getState().setRegion('eu')
     renderView()
-    expect(screen.queryByText(/When does this reach me/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/What is recorded for/i)).not.toBeInTheDocument()
   })
 
   it('states what was cut rather than silently dropping it', () => {
@@ -109,18 +109,19 @@ describe('MobileTimelineView', () => {
     expect(screen.getByRole('button', { name: 'Swipe' })).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('the "Next 12 months" banner matches the real data — present only when the reader\'s next phase is this year or next, and never otherwise', () => {
+  it('shows a year-accurate next-recorded-milestone banner without claiming 12-month precision', () => {
     usePersonaStore.getState().setRegion('americas')
     renderView()
     const expected = expectedNextUp('United States')
-    const banner = screen.queryByText('Next 12 months')
+    const banner = screen.queryByText('Next recorded milestone')
     if (expected) {
       expect(banner).toBeInTheDocument()
       expect(
-        screen.getByText(`One marker lands: ${expected.title} (${expected.startYear}).`, {
+        screen.getByText(`${expected.title} (${expected.startYear}).`, {
           exact: false,
         })
       ).toBeInTheDocument()
+      expect(screen.queryByText(/Next 12 months/i)).not.toBeInTheDocument()
     } else {
       expect(banner).not.toBeInTheDocument()
     }

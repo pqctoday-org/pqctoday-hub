@@ -62,16 +62,16 @@ import { TIMELINE_REGION_LABELS as REGION_LABELS } from './timelineRegions'
 
 export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
   executive:
-    'Focus on regulatory deadlines — countries approaching 2025–2026 milestones need immediate procurement action.',
+    'Start with reviewed deadlines, then open the cited source to determine whether its scope reaches your organization before making a procurement decision.',
   developer:
-    'Track early-mover countries (US, UK, Germany) to align your library adoption with first production deployments.',
+    'Use testing and migration records to find implementation guidance worth reading; a country phase is context, not proof that a library is production-ready.',
   architect:
-    'Map which countries have reached the Testing, POC, or Migration phases — these are the production-ready patterns to learn from.',
+    'Compare testing, proof-of-concept, and migration records, then inspect their sources before treating them as reusable architecture patterns.',
   researcher:
-    'Toggle the region filter to compare migration velocity across blocs and identify adoption outliers.',
-  ops: 'Watch the Migration and Deadline phases — countries entering them set the certificate-rotation clock for your fleet.',
+    'Toggle the region filter to compare recorded policy activity. Different publication coverage means the chart does not measure migration velocity.',
+  ops: 'Use migration and deadline records as planning signals, then verify applicability and exact dates before changing fleet schedules.',
   curious:
-    'Each row is one country/region; bars show how far it has moved through the PQC migration phases shown in the legend.',
+    'Each row groups published records for one country or international body. Bars show stated phases and dates, not a readiness score.',
 }
 
 /**
@@ -699,7 +699,7 @@ export const TimelineView = () => {
       <PageHeader
         icon={Globe}
         title="Global Migration Timeline"
-        description="Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from discovery to full migration and key regulatory milestones."
+        description="Compare published post-quantum migration milestones across jurisdictions and international bodies. Open each record to inspect its source, scope, and evidence status."
         testId="timeline-header"
       />
 

@@ -113,7 +113,7 @@ export const CoverageByRegion = ({ data, selectedRegion, onSelectRegion }: Props
               </div>
               {s.countries > 0 && (
                 <div className="text-[10px] text-muted-foreground">
-                  {s.atMigrationPlus} of {s.countries} at Migration+
+                  {s.atMigrationPlus} of {s.countries} with Migration/Standardization records
                 </div>
               )}
             </Button>

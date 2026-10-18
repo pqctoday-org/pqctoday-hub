@@ -24,7 +24,7 @@ const TYPE_STYLE: Record<string, string> = {
 /** Humanizes the real ISO verifiedDate field ("2026-07-09" -> "Jul 2026").
  *  No existing formatter for this on desktop — LeaderCard.tsx/
  *  LeaderDetailSection.tsx both print the raw ISO string verbatim
- *  ("Verified 2026-07-09"). This is a real, honest derivation of the same
+ *  ("Profile checked 2026-07-09"). This is a real, honest derivation of the same
  *  real field, not a re-invented one. */
 function humanizeDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`)
@@ -158,8 +158,9 @@ export function MobileCommunityView() {
       </div>
 
       <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
-        People contributing to the advances of post-quantum cryptography. Community members are
-        listed <span className="font-semibold text-foreground">only with written consent</span>.
+        Evidence-linked profiles from post-quantum research, standards, policy, and implementation
+        sources. Inclusion is not an endorsement or ranking. Community members are listed{' '}
+        <span className="font-semibold text-foreground">only with written consent</span>.
       </p>
 
       {notFound && (
@@ -296,7 +297,7 @@ export function MobileCommunityView() {
                   <span>·</span>
                   <span className="flex items-center gap-1 text-success">
                     <ShieldCheck size={11} aria-hidden="true" />
-                    verified {humanizeDate(leader.verifiedDate)}
+                    profile checked {humanizeDate(leader.verifiedDate)}
                   </span>
                 </>
               )}
@@ -442,7 +443,7 @@ export function MobileCommunityView() {
                   <span>·</span>
                   <span className="flex items-center gap-1 text-success">
                     <ShieldCheck size={11} aria-hidden="true" />
-                    verified {humanizeDate(selected.verifiedDate)}
+                    profile checked {humanizeDate(selected.verifiedDate)}
                   </span>
                 </>
               )}

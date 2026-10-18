@@ -73,17 +73,21 @@ export const SectorStack = ({
               }}
               className="transition-all duration-500 ease-in-out relative flex flex-col opacity-100"
             >
-              <Button
-                variant="ghost"
-                onClick={() => handleSelect(layer.id)}
-                className={`group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl transition-all duration-300 ease-in-out cursor-pointer ${isActive ? layer.activeColor : `bg-gradient-to-r ${layer.color} border ${layer.borderColor} hover:scale-[1.01] hover:brightness-110`} ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}`}
+              <div
+                className={`group relative z-10 w-full rounded-xl transition-all duration-300 ease-in-out ${isActive ? layer.activeColor : `bg-gradient-to-r ${layer.color} border ${layer.borderColor} hover:scale-[1.01] hover:brightness-110`} ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}`}
                 style={{ transformOrigin: 'center' }}
               >
                 <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
                   <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/5 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center justify-between w-full">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => handleSelect(layer.id)}
+                  aria-expanded={isActive}
+                  className="relative z-10 flex h-auto w-full cursor-pointer flex-col items-center justify-between whitespace-normal rounded-xl p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 md:flex-row md:px-8"
+                >
                   <div className="flex items-center gap-4 w-full md:w-auto">
                     <div
                       className={`flex items-center justify-center w-12 h-12 rounded-lg bg-background/50 backdrop-blur border border-border/30 shadow-inner transition-colors ${
@@ -120,25 +124,15 @@ export const SectorStack = ({
                       {isActive ? 'Filtered' : 'Click to filter'}
                     </div>
                   </div>
-                </div>
+                </Button>
 
                 {isActive && expandedContent && (
-                  <div
-                    role="presentation"
-                    className="mt-3 pt-3 w-full border-t border-border/30 text-left cursor-default"
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => e.stopPropagation()}
-                  >
-                    <div className="bg-card rounded-lg border border-border relative z-20 pointer-events-auto">
-                      {expandedContent}
-                    </div>
+                  <div className="relative z-20 mx-4 mb-4 border-t border-border/30 pt-3 text-left md:mx-8">
+                    <div className="rounded-lg border border-border bg-card">{expandedContent}</div>
                     <Button
                       variant="ghost"
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onSelectLayer('All')
-                      }}
+                      onClick={() => onSelectLayer('All')}
                       className="mt-3 w-full py-2 text-xs text-muted-foreground hover:text-foreground border border-border/40 rounded-lg hover:bg-background/50 transition-colors flex items-center justify-center gap-1.5"
                     >
                       <ChevronUp size={14} />
@@ -146,7 +140,7 @@ export const SectorStack = ({
                     </Button>
                   </div>
                 )}
-              </Button>
+              </div>
             </div>
           )
         })}

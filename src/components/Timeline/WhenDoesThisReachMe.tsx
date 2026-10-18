@@ -7,8 +7,8 @@
  * comparing jurisdictions and the wrong shape for the one question a newcomer
  * actually has, which is about themselves.
  *
- * So this is that single track: the reader's own country, its phases in date
- * order, and one sentence saying which one binds them next. The full chart
+ * So this is that single track: the reader's selected country, its phases in date
+ * order, and one sentence identifying the next recorded milestone. The full chart
  * stays directly below, unchanged — this replaces nothing, it just arrives
  * first.
  *
@@ -57,17 +57,15 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
     <section className="mb-4 rounded-xl border border-primary/25 bg-primary/5 p-4">
       <div className="mb-2 flex items-center gap-2">
         <CalendarClock size={17} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-base font-bold text-foreground">
-          When does this reach me, in {countryName}?
-        </h2>
+        <h2 className="text-base font-bold text-foreground">What is recorded for {countryName}?</h2>
       </div>
 
       <p className="text-sm leading-relaxed text-muted-foreground">
         {track.next ? (
           <>
-            The next date that applies to you is{' '}
+            The next recorded milestone is{' '}
             <span className="font-semibold text-foreground">{track.next.startYear}</span> —{' '}
-            {track.next.title}. Everything before it has already happened.
+            {track.next.title}. Earlier recorded start years have passed.
           </>
         ) : (
           <>
@@ -75,6 +73,11 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
             the work is finished; it means the dates that were set have arrived.
           </>
         )}
+      </p>
+
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+        Country selection does not establish that a milestone applies to your organization. Open the
+        record and its official source to check sector, system, and procurement scope.
       </p>
 
       {/* One row per phase, in date order. Deliberately a list rather than a

@@ -86,7 +86,7 @@ export function NavigateDetailPanel({
 
   return (
     <div
-      className="absolute right-4 top-4 bottom-4 z-10 w-[340px] overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-2xl"
+      className="absolute inset-x-3 bottom-3 top-3 z-20 w-auto overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:top-4 sm:w-[340px]"
       role="complementary"
     >
       {/* Deliberately opaque, not .glass-panel (bg-card/80 + blur) — this

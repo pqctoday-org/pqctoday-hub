@@ -233,13 +233,13 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
               Events from {leader.country}
             </Link>
             <Link
-              to={`/compliance${leader.type === 'Public' ? '?industry=Government+%26+Defense' : leader.type === 'Academic' ? '' : '?industry=Technology'}`}
+              to="/compliance"
               onClick={onClose}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
-              title="View compliance frameworks for this sector"
+              title="Learn how compliance sources and applicability are assessed"
             >
               <ShieldCheck size={12} aria-hidden="true" />
-              Compliance frameworks
+              Explore compliance sources
             </Link>
             {leader.patentRefs && leader.patentRefs.length > 0 && (
               <Link
