@@ -4,6 +4,17 @@ import type { LibraryItem } from '@/data/libraryData'
 const SCOPE_SENSITIVE_CLAIM =
   /\b(mandat(?:e|ed|ory)|require(?:d|ment)?|must|prohibit(?:s|ed)?|deadline|compliant|certif(?:y|ied|ication))\b/i
 
+const DOCUMENTED_PRIMARY_REVIEW =
+  /fetched and read directly|verified verbatim|content-verified|official .* reviewed|cross-checked by codex and approved|corrected via approved proposal/i
+
+export function hasSufficientClaimReview(item: LibraryItem): boolean {
+  if (!item.lastVerified) return false
+  if ((item.confidenceScore ?? 0) >= 85) return true
+  return (
+    (item.confidenceScore ?? 0) >= 80 && DOCUMENTED_PRIMARY_REVIEW.test(item.dataQualityNotes ?? '')
+  )
+}
+
 /**
  * Catalog summaries are pqctoday editorial text, not quotations from the
  * publisher. Low-confidence or stale summaries containing obligation language
@@ -11,10 +22,7 @@ const SCOPE_SENSITIVE_CLAIM =
  * system class, scheme version, and effective date.
  */
 export function needsScopeVerification(item: LibraryItem): boolean {
-  return (
-    SCOPE_SENSITIVE_CLAIM.test(item.shortDescription ?? '') &&
-    ((item.confidenceScore ?? 0) < 85 || !item.lastVerified)
-  )
+  return SCOPE_SENSITIVE_CLAIM.test(item.shortDescription ?? '') && !hasSufficientClaimReview(item)
 }
 
 export const MISSING_REVIEWED_SUMMARY =

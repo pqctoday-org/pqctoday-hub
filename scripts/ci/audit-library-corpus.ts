@@ -80,9 +80,14 @@ const reviewClaims = active.filter((row) =>
     row.short_description ?? ''
   )
 )
-const reviewClaimsNeedingScopeCheck = reviewClaims.filter(
-  (row) => Number(row.confidence_score || 0) < 85 || blank(row, 'last_verified')
-)
+const documentedPrimaryReview = (row: Row) =>
+  !blank(row, 'last_verified') &&
+  (Number(row.confidence_score || 0) >= 85 ||
+    (Number(row.confidence_score || 0) >= 80 &&
+      /fetched and read directly|verified verbatim|content-verified|official .* reviewed|cross-checked by codex and approved|corrected via approved proposal/i.test(
+        row.data_quality_notes ?? ''
+      )))
+const reviewClaimsNeedingScopeCheck = reviewClaims.filter((row) => !documentedPrimaryReview(row))
 
 const pickFiles = [
   'libraryCuriousPicks.ts',
@@ -175,7 +180,11 @@ const sample = (label: string, list: Row[], max = 20) => {
 sample('Paid sources with publisher-page description only', paidWithoutSummary)
 sample('Paid direct-PDF URLs', paidDirectPdf)
 sample('Non-HTTPS URLs', nonHttps)
-sample('Claims requiring primary-source review', reviewClaims)
+sample('Descriptions containing scope-sensitive language (reviewed and unreviewed)', reviewClaims)
+sample(
+  'Scope-sensitive descriptions still below the review threshold',
+  reviewClaimsNeedingScopeCheck
+)
 sample('Curated starter records missing review metadata', incompleteStarterRows)
 sample('Active records admitting an unsubstantiated source', knownUnsubstantiatedRows)
 

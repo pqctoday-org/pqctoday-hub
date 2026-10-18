@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import type { LibraryItem } from '@/data/libraryData'
-import { needsScopeVerification, paidSourceContext } from './libraryClaimSemantics'
+import {
+  hasSufficientClaimReview,
+  needsScopeVerification,
+  paidSourceContext,
+} from './libraryClaimSemantics'
 
 const item = (overrides: Partial<LibraryItem> = {}) =>
   ({
@@ -28,6 +32,20 @@ describe('library catalog claim semantics', () => {
           confidenceScore: 90,
           lastVerified: '2026-10-17',
         })
+      )
+    ).toBe(false)
+  })
+
+  it('accepts a dated 80-score record only when its notes document direct source review', () => {
+    const reviewed = item({
+      confidenceScore: 80,
+      lastVerified: '2026-10-17',
+      dataQualityNotes: 'Fetched and read directly; quoted requirement text verified verbatim.',
+    })
+    expect(hasSufficientClaimReview(reviewed)).toBe(true)
+    expect(
+      hasSufficientClaimReview(
+        item({ confidenceScore: 80, lastVerified: '2026-10-17', dataQualityNotes: 'Imported.' })
       )
     ).toBe(false)
   })

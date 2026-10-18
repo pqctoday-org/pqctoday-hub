@@ -80,6 +80,122 @@ describe('libraryData', () => {
     expect(rfc?.shortDescription).not.toContain('ML-DSA validation')
     expect(rfc?.documentTitle).not.toContain('Hardware Security Modules')
   })
+
+  it('does not turn adjacent regulation and protocol sources into universal PQC mandates', () => {
+    const rfc9935 = libraryData.find((item) => item.referenceId === 'RFC-9935')
+    expect(rfc9935?.shortDescription).toContain('when an X.509 deployment uses ML-KEM')
+    expect(rfc9935?.shortDescription).not.toContain('Required for post-quantum PKI')
+
+    const cra = libraryData.find((item) => item.referenceId === 'EU-CRA-REG-2024-2847')
+    expect(cra?.shortDescription).toContain('where applicable')
+    expect(cra?.shortDescription).toContain('does not prescribe a named PQC algorithm')
+
+    const austrac = libraryData.find((item) => item.referenceId === 'AUSTRAC-AML-CTF-Act')
+    expect(austrac?.shortDescription).toContain('relevance to cryptographic migration is indirect')
+    expect(austrac?.shortDescription).not.toContain('must maintain secure cryptographic systems')
+  })
+
+  it('keeps legacy TLS deprecation separate from PQC protocol requirements', () => {
+    for (const referenceId of ['RFC 6176', 'RFC 7568', 'RFC 8996']) {
+      const item = libraryData.find((candidate) => candidate.referenceId === referenceId)
+      expect(item?.shortDescription, referenceId).toMatch(/does not|neither defines nor requires/)
+      expect(item?.shortDescription, referenceId).not.toContain('required for PQC hybrid')
+    }
+  })
+
+  it('preserves the DoD memorandum exceptions and scoped transition dates', () => {
+    const memo = libraryData.find((item) => item.referenceId === 'DoD-CIO-PQC-Memo-2025')
+    expect(memo?.shortDescription).toContain('unless excepted')
+    expect(memo?.shortDescription).toContain('particular PSK')
+    expect(memo?.shortDescription).not.toContain('Bans QKD on DoD networks')
+  })
+
+  it('does not confuse Common Criteria product evaluation with FIPS module certification', () => {
+    const commonCriteria = libraryData.find((item) => item.referenceId === 'COMMON-CRITERIA')
+    expect(commonCriteria?.documentStatus).toContain('CC:2022 Release 1')
+    expect(commonCriteria?.shortDescription).toContain('does not by itself validate')
+    expect(commonCriteria?.shortDescription).toContain('FIPS 140-3')
+    expect(commonCriteria?.documentStatus).not.toContain('v3.1 Rev 5')
+  })
+
+  it('separates IoT and OAuth source requirements from PQCtoday migration analysis', () => {
+    for (const referenceId of ['RFC-7925', 'RFC-9124', 'RFC-7252', 'RFC-9068']) {
+      const item = libraryData.find((candidate) => candidate.referenceId === referenceId)
+      expect(item?.lastVerified, referenceId).toBe('2026-10-17')
+      expect(item?.shortDescription, referenceId).toContain('PQCtoday migration note:')
+    }
+
+    const oauth = libraryData.find((item) => item.referenceId === 'RFC-9068')
+    expect(oauth?.shortDescription).toContain('must include RS256 among')
+    expect(oauth?.shortDescription).toContain('does not require RS256 to be the only algorithm')
+
+    const coap = libraryData.find((item) => item.referenceId === 'RFC-7252')
+    expect(coap?.shortDescription).toContain('RawPublicKey is mandatory to implement')
+    expect(coap?.shortDescription).toContain('secp256r1')
+  })
+
+  it('keeps product, health, and OT obligations within their official source scope', () => {
+    const smart = libraryData.find((item) => item.referenceId === 'SMART-App-Launch')
+    expect(smart?.documentStatus).toContain('v2.2.0')
+    expect(smart?.shortDescription).toContain('does not mandate a PQC algorithm')
+    expect(smart?.shortDescription).not.toContain('required client-authentication signature')
+
+    const psti = libraryData.find((item) => item.referenceId === 'UK-PSTI-Regs-2023-1007')
+    expect(psti?.shortDescription).toContain('unique per product or user-defined')
+    expect(psti?.shortDescription).toContain('does not itself impose a PQC deadline')
+
+    const tsa = libraryData.find((item) => item.referenceId === 'TSA-SD-PIPELINE-2021-02G')
+    expect(tsa?.shortDescription).toContain('when OT services are allowed to traverse')
+    expect(tsa?.shortDescription).toContain('does not state a general rule')
+
+    const opc = libraryData.find((item) => item.referenceId === 'OPC-10000-7')
+    expect(opc?.shortDescription).toContain('does not define a post-quantum SecurityPolicy')
+  })
+
+  it('tracks current BSI RNG classes and EUCC document applicability', () => {
+    const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
+    expect(ais?.documentTitle).toContain('Version 3.0')
+    expect(ais?.shortDescription).toContain('DRT.1')
+    expect(ais?.shortDescription).toContain('NTG.1')
+    expect(ais?.shortDescription).toContain('removes the former DRG.1 and PTG.1')
+
+    const guidance = libraryData.find(
+      (item) => item.referenceId === 'EUCC-Guidelines-on-Cryptography'
+    )
+    expect(guidance?.shortDescription).toContain('v2')
+    expect(guidance?.shortDescription).toContain('ACM v3 as a draft')
+    expect(guidance?.shortDescription).toContain('not an applicable certification requirement')
+
+    const amendment = libraryData.find(
+      (item) => item.referenceId === 'CIR-EU-2025-2462-EUCC-Amendment'
+    )
+    expect(amendment?.documentStatus).toBe('In Force')
+    expect(amendment?.shortDescription).toContain('does not itself establish a general PQC')
+  })
+
+  it('replaces truncated RFC stubs with scoped educational summaries', () => {
+    const cp = libraryData.find((item) => item.referenceId === 'RFC-3647')
+    expect(cp?.documentTitle).toContain('Certificate Policy and Certification Practices')
+    expect(cp?.shortDescription).toContain('does not define a particular certificate policy')
+
+    const cache = libraryData.find((item) => item.referenceId === 'RFC-7924')
+    expect(cache?.documentTitle).toContain('Cached Information Extension')
+    expect(cache?.shortDescription).toContain('not a substitute for PQ-capable authentication')
+
+    const delegated = libraryData.find((item) => item.referenceId === 'RFC-9345')
+    expect(delegated?.shortDescription).toContain('TLS 1.3-or-later')
+    expect(delegated?.shortDescription).toContain('no independent early-revocation')
+
+    const cnsa = libraryData.find((item) => item.referenceId === 'RFC 9151')
+    expect(cnsa?.shortDescription).toContain('Independent Submission')
+    expect(cnsa?.shortDescription).toContain('does not define CNSA 2.0')
+
+    const c509 = libraryData.find(
+      (item) => item.referenceId === 'draft-ietf-cose-cbor-encoded-cert'
+    )
+    expect(c509?.lastVerified).toBe('2026-10-17')
+    expect(c509?.shortDescription).toContain('marginal savings for ML-DSA-65')
+  })
 })
 
 describe('findLibraryItemByRef', () => {
