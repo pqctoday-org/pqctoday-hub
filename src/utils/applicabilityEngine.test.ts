@@ -91,10 +91,25 @@ describe('applicableFrameworks — tier classification', () => {
       countries: ['Australia'],
       industries: ['Government & Defense'],
       enforcementBody: 'ASD',
+      bindingStatus: 'mandatory_for_scope',
+      bindingBasis: 'ISM control 1917',
     })
     const [result] = applicableFrameworks(auGovProfile, [fw])
     expect(result?.tier).toBe('mandatory')
-    expect(result?.reason).toMatch(/Your regulator: ASD/)
+    expect(result?.reason).toMatch(/Binding for its stated scope/)
+  })
+
+  it('does not turn domestic guidance into a mandatory obligation', () => {
+    const fw = makeFramework({
+      countries: ['Australia'],
+      industries: ['Government & Defense'],
+      enforcementBody: 'ASD',
+      bindingStatus: 'recommendation',
+      bindingBasis: 'Advisory publication',
+    })
+    const [result] = applicableFrameworks(auGovProfile, [fw])
+    expect(result?.tier).toBe('advisory')
+    expect(result?.reason).toMatch(/not a binding obligation/)
   })
 
   it('classifies country+industry match with foreign Five-Eyes regulator as Recognized', () => {
@@ -192,6 +207,8 @@ describe('applicableFrameworks — tier classification', () => {
       countries: ['European Union'],
       industries: ['Critical Infrastructure'],
       enforcementBody: 'ENISA/EU Member States',
+      bindingStatus: 'binding',
+      bindingBasis: 'Directive (EU) 2022/2555',
     })
     const frenchProfile: UserProfile = {
       industry: 'Critical Infrastructure',
@@ -221,6 +238,8 @@ describe('applicableFrameworks — tier classification', () => {
       countries: ['Israel'],
       industries: ['Government & Defense'],
       enforcementBody: 'INCD',
+      bindingStatus: 'mandatory_for_scope',
+      bindingBasis: 'Government directive',
     })
     const ilProfile: UserProfile = {
       industry: 'Government & Defense',
@@ -229,7 +248,7 @@ describe('applicableFrameworks — tier classification', () => {
     }
     const [result] = applicableFrameworks(ilProfile, [fw])
     // Region: 'mena' must be accepted by the engine (no fallthrough to null).
-    // Tier promotes to mandatory because INCD is Israel's domestic regulator.
+    // Tier promotes to binding because the reviewed scope and basis are present.
     expect(result).toBeDefined()
     expect(result?.tier).toBe('mandatory')
   })
@@ -330,6 +349,8 @@ describe('groupByTier', () => {
       countries: ['Australia'],
       industries: ['Government & Defense'],
       enforcementBody: 'ASD',
+      bindingStatus: 'mandatory_for_scope',
+      bindingBasis: 'ISM control 1917',
     })
     // Same-country, single-industry item for a different sector is now suppressed
     // (not emitted as cross-border) to avoid noise — e.g. HIPAA for a Finance profile.

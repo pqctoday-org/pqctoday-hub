@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   ArrowRight,
@@ -8,8 +8,11 @@ import {
   Globe,
   FileText,
   ListChecks,
+  CalendarClock,
+  PackageSearch,
   Search,
   ShieldCheck,
+  Sparkles,
   Users,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -75,13 +78,24 @@ function safeHostname(url: string): string {
 /** Linked-evidence rows listed on the phone before deferring to a laptop. */
 const EVREF_PHONE_LIMIT = 8
 
-type Section = 'obligations' | 'requirements' | 'landscape' | 'records' | 'cswp39'
+type Section =
+  | 'obligations'
+  | 'requirements'
+  | 'progress'
+  | 'products'
+  | 'landscape'
+  | 'records'
+  | 'foryou'
+  | 'cswp39'
 
 const SECTIONS: { id: Section; label: string }[] = [
   { id: 'obligations', label: 'Rules & Standards' },
-  { id: 'requirements', label: 'Requirements' },
+  { id: 'requirements', label: 'Sources & Practices' },
+  { id: 'progress', label: 'Dates' },
+  { id: 'products', label: 'Evidence' },
   { id: 'landscape', label: 'Landscape' },
   { id: 'records', label: 'Records' },
+  { id: 'foryou', label: 'For You' },
   { id: 'cswp39', label: 'CSWP.39' },
 ]
 
@@ -222,14 +236,11 @@ const TIER_TONE: Record<ApplicabilityTier, string> = {
  * The README's own mechanism ("nine desktop views" collapsed to "exactly two
  * primary chips" behind a "+7 more views" chip, with a teal "lens line") does
  * not exist in the real code — verified by research before writing any UI.
- * Desktop has 8 fixed tabs (obligationsModel/ComplianceView.tsx), same order
- * for every persona; persona is a reading LENS (order + one-line annotation),
- * never a tab-count reducer. No "lens line" copy, no chip-collapse mechanism,
- * anywhere in the tree. Scope confirmed with the user (2026-08-23): distill
- * 5 of the 8 real tabs — Rules & Standards, Requirements, Landscape's real
- * persona-emphasis reduction, Product Records' certification glossary, and
- * CSWP.39 — dropping Progress, Products, and For You (whose Gantt is already
- * a stated cut per the handoff).
+ * Desktop has 8 fixed tabs. Mobile now preserves all eight concepts with
+ * purpose-built compact lessons: dates replace the dense Progress chart,
+ * evidence classes replace the full inventory-to-certificate table, and For
+ * You becomes a short role-aware source list. Dense visualisations remain a
+ * larger-screen enhancement; core claim semantics no longer disappear.
  *
  * Every section reuses the real desktop model verbatim: useApplicability()
  * (same industry/country/region/persona stores every desktop tab reads),
@@ -354,10 +365,20 @@ export function MobileComplianceView({
   const openRecord = (id: string) => setParam('cert', id, false)
 
   const persona = usePersonaStore((s) => s.selectedPersona)
-  const { profile, isEmpty } = useApplicability()
+  const { profile, isEmpty, frameworks: applicableFrameworks } = useApplicability()
   // The phone has no scope bar, so the empty state's country picker writes the
   // assessment answer directly — the same value the applicability engine reads.
   const setCountry = useAssessmentStore((s) => s.setCountry)
+  const setIndustry = useAssessmentStore((s) => s.setIndustry)
+  // Shared desktop links often carry scope in the URL. Hydrate the same
+  // assessment profile on phone so a link does not reopen as an empty scope.
+  useEffect(() => {
+    const urlCountry = searchParams.get('country') ?? searchParams.get('geo')
+    const urlIndustry =
+      searchParams.get('industry') ?? searchParams.get('ind') ?? searchParams.get('sector')
+    if (!profile.country && urlCountry && urlCountry !== 'All') setCountry(urlCountry)
+    if (!profile.industry && urlIndustry && urlIndustry !== 'All') setIndustry(urlIndustry)
+  }, [profile.country, profile.industry, searchParams, setCountry, setIndustry])
   const countryItems = useMemo(
     () => ALL_JURISDICTIONS.map((j) => j.name).sort((a, b) => a.localeCompare(b)),
     []
@@ -375,6 +396,34 @@ export function MobileComplianceView({
     [rows, persona]
   )
   const framing = roleFramingFor(persona)
+  const mobileMilestones = useMemo(
+    () =>
+      rows
+        .flatMap((row) =>
+          row.milestones.map((milestone) => ({
+            framework: row.framework,
+            tier: row.tier,
+            year: milestone.year,
+            label: milestone.label,
+          }))
+        )
+        .sort((a, b) => a.year - b.year || a.framework.label.localeCompare(b.framework.label)),
+    [rows]
+  )
+  const mobileEvidenceSummary = useMemo(() => {
+    const current = applyRecordScope(records ?? [], 'current')
+    const namesPqc = (record: MobileCertRecord) => {
+      const state = pqcCoverageState(record.pqcCoverage)
+      return state === 'flag' || state === 'named'
+    }
+    return {
+      total: current.length,
+      algorithm: current.filter((record) => record.type === 'ACVP' && namesPqc(record)).length,
+      module: current.filter((record) => record.type === 'FIPS 140-3' && namesPqc(record)).length,
+      evaluated: current.filter((record) => isSecurityTargetType(record.type) && namesPqc(record))
+        .length,
+    }
+  }, [records])
 
   const index = useMemo(() => citationIndex(rows.map((r) => r.framework)), [rows])
   const { selected: selectedRow, status: reqfwStatus } = useMemo(
@@ -464,7 +513,8 @@ export function MobileComplianceView({
         <div className="glass-panel p-4 text-center">
           <p className="text-[12.5px] font-semibold text-foreground">Nothing in scope yet</p>
           <p className="mt-1 text-[11px] text-muted-foreground">
-            Pick a country and a sector to see which rules bind you.
+            Pick a country and a sector to explore potentially relevant sources. This does not
+            decide what legally applies to an organisation.
           </p>
           <InlineScopeStep {...scopeStep} />
         </div>
@@ -599,19 +649,19 @@ export function MobileComplianceView({
                   </h2>
                   <p className="mt-0.5 text-[11px] text-muted-foreground">{selectedRow.reason}</p>
                   <p className="mt-2 text-[10.5px] text-muted-foreground">
-                    These requirements are extracted from the documents this instrument{' '}
+                    These practices are machine-extracted from documents this instrument{' '}
                     <span className="font-semibold text-foreground">cites</span> — not from its own
-                    text.
+                    text. Verify the primary passage before treating one as a requirement.
                     {docs.length > 0 &&
-                      ` ${totalFor(docs)} requirement${totalFor(docs) === 1 ? '' : 's'} across ${docs.length} cited document${docs.length === 1 ? '' : 's'}.`}
+                      ` ${totalFor(docs)} extracted practice${totalFor(docs) === 1 ? '' : 's'} across ${docs.length} cited document${docs.length === 1 ? '' : 's'}.`}
                   </p>
                 </div>
               )}
 
               {docs.length === 0 ? (
                 <p className="text-[12px] text-muted-foreground">
-                  No extracted requirements for this one — a gap in the corpus, not a statement
-                  about the instrument.
+                  No extracted practices for this one — a gap in the corpus, not a statement about
+                  the instrument.
                 </p>
               ) : (
                 docs.map((doc) => (
@@ -626,6 +676,9 @@ export function MobileComplianceView({
                       </span>
                     </div>
                     <p className="mt-1 font-mono text-sim-chip text-muted-foreground">
+                      <span className="mr-1 inline-flex rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0.5 font-sans font-semibold text-status-warning">
+                        Human review not recorded
+                      </span>
                       extracted by {doc.extractionModel || 'unknown model'}
                       {doc.extractionDate ? ` · ${doc.extractionDate}` : ''} · confidence{' '}
                       {doc.confidence}
@@ -656,6 +709,105 @@ export function MobileComplianceView({
             </>
           )}
         </div>
+      )}
+
+      {section === 'progress' && (
+        <section className="flex flex-col gap-3" aria-labelledby="mobile-compliance-dates">
+          <div className="glass-panel p-3.5">
+            <h2
+              id="mobile-compliance-dates"
+              className="flex items-center gap-2 text-[13px] font-bold text-foreground"
+            >
+              <CalendarClock size={14} className="text-primary" aria-hidden="true" />
+              Dates stated by scoped sources
+            </h2>
+            <p className="mt-1 text-[10.5px] text-muted-foreground">
+              These dates teach source comparison. They do not say that your organisation is late,
+              compliant, or required to follow every listed instrument.
+            </p>
+          </div>
+          {isEmpty ? (
+            <p className="text-[11.5px] text-muted-foreground">
+              Choose a country and sector on Rules &amp; Standards first.
+            </p>
+          ) : mobileMilestones.length === 0 ? (
+            <p className="text-[11.5px] text-muted-foreground">
+              No structured dates are recorded for this educational scope.
+            </p>
+          ) : (
+            <ol className="flex flex-col gap-2">
+              {mobileMilestones.slice(0, 20).map((item, index) => (
+                <li
+                  key={`${item.framework.id}-${item.year}-${index}`}
+                  className="glass-panel flex items-start gap-3 p-3"
+                >
+                  <span className="font-mono text-[12px] font-bold text-primary">{item.year}</span>
+                  <div className="min-w-0">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => openFramework(item.framework)}
+                      className="h-auto whitespace-normal p-0 text-left text-[12px] font-semibold text-foreground"
+                    >
+                      {item.framework.label}
+                    </Button>
+                    <p className="text-[10.5px] text-muted-foreground">
+                      {TIER_META[item.tier].label}
+                      {item.label ? ` · ${item.label}` : ''}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+      )}
+
+      {section === 'products' && (
+        <section className="flex flex-col gap-3" aria-labelledby="mobile-compliance-evidence">
+          <div className="glass-panel p-3.5">
+            <h2
+              id="mobile-compliance-evidence"
+              className="flex items-center gap-2 text-[13px] font-bold text-foreground"
+            >
+              <PackageSearch size={14} className="text-primary" aria-hidden="true" />
+              Read product evidence correctly
+            </h2>
+            <p className="mt-1 text-[10.5px] text-muted-foreground">
+              Current snapshot: {mobileEvidenceSummary.algorithm} PQC algorithm-validation records,{' '}
+              {mobileEvidenceSummary.module} PQC-covering module-validation records, and{' '}
+              {mobileEvidenceSummary.evaluated} evaluated-product records naming PQC. These classes
+              are not interchangeable and do not prove deployment compliance.
+            </p>
+          </div>
+          {[
+            [
+              'Algorithm validation',
+              'An implementation passed CAVP testing, commonly through ACVP.',
+            ],
+            [
+              'Module validation',
+              'A defined module, version and environment holds a FIPS 140 certificate.',
+            ],
+            [
+              'Evaluated claim',
+              'An evaluated-product document names PQC; this is not ACVP or FIPS validation.',
+            ],
+          ].map(([title, detail]) => (
+            <div key={title} className="glass-panel p-3">
+              <h3 className="text-[12px] font-bold text-foreground">{title}</h3>
+              <p className="mt-0.5 text-[10.5px] text-muted-foreground">{detail}</p>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setSectionParams('records', {})}
+            className="h-9 text-[11.5px]"
+          >
+            Inspect the underlying records
+          </Button>
+        </section>
       )}
 
       {section === 'landscape' && (
@@ -799,6 +951,45 @@ export function MobileComplianceView({
         </div>
       )}
 
+      {section === 'foryou' && (
+        <section className="flex flex-col gap-3" aria-labelledby="mobile-compliance-for-you">
+          <div className="glass-panel p-3.5">
+            <h2
+              id="mobile-compliance-for-you"
+              className="flex items-center gap-2 text-[13px] font-bold text-foreground"
+            >
+              <Sparkles size={14} className="text-primary" aria-hidden="true" />
+              Your learning lens
+            </h2>
+            <p className="mt-1 text-[10.5px] text-muted-foreground">
+              Role changes explanation depth and ordering, not legal applicability. Review why each
+              example was included and what its evidence cannot establish.
+            </p>
+          </div>
+          {isEmpty ? (
+            <p className="text-[11.5px] text-muted-foreground">
+              Choose a country and sector on Rules &amp; Standards first.
+            </p>
+          ) : (
+            applicableFrameworks.slice(0, 10).map((result) => (
+              <Button
+                key={result.item.id}
+                type="button"
+                variant="ghost"
+                onClick={() => openFramework(result.item)}
+                className="glass-panel h-auto w-full flex-col items-start gap-1 whitespace-normal p-3 text-left"
+              >
+                <span className="text-[12px] font-bold text-foreground">{result.item.label}</span>
+                <span className="text-[10px] font-semibold text-primary">
+                  {TIER_META[result.tier].label}
+                </span>
+                <span className="text-[10.5px] text-muted-foreground">{result.reason}</span>
+              </Button>
+            ))
+          )}
+        </section>
+      )}
+
       {section === 'cswp39' && evrefParam && evrefRequirements.length === 0 && (
         <DeepLinkNotice
           kind="not-found"
@@ -822,7 +1013,7 @@ export function MobileComplianceView({
               </h2>
               <p className="text-[11px] text-muted-foreground">
                 <span className="font-mono">{evrefParam}</span> · {evrefRequirements.length}{' '}
-                extracted requirement{evrefRequirements.length === 1 ? '' : 's'}
+                extracted practice{evrefRequirements.length === 1 ? '' : 's'}
               </p>
             </div>
             <Button
@@ -915,8 +1106,9 @@ export function MobileComplianceView({
       )}
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        Progress tracking, the full Products catalogue, the For You validation Gantt, and the IR
-        8477 concept graph are on a laptop.
+        Educational reference only — not legal advice, a GRC system, or proof of compliance. The
+        phone provides compact learning views. Dense charts, full product-to-inventory mapping, and
+        the IR 8477 concept graph remain on a larger screen.
       </p>
 
       <MobileFrameworkDetailSheet
@@ -1461,7 +1653,7 @@ function MobileFrameworkDetailSheet({
             onClick={() => onViewRequirements(framework.id)}
             className="h-9 justify-between whitespace-normal text-[11.5px]"
           >
-            View extracted requirements
+            View extracted practices
             <ArrowRight size={13} aria-hidden="true" />
           </Button>
         </div>

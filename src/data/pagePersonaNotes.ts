@@ -303,14 +303,14 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/compliance': {
     executive:
-      '"For You" groups your frameworks as Mandatory, Recognized, Cross-border and Advisory above a "Deadline timeline", with "Sector threats" and "Industry events" beside them; "Progress" states the next dated milestone in your scope.',
-    grc: '"Rules & Standards": pick a Country (sector comes from the top bar) and the register says how many instruments are in scope and how many actually mandate PQC; "Requirements" quotes each source verbatim, "Products" shows your certificates.',
+      '"For You" groups scoped instruments as Binding, Relevant / recognized, Cross-border and Advisory above a "Deadline timeline", with "Sector threats" and "Industry events" beside them; "Progress" states the next dated milestone in your scope.',
+    grc: '"Rules & Standards": pick a Country (sector comes from the top bar) and review why each instrument is in scope, its binding basis and freshness; "Sources & Practices" shows extracted passages to verify against primary sources, while "Products" separates algorithm validation, module validation and evaluated claims.',
     developer:
-      '"For You" has "Wire a PQC gate into CI" — a GitHub Actions snippet with a "Copy CI gate YAML" button — plus "Algorithm coverage" and an "Implementation jump bar".',
+      '"For You" has an inventory-policy CI example with a "Copy CI gate YAML" button — it can fail on prohibited findings but does not determine compliance — plus "Algorithm coverage" and an "Implementation jump bar".',
     architect:
       '"For You" has a "Crypto-Agility Maturity" panel, a "Jurisdiction map" and "Standards to read"; the "Landscape" tab lays out Standardization Bodies, Certification Schemes and Compliance Frameworks as one pipeline.',
     researcher:
-      '"For You" sorts frameworks by data confidence with a "Source library" and "Cited timeline events"; "Requirements" names the model that extracted each quote; "Product Records" are live NIST CMVP, CAVP and Common Criteria records.',
+      '"For You" sorts frameworks by data confidence with a "Source library" and "Cited timeline events"; "Sources & Practices" names the model that extracted each passage; "Product Records" are snapshots of NIST CMVP, CAVP and Common Criteria records with source and freshness metadata.',
     'cert-engineer':
       '"Product Records" lists NIST CMVP, CAVP and Common Criteria records — keep the stages apart: CAVP is the prerequisite, a module certificate is the certification; "For You" lists the schemes that expect PQC and the tests to run first.',
     ops: '"For You" has a "Rotation clock" bucketing frameworks by how soon they bind, "Toolchain quick jumps" and "Framework deadlines"; "Products" shows whether each certificate is PQC validated, mixed or classical only.',

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Obligations — the register. "Which rules bind me, and why?"
+ * Rules & Standards — an educational applicability catalogue.
  *
  * The page's other tabs browse a 197-row catalogue. This one answers the
  * question the catalogue makes you work out for yourself, using the tiering the
@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
 import {
+  complianceFrameworks,
   PQC_REQUIREMENT_LABEL as PQC_LABEL,
   type ComplianceFramework,
   type PQCRequirement,
@@ -43,6 +44,8 @@ import {
   COLLAPSED_BY_DEFAULT,
   type ObligationRow,
 } from './obligationsModel'
+import { SourceFreshnessBadge } from '../SourceFreshnessBadge'
+import { summarizeComplianceDataQuality } from '../complianceDataQuality'
 
 const TIER_TONE: Record<ApplicabilityTier, string> = {
   mandatory: 'text-status-error',
@@ -59,6 +62,7 @@ const PQC_TONE: Record<PQCRequirement, string> = {
   expected: 'text-status-warning',
   guidance: 'text-status-info',
   no: 'text-muted-foreground',
+  unknown: 'text-muted-foreground',
 }
 
 const COUNTRY_ANY = 'All'
@@ -106,6 +110,7 @@ export function ObligationsTab({
     [rows, persona]
   )
   const totals = useMemo(() => summarize(rows), [rows])
+  const dataQuality = useMemo(() => summarizeComplianceDataQuality(complianceFrameworks), [])
 
   // Re-homes the About-strip's revisions feed, scoped to this reader's rows.
   const { revisions } = useRevisions()
@@ -143,6 +148,17 @@ export function ObligationsTab({
     <div className="space-y-4">
       <ScopeBar {...pickers} totals={totals} framing={roleFramingFor(persona)} />
 
+      <aside className="rounded-xl border border-border bg-muted/20 px-3.5 py-3 text-[11px] text-muted-foreground">
+        <span className="font-semibold text-foreground">Catalogue coverage:</span>{' '}
+        {dataQuality.sourceCheckRecorded.toLocaleString()} of {dataQuality.total.toLocaleString()}{' '}
+        active entries have a source check recorded within the last 12 months;{' '}
+        {dataQuality.sourceCheckOlderThanYear.toLocaleString()} have an older check and{' '}
+        {dataQuality.sourceCheckMissing.toLocaleString()} have no recorded check date. Missing
+        freshness means “not tracked,” not “obsolete.”{' '}
+        {dataQuality.bindingRows - dataQuality.bindingRowsMissingBasis} of {dataQuality.bindingRows}{' '}
+        binding-classified entries include a stated basis.
+      </aside>
+
       {changes.hasHistory && rows.length > 0 && (
         <p className="px-1 text-[11.5px] text-muted-foreground">
           Last recorded data change {formatChangeDate(changes.changedAt)} —{' '}
@@ -171,11 +187,11 @@ export function ObligationsTab({
         <div className="rounded-xl border border-border bg-card p-6 text-center">
           <ShieldCheck size={26} className="mx-auto text-muted-foreground" />
           <p className="mt-2 text-sm font-semibold text-foreground">
-            Tell us where you operate and we&apos;ll list what binds you
+            Choose a context to explore potentially relevant sources
           </p>
           <p className="mx-auto mt-1 max-w-xl text-xs text-muted-foreground">
-            The applicability tiers are computed from a country and a sector — without both, no
-            instrument can be shown as mandatory rather than merely relevant.
+            The catalogue uses country and sector signals to teach applicability reasoning. It does
+            not decide what legally binds an organisation.
           </p>
           {/* CHANGED 2026-10-16 (owner decision D3, GRC journey audit): the
               pickers are back in this card. On 2026-08-11 they were replaced by a
@@ -422,9 +438,10 @@ function ObligationListRow({
           ))}
           <span>
             {row.requirementCount > 0
-              ? `${row.requirementCount} requirements`
-              : 'no extracted requirements'}
+              ? `${row.requirementCount} extracted practices`
+              : 'no extracted practices'}
           </span>
+          <SourceFreshnessBadge lastVerified={fw.lastVerified} />
           {fw.website && (
             <a
               href={fw.website}

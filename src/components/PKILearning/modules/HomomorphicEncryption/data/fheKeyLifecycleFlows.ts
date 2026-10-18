@@ -39,7 +39,7 @@ export const KEY_LIFECYCLE_FLOWS: FheFlow[] = [
     },
     validation: {
       target:
-        'Reference-validated with Lattigo v6.2.0: the token’s rotation key matched Lattigo’s own rebuild limb for limb (30 of 30), Lattigo switched a level-9 and a level-0 ciphertext, the switched ciphertexts no longer decrypt under the old key, and the new seed decrypted the result under its policy. Measured with the software token in a container on a Mac; not run on a board.',
+        'Reproduced against Lattigo v6.2.0: the token’s rotation key matched Lattigo’s own rebuild limb for limb (30 of 30), Lattigo switched a level-9 and a level-0 ciphertext, the switched ciphertexts no longer decrypt under the old key, and the new seed decrypted the result under its policy. Measured with the software token in a container on a Mac; not run on a board and not independently reviewed.',
       reference: 'Lattigo v6.2.0 evaluation keys; pqctoday-fhe rotation reference run',
     },
     label: 'CKKS key rotation',
@@ -222,7 +222,7 @@ export const KEY_LIFECYCLE_FLOWS: FheFlow[] = [
       analogy:
         'A vault that needs two keys turned at once, held by two different people. Neither can open it alone, and a thief who steals one key gets nothing.',
       whatsDifferent:
-        'With one token, whoever may ask it to decrypt can recover the key. With two shares, one stolen or compromised token is no longer enough, and decryption needs two independent approvals.',
+        'With one token, an unrestricted or insufficiently checked decryption interface can become a key-recovery oracle. With two shares, one stolen or compromised token is no longer enough, and decryption needs two genuinely independent approvals.',
       catch:
         'It protects only if the two approvals really are independent: a crafted request sent to one token returned that token’s whole share, so one application holding both approvals gets both shares. Flooding the shares for third parties still fails at the default parameters.',
     },

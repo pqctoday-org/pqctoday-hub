@@ -23,10 +23,10 @@ import type { Tone } from './tones'
  */
 export const STEP_OWNERS: Record<CSWP39Step['id'], PersonaId[]> = {
   govern: ['executive', 'grc', 'architect'],
-  inventory: ['ops', 'grc', 'architect'],
-  'identify-gaps': ['ops', 'grc', 'developer', 'researcher'],
+  inventory: ['ops', 'grc', 'architect', 'cert-engineer'],
+  'identify-gaps': ['ops', 'grc', 'developer', 'researcher', 'cert-engineer'],
   prioritise: ['executive', 'grc', 'architect', 'researcher'],
-  implement: ['developer', 'ops', 'architect'],
+  implement: ['developer', 'ops', 'architect', 'cert-engineer'],
 }
 
 /** Per-step accent tone for the agility cycle. */

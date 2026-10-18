@@ -151,7 +151,9 @@ export function buildProductStageTimeline(
           m.list === 'MIP' ? earliest([m.date, m.firstSeen]) : m.date
         )
       ),
-      certified: earliest(pqcCerts.filter((c) => c.certType !== 'ACVP').map((c) => c.certDate)),
+      certified: earliest(
+        pqcCerts.filter((c) => c.certType === 'FIPS 140-3').map((c) => c.certDate)
+      ),
     }
     if (target !== 'none' && !dates[target]) undated += 1
     for (const pt of points) {

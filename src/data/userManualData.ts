@@ -229,19 +229,19 @@ export const pageManuals: Record<PageId, PageManual> = {
   compliance: {
     title: 'Compliance Frameworks',
     summary:
-      'See which rules, standards and certifications apply to your country and sector, what they say about post-quantum cryptography, and the dates they state. The page has eight views: Rules & Standards, Requirements, Progress, Products, Landscape, Product Records, For You and CSWP.39 Agility.',
+      'Use this educational reference to learn which rules, standards and certification records may be relevant to a country and sector, why they were included, what their sources say about post-quantum cryptography, and the dates they state. It is not a GRC system, legal advice, an applicability decision or proof of compliance. The page has eight views: Rules & Standards, Sources & Practices, Progress, Products, Landscape, Product Records, For You and CSWP.39 Agility.',
     sections: [
       {
         heading: 'Eight Views',
-        body: 'The tab bar has eight views: Rules & Standards, Requirements, Progress, Products, Landscape, Product Records, For You and CSWP.39 Agility. Rules & Standards opens first for most roles, and operations roles open on Progress. A link that carries a certificate, a requirement, a product or a CSWP.39 reference opens the view it belongs to. On a narrow screen the tab bar scrolls sideways.',
+        body: 'The tab bar has eight views: Rules & Standards, Sources & Practices, Progress, Products, Landscape, Product Records, For You and CSWP.39 Agility. Rules & Standards opens first for most roles, and operations roles open on Progress. A link that carries a certificate, a source passage, a product or a CSWP.39 reference opens the view it belongs to. On a narrow screen the tab bar scrolls sideways.',
       },
       {
-        heading: 'Rules & Standards, Requirements and Progress',
-        body: 'Rules & Standards lists the instruments that apply to your country and sector, why each one applies, and what it says about post-quantum cryptography. Each item carries a tier (Mandatory, Recognized, Cross-border, Advisory, Related via IR 8477 or Informational) from the same applicability engine as For You. Mandatory means a body in your country issues or enforces the item; this includes guidance and drafts, so check each item\u2019s status. Requirements shows what each obligation requires, taken from the documents it cites, with the verbatim quote, where it appears and which model extracted it; it is a reading list, not a checklist. Progress puts every date that the instruments in your scope state into one ordered list.',
+        heading: 'Rules & Standards, Sources & Practices and Progress',
+        body: 'Rules & Standards lists instruments associated with the selected country and sector, why each one was included, and what its source says about post-quantum cryptography. Each item carries a tier (Binding, Relevant / recognized, Cross-border, Advisory, Related via IR 8477 or Informational) from the same educational applicability model as For You. Binding requires a reviewed binding status and a stated basis; an issuer match alone is not enough, and the site does not decide whether an instrument applies to a real organisation. Sources & Practices shows machine-extracted source passages, where they appear and which model extracted them. Verify the primary passage and obtain the appropriate legal or assurance review before treating it as an obligation. Progress compares dates stated by scoped sources; a date does not by itself prove implementation is overdue.',
       },
       {
         heading: 'Products and Product Records',
-        body: 'Products shows which of the products you run hold a certificate, under which scheme, and whether it covers post-quantum algorithms or only classical ones; the inventory comes from the list you keep on Migrate. Product Records is a searchable snapshot of NIST CMVP (FIPS 140-3) module validations, NIST CAVP algorithm validations, Common Criteria and EUCC certificates, and ANSSI CSPN certificates. Search by product, vendor or type, and filter by source, product category, Migrate category, vendor and PQC status. A link with ?cert= opens one specific record.',
+        body: 'Products maps the inventory you keep on Migrate to reviewed evidence. It distinguishes NIST CAVP/ACVP algorithm validation, FIPS 140 module validation, and algorithms named in evaluated-product documentation; those evidence classes are not interchangeable. Product Records is a searchable snapshot of NIST CMVP module validations, NIST CAVP algorithm validations, Common Criteria and EUCC certificates, and ANSSI CSPN certificates. Search by product, vendor or type, filter by source and status, and use the source and freshness fields before relying on a record. A link with ?cert= opens one specific record.',
       },
       {
         heading: 'Landscape',
@@ -249,7 +249,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'For You and CSWP.39 Agility',
-        body: 'For You lists the standards, threats, library documents and timeline milestones that apply to your industry, country and region, tuned by your role (top bar) and your assessment profile; it can export the list as CSV. CSWP.39 Agility presents NIST CSWP.39, Achieving Cryptographic Agility: a continuously repeated 5-step process and a 4-tier maturity model, with a link to the PDF and to the related Learn module.',
+        body: 'For You presents standards, threats, library documents and timeline milestones associated with the selected industry, country and region, tuned by the role selected in the top bar. The executive CSV is a learning worksheet, not an audit or management register. CSWP.39 Agility presents a PQC Today learning sequence based on NIST CSWP 39, with links to the source PDF and related Learn module; its steps are not NIST’s section structure.',
       },
       {
         heading: 'Framework Details',

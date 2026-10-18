@@ -35,6 +35,7 @@ import {
   type StreamDevice,
 } from './fheConceptsData'
 import { RotationView, SharedDecryptView } from './FheRotationSharedViews'
+import { useActiveLearnPathId } from '@/components/PKILearning/common/useLearnPath'
 
 /* ------------------------------------------------------------------ */
 /*  Shared helpers                                                     */
@@ -175,7 +176,8 @@ const CKKS_FRESH_LEVELS = 6
 const CKKS_AFTER_BOOT_LEVELS = 4
 const TFHE_FRESH_NOISE = 10
 const TFHE_ADD_NOISE = 22
-const REFUSAL = 'Decryption would fail — bootstrap first'
+const REFUSAL =
+  'No multiplication level remains. The current ciphertext may still decrypt, but multiply/rescale needs a refresh or a shallower circuit.'
 
 const NoiseBudgetDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
   const [levels, setLevels] = useState(CKKS_FRESH_LEVELS)
@@ -213,11 +215,15 @@ const NoiseBudgetDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) =
       setLevels((l) => l - 1)
       push(setCkksLog, 'Multiply + rescale: one level used')
     }
-    // TFHE: a non-linear operation runs as a programmable bootstrap with a lookup table
+    // Simplified teaching model: a high-level integer multiplication can require
+    // one or more programmable bootstraps and key switches in the implementation.
     setTfheRefused(false)
     setNoise(TFHE_FRESH_NOISE)
     setPbs((p) => p + 1)
-    push(setTfheLog, 'Multiply (non-linear): bootstrap with a lookup table, noise reset')
+    push(
+      setTfheLog,
+      'Multiply: illustrative PBS refresh; real operation may use several PBS/key switches'
+    )
   }
   const doBootstrap = () => {
     onInteract()
@@ -247,8 +253,10 @@ const NoiseBudgetDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) =
     <div className="space-y-4">
       <WhatYouSee>
         The same operations applied to a CKKS and a TFHE ciphertext. CKKS spends a level on every
-        multiplication and must bootstrap when the levels run out; TFHE lets noise grow on cheap
-        operations and bootstraps on every non-linear one.
+        multiplication and needs a refresh before another multiply/rescale when the levels run out;
+        TFHE lets noise grow on cheap operations and uses programmable bootstrapping and key
+        switching for non-linear integer operations. The counter is illustrative, not a count of
+        low-level cryptographic calls.
       </WhatYouSee>
       <IllustrationLabel />
       <div className="flex flex-wrap gap-2" role="group" aria-label="Homomorphic operations">
@@ -939,7 +947,9 @@ const StreamDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-const CARD_IDS: CardId[] = ['noise', 'encode', 'circuit', 'stream', 'rotation', 'shared']
+const CORE_CARD_IDS: CardId[] = ['noise', 'encode', 'circuit']
+const ADVANCED_CARD_IDS: CardId[] = ['stream', 'rotation', 'shared']
+const CARD_IDS: CardId[] = [...CORE_CARD_IDS, ...ADVANCED_CARD_IDS]
 
 export const FheConceptsWorkshop: React.FC<{
   onComplete?: () => void
@@ -947,8 +957,11 @@ export const FheConceptsWorkshop: React.FC<{
   initialCard?: CardId
 }> = ({ onComplete, initialCard }) => {
   const reduced = usePrefersReducedMotion()
+  const activePath = useActiveLearnPathId('homomorphic-encryption')
+  const advanced = activePath === 'hsm-custody'
+  const visibleCardIds = advanced ? CARD_IDS : CORE_CARD_IDS
   const [expanded, setExpanded] = useState<CardId | null>(
-    initialCard && CARD_IDS.includes(initialCard) ? initialCard : 'noise'
+    initialCard && visibleCardIds.includes(initialCard) ? initialCard : 'noise'
   )
   const [done, setDone] = useState<Set<CardId>>(new Set())
 
@@ -958,15 +971,15 @@ export const FheConceptsWorkshop: React.FC<{
         if (prev.has(id)) return prev
         const next = new Set(prev)
         next.add(id)
-        if (next.size === CARD_IDS.length) onComplete?.()
+        if (visibleCardIds.every((cardId) => next.has(cardId))) onComplete?.()
         return next
       })
     },
-    [onComplete]
+    [onComplete, visibleCardIds]
   )
   const toggle = (id: CardId) => setExpanded((p) => (p === id ? null : id))
 
-  const cards: {
+  const allCards: {
     id: CardId
     title: string
     short: string
@@ -1030,16 +1043,23 @@ export const FheConceptsWorkshop: React.FC<{
       body: <SharedDecryptView onInteract={() => mark('shared')} />,
     },
   ]
+  const cards = allCards.filter((card) => visibleCardIds.includes(card.id))
 
   return (
     <MotionConfig reducedMotion={reduced ? 'always' : 'never'}>
       <div className="space-y-5">
         <p className="text-muted-foreground leading-relaxed">
-          Six hands-on views of what makes FHE different from ordinary encryption: noise that must
-          be managed, numbers that are scaled and rounded, programs that cannot branch on secret
-          data, evaluation keys large enough that the custodian streams them out in pieces, a key
-          that can be rotated without decrypting the data, and a secret that two tokens can hold as
-          shares. Concepts use simplified math; measured numbers link to their evidence.
+          Start with three hands-on views of what makes FHE different from ordinary encryption:
+          noise that must be managed, numbers that are scaled and rounded, and programs that cannot
+          branch on secret data. Concepts use simplified math; measured numbers link to their
+          evidence.
+          {advanced && (
+            <>
+              {' '}
+              Your advanced path also includes evaluation-key streaming, rotation without decrypting
+              stored data, and shared decryption across two tokens.
+            </>
+          )}
         </p>
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span>Progress:</span>

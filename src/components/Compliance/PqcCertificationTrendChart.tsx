@@ -22,6 +22,8 @@ interface PqcCertificationTrendChartProps {
    *  axis ends at its month. Not a retrieval date. Falls back to the wall clock
    *  only when the data hasn't loaded yet. */
   asOf: Date | null
+  /** Whether the surrounding records view includes historical / archived records. */
+  recordScope?: 'current' | 'all'
 }
 
 type View = 'products' | 'listings'
@@ -106,7 +108,11 @@ async function fetchJson<T>(path: string): Promise<T | null> {
  *   NIST listings — industry-wide listings appearing at each stage that month.
  * The model and its limits live in fipsStageProgressModel.ts.
  */
-export function PqcCertificationTrendChart({ data, asOf }: PqcCertificationTrendChartProps) {
+export function PqcCertificationTrendChart({
+  data,
+  asOf,
+  recordScope = 'current',
+}: PqcCertificationTrendChartProps) {
   const [view, setView] = useState<View>('products')
   const [inProcess, setInProcess] = useState<
     (InProcessData & { mipMeta?: { notDisplayed?: number } }) | null
@@ -215,6 +221,17 @@ export function PqcCertificationTrendChart({ data, asOf }: PqcCertificationTrend
           </span>
         ))}
       </div>
+
+      <p className="mb-2 text-[10.5px] text-muted-foreground">
+        Record scope:{' '}
+        <span className="font-semibold text-foreground">
+          {recordScope === 'current'
+            ? 'current and validated records only'
+            : 'current plus historical, archived and revoked records'}
+        </span>
+        . This chart follows the FIPS 140-3 evidence path; Common Criteria and other evaluated
+        claims are excluded rather than treated as validation.
+      </p>
 
       {points.length === 0 ? (
         <p className="py-10 text-center text-xs text-muted-foreground">Loading…</p>

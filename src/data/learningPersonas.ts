@@ -112,6 +112,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'pqc-risk-management',
       'ai-security-pqc',
+      'homomorphic-encryption',
       'data-asset-sensitivity',
       'pqc-business-case',
       'pqc-governance',
@@ -145,6 +146,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'pqc-risk-management' },
       { type: 'module', moduleId: 'ai-security-pqc' },
+      { type: 'module', moduleId: 'homomorphic-encryption' },
       { type: 'module', moduleId: 'data-asset-sensitivity' },
       { type: 'module', moduleId: 'pqc-business-case' },
       {
@@ -223,7 +225,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // back deliberately, and the ~10h concern that motivated that trim is now
     // carried by `essentials` (200 min) rather than by the full path, since the
     // capstone unlocks on essentials, not on the whole recommendedPath.
-    estimatedMinutes: 985,
+    estimatedMinutes: 1090,
     // 2026-09-07 Executive/GRC split: Essentials narrowed to the five modules a
     // busy sponsor needs to fund and govern a program (§4 of the split plan).
     // `quantum-threats` and `compliance-strategy` stay in the full path as
@@ -280,6 +282,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'pqc-risk-management',
       'data-asset-sensitivity',
+      'homomorphic-encryption',
       'pqc-grc',
       'compliance-strategy',
       'standards-bodies',
@@ -304,6 +307,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quantum-threats' },
       { type: 'module', moduleId: 'pqc-risk-management' },
       { type: 'module', moduleId: 'data-asset-sensitivity' },
+      { type: 'module', moduleId: 'homomorphic-encryption' },
       { type: 'module', moduleId: 'pqc-grc' },
       { type: 'module', moduleId: 'compliance-strategy' },
       {
@@ -364,7 +368,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 860,
+    estimatedMinutes: 965,
     essentials: [
       'pqc-101',
       'pqc-risk-management',
@@ -559,7 +563,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2105,
+    estimatedMinutes: 2165,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -782,7 +786,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2475,
+    estimatedMinutes: 2535,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -1069,7 +1073,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 3150,
+    estimatedMinutes: 3210,
     essentials: [
       'pqc-101',
       'research-quantum-impact',
@@ -1105,6 +1109,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'acvp-lab-workflow',
       'entropy-randomness',
       'hsm-pqc',
+      'homomorphic-encryption',
       'pqc-testing-validation',
       'cc-eucc-certification',
       'pqc-hw-acceleration',
@@ -1135,6 +1140,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         ],
       },
       { type: 'module', moduleId: 'hsm-pqc' },
+      { type: 'module', moduleId: 'homomorphic-encryption' },
       { type: 'module', moduleId: 'pqc-testing-validation' },
       { type: 'module', moduleId: 'cc-eucc-certification' },
       { type: 'module', moduleId: 'pqc-hw-acceleration' },
@@ -1174,7 +1180,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1070,
+    estimatedMinutes: 1175,
     essentials: [
       'crypto-product-certification',
       'fips-140-3-certification',
@@ -1356,7 +1362,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2100,
+    estimatedMinutes: 2160,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',
@@ -1432,6 +1438,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'tls-basics',
       'email-signing',
       'database-encryption-pqc',
+      'homomorphic-encryption',
       'iam-pqc',
       'digital-assets',
       'digital-id',
@@ -1488,6 +1495,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'tls-basics' },
       { type: 'module', moduleId: 'email-signing' },
       { type: 'module', moduleId: 'database-encryption-pqc' },
+      { type: 'module', moduleId: 'homomorphic-encryption' },
       { type: 'module', moduleId: 'iam-pqc' },
       { type: 'module', moduleId: 'digital-assets' },
       { type: 'module', moduleId: 'digital-id' },
@@ -1506,7 +1514,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 935,
+    estimatedMinutes: 1040,
     // Curious journey review (owner decision C2, 16 Oct 2026): a beginner's
     // must-do set is the idea, the threat and one real handshake — about 1½
     // hours. Candidates, risk and compliance stay on the full path as the

@@ -19,7 +19,8 @@
 import { useMemo } from 'react'
 import { Link2, ShieldAlert, Calendar, BookOpen } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
+import { groupByTier, TIER_META, type UserProfile } from '../../../utils/applicabilityEngine'
+import { BINDING_GROUP_META, bindingGroupOf } from '../../../utils/bindingSplit'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { LibraryDocItem, TimelineItem } from '../../applicability/parts/items'
@@ -31,6 +32,7 @@ import type { ComplianceFramework } from '../../../data/complianceData'
 import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
+import { SourceFreshnessBadge } from '../SourceFreshnessBadge'
 
 interface GrcApplicabilityViewProps {
   profileOverride?: Partial<UserProfile>
@@ -81,6 +83,21 @@ export function GrcApplicabilityView({
         <ProfileSummary profile={profile} editable />
       </div>
 
+      <section className="glass-panel p-4 space-y-2" aria-labelledby="grc-reasoning-lesson">
+        <h3 id="grc-reasoning-lesson" className="text-base font-semibold text-foreground">
+          Applicability reasoning lesson
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          For each example, ask what facts would establish scope, which primary passage supplies the
+          binding basis, what remains uncertain, and which qualified expert would decide it in a
+          real engagement. PQC Today does not store or make that decision.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Data confidence measures catalogue completeness and provenance. It is not legal certainty
+          and does not replace an applicability decision.
+        </p>
+      </section>
+
       {/* ── Recent revisions — what changed since you last checked ── */}
       <section data-section-id="grc-updates" className="glass-panel p-4 space-y-2 scroll-mt-20">
         <header className="flex items-center gap-2">
@@ -97,10 +114,10 @@ export function GrcApplicabilityView({
       <section data-section-id="grc-frameworks" className="space-y-2 scroll-mt-20">
         <header className="flex items-center gap-2">
           <ShieldAlert size={16} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">Applicable frameworks</h3>
+          <h3 className="text-base font-semibold text-foreground">Applicability review queue</h3>
           <span className="text-xs text-muted-foreground">
-            Sorted by data confidence (lowest first) — review these against the source before
-            recording a treatment decision
+            Sorted by data confidence (lowest first) — compare each catalogue summary with its
+            source and identify what you would verify
           </span>
         </header>
         {sorted.length === 0 ? (
@@ -123,6 +140,12 @@ export function GrcApplicabilityView({
                     {r.item.label}
                   </Button>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    <span className="text-[10px] rounded border border-border px-1.5 py-0.5">
+                      {TIER_META[r.tier].label}
+                    </span>
+                    <span className="text-[10px] rounded border border-border px-1.5 py-0.5">
+                      {BINDING_GROUP_META[bindingGroupOf(r.item.bindingStatus)].chip}
+                    </span>
                     {r.item.confidenceScore !== undefined && (
                       <span
                         className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
@@ -145,6 +168,16 @@ export function GrcApplicabilityView({
                     {r.item.deadline && (
                       <span className="text-[10px] text-status-error">{r.item.deadline}</span>
                     )}
+                  </div>
+                  <p className="mt-1 text-[11px] text-muted-foreground">{r.reason}</p>
+                  {r.item.bindingBasis && (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      <span className="font-semibold text-foreground">Basis:</span>{' '}
+                      {r.item.bindingBasis}
+                    </p>
+                  )}
+                  <div className="mt-1">
+                    <SourceFreshnessBadge lastVerified={r.item.lastVerified} />
                   </div>
                 </div>
                 {r.trustPath && (

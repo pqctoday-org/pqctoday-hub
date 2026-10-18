@@ -97,6 +97,10 @@ interface ItemFields {
    * to weaker tiers regardless.
    */
   enforcementBody?: string | null
+  /** Reviewed force-of-law classification. Authority identity alone never creates an obligation. */
+  bindingStatus?: ComplianceFramework['bindingStatus']
+  /** Public citation supporting a binding classification. */
+  bindingBasis?: string | null
 }
 
 // ── Profile helpers ──────────────────────────────────────────────────────
@@ -316,7 +320,8 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
     hasIndustry && (industries.includes(industry!) || sectorCodesOverlap(industries, industry!))
   const industryApplies = directIndustryMatch || industryUniversal
 
-  // Authority signals — drive Mandatory-vs-Recognized when country matches.
+  // Authority signals establish relevance. They do not, by themselves, establish
+  // that an instrument binds the reader.
   const eb = enforcementBody?.trim() || null
   const domesticBody = isDomesticRegulator(country, industry, eb) || (eu && isEuLevelBody(eb))
   const fiveEyesBody = !domesticBody && isFiveEyesAffinity(country, eb)
@@ -327,15 +332,23 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
   // generic "applies to everyone" tag) are intentionally dropped to keep the
   // panel signal-dense.
   if (directCountryMatch && industryApplies) {
-    if (domesticBody) {
+    const reviewedBinding =
+      (fields.bindingStatus === 'binding' || fields.bindingStatus === 'mandatory_for_scope') &&
+      Boolean(fields.bindingBasis?.trim())
+    if (domesticBody && reviewedBinding) {
       return {
         tier: 'mandatory',
-        reason: eb
-          ? `Your regulator: ${eb}`
-          : directIndustryMatch
-            ? `${country} + ${industry} match`
-            : `${country} match (applies to all industries)`,
+        reason: `${fields.bindingStatus === 'mandatory_for_scope' ? 'Binding for its stated scope' : 'Binding instrument'} — ${fields.bindingBasis}`,
       }
+    }
+    if (domesticBody) {
+      const reason =
+        fields.bindingStatus === undefined
+          ? `Relevant domestic source${eb ? ` (${eb})` : ''} — binding status not yet reviewed`
+          : fields.bindingStatus === 'draft'
+            ? `Domestic draft${eb ? ` from ${eb}` : ''} — not an adopted obligation`
+            : `Domestic ${fields.bindingStatus.replaceAll('_', ' ')}${eb ? ` from ${eb}` : ''} — not a binding obligation`
+      return { tier: fields.bindingStatus === undefined ? 'recognized' : 'advisory', reason }
     }
     if (fiveEyesBody) {
       return {
@@ -400,6 +413,8 @@ export function applicableFrameworks(
       industryUniversal: isIndustryUniversal(fw.industries),
       countryUniversal: isCountryUniversal(fw.countries),
       enforcementBody: fw.enforcementBody,
+      bindingStatus: fw.bindingStatus,
+      bindingBasis: fw.bindingBasis,
     })
     if (match) out.push({ item: fw, tier: match.tier, reason: match.reason })
   }
@@ -570,12 +585,12 @@ export const TIER_ORDER: ApplicabilityTier[] = [
 
 export const TIER_META: Record<ApplicabilityTier, { label: string; description: string }> = {
   mandatory: {
-    label: 'Mandatory',
-    description: 'Your domestic regulator enforces this — direct compliance obligation',
+    label: 'Binding',
+    description: 'Reviewed as binding for this scope, with a recorded legal or regulatory basis',
   },
   recognized: {
-    label: 'Recognized',
-    description: 'Foreign authority — your country recognizes or adopts this standard',
+    label: 'Relevant / recognized',
+    description: 'Relevant to this profile, but not established here as a direct obligation',
   },
   'cross-border': {
     label: 'Cross-border',

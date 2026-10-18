@@ -69,8 +69,7 @@ describe('ComplianceDetailDrawer', () => {
     // above the trust panel, so more than one match is expected here.
     expect(screen.getAllByText('Example Regulator').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('85/100')).toBeInTheDocument()
-    expect(screen.getByText('Last verified')).toBeInTheDocument()
-    expect(screen.getByText('2026-07-16')).toBeInTheDocument()
+    expect(screen.getByText(/Source check recorded/)).toHaveTextContent('2026-07-16')
     expect(screen.getByText('yes')).toBeInTheDocument()
   })
 

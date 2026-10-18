@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { DeveloperImplementationView } from './DeveloperImplementationView'
+import { CI_GATE_YAML, DeveloperImplementationView } from './DeveloperImplementationView'
 
 vi.mock('../../../hooks/useApplicabilityWithPaths', () => ({
   useApplicabilityWithPaths: () => ({
@@ -71,5 +71,12 @@ describe('DeveloperImplementationView', () => {
     renderView()
     expect(screen.getByText(/Standards.*implementation docs/i)).toBeInTheDocument()
     expect(screen.getByText('FIPS 203 ML-KEM')).toBeInTheDocument()
+  })
+
+  it('uses an explicit conditional so a policy finding cannot fall through to success', () => {
+    expect(CI_GATE_YAML).toContain("if jq -e '.components[]")
+    expect(CI_GATE_YAML).toContain('exit 1')
+    expect(CI_GATE_YAML).not.toContain('exit 1) \\\n            || echo')
+    expect(CI_GATE_YAML).toMatch(/not, by itself,\s*# a legal compliance determination/)
   })
 })

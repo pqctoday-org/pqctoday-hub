@@ -275,10 +275,10 @@
     "homomorphic-encryption": {
       "id": "homomorphic-encryption",
       "lm_id": "LM-076",
-      "title": "Homomorphic Encryption (FHE) & HSM Key Custody",
-      "description": "Compute on encrypted data without trusting the hardware: what FHE promises and costs, the four ISO/IEC 28033 draft schemes, where FHE is used, standards and compliance, FHE against the quantum threat, and how an HSM can hold the FHE secret key and what its decryption policy can and cannot protect.",
-      "duration": "45 min",
-      "difficulty": "advanced",
+      "title": "Homomorphic Encryption (FHE)",
+      "description": "Learn what computing on encrypted data can and cannot protect, choose among BFV, BGV, CKKS and TFHE, reason about noise, depth and precision, and optionally follow the advanced HSM custody and assurance path.",
+      "duration": "105 min",
+      "difficulty": "intermediate",
       "frameworkPhase": "p6"
     },
     "hsm-pqc": {
@@ -1537,12 +1537,12 @@
         "label": "Standards & Compliance"
       },
       {
-        "id": "fhe-hsm-custody",
-        "label": "The HSM as FHE Key Custodian"
-      },
-      {
         "id": "fhe-implementations",
         "label": "Open-Source Implementations"
+      },
+      {
+        "id": "fhe-hsm-custody",
+        "label": "Advanced: HSM Custody & Assurance"
       }
     ],
     "hsm-pqc": [
@@ -3058,12 +3058,13 @@
     ],
     "homomorphic-encryption": [
       {
-        "id": "fhe-hsm-flows",
-        "label": "FHE + HSM Flows"
+        "id": "fhe-concepts",
+        "label": "FHE concepts lab"
       },
       {
-        "id": "fhe-concepts",
-        "label": "FHE concepts, hands-on"
+        "id": "fhe-hsm-flows",
+        "label": "Advanced HSM custody lab",
+        "paths": ["hsm-custody"]
       }
     ],
     "hsm-pqc": [
@@ -4213,10 +4214,10 @@
         {
           "id": "homomorphic-encryption",
           "lm_id": "LM-076",
-          "title": "Homomorphic Encryption (FHE) & HSM Key Custody",
-          "description": "Compute on encrypted data without trusting the hardware: what FHE promises and costs, the four ISO/IEC 28033 draft schemes, where FHE is used, standards and compliance, FHE against the quantum threat, and how an HSM can hold the FHE secret key and what its decryption policy can and cannot protect.",
-          "duration": "45 min",
-          "difficulty": "advanced",
+          "title": "Homomorphic Encryption (FHE)",
+          "description": "Learn what computing on encrypted data can and cannot protect, choose among BFV, BGV, CKKS and TFHE, reason about noise, depth and precision, and optionally follow the advanced HSM custody and assurance path.",
+          "duration": "105 min",
+          "difficulty": "intermediate",
           "frameworkPhase": "p6"
         },
         {

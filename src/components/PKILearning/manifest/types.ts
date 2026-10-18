@@ -15,6 +15,7 @@
  */
 import type { ComponentType } from 'react'
 import type { PhaseId } from '@/data/frameworkPhases'
+import type { PersonaId } from '@/data/personaIds'
 
 export interface TabItem {
   value: string
@@ -66,6 +67,12 @@ export interface LearnPath {
   duration: string
   /** one line on who this path is for; shown in the path picker */
   audience?: string
+  /**
+   * Personas allowed to select this path. Omit for a path that is available
+   * to everyone. When no persona has been selected, restricted paths remain
+   * hidden until the learner chooses an eligible role.
+   */
+  personas?: PersonaId[]
 }
 
 /**

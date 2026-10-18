@@ -32,17 +32,41 @@ export interface ProductCertification {
   /** Distinct schemes with a count, e.g. `ACVP ×3`. */
   schemes: { scheme: string; count: number }[]
   pqcCount: number
+  /** Evaluation records that name PQC but do not validate the algorithm or module. */
+  evaluatedClaimCount: number
   classicalCount: number
   coverage: Coverage
 }
 
-/** A certificate counts as PQC when it names at least one PQC algorithm. */
-export function isPqcCertificate(cert: CertificationXref): boolean {
+export type PqcEvidenceKind =
+  'algorithm-validation' | 'module-validation' | 'evaluated-claim' | 'none'
+
+/** Classify what a named algorithm means under the record's actual scheme. */
+export function pqcEvidenceKind(cert: CertificationXref): PqcEvidenceKind {
   const algos = (cert.pqcAlgorithms ?? '').trim()
-  if (!algos) return false
-  // The scrape writes this phrase for certificates it checked and found none.
-  if (/no pqc mechanisms detected/i.test(algos)) return false
-  return true
+  if (!algos || /no pqc mechanisms detected/i.test(algos)) return 'none'
+  if (cert.certType === 'ACVP') return 'algorithm-validation'
+  if (cert.certType === 'FIPS 140-3') return 'module-validation'
+  return 'evaluated-claim'
+}
+
+export function pqcEvidenceLabel(cert: CertificationXref): string {
+  switch (pqcEvidenceKind(cert)) {
+    case 'algorithm-validation':
+      return 'Algorithm implementation validated'
+    case 'module-validation':
+      return 'PQC listed by the validated module'
+    case 'evaluated-claim':
+      return 'PQC named in evaluated product documentation — not algorithm validation'
+    default:
+      return 'No PQC mechanisms recorded'
+  }
+}
+
+/** True only for algorithm- or module-validation evidence, never a CC/PSA claim. */
+export function isPqcCertificate(cert: CertificationXref): boolean {
+  const kind = pqcEvidenceKind(cert)
+  return kind === 'algorithm-validation' || kind === 'module-validation'
 }
 
 /**
@@ -78,7 +102,10 @@ export function summarizeProduct(
   }
 
   const pqcCount = unique.filter(isPqcCertificate).length
-  const classicalCount = unique.length - pqcCount
+  const evaluatedClaimCount = unique.filter(
+    (cert) => pqcEvidenceKind(cert) === 'evaluated-claim'
+  ).length
+  const classicalCount = unique.length - pqcCount - evaluatedClaimCount
 
   const bySchemeCount = new Map<string, number>()
   for (const cert of unique) {
@@ -98,6 +125,7 @@ export function summarizeProduct(
       .map(([scheme, count]) => ({ scheme, count }))
       .sort((a, b) => a.scheme.localeCompare(b.scheme)),
     pqcCount,
+    evaluatedClaimCount,
     classicalCount,
     coverage: coverageOf(pqcCount, classicalCount),
   }
@@ -143,15 +171,18 @@ export function buildProductRows(
 export function summarizeCoverage(rows: ProductCertification[]): {
   products: number
   certificates: number
+  evaluatedClaims: number
   byCoverage: Record<Coverage, number>
 } {
   const byCoverage: Record<Coverage, number> = { pqc: 0, mixed: 0, classical: 0, none: 0 }
   let certificates = 0
+  let evaluatedClaims = 0
   for (const row of rows) {
     byCoverage[row.coverage] += 1
     certificates += row.certificates.length
+    evaluatedClaims += row.evaluatedClaimCount
   }
-  return { products: rows.length, certificates, byCoverage }
+  return { products: rows.length, certificates, evaluatedClaims, byCoverage }
 }
 
 /**

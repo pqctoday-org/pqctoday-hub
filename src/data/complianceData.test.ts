@@ -260,4 +260,15 @@ describe('compliance binding_status column', () => {
       complianceFrameworks.some((f) => f.bindingStatus !== undefined)
     )
   })
+
+  it('requires a stated basis for every active binding classification', () => {
+    const missing = complianceFrameworks
+      .filter(
+        (framework) =>
+          framework.bindingStatus === 'binding' || framework.bindingStatus === 'mandatory_for_scope'
+      )
+      .filter((framework) => !framework.bindingBasis)
+      .map((framework) => framework.id)
+    expect(missing).toEqual([])
+  })
 })

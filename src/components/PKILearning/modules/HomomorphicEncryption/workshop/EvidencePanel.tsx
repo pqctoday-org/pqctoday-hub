@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { useModalPosition } from '@/hooks/useModalPosition'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import type { EvidenceRecord } from '@/data/fhe/fheEvidence'
 import { evidencePanelModel } from '@/data/fhe/fheEvidencePanel'
 
@@ -21,7 +22,7 @@ interface EvidencePanelProps {
 const FILE_LINK = 'text-primary underline underline-offset-2 hover:text-primary/80 break-all'
 
 /**
- * Results panel behind a "Validated" badge: a short summary, a small key-numbers table and,
+ * Results panel behind an evidence badge: a short summary, a small key-numbers table and,
  * last, the raw files. Portalled above the step-detail modal (which also shows badges), so
  * the stacking is 10000/10001 rather than the modal's 9998/9999.
  */
@@ -29,6 +30,7 @@ export const EvidencePanel: React.FC<EvidencePanelProps> = ({ open, onClose, rec
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
   useOverlayEscape(open, onClose)
+  const focusTrapRef = useFocusTrap(open)
   const closeRef = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     if (open) closeRef.current?.focus()
@@ -63,6 +65,7 @@ export const EvidencePanel: React.FC<EvidencePanelProps> = ({ open, onClose, rec
             style={isEmbedded ? undefined : { zIndex: 10001 }}
           >
             <motion.div
+              ref={focusTrapRef}
               initial={{ opacity: 0, scale: 0.96, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}
@@ -76,7 +79,7 @@ export const EvidencePanel: React.FC<EvidencePanelProps> = ({ open, onClose, rec
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[11px] text-status-success font-bold">Validated</p>
+                  <p className="text-[11px] text-status-success font-bold">Evidence available</p>
                   <h2 id={titleId} className="text-base sm:text-lg font-bold text-foreground">
                     {label}
                   </h2>

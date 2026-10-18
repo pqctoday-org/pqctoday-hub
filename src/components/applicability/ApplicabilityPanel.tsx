@@ -97,9 +97,9 @@ export function ApplicabilityPanel({
         )}
         compact={isCompact}
         // The Report does not call a framework "Mandatory" just because a body in
-        // your country issues it: once frameworks have been reviewed, the top tier
-        // is shown as Binding, Guidance and drafts, and Not yet classified.
-        mandatoryGroups={
+        // your country issues it: once frameworks have been reviewed, the displayed
+        // frameworks are grouped as Binding, Guidance and drafts, or Not yet classified.
+        bindingGroups={
           variant === 'report-section' && bindingDataPresent()
             ? (items) => {
                 const split = splitByBinding(items)
@@ -174,8 +174,8 @@ interface SectionProps<T> {
   dropped?: Record<ApplicabilityTier, number>
   renderItem: (r: ApplicabilityResult<T>) => React.ReactNode
   compact: boolean
-  /** Replaces the single top-tier group with these groups (Report, frameworks only). */
-  mandatoryGroups?: (
+  /** Replaces applicability tiers with reviewed binding groups (Report, frameworks only). */
+  bindingGroups?: (
     items: ApplicabilityResult<T>[]
   ) => Array<{ id: BindingGroup; items: ApplicabilityResult<T>[] }>
 }
@@ -187,9 +187,10 @@ function Section<T>({
   dropped,
   renderItem,
   compact,
-  mandatoryGroups,
+  bindingGroups,
 }: SectionProps<T>) {
   const grouped = useMemo(() => groupByTier(results), [results])
+  const reviewedGroups = bindingGroups?.(results).filter((g) => g.items.length > 0)
   const total = results.length
   const totalDropped = dropped ? TIER_ORDER.reduce((sum, t) => sum + (dropped[t] ?? 0), 0) : 0
 
@@ -210,71 +211,62 @@ function Section<T>({
         <div className="px-3 py-3 text-xs text-muted-foreground">No items match this profile.</div>
       ) : (
         <div className="divide-y divide-border">
-          {TIER_ORDER.map((tier) => {
-            const items = grouped[tier]
-            if (items.length === 0) return null
-            const styles = TIER_STYLES[tier]
-            // eslint-disable-next-line security/detect-object-injection
-            const droppedHere = dropped?.[tier] ?? 0
-            if (tier === 'mandatory' && mandatoryGroups) {
-              const groups = mandatoryGroups(items).filter((g) => g.items.length > 0)
-              return (
-                <div key={tier} className="divide-y divide-border">
-                  {groups.map((g, gi) => {
-                    const meta = BINDING_GROUP_META[g.id]
-                    return (
-                      <div key={g.id} className="px-3 py-2" data-testid={`binding-group-${g.id}`}>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className={`w-2 h-2 rounded-full ${meta.dot}`} aria-hidden="true" />
-                          <span className="text-xs font-medium text-foreground">{meta.label}</span>
-                          <span className="text-xs text-muted-foreground">({g.items.length})</span>
-                          {gi === 0 && droppedHere > 0 && (
-                            <span className="text-xs text-muted-foreground/80">
-                              +{droppedHere} more
-                            </span>
-                          )}
-                          <span
-                            className="text-xs text-muted-foreground/80 hidden sm:inline truncate"
-                            title={meta.description}
-                          >
-                            — {meta.description}
-                          </span>
-                        </div>
-                        <ul className={compact ? 'space-y-0.5' : 'space-y-1'}>
-                          {g.items.map((r, i) => (
-                            <li key={i}>{renderItem(r)}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )
-                  })}
-                </div>
-              )
-            }
-            return (
-              <div key={tier} className="px-3 py-2">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className={`w-2 h-2 rounded-full ${styles.dot}`} aria-hidden="true" />
-                  <span className="text-xs font-medium text-foreground">{styles.label}</span>
-                  <span className="text-xs text-muted-foreground">({items.length})</span>
-                  {droppedHere > 0 && (
-                    <span className="text-xs text-muted-foreground/80">+{droppedHere} more</span>
-                  )}
-                  <span
-                    className="text-xs text-muted-foreground/80 hidden sm:inline truncate"
-                    title={TIER_META[tier].description}
-                  >
-                    — {TIER_META[tier].description}
-                  </span>
-                </div>
-                <ul className={compact ? 'space-y-0.5' : 'space-y-1'}>
-                  {items.map((r, i) => (
-                    <li key={i}>{renderItem(r)}</li>
-                  ))}
-                </ul>
-              </div>
-            )
-          })}
+          {reviewedGroups
+            ? reviewedGroups.map((g) => {
+                const meta = BINDING_GROUP_META[g.id]
+                return (
+                  <div key={g.id} className="px-3 py-2" data-testid={`binding-group-${g.id}`}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`w-2 h-2 rounded-full ${meta.dot}`} aria-hidden="true" />
+                      <span className="text-xs font-medium text-foreground">{meta.label}</span>
+                      <span className="text-xs text-muted-foreground">({g.items.length})</span>
+                      <span
+                        className="text-xs text-muted-foreground/80 hidden sm:inline truncate"
+                        title={meta.description}
+                      >
+                        — {meta.description}
+                      </span>
+                    </div>
+                    <ul className={compact ? 'space-y-0.5' : 'space-y-1'}>
+                      {g.items.map((r, i) => (
+                        <li key={i}>{renderItem(r)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              })
+            : TIER_ORDER.map((tier) => {
+                const items = grouped[tier]
+                if (items.length === 0) return null
+                const styles = TIER_STYLES[tier]
+                // eslint-disable-next-line security/detect-object-injection
+                const droppedHere = dropped?.[tier] ?? 0
+                return (
+                  <div key={tier} className="px-3 py-2">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`w-2 h-2 rounded-full ${styles.dot}`} aria-hidden="true" />
+                      <span className="text-xs font-medium text-foreground">{styles.label}</span>
+                      <span className="text-xs text-muted-foreground">({items.length})</span>
+                      {droppedHere > 0 && (
+                        <span className="text-xs text-muted-foreground/80">
+                          +{droppedHere} more
+                        </span>
+                      )}
+                      <span
+                        className="text-xs text-muted-foreground/80 hidden sm:inline truncate"
+                        title={TIER_META[tier].description}
+                      >
+                        — {TIER_META[tier].description}
+                      </span>
+                    </div>
+                    <ul className={compact ? 'space-y-0.5' : 'space-y-1'}>
+                      {items.map((r, i) => (
+                        <li key={i}>{renderItem(r)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              })}
         </div>
       )}
     </section>

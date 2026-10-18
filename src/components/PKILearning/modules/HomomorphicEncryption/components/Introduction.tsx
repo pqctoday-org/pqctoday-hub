@@ -106,19 +106,19 @@ export const Introduction: React.FC<IntroductionProps> = ({
       </LearnSection>
 
       <LearnSection
-        sectionId="fhe-hsm-custody"
-        title="The HSM as FHE Key Custodian"
-        icon={<ShieldCheck size={24} className="text-primary" />}
-      >
-        <FheCustodySection onOpenLifecycleView={onOpenLifecycleView} />
-      </LearnSection>
-
-      <LearnSection
         sectionId="fhe-implementations"
         title="Open-Source Implementations"
         icon={<Server size={24} className="text-primary" />}
       >
         <FheImplementationsSection onOpenLifecycleView={onOpenLifecycleView} />
+      </LearnSection>
+
+      <LearnSection
+        sectionId="fhe-hsm-custody"
+        title="Advanced: HSM Custody and Assurance"
+        icon={<ShieldCheck size={24} className="text-primary" />}
+      >
+        <FheCustodySection onOpenLifecycleView={onOpenLifecycleView} />
       </LearnSection>
 
       <FheReferencesList />
@@ -127,10 +127,10 @@ export const Introduction: React.FC<IntroductionProps> = ({
       <div className="glass-panel p-6 border-primary/20">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-bold text-foreground">Ready to follow the keys?</h3>
+            <h3 className="font-bold text-foreground">Ready to test the concepts?</h3>
             <p className="text-sm text-muted-foreground">
-              Step through eight encrypt, compute and decrypt scenarios, including key rotation and
-              shared decryption, and see where every key and every piece of data sits.
+              Start with noise, encoding and circuit design. The advanced path then follows HSM
+              custody, controlled decryption, rotation and shared decryption.
             </p>
           </div>
           <Button variant="gradient" onClick={onNavigateToWorkshop} className="shrink-0">

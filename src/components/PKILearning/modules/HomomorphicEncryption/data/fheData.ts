@@ -167,6 +167,9 @@ export interface FheImplementation {
   schemes: string
   wasm: string
   caveat?: string
+  currentVersion: string
+  testedVersion?: string
+  checkedOn: string
   url: string
 }
 
@@ -178,6 +181,9 @@ export const FHE_IMPLEMENTATIONS: FheImplementation[] = [
     license: 'Apache-2.0',
     schemes: 'BGV, BFV, CKKS, multiparty (threshold)',
     wasm: 'Pure Go — compiles to WebAssembly with the standard Go toolchain',
+    currentVersion: '6.2.0',
+    testedVersion: '6.2.0',
+    checkedOn: '2026-10-17',
     url: 'https://github.com/tuneinsight/lattigo',
   },
   {
@@ -188,6 +194,9 @@ export const FHE_IMPLEMENTATIONS: FheImplementation[] = [
     schemes: 'BGV, BFV, CKKS, CGGI/FHEW, scheme switching, threshold, proxy re-encryption',
     wasm: 'Official openfhe-wasm port (Emscripten)',
     caveat: 'WASM port is work in progress — a subset of BGV/BFV/CKKS, no FHEW/TFHE',
+    currentVersion: '1.6.1',
+    testedVersion: '1.6.0',
+    checkedOn: '2026-10-17',
     url: 'https://github.com/openfheorg/openfhe-development',
   },
   {
@@ -198,6 +207,9 @@ export const FHE_IMPLEMENTATIONS: FheImplementation[] = [
     schemes: 'BFV, BGV, CKKS (no bootstrapping)',
     wasm: 'node-seal (community Emscripten build)',
     caveat: 'node-seal tracks SEAL 4.1.2, behind upstream',
+    currentVersion: '4.7.0',
+    testedVersion: '4.1.2',
+    checkedOn: '2026-10-17',
     url: 'https://github.com/microsoft/SEAL',
   },
   {
@@ -208,7 +220,22 @@ export const FHE_IMPLEMENTATIONS: FheImplementation[] = [
     schemes: 'TFHE / CGGI (integers, booleans)',
     wasm: 'Official npm package “tfhe” — client-side keygen, encrypt, decrypt',
     caveat: 'Zama states commercial use requires a separate patent licence',
+    currentVersion: '1.8.1',
+    testedVersion: '1.8.1',
+    checkedOn: '2026-10-17',
     url: 'https://github.com/zama-ai/tfhe-rs',
+  },
+  {
+    id: 'fhe-rs',
+    name: 'fhe.rs',
+    maintainer: 'tlepoint',
+    license: 'BSD-3-Clause',
+    schemes: 'BFV',
+    wasm: 'Rust library; no supported browser package documented here',
+    caveat: 'Listed for coverage; this module has no local performance or interoperability run',
+    currentVersion: '0.1.1',
+    checkedOn: '2026-10-17',
+    url: 'https://github.com/tlepoint/fhe.rs',
   },
 ]
 

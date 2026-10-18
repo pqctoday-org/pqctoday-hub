@@ -59,8 +59,8 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
           ) : (
             <>No dated milestone ahead in this scope. </>
           )}
-          {dated} dated milestone{dated === 1 ? '' : 's'} across your obligations
-          {undated > 0 && `, and ${undated} that bind continuously without stating a date`}.
+          {dated} dated milestone{dated === 1 ? '' : 's'} across the scoped examples
+          {undated > 0 && `, and ${undated} sources with no structured date`}.
         </p>
         <p className="mt-2 text-xs">
           <Link to="/timeline" className="text-primary hover:underline">
@@ -69,7 +69,8 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
           </Link>
           <span className="text-muted-foreground">
             {' '}
-            — that page answers what each country is doing; this one answers what binds you.
+            — that page answers what each country is doing; this lesson compares dates in the
+            selected source set.
           </span>
         </p>
       </div>

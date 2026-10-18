@@ -729,15 +729,11 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   },
 
   '/learn/homomorphic-encryption': {
-    title: 'Homomorphic Encryption (FHE) & HSM Key Custody — ISO/IEC 28033 & PQC | PQC Today',
+    title: 'Homomorphic Encryption (FHE) — Schemes, Limits & HSM Custody | PQC Today',
     description:
-      'Compute on encrypted data without trusting the hardware: the ISO/IEC 28033 draft FHE schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM holds the FHE secret key without becoming a decryption oracle.',
+      'Learn what FHE can and cannot protect, compare BFV, BGV, CKKS and TFHE, reason about noise and precision, and optionally follow the advanced HSM custody path.',
     canonical: `${BASE_URL}/learn/homomorphic-encryption`,
-    structuredData: buildModuleSchema(
-      'Homomorphic Encryption (FHE) & HSM Key Custody',
-      'PT45M',
-      'Advanced'
-    ),
+    structuredData: buildModuleSchema('Homomorphic Encryption (FHE)', 'PT105M', 'Intermediate'),
   },
 
   '/learn/web-gateway-pqc': {

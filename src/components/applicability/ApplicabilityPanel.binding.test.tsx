@@ -3,7 +3,7 @@
  * The Report's applicability panel no longer calls every framework from a body in
  * your country "Mandatory". Once frameworks have been reviewed it shows Binding,
  * Guidance and drafts, and Not yet classified. Until then (the data has no
- * binding_status yet) it looks exactly as before. The compliance file now carries
+ * binding_status yet) it retains the engine's ordinary applicability tiers. The compliance file now carries
  * reviewed statuses, so every test starts from a clean slate (no framework
  * classified), sets the statuses it needs on real frameworks, and the original
  * values are put back afterwards.
@@ -19,27 +19,33 @@ import { complianceFrameworks, type ComplianceFramework } from '@/data/complianc
 
 const profile = { country: 'United States', industry: 'Finance & Insurance' }
 
-function mandatory(): ComplianceFramework[] {
-  return applicableFrameworks(profile)
-    .filter((r) => r.tier === 'mandatory')
-    .map((r) => r.item)
+function applicable(): ComplianceFramework[] {
+  return applicableFrameworks(profile).map((r) => r.item)
 }
 
-const touched: Array<[ComplianceFramework, BindingStatus | undefined]> = []
+const touched: Array<[ComplianceFramework, BindingStatus | undefined, string | undefined]> = []
 function mark(fw: ComplianceFramework, status: BindingStatus) {
-  touched.push([fw, fw.bindingStatus])
+  touched.push([fw, fw.bindingStatus, fw.bindingBasis])
   fw.bindingStatus = status
+  if (status === 'binding' || status === 'mandatory_for_scope') {
+    fw.bindingBasis ||= 'Test binding basis'
+  }
 }
 beforeEach(() => {
   for (const fw of complianceFrameworks) {
-    if (fw.bindingStatus !== undefined) touched.push([fw, fw.bindingStatus])
+    if (fw.bindingStatus !== undefined) touched.push([fw, fw.bindingStatus, fw.bindingBasis])
     fw.bindingStatus = undefined
   }
 })
 afterEach(() => {
   while (touched.length) {
-    const [fw, was] = touched.pop() as [ComplianceFramework, BindingStatus | undefined]
-    fw.bindingStatus = was
+    const [fw, status, basis] = touched.pop() as [
+      ComplianceFramework,
+      BindingStatus | undefined,
+      string | undefined,
+    ]
+    fw.bindingStatus = status
+    fw.bindingBasis = basis
   }
 })
 
@@ -52,7 +58,7 @@ const renderPanel = (variant: 'report-section' | 'tab' = 'report-section') =>
 
 describe('ApplicabilityPanel in the Report, with reviewed frameworks', () => {
   it('shows Binding, Guidance and drafts, and Not yet classified instead of Mandatory', () => {
-    const [a, b, c, d] = mandatory()
+    const [a, b, c, d] = applicable()
     mark(a, 'binding')
     mark(b, 'mandatory_for_scope')
     mark(c, 'recommendation')
@@ -80,7 +86,7 @@ describe('ApplicabilityPanel in the Report, with reviewed frameworks', () => {
   })
 
   it('never puts a framework in two groups', () => {
-    const [a, b] = mandatory()
+    const [a, b] = applicable()
     mark(a, 'binding')
     mark(b, 'informational')
     renderPanel()
@@ -93,7 +99,7 @@ describe('ApplicabilityPanel in the Report, with reviewed frameworks', () => {
   })
 
   it("leaves the other pages' tiers alone: the For You tab still says Mandatory", () => {
-    mark(mandatory()[0], 'binding')
+    mark(applicable()[0], 'binding')
     renderPanel('tab')
     expect(screen.queryByTestId('binding-group-binding')).not.toBeInTheDocument()
     expect(screen.getAllByText('Mandatory').length).toBeGreaterThan(0)
@@ -101,10 +107,11 @@ describe('ApplicabilityPanel in the Report, with reviewed frameworks', () => {
 })
 
 describe('ApplicabilityPanel in the Report, before any framework is reviewed', () => {
-  it('looks as before: one Mandatory group, no binding groups', () => {
+  it('uses ordinary applicability tiers and does not invent a binding group', () => {
     renderPanel()
     expect(screen.queryByTestId('binding-group-binding')).not.toBeInTheDocument()
     expect(screen.queryByTestId('binding-group-unclassified')).not.toBeInTheDocument()
-    expect(screen.getAllByText('Mandatory').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Recognized').length).toBeGreaterThan(0)
+    expect(screen.queryByText('Mandatory')).not.toBeInTheDocument()
   })
 })

@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { CertEngineerSchemesView } from './CertEngineerSchemesView'
 import { complianceFrameworks } from '../../../data/complianceData'
+import { applicableFrameworks } from '../../../utils/applicabilityEngine'
 
 // No records loaded: ModuleCertificationStatus renders nothing on empty data,
 // so this suite covers the schemes list and the links deterministically.
@@ -14,23 +15,32 @@ vi.mock('../services', () => ({
 function renderView(onSelectFramework = vi.fn()) {
   render(
     <MemoryRouter>
-      <CertEngineerSchemesView onSelectFramework={onSelectFramework} />
+      <CertEngineerSchemesView
+        profileOverride={{ country: 'United States', industry: 'Technology', region: 'americas' }}
+        onSelectFramework={onSelectFramework}
+      />
     </MemoryRouter>
   )
 }
 
-const schemes = complianceFrameworks.filter((fw) => fw.bodyType === 'certification_body')
+const schemes = applicableFrameworks(
+  { country: 'United States', industry: 'Technology', region: 'americas' },
+  complianceFrameworks
+)
+  .map((result) => result.item)
+  .filter((fw) => fw.bodyType === 'certification_body')
 const expecting = schemes.filter((fw) =>
   ['yes', 'expected', 'partial', 'guidance'].includes(fw.pqcRequirement ?? '')
 )
 
 describe('CertEngineerSchemesView', () => {
-  it('lists every certification scheme that expects PQC, derived from the live framework set', () => {
+  it('lists in-scope certification schemes with PQC posture from the live framework set', () => {
     renderView()
     expect(expecting.length).toBeGreaterThan(0)
-    for (const fw of expecting) {
-      expect(screen.getByRole('button', { name: fw.label })).toBeInTheDocument()
-    }
+    expect(screen.getByRole('button', { name: 'FIPS 140-3' })).toBeInTheDocument()
+    expect(
+      screen.getAllByText(/Requires PQC|PQC expected|Partly PQC|PQC guidance/).length
+    ).toBeGreaterThan(0)
   })
 
   it('counts the remaining schemes instead of listing them', () => {
@@ -61,5 +71,12 @@ describe('CertEngineerSchemesView', () => {
       '/compliance?tab=records&rtab=acvp'
     )
     expect(screen.getByText(/the prerequisite stage, not a module certificate/)).toBeInTheDocument()
+  })
+
+  it('shows the certification evidence readiness checklist and current program links', () => {
+    renderView()
+    expect(screen.getByText('Learn the submission evidence chain')).toBeInTheDocument()
+    expect(screen.getByText(/module boundary and approved mode/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /CMVP Management Manual/ })).toBeInTheDocument()
   })
 })

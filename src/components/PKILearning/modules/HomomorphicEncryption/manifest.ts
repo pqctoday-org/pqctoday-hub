@@ -3,15 +3,15 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'homomorphic-encryption',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-076',
-  title: 'Homomorphic Encryption (FHE) & HSM Key Custody',
+  title: 'Homomorphic Encryption (FHE)',
   description:
-    'Compute on encrypted data without trusting the hardware: what FHE promises and costs, the four ISO/IEC 28033 draft schemes, where FHE is used, standards and compliance, FHE against the quantum threat, and how an HSM can hold the FHE secret key and what its decryption policy can and cannot protect.',
+    'Learn what computing on encrypted data can and cannot protect, choose among BFV, BGV, CKKS and TFHE, reason about noise, depth and precision, and optionally follow the advanced HSM custody and assurance path.',
   whyThisMatters:
-    'FHE needs no trusted hardware, but it costs thousands of times the compute and its keys still need a custodian: the secret key is small and precious, the public keys are huge, and whoever may ask the custodian to decrypt can recover the key.',
-  duration: '45 min',
-  difficulty: 'advanced',
+    'FHE can keep inputs and results encrypted while an evaluator computes, but it does not by itself provide result integrity, hide every form of metadata, or make decryption authorization safe. Scheme choice, parameters and key custody determine whether the design meets its real threat model.',
+  duration: '105 min',
+  difficulty: 'intermediate',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
   trackOrder: 2,
@@ -23,16 +23,71 @@ const manifest: ModuleManifest = {
     { id: 'fhe-keys-operations', label: 'Keys, Operations & AES Data' },
     { id: 'fhe-quantum', label: 'FHE Against the Quantum Threat' },
     { id: 'fhe-standards', label: 'Standards & Compliance' },
-    { id: 'fhe-hsm-custody', label: 'The HSM as FHE Key Custodian' },
     { id: 'fhe-implementations', label: 'Open-Source Implementations' },
+    { id: 'fhe-hsm-custody', label: 'Advanced: HSM Custody & Assurance' },
   ],
+  learnPaths: [
+    {
+      id: 'fhe-foundations',
+      label: 'FHE foundations',
+      entrySection: 'fhe-fundamentals',
+      duration: '60 min',
+      audience: 'Anyone evaluating, designing, implementing or operating an FHE workload',
+      sections: [
+        'fhe-fundamentals',
+        'fhe-schemes',
+        'fhe-use-cases',
+        'fhe-cost',
+        'fhe-keys-operations',
+        'fhe-quantum',
+        'fhe-standards',
+        'fhe-implementations',
+      ],
+    },
+    {
+      id: 'hsm-custody',
+      label: 'Advanced HSM custody',
+      entrySection: 'fhe-fundamentals',
+      duration: '105 min',
+      audience:
+        'Developers, architects, researchers, certification engineers and operators who need custody and assurance detail',
+      personas: ['developer', 'architect', 'researcher', 'cert-engineer', 'ops'],
+      sections: [
+        'fhe-fundamentals',
+        'fhe-schemes',
+        'fhe-use-cases',
+        'fhe-cost',
+        'fhe-keys-operations',
+        'fhe-quantum',
+        'fhe-standards',
+        'fhe-implementations',
+        'fhe-hsm-custody',
+      ],
+    },
+  ],
+  offPathSections: 'hide',
   workshopSteps: [
-    { id: 'fhe-hsm-flows', label: 'FHE + HSM Flows' },
-    { id: 'fhe-concepts', label: 'FHE concepts, hands-on' },
+    { id: 'fhe-concepts', label: 'FHE concepts lab' },
+    { id: 'fhe-hsm-flows', label: 'Advanced HSM custody lab', paths: ['hsm-custody'] },
+  ],
+  referencePaths: {
+    'IACR-ePrint-2024-116': ['hsm-custody'],
+    'IACR-ePrint-2025-699': ['hsm-custody'],
+  },
+  // The catalogue currently has no reviewed FHE product records. Do not show
+  // the generic empty Tools & Products tab or imply that a related Playground
+  // tool exists; maintained open-source implementations live in Learn and
+  // their pinned primary sources live in References.
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'exercises', label: 'Exercises' },
+    { value: 'references', label: 'References' },
   ],
   startHere: {
-    step: 'fhe-hsm-flows',
-    text: 'Open the first scenario in the FHE + HSM Flows step: the data owner makes its FHE key in an HSM, encrypts locally, lets a third party compute on ciphertexts, then asks the HSM to decrypt under policy.',
+    step: 'fhe-concepts',
+    text: 'Start with the noise budget: apply additions and multiplications, watch CKKS levels and TFHE noise change, and explain when bootstrapping is required.',
   },
   // Derived from the algorithm and standard ids content.ts declares, restricted to
   // the researcher-filter vocabulary (moduleEnrichment). The FHE schemes and

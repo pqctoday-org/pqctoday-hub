@@ -1,12 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
+import { beforeEach, describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { FheConceptsWorkshop } from './FheConceptsWorkshop'
+import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 const open = (name: RegExp) => fireEvent.click(screen.getByRole('button', { name }))
 
 describe('FheConceptsWorkshop', () => {
+  beforeEach(() => {
+    usePersonaStore.getState().setPersona('cert-engineer')
+    useModuleStore.getState().setActiveLearnPath('homomorphic-encryption', 'hsm-custody')
+  })
+
   it('shows the six concept cards', () => {
     render(<FheConceptsWorkshop />)
     for (const t of [
@@ -29,7 +36,7 @@ describe('FheConceptsWorkshop', () => {
     for (let i = 0; i < 6; i++) fireEvent.click(mul)
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     fireEvent.click(mul)
-    expect(screen.getByRole('alert')).toHaveTextContent(/decryption would fail — bootstrap first/i)
+    expect(screen.getByRole('alert')).toHaveTextContent(/current ciphertext may still decrypt/i)
     fireEvent.click(screen.getByRole('button', { name: 'Bootstrap' }))
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(screen.getByRole('meter', { name: 'CKKS levels remaining' })).toHaveAttribute(

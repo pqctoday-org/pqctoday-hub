@@ -21,17 +21,20 @@ import { recordTypeLabel } from '../recordSemantics'
 import {
   buildProductRows,
   isPqcCertificate,
+  pqcEvidenceKind,
+  pqcEvidenceLabel,
   productKey,
   summarizeCoverage,
   type Coverage,
   type ProductCertification,
 } from './productsModel'
+import { EvidenceClassLegend } from '../EvidenceClassLegend'
 
 const COVERAGE_LABEL: Record<Coverage, string> = {
-  pqc: 'PQC validated',
+  pqc: 'PQC validation evidence',
   mixed: 'Mixed coverage',
   classical: 'Classical only',
-  none: 'No certificates',
+  none: 'No PQC validation',
 }
 
 const COVERAGE_TONE: Record<Coverage, string> = {
@@ -70,7 +73,7 @@ export function ProductsTab({
     [showAll, hasInventory, owned]
   )
   const visible = useMemo(
-    () => (pqcOnly ? rows.filter((r) => r.coverage === 'pqc' || r.coverage === 'mixed') : rows),
+    () => (pqcOnly ? rows.filter((r) => r.pqcCount > 0 || r.evaluatedClaimCount > 0) : rows),
     [rows, pqcOnly]
   )
   const totals = useMemo(() => summarizeCoverage(rows), [rows])
@@ -108,11 +111,11 @@ export function ProductsTab({
       } else {
         setExpanded((prev) => ({ ...prev, [openProductId]: true }))
         const hiddenByInventory = !rows.some((r) => productKey(r) === openProductId)
-        const hiddenByPqc = pqcOnly && target.coverage !== 'pqc' && target.coverage !== 'mixed'
+        const hiddenByPqc = pqcOnly && target.pqcCount === 0 && target.evaluatedClaimCount === 0
         if (hiddenByInventory || hiddenByPqc) {
           const why = [
             hiddenByInventory ? 'your inventory view' : null,
-            hiddenByPqc ? 'the PQC-validated-only filter' : null,
+            hiddenByPqc ? 'the PQC-evidence-only filter' : null,
           ]
             .filter(Boolean)
             .join(' and ')
@@ -167,7 +170,7 @@ export function ProductsTab({
               pqcOnly ? 'border-primary/45 bg-primary/5 text-primary' : 'border-border'
             }`}
           >
-            PQC-validated only
+            PQC evidence only
           </Button>
         </div>
 
@@ -175,8 +178,10 @@ export function ProductsTab({
           <span className="font-semibold text-foreground">{totals.products}</span> product
           {totals.products === 1 ? '' : 's'} with{' '}
           <span className="font-semibold text-foreground">{totals.certificates}</span> certificate
-          {totals.certificates === 1 ? '' : 's'} — {totals.byCoverage.pqc} PQC validated,{' '}
-          {totals.byCoverage.mixed} mixed, {totals.byCoverage.classical} classical only.
+          {totals.certificates === 1 ? '' : 's'} — {totals.byCoverage.pqc} with PQC validation
+          evidence, {totals.byCoverage.mixed} mixed, {totals.evaluatedClaims} evaluation record
+          {totals.evaluatedClaims === 1 ? '' : 's'} naming PQC, and {totals.byCoverage.classical}{' '}
+          classical only.
         </p>
 
         {!hasInventory && (
@@ -190,6 +195,8 @@ export function ProductsTab({
           </p>
         )}
       </div>
+
+      <EvidenceClassLegend />
 
       {notice && (
         <DeepLinkNotice
@@ -296,10 +303,12 @@ function ProductRow({
 
 function CertificateRow({ cert }: { cert: CertificationXref }) {
   const pqc = isPqcCertificate(cert)
+  const evidenceKind = pqcEvidenceKind(cert)
+  const namesPqc = evidenceKind !== 'none'
   return (
     <li
       className={`border-l-[3px] px-4 py-2.5 ${
-        pqc ? 'border-status-success' : 'border-status-error'
+        pqc ? 'border-status-success' : namesPqc ? 'border-status-warning' : 'border-status-error'
       }`}
     >
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
@@ -325,10 +334,10 @@ function CertificateRow({ cert }: { cert: CertificationXref }) {
       </p>
       <p
         className={`mt-0.5 text-[10.5px] font-medium ${
-          pqc ? 'text-status-success' : 'text-muted-foreground'
+          pqc ? 'text-status-success' : namesPqc ? 'text-status-warning' : 'text-muted-foreground'
         }`}
       >
-        {pqc ? cert.pqcAlgorithms : 'Classical only — no PQC mechanisms detected'}
+        {namesPqc ? `${pqcEvidenceLabel(cert)}: ${cert.pqcAlgorithms}` : pqcEvidenceLabel(cert)}
       </p>
     </li>
   )
