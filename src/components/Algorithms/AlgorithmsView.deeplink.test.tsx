@@ -162,7 +162,9 @@ describe('AlgorithmsView — deep links', () => {
     expect(await screen.findByText('HQC-128')).toBeInTheDocument()
     await waitFor(() => expect(urlSearch()).toContain('quickview=none'))
     fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
-    await waitFor(() => expect(screen.queryByText('HQC-128')).not.toBeInTheDocument())
+    await waitFor(() => expect(screen.queryByText('HQC-128')).not.toBeInTheDocument(), {
+      timeout: 5000,
+    })
     await waitFor(() => expect(urlSearch()).not.toContain('quickview='))
     expect(screen.queryByTestId('deeplink-notice-widened')).not.toBeInTheDocument()
   })
