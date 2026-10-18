@@ -85,10 +85,10 @@ describe('QRASection', () => {
   it('renders the five framework section headings', () => {
     renderQRA()
     expect(screen.getByText(/Executive Summary/i)).toBeInTheDocument()
-    expect(screen.getByText('Estate Heatmap')).toBeInTheDocument()
+    expect(screen.getByText('Answer-derived attention map')).toBeInTheDocument()
     expect(screen.getByText('Prioritised Backlog')).toBeInTheDocument()
-    expect(screen.getByText('Gap Analysis vs. Regulatory')).toBeInTheDocument()
-    expect(screen.getByText('Compliance Mapping')).toBeInTheDocument()
+    expect(screen.getByText('Requirements to verify')).toBeInTheDocument()
+    expect(screen.getByText('Selected source mapping')).toBeInTheDocument()
   })
 
   it('shows the exec-summary headline numbers', () => {
@@ -144,13 +144,14 @@ describe('QRASection', () => {
 
   it('lists regulatory gaps for PQC-required frameworks only', () => {
     renderQRA()
-    // FIPS 140-3 requiresPQC=true → a gap; PCI DSS requiresPQC=false → not a gap.
-    expect(screen.getByText(/1 in-scope framework/i)).toBeInTheDocument()
+    // The source states a requirement; the self-assessment cannot prove a control gap.
+    expect(screen.getByText(/1 selected framework/i)).toBeInTheDocument()
+    expect(screen.getByText(/not proven compliance gaps/i)).toBeInTheDocument()
   })
 
   it('maps all compliance frameworks with obligation badges', () => {
     renderQRA()
-    expect(screen.getByText('PQC Required')).toBeInTheDocument()
+    expect(screen.getByText('Source states PQC required')).toBeInTheDocument()
     expect(screen.getByText('No PQC mandate yet')).toBeInTheDocument()
   })
 

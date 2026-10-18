@@ -746,8 +746,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         )
                       ) : (
                         <ReportLockedOverlay
-                          reason="Track your risk score over time"
-                          detail="Progress trends come from saved comprehensive assessments. Finish the full assessment to start tracking your risk score and crypto-agility over time."
+                          reason="Compare your priority index over time"
+                          detail="Trends compare saved comprehensive self-assessments. Finish the full assessment to track how answer changes affect the educational index and crypto-agility model."
                         >
                           <KpiPreviewSkeleton />
                         </ReportLockedOverlay>

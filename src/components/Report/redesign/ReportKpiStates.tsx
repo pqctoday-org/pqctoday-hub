@@ -19,7 +19,7 @@ export function KpiEmptyState() {
         </p>
         <p className="mt-0.5 text-[12px] text-muted-foreground">
           We&apos;ve saved this assessment. Re-run it later (e.g. each quarter) and this section
-          charts how your risk score and crypto-agility trend over time.
+          charts how the educational priority index and crypto-agility model change over time.
         </p>
       </div>
     </div>

@@ -62,7 +62,7 @@ export interface QRABacklogItem {
   effort?: RecommendedAction['effort']
 }
 
-/** A regulatory gap: a PQC-required framework and the deadline pressure it implies. */
+/** A selected source that states a PQC requirement; implementation evidence is not collected. */
 export interface QRARegulatoryGap {
   framework: string
   deadline: string
@@ -232,9 +232,9 @@ function buildExecSummaryText(
 ): string {
   const where = input.country && input.country !== 'Global' ? ` in ${input.country}` : ''
   return (
-    `This ${input.industry} organization${where} scores ${result.riskScore}/100 ` +
-    `(${result.riskLevel} risk), placing it in ${tier.label}. ` +
-    `Recommended posture: start ${tier.startWindow.toLowerCase()} and deploy ${tier.deployWindow.toLowerCase()}.`
+    `For this ${input.industry} learning scenario${where}, the self-reported inputs produce a ` +
+    `${result.riskScore}/100 priority index (${result.riskLevel} band), placing it in ${tier.label}. ` +
+    `Illustrative planning posture: start ${tier.startWindow.toLowerCase()} and target deployment ${tier.deployWindow.toLowerCase()}.`
   )
 }
 

@@ -93,7 +93,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
         <p className="max-w-xs text-[11.5px] leading-relaxed text-muted-foreground">
           {isCurious
             ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'
-            : 'Complete the PQC Risk Assessment to generate your personalized report with risk scores, migration priorities, and actionable recommendations — or open a worked example first.'}
+            : 'Complete the PQC Risk Assessment to generate an educational priority report with transparent assumptions and candidate next steps — or open a worked example first.'}
         </p>
         <div className="mt-1 flex flex-col gap-2">
           <Link
@@ -159,6 +159,10 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
         <p className={cn('mt-1 text-[11px] font-bold uppercase tracking-wide', tier.color)}>
           {tier.label}
         </p>
+        <p className="mt-2 text-[10.5px] leading-relaxed text-muted-foreground">
+          Educational priority index from self-reported answers—not a scan, compliance grade, or
+          breach probability.
+        </p>
       </div>
 
       {!isComprehensive && (
@@ -171,11 +175,11 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
         <div className="mt-3 flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 p-3">
           <AlertTriangle size={15} className="mt-0.5 shrink-0 text-warning" aria-hidden="true" />
           <div>
-            <p className="text-[12px] font-bold text-foreground">HNDL Risk Not Quantified</p>
+            <p className="text-[12px] font-bold text-foreground">HNDL Window Not Modelled</p>
             <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
-              This quick assessment did not include data retention information.
-              Harvest-Now-Decrypt-Later risk cannot be calculated. For sensitive long-lived data,
-              run a Comprehensive Assessment to quantify this exposure.
+              This quick assessment did not include data retention information. The exposure window
+              cannot be modelled. Run a full assessment and replace assumptions with documented
+              retention evidence.
             </p>
           </div>
         </div>

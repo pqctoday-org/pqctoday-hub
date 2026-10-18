@@ -83,6 +83,7 @@ export const AssessReview: React.FC<AssessReviewProps> = ({ mode, onEdit, onBack
                         variant="outline"
                         size="sm"
                         onClick={() => onEdit(key)}
+                        aria-label={`Edit ${STEP_META[key].label}`}
                         className="h-auto shrink-0 px-2.5 py-1 text-[11px] text-primary"
                       >
                         Edit

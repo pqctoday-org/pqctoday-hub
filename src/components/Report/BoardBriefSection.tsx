@@ -121,10 +121,10 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
         >
           <div>
             <h1 style={{ fontSize: '18pt', fontWeight: 700, margin: 0, color: '#1d4ed8' }}>
-              PQC Risk Assessment
+              PQC Educational Priority Brief
             </h1>
             <p style={{ margin: '2pt 0 0', color: '#6b7280', fontSize: '9pt' }}>
-              Executive Summary — Prepared for Board Review
+              Self-reported learning model — review assumptions before reuse
             </p>
           </div>
           <div style={{ textAlign: 'right', fontSize: '9pt', color: '#6b7280' }}>
@@ -132,6 +132,22 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
             {country && <div>{country}</div>}
             <div>{formattedDate}</div>
           </div>
+        </div>
+
+        <div
+          style={{
+            marginBottom: '14pt',
+            padding: '8pt 10pt',
+            border: '1px solid #f59e0b',
+            background: '#fffbeb',
+            color: '#78350f',
+            fontSize: '8.5pt',
+            lineHeight: 1.4,
+          }}
+        >
+          Educational output from self-reported answers and model assumptions. Not a scan, audit,
+          compliance determination, certification result, measured loss probability, quote, or
+          finance-approved forecast.
         </div>
 
         {/* Program ownership — only shown once at least one field is filled in */}
@@ -195,7 +211,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
                 marginBottom: '6pt',
               }}
             >
-              {RISK_LEVEL_LABEL[riskLevel] ?? riskLevel} Risk
+              {RISK_LEVEL_LABEL[riskLevel] ?? riskLevel} priority band
             </div>
             <p style={{ margin: 0, fontSize: '9.5pt', color: '#374151', lineHeight: 1.5 }}>
               {result.executiveSummary ?? result.narrative ?? ''}
@@ -209,7 +225,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
             <h2
               style={{ fontSize: '11pt', fontWeight: 700, marginBottom: '8pt', color: '#374151' }}
             >
-              Risk Category Breakdown
+              Model Category Breakdown
             </h2>
             <div
               style={{
@@ -340,7 +356,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
             <h3
               style={{ fontSize: '11pt', fontWeight: 700, marginBottom: '8pt', color: '#374151' }}
             >
-              Migration ROI Summary
+              Illustrative Financial Scenario
             </h3>
             <table
               style={{
@@ -390,7 +406,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
             <h3
               style={{ fontSize: '11pt', fontWeight: 700, marginBottom: '8pt', color: '#374151' }}
             >
-              Regulatory Obligations Requiring PQC
+              Selected Sources Stating PQC Requirements
             </h3>
             <table
               style={{

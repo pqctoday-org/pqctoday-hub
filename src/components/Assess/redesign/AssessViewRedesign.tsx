@@ -89,6 +89,7 @@ export const AssessViewRedesign: React.FC<{
   // In the sim embed, back the deep-link params with LOCAL state so the wizard
   // never reads/writes the /simulation route (it can't nest its own Router).
   const [realSearchParams, realSetSearchParams] = useSearchParams()
+  const [editingFromReview, setEditingFromReview] = useState(false)
   const [embedSearchParams, setEmbedSearchParamsState] = useState(() => new URLSearchParams())
   const searchParams = simEmbed ? embedSearchParams : realSearchParams
   const setSearchParams: typeof realSetSearchParams = simEmbed
@@ -237,6 +238,7 @@ export const AssessViewRedesign: React.FC<{
   // Edit a specific answer from the review screen.
   const editFromReview = (key: AssessStepKey) => {
     if (effectiveAssessmentMode) setStep(storeIndexOf(effectiveAssessmentMode, key))
+    setEditingFromReview(true)
     setScreen('wizard')
   }
 
@@ -330,7 +332,7 @@ export const AssessViewRedesign: React.FC<{
         resourceType: 'Assess Tool',
         resourceId: 'PQC Risk Assessment',
         resourceDetails:
-          '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
+          '**Tool:** PQC Risk Assessment — an educational priority model, migration questions, and suggested learning actions based on self-reported answers.',
         pageUrl: '/assess',
       }),
       endorseLabel: 'Assess Tool',
@@ -341,7 +343,7 @@ export const AssessViewRedesign: React.FC<{
         resourceType: 'Assess Tool',
         resourceId: 'PQC Risk Assessment',
         resourceDetails:
-          '**Tool:** PQC Risk Assessment — personalized quantum risk score, migration priorities, and recommendations.',
+          '**Tool:** PQC Risk Assessment — an educational priority model, migration questions, and suggested learning actions based on self-reported answers.',
         pageUrl: '/assess',
       }),
       flagLabel: 'Assess Tool',
@@ -368,9 +370,15 @@ export const AssessViewRedesign: React.FC<{
           <PageHeader
             icon={ClipboardCheck}
             title="PQC Risk Assessment"
-            description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+            description="Explore how self-reported inputs can shape PQC priorities, migration questions, and next learning steps."
           />
           <PersonaPageNote route="/assess" className="mb-6" />
+          <div className="mb-6 rounded-xl border border-primary/25 bg-primary/5 p-3 text-xs leading-relaxed text-muted-foreground">
+            <strong className="text-foreground">Educational self-assessment.</strong> Results are a
+            transparent prioritization model based on your answers and stated defaults. They are not
+            a scan, audit, compliance determination, certification result, or prediction of when a
+            cryptographically relevant quantum computer will arrive.
+          </div>
         </>
       )}
 
@@ -427,7 +435,7 @@ export const AssessViewRedesign: React.FC<{
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <p className="text-sm text-foreground">
                 Your assessment is complete. Edit any answer below to update it, view your
-                personalized report, or open the Business Center to plan next steps.
+                educational report, or open the Business Center to explore next steps.
               </p>
               <div className="flex shrink-0 items-center gap-2">
                 <Button
@@ -575,6 +583,22 @@ export const AssessViewRedesign: React.FC<{
           onComplete={goToReview}
           onExitToChooser={() => setAssessmentMode(null)}
           onSwitchTrack={handleSwitchTrack}
+          onSaveEdit={
+            editingFromReview
+              ? () => {
+                  setEditingFromReview(false)
+                  setScreen('review')
+                }
+              : undefined
+          }
+          onCancelEdit={
+            editingFromReview
+              ? () => {
+                  setEditingFromReview(false)
+                  setScreen('review')
+                }
+              : undefined
+          }
           searchParams={searchParams}
           setSearchParams={setSearchParams}
         />

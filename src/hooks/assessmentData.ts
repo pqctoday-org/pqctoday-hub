@@ -45,19 +45,19 @@ export const ALGORITHM_DB: Record<
     quantumVulnerable: true,
     replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
     notes:
-      "ECDH on P-256 curve. Key agreement vulnerable to Shor's algorithm. NIST recommends hybrid key exchange during transition.",
+      "ECDH on P-256 curve. Key agreement is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
   },
   'ECDH P-384': {
     quantumVulnerable: true,
     replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
     notes:
-      "ECDH on P-384 curve. Key agreement vulnerable to Shor's algorithm. NIST recommends hybrid key exchange during transition.",
+      "ECDH on P-384 curve. Key agreement is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
   },
   'ECDH P-521': {
     quantumVulnerable: true,
     replacement: 'ML-KEM-1024 (hybrid: ML-KEM-1024 + X448)',
     notes:
-      "ECDH on P-521 curve. Key agreement vulnerable to Shor's algorithm. NIST recommends hybrid key exchange during transition.",
+      "ECDH on P-521 curve. Key agreement is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
   },
   Ed25519: {
     quantumVulnerable: true,
@@ -73,7 +73,7 @@ export const ALGORITHM_DB: Record<
     quantumVulnerable: true,
     replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
     notes:
-      'Classic key exchange. Fully broken by quantum computers. NIST recommends hybrid key exchange during transition.',
+      "Classic key exchange is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
   },
   'AES-128': {
     quantumVulnerable: false,

@@ -137,9 +137,11 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     label: 'Jurisdiction',
     domain: 'profile',
     question: 'Which jurisdiction applies to your organization?',
-    subtitle: "Your country's regulatory timeline aligns your migration deadline recommendations.",
-    why: 'Regulators set hard PQC dates (CNSA 2.0, BSI, ANSSI…). The jurisdiction decides which deadline drives your roadmap.',
-    changesInReport: 'Chooses which regulator’s deadline drives your roadmap dates.',
+    subtitle:
+      'Your jurisdiction selects the relevant public guidance, policy and regulatory milestones.',
+    why: 'PQC publications differ by jurisdiction and scope. Some are binding only for named systems; others are planning guidance. Your selection supplies context, not an automatic legal conclusion.',
+    changesInReport:
+      'Shows that jurisdiction’s sourced milestones and uses the earliest applicable planning target to pace the illustrative roadmap.',
     freelyOptional: false,
   },
   crypto: {
@@ -172,7 +174,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'Which compliance frameworks apply to you?',
     subtitle:
       'Select any regulatory or compliance frameworks you must adhere to. Skip if unsure — it won’t change your score much.',
-    why: 'Frameworks set the hard dates and mandatory algorithms. We surface PQC obligations and deadlines specific to your selections.',
+    why: 'Selected frameworks can provide requirements, transition targets or useful guidance. Applicability still depends on the framework’s own scope and your facts.',
     changesInReport:
       'Adds each framework’s own deadline and requirements to the compliance section.',
     freelyOptional: true,
@@ -186,7 +188,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
       'Select all cryptographic use cases in your organization to prioritize which migrations are most urgent.',
     why: 'Each use case has its own migration path and priority — TLS and VPN move first, niche use cases later. This shapes the ordering in your roadmap.',
     changesInReport:
-      'Adds each framework’s own deadline and requirements to the compliance section.',
+      'Adjusts exposure drivers and helps order the discovery and migration actions by cryptographic use case.',
     freelyOptional: true,
   },
   retention: {
@@ -195,7 +197,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     domain: 'exposure',
     question: 'How long must your data stay confidential?',
     subtitle: 'Select all that apply — HNDL risk is assessed against the longest period.',
-    why: 'If encrypted data must stay confidential past the first quantum computer (~2030), adversaries may be harvesting it today for later decryption.',
+    why: 'If captured ciphertext must remain confidential beyond a plausible CRQC horizon, it may be exposed to harvest-now-decrypt-later risk. The arrival year is uncertain, so the report shows its planning assumption.',
     changesInReport:
       'Sets how long your data stays valuable to an attacker, which is what makes the deadline urgent or not.',
     freelyOptional: false,
@@ -206,9 +208,9 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     domain: 'exposure',
     question: 'How long must your certificates stay trusted?',
     subtitle: 'Select all that apply — HNFL risk is assessed against the longest period.',
-    why: 'Root CA certificates issued today with long validity must be trusted past the quantum threat horizon — a primary signature-forgery target.',
+    why: 'Long-lived signing keys and trust anchors can remain operational into the PQC transition. Their use case and renewal path matter more than certificate lifetime alone.',
     changesInReport:
-      'Sets how long your data stays valuable to an attacker, which is what makes the deadline urgent or not.',
+      'Sets the illustrative signature-transition window and flags long-lived credentials when a vulnerable signing algorithm is selected.',
     freelyOptional: false,
   },
   migration: {
@@ -229,7 +231,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'What is your organizational scale?',
     subtitle: 'Migration scope and team capacity directly affect timelines and effort.',
     why: 'The ratio of systems to engineers calibrates how aggressive a timeline is realistic and where to invest in automation.',
-    changesInReport: 'Scales the effort estimate and the team-size guidance in the roadmap.',
+    changesInReport:
+      'Adjusts the modelled complexity and team-capacity indicators; it does not estimate project cost or duration from measured estate data.',
     freelyOptional: false,
   },
   agility: {
@@ -261,8 +264,9 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     domain: 'readiness',
     question: 'Do you have a migration deadline?',
     subtitle: 'Timeline pressure affects how aggressively migration must be prioritized.',
-    why: 'A regulatory deadline forces a fixed plan; an internal target gives more latitude. This sets the pace of every roadmap phase.',
-    changesInReport: 'Sets how aggressively the roadmap is sequenced against your own deadline.',
+    why: 'A confirmed obligation, published target and internal goal carry different authority. This answer records the pressure you want the learning model to plan against.',
+    changesInReport:
+      'Adjusts the modelled urgency and roadmap pacing; source panels still distinguish binding requirements from guidance and internal targets.',
     freelyOptional: false,
   },
 }
