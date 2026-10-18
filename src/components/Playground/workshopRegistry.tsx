@@ -742,7 +742,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.5',
+    version: '1.0.6',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -951,7 +951,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-workshop',
     pt_id: 'PT-015',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
@@ -986,7 +986,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cert-capacity',
     pt_id: 'PT-025',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'Cert Capacity Calculator',
     description:
       'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert counts and renewal cadence.',
@@ -1292,7 +1292,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-enrollment',
     pt_id: 'PT-029',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'PKI Enrollment (EST + CMP)',
     description:
       'RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.',
