@@ -5,7 +5,9 @@ import { NavigateGuide } from './NavigateGuide'
 
 describe('NavigateGuide', () => {
   it('explains the graph encoding without turning connectivity into importance', () => {
-    render(<NavigateGuide persona="curious" onTour={() => {}} onList={() => {}} />)
+    render(
+      <NavigateGuide persona="curious" onTour={() => {}} onList={() => {}} onDismiss={() => {}} />
+    )
 
     expect(screen.getByRole('heading', { name: 'Explore how the hub connects' })).toBeVisible()
     expect(screen.getByText(/each node is a hub record/i)).toBeVisible()
@@ -16,12 +18,25 @@ describe('NavigateGuide', () => {
   it('offers working tour and keyboard-list entry points', () => {
     const onTour = vi.fn()
     const onList = vi.fn()
-    render(<NavigateGuide persona="cert-engineer" onTour={onTour} onList={onList} />)
+    render(
+      <NavigateGuide persona="cert-engineer" onTour={onTour} onList={onList} onDismiss={() => {}} />
+    )
 
     fireEvent.click(screen.getByRole('button', { name: 'Start guided tour' }))
     fireEvent.click(screen.getByRole('button', { name: 'Open accessible list' }))
 
     expect(onTour).toHaveBeenCalledOnce()
     expect(onList).toHaveBeenCalledOnce()
+  })
+
+  it('can be closed', () => {
+    const onDismiss = vi.fn()
+    render(
+      <NavigateGuide persona={null} onTour={() => {}} onList={() => {}} onDismiss={onDismiss} />
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close guide' }))
+
+    expect(onDismiss).toHaveBeenCalledOnce()
   })
 })
