@@ -325,6 +325,40 @@ describe('libraryData', () => {
     expect(pont?.shortDescription).toContain('not an established deadline')
   })
 
+  it('separates vendor and news claims from certification, mandates, and independent evidence', () => {
+    const pqshield = libraryData.find(
+      (item) => item.referenceId === 'PQShield-4-Quantum-Threats-Enterprises-2026'
+    )
+    expect(pqshield?.lastVerified).toBe('2026-10-17')
+    expect(pqshield?.shortDescription).toContain('vendor guidance')
+    expect(pqshield?.shortDescription).toContain('not as an independent risk assessment')
+
+    const cryptonext = libraryData.find(
+      (item) => item.referenceId === 'QuantumZeitgeist-CryptoNext-NIST-Cert-2026'
+    )
+    expect(cryptonext?.manualCategory).toBe('Industry & Research')
+    expect(cryptonext?.shortDescription).toContain('not the same as')
+    expect(cryptonext?.shortDescription).toContain('FIPS 140 cryptographic-module validation')
+    expect(cryptonext?.documentTitle).not.toContain('Full NIST Quantum-Safe Certification')
+
+    const eff = libraryData.find((item) => item.referenceId === 'EFF-Encryption-Y2K-Moment-2026')
+    expect(eff?.documentType).toBe('Article')
+    expect(eff?.shortDescription).toContain('company planning estimate')
+    expect(eff?.shortDescription).toContain('not a government deadline')
+
+    const acs = libraryData.find((item) => item.referenceId === 'ACS-Google-Cloudflare-PQC-2029')
+    expect(acs?.shortDescription).toContain('their own PQC-readiness programmes')
+    expect(acs?.shortDescription).toContain('not an industry-wide regulatory deadline')
+
+    const samsung = libraryData.find(
+      (item) => item.referenceId === 'Samsung-Thales-ML-KEM-eSE-2026'
+    )
+    expect(samsung?.documentType).toBe('Press Release')
+    expect(samsung?.accessType).not.toBe('blocked')
+    expect(samsung?.shortDescription).toContain('does not identify ML-KEM')
+    expect(samsung?.shortDescription).toContain('vendor claims')
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
