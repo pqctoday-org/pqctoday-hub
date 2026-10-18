@@ -11,22 +11,16 @@ interface SourcePassagesDrawerProps {
   className?: string
 }
 
-function cachedHref(sourceDoc: string | undefined): string | undefined {
-  if (!sourceDoc) return undefined
-  return `/${sourceDoc.replace(/^public\//, '')}`
-}
-
 export function SourcePassagesDrawer({ chunkId, className = '' }: SourcePassagesDrawerProps) {
   const [open, setOpen] = useState(false)
-  const { passages, sourceDoc, wasAttributedTo, isLoading } = useSourcePassages(chunkId)
+  const { passages, sourceTitle, officialUrl, wasAttributedTo, isLoading } =
+    useSourcePassages(chunkId)
 
   if (isLoading) return null
   if (passages.length === 0) return null
 
-  const docHref = cachedHref(sourceDoc)
-  const docLabel = sourceDoc ? sourceDoc.split('/').pop() : undefined
   const attribution = attributionLabel(wasAttributedTo)
-  const summary = `${passages.length} passage${passages.length === 1 ? '' : 's'} from ${docLabel ?? 'source'}`
+  const summary = `${passages.length} passage${passages.length === 1 ? '' : 's'} from ${sourceTitle ?? 'the cited source'}`
 
   return (
     <div className={`border-t border-border pt-2 ${className}`}>
@@ -40,7 +34,7 @@ export function SourcePassagesDrawer({ chunkId, className = '' }: SourcePassages
         }}
         aria-expanded={open}
         className="h-auto w-full flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] px-1 py-0.5 text-left text-muted-foreground hover:text-foreground whitespace-normal break-words"
-        title="View source evidence from the cached document"
+        title="View attributed passages extracted from the cited source"
       >
         {open ? (
           <ChevronUp size={12} className="shrink-0" />
@@ -69,16 +63,16 @@ export function SourcePassagesDrawer({ chunkId, className = '' }: SourcePassages
               &ldquo;{passage}&rdquo;
             </div>
           ))}
-          {docHref && (
+          {officialUrl && (
             <a
-              href={docHref}
+              href={officialUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
               onClick={(e) => e.stopPropagation()}
             >
               <ExternalLink size={10} aria-hidden="true" />
-              View source document
+              Open official source
             </a>
           )}
         </div>

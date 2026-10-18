@@ -39,6 +39,15 @@ const renderSection = (omitted?: string[], complianceImpacts = impacts) =>
   )
 
 describe('ComplianceImpactSection — frameworks left out', () => {
+  it('explains why a selected framework is shown without presenting legal advice', () => {
+    renderSection()
+    const explanation = screen.getByTestId('compliance-applicability-explanation')
+    expect(explanation).toHaveTextContent('Why this is shown:')
+    expect(explanation).toHaveTextContent(
+      /educational context, not a legal applicability decision/i
+    )
+  })
+
   it('names the frameworks that were left out, on one line', () => {
     renderSection(['DORA (EU Digital Operational Resilience)', 'HIPAA'])
     const line = screen.getByTestId('compliance-omitted')

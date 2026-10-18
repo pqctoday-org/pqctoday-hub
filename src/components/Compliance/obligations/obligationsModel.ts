@@ -24,14 +24,17 @@ import {
   applicableFrameworks,
   TIER_ORDER,
   type ApplicabilityTier,
+  type SourceContext,
   type UserProfile,
 } from '@/utils/applicabilityEngine'
 
 export interface ObligationRow {
   framework: ComplianceFramework
   tier: ApplicabilityTier
-  /** Verbatim engine reason — "Your regulator: ANSSI". Never paraphrase it. */
+  /** Verbatim, type-aware source relationship from the applicability engine. */
   reason: string
+  /** Structured source identity behind the learner-facing reason. */
+  sourceContext?: SourceContext
   /** Distinct requirements across every cited document that carries any. */
   requirementCount: number
   /** The `ref_id`s those requirements came from, in citation order. */
@@ -96,6 +99,7 @@ export function buildObligations(
       framework: result.item,
       tier: result.tier,
       reason: result.reason,
+      sourceContext: result.sourceContext,
       requirementCount: count,
       requirementSources: sources,
       milestones: milestonesFor(result.item),

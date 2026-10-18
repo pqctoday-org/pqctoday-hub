@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useState } from 'react'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
-import type { ChunkProv } from '@/types/ChatTypes'
 
 export interface SourcePassages {
   passages: string[]
-  sourceDoc: string | undefined
+  sourceTitle: string | undefined
+  officialUrl: string | undefined
   wasAttributedTo: string | undefined
   isLoading: boolean
 }
 
 const EMPTY_DONE: SourcePassages = {
   passages: [],
-  sourceDoc: undefined,
+  sourceTitle: undefined,
+  officialUrl: undefined,
   wasAttributedTo: undefined,
   isLoading: false,
 }
 
-function extractProv(chunkId: string): ChunkProv | undefined {
+function extractChunk(chunkId: string) {
   const svc = UnifiedSearchService.getInstance()
   if (!svc.isReady) return undefined
-  const chunk = svc.corpusById.get(chunkId)
-  return chunk?.prov
+  return svc.corpusById.get(chunkId)
 }
 
 /**
@@ -41,10 +41,12 @@ export function useSourcePassages(chunkId: string | undefined): SourcePassages {
     if (!chunkId) return EMPTY_DONE
     const svc = UnifiedSearchService.getInstance()
     if (svc.isReady) {
-      const prov = extractProv(chunkId)
+      const chunk = extractChunk(chunkId)
+      const prov = chunk?.prov
       return {
         passages: prov?.source_passages ?? [],
-        sourceDoc: prov?.source_doc || undefined,
+        sourceTitle: chunk?.title || undefined,
+        officialUrl: chunk?.metadata.url || undefined,
         wasAttributedTo: prov?.was_attributed_to || undefined,
         isLoading: false,
       }
@@ -62,10 +64,12 @@ export function useSourcePassages(chunkId: string | undefined): SourcePassages {
       .initialize()
       .then(() => {
         if (cancelled) return
-        const prov = extractProv(chunkId)
+        const chunk = extractChunk(chunkId)
+        const prov = chunk?.prov
         setState({
           passages: prov?.source_passages ?? [],
-          sourceDoc: prov?.source_doc || undefined,
+          sourceTitle: chunk?.title || undefined,
+          officialUrl: chunk?.metadata.url || undefined,
           wasAttributedTo: prov?.was_attributed_to || undefined,
           isLoading: false,
         })

@@ -6,8 +6,8 @@
  * question the catalogue makes you work out for yourself, using the tiering the
  * applicability engine already computes. Three rules hold it honest:
  *
- *  - Reasons are the engine's own strings, rendered verbatim. "Your regulator:
- *    ANSSI" is a claim the engine can defend; a paraphrase is not.
+ *  - Reasons are the engine's own structured source classification rendered as
+ *    concise copy; the UI does not invent a regulator or jurisdiction label.
  *  - Requirement counts are context, never a denominator. Nothing here shows a
  *    percentage over requirements, because the requirement corpus is
  *    model-extracted and a percentage would claim more than it can carry.
@@ -414,9 +414,24 @@ function ObligationListRow({
         <p className={`mt-0.5 text-[11.5px] ${TIER_TONE[row.tier]}`}>
           {row.reason}
           {fw.countries.length > 0 && (
-            <span className="text-muted-foreground"> · {fw.countries.join(', ')}</span>
+            <span className="text-muted-foreground"> · Scope: {fw.countries.join(', ')}</span>
           )}
         </p>
+
+        {row.sourceContext && (
+          <details className="mt-1 text-[10.5px] text-muted-foreground">
+            <summary className="w-fit cursor-pointer font-semibold text-foreground">
+              Why this is shown
+            </summary>
+            <p className="mt-1 max-w-2xl leading-relaxed">
+              Source relationship: {row.sourceContext.relationship}. Source type:{' '}
+              {row.sourceContext.bodyType?.replaceAll('_', ' ') ?? 'not classified'}. Recorded
+              scope: {fw.countries.length > 0 ? fw.countries.join(', ') : 'not stated'}. This
+              explains why the catalogue included the item; it is not an applicability or legal
+              determination.
+            </p>
+          </details>
+        )}
 
         {roleNote && <p className="mt-0.5 text-[11px] font-medium text-primary">{roleNote}</p>}
 

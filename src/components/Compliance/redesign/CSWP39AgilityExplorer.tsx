@@ -151,13 +151,13 @@ export function CSWP39AgilityExplorer({
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <a
-            href={CSWP39_SOURCE_METADATA.localPdfPath}
+            href={CSWP39_SOURCE_METADATA.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-lg border border-input px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/30"
           >
             <FileText size={13} />
-            PDF
+            Official PDF
           </a>
           <Link
             to="/learn/standards-bodies"

@@ -48,7 +48,7 @@ describe('ComplianceDetailDrawer', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('shows the Source & trust panel with website, enforcement body, confidence, peer-review, and last-verified fields', () => {
+  it('shows the Source & trust panel with website, publisher or scheme body, confidence, peer-review, and last-verified fields', () => {
     render(
       <ComplianceDetailDrawer
         framework={framework({
@@ -64,6 +64,7 @@ describe('ComplianceDetailDrawer', () => {
       />
     )
     expect(screen.getByText('Source & trust')).toBeInTheDocument()
+    expect(screen.getByText('Publisher or scheme body')).toBeInTheDocument()
     expect(screen.getByText('example.gov')).toBeInTheDocument()
     // enforcementBody legitimately also appears in the traceability chain
     // above the trust panel, so more than one match is expected here.

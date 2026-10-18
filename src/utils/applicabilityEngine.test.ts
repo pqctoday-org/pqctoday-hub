@@ -123,12 +123,15 @@ describe('applicableFrameworks — tier classification', () => {
     })
     const [result] = applicableFrameworks(auGovProfile, [fw])
     expect(result?.tier).toBe('recognized')
-    expect(result?.reason).toMatch(/Five Eyes affinity/)
+    expect(result?.reason).toMatch(/Five Eyes relevance/)
     expect(result?.reason).toContain('NIST')
+    expect(result?.reason).toContain('United States')
+    expect(result?.reason).not.toContain('recognized in Australia')
   })
 
-  it('classifies country+industry match with non-Five-Eyes foreign body as plain Recognized', () => {
-    // NATO-4774 is enforced by NATO (not Five Eyes) but applies to AU.
+  it('does not infer foreign authority status from an unmatched body name', () => {
+    // NATO is not in the initial organization registry. An absent match is a
+    // metadata gap, not evidence that the source is either foreign or an authority.
     const fw = makeFramework({
       id: 'NATO-4774',
       countries: ['United States', 'European Union', 'Canada', 'Czech Republic', 'Australia'],
@@ -137,8 +140,91 @@ describe('applicableFrameworks — tier classification', () => {
     })
     const [result] = applicableFrameworks(auGovProfile, [fw])
     expect(result?.tier).toBe('recognized')
-    expect(result?.reason).toMatch(/Foreign authority NATO/)
+    expect(result?.reason).toMatch(/Source relationship not yet classified \(NATO\)/)
+    expect(result?.reason).not.toMatch(/Foreign authority/)
     expect(result?.reason).not.toMatch(/Five Eyes/)
+  })
+
+  it('treats NIST NCCoE as domestic US technical guidance, not a foreign authority', () => {
+    const fw = makeFramework({
+      id: 'NIST-NCCOE-PQC',
+      countries: ['United States'],
+      industries: ['Technology'],
+      enforcementBody: 'NIST NCCoE',
+      bodyType: 'technical_standard',
+      bindingStatus: 'draft',
+    })
+    const [result] = applicableFrameworks({ country: 'United States', industry: 'Technology' }, [
+      fw,
+    ])
+    expect(result?.tier).toBe('advisory')
+    expect(result?.reason).toBe(
+      'Domestic technical guidance from NIST NCCoE — draft, not an adopted obligation'
+    )
+    expect(result?.sourceContext).toMatchObject({
+      organizationId: 'us-nist-nccoe',
+      relationship: 'domestic',
+      organizationKind: 'government_agency',
+    })
+  })
+
+  it('treats the full CISA name as domestic US recommendation guidance', () => {
+    const fw = makeFramework({
+      id: 'US-CISA-PQC-PRODUCT-CATEGORIES',
+      countries: ['United States'],
+      industries: ['Technology'],
+      enforcementBody: 'Cybersecurity and Infrastructure Security Agency (CISA)',
+      bodyType: 'regulatory_body',
+      bindingStatus: 'recommendation',
+    })
+    const [result] = applicableFrameworks({ country: 'United States', industry: 'Technology' }, [
+      fw,
+    ])
+    expect(result?.tier).toBe('advisory')
+    expect(result?.reason).toContain('Domestic government guidance')
+    expect(result?.reason).toContain('recommendation, not a binding obligation')
+    expect(result?.reason).not.toMatch(/foreign/i)
+    expect(result?.reason).not.toContain('recognized in United States')
+  })
+
+  it.each([
+    [
+      'National Information Assurance Partnership (NIAP), NSA',
+      'certification_body' as const,
+      'evaluation scheme source',
+    ],
+    ['AICPA', 'compliance_framework' as const, 'professional source'],
+    ['NIST; SRI International', 'industry_alliance' as const, 'industry consortium source'],
+  ])('keeps confirmed US source %s domestic and type-aware', (body, bodyType, role) => {
+    const fw = makeFramework({
+      countries: ['United States'],
+      industries: ['Technology'],
+      enforcementBody: body,
+      bodyType,
+      bindingStatus: 'informational',
+    })
+    const [result] = applicableFrameworks({ country: 'United States', industry: 'Technology' }, [
+      fw,
+    ])
+    expect(result?.reason).toContain(`Domestic ${role}`)
+    expect(result?.reason).not.toMatch(/foreign/i)
+  })
+
+  it('describes CCRA as an international arrangement rather than a foreign authority', () => {
+    const fw = makeFramework({
+      id: 'CCRA',
+      countries: ['United States'],
+      industries: ['Technology'],
+      enforcementBody:
+        'Common Criteria Recognition Arrangement (CCRA) members including ASD, CSE, ANSSI, BSI, IPA, NCCSA, GCSB, NSRI, MAP/CCN, FMV, NCSC, NSA/NIST',
+      bodyType: 'technical_standard',
+      bindingStatus: 'informational',
+    })
+    const [result] = applicableFrameworks({ country: 'United States', industry: 'Technology' }, [
+      fw,
+    ])
+    expect(result?.reason).toMatch(/^International recognition arrangement/)
+    expect(result?.reason).not.toMatch(/foreign authority/i)
   })
 
   it('suppresses same-country single-industry standard for wrong sector (no cross-border noise)', () => {

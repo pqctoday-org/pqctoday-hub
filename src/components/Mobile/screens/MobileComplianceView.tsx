@@ -36,6 +36,7 @@ import {
   buildObligations,
   groupObligations,
   COLLAPSED_BY_DEFAULT,
+  type ObligationRow,
 } from '@/components/Compliance/obligations/obligationsModel'
 import {
   applyRoleOrder,
@@ -391,6 +392,13 @@ export function MobileComplianceView({
   }
 
   const rows = useMemo(() => buildObligations(profile), [profile])
+  const detailRow = useMemo(
+    () =>
+      detailFramework
+        ? (rows.find((row) => row.framework.id === detailFramework.id) ?? null)
+        : null,
+    [detailFramework, rows]
+  )
   const groups = useMemo(
     () => groupObligations(rows).map((g) => ({ ...g, rows: applyRoleOrder(g.rows, persona) })),
     [rows, persona]
@@ -1113,6 +1121,7 @@ export function MobileComplianceView({
 
       <MobileFrameworkDetailSheet
         framework={detailFramework}
+        applicability={detailRow}
         onClose={closeFramework}
         onViewRequirements={jumpToRequirements}
       />
@@ -1481,10 +1490,12 @@ function MobileRecordDetailSheet({
  */
 function MobileFrameworkDetailSheet({
   framework,
+  applicability,
   onClose,
   onViewRequirements,
 }: {
   framework: ComplianceFramework | null
+  applicability: ObligationRow | null
   onClose: () => void
   onViewRequirements: (frameworkId: string) => void
 }) {
@@ -1512,6 +1523,24 @@ function MobileFrameworkDetailSheet({
             <Globe size={12} className="shrink-0" aria-hidden="true" />
             {detail.juris}
           </p>
+
+          {applicability && (
+            <div className="rounded-lg border border-border bg-muted/20 p-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Why this is shown
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-foreground">
+                {applicability.reason}
+              </p>
+              {applicability.sourceContext && (
+                <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
+                  Relationship: {applicability.sourceContext.relationship}. Source type:{' '}
+                  {applicability.sourceContext.bodyType?.replaceAll('_', ' ') ?? 'not classified'}.
+                  This is an educational relevance explanation, not a legal determination.
+                </p>
+              )}
+            </div>
+          )}
 
           {framework.description && (
             <p className="text-[12px] leading-relaxed text-foreground/90">
@@ -1544,7 +1573,7 @@ function MobileFrameworkDetailSheet({
                 )}
                 {framework.enforcementBody && (
                   <div className="flex items-start justify-between gap-2">
-                    <dt className="shrink-0 text-muted-foreground">Enforcement body</dt>
+                    <dt className="shrink-0 text-muted-foreground">Publisher or scheme body</dt>
                     <dd className="min-w-0 text-right font-semibold text-foreground">
                       {framework.enforcementBody}
                     </dd>

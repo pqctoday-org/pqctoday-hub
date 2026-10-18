@@ -7,6 +7,7 @@ import {
   COUNTRY_CODE_TO_NAME as JURISDICTION_CODE_TO_NAME,
   COUNTRY_NAME_TO_COMPLIANCE_BLOC,
 } from './jurisdictionsData'
+import { sourceOrganizationFor } from './sourceOrganizations'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -107,6 +108,8 @@ export interface ComplianceFramework {
   deadlineKind?: DeadlineKind
   notes: string
   enforcementBody: string
+  /** Canonical publisher/scheme identity resolved from `enforcementBody`, when reviewed. */
+  sourceOrganizationId?: string
   libraryRefs: string[]
   /** Learn-module ids this framework routes to. Added 2026-07-31 — traversal was one-way until then. */
   learnModules?: string[]
@@ -367,6 +370,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     deadlineEnd,
     notes: row.notes || '',
     enforcementBody: row.enforcement_body || '',
+    sourceOrganizationId: sourceOrganizationFor(row.enforcement_body)?.id,
     libraryRefs: splitSemicolon(row.library_refs),
     learnModules: splitSemicolon(row.learn_modules),
     timelineRefs: splitSemicolon(row.timeline_refs),
