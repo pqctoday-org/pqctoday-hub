@@ -28,6 +28,7 @@ import { CertParser } from './CertParser'
 import { CRLGenerator } from './CRLGenerator'
 import { MTCComparison } from './MTCComparison'
 import { AcmePqcWalkthrough } from './AcmePqcWalkthrough'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 import { CertCapacityCalculator } from './CertCapacityCalculator'
 import { ModuleShell } from '@/components/PKILearning/common/ModuleShell'
 import { Button } from '@/components/ui/button'
@@ -275,7 +276,11 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
       </div>
 
       {/* Part Progress Steps */}
-      <div className="overflow-x-auto px-2 sm:px-0">
+      <ScrollFadeContainer
+        scrollClassName="px-2 sm:px-0"
+        showScrollHint
+        scrollProps={{ role: 'navigation', 'aria-label': 'PKI workshop steps' }}
+      >
         <div className="flex justify-evenly relative min-w-0">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
@@ -309,7 +314,7 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
             )
           })}
         </div>
-      </div>
+      </ScrollFadeContainer>
 
       {/* Content Area */}
       <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">

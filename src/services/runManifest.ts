@@ -10,8 +10,13 @@
  * uploaded or stored. Full test vectors are never embedded, only digests.
  */
 import { withEducationNoticeMarkdown } from '@/data/educationNotice'
+import {
+  EVIDENCE_CLASS_LABEL,
+  NON_CERTIFICATION_NOTICE,
+  type ToolEvidenceClass,
+} from '@/data/evidenceClassification'
 
-export const RUN_MANIFEST_SCHEMA = 'pqctoday.run-manifest/1'
+export const RUN_MANIFEST_SCHEMA = 'pqctoday.run-manifest/2'
 
 export type ExecutionMode =
   'in-browser-implementation' | 'simulation' | 'spec-visualiser' | 'docker'
@@ -29,6 +34,12 @@ export interface RunManifest {
   site: { appVersion: string; commit: string; wasmHash: string; buildTimestamp: string }
   runtime: { userAgent: string; startedAt: string; finishedAt: string }
   executionMode: ExecutionMode
+  evidence: {
+    class: ToolEvidenceClass
+    implementation: string
+    assumptions: string[]
+    nonCertification: typeof NON_CERTIFICATION_NOTICE
+  }
   inputs: Record<string, unknown>
   vectors?: { source: string; url: string; sha256: string; count: number }
   cases: RunCase[]
@@ -48,6 +59,16 @@ export interface RunManifestInput {
   finishedAt: string
   vectors?: RunManifest['vectors']
   negativeControls?: RunManifest['negativeControls']
+  evidenceClass?: ToolEvidenceClass
+  implementation?: string
+  assumptions?: string[]
+}
+
+const DEFAULT_EVIDENCE_CLASS: Record<ExecutionMode, ToolEvidenceClass> = {
+  'in-browser-implementation': 'real-crypto',
+  simulation: 'synthetic-simulation',
+  'spec-visualiser': 'protocol-model',
+  docker: 'real-crypto',
 }
 
 /** The build the page was served from. Each constant is '' when the build did not define it. */
@@ -75,6 +96,14 @@ export function buildRunManifest(
     site,
     runtime: { userAgent, startedAt: input.startedAt, finishedAt: input.finishedAt },
     executionMode: input.executionMode,
+    evidence: {
+      class: input.evidenceClass ?? DEFAULT_EVIDENCE_CLASS[input.executionMode],
+      implementation: input.implementation ?? `${input.tool.title} ${input.tool.version}`,
+      assumptions: input.assumptions ?? [
+        'Only the recorded inputs, implementation and browser environment were evaluated.',
+      ],
+      nonCertification: NON_CERTIFICATION_NOTICE,
+    },
     inputs: input.inputs,
     ...(input.vectors ? { vectors: input.vectors } : {}),
     cases: input.cases,
@@ -101,7 +130,10 @@ export function runManifestToMarkdown(m: RunManifest): string {
     `- Tool: ${m.tool.title} (${m.tool.id}) version ${m.tool.version}`,
     `- Site build: ${m.site.appVersion || 'unknown'}${m.site.commit ? ` (commit ${m.site.commit.slice(0, 12)})` : ''}`,
     `- How it ran: ${MODE_TEXT[m.executionMode]}`,
+    `- Evidence class: ${EVIDENCE_CLASS_LABEL[m.evidence.class]}`,
+    `- Implementation: ${m.evidence.implementation}`,
     `- Result: ${m.summary.passed} passed, ${m.summary.failed} failed`,
+    `- Certification boundary: ${m.evidence.nonCertification}`,
     '',
     '## Results',
     '',
@@ -109,6 +141,10 @@ export function runManifestToMarkdown(m: RunManifest): string {
       (c) =>
         `- ${c.pass ? 'PASS' : 'FAIL'} ${c.id}: ${c.actual}${c.expected ? ` (expected ${c.expected})` : ''}`
     ),
+    '',
+    '## Assumptions',
+    '',
+    ...m.evidence.assumptions.map((assumption) => `- ${assumption}`),
     '',
     '## What this run does not show',
     '',

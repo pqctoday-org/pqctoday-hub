@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
+import { Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
 import { cn } from '@/lib/utils'
@@ -11,6 +12,9 @@ import {
 } from '@/components/BusinessCenter/businessToolsRegistry'
 import { Cswp39SectionBadge } from '@/components/BusinessCenter/widgets/Cswp39SectionBadge'
 import { MobileSheet } from '../primitives/Sheet'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
+import { businessToolEvidence } from '@/data/businessToolEvidence'
 
 // crypto-architecture-diagram dropped entirely (per audit, 2026-08-24): its
 // core value is a live Mermaid topology diagram (`MermaidDiagram.tsx`,
@@ -62,6 +66,8 @@ export function MobileBusinessToolsView() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string | null>(null)
   const [selected, setSelected] = useState<BusinessTool | null>(null)
+  const selectedPersona = usePersonaStore((state) => state.selectedPersona)
+  const startHere = getBusinessRoleSequence(selectedPersona)
 
   const categoryCounts = useMemo(() => {
     const counts = new Map<string, number>()
@@ -135,6 +141,27 @@ export function MobileBusinessToolsView() {
         ))}
       </div>
 
+      {!search.trim() && !category && (
+        <section className="mb-4 rounded-xl border border-border bg-card p-3.5">
+          <h2 className="text-[12px] font-bold text-foreground">{startHere.heading}</h2>
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            {startHere.guidance}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {startHere.steps.slice(0, 4).map((step) => (
+              <Link
+                key={step.id}
+                to={`/business/tools/${step.id}`}
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-foreground"
+              >
+                <span className="text-primary">{step.step}</span>
+                {step.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="flex flex-col gap-2.5">
         {filtered.length === 0 && (
           <p className="text-[12.5px] text-muted-foreground">No tools match these filters.</p>
@@ -168,10 +195,9 @@ export function MobileBusinessToolsView() {
       ))}
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The Zone, Phase and Audience filters, "Group by", and the "Start here" suggested sequence
-        are on a laptop. The Crypto Architecture Diagram tool needs a wider screen — its live
-        topology diagram and dense entry table don&apos;t fit a phone — open that one on a laptop
-        too.
+        The role-specific "Start here" sequence is available above. Zone, Phase and Audience filters
+        and "Group by" remain laptop features. The Crypto Architecture Diagram tool also needs a
+        wider screen — its live topology diagram and dense entry table don&apos;t fit a phone.
       </p>
 
       <MobileSheet
@@ -191,7 +217,7 @@ export function MobileBusinessToolsView() {
 function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () => void }) {
   const Icon = tool.icon
   return (
-    <article className="glass-panel flex flex-col p-3.5">
+    <article className="glass-panel flex flex-col gap-1.5 p-3.5">
       <Button
         type="button"
         variant="ghost"
@@ -206,21 +232,22 @@ function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () =
           </span>
           <span className="text-[13px] font-bold leading-tight text-foreground">{tool.name}</span>
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {tool.audience && tool.audience !== 'business' && (
-            <span className="rounded bg-secondary/10 px-1.5 py-0.5 text-sim-chip font-semibold leading-none text-secondary">
-              {AUDIENCE_BADGE[tool.audience]}
-            </span>
-          )}
-          <Cswp39SectionBadge
-            sectionRef={tool.cswp39SectionRef}
-            subSection={tool.cswp39SubSection}
-          />
-        </div>
         <p className="line-clamp-2 text-[11.5px] leading-snug text-muted-foreground">
           {tool.description}
         </p>
       </Button>
+      {/* Keep provenance outside the card's Open button. Cswp39SectionBadge is
+          independently keyboard/touch interactive; nesting it in the button
+          created 36 inaccessible nested controls on the phone catalogue. */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        {tool.audience && tool.audience !== 'business' && (
+          <span className="rounded bg-secondary/10 px-1.5 py-0.5 text-sim-chip font-semibold leading-none text-secondary">
+            {AUDIENCE_BADGE[tool.audience]}
+          </span>
+        )}
+        <Cswp39SectionBadge sectionRef={tool.cswp39SectionRef} subSection={tool.cswp39SubSection} />
+        <MobileBusinessToolEvidenceNotice toolId={tool.id} compact />
+      </div>
     </article>
   )
 }
@@ -246,7 +273,10 @@ function ToolDetailSheetBody({ tool }: { tool: BusinessTool }) {
 
       <div className="flex items-center gap-1.5">
         <Cswp39SectionBadge sectionRef={tool.cswp39SectionRef} subSection={tool.cswp39SubSection} />
+        <MobileBusinessToolEvidenceNotice toolId={tool.id} compact />
       </div>
+
+      <MobileBusinessToolEvidenceNotice toolId={tool.id} />
 
       <Link
         to={`/business/tools/${tool.id}`}
@@ -258,5 +288,49 @@ function ToolDetailSheetBody({ tool }: { tool: BusinessTool }) {
         Open tool
       </Link>
     </div>
+  )
+}
+
+/** Phone-specific presentation backed by the same evidence contract as desktop. */
+function MobileBusinessToolEvidenceNotice({
+  toolId,
+  compact = false,
+}: {
+  toolId: string
+  compact?: boolean
+}) {
+  const evidence = businessToolEvidence(toolId)
+  if (!evidence) return null
+
+  if (compact) {
+    return (
+      <span
+        className="inline-flex rounded-full border border-primary/30 bg-primary/5 px-2 py-0.5 text-[10px] font-semibold text-primary"
+        aria-label={`Output type: ${evidence.label}`}
+      >
+        {evidence.label}
+      </span>
+    )
+  }
+
+  return (
+    <aside
+      className="rounded-xl border border-primary/25 bg-primary/5 p-3 text-[11px]"
+      aria-label="How to interpret this business tool"
+    >
+      <div className="flex items-start gap-2">
+        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+        <div className="min-w-0 space-y-1 leading-relaxed text-muted-foreground">
+          <p className="font-semibold text-foreground">{evidence.label}</p>
+          <p>
+            <span className="font-semibold text-foreground">Can show:</span> {evidence.proves}
+          </p>
+          <p>
+            <span className="font-semibold text-foreground">Cannot establish:</span>{' '}
+            {evidence.doesNotProve}
+          </p>
+        </div>
+      </div>
+    </aside>
   )
 }

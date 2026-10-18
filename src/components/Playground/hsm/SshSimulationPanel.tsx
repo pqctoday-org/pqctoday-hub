@@ -444,12 +444,12 @@ export function SshSimulationPanel() {
                 computers.
               </p>
               <a
-                href="https://datatracker.ietf.org/doc/draft-ietf-sshm-hybrid/"
+                href="https://www.rfc-editor.org/rfc/rfc10042.html"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-primary underline hover:text-primary/80 flex items-center gap-0.5 w-fit"
               >
-                draft-ietf-sshm-hybrid <ExternalLink size={9} />
+                RFC 10042 (Informational) <ExternalLink size={9} />
               </a>
             </div>
           </div>

@@ -34,8 +34,8 @@ const revealSandboxScenarios = () => {
 beforeEach(() => {
   usePersonaStore.setState({ selectedPersona: null })
   useBookmarkStore.setState({ myPlaygroundTools: [], showOnlyPlaygroundTools: false })
-  // 'offline' (not 'idle') so the component's mount probe stays put and the
-  // sandbox-locked presentation is deterministic.
+  // Keep the sandbox presentation deterministic; ordinary rendering no longer
+  // probes localhost.
   useSandboxStore.setState({ status: 'offline', lastChecked: 1, error: 'stub', baseUrl: '' })
 })
 
@@ -266,6 +266,13 @@ describe('Crypto Lab Workbench', () => {
     expect(screen.getByText(/Runtime active/i)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Sandbox runtime/i }))
     expect(useSandboxStore.getState().status).toBe('idle')
+  })
+
+  it('does not contact the local sandbox until the learner explicitly opens it', () => {
+    const probe = vi.fn().mockResolvedValue('offline')
+    useSandboxStore.setState({ probe, status: 'idle' })
+    renderWorkbench()
+    expect(probe).not.toHaveBeenCalled()
   })
 
   it('probes and reveals the access panel when the sidebar toggle is clicked offline', () => {

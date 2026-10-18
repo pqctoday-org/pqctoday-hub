@@ -85,6 +85,12 @@ jobs:
         # No VITE_* secrets: the PR build is never deployed.
         run: npm run build
 
+      - name: Browser Playground and Business Tool routes, roles, mobile layout and accessibility
+        # Fast education-tool UI contract only. Real-WASM/crypto execution
+        # remains in the nightly and release suites so this required PR check
+        # stays bounded.
+        run: npx playwright test --project=playground-pr-desktop --project=playground-pr-mobile
+
   pr-test:
     # The unit suite, moved off the pre-push hook to here on 2026-09-29 (owner
     # decision: fast local pre-push, heavy checks on GitHub). Same as ci.yml

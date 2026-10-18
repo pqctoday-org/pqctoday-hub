@@ -5,11 +5,11 @@
  *
  * Migration cost and delay premium are industry-analyst estimates for a
  * mid-size org — illustrative, not cited figures. Everything else this step
- * needs (breach baseline, HNDL/CRQC modeling, regulatory deadline and
- * penalty) is DERIVED, not hand-maintained here: breach baseline from
+ * needs (breach baseline and HNDL/CRQC modelling) is derived rather than
+ * hand-maintained here: breach baseline from
  * roiBaselines.ts (IBM 2025), quantum-risk modeling from breachCostModel.ts
- * (GRI 2025 CRQC curve + data-class shelf-life decay), and deadline/penalty
- * from inactionDrivers.ts (complianceData.ts + the timeline CSV).
+ * (GRI 2025 CRQC curve + data-class shelf-life decay). Framework dates are
+ * context only; no regulatory or contract-loss amount is inferred from them.
  */
 import type { DataSensitivityClass } from '@/utils/breachCostModel'
 

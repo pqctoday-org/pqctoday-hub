@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { afterEach, describe, it, expect } from 'vitest'
+import { act, render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileBusinessToolsView } from './MobileBusinessToolsView'
 import {
   BUSINESS_TOOLS,
   BUSINESS_CATEGORIES,
 } from '@/components/BusinessCenter/businessToolsRegistry'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { CERT_ENGINEER_SEQUENCE } from '@/data/businessRoleConfig'
 
 // Real data throughout — BUSINESS_TOOLS is the same real registry
 // BusinessToolsGrid.tsx/BusinessToolRoute.tsx already read. Assertions are
@@ -24,6 +26,21 @@ function renderView() {
 }
 
 describe('MobileBusinessToolsView', () => {
+  afterEach(() => {
+    act(() => usePersonaStore.setState({ selectedPersona: null }))
+  })
+
+  it("shows the selected role's short starting sequence on a phone", () => {
+    act(() => usePersonaStore.setState({ selectedPersona: 'cert-engineer' }))
+    renderView()
+    expect(screen.getByText(CERT_ENGINEER_SEQUENCE.heading)).toBeInTheDocument()
+    for (const step of CERT_ENGINEER_SEQUENCE.steps.slice(0, 4)) {
+      expect(
+        screen.getByRole('link', { name: new RegExp(`${step.step}\\s*${step.label}`) })
+      ).toHaveAttribute('href', `/business/tools/${step.id}`)
+    }
+  })
+
   it('shows the real tool count, excluding the dropped tool', () => {
     renderView()
     expect(screen.getByText(`${MOBILE_TOOLS.length} tools`)).toBeInTheDocument()
@@ -98,9 +115,12 @@ describe('MobileBusinessToolsView', () => {
 
   it('states what was cut, including why the dropped tool is missing, rather than silently dropping it', () => {
     renderView()
+    expect(
+      screen.getByText(/role-specific "Start here" sequence is available above/i)
+    ).toBeInTheDocument()
     expect(screen.getByText(/Zone, Phase and Audience filters/i)).toBeInTheDocument()
     expect(
-      screen.getByText(/Crypto Architecture Diagram tool needs a wider screen/i)
+      screen.getByText(/Crypto Architecture Diagram tool also needs a wider screen/i)
     ).toBeInTheDocument()
   })
 

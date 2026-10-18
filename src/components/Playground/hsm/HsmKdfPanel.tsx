@@ -43,7 +43,7 @@ const KDF_MODES: { id: KdfMode; label: string; spec: string; useCase: string; pq
       id: 'hkdf',
       label: 'HKDF',
       spec: 'PKCS#11 v3.2 §6.62 / CKM_HKDF_DERIVE',
-      useCase: 'KEM shared-secret expansion · TLS 1.3 key schedule (RFC 8446)',
+      useCase: 'KEM shared-secret expansion · TLS 1.3 key schedule (RFC 9846)',
       pqcNote:
         'SP 800-56C Rev2 §6.1 mandates HKDF to expand ML-KEM shared secrets in hybrid schemes',
     },

@@ -63,7 +63,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     signCpuMicros: 400, // OpenSSL 3.x + CRT + AVX2, ~2500 sign/s at 3 GHz
     verifyCpuMicros: 5, // e=65537 — single modexp, very fast
     tlsCertOverheadBytes: 0, // baseline
-    sizeSource: 'RFC 3447, RFC 5280',
+    sizeSource: 'RFC 8017, RFC 5280',
     perfSource: 'OpenSSL 3.x + AVX2 + CRT, 3 GHz x86-64 (Haswell-class)',
   },
   {

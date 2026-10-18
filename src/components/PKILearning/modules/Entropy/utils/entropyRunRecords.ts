@@ -4,7 +4,7 @@
  * the SP 800-90A DRBG known-answer check, the Entropy Testing primitive
  * self-checks, Source Combining and the Entropy Evidence Lab.
  *
- * Each builder turns one run's own results into a `pqctoday.run-manifest/1`
+ * Each builder turns one run's own results into a `pqctoday.run-manifest/2`
  * record (see `@/services/runManifest`). Nothing is uploaded; full test
  * vectors are not embedded — long outputs are recorded as SHA-256 digests.
  */

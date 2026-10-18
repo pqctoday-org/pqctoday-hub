@@ -7,6 +7,7 @@ import {
   SANDBOX_TOOL_PREFIX,
 } from './workshopRegistry'
 import { SANDBOX_SCENARIOS } from '@/data/sandboxScenarios'
+import { PLAYGROUND_ROLE_JOURNEYS } from '@/data/playgroundRoleJourneys'
 
 describe('workshopRegistry — Sandbox facet wiring', () => {
   it("no longer exposes 'Sandbox' as a category (it is a cross-cutting facet)", () => {
@@ -63,6 +64,15 @@ describe('workshopRegistry — visitor-facing honesty invariants', () => {
     expect(unflagged, 'pre-1.0 tools must set `wip: true`').toEqual([])
   })
 
+  it('states whether every browser tool produces output and specifies that output when it does', () => {
+    for (const tool of WORKSHOP_TOOLS.filter((candidate) => !candidate.sandbox)) {
+      expect(typeof tool.hasOutput, `${tool.id}: hasOutput`).toBe('boolean')
+      if (tool.hasOutput) {
+        expect(tool.outputSpec?.length, `${tool.id}: outputSpec`).toBeGreaterThan(40)
+      }
+    }
+  })
+
   // NOTE: an over-claiming guard (does a tool advertise crypto it never runs?)
   // was attempted here and removed. Comparing `algorithms` against the tool's
   // own name/keywords only checks metadata against metadata — it flagged
@@ -72,57 +82,44 @@ describe('workshopRegistry — visitor-facing honesty invariants', () => {
   // WS6 in playground-tools-remediation-plan-08112026.md.
 })
 
-// B+ round 8, Wave B (2026-09-18) — WS17 tasks 4 and 7c: the "Start here"
-// allocation is curated data, so it gets the same drift guards as the rest of
-// the registry. Executive and grc are the documented exception to distinctness:
-// each has exactly two eligible tools in the registry and they are the same two.
-describe('workshopRegistry — Start-here allocation (WS17)', () => {
-  const PERSONAS = [
-    'executive',
-    'grc',
-    'developer',
-    'architect',
-    'researcher',
-    'ops',
-    'curious',
-  ] as const
-  const poolFor = (role: (typeof PERSONAS)[number]) => {
-    const base = WORKSHOP_TOOLS.filter((t) => !t.sandbox && t.recommendedPersonas.includes(role))
-    const curated = base.filter((t) => t.startHere?.includes(role))
-    return [...curated, ...base.filter((t) => !curated.includes(t))].slice(0, 3).map((t) => t.id)
-  }
+describe('workshopRegistry — canonical role journeys', () => {
+  const PERSONAS = Object.keys(PLAYGROUND_ROLE_JOURNEYS) as Array<
+    keyof typeof PLAYGROUND_ROLE_JOURNEYS
+  >
 
-  it('startHere only names personas the tool already recommends itself to', () => {
-    for (const t of WORKSHOP_TOOLS) {
-      for (const p of t.startHere ?? []) {
-        expect(
-          t.recommendedPersonas,
-          `${t.id}: startHere '${p}' not in recommendedPersonas`
-        ).toContain(p)
+  it('uses only ready browser tools that recommend the selected role', () => {
+    for (const persona of PERSONAS) {
+      for (const id of PLAYGROUND_ROLE_JOURNEYS[persona].toolIds) {
+        const tool = WORKSHOP_TOOLS.find((candidate) => candidate.id === id)
+        expect(tool, `${persona}: missing ${id}`).toBeDefined()
+        expect(tool?.sandbox, `${persona}: ${id} must run in the browser`).toBeFalsy()
+        expect(tool?.wip, `${persona}: ${id} must be ready`).toBeFalsy()
+        expect(tool?.recommendedPersonas, `${persona}: ${id} must recommend the role`).toContain(
+          persona
+        )
       }
     }
   })
 
-  it('no role has more than three curated picks (the pool shows exactly three)', () => {
-    for (const p of PERSONAS) {
-      const n = WORKSHOP_TOOLS.filter((t) => t.startHere?.includes(p)).length
-      expect(n, `${p} has ${n} startHere picks`).toBeLessThanOrEqual(3)
+  it('keeps executive and GRC short and every technical or curious path to three tools', () => {
+    expect(PLAYGROUND_ROLE_JOURNEYS.executive.toolIds).toHaveLength(2)
+    expect(PLAYGROUND_ROLE_JOURNEYS.grc.toolIds).toHaveLength(2)
+    for (const persona of PERSONAS.filter((id) => id !== 'executive' && id !== 'grc')) {
+      expect(PLAYGROUND_ROLE_JOURNEYS[persona].toolIds, persona).toHaveLength(3)
     }
   })
 
-  it('the seven pools cover at least 16 distinct tools, and only executive/grc share a pool', () => {
-    const pools = Object.fromEntries(PERSONAS.map((p) => [p, poolFor(p)]))
+  it('covers at least 16 distinct tools, with no duplicate role journey', () => {
+    const pools = Object.fromEntries(
+      PERSONAS.map((persona) => [persona, [...PLAYGROUND_ROLE_JOURNEYS[persona].toolIds]])
+    )
     const distinct = new Set(Object.values(pools).flat())
     expect(distinct.size, JSON.stringify(pools)).toBeGreaterThanOrEqual(16)
     for (const a of PERSONAS) {
       for (const b of PERSONAS) {
         if (a >= b) continue
         const same = pools[a].join() === pools[b].join()
-        const allowed = new Set([a, b]).has('executive') && new Set([a, b]).has('grc')
-        expect(
-          same && !allowed,
-          `${a} and ${b} open on the same Start-here pool: ${pools[a]}`
-        ).toBe(false)
+        expect(same, `${a} and ${b} have the same journey: ${pools[a]}`).toBe(false)
       }
     }
   })

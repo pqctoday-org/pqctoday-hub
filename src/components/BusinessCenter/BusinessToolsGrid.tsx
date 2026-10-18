@@ -20,6 +20,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileBusinessToolsView } from '@/components/Mobile/screens/MobileBusinessToolsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
+import { BusinessToolEvidenceNotice } from '@/components/shared/BusinessToolEvidenceNotice'
 
 // Badge shown only for the non-default (technical) audiences, so an executive can
 // tell at a glance which tools are meant for architects/developers. Business/GRC
@@ -430,6 +431,7 @@ export const BusinessToolsGrid = () => {
                             sectionRef={tool.cswp39SectionRef}
                             subSection={tool.cswp39SubSection}
                           />
+                          <BusinessToolEvidenceNotice toolId={tool.id} compact />
                         </div>
                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                           {tool.description}

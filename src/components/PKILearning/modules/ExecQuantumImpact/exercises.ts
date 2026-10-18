@@ -8,16 +8,16 @@ export const EXEC_QUANTUM_EXERCISES: ExecExercise[] = [
   {
     title: 'Scenario: Board Quantum Risk Briefing',
     prompt:
-      'You are preparing a 15-minute board briefing on quantum risk. Your organization is a mid-sized financial institution with 30-year data retention requirements. Outline the key points: HNDL exposure, regulatory deadlines, budget request, and governance proposal. Use the workshop tools to quantify your exposure score.',
+      'You are preparing a 15-minute board briefing for a mid-sized financial institution with 30-year data retention. Separate known facts, CRQC scenarios, potentially applicable obligations, and evidence still needed. Produce three board questions and proposed owners; do not invent an exposure score.',
   },
   {
     title: 'Scenario: Vendor PQC Readiness Review',
     prompt:
-      'Your top 5 vendors include a cloud provider (PQC-ready), an ERP vendor (no roadmap), a payment processor (partial support), a communication platform (unknown), and a backup provider (PQC-ready). Use the skills assessment to identify your gaps in vendor risk evaluation, then build an action plan.',
+      'Your top five vendors report different PQC maturity. Identify what evidence would support each claim, record Unknown where the product or version is not scoped, and propose an owner and review date before carrying a vendor KPI into the dashboard.',
   },
   {
     title: 'Scenario: Compliance Deadline Collision',
     prompt:
-      'Your organization must navigate overlapping timelines: DORA (effective 2025), NIS2 (transposition 2024), and the draft NIST 2030 deprecation of RSA/ECC (NIST IR 8547). Budget is limited. Use the action plan builder to prioritize: which deadlines require immediate action versus which allow phased migration?',
+      'Classify DORA and NIS2 as broader cyber-risk duties, NIST IR 8547 as an initial public draft transition proposal, and any scoped national roadmap or mandate separately. Determine applicability before prioritizing work, and list the official source and owner who must verify each conclusion.',
   },
 ]

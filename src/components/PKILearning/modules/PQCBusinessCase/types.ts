@@ -8,6 +8,35 @@
  */
 import type { DataSensitivityClass } from '@/utils/breachCostModel'
 
+export interface InactionScenarioRecord {
+  modelVersion: 'coi-2'
+  asOfYear: number
+  horizonYears: number
+  industry: string
+  delayYears: number
+  migrationDurationYears: number
+  migrationCostUSD: number
+  delayPremiumPerYearUSD: number
+  annualBreachProbPct: number
+  breachBaselineUSD: number
+  baselineOrigin: 'breach-simulator' | 'industry-default'
+  baseYearsOfData: number
+  hndlFactorPct: number
+  dataSensitivityClass: DataSensitivityClass
+  discountRatePct: number
+  verifiedConsequence: {
+    effectiveYear: number
+    annualUSD: number
+    oneTimeUSD: number
+    sourceNote: string
+  }
+  sourceStatus: {
+    breachBaseline: 'IBM 2025 sector assumption — one edition behind and not independently verified'
+    breachProbability: 'Cyentia IRIS 2025 primary-verified'
+    crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model'
+  }
+}
+
 export interface ROIOutput {
   totalCostUSD: number
   roiPercent: number
@@ -37,8 +66,10 @@ export interface BreachOutput {
 export interface InactionOutput {
   costOfInactionUSD: number
   delayYears: number
-  /** First year the delayed cumulative NPV permanently exceeds migrate-now's; null if it never does within the horizon. */
+  /** First year delayed cumulative NPV stays above migrate-now through the selected horizon; null if it does not. */
   crossoverYear: number | null
   latestSafeStartYear: number
   alreadyLate: boolean
+  /** Complete, versioned inputs used to reproduce the displayed scenario. */
+  scenario?: InactionScenarioRecord
 }

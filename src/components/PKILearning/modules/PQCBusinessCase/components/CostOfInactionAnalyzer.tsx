@@ -17,6 +17,7 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { DELAY_COST_PROFILES } from '../data/businessCaseScenarios'
 import {
   resolveIndustryBreachBaseline,
@@ -24,7 +25,11 @@ import {
   reconcileEstimates,
   MIGRATION_COST_FLOOR,
 } from '@/utils/roiMath'
-import { ANNUAL_BREACH_PROBABILITY_PCT, type OrgSizeTier } from '@/data/roiBaselines'
+import {
+  ANNUAL_BREACH_PROBABILITY_PCT,
+  IBM_BASELINE_UNVERIFIED_NOTE,
+  type OrgSizeTier,
+} from '@/data/roiBaselines'
 import {
   DELAY_MODEL_DEFAULTS,
   projectDelayScenario,
@@ -33,8 +38,8 @@ import {
 } from '@/utils/delayCostModel'
 import { DATA_SHELF_LIFE_YEARS, DATA_SENSITIVITY_LABELS } from '@/utils/breachCostModel'
 import { computeMoscaVerdict } from '@/utils/moscaTheorem'
-import { deriveIndustryMandate, deriveIndustryPenalty } from '@/utils/inactionDrivers'
-import type { BreachOutput, InactionOutput } from '../types'
+import { deriveIndustryMandate } from '@/utils/inactionDrivers'
+import type { BreachOutput, InactionOutput, InactionScenarioRecord } from '../types'
 
 const ORG_SIZE_TIER_OPTIONS: { tier: OrgSizeTier; label: string }[] = [
   { tier: 'smb', label: 'SMB' },
@@ -61,6 +66,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   onOutput,
 }) => {
   const data = useExecutiveModuleData()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   // Restore the last-saved scenario so the tool round-trips instead of
   // resetting to defaults on every visit.
@@ -69,6 +75,12 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     delayYears: number
     annualBreachProbPct: number
     migrationDurationYears: number
+    migrationCostOverrideUSD?: number | null
+    discountRatePct?: number
+    verifiedEffectiveYear?: number
+    verifiedAnnualConsequenceUSD?: number
+    verifiedOneTimeConsequenceUSD?: number
+    verifiedConsequenceSource?: string
   }>('cost-of-inaction')
   // `||`, not `??`. When no industry is set, useExecutiveModuleData returns an
   // EMPTY STRING, which is not nullish — so the 'Finance & Banking' fallback was
@@ -88,6 +100,24 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   const [migrationDurationYears, setMigrationDurationYears] = useState<number>(
     savedInputs?.migrationDurationYears ?? DELAY_MODEL_DEFAULTS.migrationDurationYears
   )
+  const [migrationCostOverrideUSD, setMigrationCostOverrideUSD] = useState<number | null>(
+    savedInputs?.migrationCostOverrideUSD ?? null
+  )
+  const [discountRatePct, setDiscountRatePct] = useState<number>(
+    savedInputs?.discountRatePct ?? DELAY_MODEL_DEFAULTS.discountRatePct
+  )
+  const [verifiedEffectiveYear, setVerifiedEffectiveYear] = useState<number>(
+    savedInputs?.verifiedEffectiveYear ?? new Date().getFullYear() + 4
+  )
+  const [verifiedAnnualConsequenceUSD, setVerifiedAnnualConsequenceUSD] = useState<number>(
+    savedInputs?.verifiedAnnualConsequenceUSD ?? 0
+  )
+  const [verifiedOneTimeConsequenceUSD, setVerifiedOneTimeConsequenceUSD] = useState<number>(
+    savedInputs?.verifiedOneTimeConsequenceUSD ?? 0
+  )
+  const [verifiedConsequenceSource, setVerifiedConsequenceSource] = useState<string>(
+    savedInputs?.verifiedConsequenceSource ?? ''
+  )
 
   const profile = useMemo(
     () =>
@@ -104,7 +134,6 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     () => deriveIndustryMandate(selectedIndustry, data.country),
     [selectedIndustry, data.country]
   )
-  const penalty = useMemo(() => deriveIndustryPenalty(selectedIndustry), [selectedIndustry])
 
   // Independent second migration-cost estimate from the user's assessment
   // profile — the same cross-check the ROI Calculator already runs.
@@ -115,7 +144,8 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         : null,
     [data.isAssessmentComplete, data.assessmentResult]
   )
-  const migrationCostUSD = assessmentDerived?.migrationCost ?? profile.migrationCostUSD
+  const suggestedMigrationCostUSD = assessmentDerived?.migrationCost ?? profile.migrationCostUSD
+  const migrationCostUSD = migrationCostOverrideUSD ?? suggestedMigrationCostUSD
   const migrationCostRecon = useMemo(() => {
     if (!assessmentDerived) return null
     return {
@@ -153,13 +183,18 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       migrationCostUSD,
       delayPremiumPerYear: profile.delayPremiumPerYear,
       migrationDurationYears,
-      mandateType: mandate.mandateType,
-      hardDeadlineYear: mandate.deadlineYear,
-      annualFineUSD: penalty.annualFineUSD,
-      cliffLossUSD: penalty.cliffLossUSD,
+      // A framework match is educational context, not proof that a dollar
+      // consequence applies to this organization. Only explicit learner input
+      // enters the calculation.
+      mandateType:
+        verifiedAnnualConsequenceUSD > 0 || verifiedOneTimeConsequenceUSD > 0 ? 'HARD' : 'NONE',
+      hardDeadlineYear: verifiedEffectiveYear,
+      annualFineUSD: verifiedAnnualConsequenceUSD,
+      cliffLossUSD: verifiedOneTimeConsequenceUSD,
       currentYear,
       horizonYears: DELAY_MODEL_DEFAULTS.horizonYears,
-      discountRatePct: DELAY_MODEL_DEFAULTS.discountRatePct,
+      discountRatePct,
+      crqcScenario: 'consensus',
     }
   }, [
     chainedFromSimulator,
@@ -169,8 +204,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     migrationCostUSD,
     profile.delayPremiumPerYear,
     migrationDurationYears,
-    mandate,
-    penalty,
+    verifiedEffectiveYear,
+    verifiedAnnualConsequenceUSD,
+    verifiedOneTimeConsequenceUSD,
+    discountRatePct,
     currentYear,
   ])
 
@@ -180,6 +217,39 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     [inputs, delayYears]
   )
   const costOfInaction = delayedResult.total - nowResult.total
+  const scenarioRange = useMemo(() => {
+    const incremental = (crqcScenario: 'slow' | 'fast') => {
+      const scenarioInputs = { ...inputs, crqcScenario }
+      return (
+        projectDelayScenario(scenarioInputs, delayYears).total -
+        projectDelayScenario(scenarioInputs, 0).total
+      )
+    }
+    return { slow: incremental('slow'), fast: incremental('fast') }
+  }, [inputs, delayYears])
+  const scenarioLow = Math.min(scenarioRange.slow, scenarioRange.fast)
+  const scenarioHigh = Math.max(scenarioRange.slow, scenarioRange.fast)
+  const incrementalDrivers = useMemo(
+    () => [
+      {
+        label: 'migration timing and delay premium',
+        value: delayedResult.totalMigration - nowResult.totalMigration,
+      },
+      {
+        label: 'expected breach exposure',
+        value: delayedResult.totalBreach - nowResult.totalBreach,
+      },
+      {
+        label: 'learner-verified consequence',
+        value: delayedResult.totalPenalty - nowResult.totalPenalty,
+      },
+    ],
+    [delayedResult, nowResult]
+  )
+  const largestDriver = [...incrementalDrivers].sort(
+    (a, b) => Math.abs(b.value) - Math.abs(a.value)
+  )[0]
+  const nearZero = Math.abs(costOfInaction) < 1_000
   const crossover = useMemo(
     () => crossoverYear(nowResult.rows, delayedResult.rows),
     [nowResult, delayedResult]
@@ -188,6 +258,55 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   // Shared with the export below (`output:`) so Board Pitch Builder can read
   // the same numbers whether it's chained live via props (in the linear
   // wizard) or reads the last saved artifact (Simulation, Business Center).
+  const scenarioRecord: InactionScenarioRecord = useMemo(
+    () => ({
+      modelVersion: 'coi-2',
+      asOfYear: currentYear,
+      horizonYears: inputs.horizonYears,
+      industry: selectedIndustry,
+      delayYears,
+      migrationDurationYears,
+      migrationCostUSD,
+      delayPremiumPerYearUSD: profile.delayPremiumPerYear,
+      annualBreachProbPct,
+      breachBaselineUSD: inputs.breachBaseline,
+      baselineOrigin: chainedFromSimulator ? 'breach-simulator' : 'industry-default',
+      baseYearsOfData: inputs.baseYearsOfData,
+      hndlFactorPct: inputs.hndlFactorPct,
+      dataSensitivityClass,
+      discountRatePct,
+      verifiedConsequence: {
+        effectiveYear: verifiedEffectiveYear,
+        annualUSD: verifiedAnnualConsequenceUSD,
+        oneTimeUSD: verifiedOneTimeConsequenceUSD,
+        sourceNote: verifiedConsequenceSource.trim(),
+      },
+      sourceStatus: {
+        breachBaseline:
+          'IBM 2025 sector assumption — one edition behind and not independently verified',
+        breachProbability: 'Cyentia IRIS 2025 primary-verified',
+        crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model',
+      },
+    }),
+    [
+      currentYear,
+      inputs,
+      selectedIndustry,
+      delayYears,
+      migrationDurationYears,
+      migrationCostUSD,
+      profile.delayPremiumPerYear,
+      annualBreachProbPct,
+      chainedFromSimulator,
+      dataSensitivityClass,
+      discountRatePct,
+      verifiedEffectiveYear,
+      verifiedAnnualConsequenceUSD,
+      verifiedOneTimeConsequenceUSD,
+      verifiedConsequenceSource,
+    ]
+  )
+
   const outputPayload: InactionOutput = useMemo(
     () => ({
       costOfInactionUSD: costOfInaction,
@@ -195,8 +314,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       crossoverYear: crossover,
       latestSafeStartYear: moscaVerdict.latestSafeStartYear,
       alreadyLate: moscaVerdict.alreadyLate,
+      scenario: scenarioRecord,
     }),
-    [costOfInaction, delayYears, crossover, moscaVerdict]
+    [costOfInaction, delayYears, crossover, moscaVerdict, scenarioRecord]
   )
 
   useEffect(() => {
@@ -205,7 +325,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
 
   const mandateLabel =
     mandate.mandateType === 'HARD'
-      ? 'binding deadline'
+      ? 'candidate requirement date; applicability and effective date unverified'
       : mandate.mandateType === 'SOFT'
         ? 'guidance target'
         : 'planning anchor (no binding mandate found)'
@@ -219,15 +339,25 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     md += `| **Cost of inaction (delay ${delayYears}yr)** | **${fmt(costOfInaction)}** |\n`
     md += `| Annual breach probability | ${annualBreachProbPct}% |\n`
     md += `| Migration duration | ${migrationDurationYears} yr |\n`
-    md += `| Regulatory deadline | ${mandate.deadlineYear} (${mandateLabel} — ${mandate.driverName}) |\n`
-    md += `| Mosca latest safe start | ${Math.round(moscaVerdict.latestSafeStartYear)} (median CRQC arrival ${moscaVerdict.crqcYear}) |\n`
+    md += `| Planning date context | ${mandate.deadlineYear} (${mandateLabel} — ${mandate.driverName}; verify applicability and effective date) |\n`
+    md += `| Mosca scenario threshold | ${Math.round(moscaVerdict.latestSafeStartYear)} (consensus median CRQC year ${moscaVerdict.crqcYear}; not a safe-date guarantee) |\n`
     md += `| Crossover year | ${crossover ?? `beyond the ${inputs.horizonYears}-year horizon`} |\n\n`
     md += `## Delay ${delayYears}yr breakdown (NPV)\n\n`
     md += `| Component | Value |\n|-----------|-------|\n`
     md += `| Migration (with delay premium) | ${fmt(delayedResult.totalMigration)} |\n`
     md += `| Expected breach loss | ${fmt(delayedResult.totalBreach)} |\n`
-    md += `| Regulatory fine (${penalty.annualFineDriver ?? 'none'}) | ${fmt(delayedResult.totalFine)} |\n`
-    md += `| Regulatory cliff loss (${penalty.cliffLossDriver ?? 'none'}) | ${fmt(delayedResult.totalCliff)} |\n\n`
+    md += `| Learner-verified annual consequence | ${fmt(delayedResult.totalFine)} |\n`
+    md += `| Learner-verified one-time consequence | ${fmt(delayedResult.totalCliff)} |\n\n`
+    md += `## Reproducible scenario inputs (model coi-2)\n\n`
+    md += `| Input | Value / origin |\n|---|---|\n`
+    md += `| As-of year / horizon | ${currentYear} / ${inputs.horizonYears} years |\n`
+    md += `| Migration cost | ${fmt(migrationCostUSD)} (${migrationCostOverrideUSD === null ? 'suggested scenario value' : 'learner-entered'}) |\n`
+    md += `| Delay premium | ${fmt(profile.delayPremiumPerYear)}/year (analyst assumption) |\n`
+    md += `| Discount rate | ${discountRatePct}% (learner-adjustable assumption) |\n`
+    md += `| Stored-data / HNDL assumptions | ${inputs.baseYearsOfData} years / ${inputs.hndlFactorPct}% |\n`
+    md += `| Data class / assumed shelf life | ${DATA_SENSITIVITY_LABELS[dataSensitivityClass]} / ${shelfLifeYears} years |\n`
+    md += `| Verified consequence effective year | ${verifiedAnnualConsequenceUSD > 0 || verifiedOneTimeConsequenceUSD > 0 ? verifiedEffectiveYear : 'not included'} |\n`
+    md += `| Verified consequence source | ${verifiedConsequenceSource.trim() || 'none supplied'} |\n\n`
     if (migrationCostRecon) {
       md += `Assessment-profile migration estimate: ${fmt(migrationCostRecon.assessmentCost)} (${migrationCostRecon.recon.verdict} with the industry baseline).\n\n`
     }
@@ -237,7 +367,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       const delayed = delayedResult.rows[i]
       md += `| ${row.year} | ${fmt(row.cumulativeTotal)} | ${fmt(delayed.cumulativeTotal)} | ${fmt(delayed.cumulativeTotal - row.cumulativeTotal)} |\n`
     })
-    md += `\n*Illustrative — same probability-weighted breach model as the Breach Scenario Simulator (IBM 2025 baseline, GRI 2025 CRQC-arrival curve); deadline/penalty traced to complianceData.ts and the timeline CSV. Discounted at ${inputs.discountRatePct}% over ${inputs.horizonYears} years. Migration cost and delay premium are analyst estimates, not cited figures.*\n`
+    md += `\n*Illustrative financial scenario, not a forecast or investment recommendation. IBM 2025 per-sector baseline: one edition behind and not independently verified. GRI 2025 expert-survey bands are interpolated by this model. Migration cost, delay premium and most data shelf lives are assumptions. No framework-derived fine is included automatically; only the learner-entered, organization-verified consequence above enters the arithmetic.*\n`
     return md
   }, [
     selectedIndustry,
@@ -248,7 +378,17 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     mandateLabel,
     moscaVerdict,
     crossover,
-    penalty,
+    currentYear,
+    migrationCostUSD,
+    migrationCostOverrideUSD,
+    profile.delayPremiumPerYear,
+    discountRatePct,
+    dataSensitivityClass,
+    shelfLifeYears,
+    verifiedEffectiveYear,
+    verifiedAnnualConsequenceUSD,
+    verifiedOneTimeConsequenceUSD,
+    verifiedConsequenceSource,
     nowResult,
     delayedResult,
     costOfInaction,
@@ -262,13 +402,16 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         <PreFilledBanner summary="Restored your last saved cost-of-inaction scenario — adjust the controls below to update it." />
       )}
       {/* Controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="space-y-2">
           <div className="text-sm font-medium text-foreground">Industry</div>
           <FilterDropdown
             items={DELAY_COST_PROFILES.map((p) => ({ id: p.industry, label: p.industry }))}
             selectedId={selectedIndustry}
-            onSelect={setSelectedIndustry}
+            onSelect={(industry) => {
+              setSelectedIndustry(industry)
+              setMigrationCostOverrideUSD(null)
+            }}
           />
         </div>
         <div className="space-y-2">
@@ -289,7 +432,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>1 yr</span>
-            <span>past {mandate.deadlineYear} →</span>
+            <span>compare with start now</span>
             <span>8 yrs</span>
           </div>
         </div>
@@ -360,7 +503,107 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             <span>6 yrs</span>
           </div>
         </div>
+        <div className="space-y-2">
+          <label htmlFor="inaction-migration-cost" className="text-sm font-medium text-foreground">
+            Migration cost (USD)
+          </label>
+          <input
+            id="inaction-migration-cost"
+            type="number"
+            min={0}
+            step={10000}
+            value={migrationCostUSD}
+            onChange={(e) => setMigrationCostOverrideUSD(Math.max(0, Number(e.target.value)))}
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+          />
+          <p className="text-xs text-muted-foreground">
+            {migrationCostOverrideUSD === null
+              ? 'Suggested scenario value; replace it with a reviewed finance estimate.'
+              : 'Learner-entered value.'}
+          </p>
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="inaction-discount-rate" className="text-sm font-medium text-foreground">
+            Discount rate: <span className="font-bold text-primary">{discountRatePct}%</span>
+          </label>
+          <input
+            id="inaction-discount-rate"
+            type="range"
+            min={0}
+            max={20}
+            step={0.5}
+            value={discountRatePct}
+            onChange={(e) => setDiscountRatePct(Number(e.target.value))}
+            className="w-full accent-primary"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>0%</span>
+            <span>20%</span>
+          </div>
+        </div>
       </div>
+
+      <details className="rounded-lg border border-border bg-muted/20 p-4">
+        <summary className="cursor-pointer text-sm font-semibold text-foreground">
+          Optional organization-verified consequence
+        </summary>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          No fine, contract loss or certification loss is inferred from the framework list. Enter a
+          value only after your legal, compliance or commercial owner has confirmed that it applies
+          to this organization and date.
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="space-y-1 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">Effective year</span>
+            <input
+              aria-label="Verified consequence effective year"
+              type="number"
+              min={currentYear}
+              max={currentYear + 30}
+              value={verifiedEffectiveYear}
+              onChange={(e) => setVerifiedEffectiveYear(Number(e.target.value))}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="space-y-1 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">Annual consequence (USD)</span>
+            <input
+              aria-label="Verified annual consequence"
+              type="number"
+              min={0}
+              step={10000}
+              value={verifiedAnnualConsequenceUSD}
+              onChange={(e) => setVerifiedAnnualConsequenceUSD(Math.max(0, Number(e.target.value)))}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="space-y-1 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">One-time consequence (USD)</span>
+            <input
+              aria-label="Verified one-time consequence"
+              type="number"
+              min={0}
+              step={10000}
+              value={verifiedOneTimeConsequenceUSD}
+              onChange={(e) =>
+                setVerifiedOneTimeConsequenceUSD(Math.max(0, Number(e.target.value)))
+              }
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="space-y-1 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">Source or owner</span>
+            <input
+              aria-label="Verified consequence source or owner"
+              type="text"
+              value={verifiedConsequenceSource}
+              onChange={(e) => setVerifiedConsequenceSource(e.target.value)}
+              placeholder="e.g. Legal memo, 2026-10-01"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+          </label>
+        </div>
+      </details>
 
       {breachOutput && (
         <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -377,6 +620,112 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             </>
           )}
         </p>
+      )}
+
+      <section
+        aria-label="Scenario assumptions"
+        className="rounded-lg border border-primary/25 bg-primary/5 p-4"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold text-foreground">Scenario assumptions</h2>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setMigrationCostOverrideUSD(null)
+              setDiscountRatePct(DELAY_MODEL_DEFAULTS.discountRatePct)
+              setVerifiedAnnualConsequenceUSD(0)
+              setVerifiedOneTimeConsequenceUSD(0)
+              setVerifiedConsequenceSource('')
+            }}
+          >
+            Reset financial assumptions
+          </Button>
+        </div>
+        <dl className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <dt className="font-semibold text-foreground">Breach baseline</dt>
+            <dd>
+              {fmt(inputs.breachBaseline)} — IBM 2025 sector assumption, one edition behind and not
+              independently verified
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-foreground">Breach probability</dt>
+            <dd>{annualBreachProbPct}% — Cyentia IRIS 2025 primary-verified</dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-foreground">CRQC uncertainty</dt>
+            <dd>GRI 2025 expert-survey bands, interpolated by this model</dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-foreground">Stored data / HNDL</dt>
+            <dd>
+              {inputs.baseYearsOfData} years / {inputs.hndlFactorPct}% (
+              {chainedFromSimulator ? 'carried from Step 3' : 'example defaults'})
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-foreground">Shelf life</dt>
+            <dd>
+              {shelfLifeYears} years for {DATA_SENSITIVITY_LABELS[dataSensitivityClass]} — modelling
+              assumption
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-foreground">Finance</dt>
+            <dd>
+              {inputs.horizonYears}-year horizon, {discountRatePct}% discount rate; migration and
+              delay premium are scenario assumptions
+            </dd>
+          </div>
+        </dl>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          {IBM_BASELINE_UNVERIFIED_NOTE}
+        </p>
+      </section>
+
+      {selectedPersona === 'executive' && (
+        <section
+          aria-label="Executive decision brief"
+          className="rounded-lg border border-primary/30 bg-muted/20 p-4"
+        >
+          <h2 className="text-base font-semibold text-foreground">Executive decision brief</h2>
+          <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="font-semibold text-foreground">Decision being tested</dt>
+              <dd className="text-muted-foreground">
+                Start migration now or defer its start by {delayYears} year
+                {delayYears === 1 ? '' : 's'}, over the same {inputs.horizonYears}-year horizon.
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-foreground">Modelled direction</dt>
+              <dd className="text-muted-foreground">
+                {nearZero
+                  ? 'The two choices are within $1,000 in the central scenario.'
+                  : costOfInaction > 0
+                    ? `Deferral adds ${fmt(costOfInaction)} in the central scenario.`
+                    : `Deferral reduces discounted NPV by ${fmt(Math.abs(costOfInaction))}, while leaving exposure higher for longer.`}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-foreground">Largest modelled driver</dt>
+              <dd className="text-muted-foreground">
+                {largestDriver.label} ({fmt(largestDriver.value)} incremental NPV).
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-foreground">Before using this result</dt>
+              <dd className="text-muted-foreground">
+                Replace example costs with finance-reviewed inputs, validate data lifetime and
+                breach assumptions, and obtain written confirmation for any legal or commercial
+                consequence.
+              </dd>
+            </div>
+          </dl>
+        </section>
       )}
 
       {/* Key metrics (NPV over the horizon) */}
@@ -417,7 +766,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               size={14}
               className={costOfInaction < 0 ? 'text-status-warning' : 'text-status-error'}
             />
-            <span className="text-xs text-muted-foreground">Cost of Inaction</span>
+            <span className="text-xs text-muted-foreground">Incremental NPV of deferral</span>
           </div>
           <div
             className={`text-2xl font-bold ${
@@ -427,7 +776,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             {fmt(costOfInaction)}
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            Extra cost from delaying {delayYears} year{delayYears !== 1 ? 's' : ''}
+            Delay scenario minus migrate-now scenario
           </div>
           {/* A negative figure is a real result, not an error, and it must be
               explained rather than left to read as "$0 risk". At a high
@@ -438,12 +787,22 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               Negative: at a {inputs.discountRatePct}% discount rate
               {mandate.mandateType !== 'HARD' && ' and with no binding mandate'}, deferring the
               migration spend is worth more in present-value terms than the added breach exposure it
-              buys. That is a financing result, not a safety verdict — the risk itself still rises
-              every year you wait (see the year-by-year table). Lower the discount rate to see the
-              risk in real terms.
+              buys. That is a financing result, not a safety verdict. Set the discount rate to 0% to
+              inspect undiscounted modelled dollars; that is not the same as an inflation-adjusted
+              real-dollar analysis.
             </div>
           )}
         </div>
+      </div>
+
+      <div className="rounded-lg border border-border bg-muted/20 p-4 text-sm">
+        <h2 className="font-semibold text-foreground">CRQC scenario range</h2>
+        <p className="mt-1 text-muted-foreground">
+          Across the GRI expert-survey slow and fast bands, the incremental NPV ranges from{' '}
+          <strong className="text-foreground">{fmt(scenarioLow)}</strong> to{' '}
+          <strong className="text-foreground">{fmt(scenarioHigh)}</strong>. The headline uses the
+          consensus midpoint. This range is scenario uncertainty, not a confidence interval.
+        </p>
       </div>
 
       {/* Mosca's inequality + crossover year */}
@@ -451,26 +810,28 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         <div className="glass-panel p-4 border-l-4 border-l-primary">
           <div className="flex items-center gap-2 mb-1">
             <Clock size={14} className="text-primary" />
-            <span className="text-xs font-medium text-foreground">Mosca&apos;s inequality</span>
+            <span className="text-xs font-medium text-foreground">Mosca scenario threshold</span>
           </div>
           <p className="text-xs text-muted-foreground">
             {DATA_SENSITIVITY_LABELS[dataSensitivityClass]} must stay secure for {shelfLifeYears}{' '}
             years; migration takes {migrationDurationYears}.{' '}
             {moscaVerdict.alreadyLate ? (
               <>
-                Already past the latest safe start (
+                In the consensus scenario, the latest-start threshold is already past (
                 <strong className="text-status-error">
                   {Math.round(moscaVerdict.latestSafeStartYear)}
                 </strong>
-                ) for the median CRQC arrival year ({moscaVerdict.crqcYear}).
+                ) for the median CRQC year ({moscaVerdict.crqcYear}). This is not a safe-date
+                guarantee.
               </>
             ) : (
               <>
-                Migration should start no later than{' '}
+                The consensus-scenario threshold is{' '}
                 <strong className="text-primary">
                   {Math.round(moscaVerdict.latestSafeStartYear)}
                 </strong>{' '}
-                to stay protected through the median CRQC arrival year ({moscaVerdict.crqcYear}).
+                when compared with the median CRQC year ({moscaVerdict.crqcYear}). This is a
+                planning scenario, not a safe-date guarantee.
               </>
             )}
           </p>
@@ -483,8 +844,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           <p className="text-xs text-muted-foreground">
             {crossover !== null ? (
               <>
-                Delaying {delayYears} year{delayYears !== 1 ? 's' : ''} permanently costs more
-                starting <strong className="text-status-error">{crossover}</strong>.
+                Delaying {delayYears} year{delayYears !== 1 ? 's' : ''} costs more from{' '}
+                <strong className="text-status-error">{crossover}</strong> through the end of this
+                {` ${inputs.horizonYears}`}-year horizon.
               </>
             ) : (
               <>
@@ -550,14 +912,29 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       <div className="glass-panel border-l-4 border-l-primary p-4">
         <h2 className="mb-1 text-sm font-semibold text-foreground">What this is telling you</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Waiting {delayYears} year{delayYears === 1 ? '' : 's'} costs you about{' '}
-          <strong className="text-foreground">{fmt(costOfInaction)}</strong> more over{' '}
-          {inputs.horizonYears} years than starting now — not because migration gets more expensive
-          on its own, but because you carry full exposure for longer and pay a rising premium to
-          compress the work later.{' '}
-          {moscaVerdict.alreadyLate
-            ? 'You are already past the latest safe start date for your own data shelf life, so the question is no longer whether to start but what to protect first.'
-            : `The date that actually binds you is ${Math.round(moscaVerdict.latestSafeStartYear)} — that is when starting later stops being a cost decision and becomes an exposure you cannot undo.`}
+          {nearZero ? (
+            <>
+              At the displayed precision, waiting {delayYears} year{delayYears === 1 ? '' : 's'}{' '}
+              does not materially change the {inputs.horizonYears}-year NPV in the central scenario.
+            </>
+          ) : costOfInaction > 0 ? (
+            <>
+              Waiting {delayYears} year{delayYears === 1 ? '' : 's'} adds approximately{' '}
+              <strong className="text-foreground">{fmt(costOfInaction)}</strong> over{' '}
+              {inputs.horizonYears} years in the central scenario. The largest modelled driver is{' '}
+              {largestDriver.label}.
+            </>
+          ) : (
+            <>
+              Waiting {delayYears} year{delayYears === 1 ? '' : 's'} lowers discounted NPV by
+              approximately{' '}
+              <strong className="text-foreground">{fmt(Math.abs(costOfInaction))}</strong> because
+              spending is deferred, while the organization remains exposed for longer. This is a
+              financing result, not a safety recommendation.
+            </>
+          )}{' '}
+          The Mosca date shown above is a threshold under assumed data shelf life, migration time
+          and the GRI consensus scenario; validate all three before using it in a decision.
         </p>
       </div>
 
@@ -593,29 +970,22 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             </p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-0.5">Regulatory exposure</p>
+            <p className="text-xs text-muted-foreground mb-0.5">Verified consequence</p>
             <p className="font-semibold text-status-warning">{fmt(delayedResult.totalPenalty)}</p>
             <p className="text-xs text-muted-foreground">
-              {mandate.mandateType === 'HARD' ? (
+              {verifiedAnnualConsequenceUSD > 0 || verifiedOneTimeConsequenceUSD > 0 ? (
                 <>
-                  {penalty.annualFineUSD > 0 &&
-                    `${fmt(penalty.annualFineUSD)}/yr fine (${penalty.annualFineDriver}) `}
-                  {penalty.cliffLossUSD > 0 &&
-                    `+ ${fmt(penalty.cliffLossUSD)} one-time loss (${penalty.cliffLossDriver}) `}
-                  {penalty.annualFineUSD === 0 && penalty.cliffLossUSD === 0
-                    ? `no priced penalty found for this industry's binding frameworks — `
-                    : ''}
-                  once unmigrated past the {mandate.deadlineYear} deadline ({mandate.driverName}).
-                </>
-              ) : mandate.mandateType === 'SOFT' ? (
-                <>
-                  {mandate.deadlineYear} is a guidance target ({mandate.driverName}), not a binding
-                  mandate — no penalty modeled.
+                  Learner-entered amounts apply while migration remains incomplete after{' '}
+                  {verifiedEffectiveYear}. Source/owner:{' '}
+                  {verifiedConsequenceSource.trim() ||
+                    'not supplied — add one before relying on it'}
+                  .
                 </>
               ) : (
                 <>
-                  No binding PQC mandate found for {selectedIndustry} — {mandate.deadlineYear} is a
-                  planning anchor ({mandate.driverName}), not a penalty trigger.
+                  $0 by default. The {mandate.deadlineYear} date shown elsewhere (
+                  {mandate.driverName}) is planning context only and does not prove a fine or
+                  contract loss applies.
                 </>
               )}
             </p>
@@ -648,35 +1018,42 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           <p>
             <strong>Migrating now is not zero-risk:</strong> data harvested before you migrate stays
             decryptable, so a residual HNDL tail persists after migration — exposure ramps down over
-            the {migrationDurationYears}-year migration window rather than switching off instantly,
-            and no further data is harvested once migration begins.
+            the {migrationDurationYears}-year migration window rather than switching off instantly.
+            For this educational scenario, the vulnerable corpus stops growing when migration
+            begins; a real staged migration may keep creating quantum-vulnerable ciphertext on
+            legacy systems.
           </p>
           <p>
-            <strong>Deadline:</strong>{' '}
+            <strong>Planning date context:</strong>{' '}
             {mandate.mandateType === 'HARD'
-              ? `a binding requirement (${mandate.driverName})`
+              ? `a candidate requirement record (${mandate.driverName}), not a legal determination`
               : mandate.mandateType === 'SOFT'
                 ? `guidance, not a binding mandate (${mandate.driverName})`
                 : 'no framework or country mandate applies to this industry'}{' '}
             — {mandate.deadlineYear}{' '}
             {mandate.driverSource === 'planning-anchor'
               ? 'is a NIST IR 8547 (draft) planning anchor, not a deadline you can be penalized against.'
-              : 'is derived from complianceData.ts / the timeline CSV, not hand-picked.'}{' '}
-            Penalties accrue only once migration is fully complete and past a HARD deadline — a
-            short delay that still finishes before it incurs none.
+              : 'is derived from the cited compliance/timeline record, but its applicability and effective date still require review.'}{' '}
+            No dollar consequence is inferred from that record. If you enter a verified consequence,
+            it applies only while migration remains incomplete after the effective year you
+            supplied.
           </p>
           <p>
             <strong>Mosca&apos;s inequality:</strong> shelf life + migration time compared against
-            the median CRQC arrival year ({moscaVerdict.crqcYear}, GRI 2025 consensus scenario) —
-            the same decision rule the Breach Scenario Simulator uses.
+            the median CRQC year ({moscaVerdict.crqcYear}, GRI 2025 consensus scenario). The slow,
+            consensus and fast curves interpolate expert-survey probability bands; they are not
+            predictions or confidence intervals.
           </p>
           <p>
-            <strong>NPV:</strong> all cash flows are discounted at {inputs.discountRatePct}% over{' '}
-            {inputs.horizonYears} years, matching the ROI Calculator.
+            <strong>NPV:</strong> cash flows are discounted at the learner-adjustable{' '}
+            {inputs.discountRatePct}% rate over {inputs.horizonYears} years. Migration capex is
+            modelled as one payment when migration starts; it is not spread across the programme.
           </p>
           <p className="italic">
-            Illustrative estimates. Migration cost and delay premium are industry-analyst estimates,
-            not cited figures. Pair with your finance model before committing capital.
+            Illustrative financial scenario, not a forecast, actuarial opinion or investment
+            recommendation. Migration cost, delay premium and most data shelf lives are assumptions.
+            Pair the export with reviewed finance, legal and technical inputs before making a
+            decision.
           </p>
         </div>
       </details>
@@ -693,7 +1070,19 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             type: 'cost-of-inaction',
             title: `Cost of Inaction — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
             data: exportMarkdown,
-            inputs: { selectedIndustry, delayYears, annualBreachProbPct, migrationDurationYears },
+            inputs: {
+              selectedIndustry,
+              delayYears,
+              annualBreachProbPct,
+              migrationDurationYears,
+              migrationCostOverrideUSD,
+              discountRatePct,
+              verifiedEffectiveYear,
+              verifiedAnnualConsequenceUSD,
+              verifiedOneTimeConsequenceUSD,
+              verifiedConsequenceSource,
+              scenario: scenarioRecord,
+            },
             output: outputPayload,
             createdAt: Date.now(),
           })

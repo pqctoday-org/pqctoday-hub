@@ -4,6 +4,10 @@ import {
   EXECUTIVE_SEQUENCE,
   GRC_SEQUENCE,
   DEVELOPER_SEQUENCE,
+  ARCHITECT_SEQUENCE,
+  CERT_ENGINEER_SEQUENCE,
+  OPS_SEQUENCE,
+  CURIOUS_SEQUENCE,
   RESEARCHER_SEQUENCE,
   GENERIC_SEQUENCE,
   getBusinessRoleSequence,
@@ -14,6 +18,10 @@ const ALL_SEQUENCES = {
   executive: EXECUTIVE_SEQUENCE,
   grc: GRC_SEQUENCE,
   developer: DEVELOPER_SEQUENCE,
+  architect: ARCHITECT_SEQUENCE,
+  certification: CERT_ENGINEER_SEQUENCE,
+  operations: OPS_SEQUENCE,
+  curious: CURIOUS_SEQUENCE,
   researcher: RESEARCHER_SEQUENCE,
   generic: GENERIC_SEQUENCE,
 }
@@ -45,11 +53,15 @@ describe('businessRoleConfig', () => {
     expect(grcIds).not.toEqual(genericIds)
   })
 
-  it('getBusinessRoleSequence resolves executive, grc and developer to their own sequence', () => {
+  it('getBusinessRoleSequence resolves every selected role to an intentional sequence', () => {
     expect(getBusinessRoleSequence('executive')).toBe(EXECUTIVE_SEQUENCE)
     expect(getBusinessRoleSequence('grc')).toBe(GRC_SEQUENCE)
     expect(getBusinessRoleSequence('developer')).toBe(DEVELOPER_SEQUENCE)
     expect(getBusinessRoleSequence('researcher')).toBe(RESEARCHER_SEQUENCE)
+    expect(getBusinessRoleSequence('architect')).toBe(ARCHITECT_SEQUENCE)
+    expect(getBusinessRoleSequence('cert-engineer')).toBe(CERT_ENGINEER_SEQUENCE)
+    expect(getBusinessRoleSequence('ops')).toBe(OPS_SEQUENCE)
+    expect(getBusinessRoleSequence('curious')).toBe(CURIOUS_SEQUENCE)
   })
 
   it('the researcher sequence holds no program deliverables (ROI, RACI, roadmap, board deck)', () => {
@@ -67,10 +79,7 @@ describe('businessRoleConfig', () => {
     expect(ids).not.toContain('raci-builder')
   })
 
-  it('getBusinessRoleSequence falls back to the generic sequence for every other persona and null', () => {
-    for (const persona of ['architect', 'ops', 'curious'] as const) {
-      expect(getBusinessRoleSequence(persona), persona).toBe(GENERIC_SEQUENCE)
-    }
+  it('uses the generic sequence only when no role is selected', () => {
     expect(getBusinessRoleSequence(null)).toBe(GENERIC_SEQUENCE)
   })
 

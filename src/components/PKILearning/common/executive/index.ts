@@ -3,7 +3,11 @@ export { ArtifactBuilder } from './ArtifactBuilder'
 export type { ArtifactSection, ArtifactField } from './ArtifactBuilder'
 
 export { DataDrivenScorecard } from './DataDrivenScorecard'
-export type { ScorecardDimension } from './DataDrivenScorecard'
+export type {
+  ScorecardDimension,
+  ScorecardObservation,
+  ScorecardVerificationState,
+} from './DataDrivenScorecard'
 
 export { ExportableArtifact } from './ExportableArtifact'
 

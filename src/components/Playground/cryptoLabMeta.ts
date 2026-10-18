@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import type React from 'react'
 import type { PersonaId } from '@/data/learningPersonas'
+import { PLAYGROUND_ROLE_JOURNEYS } from '@/data/playgroundRoleJourneys'
 import { CATEGORIES, WORKSHOP_TOOLS, type WorkshopCategory } from './workshopRegistry'
 
 export interface CategoryMeta {
@@ -175,16 +176,14 @@ export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
  */
 export const PERSONA_FEATURED_TOOL_IDS: Record<PersonaId | 'none', readonly string[]> = {
   none: ['hsm-capacity', 'cert-capacity', 'pki-workshop'],
-  executive: ['hsm-capacity', 'cert-capacity'],
-  grc: ['cert-capacity', 'hsm-capacity'],
-  developer: ['hybrid-sigs', 'tpm-playground', 'email-signing', 'solana-flow'],
-  architect: ['tee-channel', 'kdf-derivation', 'hsm-capacity'],
-  researcher: ['source-combining', 'lms-hss', 'suci-flow', 'hd-wallet'],
-  'cert-engineer': ['entropy-test', 'drbg-demo', 'firmware-signing'],
-  ops: ['vpn-sim', 'hsm-capacity', 'hybrid-certs'],
-  // The TLS simulator is the curious first win ("see what breaks · 6 min");
-  // it leads, then the beginner QRNG demo (curious journey review, 16 Oct 2026).
-  curious: ['tls-simulator', 'qrng-demo', 'merkle-proof'],
+  executive: PLAYGROUND_ROLE_JOURNEYS.executive.toolIds,
+  grc: PLAYGROUND_ROLE_JOURNEYS.grc.toolIds,
+  developer: PLAYGROUND_ROLE_JOURNEYS.developer.toolIds,
+  architect: PLAYGROUND_ROLE_JOURNEYS.architect.toolIds,
+  researcher: PLAYGROUND_ROLE_JOURNEYS.researcher.toolIds,
+  'cert-engineer': PLAYGROUND_ROLE_JOURNEYS['cert-engineer'].toolIds,
+  ops: PLAYGROUND_ROLE_JOURNEYS.ops.toolIds,
+  curious: PLAYGROUND_ROLE_JOURNEYS.curious.toolIds,
 }
 
 const FEATURED_ACCENTS: readonly FeatureAccent[] = ['secondary', 'success', 'primary', 'warning']

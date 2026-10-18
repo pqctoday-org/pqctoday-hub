@@ -26,12 +26,12 @@
  *    it was when migration began; what still varies year to year afterward is
  *    the marginal CRQC-arrival probability, not further corpus aging —
  *    matching the shared model's own simplification, not a separate one.
- *  - Regulatory penalties (fine and one-time cliff) accrue only once
- *    migration is FULLY complete and past a HARD-mandated deadline — a SOFT
- *    guidance deadline or a NONE (no applicable mandate) never accrues a
- *    penalty. See inactionDrivers.ts for how the deadline/penalty are sourced.
+ *  - Optional learner-verified consequences (annual and one-time) accrue while
+ *    migration remains INCOMPLETE after the learner-supplied effective year.
+ *    The caller must never infer a dollar amount from a framework match alone.
  */
 import { computeBreachCosts, type DataSensitivityClass } from './breachCostModel'
+import type { CrqcScenario } from './crqcProbability'
 import { ANNUAL_BREACH_PROBABILITY_PCT } from '@/data/roiBaselines'
 import type { InactionMandateType } from './inactionDrivers'
 
@@ -57,9 +57,9 @@ export interface DelayScenarioInputs {
   mandateType: InactionMandateType
   /** Year the mandate bites (only meaningful when mandateType === 'HARD'). */
   hardDeadlineYear: number
-  /** Recurring annual fine once unmigrated past a HARD deadline. */
+  /** Recurring annual consequence once unmigrated past the verified effective year. */
   annualFineUSD: number
-  /** One-time contract/certification-loss cliff, charged once, past a HARD deadline. */
+  /** One-time verified consequence, charged once after the effective year. */
   cliffLossUSD: number
   /** Current calendar year (projection index 0). */
   currentYear: number
@@ -67,6 +67,8 @@ export interface DelayScenarioInputs {
   horizonYears: number
   /** Discount rate (0–100) for NPV. */
   discountRatePct: number
+  /** Expert-survey CRQC curve used for this scenario. Defaults to consensus. */
+  crqcScenario?: CrqcScenario
 }
 
 export const DELAY_MODEL_DEFAULTS = {
@@ -128,7 +130,7 @@ function rowAnnualLoss(
    */
   decryptionGapYears: number
 ): number {
-  return computeBreachCosts({
+  const costs = computeBreachCosts({
     baseline: inp.breachBaseline,
     breachScale: inp.breachScale,
     yearsOfData,
@@ -140,7 +142,10 @@ function rowAnnualLoss(
     crqcProbabilityMode: 'cumulative',
     decryptionGapYears,
     discountRateAnnual: Math.max(0, inp.discountRatePct) / 100,
-  }).quantumALE
+  })
+  if (inp.crqcScenario === 'slow') return costs.range.low.quantumALE
+  if (inp.crqcScenario === 'fast') return costs.range.high.quantumALE
+  return costs.range.central.quantumALE
 }
 
 /**
@@ -237,9 +242,8 @@ export function costOfInaction(inp: DelayScenarioInputs, delayYears: number): nu
 }
 
 /**
- * First year the delayed scenario's cumulative NPV permanently exceeds
- * migrate-now's (not just crosses briefly) — null if it never does within
- * the horizon.
+ * First year the delayed scenario's cumulative NPV exceeds migrate-now's and
+ * stays above it through the end of the selected horizon — null if it does not.
  */
 export function crossoverYear(nowRows: DelayYearRow[], delayedRows: DelayYearRow[]): number | null {
   for (let i = 0; i < nowRows.length; i++) {

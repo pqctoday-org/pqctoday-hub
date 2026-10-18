@@ -106,6 +106,8 @@ const MOBILE_SMOKE_SPECS = [
   'sim-mobile.spec.ts',
 ]
 
+const EDUCATION_TOOL_PR_SPECS = ['playground-pr.spec.ts', 'business-tools-pr.spec.ts']
+
 const useDev = process.env.E2E_SERVER === 'dev' && !process.env.CI
 const serverCommand = useDev
   ? `npm run dev -- --port ${PORT} --strictPort`
@@ -185,6 +187,27 @@ export default defineConfig({
       name: 'mobile-smoke',
       use: { ...devices['iPhone 14'] },
       testMatch: MOBILE_SMOKE_SPECS.map((f) => `**/${f}`),
+    },
+    // Browser education-tool PR gate: Playground and Business Tool
+    // route/role/a11y checks without executing the slow real-WASM suites.
+    // Those remain in nightly/release coverage.
+    {
+      name: 'playground-pr-desktop',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 1000 },
+        launchOptions: CHROMIUM_LAUNCH_OPTIONS,
+      },
+      testMatch: EDUCATION_TOOL_PR_SPECS.map((f) => `**/${f}`),
+    },
+    {
+      name: 'playground-pr-mobile',
+      use: {
+        ...devices['Pixel 7'],
+        viewport: { width: 390, height: 844 },
+        launchOptions: CHROMIUM_LAUNCH_OPTIONS,
+      },
+      testMatch: EDUCATION_TOOL_PR_SPECS.map((f) => `**/${f}`),
     },
   ],
   webServer: {

@@ -133,7 +133,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
       for (const f of findings) md += `- ${f}\n`
       md += `\n`
     }
-    md += `*Illustrative — IBM Cost of a Data Breach 2025 and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
+    md += `*Illustrative — IBM Cost of a Data Breach 2025 per-sector baselines (one edition behind; IBM published its 2026 global report) and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
     md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     return md
   }, [breachCosts, selectedIndustry, findings])

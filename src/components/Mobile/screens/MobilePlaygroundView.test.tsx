@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobilePlaygroundView } from './MobilePlaygroundView'
 import { WORKSHOP_TOOLS, CATEGORIES } from '@/components/Playground/workshopRegistry'
@@ -23,10 +23,12 @@ function renderView() {
 
 describe('MobilePlaygroundView', () => {
   afterEach(() => {
-    useBookmarkStore.getState().myPlaygroundTools.forEach((id) => {
-      useBookmarkStore.getState().toggleMyPlaygroundTool(id)
+    act(() => {
+      useBookmarkStore.getState().myPlaygroundTools.forEach((id) => {
+        useBookmarkStore.getState().toggleMyPlaygroundTool(id)
+      })
+      usePersonaStore.getState().clearPersona()
     })
-    usePersonaStore.getState().clearPersona()
   })
 
   it('shows a "Good places to start" row of real beginner tools when no persona is set', () => {
@@ -40,7 +42,7 @@ describe('MobilePlaygroundView', () => {
   })
 
   it('the start-here row switches to persona-matched tools once a persona is set', () => {
-    usePersonaStore.getState().setPersona('developer')
+    act(() => usePersonaStore.getState().setPersona('developer'))
     renderView()
     expect(screen.getByText('Recommended for Developer')).toBeInTheDocument()
     const matched = MOBILE_TOOLS.filter((t) => t.recommendedPersonas.includes('developer')).slice(

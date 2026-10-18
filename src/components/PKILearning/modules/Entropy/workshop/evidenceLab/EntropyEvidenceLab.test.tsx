@@ -269,7 +269,7 @@ describe('EntropyEvidenceLab', () => {
       /^entropy-evidence-kv260-idle-sequential-\d{4}-\d{2}-\d{2}\.json$/
     )
     const json = JSON.parse(await downloads[0].blob.text())
-    expect(json.schema).toBe('pqctoday.run-manifest/1')
+    expect(json.schema).toBe('pqctoday.run-manifest/2')
     expect(json.notice).toMatch(/^PQC Today is an educational/)
     expect(json.site).toHaveProperty('appVersion')
     expect(json.tool.id).toBe('entropy-evidence-lab')

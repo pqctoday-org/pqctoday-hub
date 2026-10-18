@@ -4,12 +4,12 @@ Migrating to post-quantum cryptography is not just a technical upgrade; it is a 
 
 ### Why It Matters
 
-Without executive sponsorship and dedicated funding, PQC migrations stall. Delaying the transition leads to rapidly compounding costs: increasing breach exposure from Harvest-Now-Decrypt-Later attacks, rising compliance penalties, and the growing technical debt of legacy systems.
+Without executive sponsorship and dedicated funding, PQC migrations stall. Delaying the transition can increase Harvest-Now-Decrypt-Later exposure, compress delivery work and deepen legacy-system complexity. Whether it raises discounted financial cost depends on the scenario assumptions.
 
 ### The Key Takeaway
 
-A successful business case accurately projects direct migration costs (software, hardware, training) and offsets them against measurable savings from breach avoidance, compliance penalty avoidance, and operational competitive advantages.
+A useful business case makes direct migration costs, breach-risk assumptions, possible commercial or regulatory consequences, uncertainty and the limits of the evidence visible. It does not turn an industry average into an organization-specific forecast.
 
 ### What's Happening
 
-Early adopters are using PQC migration cost models to secure board-level funding, demonstrating that proactive investment in quantum-safe cryptography is significantly cheaper than the compounding costs of delayed migration, breach exposure, and compliance penalties.
+PQC migration cost models can help frame a board decision by comparing start-now and delay scenarios. Their value is in exposing the assumptions and decision trade-off, not in guaranteeing that one precise dollar result will occur.

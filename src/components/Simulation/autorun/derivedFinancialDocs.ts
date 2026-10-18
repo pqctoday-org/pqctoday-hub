@@ -21,7 +21,6 @@ import {
   projectDelayScenario,
   type DelayScenarioResult,
 } from '@/utils/delayCostModel'
-import { deriveIndustryMandate, deriveIndustryPenalty } from '@/utils/inactionDrivers'
 import { compareCostModels } from '@/utils/costModelSim'
 import { DELAY_COST_PROFILES } from '@/components/PKILearning/modules/PQCBusinessCase/data/businessCaseScenarios'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
@@ -166,8 +165,6 @@ function sectorFinancials(sector: DemoSector): SectorFinancials {
 
   const profile =
     DELAY_COST_PROFILES.find((p) => p.industry === s.industry) ?? DELAY_COST_PROFILES[0]
-  const mandate = deriveIndustryMandate(s.industry)
-  const penalty = deriveIndustryPenalty(s.industry)
   const delayInputs = {
     breachBaseline: baseline,
     breachScale: 1,
@@ -178,10 +175,13 @@ function sectorFinancials(sector: DemoSector): SectorFinancials {
     migrationCostUSD: profile.migrationCostUSD,
     delayPremiumPerYear: profile.delayPremiumPerYear,
     migrationDurationYears: DELAY_MODEL_DEFAULTS.migrationDurationYears,
-    mandateType: mandate.mandateType,
-    hardDeadlineYear: mandate.deadlineYear,
-    annualFineUSD: penalty.annualFineUSD,
-    cliffLossUSD: penalty.cliffLossUSD,
+    // Demo artifacts must not imply that an industry/framework match proves a
+    // fine or contract loss for an organization. The interactive tool accepts
+    // only learner-entered, verified consequences; the demo therefore uses 0.
+    mandateType: 'NONE' as const,
+    hardDeadlineYear: CURRENT_YEAR,
+    annualFineUSD: 0,
+    cliffLossUSD: 0,
     currentYear: CURRENT_YEAR,
     horizonYears: DELAY_MODEL_DEFAULTS.horizonYears,
     discountRatePct: DELAY_MODEL_DEFAULTS.discountRatePct,
@@ -268,7 +268,7 @@ export function deriveInactionDoc(sector: DemoSector): DemoDoc {
       `| Delay ${DELAY_YEARS}yr (${DELAY_MODEL_DEFAULTS.horizonYears}-yr NPV) | ${fmt(cur, delayed.total)} |`,
       `| **Cost of inaction** | **${fmt(cur, costOfInaction)}** |`,
       '',
-      `Discounted at ${DELAY_MODEL_DEFAULTS.discountRatePct}% over ${DELAY_MODEL_DEFAULTS.horizonYears} years; a residual HNDL tail persists after migration from data harvested before then. Derived from the Cost of Inaction Analyzer.`
+      `Illustrative financial scenario, not a forecast. Discounted at ${DELAY_MODEL_DEFAULTS.discountRatePct}% over ${DELAY_MODEL_DEFAULTS.horizonYears} years; a residual HNDL tail persists after migration from data harvested before then. No framework-derived fine or contract loss is included. Derived from the Cost of Inaction Analyzer.`
     ),
   }
 }

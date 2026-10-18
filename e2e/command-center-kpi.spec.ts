@@ -66,13 +66,16 @@ test.describe('Command Center KPI Dashboard Builder', () => {
     await expect(page.getByTestId('kpi-dim-systems-inventoried')).toBeVisible()
   })
 
-  test('HNDL horizon is locked when no assessment is complete', async ({ page }) => {
+  test('HNDL coverage remains unscored until organizational evidence is entered', async ({
+    page,
+  }) => {
     await seedPersona(page, 'executive')
     await page.goto(DASHBOARD_URL, { waitUntil: 'networkidle', timeout: 30_000 })
 
     const hndl = page.getByTestId('kpi-dim-hndl-horizon')
     await expect(hndl).toBeVisible()
-    await expect(hndl).toHaveAttribute('data-disabled', 'true')
+    await expect(hndl).toHaveAttribute('data-pending', 'true')
+    await expect(hndl.getByText('Not yet scored')).toBeVisible()
   })
 
   test('exposes markdown + CSV + PDF export buttons', async ({ page }) => {

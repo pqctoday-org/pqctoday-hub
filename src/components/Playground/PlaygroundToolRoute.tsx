@@ -20,6 +20,7 @@ import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { moduleIdFromToolLink } from '@/data/moduleToolLinks'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { ToolEvidenceNotice } from './ToolEvidenceNotice'
 
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -207,6 +208,8 @@ export const PlaygroundToolRoute = () => {
         </p>
       </section>
 
+      <ToolEvidenceNotice toolId={tool.id} />
+
       {/* Round 9, wave 2 — "For your role", one paragraph per claimed persona (src/data/personaBlocks.ts). */}
       <PersonaBlock route={`/playground/${tool.id}`} />
 
@@ -230,6 +233,8 @@ export const PlaygroundToolRoute = () => {
             <Comp />
           ))}
       </Suspense>
+
+      <ToolEvidenceNotice toolId={tool.id} resultBoundary />
 
       {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts):
           the chain tool → business tool → report, beside the in-category rotation below. */}

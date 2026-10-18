@@ -465,12 +465,41 @@ export function StatefulSignaturesDemo() {
         </CardHeader>
 
         <CardContent className="p-0">
-          <div className="flex border-b overflow-x-auto">
+          <p className="px-4 pt-2 text-[11px] font-medium text-muted-foreground sm:hidden">
+            Scroll sideways to see all sections →
+          </p>
+          <div
+            className="flex border-b overflow-x-auto"
+            role="tablist"
+            aria-label="Stateful signature sections"
+          >
             {['hss', 'xmss', 'comparison', 'kat'].map((tab) => (
               <Button
                 variant="ghost"
                 key={tab}
                 onClick={() => setActiveTab(tab as 'hss' | 'xmss' | 'comparison' | 'kat')}
+                role="tab"
+                aria-selected={activeTab === tab}
+                tabIndex={activeTab === tab ? 0 : -1}
+                onKeyDown={(event) => {
+                  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+                  event.preventDefault()
+                  const tabs = Array.from(
+                    event.currentTarget.parentElement?.querySelectorAll<HTMLElement>(
+                      '[role="tab"]'
+                    ) ?? []
+                  )
+                  const current = tabs.indexOf(event.currentTarget)
+                  const next =
+                    event.key === 'Home'
+                      ? 0
+                      : event.key === 'End'
+                        ? tabs.length - 1
+                        : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) %
+                          tabs.length
+                  tabs[next]?.focus()
+                  tabs[next]?.click()
+                }}
                 className={`flex-1 min-w-[160px] py-3 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
                   activeTab === tab
                     ? 'border-b-2 border-primary text-primary bg-primary/5'
