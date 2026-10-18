@@ -24,6 +24,7 @@ import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndors
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { Button } from '@/components/ui/button'
+import { resolveLibrarySourceAction } from './librarySourceAction'
 
 interface LibraryTreeTableProps {
   /** Rows in the page pipeline's order (`?sort`); kept as-is unless a header
@@ -207,6 +208,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
 
       const isExpanded = expandedIds.has(item.referenceId)
       const hasChildren = item.children && item.children.length > 0
+      const sourceAction = resolveLibrarySourceAction(item)
 
       const rows = [
         <tr
@@ -257,14 +259,15 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
             <div className="flex items-center gap-2">
               {item.documentTitle}
-              {item.downloadUrl && (
+              {sourceAction.href && (
                 <a
-                  href={item.downloadUrl}
+                  href={sourceAction.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
+                  title={sourceAction.description}
                   className="text-primary/80 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
-                  aria-label={`Open ${item.documentTitle} in new tab`}
+                  aria-label={`${sourceAction.label}: ${item.documentTitle}`}
                 >
                   <ExternalLink size={14} aria-hidden="true" />
                 </a>
@@ -360,7 +363,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
     { key: 'referenceId', label: 'Reference ID', width: 'w-56 xl:w-64' },
     { key: 'documentTitle', label: 'Title', width: 'w-auto' },
     { key: 'documentStatus', label: 'Status', width: 'w-36' },
-    { key: 'lastUpdateDate', label: 'Last Update', width: 'w-36' },
+    { key: 'lastUpdateDate', label: 'Catalog update', width: 'w-36' },
     { key: 'actions', label: '', width: 'w-28' },
   ]
 
@@ -398,7 +401,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           <table id="library-table" className="w-full text-left border-collapse table-fixed">
             <caption className="sr-only">
               Library of standards and specifications organized hierarchically by reference ID.
-              Sortable columns: Title, Status, Last Update.
+              Sortable columns: Title, Status, Catalog update.
             </caption>
             <thead>
               <tr className="border-b border-border bg-muted/20">
