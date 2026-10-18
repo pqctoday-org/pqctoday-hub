@@ -12,9 +12,6 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
   )
   const threatOffset = ((hndl.estimatedQuantumThreatYear - hndl.currentYear) / totalSpan) * 100
   const dataEndOffset = (hndl.dataRetentionYears / totalSpan) * 100
-  // The marker is the effective act-by year: the earlier of the CRQC estimate and
-  // (when it binds first) the jurisdiction's regulatory mandate horizon.
-  const bindsOnRegulation = hndl.regulatoryHorizonYear !== undefined
   const crqcYear = hndl.crqcEstimateYear ?? hndl.estimatedQuantumThreatYear
 
   return (
@@ -24,8 +21,8 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
         role="img"
         aria-label={
           hndl.isAtRisk
-            ? `Your data persists ${hndl.riskWindowYears} years beyond your ${hndl.estimatedQuantumThreatYear} migration deadline. HNDL attacks are an active concern.`
-            : `Your data retention period does not extend beyond your ${hndl.estimatedQuantumThreatYear} migration deadline.`
+            ? `Your data persists ${hndl.riskWindowYears} years beyond the ${hndl.estimatedQuantumThreatYear} CRQC planning anchor.`
+            : `Your data retention period does not extend beyond the ${hndl.estimatedQuantumThreatYear} CRQC planning anchor.`
         }
       >
         <div className="absolute top-5 left-0 right-0 h-2 rounded-full bg-border" />
@@ -83,27 +80,26 @@ const HNDLTimelineBar = ({ hndl }: { hndl: HNDLRiskWindow }) => {
       {hndl.isAtRisk ? (
         <p className="text-sm text-destructive mt-3 font-medium">
           Your data persists {hndl.riskWindowYears} year{hndl.riskWindowYears !== 1 ? 's' : ''}{' '}
-          beyond your ~{hndl.estimatedQuantumThreatYear} migration deadline. HNDL attacks are an
-          active concern.
+          beyond the ~{hndl.estimatedQuantumThreatYear} CRQC planning anchor. This answer
+          combination warrants earlier confidentiality review.
           <span className="text-xs text-muted-foreground font-normal block mt-1">
-            {bindsOnRegulation
-              ? `Deadline set by your jurisdiction's ${hndl.regulatoryHorizonYear} mandate — earlier than the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`
-              : `Deadline based on the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`}
+            Exposure window based on this site&apos;s ~{crqcYear} CRQC planning assumption, not a
+            predicted arrival date.
           </span>
           {hndl.isEstimated && (
             <span className="text-xs text-muted-foreground font-normal block mt-1">
-              Based on a conservative 15-year retention estimate — define your retention policy for
-              a precise assessment.
+              Based on an industry-specific conservative retention assumption — replace it with your
+              documented retention requirement for a better-grounded result.
             </span>
           )}
         </p>
       ) : (
         <p className="text-sm text-success mt-3 font-medium">
           Your data retention period does not extend beyond your ~{hndl.estimatedQuantumThreatYear}{' '}
-          migration deadline.
+          CRQC planning anchor.
           {hndl.isEstimated && (
             <span className="text-xs text-muted-foreground font-normal block mt-1">
-              Based on a conservative 15-year retention estimate.
+              Based on an industry-specific conservative retention assumption.
             </span>
           )}
         </p>
@@ -119,7 +115,6 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
   )
   const threatOffset = ((hnfl.estimatedQuantumThreatYear - hnfl.currentYear) / totalSpan) * 100
   const credEndOffset = (hnfl.credentialLifetimeYears / totalSpan) * 100
-  const bindsOnRegulation = hnfl.regulatoryHorizonYear !== undefined
   const crqcYear = hnfl.crqcEstimateYear ?? hnfl.estimatedQuantumThreatYear
 
   return (
@@ -129,8 +124,8 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
         role="img"
         aria-label={
           hnfl.isAtRisk
-            ? `Your credentials remain trusted ${hnfl.riskWindowYears} years beyond your ${hnfl.estimatedQuantumThreatYear} migration deadline. HNFL attacks on signature keys are an active concern.`
-            : `Your credential lifetimes expire before your ${hnfl.estimatedQuantumThreatYear} migration deadline.`
+            ? `Your credentials remain trusted ${hnfl.riskWindowYears} years beyond the ${hnfl.estimatedQuantumThreatYear} CRQC planning anchor.`
+            : `Your credential lifetimes expire before the ${hnfl.estimatedQuantumThreatYear} CRQC planning anchor.`
         }
       >
         <div className="absolute top-5 left-0 right-0 h-2 rounded-full bg-border" />
@@ -190,17 +185,16 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: TNFLRiskWindow }) => {
           <p className="text-sm text-destructive font-medium">
             Your credentials are trusted {hnfl.riskWindowYears} year
             {hnfl.riskWindowYears !== 1 ? 's' : ''} beyond your ~{hnfl.estimatedQuantumThreatYear}{' '}
-            migration deadline. Signature keys must be migrated before{' '}
-            {hnfl.estimatedQuantumThreatYear}.
+            CRQC planning anchor. Review renewal and transition sequencing before that modelled
+            horizon.
             <span className="text-xs text-muted-foreground font-normal block mt-1">
-              {bindsOnRegulation
-                ? `Deadline set by your jurisdiction's ${hnfl.regulatoryHorizonYear} mandate — earlier than the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`
-                : `Deadline based on the ~${crqcYear} quantum-computer (CRQC) arrival estimate.`}
+              Window based on this site&apos;s ~{crqcYear} CRQC planning assumption, not a predicted
+              arrival date.
             </span>
             {hnfl.isEstimated && (
               <span className="text-xs text-muted-foreground font-normal block mt-1">
                 Based on a conservative 10-year credential lifetime estimate — audit your
-                certificates and signing keys for a precise assessment.
+                certificates and signing keys for a better-grounded result.
               </span>
             )}
           </p>
@@ -282,8 +276,15 @@ export function HNDLHNFLSection({
 
   const milestones: Milestone[] = [
     { year: currentYear, label: 'Today (baseline)', type: 'baseline' },
-    { year: threatYear, label: 'Estimated CRQC arrival', type: 'warning' },
+    { year: threatYear, label: 'CRQC planning anchor (uncertain)', type: 'warning' },
   ]
+  if (ref.regulatoryHorizonYear !== undefined && ref.regulatoryHorizonYear !== threatYear) {
+    milestones.push({
+      year: ref.regulatoryHorizonYear,
+      label: 'Jurisdiction planning milestone (separate from CRQC)',
+      type: 'warning',
+    })
+  }
   if (hndl) {
     const dataExpiryYear = currentYear + hndl.dataRetentionYears
     const yearsBeyond = dataExpiryYear - threatYear

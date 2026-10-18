@@ -15,21 +15,16 @@ import { getMaxSensitivity, getMaxRetentionYears, getIndustryRetentionDefault } 
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 
-/**
- * Names the deadline the exposure window is measured against WITHOUT conflating a
- * regulatory mandate with the arrival of a quantum computer. When a jurisdiction
- * mandate binds earlier than the CRQC estimate, it is the deadline (and we say
- * so); otherwise the CRQC estimate governs.
- */
+/** Names the CRQC planning assumption used for an exposure window. Jurisdiction
+ * policy milestones are deliberately excluded: they can pace migration, but
+ * cannot change the physical cryptanalytic horizon. */
 function deadlinePhrase(w: {
   crqcEstimateYear?: number
   regulatoryHorizonYear?: number
   estimatedQuantumThreatYear: number
 }): string {
   const crqc = w.crqcEstimateYear ?? w.estimatedQuantumThreatYear
-  return w.regulatoryHorizonYear !== undefined
-    ? `your ${w.regulatoryHorizonYear} regulatory migration deadline (earlier than the ~${crqc} quantum-threat estimate)`
-    : `the ~${crqc} estimated quantum-threat horizon`
+  return `this site's ~${crqc} CRQC planning anchor`
 }
 
 /**
@@ -554,7 +549,7 @@ export function generateExecutiveSummary(
 ): string {
   const parts: string[] = []
   parts.push(
-    `Your ${input.industry} organization faces a ${riskLevel} quantum risk (${riskScore}/100).`
+    `Your answers for the ${input.industry} sector produce a ${riskLevel} educational priority index (${riskScore}/100).`
   )
   if (vulnerableCount > 0) {
     const quickWins = migrationEffort.filter((m) => m.estimatedScope === 'quick-win').length
@@ -570,25 +565,25 @@ export function generateExecutiveSummary(
     if (moderate > 0) scopeParts.push(`${moderate} moderate migration${moderate > 1 ? 's' : ''}`)
 
     parts.push(
-      `${vulnerableCount} algorithm${vulnerableCount > 1 ? 's' : ''} require${vulnerableCount === 1 ? 's' : ''} migration: ${scopeParts.join(', ')}.`
+      `${vulnerableCount} reported algorithm${vulnerableCount > 1 ? 's' : ''} warrant${vulnerableCount === 1 ? 's' : ''} transition review: ${scopeParts.join(', ')}.`
     )
   }
 
   if (hndl?.isAtRisk) {
     parts.push(
-      `Data persists ${hndl.riskWindowYears} year${hndl.riskWindowYears !== 1 ? 's' : ''} beyond ${deadlinePhrase(hndl)}, making HNDL attacks an active concern.`
+      `The reported data lifetime extends ${hndl.riskWindowYears} year${hndl.riskWindowYears !== 1 ? 's' : ''} beyond ${deadlinePhrase(hndl)}, making HNDL an important planning scenario.`
     )
   }
 
   if (hnfl?.isAtRisk) {
     parts.push(
-      `Credential lifetimes extend ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} beyond ${deadlinePhrase(hnfl)} — Harvest-Now-Forge-Later attacks on signature keys are an active concern.`
+      `Reported credential lifetimes extend ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} beyond ${deadlinePhrase(hnfl)} — review the Harvest-Now-Forge-Later scenario and renewal sequencing.`
     )
   }
 
   if (pqcFrameworkCount > 0) {
     parts.push(
-      `${pqcFrameworkCount} compliance framework${pqcFrameworkCount > 1 ? 's' : ''} mandate${pqcFrameworkCount === 1 ? 's' : ''} PQC adoption.`
+      `${pqcFrameworkCount} selected requirement source${pqcFrameworkCount > 1 ? 's' : ''} state${pqcFrameworkCount === 1 ? 's' : ''} a PQC expectation; verify scope and applicability in the primary source.`
     )
   }
 
@@ -603,7 +598,7 @@ export function generateExecutiveSummary(
   }
 
   const statusSummary: Record<string, string> = {
-    started: 'Migration is underway, reducing overall risk.',
+    started: 'Migration is reported as underway; verify deployed coverage and evidence.',
     planning: 'Migration planning is in progress — prioritize execution.',
     'not-started': 'Migration has not begun — immediate action is recommended.',
     unknown: 'Migration status is unclear — establishing a baseline is the first priority.',
@@ -621,7 +616,7 @@ export function generateQuickSummary(
 ): string {
   const parts: string[] = []
   parts.push(
-    `Your ${input.industry} organization faces a ${riskLevel} quantum risk (${riskScore}/100) based on a quick assessment.`
+    `Your quick-assessment answers for the ${input.industry} sector produce a ${riskLevel} educational priority index (${riskScore}/100).`
   )
   if (input.currentCryptoUnknown) {
     parts.push(
@@ -635,13 +630,13 @@ export function generateQuickSummary(
 
   if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
     parts.push(
-      'High data sensitivity means Harvest-Now-Decrypt-Later attacks are a concern. Run a comprehensive assessment to quantify retention risk.'
+      'High data sensitivity makes Harvest-Now-Decrypt-Later an important scenario. Use the full track to model retention against the disclosed CRQC planning anchor.'
     )
   }
 
   if (pqcFrameworkCount > 0) {
     parts.push(
-      `${pqcFrameworkCount} compliance framework${pqcFrameworkCount > 1 ? 's' : ''} mandate${pqcFrameworkCount === 1 ? 's' : ''} PQC adoption.`
+      `${pqcFrameworkCount} selected requirement source${pqcFrameworkCount > 1 ? 's' : ''} state${pqcFrameworkCount === 1 ? 's' : ''} a PQC expectation; verify scope and applicability.`
     )
   }
 
@@ -664,11 +659,11 @@ export function generateNarrative(
 ): string {
   const parts: string[] = []
   parts.push(
-    `Your organization in the ${input.industry} sector has a quantum risk score of ${score}/100 (${level}).`
+    `Your answers for the ${input.industry} sector produce an educational priority index of ${score}/100 (${level}).`
   )
   if (vulnerableAlgos > 0) {
     parts.push(
-      `You are currently using ${vulnerableAlgos} quantum-vulnerable cryptographic algorithm${vulnerableAlgos > 1 ? 's' : ''} that require migration to post-quantum alternatives.`
+      `You reported ${vulnerableAlgos} quantum-vulnerable cryptographic algorithm${vulnerableAlgos > 1 ? 's' : ''}; verify their use and evaluate protocol-appropriate transition options.`
     )
   } else {
     parts.push(
@@ -678,18 +673,19 @@ export function generateNarrative(
 
   if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
     parts.push(
-      'Given your high data sensitivity, "Harvest Now, Decrypt Later" attacks represent an immediate threat to long-lived data.'
+      'High data sensitivity makes Harvest Now, Decrypt Later an important scenario to investigate for long-lived encrypted data.'
     )
   }
 
   if (pqcFrameworks > 0) {
     parts.push(
-      `${pqcFrameworks} of your compliance framework${pqcFrameworks > 1 ? 's' : ''} already require${pqcFrameworks === 1 ? 's' : ''} or will soon require PQC adoption.`
+      `${pqcFrameworks} selected requirement source${pqcFrameworks > 1 ? 's' : ''} state${pqcFrameworks === 1 ? 's' : ''} a current or upcoming PQC expectation; verify scope and applicability against the primary source.`
     )
   }
 
   const statusMsg: Record<string, string> = {
-    started: 'Your migration has already begun, which significantly reduces your risk.',
+    started:
+      'You reported that migration has begun; verify deployed coverage and evidence before treating exposure as reduced.',
     planning: 'You are in the planning phase — prioritize converting plans to implementation.',
     'not-started':
       'Migration has not yet started. We recommend beginning with a cryptographic asset inventory.',
@@ -700,7 +696,7 @@ export function generateNarrative(
     const years = getMaxRetentionYears(input.dataRetention)
     if (years > 10) {
       parts.push(
-        `With a data retention period of ${years}+ years, your data may remain encrypted beyond the expected quantum computing timeline.`
+        `With a data retention period of ${years}+ years, your data may remain confidential beyond this site's CRQC planning anchor.`
       )
     }
   }
@@ -787,19 +783,19 @@ export function generateKeyFindings(
     const names = urgentCompliance.map((c) => c.framework).join(', ')
     if (p === 'executive') {
       findings.push(
-        `${urgentCompliance.length} compliance deadline${urgentCompliance.length > 1 ? 's' : ''} (${names}) require${urgentCompliance.length === 1 ? 's' : ''} board attention — non-compliance risks regulatory penalties and audit findings.`
+        `${urgentCompliance.length} selected source${urgentCompliance.length > 1 ? 's' : ''} (${names}) record${urgentCompliance.length === 1 ? 's' : ''} near-term PQC targets. Confirm scope before treating them as obligations or financial exposure.`
       )
     } else if (p === 'developer') {
       findings.push(
-        `${urgentCompliance.length} compliance framework${urgentCompliance.length > 1 ? 's' : ''} (${names}) mandate${urgentCompliance.length === 1 ? 's' : ''} PQC adoption — check framework-specific algorithm requirements for your stack.`
+        `${urgentCompliance.length} selected source${urgentCompliance.length > 1 ? 's' : ''} (${names}) record${urgentCompliance.length === 1 ? 's' : ''} near-term PQC targets — verify scope and application-specific algorithm requirements.`
       )
     } else if (p === 'grc') {
       findings.push(
-        `${urgentCompliance.length} compliance deadline${urgentCompliance.length > 1 ? 's' : ''} (${names}) need${urgentCompliance.length === 1 ? 's' : ''} to be traced to source and recorded as obligations — treat each as evidence-required, not assumed-met.`
+        `${urgentCompliance.length} selected source${urgentCompliance.length > 1 ? 's' : ''} (${names}) record${urgentCompliance.length === 1 ? 's' : ''} near-term PQC targets — verify applicability and authority before adding an obligation.`
       )
     } else {
       findings.push(
-        `${urgentCompliance.length} compliance framework${urgentCompliance.length > 1 ? 's' : ''} (${names}) ${urgentCompliance.length > 1 ? 'have' : 'has'} near-term PQC migration deadlines.`
+        `${urgentCompliance.length} selected source${urgentCompliance.length > 1 ? 's' : ''} (${names}) record${urgentCompliance.length === 1 ? 's' : ''} near-term PQC targets; verify which apply to you.`
       )
     }
   }

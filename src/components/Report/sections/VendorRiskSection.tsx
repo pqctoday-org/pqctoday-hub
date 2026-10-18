@@ -6,10 +6,8 @@
  * previously surfaced only as a one-line "Vendor Model" chip in the
  * Assessment Profile. This section:
  *   1. Frames what the assessed vendor model means for migration control.
- *   2. Lists the real, per-product data the report already computes
- *      (`relevantSoftware` — industry/infrastructure-matched Migrate catalog
- *      products) joined to each product's vendor and that vendor's PQC
- *      commitment, via the same `vendorMap` lookup used on the Migrate page.
+ *   2. Lists catalog examples matched to the reported industry/infrastructure.
+ *      These are candidates to investigate, not detected estate products.
  *
  * Deliberately does NOT pull from the PKILearning VendorRisk module — that is
  * an interactive learning workshop with no exportable data, not a content
@@ -112,8 +110,12 @@ export function VendorRiskSection({
         {relevantSoftware.length > 0 ? (
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-2">
-              Vendors &amp; products in your estate
+              Catalog examples to investigate
             </h4>
+            <p className="mb-2 text-xs leading-relaxed text-muted-foreground">
+              Matched from the Migrate catalog using your assessment profile. This is not a scan or
+              inventory and does not establish that any product is deployed in your estate.
+            </p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

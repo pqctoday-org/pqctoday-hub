@@ -28,6 +28,7 @@ import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
+import { resolveLibrarySourceAction } from './librarySourceAction'
 
 /**
  * One entry per value in the agreed `document_type` vocabulary (2026-08-10).
@@ -103,6 +104,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
   // the in-header ItemShareButton below.
 
   if (!isOpen || !item) return null
+  const sourceAction = resolveLibrarySourceAction(item)
 
   const relatedLeaders = relatedLeadersFor(item)
 
@@ -536,16 +538,17 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 </div>
 
                 {/* Download Link Desktop Only */}
-                {item.downloadUrl && (
+                {sourceAction.href && (
                   <div className="hidden md:block pt-4 text-center">
                     <a
-                      href={item.downloadUrl}
+                      href={sourceAction.href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      title={sourceAction.description}
                       className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 text-sm font-bold rounded-lg transition-all duration-200"
                     >
                       <ExternalLink size={16} />
-                      Open Document
+                      {sourceAction.label}
                     </a>
                   </div>
                 )}
@@ -554,15 +557,16 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
             {/* Mobile Sticky Footer */}
             <div className="md:hidden sticky bottom-0 left-0 right-0 p-3 bg-popover/90 backdrop-blur-md border-t border-border flex items-center justify-between gap-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 z-10 w-[calc(100%+1px)] -ml-[0.5px]">
-              {item.downloadUrl && (
+              {sourceAction.href && (
                 <a
-                  href={item.downloadUrl}
+                  href={sourceAction.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title={sourceAction.description}
                   className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 truncate"
                 >
                   <ExternalLink size={16} className="shrink-0" />
-                  <span className="truncate">Open Document</span>
+                  <span className="truncate">{sourceAction.label}</span>
                 </a>
               )}
               <div className="flex items-center gap-1 shrink-0">

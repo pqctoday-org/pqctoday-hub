@@ -105,9 +105,8 @@ export const content: ModuleContent = {
       source: 'NIST IR 8547',
     },
     {
-      // "CNSA 2.0 exclusively PQC by 2033" — KmsPqcIntroduction Phase 3 and the
-      // Exercise 5 "observe" text both call out this milestone explicitly.
-      label: 'CNSA 2.0 web, cloud & operating systems exclusively PQC',
+      // Current FAQ v2.2 general NSS algorithm mandate.
+      label: 'CNSA 2.0 algorithms mandated for NSS unless otherwise noted',
       year: CNSA_2_0.networkingExclusive,
       source: 'CNSA 2.0',
     },

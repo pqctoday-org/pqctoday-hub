@@ -186,7 +186,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is CNSA 2.0?',
         answer:
-          'CNSA 2.0 (Commercial National Security Algorithm Suite 2.0) is NSA guidance for protecting National Security Systems. It sets support-and-prefer milestones by category from 2025 to 2027 (starting with software/firmware signing via LMS/XMSS and web/cloud services in 2025), then requires exclusive use of CNSA 2.0 algorithms by 2030 for signing and networking and by 2033 for web/cloud, operating systems, and large PKI (NSM-10 targets all NSS by 2035). It is more aggressive than civilian timelines and applies to defense, intelligence, and classified environments. The Compliance Tracker shows CNSA 2.0 milestones alongside other frameworks.',
+          'CNSA 2.0 (Commercial National Security Algorithm Suite 2.0) is NSA guidance for protecting National Security Systems. The current FAQ version 2.2 requires compliant new NSS acquisitions from 1 January 2027, phase-out of equipment and services that cannot support CNSA 2.0 by 31 December 2030 unless excepted, and CNSA 2.0 algorithms by 31 December 2031 unless otherwise noted. Earlier category guidance places exclusive use for software and firmware signing and traditional networking at 2030. The separate 2035 date is the broader NSM-10 quantum-risk objective, not the current CNSA 2.0 algorithm mandate. The Compliance Tracker shows these milestones alongside other frameworks.',
         deepLink: '/compliance?framework=CNSA-2',
       },
       {
@@ -280,7 +280,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the CNSA 2.0 exclusive phase deadline?',
         answer:
-          'The CNSA 2.0 exclusive-use phase deadline is 2033, after which all classical public-key algorithms will be disallowed for national security systems — only post-quantum algorithms will be permitted. This is two years earlier than the draft NIST IR 8547 civilian disallowance date of 2035, reflecting the higher security posture required for classified systems. The Timeline view plots the CNSA 2.0 phases against civilian timelines.',
+          'There is no single current deadline accurately described as a 2033 CNSA 2.0 exclusive phase. FAQ version 2.2 requires compliant new NSS acquisitions from 1 January 2027, phases out unsupported equipment and services by 31 December 2030 unless excepted, and mandates CNSA 2.0 algorithms by 31 December 2031 unless otherwise noted. Earlier category guidance sets 2030 exclusive-use milestones for software and firmware signing and traditional networking. The separate 2035 NSM-10 objective and the draft NIST IR 8547 civilian disallowance date have different scope and authority.',
         deepLink: '/timeline',
       },
       {
@@ -734,7 +734,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What should executives know about quantum risk?',
         answer:
-          'The Executive Quantum Impact module is a 30-minute briefing covering the Harvest Now Decrypt Later threat to corporate data, regulatory compliance deadlines (NIST 2030/2035, CNSA 2.0 2033, EU directives), budget implications of infrastructure-wide crypto migration, and board-level action items for starting a PQC program. It includes a risk assessment framework calibrated for business decision-makers rather than technical staff. The module provides a board-ready presentation template.',
+          'The Executive Quantum Impact module is a 30-minute briefing covering the Harvest Now Decrypt Later threat to corporate data, dated guidance and requirements with their scope (the draft NIST 2030/2035 horizon, CNSA 2.0 NSS milestones in 2027/2030/2031, and EU roadmap milestones), budget implications of infrastructure-wide crypto migration, and board-level action items for starting a PQC program. It includes a risk assessment framework calibrated for business decision-makers rather than technical staff. The module provides a board-ready presentation template.',
         deepLink: '/learn/exec-quantum-impact',
         persona: 'executive',
       },

@@ -22,6 +22,13 @@ function topLevelCards(strip: HTMLElement): HTMLElement[] {
 const ids = (cards: HTMLElement[]) => cards.map((c) => c.getAttribute('data-claim-id'))
 
 describe('CrqcCapabilityStrip, expanded', () => {
+  it('does not turn heterogeneous demonstrations into a completion percentage', () => {
+    render(<CrqcCapabilityStrip defaultExpanded />)
+    const strip = screen.getByTestId('crqc-capability-strip')
+    expect(within(strip).queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(strip).toHaveTextContent(/not a percentage of a cryptanalytic target/i)
+    expect(strip).toHaveTextContent(/must not be read as a countdown/i)
+  })
   it('no longer publishes a range this site derived, and says what the Google paper estimates', () => {
     render(<CrqcCapabilityStrip defaultExpanded />)
     const strip = screen.getByTestId('crqc-capability-strip')
@@ -78,22 +85,22 @@ describe('CrqcCapabilityStrip, claims behind the estimates', () => {
     const strip = screen.getByTestId('crqc-capability-strip')
     const top = ids(topLevelCards(strip))
     // NSA and ANSSI have newer statements that update their first ones: the newer is shown first
-    expect(top).toContain('crqc-nsa-cnsa2-faq-v21-dates')
+    expect(top).toContain('crqc-nsa-cnsa2-faq-v22-dates')
     expect(top).toContain('crqc-anssi-faq-2025-buy-after-2030')
     expect(top).not.toContain('crqc-nsa-cnsa2-dates')
     expect(top).not.toContain('crqc-anssi-phase3')
 
     for (const [newer, older] of [
-      ['crqc-nsa-cnsa2-faq-v21-dates', 'crqc-nsa-cnsa2-dates'],
+      ['crqc-nsa-cnsa2-faq-v22-dates', 'crqc-nsa-cnsa2-faq-v21-dates'],
       ['crqc-anssi-faq-2025-buy-after-2030', 'crqc-anssi-phase3'],
     ] as const) {
       const card = topLevelCards(strip).find((c) => c.getAttribute('data-claim-id') === newer)!
-      const earlier = within(card).getByTestId('claim-earlier-statement')
+      const earlier = within(card).getAllByTestId('claim-earlier-statement')[0]
       expect(earlier.tagName).toBe('DETAILS')
-      expect(within(earlier).getByText(/Read the earlier statement by/)).toBeInTheDocument()
-      const nested = within(earlier).getByTestId('claim-card')
+      expect(within(earlier).getAllByText(/Read the earlier statement by/)[0]).toBeInTheDocument()
+      const nested = within(earlier).getAllByTestId('claim-card')[0]
       expect(nested).toHaveAttribute('data-claim-id', older)
-      // the older statement is the one the estimate's own claim id points at
+      // the previous statement points forward to the displayed head statement
       expect(getOpenClaim(older)?.newerStatements?.map((n) => n.claim)).toContain(newer)
     }
   })
@@ -101,7 +108,7 @@ describe('CrqcCapabilityStrip, claims behind the estimates', () => {
   it('says what changed between the two statements, point by point, with both quotes', () => {
     render(<CrqcCapabilityStrip defaultExpanded />)
     const card = topLevelCards(screen.getByTestId('crqc-capability-strip')).find(
-      (c) => c.getAttribute('data-claim-id') === 'crqc-nsa-cnsa2-faq-v21-dates'
+      (c) => c.getAttribute('data-claim-id') === 'crqc-nsa-cnsa2-faq-v22-dates'
     )!
     const changed = within(card).getAllByTestId('claim-what-changed')[0]
     expect(changed).toHaveTextContent(/What changed \(\d+ points?\)/)

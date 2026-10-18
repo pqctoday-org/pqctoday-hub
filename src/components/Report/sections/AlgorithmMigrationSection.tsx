@@ -34,7 +34,7 @@ export const AlgorithmMigrationSection = ({
 }) => (
   <CollapsibleSection
     id="report-section-algorithmMigration"
-    title="Algorithm Migration Priority"
+    title="Candidate Algorithm Transitions"
     icon={<ShieldAlert className="text-primary" size={20} />}
     defaultOpen={defaultOpen}
     className="print:break-inside-auto"
@@ -57,7 +57,7 @@ export const AlgorithmMigrationSection = ({
               Vulnerable?
             </th>
             <th scope="col" className="py-2 pr-3 text-muted-foreground font-medium">
-              PQC Replacement
+              Candidate transition
             </th>
             {migrationEffort && (
               <>
@@ -166,6 +166,11 @@ export const AlgorithmMigrationSection = ({
           })}
         </tbody>
       </table>
+      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+        These are educational starting points based on the selected primitive. Confirm the actual
+        function, protocol profile, security category, interoperability needs and applicable
+        authority before choosing an algorithm or hybrid construction.
+      </p>
       <div className="flex items-center gap-4 mt-3 print:hidden">
         <Link
           to={`/algorithms${

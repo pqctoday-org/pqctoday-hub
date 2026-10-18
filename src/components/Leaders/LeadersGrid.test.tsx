@@ -146,7 +146,7 @@ describe('LeadersGrid', () => {
 
     // Header
     expect(screen.getByText('Community')).toBeInTheDocument()
-    expect(screen.getAllByText(/People contributing to the advances/)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/An evidence-linked directory/)[0]).toBeInTheDocument()
 
     // Grid cardinality + identity
     const articles = screen.getAllByRole('article')

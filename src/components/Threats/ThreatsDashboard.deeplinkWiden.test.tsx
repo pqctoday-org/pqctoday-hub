@@ -80,8 +80,10 @@ describe('ThreatsDashboard ?id= deep links', () => {
   })
   afterEach(() => {
     vi.restoreAllMocks()
-    usePersonaStore.getState().setPersona(null)
-    useBookmarkStore.setState({ showOnlyThreats: false, myThreats: [] })
+    act(() => {
+      usePersonaStore.getState().setPersona(null)
+      useBookmarkStore.setState({ showOnlyThreats: false, myThreats: [] })
+    })
   })
 
   it('a draft id shows a not-found notice that says it is unpublished', async () => {

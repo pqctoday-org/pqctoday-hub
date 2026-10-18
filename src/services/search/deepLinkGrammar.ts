@@ -159,6 +159,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'view',
       'protocol',
       'threattab',
+      'type',
     ],
     description: 'Threats',
   },

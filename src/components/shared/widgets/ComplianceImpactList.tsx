@@ -50,7 +50,7 @@ export function ComplianceImpactList({
               )}
             >
               {c.requiresPQC === true
-                ? 'PQC Required'
+                ? 'Source states PQC required'
                 : c.requiresPQC === null
                   ? 'Unknown'
                   : 'No mandate yet'}

@@ -136,8 +136,9 @@ export const TimelinePlanningNotes: React.FC = () => {
               ))}
             </ul>
             <p className="text-sim-micro text-muted-foreground mt-1">
-              Reconciled to framework Mapping-table wording (p.156): networking by 2030;
-              web/cloud/OS by 2033; all NSS by 2035.
+              Current FAQ version 2.2: new NSS acquisitions from 2027; unsupported equipment and
+              services phased out by 2030; algorithms mandated by 2031 unless otherwise noted. The
+              separate 2035 date is the broader NSM-10 objective.
             </p>
           </div>
 

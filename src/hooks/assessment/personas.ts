@@ -243,7 +243,7 @@ function generateExecNarrative(
 ): string {
   const parts: string[] = []
   parts.push(
-    `Your ${input.industry} organization has a ${riskLevel} quantum risk exposure (${riskScore}/100), requiring ${riskScore > 55 ? 'board-level attention and budget allocation' : 'proactive planning'} to avoid regulatory and competitive penalties from delayed PQC migration.`
+    `Your answers for the ${input.industry} sector produce a ${riskLevel} educational priority index (${riskScore}/100). Use it to frame ${riskScore > 55 ? 'an earlier leadership review' : 'proactive planning'}, then validate scope, evidence, costs and applicable requirements.`
   )
   if (vulnerableCount > 0) {
     const quickWins = migrationEffort?.filter((m) => m.estimatedScope === 'quick-win').length ?? 0
@@ -257,23 +257,23 @@ function generateExecNarrative(
       )
     } else if (quickWins > 0) {
       parts.push(
-        `${quickWins} quick-win migration${quickWins > 1 ? 's' : ''} can be completed with minimal investment to reduce your risk score immediately.`
+        `${quickWins} modelled quick-win migration${quickWins > 1 ? 's' : ''} may lower the educational priority index; verify effort and impact before planning.`
       )
     }
   }
   if (hndl?.isAtRisk) {
     parts.push(
-      `Sensitive data is being harvested today for future decryption — your ${hndl.riskWindowYears}-year exposure window means delayed action directly increases breach liability.`
+      `The model places the reported confidentiality lifetime ${hndl.riskWindowYears} years beyond its CRQC planning anchor. Treat HNDL as a scenario to investigate, not proof that data is being harvested.`
     )
   }
   if (hnfl?.isAtRisk) {
     parts.push(
-      `Digital credentials and signatures remain trusted ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} beyond the quantum threat window — forgery risk increases without certificate lifecycle migration.`
+      `Reported credential lifetimes extend ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} beyond the CRQC planning anchor; review HNFL and certificate-lifecycle sequencing.`
     )
   }
   if (pqcFrameworkCount > 0) {
     parts.push(
-      `${pqcFrameworkCount} compliance framework${pqcFrameworkCount > 1 ? 's' : ''} mandate${pqcFrameworkCount === 1 ? 's' : ''} PQC adoption — non-compliance risks audit findings and potential penalties.`
+      `${pqcFrameworkCount} selected requirement source${pqcFrameworkCount > 1 ? 's' : ''} state${pqcFrameworkCount === 1 ? 's' : ''} a PQC expectation. Confirm authority, scope and applicability before treating any row as an obligation or penalty risk.`
     )
   }
   const statusMsg: Record<string, string> = {
@@ -305,7 +305,7 @@ function generateGrcNarrative(
 ): string {
   const parts: string[] = []
   parts.push(
-    `Your ${input.industry} organization scores ${riskLevel} on quantum risk exposure (${riskScore}/100) — treat this as the starting scope for your obligations register and risk treatment plan, not a verdict.`
+    `Your answers for the ${input.industry} sector produce a ${riskLevel} educational priority index (${riskScore}/100) — use it to identify evidence and sources to review, not as an obligations register or verdict.`
   )
   if (vulnerableCount > 0) {
     const quickWins = migrationEffort?.filter((m) => m.estimatedScope === 'quick-win').length ?? 0
@@ -319,13 +319,13 @@ function generateGrcNarrative(
       )
     } else if (quickWins > 0) {
       parts.push(
-        `${quickWins} quick-win migration${quickWins > 1 ? 's' : ''} can close and be recorded as evidence with minimal investment.`
+        `${quickWins} modelled quick-win migration${quickWins > 1 ? 's' : ''} may be useful evidence candidates; verify effort, deployment and acceptance criteria first.`
       )
     }
   }
   if (hndl?.isAtRisk) {
     parts.push(
-      `Data is being harvested today for future decryption — record the ${hndl.riskWindowYears}-year exposure window as a documented risk with a named owner and a review date, not a general concern.`
+      `The HNDL model places the reported confidentiality lifetime ${hndl.riskWindowYears} years beyond its CRQC planning anchor. Record it as a scenario to validate with an owner and review date, not as evidence that collection is occurring.`
     )
   }
   if (hnfl?.isAtRisk) {
@@ -335,7 +335,7 @@ function generateGrcNarrative(
   }
   if (pqcFrameworkCount > 0) {
     parts.push(
-      `${pqcFrameworkCount} compliance framework${pqcFrameworkCount > 1 ? 's' : ''} require${pqcFrameworkCount === 1 ? 's' : ''} PQC adoption — trace each to its source and record what evidence you can already show.`
+      `${pqcFrameworkCount} selected requirement source${pqcFrameworkCount > 1 ? 's' : ''} state${pqcFrameworkCount === 1 ? 's' : ''} a PQC expectation — trace each to its primary source and verify scope before recording an obligation.`
     )
   }
   const statusMsg: Record<string, string> = {
@@ -469,7 +469,7 @@ function generateResearcherNarrative(
 ): string {
   const parts: string[] = []
   parts.push(
-    `Composite risk score: ${riskScore}/100 (${riskLevel}) across ${vulnerableCount} quantum-vulnerable algorithm${vulnerableCount !== 1 ? 's' : ''}.`
+    `Educational priority index: ${riskScore}/100 (${riskLevel}) across ${vulnerableCount} reported quantum-vulnerable algorithm${vulnerableCount !== 1 ? 's' : ''}.`
   )
   if (categoryScores) {
     const scoreBreakdown = Object.entries(categoryScores)
@@ -499,7 +499,7 @@ function generateResearcherNarrative(
   }
   if (pqcFrameworkCount > 0) {
     parts.push(
-      `${pqcFrameworkCount} compliance framework${pqcFrameworkCount > 1 ? 's' : ''} mandate${pqcFrameworkCount === 1 ? 's' : ''} PQC adoption for the ${input.industry}/${input.country ?? 'Global'} jurisdiction.`
+      `${pqcFrameworkCount} selected requirement source${pqcFrameworkCount > 1 ? 's' : ''} state${pqcFrameworkCount === 1 ? 's' : ''} a PQC expectation for the chosen ${input.industry}/${input.country ?? 'Global'} profile; profile matching does not establish applicability.`
     )
   }
   if (migrationEffort && migrationEffort.length > 0) {

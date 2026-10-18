@@ -277,7 +277,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'US',
     founded: '1952',
     mission:
-      'US signals intelligence and cybersecurity agency. Publishes CNSA (Commercial National Security Algorithm Suite) — the mandatory algorithm suite for National Security Systems (NSS). CNSA 2.0 (September 2022) mandates exclusive use of ML-KEM-1024 and ML-DSA-87 by 2030–2033.',
+      'US signals intelligence and cybersecurity agency. Publishes CNSA (Commercial National Security Algorithm Suite) — the mandatory algorithm suite for National Security Systems (NSS). Current CNSA 2.0 FAQ version 2.2 requires compliant new acquisitions from 2027, phase-out of unsupported equipment and services by 2030, and CNSA 2.0 algorithms by 2031 unless otherwise noted.',
     decisionMaking:
       'Issues mandates via CNSSP (Committee on National Security Systems Policy). CNSA 2.0 issued September 2022 with phased deadlines. NSA CSfC (Commercial Solutions for Classified) program certifies commercial products for classified use.',
     keyPqcOutputs: [

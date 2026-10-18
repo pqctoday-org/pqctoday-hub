@@ -16,6 +16,8 @@ interface AssessWizardScreenProps {
   onComplete: () => void
   onExitToChooser: () => void
   onSwitchTrack: (mode: AssessTrack) => void
+  onSaveEdit?: () => void
+  onCancelEdit?: () => void
   /** Embed-isolated URL params, threaded to useAssessFlow so ?step doesn't leak
    *  to the /simulation route when the wizard runs inside the sim embed. */
   searchParams?: URLSearchParams
@@ -27,6 +29,8 @@ export const AssessWizardScreen: React.FC<AssessWizardScreenProps> = ({
   onComplete,
   onExitToChooser,
   onSwitchTrack,
+  onSaveEdit,
+  onCancelEdit,
   searchParams,
   setSearchParams,
 }) => {
@@ -46,7 +50,12 @@ export const AssessWizardScreen: React.FC<AssessWizardScreenProps> = ({
           mode={mode}
           onSwitchToFull={() => onSwitchTrack('comprehensive')}
         />
-        <AssessQuestionPane flow={flow} onExitToChooser={onExitToChooser} />
+        <AssessQuestionPane
+          flow={flow}
+          onExitToChooser={onExitToChooser}
+          onSaveEdit={onSaveEdit}
+          onCancelEdit={onCancelEdit}
+        />
       </div>
     </>
   )

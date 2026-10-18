@@ -11,7 +11,7 @@ This module teaches post-quantum code signing and software supply chain security
 - **Package manager signing**: RPM leading with hybrid ML-DSA-87+Ed448 in RHEL 10; most others (npm, PyPI, Maven, NuGet, APT/DPKG) rely on upstream Sigstore PQC adoption; hybrid signing provides backward compatibility
 - **Sigstore keyless signing**: Identity-based trust (GitHub/Google auth) with short-lived certificates from Fulcio CA; all signatures recorded in Rekor transparency log; centralizes PQC migration to Fulcio and Rekor infrastructure
 - **Secure boot and firmware signing**: Trust chain from immutable root of trust (ROM/TPM) through UEFI Secure Boot, OS kernel, to runtime firmware; firmware keys have 10-20 year lifetimes making them priority PQC migration targets
-- **CNSA 2.0 mandate**: NSA mandates LMS/HSS or XMSS for firmware/software signing in National Security Systems; 2025 prefer CNSA 2.0 algorithms, 2030 all NSS must use CNSA 2.0, 2033-35 full quantum-resistant enforcement
+- **CNSA 2.0 mandate**: NSA permits ML-DSA-87 or the stateful LMS/XMSS schemes specified by SP 800-208 for firmware/software signing in National Security Systems; the category guidance says prefer CNSA 2.0 signing from 2025 and use it exclusively by 2030. FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 2031 unless otherwise noted; 2035 is the separate NSM-10 objective.
 - **LMS vs ML-DSA for firmware**: LMS offers compact signatures (2.5 KB) and tiny public keys (56 B), fast verification (~0.1 ms), CNSA 2.0 compliant, but requires stateful monotonic counter; ML-DSA is stateless but has larger signatures (3.3 KB) and public keys (1.9 KB)
 
 ## Workshop Activities

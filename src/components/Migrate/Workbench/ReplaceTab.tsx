@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigationType } from 'react-router'
-import { ArrowRight, Clock, Search, AlertTriangle, Check, Plus } from 'lucide-react'
+import { ArrowRight, Search, AlertTriangle, Check, Plus } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import {
   REPLACE_ASSETS,
@@ -533,10 +533,7 @@ function AssetDetailCard({
         <span className="rounded-md border border-status-success/30 bg-status-success/10 px-2 py-0.5 font-mono text-[11px] text-status-success">
           {asset.target}
         </span>
-        <span className="ml-auto flex items-center gap-1 text-[11px] text-status-warning">
-          <Clock size={12} aria-hidden />
-          <strong>{asset.cnsaYear}</strong> · {asset.deadlineLabel}
-        </span>
+        <span className="ml-auto text-[11px] text-muted-foreground">Illustrative action</span>
       </div>
 
       <p className="mt-3 text-xs leading-relaxed text-foreground/80">{asset.note}</p>
@@ -556,9 +553,7 @@ function GapCard({ asset, hasCandidates }: { asset: ReplaceAsset; hasCandidates:
       <div className={`flex items-center gap-2 ${toneClass.text}`}>
         <AlertTriangle size={16} aria-hidden />
         <span className="text-sm font-semibold">
-          {isRoadmap
-            ? 'No GA quantum-safe product yet — vendor has announced one'
-            : 'No GA quantum-safe product for this yet'}
+          {isRoadmap ? 'Roadmap evidence needs review' : 'Use an interim-control discussion'}
         </span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{asset.note}</p>
@@ -566,8 +561,9 @@ function GapCard({ asset, hasCandidates }: { asset: ReplaceAsset; hasCandidates:
         Lands in Wave {asset.wave}, flagged{' '}
         <strong className={toneClass.text}>{decision.label}</strong>.
         {isRoadmap
-          ? ' Check the vendor roadmaps tab for the announced timeline.'
-          : hasCandidates && ' Partial / early candidates are listed below — none are GA yet.'}
+          ? ' Check the vendor roadmaps tab and verify the current source before planning.'
+          : hasCandidates &&
+            ' Catalog candidates are listed below; validate suitability and current evidence.'}
       </p>
     </div>
   )

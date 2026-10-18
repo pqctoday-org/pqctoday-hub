@@ -122,7 +122,7 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
 
   return (
     <CollapsibleSection
-      title="Risk Score Trending"
+      title="Priority Index History"
       icon={<TrendingUp size={18} className="text-primary" />}
       defaultOpen={defaultOpen}
       infoTip="kpiTrending"
@@ -132,8 +132,8 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
         <div className="print:hidden flex items-start gap-2 rounded-lg bg-muted/30 border border-border px-4 py-3 mb-5 text-sm text-muted-foreground">
           <Info size={15} className="shrink-0 mt-0.5 text-primary" />
           <span>
-            Complete your next assessment to see score trends over time. Your current category
-            scores are shown below.
+            Complete another self-assessment to compare model snapshots. Your current category
+            values are shown below.
           </span>
         </div>
       )}
@@ -145,8 +145,8 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
           <thead>
             <tr>
               <th className="border-b border-border pb-1 pr-4">Date</th>
-              <th className="border-b border-border pb-1 pr-4">Risk Score</th>
-              <th className="border-b border-border pb-1">Level</th>
+              <th className="border-b border-border pb-1 pr-4">Priority Index</th>
+              <th className="border-b border-border pb-1">Model Band</th>
             </tr>
           </thead>
           <tbody>
@@ -196,7 +196,9 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
         {/* Line chart — risk score over time */}
         {hasMultiple && (
           <div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">Overall Risk Score</p>
+            <p className="text-xs font-medium text-muted-foreground mb-2">
+              Educational Priority Index
+            </p>
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={lineData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
                 <XAxis

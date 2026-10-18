@@ -161,10 +161,10 @@ vi.mock('./workbenchCatalog', () => ({
 describe('VendorConcentrationRiskPanel', () => {
   it('renders all four risk categories', () => {
     render(<VendorConcentrationRiskPanel />)
-    expect(screen.getByText('Single-source domains')).toBeInTheDocument()
-    expect(screen.getByText('Vendor concentration')).toBeInTheDocument()
-    expect(screen.getByText('Certification gap')).toBeInTheDocument()
-    expect(screen.getByText('Geographic concentration')).toBeInTheDocument()
+    expect(screen.getByText('Single-source catalog coverage')).toBeInTheDocument()
+    expect(screen.getByText('Available-product concentration')).toBeInTheDocument()
+    expect(screen.getByText('FIPS evidence gap')).toBeInTheDocument()
+    expect(screen.getByText('Vendor HQ distribution')).toBeInTheDocument()
   })
 
   it('flags the single-source domain by name', () => {
@@ -173,11 +173,11 @@ describe('VendorConcentrationRiskPanel', () => {
     expect(screen.getByText(/TLS key exchange/)).toBeInTheDocument()
   })
 
-  it('computes vendor concentration from real GA product counts', () => {
+  it('computes concentration from recorded available-product counts', () => {
     render(<VendorConcentrationRiskPanel />)
     expect(screen.getByText('67%')).toBeInTheDocument()
     expect(
-      screen.getByText(/Acme Crypto supplies 2 of the 3 GA-ready catalog products/)
+      screen.getByText(/Acme Crypto supplies 2 of the 3 available catalog products/)
     ).toBeInTheDocument()
   })
 

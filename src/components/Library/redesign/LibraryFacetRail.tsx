@@ -26,7 +26,7 @@ interface LibraryFacetRailProps {
 const QUICK_VIEWS: { id: LibraryQuickView; label: string; icon: typeof Bookmark }[] = [
   { id: 'all', label: 'All documents', icon: Layers },
   { id: 'new', label: 'New & updated', icon: Sparkles },
-  { id: 'cert', label: 'Cert-relevant', icon: ShieldCheck },
+  { id: 'cert', label: 'Certification starter set', icon: ShieldCheck },
   { id: 'bookmarked', label: 'Bookmarked', icon: Bookmark },
 ]
 

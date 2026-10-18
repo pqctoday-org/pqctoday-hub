@@ -391,7 +391,7 @@ export function DeadlineTimeline({
 const REGION_CONTEXT: Record<RegionBloc, { title: string; body: string }> = {
   'North America': {
     title: 'North America',
-    body: 'Dominated by US federal mandates: CNSA 2.0 (NSA) and NIST IR 8547 set the binding deprecation timeline through 2035. FIPS 140-3 (NIST CMVP) and FedRAMP carry the certification weight. Canada (CCCS) cross-recognises FIPS 140-3 and tracks NIST PQC for federal procurement.',
+    body: 'US federal policy has several distinct scopes: CNSA 2.0 sets dated requirements for National Security Systems, while NIST IR 8547 remains an initial public draft proposing a civilian transition horizon. FIPS 140-3 (NIST CMVP) and FedRAMP carry certification and authorization weight. Canada (CCCS) cross-recognises FIPS 140-3 and tracks NIST PQC for federal procurement.',
   },
   'European Union': {
     title: 'European Union',

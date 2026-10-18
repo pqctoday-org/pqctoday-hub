@@ -86,7 +86,16 @@ const ROLES = [
   'curious',
 ] as const
 const REQUIRED_GRID_CARDS = 3
-const REQUIRED_VARIANTS_PER_ROLE = 6
+const REQUIRED_VARIANTS_PER_ROLE: Record<(typeof ROLES)[number], number> = {
+  executive: 6,
+  grc: 6,
+  developer: 6,
+  architect: 6,
+  ops: 6,
+  researcher: 6,
+  'cert-engineer': 5,
+  curious: 6,
+}
 
 /** See PersonaJourneyBoard['sideCard']['provenance'] for what each one means. */
 const SIDE_CARD_PROVENANCE = new Set(['sourced', 'illustrative', 'guidance'])
@@ -295,16 +304,15 @@ async function main() {
   const boardEntries: string[] = []
   for (const role of ROLES) {
     const variants = variantsByRole.get(role) ?? []
-    if (variants.length !== REQUIRED_VARIANTS_PER_ROLE) {
+    const requiredVariants = REQUIRED_VARIANTS_PER_ROLE[role]
+    if (variants.length !== requiredVariants) {
       throw new Error(
         `${variantCsvPath}: ${role} has ${variants.length} active variant(s), ` +
-          `expected ${REQUIRED_VARIANTS_PER_ROLE}`
+          `expected ${requiredVariants}`
       )
     }
     const orders = variants.map((v) => Number(v.order)).join(',')
-    const expectedOrders = Array.from({ length: REQUIRED_VARIANTS_PER_ROLE }, (_, i) => i + 1).join(
-      ','
-    )
+    const expectedOrders = Array.from({ length: requiredVariants }, (_, i) => i + 1).join(',')
     if (orders !== expectedOrders) {
       throw new Error(
         `${variantCsvPath}: ${role}'s variant order is [${orders}], expected [${expectedOrders}]`

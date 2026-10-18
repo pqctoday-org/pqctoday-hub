@@ -129,7 +129,7 @@ const crqcScenario: Record<DemoSector, DemoDoc> = {
       '- PKI trust anchors (DoD Root CA) have 20-year lifetimes; firmware signing for embedded systems runs 15+ years.',
       '',
       '## Mosca inequality',
-      `- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.government.zLabel} → X + Y > Z. The June 2026 EO's ${US_EO_KEM_YEAR} key-establishment deadline is binding (NSM-10 set the 2035 whole-of-government goal; CNSA 2.0 sets the 2035 NSS completion).`,
+      `- X (secrecy) ≈ 25y, Y (migration) ≈ 5y, Z (CRQC) ≈ ${CRQC_BAND_BY_SECTOR.government.zLabel} → X + Y > Z. The June 2026 EO's ${US_EO_KEM_YEAR} key-establishment deadline is binding. CNSA 2.0 FAQ version 2.2 mandates its algorithms for NSS by 31 December 2031 unless otherwise noted; NSM-10 separately set the broader 2035 quantum-risk objective.`,
       MOSCA_PLANNING_NOTE
     ),
   },

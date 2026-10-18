@@ -34,7 +34,7 @@ The workshop has 3 interactive steps:
 - RFC 7296 (IKEv2 — Internet Key Exchange for IPsec VPN)
 - NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms)
-- NSA CNSA 2.0 (networking equipment deadline: 2026, all NSS: 2033)
+- NSA CNSA 2.0 FAQ version 2.2 (new NSS acquisitions: 2027; unsupported equipment and services phased out: 2030; algorithms mandated: 2031 unless otherwise noted)
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
 - CIS Kubernetes Benchmark v1.9 (crypto policy controls, etcd encryption-at-rest)
 

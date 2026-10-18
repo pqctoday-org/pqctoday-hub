@@ -51,6 +51,7 @@ const SMOKE_SPECS = [
   'timeline-freshness-badge.spec.ts', // timeline page + data freshness
   'trust-tier-filter.spec.ts', // data filtering across views (library/migrate/compliance/threats/timeline)
   'compliance-foryou-executive.spec.ts', // compliance persona deep-link
+  'library-education.spec.ts', // role scope truth + starter-card responsive layout
   // ACVP Validation Suite (real WASM/liboqs crypto, all ~34 test categories
   // asserted zero-fail — see the spec's own comment on that assertion). Promoted
   // 2026-08-23: it was previously nightly-only, so a regression anywhere

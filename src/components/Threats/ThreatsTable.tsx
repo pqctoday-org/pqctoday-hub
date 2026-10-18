@@ -14,6 +14,7 @@ import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
 import { EmptyState } from '../ui/empty-state'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
+import { ThreatRecordTypeBadge } from '@/components/common/ThreatRecordTypeBadge'
 import { NOT_YET_SPECIFIED, UNRATED_CRITICALITY } from '@/data/threatRowRules'
 
 /** A blank at-risk / PQC field on a not-yet-filled row. */
@@ -103,10 +104,21 @@ export const ThreatsTable = ({
             <tr className="border-b border-border bg-muted/20">
               {showIndustry && (
                 <th
-                  className="px-3 py-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => onSort('industry')}
+                  className="px-3 py-2 font-semibold text-sm"
+                  aria-sort={
+                    sortField === 'industry'
+                      ? sortDirection === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
                 >
-                  <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => onSort('industry')}
+                    className="flex min-h-11 items-center gap-1 px-0 hover:text-primary"
+                  >
                     Industry
                     {sortField === 'industry' &&
                       (sortDirection === 'asc' ? (
@@ -114,38 +126,71 @@ export const ThreatsTable = ({
                       ) : (
                         <ChevronDown size={14} />
                       ))}
-                  </div>
+                  </Button>
                 </th>
               )}
               <th
-                className="hidden md:table-cell px-3 py-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
-                onClick={() => onSort('threatId')}
+                className="hidden px-3 py-2 font-semibold text-sm md:table-cell"
+                aria-sort={
+                  sortField === 'threatId'
+                    ? sortDirection === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : 'none'
+                }
               >
-                <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => onSort('threatId')}
+                  className="flex min-h-11 items-center gap-1 px-0 hover:text-primary"
+                >
                   ID
                   {sortField === 'threatId' &&
                     (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
-                </div>
+                </Button>
               </th>
               <th className="hidden md:table-cell px-3 py-4 font-semibold text-sm">Description</th>
               <th
-                className="px-3 py-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
-                onClick={() => onSort('criticality')}
+                className="px-3 py-2 font-semibold text-sm"
+                aria-sort={
+                  sortField === 'criticality'
+                    ? sortDirection === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : 'none'
+                }
               >
-                <div className="flex items-center gap-1 justify-center md:justify-start">
-                  <span className="md:hidden">Crit.</span>
-                  <span className="hidden md:inline">Criticality</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => onSort('criticality')}
+                  className="flex min-h-11 items-center justify-center gap-1 px-0 hover:text-primary md:justify-start"
+                >
+                  <span className="md:hidden">Priority</span>
+                  <span className="hidden md:inline">Site priority</span>
                   {sortField === 'criticality' &&
                     (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
-                </div>
+                </Button>
               </th>
               {showEvidence && (
                 <th
-                  className="px-3 py-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => onSort('evidence')}
+                  className="px-3 py-2 font-semibold text-sm"
+                  aria-sort={
+                    sortField === 'evidence'
+                      ? sortDirection === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
                   title="Whether the cited document is confirmed and how many of the row's claims it states. Sorting by this puts the best-evidenced records first, not the newest."
                 >
-                  <div className="flex items-center justify-center gap-1 md:justify-start">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => onSort('evidence')}
+                    className="flex min-h-11 items-center justify-center gap-1 px-0 hover:text-primary md:justify-start"
+                  >
                     <span>Evidence</span>
                     {sortField === 'evidence' &&
                       (sortDirection === 'asc' ? (
@@ -153,11 +198,11 @@ export const ThreatsTable = ({
                       ) : (
                         <ChevronDown size={14} />
                       ))}
-                  </div>
+                  </Button>
                 </th>
               )}
               <th className="px-3 py-4 font-semibold text-sm">Crypto</th>
-              <th className="px-3 py-4 font-semibold text-sm">PQC Repl.</th>
+              <th className="px-3 py-4 font-semibold text-sm">Candidate response</th>
               <th className="hidden lg:table-cell px-3 py-4 font-semibold text-sm text-center">
                 Actions
               </th>
@@ -225,6 +270,7 @@ export const ThreatsTable = ({
                           </td>
                           <td className="hidden md:table-cell px-3 py-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors overflow-hidden">
                             <div className="line-clamp-2 md:line-clamp-3">{item.description}</div>
+                            <ThreatRecordTypeBadge threat={item} className="mt-1" />
                             <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider truncate">
                               Source: {item.mainSource}
                             </div>

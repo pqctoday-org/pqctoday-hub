@@ -66,7 +66,7 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
                 title="Affiliation and role last confirmed against public sources"
               >
                 <CheckCircle2 size={12} className="shrink-0" aria-hidden="true" />
-                Verified as of {leader.verifiedDate}
+                Profile sources checked {leader.verifiedDate}
               </span>
             )}
           </div>
@@ -99,12 +99,12 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
               Events from {leader.country}
             </Link>
             <Link
-              to={`/compliance${leader.type === 'Public' ? '?industry=Government+%26+Defense' : leader.type === 'Academic' ? '' : '?industry=Technology'}`}
+              to="/compliance"
               className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
-              title="View compliance frameworks for this sector"
+              title="Learn how compliance sources and applicability are assessed"
             >
               <ShieldCheck size={12} aria-hidden="true" />
-              Compliance frameworks
+              Explore compliance sources
             </Link>
           </div>
         )}

@@ -15,7 +15,8 @@
  * regulatoryConstantProvenance.test.ts against the reviewed timeline CSV.
  *
  * Sources:
- *   - CNSA 2.0: NSA Cybersecurity Advisory (September 2022, updated March 2024)
+ *   - CNSA 2.0: NSA FAQ version 2.2 (August 2026), which supersedes the
+ *     earlier category dates for current planning
  *   - NIST IR 8547: Transition to Post-Quantum Cryptography Standards (November 2024)
  *   - ANSSI: Avis relatif à la migration vers la cryptographie post-quantique (2024)
  *   - BSI TR-02102: Cryptographic Mechanisms: Recommendations and Key Lengths (2024)
@@ -57,26 +58,27 @@ export const CNSA_2_0 = {
    * (regulatoryConstantProvenance.ts). It used to read US_DEADLINE — EO 14412's
    * key-establishment year, a different policy that happens to be 2030 too. */
   softwareExclusive: 2030,
-  /** Web browsers, servers, cloud services & operating systems exclusively CNSA 2.0.
-   * (Traditional networking equipment is exclusive by 2030, not 2033.) Field name kept
-   * for back-compat. */
-  networkingExclusive: 2033,
-  /** All remaining NSS systems — web, cloud, servers */
-  fullEnforcement: 2035,
+  /** CNSA 2.0 algorithms are mandated for NSS by 31 December 2031 unless
+   * otherwise noted. Field name kept for back-compat with older consumers. */
+  networkingExclusive: 2031,
+  /** Current CNSA 2.0 mandate for NSS. This is not the separate 2035 NSM-10 goal. */
+  fullEnforcement: 2031,
   /** Date the advisory was originally published */
   publishedDate: '2022-09-07',
 } as const
 
 /**
- * CNSA 2.0 per-equipment-class deadline labels — reconciled to the Applied
- * Quantum Reg & Standards Alignment Map (p.156) wording (PER-PAGE-CHANGES
- * Timeline #7). The milestone *years* are the same `CNSA_2_0` ladder; this view
- * pins which equipment class lands on each year so the Timeline can label a bar
- * with the framework's class-by-deadline semantics rather than the looser
- * `softwareExclusive`/`networkingExclusive` field names.
- *
- * Mapping-table wording (p.156): "NSS acquisitions compliant by 2027;
- * networking by 2030; web/cloud/OS by 2033; all NSS by 2035."
+ * Separate NSM-10 federal objective: mitigate as much quantum risk as feasible
+ * by 2035. This is broader than, and must not be presented as, the CNSA 2.0
+ * algorithm-mandate date for National Security Systems.
+ */
+export const NSM_10_QUANTUM_RISK_GOAL = 2035
+
+/**
+ * Current CNSA 2.0 FAQ milestones. The FAQ v2.2 dates supersede the earlier
+ * category ladder for current planning: new acquisitions from 1 January 2027,
+ * unsupported equipment and services phased out by 31 December 2030, and
+ * CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted.
  */
 export const CNSA_2_0_BY_CLASS: ReadonlyArray<{
   /** Equipment / system class as named in the framework Mapping table. */
@@ -87,24 +89,19 @@ export const CNSA_2_0_BY_CLASS: ReadonlyArray<{
   requirement: string
 }> = [
   {
-    class: 'New NSS acquisitions & operating systems',
+    class: 'New National Security System acquisitions',
     year: CNSA_2_0.networkingRequired, // 2027 — new-acquisition / OS support gate
-    requirement: 'New NSS acquisitions and operating-system support must use CNSA 2.0',
+    requirement: 'New NSS acquisitions must be CNSA 2.0-compliant unless otherwise noted',
   },
   {
-    class: 'Traditional networking equipment',
+    class: 'Equipment and services without CNSA 2.0 support',
     year: CNSA_2_0.softwareExclusive, // 2030 — networking & sw/fw signing exclusive
-    requirement: 'Traditional networking equipment exclusively CNSA 2.0',
+    requirement: 'Equipment and services that cannot support CNSA 2.0 must be phased out',
   },
   {
-    class: 'Web, cloud & operating systems',
-    year: CNSA_2_0.networkingExclusive, // 2033 per p.156 ("web/cloud/OS by 2033")
-    requirement: 'Web / cloud / OS exclusively CNSA 2.0',
-  },
-  {
-    class: 'All National Security Systems',
-    year: CNSA_2_0.fullEnforcement, // 2035
-    requirement: 'All remaining NSS exclusively CNSA 2.0',
+    class: 'National Security System cryptography',
+    year: CNSA_2_0.networkingExclusive,
+    requirement: 'CNSA 2.0 algorithms are mandated unless otherwise noted',
   },
 ] as const
 

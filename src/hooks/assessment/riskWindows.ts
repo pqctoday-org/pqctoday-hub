@@ -19,19 +19,21 @@ import type {
 import { getMaxRetentionYears, getIndustryRetentionDefault } from './scoring'
 
 export function getEffectiveThreatYear(country?: string): number {
-  return Math.min(
-    ESTIMATED_QUANTUM_THREAT_YEAR,
-    COUNTRY_PLANNING_HORIZON[country ?? ''] ?? ESTIMATED_QUANTUM_THREAT_YEAR
-  )
+  // A policy or regulatory milestone cannot change the physical arrival of a
+  // cryptographically relevant quantum computer. Keep this compatibility
+  // helper CRQC-only; callers that need policy pacing should read the separate
+  // `regulatory` field from getThreatHorizon().
+  void country
+  return ESTIMATED_QUANTUM_THREAT_YEAR
 }
 
 /**
  * Splits the effective "act-by" year into its two distinct drivers so the report
  * never conflates a regulatory mandate with the arrival of a quantum computer:
  *  - crqc: the cryptographically-relevant quantum computer arrival estimate
- *  - regulatory: the jurisdiction's mandate horizon, ONLY when it binds earlier
- *    than the CRQC estimate (otherwise undefined — the CRQC estimate governs)
- *  - effective: the earlier of the two (the conservative deadline)
+ *  - regulatory: a separately sourced jurisdiction planning milestone, when one
+ *    exists. It never substitutes for the CRQC estimate.
+ *  - effective: retained for compatibility and always equal to `crqc`
  */
 export function getThreatHorizon(country?: string): {
   effective: number
@@ -40,8 +42,7 @@ export function getThreatHorizon(country?: string): {
 } {
   const crqc = ESTIMATED_QUANTUM_THREAT_YEAR
   const horizon = COUNTRY_PLANNING_HORIZON[country ?? '']
-  const regulatory = horizon !== undefined && horizon < crqc ? horizon : undefined
-  return { effective: Math.min(crqc, horizon ?? crqc), crqc, regulatory }
+  return { effective: crqc, crqc, regulatory: horizon }
 }
 
 export function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | undefined {

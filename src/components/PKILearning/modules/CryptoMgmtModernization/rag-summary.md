@@ -24,7 +24,7 @@ schedule or never?"
    not an annual audit.
 3. **Library EoL and CVE cadence**. OpenSSL 1.1.1 EoL (September 2023). Bouncy Castle
    high-severity CVEs per release. OMB M-23-02 annual cryptographic inventory mandate for US
-   federal agencies through 2035. CNSA 2.0 National Security Systems: CNSSP 15 requires new acquisitions to be compliant from 1 Jan 2027, phases out non-supporting equipment by 31 Dec 2030 and mandates the algorithms by 31 Dec 2031 (FAQ Ver. 2.1, Dec 2024); the 2022 advisory per-class timetable runs 2030 (software/firmware signing) and 2033 (web/cloud/OS).
+   federal agencies through 2035. CNSA 2.0 National Security Systems: CNSSP 15 requires new acquisitions to be compliant from 1 Jan 2027, phases out non-supporting equipment and services by 31 Dec 2030 and mandates the algorithms by 31 Dec 2031 unless otherwise noted (FAQ Ver. 2.2, Aug 2026). Earlier category dates remain historical context; use the current FAQ for planning.
 
 ## Five pillars of CPM
 

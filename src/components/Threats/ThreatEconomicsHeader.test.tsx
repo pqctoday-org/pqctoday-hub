@@ -80,14 +80,14 @@ describe('ThreatEconomicsHeader — Mosca two-clock calculator', () => {
     // HNDL: far OVERDUE — explicit "closed" framing, real year still shown in full.
     expect(within(hndlRow).getByText(hndlDeadline)).toBeInTheDocument()
     expect(within(hndlRow).getByText('Closed in')).toBeInTheDocument()
-    expect(within(hndlRow).getByText('migration window')).toBeInTheDocument()
+    expect(within(hndlRow).getByText('safe-start window')).toBeInTheDocument()
     expect(within(hndlRow).getByText('OVERDUE')).toBeInTheDocument()
-    expect(within(hndlRow).getByText(/should have started/)).toBeInTheDocument()
+    expect(within(hndlRow).getByText(/latest safe-start year passed/)).toBeInTheDocument()
 
     // HNFL: rem === 0, CRITICAL but not overdue — ordinary framing unchanged.
     expect(within(hnflRow).getByText(hnflDeadline)).toBeInTheDocument()
     expect(within(hnflRow).queryByText('Closed in')).not.toBeInTheDocument()
-    expect(within(hnflRow).getByText('migration deadline')).toBeInTheDocument()
+    expect(within(hnflRow).getByText('latest safe-start year')).toBeInTheDocument()
     expect(within(hnflRow).getByText('CRITICAL')).toBeInTheDocument()
   })
 })

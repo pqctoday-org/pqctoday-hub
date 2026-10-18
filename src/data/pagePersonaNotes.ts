@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * B+ round 8, Wave C (2026-09-19) — "What this means for you" on eleven routed
- * reference pages. /navigate is a full-screen canvas with no header to sit under,
- * so it carries no strip.
+ * reference pages. /navigate is a full-screen canvas, so it carries equivalent
+ * role guidance in its overlay rather than this strip.
  *
  * One line per persona per page. Every line was written against the page's
  * real controls and sections (its headings, filter labels, data columns) —
@@ -51,19 +51,19 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/leaders': {
     executive:
-      'The people here wrote the standards your regulator will cite; when a vendor names a co-author, filter by name and check the claim.',
-    grc: 'Filter by country, region and sector to see which national bodies and organisations are actually represented in the standards work.',
+      'Use the category and organization filters to find relevant profiles, then open their cited resources; inclusion and profile counts are not influence or endorsement rankings.',
+    grc: 'Filter by country, region and category to see which people and organisations are represented in the current evidence-linked directory, then verify any role claim at its source.',
     developer:
-      'The Standards category names the authors behind FIPS 203–205 and the PKCS#11 specification, with the documents each one wrote.',
+      'Use Standards and Open Source Maintainer to find cited authorship and project links; confirm current maintainer roles and releases at the linked source.',
     architect:
-      'Interoperability questions have owners: the Standards category tells you who edits the PKCS#11 and KMIP specifications you design against.',
+      'Use Standards and Industry Vendor as routes into cited specifications and roadmaps, without treating a profile as proof of interoperability or readiness.',
     researcher:
-      'Entries carry their key resources and a verified date; a name that is missing means no public proof was found, not that the person is unknown.',
+      'Entries show cited resources and, where available, when profile sources were last checked; absence from this curated directory proves nothing about a person or contribution.',
     'cert-engineer':
-      'Your guidance points at Government and Industry Vendor — the bodies behind the schemes and the vendors taking modules through validation; a missing name means no public proof was found.',
-    ops: 'Skip the biographies: sort "By relevance to you" or filter to the Standards category to see who maintains the documents your configuration references.',
+      'Government and Industry Vendor profiles can lead you to scheme or vendor sources; confirm certificates, status, scope, and effective versions in official registers.',
+    ops: 'Use Industry Vendor and Open Source Maintainer to locate support and release sources, then confirm the exact product, version, platform, and distribution you operate.',
     curious:
-      'Post-quantum cryptography is being built by a few hundred people you can name — this is who they are, in cards or a table, and what each one did.',
+      'This is a curated, evidence-linked introduction to people appearing in post-quantum sources—not a complete census, ranking, or endorsement list.',
   },
   '/explore': {
     executive:
@@ -287,19 +287,19 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/migrate': {
     executive:
-      '"Which of your suppliers have committed" counts the vendors with a published PQC roadmap we hold a copy of against those with nothing public; the "Vendor roadmaps" and "Vendor risk" tabs give the detail per supplier.',
-    grc: 'Product rows on "Replace what you own" carry a PQC status (GA, Partial, Roadmap, No PQC), a FIPS 140-3 badge and a verification badge (Verified, Pending Verification); the "Vendor risk" tab scores a "Certification gap".',
+      '"Which vendors have published evidence" summarizes the tracked catalog; compare it with your own supplier list rather than treating it as an assessment of your supply chain.',
+    grc: 'Product rows show recorded availability, FIPS evidence and verification freshness; "Evidence gaps" highlights catalog questions and does not score risk or determine compliance.',
     developer:
       'Under "Replace what you own", the "Crypto libraries & frameworks" domain lists the libraries; use "Filter products…" to narrow, and a product\'s detail shows its CPE and PURL identifiers.',
     architect:
-      '"Replace what you own" lists assets — TLS key exchange, IPsec / IKEv2 VPN, X.509 cert signatures, HSM-protected keys — each with a decision (Upgrade / configure, Hybrid config, Re-key, Track roadmap, Mitigate); "Plan & sequence" orders by exposure.',
+      '"Replace what you own" lists common cryptographic areas with illustrative actions; "Plan & sequence" offers a teaching order that you must adapt to inventory, dependencies and policy.',
     researcher:
       '"This catalog as a corpus of claims" states how many products are backed by a dated document versus the vendor\'s word; every product row shows its verification status and evidence warnings.',
     'cert-engineer':
       "Product rows carry a PQC status, a FIPS 140-3 badge and a verification badge; a product's detail names the stage and flags PQC that is CAVP-validated but outside the module certificate.",
-    ops: 'The readiness panel shows the share of your assets with a GA path, the "HNDL-urgent" count, the "Nearest CNSA deadline" and your "Next move" with its wave; "Export plan + CBOM" on "Plan & sequence" downloads the plan.',
+    ops: 'Planning coverage counts selected catalog examples, not readiness. "Plan & sequence" shows illustrative waves, and its JSON export is an educational draft—not an inventory or CBOM.',
     curious:
-      '"Who has already moved" says how many tracked products support post-quantum cryptography with a document proving it, and where it landed first; "Add what you run" starts a plan of your own.',
+      '"Who has already moved" introduces documented catalog examples; "Add what you run" builds an educational sequence, not a scan or readiness verdict.',
   },
   '/compliance': {
     executive:
@@ -335,19 +335,19 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/timeline': {
     executive:
-      '"Your nearest binding milestone" above the chart names the soonest enforceable date in your region and how many years out it is; the region filter changes the scope, and the "Deadlines" button strips the chart to deadline bars only.',
-    grc: 'The "Show:" control defaults to Government and Standards & Consortia; pick a country and a "Documents" table appears under the chart listing its policy documents by phase, type, organisation and period; country rows show a Verified date.',
+      'The nearest confirmed-binding milestone card is limited to reviewed records in the current view; open the cited source to determine sector, system, and procurement scope before using its date.',
+    grc: 'Filter to a country and inspect its source table, binding characterization, and source-check date; country selection alone does not establish applicability.',
     developer:
-      'Set the country to the US, UK or Germany and watch for rows in the Testing, POC and Migration phases — those are the first production deployments to align a library choice with; the "All Phases" dropdown filters to one phase.',
+      'Use Testing, POC, and Migration records to locate implementation guidance, then inspect the linked source; a phase label is not proof that a library or deployment is production-ready.',
     architect:
-      'Use the "All Phases" dropdown to show only Testing, POC or Migration and see which countries have reached them; the Countries list on the left jumps to a row, and the "Phase Color Code" legend at the bottom decodes the bars.',
+      'Use the phase filter to compare published records and open each source before treating it as an architecture pattern; the bars organize evidence rather than score readiness.',
     researcher:
-      'Switch the region filter to compare migration pace across blocs; country rows show their Verified date, and the "Documents" table under a selected country lists the source documents with sortable phase, type, organisation and period.',
+      'Switch regions to compare recorded policy activity and source coverage—not migration pace—and use the source table and source-check dates to inspect the evidence behind each row.',
     'cert-engineer':
-      'Pick a country and a "Documents" table lists its policy documents by phase, type, organisation and period — the dates a certificate will have to list PQC by.',
-    ops: 'Watch the Migration and Deadline phases — they set the certificate-rotation clock; the "Export ... matching as .ics" button puts the filtered phases into your calendar as all-day windows, and the CSV export is next to the search box.',
+      'Use country and source filters to find certification-policy records, then verify programme, module boundary, effective version, and official register; these dates are not certificate requirements by themselves.',
+    ops: 'Treat Migration and Deadline rows as planning signals. Calendar exports are year-level reminder windows, not exact cutover dates or proof that a milestone applies to your fleet.',
     curious:
-      '"When does this reach me" above the chart shows your own country\'s track and what comes next; each row below is one country, and the "Phase Color Code" legend at the bottom explains what each coloured bar means.',
+      '"What is recorded for your country?" identifies the next published milestone in the dataset; open its source to learn who and what it covers.',
   },
   '/library': {
     executive:
@@ -399,19 +399,19 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/threats': {
     executive:
-      '"Your Exposure" at the top shows your sector\'s threats and "Your migration deadline" — the year the Mosca arithmetic says you must be done; the Severity chips in the Threat Catalog cut the list to Critical.',
-    grc: 'Sort the Table view by Evidence to put the best-documented records first; each threat opens with its Data Provenance (peer review, vetting body, last verified) and a Reference Source link you can cite.',
+      'Pick your sector in "Your Exposure" to narrow the teaching catalog. The Mosca result is the latest safe-start year produced by example assumptions—not a compliance deadline; replace X, Y and Z with your organisation’s figures.',
+    grc: 'Open a threat dossier to inspect its Evidence section: source identity, claims checked, caveats, second sources and last-verified date. Evidence sorting is available only in the Researcher table view.',
     developer:
-      'The "By protocol" chips — TLS / HTTPS, SSH, VPN / IPsec and more — filter threats by what you build on, and say whether each match is stated in the record or inferred; each threat lists its At-Risk Cryptography and PQC Mitigation.',
+      'The "By protocol" chips — TLS / HTTPS, SSH, VPN / IPsec and more — filter threats by what you build on, and say whether each match is stated in the record or inferred; each dossier separates At-Risk Cryptography from its site-derived Candidate response.',
     architect:
-      'Each threat names its At-Risk Cryptography, its PQC Mitigation and the implementation pitfalls of the replacement (side-channel, fault, RNG); the Class chips split HNDL from HNFL so you know whether the exposure is data or signatures.',
+      'Each dossier names its At-Risk Cryptography, its site-derived Candidate response and any recorded implementation pitfalls (side-channel, fault, RNG); the Class chips split HNDL from HNFL so you know whether the exposure is data or signatures.',
     researcher:
-      '"CRQC Threat Horizon" lists the CRQC arrival estimates by source and logical-qubit progress per machine, with a Mosca calculator; the Evidence column sorts records by peer review, source and confidence.',
+      '"CRQC Threat Horizon" separates arrival surveys, migration deadlines and machine demonstrations. In the Table view, Evidence sorting ranks claim-lineage coverage and trusted-source presence; it is not a peer-review or confidence score.',
     'cert-engineer':
-      'Each threat opens with its Data Provenance (peer review, vetting body, last verified); where a replacement algorithm has attack notes, the detail links to Implementation Attacks on /algorithms.',
-    ops: 'Each threat\'s Detection & Response section has a "Detection / SOC" tab and an "Incident Response" tab; use the Industry filter for your sector and the Severity chips to work Critical first.',
+      'Each threat opens with an Evidence section showing source identity, checked claims, caveats, second sources and last verification; where a replacement has attack notes, the dossier links to Implementation Attacks on /algorithms.',
+    ops: 'Each threat\'s Educational detection and response section has a "Detection / SOC" tab and an "Incident Response" tab; use the Industry filter for your sector and the Site priority chips as teaching order, not as an assessment of your estate.',
     curious:
-      'A line above the catalog tells you how many known threats there are and what one is; pick an industry in the list on the left to see the ones closest to you, and "Your Exposure" at the top sums it up.',
+      'A line above the catalog explains what the records represent. Pick a sector in the "Your Exposure" section to narrow the list, then open any card for a plain-language scenario, candidate response and evidence.',
   },
   '/playground': {
     executive:

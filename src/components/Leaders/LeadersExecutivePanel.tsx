@@ -4,14 +4,18 @@ import { Building2, Compass } from 'lucide-react'
 import type { Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from './LeaderCategorySidebar'
 
-// Why each contributor category matters to a risk/governance decision-maker —
-// turns a who's-who directory into market-and-mandate intelligence.
+// Why each contributor category can help a reader navigate the directory.
 const CATEGORY_WHY: Record<string, string> = {
-  Government: 'Regulators and agencies that set the mandates and deadlines you must meet.',
-  Standards: 'Authors of the FIPS / ISO standards your systems will be audited against.',
-  'Industry Vendor': 'Suppliers whose PQC readiness shapes your procurement options.',
-  'Industry Adopter': 'Enterprises already migrating — real-world patterns to benchmark against.',
-  'Algorithm Inventor': 'Designed the algorithms (ML-KEM, ML-DSA) now entering your stack.',
+  Government:
+    'Find people associated with public policy and agency guidance, then read the cited source.',
+  Standards:
+    'Find contributors associated with standards work; applicability still depends on your system and programme.',
+  'Industry Vendor':
+    'Explore supplier and implementation perspectives without treating inclusion as a readiness rating.',
+  'Industry Adopter':
+    'Find published adoption examples; a profile does not independently validate a deployment.',
+  'Algorithm Inventor':
+    'Connect algorithm names with cited research and standardization contributions.',
 }
 
 /**
@@ -43,11 +47,13 @@ export function LeadersExecutivePanel({ leaders }: { leaders: Leader[] }) {
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">
           <Building2 size={16} className="text-primary" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-foreground">Institutional influence</h2>
+          <h2 className="text-sm font-semibold text-foreground">
+            Representation in this directory
+          </h2>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          Organizations with the most contributors here — a quick read on who is driving the
-          standards, mandates, and products.
+          Organizations named on the most profiles in the current dataset. This measures directory
+          representation, not influence, quality, or institutional endorsement.
         </p>
         <ol className="space-y-1.5">
           {topOrgs.map(([org, count], i) => (

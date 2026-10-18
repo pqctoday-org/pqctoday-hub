@@ -77,6 +77,7 @@ test.describe('Assess redesign — happy path', () => {
     await expect(page.getByRole('button', { name: /start full track/i })).toBeVisible({
       timeout: 15000,
     })
+    await expect(page.getByText(/Educational self-assessment/i)).toBeVisible()
     // Outcome-framed: the chooser names the report sections each track unlocks.
     // ('Algorithm migration map' was dropped from FAST_REPORT_SECTIONS on
     // 2026-07-04 (commit 0e07d90b) -- both tracks populate it, so advertising
@@ -122,4 +123,27 @@ test.describe('Assess — no auto-jump to report for a completed assessment', ()
     await expect(page).toHaveURL(/\/assess/)
     await expect(page.getByRole('button', { name: /view report/i }).first()).toBeVisible()
   })
+
+  test('editing from Review saves once and returns directly to Review', async ({ page }) => {
+    await page.addInitScript(injectCompleteAssessment)
+    await page.goto('/assess?screen=review')
+
+    await expect(page.getByRole('heading', { name: /review your answers/i })).toBeVisible({
+      timeout: 15000,
+    })
+    await page.getByRole('button', { name: /edit industry/i }).click()
+    await expect(page.getByRole('heading', { name: /what industry are you in/i })).toBeVisible()
+    await page.getByRole('radio', { name: /Technology/i }).click()
+    await page.getByRole('button', { name: /save and return/i }).click()
+
+    await expect(page.getByRole('heading', { name: /review your answers/i })).toBeVisible()
+    await expect(page.getByText('Technology', { exact: true })).toBeVisible()
+  })
+})
+
+test('sample report states the educational limits before its findings', async ({ page }) => {
+  await page.goto('/report?example=1')
+  await expect(page.getByText(/How to read this report/i)).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText(/not a system scan/i)).toBeVisible()
+  await expect(page.getByText(/fictional US bank/i)).toBeVisible()
 })

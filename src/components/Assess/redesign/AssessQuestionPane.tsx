@@ -30,11 +30,16 @@ interface AssessQuestionPaneProps {
   flow: AssessFlow
   /** Back from the first step returns to the chooser. */
   onExitToChooser: () => void
+  /** Present while editing one answer from Review. */
+  onSaveEdit?: () => void
+  onCancelEdit?: () => void
 }
 
 export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
   flow,
   onExitToChooser,
+  onSaveEdit,
+  onCancelEdit,
 }) => {
   const { activeKey, stepIdx, total, attempted, canProceed } = flow
   const reset = useAssessmentStore((s) => s.reset)
@@ -121,11 +126,13 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
       <div className="glass-panel sticky bottom-0 z-10 flex flex-wrap items-center gap-3 px-4 py-3 lg:static">
         <Button
           variant="outline"
-          onClick={() => (stepIdx === 0 ? onExitToChooser() : flow.back())}
+          onClick={() =>
+            onCancelEdit ? onCancelEdit() : stepIdx === 0 ? onExitToChooser() : flow.back()
+          }
           className="gap-1"
         >
           <ChevronLeft size={15} />
-          Back
+          {onCancelEdit ? 'Back to review' : 'Back'}
         </Button>
         <span className="font-mono text-[11px] text-muted-foreground">
           Step {stepIdx + 1} / {total}
@@ -163,11 +170,14 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
         )}
         <Button
           variant="gradient"
-          onClick={() => flow.next()}
+          onClick={() => {
+            if (onSaveEdit && canProceed) onSaveEdit()
+            else flow.next()
+          }}
           data-workshop-target={isLast ? 'assess-submit' : 'assess-next'}
           className="gap-1.5 font-bold"
         >
-          {isLast ? 'Review answers' : 'Continue'}
+          {onSaveEdit ? 'Save and return' : isLast ? 'Review answers' : 'Continue'}
           <ChevronRight size={15} />
         </Button>
       </div>

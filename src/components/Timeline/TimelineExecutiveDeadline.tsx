@@ -113,7 +113,9 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
       <div className="flex items-start gap-3">
         <CalendarClock size={18} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
         <div className="flex-1 text-sm">
-          <p className="font-semibold text-foreground mb-1">Your nearest binding milestone</p>
+          <p className="font-semibold text-foreground mb-1">
+            Nearest confirmed-binding milestone in this view
+          </p>
           {next ? (
             <p className="text-muted-foreground leading-relaxed mb-2">
               {scope.charAt(0).toUpperCase() + scope.slice(1)}, the soonest enforceable milestone in
@@ -124,9 +126,9 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
                 : yearsOut !== null
                   ? ` — about ${yearsOut} year${yearsOut === 1 ? '' : 's'} out`
                   : ''}
-              ). The colored bars below are analyst phases; binding regulations and deadlines carry
-              more weight than advisory guidance — confirm the dates that legally apply to you on
-              the compliance page.
+              ). The colored bars below group published phases; this country-level record does not
+              determine whether the milestone applies to your organization. Check the cited source
+              for sector, system, and procurement scope.
             </p>
           ) : pending ? (
             <p className="text-muted-foreground leading-relaxed mb-2">
@@ -134,13 +136,12 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
               this view is <strong className="text-foreground">{pending.title}</strong> (
               {pending.country}, <strong className="text-foreground">{pending.year}</strong>) — but
               its binding status is guidance or still under review, not a confirmed legal mandate.
-              Confirm the obligations that legally apply to you on the compliance page.
+              Check the cited source before using it as an obligation or planning date.
             </p>
           ) : (
             <p className="text-muted-foreground leading-relaxed mb-2">
               No upcoming binding regulation or deadline appears in this view. Widen the region
-              filter or confirm the obligations that apply to you on the compliance page — and start
-              planning now, before one lands.
+              filter and inspect the cited sources before drawing an applicability conclusion.
             </p>
           )}
           <div className="flex flex-wrap gap-2">
@@ -152,7 +153,7 @@ export function TimelineExecutiveDeadline({ ganttData, regionFilter, regionLabel
             </Link>
             <Link to="/compliance">
               <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                Binding compliance deadlines →
+                Learn how scope is assessed →
               </Button>
             </Link>
             <Link to={`/timeline?${deadlinesSearch}`}>

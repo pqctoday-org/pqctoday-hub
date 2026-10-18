@@ -20,7 +20,6 @@ import { findLibraryItemByRef, type LibraryItem } from '@/data/libraryData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
-import { getTrustScore } from '@/data/trustScore'
 import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
 import { FrameworkCrosswalkPanel } from '@/components/Library/FrameworkCrosswalkPanel'
 import { relatedLeadersFor } from '@/components/Library/relatedLeaders'
@@ -43,6 +42,13 @@ import {
 } from './libraryPills'
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 import { AddToCollection } from '@/components/shared/research/AddToCollection'
+import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
+import {
+  MISSING_REVIEWED_SUMMARY,
+  SCOPE_VERIFICATION_NOTE,
+  needsScopeVerification,
+  paidSourceContext,
+} from '@/components/Library/libraryClaimSemantics'
 
 interface LibraryDetailDrawerProps {
   item: LibraryItem | null
@@ -171,8 +177,8 @@ function DrawerPanel({
     reqs: reqs.filter((r) => r.pillar === p).sort((a, b) => a.maturityLevel - b.maturityLevel),
   })).filter((g) => g.reqs.length > 0)
   const enrichment = libraryEnrichments[item.referenceId]
-  const ts = getTrustScore('library', item.referenceId)
   const trust = trustInfo(item.referenceId)
+  const sourceAction = resolveLibrarySourceAction(item)
   const documentStatusText = publisherStatusText(item.documentStatus, item.lifecycleLabel)
   const relatedLeaders = relatedLeadersFor(item)
 
@@ -249,7 +255,9 @@ function DrawerPanel({
               </h2>
               <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
                 <Building2 size={13} aria-hidden="true" />
-                <span className="truncate">{item.authorsOrOrganization || 'Unknown'}</span>
+                <span className="truncate">
+                  {item.authorsOrOrganization || 'Publisher not yet catalogued'}
+                </span>
                 {/* The document's own publication date is the primary signal here;
                   lastUpdateDate (catalog activity) is the fallback, matching the card. */}
                 {(item.initialPublicationDate || item.lastUpdateDate) && (
@@ -312,25 +320,44 @@ function DrawerPanel({
 
           {/* body */}
           <div className="flex-1 space-y-4 overflow-y-auto p-4">
-            {item.shortDescription && (
-              <p className="text-[13px] leading-relaxed text-muted-foreground">
-                {item.shortDescription}
+            <div className="space-y-1.5">
+              <p className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                pqctoday catalog summary
               </p>
-            )}
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                {item.shortDescription?.trim() || MISSING_REVIEWED_SUMMARY}
+              </p>
+              {needsScopeVerification(item) && (
+                <p className="rounded-lg border border-warning/40 bg-warning/10 p-2 text-[11.5px] leading-relaxed text-foreground">
+                  {SCOPE_VERIFICATION_NOTE}
+                </p>
+              )}
+              {paidSourceContext(item) && (
+                <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+                  {paidSourceContext(item)}
+                </p>
+              )}
+            </div>
 
             <SuccessionLinks item={item} onOpenRef={onOpenRef} />
 
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4">
               <KeyFact label="Type" value={item.documentType} />
-              <KeyFact label="Algorithm family" value={item.algorithmFamily} />
-              <KeyFact label="Security levels" value={item.securityLevels} />
+              <KeyFact label="Catalog algorithm classification" value={item.algorithmFamily} />
+              <KeyFact label="Catalog security-level tags" value={item.securityLevels} />
               <KeyFact label="Region" value={item.regionScope} />
               <KeyFact label="Migration urgency" value={item.migrationUrgency} />
               <KeyFact
-                label="Citations"
+                label="Referenced by Library records"
                 value={item.citationCount != null ? String(item.citationCount) : undefined}
               />
             </dl>
+            {(item.algorithmFamily || item.securityLevels || item.protocolOrToolImpact) && (
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
+                Catalog classifications and impact tags are pqctoday analysis. They may not be
+                statements made by the publisher.
+              </p>
+            )}
 
             {item.categories?.length > 0 && (
               <Section title="Categories">
@@ -504,7 +531,7 @@ function DrawerPanel({
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <KeyFact
                   label="Trust score"
-                  value={trust.score != null ? `${trust.score} (${ts?.tier})` : undefined}
+                  value={trust.score != null ? `${trust.score} (${trust.source})` : undefined}
                 />
                 <KeyFact label="Source quality" value={item.downloadUrlQuality} />
                 <KeyFact label="Vetting body" value={item.vettingBody?.join(', ')} />
@@ -540,22 +567,23 @@ function DrawerPanel({
 
           {/* footer */}
           <div className="flex flex-wrap items-center gap-2 gap-y-2 border-t border-border bg-background p-3">
-            {item.downloadUrl ? (
+            {sourceAction.href ? (
               <a
-                href={item.downloadUrl}
+                href={sourceAction.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                title={sourceAction.description}
                 className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground hover:bg-primary/90"
               >
-                Open document
+                {sourceAction.label}
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             ) : (
               <span
                 className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-4 py-2 text-[13px] font-semibold text-muted-foreground"
-                title="No public source link is available for this document yet."
+                title={sourceAction.description}
               >
-                Source not available
+                {sourceAction.label}
               </span>
             )}
             <Button

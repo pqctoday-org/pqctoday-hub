@@ -13,12 +13,12 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   countryTimeline: {
     title: 'Country PQC Timeline',
     summary:
-      'Displays the PQC migration phases and regulatory deadlines for the country you selected in the assessment wizard.',
+      'Displays sourced PQC milestones for the selected jurisdiction, distinguishing binding requirements from guidance where the data supports that distinction.',
     wizardInputs: [
       {
         label: 'Country (Step 2)',
         detail:
-          'Determines which country timeline is shown. Each country has its own regulatory milestones, phases, and deadline targets sourced from government publications.',
+          'Determines which jurisdiction timeline is shown. A published target is not automatically a legal deadline for every organization.',
       },
     ],
     personaEffects: [
@@ -32,9 +32,9 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   },
 
   riskScore: {
-    title: 'Risk Score',
+    title: 'Educational Priority Index',
     summary:
-      'A composite score from 0 to 100 that quantifies your organization\u2019s quantum risk. Higher scores mean more urgent action is needed.',
+      'An educational 0–100 priority index derived from self-reported answers and model defaults. It is not a measured probability, audit grade, or compliance determination.',
     wizardInputs: [
       {
         label: 'Industry (Step 1)',
@@ -49,17 +49,17 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       {
         label: 'Migration Complexity inputs',
         detail:
-          'Crypto Agility (Step 11), Infrastructure (Step 12), System Scale + Team Size (Step 10), Vendor Dependency (Step 13).',
+          'Crypto Agility (Step 11), Infrastructure and its nested vendor model (Step 12), System Scale + Team Size (Step 10).',
       },
       {
         label: 'Regulatory Pressure inputs',
         detail:
-          'Compliance Frameworks (Step 5), Industry (Step 1), Country (Step 2), Timeline Pressure (Step 13).',
+          'Compliance Frameworks (Step 5), Industry (Step 1), Country (Step 2), Timeline Pressure (Step 13). Scope still needs source-level verification.',
       },
       {
         label: 'Organizational Readiness inputs',
         detail:
-          'Migration Status (Step 6), Team Size (Step 10), Crypto Agility (Step 11), Vendor Dependency (Step 13).',
+          'Migration Status (Step 9), Team Size (Step 10), Crypto Agility (Step 11), and the nested vendor model in Step 12.',
       },
       {
         label: 'See Risk Breakdown section',
@@ -68,8 +68,8 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       },
     ],
     scoringPrinciples: [
-      'Composite = (QE \u00d7 w1) + (MC \u00d7 w2) + (RP \u00d7 w3) + (OR \u00d7 w4), where weights are industry-specific.',
-      'Situational boosts (up to +20%) apply for compounding risks: critical data with long retention and no migration started (HNDL), signing algorithms with long credential lifetime (HNFL), government with CNSA 2.0 obligations, or hardcoded crypto with legacy infrastructure.',
+      'Composite = (QE × w1) + (MC × w2) + (RP × w3) + ((100 − OR) × w4), where OR is readiness (higher is better) and the other categories are attention needs (higher is worse).',
+      'Situational boosts (up to +20%) are model rules for compounding answer combinations; they are not empirical loss probabilities.',
       'Risk level thresholds: Low (0\u201325), Medium (26\u201355), High (56\u201375), Critical (76\u2013100).',
     ],
     personaEffects: [
@@ -96,14 +96,15 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       },
       {
         label: 'Compliance (Step 5)',
-        detail: 'Flags frameworks with approaching PQC deadlines.',
+        detail:
+          'Flags selected frameworks recorded with PQC requirements or transition targets; selection does not prove applicability.',
       },
       {
-        label: 'Data Retention (Step 8) / Credential Lifetime (Step 9)',
+        label: 'Data Retention (Step 7) / Credential Lifetime (Step 8)',
         detail: 'Highlights HNDL or HNFL risk windows.',
       },
       {
-        label: 'Migration Status (Step 6)',
+        label: 'Migration Status (Step 9)',
         detail: 'Flags if migration has not started.',
       },
     ],
@@ -118,7 +119,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   riskBreakdown: {
     title: 'Risk Breakdown',
     summary:
-      'Shows your score across four risk categories, each computed from specific wizard inputs with industry-tuned weights.',
+      'Shows four answer-derived model categories. The weights are editorial planning assumptions, not an external benchmark or maturity certification.',
     wizardInputs: [
       {
         label: 'Quantum Exposure',
@@ -159,7 +160,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
     dataSources: [
       'Industry composite weights from assessment configuration.',
-      'Compliance framework deadlines from Compliance database.',
+      'Requirement and target text from the Compliance dataset; scope still needs source-level verification.',
     ],
   },
 
@@ -171,7 +172,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       {
         label: 'All wizard inputs',
         detail:
-          'The narrative references your specific algorithms, compliance gaps, infrastructure, and migration status.',
+          'The narrative references selected algorithms, potential requirement-review items, infrastructure answers, and migration status. It does not validate the estate.',
       },
     ],
     personaEffects: [
@@ -210,10 +211,10 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   assessmentProfile: {
     title: 'Assessment Profile',
     summary:
-      'A direct snapshot of all the selections you made in the assessment wizard. No scoring is applied \u2014 this is purely for reference.',
+      'A direct snapshot of the selections made in the assessment wizard. No independent evidence or scanning is added.',
     wizardInputs: [
       {
-        label: 'All 14 wizard steps',
+        label: 'All 13 wizard steps',
         detail:
           'Industry, Country, Algorithms, Data Sensitivity, Compliance Frameworks, Migration Status, Use Cases, Data Retention, Credential Lifetime, System Scale, Crypto Agility, Infrastructure, Vendor Dependency, Timeline Pressure.',
       },
@@ -233,37 +234,37 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   hndlHnfl: {
     title: 'HNDL & HNFL Risk Windows',
     summary:
-      'Calculates whether adversaries can harvest your encrypted data now and decrypt it later (HNDL), or forge your digital signatures retroactively (HNFL).',
+      'Compares self-reported retention or credential lifetime with an explicit planning horizon. It illustrates exposure timing; it does not predict CRQC arrival.',
     wizardInputs: [
       {
-        label: 'Data Retention (Step 8)',
+        label: 'Data Retention (Step 7)',
         detail:
           'HNDL: how many years your data must stay confidential. Longer retention = larger risk window.',
       },
       {
-        label: 'Credential Lifetime (Step 9)',
+        label: 'Credential Lifetime (Step 8)',
         detail:
           'HNFL: how many years your signed artifacts must remain trusted. Longer lifetime = larger risk window.',
       },
       {
         label: 'Country (Step 2)',
         detail:
-          'Determines the estimated quantum threat year. Countries with earlier regulatory deadlines (e.g., US and France target 2030) use an accelerated horizon.',
+          'Adds a separately labelled jurisdiction planning milestone when one is available. It does not change the site-wide CRQC planning assumption used by the HNDL/HNFL illustration.',
       },
       {
         label: 'Algorithms (Step 3)',
         detail: 'HNFL only applies when signing algorithms (RSA, ECDSA, EdDSA) are present.',
       },
       {
-        label: 'Use Cases (Step 7)',
+        label: 'Use Cases (Step 6)',
         detail:
           'Use cases with high HNFL relevance (code signing, PKI, digital identity) are flagged.',
       },
     ],
     scoringPrinciples: [
-      'HNDL: At risk when (current year + retention years) > estimated quantum threat year.',
-      'HNFL: At risk when signing algorithms are present AND (current year + credential lifetime) > estimated quantum threat year.',
-      'Risk window = years of exposure beyond the quantum threat horizon.',
+      'HNDL attention flag: (current year + retention years) > the site-wide CRQC planning anchor.',
+      'HNFL attention flag: signing algorithms are present AND (current year + credential lifetime) > the site-wide CRQC planning anchor.',
+      'Illustrative window = years beyond the CRQC planning anchor; it is not a measured probability or predicted arrival date.',
       '\u201cI don\u2019t know\u201d responses use conservative industry defaults (e.g., 75 years for government retention, 10 years for credential lifetime).',
     ],
     personaEffects: [
@@ -306,14 +307,14 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   },
 
   algorithmMigration: {
-    title: 'Algorithm Migration Priority',
+    title: 'Candidate Algorithm Transitions',
     summary:
-      'Maps each classical algorithm you selected to its NIST-recommended post-quantum replacement, with urgency and effort estimates.',
+      'Maps each selected primitive to candidate PQC transitions and modelled complexity. The correct choice depends on function, protocol, security category, interoperability and authority.',
     wizardInputs: [
       {
         label: 'Algorithms (Step 3)',
         detail:
-          'Each selected algorithm is looked up in the algorithm database to determine quantum vulnerability and recommended PQC replacement (e.g., RSA-2048 \u2192 ML-KEM, ECDSA \u2192 ML-DSA).',
+          'Each selected primitive is looked up for quantum vulnerability and candidate transitions. RSA is dual-use, so its KEM or signature path must be confirmed.',
       },
       {
         label: 'Crypto Agility (Step 11)',
@@ -326,11 +327,12 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       },
       {
         label: 'Compliance (Step 5)',
-        detail: 'Frameworks with PQC mandates increase urgency for vulnerable algorithms.',
+        detail:
+          'Selected sources recorded with PQC requirements increase modelled urgency; applicability requires separate verification.',
       },
     ],
     scoringPrinciples: [
-      'Urgency levels: Immediate (quantum-vulnerable + compliance deadline), Near-term (quantum-vulnerable, no immediate deadline), Long-term (not directly vulnerable).',
+      'Urgency labels are planning heuristics generated from the answers, not authoritative implementation deadlines.',
       'Effort scope: Quick-win, Moderate, Major project, or Multi-year \u2014 based on crypto agility and infrastructure complexity.',
     ],
     personaEffects: [
@@ -343,18 +345,20 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
         effect: 'Section is open by default.',
       },
     ],
-    dataSources: ['Algorithm database with NIST FIPS 203/204/205 replacement mappings.'],
+    dataSources: [
+      'Algorithm database aligned to NIST FIPS 203/204/205 primitives; application-level transition choices still require protocol and authority review.',
+    ],
   },
 
   complianceImpact: {
     title: 'Compliance Impact',
     summary:
-      'Shows PQC mandates and deadlines for the compliance frameworks you selected, with links to relevant standards and timeline milestones.',
+      'Shows recorded PQC requirement status and transition targets for selected frameworks, with scope context and source-navigation links.',
     wizardInputs: [
       {
         label: 'Compliance Frameworks (Step 5)',
         detail:
-          'Each selected framework is looked up for PQC requirements, deadlines, and notes. Only frameworks matching your selected industry are available.',
+          'Each selected framework is looked up for PQC requirement status, targets and notes. The profile filter is educational support, not a legal applicability decision.',
       },
       {
         label: 'Industry (Step 1)',
@@ -382,7 +386,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   recommendedActions: {
     title: 'Recommended Actions',
     summary:
-      'Prioritized action items generated from your specific assessment inputs. Each action includes an effort estimate and links to relevant modules for next steps.',
+      'Prioritized learning and investigation prompts generated from the assessment inputs. Effort labels are coarse model bands, not project estimates.',
     wizardInputs: [
       {
         label: 'Algorithms (Step 3)',
@@ -397,7 +401,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
         detail: 'Actions for meeting compliance framework deadlines.',
       },
       {
-        label: 'Migration Status (Step 6)',
+        label: 'Migration Status (Step 9)',
         detail:
           'Actions are prioritized differently based on whether migration has started, is planned, or has not begun.',
       },
@@ -432,7 +436,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   migrationRoadmap: {
     title: 'Migration Roadmap',
     summary:
-      'Groups your recommended actions into Immediate, Short-term, and Long-term swim lanes, aligned with your country\u2019s regulatory deadline.',
+      'Groups suggested actions into planning lanes and shows a sourced jurisdiction milestone. Guidance targets and binding deadlines remain distinct.',
     wizardInputs: [
       {
         label: 'Recommended Actions',
@@ -442,7 +446,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       {
         label: 'Country (Step 2)',
         detail:
-          'The country\u2019s regulatory deadline is shown as a target marker on the timeline.',
+          'The selected jurisdiction’s next sourced milestone is shown as either guidance or a regulatory deadline according to its recorded mandate type.',
       },
     ],
     personaEffects: [
@@ -480,7 +484,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   vendorRisk: {
     title: 'Third-Party & Vendor PQC Risk',
     summary:
-      'Frames what your assessed vendor dependency model means for how much control you have over your own migration timeline, and lists the real catalog products matched to your industry/infrastructure alongside each vendor\u2019s tracked PQC commitment.',
+      'Frames the selected vendor-dependency model and lists catalog examples matched to the profile. Matches are not detected products or an estate inventory.',
     wizardInputs: [
       {
         label: 'Vendor Dependency (Step 12, part of Infrastructure)',
@@ -490,7 +494,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       {
         label: 'Infrastructure + Industry (Steps 1, 12)',
         detail:
-          'Same matching used by the Migration Toolkit \u2014 filters the Migrate catalog to products relevant to your estate.',
+          'Same matching used by the Migration Toolkit — filters the Migrate catalog to examples worth investigating, not products known to be deployed.',
       },
     ],
     personaEffects: [{ persona: 'All personas', effect: 'Section is collapsed by default.' }],
@@ -502,7 +506,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   roiCalculator: {
     title: 'ROI Calculator',
     summary:
-      'An interactive cost/benefit model for your PQC migration. All four inputs are auto-calculated from your assessment answers \u2014 infrastructure layers, vendor dependency, migration status, crypto agility, and team size all factor in. Override any field to match your organization\u2019s actuals.',
+      'An illustrative cost/benefit scenario seeded from assessment answers and editorial assumptions. It is not a quote, forecast, regulatory exposure calculation, or finance-approved business case; replace every assumption with organization-specific evidence.',
     wizardInputs: [
       {
         label: 'Algorithm Migrations (Step 3)',
@@ -510,34 +514,34 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
           'Number of quantum-vulnerable algorithms determines the base engineering cost ($30K per algorithm, scaled by system count).',
       },
       {
-        label: 'Infrastructure Layers (Step 11)',
+        label: 'Infrastructure Layers (Step 12)',
         detail:
           'Each selected layer (Hardware, Security Stack, OS, Network, Application, Cloud, Database) adds its estimated migration cost. Hardware/HSM is the most expensive; cloud is the least.',
       },
       {
-        label: 'Vendor Dependency (Step 11)',
+        label: 'Vendor Dependency (nested in Step 12)',
         detail:
           'Heavy vendor dependency increases cost (vendor coordination, licensing, upgrade cycles). Open-source and in-house reduce it.',
       },
       {
-        label: 'Migration Status (Step 6)',
+        label: 'Migration Status (Step 9)',
         detail:
           'Already-started migrations reduce remaining cost to 40%. Planning phase applies 70%. Not-started uses the full estimate.',
       },
       {
-        label: 'Crypto Agility (Step 10)',
+        label: 'Crypto Agility (Step 11)',
         detail:
           'Hardcoded crypto increases cost by 50% (major refactoring). Fully-abstracted reduces cost by 40%.',
       },
       {
-        label: 'Team Size (Step 9)',
+        label: 'Team Size (Step 10)',
         detail:
           'Small teams (1\u201310) face 30% higher costs due to longer timelines. Large teams (200+) can parallelize for 15% savings.',
       },
       {
         label: 'Compliance Frameworks (Step 5)',
         detail:
-          'Compliance penalty is auto-populated from framework-specific baselines (e.g., GDPR up to $20M, HIPAA $1.5M, PCI DSS $500K). Uses the highest applicable penalty as the default.',
+          'A rough penalty scenario may be seeded from a selected framework. Selection does not establish applicability, violation, enforcement likelihood, or recoverable savings.',
       },
       {
         label: 'Industry (Step 1)',
@@ -549,7 +553,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       'Migration Cost = (Algorithm Base + Infrastructure Base) \u00d7 Vendor \u00d7 Migration Status \u00d7 Agility \u00d7 Team Size. Floor: $50K.',
       'Algorithm Base = Vulnerable algorithm count \u00d7 $30K \u00d7 system scale multiplier.',
       'Infrastructure Base = sum of per-layer costs for selected layers (Hardware $120K, Security Stack $80K, OS $60K, Network $50K, Application $40K, Database $35K, Cloud $30K).',
-      'Avoided Breach Cost = (breach probability %) \u00d7 industry breach baseline \u00d7 planning horizon (years). Breach probability seeded from risk score / 2, capped at 50%.',
+      'Illustrative avoided-cost scenario = editable scenario probability \u00d7 industry baseline \u00d7 planning horizon. The initial probability is a model seed derived from half the priority index and capped at 50%; it is not a measured breach probability.',
       'Compliance Savings = compliance penalty per incident \u00d7 number of PQC-mandating frameworks. Penalty seeded from the highest framework-specific baseline.',
       'Net ROI = ((Avoided Breach Cost + Compliance Savings \u2212 Migration Cost) / Migration Cost) \u00d7 100%.',
       'Payback Period = Migration Cost / (Total Benefit / 12 months).',
@@ -563,33 +567,33 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
     dataSources: [
       'Industry breach cost baselines from IBM Cost of a Data Breach Report 2025.',
-      'Compliance penalty baselines from published regulatory enforcement data (GDPR Art. 83, HIPAA, PCI SSC, NERC, MiCA, etc.).',
-      'Infrastructure layer cost estimates based on industry migration complexity analysis.',
+      'Illustrative regulatory maximums or baselines used as editable scenario inputs, not predicted penalties.',
+      'Editorial infrastructure-layer cost assumptions; no measured market benchmark is claimed.',
     ],
   },
 
   kpiTrending: {
     title: 'KPI Trending',
     summary:
-      'Tracks your PQC risk score and category breakdown across multiple assessments over time, showing your migration progress. Each completed assessment saves a snapshot of your scores. The line chart plots overall risk score history, while the radar chart compares your current category scores against the previous assessment.',
+      'Compares the educational priority index and category values across multiple self-assessments. Each completion saves a model snapshot. The line chart plots index history, while the radar chart compares current category values with the previous snapshot; neither proves migration progress.',
     wizardInputs: [
       {
         label: 'Assessment History',
         detail:
-          'Each time you complete an assessment, a snapshot is saved with your risk score, risk level, and all four category scores. Up to 5 snapshots are retained.',
+          'Each completed assessment saves the educational priority index, model band, and four category values. Up to five snapshots are retained.',
       },
       {
         label: 'All wizard inputs (indirectly)',
         detail:
-          'Each snapshot captures the computed risk score and category scores at completion time. Changing wizard inputs and re-completing the assessment generates a new snapshot with updated scores.',
+          'Each snapshot captures the computed priority index and category values at completion time. Changing answers and completing again creates a new model snapshot.',
       },
     ],
     scoringPrinciples: [
-      'Line chart: plots each snapshot\u2019s composite risk score (0\u2013100) over time. Reference lines at 70 (High) and 40 (Medium) show risk level thresholds.',
+      'Line chart: plots each snapshot\u2019s educational priority index (0\u2013100). Reference lines at 70 and 40 show editorial model-band thresholds, not externally validated risk thresholds.',
       'Radar chart: overlays your current four category scores (Quantum Exposure, Migration Complexity, Regulatory Pressure, Org Readiness) against the previous assessment\u2019s scores.',
-      'Delta badge: the colored pill under the Risk Score gauge shows the point change since your last assessment (\u2212 green = improved, + red = worsened).',
+      'Delta badge: the colored pill under the priority gauge shows the point change since the previous self-assessment (\u2212 green, + red); it reflects answer/model changes, not measured risk reduction.',
       'The line chart requires at least 2 completed assessments to appear. The radar chart shows from the first assessment onward.',
-      'History is preserved when you reset and re-take the assessment, so you can track progress over time.',
+      'History is preserved when you reset and re-take the assessment so you can compare model snapshots over time.',
     ],
     personaEffects: [
       {
@@ -600,7 +604,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     ],
     dataSources: [
       'Assessment snapshots stored in your browser\u2019s local storage (up to 5 most recent).',
-      'Current scores are recomputed live from your latest wizard inputs using the same scoring engine as the Risk Score section.',
+      'Current values are recomputed live from the latest answers using the same model as the Educational Priority Index section.',
     ],
   },
 

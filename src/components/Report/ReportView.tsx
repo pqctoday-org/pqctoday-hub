@@ -383,14 +383,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           <p className="text-muted-foreground mb-6">
             {isCurious
               ? 'Curious what a finished report looks like? Browse an example before committing to the assessment — or jump straight in.'
-              : 'Complete the PQC Risk Assessment to generate your personalized report with risk scores, migration priorities, and actionable recommendations — or open a worked example first.'}
+              : 'Complete the PQC Risk Assessment to generate an educational priority report with transparent assumptions, candidate migration actions, and suggested learning steps — or open a worked example first.'}
           </p>
           {!simEmbed && (
             <p className="mx-auto mb-6 max-w-2xl text-sm text-muted-foreground">
-              The report turns your assessment answers into an executive-ready view of cryptographic
-              exposure, prioritized remediation work, and practical next steps. Use the example to
-              understand the output, then complete the assessment when you are ready to create
-              recommendations tailored to your organization.
+              The report turns assessment answers into a learning view of possible cryptographic
+              exposure, candidate priorities, and evidence to investigate. Use the example to
+              understand the model, then complete the assessment when you are ready to explore how
+              different answers change the output.
             </p>
           )}
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -430,11 +430,20 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         <PageHeader
           icon={FileBarChart}
           title="PQC Assessment Report"
-          description="Your personalized post-quantum cryptography risk report with scores, priorities, and recommendations."
+          description="An educational PQC prioritization report derived from your self-reported answers and model assumptions."
         />
       )}
 
       {!simEmbed && <PersonaPageNote route="/report" className="mb-4" />}
+
+      {!simEmbed && (
+        <div className="mb-4 rounded-xl border border-primary/25 bg-primary/5 p-3 text-xs leading-relaxed text-muted-foreground">
+          <strong className="text-foreground">How to read this report:</strong> use it to learn,
+          compare priorities and decide what evidence to collect next. It is not a system scan,
+          measured risk probability, legal or compliance determination, certification result, or
+          substitute for an organization-specific engineering review.
+        </div>
+      )}
 
       {!sharedView && <MaturityTierChip />}
 

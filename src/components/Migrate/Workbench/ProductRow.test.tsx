@@ -11,6 +11,11 @@ vi.mock('@/data/sponsors', () => ({
     vendorName.trim().toLowerCase() === 'sponsored vendor corp' ? { name: vendorName } : undefined,
 }))
 
+vi.mock('@/hooks/useRevisions', () => ({
+  useRevisions: () => ({ revisions: [], isLoading: false, error: null }),
+  byRecord: () => [],
+}))
+
 function makeItem(over: Partial<SoftwareItem>): SoftwareItem {
   return {
     productId: 'p1',

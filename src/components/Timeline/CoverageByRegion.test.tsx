@@ -29,19 +29,19 @@ function makeCountry(name: string, phases: string[]): GanttCountryData {
   }
 }
 
-describe('CoverageByRegion — "at Migration+" stat', () => {
+describe('CoverageByRegion — migration/standardization record stat', () => {
   it('counts only countries with a Migration or Standardization phase', () => {
     const data: GanttCountryData[] = [
       makeCountry('United States', ['Discovery', 'Migration']),
       makeCountry('Canada', ['Discovery', 'Testing']),
     ]
     render(<CoverageByRegion data={data} selectedRegion="All" onSelectRegion={() => {}} />)
-    expect(screen.getByText('1 of 2 at Migration+')).toBeInTheDocument()
+    expect(screen.getByText('1 of 2 with Migration/Standardization records')).toBeInTheDocument()
   })
 
   it('omits the stat line for a region with zero countries', () => {
     const data: GanttCountryData[] = []
     render(<CoverageByRegion data={data} selectedRegion="All" onSelectRegion={() => {}} />)
-    expect(screen.queryByText(/at Migration\+/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/with Migration\/Standardization records/)).not.toBeInTheDocument()
   })
 })

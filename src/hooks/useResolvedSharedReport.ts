@@ -202,6 +202,7 @@ export function useResolvedSharedReport(livePersona: PersonaId | null): SharedRe
         // authored persona for a first-time visitor with none selected yet.
         persona: livePersonaRef.current ?? toValidPersona(EXAMPLE_REPORT_PERSONA),
         approximate: false,
+        sample: true,
       })
       return
     }

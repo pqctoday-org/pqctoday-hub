@@ -67,19 +67,19 @@ function urgencyFor(deadline: number): Urgency {
 }
 
 /**
- * Plain-language deadline message. `atRiskPhrase` is model-specific — what is
- * already exposed once the deadline has passed (data secrecy vs. credentials).
+ * Plain-language model message. `atRiskPhrase` describes the possible exposure;
+ * the arithmetic does not prove interception, compromise or organisational scope.
  */
 function urgencyMessage(deadline: number, atRiskPhrase: string): string {
   const rem = deadline - CURRENT_YEAR
   if (rem < 0) {
     const abs = Math.abs(rem)
-    return `Migration should have started ${abs} year${abs === 1 ? '' : 's'} ago. ${atRiskPhrase}`
+    return `With these inputs, the latest safe-start year passed ${abs} year${abs === 1 ? '' : 's'} ago. ${atRiskPhrase}`
   }
   if (rem <= 2)
-    return `Only ${rem} year${rem === 1 ? '' : 's'} remaining. Migration must begin immediately.`
-  if (rem <= 5) return `${rem} years remaining. Migration planning should be underway.`
-  return `${rem} years remaining. Begin cryptographic inventory and planning.`
+    return `With these inputs, ${rem} year${rem === 1 ? '' : 's'} remain before the latest safe-start year.`
+  if (rem <= 5) return `With these inputs, ${rem} years remain before the latest safe-start year.`
+  return `With these inputs, ${rem} years remain before the latest safe-start year.`
 }
 
 export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
@@ -112,7 +112,8 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
         x: dataLifetime,
         xLabel: 'data lifetime',
         deadline: crqcYear - dataLifetime - migrationTime,
-        atRiskPhrase: 'Data intercepted today is already at risk.',
+        atRiskPhrase:
+          'Data collected now may become readable later if its confidentiality lifetime extends beyond the assumed CRQC year.',
       },
       {
         key: 'hnfl',
@@ -120,7 +121,8 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
         x: credentialValidity,
         xLabel: 'credential validity',
         deadline: crqcYear - credentialValidity - migrationTime,
-        atRiskPhrase: 'Credentials signed today can be forged retroactively.',
+        atRiskPhrase:
+          'A still-trusted classical credential could become forgeable after a capable CRQC arrives.',
         // This clock answers "when must I stop issuing NEW classical-signed
         // credentials" (Z − validity − migration-time). It is a distinct,
         // earlier-or-later question from the HNFL workshop's re-issuance clock
@@ -315,7 +317,7 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
                     </span>
                     <span className="text-xs font-bold text-foreground">{row.label}</span>
                     <span className="text-xs text-muted-foreground">
-                      {isOverdue ? 'migration window' : 'migration deadline'}
+                      {isOverdue ? 'safe-start window' : 'latest safe-start year'}
                     </span>
                     {isExample && (
                       <span
@@ -350,8 +352,9 @@ export const ThreatEconomicsHeader: React.FC<{ defaultExpanded?: boolean }> = ({
                       {crqcYear} &minus; {row.x} &minus; {migrationTime} = {row.deadline}
                     </div>
                     <div className="text-[10px] text-muted-foreground mt-0.5">
-                      Z &minus; X &minus; Y = deadline ({row.xLabel}). If X + Y &gt; (Z &minus;
-                      today), you are already exposed.
+                      Z &minus; X &minus; Y = latest safe-start year ({row.xLabel}). If X + Y &gt;
+                      (Z &minus; today), the model flags a potential exposure window; it does not
+                      prove collection or compromise.
                     </div>
                     {row.note && (
                       <div className="text-[10px] text-muted-foreground/80 mt-1 italic">

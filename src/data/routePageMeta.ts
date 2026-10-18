@@ -83,7 +83,7 @@ export const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string 
   },
   '/assess': {
     title: 'PQC Risk Assessment — Post-Quantum Cryptography Migration Tool',
-    text: 'Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization.',
+    text: 'Explore an educational PQC priority model, migration questions, and suggested learning actions based on your answers.',
   },
   '/business': {
     title: 'PQC Command Center — Quantum Readiness Workspace',
@@ -115,7 +115,7 @@ export const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string 
   },
   '/report': {
     title: 'PQC Assessment Report — Post-Quantum Cryptography Risk Analysis',
-    text: 'View your personalized PQC risk score, migration priorities, and actionable recommendations.',
+    text: 'Review an educational PQC priority model, candidate migration actions, and the assumptions behind them.',
   },
   '/threats': {
     title: 'Quantum Threats Dashboard — Industry Risk Analysis',
