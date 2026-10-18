@@ -148,7 +148,7 @@ describe('ComplianceImpactSection: binding chip', () => {
     renderSection(undefined, [{ ...impactFor(fwA), requiresPQC: true }])
     const row = screen.getByText(fwA.label).closest('div')?.parentElement as HTMLElement
     expect(within(row).getByTestId('binding-chip')).toHaveTextContent('Binding')
-    expect(within(row).getByText('PQC Required')).toBeInTheDocument()
+    expect(within(row).getByText('Source states PQC required')).toBeInTheDocument()
   })
 
   it("names the basis in the chip's tooltip when the framework has one", () => {

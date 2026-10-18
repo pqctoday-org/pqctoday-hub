@@ -182,7 +182,7 @@ function buildPlan(input: EngineeringPlanInput, date: string): string {
   } else {
     out.push(
       mdTable(
-        ['Current', 'Quantum-vulnerable', 'Replacement', 'Urgency', 'Notes'],
+        ['Current', 'Quantum-vulnerable', 'Candidate transition', 'Model urgency', 'Notes'],
         result.algorithmMigrations.map((m) => [
           m.classical,
           m.quantumVulnerable ? 'Yes' : 'No',
@@ -235,8 +235,8 @@ export async function buildEngineeringPlanBlob(input: EngineeringPlanInput): Pro
   const backlog = generateCsv(input.result.algorithmMigrations, [
     { header: 'Current', accessor: (m) => m.classical },
     { header: 'Quantum-vulnerable', accessor: (m) => (m.quantumVulnerable ? 'Yes' : 'No') },
-    { header: 'Replacement', accessor: (m) => m.replacement },
-    { header: 'Urgency', accessor: (m) => m.urgency },
+    { header: 'Candidate transition', accessor: (m) => m.replacement },
+    { header: 'Model urgency', accessor: (m) => m.urgency },
     { header: 'Notes', accessor: (m) => m.notes },
   ])
   const products = generateCsv(productRows(input), [

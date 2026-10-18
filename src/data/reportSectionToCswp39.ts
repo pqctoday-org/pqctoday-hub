@@ -92,7 +92,7 @@ export function getReportSectionsForStep(stepId: CSWP39StepId): ReportSectionId[
 /** Human-readable label per section ID — shown in the CSWP.39 nav legend. */
 export const REPORT_SECTION_LABELS: Record<ReportSectionId, string> = {
   countryTimeline: 'Country PQC Migration Timeline',
-  riskScore: 'Risk Score',
+  riskScore: 'Educational Priority Index',
   keyFindings: 'Key Findings',
   riskBreakdown: 'Risk Breakdown',
   executiveSummary: 'Executive Summary',
@@ -100,7 +100,7 @@ export const REPORT_SECTION_LABELS: Record<ReportSectionId, string> = {
   hndlHnfl: 'HNDL / HNFL Risk Windows',
   discovery: 'Cryptographic Discovery',
   cbom: 'Cryptographic Bill of Materials (CBOM)',
-  algorithmMigration: 'Algorithm Migration Priority',
+  algorithmMigration: 'Candidate Algorithm Transitions',
   complianceImpact: 'Compliance Impact',
   recommendedActions: 'Recommended Actions',
   migrationRoadmap: 'Migration Roadmap',

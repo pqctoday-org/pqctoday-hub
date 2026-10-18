@@ -48,8 +48,8 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
           </span>
         </div>
         <p className="mb-3.5 text-[12.5px] leading-relaxed text-muted-foreground">
-          The essentials — industry, crypto stack, data sensitivity, infrastructure and migration
-          status. Best for a first read or a quick board-ready snapshot.
+          The essentials — industry, jurisdiction, crypto in use, data sensitivity, selected
+          frameworks and migration status. Best for a first educational prioritization.
         </p>
         <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           Your report includes
@@ -93,7 +93,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
         </div>
         <p className="mb-3.5 text-[12.5px] leading-relaxed text-muted-foreground">
           Everything in fast track plus use cases, retention, credential lifetimes, scale, crypto
-          agility and vendor dependencies — for a credible migration plan.
+          agility, infrastructure and timeline pressure — for a more detailed planning model.
         </p>
         <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           Unlocks everything, including

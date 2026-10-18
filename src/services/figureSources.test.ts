@@ -89,7 +89,7 @@ describe('buildFigureSources', () => {
 
   it('makes the risk score an estimate with the weighted working as its method', () => {
     const risk = entries[0]
-    expect(risk.claim).toBe('Quantum risk score')
+    expect(risk.claim).toBe('Educational PQC priority index')
     expect(risk.value).toBe('71 / 100 (high)')
     expect(risk.kind).toBe('estimate')
     expect(risk.method).toMatch(/Weighted composite of four category scores/)

@@ -122,7 +122,7 @@ const baseResult: AssessmentResult = {
     },
   ],
   narrative:
-    'Your organization in the Technology sector has a quantum risk score of 65/100 (high).',
+    'Your answers for the Technology sector produce an educational priority index of 65/100 (high).',
   generatedAt: '2026-02-16T00:00:00.000Z',
 }
 
@@ -211,7 +211,9 @@ describe('ReportContent', () => {
   describe('algorithm migration table', () => {
     it('renders the section heading', () => {
       renderReport()
-      expect(screen.getAllByText('Algorithm Migration Priority').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText('Candidate Algorithm Transitions').length).toBeGreaterThanOrEqual(
+        1
+      )
     })
 
     it('shows algorithm names', () => {
@@ -259,7 +261,7 @@ describe('ReportContent', () => {
     it('shows PQC Required badge for required frameworks', () => {
       renderReport()
       // Rendered in both the Compliance Impact section and the QRA compliance map.
-      expect(screen.getAllByText('PQC Required').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText('Source states PQC required').length).toBeGreaterThanOrEqual(1)
     })
 
     it('shows No PQC mandate badge for non-required frameworks', () => {

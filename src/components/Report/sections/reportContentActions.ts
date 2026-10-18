@@ -52,8 +52,8 @@ export const shareReport = async (result: AssessmentResult, shared: boolean) => 
   if (navigator.share) {
     try {
       await navigator.share({
-        title: 'PQC Risk Assessment Report',
-        text: `Quantum Risk Score: ${result.riskScore}/100 — ${result.narrative}`,
+        title: 'PQC Educational Assessment Report',
+        text: `Educational priority index: ${result.riskScore}/100 — ${result.narrative}`,
         url,
       })
     } catch (err) {
@@ -82,14 +82,14 @@ export const exportAlgorithmMigrationsCsv = (result: AssessmentResult) => {
     ? [
         'Algorithm',
         'Quantum Vulnerable',
-        'PQC Replacement',
+        'Candidate Transition',
         'Urgency',
         'Migration Effort',
         'Estimated Scope',
         'Rationale',
         'Notes',
       ]
-    : ['Algorithm', 'Quantum Vulnerable', 'PQC Replacement', 'Urgency', 'Notes']
+    : ['Algorithm', 'Quantum Vulnerable', 'Candidate Transition', 'Urgency', 'Notes']
 
   const rows = result.algorithmMigrations.map((algo) => {
     const effort = effortMap.get(algo.classical)

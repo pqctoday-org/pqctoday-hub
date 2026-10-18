@@ -11,23 +11,25 @@ describe('getThreatHorizon — separates CRQC estimate from regulatory mandate',
     expect(h.effective).toBe(ESTIMATED_QUANTUM_THREAT_YEAR)
   })
 
-  it('effective is always the earlier of CRQC and the mandate horizon', () => {
+  it('keeps the CRQC clock independent and surfaces jurisdiction milestones separately', () => {
     for (const country of Object.keys(COUNTRY_PLANNING_HORIZON)) {
       const h = getThreatHorizon(country)
       const mandate = COUNTRY_PLANNING_HORIZON[country]
-      expect(h.effective).toBe(Math.min(h.crqc, mandate))
-      // regulatory is surfaced only when it binds strictly earlier than CRQC
-      if (mandate < h.crqc) {
-        expect(h.regulatory).toBe(mandate)
-      } else {
-        expect(h.regulatory).toBeUndefined()
-      }
+      expect(h.effective).toBe(h.crqc)
+      expect(h.regulatory).toBe(mandate)
     }
   })
 
-  it('never labels a mandate at/after the CRQC estimate as the regulatory driver', () => {
+  it('has no jurisdiction milestone when no country horizon is selected', () => {
     const h = getThreatHorizon(undefined)
     expect(h.regulatory).toBeUndefined()
     expect(h.effective).toBe(h.crqc)
+  })
+
+  it('never relabels an earlier jurisdiction milestone as CRQC arrival', () => {
+    const h = getThreatHorizon('France')
+    expect(h.regulatory).toBe(COUNTRY_PLANNING_HORIZON.France)
+    expect(h.effective).toBe(ESTIMATED_QUANTUM_THREAT_YEAR)
+    expect(h.crqc).toBe(ESTIMATED_QUANTUM_THREAT_YEAR)
   })
 })

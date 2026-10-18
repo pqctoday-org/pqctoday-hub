@@ -62,13 +62,17 @@ export const RiskScoreSection = ({
   return (
     <CollapsibleSection
       id="report-section-riskScore"
-      title="Risk Score"
+      title="Educational Priority Index"
       icon={<ShieldAlert className={config.color} size={20} />}
       defaultOpen={defaultOpen}
       className={clsx('border-l-4', config.border)}
       infoTip="riskScore"
     >
       <RiskGauge score={result.riskScore} level={result.riskLevel} />
+      <p className="mt-2 text-center text-[11px] leading-relaxed text-muted-foreground">
+        Educational priority index from self-reported answers (0–100), not a probability of breach,
+        compliance grade, or measured estate risk.
+      </p>
       {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
         <div className="flex items-center justify-center gap-2 mt-2 print:hidden">
           <span
