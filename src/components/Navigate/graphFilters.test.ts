@@ -84,6 +84,59 @@ describe('rankVisibleNodes', () => {
   })
 })
 
+describe('rankVisibleNodes / pinnedNodeIds', () => {
+  it('draws a pinned node the count cap would have dropped, on top of the cap', () => {
+    const nodes = [
+      node('standard', 'RFC', 9),
+      node('standard', 'RFC', 5),
+      node('standard', 'RFC', 1),
+    ]
+    const lowest = nodes[2] as ForceClusterNode
+    const picked = rankVisibleNodes(
+      graph(nodes),
+      filters({ maxNodes: 1, pinnedNodeIds: new Set([lowest.id]) })
+    )
+    expect(picked.map((n) => n.degree)).toEqual([9, 1])
+  })
+
+  it('draws a pinned node whose whole category is switched off', () => {
+    const vendor = node('vendor', 'Commercial Vendor', 3)
+    const picked = rankVisibleNodes(
+      graph([node('standard', 'RFC', 5), vendor]),
+      filters({ pinnedNodeIds: new Set([vendor.id]) })
+    )
+    expect(picked.map((n) => n.id)).toContain(vendor.id)
+  })
+
+  it('does not duplicate a pinned node that is already inside the cap', () => {
+    const top = node('standard', 'RFC', 9)
+    const picked = rankVisibleNodes(
+      graph([top, node('standard', 'RFC', 1)]),
+      filters({ maxNodes: 1, pinnedNodeIds: new Set([top.id]) })
+    )
+    expect(picked.map((n) => n.id)).toEqual([top.id])
+  })
+
+  it('ignores a pinned id that is not in the graph', () => {
+    const picked = rankVisibleNodes(
+      graph([node('standard', 'RFC', 5)]),
+      filters({ pinnedNodeIds: new Set(['no-such-node']) })
+    )
+    expect(picked).toHaveLength(1)
+  })
+
+  it('carries a pinned node and its edges into the visible subgraph', () => {
+    const top = node('standard', 'RFC', 9)
+    const low = node('standard', 'RFC', 1)
+    const sub = buildVisibleSubgraph(
+      graph([top, low], [[top.id, low.id]]),
+      filters({ maxNodes: 1, pinnedNodeIds: new Set([low.id]) })
+    )
+    expect(sub.nodes.map((n) => n.id)).toEqual([top.id, low.id])
+    expect(sub.edges).toHaveLength(1)
+  })
+})
+
 describe('filterNodes / disabledSubs', () => {
   it('drops a disabled sub-category but keeps its siblings', () => {
     const nodes = [node('standard', 'RFC', 5), node('standard', 'Internet-Draft', 5)]

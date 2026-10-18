@@ -192,9 +192,10 @@ export function MobileAboutView() {
                         inaccuracies. Leaders are featured only with written consent.
                       </Row>
                       <Row title="Trust Engine">
-                        Every fact on PQC Today carries a trust score, a named reviewer, and a link
-                        to the original source document — produced by a maintenance pipeline that
-                        re-runs whenever a source changes, not a one-time label.
+                        Records carry a trust score, a link to the original source document and, for
+                        every reviewed change, a named reviewer in a signed public audit trail. Each
+                        claim is checked against the source&rsquo;s exact words, and every change
+                        goes through the same maintainer-run flow — not a one-time label.
                       </Row>
                       <Row title="Security audit">
                         <span className="font-semibold text-status-success">0 vulnerabilities</span>{' '}
