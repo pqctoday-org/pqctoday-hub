@@ -521,10 +521,10 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                         placeholder={placeholder}
                         onChange={(event) =>
                           onObservationChange?.(d.id, {
-                            verificationState:
-                              observations[d.id]?.verificationState ?? 'not-verified',
                             ...observations[d.id],
                             [field]: event.target.value,
+                            verificationState:
+                              observations[d.id]?.verificationState ?? 'not-verified',
                           })
                         }
                         className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-foreground"
