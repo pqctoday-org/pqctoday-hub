@@ -325,13 +325,15 @@ function sourceContextFor(
   const organization = sourceOrganizationFor(enforcementBody)
   if (organization) {
     const relationship: SourceRelationship =
-      organization.scope === 'international' || organization.scope === 'regional'
-        ? 'international'
-        : country && organization.domiciles.some((domicile) => sameCountry(country, domicile))
-          ? 'domestic'
-          : country
-            ? 'foreign'
-            : 'unclassified'
+      organization.relationshipOverride === 'unclassified'
+        ? 'unclassified'
+        : organization.scope === 'international' || organization.scope === 'regional'
+          ? 'international'
+          : country && organization.domiciles.some((domicile) => sameCountry(country, domicile))
+            ? 'domestic'
+            : country
+              ? 'foreign'
+              : 'unclassified'
     return {
       relationship,
       organizationId: organization.id,

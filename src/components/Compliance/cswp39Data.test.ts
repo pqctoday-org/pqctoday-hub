@@ -31,6 +31,11 @@ describe('CSWP39_SOURCE_METADATA staleness', () => {
       /^https:\/\/nvlpubs\.nist\.gov\/.+CSWP\.39(-upd1)?\.pdf$/
     )
   })
+
+  it('links to the publisher instead of serving a third-party document locally', () => {
+    expect(CSWP39_SOURCE_METADATA).not.toHaveProperty('localPdfPath')
+    expect(CSWP39_SOURCE_METADATA.sourceUrl).toMatch(/^https:\/\/nvlpubs\.nist\.gov\//)
+  })
 })
 
 describe('PILLAR_TO_STEP drift guard', () => {

@@ -21,7 +21,7 @@ const sampleChunk: RAGChunk = {
   title: 'FIPS 203',
   content: 'ML-KEM standard',
   category: 'standard',
-  metadata: {},
+  metadata: { url: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf' },
   prov: {
     entity_id: 'abc123',
     was_generated_by: 'corpus-generator@2026-05-20',
@@ -60,7 +60,7 @@ describe('SourcePassagesDrawer', () => {
     render(<SourcePassagesDrawer chunkId="library-FIPS 203" />)
     expect(screen.getByRole('button', { name: /Source evidence/i })).toBeInTheDocument()
     expect(screen.getByText(/automated extraction/)).toBeInTheDocument()
-    expect(screen.getByText(/2 passages from FIPS_203\.pdf/)).toBeInTheDocument()
+    expect(screen.getByText(/2 passages from FIPS 203/)).toBeInTheDocument()
   })
 
   it('never shows the extraction tool identifier to readers', () => {
@@ -87,8 +87,12 @@ describe('SourcePassagesDrawer', () => {
     expect(toggle.getAttribute('aria-expanded')).toBe('true')
     expect(screen.getByText(/ML-KEM uses module lattices/)).toBeInTheDocument()
     expect(screen.getByText(/Security categories 1, 3, 5/)).toBeInTheDocument()
-    // Source doc link uses the cached path
-    const sourceLink = screen.getByRole('link', { name: /View source document/i })
-    expect(sourceLink.getAttribute('href')).toBe('/library/FIPS_203.pdf')
+    // Source passages remain visible, but the document link always goes to the
+    // publisher rather than exposing a private evidence-cache path.
+    const sourceLink = screen.getByRole('link', { name: /Open official source/i })
+    expect(sourceLink.getAttribute('href')).toBe(
+      'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf'
+    )
+    expect(sourceLink.getAttribute('href')).not.toMatch(/^\/library\//)
   })
 })

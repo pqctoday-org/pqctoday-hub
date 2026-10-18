@@ -33,11 +33,15 @@ export interface SourceOrganization {
   parentId?: string
   sourceUrl: string
   verifiedAt: string
+  /** Explicitly prevents a domicile inference when the source itself is unnamed or unresolved. */
+  relationshipOverride?: 'unclassified'
 }
+
+import { CATALOGUE_SOURCE_ORGANIZATIONS } from './sourceOrganizations.catalogue'
 
 const VERIFIED_AT = '2026-10-17'
 
-export const SOURCE_ORGANIZATIONS: readonly SourceOrganization[] = [
+const CORE_SOURCE_ORGANIZATIONS: readonly SourceOrganization[] = [
   {
     id: 'us-nist',
     name: 'National Institute of Standards and Technology (NIST)',
@@ -199,7 +203,7 @@ export const SOURCE_ORGANIZATIONS: readonly SourceOrganization[] = [
     kind: 'regulator',
     domiciles: ['France'],
     scope: 'national',
-    sourceUrl: 'https://www.amf-france.org/en/amf',
+    sourceUrl: 'https://www.amf-france.org/en/amf/presentation-amf/amf-glance',
     verifiedAt: VERIFIED_AT,
   },
   {
@@ -239,10 +243,15 @@ export const SOURCE_ORGANIZATIONS: readonly SourceOrganization[] = [
     kind: 'government_agency',
     domiciles: [],
     scope: 'regional',
-    sourceUrl: 'https://www.enisa.europa.eu/about-enisa',
+    sourceUrl: 'https://www.enisa.europa.eu/about-enisa/who-we-are',
     verifiedAt: VERIFIED_AT,
   },
 ] as const
+
+export const SOURCE_ORGANIZATIONS: readonly SourceOrganization[] = [
+  ...CORE_SOURCE_ORGANIZATIONS,
+  ...CATALOGUE_SOURCE_ORGANIZATIONS,
+]
 
 function normalizeOrganizationName(value: string): string {
   return value

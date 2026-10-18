@@ -189,7 +189,7 @@ describe('Compliance pack (GRC)', () => {
     expect(path).toBe('compliance-pack/applicability-register.csv')
     const csv = files[path as string]
     expect(csv).toContain(
-      'framework_id,framework,tier,why_it_applies,binding_status,requires_pqc,binding_basis,deadline,source'
+      'framework_id,framework,tier,why_it_applies,binding_status,requires_pqc,binding_basis,deadline,publisher_relationship,publisher_type,source'
     )
     const tiers = csv
       .split('\n')

@@ -29,4 +29,12 @@ describe('source organization registry', () => {
     const ids = SOURCE_ORGANIZATIONS.map((organization) => organization.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
+
+  it('keeps intentionally unnamed authorities explicit instead of inferring a domicile', () => {
+    expect(
+      sourceOrganizationFor(
+        'Not stated in source (statute delegates naming the supervisory authority to a future government decision)'
+      )?.relationshipOverride
+    ).toBe('unclassified')
+  })
 })

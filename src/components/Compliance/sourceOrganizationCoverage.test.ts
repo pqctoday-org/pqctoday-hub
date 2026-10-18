@@ -36,9 +36,33 @@ describe('compliance source-organization reconciliation', () => {
     }
   })
 
-  it('keeps unresolved names in an explicit maintainer queue', () => {
+  it('resolves every active publisher or scheme-body string', () => {
     const queue = unclassifiedSourceOrganizations()
-    expect(queue.length).toBeGreaterThan(0)
-    expect(queue.every((entry) => entry.frameworkIds.length > 0)).toBe(true)
+    expect(queue).toEqual([])
   })
+
+  it('marks the statute with an unnamed future supervisor as intentionally unclassified', () => {
+    const [result] = applicableFrameworks(
+      { country: 'Sweden', industry: 'Technology' },
+      complianceFrameworks.filter((framework) => framework.id === 'CYBERSAKERHETSLAG-SWEDEN-CYBER')
+    )
+    expect(result?.sourceContext?.relationship).toBe('unclassified')
+    expect(result?.sourceContext?.classificationBasis).toBe('organization-registry')
+  })
+
+  it.each([
+    ['NIST', 'United States', 'Technology', 'domestic'],
+    ['FIPS-140-3', 'Australia', 'Technology', 'foreign'],
+    ['ANSSI', 'France', 'Finance & Banking', 'domestic'],
+    ['BSI-PQC-ADVISORY', 'Germany', 'Technology', 'domestic'],
+    ['EIDAS', 'France', 'Technology', 'international'],
+  ] as const)(
+    'classifies %s for %s / %s as %s',
+    (frameworkId, country, industry, expectedRelationship) => {
+      const framework = complianceFrameworks.find((item) => item.id === frameworkId)
+      expect(framework, `missing fixture ${frameworkId}`).toBeDefined()
+      const [result] = applicableFrameworks({ country, industry }, [framework!])
+      expect(result?.sourceContext?.relationship).toBe(expectedRelationship)
+    }
+  )
 })

@@ -165,6 +165,19 @@ describe('inbound industry / sector / geo aliases', () => {
     expect(p.get('geo')).toBeNull()
     expect(result.current.state.lsIndustry).toBe('Energy')
   })
+
+  it('preserves an explicit country and sector across Compliance tabs and role changes', () => {
+    const { result } = at('/compliance?tab=foryou&country=United%20States&ind=Technology')
+
+    act(() => result.current.state.syncFiltersToUrl({ tab: 'standards' }))
+    expect(url(result).get('country')).toBe('United States')
+    expect(url(result).get('ind')).toBe('Technology')
+
+    act(() => usePersonaStore.setState({ selectedPersona: 'grc' }))
+    expect(result.current.state.activeTab).toBe('standards')
+    expect(url(result).get('country')).toBe('United States')
+    expect(url(result).get('ind')).toBe('Technology')
+  })
 })
 
 describe('Landscape lq / lsort vs Records q / sort', () => {
