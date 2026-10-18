@@ -16,7 +16,9 @@ describe('Threats accuracy guards', () => {
 
   it('gives every published source a review state and registered source identity', () => {
     for (const threat of threatsData) {
-      expect(threat.sourceUrlQuality, threat.threatId).toMatch(/^(url_authoritative|partial|no)$/)
+      expect(threat.sourceUrlQuality, threat.threatId).toMatch(
+        /^(url_authoritative|url_needs_review|url_unverified)$/
+      )
       expect(threat.trustedSourceIdStatus, threat.threatId).toBe('registered')
     }
   })

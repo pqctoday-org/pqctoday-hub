@@ -2770,9 +2770,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/openssl-studio',
           },
           {
-            title: 'Learn how the lab runs it',
-            body: 'Vector sets, prompts and responses, dispositions, and how to state a result at exactly the evidence level it reached. A draft, awaiting review by a validation-lab practitioner.',
-            href: '/learn/acvp-lab-workflow',
+            title: 'Review the correction history',
+            body: 'The revisions page shows what changed, why it changed, and which evidence supports the correction — useful context before repeating or escalating a finding.',
+            href: '/revisions',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -2836,9 +2836,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Where entropy sits on the way to a certificate',
         gridCards: [
           {
-            title: 'Where entropy sits in a certificate',
-            body: "The FIPS 140-3 Certification module separates the tracks — algorithm testing, the module's own self-tests, and entropy — and says which evidence belongs to which.",
-            href: '/learn/fips-140-3-certification',
+            title: 'Meet the standards community',
+            body: 'Browse people working on standards, validation, implementations and migration, with source-backed profiles and consent-based listings.',
+            href: '/leaders',
           },
           {
             title: 'Not sure this is the board you need?',
@@ -2968,8 +2968,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'The certification records follow PQC along the FIPS 140-3 track in three recorded stages — algorithms CAVP-validated, the module listed by NIST as in process, and a certificate — beside Common Criteria and EUCC certificates.',
         ctaPrimary: 'Open the certification records',
         ctaPrimaryHref: '/compliance?tab=records',
-        ctaSecondary: 'Learn the FIPS 140-3 path',
-        ctaSecondaryHref: '/learn/fips-140-3-certification',
+        ctaSecondary: 'See the evidence closure gate',
+        ctaSecondaryHref: '/simulation?phase=verify-close',
         proofChips: ['CAVP is never counted as certified', 'A published snapshot, not a live feed'],
         sideCard: {
           title: 'The FIPS 140-3 track, as recorded',
@@ -3060,9 +3060,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'From the boot chain to the silicon',
         gridCards: [
           {
-            title: 'Where the cycles go in hardware',
-            body: 'Where PQC spends its time, the building blocks worth accelerating, and what was actually built on Arm — with the FPGA limits stated.',
-            href: '/learn/pqc-hw-acceleration',
+            title: "Check the implementation's patent context",
+            body: 'The patents corpus links claims to particular PQC techniques so you can identify research and licensing questions before product or lab review. It is research context, not legal advice.',
+            href: '/patents',
           },
           {
             title: 'When firmware signing has to change',
