@@ -189,4 +189,19 @@ describe('FilterDropdown', () => {
 
     expect(screen.getByTestId('filter-dropdown')).toBeInTheDocument()
   })
+
+  it('gives two dropdowns with the same label distinct aria-labelledby targets', () => {
+    render(
+      <>
+        <FilterDropdown items={['A', 'B']} selectedId="A" onSelect={mockOnSelect} label="Status" />
+        <FilterDropdown items={['C', 'D']} selectedId="C" onSelect={mockOnSelect} label="Status" />
+      </>
+    )
+    const refs = [...document.querySelectorAll('[aria-labelledby]')].map((el) =>
+      el.getAttribute('aria-labelledby')
+    )
+    expect(refs.length).toBeGreaterThanOrEqual(2)
+    expect(new Set(refs).size).toBe(refs.length)
+    for (const id of refs) expect(document.getElementById(id ?? '')).not.toBeNull()
+  })
 })

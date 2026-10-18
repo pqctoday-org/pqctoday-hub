@@ -123,7 +123,7 @@ test('phone Detailed Comparison supports a bounded three-pick comparison without
     .getByRole('button', { name: /Compare side-by-side/ })
     .last()
     .click()
-  await expect(page.getByText(/Swipe across up to three picks/)).toBeVisible()
+  await expect(page.getByText(/Swipe across up to (3|three) picks/)).toBeVisible()
   await expect(page.locator('article')).toHaveCount(2)
 
   const overflow = await page.evaluate(

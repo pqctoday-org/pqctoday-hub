@@ -2,7 +2,16 @@
 import type { CsvColumnConfig } from './csvExport'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { LibraryItem } from '@/data/libraryData'
-import { evidenceStateLabel, type AlgorithmDetail } from '@/data/pqcAlgorithmsData'
+import {
+  exportAlgorithmSize,
+  exportStackRam,
+  formatAesEquivalent,
+  formatLinkQuality,
+  formatSecurityLevel,
+  statusTierLabel,
+  type AlgorithmDetail,
+} from '@/data/pqcAlgorithmsData'
+import { transitionFunctionLabel, type AlgorithmTransition } from '@/data/algorithmsData'
 import type { TimelineEvent } from '@/types/timeline'
 import type { ComplianceRecord } from '@/components/Compliance/types'
 import {
@@ -44,65 +53,72 @@ export const LIBRARY_CSV_COLUMNS: CsvColumnConfig<LibraryItem>[] = [
   { header: 'URL', accessor: (i) => i.downloadUrl },
 ]
 
+const NOT_RECORDED = 'Not recorded in source catalogue'
+
+/**
+ * Algorithm catalogue export. Every cell goes through the same helpers the
+ * table, drawer and compare views use, so a field carries the same value, or
+ * the same missing-data words, in the file as on the page — never a blank.
+ */
 export const ALGORITHM_CSV_COLUMNS: CsvColumnConfig<AlgorithmDetail>[] = [
   { header: 'Name', accessor: (i) => i.name },
   { header: 'Family', accessor: (i) => i.family },
   { header: 'Cryptographic Family', accessor: (i) => i.cryptoFamily },
   { header: 'Type', accessor: (i) => i.type },
-  { header: 'Security Level', accessor: (i) => i.securityLevel },
-  { header: 'AES Equivalent', accessor: (i) => i.aesEquivalent },
-  {
-    header: 'Public Key Size (bytes)',
-    accessor: (i) =>
-      i.evidenceStates?.publicKey && i.evidenceStates.publicKey !== 'stated'
-        ? evidenceStateLabel(i.evidenceStates.publicKey)
-        : i.sizesUnknown
-          ? 'Research needed'
-          : i.publicKeySize,
-  },
-  {
-    header: 'Private Key Size (bytes)',
-    accessor: (i) =>
-      i.evidenceStates?.privateKey && i.evidenceStates.privateKey !== 'stated'
-        ? evidenceStateLabel(i.evidenceStates.privateKey)
-        : i.sizesUnknown
-          ? 'Research needed'
-          : i.privateKeySize,
-  },
+  { header: 'Security Level', accessor: (i) => formatSecurityLevel(i) },
+  { header: 'AES Equivalent', accessor: (i) => formatAesEquivalent(i) },
+  { header: 'Public Key Size (bytes)', accessor: (i) => exportAlgorithmSize(i, 'publicKey') },
+  { header: 'Private Key Size (bytes)', accessor: (i) => exportAlgorithmSize(i, 'privateKey') },
   {
     header: 'Sig/Ciphertext Size (bytes)',
-    accessor: (i) =>
-      i.evidenceStates?.signatureOrCiphertext && i.evidenceStates.signatureOrCiphertext !== 'stated'
-        ? evidenceStateLabel(i.evidenceStates.signatureOrCiphertext)
-        : i.sizesUnknown
-          ? 'Research needed'
-          : i.signatureCiphertextSize,
+    accessor: (i) => exportAlgorithmSize(i, 'signatureOrCiphertext'),
+  },
+  { header: 'Shared Secret Size (bytes)', accessor: (i) => exportAlgorithmSize(i, 'sharedSecret') },
+  { header: 'Stack RAM (bytes; ~ = estimate)', accessor: (i) => exportStackRam(i) },
+  { header: 'FIPS Standard', accessor: (i) => i.fipsStandard || NOT_RECORDED },
+  { header: 'Maturity Tier', accessor: (i) => statusTierLabel(i.statusTier) },
+  { header: 'Status Source URL', accessor: (i) => i.statusUrl || NOT_RECORDED },
+  { header: 'Trusted Source ID', accessor: (i) => i.trustedSourceId || NOT_RECORDED },
+  { header: 'Peer Reviewed', accessor: (i) => i.peerReviewed || NOT_RECORDED },
+  { header: 'Vetting Body', accessor: (i) => i.vettingBody || NOT_RECORDED },
+  { header: 'Source Link Quality', accessor: (i) => formatLinkQuality(i) },
+  {
+    header: 'Confidence Score',
+    accessor: (i) => (i.confidenceScore === undefined ? 'Not scored' : i.confidenceScore),
+  },
+  { header: 'Row Last Verified', accessor: () => NOT_RECORDED },
+  { header: 'Row Reviewer', accessor: () => NOT_RECORDED },
+  { header: 'Verification Method', accessor: () => NOT_RECORDED },
+  { header: 'Next Review', accessor: () => NOT_RECORDED },
+  { header: 'Has Research Gap', accessor: (i) => (i.hasResearchGap ? 'yes' : 'no') },
+  { header: 'Use Case Notes', accessor: (i) => i.useCaseNotes || NOT_RECORDED },
+]
+
+/**
+ * Transition Guide export: the rows the Transition tab shows, with its own
+ * columns (function, classical algorithm, candidate path, dates, status).
+ */
+export const TRANSITION_CSV_COLUMNS: CsvColumnConfig<AlgorithmTransition>[] = [
+  { header: 'Function', accessor: (t) => transitionFunctionLabel(t.function) },
+  { header: 'Classical Algorithm', accessor: (t) => t.classical },
+  { header: 'Key Size', accessor: (t) => t.keySize || 'Not specified by the source' },
+  {
+    header: 'Candidate PQC Path',
+    accessor: (t) => t.pqc || 'No reviewed replacement recorded',
+  },
+  { header: 'Region', accessor: (t) => t.region || 'Not specified by the source' },
+  { header: 'Status', accessor: (t) => t.status || 'Not specified by the source' },
+  { header: 'Maturity Tier', accessor: (t) => statusTierLabel(t.statusTier) },
+  {
+    header: 'Transition / Deprecation',
+    accessor: (t) => t.deprecationDate || 'Not specified by the source',
   },
   {
-    header: 'Shared Secret Size (bytes)',
-    accessor: (i) =>
-      i.evidenceStates?.sharedSecret && i.evidenceStates.sharedSecret !== 'stated'
-        ? evidenceStateLabel(i.evidenceStates.sharedSecret)
-        : i.sharedSecretSize,
+    header: 'Standardization',
+    accessor: (t) => t.standardizationDate || 'Not specified by the source',
   },
-  {
-    header: 'Stack RAM (bytes)',
-    accessor: (i) => (i.stackRAM > 0 ? i.stackRAM : 'Research needed'),
-  },
-  { header: 'FIPS Standard', accessor: (i) => i.fipsStandard },
-  { header: 'Maturity Tier', accessor: (i) => i.statusTier },
-  { header: 'Status Source URL', accessor: (i) => i.statusUrl },
-  { header: 'Trusted Source ID', accessor: (i) => i.trustedSourceId },
-  { header: 'Peer Reviewed', accessor: (i) => i.peerReviewed },
-  { header: 'Vetting Body', accessor: (i) => i.vettingBody },
-  { header: 'Source Link Quality', accessor: (i) => i.statusUrlQuality },
-  { header: 'Confidence Score', accessor: (i) => i.confidenceScore },
-  { header: 'Row Last Verified', accessor: () => 'Not recorded in source catalogue' },
-  { header: 'Row Reviewer', accessor: () => 'Not recorded in source catalogue' },
-  { header: 'Verification Method', accessor: () => 'Not recorded in source catalogue' },
-  { header: 'Next Review', accessor: () => 'Not recorded in source catalogue' },
-  { header: 'Has Research Gap', accessor: (i) => i.hasResearchGap },
-  { header: 'Use Case Notes', accessor: (i) => i.useCaseNotes },
+  { header: 'Status Source URL', accessor: (t) => t.statusUrl || 'Not specified by the source' },
+  { header: 'Data Quality Notes', accessor: (t) => t.dataQualityNotes || 'None recorded' },
 ]
 
 export const TIMELINE_CSV_COLUMNS: CsvColumnConfig<TimelineEvent>[] = [

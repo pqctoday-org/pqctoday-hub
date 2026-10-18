@@ -19,6 +19,7 @@
 //  - ML-KEM-1024 ......... REQUIRED (asymmetric key establishment)
 //  - ML-DSA-87 ........... REQUIRED (general-purpose digital signatures)
 //  - LMS / XMSS (SP 800-208, SHA-256/192) .. APPROVED for software/firmware signing only
+//  - HSS / XMSS^MT (multi-tree SP 800-208 variants) .. NOT allowed (FAQ Ver. 2.2)
 //  - AES-256 ............. REQUIRED (symmetric)
 //  - SHA-384 / SHA-512 ... REQUIRED (hashing)
 //  - SLH-DSA ............. NOT selected by CNSA 2.0 (stateless hash-based; excluded)
@@ -52,6 +53,15 @@ export interface Cnsa20Verdict {
 /** Normalize an algorithm name for matching (strip parenthetical params, trim). */
 function bareName(name: string): string {
   return name.split(/\s*\(/)[0].trim()
+}
+
+/**
+ * HSS (multi-level LMS) and XMSS^MT (multi-tree XMSS), however spelled:
+ * 'HSS-…', 'LMS-HSS', 'XMSS^MT-…', 'XMSSMT-…', 'XMSS-MT-…'.
+ */
+function isMultiTreeStatefulHbs(name: string): boolean {
+  const n = name.toUpperCase()
+  return /^HSS(?![A-Z])/.test(n) || /\bHSS\b/.test(n) || /^XMSS[\s_^-]*MT(?![A-Z])/.test(n)
 }
 
 /**
@@ -93,13 +103,24 @@ export function classifyCnsa20(algo: Pick<AlgorithmDetail, 'name' | 'family'>): 
     }
   }
 
-  // --- Approved for a limited role: stateful hash-based signatures ---
-  if (name.startsWith('LMS') || name.startsWith('XMSS') || name.startsWith('HSS')) {
+  // --- Stateful hash-based signatures ---
+  // CNSA 2.0 FAQ Ver. 2.2: only single-tree LMS and XMSS are allowed; the
+  // multi-tree variants HSS and XMSS^MT are not. Check the multi-tree forms
+  // first, because 'XMSS^MT' / 'XMSSMT' also start with 'XMSS'.
+  if (isMultiTreeStatefulHbs(name)) {
+    return {
+      status: 'excluded',
+      label: 'Not in CNSA 2.0',
+      rationale:
+        'HSS and XMSS^MT (multi-tree variants in SP 800-208) are not allowed under CNSA 2.0; only single-tree LMS and XMSS are allowed, for software/firmware signing.',
+    }
+  }
+  if (/^(LMS|XMSS)(?![A-Z^])/i.test(name)) {
     return {
       status: 'approved-limited',
       label: 'CNSA 2.0 (firmware only)',
       rationale:
-        'Stateful hash-based signatures (LMS/XMSS, SP 800-208) are CNSA 2.0-approved only for software/firmware signing, not general use. State management is mandatory.',
+        'Single-tree stateful hash-based signatures (LMS/XMSS, SP 800-208) are allowed by CNSA 2.0 for software/firmware signing only, not general use. State management is mandatory.',
     }
   }
 

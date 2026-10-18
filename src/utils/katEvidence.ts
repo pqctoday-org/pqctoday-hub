@@ -84,7 +84,7 @@ const ACTION_LABEL: Record<KatEvidenceClass, string> = {
   'functional-round-trip': 'Run functional tests',
   'oasis-profile-case': 'Run OASIS profile cases',
   'product-mechanism-probe': 'Run product probes',
-  'unverified-provenance': 'Run validation tests',
+  'unverified-provenance': 'Run known-answer checks',
 }
 
 /**
@@ -98,7 +98,7 @@ export function katActionLabel(specs: readonly Pick<KatTestSpec, 'kind'>[]): str
     const label = ACTION_LABEL[only]
     return specs.length === 1 ? label.replace(/s$/, '') : label
   }
-  return 'Run validation tests'
+  return 'Run known-answer checks'
 }
 
 /** Distinct evidence classes in a spec set, in a stable display order. */
@@ -108,4 +108,37 @@ export function evidenceClassesFor(
   const order = Object.keys(KAT_EVIDENCE_META) as KatEvidenceClass[]
   const present = new Set(specs.map((s) => evidenceForKind(s.kind)))
   return order.filter((c) => present.has(c))
+}
+
+/** Tallies of one run, as `summarizeKatResults` returns them. */
+export interface KatRunCounts {
+  pass: number
+  fail: number
+  error: number
+  skip: number
+  total: number
+}
+
+/**
+ * Tone of a finished run's summary. A run counts as successful only when at
+ * least one check passed and none failed or errored — a run whose every check
+ * was skipped ("0/0 passed · 2 not tested") is not a success.
+ */
+export function katRunTone(counts: KatRunCounts): 'success' | 'warning' | 'error' {
+  if (counts.fail + counts.error > 0) return 'error'
+  return counts.pass > 0 ? 'success' : 'warning'
+}
+
+/**
+ * Sentence a screen reader hears when a run finishes, e.g.
+ * "ML-KEM-768: 2 of 2 checks passed." or
+ * "ML-KEM-768: 0 of 0 checks passed, 2 not tested."
+ */
+export function katRunAnnouncement(name: string, counts: KatRunCounts): string {
+  const ran = counts.total - counts.skip
+  const parts = [`${counts.pass} of ${ran} ${ran === 1 ? 'check' : 'checks'} passed`]
+  if (counts.fail > 0) parts.push(`${counts.fail} failed`)
+  if (counts.error > 0) parts.push(`${counts.error} could not run`)
+  if (counts.skip > 0) parts.push(`${counts.skip} not tested`)
+  return `${name}: ${parts.join(', ')}.`
 }

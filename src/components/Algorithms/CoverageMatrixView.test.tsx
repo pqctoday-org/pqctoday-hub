@@ -3,9 +3,15 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CoverageMatrixView } from './CoverageMatrixView'
-import { buildCoverageMatrix, compactMatrix, type RunResult } from '@/data/validation/coverageModel'
+import {
+  buildCoverageMatrix,
+  compactMatrix,
+  expandMatrix,
+  type RunResult,
+} from '@/data/validation/coverageModel'
 import { FIXTURE_ARTIFACT, fixtureInputs } from '@/data/validation/coverageFixture'
 import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
+import { groupByMechanismOperation } from '@/data/validation/coverageExport'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 const fail: RunResult = {
@@ -80,12 +86,78 @@ describe('CoverageMatrixView', () => {
     expect(screen.getByText(/recorded FAIL \(1\)/)).toBeInTheDocument()
   })
 
-  it('lists the open-gaps register with owner and status', async () => {
+  it('lists the open-gaps register without maintenance codes in the guided overview', async () => {
     render(<CoverageMatrixView loader={loader} />)
     const gaps = await screen.findByRole('region', { name: 'Open gaps register' })
     expect(within(gaps).getByText('Curated gap')).toBeInTheDocument()
-    expect(within(gaps).getAllByText('owner: unassigned').length).toBeGreaterThan(0)
     expect(within(gaps).getByText(/Recorded FAIL on C\+\+/)).toBeInTheDocument()
+    expect(within(gaps).queryByText(/owner/i)).toBeNull()
+    expect(within(gaps).queryByText(/unassigned/)).toBeNull()
+    expect(within(gaps).queryByText(/^plan /)).toBeNull()
+    expect(screen.queryByText(/\(G-3\)/)).toBeNull()
+  })
+
+  it('shows owner and tracking reference, phrased for readers, only in Evidence detail', async () => {
+    const user = userEvent.setup()
+    render(<CoverageMatrixView loader={loader} />)
+    const gaps = await screen.findByRole('region', { name: 'Open gaps register' })
+    await user.click(within(gaps).getByRole('button', { name: 'Evidence detail' }))
+    expect(within(gaps).getAllByText('Owner: not yet assigned').length).toBeGreaterThan(0)
+    expect(within(gaps).queryByText('owner: unassigned')).toBeNull()
+  })
+
+  it('gap heading and status chips count exactly what the list can show, with a note for folded entries', async () => {
+    const user = userEvent.setup()
+    const all = expandMatrix(structuredClone(file)).openGaps
+    const listed = all.filter((g) => g.origin === 'curated' || !g.id.startsWith('untested:'))
+    expect(listed.length).toBeLessThan(all.length)
+    render(<CoverageMatrixView loader={loader} />)
+    const gaps = await screen.findByRole('region', { name: 'Open gaps register' })
+    expect(within(gaps).getByTestId('gap-total')).toHaveTextContent(`(${listed.length})`)
+    expect(
+      within(gaps).getByText(`Showing ${listed.length} of ${listed.length}`)
+    ).toBeInTheDocument()
+    const chips = within(gaps).getByLabelText('Gap status definitions')
+    const chipTotal = within(chips)
+      .getAllByRole('button')
+      .reduce((sum, b) => sum + Number(b.textContent?.match(/(\d+)/)?.[1] ?? 0), 0)
+    expect(chipTotal).toBe(listed.length)
+    expect(within(gaps).getByTestId('gap-hidden-note')).toHaveTextContent(
+      `${all.length} gaps in total. ${all.length - listed.length} generated entries`
+    )
+    await user.click(within(gaps).getByRole('button', { name: /generated per-mechanism entries/ }))
+    expect(within(gaps).getByTestId('gap-total')).toHaveTextContent(`(${all.length})`)
+    expect(within(gaps).queryByTestId('gap-hidden-note')).toBeNull()
+  })
+
+  it('the "untested" filter keeps groups that are only partly untested and says so', async () => {
+    const user = userEvent.setup()
+    const groups = groupByMechanismOperation(expandMatrix(structuredClone(file)))
+    const strongestUntested = groups.filter(
+      (g) => g.engines.cpp.polarity.positive.status === 'untested'
+    ).length
+    const anyUntested = groups.filter((g) =>
+      g.rows.some(
+        (r) => r.engines.cpp.advertised && r.engines.cpp.polarity.positive.status === 'untested'
+      )
+    ).length
+    expect(anyUntested).toBeGreaterThan(strongestUntested)
+    render(<CoverageMatrixView loader={loader} />)
+    await screen.findByTestId('coverage-matrix-view')
+    await user.click(screen.getByRole('button', { name: /Status/ }))
+    await user.click(await screen.findByRole('option', { name: 'untested' }))
+    expect(
+      screen.getByRole('table', {
+        name: new RegExp(`^${anyUntested} mechanism × operation groups`),
+      })
+    ).toBeInTheDocument()
+    expect(screen.getByTestId('untested-filter-note')).toBeInTheDocument()
+  })
+
+  it('the reading-level toggle wraps instead of clipping on narrow screens', async () => {
+    render(<CoverageMatrixView loader={loader} />)
+    const group = await screen.findByRole('group', { name: 'Gap register reading level' })
+    expect(group).toHaveClass('flex-wrap', 'max-w-full', 'min-w-0')
   })
 
   it('teaches the claim boundary before revealing the technical history', async () => {
@@ -106,7 +178,7 @@ describe('CoverageMatrixView', () => {
     usePersonaStore.setState({ selectedPersona: 'cert-engineer' })
     render(<CoverageMatrixView loader={loader} />)
     const gaps = await screen.findByRole('region', { name: 'Open gaps register' })
-    expect(within(gaps).getByRole('button', { name: 'Certification evidence' })).toHaveAttribute(
+    expect(within(gaps).getByRole('button', { name: 'Evidence detail' })).toHaveAttribute(
       'aria-pressed',
       'true'
     )

@@ -69,7 +69,7 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
   executive: {
     label: 'View common NIST examples',
     description:
-      'ML-KEM-768 and ML-DSA-65 — NIST’s general-purpose defaults; US national security systems (CNSA 2.0) need ML-KEM-1024 and ML-DSA-87',
+      'ML-KEM-768 (FIPS 203’s stated default parameter set) and ML-DSA-65 — common general-purpose examples; US national security systems (CNSA 2.0) need ML-KEM-1024 and ML-DSA-87',
     icon: <ArrowRight size={15} />,
     params: {
       tab: 'detailed',
@@ -94,7 +94,7 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
   },
   researcher: {
     label: 'Run known-answer checks',
-    description: 'Execute ACVP-style vectors against the included WASM implementations',
+    description: 'Run known-answer vectors against the included WASM implementations',
     icon: <FlaskConical size={15} />,
     params: { tab: 'validation', section: 'kat' },
   },
@@ -146,7 +146,7 @@ export const EU_EXECUTIVE_INTENTS: Intent[] = [
   {
     label: 'ANSSI (France)',
     description:
-      'ANSSI recommends hybridizing ML-KEM-768 and ML-DSA-65 with a classical algorithm (mandatory in its regulated perimeter); SLH-DSA is usable alone; FrodoKEM-976 is the hybrid pick',
+      'ANSSI recommends hybridizing ML-KEM-768 and ML-DSA-65 with a classical algorithm (mandatory in its regulated perimeter); SLH-DSA is usable alone; FrodoKEM-976 is the conservative KEM alternate it names for hybrid use',
     icon: <ArrowRight size={15} />,
     params: {
       tab: 'detailed',

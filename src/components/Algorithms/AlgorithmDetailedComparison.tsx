@@ -3,10 +3,16 @@ import { useState, useMemo } from 'react'
 import React from 'react'
 import {
   type AlgorithmDetail,
-  type EvidenceFieldState,
+  type AlgorithmSizeField,
   getSecurityLevelColor,
   getFunctionGroup,
-  RESEARCH_NEEDED,
+  algorithmSizeState,
+  algorithmSizeBytes,
+  formatAlgorithmSize,
+  formatSecurityLevel,
+  formatStackRam,
+  stackRamState,
+  statusTierLabel,
 } from '../../data/pqcAlgorithmsData'
 import {
   Info,
@@ -172,6 +178,7 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
         <CompareView
           comparisonAlgos={comparisonAlgos}
           baselineAlgo={baselineAlgo}
+          phoneLimit={Math.min(selectionLimit, PHONE_COMPARE_LIMIT)}
           onBrowse={() => onDetailModeChange('browse')}
         />
       ) : (
@@ -202,15 +209,22 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
 /* ────────────────────────────────────────────────────────────────────────────
  * Compare mode — the transposed side-by-side matrix is the centerpiece.
  * ────────────────────────────────────────────────────────────────────────── */
+/** Phone compare cards fit three across; later picks are named, not dropped. */
+const PHONE_COMPARE_LIMIT = 3
+
 function CompareView({
   comparisonAlgos,
   baselineAlgo,
+  phoneLimit,
   onBrowse,
 }: {
   comparisonAlgos: AlgorithmDetail[]
   baselineAlgo: AlgorithmDetail | null
+  phoneLimit: number
   onBrowse: () => void
 }) {
+  const shown = comparisonAlgos.slice(0, phoneLimit)
+  const hidden = comparisonAlgos.slice(phoneLimit)
   if (comparisonAlgos.length < 2) {
     return (
       <div className="glass-panel border-dashed border-2 border-border p-10 flex flex-col items-center justify-center text-center">
@@ -237,39 +251,37 @@ function CompareView({
       </div>
       <div className="md:hidden overflow-x-auto rounded-lg border border-border bg-card p-3">
         <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
-          Swipe across up to three picks. Compare function, maturity, security level and serialized
-          sizes first; performance depends on the implementation and device.
+          Swipe across up to {phoneLimit} picks. Compare function, maturity, security level and
+          serialized sizes first; performance depends on the implementation and device.
         </p>
+        {hidden.length > 0 && (
+          <p
+            className="mb-3 rounded border border-border bg-muted px-2 py-1.5 text-xs text-foreground"
+            data-testid="phone-compare-hidden"
+          >
+            Showing {shown.length} of {comparisonAlgos.length} — hidden:{' '}
+            {hidden.map((a) => a.name).join(', ')}. Remove a pick in Browse to see them here, or use
+            a wider screen.
+          </p>
+        )}
         <div
           className="grid min-w-max gap-2"
           style={{
-            gridTemplateColumns: `repeat(${Math.min(comparisonAlgos.length, 3)}, minmax(9rem, 1fr))`,
+            gridTemplateColumns: `repeat(${shown.length}, minmax(9rem, 1fr))`,
           }}
         >
-          {comparisonAlgos.slice(0, 3).map((algo) => (
+          {shown.map((algo) => (
             <article key={algo.id} className="rounded-md border border-border bg-background p-3">
               <h4 className="text-sm font-semibold text-foreground">{algo.name}</h4>
               <p className="mt-0.5 text-[11px] text-muted-foreground">{algo.family}</p>
               <dl className="mt-3 space-y-2 text-xs">
-                <Fact label="Maturity">{algo.statusTier}</Fact>
-                <Fact label="Security">
-                  {algo.securityLevel === null
-                    ? 'Not specified'
-                    : `NIST level ${algo.securityLevel}`}
-                </Fact>
+                <Fact label="Maturity">{statusTierLabel(algo.statusTier)}</Fact>
+                <Fact label="Security">{formatSecurityLevel(algo)}</Fact>
                 <Fact label="Public key">
-                  <ByteSize
-                    value={algo.publicKeySize}
-                    state={algo.evidenceStates?.publicKey}
-                    unknown={!algo.evidenceStates && algo.sizesUnknown}
-                  />
+                  <ByteSize algo={algo} field="publicKey" />
                 </Fact>
                 <Fact label="Signature / ciphertext">
-                  <ByteSize
-                    value={algo.signatureCiphertextSize}
-                    state={algo.evidenceStates?.signatureOrCiphertext}
-                    unknown={!algo.evidenceStates && algo.sizesUnknown}
-                  />
+                  <ByteSize algo={algo} field="signatureOrCiphertext" />
                 </Fact>
                 <Fact label="Standard">{algo.fipsStandard || 'Not recorded'}</Fact>
               </dl>
@@ -315,7 +327,16 @@ function SelectionBar({
   return (
     <div className="glass-panel p-3 flex items-center justify-between gap-3 flex-wrap">
       <span className="text-sm text-muted-foreground">
-        <strong className="text-foreground">{count}</strong> of {selectionLimit} selected
+        {count > selectionLimit ? (
+          <>
+            <strong className="text-foreground">{count}</strong> selected · first {selectionLimit}{' '}
+            shown side by side
+          </>
+        ) : (
+          <>
+            <strong className="text-foreground">{count}</strong> of {selectionLimit} selected
+          </>
+        )}
         {compareType && (
           <>
             {' · '}
@@ -392,7 +413,7 @@ function CompareCheckbox({
 }: BrowseTableProps & { algo: AlgorithmDetail }) {
   const algoGroup = getFunctionGroup(algo)
   if (algoGroup !== 'KEM' && algoGroup !== 'Signature') {
-    return <span className="inline-block w-4 shrink-0" aria-hidden="true" />
+    return <span className="inline-block w-6 md:w-4 shrink-0" aria-hidden="true" />
   }
   const isCompared = compareSet.has(algo.name)
   const canToggle =
@@ -412,7 +433,7 @@ function CompareCheckbox({
       onChange={() => onToggleCompare(algo.name)}
       title={reason}
       aria-label={`${reason}: ${algo.name}`}
-      className="h-4 w-4 shrink-0 rounded border-border accent-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+      className="h-6 w-6 md:h-4 md:w-4 shrink-0 rounded border-border accent-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
     />
   )
 }
@@ -503,36 +524,26 @@ function NoImplementationBadge({ algo }: { algo: AlgorithmDetail }) {
   return (
     <span
       className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border font-medium"
-      title="No indexed library or reference implementation found for this algorithm yet."
+      title="No implementation is recorded for this algorithm in the libraries PQC Today has reviewed. That is not evidence that none exists."
     >
       <SearchX size={10} aria-hidden="true" />
-      No known implementation
+      No reviewed implementation evidence
     </span>
   )
 }
 
-/** Render either the formatted byte count or the literal "Research needed" placeholder. */
-function ByteSize({
-  value,
-  unknown,
-  state,
-}: {
-  value: number | null
-  unknown?: boolean
-  state?: EvidenceFieldState
-}) {
-  if (state === 'not-applicable') return <span className="text-muted-foreground">N/A</span>
-  if (state === 'not-specified') {
-    return <span className="text-muted-foreground">Not specified</span>
-  }
-  if (unknown || state === 'not-researched' || value === null || value === undefined) {
-    return (
-      <span className="italic text-muted-foreground" title="Not yet researched">
-        {RESEARCH_NEEDED}
-      </span>
-    )
-  }
-  return <>{value.toLocaleString()} B</>
+/** A size field's shared text: the bytes, or the field's missing-data words. */
+function ByteSize({ algo, field }: { algo: AlgorithmDetail; field: AlgorithmSizeField }) {
+  const text = formatAlgorithmSize(algo, field)
+  if (algorithmSizeState(algo, field) === 'stated') return <>{text}</>
+  return <span className="italic text-muted-foreground">{text}</span>
+}
+
+/** Stack RAM's shared text ("~6,000 B" for an estimate), or its missing-data words. */
+function RamSize({ algo }: { algo: AlgorithmDetail }) {
+  const text = formatStackRam(algo)
+  if (stackRamState(algo) === 'stated') return <>{text}</>
+  return <span className="italic">{text}</span>
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -568,16 +579,8 @@ function BrowseTable({
     algo: AlgorithmDetail,
     key: 'publicKeySize' | 'signatureCiphertextSize' | 'stackRAM'
   ): number | null => {
-    const state =
-      key === 'publicKeySize'
-        ? algo.evidenceStates?.publicKey
-        : key === 'signatureCiphertextSize'
-          ? algo.evidenceStates?.signatureOrCiphertext
-          : algo.evidenceStates?.stackRam
-    if (state && state !== 'stated') return null
-    if (!algo.evidenceStates && algo.sizesUnknown && key !== 'stackRAM') return null
-    const value = algo[key]
-    return value === null || value === 0 ? null : value
+    if (key === 'stackRAM') return stackRamState(algo) === 'stated' ? algo.stackRAM : null
+    return algorithmSizeBytes(algo, key === 'publicKeySize' ? 'publicKey' : 'signatureOrCiphertext')
   }
   // Missing values always sort last, whichever direction is chosen.
   const compareSizes = (a: number | null, b: number | null, dir: number) => {
@@ -634,6 +637,10 @@ function BrowseTable({
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
+          <caption className="sr-only">
+            Algorithm catalogue: sizes, security level and maturity for the rows matching the
+            current filters
+          </caption>
           <thead>
             <tr className="bg-muted/50 text-muted-foreground text-xs uppercase tracking-wider border-b border-border">
               <th className="p-3 w-8" aria-label="Select for comparison" />
@@ -712,14 +719,18 @@ function BrowseTable({
                         <ResearchNeededBadge algo={algo} />
                         <NoImplementationBadge algo={algo} />
                       </div>
-                      {algo.securityLevel && (
+                      {algo.securityLevel ? (
                         <span
                           className={clsx(
                             'text-xs px-2 py-0.5 rounded border w-fit',
                             getSecurityLevelColor(algo.securityLevel)
                           )}
                         >
-                          Level {algo.securityLevel}
+                          {formatSecurityLevel(algo)}
+                        </span>
+                      ) : (
+                        <span className="text-xs italic text-muted-foreground">
+                          Security level: {formatSecurityLevel(algo)}
                         </span>
                       )}
                       <AlgoCtaStrip
@@ -730,34 +741,13 @@ function BrowseTable({
                   </td>
                   <td className="p-3 align-top text-sm text-muted-foreground">{algo.family}</td>
                   <td className="p-3 align-top text-xs font-mono text-foreground whitespace-nowrap">
-                    <ByteSize
-                      value={algo.publicKeySize}
-                      state={algo.evidenceStates?.publicKey}
-                      unknown={!algo.evidenceStates && algo.sizesUnknown}
-                    />
+                    <ByteSize algo={algo} field="publicKey" />
                   </td>
                   <td className="p-3 align-top text-xs font-mono text-foreground whitespace-nowrap">
-                    <ByteSize
-                      value={algo.signatureCiphertextSize}
-                      state={algo.evidenceStates?.signatureOrCiphertext}
-                      unknown={!algo.evidenceStates && algo.sizesUnknown}
-                    />
+                    <ByteSize algo={algo} field="signatureOrCiphertext" />
                   </td>
-                  <td className="p-3 align-top min-w-[80px]">
-                    {algo.stackRAM > 0 ? (
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-mono text-muted-foreground">
-                          ~{(algo.stackRAM / 1000).toFixed(1)}KB
-                        </span>
-                      </div>
-                    ) : (
-                      <span
-                        className="text-xs italic text-muted-foreground"
-                        title="Not yet researched"
-                      >
-                        {RESEARCH_NEEDED}
-                      </span>
-                    )}
+                  <td className="p-3 align-top min-w-[80px] whitespace-nowrap text-xs font-mono text-muted-foreground">
+                    <RamSize algo={algo} />
                   </td>
                   <td className="p-3 align-top text-xs font-mono text-muted-foreground whitespace-nowrap">
                     {algo.fipsStandard}
@@ -812,14 +802,19 @@ function BrowseTable({
                   <NoImplementationBadge algo={algo} />
                   <span className="text-xs text-muted-foreground">{algo.family}</span>
                 </div>
-                {algo.securityLevel && (
+                {algo.securityLevel ? (
                   <span
                     className={clsx(
                       'text-xs px-2 py-0.5 rounded border shrink-0',
                       getSecurityLevelColor(algo.securityLevel)
                     )}
+                    title={formatSecurityLevel(algo)}
                   >
                     L{algo.securityLevel}
+                  </span>
+                ) : (
+                  <span className="text-[11px] italic text-muted-foreground shrink-0">
+                    Level: {formatSecurityLevel(algo)}
                   </span>
                 )}
               </div>
@@ -831,32 +826,19 @@ function BrowseTable({
                 <div>
                   <span className="text-muted-foreground block">Pub key</span>
                   <span className="font-mono text-foreground">
-                    <ByteSize
-                      value={algo.publicKeySize}
-                      state={algo.evidenceStates?.publicKey}
-                      unknown={!algo.evidenceStates && algo.sizesUnknown}
-                    />
+                    <ByteSize algo={algo} field="publicKey" />
                   </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground block">Sig / CT</span>
                   <span className="font-mono text-foreground">
-                    <ByteSize
-                      value={algo.signatureCiphertextSize}
-                      state={algo.evidenceStates?.signatureOrCiphertext}
-                      unknown={!algo.evidenceStates && algo.sizesUnknown}
-                    />
+                    <ByteSize algo={algo} field="signatureOrCiphertext" />
                   </span>
                 </div>
               </div>
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>
-                  RAM:{' '}
-                  {algo.stackRAM > 0 ? (
-                    <>~{(algo.stackRAM / 1000).toFixed(1)}KB</>
-                  ) : (
-                    <span className="italic">{RESEARCH_NEEDED}</span>
-                  )}
+                  RAM: <RamSize algo={algo} />
                 </span>
                 <span className="font-mono">{algo.fipsStandard}</span>
               </div>

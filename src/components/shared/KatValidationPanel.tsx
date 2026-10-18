@@ -6,7 +6,7 @@
  * tests and displays results inline. Each row carries the evidence class of
  * its expected value (derived from the vector file's provenance by
  * katEvidence.ts), and the run button names that class only when every spec
- * shares it — a mixed set gets the neutral "Run validation tests".
+ * shares it — a mixed set gets the neutral "Run known-answer checks".
  */
 import { useState } from 'react'
 import { ShieldCheck, Loader2, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
@@ -25,7 +25,9 @@ import {
   evidenceClassesFor,
   evidenceRecordsForKind,
   katActionLabel,
+  katRunAnnouncement,
 } from '@/utils/katEvidence'
+import { useRestoreFocusAfterRun } from '@/hooks/useRestoreFocusAfterRun'
 import { CaseEvidenceBadge } from '@/components/shared/CaseEvidenceBadge'
 import { KatStatusBadge } from '@/components/shared/KatStatusBadge'
 
@@ -48,8 +50,10 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+  const { ref: runButtonRef, markRunStart } = useRestoreFocusAfterRun(running)
 
   const runKATs = async () => {
+    markRunStart()
     setRunning(true)
     setError(null)
     setResults([])
@@ -148,6 +152,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
           </div>
         </div>
         <Button
+          ref={runButtonRef}
           variant="outline"
           size="sm"
           onClick={runKATs}
@@ -168,6 +173,15 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
         </Button>
       </div>
 
+      {/* Polite live region: the run's outcome is announced when it ends */}
+      <p role="status" aria-live="polite" className="sr-only" data-testid="kat-run-status">
+        {error
+          ? `${label}: the checks could not run. ${error}`
+          : done && counts.total > 0
+            ? katRunAnnouncement(label, counts)
+            : ''}
+      </p>
+
       {/* Operation log + progress bar (A7) */}
       {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-48" />}
 
@@ -177,8 +191,14 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
       {/* Summary badges */}
       {done && (
         <div className="flex items-center gap-3 text-xs">
-          <span className="flex items-center gap-1 text-status-success font-medium">
-            <CheckCircle size={13} />
+          {/* Green only when something passed: "0 passed" is not a success */}
+          <span
+            data-testid="kat-pass-count"
+            className={`flex items-center gap-1 font-medium ${
+              passCount > 0 ? 'text-status-success' : 'text-muted-foreground'
+            }`}
+          >
+            {passCount > 0 ? <CheckCircle size={13} /> : <MinusCircle size={13} />}
             {passCount} passed
           </span>
           {failCount > 0 && (

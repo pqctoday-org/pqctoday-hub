@@ -8,6 +8,7 @@ import {
   findAlgorithmByRef,
   getFunctionGroup,
   isClassical,
+  formatSnapshotDate,
 } from '../../data/pqcAlgorithmsData'
 import {
   loadAlgorithmsData,
@@ -15,13 +16,19 @@ import {
   type AlgorithmTransition,
   getCryptoFamilyFromPQCName,
   getTransitionFunctionGroup,
+  transitionFunctionLabel,
 } from '../../data/algorithmsData'
 import type { AlgorithmStatusTier } from '../../data/algorithmStatusTier'
 import { passesCnsa20Filter } from './cnsa20'
-import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
-import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
+import { generateCsv, downloadCsv, csvFilename, csvPreambleLine } from '../../utils/csvExport'
+import { ALGORITHM_CSV_COLUMNS, TRANSITION_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
-import { getAlgorithmDefaults, type AlgorithmTabId } from '../../data/personaConfig'
+import {
+  getAlgorithmDefaults,
+  type AlgorithmFilterKey,
+  type AlgorithmTabId,
+} from '../../data/personaConfig'
+import { filterValueLabel } from './algorithmFilterOptions'
 import {
   algoMatchesHighlight,
   findTransitionRows,
@@ -138,6 +145,14 @@ function resolveClassicalAlgoName(
 
 export type QuickViewId = 'none' | 'nist-picks' | 'final-nist-standards'
 
+const FILTER_KEY_NAMES: Record<AlgorithmFilterKey, string> = {
+  family: 'family',
+  fn: 'function',
+  level: 'level',
+  region: 'region',
+  status: 'maturity',
+}
+
 /** Every filter that can hide an algorithm/transition row. */
 export interface ExplorerFilterState {
   quickView: QuickViewId
@@ -162,6 +177,20 @@ export const WIDE_OPEN_FILTERS: ExplorerFilterState = {
   cnsa: false,
   gap: false,
   q: '',
+}
+
+/**
+ * Lower-cased search words. A multi-word query such as "lattice KEM" matches
+ * a row when every word appears in at least one of its fields, so a family
+ * word and a function word can be combined.
+ */
+export function searchTokens(q: string): string[] {
+  return q.toLowerCase().split(/\s+/).filter(Boolean)
+}
+
+function everyTokenIn(tokens: string[], fields: string[]): boolean {
+  const lowered = fields.map((f) => f.toLowerCase())
+  return tokens.every((t) => lowered.some((f) => f.includes(t)))
 }
 
 function matchesStatus(filterStatus: string, status: string, tier: AlgorithmStatusTier): boolean {
@@ -204,12 +233,12 @@ export function passesAlgoFilterState(
   if (f.region !== 'All' && algo.region !== f.region) return false
   if (!matchesStatus(f.status, algo.status, algo.statusTier)) return false
   if (f.q) {
-    const q = f.q.toLowerCase()
-    const lexicalMatch =
-      algo.name.toLowerCase().includes(q) ||
-      algo.family.toLowerCase().includes(q) ||
-      algo.cryptoFamily.toLowerCase().includes(q) ||
-      algo.fipsStandard.toLowerCase().includes(q)
+    const lexicalMatch = everyTokenIn(searchTokens(f.q), [
+      algo.name,
+      algo.family,
+      algo.cryptoFamily,
+      algo.fipsStandard,
+    ])
     if (!lexicalMatch) {
       if (semanticAlgoNameSet && semanticAlgoNameSet.has(algo.name.toLowerCase())) return true
       return false
@@ -238,8 +267,13 @@ export function passesTransitionFilterState(
   if (f.region !== 'All' && t.region !== f.region) return false
   if (!matchesStatus(f.status, t.status, t.statusTier)) return false
   if (f.q) {
-    const q = f.q.toLowerCase()
-    const lexicalMatch = t.classical.toLowerCase().includes(q) || t.pqc.toLowerCase().includes(q)
+    const lexicalMatch = everyTokenIn(searchTokens(f.q), [
+      t.classical,
+      t.pqc,
+      t.function,
+      transitionFunctionLabel(t.function),
+      getCryptoFamilyFromPQCName(t.pqc),
+    ])
     if (!lexicalMatch) {
       // Transition rows aren't in the embeddings index directly; we
       // accept them when the PQC algorithm name appears in the
@@ -423,21 +457,26 @@ export function useAlgorithmExplorer(
   }, [])
 
   // --- Filter state (synced to URL). URL params win; otherwise the persona's
-  //     filter preset applies on first paint. ---
+  //     filter preset applies on first paint — except under an explicit
+  //     ?quickview=none ("Everything"), which means no preset at all, so the
+  //     same link shows the same rows whatever role the reader picked. ---
+  const roleFilterDefault = (key: AlgorithmFilterKey): string | undefined =>
+    // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+    searchParams.get('quickview') === 'none' ? undefined : personaDefaults.filters[key]
   const [filterCryptoFamily, setFilterCryptoFamily] = useState(
-    () => searchParams.get('family') || personaDefaults.filters.family || 'All'
+    () => searchParams.get('family') || roleFilterDefault('family') || 'All'
   )
   const [filterFunction, setFilterFunction] = useState(
-    () => searchParams.get('fn') || personaDefaults.filters.fn || 'All'
+    () => searchParams.get('fn') || roleFilterDefault('fn') || 'All'
   )
   const [filterSecurityLevel, setFilterSecurityLevel] = useState(
-    () => searchParams.get('level') || personaDefaults.filters.level || 'All'
+    () => searchParams.get('level') || roleFilterDefault('level') || 'All'
   )
   const [filterRegion, setFilterRegion] = useState(
-    () => searchParams.get('region') || personaDefaults.filters.region || 'All'
+    () => searchParams.get('region') || roleFilterDefault('region') || 'All'
   )
   const [filterStatus, setFilterStatus] = useState(() => {
-    const status = searchParams.get('status') || personaDefaults.filters.status || 'All'
+    const status = searchParams.get('status') || roleFilterDefault('status') || 'All'
     return status === 'Certified' ? 'published-standard' : status
   })
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
@@ -578,12 +617,17 @@ export function useAlgorithmExplorer(
   activeTabRef.current = activeTab
 
   const updateSearchParams = useCallback(
-    (updates: Record<string, string | null>, opts: { push?: boolean } = {}) => {
+    (
+      updates: Record<string, string | null>,
+      opts: { push?: boolean; keepAll?: readonly string[] } = {}
+    ) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
           for (const [key, value] of Object.entries(updates)) {
-            if (value === null || value === '' || value === 'All') {
+            if (value === 'All' && opts.keepAll?.includes(key)) {
+              next.set(key, value)
+            } else if (value === null || value === '' || value === 'All') {
               next.delete(key)
             } else {
               next.set(key, value)
@@ -658,44 +702,55 @@ export function useAlgorithmExplorer(
     })
   }, [updateSearchParams])
 
+  // Clearing a filter the reader's role presets writes an explicit "All", so
+  // a reload or shared link does not bring the role default back.
+  const keepAllFor = useCallback(
+    (key: AlgorithmFilterKey): readonly string[] => {
+      // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+      const def = personaDefaults.filters[key]
+      return def && def !== 'All' ? [key] : []
+    },
+    [personaDefaults]
+  )
+
   const handleCryptoFamilyChange = useCallback(
     (id: string) => {
       setFilterCryptoFamily(id)
-      updateSearchParams({ family: id === 'All' ? null : id })
+      updateSearchParams({ family: id }, { keepAll: keepAllFor('family') })
     },
-    [updateSearchParams]
+    [updateSearchParams, keepAllFor]
   )
 
   const handleFunctionChange = useCallback(
     (id: string) => {
       setFilterFunction(id)
-      updateSearchParams({ fn: id === 'All' ? null : id })
+      updateSearchParams({ fn: id }, { keepAll: keepAllFor('fn') })
     },
-    [updateSearchParams]
+    [updateSearchParams, keepAllFor]
   )
 
   const handleSecurityLevelChange = useCallback(
     (id: string) => {
       setFilterSecurityLevel(id)
-      updateSearchParams({ level: id === 'All' ? null : id })
+      updateSearchParams({ level: id }, { keepAll: keepAllFor('level') })
     },
-    [updateSearchParams]
+    [updateSearchParams, keepAllFor]
   )
 
   const handleRegionChange = useCallback(
     (id: string) => {
       setFilterRegion(id)
-      updateSearchParams({ region: id === 'All' ? null : id })
+      updateSearchParams({ region: id }, { keepAll: keepAllFor('region') })
     },
-    [updateSearchParams]
+    [updateSearchParams, keepAllFor]
   )
 
   const handleStatusChange = useCallback(
     (id: string) => {
       setFilterStatus(id)
-      updateSearchParams({ status: id === 'All' ? null : id })
+      updateSearchParams({ status: id }, { keepAll: keepAllFor('status') })
     },
-    [updateSearchParams]
+    [updateSearchParams, keepAllFor]
   )
 
   const handleSearchChange = useCallback(
@@ -1137,35 +1192,102 @@ export function useAlgorithmExplorer(
     return Array.from(levels).sort()
   }, [algorithmData, passesAlgoFilters])
 
+  // --- Role default filters in force ---
+  // A filter whose value came from the reader's role preset (not from the
+  // URL or a click). Shown as a chip and recorded in the export, so rows a
+  // role hides are never hidden silently.
+  const roleDefaultFilters = useMemo(() => {
+    const current: Record<AlgorithmFilterKey, string> = {
+      family: filterCryptoFamily,
+      fn: filterFunction,
+      level: filterSecurityLevel,
+      region: filterRegion,
+      status: filterStatus,
+    }
+    return (Object.keys(current) as AlgorithmFilterKey[]).flatMap((key) => {
+      // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+      const def = personaDefaults.filters[key]
+      // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+      const value = current[key]
+      if (!def || def === 'All' || searchParams.has(key) || value !== def) return []
+      return [{ key, value, label: filterValueLabel(key, value) }]
+    })
+  }, [
+    personaDefaults,
+    searchParams,
+    filterCryptoFamily,
+    filterFunction,
+    filterSecurityLevel,
+    filterRegion,
+    filterStatus,
+  ])
+
   // --- CSV export ---
+  // The Transition Guide exports the transition rows it shows, with their own
+  // columns; every other tab exports the algorithm catalogue rows, and says so.
   const handleExportCsv = useCallback(() => {
-    const csvLine = (value: string) => JSON.stringify(value)
-    const snapshotDate = metadata?.date
-      ? metadata.date.toISOString().slice(0, 10)
-      : 'date not recorded'
+    const isTransition = activeTab === 'transition'
+    const meta = isTransition ? transitionMetadata : metadata
+    const snapshotDate = formatSnapshotDate(meta?.date) ?? 'date not recorded'
+    const filterLine = [
+      `quick view=${quickView}`,
+      `family=${filterValueLabel('family', filterCryptoFamily)}`,
+      `function=${filterValueLabel('fn', filterFunction)}`,
+      ...(isTransition ? [] : [`level=${filterSecurityLevel}`]),
+      `region=${filterValueLabel('region', filterRegion)}`,
+      `maturity=${filterValueLabel('status', filterStatus)}`,
+      `CNSA lens=${cnsaLens ? 'on' : 'off'}`,
+      ...(isTransition ? [] : [`research gaps=${researchGapOnly ? 'only' : 'all'}`]),
+      `search=${searchQuery ? `"${searchQuery}"` : 'none'}`,
+    ].join('; ')
+    const roleLine =
+      roleDefaultFilters.length > 0
+        ? `Role default filter applied (not chosen on the page): ${roleDefaultFilters
+            .map((r) => `${FILTER_KEY_NAMES[r.key]}=${r.label}`)
+            .join('; ')}. Choose "Everything" to remove it.`
+        : 'Role default filter applied: none.'
     const preamble = [
-      csvLine(
-        'Educational algorithm catalogue export — not an approved-algorithm list, product validation, compliance determination, or deployment recommendation.'
+      csvPreambleLine(
+        isTransition
+          ? 'Educational transition guide export — candidate replacement paths for learning, not an approved-algorithm list, product validation, compliance determination, or deployment recommendation.'
+          : 'Educational algorithm catalogue export — not an approved-algorithm list, product validation, compliance determination, or deployment recommendation.'
       ),
-      csvLine(`Scope: ${filteredAlgorithms.length} rows visible under the active filters.`),
-      csvLine(
-        `Source snapshot: ${metadata?.filename ?? 'not recorded'}; snapshot date: ${snapshotDate}.`
+      csvPreambleLine(
+        isTransition
+          ? `Scope: ${filteredTransitions.length} of ${transitionData.length} transition guide rows visible under the active filters.`
+          : `Scope: ${filteredAlgorithms.length} of ${algorithmData.length} algorithm catalogue rows visible under the active filters.`
       ),
-      csvLine(
+      csvPreambleLine(
+        `Source snapshot: ${meta?.filename ?? 'not recorded'}; snapshot date: ${snapshotDate}.`
+      ),
+      csvPreambleLine(
         'The snapshot date is not a row-level verification date. Row reviewer, verification method, source locator, and next-review date are not recorded in the current source catalogue.'
       ),
-      csvLine(
-        `Filters: quick view=${quickView}; family=${filterCryptoFamily}; function=${filterFunction}; level=${filterSecurityLevel}; region=${filterRegion}; maturity=${filterStatus}; CNSA lens=${cnsaLens ? 'on' : 'off'}; research gaps=${researchGapOnly ? 'only' : 'all'}; search=${searchQuery || 'none'}.`
-      ),
-      csvLine(
-        'Legacy catalogue speed estimates are omitted because their platforms and measurement methods are not comparable.'
-      ),
+      csvPreambleLine(`Filters: ${filterLine}.`),
+      csvPreambleLine(roleLine),
+      ...(isTransition
+        ? []
+        : [
+            csvPreambleLine(
+              'Legacy catalogue speed estimates are omitted because their platforms and measurement methods are not comparable.'
+            ),
+          ]),
     ]
-    const csv = [...preamble, generateCsv(filteredAlgorithms, ALGORITHM_CSV_COLUMNS)].join('\n')
-    downloadCsv(csv, csvFilename('pqc-algorithms'))
+    const body = isTransition
+      ? generateCsv(filteredTransitions, TRANSITION_CSV_COLUMNS)
+      : generateCsv(filteredAlgorithms, ALGORITHM_CSV_COLUMNS)
+    downloadCsv(
+      [...preamble, body].join('\n'),
+      csvFilename(isTransition ? 'pqc-transition-guide' : 'pqc-algorithms')
+    )
   }, [
+    activeTab,
     filteredAlgorithms,
+    filteredTransitions,
+    algorithmData.length,
+    transitionData.length,
     metadata,
+    transitionMetadata,
     quickView,
     filterCryptoFamily,
     filterFunction,
@@ -1175,6 +1297,7 @@ export function useAlgorithmExplorer(
     cnsaLens,
     researchGapOnly,
     searchQuery,
+    roleDefaultFilters,
   ])
 
   // Total counts for filter bar
@@ -1259,5 +1382,7 @@ export function useAlgorithmExplorer(
     // counts
     totalAlgoCount,
     filteredCount,
+    // role preset filters in force (not in the URL, not clicked)
+    roleDefaultFilters,
   }
 }

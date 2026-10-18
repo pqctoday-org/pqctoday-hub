@@ -12,7 +12,9 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import {
+  ATTACK_CATEGORY_LABELS,
   ATTACK_PROFILES,
+  ATTACK_SEVERITY_NOTE,
   type AttackCategory,
   type AttackSeverity,
 } from '@/data/implementationAttackProfiles'
@@ -24,37 +26,37 @@ const ATTACK_CATEGORY_META: Record<
   { label: string; icon: React.ElementType; color: string }
 > = {
   'side-channel': {
-    label: 'Side-Channel',
+    label: ATTACK_CATEGORY_LABELS['side-channel'],
     icon: Cpu,
     color: 'text-status-error',
   },
   'fault-injection': {
-    label: 'Fault Injection',
+    label: ATTACK_CATEGORY_LABELS['fault-injection'],
     icon: Zap,
     color: 'text-status-warning',
   },
   'rng-failure': {
-    label: 'RNG Failure',
+    label: ATTACK_CATEGORY_LABELS['rng-failure'],
     icon: KeyRound,
     color: 'text-status-error',
   },
   'secret-handling': {
-    label: 'Secret Handling',
+    label: ATTACK_CATEGORY_LABELS['secret-handling'],
     icon: ShieldAlert,
     color: 'text-status-warning',
   },
   'api-misuse': {
-    label: 'API/Integration',
+    label: ATTACK_CATEGORY_LABELS['api-misuse'],
     icon: Code2,
     color: 'text-status-info',
   },
   kleptography: {
-    label: 'Kleptography',
+    label: ATTACK_CATEGORY_LABELS.kleptography,
     icon: EyeOff,
     color: 'text-status-error',
   },
   'ai-cryptanalysis': {
-    label: 'AI-Assisted Cryptanalysis',
+    label: ATTACK_CATEGORY_LABELS['ai-cryptanalysis'],
     icon: Brain,
     color: 'text-status-warning',
   },
@@ -134,7 +136,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
     <div className="space-y-6">
       {/* Introductory context */}
       <div className="glass-panel p-4 md:p-6">
-        <div className="flex items-start gap-3 p-4 bg-status-warning/10 border border-status-warning/30 rounded-lg">
+        <div className="flex items-start gap-3 p-4 bg-warning/12 border border-border rounded-lg">
           <AlertTriangle className="text-status-warning flex-shrink-0 mt-0.5" size={20} />
           <div className="text-sm">
             <p className="font-semibold mb-1 text-foreground">Implementation Attack Evidence</p>
@@ -165,7 +167,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
         </div>
         <div className="flex flex-wrap gap-3 justify-center border-t border-border pt-3">
           <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-            Reported impact (PQC Today qualitative reading, not CVSS):
+            {ATTACK_SEVERITY_NOTE}:
           </span>
           {(
             Object.entries(SEVERITY_LABELS) as [
@@ -219,7 +221,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
                     key={attack.category}
                     className={clsx(
                       'flex items-start gap-2 p-2 rounded-md text-sm',
-                      attack.status === 'yes' && 'bg-status-error/5',
+                      attack.status === 'yes' && 'bg-destructive/5',
                       attack.status === 'unknown' && 'bg-muted/30'
                     )}
                   >
@@ -247,9 +249,9 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
 
             {/* Countermeasures */}
             {profile.countermeasures && profile.countermeasures.length > 0 && (
-              <div className="bg-status-success/5 border border-status-success/20 rounded-md p-3">
-                <span className="text-xs font-semibold text-status-success uppercase tracking-wider block mb-1.5">
-                  Countermeasures
+              <div className="bg-muted/40 border border-border rounded-md p-3">
+                <span className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1.5">
+                  Mitigation considerations
                 </span>
                 <ul className="space-y-1">
                   {profile.countermeasures.map((cm, i) => (
@@ -263,7 +265,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
             )}
 
             {/* Reference links */}
-            <div className="flex flex-col gap-1.5 mt-auto">
+            <div className="flex flex-col gap-0.5 mt-auto">
               <span className="text-xs font-semibold text-primary uppercase tracking-wider">
                 References
               </span>
@@ -273,7 +275,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
                   href={ref.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-1.5 text-xs text-accent hover:text-primary transition-colors group"
+                  className="flex min-h-6 items-start gap-1.5 py-1 text-xs text-accent hover:text-primary transition-colors group"
                   title={ref.title}
                 >
                   <ExternalLink

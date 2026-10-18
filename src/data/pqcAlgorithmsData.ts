@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { loadLatestCSVAsync, parseIntOrNull } from './csvUtils'
-import type { AlgorithmStatusTier } from './algorithmStatusTier'
+import { tierBadge, type AlgorithmStatusTier } from './algorithmStatusTier'
 
 export const RESEARCH_NEEDED = 'Research needed'
 
@@ -16,6 +16,9 @@ export interface AlgorithmEvidenceStates {
   signOrEncapsulate: EvidenceFieldState
   verifyOrDecapsulate: EvidenceFieldState
   stackRam: EvidenceFieldState
+  /** NIST security category. Optional so older fixtures stay valid. */
+  securityLevel?: EvidenceFieldState
+  aesEquivalent?: EvidenceFieldState
 }
 
 export function evidenceStateLabel(state: EvidenceFieldState): string {
@@ -64,6 +67,8 @@ export interface AlgorithmDetail {
   signEncapsCycles: string
   verifyDecapsCycles: string
   stackRAM: number
+  /** True when the catalogue gives the stack RAM as an estimate ("~6000"). */
+  stackRAMApprox?: boolean
   optimizationTarget: string
   fipsStandard: string
   useCaseNotes: string
@@ -125,13 +130,27 @@ export function getCatalogueFreshness(
   if (ageDays < 0) {
     return { state: 'future', ageDays, label: 'Snapshot date is in the future' }
   }
+  const age = `${ageDays} ${ageDays === 1 ? 'day' : 'days'} old`
   if (ageDays > staleDays) {
-    return { state: 'stale', ageDays, label: `Snapshot is ${ageDays} days old` }
+    return { state: 'stale', ageDays, label: `Snapshot is ${age}` }
   }
   if (ageDays > reviewDays) {
-    return { state: 'review-due', ageDays, label: `Snapshot review is due (${ageDays} days old)` }
+    return { state: 'review-due', ageDays, label: `Snapshot review is due (${age})` }
   }
-  return { state: 'current', ageDays, label: `Snapshot is ${ageDays} days old` }
+  return { state: 'current', ageDays, label: `Snapshot is ${age}` }
+}
+
+/**
+ * A snapshot date as YYYY-MM-DD in the calendar it was parsed in. Snapshot
+ * dates are built at local midnight from the file name, so toISOString()
+ * would move them a day earlier east of UTC. Null when there is no date.
+ */
+export function formatSnapshotDate(date: Date | null | undefined): string | null {
+  if (!date || Number.isNaN(date.getTime())) return null
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
 /**
@@ -279,6 +298,11 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'SP 800-232 (standardised) — lightweight symmetric, NOT a post-quantum public-key algorithm|||SP 800-232':
     'final', // Ascon-AEAD128, Ascon-Hash256
   'Candidate|||Draft (Selected 2025)': 'fips-draft', // HQC
+  // HQC wording corrected 2026-10-17: NIST selected HQC on 11 March 2025, has
+  // not published a draft FIPS yet, and expects the final standard in 2027
+  // (NIST news release, 11 March 2025; NIST IR 8545).
+  'Candidate|||Selected March 2025; draft FIPS not yet published; final expected 2027':
+    'fips-draft', // HQC
   // FN-DSA: FIPS 206 is announced/in development — NO public draft exists yet
   // (csrc.nist.gov is the source of truth; the ipd URL 404s). Tier stays
   // 'fips-draft' (the NIST-FIPS-pipeline tier HQC also uses) — see
@@ -321,6 +345,12 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // while the other 8 Round 3 candidates remain active.
   'NIST Additional Sig Round 3 — Withdrawn (2026-07-29)|||Withdrawn from NIST Additional Digital Signatures standardization (2026-07-29, per Round 3 Additional Signatures — Post-Quantum Cryptography: Additional Digital Signature Schemes, NIST CSRC)':
     'eliminated', // HAWK-512/1024
+  // fips_standard corrected 2026-10-17 to name Round 3 for all nine candidates
+  // NIST advanced on 14 May 2026 (HAWK was later withdrawn; it keeps its own key).
+  'NIST Additional Sig Round 3 — Candidate|||NIST Additional Signatures Round 3 (May 2026)':
+    'round2-candidate', // MAYO-1/2/3/5, UOV, FAEST, SNOVA, MQOM, QR-UOV, SDitH
+  'NIST Additional Sig Round 3 — Candidate (SQIsign-I)|||NIST Additional Signatures Round 3 (May 2026)':
+    'round2-candidate', // SQIsign
   'NIST Additional Sig Round 3 — Candidate|||': 'round2-candidate', // MQOM, QR-UOV, SDitH — new
   // stub rows (2026-07-27), fips_standard genuinely blank (add_row.py leaves it for human
   // follow-up rather than guessing). The status itself IS verified (csrc.nist.gov's own
@@ -380,6 +410,9 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // lookup throws on an unregistered pair, so the key must exist BEFORE the
   // CSV bumps to -19, and archived CSV snapshots still carry -16/-18.
   'Candidate|||draft-ietf-lamps-pq-composite-kem-19': 'ietf-draft', // Composite ML-KEM
+  // -23 posted 2026-10-14; datatracker shows the draft in the RFC Editor queue
+  // (checked 2026-10-17). Still an Internet-Draft, not an RFC.
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-23': 'ietf-draft', // Composite ML-KEM
   // BLS12-381 (2026-08-16): draft-irtf-cfrg-bls-signature is an active
   // IRTF CFRG Internet-Draft, verified against the datatracker directly —
   // not yet an RFC.
@@ -397,6 +430,11 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // BSI TR-02102-1 (2026-01) Tables 2.5/2.6 list only FrodoKEM-976/1344 and
   // mceliece460896/6688128/8192128, so these rows no longer cite BSI.
   'ISO 18033-2 Amd2|||NIST PQC Round 4 (Alternate)': 'final', // Classic-McEliece-348864
+  // 2026-10-17: Classic McEliece was a Round 4 candidate, not an alternate, and
+  // NIST IR 8545 (March 2025) did not select it. The ISO/IEC 18033-2 Amd 2
+  // standard keeps the tier at 'final'.
+  'ISO 18033-2 Amd2|||NIST PQC Round 4 (concluded 2025; not selected)': 'final', // Classic-McEliece-348864
+  'ISO 18033-2 Amd2; BSI TR-02102-1|||NIST PQC Round 4 (concluded 2025; not selected)': 'final', // Classic-McEliece-460896/8192128
   'ISO 18033-2 Amd2|||Not listed in BSI TR-02102-1 (BSI lists mceliece460896, 6688128 and 8192128); NOT in NIST FIPS':
     'final', // Classic-McEliece-6960119
   'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); ISO 18033-2 Amd2; ANSSI: acceptable in hybrid; not listed by BSI (BSI lists FrodoKEM-976/1344)':
@@ -430,6 +468,130 @@ export function mapReferenceStatusToTier(
   return tier
 }
 
+const POST_QUANTUM_FAMILIES = new Set(['KEM', 'Signature', 'Hybrid KEM'])
+
+// ── One text per field, for every surface ────────────────────────────────
+// The table, drawer, compare views and CSV export all read these helpers so
+// a field shows the same value, or the same missing-data words, everywhere.
+
+export type AlgorithmSizeField =
+  'publicKey' | 'privateKey' | 'signatureOrCiphertext' | 'sharedSecret'
+
+function sizeValue(algo: AlgorithmDetail, field: AlgorithmSizeField): number | null {
+  switch (field) {
+    case 'publicKey':
+      return algo.publicKeySize
+    case 'privateKey':
+      return algo.privateKeySize
+    case 'signatureOrCiphertext':
+      return algo.signatureCiphertextSize
+    case 'sharedSecret':
+      return algo.sharedSecretSize
+  }
+}
+
+/** The evidence state of one size field, judged on that field alone. */
+export function algorithmSizeState(
+  algo: AlgorithmDetail,
+  field: AlgorithmSizeField
+): EvidenceFieldState {
+  // eslint-disable-next-line security/detect-object-injection -- field is a typed union, not user input
+  const state = algo.evidenceStates?.[field]
+  if (state && state !== 'stated') return state
+  const value = sizeValue(algo, field)
+  // Records built without evidence states fall back to the row-level flag.
+  if (!algo.evidenceStates && algo.sizesUnknown && field !== 'sharedSecret') {
+    return 'not-researched'
+  }
+  if (value === null || value === 0) {
+    return field === 'sharedSecret' ? 'not-specified' : 'not-researched'
+  }
+  return 'stated'
+}
+
+/** The stated size in bytes, or null when the field is missing. */
+export function algorithmSizeBytes(
+  algo: AlgorithmDetail,
+  field: AlgorithmSizeField
+): number | null {
+  return algorithmSizeState(algo, field) === 'stated' ? sizeValue(algo, field) : null
+}
+
+/** "1,184 B", or the field's missing-data words. */
+export function formatAlgorithmSize(algo: AlgorithmDetail, field: AlgorithmSizeField): string {
+  const state = algorithmSizeState(algo, field)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return formatByteField(sizeValue(algo, field), 'stated')
+}
+
+/** Export cell: the number of bytes, or the field's missing-data words. */
+export function exportAlgorithmSize(
+  algo: AlgorithmDetail,
+  field: AlgorithmSizeField
+): string | number {
+  const state = algorithmSizeState(algo, field)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return sizeValue(algo, field) ?? RESEARCH_NEEDED
+}
+
+export function stackRamState(algo: AlgorithmDetail): EvidenceFieldState {
+  const state = algo.evidenceStates?.stackRam
+  if (state && state !== 'stated') return state
+  if (algo.stackRAM > 0) return 'stated'
+  // A cell that was filled in but held no usable number is still a gap.
+  return state === 'stated' ? 'not-researched' : 'not-measured'
+}
+
+/** "~6,000 B" (estimate), "6,000 B", or the field's missing-data words. */
+export function formatStackRam(algo: AlgorithmDetail): string {
+  const state = stackRamState(algo)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return `${algo.stackRAMApprox ? '~' : ''}${algo.stackRAM.toLocaleString()} B`
+}
+
+/** Export cell: "~6000" for an estimate, 6000 when exact, or the missing-data words. */
+export function exportStackRam(algo: AlgorithmDetail): string | number {
+  const state = stackRamState(algo)
+  if (state !== 'stated') return evidenceStateLabel(state)
+  return algo.stackRAMApprox ? `~${algo.stackRAM}` : algo.stackRAM
+}
+
+export function securityLevelState(algo: AlgorithmDetail): EvidenceFieldState {
+  if (algo.securityLevel !== null) return 'stated'
+  const state = algo.evidenceStates?.securityLevel
+  return state && state !== 'stated' ? state : 'not-specified'
+}
+
+/** "Level 3", or the field's missing-data words. */
+export function formatSecurityLevel(algo: AlgorithmDetail): string {
+  const state = securityLevelState(algo)
+  return state === 'stated' ? `Level ${algo.securityLevel}` : evidenceStateLabel(state)
+}
+
+/** The AES-equivalent text, or the field's missing-data words. */
+export function formatAesEquivalent(algo: AlgorithmDetail): string {
+  const state = algo.evidenceStates?.aesEquivalent
+  if (state && state !== 'stated') return evidenceStateLabel(state)
+  if (isResearchNeeded(algo.aesEquivalent)) return RESEARCH_NEEDED
+  return algo.aesEquivalent?.trim() || evidenceStateLabel('not-specified')
+}
+
+export const LINK_QUALITY_NOT_ASSESSED = 'Not assessed'
+
+export function formatLinkQuality(algo: AlgorithmDetail): string {
+  return algo.statusUrlQuality?.trim() || LINK_QUALITY_NOT_ASSESSED
+}
+
+/**
+ * Reader-facing words for a maturity tier — the status filter's own labels,
+ * never the internal id (e.g. 'round2-candidate').
+ */
+export function statusTierLabel(tier: AlgorithmStatusTier): string {
+  if (tier === 'final') return 'Published standard'
+  if (tier === 'regional') return 'Regional recommendation or selection'
+  return tierBadge(tier)?.label ?? tier
+}
+
 // Import CSV data dynamically (lazy glob)
 const csvModule = import.meta.glob('./pqc_complete_algorithm_reference_*.csv', {
   query: '?raw',
@@ -438,6 +600,20 @@ const csvModule = import.meta.glob('./pqc_complete_algorithm_reference_*.csv', {
 
 let cachedData: AlgorithmDetail[] | null = null
 export let loadedFileMetadata: { filename: string; date: Date | null } | null = null
+
+/** Rows the loader withheld from the latest catalogue file, by reason. */
+export interface WithheldCatalogueRows {
+  /** Rows with no name, algorithm family or cryptographic family. */
+  unclassified: number
+  /** Program-track placeholders with no algorithm selected yet. */
+  placeholder: number
+}
+let withheldRows: WithheldCatalogueRows = { unclassified: 0, placeholder: 0 }
+
+/** Withheld-row counts from the last load, so the page can disclose them. */
+export function getWithheldCatalogueRows(): WithheldCatalogueRows {
+  return { ...withheldRows }
+}
 
 // Helper to extract date from filename — exported for use by algorithmsData.ts
 export function getDateFromFilename(path: string): Date | null {
@@ -465,6 +641,7 @@ export function getRevisionFromFilename(path: string): number {
 export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
   if (cachedData) return cachedData
 
+  const withheld: WithheldCatalogueRows = { unclassified: 0, placeholder: 0 }
   const { data, metadata } = await loadLatestCSVAsync<RawAlgorithmRow, AlgorithmDetail>(
     csvModule,
     /pqc_complete_algorithm_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
@@ -476,6 +653,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         isMissingEvidence(row.algorithm_family) ||
         isMissingEvidence(row.cryptographic_family)
       ) {
+        withheld.unclassified += 1
         return null
       }
       const statusTier = mapReferenceStatusToTier(row.status || '', row.fips_standard || '')
@@ -483,7 +661,10 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
       // yet (confirmed by the CSV's own data-quality note) — not a real
       // algorithm to show in a user-facing comparison. Drop the row rather
       // than badge it, per WORKSTREAMS.md §WS-A step 4.
-      if (statusTier === 'placeholder') return null
+      if (statusTier === 'placeholder') {
+        withheld.placeholder += 1
+        return null
+      }
 
       const carriesAsymmetricObjects = [
         'KEM',
@@ -495,6 +676,16 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
       const carriesSharedSecret = ['KEM', 'Hybrid KEM', 'Classical KEM'].includes(
         row.algorithm_family
       )
+      // Classical key agreement (ECDH, X25519, X448, DH) has no ciphertext:
+      // each side sends a public key. A blank cell there is "not applicable",
+      // not a research gap. RSA rows in the same family state a ciphertext.
+      const ciphertextMissingMeans: EvidenceFieldState =
+        row.algorithm_family === 'Classical KEM' ? 'not-applicable' : 'not-researched'
+      // NIST security categories are defined for post-quantum schemes; the
+      // catalogue leaves them blank for classical and symmetric primitives.
+      const levelMissingMeans: EvidenceFieldState = POST_QUANTUM_FAMILIES.has(row.algorithm_family)
+        ? 'not-specified'
+        : 'not-applicable'
       const evidenceStates: AlgorithmEvidenceStates = {
         publicKey: carriesAsymmetricObjects
           ? statedOr(row.public_key_bytes, 'not-researched')
@@ -503,7 +694,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
           ? statedOr(row.private_key_bytes, 'not-researched')
           : 'not-applicable',
         signatureOrCiphertext: carriesAsymmetricObjects
-          ? statedOr(row.signature_ciphertext_bytes, 'not-researched')
+          ? statedOr(row.signature_ciphertext_bytes, ciphertextMissingMeans)
           : 'not-applicable',
         sharedSecret: carriesSharedSecret
           ? statedOr(row.shared_secret_bytes, 'not-specified')
@@ -512,12 +703,15 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         signOrEncapsulate: statedOr(row.sign_encaps_cycles_relative, 'not-measured'),
         verifyOrDecapsulate: statedOr(row.verifydecaps_cycles_relative, 'not-measured'),
         stackRam: statedOr(row.stack_ram_bytes, 'not-measured'),
+        securityLevel: statedOr(row.nist_security_level, levelMissingMeans),
+        aesEquivalent: statedOr(row.aes_equivalent, 'not-specified'),
       }
       const sizesUnknown =
         carriesAsymmetricObjects &&
-        (isMissingEvidence(row.public_key_bytes) ||
-          isMissingEvidence(row.private_key_bytes) ||
-          isMissingEvidence(row.signature_ciphertext_bytes))
+        (evidenceStates.publicKey !== 'stated' ||
+          evidenceStates.privateKey !== 'stated' ||
+          (evidenceStates.signatureOrCiphertext !== 'stated' &&
+            evidenceStates.signatureOrCiphertext !== 'not-applicable'))
       const perfUnknown =
         isMissingEvidence(row.keygen_cycles_relative) ||
         isMissingEvidence(row.sign_encaps_cycles_relative) ||
@@ -552,6 +746,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         signEncapsCycles: row.sign_encaps_cycles_relative,
         verifyDecapsCycles: row.verifydecaps_cycles_relative,
         stackRAM: parseInt((row.stack_ram_bytes || '0').replace(/[~,]/g, ''), 10) || 0,
+        stackRAMApprox: /^\s*~/.test(row.stack_ram_bytes || ''),
         optimizationTarget: row.optimization_target,
         fipsStandard: row.fips_standard,
         useCaseNotes: row.use_case_notes || '',
@@ -574,6 +769,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
   )
 
   loadedFileMetadata = metadata ? { filename: metadata.filename, date: metadata.lastUpdate } : null
+  withheldRows = withheld
 
   cachedData = data
   return data

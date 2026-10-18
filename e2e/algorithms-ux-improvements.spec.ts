@@ -67,7 +67,7 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
   }) => {
     await page.goto('/algorithms?tab=validation')
     await page.waitForLoadState('domcontentloaded')
-    const katHeader = page.getByRole('button', { name: /Known-answer checks/i })
+    const katHeader = page.getByRole('button', { name: /^Known-answer checks/i })
     await expect(katHeader).toBeVisible({ timeout: 30000 })
     await expect(katHeader).toHaveAttribute('aria-expanded', 'false')
     await katHeader.click()

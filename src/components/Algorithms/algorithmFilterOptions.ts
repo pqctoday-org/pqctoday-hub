@@ -25,7 +25,9 @@ export const CRYPTO_FAMILY_ITEMS = [
 
 export const FUNCTION_ITEMS = [
   { id: 'All', label: 'All Functions' },
-  { id: 'KEM', label: 'KEM / Encryption' },
+  // Display text only — the id stays 'KEM' so existing ?fn=KEM links work.
+  // Key agreement rows (ECDH, DH) are included: they are key establishment too.
+  { id: 'KEM', label: 'KEM (key establishment)' },
   { id: 'Signature', label: 'Signature' },
 ]
 
@@ -94,3 +96,23 @@ export const LEVEL_ITEMS = [
   { id: '4', label: 'Level 4' },
   { id: '5', label: 'Level 5' },
 ]
+
+/** The URL filter keys these lists serve (same as personaConfig's AlgorithmFilterKey). */
+export type FilterKey = 'family' | 'fn' | 'level' | 'region' | 'status'
+
+/** The dropdown's own label for a filter value (falls back to the raw value). */
+export function filterValueLabel(key: FilterKey, value: string): string {
+  const items =
+    key === 'family'
+      ? CRYPTO_FAMILY_ITEMS
+      : key === 'fn'
+        ? FUNCTION_ITEMS
+        : key === 'region'
+          ? REGION_ITEMS
+          : key === 'status'
+            ? STATUS_ITEMS
+            : null
+  if (value === 'All') return 'All'
+  if (key === 'level') return `Level ${value}`
+  return items?.find((i) => i.id === value)?.label ?? value
+}

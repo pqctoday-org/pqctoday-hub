@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react'
 import { ArrowRight, ChevronLeft, FileSignature, Lock, Hash, Key } from 'lucide-react'
 import clsx from 'clsx'
-import type { AlgorithmTransition } from '../../data/algorithmsData'
+import { getTransitionFunctionGroup, type AlgorithmTransition } from '../../data/algorithmsData'
 import type { AlgorithmDetail } from '../../data/pqcAlgorithmsData'
 import { Button } from '@/components/ui/button'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
@@ -30,10 +30,10 @@ type FunctionGroup = 'KEM' | 'Signature' | 'Other'
 
 // One grouping for Step 1 (what the learner picks) and Step 3 (which rows are
 // offered), so a key-establishment choice can never surface signature rows.
+// Uses the page's own grouping, so key agreement rows (ECDH, DH) count as key
+// establishment here exactly as they do under the KEM filter.
 function groupOf(fn: AlgorithmTransition['function']): FunctionGroup {
-  if (fn.includes('Signature')) return 'Signature'
-  if (fn === 'Encryption/KEM' || fn.includes('KEM')) return 'KEM'
-  return 'Other'
+  return getTransitionFunctionGroup(fn) ?? 'Other'
 }
 
 const GROUP_LABELS: Record<FunctionGroup, string> = {

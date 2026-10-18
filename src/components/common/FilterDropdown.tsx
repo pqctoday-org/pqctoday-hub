@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useId } from 'react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import { ChevronDown, Globe, Check, Search } from 'lucide-react'
@@ -116,9 +116,11 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     onMultiSelect(next)
   }
 
-  // Generate unique ID for label
+  // Unique per instance: two dropdowns with the same label (e.g. two "Status"
+  // filters on one tab) must not share an aria-labelledby target.
+  const instanceId = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   const labelId = label
-    ? `filter-dropdown-label-${label.replace(/\s+/g, '-').toLowerCase()}`
+    ? `filter-dropdown-label-${label.replace(/\s+/g, '-').toLowerCase()}-${instanceId}`
     : undefined
 
   // Close dropdown when clicking outside (check both trigger and portal menu)

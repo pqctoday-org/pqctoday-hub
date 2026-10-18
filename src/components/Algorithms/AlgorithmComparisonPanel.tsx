@@ -5,11 +5,15 @@ import { Button } from '../ui/button'
 import { InlineTooltip } from '../ui/InlineTooltip'
 import {
   type AlgorithmDetail,
+  type AlgorithmSizeField,
   getCryptoFamilyColor,
   isClassical,
-  RESEARCH_NEEDED,
-  evidenceStateLabel,
-  type EvidenceFieldState,
+  algorithmSizeBytes,
+  formatAesEquivalent,
+  formatAlgorithmSize,
+  formatSecurityLevel,
+  formatStackRam,
+  stackRamState,
 } from '../../data/pqcAlgorithmsData'
 import {
   resolveEngine,
@@ -27,23 +31,22 @@ interface ComparisonField {
   key: string
   label: string
   tooltip?: string
+  /** Numeric value for best-in-row, or text; null when the field is missing. */
   getValue: (algo: AlgorithmDetail) => string | number | null
+  /** The cell text — the same words the table, drawer and export use. */
+  format?: (algo: AlgorithmDetail) => string
   compare?: 'lower-better' | 'higher-better'
 }
 
-/**
- * A size field's own value, or its own evidence state. Each field is judged
- * on its own (one missing size no longer hides the others), and a non-numeric
- * state is never treated as the smallest value.
- */
-function sizeOrState(
-  value: number | null,
-  state: EvidenceFieldState | undefined,
-  legacyUnknown: boolean
-): number | string {
-  if (state && state !== 'stated') return evidenceStateLabel(state)
-  if (state === undefined && legacyUnknown) return RESEARCH_NEEDED
-  return value === null || value === 0 ? RESEARCH_NEEDED : value
+/** A size row: compared on its stated bytes, shown with the shared text. */
+function sizeField(key: string, label: string, field: AlgorithmSizeField): ComparisonField {
+  return {
+    key,
+    label,
+    getValue: (a) => algorithmSizeBytes(a, field),
+    format: (a) => formatAlgorithmSize(a, field),
+    compare: 'lower-better',
+  }
 }
 
 const DETAIL_FIELDS: ComparisonField[] = [
@@ -51,52 +54,28 @@ const DETAIL_FIELDS: ComparisonField[] = [
   {
     key: 'securityLevel',
     label: 'Security Level',
+    tooltip: 'NIST security category',
+    getValue: (a) => formatSecurityLevel(a),
+  },
+  {
+    key: 'aesEquivalent',
+    label: 'AES Equivalent',
     tooltip: 'Classical Security Bits',
-    getValue: (a) =>
-      a.securityLevel !== null ? `Level ${a.securityLevel} (${a.aesEquivalent})` : a.aesEquivalent,
+    getValue: (a) => formatAesEquivalent(a),
   },
-  {
-    key: 'publicKeySize',
-    label: 'Public Key',
-    getValue: (a) =>
-      sizeOrState(
-        a.publicKeySize,
-        a.evidenceStates?.publicKey,
-        !a.evidenceStates && a.sizesUnknown
-      ),
-    compare: 'lower-better',
-  },
-  {
-    key: 'privateKeySize',
-    label: 'Private Key',
-    getValue: (a) =>
-      sizeOrState(
-        a.privateKeySize,
-        a.evidenceStates?.privateKey,
-        !a.evidenceStates && a.sizesUnknown
-      ),
-    compare: 'lower-better',
-  },
-  {
-    key: 'sigCt',
-    label: 'Sig / Ciphertext',
-    getValue: (a) =>
-      sizeOrState(
-        a.signatureCiphertextSize,
-        a.evidenceStates?.signatureOrCiphertext,
-        !a.evidenceStates && a.sizesUnknown
-      ),
-    compare: 'lower-better',
-  },
+  sizeField('publicKeySize', 'Public Key', 'publicKey'),
+  sizeField('privateKeySize', 'Private Key', 'privateKey'),
+  sizeField('sigCt', 'Sig / Ciphertext', 'signatureOrCiphertext'),
   {
     key: 'stackRam',
     label: 'Stack RAM',
-    getValue: (a) =>
-      sizeOrState(a.stackRAM > 0 ? a.stackRAM : null, a.evidenceStates?.stackRam, false),
+    getValue: (a) => (stackRamState(a) === 'stated' ? a.stackRAM : null),
+    // Keeps the "~" of an estimate, exactly as the table and export do.
+    format: (a) => formatStackRam(a),
     compare: 'lower-better',
   },
-  { key: 'fips', label: 'FIPS Standard', getValue: (a) => a.fipsStandard },
-  { key: 'useCase', label: 'Use Case', getValue: (a) => a.useCaseNotes },
+  { key: 'fips', label: 'FIPS Standard', getValue: (a) => a.fipsStandard || 'Not recorded' },
+  { key: 'useCase', label: 'Use Case', getValue: (a) => a.useCaseNotes || 'Not recorded' },
 ]
 
 function formatValue(val: string | number | null): string {
@@ -144,8 +123,15 @@ export function AlgorithmComparisonPanel({
             <span className="text-muted-foreground font-normal"> vs {baseline.name} baseline</span>
           )}
         </h3>
-        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={onClose}>
-          <X size={14} />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0"
+          onClick={onClose}
+          aria-label="Close comparison"
+          title="Close comparison"
+        >
+          <X size={14} aria-hidden="true" />
         </Button>
       </div>
 
@@ -252,7 +238,7 @@ export function AlgorithmComparisonPanel({
                                 ✓
                               </span>
                             )}
-                            {formatValue(val)}
+                            {field.format ? field.format(a) : formatValue(val)}
                           </>
                         )}
                       </td>

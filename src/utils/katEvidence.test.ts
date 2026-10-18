@@ -18,6 +18,8 @@ import {
   evidenceForVectorFile,
   evidenceRecordsForKind,
   isAcvpBacked,
+  katRunAnnouncement,
+  katRunTone,
   katActionLabel,
   sourceForKind,
 } from './katEvidence'
@@ -225,12 +227,45 @@ describe('katEvidence classification (generated from the manifest + registry)', 
     expect(katActionLabel([decap])).toBe('Run reference sample')
     expect(katActionLabel([decap, decap])).toBe('Run reference samples')
     expect(katActionLabel([rt])).toBe('Run functional test')
-    expect(katActionLabel([decap, rt])).toBe('Run validation tests')
+    expect(katActionLabel([decap, rt])).toBe('Run known-answer checks')
     expect(katActionLabel([{ kind: { type: 'aeskw-wrap' } }])).toBe('Run standard KAT')
   })
 })
 
+describe('run outcome', () => {
+  const c = (pass: number, fail = 0, error = 0, skip = 0) => ({
+    pass,
+    fail,
+    error,
+    skip,
+    total: pass + fail + error + skip,
+  })
+  it('is a success only when something passed and nothing failed', () => {
+    expect(katRunTone(c(2))).toBe('success')
+    expect(katRunTone(c(1, 0, 0, 1))).toBe('success')
+    expect(katRunTone(c(0, 0, 0, 2))).toBe('warning')
+    expect(katRunTone(c(0))).toBe('warning')
+    expect(katRunTone(c(1, 1))).toBe('error')
+    expect(katRunTone(c(1, 0, 1))).toBe('error')
+  })
+  it('announces counts in words', () => {
+    expect(katRunAnnouncement('ML-KEM-768', c(2))).toBe('ML-KEM-768: 2 of 2 checks passed.')
+    expect(katRunAnnouncement('X', c(0, 0, 0, 2))).toBe('X: 0 of 0 checks passed, 2 not tested.')
+    expect(katRunAnnouncement('X', c(0, 1, 1))).toBe(
+      'X: 0 of 2 checks passed, 1 failed, 1 could not run.'
+    )
+    expect(katRunAnnouncement('X', c(1))).toBe('X: 1 of 1 check passed.')
+  })
+})
+
 describe('evidence-label static guard', () => {
+  it('no KAT run button anywhere in src still reads "Run validation tests"', () => {
+    const offenders = walk(SRC)
+      .filter((f) => /Run validation tests/.test(readFileSync(f, 'utf8')))
+      .map((f) => relative(ROOT, f))
+    expect(offenders).toEqual([])
+  })
+
   it('no button anywhere in src still reads "Run NIST KAT"', () => {
     const offenders = walk(SRC)
       .filter((f) => /Run NIST KAT/.test(readFileSync(f, 'utf8')))

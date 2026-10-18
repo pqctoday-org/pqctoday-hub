@@ -21,12 +21,15 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '../../data/learningPersonas'
 import { granularityForPersona } from '../../data/pqcProtocolMatrix'
+import { getAlgorithmDefaults } from '../../data/personaConfig'
 import {
   CRYPTO_FAMILY_ITEMS,
   FUNCTION_ITEMS,
   REGION_ITEMS,
   STATUS_ITEMS,
   LEVEL_ITEMS,
+  filterValueLabel,
+  type FilterKey,
 } from './algorithmFilterOptions'
 
 export {
@@ -77,6 +80,28 @@ interface AlgorithmFiltersProps {
   onDismissHint?: () => void
   /** Clears every active filter + search in one click. */
   onClearAll?: () => void
+  /**
+   * Filters currently set by the reader's role preset rather than by the URL
+   * or a click (useAlgorithmExplorer's `roleDefaultFilters`). When omitted,
+   * any filter still equal to the role's preset value is treated as one.
+   */
+  roleDefaultFilters?: ReadonlyArray<{ key: FilterKey; label: string }>
+}
+
+/** Role-preset filters still in force, judged from the persona and the current values. */
+function roleDefaultsInForce(
+  persona: PersonaId | null,
+  current: Record<FilterKey, string>
+): Array<{ key: FilterKey; label: string }> {
+  if (!persona) return []
+  const preset = getAlgorithmDefaults(persona).filters
+  return (Object.keys(current) as FilterKey[]).flatMap((key) => {
+    // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+    const def = preset[key]
+    // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+    if (!def || def === 'All' || current[key] !== def) return []
+    return [{ key, label: filterValueLabel(key, def) }]
+  })
 }
 
 /**
@@ -87,9 +112,12 @@ interface AlgorithmFiltersProps {
 function QuickViewSegmented({
   quickView,
   onQuickView,
+  narrowed,
 }: {
   quickView: 'none' | 'nist-picks' | 'final-nist-standards'
   onQuickView: (preset: QuickViewPreset) => void
+  /** A dropdown filter (e.g. a role default) still hides rows. */
+  narrowed: boolean
 }) {
   // quickView is tracked directly (see useAlgorithmExplorer.ts) rather than
   // reverse-derived from the Family/Function/Status dropdowns — that reverse
@@ -98,7 +126,10 @@ function QuickViewSegmented({
   // AIMer/HAETAE/Classic-McEliece) and "NIST picks" mean "family=Lattice"
   // (which excludes SLH-DSA, a Hash-based algorithm this preset's own
   // tooltip claims to include).
-  const active: QuickViewPreset = quickView === 'none' ? 'everything' : quickView
+  // "Everything" only reads as pressed when nothing else hides rows; with a
+  // dropdown filter still in force no preset is pressed.
+  const active: QuickViewPreset | null =
+    quickView === 'none' ? (narrowed ? null : 'everything') : quickView
 
   const options: Array<{ id: QuickViewPreset; label: string; icon: typeof Star; title: string }> = [
     {
@@ -174,6 +205,7 @@ export function AlgorithmFilters({
   hintAction,
   onDismissHint,
   onClearAll,
+  roleDefaultFilters,
 }: AlgorithmFiltersProps) {
   const levelItems = availableLevels
     ? LEVEL_ITEMS.filter((item) => item.id === 'All' || availableLevels.includes(parseInt(item.id)))
@@ -192,6 +224,28 @@ export function AlgorithmFilters({
     status !== 'All' ||
     searchQuery !== '' ||
     quickView !== 'none'
+  const dropdownNarrowed =
+    cryptoFamily !== 'All' ||
+    functionGroup !== 'All' ||
+    securityLevel !== 'All' ||
+    region !== 'All' ||
+    status !== 'All'
+  const roleDefaults =
+    roleDefaultFilters ??
+    roleDefaultsInForce(persona, {
+      family: cryptoFamily,
+      fn: functionGroup,
+      level: securityLevel,
+      region,
+      status,
+    })
+  const clearFilter: Record<FilterKey, (id: string) => void> = {
+    family: onCryptoFamilyChange,
+    fn: onFunctionGroupChange,
+    level: onSecurityLevelChange,
+    region: onRegionChange,
+    status: onStatusChange,
+  }
 
   return (
     <div className="glass-panel p-3 md:p-4 space-y-3">
@@ -205,7 +259,7 @@ export function AlgorithmFilters({
           />
           <Input
             type="text"
-            placeholder='Search — try "lattice KEM" or "replaces RSA"'
+            placeholder='Search — try "lattice KEM" or "ML-DSA"'
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9 pr-3 py-2 text-sm"
@@ -213,7 +267,13 @@ export function AlgorithmFilters({
           />
         </div>
 
-        {onQuickView && <QuickViewSegmented quickView={quickView} onQuickView={onQuickView} />}
+        {onQuickView && (
+          <QuickViewSegmented
+            quickView={quickView}
+            onQuickView={onQuickView}
+            narrowed={dropdownNarrowed}
+          />
+        )}
 
         {/* CNSA 2.0 lens toggle — primary-tinted when active */}
         {onToggleCnsaLens && (
@@ -272,6 +332,31 @@ export function AlgorithmFilters({
           Showing {filteredCount} of {totalCount}
         </span>
       </div>
+
+      {/* Role-preset filters stay visible even with the dropdown row collapsed,
+          so rows a role hides are never hidden silently. */}
+      {roleDefaults.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2" data-testid="role-default-filters">
+          {roleDefaults.map(({ key, label }) => (
+            <span
+              key={key}
+              className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-muted px-2.5 py-1 text-xs text-foreground"
+            >
+              Role default: {label}
+              <Button
+                variant="ghost"
+                size="sm"
+                // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+                onClick={() => clearFilter[key]('All')}
+                aria-label={`Clear role default filter: ${label}`}
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+              >
+                <X size={12} aria-hidden="true" />
+              </Button>
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Row 2 — dropdown filters, collapsible */}
       {advancedOpen && (

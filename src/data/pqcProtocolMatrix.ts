@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-10-01'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-10-17'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -103,15 +103,16 @@ export const DRAFT_STAGE_LEVEL: Record<DraftStage, number> = {
 import type { PersonaId } from './learningPersonas'
 
 /** Persona granularity tiers for the Protocol Support heatmap palette.
- *  - `binary`  collapses to {RFC | everything else} — executive/grc/ops/curious
+ *  - `binary`  collapses to {RFC | draft or experimental | none / N/A} —
+ *              executive/grc/ops/curious (the "Simple" palette)
  *  - `ternary` collapses to {RFC | WG+ | early} — developer/architect
  *  - `full`    keeps the graduated 0–7 palette — researcher (current behaviour)
  */
 export type PersonaStageGranularity = 'binary' | 'ternary' | 'full'
 
 /** Effective tier rendered by `dimensionStageTone()`. The full set (0..7) is
- *  used only for researcher / no-persona; binary and ternary personas land on
- *  a strict subset of {0, 1, 4, 7}. */
+ *  used only for researcher / no-persona; binary personas land on {0, 4, 7}
+ *  and ternary personas on {0, 1, 4, 7}. */
 export type StageTier = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 export const PERSONA_STAGE_GRANULARITY: Record<PersonaId, PersonaStageGranularity> = {
@@ -133,7 +134,7 @@ export const PERSONA_STAGE_GRANULARITY: Record<PersonaId, PersonaStageGranularit
  * non-applicable cells.
  *
  * Tier mapping per granularity:
- *   binary  → {0, 7}                    RFC vs everything else
+ *   binary  → {0, 4, 7}                 none or N/A / any pre-RFC work / RFC
  *   ternary → {0, 1, 4, 7}              early / WG+ / RFC
  *   full    → DRAFT_STAGE_LEVEL[stage]  graduated 0..7 (current behaviour)
  */
@@ -151,7 +152,11 @@ export function stageCollapseAt(
     if (raw === 0) return 0
     return 1
   }
-  return raw === 7 ? 7 : 0
+  // Simple palette: three tones so a draft or experimental spec never reads
+  // the same as "no work at all".
+  if (raw >= 7) return 7
+  if (raw === 0) return 0
+  return 4
 }
 
 /** Resolve the persona's effective granularity (full when no persona). */
@@ -484,11 +489,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-04',
         localFile: '/library/RFC_9941.html',
       },
+      {
+        id: 'RFC-10042',
+        title:
+          'RFC 10042 — ML-KEM hybrid key exchange for SSH (Informational; was draft-ietf-sshm-mlkem-hybrid-kex)',
+        url: 'https://www.rfc-editor.org/rfc/rfc10042.html',
+        date: '2026-08',
+      },
     ],
     latestDraft: [
       {
         id: 'draft-ietf-sshm-mlkem-hybrid-kex-10',
-        title: 'draft-ietf-sshm-mlkem-hybrid-kex-10 — ML-KEM Hybrid KEX for SSH',
+        title:
+          'draft-ietf-sshm-mlkem-hybrid-kex-10 — ML-KEM Hybrid KEX for SSH (published Aug 2026 as RFC 10042)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/',
         date: '2026-02-26',
         localFile: '/library/draft-ietf-sshm-mlkem-hybrid-kex-10.html',
@@ -546,7 +559,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote:
-          'RFC 9941 published 2026-04; follow-on ML-KEM hybrid draft (draft-ietf-sshm-mlkem-hybrid-kex) now in RFC Editor Queue (EDIT)',
+          'RFC 9941 (sntrup761 hybrid) published 2026-04; the ML-KEM hybrid key exchange (draft-ietf-sshm-mlkem-hybrid-kex) was published as RFC 10042 (Informational) in August 2026.',
         refs: [
           {
             kind: 'rfc',
@@ -557,11 +570,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             publishedOn: '2026-04',
           },
           {
-            kind: 'draft',
-            id: 'draft-ietf-sshm-mlkem-hybrid-kex',
-            title: 'ML-KEM Hybrid KEX for SSH',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/',
-            publishedOn: '2026-02-26',
+            kind: 'rfc',
+            id: 'RFC 10042',
+            title:
+              'ML-KEM hybrid key exchange for SSH (Informational; was draft-ietf-sshm-mlkem-hybrid-kex)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10042.html',
+            publishedOn: '2026-08',
           },
         ],
       },
@@ -753,16 +767,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-tls-ecdhe-mlkem-05.html',
       },
       {
-        id: 'draft-ietf-tls-mlkem-08',
-        title: 'draft-ietf-tls-mlkem-08 — Standalone ML-KEM groups for TLS (In WG Last Call)',
+        id: 'draft-ietf-tls-mlkem-11',
+        title: 'draft-ietf-tls-mlkem-11 — Standalone ML-KEM groups for TLS (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-        date: '2026-06-24',
+        date: '2026-09-17',
       },
       {
-        id: 'draft-ietf-tls-mldsa-05',
-        title: 'draft-ietf-tls-mldsa-05 — ML-DSA in TLS 1.3 (Approved — AD Followup)',
+        id: 'draft-ietf-tls-mldsa-06',
+        title: 'draft-ietf-tls-mldsa-06 — ML-DSA in TLS 1.3 (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
-        date: '2026-07-06',
+        date: '2026-09-11',
         localFile: '/library/draft-ietf-tls-mldsa-04.html',
       },
       {
@@ -791,7 +805,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note.",
+          'Re-checked 2026-10-17: draft-ietf-tls-mlkem-11 is in the RFC Editor queue (IESG approval announced after the 2026-09-03 telechat).',
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
@@ -801,7 +815,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-tls-mlkem',
             title: 'Standalone ML-KEM groups for TLS',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-            publishedOn: '2026-06-24',
+            publishedOn: '2026-09-17',
           },
         ],
       },
@@ -828,22 +842,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          'Approved by IESG at the 2026-07-02 telechat — AD Followup ahead of RFC Editor queue (draft-ietf-tls-mldsa-05)',
+          'Re-checked 2026-10-17: draft-ietf-tls-mldsa-06 is in the RFC Editor queue (approved by the IESG at the 2026-07-02 telechat).',
         refs: [
           {
             kind: 'draft',
             id: 'draft-ietf-tls-mldsa',
             title: 'ML-DSA in TLS 1.3',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
-            publishedOn: '2026-05-06',
+            publishedOn: '2026-09-11',
           },
         ],
       },
       hybridSig: {
         value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'rfc editor queue (datatracker 2026-06-02)',
-        note: 'Three approaches to composite/hybrid signatures for TLS 1.3: dual-certificate negotiation in TLS WG (Internet-Draft), composite signatures from LAMPS that TLS will profile after publication, and an individual draft proposing composite ML-DSA directly in the TLS handshake. TLS profiling pending LAMPS RFC publication.',
+        stage: 'individual-draft',
+        stageNote:
+          'Re-checked 2026-10-17: no TLS-layer hybrid-signature document is in the RFC Editor queue. The TLS proposals (dual-certificate negotiation, composite ML-DSA in the handshake) are individual Internet-Drafts; the LAMPS composite-signature document is X.509-layer work that TLS would profile later. Was staged as RFC Editor queue.',
+        note: 'Three approaches to composite/hybrid signatures for TLS 1.3: dual-certificate negotiation (individual Internet-Draft), composite signatures from LAMPS that TLS will profile after publication, and an individual draft proposing composite ML-DSA directly in the TLS handshake. TLS profiling pending LAMPS RFC publication.',
         refs: [
           {
             kind: 'draft',
@@ -1337,10 +1352,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-lamps-cms-composite-kem-01',
-        title: 'draft-ietf-lamps-cms-composite-kem-01 — Composite ML-KEM for CMS',
+        id: 'draft-ietf-lamps-cms-composite-kem-04',
+        title:
+          'draft-ietf-lamps-cms-composite-kem-04 — Composite ML-KEM for CMS (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-kem/',
-        date: '2026-05-06',
+        date: '2026-10-15',
       },
       {
         id: 'draft-ietf-lamps-cms-composite-sigs-05',
@@ -1372,9 +1388,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-03: draft-ietf-lamps-cms-composite-kem-01 is now 'Submitted to IESG for Publication', with a telechat scheduled 2026-09-17 (9 more positions needed) — real progress past IETF Last Call, which closed 2026-08-18. This draft defines the CMS KEMRecipientInfo composite-ML-KEM structure S/MIME itself uses, not a borrowed dependency, so the advance is legitimate.",
+          'Re-checked 2026-10-17: draft-ietf-lamps-cms-composite-kem-04 is in the RFC Editor queue, after IETF Last Call (closed 2026-08-18) and IESG review. This draft defines the CMS KEMRecipientInfo composite-ML-KEM structure S/MIME itself uses, not a borrowed dependency.',
         note: 'Uses the CMS KEMRecipientInfo structure; pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1382,7 +1398,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-lamps-cms-composite-kem',
             title: 'Composite ML-KEM for CMS',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-kem/',
-            publishedOn: '2026-05-06',
+            publishedOn: '2026-10-15',
           },
         ],
       },

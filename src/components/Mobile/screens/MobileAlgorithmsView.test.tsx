@@ -29,10 +29,12 @@ describe('MobileAlgorithmsView', () => {
     mockNavigate.mockClear()
   })
 
-  it('shows the real registry count', () => {
+  it('shows the real registry count and says what it counts', () => {
     renderView()
     expect(
-      screen.getByText(`${Object.keys(ALGORITHM_REGISTRY).length} tracked`)
+      screen.getByText(
+        `${Object.keys(ALGORITHM_REGISTRY).length} algorithms in this quick reference · the full catalogue lists more`
+      )
     ).toBeInTheDocument()
   })
 

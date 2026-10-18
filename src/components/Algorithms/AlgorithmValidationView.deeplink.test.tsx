@@ -28,6 +28,9 @@ describe('matchAttackProfile', () => {
     ['SLH-DSA-SHA2-128s', 'SLH-DSA / SPHINCS+'],
     ['Classic-McEliece-348864', 'Classic McEliece'],
     ['NTRU+-768', 'NTRU+'],
+    ['NTRU+', 'NTRU+'],
+    ['ntru-plus', 'NTRU+'],
+    ['SPHINCS+', 'SLH-DSA / SPHINCS+'],
     ['LMS-SHA256 (H20/W8)', 'LMS / XMSS (Stateful Hash-Based)'],
     ['ECDSA P-256', 'RSA / ECDSA (Classical)'],
     ['ml-kem-kyber', 'ML-KEM / Kyber'],
@@ -38,6 +41,13 @@ describe('matchAttackProfile', () => {
   it('returns null for empty or unmatched values', () => {
     expect(matchAttackProfile(null)).toBeNull()
     expect(matchAttackProfile('Picnic-L1')).toBeNull()
+  })
+
+  it('does not let NTRU+ absorb plain NTRU or NTRU Prime', () => {
+    expect(matchAttackProfile('NTRU')).toBeNull()
+    expect(matchAttackProfile('ntruprime')).toBeNull()
+    expect(matchAttackProfile('NTRU-HPS-2048-677')).toBeNull()
+    expect(matchAttackProfile('sntrup761')).toBeNull()
   })
 
   it('profile ids are unique', () => {

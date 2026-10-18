@@ -31,8 +31,11 @@ import {
   evidenceForKind,
   evidenceRecordsForKind,
   katActionLabel,
+  katRunAnnouncement,
+  katRunTone,
   sourceForKind,
 } from '@/utils/katEvidence'
+import { useRestoreFocusAfterRun } from '@/hooks/useRestoreFocusAfterRun'
 import { CaseEvidenceBadge } from '@/components/shared/CaseEvidenceBadge'
 import { KatStatusBadge } from '@/components/shared/KatStatusBadge'
 import type { UseHSMResult } from '@/hooks/useHSM'
@@ -57,16 +60,43 @@ function levelLabel(n: number): string {
 
 // ── Run summary: skips are their own count, never passes ───────────────────
 
+const TONE_CLASS = {
+  success: 'text-status-success',
+  warning: 'text-status-warning',
+  error: 'text-status-error',
+} as const
+
 const KatCounts: React.FC<{ counts: ReturnType<typeof summarizeKatResults> }> = ({ counts }) => {
   const ran = counts.total - counts.skip
-  const ok = counts.fail + counts.error === 0
+  // Green only when something actually passed: "0/0 passed · 2 not tested" is not a success.
+  const tone = katRunTone(counts)
   return (
-    <span data-testid="kat-counts" className={ok ? 'text-status-success' : 'text-status-error'}>
+    <span data-testid="kat-counts" data-tone={tone} className={TONE_CLASS[tone]}>
       {counts.pass}/{ran} passed
       {counts.skip > 0 && <span className="text-status-warning"> · {counts.skip} not tested</span>}
     </span>
   )
 }
+
+/**
+ * Polite live region: screen readers hear the outcome of a run when it ends.
+ * Always mounted (empty until there is something to say) so the first
+ * announcement is not missed.
+ */
+const KatRunStatus: React.FC<{
+  name: string
+  done: boolean
+  error: string | null
+  counts: ReturnType<typeof summarizeKatResults>
+}> = ({ name, done, error, counts }) => (
+  <p role="status" aria-live="polite" className="sr-only" data-testid="kat-run-status">
+    {error
+      ? `${name}: the checks could not run. ${error}`
+      : done && counts.total > 0
+        ? katRunAnnouncement(name, counts)
+        : ''}
+  </p>
+)
 
 // ── Results table (shared by all tiles) ─────────────────────────────────────
 
@@ -126,6 +156,7 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resultsOpen, setResultsOpen] = useState(false)
+  const { ref: runButtonRef, markRunStart } = useRestoreFocusAfterRun(running)
 
   const counts = summarizeKatResults(results)
   const done = results.length === config.specs.length && !running
@@ -138,6 +169,7 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
     .find(Boolean)
 
   const handleRun = useCallback(async () => {
+    markRunStart()
     setRunning(true)
     setError(null)
     setResults([])
@@ -159,7 +191,7 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
     } finally {
       setRunning(false)
     }
-  }, [hsm, config.specs])
+  }, [hsm, config.specs, markRunStart])
 
   return (
     <div className="border border-border rounded-lg p-5 bg-muted/30 hover:border-primary/50 transition-colors space-y-4">
@@ -214,7 +246,14 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
       </div>
 
       {/* Run button */}
-      <Button variant="outline" size="sm" onClick={handleRun} disabled={running} className="w-full">
+      <Button
+        ref={runButtonRef}
+        variant="outline"
+        size="sm"
+        onClick={handleRun}
+        disabled={running}
+        className="w-full"
+      >
         {running ? (
           <>
             <Loader2 size={14} className="animate-spin mr-2" />
@@ -227,10 +266,11 @@ const KATTile: React.FC<KATTileProps> = ({ config, hsm }) => {
           </>
         )}
       </Button>
+      <KatRunStatus name={config.name} done={done} error={error} counts={counts} />
 
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-2 text-xs text-status-error bg-status-error/10 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-xs text-status-error bg-destructive/12 rounded-lg px-3 py-2">
           <AlertCircle size={13} className="shrink-0" />
           {error}
         </div>
@@ -275,6 +315,7 @@ const SLHDSATile: React.FC<{
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resultsOpen, setResultsOpen] = useState(false)
+  const { ref: runButtonRef, markRunStart } = useRestoreFocusAfterRun(running)
 
   // ?kat: re-read on same-route navigation. A different variant drops the
   // previous variant's results, as picking it in the dropdown does.
@@ -321,6 +362,7 @@ const SLHDSATile: React.FC<{
   const done = results.length === specs.length && !running
 
   const handleRun = useCallback(async () => {
+    markRunStart()
     setRunning(true)
     setError(null)
     setResults([])
@@ -342,7 +384,7 @@ const SLHDSATile: React.FC<{
     } finally {
       setRunning(false)
     }
-  }, [hsm, specs])
+  }, [hsm, specs, markRunStart])
 
   const handleVariantChange = (id: string) => {
     // The dropdown's own "default" row reports 'All' — that is the default variant.
@@ -407,7 +449,7 @@ const SLHDSATile: React.FC<{
       </div>
 
       {/* Run button */}
-      <Button variant="outline" size="sm" onClick={handleRun} disabled={running}>
+      <Button ref={runButtonRef} variant="outline" size="sm" onClick={handleRun} disabled={running}>
         {running ? (
           <>
             <Loader2 size={14} className="animate-spin mr-2" />
@@ -420,10 +462,11 @@ const SLHDSATile: React.FC<{
           </>
         )}
       </Button>
+      <KatRunStatus name={`SLH-DSA-${variant}`} done={done} error={error} counts={counts} />
 
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-2 text-xs text-status-error bg-status-error/10 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-xs text-status-error bg-destructive/12 rounded-lg px-3 py-2">
           <AlertCircle size={13} className="shrink-0" />
           {error}
         </div>
@@ -601,16 +644,17 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
         <Button
           variant="ghost"
           onClick={() => setDiagOpen(!diagOpen)}
-          className="flex items-center gap-3 w-full justify-start text-left p-6 h-auto rounded-none hover:bg-muted/30"
+          aria-expanded={diagOpen}
+          className="flex flex-wrap items-center gap-x-3 gap-y-1 w-full justify-start text-left p-6 h-auto whitespace-normal rounded-none hover:bg-muted/30"
         >
           <Terminal className="text-primary shrink-0" size={20} />
-          <div className="flex-1 min-w-0 text-left">
-            <h4 className="text-lg font-bold text-foreground">PKCS#11 Diagnostics</h4>
+          <div className="flex-1 min-w-0 basis-40 text-left">
+            <h4 className="text-lg font-bold text-foreground break-words">PKCS#11 Diagnostics</h4>
             <p className="text-xs text-muted-foreground mt-0.5">
               Activity log and key inspector for all KAT operations
             </p>
           </div>
-          <span className="text-xs text-muted-foreground mr-2">
+          <span className="text-xs text-muted-foreground mr-2 shrink-0">
             {hsm.log.length > 0 ? `${hsm.log.length} operations` : 'No activity yet'}
           </span>
           <ChevronDown

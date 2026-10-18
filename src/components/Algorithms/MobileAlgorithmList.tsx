@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { AlgorithmTransition } from '../../data/algorithmsData'
+import { transitionFunctionLabel, type AlgorithmTransition } from '../../data/algorithmsData'
 import type { AlgorithmDetail } from '../../data/pqcAlgorithmsData'
 import { FileSignature, Lock, Hash, Key, ArrowRight } from 'lucide-react'
 import clsx from 'clsx'
@@ -100,7 +100,7 @@ export const MobileAlgorithmList = ({
                 </div>
                 <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted border border-border text-muted-foreground font-mono">
-                    {algo.function}
+                    {transitionFunctionLabel(algo.function)}
                   </span>
                   {algo.keySize && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted border border-border text-muted-foreground font-mono">

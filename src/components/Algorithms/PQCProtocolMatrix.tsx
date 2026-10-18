@@ -76,6 +76,27 @@ const WORKSHOP_TOOL_LINKS: Record<string, string> = Object.fromEntries(
 function resolveToolLink(tool: PlaygroundTool): string {
   return tool.url ?? WORKSHOP_TOOL_LINKS[tool.toolId] ?? `/playground/${tool.toolId}`
 }
+
+/** True when a tool cell resolves to a Learn module rather than the tool itself. */
+function opensLearnModule(href: string): boolean {
+  return href.startsWith('/learn/')
+}
+
+/**
+ * Visible label for a tool cell. When the link resolves to the Learn module
+ * that hosts the tool (registry `moduleLink`), say so, so the label matches
+ * where the click lands — the protocol modal links the tool page directly.
+ * Exported for unit tests.
+ */
+export function toolLinkLabel(tool: PlaygroundTool, href: string): string {
+  return opensLearnModule(href) ? `${tool.toolName} (Learn module)` : tool.toolName
+}
+
+function toolLinkTitle(tool: PlaygroundTool, href: string): string {
+  return opensLearnModule(href)
+    ? `Opens the Learn module that hosts ${tool.toolName}`
+    : `Open ${tool.toolName}`
+}
 type ViewMode = 'heatmap' | 'detailed'
 
 interface DimensionBadgeProps {
@@ -113,15 +134,17 @@ function dimensionLabel(value: DimensionStatusValue): string {
 }
 
 function dimensionTone(value: DimensionStatusValue): string {
+  // Theme colour tokens (bg-success/15 …), not the `.bg-status-*` component
+  // classes: those are plain classes, so an opacity suffix on them emits no CSS.
   switch (value) {
     case 'rfc':
-      return 'bg-status-success/15 text-status-success border-status-success/30'
+      return 'bg-success/15 text-status-success border-success/40'
     case 'draft':
-      return 'bg-primary/15 text-primary border-primary/30'
+      return 'bg-primary/15 text-primary-legible border-primary/40'
     case 'experimental':
-      return 'bg-status-warning/15 text-status-warning border-status-warning/30'
+      return 'bg-warning/15 text-status-warning border-warning/40'
     case 'none':
-      return 'bg-status-error/10 text-status-error border-status-error/30'
+      return 'bg-destructive/10 text-status-error border-destructive/30'
     case 'na':
       return 'bg-muted text-muted-foreground border-border'
   }
@@ -130,13 +153,15 @@ function dimensionTone(value: DimensionStatusValue): string {
 /**
  * Stage-aware graduated heatmap palette (0–7). When a DimensionStatus has a
  * `stage`, the matrix renders this finer gradient instead of the 5-bucket
- * coarse coloring. Uses semantic tokens only — no raw palette classes (see
- * CLAUDE.md UX rules).
+ * coarse coloring. Uses semantic theme tokens only — no raw palette classes,
+ * and no opacity suffix on the `.bg-status-*` component classes (those emit
+ * no CSS).
  *
- * `granularity` collapses the 0..7 raw level into 2 / 3 / 8 tiers. Binary
- * personas (executive/ops/curious) only ever see tiers 0 and 7; ternary
- * (developer/architect) see {0, 1, 4, 7}; researcher / no-persona / explicit
- * "Full" override keeps the full graduated palette.
+ * `granularity` collapses the 0..7 raw level into 3 / 4 / 8 tiers. Binary
+ * ("Simple") personas (executive/grc/ops/curious) see tiers 0, 4 and 7 —
+ * none or N/A, any pre-RFC work, RFC; ternary (developer/architect/
+ * cert-engineer) see {0, 1, 4, 7}; researcher / no-persona / explicit "Full"
+ * override keeps the full graduated palette.
  */
 function dimensionStageTone(status: DimensionStatus, granularity: PersonaStageGranularity): string {
   if (!status.stage) return dimensionTone(status.value)
@@ -145,19 +170,19 @@ function dimensionStageTone(status: DimensionStatus, granularity: PersonaStageGr
     case 0:
       return 'bg-muted text-muted-foreground border-border'
     case 1:
-      return 'bg-status-error/15 text-status-error border-status-error/30'
+      return 'bg-destructive/15 text-status-error border-destructive/30'
     case 2:
-      return 'bg-status-warning/10 text-status-warning border-status-warning/30'
+      return 'bg-warning/10 text-status-warning border-warning/30'
     case 3:
-      return 'bg-status-warning/20 text-status-warning border-status-warning/40'
+      return 'bg-warning/20 text-status-warning border-warning/40'
     case 4:
-      return 'bg-primary/10 text-primary border-primary/30'
+      return 'bg-primary/10 text-primary-legible border-primary/30'
     case 5:
-      return 'bg-primary/20 text-primary border-primary/40'
+      return 'bg-primary/20 text-primary-legible border-primary/40'
     case 6:
-      return 'bg-status-success/15 text-status-success border-status-success/30'
+      return 'bg-success/15 text-status-success border-success/30'
     case 7:
-      return 'bg-status-success/30 text-status-success border-status-success/50'
+      return 'bg-success/30 text-status-success border-success/50'
     default:
       return dimensionTone(status.value)
   }
@@ -366,14 +391,16 @@ function PlaygroundCell({
     )
   }
   const [primary, ...secondary] = tools
+  const primaryHref = resolveToolLink(primary)
   return (
     <div className="flex flex-col gap-1">
       <Link
-        to={resolveToolLink(primary)}
-        className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+        to={primaryHref}
+        className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary-legible transition-colors hover:bg-primary/20"
+        title={toolLinkTitle(primary, primaryHref)}
       >
         <FlaskConical size={12} />
-        {primary.toolName}
+        {toolLinkLabel(primary, primaryHref)}
       </Link>
       {!compact && (
         <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] leading-tight">
@@ -401,17 +428,20 @@ function PlaygroundCell({
       )}
       {secondary.length > 0 && (
         <div className="flex flex-wrap gap-1 pt-0.5">
-          {secondary.map((s) => (
-            <Link
-              key={s.toolId}
-              to={resolveToolLink(s)}
-              className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] text-accent transition-colors hover:bg-accent/15"
-              title={s.toolName}
-            >
-              <FlaskConical size={10} />
-              {s.toolName}
-            </Link>
-          ))}
+          {secondary.map((s) => {
+            const href = resolveToolLink(s)
+            return (
+              <Link
+                key={s.toolId}
+                to={href}
+                className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] text-accent-legible transition-colors hover:bg-accent/15"
+                title={toolLinkTitle(s, href)}
+              >
+                <FlaskConical size={10} />
+                {toolLinkLabel(s, href)}
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>
@@ -428,10 +458,10 @@ function DeploymentCountBadge({
   if (deployments.length === 0) {
     return (
       <span
-        className="inline-flex items-center gap-1 rounded-md border border-status-error/30 bg-status-error/10 px-2 py-0.5 text-xs font-medium text-status-error"
-        title={noDeploymentReason ?? 'No known production deployment'}
+        className="inline-flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+        title={noDeploymentReason ?? 'No reviewed production-deployment evidence'}
       >
-        ✗ No deployment
+        No reviewed evidence
       </span>
     )
   }
@@ -1031,9 +1061,9 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
         <div className="glass-panel p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Star size={15} className="text-status-warning shrink-0" />
-            <h3 className="text-sm font-semibold text-foreground">
+            <h2 className="text-sm font-semibold text-foreground">
               Reviewed deployment evidence (PQC Today synthesis)
-            </h3>
+            </h2>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Protocols with published PQC support and public production deployments that PQC Today
@@ -1076,7 +1106,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex-1 space-y-2">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <h3 className="text-lg font-semibold text-foreground">PQC Protocol Support Matrix</h3>
+              <h2 className="text-lg font-semibold text-foreground">PQC Protocol Support Matrix</h2>
               <span
                 className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground"
                 title={`Snapshot date — last manual update to the matrix data file (${PROTOCOL_MATRIX_LAST_UPDATED})`}
@@ -1378,6 +1408,11 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       {isHeatmap && (
         <div className="glass-panel overflow-x-auto">
           <table className="w-full text-sm">
+            <caption className="sr-only">
+              PQC protocol support heatmap: standardisation stage of each protocol for pure KEM,
+              hybrid KEM, pure signature and hybrid signature, with reviewed deployment evidence and
+              playground tools
+            </caption>
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="sticky left-0 z-10 bg-muted/60 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -1595,9 +1630,9 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                       ) : !p.liveDeployments || p.liveDeployments.length === 0 ? (
                         <span
                           className="inline-flex items-center gap-1 text-xs text-muted-foreground"
-                          title="No known production deployment"
+                          title="No reviewed production-deployment evidence"
                         >
-                          <Globe2 size={11} className="opacity-50" /> None
+                          <Globe2 size={11} className="opacity-50" /> No reviewed evidence
                         </span>
                       ) : (
                         <div className="flex flex-wrap gap-1">
@@ -1658,10 +1693,10 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       {!isHeatmap && TRANSPORT_ISSUES.length > 0 && (
         <div className="glass-panel space-y-3 p-4">
           <div className="flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
               <Zap size={18} className="text-status-warning" />
               Transport-Layer Blockers ({TRANSPORT_ISSUES.length})
-            </h3>
+            </h2>
             <span className="text-xs text-muted-foreground">
               Cross-cutting issues that affect PQC handshake performance
             </span>

@@ -32,8 +32,23 @@ export interface AlgorithmAttackProfile {
   }[]
   summary: string
   references: AttackReference[]
+  /** Mitigation considerations — points to weigh, not a checklist that makes an implementation safe. */
   countermeasures?: string[]
 }
+
+/** Reader-facing name of each attack category (shared by desktop and phone views). */
+export const ATTACK_CATEGORY_LABELS: Record<AttackCategory, string> = {
+  'side-channel': 'Side-Channel',
+  'fault-injection': 'Fault Injection',
+  'rng-failure': 'RNG Failure',
+  'secret-handling': 'Secret Handling',
+  'api-misuse': 'API/Integration',
+  kleptography: 'Kleptography',
+  'ai-cryptanalysis': 'AI-Assisted Cryptanalysis',
+}
+
+/** Severity is a qualitative reading of the reviewed sources, not a CVSS score. */
+export const ATTACK_SEVERITY_NOTE = 'Reported impact (PQC Today qualitative reading, not CVSS)'
 
 export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
   {
@@ -87,7 +102,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Use masked implementations (first-order or higher-order masking of NTT operations)',
       'Enable constant-time polynomial arithmetic; avoid branch-dependent execution',
       'Draw all randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
-      'Use FIPS 140-3 validated modules whose algorithms hold CAVP certificates',
+      'Module validation (FIPS 140-3, CAVP certificates) checks that the algorithms give correct results on the tested vectors; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
       'Source key-generation implementations only from vetted, reproducible builds — a kleptographic backdoor is invisible in the algorithm spec and only auditable in the actual code',
     ],
     references: [
@@ -161,7 +176,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Use masked implementations for NTT and rejection sampling',
       'Ensure deterministic nonce generation (hedged against bad RNG)',
       'Deploy redundancy checks to detect fault injection during signing',
-      'Use FIPS 140-3 validated modules whose algorithms hold CAVP certificates',
+      'Module validation (FIPS 140-3, CAVP certificates) checks that the algorithms give correct results on the tested vectors; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
     ],
     references: [
       {
@@ -695,7 +710,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Use an SP 800-90A Rev. 1 DRBG (CTR_DRBG, HMAC_DRBG or Hash_DRBG) seeded by an SP 800-90B-validated entropy source',
       'Zeroize all key material after use (memset_s or explicit_bzero)',
       'Follow OWASP Cryptographic Failures guidance for integration patterns',
-      'Use FIPS 140-3 validated cryptographic modules in production',
+      'Module validation (FIPS 140-3) covers approved algorithms and randomness requirements; on its own it does not rule out integration mistakes or side-channel leakage in the surrounding application',
     ],
     references: [
       {
@@ -779,8 +794,8 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     ],
     countermeasures: [
       'Combine masking with hiding countermeasures — ML-based side-channel analysis has shown hiding alone is insufficient',
-      'Evaluate implementations against profiled deep-learning attacks, not just classical DPA/CPA, during certification',
-      'Use FIPS 140-3 validated modules with side-channel-resistant implementations',
+      'Evaluate implementations against profiled deep-learning attacks, not just classical DPA/CPA, during security evaluation',
+      'Module validation (FIPS 140-3) alone does not establish side-channel resistance; look for implementations evaluated specifically against power and electromagnetic analysis',
     ],
     references: [
       {
