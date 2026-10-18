@@ -201,13 +201,19 @@ describe('publisherStatusText', () => {
 describe('trust word on the card (trust is not maturity)', () => {
   it('uses the pill thresholds and never says "Authoritative"', async () => {
     const { trustInfo } = await import('./libraryPills')
+    const { getTrustTier } = await import('@/data/trustScore/weights')
     const words = new Set<string>()
     for (const item of libraryData) {
       const info = trustInfo(item.referenceId)
       words.add(info.source)
       if (info.score == null) continue
+      const tier = getTrustTier(info.score)
       const expected =
-        info.score >= 80 ? 'High trust' : info.score >= 66 ? 'Moderate trust' : 'Needs review'
+        tier === 'Authoritative' || tier === 'High'
+          ? 'High trust'
+          : tier === 'Moderate'
+            ? 'Moderate trust'
+            : 'Needs review'
       expect(info.source, item.referenceId).toBe(expected)
     }
     expect(words.has('Authoritative' as never)).toBe(false)

@@ -106,7 +106,8 @@ export interface LibraryItem {
   researchTopics: string[]
   /** Number of other library items that name this item in their `dependencies`
    *  field. Derived in a single pass over `libraryData` at module load and
-   *  used as the researcher persona's default "Most cited" sort. */
+   *  used by the "Most referenced in this catalog" sort. This is internal
+   *  dependency in-degree, not a scholarly citation count. */
   citationCount?: number
   /** Older (deprecated) revisions of this same document, collapsed into this
    *  surviving tile. Present only when this record superseded ≥1 other. */
@@ -671,7 +672,7 @@ const statusMap =
 
 /**
  * Build a citation-count map: how many other items name THIS item in their
- * `dependencies` field. Single O(N) pass. Used by the "Most cited" sort
+ * `dependencies` field. Single O(N) pass. Used by the "Most referenced in this catalog" sort
  * (researcher default). Exported so the derivation can be unit-tested
  * against synthetic fixtures without re-loading the CSV.
  */

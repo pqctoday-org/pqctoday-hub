@@ -264,12 +264,30 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
     return false
   if (!filterText) return true
   const searchLower = filterText.toLowerCase()
-  // Every meaningful word of the query must appear somewhere in title / id /
-  // description / categories ("operational technology purdue" finds a document
-  // whose title has the first two words and whose description has the third).
+  // Every meaningful word of the query may appear across the record's public,
+  // user-meaningful metadata. Technical readers commonly search by publisher,
+  // algorithm, protocol, security level, region, or an older dependency id —
+  // not only by title.
   // A contiguous phrase that matched before still matches (see searchMatch.ts).
   const lexicalMatch = matchesAllWords(
-    [item.documentTitle, item.referenceId, item.shortDescription, ...(item.categories ?? [])],
+    [
+      item.documentTitle,
+      item.referenceId,
+      item.shortDescription,
+      item.authorsOrOrganization,
+      item.documentType,
+      item.documentStatus,
+      item.algorithmFamily,
+      item.securityLevels,
+      item.protocolOrToolImpact,
+      item.toolchainSupport,
+      item.regionScope,
+      item.dependencies,
+      ...(item.categories ?? []),
+      ...(item.applicableIndustries ?? []),
+      ...(item.supersededByRefs ?? []),
+      ...(item.replacesRefs ?? []),
+    ],
     filterText
   )
   if (lexicalMatch) return true

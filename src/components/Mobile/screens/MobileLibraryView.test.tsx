@@ -77,15 +77,34 @@ describe('MobileLibraryView', () => {
     expect(shown).toBeLessThan(allCount)
   })
 
-  it('the Cert-relevant quick view narrows to exactly the real LIBRARY_OPS_PICKS allowlist size (at most)', () => {
+  it('the Certification starter set narrows to the curated LIBRARY_OPS_PICKS allowlist size (at most)', () => {
     renderView()
-    fireEvent.click(screen.getByText('Cert-relevant'))
+    fireEvent.click(screen.getByText('Certification starter set'))
     const shownText = screen.getByTestId('library-count').textContent!
     const shown = Number(shownText.split(' ')[0])
     expect(shown).toBeLessThanOrEqual(LIBRARY_OPS_PICKS.length)
     // At least one real ops pick should actually render.
     const anyPick = LIBRARY_OPS_PICKS.find((p) => screen.queryByText(p.referenceId))
     expect(anyPick).toBeDefined()
+  })
+
+  it('discloses persona narrowing and lets the learner show the full catalog', () => {
+    usePersonaStore.getState().setPersona('curious')
+    renderView()
+
+    expect(screen.getByTestId('library-mobile-role-scope')).toHaveTextContent(
+      'Narrowed for Curious'
+    )
+    const narrowed = Number(screen.getByTestId('library-count').textContent!.split(' ')[0])
+    expect(narrowed).toBeLessThan(libraryData.length)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Show full catalog' }))
+    expect(screen.getByTestId('library-mobile-role-scope')).toHaveTextContent(
+      'Showing the full active catalog'
+    )
+    expect(Number(screen.getByTestId('library-count').textContent!.split(' ')[0])).toBe(
+      libraryData.length
+    )
   })
 
   it('typing a search query narrows the list via the real pipeline', () => {

@@ -27,43 +27,43 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
     referenceId: 'NIST IR 8547',
     label: 'NIST IR 8547 — PQC Transition Timeline',
     blurb:
-      "NIST's plan for retiring today's encryption. Deprecates 112-bit classical asymmetric crypto by 2030, disallows it by 2035 — every downstream regulator references it.",
+      "NIST's Initial Public Draft transition plan. It proposes deprecating 112-bit classical asymmetric cryptography after 2030 and disallowing it after 2035; it is influential guidance, not a final regulation.",
   },
   {
     referenceId: 'NSA CNSA 2.0',
     label: 'NSA CNSA 2.0 — National Security Suite',
     blurb:
-      'The US national-security baseline for PQC. Sets the floor for federal and defence systems and drives vendor roadmaps far beyond government users.',
+      'The U.S. national-security algorithm suite for National Security Systems. Its requirements do not automatically apply to ordinary commercial systems, though vendors may use them when planning compatible products.',
   },
   {
     referenceId: 'ANSSI PQC Follow-up Paper',
     label: 'ANSSI — French PQC Position',
     blurb:
-      "France's national agency on hybrid-first PQC migration. The most quoted European counter-weight to NIST timelines.",
+      "ANSSI's December 2023 position on staged PQC migration and hybridization. It explains the French national-security agency's position; it is not an EU-wide mandate.",
   },
   {
     referenceId: 'BSI TR-02102-1',
     label: 'BSI TR-02102-1 — German Crypto Guidance',
     blurb:
-      "Germany's federal cryptographic recommendations. Sets the EU-side bar for which algorithms regulators consider acceptable.",
+      "Germany's federal cryptographic recommendations. Use it to understand BSI's current algorithm and key-length guidance; it does not by itself create an EU-wide requirement.",
   },
   {
     referenceId: 'EC-Recommendation-2024-1101',
     label: 'EU Recommendation 2024/1101',
     blurb:
-      "European Commission's coordinated PQC migration recommendation. The compliance lens any multi-jurisdiction enterprise has to plan around.",
+      'European Commission recommendation asking Member States to coordinate PQC migration roadmaps. It informs EU planning but should not be presented as a directly binding technical standard.',
   },
   {
     referenceId: 'UK-NCSC-Migration-Timelines-2025',
     label: 'UK NCSC — Migration Timelines',
     blurb:
-      "The UK's official PQC timeline: discovery by 2028, critical systems migrated by 2031, full migration by 2035. Aligns closely with US NIST IR 8547.",
+      "The UK's official planning milestones: complete discovery and planning by 2028, complete the highest-priority migrations by 2031, and complete migration by 2035. This is UK NCSC guidance, not a global mandate.",
   },
   {
     referenceId: 'CISA-Quantum-Readiness-Roadmap',
     label: 'CISA Quantum-Readiness Roadmap',
     blurb:
-      'The August-2023 CISA/NSA/NIST joint migration playbook: establish governance, inventory vulnerable crypto, assess priorities, engage vendors. The most-cited US federal readiness document; downstream of NIST IR 8547 and upstream of every department-level PQC migration plan.',
+      'The August 2023 CISA/NSA/NIST readiness factsheet: establish governance, inventory vulnerable cryptography, assess priorities and engage vendors. It predates NIST IR 8547 and provides practical preparation guidance rather than a binding deadline.',
   },
 ] as const
 

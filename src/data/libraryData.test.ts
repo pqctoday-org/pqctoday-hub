@@ -60,6 +60,26 @@ describe('libraryData', () => {
       expect(LIBRARY_PURPOSES).toContain(item.purpose)
     }
   })
+
+  it('carries the current CNSA 2.0 FAQ Version 2.2 milestones and qualified hybrid position', () => {
+    const faq = libraryData.find((item) => item.referenceId === 'NSA CNSA 2.0 FAQ')
+    expect(faq).toBeDefined()
+    expect(faq?.documentStatus).toContain('Version 2.2')
+    expect(faq?.shortDescription).toContain('1 January 2027')
+    expect(faq?.shortDescription).toContain('31 December 2030')
+    expect(faq?.shortDescription).toContain('31 December 2031')
+    expect(faq?.shortDescription).toContain('Hybrids are not generally required')
+    expect(faq?.shortDescription).not.toContain('2033')
+  })
+
+  it('describes RFC 9811 as HTTP transport for CMP, not as an HSM or PQC profile', () => {
+    const rfc = libraryData.find((item) => item.referenceId === 'RFC 9811')
+    expect(rfc).toBeDefined()
+    expect(rfc?.documentTitle).toContain('HTTP Transfer for the Certificate Management Protocol')
+    expect(rfc?.shortDescription).toContain('does not define an HSM')
+    expect(rfc?.shortDescription).not.toContain('ML-DSA validation')
+    expect(rfc?.documentTitle).not.toContain('Hardware Security Modules')
+  })
 })
 
 describe('findLibraryItemByRef', () => {

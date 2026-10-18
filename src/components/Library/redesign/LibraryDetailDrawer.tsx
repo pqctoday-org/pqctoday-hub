@@ -20,7 +20,6 @@ import { findLibraryItemByRef, type LibraryItem } from '@/data/libraryData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
-import { getTrustScore } from '@/data/trustScore'
 import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
 import { FrameworkCrosswalkPanel } from '@/components/Library/FrameworkCrosswalkPanel'
 import { relatedLeadersFor } from '@/components/Library/relatedLeaders'
@@ -43,6 +42,7 @@ import {
 } from './libraryPills'
 import { SuccessionLinks } from '@/components/common/SuccessionLinks'
 import { AddToCollection } from '@/components/shared/research/AddToCollection'
+import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
 
 interface LibraryDetailDrawerProps {
   item: LibraryItem | null
@@ -171,8 +171,8 @@ function DrawerPanel({
     reqs: reqs.filter((r) => r.pillar === p).sort((a, b) => a.maturityLevel - b.maturityLevel),
   })).filter((g) => g.reqs.length > 0)
   const enrichment = libraryEnrichments[item.referenceId]
-  const ts = getTrustScore('library', item.referenceId)
   const trust = trustInfo(item.referenceId)
+  const sourceAction = resolveLibrarySourceAction(item)
   const documentStatusText = publisherStatusText(item.documentStatus, item.lifecycleLabel)
   const relatedLeaders = relatedLeadersFor(item)
 
@@ -327,7 +327,7 @@ function DrawerPanel({
               <KeyFact label="Region" value={item.regionScope} />
               <KeyFact label="Migration urgency" value={item.migrationUrgency} />
               <KeyFact
-                label="Citations"
+                label="Referenced by Library records"
                 value={item.citationCount != null ? String(item.citationCount) : undefined}
               />
             </dl>
@@ -504,7 +504,7 @@ function DrawerPanel({
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
                 <KeyFact
                   label="Trust score"
-                  value={trust.score != null ? `${trust.score} (${ts?.tier})` : undefined}
+                  value={trust.score != null ? `${trust.score} (${trust.source})` : undefined}
                 />
                 <KeyFact label="Source quality" value={item.downloadUrlQuality} />
                 <KeyFact label="Vetting body" value={item.vettingBody?.join(', ')} />
@@ -540,22 +540,23 @@ function DrawerPanel({
 
           {/* footer */}
           <div className="flex flex-wrap items-center gap-2 gap-y-2 border-t border-border bg-background p-3">
-            {item.downloadUrl ? (
+            {sourceAction.href ? (
               <a
-                href={item.downloadUrl}
+                href={sourceAction.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                title={sourceAction.description}
                 className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground hover:bg-primary/90"
               >
-                Open document
+                {sourceAction.label}
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             ) : (
               <span
                 className="basis-full sm:basis-auto flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-4 py-2 text-[13px] font-semibold text-muted-foreground"
-                title="No public source link is available for this document yet."
+                title={sourceAction.description}
               >
-                Source not available
+                {sourceAction.label}
               </span>
             )}
             <Button

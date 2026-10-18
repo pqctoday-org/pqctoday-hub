@@ -5,6 +5,7 @@
  */
 import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
 import { getTrustScore } from '@/data/trustScore'
+import { getTrustTier } from '@/data/trustScore/weights'
 
 export function lifecycleLabel(label: LifecycleLabel): string {
   // eslint-disable-next-line security/detect-object-injection -- label is a typed enum key
@@ -58,20 +59,21 @@ export interface TrustInfo {
 export function trustInfo(referenceId: string): TrustInfo {
   const ts = getTrustScore('library', referenceId)
   const score = ts ? ts.compositeScore : null
+  const tier = score == null ? null : getTrustTier(score)
   const pillClass =
-    score == null
+    tier == null
       ? 'bg-muted text-muted-foreground'
-      : score >= 80
+      : tier === 'Authoritative' || tier === 'High'
         ? 'bg-success/15 text-success'
-        : score >= 66
+        : tier === 'Moderate'
           ? 'bg-warning/15 text-warning'
           : 'bg-muted text-muted-foreground'
   const source: TrustInfo['source'] =
-    score == null
+    tier == null
       ? 'Needs review'
-      : score >= 80
+      : tier === 'Authoritative' || tier === 'High'
         ? 'High trust'
-        : score >= 66
+        : tier === 'Moderate'
           ? 'Moderate trust'
           : 'Needs review'
   return { score, pillClass, source }

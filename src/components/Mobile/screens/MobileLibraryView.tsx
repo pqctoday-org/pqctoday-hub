@@ -32,13 +32,15 @@ import { cn } from '@/lib/utils'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { MobileSheet } from '../primitives/Sheet'
+import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
+import { LIBRARY_PERSONAS } from '@/data/libraryPersonaConfig'
 
 type QuickView = 'all' | 'new' | 'cert' | 'bookmarked'
 
 const QUICK_VIEWS: { id: QuickView; label: string }[] = [
   { id: 'all', label: 'All documents' },
   { id: 'new', label: 'New & updated' },
-  { id: 'cert', label: 'Cert-relevant' },
+  { id: 'cert', label: 'Certification starter set' },
   { id: 'bookmarked', label: 'Bookmarked' },
 ]
 
@@ -52,7 +54,7 @@ const QUICK_VIEWS: { id: QuickView; label: string }[] = [
  * - "Showing 7 of 214 · ... — search to reach the rest" doesn't exist
  *   anywhere in the codebase, and 214 matches no real denominator (full
  *   catalog is 916 active rows; Reference-purpose alone is ~696; the
- *   cert-relevant allowlist is 7). Replaced with the one real count line
+ *   certification starter allowlist is 7). Replaced with the one real count line
  *   desktop itself renders: "{N} documents".
  * - The search placeholder ("assignee, algorithm or protocol") is a
  *   confirmed copy-paste from the Patents screen's own search — Library's
@@ -64,7 +66,7 @@ const QUICK_VIEWS: { id: QuickView; label: string }[] = [
  *
  * Purpose-door labels/order match the real `LibraryPurposeDoors.tsx`
  * (Everything/Learn/Reference/Plan migration), not the mockup's reordering.
- * "Cert-relevant" is stated as what it really is — a 7-item curated
+ * "Certification starter set" is stated as what it really is — a 7-item curated
  * allowlist (`LIBRARY_OPS_PICKS`), not a computed corpus-wide flag.
  *
  * Distilled: no geo/sector/trust-tier/algorithm-family filters, no sort
@@ -96,6 +98,8 @@ export function MobileLibraryView() {
   // shared /library?ref= link opens its sheet on a phone too, and Back closes it.
   // ?q, ?purpose and ?qv seed the search box, door and quick view once, on arrival.
   const [params, setParams] = useSearchParams()
+  const prefsOff = params.get('prefs') === 'off'
+  const personaLabel = LIBRARY_PERSONAS.find((persona) => persona.id === selectedPersona)?.label
   const [purpose, setPurpose] = useState<PurposeSelection>(() => {
     const p = params.get('purpose')
     return DOORS.some((d) => d.id === p) ? (p as PurposeSelection) : 'all'
@@ -128,6 +132,7 @@ export function MobileLibraryView() {
         : null,
     [detailRef]
   )
+  const selectedSourceAction = selected ? resolveLibrarySourceAction(selected) : null
   const setDetailRef = useCallback(
     (ref: string | null) => {
       const next = new URLSearchParams(params)
@@ -190,7 +195,7 @@ export function MobileLibraryView() {
     sortBy: sortBy ?? 'published',
     sortExplicit: sortBy !== undefined,
     selectedPersona,
-    prefsOff: false,
+    prefsOff,
     semanticIdSet: null,
   })
 
@@ -217,8 +222,40 @@ export function MobileLibraryView() {
         <h1 className="sr-only">Library</h1>
         <p className="text-[11.5px] text-muted-foreground" data-testid="library-count">
           {displayedItems.length} documents
+          {selectedPersona && !prefsOff && ` · narrowed for ${personaLabel ?? selectedPersona}`}
         </p>
       </div>
+
+      {selectedPersona && (
+        <div
+          className="mb-3 rounded-xl border border-primary/20 bg-primary/[0.06] p-3"
+          data-testid="library-mobile-role-scope"
+        >
+          <p className="text-[12px] font-semibold text-foreground">
+            {prefsOff
+              ? 'Showing the full active catalog'
+              : `Narrowed for ${personaLabel ?? selectedPersona}`}
+          </p>
+          <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
+            {prefsOff
+              ? `${libraryData.length} active sources are available. Your role can still provide a smaller starting view.`
+              : `Your role highlights a smaller starting set from ${libraryData.length} active sources. Other relevant documents may be hidden.`}
+          </p>
+          <Button
+            type="button"
+            variant="link"
+            onClick={() => {
+              const next = new URLSearchParams(params)
+              if (prefsOff) next.delete('prefs')
+              else next.set('prefs', 'off')
+              setParams(next, { replace: true })
+            }}
+            className="mt-1 h-auto p-0 text-[11.5px] font-semibold"
+          >
+            {prefsOff ? `Use ${personaLabel ?? selectedPersona} view` : 'Show full catalog'}
+          </Button>
+        </div>
+      )}
 
       {notice && (
         <DeepLinkNotice
@@ -454,7 +491,10 @@ export function MobileLibraryView() {
                 ['Security levels', selected.securityLevels],
                 ['Region', selected.regionScope],
                 ['Migration urgency', selected.migrationUrgency],
-                ['Citations', selected.citationCount ? String(selected.citationCount) : undefined],
+                [
+                  'Referenced by Library records',
+                  selected.citationCount ? String(selected.citationCount) : undefined,
+                ],
               ]
                 // Screen real estate is scarce here — a row that only says "N/A" or
                 // "0" costs a line without telling the reader anything, so it's
@@ -488,19 +528,20 @@ export function MobileLibraryView() {
               </div>
             )}
             <div className="flex items-center gap-2 border-t border-border pt-3">
-              {selected.downloadUrl ? (
+              {selectedSourceAction?.href ? (
                 <a
-                  href={selected.downloadUrl}
+                  href={selectedSourceAction.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title={selectedSourceAction.description}
                   className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary text-[12.5px] font-bold text-primary-foreground"
                 >
-                  Open document
+                  {selectedSourceAction.label}
                   <ExternalLink size={13} aria-hidden="true" />
                 </a>
               ) : (
                 <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-border bg-muted/50 text-[12px] font-semibold text-muted-foreground">
-                  Source not available
+                  {selectedSourceAction?.label ?? 'Source link unavailable'}
                 </span>
               )}
               <Button

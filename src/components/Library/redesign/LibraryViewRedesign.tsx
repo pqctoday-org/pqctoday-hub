@@ -100,7 +100,7 @@ const PURPOSE_LABELS: Record<LibraryPurpose, string> = {
 
 const QUICK_VIEW_LABELS = new Map<string, string>([
   ['new', 'New & updated'],
-  ['cert', 'Cert-relevant'],
+  ['cert', 'Certification starter set'],
   ['bookmarked', 'Bookmarked'],
 ])
 
@@ -314,6 +314,16 @@ export function LibraryViewRedesign({
     for (const p of pipeline.purposeInfo) out[p.id] = p.count
     return out
   }, [pipeline.purposeInfo])
+
+  const certificationStarterCount = useMemo(
+    () =>
+      libraryData.filter(
+        (item) =>
+          certRelevantIdSet.has(item.referenceId) &&
+          (activePurpose === 'all' || item.purpose === activePurpose)
+      ).length,
+    [activePurpose, certRelevantIdSet]
+  )
 
   // ── Org dropdown options (canonical) ───────────────────────────────────────
   const orgs = useMemo(() => {
@@ -722,7 +732,7 @@ export function LibraryViewRedesign({
             counts={{
               all: libraryData.length,
               new: pipeline.activityItems.length,
-              cert: certRelevantIdSet.size,
+              cert: certificationStarterCount,
               bookmarked: libraryBookmarks.length,
             }}
           />

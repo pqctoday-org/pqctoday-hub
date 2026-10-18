@@ -18,6 +18,7 @@ import {
   publisherStatusText,
 } from './libraryPills'
 import { documentWeight } from '@/data/libraryDocumentWeight'
+import { resolveLibrarySourceAction } from '../librarySourceAction'
 
 interface LibraryDocumentCardProps {
   item: LibraryItem
@@ -40,6 +41,7 @@ export function LibraryDocumentCard({
   const lifecycle = item.lifecycleLabel
   const statusText = publisherStatusText(item.documentStatus, lifecycle)
   const revisionCount = item.priorRevisions?.length ?? 0
+  const sourceAction = resolveLibrarySourceAction(item)
 
   return (
     // 2026-08-02 a11y fix: this was `role="button" tabIndex={0}` on the card
@@ -210,46 +212,24 @@ export function LibraryDocumentCard({
               aria-hidden="true"
             />
           </Button>
-          {item.accessType === 'paid' && item.freeSummaryUrl ? (
-            /* Paid standards are still named — the name stays useful even when
-               the document is sold — but "Open" would promise a document the
-               reader can't reach. Lead with the free summary, and say plainly
-               that it is a summary rather than the standard. */
+          {sourceAction.href ? (
             <a
-              href={item.freeSummaryUrl}
+              href={sourceAction.href}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              title="A free abstract describing this standard — not the standard itself, which must be purchased."
+              title={sourceAction.description}
               className="flex items-center gap-1 rounded-md px-1.5 py-1 max-md:min-h-[44px] text-[12px] font-semibold text-primary hover:bg-primary/10"
             >
-              Free summary
-              <ExternalLink size={12} aria-hidden="true" />
-            </a>
-          ) : item.accessType === 'paid' ? (
-            <span
-              className="px-1.5 py-1 text-[12px] font-medium text-status-warning"
-              title="This standard is sold by its publisher. No free copy or summary is available."
-            >
-              Purchase required
-            </span>
-          ) : item.downloadUrl ? (
-            <a
-              href={item.downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 rounded-md px-1.5 py-1 max-md:min-h-[44px] text-[12px] font-semibold text-primary hover:bg-primary/10"
-            >
-              Open
+              {sourceAction.compactLabel}
               <ExternalLink size={12} aria-hidden="true" />
             </a>
           ) : (
             <span
               className="px-1.5 py-1 text-[12px] font-medium text-muted-foreground"
-              title="No public source link is available for this document yet."
+              title={sourceAction.description}
             >
-              Source not available
+              {sourceAction.compactLabel}
             </span>
           )}
         </div>

@@ -25,26 +25,31 @@ export function LibraryStartHere({ persona, onOpen }: LibraryStartHereProps) {
   const personaLabel = LIBRARY_PERSONAS.find((p) => p.id === persona)?.label ?? persona
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/[0.07] to-secondary/[0.05] p-3.5">
+    <section
+      aria-label={`Start here — picked for ${personaLabel}`}
+      data-testid="library-start-here"
+      className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/[0.07] to-secondary/[0.05] p-3.5"
+    >
       <div className="mb-2.5 flex items-center gap-1.5">
         <Star size={15} className="text-primary" aria-hidden="true" />
         <span className="text-[13px] font-bold text-foreground">
           Start here — picked for {personaLabel}
         </span>
       </div>
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid min-w-0 gap-2 md:grid-cols-2 xl:grid-cols-3">
         {picks.map((pick) => {
           const item = libraryData.find((i) => i.referenceId === pick.referenceId)
           return (
             <Button
               key={pick.referenceId}
+              data-testid="library-start-card"
               type="button"
               variant="ghost"
               onClick={() => onOpen(pick.referenceId)}
-              className="flex h-auto w-full flex-col items-start justify-start gap-1.5 rounded-xl border border-border bg-card/50 p-2.5 text-left font-normal hover:border-primary/40 hover:bg-card"
+              className="flex h-auto min-w-0 w-full flex-col items-start justify-start gap-1.5 whitespace-normal rounded-xl border border-border bg-card/50 p-2.5 text-left font-normal hover:border-primary/40 hover:bg-card"
             >
-              <span className="flex w-full items-center gap-1.5">
-                <span className="font-mono text-[11px] font-semibold text-primary">
+              <span className="flex min-w-0 w-full items-start gap-1.5">
+                <span className="min-w-0 break-all font-mono text-[11px] font-semibold text-primary">
                   {pick.referenceId}
                 </span>
                 {item && (
@@ -60,10 +65,16 @@ export function LibraryStartHere({ persona, onOpen }: LibraryStartHereProps) {
               <span className="line-clamp-2 text-[12.5px] font-semibold text-foreground">
                 {item?.documentTitle ?? pick.label}
               </span>
+              {pick.blurb && (
+                <span className="line-clamp-3 text-[11px] leading-relaxed text-muted-foreground">
+                  <span className="font-semibold text-foreground">Why start here: </span>
+                  {pick.blurb}
+                </span>
+              )}
             </Button>
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }
