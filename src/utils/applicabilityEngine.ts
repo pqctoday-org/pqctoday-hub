@@ -15,8 +15,9 @@
  * and the command center, replacing inline filter logic that previously lived
  * in each consumer.
  */
-import type { ComplianceFramework } from '../data/complianceData'
+import type { BodyType, ComplianceFramework } from '../data/complianceData'
 import { complianceFrameworks } from '../data/complianceData'
+import { sourceOrganizationFor, type SourceOrganizationKind } from '../data/sourceOrganizations'
 import type { ThreatData } from '../data/threatsData'
 import { threatsData } from '../data/threatsData'
 import type { TimelineEvent, CountryData } from '../types/timeline'
@@ -77,8 +78,23 @@ export interface ApplicabilityResult<T> {
   tier: ApplicabilityTier
   /** Human-readable reason — shown in panel chips/tooltips. */
   reason: string
+  /** Structured provenance behind `reason`; present for compliance frameworks. */
+  sourceContext?: SourceContext
   /** Present only when tier === 'derived' — the IR 8477 trust path that produced this result. */
   trustPath?: TrustPath
+}
+
+export type SourceRelationship = 'domestic' | 'foreign' | 'international' | 'unclassified'
+
+/** Source provenance is deliberately separate from an instrument's legal force. */
+export interface SourceContext {
+  relationship: SourceRelationship
+  organizationId?: string
+  organizationName: string | null
+  organizationKind: SourceOrganizationKind | 'unclassified'
+  domiciles: string[]
+  bodyType?: BodyType
+  classificationBasis: 'organization-registry' | 'domestic-authority-map' | 'unclassified'
 }
 
 /** Normalized view of an item's applicability fields, abstracted across types. */
@@ -97,6 +113,8 @@ interface ItemFields {
    * to weaker tiers regardless.
    */
   enforcementBody?: string | null
+  /** What kind of source/instrument the compliance catalogue records. */
+  bodyType?: BodyType
   /** Reviewed force-of-law classification. Authority identity alone never creates an obligation. */
   bindingStatus?: ComplianceFramework['bindingStatus']
   /** Public citation supporting a binding classification. */
@@ -289,6 +307,119 @@ export function sectorCodesOverlap(csvIndustries: string[], profileIndustry: str
 interface ClassifyResult {
   tier: ApplicabilityTier
   reason: string
+  sourceContext?: SourceContext
+}
+
+function sameCountry(left: string, right: string): boolean {
+  const a = expandCountry(left)
+  const b = expandCountry(right)
+  return a.some((value) => b.includes(value))
+}
+
+function sourceContextFor(
+  country: string | null,
+  enforcementBody: string | null,
+  bodyType: BodyType | undefined,
+  domesticAuthorityMatch: boolean
+): SourceContext {
+  const organization = sourceOrganizationFor(enforcementBody)
+  if (organization) {
+    const relationship: SourceRelationship =
+      organization.scope === 'international' || organization.scope === 'regional'
+        ? 'international'
+        : country && organization.domiciles.some((domicile) => sameCountry(country, domicile))
+          ? 'domestic'
+          : country
+            ? 'foreign'
+            : 'unclassified'
+    return {
+      relationship,
+      organizationId: organization.id,
+      organizationName: enforcementBody,
+      organizationKind: organization.kind,
+      domiciles: [...organization.domiciles],
+      bodyType,
+      classificationBasis: 'organization-registry',
+    }
+  }
+  if (domesticAuthorityMatch) {
+    return {
+      relationship: 'domestic',
+      organizationName: enforcementBody,
+      organizationKind: bodyType === 'regulatory_body' ? 'regulator' : 'government_agency',
+      domiciles: country ? [country] : [],
+      bodyType,
+      classificationBasis: 'domestic-authority-map',
+    }
+  }
+  return {
+    relationship: 'unclassified',
+    organizationName: enforcementBody,
+    organizationKind: 'unclassified',
+    domiciles: [],
+    bodyType,
+    classificationBasis: 'unclassified',
+  }
+}
+
+function sourceRole(context: SourceContext): string {
+  if (context.organizationKind === 'international_arrangement') return 'recognition arrangement'
+  if (context.organizationKind === 'professional_body') return 'professional source'
+  if (context.organizationKind === 'industry_consortium') return 'industry consortium source'
+  if (context.organizationKind === 'certification_scheme') return 'evaluation scheme source'
+  switch (context.bodyType) {
+    case 'technical_standard':
+      return 'technical guidance'
+    case 'standardization_body':
+      return 'standards source'
+    case 'certification_body':
+      return 'certification or evaluation source'
+    case 'industry_alliance':
+      return 'industry source'
+    case 'regulatory_body':
+    case 'executive_order':
+      return 'government guidance'
+    default:
+      return context.organizationKind === 'regulator' ? 'regulatory source' : 'source'
+  }
+}
+
+function nonBindingForce(status: ItemFields['bindingStatus']): string {
+  switch (status) {
+    case 'draft':
+      return 'draft, not an adopted obligation'
+    case 'recommendation':
+      return 'recommendation, not a binding obligation'
+    case 'official_target':
+      return 'official target, not a binding obligation by itself'
+    case 'informational':
+      return 'informational, not a binding obligation'
+    case 'binding':
+      return 'binding only where its stated scope applies'
+    case 'mandatory_for_scope':
+      return 'binding only for its stated scope'
+    default:
+      return 'binding status not yet reviewed'
+  }
+}
+
+function sourceReason(context: SourceContext, status: ItemFields['bindingStatus']): string {
+  const body = context.organizationName ? ` from ${context.organizationName}` : ''
+  const role = sourceRole(context)
+  const force = nonBindingForce(status)
+  switch (context.relationship) {
+    case 'domestic':
+      return `Domestic ${role}${body} — ${force}`
+    case 'foreign': {
+      const origin = context.domiciles.length > 0 ? ` from ${context.domiciles.join(', ')}` : ''
+      const publisher = context.organizationName ? ` (${context.organizationName})` : ''
+      return `Foreign ${role}${origin}${publisher} — ${force}; relevance here does not establish a local obligation`
+    }
+    case 'international':
+      return `International ${role}${body} — ${force}`
+    default:
+      return `Source relationship not yet classified${context.organizationName ? ` (${context.organizationName})` : ''} — ${force}; verify the primary source`
+  }
 }
 
 function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult | null {
@@ -323,7 +454,13 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
   // Authority signals establish relevance. They do not, by themselves, establish
   // that an instrument binds the reader.
   const eb = enforcementBody?.trim() || null
-  const domesticBody = isDomesticRegulator(country, industry, eb) || (eu && isEuLevelBody(eb))
+  const domesticAuthorityMatch =
+    isDomesticRegulator(country, industry, eb) || (eu && isEuLevelBody(eb))
+  const sourceContext = sourceContextFor(country, eb, fields.bodyType, domesticAuthorityMatch)
+  // EU-level bodies are domestic-to-scope for an EU member even though their
+  // provenance is regional. Keep that applicability rule separate from the
+  // source relationship the learner sees.
+  const domesticBody = domesticAuthorityMatch || sourceContext.relationship === 'domestic'
   const fiveEyesBody = !domesticBody && isFiveEyesAffinity(country, eb)
 
   // Tier rules — first match wins (ordered strongest → weakest).
@@ -339,28 +476,30 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
       return {
         tier: 'mandatory',
         reason: `${fields.bindingStatus === 'mandatory_for_scope' ? 'Binding for its stated scope' : 'Binding instrument'} — ${fields.bindingBasis}`,
+        sourceContext,
       }
     }
     if (domesticBody) {
-      const reason =
-        fields.bindingStatus === undefined
-          ? `Relevant domestic source${eb ? ` (${eb})` : ''} — binding status not yet reviewed`
-          : fields.bindingStatus === 'draft'
-            ? `Domestic draft${eb ? ` from ${eb}` : ''} — not an adopted obligation`
-            : `Domestic ${fields.bindingStatus.replaceAll('_', ' ')}${eb ? ` from ${eb}` : ''} — not a binding obligation`
-      return { tier: fields.bindingStatus === undefined ? 'recognized' : 'advisory', reason }
+      return {
+        tier: fields.bindingStatus === undefined ? 'recognized' : 'advisory',
+        reason: sourceReason(sourceContext, fields.bindingStatus),
+        sourceContext,
+      }
     }
     if (fiveEyesBody) {
       return {
         tier: 'recognized',
-        reason: `Five Eyes affinity — ${eb} recognized in ${country}`,
+        reason:
+          sourceContext.relationship === 'foreign'
+            ? `Five Eyes relevance — ${sourceReason(sourceContext, fields.bindingStatus).replace(/^Foreign /, '')}`
+            : sourceReason(sourceContext, fields.bindingStatus),
+        sourceContext,
       }
     }
     return {
       tier: 'recognized',
-      reason: eb
-        ? `Foreign authority ${eb} — recognized in ${country}`
-        : `Recognized in ${country}`,
+      reason: sourceReason(sourceContext, fields.bindingStatus),
+      sourceContext,
     }
   }
   if (directCountryMatch) {
@@ -413,10 +552,17 @@ export function applicableFrameworks(
       industryUniversal: isIndustryUniversal(fw.industries),
       countryUniversal: isCountryUniversal(fw.countries),
       enforcementBody: fw.enforcementBody,
+      bodyType: fw.bodyType,
       bindingStatus: fw.bindingStatus,
       bindingBasis: fw.bindingBasis,
     })
-    if (match) out.push({ item: fw, tier: match.tier, reason: match.reason })
+    if (match)
+      out.push({
+        item: fw,
+        tier: match.tier,
+        reason: match.reason,
+        sourceContext: match.sourceContext,
+      })
   }
   return out
 }

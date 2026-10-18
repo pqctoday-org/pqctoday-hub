@@ -1109,7 +1109,7 @@ function FrameworkTable({
                   Name
                 </th>
                 <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
-                  Enforcement Body
+                  Publisher / scheme body
                 </th>
                 <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
                   Deadline

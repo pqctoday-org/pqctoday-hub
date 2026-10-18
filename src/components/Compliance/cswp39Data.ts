@@ -49,8 +49,10 @@ export const CSWP39_SOURCE_METADATA: CSWP39SourceMetadata = {
   updatedDate: '2026-06-29',
   sourceUrl: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf',
   localPdfPath: '/library/NIST_CSWP_39.pdf',
-  dataExtractedAt: '2026-07-19',
-  nextReviewBy: '2026-10-17',
+  // Re-verified 2026-10-17 against the NIST CSRC publication record and the
+  // upd1 PDF: Update 1 remains the current Final, with no later revision listed.
+  dataExtractedAt: '2026-10-17',
+  nextReviewBy: '2027-01-17',
 }
 
 export interface CSWP39Step {
