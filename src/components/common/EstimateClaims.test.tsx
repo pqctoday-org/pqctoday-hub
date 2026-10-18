@@ -14,7 +14,7 @@ describe('claimsForEstimates', () => {
     expect(forEstimates.map((c) => c.id)).toEqual([
       'crqc-gri-2025-timeline',
       'crqc-nist-ir8547-dates',
-      'crqc-nsa-cnsa2-faq-v21-dates',
+      'crqc-nsa-cnsa2-faq-v22-dates',
       'crqc-anssi-faq-2025-buy-after-2030',
       'crqc-bsi-tr02102-2026-dates',
     ])
@@ -49,9 +49,9 @@ describe('EstimateClaims', () => {
     render(<EstimateClaims estimates={CRQC_ESTIMATES} />)
     const nsa = screen
       .getAllByTestId('claim-card')
-      .find((c) => c.getAttribute('data-claim-id') === 'crqc-nsa-cnsa2-faq-v21-dates')!
-    expect(within(nsa).getByText('Updates an earlier statement.')).toBeInTheDocument()
-    expect(within(nsa).getByTestId('claim-what-changed')).toBeInTheDocument()
+      .find((c) => c.getAttribute('data-claim-id') === 'crqc-nsa-cnsa2-faq-v22-dates')!
+    expect(within(nsa).getAllByText('Updates an earlier statement.')[0]).toBeInTheDocument()
+    expect(within(nsa).getAllByTestId('claim-what-changed')[0]).toBeInTheDocument()
   })
 
   it('never averages or merges the estimates into one figure', () => {

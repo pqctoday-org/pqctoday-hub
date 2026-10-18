@@ -77,6 +77,27 @@ describe('MobileThreatsView', () => {
     renderView()
     expect(screen.getByText(`${threatsData.length} tracked`, { exact: false })).toBeInTheDocument()
     expect(screen.queryByText(/in your focus areas/i)).not.toBeInTheDocument()
+    expect(
+      screen.getByText(/Pick a sector before interpreting a latest safe-start year/i)
+    ).toBeInTheDocument()
+    expect(screen.queryByText('OVERDUE')).not.toBeInTheDocument()
+  })
+
+  it('uses progressive loading instead of rendering the full catalog at once', () => {
+    renderView()
+    expect(document.querySelectorAll('article[data-deeplink-id]')).toHaveLength(12)
+    fireEvent.click(screen.getByRole('button', { name: /Show 12 more/ }))
+    expect(document.querySelectorAll('article[data-deeplink-id]')).toHaveLength(24)
+  })
+
+  it('offers a purpose-built phone search that updates the shared query', () => {
+    renderView()
+    const target = threatsData[0]
+    fireEvent.change(screen.getByRole('searchbox', { name: /Search threat records/i }), {
+      target: { value: target.threatId },
+    })
+    expect(screen.getByTestId('location-search')).toHaveTextContent(`q=${target.threatId}`)
+    expect(screen.getByText(target.threatId)).toBeInTheDocument()
   })
 
   it('scopes the count to the real persona-default industries, matching the same resolver desktop uses', () => {
@@ -131,7 +152,7 @@ describe('MobileThreatsView', () => {
       expect(headline.map((c) => c.getAttribute('data-claim-id'))).toEqual([
         'crqc-gri-2025-timeline',
         'crqc-nist-ir8547-dates',
-        'crqc-nsa-cnsa2-faq-v21-dates',
+        'crqc-nsa-cnsa2-faq-v22-dates',
         'crqc-anssi-faq-2025-buy-after-2030',
         'crqc-bsi-tr02102-2026-dates',
         'crqc-rsa2048-physical-qubits-2025',
@@ -166,10 +187,10 @@ describe('MobileThreatsView', () => {
   })
 
   it('stepping the CRQC year up and down live-recomputes the urgency band', () => {
-    renderView()
-    const before = screen.getByText(/Migration should have|years remaining/i).textContent
+    renderView(`/threats?industry=${encodeURIComponent(threatsData[0].industry)}`)
+    const before = screen.getByText(/latest safe-start year/i).textContent
     fireEvent.click(screen.getByRole('button', { name: 'Later CRQC year' }))
-    const after = screen.getByText(/Migration should have|years remaining/i).textContent
+    const after = screen.getByText(/latest safe-start year/i).textContent
     expect(after).not.toBe(before)
   })
 
@@ -331,7 +352,7 @@ describe('MobileThreatsView', () => {
     it('?class= preselects the class chip and filters to it', () => {
       renderView('/threats?class=hnfl')
       const group = screen.getByRole('group', { name: 'Filter by threat class' })
-      const chip = within(group).getByRole('button', { name: /HNFL \/ TNFL/ })
+      const chip = within(group).getByRole('button', { name: 'HNFL' })
       expect(chip).toHaveAttribute('aria-pressed', 'true')
       const hndlOnly = threatsData.find((t) => getThreatClass(t) === 'hndl')
       if (hndlOnly) expect(screen.queryByText(hndlOnly.threatId)).not.toBeInTheDocument()

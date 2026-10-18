@@ -113,7 +113,7 @@ describe('threat lineage — the Evidence panel (ruling R2)', () => {
     })
     expect(sourceIdentityText(l)).toBe('Source document: confirmed to be the cited document')
     expect(claimsCheckedText(l)).toBe(
-      'Claims checked against the cited document: 1 supported · 2 could not be confirmed'
+      'Maintenance-pipeline claims check: 1 supported · 2 could not be confirmed'
     )
   })
 
@@ -131,7 +131,7 @@ describe('threat lineage — the Evidence panel (ruling R2)', () => {
     })
     expect(l.supportedBySecondReader).toBe(1)
     expect(claimsCheckedText(l)).toBe(
-      'Claims checked against the cited document: 2 supported (1 by an AI second reader) · 1 could not be confirmed'
+      'Maintenance-pipeline claims check: 2 supported (1 by an AI second reader) · 1 could not be confirmed'
     )
   })
 

@@ -7,11 +7,6 @@ import {
   Cpu,
   ExternalLink,
   BookOpen,
-  Sparkles,
-  Target,
-  Clock,
-  DollarSign,
-  Shield,
   ShieldCheck,
   ClipboardCheck,
   ArrowRight,
@@ -32,7 +27,6 @@ import { FlagButton } from '../ui/FlagButton'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { OpenOnPageLink } from '@/components/common/OpenOnPageLink'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { threatEnrichmentData } from '@/data/threatEnrichmentData'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
@@ -55,6 +49,7 @@ import {
   sourceIdentityText,
 } from '@/data/threatClaimStatus'
 import type { ThreatDetailTab } from './threatsUrlParams'
+import { ThreatRecordTypeBadge } from '@/components/common/ThreatRecordTypeBadge'
 
 /** An at-risk / PQC field, or an honest "not yet specified" when blank. */
 const SpecifiedOrNot = ({ value }: { value: string }) =>
@@ -178,9 +173,15 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
 
               <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
                 <h3 className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
-                  <Cpu size={14} /> PQC Mitigation
+                  <Cpu size={14} /> Candidate response
                 </h3>
                 <SpecifiedOrNot value={threat.pqcReplacement} />
+                {threat.pqcReplacement.trim() && (
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Status: site-derived suggestion. Validate applicability and implementation
+                    maturity against the linked authority and your system context.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -229,9 +230,10 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                  Criticality
+                  Site teaching priority
                 </h3>
                 <div className="flex flex-wrap items-center gap-2">
+                  <ThreatRecordTypeBadge threat={threat} />
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       threat.criticality.toLowerCase() === 'critical'
@@ -252,6 +254,11 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                 {/* Shor-resource tier explanation — Threats #4 */}
                 <p className="text-xs text-muted-foreground mt-2">
                   {SHOR_TIER_DEFS[getShorTier(threat)].blurb}
+                </p>
+                <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                  The priority label is an editorial aid based on consequence, exposure horizon and
+                  migration difficulty. It is not a likelihood score or an assessment of your
+                  estate.
                 </p>
               </div>
             </div>
@@ -351,7 +358,8 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
             {/* Detection / SOC + Incident-Response — Threats #3 / #6 */}
             <div className="pt-4 border-t border-border mt-4">
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Radar size={14} className="text-primary" /> Detection &amp; Response
+                <Radar size={14} className="text-primary" /> Educational Detection &amp; Response
+                Examples
               </h3>
               <Tabs
                 defaultValue="detection"
@@ -369,8 +377,9 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
 
                 <TabsContent value="detection">
                   <p className="text-xs text-muted-foreground mb-3">
-                    SOC detection use cases that apply to this threat&apos;s class, from the Applied
-                    Quantum PQC Migration Framework v3.0 &ldquo;SOC Implementation&rdquo; section.
+                    Site-mapped examples for this threat class, drawn from the self-published
+                    Applied Quantum PQC Migration Framework v3.0. Treat them as teaching prompts to
+                    adapt and validate, not authoritative control requirements.
                   </p>
                   <ul className="space-y-2.5">
                     {getSocUseCases(threat).map((uc) => (
@@ -417,8 +426,8 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
 
                 <TabsContent value="response">
                   <p className="text-xs text-muted-foreground mb-3">
-                    Incident-response playbooks from the same source that apply to this
-                    threat&apos;s class.
+                    Site-mapped incident-response examples from the same self-published source.
+                    Validate triggers, evidence and escalation paths against your own procedures.
                   </p>
                   <ul className="space-y-2.5">
                     {getIrPlaybooks(threat).map((pb) => (
@@ -453,101 +462,6 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                 </TabsContent>
               </Tabs>
             </div>
-
-            {/* Threat Enrichment Analysis */}
-            {(() => {
-              const enrichment = threatEnrichmentData[threat.threatId]
-              if (!enrichment) return null
-              const hasAttack = enrichment.attackClassification.length > 0
-              const hasTimeline = enrichment.exploitationTimeline.length > 0
-              const hasFinancial = enrichment.financialImpact.length > 0
-              const hasCountermeasure = enrichment.countermeasureEffectiveness.length > 0
-              const hasAny = hasAttack || hasTimeline || hasFinancial || hasCountermeasure
-              if (!hasAny) return null
-              return (
-                <div className="pt-4 border-t border-border mt-4">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <Sparkles size={14} className="text-primary" /> Threat Analysis
-                  </h3>
-                  <div className="space-y-3">
-                    {hasAttack && (
-                      <div className="flex items-start gap-2">
-                        <Target size={14} className="text-status-error mt-0.5 shrink-0" />
-                        <div>
-                          <span className="text-xs font-medium text-muted-foreground">
-                            Attack Classification
-                          </span>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {enrichment.attackClassification.map((c) => (
-                              <span
-                                key={c}
-                                className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-status-error/10 text-status-error border border-status-error/20"
-                              >
-                                {c}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {hasTimeline && (
-                      <div className="flex items-start gap-2">
-                        <Clock size={14} className="text-status-warning mt-0.5 shrink-0" />
-                        <div>
-                          <span className="text-xs font-medium text-muted-foreground">
-                            Exploitation Timeline
-                          </span>
-                          <ul className="mt-1 space-y-0.5">
-                            {enrichment.exploitationTimeline.map((t, i) => (
-                              <li key={i} className="text-xs text-foreground">
-                                {t}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    )}
-                    {hasFinancial && (
-                      <div className="flex items-start gap-2">
-                        <DollarSign size={14} className="text-primary mt-0.5 shrink-0" />
-                        <div>
-                          <span className="text-xs font-medium text-muted-foreground">
-                            Financial Impact
-                          </span>
-                          <ul className="mt-1 space-y-0.5">
-                            {enrichment.financialImpact.map((f, i) => (
-                              <li key={i} className="text-xs text-foreground">
-                                {f}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    )}
-                    {hasCountermeasure && (
-                      <div className="flex items-start gap-2">
-                        <Shield size={14} className="text-status-success mt-0.5 shrink-0" />
-                        <div>
-                          <span className="text-xs font-medium text-muted-foreground">
-                            Countermeasure Effectiveness
-                          </span>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {enrichment.countermeasureEffectiveness.map((c) => (
-                              <span
-                                key={c}
-                                className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-status-success/10 text-status-success border border-status-success/20"
-                              >
-                                {c}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })()}
 
             {threat.relatedModules && threat.relatedModules.length > 0 && (
               <div className="pt-4 border-t border-border mt-4">
@@ -609,9 +523,9 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                 resourceDetails: [
                   `**Threat ID:** ${threat.threatId}`,
                   `**Industry:** ${threat.industry}`,
-                  `**Criticality:** ${threat.criticality}`,
+                  `**Site teaching priority:** ${threat.criticality}`,
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
-                  `**PQC Mitigation:** ${threat.pqcReplacement}`,
+                  `**Candidate response (site-derived):** ${threat.pqcReplacement}`,
                 ].join('\n'),
                 pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}
@@ -629,9 +543,9 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                 resourceDetails: [
                   `**Threat ID:** ${threat.threatId}`,
                   `**Industry:** ${threat.industry}`,
-                  `**Criticality:** ${threat.criticality}`,
+                  `**Site teaching priority:** ${threat.criticality}`,
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
-                  `**PQC Mitigation:** ${threat.pqcReplacement}`,
+                  `**Candidate response (site-derived):** ${threat.pqcReplacement}`,
                 ].join('\n'),
                 pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}
@@ -645,7 +559,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
               variant="text"
               className="min-h-[44px]"
               label="Ask Assistant"
-              question={`What are the recommended PQC mitigations for ${threat.threatId} in the ${threat.industry} sector? Criticality: ${threat.criticality}. Crypto at risk: ${threat.cryptoAtRisk}. Recommended replacement: ${threat.pqcReplacement}.`}
+              question={`Explain the evidence and possible response for ${threat.threatId} in the ${threat.industry} sector. PQC Today teaching priority: ${threat.criticality}. Crypto at risk: ${threat.cryptoAtRisk}. Site-derived candidate response to validate: ${threat.pqcReplacement}.`}
             />
           </div>
         </div>

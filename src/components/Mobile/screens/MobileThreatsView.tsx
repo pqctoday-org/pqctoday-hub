@@ -1,7 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { Minus, Plus, Bookmark, BookmarkCheck, BookOpen, ExternalLink, X } from 'lucide-react'
+import {
+  Minus,
+  Plus,
+  Bookmark,
+  BookmarkCheck,
+  BookOpen,
+  ExternalLink,
+  Radar,
+  Search,
+  Siren,
+  X,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   draftThreatIndustries,
@@ -19,6 +30,8 @@ import {
 import { EstimateClaims } from '@/components/common/EstimateClaims'
 import {
   getShorTier,
+  getSocUseCases,
+  getIrPlaybooks,
   getThreatClass,
   SHOR_TIER_DEFS,
   THREAT_CLASS_DEFS,
@@ -59,6 +72,9 @@ import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 import { InlineScopeStep } from '@/components/common/InlineScopeStep'
+import { formatSocCite, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
+import { getThreatRecordType, parseThreatRecordType } from '@/data/threatRecordTypes'
+import { ThreatRecordTypeBadge } from '@/components/common/ThreatRecordTypeBadge'
 
 const CURRENT_YEAR = new Date().getFullYear()
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
@@ -88,12 +104,13 @@ function urgencyMessage(deadline: number): string {
   const rem = deadline - CURRENT_YEAR
   if (rem < 0) {
     const abs = Math.abs(rem)
-    return `Migration should have started ${abs} year${abs === 1 ? '' : 's'} ago. Anything sent under RSA or ECC since then is already harvestable, and stays readable once the machine arrives.`
+    return `With these example inputs, the latest safe-start year passed ${abs} year${abs === 1 ? '' : 's'} ago. Data an adversary collected may become readable later if it must remain confidential beyond the assumed CRQC year.`
   }
   if (rem <= 2)
-    return `Only ${rem} year${rem === 1 ? '' : 's'} remaining. Migration must begin immediately.`
-  if (rem <= 5) return `${rem} years remaining. Migration planning should be underway.`
-  return `${rem} years remaining. Begin cryptographic inventory and planning.`
+    return `With these example inputs, ${rem} year${rem === 1 ? '' : 's'} remain before the latest safe-start year.`
+  if (rem <= 5)
+    return `With these example inputs, ${rem} years remain before the latest safe-start year.`
+  return `With these example inputs, ${rem} years remain before the latest safe-start year.`
 }
 
 const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string }> = {
@@ -189,6 +206,7 @@ export function MobileThreatsView() {
     criticalityParam && CRITICALITY_LEVELS.includes(criticalityParam) ? criticalityParam : null
   const setCriticality = (level: string | null) => setParam({ criticality: level })
   const classFilter = threatClassParam(searchParams)
+  const recordTypeFilter = parseThreatRecordType(searchParams.get('type'))
   const setClassFilter = (cls: ThreatClass | null) => setParam({ class: cls })
   const urlIndustries = useMemo(
     () => resolveIndustryParam(searchParams.get('industry'), threatsData),
@@ -251,6 +269,7 @@ export function MobileThreatsView() {
       ? [...industries, personaScopeExtra]
       : industries
   }, [selectedPersona, storeIndustries, personaScopeExtra])
+  const hasScope = urlIndustries.length > 0 || personaIndustries !== null
 
   // ── ?id= arrival: not-found notice, or widen whatever hides the card ──
   const [deepLinkNotice, setDeepLinkNotice] = useState<{
@@ -283,6 +302,7 @@ export function MobileThreatsView() {
       personaScope: urlIndustries.length === 0 ? (personaIndustries ?? []) : [],
       criticality,
       threatClass: classFilter,
+      recordType: recordTypeFilter,
       query: urlQuery,
       lensExcludes: !!urlProtocol && !threatTouchesProtocol(selected, urlProtocol),
     })
@@ -297,6 +317,7 @@ export function MobileThreatsView() {
       else if (ex === 'persona-scope') setPersonaScopeExtra(selected.industry)
       else if (ex === 'criticality') updates.criticality = null
       else if (ex === 'class') updates.class = null
+      else if (ex === 'record-type') updates.type = null
       else if (ex === 'q') updates.q = null
       else if (ex === 'lens') updates.protocol = null
     }
@@ -354,9 +375,20 @@ export function MobileThreatsView() {
     if (urlQuery) data = data.filter((t) => matchesThreatQuery(t, urlQuery))
     if (criticality) data = data.filter((t) => t.criticality === criticality)
     if (classFilter) data = data.filter((t) => threatMatchesClass(t, classFilter))
+    if (recordTypeFilter) data = data.filter((t) => getThreatRecordType(t) === recordTypeFilter)
     if (urlProtocol) data = data.filter((t) => threatTouchesProtocol(t, urlProtocol))
     return data
-  }, [scopedData, urlQuery, criticality, classFilter, urlProtocol])
+  }, [scopedData, urlQuery, criticality, classFilter, recordTypeFilter, urlProtocol])
+  const [visibleCount, setVisibleCount] = useState(12)
+  useEffect(
+    () => setVisibleCount(12),
+    [urlIndustries, urlQuery, criticality, classFilter, recordTypeFilter, urlProtocol]
+  )
+  useEffect(() => {
+    if (!selected) return
+    const selectedIndex = filteredData.findIndex((item) => item.threatId === selected.threatId)
+    if (selectedIndex >= 0) setVisibleCount((count) => Math.max(count, selectedIndex + 1))
+  }, [filteredData, selected])
 
   const urgencyStyle = URGENCY_CONFIG[urgency]
 
@@ -438,21 +470,38 @@ export function MobileThreatsView() {
         </div>
       )}
 
-      <section className={cn('mb-4 rounded-xl border p-4', urgencyStyle.bg)}>
-        <div className="mb-1.5 flex items-center gap-2">
-          <span
-            className={cn('text-[10px] font-extrabold uppercase tracking-wide', urgencyStyle.color)}
-          >
-            {urgencyStyle.label}
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-            Mosca urgency band
-          </span>
-        </div>
-        <p className={cn('text-[13px] font-semibold leading-snug', urgencyStyle.color)}>
-          {urgencyMessage(worstDeadline)}
-        </p>
-      </section>
+      {hasScope ? (
+        <section className={cn('mb-4 rounded-xl border p-4', urgencyStyle.bg)}>
+          <div className="mb-1.5 flex items-center gap-2">
+            <span
+              className={cn(
+                'text-[10px] font-extrabold uppercase tracking-wide',
+                urgencyStyle.color
+              )}
+            >
+              {urgencyStyle.label}
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+              Mosca urgency band
+            </span>
+          </div>
+          <p className={cn('text-[13px] font-semibold leading-snug', urgencyStyle.color)}>
+            {urgencyMessage(worstDeadline)}
+          </p>
+        </section>
+      ) : (
+        <section className="mb-4 rounded-xl border border-border bg-muted/20 p-4">
+          <p className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">
+            Mosca planning model
+          </p>
+          <p className="mt-1 text-[13px] font-semibold leading-snug text-foreground">
+            Pick a sector before interpreting a latest safe-start year.
+          </p>
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            The values below are teaching assumptions, not your deadline or a CRQC prediction.
+          </p>
+        </section>
+      )}
 
       <UnresolvedEstimatesNotice detail="oneFigure" className="mb-4" />
 
@@ -508,10 +557,35 @@ export function MobileThreatsView() {
         Same subtraction, two different X&apos;s:{' '}
         <span className="font-semibold text-foreground">HNDL</span> uses how long the data must stay
         secret, <span className="font-semibold text-foreground">HNFL</span> how long the credential
-        stays valid. Whichever is longer sets your date.
+        stays valid. Whichever is longer sets your date. HNFL is PQC Today&apos;s teaching label,
+        not a standardized industry term.
       </p>
 
-      <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Filter by criticality">
+      <label className="relative mb-3 block">
+        <span className="sr-only">Search threat records</span>
+        <Search
+          size={15}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <input
+          type="search"
+          value={urlQuery}
+          onChange={(event) => setParam({ q: event.target.value || null })}
+          placeholder="Search threats, crypto, mitigations…"
+          className="h-11 w-full rounded-lg border border-border bg-card pl-9 pr-3 text-[12px] text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none"
+        />
+      </label>
+
+      <p className="mb-2 text-[10.5px] leading-relaxed text-muted-foreground">
+        Site priority is an editorial teaching aid—not likelihood and not an assessment of your
+        organisation.
+      </p>
+      <div
+        className="mb-2 flex flex-wrap gap-1.5"
+        role="group"
+        aria-label="Filter by site priority"
+      >
         <Button
           type="button"
           variant="ghost"
@@ -583,7 +657,7 @@ export function MobileThreatsView() {
         {filteredData.length === 0 && (
           <p className="text-[12.5px] text-muted-foreground">No threats match these filters.</p>
         )}
-        {filteredData.map((threat) => (
+        {filteredData.slice(0, visibleCount).map((threat) => (
           <ThreatCardMobile
             key={threat.threatId}
             threat={threat}
@@ -592,6 +666,16 @@ export function MobileThreatsView() {
             onSelect={() => setSelected(threat)}
           />
         ))}
+        {visibleCount < filteredData.length && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setVisibleCount((count) => count + 12)}
+            className="h-11 w-full"
+          >
+            Show 12 more · {filteredData.length - visibleCount} remaining
+          </Button>
+        )}
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
@@ -617,9 +701,14 @@ export function MobileThreatsView() {
                 <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   {selected.criticality}
                 </span>
+                <ThreatRecordTypeBadge threat={selected} />
               </div>
               <p className="mt-1 text-[13px] leading-relaxed text-foreground">
                 {selected.description}
+              </p>
+              <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
+                The priority label is PQC Today&apos;s teaching order based on consequence, exposure
+                horizon and migration difficulty—not likelihood or an assessment of your estate.
               </p>
             </div>
             <div className="border-t border-border pt-3 text-[12px] text-muted-foreground">
@@ -628,6 +717,53 @@ export function MobileThreatsView() {
             <p className="text-[11.5px] leading-relaxed text-muted-foreground">
               {SHOR_TIER_DEFS[getShorTier(selected)].blurb}
             </p>
+            <div className="border-t border-border pt-3">
+              <p className="flex items-center gap-1.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                <Radar size={12} aria-hidden="true" /> Educational detection examples
+              </p>
+              <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
+                Site-mapped teaching prompts from the self-published Applied Quantum framework;
+                validate them against your own monitoring requirements.
+              </p>
+              <ul className="mt-2 space-y-2">
+                {getSocUseCases(selected).map((item) => (
+                  <li key={item.id} className="rounded-lg border border-border bg-muted/20 p-2.5">
+                    <p className="text-[11.5px] font-semibold text-foreground">
+                      {item.code}: {item.title}
+                    </p>
+                    <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
+                      {item.summary}
+                    </p>
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      Source: {formatSocCite(item.source)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border-t border-border pt-3">
+              <p className="flex items-center gap-1.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                <Siren size={12} aria-hidden="true" /> Educational response examples
+              </p>
+              <ul className="mt-2 space-y-2">
+                {getIrPlaybooks(selected).map((item) => (
+                  <li key={item.id} className="rounded-lg border border-border bg-muted/20 p-2.5">
+                    <p className="text-[11.5px] font-semibold text-foreground">
+                      Playbook {item.number}: {item.title}
+                    </p>
+                    <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
+                      {item.summary}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to={SOC_LEARN_MODULE_HREF}
+                className="mt-2 inline-flex min-h-11 items-center text-[11.5px] font-semibold text-primary"
+              >
+                Learn: SOC implementation for PQC
+              </Link>
+            </div>
             {selected.relatedModules.length > 0 && (
               <div className="border-t border-border pt-3">
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
@@ -721,7 +857,7 @@ export function MobileThreatsView() {
   )
 }
 
-/** "At risk: X → Y", or an honest "not yet specified" for a blank field. */
+/** At-risk cryptography and the site-proposed candidate response. */
 function AtRiskLine({ threat }: { threat: ThreatItem }) {
   const risk = threat.cryptoAtRisk.trim()
   const pqc = threat.pqcReplacement.trim()
@@ -729,10 +865,14 @@ function AtRiskLine({ threat }: { threat: ThreatItem }) {
     <>
       <span className="font-semibold text-foreground/80">At risk:</span>{' '}
       {risk || <span className="italic">{NOT_YET_SPECIFIED}</span>}
-      {' → '}
-      <span className="font-semibold text-foreground/80">
-        {pqc || <span className="font-normal italic">{NOT_YET_SPECIFIED}</span>}
-      </span>
+      <br />
+      <span className="font-semibold text-foreground/80">Candidate response: </span>
+      <span>{pqc || <span className="font-normal italic">{NOT_YET_SPECIFIED}</span>}</span>
+      {pqc && (
+        <span className="mt-0.5 block text-[10px]">
+          Site-derived suggestion; validate applicability and maturity.
+        </span>
+      )}
     </>
   )
 }
@@ -757,8 +897,9 @@ function ThreatCardMobile({
     <article data-deeplink-id={threat.threatId} className="glass-panel flex flex-col gap-2 p-3.5">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-[10.5px] text-muted-foreground">{threat.threatId}</span>
+        <ThreatRecordTypeBadge threat={threat} />
         {/* Compact tier chip (UX-19): the short name in sentence case, the
-            full "Tier 1 — Imminent" as its accessible name; the tier blurb
+            full resource-tier label as its accessible name; the tier blurb
             below the description explains it. */}
         <span
           className={cn(

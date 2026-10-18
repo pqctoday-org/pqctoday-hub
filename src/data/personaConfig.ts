@@ -19,7 +19,7 @@ import { TRACK_INFO } from '../components/Assess/redesign/assessFlowModel'
 import { getLandscapeIndustries } from './industryLandscapeData'
 import { isCrossIndustry } from './industryMatch'
 import { getCrqcForecast } from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
-import { CNSA_2_0 } from './regulatoryTimelines'
+import { CNSA_2_0, NSM_10_QUANTUM_RISK_GOAL } from './regulatoryTimelines'
 
 /**
  * Persona-aware "Practice in the Simulation" CTA — which migration phases each
@@ -2041,13 +2041,9 @@ export const CRQC_WINDOW_ROW = `${CRQC.low}–${CRQC.high}`
 
 /**
  * A CNSA 2.0 milestone year, by field name on `CNSA_2_0`
- * (`regulatoryTimelines.ts`) — added 2026-09-03 after a home board asserted
- * "CNSA 2.0 full transition = 2033" as a literal. Verified against NSA's own
- * CNSA 2.0 Suite table (PP-22-1338, Sept 2022): 2033 is the exclusive-use
- * year for web browsers/servers/cloud services and for operating systems
- * specifically (`CNSA_2_0.networkingExclusive`); the full NSS transition,
- * per NSM-10, is 2035 (`CNSA_2_0.fullEnforcement`). The two are different
- * claims and this token exists so a board can never conflate them again.
+ * (`regulatoryTimelines.ts`). The current v2.2 FAQ has a 2031 mandate for NSS;
+ * the separate NSM-10 federal quantum-risk objective is 2035 and intentionally
+ * has its own token below so the two claims cannot be conflated.
  */
 export function cnsa2Year(field: string): string {
   // Runtime-checked, not just compile-time typed: the generator calls this
@@ -2061,6 +2057,8 @@ export function cnsa2Year(field: string): string {
   }
   return String(CNSA_2_0[field as keyof typeof CNSA_2_0])
 }
+
+export const NSM_10_GOAL_ROW = String(NSM_10_QUANTUM_RISK_GOAL)
 
 /**
  * Question count and time estimate for the /assess quick track — the one every
