@@ -221,8 +221,8 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
       {openNotice}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">
-          Your assets, sequenced by exposure — <strong>external-facing traffic first</strong>. Open
-          any product for its roadmap, certifications and evidence.
+          An illustrative sequence, starting with externally exposed traffic. Adapt it to your
+          inventory, dependencies and policy; open a product to inspect its recorded evidence.
         </p>
         <ConfirmButton
           size="sm"
@@ -238,18 +238,17 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
         </ConfirmButton>
       </div>
 
-      {posture.gaps.length > 0 && (
-        <div className="rounded-xl border border-status-error/25 bg-status-error/[0.07] p-3">
-          <div className="flex items-center gap-2 text-status-error">
+      {posture.cautions.length > 0 && (
+        <div className="rounded-xl border border-status-warning/25 bg-status-warning/[0.07] p-3">
+          <div className="flex items-center gap-2 text-status-warning">
             <AlertTriangle size={16} aria-hidden />
             <span className="text-sm font-semibold">
-              {posture.gaps.length} asset{posture.gaps.length > 1 ? 's have' : ' has'} no GA
-              quantum-safe product yet
+              {posture.cautions.length} example{posture.cautions.length > 1 ? 's need' : ' needs'} an interim-control discussion
             </span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            {posture.gaps.map((g) => g.label).join(', ')} — deploy a crypto gateway with a hard
-            sunset date. Mitigation is never permanent.
+            {posture.cautions.map((g) => g.label).join(', ')} — verify protocol support, exposure,
+            ownership and an exit condition before choosing a mitigation.
           </p>
         </div>
       )}
@@ -306,9 +305,6 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
                       <Pill tone={decision.tone} icon={DECISION_ICON[asset.decision]}>
                         {decision.label}
                       </Pill>
-                      <span className="font-mono text-[11px] text-status-warning">
-                        {asset.cnsaYear}
-                      </span>
                       {chosen.length > 1 ? (
                         <ConfirmButton
                           size="sm"
@@ -353,8 +349,8 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
                     ) : (
                       <p className="px-3 pb-2.5 pl-6 text-[11px] text-muted-foreground">
                         {asset.decision === 'mitigate'
-                          ? 'No product — mitigate'
-                          : 'No product chosen yet'}
+                          ? 'No catalog example selected — review interim controls'
+                          : 'No catalog example selected yet'}
                       </p>
                     )}
                   </div>
@@ -428,7 +424,7 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
             })
           }
         >
-          <FileText size={14} /> Export plan + CBOM
+          <FileText size={14} /> Export planning draft (JSON)
         </Button>
       </div>
     </div>

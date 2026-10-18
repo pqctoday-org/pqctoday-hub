@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -9,6 +9,11 @@ import { cpeByProduct } from '@/data/cpeXrefData'
 import { purlByProduct } from '@/data/purlXrefData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+
+vi.mock('@/hooks/useRevisions', () => ({
+  useRevisions: () => ({ revisions: [], isLoading: false, error: null }),
+  byRecord: () => [],
+}))
 
 function makeItem(over: Partial<SoftwareItem>): SoftwareItem {
   return {

@@ -29,10 +29,10 @@ const FOUNDATION_DOMAINS: DomainId[] = Object.values(DOMAINS)
   .filter((d) => d.kind === 'foundation')
   .map((d) => d.id)
 
-/** Canonical (wave, deadline) order — the order shown once no persona
+/** Canonical teaching-wave order — the order shown once no persona
  *  narrowing applies, or once the user asks to see everything. */
 function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
-  return [...list].sort((a, b) => a.wave - b.wave || a.cnsaYear - b.cnsaYear)
+  return [...list].sort((a, b) => a.wave - b.wave)
 }
 
 export function AssetList({ persona, selectedDomain, onSelect, onSelectProduct }: AssetListProps) {

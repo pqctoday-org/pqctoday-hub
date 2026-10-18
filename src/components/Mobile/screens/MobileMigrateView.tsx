@@ -58,6 +58,7 @@ import { proofFreshness } from '@/components/Migrate/Workbench/proofFreshness'
 import { useMigrationPlan } from '@/components/Migrate/Workbench/useMigrationPlan'
 import { WAVES_FALLBACK } from '@/components/Migrate/Workbench/waves'
 import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
+import { MIGRATION_EDUCATION } from '@/data/migrationEducation'
 import { useVendorConcentrationRisks } from '@/components/Migrate/Workbench/vendorConcentrationRisk'
 import { TONE_CLASS, type Tone } from '@/data/migrateToneClass'
 import type {
@@ -134,7 +135,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'replace', label: 'Replace' },
   { id: 'plan', label: 'Plan' },
   { id: 'roadmaps', label: 'Vendors' },
-  { id: 'vendorrisk', label: 'Risk' },
+  { id: 'vendorrisk', label: 'Evidence' },
 ]
 
 function Badge({
@@ -170,7 +171,7 @@ function Badge({
 }
 
 function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
-  return [...list].sort((a, b) => a.wave - b.wave || a.cnsaYear - b.cnsaYear)
+  return [...list].sort((a, b) => a.wave - b.wave)
 }
 
 /**
@@ -181,10 +182,8 @@ function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
  * deleted legacy page (`MigrateView.tsx`, retired 2026-06-24) — verified by
  * research before writing any UI. The real `/migrate` route renders
  * `MigrationWorkbench.tsx`, an asset-first planner with 4 real tabs (Replace/
- * Plan/Vendor roadmaps/Vendor risk), matching the target screenshot (which
- * itself has 2 stale numbers, corrected here by reading straight from
- * `migrationAssets.ts`: TLS's real cnsaYear is 2025 not 2035, and Secure
- * email's real decision is 'mitigate' → "Mitigate", not "Track roadmap").
+ * Plan/Vendor roadmaps/Evidence gaps), using the same source data and
+ * selection state as desktop.
  * Scope confirmed with the user (2026-08-23): all 4 real tabs.
  *
  * Every section reuses real desktop logic verbatim: REPLACE_ASSETS/DECISIONS
@@ -193,11 +192,10 @@ function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
  * mobile land in the identical store desktop reads), productPqcStatus/
  * productFipsBadge/proofFreshness (the real per-product badge logic),
  * useMigrationPlan() (the real posture/wave-grouping hook), WAVES_FALLBACK
- * (the real 4-wave sequencing copy), and downloadPlanCbom (the real CBOM
- * export, byte-identical output to desktop's).
+ * (the real 4-wave sequencing copy), and the same educational planning-draft
+ * export as desktop.
  *
- * The Vendor risk tab's 4 real risk signals (single-source domains, vendor
- * concentration, certification gap, geographic concentration) reuse
+ * The Evidence tab's four catalog review cues reuse
  * useVendorConcentrationRisks() verbatim — the same hook
  * VendorConcentrationRiskPanel renders on desktop, extracted to a pure
  * module (2026-08-24 audit fix) so both surfaces compute identical numbers
@@ -205,9 +203,7 @@ function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
  * version of this file carried a hand-copied severity computation with
  * different thresholds (25/50/40 vs desktop's 40/30/50) — the same vendor
  * data could read "severe" on a phone and calm on a laptop; that's the bug
- * this reuse closes. `SupplyChainRiskMatrix` (that tab's other real
- * sub-view, per its own comment "a different-shaped view of the SAME tab")
- * is dropped, stated below.
+ * this reuse closes.
  *
  * 2026-08-28 (real production feedback): foundation-domain browsing (the 8
  * domains with no seeded "what you run" asset — crypto libraries, platforms,
@@ -218,7 +214,6 @@ function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
  * selected domain's product list. Mirrors desktop's AssetList.tsx grouping
  * (a chip per foundation domain with its product count) rather than its
  * literal vertical-list component, matching this file's own chip idiom.
- * `SupplyChainRiskMatrix` remains the only real stated cut.
  *
  * 2026-08-24 (real production feedback): certifications (ACVP/FIPS 140-3/
  * Common Criteria, via the same `getCertsForProduct` desktop reads) and the
@@ -350,9 +345,7 @@ export function MobileMigrateView() {
   }, [hasLinkParams, linkKey, searchParams, updateParams])
 
   // ?open=<productId>: Plan → that product's sheet; Vendors → its vendor's
-  // roadmap sheet. Vendor risk (desktop rings the risk-matrix card of the
-  // product's / the named domain's layer; the phone has no matrix): a
-  // product opens its detail sheet over the risk tab, and a domain id moves
+  // roadmap sheet. On Evidence, a product opens its detail sheet and a domain id moves
   // to the Replace tab on that domain — the phone's only per-domain view —
   // rewriting the URL to that view (replace) so it reloads and shares as such.
   useEffect(() => {
@@ -545,10 +538,13 @@ export function MobileMigrateView() {
       <div className="mb-1">
         <h1 className="sr-only">Migrate</h1>
       </div>
-      <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
-        Pick the cryptography you run to get a sequenced, quantum-safe plan aligned to NIST IR 8547
-        (Initial Public Draft) &amp; CNSA 2.0.
+      <p className="mb-3 text-[11.5px] leading-relaxed text-muted-foreground">
+        Explore catalog evidence and build an illustrative post-quantum migration sequence.
       </p>
+      <aside className="mb-4 rounded-xl border border-primary/25 bg-primary/5 p-3 text-[11px] leading-relaxed text-muted-foreground">
+        <p className="font-semibold text-foreground">{MIGRATION_EDUCATION.heading}</p>
+        <p className="mt-1">{MIGRATION_EDUCATION.boundary}</p>
+      </aside>
 
       <div className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
         {TABS.map((t) => (
@@ -794,9 +790,7 @@ export function MobileMigrateView() {
                     <span className="rounded border border-status-success/30 bg-status-success/10 px-1.5 py-0.5 font-mono text-[10px] text-status-success">
                       {asset.target}
                     </span>
-                    <span className="ml-auto text-[10.5px] font-semibold text-status-warning">
-                      {asset.cnsaYear} · {asset.deadlineLabel}
-                    </span>
+                    <span className="ml-auto text-[10.5px] text-muted-foreground">Illustrative action</span>
                   </div>
                   <p className="mt-2 text-[10.5px] leading-relaxed text-foreground/80">
                     {asset.note}
@@ -814,7 +808,7 @@ export function MobileMigrateView() {
               ) : null}
 
               <p className="text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
-                {asset ? 'Products that replace this' : 'Products'} ·{' '}
+                {asset ? 'Catalog examples for this area' : 'Products'} ·{' '}
                 <span className="text-foreground">{products.length} in catalog</span>
               </p>
               {products.length > 0 && (
@@ -942,9 +936,6 @@ export function MobileMigrateView() {
         }}
       />
 
-      <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The Supply Chain Risk Matrix is on a laptop.
-      </p>
     </div>
   )
 }
@@ -1379,15 +1370,14 @@ function MobilePlanTab({
         </div>
       )}
 
-      {posture.gaps.length > 0 && (
-        <div className="rounded-xl border border-status-error/25 bg-status-error/[0.07] p-3">
-          <p className="text-[11.5px] font-semibold text-status-error">
-            {posture.gaps.length} asset{posture.gaps.length > 1 ? 's have' : ' has'} no GA
-            quantum-safe product yet
+      {posture.cautions.length > 0 && (
+        <div className="rounded-xl border border-status-warning/25 bg-status-warning/[0.07] p-3">
+          <p className="text-[11.5px] font-semibold text-status-warning">
+            {posture.cautions.length} example{posture.cautions.length > 1 ? 's need' : ' needs'} an interim-control discussion
           </p>
           <p className="mt-1 text-[10.5px] text-muted-foreground">
-            {posture.gaps.map((g) => g.label).join(', ')} — deploy a crypto gateway with a hard
-            sunset date. Mitigation is never permanent.
+            {posture.cautions.map((g) => g.label).join(', ')} — verify protocol support,
+            exposure, ownership and an exit condition before choosing a mitigation.
           </p>
         </div>
       )}
@@ -1422,9 +1412,6 @@ function MobilePlanTab({
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="text-[12px] font-semibold text-foreground">{a.label}</span>
                       <Badge tone={decision.tone}>{decision.label}</Badge>
-                      <span className="ml-auto font-mono text-[10.5px] text-status-warning">
-                        {a.cnsaYear}
-                      </span>
                       <Button
                         type="button"
                         variant="ghost"
@@ -1488,8 +1475,8 @@ function MobilePlanTab({
                     ) : (
                       <p className="mt-1 text-[10.5px] text-muted-foreground">
                         {decision.key === 'mitigate'
-                          ? 'No product — mitigate'
-                          : 'No product chosen yet'}
+                          ? 'No catalog example selected — review interim controls'
+                          : 'No catalog example selected yet'}
                       </p>
                     )}
                   </div>
@@ -1513,7 +1500,7 @@ function MobilePlanTab({
         }
         className="h-9 self-end text-[11.5px]"
       >
-        <FileText size={13} /> Export plan + CBOM
+        <FileText size={13} /> Export planning draft (JSON)
       </Button>
     </div>
   )
@@ -2034,6 +2021,13 @@ function MobileVendorRiskTab() {
 
   return (
     <div className="flex flex-col gap-2.5">
+      <div>
+        <h2 className="text-[13px] font-bold text-foreground">Catalog evidence cues</h2>
+        <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
+          These catalog statistics are not likelihood, vendor-risk, suitability or compliance
+          scores, and they do not describe your estate.
+        </p>
+      </div>
       {risks.map((c) => (
         <div key={c.key} className="glass-panel p-3.5">
           <div className="flex items-center justify-between gap-2">

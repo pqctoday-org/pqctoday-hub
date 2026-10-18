@@ -16,6 +16,13 @@ vi.mock('@/hooks/useIsMobileShell', () => ({
   useIsMobileShell: mockUseIsMobileShell,
 }))
 
+// Revision data is unrelated to workbench navigation. Keep this integration
+// suite deterministic and avoid late async hook updates after assertions.
+vi.mock('@/hooks/useRevisions', () => ({
+  useRevisions: () => ({ revisions: [], isLoading: false, error: null }),
+  byRecord: () => [],
+}))
+
 function renderWorkbench() {
   return render(
     <MemoryRouter>
@@ -75,12 +82,13 @@ describe('MigrationWorkbench (integration)', () => {
     expect(screen.queryByText('Your readiness')).not.toBeInTheDocument()
   })
 
-  it('adding an asset to the plan updates readiness + plan count', () => {
+  it('adding an asset updates plan count without claiming readiness', () => {
     renderWorkbench()
     // TLS is the default selected asset → its detail "Add to plan" button shows
     fireEvent.click(screen.getByRole('button', { name: /Add TLS key exchange to plan/i }))
-    // readiness now 100% (tls is drop-in / ready) and 1 in plan
-    expect(screen.getByText('100%')).toBeInTheDocument()
+    expect(screen.getByText('Planning coverage')).toBeInTheDocument()
+    expect(screen.getByText('0%')).toBeInTheDocument()
+    expect(screen.getByText('1 / 10')).toBeInTheDocument()
     expect(useMigrateSelectionStore.getState().plan).toContain('tls')
   })
 
@@ -91,10 +99,10 @@ describe('MigrationWorkbench (integration)', () => {
     expect(screen.getByRole('heading', { name: 'IPsec / IKEv2 VPN' })).toBeInTheDocument()
   })
 
-  it('email asset shows the mitigate gap card (no GA product)', () => {
+  it('email asset explains that interim controls need review', () => {
     renderWorkbench()
     fireEvent.click(screen.getByRole('button', { name: /Secure email/i }))
-    expect(screen.getByText(/No GA quantum-safe product for this yet/i)).toBeInTheDocument()
+    expect(screen.getByText(/Use an interim-control discussion/i)).toBeInTheDocument()
   })
 
   it('foundation domains are reachable (catalog not orphaned)', () => {
@@ -190,7 +198,7 @@ describe('MigrationWorkbench (integration)', () => {
     renderWorkbench()
     fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
     expect(screen.getByText('External-facing live traffic')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Export plan \+ CBOM/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Export planning draft/i })).toBeInTheDocument()
   })
 
   it('vendor roadmaps tab lists vendors with roadmaps', () => {
