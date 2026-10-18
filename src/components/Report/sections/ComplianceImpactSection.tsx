@@ -153,6 +153,35 @@ export const ComplianceImpactSection = ({
           <p className="text-xs text-muted-foreground">{c.notes}</p>
           {(() => {
             const fw = complianceFrameworks.find((f) => f.label === c.framework)
+            if (!fw) return null
+            const [applicability] = applicableFrameworks(
+              { industry: industry || null, country: country || null },
+              [fw]
+            )
+            if (!applicability) return null
+            return (
+              <div
+                className="mt-2 rounded border border-border/70 bg-muted/20 px-2.5 py-2 text-xs text-muted-foreground"
+                data-testid="compliance-applicability-explanation"
+              >
+                <p>
+                  <strong className="text-foreground">Why this is shown:</strong>{' '}
+                  {applicability.reason}
+                </p>
+                {applicability.sourceContext && (
+                  <p className="mt-1">
+                    Publisher relationship: {applicability.sourceContext.relationship}. Publisher
+                    type: {applicability.sourceContext.organizationKind.replaceAll('_', ' ')}.
+                  </p>
+                )}
+                <p className="mt-1">
+                  This is educational context, not a legal applicability decision.
+                </p>
+              </div>
+            )
+          })()}
+          {(() => {
+            const fw = complianceFrameworks.find((f) => f.label === c.framework)
             if (!fw || !bindingDataPresent()) return null
             if (bindingChipFor(fw.bindingStatus, inReaderScope(fw, industry, country)) !== 'scoped')
               return null

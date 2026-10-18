@@ -946,7 +946,8 @@ export const ComplianceView = ({
         )}
 
         {!error && showComplianceSkeleton && (
-          <div className="mt-4 space-y-3" aria-busy="true" aria-label="Loading compliance data">
+          <div className="mt-4 space-y-3" aria-busy="true" role="status">
+            <span className="sr-only">Loading compliance data</span>
             <Skeleton className="h-8 w-2/3" />
             <Skeleton className="h-24 w-full" />
             <Skeleton className="h-12 w-full" />

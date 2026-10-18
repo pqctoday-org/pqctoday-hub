@@ -287,12 +287,12 @@ export function MobileAssessView() {
     const results: ApplicabilityResult<ComplianceFramework>[] = isProfileEmpty(profile)
       ? complianceFrameworks.map((fw) => ({ item: fw, tier: 'advisory' as const, reason: '' }))
       : applicableFrameworks(profile).filter((r) => r.tier !== 'informational')
-    const groups = new Map<ApplicabilityTier, ComplianceFramework[]>()
+    const groups = new Map<ApplicabilityTier, ApplicabilityResult<ComplianceFramework>[]>()
     for (const r of results) {
       const tier: ApplicabilityTier = COMPLIANCE_TIER_ORDER.includes(r.tier) ? r.tier : 'advisory'
       const list = groups.get(tier)
-      if (list) list.push(r.item)
-      else groups.set(tier, [r.item])
+      if (list) list.push(r)
+      else groups.set(tier, [r])
     }
     return groups
   }, [store.industry, store.country, selectedRegion])
@@ -612,7 +612,7 @@ export function MobileAssessView() {
                   <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                     {TIER_META[tier].label}
                   </p>
-                  {complianceGroups.get(tier)!.map((fw) => {
+                  {complianceGroups.get(tier)!.map(({ item: fw, reason }) => {
                     const selected = store.complianceRequirements.includes(fw.label)
                     return (
                       <Button
@@ -632,6 +632,11 @@ export function MobileAssessView() {
                         <span className="text-[10px] text-muted-foreground">
                           Deadline: {fw.deadline}
                         </span>
+                        {reason && (
+                          <span className="text-[10px] leading-snug text-muted-foreground">
+                            Why shown: {reason}
+                          </span>
+                        )}
                       </Button>
                     )
                   })}

@@ -103,6 +103,17 @@ describe('CSWP39AgilityExplorer URL state', () => {
       'true'
     )
   })
+
+  it('opens the official NIST PDF and never a locally published copy', () => {
+    mountExplorer({})
+    const link = screen.getByRole('link', { name: 'Official PDF' })
+    expect(link).toHaveAttribute(
+      'href',
+      'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf'
+    )
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link.getAttribute('href')).not.toMatch(/^\/library\//)
+  })
 })
 
 describe('CSWP39AgilityExplorer — "Frameworks tagged for this step"', () => {

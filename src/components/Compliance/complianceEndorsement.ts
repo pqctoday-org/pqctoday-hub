@@ -10,7 +10,7 @@ function frameworkDetails(fw: ComplianceFramework): string {
   return [
     `**Framework:** ${fw.label}`,
     `**ID:** ${fw.id}`,
-    fw.enforcementBody ? `**Enforcement body:** ${fw.enforcementBody}` : '',
+    fw.enforcementBody ? `**Publisher or scheme body:** ${fw.enforcementBody}` : '',
     fw.countries?.length ? `**Jurisdiction:** ${fw.countries.join(', ')}` : '',
     fw.deadline ? `**Deadline:** ${fw.deadline}` : '',
   ]

@@ -255,6 +255,8 @@ export function buildApplicabilityRegisterCsv(profile: BoardPackProfile): string
     'requires_pqc',
     'binding_basis',
     'deadline',
+    'publisher_relationship',
+    'publisher_type',
     'source',
   ].join(',')
   const results = applicableFrameworks({
@@ -262,7 +264,7 @@ export function buildApplicabilityRegisterCsv(profile: BoardPackProfile): string
     country: profile.country || null,
     region: (profile.region as UserProfile['region']) ?? null,
   }).sort((a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier))
-  const rows = results.map(({ item: fw, tier, reason }) =>
+  const rows = results.map(({ item: fw, tier, reason, sourceContext }) =>
     [
       escapeCsv(fw.id),
       escapeCsv(fw.label),
@@ -272,6 +274,8 @@ export function buildApplicabilityRegisterCsv(profile: BoardPackProfile): string
       escapeCsv(fw.pqcRequirement),
       escapeCsv(fw.bindingBasis ?? ''),
       escapeCsv(fw.deadline),
+      escapeCsv(sourceContext?.relationship ?? 'not classified'),
+      escapeCsv(sourceContext?.organizationKind ?? 'not classified'),
       escapeCsv(fw.website ?? ''),
     ].join(',')
   )
