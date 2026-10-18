@@ -20,6 +20,10 @@ import {
   threatsData,
   type ThreatItem,
 } from '@/data/threatsData'
+import {
+  candidateResponseMaturityText,
+  sitePriorityRationale,
+} from '@/data/threatEducationalAssessment'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -707,8 +711,8 @@ export function MobileThreatsView() {
                 {selected.description}
               </p>
               <p className="mt-1 text-[10.5px] leading-relaxed text-muted-foreground">
-                The priority label is PQC Today&apos;s teaching order based on consequence, exposure
-                horizon and migration difficulty—not likelihood or an assessment of your estate.
+                <span className="font-semibold text-foreground/80">Why this site priority: </span>
+                {sitePriorityRationale(selected)}
               </p>
             </div>
             <div className="border-t border-border pt-3 text-[12px] text-muted-foreground">
@@ -869,9 +873,7 @@ function AtRiskLine({ threat }: { threat: ThreatItem }) {
       <span className="font-semibold text-foreground/80">Candidate response: </span>
       <span>{pqc || <span className="font-normal italic">{NOT_YET_SPECIFIED}</span>}</span>
       {pqc && (
-        <span className="mt-0.5 block text-[10px]">
-          Site-derived suggestion; validate applicability and maturity.
-        </span>
+        <span className="mt-0.5 block text-[10px]">{candidateResponseMaturityText(threat)}</span>
       )}
     </>
   )

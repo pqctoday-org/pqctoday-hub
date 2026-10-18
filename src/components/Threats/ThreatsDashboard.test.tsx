@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ThreatsDashboard } from './ThreatsDashboard'
 import type { ThreatData } from '../../data/threatsData'
@@ -108,8 +108,8 @@ vi.mock('../common/FilterDropdown', () => ({
           {effectiveLabel}: {items.find((i) => i.id === selectedId)?.label || selectedId}
         </Button>
         <ul>
-          {items.map((item) => (
-            <li key={item.id}>
+          {items.map((item, index) => (
+            <li key={`${item.id}-${index}`}>
               <Button
                 onClick={() => {
                   if (isMulti) {
@@ -471,7 +471,7 @@ describe('ThreatsDashboard', () => {
     })
 
     afterEach(() => {
-      usePersonaStore.getState().clearPersona()
+      act(() => usePersonaStore.getState().clearPersona())
     })
 
     it('renders a plain-language orientation card for the curious persona — even with no industries selected', () => {

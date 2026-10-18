@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, act } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import { MobileThreatsView } from './MobileThreatsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -69,8 +69,10 @@ function renderView(url = '/threats') {
 
 describe('MobileThreatsView', () => {
   afterEach(() => {
-    usePersonaStore.getState().setPersona(null)
-    useBookmarkStore.getState().clearMyThreats()
+    act(() => {
+      usePersonaStore.getState().setPersona(null)
+      useBookmarkStore.getState().clearMyThreats()
+    })
   })
 
   it('shows the real total threat count, and no persona-scoped line when no persona is set', () => {

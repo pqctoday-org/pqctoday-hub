@@ -148,3 +148,40 @@ test('desktop Threats cards and dossier do not spill at supported widths', async
     await page.getByRole('button', { name: 'Close details' }).click()
   }
 })
+
+test('desktop Threats controls complete the core journey from the keyboard', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto('/threats')
+  await expect(page.getByRole('heading', { name: /Quantum Threats/i })).toBeVisible({
+    timeout: 15000,
+  })
+
+  const cards = page.getByRole('radio', { name: 'Cards' })
+  await cards.focus()
+  await page.keyboard.press('Space')
+  await expect(cards).toBeChecked()
+
+  const opener = page.getByRole('button', { name: 'Open dossier' }).first()
+  await opener.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('dialog')).toBeVisible()
+
+  const responseTab = page.getByRole('tab', { name: /Incident Response/i })
+  await responseTab.focus()
+  await page.keyboard.press('Enter')
+  await expect(responseTab).toHaveAttribute('aria-selected', 'true')
+
+  const close = page.getByRole('button', { name: 'Close details' })
+  await close.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+
+  const table = page.getByRole('radio', { name: 'Table' })
+  await table.focus()
+  await page.keyboard.press('Space')
+  await expect(table).toBeChecked()
+  const prioritySort = page.getByRole('button', { name: 'Site priority' })
+  await prioritySort.focus()
+  await page.keyboard.press('Enter')
+  await expect(prioritySort.locator('xpath=ancestor::th')).toHaveAttribute('aria-sort', /.+/)
+})

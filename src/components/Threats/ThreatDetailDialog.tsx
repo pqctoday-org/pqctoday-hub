@@ -19,6 +19,11 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router'
 import type { ThreatItem } from '../../data/threatsData'
+import {
+  candidateResponseMaturity,
+  candidateResponseMaturityText,
+  sitePriorityRationale,
+} from '@/data/threatEducationalAssessment'
 import { StatusBadge } from '../common/StatusBadge'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
@@ -161,6 +166,10 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                 Description
               </h3>
               <p className="text-foreground leading-relaxed">{threat.description}</p>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                <span className="font-semibold text-foreground/80">Why this site priority: </span>
+                {sitePriorityRationale(threat)}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -178,8 +187,8 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                 <SpecifiedOrNot value={threat.pqcReplacement} />
                 {threat.pqcReplacement.trim() && (
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    Status: site-derived suggestion. Validate applicability and implementation
-                    maturity against the linked authority and your system context.
+                    {candidateResponseMaturityText(threat)} Validate applicability against the
+                    linked authority and your system context.
                   </p>
                 )}
               </div>
@@ -525,7 +534,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                   `**Industry:** ${threat.industry}`,
                   `**Site teaching priority:** ${threat.criticality}`,
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
-                  `**Candidate response (site-derived):** ${threat.pqcReplacement}`,
+                  `**Candidate response (${candidateResponseMaturity(threat)}):** ${threat.pqcReplacement}`,
                 ].join('\n'),
                 pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}
@@ -545,7 +554,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                   `**Industry:** ${threat.industry}`,
                   `**Site teaching priority:** ${threat.criticality}`,
                   `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
-                  `**Candidate response (site-derived):** ${threat.pqcReplacement}`,
+                  `**Candidate response (${candidateResponseMaturity(threat)}):** ${threat.pqcReplacement}`,
                 ].join('\n'),
                 pageUrl: `/threats?id=${encodeURIComponent(threat.threatId)}`,
               })}

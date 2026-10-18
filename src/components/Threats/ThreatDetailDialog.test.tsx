@@ -77,6 +77,14 @@ function renderDialog(t: ThreatItem, onClose = vi.fn()) {
 }
 
 describe('ThreatDetailDialog — Detection & Response (UX-1 / UX-2)', () => {
+  it('explains site priority and distinguishes component maturity from deployment maturity', () => {
+    renderDialog(threat({}))
+    expect(screen.getByText(/Why this site priority:/i)).toBeInTheDocument()
+    expect(screen.getByText(/does not measure likelihood/i)).toBeInTheDocument()
+    expect(screen.getByText(/standardized components are named/i)).toBeInTheDocument()
+    expect(screen.getByText(/deployment pattern is not verified/i)).toBeInTheDocument()
+  })
+
   it('labels the site-mapped material as educational and does not render unproven generated enrichment', () => {
     renderDialog(threat({}))
     expect(screen.getByText(/Educational Detection & Response Examples/i)).toBeInTheDocument()
