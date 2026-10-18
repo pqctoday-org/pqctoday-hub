@@ -59,7 +59,7 @@ const missingFields = [
 ].map((field) => ({ field, count: countBlank(field) }))
 
 const localPublicUrls = active.filter((row) =>
-  /^(?:file:|\/|\.\.?\/)|(?:public\/library|local-evidence-cache|\/Users\/)/i.test(
+  /^(?:file:|\/|\.\.?\/)|(?:public\/library|local-(?:evidence|source)-cache|\/Users\/)/i.test(
     (row.download_url ?? '').trim()
   )
 )
