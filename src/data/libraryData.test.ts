@@ -359,6 +359,41 @@ describe('libraryData', () => {
     expect(samsung?.shortDescription).toContain('vendor claims')
   })
 
+  it('scopes historical drafts and implementation registries to their actual standing', () => {
+    const semistatic = libraryData.find(
+      (item) => item.referenceId === 'draft-ietf-tls-semistatic-dh'
+    )
+    expect(semistatic?.documentStatus).toBe('Expired Internet-Draft')
+    expect(semistatic?.shortDescription).toContain('never became an RFC')
+    expect(semistatic?.shortDescription).toContain('not as a current TLS requirement')
+
+    const ike = libraryData.find(
+      (item) => item.referenceId === 'Post-Quantum-Traditional-PQ-T-Hybrid-PKI-Authentication-in-t'
+    )
+    expect(ike?.documentStatus).toContain('individual submission')
+    expect(ike?.algorithmFamily).toBe('ML-DSA')
+    expect(ike?.shortDescription).toContain('no IETF endorsement')
+    expect(ike?.shortDescription).toContain('does not itself change key exchange')
+
+    const iso26262 = libraryData.find(
+      (item) => item.referenceId === 'ISO-26262-Road-vehicles-Functional-safety'
+    )
+    expect(iso26262?.shortDescription).toContain('does not prescribe cryptographic algorithms')
+    expect(iso26262?.shortDescription).toContain('only when it can affect a safety-related item')
+
+    const sigstore = libraryData.find((item) => item.referenceId === 'Sigstore-Algorithm-Registry')
+    expect(sigstore?.shortDescription).toContain('not required to implement every')
+    expect(sigstore?.shortDescription).toContain('not operational within Sigstore')
+    expect(sigstore?.shortDescription).not.toContain('post-quantum replacement')
+
+    const autosar = libraryData.find(
+      (item) => item.referenceId === 'AUTOSAR-CP-SWS-CryptoDriver-R23-11'
+    )
+    expect(autosar?.shortDescription).toContain('does not require every ECU')
+    expect(autosar?.shortDescription).toContain('does not prescribe PQC')
+    expect(autosar?.shortDescription).toContain('or define MACsec')
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
