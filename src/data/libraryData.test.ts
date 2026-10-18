@@ -296,6 +296,35 @@ describe('libraryData', () => {
     expect(openidVp?.shortDescription).not.toContain('DIF PE')
   })
 
+  it('labels research estimates and developing standards without turning them into forecasts', () => {
+    const enisa = libraryData.find(
+      (item) => item.referenceId === 'ENISA-State-of-Cybersecurity-2024'
+    )
+    expect(enisa?.lastVerified).toBe('2026-10-17')
+    expect(enisa?.shortDescription).toContain('not a cryptographic standard')
+    expect(enisa?.shortDescription).not.toContain('most European stakeholders')
+
+    const falcon = libraryData.find((item) => item.referenceId === 'Falcon-Spec-v12')
+    expect(falcon?.documentStatus).toContain('submission specification')
+    expect(falcon?.shortDescription).toContain('FIPS 206 as under development')
+    expect(falcon?.shortDescription).toContain('must not be presented as final FIPS 206')
+
+    const gidney = libraryData.find((item) => item.referenceId === 'ref-gidney-factor-rsa')
+    expect(gidney?.documentStatus).toBe('Preprint v1')
+    expect(gidney?.shortDescription).toContain('under stated assumptions')
+    expect(gidney?.shortDescription).toContain('not evidence that such a computer exists')
+
+    const kim = libraryData.find((item) => item.referenceId === 'ref-kim-ecdlp')
+    expect(kim?.documentStatus).toContain('Preprint')
+    expect(kim?.shortDescription).toContain('conditional resource estimates')
+    expect(kim?.shortDescription).toContain('not evidence that the required hardware exists')
+
+    const pont = libraryData.find((item) => item.referenceId === 'ref-pont-downtime')
+    expect(pont?.documentStatus).toBe('Preprint v1')
+    expect(pont?.shortDescription).toContain('non-tight lower bound')
+    expect(pont?.shortDescription).toContain('not an established deadline')
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
