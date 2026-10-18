@@ -42,13 +42,19 @@ export function VendorConcentrationRiskPanel({ openRef }: { openRef?: string } =
         />
       )}
       {openRef && openDomain && (
-        <p role="status" className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-          Showing catalog-wide evidence cues. The linked item maps to the <strong className="text-foreground">{openDomain}</strong> category;
-          inspect its product evidence on the Replace tab.
+        <p
+          role="status"
+          className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
+        >
+          Showing catalog-wide evidence cues. The linked item maps to the{' '}
+          <strong className="text-foreground">{openDomain}</strong> category; inspect its product
+          evidence on the Replace tab.
         </p>
       )}
       <div>
-        <h3 className="text-sm font-semibold text-foreground">Catalog concentration &amp; evidence signals</h3>
+        <h3 className="text-sm font-semibold text-foreground">
+          Catalog concentration &amp; evidence signals
+        </h3>
         <p className="text-xs text-muted-foreground">
           {selectedCount > 0
             ? `Describes the ${selectedCount} catalog example${selectedCount !== 1 ? 's' : ''} you selected; it is not an assessment of your estate or suppliers.`

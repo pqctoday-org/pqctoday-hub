@@ -88,9 +88,10 @@ export function computePosture(
   plannedAssets.sort(byWave)
 
   const total = plannedAssets.length + foundations.length
-  const productSelectedN = [...plannedAssets.map((a) => a.id), ...foundations.map((f) => f.id)].filter(
-    (id) => (choice[id] ?? []).length > 0
-  ).length
+  const productSelectedN = [
+    ...plannedAssets.map((a) => a.id),
+    ...foundations.map((f) => f.id),
+  ].filter((id) => (choice[id] ?? []).length > 0).length
   const needsProductN = total - productSelectedN
   const planningPct = total === 0 ? 0 : Math.round((productSelectedN / total) * 100)
 

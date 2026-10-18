@@ -5,12 +5,8 @@ import { MIGRATION_EDUCATION } from '@/data/migrationEducation'
 export function MigrationEducationScope({ compact = false }: { compact?: boolean }) {
   return (
     <aside className="rounded-xl border border-primary/25 bg-primary/5 p-3 text-xs leading-relaxed text-muted-foreground">
-      <p className="font-semibold text-foreground">
-        {MIGRATION_EDUCATION.heading}
-      </p>
-      <p className={compact ? 'mt-1' : 'mt-1.5'}>
-        {MIGRATION_EDUCATION.boundary}
-      </p>
+      <p className="font-semibold text-foreground">{MIGRATION_EDUCATION.heading}</p>
+      <p className={compact ? 'mt-1' : 'mt-1.5'}>{MIGRATION_EDUCATION.boundary}</p>
       {!compact && (
         <p className="mt-1.5">
           <a

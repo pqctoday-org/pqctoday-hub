@@ -562,7 +562,8 @@ function GapCard({ asset, hasCandidates }: { asset: ReplaceAsset; hasCandidates:
         <strong className={toneClass.text}>{decision.label}</strong>.
         {isRoadmap
           ? ' Check the vendor roadmaps tab and verify the current source before planning.'
-          : hasCandidates && ' Catalog candidates are listed below; validate suitability and current evidence.'}
+          : hasCandidates &&
+            ' Catalog candidates are listed below; validate suitability and current evidence.'}
       </p>
     </div>
   )

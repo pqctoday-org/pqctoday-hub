@@ -39,12 +39,14 @@ describe('CRQC_ESTIMATES (the Threats sources list)', () => {
     }
   })
 
-  it('NSA names both documents, marks the newer one, and keeps the 2030–2033 range', () => {
+  it('NSA identifies the current FAQ and keeps its 2030–2031 mandate range', () => {
     const nsa = CRQC_ESTIMATES.find((e) => e.source.startsWith('NSA CNSA 2.0'))!
-    expect(nsa.source).toMatch(/2022.*FAQ version 2\.1, December 2024/)
-    expect(nsa.notes).toMatch(/version 1\.0/)
-    expect(nsa.notes).toMatch(/December 2024 FAQ is the newer/)
-    expect([nsa.yearLow, nsa.yearHigh]).toEqual([2030, 2033])
+    expect(nsa.source).toMatch(/FAQ version 2\.2 \(August 2026\)/)
+    expect(nsa.notes).toMatch(/1 January 2027/)
+    expect(nsa.notes).toMatch(/31 December 2030/)
+    expect(nsa.notes).toMatch(/31 December 2031/)
+    expect(nsa.notes).toMatch(/separate 2035 NSM-10 goal/)
+    expect([nsa.yearLow, nsa.yearHigh]).toEqual([2030, 2031])
     expect(nsa.kind).toBe('migration-deadline')
   })
 
@@ -118,16 +120,21 @@ describe('CRQC_ESTIMATES and the published claims', () => {
     }
   })
 
-  it('every estimate stands on a claim tagged as an estimate, and its newer statement as an update', () => {
+  it('every row stands on its original list claim or a newer statement in that lineage', () => {
     for (const e of CRQC_ESTIMATES) {
-      expect(getOpenClaim(e.claimId!)!.topics, e.source).toContain('estimates')
+      const topics = getOpenClaim(e.claimId!)!.topics ?? []
+      expect(topics.includes('estimates') || topics.includes('estimate-update'), e.source).toBe(
+        true
+      )
       const shown = headStatement(e.claimId!)!
       if (shown.id !== e.claimId) expect(shown.topics, e.source).toContain('estimate-update')
     }
   })
 
-  it('every claim that stands for an estimate is tagged for it, and the open questions are the tagged ones', () => {
-    const tagged = new Set(claimsWithTopic('estimates').map((c) => c.id))
+  it('every displayed row has a list or update tag, and open-question tags remain open', () => {
+    const tagged = new Set(
+      [...claimsWithTopic('estimates'), ...claimsWithTopic('estimate-update')].map((c) => c.id)
+    )
     for (const e of CRQC_ESTIMATES) expect(tagged.has(e.claimId!), e.source).toBe(true)
     expect(claimsWithTopic('open-questions').every((c) => c.state === 'Open')).toBe(true)
   })

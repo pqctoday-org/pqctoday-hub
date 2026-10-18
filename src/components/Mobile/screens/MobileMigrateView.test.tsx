@@ -864,7 +864,10 @@ describe('MobileMigrateView', () => {
       it('<productId> opens that product sheet over the evidence tab; closing drops ?open', () => {
         const [hsm] = productsForDomain('hsm')
         renderMobile(`/migrate?tab=vendorrisk&open=${encodeURIComponent(hsm.productId)}`)
-        expect(screen.getByRole('button', { name: 'Evidence' })).toHaveAttribute('aria-pressed', 'true')
+        expect(screen.getByRole('button', { name: 'Evidence' })).toHaveAttribute(
+          'aria-pressed',
+          'true'
+        )
         const sheet = screen.getByTestId('migrate-product-detail-sheet')
         expect(within(sheet).getAllByText(hsm.softwareName).length).toBeGreaterThan(0)
         fireEvent.click(within(sheet).getAllByRole('button', { name: /^close$/i })[0])

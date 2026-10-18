@@ -604,9 +604,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             },
             {
               framework: 'NSM-8 / CNSA 2.0',
-              requirement: 'ML-KEM-1024 exclusively for US federal/NSS key establishment by 2033.',
+              requirement:
+                'CNSA 2.0 algorithms for NSS by 31 December 2031 unless otherwise noted.',
               pqcNote:
-                'Databases holding classified data or supporting federal systems must use ML-KEM-1024 DEK wrapping. New capabilities: PQC by 2027. All legacy: PQC-only by 2033. HYOK with FIPS 140-3 Level 3+ HSM mandatory.',
+                'For in-scope National Security Systems, new acquisitions must be CNSA 2.0-compliant from 1 January 2027 and unsupported equipment and services must be phased out by 31 December 2030 unless excepted. CNSA 2.0 specifies ML-KEM-1024 for key establishment, but the applicable architecture and validation policy determine how a database wraps DEKs and whether an HSM or HYOK design is required.',
               color: 'border-status-error/30 bg-status-error/5',
               labelColor: 'text-status-error',
             },

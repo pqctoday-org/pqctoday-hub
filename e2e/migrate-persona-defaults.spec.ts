@@ -28,7 +28,9 @@ async function setRole(page: Page, role: string) {
   }, role)
 }
 
-test('certification engineer gets evidence-first planning without false readiness', async ({ page }) => {
+test('certification engineer gets evidence-first planning without false readiness', async ({
+  page,
+}) => {
   await setRole(page, 'cert-engineer')
   await page.goto('/migrate')
 
@@ -54,16 +56,25 @@ test('role narrowing can be dismissed and all educational tabs are reachable', a
   await page.getByRole('button', { name: 'See all' }).first().click()
   await expect(roleNote).toHaveCount(0)
 
-  for (const name of ['Plan & sequence', 'Vendor roadmaps', 'Evidence gaps', 'Replace what you own']) {
+  for (const name of [
+    'Plan & sequence',
+    'Vendor roadmaps',
+    'Evidence gaps',
+    'Replace what you own',
+  ]) {
     await page.getByRole('tab', { name }).click()
     await expect(page.getByRole('tab', { name })).toHaveAttribute('aria-selected', 'true')
   }
   await page.getByRole('tab', { name: 'Evidence gaps' }).click()
-  await expect(page.getByText(/not likelihood, vendor-risk, suitability or compliance scores/i)).toBeVisible()
+  await expect(
+    page.getByText(/not likelihood, vendor-risk, suitability or compliance scores/i)
+  ).toBeVisible()
 })
 
 for (const width of [320, 390]) {
-  test(`phone ${width}px keeps the four-step flow usable without document overflow`, async ({ page }) => {
+  test(`phone ${width}px keeps the four-step flow usable without document overflow`, async ({
+    page,
+  }) => {
     await page.setViewportSize({ width, height: 844 })
     await setRole(page, 'cert-engineer')
     await page.goto('/migrate')
@@ -72,7 +83,9 @@ for (const width of [320, 390]) {
     for (const name of ['Replace', 'Plan', 'Vendors', 'Evidence']) {
       await page.getByRole('button', { name, exact: true }).click()
     }
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > innerWidth + 1
+    )
     expect(overflow).toBe(false)
   })
 }

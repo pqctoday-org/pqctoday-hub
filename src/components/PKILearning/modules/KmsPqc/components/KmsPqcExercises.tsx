@@ -80,11 +80,11 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       id: 'compliance-rotation',
       title: '5. Compliance-Driven Rotation',
       description:
-        'Plan a key rotation schedule for 500 certificates aligned with CNSA 2.0 (2025-2033), the NIST IR 8547 initial public draft (proposed 2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
+        'Plan a key rotation schedule for 500 certificates against CNSA 2.0 FAQ version 2.2 (2027/2030/2031), the NIST IR 8547 initial public draft (proposed 2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'CNSA 2.0 phases PQC into U.S. national security systems by category: software/firmware signing and networking by 2030, with web, cloud, and operating systems following by 2033. The storage impact multiplier ranges from 1.0x (AES-256 DEKs) to 30.0x (ECDSA → ML-DSA-65 code signing keys).',
+        'CNSA 2.0 category guidance puts software/firmware signing and traditional networking at 2030; current FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 2031 unless otherwise noted. The storage impact multiplier ranges from 1.0x (AES-256 DEKs) to 30.0x (ECDSA → ML-DSA-65 code signing keys).',
       config: { step: 3 },
     },
   ]

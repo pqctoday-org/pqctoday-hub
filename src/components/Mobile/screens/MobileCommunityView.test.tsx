@@ -38,9 +38,7 @@ describe('MobileCommunityView', () => {
 
   it('states directory limits and preserves the written-consent rule', () => {
     renderView()
-    expect(
-      screen.getByText(/Inclusion is not an endorsement or ranking/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Inclusion is not an endorsement or ranking/i)).toBeInTheDocument()
     expect(screen.getByText(/only with written consent/i)).toBeInTheDocument()
   })
 

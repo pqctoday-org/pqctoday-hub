@@ -446,9 +446,9 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
               <InlineTooltip term="NIST SP 800-227">NIST SP 800-227</InlineTooltip> (2025), which
               covers KEMs generally rather than ZTNA. Read them together, not as one citing the
               other. Organizations implementing zero trust should plan PQC adoption in their ZTNA
-              architecture aligned with CNSA 2.0 timelines (exclusive CNSA 2.0 use by 2030–2033 by
-              equipment class; NSM-10 targets all NSS quantum-resistant by 2035; NSA prefers pure
-              PQC and does not require hybrid).
+              architecture against the authority that actually applies. For NSS, CNSA 2.0 FAQ
+              version 2.2 records 2027, 2030 and 2031 milestones; the separate 2035 date is the
+              broader NSM-10 objective. CNSA 2.0 does not generally require hybrid constructions.
             </p>
           </div>
         </CollapsibleSection>

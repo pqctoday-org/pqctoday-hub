@@ -262,9 +262,9 @@ const Step2ApproachAndDeadlines: React.FC = () => (
               source: 'ANSSI',
             },
             {
-              year: '2033',
+              year: '2031',
               event:
-                'CNSA 2.0 web/cloud/servers & operating systems exclusive (NSM-10 targets all NSS quantum-resistant by 2035)',
+                'CNSA 2.0 algorithms mandated for NSS unless otherwise noted (FAQ version 2.2); NSM-10 separately targets broader quantum-risk reduction by 2035',
               source: 'NSA',
             },
             {

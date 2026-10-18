@@ -246,7 +246,7 @@ function extractDeadlineYear(deadline: string): number | undefined {
   const trimmed = deadline.trim().toLowerCase()
   if (trimmed.startsWith('ongoing') || trimmed.startsWith('annual')) return undefined
   // An explicit "YYYY-YYYY" range whose start year has already passed is a phased
-  // mandate that is *in force now* (e.g. CNSA 2.0 "2025-2033", ANSSI "2025-2030").
+  // mandate that is *in force now* (e.g. CNSA 2.0's 2027/2030/2031 NSS milestones).
   // Selecting the far endpoint would bucket it as a distant ('mid'/'long') deadline
   // and bury the active phase, so treat a straddling range as the current year.
   const range = deadline.replace(/[–—]/g, '-').match(/\b(20\d{2})-(20\d{2})\b/)

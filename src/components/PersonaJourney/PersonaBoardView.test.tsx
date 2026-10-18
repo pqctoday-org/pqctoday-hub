@@ -292,13 +292,24 @@ describe('resolveRoleBoardVariant — one fallback rule, shared by both callers'
     expect(resolveRoleBoardVariant('curious', 'nope').order).toBe(1)
   })
 
-  it("every role's variants are ordered 1..6, with no gaps or repeats", () => {
+  it("every role's variants are ordered with no gaps or repeats", () => {
     for (const personaId of ALL_PERSONAS) {
       // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
-      expect(PERSONA_JOURNEY_BOARD_VARIANTS[personaId].map((v) => v.order)).toEqual([
-        1, 2, 3, 4, 5, 6,
-      ])
+      const variants = PERSONA_JOURNEY_BOARD_VARIANTS[personaId]
+      expect(variants.map((v) => v.order)).toEqual(
+        Array.from({ length: variants.length }, (_, i) => i + 1)
+      )
     }
+  })
+
+  it('does not include the removed certification-engineer contribution board', () => {
+    expect(PERSONA_JOURNEY_BOARD_VARIANTS['cert-engineer'].map((v) => v.id)).toEqual([
+      'testing',
+      'entropy',
+      'module',
+      'stages',
+      'hardware',
+    ])
   })
 
   it('PERSONA_JOURNEY_BOARD stays the order-1 board of each role', () => {

@@ -790,7 +790,9 @@ export function MobileMigrateView() {
                     <span className="rounded border border-status-success/30 bg-status-success/10 px-1.5 py-0.5 font-mono text-[10px] text-status-success">
                       {asset.target}
                     </span>
-                    <span className="ml-auto text-[10.5px] text-muted-foreground">Illustrative action</span>
+                    <span className="ml-auto text-[10.5px] text-muted-foreground">
+                      Illustrative action
+                    </span>
                   </div>
                   <p className="mt-2 text-[10.5px] leading-relaxed text-foreground/80">
                     {asset.note}
@@ -935,7 +937,6 @@ export function MobileMigrateView() {
           }, true)
         }}
       />
-
     </div>
   )
 }
@@ -1373,11 +1374,12 @@ function MobilePlanTab({
       {posture.cautions.length > 0 && (
         <div className="rounded-xl border border-status-warning/25 bg-status-warning/[0.07] p-3">
           <p className="text-[11.5px] font-semibold text-status-warning">
-            {posture.cautions.length} example{posture.cautions.length > 1 ? 's need' : ' needs'} an interim-control discussion
+            {posture.cautions.length} example{posture.cautions.length > 1 ? 's need' : ' needs'} an
+            interim-control discussion
           </p>
           <p className="mt-1 text-[10.5px] text-muted-foreground">
-            {posture.cautions.map((g) => g.label).join(', ')} — verify protocol support,
-            exposure, ownership and an exit condition before choosing a mitigation.
+            {posture.cautions.map((g) => g.label).join(', ')} — verify protocol support, exposure,
+            ownership and an exit condition before choosing a mitigation.
           </p>
         </div>
       )}

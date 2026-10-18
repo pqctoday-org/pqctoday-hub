@@ -243,7 +243,8 @@ export function PlanTab({ posture, onGoToReplace, openRef, onOpenChange }: PlanT
           <div className="flex items-center gap-2 text-status-warning">
             <AlertTriangle size={16} aria-hidden />
             <span className="text-sm font-semibold">
-              {posture.cautions.length} example{posture.cautions.length > 1 ? 's need' : ' needs'} an interim-control discussion
+              {posture.cautions.length} example{posture.cautions.length > 1 ? 's need' : ' needs'}{' '}
+              an interim-control discussion
             </span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">

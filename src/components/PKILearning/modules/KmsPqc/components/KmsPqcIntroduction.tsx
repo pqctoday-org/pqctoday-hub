@@ -471,9 +471,9 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               },
               {
                 phase: 'Phase 3: Full PQC',
-                timeline: '2028-2033',
+                timeline: '2028-2031',
                 description:
-                  'Deprecate classical-only keys per NIST IR 8547. Migrate all remaining certificates to PQC-only or composite. CNSA 2.0 exclusively PQC by 2033.',
+                  'Complete the in-scope migration using approved profiles. CNSA 2.0 FAQ version 2.2 mandates its algorithms for NSS by 31 December 2031 unless otherwise noted; NIST IR 8547 remains an initial public draft with a separate proposed civilian transition horizon.',
               },
             ].map((p) => (
               <div key={p.phase} className="bg-muted/50 rounded-lg p-3 border border-border">
