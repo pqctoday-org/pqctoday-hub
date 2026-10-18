@@ -4,7 +4,6 @@ import { Activity, ChevronDown, Cpu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   CRQC_ESTIMATE_KIND_LABELS,
-  CRQC_QUBIT_THRESHOLDS,
   CURRENT_QUANTUM_COMPUTERS,
   getCrqcForecast,
   getCrqcMigrationDeadlines,
@@ -120,16 +119,6 @@ export const CrqcCapabilityStrip: React.FC<{
     []
   )
 
-  // The most-urgent target needs the fewest logical qubits — show progress toward the
-  // low-end Shor target for ECC-256, derived from the same CRQC_QUBIT_THRESHOLDS
-  // the trajectory chart's reference lines use (Threats #1), not a separate hardcoded
-  // number. Published estimates range to ~2,330+.
-  const shorTargetQubits = CRQC_QUBIT_THRESHOLDS.bitcoinEcc256
-  const progressPct = useMemo(
-    () => Math.min(100, (leadMachine.estimatedLogicalQubits / shorTargetQubits) * 100),
-    [leadMachine, shorTargetQubits]
-  )
-
   return (
     <section
       className="glass-panel p-4 mb-4 border border-border"
@@ -213,30 +202,16 @@ export const CrqcCapabilityStrip: React.FC<{
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-3">
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Hardware progress
+            Demonstrated hardware snapshot
           </div>
           <div className="text-2xl font-bold text-primary">
             {leadMachine.estimatedLogicalQubits}
-            <span className="text-sm font-normal text-muted-foreground">
-              {' '}
-              / ~{shorTargetQubits.toLocaleString()} LQ
-            </span>
-          </div>
-          <div
-            className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden"
-            role="progressbar"
-            aria-valuenow={Math.round(progressPct)}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Logical-qubit progress toward the smallest Shor target"
-          >
-            <div className="h-full bg-primary rounded-full" style={{ width: `${progressPct}%` }} />
+            <span className="text-sm font-normal text-muted-foreground"> recorded LQ</span>
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
-            ~{shorTargetQubits.toLocaleString()} LQ is the low-end ECC-256 estimate
-            (Google/Ethereum, 2026); earlier work ranged to ~2,330+ LQ (Roetteler et al. 2017,
-            arXiv:1706.06752). The bar to break RSA-2048 keeps falling: ~20M physical qubits (2019)
-            → &lt;1M (Gidney 2025) → &lt;100k projected (qLDPC, 2026).
+            Largest count in this curated machine list. Demonstrations use different hardware, code
+            distances and error-correction claims, so this number is not a percentage of a
+            cryptanalytic target and must not be read as a countdown.
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
             The <em>logical</em>-qubit count for the same RSA-2048 target has fallen too: 2n+2,

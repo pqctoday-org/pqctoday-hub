@@ -4,15 +4,9 @@ import { test, expect } from '@playwright/test'
 /**
  * Persona-overwhelm audit acceptance — /threats page.
  *
- * Goal (per audit `pqctoday-priv/docs/platform/ux/page-audits/
- * 2026-05-22-persona-overwhelm/threats.md`): when a persona is set but
- * no industry is picked, the page rendered the full threat corpus
- * unfiltered. The new PERSONA_THREATS_DEFAULT_INDUSTRIES constant
- * provides sensible per-persona default industries; the dashboard now
- * narrows the corpus to those industries on first paint.
- *
- * Executive's default = ['Finance & Banking', 'Government & Defense']
- * Researcher's default = [] (full corpus, no narrowing — AC-5 invariant).
+ * Role is not applicability. A role with no chosen sector must see the neutral
+ * catalogue and an explicit scope prompt; it must not inherit an imagined
+ * industry. This pins the post-audit behavior for two different roles.
  */
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -27,9 +21,7 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('executive persona (no industry picked) narrows /threats and reset works', async ({
-  page,
-}) => {
+test('executive persona does not imply an industry on /threats', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem(
       'pqc-learning-persona',
@@ -52,29 +44,14 @@ test('executive persona (no industry picked) narrows /threats and reset works', 
 
   await page.goto('/threats')
 
-  // PersonaDefaultsBanner is keyed by role="status".
-  const banner = page
-    .getByRole('status')
-    .filter({ hasText: /matched to your role/i })
-    .first()
-  await expect(banner).toBeVisible({ timeout: 15000 })
-
-  const bannerText = await banner.textContent()
-  // Banner copy comes from the shared PersonaDefaultsBanner:
-  // "Showing N threats matched to your[ Persona] role (M hidden) · Show all T"
-  const match = bannerText?.match(
-    /Showing (\d+) threats? matched to your(?: \w+)? role.*?Show all (\d+)/
+  await expect(page.getByRole('heading', { name: /Quantum Threats/i })).toBeVisible({
+    timeout: 15000,
+  })
+  await expect(page.getByRole('group', { name: /Complete your scope/i })).toContainText(
+    /Still unknown: sector/i
   )
-  expect(match, `banner text: ${bannerText ?? '(null)'}`).not.toBeNull()
-  const matched = parseInt(match![1], 10)
-  const total = parseInt(match![2], 10)
-  expect(matched).toBeGreaterThan(0)
-  expect(matched).toBeLessThan(total)
-
-  // Click "Show all N" — sets ?prefs=off, banner disappears.
-  await banner.getByRole('button', { name: /^Show all \d+$/ }).click()
-  await expect(page).toHaveURL(/[?&]prefs=off(&|$)/, { timeout: 5000 })
-  await expect(banner).not.toBeVisible()
+  await expect(page.getByText('71 in scope', { exact: true })).toBeVisible()
+  await expect(page.getByRole('status').filter({ hasText: /matched to your role/i })).toHaveCount(0)
 })
 
 test('researcher persona (no industry picked) does not narrow /threats', async ({ page }) => {
@@ -104,4 +81,107 @@ test('researcher persona (no industry picked) does not narrow /threats', async (
   // Researcher has no default industries → no banner.
   const banner = page.getByRole('status').filter({ hasText: /matched to your role/i })
   await expect(banner).toHaveCount(0)
+})
+
+test('phone Threats runner stays within the viewport and exposes progressive search', async ({
+  page,
+}) => {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 })
+    await page.goto('/threats')
+
+    await expect(page.getByPlaceholder('Search threats, crypto, mitigations…')).toBeVisible({
+      timeout: 15000,
+    })
+    await expect(page.getByRole('button', { name: /Show 12 more/i })).toBeVisible()
+
+    const overflow = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(overflow.scrollWidth, `${width}px phone page`).toBeLessThanOrEqual(overflow.clientWidth)
+  }
+})
+
+test('tablet-width Threats shell stays within the viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 })
+  await page.goto('/threats')
+
+  // The responsive breakpoint intentionally uses the compact shell at 768px.
+  await expect(page.getByPlaceholder('Search threats, crypto, mitigations…')).toBeVisible({
+    timeout: 15000,
+  })
+  const overflow = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }))
+  expect(overflow.scrollWidth, '768px tablet page').toBeLessThanOrEqual(overflow.clientWidth)
+})
+
+test('desktop Threats cards and dossier do not spill at supported widths', async ({ page }) => {
+  for (const width of [1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/threats')
+    await expect(page.getByRole('heading', { name: /Quantum Threats/i })).toBeVisible({
+      timeout: 15000,
+    })
+    await page.getByRole('radio', { name: 'Cards' }).click()
+    await expect(page.getByRole('radio', { name: 'Cards' })).toBeChecked()
+
+    const cardOverflow = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(cardOverflow.scrollWidth, `${width}px card view`).toBeLessThanOrEqual(
+      cardOverflow.clientWidth
+    )
+
+    await page.getByRole('button', { name: 'Open dossier' }).first().click()
+    await expect(page.getByRole('button', { name: 'Close details' })).toBeVisible()
+    const dossierOverflow = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }))
+    expect(dossierOverflow.scrollWidth, `${width}px dossier`).toBeLessThanOrEqual(
+      dossierOverflow.clientWidth
+    )
+    await page.getByRole('button', { name: 'Close details' }).click()
+  }
+})
+
+test('desktop Threats controls complete the core journey from the keyboard', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto('/threats')
+  await expect(page.getByRole('heading', { name: /Quantum Threats/i })).toBeVisible({
+    timeout: 15000,
+  })
+
+  const cards = page.getByRole('radio', { name: 'Cards' })
+  await cards.focus()
+  await page.keyboard.press('Space')
+  await expect(cards).toBeChecked()
+
+  const opener = page.getByRole('button', { name: 'Open dossier' }).first()
+  await opener.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('dialog')).toBeVisible()
+
+  const responseTab = page.getByRole('tab', { name: /Incident Response/i })
+  await responseTab.focus()
+  await page.keyboard.press('Enter')
+  await expect(responseTab).toHaveAttribute('aria-selected', 'true')
+
+  const close = page.getByRole('button', { name: 'Close details' })
+  await close.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+
+  const table = page.getByRole('radio', { name: 'Table' })
+  await table.focus()
+  await page.keyboard.press('Space')
+  await expect(table).toBeChecked()
+  const prioritySort = page.getByRole('button', { name: 'Site priority' })
+  await prioritySort.focus()
+  await page.keyboard.press('Enter')
+  await expect(prioritySort.locator('xpath=ancestor::th')).toHaveAttribute('aria-sort', /.+/)
 })

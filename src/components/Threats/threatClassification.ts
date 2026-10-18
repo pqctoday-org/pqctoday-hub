@@ -66,8 +66,8 @@ export const THREAT_CLASS_DEFS: Record<ThreatClass, ThreatClassDef> = {
   },
   hnfl: {
     id: 'hnfl',
-    label: 'HNFL / TNFL',
-    full: 'Harvest/Tamper Now, Forge Later',
+    label: 'HNFL',
+    full: 'Harvest/Tamper Now, Forge Later (PQC Today teaching label)',
     clock: "credential's validity period",
     property: 'Authenticity',
   },
@@ -80,7 +80,7 @@ export const THREAT_CLASS_DEFS: Record<ThreatClass, ThreatClassDef> = {
   },
 }
 
-/** Signature/authentication crypto → forge-later (HNFL/TNFL). */
+/** Signature/authentication crypto → forge-later (HNFL). */
 const SIGNATURE_HINTS = [
   'ecdsa',
   'eddsa',
@@ -215,21 +215,21 @@ export interface ShorTierDef {
 export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
   imminent: {
     id: 'imminent',
-    label: 'Tier 1 — Imminent',
-    short: 'Imminent',
+    label: 'Tier 1 — Lower-resource Shor target',
+    short: 'Lower resource',
     color: 'text-destructive',
     bg: 'bg-destructive/10 border-destructive/20',
     blurb:
-      'Shor-breakable with the fewest logical qubits (≲1,500). ECC-256 sits here alongside RSA-2048 — equal urgency, not equal key size.',
+      'Shor-breakable within the lower resource band used by this teaching model (up to about 6,200 logical qubits). This is a resource grouping, not an arrival forecast.',
   },
   near: {
     id: 'near',
-    label: 'Tier 2 — Near-term',
-    short: 'Near-term',
+    label: 'Tier 2 — Higher-resource Shor target',
+    short: 'Higher resource',
     color: 'text-warning',
     bg: 'bg-warning/10 border-warning/20',
     blurb:
-      'Shor-breakable but needs more resource (larger RSA / P-384+). Still on the migration clock — close behind Tier 1, just needing more quantum resources.',
+      'Shor-breakable, but above this teaching model’s lower resource band. It still requires migration; the tier does not predict when a capable machine will exist.',
   },
   grover: {
     id: 'grover',
@@ -238,15 +238,16 @@ export const SHOR_TIER_DEFS: Record<ShorTier, ShorTierDef> = {
     color: 'text-primary',
     bg: 'bg-primary/10 border-primary/20',
     blurb:
-      'Symmetric/hash crypto only quadratically weakened by Grover. Double the key size (AES-256, SHA-384+) to stay safe.',
+      'Grover gives a quadratic search speed-up in the idealized model, but real attack cost depends on circuit depth, error correction and parallelism. Use standards-approved strengths such as AES-256 where required.',
   },
   safe: {
     id: 'safe',
-    label: 'PQC-safe',
-    short: 'PQC-safe',
+    label: 'Standardized PQC',
+    short: 'Standardized PQC',
     color: 'text-success',
     bg: 'bg-success/10 border-success/20',
-    blurb: 'Already a NIST PQC parameter set — no quantum-resource exposure.',
+    blurb:
+      'A standardized post-quantum parameter set with no known Shor or Grover break at its intended security level. Implementations still need validation and side-channel review.',
   },
   unknown: {
     id: 'unknown',
@@ -266,11 +267,11 @@ const ALGO_INDEX = ALGORITHM_SECURITY_DATA.map((a) => ({
 
 /**
  * Classify a single algorithm token into a Shor tier. Reuses the published
- * logical-qubit estimates: standard deployed Shor-broken asymmetric (RSA-2048/
- * 3072 and every ECC curve, ≲6,200 logical qubits) is Tier-1 imminent — this
- * is the row's core point that ECC-256 carries the *same* urgency as RSA-2048,
- * not a smaller one. Oversized variants (RSA-4096, P-521) are Tier-2 near,
- * Grover-weakened symmetric/hash is Tier-3, and PQC sets are safe.
+ * logical-qubit estimates. Standard deployed Shor-broken asymmetric algorithms
+ * up to this teaching model's 6,200-LQ ceiling are grouped in the lower-resource
+ * tier; larger estimates are grouped separately. These are resource bands, not
+ * predictions of arrival time. Grover-affected symmetric/hash algorithms form
+ * a third tier, and standardized PQC parameter sets are labelled separately.
  */
 const IMMINENT_QUBIT_CEILING = 6200
 

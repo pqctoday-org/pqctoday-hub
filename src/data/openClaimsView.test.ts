@@ -76,10 +76,10 @@ describe('headStatement: the latest statement of a claim', () => {
 
 describe('the published claims, read through headStatement', () => {
   it('shows the newer NSA and ANSSI statements first and keeps the older ones one link away', () => {
-    expect(headStatement('crqc-nsa-cnsa2-dates')?.id).toBe('crqc-nsa-cnsa2-faq-v21-dates')
+    expect(headStatement('crqc-nsa-cnsa2-dates')?.id).toBe('crqc-nsa-cnsa2-faq-v22-dates')
     expect(headStatement('crqc-anssi-phase3')?.id).toBe('crqc-anssi-faq-2025-buy-after-2030')
-    expect(getOpenClaim('crqc-nsa-cnsa2-faq-v21-dates')?.earlier?.[0].claim).toBe(
-      'crqc-nsa-cnsa2-dates'
+    expect(getOpenClaim('crqc-nsa-cnsa2-faq-v22-dates')?.earlier?.[0].claim).toBe(
+      'crqc-nsa-cnsa2-faq-v21-dates'
     )
   })
 

@@ -107,10 +107,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'CNSA 2.0 exclusive use (web, cloud, OS)', value: '2033' },
+            { label: 'CNSA 2.0 algorithms mandated for NSS', value: '2031' },
             { label: 'Planning year for a quantum computer (our own)', value: '2035 (2030–2041)' },
             { label: 'Your migration takes', value: '5 yrs' },
-            { label: 'All national-security systems', value: '2035' },
+            { label: 'Separate NSM-10 federal goal', value: '2035' },
           ],
           punchline: 'Three of these four are not yours to move.',
           footnote:

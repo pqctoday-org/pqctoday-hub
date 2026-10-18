@@ -399,19 +399,19 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/threats': {
     executive:
-      '"Your Exposure" at the top shows your sector\'s threats and "Your migration deadline" — the year the Mosca arithmetic says you must be done; the Severity chips in the Threat Catalog cut the list to Critical.',
-    grc: 'Sort the Table view by Evidence to put the best-documented records first; each threat opens with its Data Provenance (peer review, vetting body, last verified) and a Reference Source link you can cite.',
+      'Pick your sector in "Your Exposure" to narrow the teaching catalog. The Mosca result is the latest safe-start year produced by example assumptions—not a compliance deadline; replace X, Y and Z with your organisation’s figures.',
+    grc: 'Open a threat dossier to inspect its Evidence section: source identity, claims checked, caveats, second sources and last-verified date. Evidence sorting is available only in the Researcher table view.',
     developer:
-      'The "By protocol" chips — TLS / HTTPS, SSH, VPN / IPsec and more — filter threats by what you build on, and say whether each match is stated in the record or inferred; each threat lists its At-Risk Cryptography and PQC Mitigation.',
+      'The "By protocol" chips — TLS / HTTPS, SSH, VPN / IPsec and more — filter threats by what you build on, and say whether each match is stated in the record or inferred; each dossier separates At-Risk Cryptography from its site-derived Candidate response.',
     architect:
-      'Each threat names its At-Risk Cryptography, its PQC Mitigation and the implementation pitfalls of the replacement (side-channel, fault, RNG); the Class chips split HNDL from HNFL so you know whether the exposure is data or signatures.',
+      'Each dossier names its At-Risk Cryptography, its site-derived Candidate response and any recorded implementation pitfalls (side-channel, fault, RNG); the Class chips split HNDL from HNFL so you know whether the exposure is data or signatures.',
     researcher:
-      '"CRQC Threat Horizon" lists the CRQC arrival estimates by source and logical-qubit progress per machine, with a Mosca calculator; the Evidence column sorts records by peer review, source and confidence.',
+      '"CRQC Threat Horizon" separates arrival surveys, migration deadlines and machine demonstrations. In the Table view, Evidence sorting ranks claim-lineage coverage and trusted-source presence; it is not a peer-review or confidence score.',
     'cert-engineer':
-      'Each threat opens with its Data Provenance (peer review, vetting body, last verified); where a replacement algorithm has attack notes, the detail links to Implementation Attacks on /algorithms.',
-    ops: 'Each threat\'s Detection & Response section has a "Detection / SOC" tab and an "Incident Response" tab; use the Industry filter for your sector and the Severity chips to work Critical first.',
+      'Each threat opens with an Evidence section showing source identity, checked claims, caveats, second sources and last verification; where a replacement has attack notes, the dossier links to Implementation Attacks on /algorithms.',
+    ops: 'Each threat\'s Educational detection and response section has a "Detection / SOC" tab and an "Incident Response" tab; use the Industry filter for your sector and the Site priority chips as teaching order, not as an assessment of your estate.',
     curious:
-      'A line above the catalog tells you how many known threats there are and what one is; pick an industry in the list on the left to see the ones closest to you, and "Your Exposure" at the top sums it up.',
+      'A line above the catalog explains what the records represent. Pick a sector in the "Your Exposure" section to narrow the list, then open any card for a plain-language scenario, candidate response and evidence.',
   },
   '/playground': {
     executive:

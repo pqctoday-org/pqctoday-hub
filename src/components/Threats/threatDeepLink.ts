@@ -13,9 +13,18 @@
 import type { ThreatItem } from '@/data/threatsData'
 import { threatMatchesClass, type ThreatClass } from './threatClassification'
 import { matchesThreatQuery } from './threatsUrlParams'
+import { getThreatRecordType, type ThreatRecordType } from '@/data/threatRecordTypes'
 
 export type ThreatExclusion =
-  'industry' | 'persona-scope' | 'criticality' | 'class' | 'q' | 'mine' | 'tier' | 'lens'
+  | 'industry'
+  | 'persona-scope'
+  | 'criticality'
+  | 'class'
+  | 'record-type'
+  | 'q'
+  | 'mine'
+  | 'tier'
+  | 'lens'
 
 export interface ThreatScope {
   /** Explicit industries in effect (URL or picked); empty = none picked. */
@@ -24,6 +33,7 @@ export interface ThreatScope {
   personaScope: readonly string[]
   criticality: string | null
   threatClass: string | null
+  recordType?: ThreatRecordType | null
   query: string
   /** "Show only my threats" is on and this is the bookmark list. */
   onlyMine?: readonly string[] | null
@@ -49,6 +59,7 @@ export function threatExclusions(threat: ThreatItem, scope: ThreatScope): Threat
     !threatMatchesClass(threat, scope.threatClass as ThreatClass)
   )
     out.push('class')
+  if (scope.recordType && getThreatRecordType(threat) !== scope.recordType) out.push('record-type')
   if (scope.query.trim() && !matchesThreatQuery(threat, scope.query)) out.push('q')
   if (scope.onlyMine && !scope.onlyMine.includes(threat.threatId)) out.push('mine')
   if (scope.tierExcludes) out.push('tier')
@@ -60,6 +71,7 @@ const EXCLUSION_LABELS: Record<ThreatExclusion, string> = {
   'persona-scope': 'added its industry to your role’s default scope',
   criticality: 'cleared the criticality filter',
   class: 'cleared the threat-class filter',
+  'record-type': 'cleared the record-type filter',
   q: 'cleared the search',
   mine: 'turned off “My threats only” for this visit',
   tier: 'cleared the trust-tier filter',

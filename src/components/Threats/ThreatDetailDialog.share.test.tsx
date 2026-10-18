@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import type { ThreatItem } from '@/data/threatsData'
@@ -23,14 +24,13 @@ const threat: ThreatItem = {
 }
 
 describe('ThreatDetailDialog — Share inside the focus-locked dialog', () => {
-  beforeEach(() => {
+  it('Copy link copies the clean threat link and leaves the dialog open', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText: vi.fn().mockResolvedValue(undefined) },
+      value: { writeText },
       configurable: true,
     })
-  })
-
-  it('Copy link copies the clean threat link and leaves the dialog open', async () => {
     const onClose = vi.fn()
     // Rendered on a filtered URL: the shared link must NOT carry these params.
     render(
@@ -45,15 +45,10 @@ describe('ThreatDetailDialog — Share inside the focus-locked dialog', () => {
     expect(dialog.contains(menu)).toBe(false)
     const copy = within(menu).getByRole('button', { name: /Copy link/ })
     // Full pointer sequence, as a real click would deliver it.
-    fireEvent.pointerDown(copy)
-    fireEvent.mouseDown(copy)
-    fireEvent.mouseUp(copy)
-    fireEvent.click(copy)
+    await user.click(copy)
 
     await vi.waitFor(() =>
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-        `${window.location.origin}/threats?id=FIN%20001`
-      )
+      expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/threats?id=FIN%20001`)
     )
     expect(onClose).not.toHaveBeenCalled()
     await vi.waitFor(() => expect(screen.queryByRole('menu')).toBeNull())

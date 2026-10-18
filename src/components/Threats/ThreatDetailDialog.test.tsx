@@ -77,6 +77,20 @@ function renderDialog(t: ThreatItem, onClose = vi.fn()) {
 }
 
 describe('ThreatDetailDialog — Detection & Response (UX-1 / UX-2)', () => {
+  it('explains site priority and distinguishes component maturity from deployment maturity', () => {
+    renderDialog(threat({}))
+    expect(screen.getByText(/Why this site priority:/i)).toBeInTheDocument()
+    expect(screen.getByText(/does not measure likelihood/i)).toBeInTheDocument()
+    expect(screen.getByText(/standardized components are named/i)).toBeInTheDocument()
+    expect(screen.getByText(/deployment pattern is not verified/i)).toBeInTheDocument()
+  })
+
+  it('labels the site-mapped material as educational and does not render unproven generated enrichment', () => {
+    renderDialog(threat({}))
+    expect(screen.getByText(/Educational Detection & Response Examples/i)).toBeInTheDocument()
+    expect(screen.getByText(/self-published Applied Quantum/i)).toBeInTheDocument()
+    expect(screen.queryByText('Threat Analysis')).not.toBeInTheDocument()
+  })
   it('lists the source use cases for a decrypt-later threat, each with its v3.0 page', () => {
     renderDialog(threat({}))
     expect(screen.getByText('Hybrid Downgrade Detection')).toBeInTheDocument()
@@ -221,9 +235,7 @@ describe('ThreatDetailDialog — Evidence panel shows lineage, not scores (rulin
       screen.getByText('Source document: confirmed to be the cited document')
     ).toBeInTheDocument()
     expect(
-      screen.getByText(
-        'Claims checked against the cited document: 2 supported · 1 could not be confirmed'
-      )
+      screen.getByText('Maintenance-pipeline claims check: 2 supported · 1 could not be confirmed')
     ).toBeInTheDocument()
     expect(screen.getByText('Last verified 2026-09-20')).toBeInTheDocument()
     expect(screen.queryByText(/confidence score|accuracy/i)).not.toBeInTheDocument()

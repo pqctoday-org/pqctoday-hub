@@ -62,14 +62,14 @@ export const REGULATORY_CONSTANT_PROVENANCE: Readonly<Record<string, ConstantPro
     note: 'Was read from the US sim deadline, i.e. EO 14412 key establishment — a different policy that happens to share the year. Decoupled 2026-09-25.',
   },
   'CNSA_2_0.networkingExclusive': {
-    kind: 'timeline',
-    eventId: 'united-states-nsa-cnsa-2-0-exclusive-os-web-cloud',
-    field: 'StartYear',
+    kind: 'policy_constant',
+    evidence:
+      'NSA CNSA 2.0 FAQ v2.2: CNSA 2.0 algorithms are mandated by 31 December 2031 unless otherwise noted',
   },
   'CNSA_2_0.fullEnforcement': {
     kind: 'policy_constant',
     evidence:
-      'NSA CNSA 2.0 FAQ (library "NSA CNSA 2.0 FAQ"): "NSA intends that all NSS will be quantum-resistant by 2035"',
+      'NSA CNSA 2.0 FAQ v2.2: CNSA 2.0 algorithms are mandated by 31 December 2031 unless otherwise noted; 2035 is a separate NSM-10 goal',
   },
   'CNSA_2_0.publishedDate': {
     kind: 'timeline',

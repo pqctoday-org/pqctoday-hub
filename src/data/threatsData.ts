@@ -11,6 +11,7 @@ import {
   UNRATED_CRITICALITY,
   type ReviewedThreatClass,
 } from './threatRowRules'
+import { threatRecordTypeFor, type ThreatRecordType } from './threatRecordTypes'
 
 export interface ThreatData {
   industry: string
@@ -48,6 +49,9 @@ export interface ThreatData {
   /** Publisher of the original document when `source_url` points at a mirror
    *  copy (e.g. "PCI Security Standards Council") — the link says so. */
   sourceMirrorOf?: string
+  /** Editorial kind: keeps scenarios, policy signals and evidence from being
+   * presented as if they were one comparable severity-ranked population. */
+  recordType?: ThreatRecordType
 }
 
 export interface SecondarySource {
@@ -157,6 +161,7 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     lastVerified: row.last_verified || undefined,
     threatClass: parseThreatClass(row.threat_class),
     sourceMirrorOf: row.source_mirror_of?.trim() || undefined,
+    recordType: threatRecordTypeFor(row.threat_id || ''),
     secondarySources: (() => {
       const found = parseSecondarySources(row.secondary_source_ref, row.secondary_claims)
       return found.length ? found : undefined

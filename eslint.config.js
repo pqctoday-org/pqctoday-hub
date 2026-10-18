@@ -405,6 +405,10 @@ export default defineConfig([
                 // stack on a phone; pure-moved out of the Quantum Threats module). The phone
                 // Threats screen shows the same cards desktop does, from this one component.
                 '!@/components/common/EstimateClaims',
+                // ThreatRecordTypeBadge.tsx (common, 2026-10-17) — a compact,
+                // layout-neutral semantic label shared by the desktop table/cards
+                // and the purpose-built phone list/sheet so record kinds cannot drift.
+                '!@/components/common/ThreatRecordTypeBadge',
                 // SuccessionLinks.tsx (common, 2026-10-04) — same category: a small,
                 // self-contained "Newer document" / "Replaces" list of links with no
                 // desktop-only layout (it stacks on a phone; kept out of the Library

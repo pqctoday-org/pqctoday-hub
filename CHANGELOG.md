@@ -29,6 +29,26 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.166.0] - 2026-10-17
+
+The Threats experience now separates scenarios from policy, implementation and evidence records; presents CRQC uncertainty without invented trends; and gives both scoped and unscoped learners a clearer path through the catalogue.
+
+### Changed
+
+- **Threat records now say what kind of evidence they are** [view:/threats] [persona:curious] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: a short primer explains harvest-now-decrypt-later and harvest-now-forge-later, while every card, table row and detail view distinguishes threat scenarios, implementation vulnerabilities, migration constraints, policy signals, adoption milestones, quantum-capability evidence and educational guidance. A shareable record-type filter prevents unlike entries from being compared as though they were equivalent threats.
+- **CRQC evidence is taught as uncertain source claims, not a smooth forecast** [view:/threats] [persona:curious] [persona:executive] [persona:grc] [persona:researcher] [persona:cert-engineer]: the former continuous trajectory graphic is replaced by discrete demonstrations and roadmap markers with their scope and comparability limits. Source cards retain their individual estimates and lineage instead of being turned into a percentage-complete story.
+- **Candidate responses are framed as questions to validate** [view:/threats] [persona:developer] [persona:architect] [persona:cert-engineer] [persona:ops]: catalogue suggestions no longer read as prescribed mitigations. Detail views explain that each response is site-derived educational guidance and prompt the learner to verify maturity, applicability and evidence before using it.
+
+### Fixed
+
+- **Unscoped visitors no longer receive made-up personal exposure figures** [view:/threats] [persona:curious] [persona:executive] [persona:grc]: the page first explains what a sector and role selection will change, keeps the catalogue available in neutral mode, and only calculates a personal exposure summary after the learner supplies the needed context.
+- **Threat navigation remains usable on phones and from shared links** [view:/threats] [persona:curious] [persona:developer] [persona:cert-engineer] [persona:ops]: the phone view adds purpose-built search and progressive loading, preserves record-type and threat deep links, expands far enough to reveal a linked record, and returns to that record after its detail sheet closes. Desktop sort controls use real buttons and announce their sort state to assistive technology.
+- **CNSA 2.0 and NSM-10 dates are no longer conflated** [view:/threats] [view:/] [persona:executive] [persona:grc] [persona:cert-engineer]: NSA's current 2027 acquisition, 2030 phase-out and 2031 NSS algorithm-mandate milestones replace the superseded category schedule. The separate NSM-10 objective to mitigate as much federal quantum risk as feasible by 2035 remains clearly identified as a different claim.
+
+### Data
+
+- **Current threat-source claims carry explicit freshness and provenance states** [view:/threats] [persona:researcher] [persona:cert-engineer] [persona:grc]: all published records now identify their source-link quality and registered source, stale future-tense statements were revised or bounded by date, and the open-claims lineage preserves the superseded CNSA material instead of deleting its history.
+
 ## [4.165.0] - 2026-10-17
 
 Compliance source labels now explain who published an item, why it appears for the selected profile, and what its evidence can establish. Official publications open at their publisher; copied third-party documents are excluded from the public Library.

@@ -790,6 +790,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'United States:NSA — NSS Acquisitions CNSA 2.0 Required',
   ],
   'united-states-nsa-nss-quantum-resistant-majority': [
+    'United States:NSA — CNSA 2.0 Algorithms Mandated for NSS',
     'United States:NSA — NSS Quantum Resistant Majority',
   ],
   'united-states-nsa-operating-systems-transition': [
