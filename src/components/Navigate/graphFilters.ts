@@ -21,6 +21,13 @@ export interface GraphFilters {
   disabledSubs: ReadonlySet<string>
   /** Upper bound on nodes rendered — an absolute count, not a percentage of an invisible total. */
   maxNodes: number
+  /**
+   * Nodes the user navigated to (a connection followed in the detail panel)
+   * that the type/sub-category filters or the count cap would otherwise
+   * leave out. They are always drawn, on top of the cap, so a click that
+   * lands on one never selects a record the scene is not showing.
+   */
+  pinnedNodeIds?: ReadonlySet<string>
 }
 
 /** `${type}::${sub}` — the same composite key applyFilters already uses for sub-category centroids. */
@@ -92,6 +99,13 @@ export function rankVisibleNodes(
       if (node) picked.push(node)
       // eslint-disable-next-line security/detect-object-injection -- q is this loop's own numeric index bounded by cursors.length, not user input
       cursors[q] = cursor + 1
+    }
+  }
+  const pinned = filters.pinnedNodeIds
+  if (pinned && pinned.size > 0) {
+    const have = new Set(picked.map((n) => n.id))
+    for (const n of graph.nodes) {
+      if (pinned.has(n.id) && !have.has(n.id)) picked.push(n)
     }
   }
   return picked

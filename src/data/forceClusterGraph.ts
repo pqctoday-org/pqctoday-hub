@@ -72,6 +72,11 @@ export interface ForceClusterNode {
 
 const TOOL_NAME_BY_ID = new Map(WORKSHOP_TOOLS.map((t) => [t.id, t.name]))
 
+/** Patent titles arrive with the source's search-highlight markup (`<b>post-quantum</b>`); a graph label is plain text. */
+function plainText(value: string): string {
+  return value.replace(/<[^>]*>/g, '').trim()
+}
+
 function learnModuleLink(moduleId: string): { label: string; href: string } {
   // eslint-disable-next-line security/detect-object-injection -- moduleId comes from this same codebase's own CSV-declared reverse-link fields, not user input
   const title = MODULE_CATALOG[moduleId]?.title ?? moduleId
@@ -325,7 +330,7 @@ function buildNodes(
     const id = `pat-${slug(patent.patentNumber)}`
     nodes.set(id, {
       id,
-      label: patent.title,
+      label: plainText(patent.title),
       type: 'patent',
       sub: patent.applicationDomain[0] || 'Uncategorized',
       description: `${patent.assignee} — ${patent.patentNumber}`,

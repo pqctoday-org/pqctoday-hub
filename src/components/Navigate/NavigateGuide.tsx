@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { BookOpen, List, Route } from 'lucide-react'
+import { BookOpen, List, Route, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '@/data/learningPersonas'
 
@@ -21,9 +21,10 @@ interface NavigateGuideProps {
   persona: PersonaId | null
   onTour: () => void
   onList: () => void
+  onDismiss: () => void
 }
 
-export function NavigateGuide({ persona, onTour, onList }: NavigateGuideProps) {
+export function NavigateGuide({ persona, onTour, onList, onDismiss }: NavigateGuideProps) {
   return (
     <section
       className="glass-panel absolute left-3 right-3 top-3 z-10 max-w-xl space-y-2 p-3 sm:left-4 sm:right-auto sm:top-4"
@@ -35,6 +36,15 @@ export function NavigateGuide({ persona, onTour, onList }: NavigateGuideProps) {
         <h2 id="navigate-guide-title" className="text-sm font-semibold text-foreground">
           Explore how the hub connects
         </h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="-my-1 -mr-1 ml-auto h-7 w-7 shrink-0"
+          onClick={onDismiss}
+          aria-label="Close guide"
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+        </Button>
       </div>
       <p className="text-xs leading-relaxed text-muted-foreground">
         Each node is a hub record; each line is a declared relationship in the dataset. Darker nodes
