@@ -394,6 +394,38 @@ describe('libraryData', () => {
     expect(autosar?.shortDescription).toContain('or define MACsec')
   })
 
+  it('keeps demonstrations, product pages, and educational posts within their evidence', () => {
+    const safe = libraryData.find(
+      (item) => item.referenceId === 'Safe-Wallet-Safe-sol-multisig-signature-verification'
+    )
+    expect(safe?.shortDescription).toContain('does not document secp256r1')
+    expect(safe?.shortDescription).toContain('not a PQC mechanism')
+
+    const internet2 = libraryData.find(
+      (item) => item.referenceId === 'Internet2-PQC-Demo-on-the-National-Backbone'
+    )
+    expect(internet2?.shortDescription).toContain(
+      'FIPS 203 specifies ML-KEM key establishment rather than bulk data encryption'
+    )
+    expect(internet2?.shortDescription).toContain('not an independent product certification')
+
+    const pci = libraryData.find(
+      (item) => item.referenceId === 'PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management'
+    )
+    expect(pci?.shortDescription).toContain('does not recommend migration from TDES to AES')
+    expect(pci?.manualCategory).toBe('Compliance & Certification')
+
+    const securosys = libraryData.find(
+      (item) => item.referenceId === 'Securosys-Primus-HSM-CyberVault-PQC-ready'
+    )
+    expect(securosys?.shortDescription).toContain('A6129, A6130 and A6131')
+    expect(securosys?.shortDescription).toContain('not by themselves FIPS 140 module validation')
+
+    const acos = libraryData.find((item) => item.referenceId === 'ACS-ACOSJ-P-PBOC-3.0-DC-EC-Card')
+    expect(acos?.shortDescription).toContain('does not show that PBOC 3.0 requires SM2')
+    expect(acos?.shortDescription).toContain('which algorithm was exercised')
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
