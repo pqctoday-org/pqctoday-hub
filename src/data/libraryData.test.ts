@@ -269,6 +269,33 @@ describe('libraryData', () => {
     expect(unsigned?.shortDescription).toContain('not a general way to bypass')
   })
 
+  it('separates protocol specifications from ecosystem and migration claims', () => {
+    const slip10 = libraryData.find((item) => item.referenceId === 'SLIP-0010')
+    expect(slip10?.lastVerified).toBe('2026-10-17')
+    expect(slip10?.shortDescription).toContain('only hardened private-child derivation')
+    expect(slip10?.shortDescription).toContain('does not mention Solana')
+    expect(slip10?.protocolOrToolImpact).not.toContain('Solana')
+
+    const bip340 = libraryData.find((item) => item.referenceId === 'BIP-340')
+    expect(bip340?.documentStatus).toBe('Deployed')
+    expect(bip340?.shortDescription).toContain('does not define MuSig, MuSig2')
+    expect(bip340?.shortDescription).toContain('PQCtoday migration note:')
+
+    const erc4337 = libraryData.find((item) => item.referenceId === 'Ethereum-EIP4337-AA')
+    expect(erc4337?.documentTitle).toContain('ERC-4337')
+    expect(erc4337?.shortDescription).toContain("signature field's meaning")
+    expect(erc4337?.shortDescription).toContain('does not specify ML-DSA, Falcon')
+
+    const openidVci = libraryData.find((item) => item.referenceId === 'OpenID4VCI-Spec')
+    expect(openidVci?.shortDescription).toContain('optional cryptographic key binding')
+    expect(openidVci?.shortDescription).toContain('does not mention EUDI')
+
+    const openidVp = libraryData.find((item) => item.referenceId === 'OpenID4VP-Spec')
+    expect(openidVp?.shortDescription).toContain('DCQL queries')
+    expect(openidVp?.shortDescription).toContain('does not mention EUDI')
+    expect(openidVp?.shortDescription).not.toContain('DIF PE')
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
