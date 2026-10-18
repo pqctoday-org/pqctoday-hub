@@ -2,7 +2,7 @@
 generated: 2026-10-17
 collection: library
 documents_processed: 2
-enrichment_method: claude-claude-sonnet-5-5
+enrichment_method: automated extraction, human-reviewed
 ---
 
 ## BSI TR-02102-1
@@ -58,7 +58,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Source Document**: BSI-TR-02102-1.pdf (568,388 bytes, 20,000 extracted chars)
 - **Extraction Timestamp**: 2026-10-17T16:14:03
 - **Evidence SHA-256**: f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a
-- **Generation Model**: claude-sonnet-5-5 (claude)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: f601cdf25c000b43
 - **Window Chars**: 20000
 
@@ -117,7 +117,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Source Document**: ANSSI-s-views-on-crypto-agility.pdf (292,647 bytes, 14,554 extracted chars)
 - **Extraction Timestamp**: 2026-10-17T16:14:03
 - **Evidence SHA-256**: 3358f58e50dd09047055cf68ac03cdd061e66657f2475d7063d7ee4ed61bc017
-- **Generation Model**: claude-sonnet-5-5 (claude)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 3358f58e50dd0904
 - **Window Chars**: 14554
 
@@ -176,7 +176,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: 10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio.html (81,505 bytes, 11,499 extracted chars)
 - **Extraction Timestamp**: 2026-08-18T19:56:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -449,7 +449,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: 21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.html (68,554 bytes, 7,594 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -1046,7 +1046,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: A-Gentle-Introduction-to-Lattice-Based-Cryptography.pdf (5,683,687 bytes, 16,726 extracted chars)
 - **Extraction Timestamp**: 2026-09-09T19:31:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -1103,7 +1103,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: A-Multifaceted-Look-at-Starlink-Performance.pdf (2,934,270 bytes, 16,726 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:46
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -1322,7 +1322,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: A-Scenario-Based-Evaluation-of-CRQC-AI-Vulnerability-Spectru.html (44,172 bytes, 5,126 extracted chars)
 - **Extraction Timestamp**: 2026-09-09T19:31:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -1487,7 +1487,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: A-look-at-the-latest-post-quantum-signature-standardization.html (567,935 bytes, 11,654 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -1544,7 +1544,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: AACS-Introduction-and-Common-Cryptographic-Elements-Book-Rev.pdf (1,862,877 bytes, 17,953 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -1817,7 +1817,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ACVP-ML-DSA-JSON-Specification.html (170,371 bytes, 6,618 extracted chars)
 - **Extraction Timestamp**: 2026-10-15T08:13:13
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 041ef3bf965f245c
 - **Window Chars**: 6618
 
@@ -1984,7 +1984,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ALTER-DATABASE-ENCRYPTION-KEY-Transact-SQL.html (52,551 bytes, 3,217 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -3229,7 +3229,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar.pdf (3,791,096 bytes, 23,380 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:37
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -3664,7 +3664,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: About-Updating-SafeNet-Network-HSM.html (26,822 bytes, 14,825 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:39
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -4261,7 +4261,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Anchors-Post-Quantum-Command-Provenance-for-Autonomous-Machi.html (61,290 bytes, 7,427 extracted chars)
 - **Extraction Timestamp**: 2026-09-11T09:19:25
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -5236,7 +5236,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: BIP-361-Post-Quantum-Migration-and-Legacy-Signature-Sunset.html (22,141 bytes, 11,690 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -6157,7 +6157,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: BSI-Hinweise-zu-aktuellen-Entwicklungen-um-Classic-McEliece.pdf (162,449 bytes, 14,496 extracted chars)
 - **Extraction Timestamp**: 2026-10-16T00:40:06
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 91080d26a4d0a04c
 - **Window Chars**: 14496
 
@@ -6324,7 +6324,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Barriers-to-Secure-OT-Communication-Why-Johnny-Can-t-Authent.pdf (929,188 bytes, 12,881 extracted chars)
 - **Extraction Timestamp**: 2026-10-09T17:22:03
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: c1f3945b3fef398c
 - **Window Chars**: 12881
 
@@ -8111,7 +8111,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: CISA-AA21-131A-DarkSide.html (74,827 bytes, 17,071 extracted chars)
 - **Extraction Timestamp**: 2026-10-09T17:22:04
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 29c9e968e46b8804
 - **Window Chars**: 17071
 
@@ -8224,7 +8224,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: CISA-IR-ALERT-H-16-056-01.html (63,367 bytes, 12,452 extracted chars)
 - **Extraction Timestamp**: 2026-10-09T17:22:05
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 00020d7cbe37ee53
 - **Window Chars**: 12452
 
@@ -8337,7 +8337,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: CISA-OT-Primary-Mitigations-2025.pdf (729,244 bytes, 7,319 extracted chars)
 - **Extraction Timestamp**: 2026-10-09T17:22:04
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: c0b9fc67ba2dad73
 - **Window Chars**: 7319
 
@@ -10232,7 +10232,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Choosing-a-Cloud-Key-Management-Model.html (137,541 bytes, 8,178 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -11099,7 +11099,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html (369,216 bytes, 9,436 extracted chars)
 - **Extraction Timestamp**: 2026-09-01T06:08:22
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -11372,7 +11372,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment.html (45,555 bytes, 10,084 extracted chars)
 - **Extraction Timestamp**: 2026-08-31T19:38:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -11429,7 +11429,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Crypto-getRandomValues-method-Web-APIs-MDN.html (155,676 bytes, 2,731 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -11810,7 +11810,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: DCSA-Information-Model-v3-0.pdf (2,566,936 bytes, 21,371 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:39
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -12353,7 +12353,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: DVB-BlueBook-A165-Extensions-to-the-CI-Plus-Specification.pdf (1,998,347 bytes, 22,180 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -13004,7 +13004,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: EBA-RTS-SCA-2018-389.html (165,553 bytes, 14,287 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -13925,7 +13925,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: EMV-Key-Management-Explained.pdf (2,826,318 bytes, 17,090 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:43
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -14090,7 +14090,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: EN-18031-3-2024.pdf (1,277,759 bytes, 11,797 extracted chars)
 - **Extraction Timestamp**: 2026-10-01T19:43:19
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -15119,7 +15119,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: EPA-Guidance-on-Improving-Cybersecurity-at-Drinking-Water-an.pdf (458,249 bytes, 17,535 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:35
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -15230,7 +15230,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us.pdf (1,408,734 bytes, 17,953 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -15719,7 +15719,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp.pdf (70,119 bytes, 9,236 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -17234,7 +17234,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch.pdf (765,637 bytes, 16,308 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -17291,7 +17291,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ETSI-TS-103-765-1-Rail-Telecommunications-RT-FRMCS-Transport.pdf (657,010 bytes, 15,735 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -17348,7 +17348,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ETSI-TS-103-765-2-Rail-Telecommunications-RT-FRMCS-Service-S.pdf (418,909 bytes, 16,726 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:37
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -17405,7 +17405,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ETSI-TS-103-765-4-Rail-Telecommunications-RT-FRMCS-On-Networ.pdf (202,812 bytes, 14,338 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -18218,7 +18218,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: EUCC-Guidelines-on-Cryptography.html (88,278 bytes, 1,930 extracted chars)
 - **Extraction Timestamp**: 2026-10-15T08:23:25
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: bfdab4d9fab4520c
 - **Window Chars**: 1930
 
@@ -18871,7 +18871,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub.pdf (295,610 bytes, 10,438 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:37
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -19198,7 +19198,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: FERC-Security-Program-for-Hydropower-Projects-Division-of-Da.pdf (437,278 bytes, 18,553 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:35
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -20227,7 +20227,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: FRA-Information-Guide-on-Positive-Train-Control-in-49-CFR-Pa.pdf (277,108 bytes, 8,027 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -20446,7 +20446,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Falcon-Towards-FN-DSA-Technical-Overview.pdf (578,498 bytes, 6,665 extracted chars)
 - **Extraction Timestamp**: 2026-09-09T19:31:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -20557,7 +20557,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Federal-PKI-Policy-Authority.html (157,903 bytes, 7,227 extracted chars)
 - **Extraction Timestamp**: 2026-08-18T19:56:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -21100,7 +21100,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: GFMA-Quantum-Migration-Mapping-the-Emerging-Landscape-Octobe.pdf (1,675,799 bytes, 13,845 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -22399,7 +22399,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C.html (145,863 bytes, 16,099 extracted chars)
 - **Extraction Timestamp**: 2026-08-18T19:56:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -22942,7 +22942,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html (210,605 bytes, 10,063 extracted chars)
 - **Extraction Timestamp**: 2026-09-01T06:08:21
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -23107,7 +23107,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Hypericum-a-post-quantum-digital-signature-for-standardizati.html (2,462,195 bytes, 12,570 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:29
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -23596,7 +23596,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2010-560.pdf (284,377 bytes, 15,802 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:41:21
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 0978667900eba39e
 - **Window Chars**: 15802
 
@@ -23655,7 +23655,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2014-535.pdf (509,596 bytes, 16,117 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:41:22
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 1b96d44df47511d3
 - **Window Chars**: 16117
 
@@ -23714,7 +23714,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2016-421.pdf (474,109 bytes, 15,612 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:41:23
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 2d84c504e4286d94
 - **Window Chars**: 15612
 
@@ -23773,7 +23773,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2018-421.pdf (950,943 bytes, 14,290 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:29:10
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 23fa887ff217f14a
 - **Window Chars**: 14290
 
@@ -23832,7 +23832,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2020-1203.pdf (1,580,033 bytes, 16,326 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:41:24
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 3b53cf70c8cde605
 - **Window Chars**: 16326
 
@@ -23891,7 +23891,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2020-1533.pdf (521,194 bytes, 16,726 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:29:06
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 3189ba0432e73a90
 - **Window Chars**: 16726
 
@@ -23950,7 +23950,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2022-024.pdf (499,908 bytes, 14,508 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:41:24
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 37863df80532a7fe
 - **Window Chars**: 14508
 
@@ -24009,7 +24009,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2022-816.pdf (516,485 bytes, 17,052 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:29:07
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: ef42cf18bc7bf448
 - **Window Chars**: 17052
 
@@ -24068,7 +24068,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2024-116.pdf (589,361 bytes, 15,551 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:29:09
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 2bf9bc8b4e9177f0
 - **Window Chars**: 15551
 
@@ -24127,7 +24127,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2024-127.pdf (737,019 bytes, 15,735 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:47:32
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 36caef2c44ef64b0
 - **Window Chars**: 15735
 
@@ -24186,7 +24186,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2024-202.pdf (520,475 bytes, 16,726 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:47:33
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 213ac1a49144fd3f
 - **Window Chars**: 16726
 
@@ -24245,7 +24245,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2024-853.pdf (805,902 bytes, 16,535 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:29:08
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 2324812291c340d9
 - **Window Chars**: 16535
 
@@ -24304,7 +24304,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IACR-ePrint-2025-699.pdf (2,774,095 bytes, 19,362 extracted chars)
 - **Extraction Timestamp**: 2026-10-14T21:47:35
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: d0c48bbb34da4fde
 - **Window Chars**: 19362
 
@@ -24579,7 +24579,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ICAO-Assembly-Resolution-A41-19-Aviation-Cybersecurity.pdf (124,245 bytes, 6,576 extracted chars)
 - **Extraction Timestamp**: 2026-08-18T19:56:24
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -24690,7 +24690,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IEC-61850-Meets-IEC-62351-Securing-GOOSE-Power-Grid-Weakness.html (66,019 bytes, 8,701 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -27069,7 +27069,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IMO-MSC-FAL-1-Circ-3-Rev-2-Guidelines-on-Maritime-Cyber-Risk.pdf (424,627 bytes, 12,629 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -27558,7 +27558,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M.html (87,341 bytes, 3,932 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:47
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -27615,7 +27615,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com.html (86,140 bytes, 4,128 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:48
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -27780,7 +27780,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part.html (104,369 bytes, 5,698 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:48
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -27999,7 +27999,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ISO-IEC-7816-4-2020-Identification-cards-Integrated-circuit.html (85,794 bytes, 3,831 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:49
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -28812,7 +28812,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Institute-of-Commercial-Cryptography-Standards.html (62,738 bytes, 1,331 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -29085,7 +29085,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Internet2-InCommon-Federation.html (110,628 bytes, 9,387 extracted chars)
 - **Extraction Timestamp**: 2026-08-23T15:31:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -29196,7 +29196,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Introduction-to-the-IETF.html (86,257 bytes, 7,556 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:36
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -29415,7 +29415,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard.html (82,310 bytes, 4,009 extracted chars)
 - **Extraction Timestamp**: 2026-10-15T07:58:08
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 540a8216f2e54740
 - **Window Chars**: 4009
 
@@ -30230,7 +30230,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Lattice-based-Signature-Schemes-for-Bitcoin.html (17,288 bytes, 2,676 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -30557,7 +30557,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: LoRaWAN-Regional-Parameters.pdf (1,443,984 bytes, 13,299 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:45
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -30614,7 +30614,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Looma-Low-Latency-Post-Quantum-Authentication-for-TLS-1-3-in.html (103,312 bytes, 20,000 extracted chars)
 - **Extraction Timestamp**: 2026-09-11T09:48:26
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -31373,7 +31373,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Mathematics-of-Isogeny-Based-Cryptography.html (40,405 bytes, 3,845 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -31430,7 +31430,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Matter-1-6-Core-Specification.pdf (15,679,164 bytes, 18,762 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:36
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -32081,7 +32081,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Module-Lattice-Digital-Signature-Algorithm-for-DNSSEC.html (59,606 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-09-13T16:30:28
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -32246,7 +32246,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Munich-Re-Cyber-Insurance-Risks-and-Trends-2025.html (134,601 bytes, 11,454 extracted chars)
 - **Extraction Timestamp**: 2026-08-18T19:56:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -32357,7 +32357,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NAIC-Insurance-Data-Security-Model-Law-MDL-668.pdf (238,211 bytes, 13,421 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -32468,7 +32468,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NCCoE-Automation-of-the-CMVP.html (104,053 bytes, 4,087 extracted chars)
 - **Extraction Timestamp**: 2026-09-27T19:27:08
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 61314a32abe86637
 - **Reader**: unified/5 full
 - **Window Chars**: 4087
@@ -34688,7 +34688,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NIST-ACMVP-Protocol-Workstream.html (162,992 bytes, 20,608 extracted chars)
 - **Extraction Timestamp**: 2026-09-27T19:27:08
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 8172d8eefeb3411a
 - **Reader**: unified/5 selection
 - **Window Chars**: 20608
@@ -34910,7 +34910,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NIST-CMVP-ESV-Announcements.html (78,609 bytes, 12,457 extracted chars)
 - **Extraction Timestamp**: 2026-09-27T19:27:06
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 621cc5952dd8b3c8
 - **Reader**: unified/5 full
 - **Window Chars**: 12457
@@ -34970,7 +34970,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NIST-CMVP-ESV-Program.html (62,219 bytes, 3,672 extracted chars)
 - **Extraction Timestamp**: 2026-09-27T19:27:06
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 7a385ea3c5e3d762
 - **Reader**: unified/5 full
 - **Window Chars**: 3672
@@ -35030,7 +35030,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NIST-CMVP-FIPS-140-3-Standards-page.html (77,965 bytes, 15,061 extracted chars)
 - **Extraction Timestamp**: 2026-10-15T08:13:14
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: bdc29bfaa7656cf9
 - **Window Chars**: 15061
 
@@ -35143,7 +35143,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NIST-CMVP-MIS-SP800-140B.html (106,359 bytes, 5,767 extracted chars)
 - **Extraction Timestamp**: 2026-09-27T19:27:07
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 8eb04417e5de57df
 - **Reader**: unified/5 full
 - **Window Chars**: 5767
@@ -37039,7 +37039,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy.pdf (1,289,805 bytes, 16,717 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -38014,7 +38014,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NIST-SP-800-78-5-Cryptographic-Algorithms-and-Key-Sizes-for.pdf (693,666 bytes, 14,290 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -38611,7 +38611,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: NSM-8.html (175,926 bytes, 13,063 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:47
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -39424,7 +39424,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D.html (409,328 bytes, 13,359 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -39481,7 +39481,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity.html (393,160 bytes, 9,370 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -39538,7 +39538,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co.html (395,538 bytes, 10,893 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:35
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -40621,7 +40621,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: PI-PROFINET-Security-Whitepaper-V105-2019.pdf (1,572,908 bytes, 13,481 extracted chars)
 - **Extraction Timestamp**: 2026-10-01T19:43:19
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -40678,7 +40678,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O.pdf (530,083 bytes, 13,699 extracted chars)
 - **Extraction Timestamp**: 2026-08-15T13:57:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -40735,7 +40735,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3.pdf (468,117 bytes, 15,099 extracted chars)
 - **Extraction Timestamp**: 2026-08-15T13:57:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -41116,7 +41116,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: PKI-Consortium-Post-Quantum-Cryptography-Conference-2025-Kua.html (1,207,150 bytes, 24,634 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:25
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -41173,7 +41173,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: PNNL-29313-RADIANCE.pdf (433,028 bytes, 16,926 extracted chars)
 - **Extraction Timestamp**: 2026-10-01T19:43:20
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -41554,7 +41554,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: PSD2-Directive-EU-2015-2366.html (609,023 bytes, 17,326 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -41935,7 +41935,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Post-Quantum-Algorithms-Luna-HSM.html (47,081 bytes, 1,463 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:45
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -42046,7 +42046,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut.html (42,892 bytes, 7,480 extracted chars)
 - **Extraction Timestamp**: 2026-08-31T19:38:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -42157,7 +42157,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Post-Quantum-Cryptography-Recommendations-for-Key-Fragmentat.html (77,762 bytes, 9,854 extracted chars)
 - **Extraction Timestamp**: 2026-09-11T09:19:26
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -42268,7 +42268,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Post-Quantum-EDHOC-Initiator-and-Responder-using-signature-a.html (239,671 bytes, 20,000 extracted chars)
 - **Extraction Timestamp**: 2026-09-11T09:48:27
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -42433,7 +42433,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Post-Quantum-Evidence-Records-with-Algorithm-Agility-Wathiqa.html (72,813 bytes, 8,863 extracted chars)
 - **Extraction Timestamp**: 2026-09-11T09:19:26
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -42652,7 +42652,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Post-Quantum-Key-Encapsulation-Scheme-Kodiyum.pdf (165,169 bytes, 5,861 extracted chars)
 - **Extraction Timestamp**: 2026-09-09T19:31:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -42925,7 +42925,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Post-quantum-Hybrid-ECDHE-SCloud-Key-Exchange-for-TLS-1-3.html (68,129 bytes, 11,054 extracted chars)
 - **Extraction Timestamp**: 2026-08-31T19:38:40
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -43630,7 +43630,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Quantum-Computing-and-Post-Quantum-Cryptography-FAQs.pdf (264,081 bytes, 17,081 extracted chars)
 - **Extraction Timestamp**: 2026-09-09T19:31:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -44227,7 +44227,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Quantumglow-Will-Solana-s-Performance-Survive-Quantum-Comput.html (277,912 bytes, 7,067 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -50224,7 +50224,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp.html (54,585 bytes, 12,463 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:31
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -53359,7 +53359,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: RFC-9329.html (627,612 bytes, 20,000 extracted chars)
 - **Extraction Timestamp**: 2026-09-28T21:48:55
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 911fbe98a5fb9328
 - **Reader**: unified/5 head
 - **Window Chars**: 20000
@@ -54372,7 +54372,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
-- **Performance & Size Considerations**: ML-DSA-44 Public Key 1312 bytes; ML-DSA-44 Signature 2420 bytes; ML-DSA-65 Public Key 1952 bytes; ML-DSA-65 Signature 3309 bytes; ML-DSA-87 Public Key 2592 bytes; ML-DSA-87 Signature 4627 bytes; Private Key seed 32 bytes (per FIPS 204 Table 1; hand-corrected from qwen3.6:27b extraction which swapped pk/sk and undercounted signature sizes)
+- **Performance & Size Considerations**: ML-DSA-44 Public Key 1312 bytes; ML-DSA-44 Signature 2420 bytes; ML-DSA-65 Public Key 1952 bytes; ML-DSA-65 Signature 3309 bytes; ML-DSA-87 Public Key 2592 bytes; ML-DSA-87 Signature 4627 bytes; Private Key seed 32 bytes (per FIPS 204 Table 1)
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Support for AKP key type; Base64url encoding for JOSE; COSE Key format support
 - **Relevant PQC Today Features**: Algorithms; digital-assets; api-security-jwt
@@ -54553,7 +54553,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms.pdf (502,632 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-08-21T21:12:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -54610,7 +54610,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Reducing-the-Number-of-Qubits-in-Quantum-Factoring.pdf (581,217 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-08-21T21:12:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -54829,7 +54829,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Resistance-Analysis-of-Post-Quantum-Signature-Scheme-Shipovn.pdf (267,643 bytes, 9,091 extracted chars)
 - **Extraction Timestamp**: 2026-09-09T19:31:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -54994,7 +54994,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: SAND2022-1118.pdf (3,690,557 bytes, 15,708 extracted chars)
 - **Extraction Timestamp**: 2026-10-01T19:43:21
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -56779,7 +56779,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Secret-Zero-Tackling-the-Secret-Zero-Problem.html (206,282 bytes, 4,992 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:43
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -57376,7 +57376,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Singapore-Financial-Sector-QKD-Sandbox-Technical-Report.pdf (4,713,851 bytes, 18,917 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:24
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -57919,7 +57919,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Summary-of-NATO-s-Quantum-Technologies-Strategy.html (329,395 bytes, 13,283 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:23
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -57976,7 +57976,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Swift-Customer-Security-Controls-Framework-CSCF-v2026.pdf (4,576,203 bytes, 19,528 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:36
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -59059,7 +59059,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: The-Internet-Identity-Card-IIC-Credential-Format-A-Self-Cont.html (62,236 bytes, 11,863 extracted chars)
 - **Extraction Timestamp**: 2026-09-11T09:19:24
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -59278,7 +59278,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Torres-ICREPQ-2024-341.pdf (550,067 bytes, 10,254 extracted chars)
 - **Extraction Timestamp**: 2026-10-01T19:43:21
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -59335,7 +59335,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Toward-Quantum-Safe-6G-Experimental-Evaluation-of-Post-Quant.pdf (1,136,898 bytes, 11,790 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:44
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -59554,7 +59554,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: UIC-FRMCS-T-v1-0-Future-Railway-Mobile-Communication-System.pdf (700,264 bytes, 13,752 extracted chars)
 - **Extraction Timestamp**: 2026-08-07T23:22:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -59935,7 +59935,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html (565,900 bytes, 17,735 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -60208,7 +60208,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS.pdf (1,635,883 bytes, 16,926 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:28
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -60697,7 +60697,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Understanding-Programs-and-Projects.html (455,041 bytes, 11,445 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -60916,7 +60916,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for.html (40,164 bytes, 1,341 extracted chars)
 - **Extraction Timestamp**: 2026-08-31T19:38:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -61297,7 +61297,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Verifying-and-optimizing-post-quantum-cryptography-at-Amazon.html (313,354 bytes, 11,478 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -61354,7 +61354,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Visa-Token-Service.html (192,707 bytes, 6,417 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:42
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -61519,7 +61519,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: W3C-Verifiable-Credentials-Data-Model-v2-0.html (1,023,165 bytes, 20,580 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -61576,7 +61576,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: WCO-SAFE-Framework-of-Standards-2021.pdf (2,987,075 bytes, 21,998 extracted chars)
 - **Extraction Timestamp**: 2026-07-30T12:12:29
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -61957,7 +61957,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: What-Are-NIST-PQC-Standards-Palo-Alto-Networks.html (712,350 bytes, 17,299 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:32
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -62338,7 +62338,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ZIP-2005-Ironwood-Quantum-Recoverability.html (191,637 bytes, 19,538 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -62395,7 +62395,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Zemlyanika-Module-LWE-based-KEM-with-the-power-of-two-modulu.html (16,781 bytes, 2,652 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:27
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -62992,7 +62992,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: draft-becker-cnsa2-smime-profile.html (66,377 bytes, 8,836 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:26
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -64291,7 +64291,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: draft-ietf-ipsecme-ikev2-mlkem-09.html (81,555 bytes, 20,000 extracted chars)
 - **Extraction Timestamp**: 2026-09-28T21:48:54
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: e91e50c8687e3093
 - **Reader**: unified/5 head
 - **Window Chars**: 20000
@@ -70021,7 +70021,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: fhe-rs-v0.1.1.html (33,865 bytes, 5,010 extracted chars)
 - **Extraction Timestamp**: 2026-10-02T22:18:58
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 0f451f83505c0adf
 - **Window Chars**: 5010
 
@@ -70350,7 +70350,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: lattigo-v6.2.0.html (212,501 bytes, 2,681 extracted chars)
 - **Extraction Timestamp**: 2026-10-02T16:19:54
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: c2e5aef2bc290f21
 - **Window Chars**: 2681
 
@@ -70463,7 +70463,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: openfhe-v1.6.0.html (216,145 bytes, 2,149 extracted chars)
 - **Extraction Timestamp**: 2026-10-02T16:19:55
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: bcfa5406acd364ea
 - **Window Chars**: 2149
 
@@ -70522,7 +70522,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo.html (432,168 bytes, 10,048 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:39
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -71713,7 +71713,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: shrincs-bip-SHRINCS-md-at-main-SHRINCS-shrincs-bip-GitHub.html (1,633,676 bytes, 14,326 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:28
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -71770,7 +71770,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: specs-archive-dev-cryptographic-specs-falcon-deterministic-p.html (234,965 bytes, 800 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:29
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -71827,7 +71827,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: sys-dm-database-encryption-keys-Transact-SQL.html (56,892 bytes, 4,663 extracted chars)
 - **Extraction Timestamp**: 2026-08-30T17:25:41
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -71884,7 +71884,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: tc26-Kodieum-Kryptonit-PQ-Mechanism.html (46,198 bytes, 2,881 extracted chars)
 - **Extraction Timestamp**: 2026-09-07T11:24:30
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 
 ---
 
@@ -71941,7 +71941,7 @@ enrichment_method: claude-claude-sonnet-5-5
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: tfhe-rs-v1.8.1.html (208,751 bytes, 1,183 extracted chars)
 - **Extraction Timestamp**: 2026-10-02T16:19:53
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 04290b2286d43f2b
 - **Window Chars**: 1183
 

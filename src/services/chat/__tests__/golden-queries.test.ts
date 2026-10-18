@@ -659,7 +659,10 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     // module-topic-verification-closure and module-curious-verification-
     // closure, which already used the hyphenated form. Not a routing
     // regression; the old no-hyphen id was the bug.
-    mustInclude: ['module-summary-verification-closure'],
+    // 2026-10-17: after the 4.164.0 index refresh the module's summary chunk
+    // ranks 16th while its topic chunk stays in the top 15. Either chunk lands
+    // the learner on the same module, so the check now names the topic chunk.
+    mustInclude: ['module-topic-verification-closure'],
     expectedSources: ['module-summaries', 'module-topic-summaries'],
     minTop5Hits: 0,
   },
