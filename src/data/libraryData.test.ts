@@ -426,6 +426,34 @@ describe('libraryData', () => {
     expect(acos?.shortDescription).toContain('which algorithm was exercised')
   })
 
+  it('distinguishes experimental evidence and protection profiles from certification outcomes', () => {
+    const avionics = libraryData.find(
+      (item) => item.referenceId === 'Agile-Post-Quantum-Secure-Cryptography-in-Avionics'
+    )
+    expect(avionics?.documentStatus).toBe('Peer-reviewed journal article')
+    expect(avionics?.downloadUrl).toContain('10.1007/s13272-025-00806-5')
+    expect(avionics?.algorithmFamily).toBe('ML-KEM; ML-DSA')
+    expect(avionics?.shortDescription).toContain('not an avionics certification')
+    expect(avionics?.shortDescription).toContain('does not guarantee certification credit')
+
+    const goose = libraryData.find(
+      (item) => item.referenceId === 'Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub'
+    )
+    expect(goose?.documentStatus).toBe('Preprint v1')
+    expect(goose?.shortDescription).toContain('cites secondary literature')
+    expect(goose?.shortDescription).toContain('tests no cryptography or PQC overhead')
+
+    const anssi = libraryData.find((item) => item.referenceId === 'ANSSI-CC-PP-2016-05-EN-419221-5')
+    expect(anssi?.documentType).toBe('Protection Profile')
+    expect(anssi?.lastUpdateDate).toBe('2016-12-16')
+    expect(anssi?.shortDescription).toContain('does not certify a cryptographic module')
+
+    const bsi = libraryData.find((item) => item.referenceId === 'BSI-CC-PP-0084-V2-2026')
+    expect(bsi?.shortDescription).toContain('five packages add optional')
+    expect(bsi?.shortDescription).toContain('does not approve particular')
+    expect(bsi?.shortDescription).toContain('not automatically to a chip')
+  })
+
   it('tracks current BSI RNG classes and EUCC document applicability', () => {
     const ais = libraryData.find((item) => item.referenceId === 'BSI-AIS-20-31')
     expect(ais?.documentTitle).toContain('Version 3.0')
