@@ -14,7 +14,7 @@
  * directly instead.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDown, Filter } from 'lucide-react'
+import { BookOpen, ChevronDown, Filter, Home } from 'lucide-react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
@@ -168,7 +168,17 @@ interface GraphLayout {
   subCenters: Map<string, THREE.Vector3>
 }
 
-function computeLayout(graph: ForceClusterGraph): GraphLayout {
+/**
+ * `seed` (optional) holds positions from the previous layout: a seeded node
+ * starts there and is held there for the whole relaxation, so only nodes
+ * without a seed move. Revealing one hidden node uses this — the rest of the
+ * graph stays exactly where the reader last saw it, instead of re-clustering
+ * from random jitter the way a filter change does on purpose.
+ */
+function computeLayout(
+  graph: ForceClusterGraph,
+  seed?: ReadonlyMap<string, THREE.Vector3>
+): GraphLayout {
   const typeCenters = new Map<ForceClusterNodeType, THREE.Vector3>(
     fibonacciSphere(NODE_TYPES.length, TYPE_SPHERE_RADIUS).map((p, i) => [
       // eslint-disable-next-line security/detect-object-injection -- i is a numeric loop index into a same-length array, not user input
@@ -203,17 +213,20 @@ function computeLayout(graph: ForceClusterGraph): GraphLayout {
       const center = subCenters.get(`${type}::${node.sub}`) ?? typeCenter
       subHome.set(node.id, center)
       typeHome.set(node.id, typeCenter)
+      const seeded = seed?.get(node.id)
       position.set(
         node.id,
-        center
-          .clone()
-          .add(
-            new THREE.Vector3(
-              (Math.random() - 0.5) * 1.5,
-              (Math.random() - 0.5) * 1.5,
-              (Math.random() - 0.5) * 1.5
-            )
-          )
+        seeded
+          ? seeded.clone()
+          : center
+              .clone()
+              .add(
+                new THREE.Vector3(
+                  (Math.random() - 0.5) * 1.5,
+                  (Math.random() - 0.5) * 1.5,
+                  (Math.random() - 0.5) * 1.5
+                )
+              )
       )
     }
   }
@@ -299,6 +312,12 @@ function computeLayout(graph: ForceClusterGraph): GraphLayout {
       pos.add(sHome.clone().sub(pos).multiplyScalar(SUB_HOME_RESTORE))
       pos.add(tHome.clone().sub(pos).multiplyScalar(TYPE_HOME_RESTORE))
     }
+    // Held in place every pass (not restored once at the end) so a new node
+    // relaxes against the neighbours as the reader sees them, not against
+    // neighbours that have drifted and then snapped back.
+    if (seed) {
+      for (const [id, held] of seed) position.get(id)?.copy(held)
+    }
   }
 
   return { position, typeCenters, subCenters }
@@ -343,6 +362,29 @@ const TOUR_FRAME_PADDING = 1.15
 const TOUR_CAMERA_FOV_DEG = 50
 
 const MOTION_STORAGE_KEY = 'pqctoday:navigate:motion'
+const GUIDE_DISMISSED_KEY = 'pqctoday:navigate:guide-dismissed'
+
+/** Shared empty set — a stable identity, so resetting to "nothing revealed" never re-renders by itself. */
+const EMPTY_NODE_IDS: ReadonlySet<string> = new Set()
+
+/** Whether the reader already closed the "Explore how the hub connects" guide. Best-effort: storage can be blocked, and then the guide simply shows each visit. */
+function loadGuideDismissed(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    return window.localStorage.getItem(GUIDE_DISMISSED_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function saveGuideDismissed() {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(GUIDE_DISMISSED_KEY, '1')
+  } catch {
+    // Best-effort persistence — private browsing / a full storage quota should not break the page.
+  }
+}
 
 interface MotionPrefs {
   mode: MotionMode
@@ -467,7 +509,7 @@ interface BuiltScene {
    * layout. Toggling a whole category off/on leaves gaps and stale positions
    * otherwise; a real re-cluster is what "refresh the clustering" means.
    */
-  applyFilters: (filters: GraphFilters) => LayoutSnapshot
+  applyFilters: (filters: GraphFilters, options?: { keepPositions?: boolean }) => LayoutSnapshot
   /** The layout produced by buildScene's own initial applyFilters() call, so callers don't need to re-derive it. */
   initialLayout: LayoutSnapshot
 }
@@ -494,7 +536,14 @@ function buildScene(
   rotatingGroup.name = 'force-cluster-graph'
   scene.add(rotatingGroup)
 
-  function applyFilters(filters: GraphFilters): LayoutSnapshot {
+  // The positions the last applyFilters produced — the seed for a
+  // keepPositions relayout (revealing one hidden node without moving the rest).
+  let lastPositions: ReadonlyMap<string, THREE.Vector3> | undefined
+
+  function applyFilters(
+    filters: GraphFilters,
+    options: { keepPositions?: boolean } = {}
+  ): LayoutSnapshot {
     for (const child of [...rotatingGroup.children]) {
       rotatingGroup.remove(child)
       if (child instanceof THREE.Mesh || child instanceof THREE.LineSegments) {
@@ -514,7 +563,12 @@ function buildScene(
     const { nodes: visibleNodes, edges: visibleEdges } = subgraph
     const nodesById = new Map(visibleNodes.map((n) => [n.id, n]))
 
-    const { position: positionById, typeCenters, subCenters } = computeLayout(subgraph)
+    const {
+      position: positionById,
+      typeCenters,
+      subCenters,
+    } = computeLayout(subgraph, options.keepPositions ? lastPositions : undefined)
+    lastPositions = positionById
 
     // Real (post-relaxation) centroids per type/sub — typeCenters/subCenters
     // above are the idealized fibonacci-sphere anchors nodes are pulled
@@ -826,9 +880,13 @@ export function ForceClusterView() {
   // Which category's sub-category chip row is expanded in the filter panel
   // (one at a time — 12 rows of up to 26 chips would swamp the panel).
   const [expandedType, setExpandedType] = useState<ForceClusterNodeType | null>(null)
+  // Nodes the reader followed a drawer connection to that the filters or the
+  // count cap would otherwise hide — see GraphFilters.pinnedNodeIds. Cleared by
+  // any filter change (applyLayout), which re-clusters from scratch anyway.
+  const [revealedNodeIds, setRevealedNodeIds] = useState<ReadonlySet<string>>(EMPTY_NODE_IDS)
   const filters = useMemo<GraphFilters>(
-    () => ({ enabledTypes, disabledSubs, maxNodes }),
-    [enabledTypes, disabledSubs, maxNodes]
+    () => ({ enabledTypes, disabledSubs, maxNodes, pinnedNodeIds: revealedNodeIds }),
+    [enabledTypes, disabledSubs, maxNodes, revealedNodeIds]
   )
   // The scene-setup effect runs once and needs the filters current at that
   // moment for buildScene's initial layout — same mirror pattern as
@@ -846,6 +904,18 @@ export function ForceClusterView() {
     labelBudgetRef.current = labelBudget
   }, [labelBudget])
   const [listOpen, setListOpen] = useState(false)
+  // The "Explore how the hub connects" guide: closed once the reader closes it,
+  // starts a tour, opens the list or selects a node, and remembered across visits
+  // (an "About this graph" button brings it back).
+  const [guideDismissed, setGuideDismissed] = useState(loadGuideDismissed)
+  const dismissGuide = () => {
+    setGuideDismissed(true)
+    saveGuideDismissed()
+  }
+  const reopenGuide = () => {
+    setSelectedNodeId(null) // the guide only shows with no record selected
+    setGuideDismissed(false)
+  }
   // Starts collapsed to a small pill so the graph gets the full screen by
   // default; expanding is a deliberate click, and PANEL_IDLE_COLLAPSE_MS
   // below re-collapses it once the user stops touching the filter controls.
@@ -862,7 +932,9 @@ export function ForceClusterView() {
     // expandedType is here too: opening a sub-category row is the start of
     // an interaction, not the end of one.
   }, [panelOpen, listOpen, filters, labelBudget, expandedType])
-  const applyFiltersRef = useRef<((filters: GraphFilters) => LayoutSnapshot) | null>(null)
+  const applyFiltersRef = useRef<
+    ((filters: GraphFilters, options?: { keepPositions?: boolean }) => LayoutSnapshot) | null
+  >(null)
   // The layout applyFilters() most recently produced — the tour reads real
   // node/category positions from here to build its itinerary and flight
   // targets; applyFilters itself only returns a snapshot to its caller, it
@@ -881,6 +953,13 @@ export function ForceClusterView() {
   const breadcrumbSelectRef = useRef<
     ((type: ForceClusterNodeType, sub: string | null) => void) | null
   >(null)
+
+  // Same bridge for the detail panel's connection buttons: hands the camera
+  // a node to fly to (and stops a running tour from flying away again).
+  const focusNodeRef = useRef<((nodeId: string) => void) | null>(null)
+
+  // And for the Home button: flies the camera back to the overview.
+  const resetViewRef = useRef<(() => void) | null>(null)
 
   const [motionPrefs, setMotionPrefsState] = useState<MotionPrefs>(() => loadMotionPrefs())
   const motionMode = motionPrefs.mode
@@ -963,7 +1042,9 @@ export function ForceClusterView() {
     setMaxNodes(next.maxNodes)
     setSelectedNodeId(null) // a relayout invalidates the previously selected node's on-screen position
     setClusterSelection(null) // ...and the meshes/edges a spotlight was tracking
-    layoutSnapshotRef.current = applyFiltersRef.current?.(next) ?? null
+    setRevealedNodeIds(EMPTY_NODE_IDS) // a filter change is a fresh view: revealed nodes go back to the cap
+    layoutSnapshotRef.current =
+      applyFiltersRef.current?.({ ...next, pinnedNodeIds: EMPTY_NODE_IDS }) ?? null
     // A filter change invalidates every position the tour's itinerary holds
     // (navigate-motion-modes-plan-08292026.md §4.7) — rebuild it against the
     // fresh layout, resuming at the start of whichever category was active.
@@ -1003,6 +1084,39 @@ export function ForceClusterView() {
     applyLayout({ ...filters, maxNodes: count })
   }
 
+  /**
+   * A connection followed in the detail panel: select it and fly the camera
+   * there. The panel lists every connection a record has, but the scene only
+   * draws the top slice of the graph — a connection the filters or the count
+   * cap left out is drawn first (pinned), in place, so nothing else moves.
+   */
+  /** Home: close the drawer, drop any category spotlight and fly back out to the whole graph. */
+  const resetView = () => {
+    selectedNodeIdRef.current = null // Spin reads this ref every frame; see focusNode
+    setSelectedNodeId(null)
+    setClusterSelection(null)
+    resetViewRef.current?.()
+  }
+
+  const focusNode = (nodeId: string) => {
+    const drawn = layoutSnapshotRef.current?.visibleNodes.some((n) => n.id === nodeId) ?? false
+    if (!drawn) {
+      const nextRevealed = new Set(revealedNodeIds).add(nodeId)
+      setRevealedNodeIds(nextRevealed)
+      setClusterSelection(null) // the relayout rebuilds the meshes a spotlight was dimming
+      layoutSnapshotRef.current =
+        applyFiltersRef.current?.(
+          { ...filters, pinnedNodeIds: nextRevealed },
+          { keepPositions: true }
+        ) ?? null
+    }
+    // Spin reads this ref every frame; the effect that mirrors state into it
+    // lags a render behind, long enough to rotate the node out from under the flight.
+    selectedNodeIdRef.current = nodeId
+    setSelectedNodeId(nodeId)
+    focusNodeRef.current?.(nodeId)
+  }
+
   // Drives the camera fly-to and the instance/edge dim-out whenever the
   // spotlight changes (selecting, deselecting, or switching cluster) —
   // mirrors applyFiltersRef's pattern of a plain ref call rather than
@@ -1018,6 +1132,37 @@ export function ForceClusterView() {
   }, [graph])
 
   const selectedNode = selectedNodeId ? (nodesById.get(selectedNodeId) ?? null) : null
+
+  const guideVisible =
+    !loading && !error && !selectedNode && !guideDismissed && motionMode !== 'tour'
+
+  // Picking a record means the reader has found their way around — the guide
+  // should not come back when its drawer closes.
+  useEffect(() => {
+    if (selectedNodeId) {
+      setGuideDismissed(true)
+      saveGuideDismissed()
+    }
+  }, [selectedNodeId])
+
+  // Escape is the keyboard counterpart of the close buttons: the detail
+  // drawer first, then the guide. Left alone while a dialog is open, which
+  // owns the key.
+  useEffect(() => {
+    if (!selectedNodeId && !guideVisible) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return
+      if (document.querySelector('[role="dialog"], [role="alertdialog"]')) return
+      if (selectedNodeId) {
+        setSelectedNodeId(null)
+      } else {
+        setGuideDismissed(true)
+        saveGuideDismissed()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [selectedNodeId, guideVisible])
 
   // A node selected FROM WITHIN an active spotlight (clicking its sphere or
   // label always hits an already-visible, matching node — the spotlight has
@@ -1181,6 +1326,18 @@ export function ForceClusterView() {
       }
 
       breadcrumbSelectRef.current = (type, sub) => selectCluster(type, sub, false)
+
+      // A connection followed in the detail panel is a manual selection like
+      // a label click: stop a running tour from flying past it, then show it.
+      focusNodeRef.current = (nodeId) => {
+        pauseTourIfRunning()
+        flyToNode(nodeId)
+      }
+
+      resetViewRef.current = () => {
+        pauseTourIfRunning()
+        flyToSpotlight(null) // null target = the default overview
+      }
 
       const { scene, applyFilters, initialLayout } = buildScene(
         builtGraph,
@@ -1411,6 +1568,35 @@ export function ForceClusterView() {
           elapsedMs: 0,
           durationMs: SPOTLIGHT_FLIGHT_MS,
         }
+      }
+
+      /** Flies the camera to one node and frames it against open space, the same approach the guided tour uses for a node stop — never relayouts, so nothing jumps. */
+      function flyToNode(nodeId: string) {
+        if (!controls) return
+        const layout = layoutSnapshotRef.current
+        if (!layout || !rotatingGroup) return
+        const localPos = layout.positionById.get(nodeId)
+        const node = layout.visibleNodes.find((n) => n.id === nodeId)
+        if (!localPos || !node) return
+        const localCenter = layout.typeCenters.get(node.type)
+        const worldPos = rotatingGroup.localToWorld(localPos.clone())
+        const worldCenter = localCenter
+          ? rotatingGroup.localToWorld(localCenter.clone())
+          : new THREE.Vector3()
+        const fallbackDir = camera.position.clone().sub(controls.target)
+        spotlightFlightRef.current = {
+          fromPos: camera.position.clone(),
+          fromTarget: controls.target.clone(),
+          toPos: nodeApproach(worldPos, worldCenter, TOUR_NODE_APPROACH_DISTANCE, fallbackDir),
+          toTarget: worldPos,
+          elapsedMs: 0,
+          durationMs: SPOTLIGHT_FLIGHT_MS,
+        }
+        // A tour that is running (or paused) skips the per-frame label pass
+        // (`touring`), so the node's name would never be drawn — show it
+        // the way a tour node stop does.
+        if (motionModeRef.current === 'tour' && tourStateRef.current)
+          applyTourLabelFocus({ kind: 'node', type: node.type, node })
       }
 
       const SPOTLIGHT_HIDE_SCALE = new THREE.Matrix4().makeScale(0, 0, 0)
@@ -1793,6 +1979,8 @@ export function ForceClusterView() {
       applyFiltersRef.current = null
       layoutSnapshotRef.current = null
       tourControlRef.current = null
+      focusNodeRef.current = null
+      resetViewRef.current = null
     }
   }, [])
 
@@ -1821,37 +2009,67 @@ export function ForceClusterView() {
         <NavigateDetailPanel
           node={selectedNode}
           connections={connections}
-          onSelectNode={setSelectedNodeId}
+          onSelectNode={focusNode}
           onSelectCategory={(type) => breadcrumbSelectRef.current?.(type, null)}
           onSelectSub={(type, sub) => breadcrumbSelectRef.current?.(type, sub)}
           onClose={() => setSelectedNodeId(null)}
         />
       )}
-      {!loading && !error && !selectedNode && (
+      {!loading && !error && (
+        <Button
+          variant="secondary"
+          size="icon"
+          className={`glass-panel absolute right-3 top-3 z-10 h-9 w-9 rounded-full ${
+            selectedNode ? 'sm:right-[372px]' : ''
+          }`}
+          onClick={resetView}
+          aria-label="Reset view"
+          title="Reset view"
+        >
+          <Home className="h-4 w-4" aria-hidden="true" />
+        </Button>
+      )}
+      {guideVisible && (
         <NavigateGuide
           persona={selectedPersona}
           onTour={() => {
+            dismissGuide()
             setPanelOpen(true)
             setMotionMode('tour')
           }}
           onList={() => {
+            dismissGuide()
             setPanelOpen(true)
             setListOpen(true)
           }}
+          onDismiss={dismissGuide}
         />
       )}
       {!loading && !error && !panelOpen && (
-        <Button
-          variant="secondary"
-          size="sm"
-          className="glass-panel absolute bottom-4 left-4 h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
-          aria-expanded={false}
-          aria-controls="navigate-filter-panel"
-          onClick={() => setPanelOpen(true)}
-        >
-          <Filter className="h-3.5 w-3.5" aria-hidden="true" />
-          Filters
-        </Button>
+        <div className="absolute bottom-4 left-4 flex gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="glass-panel h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
+            aria-expanded={false}
+            aria-controls="navigate-filter-panel"
+            onClick={() => setPanelOpen(true)}
+          >
+            <Filter className="h-3.5 w-3.5" aria-hidden="true" />
+            Filters
+          </Button>
+          {guideDismissed && motionMode !== 'tour' && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="glass-panel h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
+              onClick={reopenGuide}
+            >
+              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+              About this graph
+            </Button>
+          )}
+        </div>
       )}
       {!loading && !error && panelOpen && (
         <div
@@ -1860,16 +2078,29 @@ export function ForceClusterView() {
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground">Filter</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto gap-1.5 px-2 py-1 text-xs"
-              aria-expanded={listOpen}
-              aria-controls="navigate-node-list"
-              onClick={() => setListOpen((v) => !v)}
-            >
-              {listOpen ? 'Hide list view' : 'List view (keyboard)'}
-            </Button>
+            <div className="flex items-center gap-1">
+              {guideDismissed && motionMode !== 'tour' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto gap-1.5 px-2 py-1 text-xs"
+                  onClick={reopenGuide}
+                >
+                  <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+                  About this graph
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-auto gap-1.5 px-2 py-1 text-xs"
+                aria-expanded={listOpen}
+                aria-controls="navigate-node-list"
+                onClick={() => setListOpen((v) => !v)}
+              >
+                {listOpen ? 'Hide list view' : 'List view (keyboard)'}
+              </Button>
+            </div>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {NODE_TYPES.map((type) => {
