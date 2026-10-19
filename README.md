@@ -2,6 +2,8 @@
 
 [PQC Today](https://www.pqctoday.com/) is a free, open-source education and demonstration platform for learning how post-quantum cryptography affects technology, policy and migration decisions.
 
+> PQC Today is an educational and demonstration platform, not a production system. Nothing it produces — keys, certificates, configurations, reports, or test results — is fit to protect real data, and none of it may be deployed or relied upon in production.
+
 > **Educational use only.** PQC Today is not a production cryptographic system, certification service, validation laboratory, GRC platform, legal opinion or product endorsement. Generated keys, certificates, configurations, reports, scores and test results are learning artifacts. Verify decisions with the relevant authority, accredited laboratory, product documentation and your own qualified advisers.
 
 ## What the Hub does
