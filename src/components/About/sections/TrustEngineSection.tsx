@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { ShieldCheck, Stamp, Flag, ChevronDown, GitMerge } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { TrustScoreMethodologySection } from './TrustScoreMethodologySection'
 import { GlobalRevisionsFeed } from '@/components/ui/GlobalRevisionsFeed'
 
 function RevisionAuditCollapsible() {
@@ -290,10 +289,6 @@ export function TrustEngineSection() {
                   claim is based on.
                 </li>
                 <li>
-                  Want the math? Expand <em>Trust Score Methodology</em> at the bottom of this
-                  section for the full dimension table + formula.
-                </li>
-                <li>
                   Want to see the paper trail for a specific record? Expand{' '}
                   <em>Content Audit Trail</em> below and filter to it — every recorded change is
                   there, with its reviewer, date and approval method.
@@ -335,12 +330,7 @@ export function TrustEngineSection() {
                 different things.
               </p>
 
-              {/* Nested methodology — full dimension table + formula for power users */}
-              <div className="mt-6">
-                <TrustScoreMethodologySection />
-              </div>
-
-              {/* Content revision audit — collapsible, same pattern as TrustScoreMethodologySection */}
+              {/* Content revision audit */}
               <div className="mt-6">
                 <RevisionAuditCollapsible />
               </div>

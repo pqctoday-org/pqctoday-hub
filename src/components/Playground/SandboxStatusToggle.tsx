@@ -12,24 +12,15 @@ interface SandboxStatusToggleProps {
 
 /**
  * Header chip that reflects sandbox reachability.
- * - Auto-probes once on mount when status is idle.
- * - Click while offline: opens a popover with the contact-for-access CTA + Retry.
+ * - Never probes on mount: a public page must not contact localhost merely by loading.
+ * - Click while idle/offline: opens a popover with an explicit connection check.
  * - Click while online: triggers a fresh probe (acts as refresh).
  */
 export const SandboxStatusToggle: React.FC<SandboxStatusToggleProps> = ({ className }) => {
   const status = useSandboxStore((s) => s.status)
   const probe = useSandboxStore((s) => s.probe)
-  const probedRef = useRef(false)
   const [popoverOpen, setPopoverOpen] = useState(false)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (probedRef.current) return
-    if (status === 'idle') {
-      probedRef.current = true
-      void probe()
-    }
-  }, [status, probe])
 
   useEffect(() => {
     if (!popoverOpen) return
@@ -74,7 +65,9 @@ export const SandboxStatusToggle: React.FC<SandboxStatusToggleProps> = ({ classN
       ? 'Sandbox online'
       : status === 'checking'
         ? 'Checking sandbox…'
-        : 'Sandbox offline'
+        : status === 'idle'
+          ? 'Sandbox not connected'
+          : 'Sandbox offline'
 
   const Icon = status === 'checking' ? Loader2 : status === 'online' ? Container : RefreshCw
 
@@ -90,7 +83,7 @@ export const SandboxStatusToggle: React.FC<SandboxStatusToggleProps> = ({ classN
         aria-label={
           status === 'online'
             ? 'Sandbox online — click to re-check'
-            : 'Sandbox offline — click for access info'
+            : 'Sandbox not connected — click for access and connection options'
         }
         className={clsx(
           'inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap',

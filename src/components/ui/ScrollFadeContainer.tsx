@@ -13,6 +13,9 @@ interface ScrollFadeContainerProps {
    * `data-tour`) when wrapping an existing tab bar / toolbar that already
    * carries its own semantics or hooks. */
   scrollProps?: React.HTMLAttributes<HTMLDivElement>
+  /** Show a small phone-only instruction when the region actually overflows. */
+  showScrollHint?: boolean
+  scrollHint?: string
 }
 
 /**
@@ -23,9 +26,20 @@ interface ScrollFadeContainerProps {
  * Ported from the TabsList component in tabs.tsx.
  */
 const ScrollFadeContainer = React.forwardRef<HTMLDivElement, ScrollFadeContainerProps>(
-  ({ className, scrollClassName, scrollProps, children }, ref) => {
+  (
+    {
+      className,
+      scrollClassName,
+      scrollProps,
+      showScrollHint = false,
+      scrollHint = 'Scroll sideways to see more →',
+      children,
+    },
+    ref
+  ) => {
     const internalRef = React.useRef<HTMLDivElement>(null)
     const [showFade, setShowFade] = React.useState(false)
+    const [overflows, setOverflows] = React.useState(false)
 
     const setRef = React.useCallback(
       (node: HTMLDivElement | null) => {
@@ -40,9 +54,9 @@ const ScrollFadeContainer = React.forwardRef<HTMLDivElement, ScrollFadeContainer
       const el = internalRef.current
       if (!el) return
       const update = () => {
-        setShowFade(
-          el.scrollWidth > el.clientWidth + 1 && el.scrollLeft < el.scrollWidth - el.clientWidth - 1
-        )
+        const hasOverflow = el.scrollWidth > el.clientWidth + 1
+        setOverflows(hasOverflow)
+        setShowFade(hasOverflow && el.scrollLeft < el.scrollWidth - el.clientWidth - 1)
       }
       update()
       el.addEventListener('scroll', update, { passive: true })
@@ -81,6 +95,11 @@ const ScrollFadeContainer = React.forwardRef<HTMLDivElement, ScrollFadeContainer
           )}
           aria-hidden="true"
         />
+        {showScrollHint && overflows && (
+          <p className="mt-1.5 text-[11px] font-medium text-muted-foreground sm:hidden">
+            {scrollHint}
+          </p>
+        )}
       </div>
     )
   }

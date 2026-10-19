@@ -19,11 +19,12 @@ The Executive Quantum Impact module equips C-suite leaders, CISOs, and board mem
 
 ## Workshop / Interactive Activities
 
-The workshop has 3 interactive steps:
+The workshop has 4 interactive steps:
 
-1. **Threat Impact Explorer** — six-panel executive briefing covering HNDL exposure (critical, already happening), regulatory deadline mapping (critical, 2025–2035), board oversight and disclosure (high, growing annually), vendor and supply chain risk (high, 2025–2028 assessment window), competitive disadvantage (medium, 2026–2030), and cyber insurance questions (medium, 2026–2030); each panel includes an example scenario illustrating the business impact
-2. **Self-Assessment Checklist** — nine weighted criteria that calculate a live Quantum Exposure Score (0–100%): long-term data confidentiality (15%), regulated industry membership (15%), government/defense contracts (12%), no documented PQC migration plan (12%), multi-jurisdiction operations (10%), lack of cryptographic inventory (10%), high-value IP or trade secrets (10%), 10+ third-party vendor dependencies (8%), and no PQC budget allocated (8%); score thresholds at 40% (Medium) and 70% (High)
-3. **Action Plan Builder** — generates a phased executive action plan across four timeframes: This Week (request crypto inventory, schedule quantum risk briefing), 30 Days (commission PQC risk assessment), 90 Days (present business case to board, establish PQC governance), and 6 Months (fund and launch migration pilot); includes three quick wins to start immediately, six KPI metrics to track progress, and a Markdown export feature for board briefing documents
+1. **Why It Matters** — explores six possible executive impact areas as scenarios and decision prompts, while separating sourced context from organization-specific conclusions.
+2. **What to Learn** — a learning self-check that helps the learner choose relevant executive topics without presenting the result as a risk assessment.
+3. **How to Act** — generates a phased executive action plan across four timeframes: This Week, 30 Days, 90 Days, and 6 Months; includes quick wins, example KPI prompts, and a Markdown export for a draft board briefing.
+4. **Organisational Evidence Scope** — nine Yes/No/Unknown questions that identify possible decision drivers and evidence requests. It deliberately does not calculate a risk or exposure score, and unanswered questions remain unknown rather than being treated as low exposure.
 
 ## Related Standards
 

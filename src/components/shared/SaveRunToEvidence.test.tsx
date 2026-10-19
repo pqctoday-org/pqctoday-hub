@@ -55,7 +55,7 @@ describe('RunRecordActions: Save to my evidence', () => {
     const [doc] = runDocs()
     expect(doc.moduleId).toBe('run-manifest:drbg-demo:2026-10-16T08:00:01.000Z')
     const out = doc.output as RunManifest
-    expect(out.schema).toBe('pqctoday.run-manifest/1')
+    expect(out.schema).toBe('pqctoday.run-manifest/2')
     expect(out.cases[0].actual).toMatch(/^sha256:[0-9a-f]{64} \(2048 chars\)$/)
     expect(doc.data).toContain('A vector match is not a CAVP/ACVP validation.')
   })

@@ -95,7 +95,7 @@ describe('projectDelayScenario', () => {
     }
   })
 
-  it('accrues a penalty only once migration fully completes past a HARD deadline', () => {
+  it('accrues a verified consequence while migration remains incomplete past the effective year', () => {
     const result = projectDelayScenario({ ...base, hardDeadlineYear: 2027 }, 8)
     const penaltyRows = result.rows.filter((row) => row.penalty > 0)
     expect(penaltyRows.length).toBeGreaterThan(0)
@@ -141,6 +141,14 @@ describe('projectDelayScenario', () => {
     const lowRate = projectDelayScenario({ ...base, discountRatePct: 2 }, 5).total
     const highRate = projectDelayScenario({ ...base, discountRatePct: 20 }, 5).total
     expect(highRate).toBeLessThan(lowRate)
+  })
+
+  it('supports slow, consensus and fast CRQC scenarios without changing other inputs', () => {
+    const slow = projectDelayScenario({ ...base, crqcScenario: 'slow' }, 3).totalBreach
+    const central = projectDelayScenario({ ...base, crqcScenario: 'consensus' }, 3).totalBreach
+    const fast = projectDelayScenario({ ...base, crqcScenario: 'fast' }, 3).totalBreach
+    expect(slow).toBeLessThanOrEqual(central)
+    expect(central).toBeLessThanOrEqual(fast)
   })
 })
 

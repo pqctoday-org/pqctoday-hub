@@ -36,7 +36,7 @@ export const CitationTierChip: React.FC<CitationTierChipProps> = ({ tier, classN
     <span
       className={`inline-flex items-center justify-center w-3.5 h-3.5 rounded-sm border text-[9px] font-mono font-bold leading-none shrink-0 ${TIER_CLS[tier]} ${className ?? ''}`}
       aria-label={`Trust tier: ${tier}`}
-      title={`${tier} trust tier — see About → Trust Score Methodology`}
+      title={`${tier} trust tier — open the citation and verify its source`}
     >
       {TIER_GLYPH[tier]}
     </span>

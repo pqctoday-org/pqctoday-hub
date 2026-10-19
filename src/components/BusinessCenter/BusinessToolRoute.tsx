@@ -20,6 +20,7 @@ import { logBusinessToolOpen } from '@/utils/analytics'
 import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
 import { RecommendedResourcesPanel } from './widgets/RecommendedResourcesPanel'
 import { primaryStepForZone } from './lib/cswp39Tier'
+import { BusinessToolEvidenceNotice } from '@/components/shared/BusinessToolEvidenceNotice'
 
 export const BusinessToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -158,6 +159,8 @@ export const BusinessToolRoute = () => {
           </Link>
         </p>
       </section>
+
+      <BusinessToolEvidenceNotice toolId={tool.id} />
 
       {/* Round 9, wave 2 — "For your role" (src/data/personaBlocks.ts). */}
       <PersonaBlock route={`/business/tools/${tool.id}`} />

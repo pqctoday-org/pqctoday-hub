@@ -199,8 +199,6 @@ describe('BoardPitchBuilder — cross-tool output chaining', () => {
       },
     ]
     renderPitch()
-    expect(
-      screen.getByText(/Cost of inaction from your last Cost of Inaction Analyzer export/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Saved Cost of Inaction scenario/i)).toBeInTheDocument()
   })
 })

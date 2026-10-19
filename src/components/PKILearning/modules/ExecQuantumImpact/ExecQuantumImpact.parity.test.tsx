@@ -10,7 +10,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
-import { ExecQuantumImpactModule } from './index'
+import { ExecQuantumImpactModule, SelfAssessmentStep } from './index'
 
 describe('ExecQuantumImpact render parity', () => {
   it('renders the gradient header, the in-page description, and all six tabs', () => {
@@ -39,5 +39,23 @@ describe('ExecQuantumImpact render parity', () => {
     ]) {
       expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
+  })
+})
+
+describe('Executive organizational evidence scope', () => {
+  it('never interprets unanswered questions as low exposure', () => {
+    render(
+      <MemoryRouter>
+        <SelfAssessmentStep />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('0/9')).toBeInTheDocument()
+    expect(screen.getByText(/Unanswered never means low exposure/)).toBeInTheDocument()
+    expect(screen.queryByText(/Low Exposure/)).not.toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'unknown' })).toHaveLength(9)
+    expect(
+      screen.getByRole('link', { name: 'Build the executive measurement pack' })
+    ).toHaveAttribute('href', '/business/tools/kpi-dashboard')
   })
 })

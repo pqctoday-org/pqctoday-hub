@@ -39,7 +39,7 @@ const PARTS: WorkshopPart[] = [
     id: 'cost-of-inaction',
     title: 'Step 4: Cost of Inaction',
     description:
-      'Model the compounding cost of delaying PQC migration — breach risk, complexity premiums, and regulatory penalties over 5 years.',
+      'Compare start-now and delayed-migration scenarios over the same 10-year horizon, with assumptions and uncertainty visible.',
     icon: TrendingDown,
   },
   {

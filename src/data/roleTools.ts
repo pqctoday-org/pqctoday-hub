@@ -20,6 +20,7 @@ import {
 } from '@/components/BusinessCenter/businessToolsRegistry'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
 import type { PersonaId } from '@/data/personaIds'
+import { playgroundJourneyFor } from '@/data/playgroundRoleJourneys'
 
 export interface RoleTools {
   playground: WorkshopTool[]
@@ -52,10 +53,12 @@ const AUDIENCE_FOR_ROLE: Record<PersonaId, BusinessToolAudience | null> = {
 export function playgroundToolsForRole(persona: PersonaId): WorkshopTool[] {
   const live = WORKSHOP_TOOLS.filter((t) => !t.sandbox && !t.wip)
   const mine = live.filter((t) => t.recommendedPersonas.includes(persona))
-  return [
-    ...mine.filter((t) => t.startHere?.includes(persona)),
-    ...mine.filter((t) => !t.startHere?.includes(persona)),
-  ]
+  const rank = new Map(playgroundJourneyFor(persona).toolIds.map((id, index) => [id, index]))
+  return [...mine].sort((a, b) => {
+    const aRank = rank.get(a.id) ?? Number.MAX_SAFE_INTEGER
+    const bRank = rank.get(b.id) ?? Number.MAX_SAFE_INTEGER
+    return aRank - bRank
+  })
 }
 
 export function toolsForRole(persona: PersonaId): RoleTools {

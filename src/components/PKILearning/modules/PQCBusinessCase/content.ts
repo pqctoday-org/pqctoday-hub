@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-business-case',
-  version: '1.0.1',
+  version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-18',
 
   standards: [
     getStandard('NIST IR 8547'),
@@ -58,7 +58,7 @@ export const content: ModuleContent = {
     keyConcepts:
       'PQC Migration Cost Categories — four dimensions: migration costs (infrastructure layer upgrades), breach avoidance (quantum-enabled attack prevention), compliance penalties (regulatory fine avoidance), and operational/competitive advantages. ROI Calculation — computed from three inputs rather than a fixed weighted scorecard: migration cost (products to migrate × cost per product, plus annual opex), breach-avoidance savings (industry breach baseline × quantum multiplier × breach probability), and compliance savings (framework count × penalty per incident × incident rate) — combined into a payback period and multi-year ROI percentage.',
     workshopSummary:
-      'The workshop has 5 interactive steps: Cost Model Explorer — compares six costing models on one scenario before committing to a number. ROI Calculator — computes migration cost, annual benefit, payback period, and 3-year ROI percentage from live migration-catalog data. Breach Scenario Simulator — adjustable sliders for data records, regulatory fines, and HNDL years; compares classical vs. quantum breach costs with industry-specific baselines. Cost of Inaction — models the compounding 5-year cost of delaying migration. Board Pitch Builder — assembles a board-ready executive brief populated from the earlier steps.',
+      'The workshop has 5 interactive steps: Cost Model Explorer — compares six costing models on one scenario before committing to a number. ROI Calculator — computes migration cost, annual benefit, payback period, and 3-year ROI percentage from live migration-catalog data. Breach Scenario Simulator — adjustable sliders for data records, regulatory fines, and HNDL years; compares classical vs. quantum breach costs with industry-specific baselines. Cost of Inaction — compares start-now and delayed-migration scenarios over the same 10-year horizon. Board Pitch Builder — assembles a board-ready executive brief populated from the earlier steps.',
     relatedStandards:
       'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). Ponemon Institute Cost of a Data Breach methodology. FAIR (Factor Analysis of Information Risk)',
   },

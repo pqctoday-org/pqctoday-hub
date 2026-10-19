@@ -50,7 +50,7 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
   'cost-of-inaction': [
     {
       prompt:
-        'Slide the migration delay from 0 to 3 years with the horizon fixed. What does the chart show?',
+        'Compare start now with a 3-year migration delay over the fixed 10-year horizon. What does the table show?',
       options: [
         'The year where waiting becomes the more expensive choice',
         'A constant cost',
@@ -176,12 +176,12 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
     {
       prompt: 'Why do some KPIs show as needing assessment or compliance data?',
       options: [
-        'They are scored from live data and unlock when that step is complete',
+        'They need organization-specific evidence before they can be interpreted',
         'They are optional',
         'They are weighted zero',
       ],
       answer: 0,
-      why: 'The dashboard scores from the assessment, the compliance page and the Migrate catalogue where it can; a KPI with no data is shown as locked, not as zero.',
+      why: 'The dashboard does not turn missing data or a selected framework into progress. A KPI without organization-specific evidence remains unavailable or not yet scored, never zero or complete.',
     },
   ],
   'vendor-scorecard': [

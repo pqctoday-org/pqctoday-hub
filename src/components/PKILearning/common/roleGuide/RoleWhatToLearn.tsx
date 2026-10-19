@@ -64,7 +64,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
         return target - current >= 2
       }),
     }
-  }, [ratings, data.skillGaps])
+  }, [ratings, data])
 
   // Group skills by category
   const groupedSkills = useMemo(() => {
@@ -74,7 +74,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
       groups[skill.category].push(skill)
     }
     return Object.entries(groups)
-  }, [data.skillGaps])
+  }, [data])
 
   return (
     <div className="space-y-8 w-full">
@@ -83,7 +83,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <BarChart3 size={18} className="text-primary" />
-            Skills Readiness
+            Learning Self-Check
           </h3>
           <span className="text-2xl font-bold text-primary">{gapSummary.percentage}%</span>
         </div>
@@ -100,7 +100,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
         {gapSummary.criticalGaps.length > 0 && (
           <div className="mt-3 p-3 rounded-lg bg-status-error/5 border border-status-error/20">
             <p className="text-xs font-medium text-status-error">
-              {gapSummary.criticalGaps.length} critical gap
+              {gapSummary.criticalGaps.length} priority learning gap
               {gapSummary.criticalGaps.length !== 1 ? 's' : ''} detected:{' '}
               {gapSummary.criticalGaps.map((s) => s.skill).join(', ')}
             </p>
@@ -146,6 +146,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
                           variant="ghost"
                           key={level}
                           onClick={() => setRating(skill.id, level)}
+                          aria-pressed={currentLevel === level}
                           className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
                             currentLevel === level
                               ? LEVEL_COLORS[level]

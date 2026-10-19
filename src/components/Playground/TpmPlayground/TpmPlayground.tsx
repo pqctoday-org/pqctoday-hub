@@ -67,8 +67,9 @@ export default function TpmPlayground() {
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Execute raw TPM 2.0 commands directly within the browser using the
                 WebAssembly-compiled
-                <code>pqctpm</code> emulator. Explore the new TCG V1.85 RC4 Post-Quantum primitives
-                (ML-KEM and ML-DSA) via a dual-mode Semantic & Hex builder.
+                <code>pqctpm</code> emulator. Explore ML-KEM and ML-DSA using an engine derived from
+                the earlier TCG V1.85 RC4 snapshot. The current normative reference is the final TCG
+                TPM 2.0 Library Version 185.
               </p>
               <div className="flex gap-4">
                 <span
@@ -104,18 +105,20 @@ export default function TpmPlayground() {
 
         <WhyThisMatters title="TPM Hierarchy & Hardware-Bound PQC Keys" variant="info">
           <p>
-            A TPM 2.0 chip organises keys into three <strong>hierarchies</strong>: <em>Owner</em>{' '}
-            (user-controlled persistent storage), <em>Endorsement</em> (manufacturer-provisioned EK
-            for attestation), and <em>Platform</em> (firmware-controlled). Keys created under the
-            Owner or Endorsement hierarchy inherit that hierarchy&apos;s seed — they cannot be
-            extracted without the hierarchy&apos;s authorization value.
+            TPM 2.0 commonly presents three persistent primary <strong>hierarchies</strong>:{' '}
+            <em>Owner</em> (user-controlled storage), <em>Endorsement</em>
+            (manufacturer-provisioned attestation roots), and <em>Platform</em>
+            (firmware-controlled). It also defines the <em>Null</em> hierarchy for transient
+            objects. A hierarchy seed helps derive primary objects, but hierarchy authorization
+            alone does not decide whether a child object can be moved.
           </p>
           <p>
-            PQC keys (ML-DSA-65, ML-KEM-768) provisioned via{' '}
-            <strong>TPM2_Create + CKA_EXTRACTABLE=FALSE</strong> are hardware-bound: the private key
-            material never leaves the TPM boundary, even in the TCG V1.85 post-quantum profile
-            (RC4). This gives <em>physical non-exportability</em> — a property that software-only
-            PQC libraries cannot provide.
+            For a TPM-created ML-DSA or ML-KEM object, attributes such as <code>fixedTPM</code>,{' '}
+            <code>fixedParent</code>, and <code>sensitiveDataOrigin</code>, together with its parent
+            and authorization policy, govern creation and duplication. Those are TPM controls;{' '}
+            <code>CKA_EXTRACTABLE</code> belongs to PKCS #11. A key is hardware-bound only when its
+            attributes and policy prevent duplication—not merely because it was created below a
+            hierarchy.
           </p>
           <p>
             The V2.7 EK tab below lets you explore the manufacturer-provisioned Endorsement Keys and

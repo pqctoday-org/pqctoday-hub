@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { TOOL_EXERCISES } from './toolExercises'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { presentExercise } from '@/components/shared/ToolExercise'
 
 describe('TOOL_EXERCISES (round 9, wave 2, playground sittings)', () => {
   it('every key is a live playground tool and every live tool has at least one exercise', () => {
@@ -20,5 +21,17 @@ describe('TOOL_EXERCISES (round 9, wave 2, playground sittings)', () => {
         expect(ex.why.length, k).toBeGreaterThanOrEqual(60)
       }
     }
+  })
+  it('distributes correct answers instead of teaching learners to always choose the first option', () => {
+    const positions = new Set<number>()
+    for (const [toolId, list] of Object.entries(TOOL_EXERCISES)) {
+      list.forEach((exercise, questionIndex) => {
+        const shown = presentExercise(toolId, questionIndex, exercise)
+        positions.add(shown.answer)
+        expect(shown.options[shown.answer]).toBe(exercise.options[exercise.answer])
+        expect(exercise.answer).toBe(0)
+      })
+    }
+    expect(positions.size).toBeGreaterThan(1)
   })
 })

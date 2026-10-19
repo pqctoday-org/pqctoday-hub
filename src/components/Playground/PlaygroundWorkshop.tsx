@@ -53,6 +53,7 @@ import {
   type FeatureAccent,
 } from './cryptoLabMeta'
 import { playgroundToolsForRole } from '@/data/roleTools'
+import { playgroundJourneyFor } from '@/data/playgroundRoleJourneys'
 import type { PersonaId } from '@/data/personaIds'
 import {
   runFor,
@@ -84,6 +85,7 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { ToolEvidenceBadges } from './ToolEvidenceNotice'
 
 // ---------------------------------------------------------------------------
 // Constants & small style maps
@@ -332,6 +334,7 @@ const ToolCardView: React.FC<ToolCardProps> = ({
                 {tool.name}
               </Link>
               <DifficultyBadge level={tool.difficulty} />
+              {!tool.sandbox && <ToolEvidenceBadges toolId={tool.id} compact />}
               {tool.sandbox && <SandboxBadge />}
               {!tool.sandbox && unmet.length > 0 && <DeviceUnmetBadge unmet={unmet} />}
               {recommended && <ForYouBadge />}
@@ -522,6 +525,7 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-lg font-bold text-foreground">{tool.name}</h2>
                 <DifficultyBadge level={tool.difficulty} />
+                {!tool.sandbox && <ToolEvidenceBadges toolId={tool.id} compact />}
                 {tool.sandbox ? (
                   <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold bg-status-warning/15 text-status-warning">
                     <Container className="w-2.5 h-2.5" aria-hidden="true" />
@@ -855,18 +859,12 @@ export const PlaygroundWorkshop = () => {
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
   const toggleBookmark = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
 
-  // Sandbox runtime — reachability probe.
+  // Sandbox runtime. It stays idle until the visitor explicitly asks to
+  // connect; opening the public Playground must never probe localhost or any
+  // other private address.
   const sandboxStatus = useSandboxStore((s) => s.status)
   const probe = useSandboxStore((s) => s.probe)
   const runtimeOn = isSandboxAvailable(sandboxStatus)
-
-  // Probe once on mount so locked/unlocked state reflects reality. Status is
-  // read via getState() rather than as an effect dependency, so a later
-  // user-disable (status → 'idle') does NOT retrigger a probe that would
-  // immediately flip the runtime back on.
-  useEffect(() => {
-    if (useSandboxStore.getState().status === 'idle') void probe()
-  }, [probe])
 
   // Local UI state.
   const [searchText, setSearchText] = useState('')
@@ -1082,21 +1080,22 @@ export const PlaygroundWorkshop = () => {
     return counts
   }, [visibleTools])
 
-  // Overview "Start here" pool — 3 tools (playground.md Phase 9.2 acceptance).
-  // Wave B (2026-09-18, WS17 task 4): curated `startHere` picks lead, in
-  // registry order; the pool is topped up from `recommendedPersonas` only when
-  // a role has fewer than three picks (executive and grc have two eligible
-  // tools in the whole registry). Before this, filter-then-truncate over
-  // registry order gave developer, architect and researcher the same three
-  // HSM tools.
+  const roleJourney = role ? playgroundJourneyFor(role) : null
+
+  // One canonical role journey drives this pool, the marquee and role boards.
+  // Executive and GRC intentionally stop after two demonstrations and exit to
+  // Learn; technical roles receive three ordered browser exercises.
   const recommendedPool = useMemo(() => {
-    const base = role
-      ? visibleTools.filter((t) => t.recommendedPersonas.includes(role) && !isLocked(t))
-      : visibleTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
-    const curated = role ? base.filter((t) => t.startHere?.includes(role)) : []
-    const rest = sortTools(base).filter((t) => !curated.includes(t))
-    return [...curated, ...rest].slice(0, 3)
-  }, [role, visibleTools, isLocked, sortTools])
+    if (!role || !roleJourney) {
+      return sortTools(
+        visibleTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
+      ).slice(0, 3)
+    }
+    return roleJourney.toolIds.flatMap((id) => {
+      const tool = visibleTools.find((candidate) => candidate.id === id)
+      return tool && !isLocked(tool) ? [tool] : []
+    })
+  }, [role, roleJourney, visibleTools, isLocked, sortTools])
 
   // ── Actions ──────────────────────────────────────────────────────────────
   const openTool = useCallback(
@@ -1571,6 +1570,17 @@ export const PlaygroundWorkshop = () => {
             title="Nothing at this difficulty"
             subtitle="Switch the difficulty filter back to All."
           />
+        )}
+        {roleJourney && (
+          <div className="mt-3 flex flex-col gap-2 rounded-xl border border-border bg-muted/25 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">{roleJourney.rationale}</p>
+            <Link
+              to={roleJourney.learnTo}
+              className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+            >
+              Continue in Learn <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          </div>
         )}
 
         <Link

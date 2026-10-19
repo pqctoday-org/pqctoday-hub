@@ -129,16 +129,16 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/about': {
     executive:
-      "The Trust Engine and Trust Score Methodology sections explain how much of the site's content is backed by a cached primary source — the figures to quote when you cite the site.",
+      "The Trust Engine explains how source checks, human decisions and signed audit entries support the site's records — and where those checks remain incomplete.",
     grc: 'The Transparency & Disclaimer and Independence sections state who runs the site, who funds it and how corrections are handled.',
     developer:
       'The SBOM section lists every dependency by category; the Data Privacy section states that the site is static, with no backend and nothing leaving your browser.',
     architect:
       'The Platform Data section names each data file with its date — the provenance of every table you design from.',
     researcher:
-      'The Trust Score Methodology and Trust Tiers are published in full; use them to judge any figure on the site.',
+      'The Trust Engine and Content Audit Trail show how records are sourced, reviewed and corrected; open the cited source before relying on a figure.',
     'cert-engineer':
-      'The Trust Score Methodology and Trust Tiers say how each record and source is weighed; the Transparency & Disclaimer section says how corrections are handled.',
+      'The Trust Engine and Content Audit Trail show the review evidence behind recorded changes; the Transparency & Disclaimer section explains the limits and correction process.',
     ops: "Your progress and settings live in your browser's localStorage; the Data Privacy section says exactly what is and is not collected.",
     curious:
       'The Transparency & Disclaimer section says who builds this site, why, and what is and is not tracked.',

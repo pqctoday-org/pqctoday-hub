@@ -400,7 +400,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     for (const row of tornado) {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
-    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025. Compliance penalties: published regulatory enforcement data.*\n`
+    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025 per-sector table (one edition behind; IBM published its 2026 global report). Compliance penalties: published regulatory enforcement data.*\n`
     md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     md += '\n---\n\n'
     md +=

@@ -152,10 +152,10 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A figure that changes a decision. If waiting and acting come out within rounding of each other, say so plainly rather than tuning the inputs until they diverge.',
     workedExample:
-      'Keep the horizon fixed and slide the migration delay from 0 to 3 years: the cumulative-NPV chart shows the year where waiting becomes the more expensive choice, and the breakdown shows which cost drives it.',
+      'Keep the 10-year horizon fixed and compare start now with a 3-year delay: the cumulative-NPV table shows when waiting becomes more expensive, while the assumption panel shows what drives the result.',
     name: 'Cost of Inaction Analyzer',
     description:
-      'Model the discounted cost of delaying PQC migration — breach exposure, HNDL residual, and regulatory penalties',
+      'Compare the discounted cost of starting now with delaying PQC migration, with assumptions and uncertainty visible',
     category: 'Risk & Strategy',
     icon: CalendarClock,
     keywords: ['delay', 'inaction', 'cost', 'npv', 'penalty', 'hndl', 'breach'],
@@ -334,7 +334,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     workedExample:
-      "Choose the Executive lens, drag Systems Inventoried down to 40 and leave Vendor Readiness auto-scored from your Migrate catalog: the Overall Score becomes the weighted average, and the export lists each KPI's score, weight and target.",
+      'Choose the Executive lens, enter Systems Inventoried from your estate and select the products your organization uses in Migrate. Vendor Readiness then derives only from that scope; the combined score stays unavailable until at least 70% of intended KPI weight has evidence.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',

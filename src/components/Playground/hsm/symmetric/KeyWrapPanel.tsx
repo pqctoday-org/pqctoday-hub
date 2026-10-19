@@ -189,7 +189,7 @@ const MECH_INFO: MechInfo[] = [
     pkcs11Constant: 'CKM_RSA_PKCS_OAEP + CKM_AES_KEY_WRAP_KWP',
     constantHex: '0x0009 + 0x210A',
     nistRef: 'NIST SP 800-56B Rev 2 (2019)',
-    rfcRef: 'RFC 3447 §7.1',
+    rfcRef: 'RFC 8017 §7.1',
     fips140Level: 'FIPS 140-3 L1–L4',
     description:
       "Standard hybrid key transport: an ephemeral AES-256 KEK wraps the target key (AES-KWP), then RSA-OAEP encrypts the ephemeral KEK using the recipient's RSA public key. This is the canonical PKCS#11 v3.x pattern for asymmetric key wrapping. SHA-256 is minimum; SHA-384/512 recommended for L3+.",

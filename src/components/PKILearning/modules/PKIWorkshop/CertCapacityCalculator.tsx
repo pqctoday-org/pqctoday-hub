@@ -8,6 +8,7 @@ import { CERT_CAPACITY_DEFAULTS } from '@/data/certCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { SaveToOperationsPack } from '@/components/BusinessCenter/operationsPack/SaveToOperationsPack'
 import { certCapacityPlanMarkdown, type CertCapacityPlanInputs } from '@/services/opsArtifacts'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 
 const ALGO_ABBREV: Record<string, string> = {
   'RSA-2048': 'RSA',
@@ -561,7 +562,11 @@ export function CertCapacityCalculator() {
       </div>
 
       {/* Data table */}
-      <div className="glass-panel overflow-x-auto">
+      <ScrollFadeContainer
+        className="glass-panel"
+        showScrollHint
+        scrollProps={{ role: 'region', 'aria-label': 'Certificate capacity results' }}
+      >
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-border">
@@ -608,7 +613,7 @@ export function CertCapacityCalculator() {
             ))}
           </tbody>
         </table>
-      </div>
+      </ScrollFadeContainer>
 
       <div className="flex justify-between items-center">
         <a

@@ -85,7 +85,7 @@ describe('DRBG run record', () => {
     await waitFor(() => expect(downloads).toHaveLength(1))
     const { name, json } = await lastDownloadJson()
     expect(name).toMatch(/^drbg-known-answer-run-\d{4}-\d{2}-\d{2}\.json$/)
-    expect(json.schema).toBe('pqctoday.run-manifest/1')
+    expect(json.schema).toBe('pqctoday.run-manifest/2')
     expect(json.notice).toMatch(/^PQC Today is an educational/)
     expect(json.summary).toEqual({ passed: 16, failed: 0 })
     expect(json.negativeControls).toHaveLength(11)

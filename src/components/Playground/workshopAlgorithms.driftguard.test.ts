@@ -30,6 +30,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { WORKSHOP_TOOLS } from './workshopRegistry'
+import { PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS } from '@/data/playgroundAlgorithmMentions'
 
 const SRC = path.resolve(__dirname, '../..')
 const REGISTRY = path.join(SRC, 'components/Playground/workshopRegistry.tsx')
@@ -139,7 +140,7 @@ describe('workshopRegistry — advertised algorithms vs. the tool that runs them
     expect(offenders).toEqual([])
   })
 
-  it('reports tools that run a PQC family without advertising it', () => {
+  it('requires every frequent but unadvertised family mention to be classified as modelled or taught', () => {
     // The direction the audit actually caught (suci-flow ran ML-KEM silently).
     // Reported rather than hard-failed: a tool may legitimately reference a
     // family in a comparison table without offering it, so this is a worklist
@@ -164,12 +165,18 @@ describe('workshopRegistry — advertised algorithms vs. the tool that runs them
         }
       }
     }
-    if (unadvertised.length) {
-      console.warn(
-        `\n  Tools running a PQC family they do not advertise (review, not a failure):\n` +
-          unadvertised.map((u) => `    - ${u}`).join('\n')
-      )
+    const keys = unadvertised.map((item) => {
+      const match = item.match(/\(([^)]+)\) mentions ([A-Z-]+)/)
+      return match ? `${match[1]}:${match[2]}` : item
+    })
+    const unresolved = keys.filter((key) => !PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS[key])
+    const stale = Object.keys(PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS).filter(
+      (key) => !keys.includes(key)
+    )
+    expect(unresolved, 'new frequent mentions need executes/models/teaches review').toEqual([])
+    expect(stale, 'remove or re-review classifications after source changes').toEqual([])
+    for (const decision of Object.values(PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS)) {
+      expect(decision.reason.length).toBeGreaterThan(30)
     }
-    expect(Array.isArray(unadvertised)).toBe(true)
   })
 })

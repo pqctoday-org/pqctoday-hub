@@ -21,4 +21,10 @@ describe('BUSINESS_TOOL_EXERCISES (round 9, wave 2, business sittings)', () => {
       }
     }
   })
+  it('Cost of Inaction exercise matches the real control range and 10-year horizon', () => {
+    const prompt = BUSINESS_TOOL_EXERCISES['cost-of-inaction'][0].prompt
+    expect(prompt).toMatch(/3-year migration delay/i)
+    expect(prompt).toMatch(/10-year horizon/i)
+    expect(prompt).not.toMatch(/from 0/i)
+  })
 })

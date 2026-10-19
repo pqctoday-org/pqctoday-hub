@@ -9,7 +9,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
 
   // Step 1: Why It Matters
   urgencyStatement:
-    'Quantum computers will break the encryption protecting your most sensitive data. Adversaries are already harvesting encrypted data today for future decryption. As an executive, you bear fiduciary responsibility for protecting organizational assets against this emerging threat, and regulators are setting binding deadlines.',
+    'A cryptographically relevant quantum computer would break widely used public-key cryptography. Treat collection of long-lived ciphertext as a current threat model, determine which policy scopes actually apply, and ask management for evidence that the transition is owned, funded and measured.',
 
   threatImpacts: [
     {
@@ -18,7 +18,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       description:
         'Adversaries intercept and store encrypted data today, planning to decrypt it once quantum computers are available.',
       severity: 'critical',
-      timeframe: 'Already happening',
+      timeframe: 'Assume collection may occur now',
       exampleScenario:
         'A foreign intelligence service captures your encrypted M&A communications today. In 5-10 years, they decrypt everything — deal terms, valuations, strategic plans — long before your confidentiality obligations expire.',
     },
@@ -26,7 +26,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       id: 'regulatory-deadlines',
       title: 'Regulatory Compliance Deadlines',
       description:
-        'CNSA 2.0 (national security systems) and EO 14412 (US federal civilian systems) set dated PQC milestones, and the EU PQC roadmap targets 2030/2035. NIS2 and DORA impose cyber risk-management duties that reach the same systems, but no PQC deadline.',
+        'CNSA 2.0 (national security systems) and EO 14412 (US federal civilian systems) set scoped milestones, and the EU PQC roadmap provides coordinated targets. NIS2 and DORA impose broader cyber risk-management duties, not standalone PQC deadlines.',
       severity: 'critical',
       timeframe: '2025-2035 deadlines',
       exampleScenario:
@@ -46,7 +46,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       id: 'vendor-supply-chain',
       title: 'Vendor & Supply Chain Risk',
       description:
-        'Your vendors\u2019 PQC readiness directly impacts your organization\u2019s security posture.',
+        'Selected critical vendors can constrain your migration, but their relevance must be scoped to products and services your organization actually uses.',
       severity: 'high',
       timeframe: '2025-2028 assessment window',
       exampleScenario:
@@ -325,39 +325,40 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       id: 'qw-vendor',
       label: 'Check your top 3 vendors\u2019 PQC roadmaps',
       description:
-        'Most major cloud and software vendors have published PQC timelines. Review them.',
+        'Review the evidence and dates published by the three vendors most critical to your migration.',
     },
   ],
 
   kpiMetrics: [
     {
       label: 'Crypto Inventory Coverage',
-      target: '100%',
+      target: 'Example: 100%',
       description: 'Percentage of systems with documented cryptographic usage.',
     },
     {
       label: 'HNDL Exposure',
-      target: '< 5 years',
-      description: 'Maximum gap between data confidentiality requirement and PQC migration date.',
+      target: 'Organization-set',
+      description:
+        'Margin between confidentiality lifetime plus migration duration and the selected CRQC scenarios; a negative margin needs treatment.',
     },
     {
       label: 'Vendor PQC Readiness',
-      target: '> 80%',
+      target: 'Example: > 80%',
       description: 'Percentage of critical vendors with documented PQC migration roadmaps.',
     },
     {
       label: 'Board Awareness',
-      target: 'Quarterly',
+      target: 'Example: Quarterly',
       description: 'Frequency of quantum risk reporting to board of directors.',
     },
     {
       label: 'Compliance Coverage',
-      target: '100%',
+      target: 'Example: 100%',
       description: 'Percentage of applicable PQC mandates with mapped migration milestones.',
     },
     {
       label: 'Migration Budget',
-      target: 'Approved',
+      target: 'Organization-set',
       description: 'Multi-year PQC migration budget formally approved by leadership.',
     },
   ],

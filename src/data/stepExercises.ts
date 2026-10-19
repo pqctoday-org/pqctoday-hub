@@ -304,10 +304,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'exec-quantum-impact/self-assessment': {
     prompt:
-      "You check only 'We store data requiring confidentiality beyond 10 years' (+15) and 'We operate in a regulated industry' (+15). What does the exposure score read?",
-    options: ['30/100 — Moderate Exposure', '30/100 — Low Exposure', '15/100 — Low Exposure'],
-    answer: 1,
-    why: 'The nine weights sum to 100, so two 15-point statements give 30%. Moderate Exposure starts at 40% and High at 70%; below 40% the checklist reports lower direct exposure and advises documenting the migration plan and monitoring regulation.',
+      'You answer Yes to two decision-driver questions, No to six, and Unknown to one. What should the evidence summary report?',
+    options: [
+      'Applicable drivers: 2; questions requiring evidence: 1',
+      'A numeric exposure score based on the two Yes answers',
+      'Applicable drivers: 3; questions requiring evidence: 0',
+    ],
+    answer: 0,
+    why: 'The checklist reports what is applicable and what remains unknown. It does not convert answers into a weighted exposure band, because the questions are prompts for organizational evidence rather than a validated risk model.',
   },
   // vendor-risk
   'vendor-risk/vendor-scorecard': {

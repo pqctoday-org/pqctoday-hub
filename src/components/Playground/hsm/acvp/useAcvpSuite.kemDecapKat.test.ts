@@ -20,7 +20,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { renderHook } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 
@@ -96,7 +96,10 @@ describe('useAcvpSuite ML-KEM Decapsulate KAT — real mismatch (285ca5d3f regre
     const { useAcvpSuite } = await import('./useAcvpSuite')
     const { result } = renderHook(() => useAcvpSuite())
 
-    const results = await result.current.runTests(new Set(['ml_kem']))
+    let results: Awaited<ReturnType<typeof result.current.runTests>> = []
+    await act(async () => {
+      results = await result.current.runTests(new Set(['ml_kem']))
+    })
 
     // Section 7 row (D1-1 label: upstream encapsulation case run as decapsulation).
     const decapResult = results.find(

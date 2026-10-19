@@ -332,8 +332,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/cost-of-inaction': {
     executive:
-      'Slide Migration delay from 0 to 3 years with the horizon fixed: the ten-year cumulative NPV chart shows the year where waiting becomes the more expensive choice, and the breakdown shows which cost drives it.',
-    grc: 'The Delay cost breakdown separates accumulated exposure from delay premium; record the annual breach probability and migration duration you chose, since they carry the whole comparison.',
+      'Compare start now with a 3-year delay over the same ten-year horizon: the executive brief shows the NPV direction, largest driver, uncertainty range and which assumptions must be validated before the number reaches a board.',
+    grc: 'Treat the framework date as planning context, not proof of a fine. Record every assumption, and enter a regulatory, contract or certification consequence only when its owner has verified the amount, effective year and applicability.',
   },
   '/business/tools/cost-model-explorer': {
     executive:
@@ -382,7 +382,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/kpi-dashboard': {
     executive:
-      'Switch View as to Executive: the overall score and the KPIs such as Algorithms Migrated and Budget Utilization are the three to five measures that would move if the programme stalled.',
+      'Switch View as to Executive and enter evidence for the three to five measures that would move if the programme stalled. The combined score stays hidden until evidence coverage is sufficient; catalog-wide figures remain a separate comparison.',
     grc: "Enter the scores you can evidence, Customise Weights to your framework's priorities, and note which KPIs need assessment or compliance data to unlock; How this score is computed is the method to cite with the .csv export.",
   },
   '/business/tools/vendor-scorecard': {

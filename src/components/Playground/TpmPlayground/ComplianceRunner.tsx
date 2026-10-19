@@ -1481,8 +1481,9 @@ export function ComplianceRunner() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Execute TCG V1.85 RC4 compliance checks against the WASM TPM emulator — entirely
-          in-browser.
+          Run RC4-snapshot conformance checks against the WASM TPM emulator. The current normative
+          specification is final TPM 2.0 Library Version 185. This educational suite is not TCG
+          certification or proof of final-v185 conformance.
         </p>
         {hasData && (
           <Button
@@ -1504,7 +1505,7 @@ export function ComplianceRunner() {
         className="w-full border-secondary/50 text-secondary hover:bg-secondary/10"
       >
         <Shield className={`mr-2 h-4 w-4 ${isRunning ? 'animate-pulse' : ''}`} />
-        {isRunning ? 'Running V1.85 Compliance Suite...' : 'Run V1.85 Compliance Suite'}
+        {isRunning ? 'Running RC4 Snapshot Checks...' : 'Run RC4 Snapshot Checks'}
       </Button>
 
       {summary && (

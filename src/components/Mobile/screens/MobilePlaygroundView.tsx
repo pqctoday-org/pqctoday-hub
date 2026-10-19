@@ -23,6 +23,7 @@ import {
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { playgroundJourneyFor } from '@/data/playgroundRoleJourneys'
 import { MobileSheet } from '../primitives/Sheet'
 
 // Tools whose own real UI does not distill to a phone screen — dropped from
@@ -97,6 +98,7 @@ export function MobilePlaygroundView() {
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
   const toggleBookmark = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
   const role = usePersonaStore((s) => s.selectedPersona)
+  const roleJourney = role ? playgroundJourneyFor(role) : null
 
   // Mirrors desktop's Overview "Start here" pool (PlaygroundWorkshop.tsx,
   // playground.md Phase 9.2 acceptance) — role-matched tools, or beginner
@@ -108,11 +110,14 @@ export function MobilePlaygroundView() {
   const startHere = useMemo(() => {
     if (category || difficulty !== 'All' || search.trim()) return []
     const runnable = MOBILE_TOOLS.filter((t) => toolFitness(t.requires, caps) === 'runs')
-    const base = role
-      ? runnable.filter((t) => t.recommendedPersonas.includes(role))
-      : runnable.filter((t) => t.difficulty === 'beginner')
-    return base.slice(0, 3)
-  }, [role, category, difficulty, search, caps])
+    if (roleJourney) {
+      return roleJourney.toolIds.flatMap((id) => {
+        const tool = runnable.find((candidate) => candidate.id === id)
+        return tool ? [tool] : []
+      })
+    }
+    return runnable.filter((t) => t.difficulty === 'beginner').slice(0, 3)
+  }, [roleJourney, category, difficulty, search, caps])
 
   const categoryCounts = useMemo(() => {
     const counts = new Map<string, number>()
@@ -172,6 +177,19 @@ export function MobilePlaygroundView() {
               />
             ))}
           </div>
+          {roleJourney && (
+            <div className="mt-2.5 rounded-lg border border-border bg-muted/25 p-3">
+              <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+                {roleJourney.rationale}
+              </p>
+              <Link
+                to={roleJourney.learnTo}
+                className="mt-2 inline-flex text-[12px] font-semibold text-primary hover:underline"
+              >
+                Continue in Learn →
+              </Link>
+            </div>
+          )}
         </div>
       )}
 

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { KPIDashboardBuilder } from './KPIDashboardBuilder'
+import { render, screen, fireEvent, within } from '@testing-library/react'
+import { buildKpiDashboardMarkdown, KPIDashboardBuilder } from './KPIDashboardBuilder'
+import { buildDimensions } from '@/data/kpiCatalog'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 
 // ── Module mocks ───────────────────────────────────────────────────────────
@@ -70,6 +71,7 @@ describe('KPIDashboardBuilder', () => {
   beforeEach(() => {
     addExecutiveDocument.mockReset()
     mockPersona = 'executive'
+    localStorage.clear()
   })
 
   it('renders the executive-weighted KPI set by default', () => {
@@ -92,10 +94,11 @@ describe('KPIDashboardBuilder', () => {
     expect(screen.queryByTestId('kpi-dim-hndl-horizon')).toBeNull()
   })
 
-  it('renders HNDL as disabled when no assessment is complete', () => {
+  it('renders HNDL coverage as not yet scored until organizational evidence is entered', () => {
     render(<KPIDashboardBuilder />)
     const hndl = screen.getByTestId('kpi-dim-hndl-horizon')
-    expect(hndl).toHaveAttribute('data-disabled', 'true')
+    expect(hndl).toHaveAttribute('data-pending', 'true')
+    expect(within(hndl).getByText('Not yet scored')).toBeInTheDocument()
   })
 
   it('renders country-specific target tick for algorithms-migrated (US exec)', () => {
@@ -107,5 +110,67 @@ describe('KPIDashboardBuilder', () => {
   it('exposes a weight customisation panel', () => {
     render(<KPIDashboardBuilder />)
     expect(screen.getByText(/Customise Weights/i)).toBeInTheDocument()
+  })
+
+  it('stores evidence lineage with the saved dashboard and local snapshot', () => {
+    render(<KPIDashboardBuilder />)
+    const hndl = screen.getByTestId('kpi-dim-hndl-horizon')
+    fireEvent.click(within(hndl).getByText('Evidence details'))
+    fireEvent.change(within(hndl).getByLabelText(/Evidence owner/i), {
+      target: { value: 'Risk Committee' },
+    })
+    fireEvent.change(within(hndl).getByLabelText(/Reporting period/i), {
+      target: { value: '2026 Q4' },
+    })
+    fireEvent.change(within(hndl).getByLabelText(/Evidence reference/i), {
+      target: { value: 'risk-register-42' },
+    })
+    fireEvent.change(within(hndl).getByLabelText(/Verification state/i), {
+      target: { value: 'owner-reviewed' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/i }))
+
+    expect(addExecutiveDocument).toHaveBeenCalledWith(
+      expect.objectContaining({
+        inputs: expect.objectContaining({
+          observations: expect.objectContaining({
+            'hndl-horizon': expect.objectContaining({
+              owner: 'Risk Committee',
+              reportingPeriod: '2026 Q4',
+              evidenceReference: 'risk-register-42',
+              verificationState: 'owner-reviewed',
+            }),
+          }),
+        }),
+      })
+    )
+    expect(localStorage.getItem('pqctoday-kpi-dashboard-snapshots-v1')).toContain(
+      'risk-register-42'
+    )
+  })
+
+  it('uses the same structured observation in the saved Markdown', () => {
+    const dimensions = buildDimensions('executive', 'governance', mockData, mockData.country)
+    const markdown = buildKpiDashboardMarkdown(
+      dimensions,
+      'executive',
+      {},
+      {},
+      {
+        'hndl-horizon': {
+          numerator: '4',
+          denominator: '10',
+          unit: 'data stores',
+          reportingPeriod: '2026 Q4',
+          asOfDate: '2026-10-18',
+          owner: 'Risk Committee',
+          evidenceReference: 'risk-register-42',
+          verificationState: 'owner-reviewed',
+        },
+      }
+    )
+
+    expect(markdown).toContain('2026 Q4 | Risk Committee | risk-register-42 | owner-reviewed')
+    expect(markdown).toContain('Raw measure: 4 / 10 data stores; as of 2026-10-18.')
   })
 })

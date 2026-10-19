@@ -115,17 +115,6 @@ export interface WorkshopTool {
   /** Personas for whom this tool is a primary (★★) fit */
   recommendedPersonas: PersonaId[]
   /**
-   * B+ round 8, Wave B (2026-09-18) — WS17 task 4. Personas for whom this tool
-   * is one of the three curated "Start here" picks on the Crypto Lab overview.
-   * Before this field the pool was "first three registry entries that name the
-   * role", so developer, architect and researcher all opened on the same three
-   * HSM tools and 21 slots covered 12 distinct tools. Must be a subset of
-   * `recommendedPersonas` (guarded in workshopRegistry.test.ts). A role with
-   * fewer than three curated picks is topped up from `recommendedPersonas` in
-   * registry order, so the field is an allocation, not a gate.
-   */
-  startHere?: PersonaId[]
-  /**
    * B+ round 8, Wave C (2026-09-18). Intro strip rendered above the tool by
    * PlaygroundToolRoute: what the user will do, and one concrete run written
    * from the tool's real steps and controls (not from its summary — the first
@@ -200,6 +189,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'Produces a browser-local KMIP operation trace, policy decision, PKCS #11 result, and before/after key-lifecycle state for the selected scenario.',
     opensourceTool: {
       name: 'pqctoday-kmip',
       url: 'https://github.com/pqctoday/pqctoday-kmip',
@@ -257,7 +249,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['architect', 'ops', 'executive', 'grc'],
-    startHere: ['executive', 'grc'],
     intro: {
       whatYouWillDo:
         "Pick a Small, Medium or Large deployment, switch on enterprise use cases and set each one's transactions per second, choose N+1 or 2N redundancy and the number of locations, then read the three fleet-sizing cards.",
@@ -280,7 +271,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
-    startHere: ['developer'],
     intro: {
       whatYouWillDo:
         'Execute six steps in order: Alice and Bob X25519 keypairs, ECDH in both directions, an ML-KEM-768 keypair, encapsulation, then decapsulate and HKDF-combine both secrets into one 32-byte session key.',
@@ -305,7 +295,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['architect', 'researcher', 'ops'],
-    startHere: ['architect'],
     intro: {
       whatYouWillDo:
         'Pick a KEK algorithm (ML-KEM-512/768/1024 or RSA-2048/4096) and a wrap mechanism (AES-KW, AES-KWP or AES-GCM), press Execute (Live WASM), then step through the five-step classical-vs-PQC comparison.',
@@ -330,7 +319,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
-    startHere: ['ops'],
     intro: {
       whatYouWillDo:
         'Choose a JWT signing algorithm (RS256, ES256 or ML-DSA-44/65/87), Sign Token to see the header, unchanged payload and signature, then Verify Signature against the JWKS public key over PKCS#11.',
@@ -377,7 +365,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'cert-engineer'],
-    startHere: ['ops'],
     intro: {
       whatYouWillDo:
         'Upload a firmware binary (or use the mock UEFI manifest), pick PQC, classical and hash algorithms, then Generate Both Keys, Sign Both and Verify Both Signatures across the four wizard steps.',
@@ -402,7 +389,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
-    startHere: ['researcher'],
     intro: {
       whatYouWillDo:
         'Pick one of the 12 FIPS 205 parameter sets and a pre-hash mode, then Generate Key Pair, Sign Message and Verify Signature on a real PKCS#11 v3.2 HSM emulator in the browser.',
@@ -416,7 +402,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'lms-hss',
     pt_id: 'PT-002',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Stateful Hash Signatures',
     description: 'LMS and XMSS stateful signature trees using SoftHSMv3',
     category: 'HSM / PKCS#11',
@@ -569,7 +555,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'curious'],
-    startHere: ['developer'],
     intro: {
       whatYouWillDo:
         'Configure the client and server panels — cipher suites, key exchange groups, an RSA-2048 or ML-DSA identity, optional client verification — then Start Full Interaction to run a real OpenSSL TLS 1.3 handshake.',
@@ -583,7 +568,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.5',
+    version: '1.0.6',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -630,7 +615,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pqc-ssh-sim',
     pt_id: 'PT-SSH-PQC',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
@@ -709,13 +694,16 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       workedExample:
         'Default SUPI 310260123456789 under Profile A: X25519 ECDH, X9.63-KDF, AES-128 MSIN encryption and a MAC tag, then Decrypt SUCI at SIDF recovers the original SUPI.',
     },
+    hasOutput: true,
+    outputSpec:
+      'Produces the synthetic SUCI, derived-key and decryption trace for the selected profile and learner-supplied demonstration SUPI.',
   },
 
   // ── Digital Identity ──────────────────────────────────────────────────────
   {
     id: 'mls-group-messaging',
     pt_id: 'PT-030',
-    version: '0.1.2',
+    version: '1.0.0',
     name: 'MLS Group Messaging',
     description:
       'RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto routes every crypto op through softhsmv3.',
@@ -743,8 +731,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       workedExample:
         'Alice and Bob start the group; add a third member and see which nodes on the direct path have to re-key.',
     },
-    // Pre-1.0 — see the note on PT-029.
-    wip: true,
+    hasOutput: true,
+    outputSpec:
+      'Produces credential-signature, key-update and encrypted-message results plus the modelled TreeKEM epoch and re-keyed-node trace.',
     opensourceTool: {
       name: 'openmls',
       url: 'https://github.com/openmls/openmls',
@@ -753,7 +742,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.4',
+    version: '1.0.6',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -798,6 +787,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       workedExample:
         'Generate from the LCG source, then predict its next output from its internal state after generation — the prediction matches even though the LCG usually lands within range on the visual checks.',
     },
+    hasOutput: true,
+    outputSpec:
+      'Produces sample bytes, source-labelled visual statistics and, for the LCG, the predicted next output from exposed state.',
   },
   {
     id: 'qrng-demo',
@@ -823,7 +815,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       workedExample:
         'Run the checks on all three samples: only the weak PRNG stands out, because the simulated QRNG and the CSPRNG are the same kind of output.',
     },
-    startHere: ['curious'],
+    hasOutput: true,
+    outputSpec:
+      'Produces source-labelled synthetic sample bytes and grouped statistical/health-test results; it produces no QRNG hardware evidence.',
   },
   {
     id: 'entropy-test',
@@ -866,13 +860,15 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer', 'cert-engineer'],
-    startHere: ['researcher'],
     intro: {
       whatYouWillDo:
         'Load a 64-byte sample (Generate Random, All Zeros, Repeating Pattern, Incrementing, or Paste Hex), press Run the checks, and read each group separately: visual checks, health tests, estimators (not run here) and primitive self-checks.',
       workedExample:
         'Load Repeating Pattern (deadbeef repeated over 64 bytes) and run: the visual checks flag the pattern, and each result shows its value, its cutoff and the limit of a 64-byte sample.',
     },
+    hasOutput: true,
+    outputSpec:
+      'Produces grouped visual checks, SP 800-90B health-test outcomes and primitive self-checks for the displayed 64-byte sample; no entropy estimate.',
   },
   {
     id: 'drbg-demo',
@@ -900,13 +896,15 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['architect', 'developer', 'researcher', 'cert-engineer'],
-    startHere: ['researcher'],
     intro: {
       whatYouWillDo:
         'Instantiate HMAC_DRBG from a 32-byte entropy input, a nonce and a personalization string, then press Generate and Reseed while the Internal State Tracker shows the working key K, state value V and reseed_counter. Run the known-answer check to compare the same code with NIST vectors.',
       workedExample:
         'Instantiate with the default personalization string and generate 32 bytes ten times: reseed_counter reaches 11, above the demo interval of 10, so a Reseed required banner blocks Generate until you press Reseed, which resets it to 1.',
     },
+    hasOutput: true,
+    outputSpec:
+      'Produces HMAC_DRBG output bytes, K/V/reseed-counter transitions and a known-answer comparison tied to the displayed inputs.',
   },
 
   // ── Certificates & Proofs ─────────────────────────────────────────────────
@@ -946,11 +944,14 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       workedExample:
         'Load the Stuck source, detected counterexample: the health tests exclude Source A before conditioning, and Source B alone falls short of the 384 bits a 256-bit DRBG needs, so the verdict is Not enough evidence.',
     },
+    hasOutput: true,
+    outputSpec:
+      'Produces source health-test outcomes, the conditioned output and an assumption-led sufficiency verdict for the simulated sources.',
   },
   {
     id: 'pki-workshop',
     pt_id: 'PT-015',
-    version: '1.0.1',
+    version: '1.0.3',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
@@ -972,7 +973,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'curious'],
-    startHere: ['curious'],
     intro: {
       whatYouWillDo:
         'Work through five steps: generate a CSR, create a Root CA, issue a certificate by signing the CSR with that CA, parse the certificate, then build a CRL.',
@@ -986,7 +986,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cert-capacity',
     pt_id: 'PT-025',
-    version: '1.0.2',
+    version: '1.0.4',
     name: 'Cert Capacity Calculator',
     description:
       'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert counts and renewal cadence.',
@@ -1008,7 +1008,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'beginner',
     requires: [],
     recommendedPersonas: ['architect', 'ops', 'executive', 'grc'],
-    startHere: ['architect', 'executive', 'grc'],
     hasOutput: false,
   },
   {
@@ -1026,7 +1025,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
-    startHere: ['architect'],
     intro: {
       whatYouWillDo:
         "Enable the HSM, press Generate on any of the seven current certificate format cards or Generate All Current Formats, check each card's verification results, then read each PEM or parsed view and the Format Comparison table. Advanced and historical examples are generated separately.",
@@ -1063,7 +1061,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'researcher', 'curious'],
-    startHere: ['curious'],
     intro: {
       whatYouWillDo:
         'Add certificate leaves and build a SHA-256 Merkle tree, generate an inclusion proof for one leaf, verify it and tamper with it, compare handshake sizes, then simulate a Certificate Transparency log.',
@@ -1106,6 +1103,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       workedExample:
         'Start Issuance Flow at the PID Issuer to get a P-256-bound mdoc, then Login with Wallet at the bank, Consent & Share family name, given name, degree and age_over_18, and the bank confirms Account Opened.',
     },
+    hasOutput: true,
+    outputSpec:
+      'Produces synthetic wallet credentials, consented presentation state and a modelled qualified-signature workflow; no real identity or trust-service transaction.',
   },
 
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
@@ -1221,7 +1221,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'cert-engineer'],
-    startHere: ['ops'],
     intro: {
       whatYouWillDo:
         'Pick the Learn, Explore or Workbench tab; in the Workbench choose a command category such as genpkey, req, x509, dgst, kem or enc, set its parameters, press Run Command and read the terminal output and logs.',
@@ -1280,7 +1279,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
-    startHere: ['developer'],
     intro: {
       whatYouWillDo:
         'Open seven sections: inspect a JWT, sign one with ML-DSA or SLH-DSA, build a composite ML-DSA-65+Ed25519 JWT, encrypt a payload as an HPKE JWE with ML-KEM-768 or the X25519 hybrid, compare token sizes, run the JOSE known-answer audit, and attack a JWT verifier in the Attack Lab.',
@@ -1294,7 +1292,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-enrollment',
     pt_id: 'PT-029',
-    version: '0.1.2',
+    version: '1.0.1',
     name: 'PKI Enrollment (EST + CMP)',
     description:
       'RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.',
@@ -1321,10 +1319,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
-    // Pre-1.0: the WIP banner is the only signal a visitor gets that this tool
-    // is still moving. `workshopRegistry.test.ts` enforces that every 0.x tool
-    // sets this, so a new pre-1.0 tool cannot ship looking finished.
-    wip: true,
     intro: {
       whatYouWillDo:
         'Generate an end-entity keypair, send a CMP Initial Request to an in-browser mock CA, run EST simpleenroll with the same key, then perform an ML-KEM-768 key update with encrCert proof of possession.',

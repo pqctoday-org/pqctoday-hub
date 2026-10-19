@@ -28,6 +28,10 @@ describe('run manifest', () => {
     expect(m.site).toEqual(SITE)
     expect(m.runtime.userAgent).toBe('UA')
     expect(m.summary).toEqual({ passed: 1, failed: 1 })
+    expect(m.evidence.class).toBe('real-crypto')
+    expect(m.evidence.implementation).toBe('TLS 1.3 Simulator 1.0.2')
+    expect(m.evidence.assumptions).not.toHaveLength(0)
+    expect(m.evidence.nonCertification).toContain('not an ACVP/CAVP result')
   })
 
   it('refuses a record that states no limitation', () => {
@@ -38,6 +42,8 @@ describe('run manifest', () => {
     const m = buildRunManifest(INPUT, SITE, 'UA')
     const md = runManifestToMarkdown(m)
     expect(md).toContain('## What this run does not show')
+    expect(md).toContain('## Assumptions')
+    expect(md).toContain('Evidence class: Real cryptography')
     expect(md.startsWith('**Notice')).toBe(true)
     expect(md).toContain('- FAIL client-auth: failed (expected success)')
     const json = md.slice(md.indexOf('```json') + 7, md.lastIndexOf('```'))

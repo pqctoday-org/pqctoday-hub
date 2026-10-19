@@ -3911,6 +3911,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       )}
 
       <GlossaryAutoWrap>
+        <p className="mb-1 text-[11px] font-medium text-muted-foreground sm:hidden">
+          Scroll sideways to follow the full handshake →
+        </p>
         {/* a11y (WS14, 2026-08-21): the inner grid is `min-w-[480px]`, so this
             wrapper does scroll below ~480px. Verified 2026-08-21: axe does NOT
             currently flag it — the grid holds 4 focusable buttons, so it passes

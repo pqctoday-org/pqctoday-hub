@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { KeyDetails } from './KeyDetails'
 import type { Key } from '../../../types'
@@ -64,15 +65,17 @@ describe('KeyDetails Component', () => {
   })
 
   it('copies raw value to clipboard', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue()
     render(<KeyDetails selectedKey={mockKey} />)
     const copyBtns = screen.getAllByTitle('Copy to clipboard')
     const rawCopyBtn = copyBtns[0] // First one is for Raw Value
 
-    fireEvent.click(rawCopyBtn)
+    await user.click(rawCopyBtn)
 
     // The status notice travels with copied key material (2026-09-26): once
     // these bytes are on a clipboard they look exactly like a real key.
-    const copied = vi.mocked(navigator.clipboard.writeText).mock.calls[0][0]
+    const copied = writeText.mock.calls[0][0]
     expect(copied).toContain('01020304')
     expect(copied).toContain('# PQC Today is an educational and demonstration platform')
   })

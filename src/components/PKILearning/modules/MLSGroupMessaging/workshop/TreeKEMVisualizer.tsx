@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import { Plus, Minus, RefreshCw, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
 
 interface TreeNode {
   id: number
@@ -185,7 +186,14 @@ export const TreeKEMVisualizer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-6 overflow-x-auto">
+        <ScrollFadeContainer
+          className="mt-6"
+          showScrollHint
+          scrollProps={{
+            role: 'region',
+            'aria-label': 'TreeKEM ratchet tree diagram',
+          }}
+        >
           <svg width={width} height={height} className="text-foreground">
             {/* Edges */}
             {nodes
@@ -277,7 +285,7 @@ export const TreeKEMVisualizer: React.FC = () => {
               )
             })}
           </svg>
-        </div>
+        </ScrollFadeContainer>
 
         <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">

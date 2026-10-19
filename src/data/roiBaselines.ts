@@ -99,7 +99,7 @@ export const FINANCIAL_BASELINE_EVIDENCE = {
  * as a source, including in exports, since those are what reach a CFO.
  */
 export const IBM_BASELINE_UNVERIFIED_NOTE =
-  'The per-sector IBM figures are cited but unverified: the report is ' +
+  "These per-sector figures come from IBM's 2025 table and are one edition behind: IBM published its 2026 global report on 29 July 2026, but the current per-sector table is not publicly available without registration. The 2025 per-sector figures are cited but unverified because that report is " +
   'registration-walled, so only its landing page has been read. When the two ' +
   'other financial sources behind this suite were opened in full, three of ' +
   'their five figures turned out to be wrong — treat these as an assumption, ' +

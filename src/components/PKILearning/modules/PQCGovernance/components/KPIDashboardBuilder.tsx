@@ -6,7 +6,11 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { DataDrivenScorecard, KpiPersonaSelector } from '@/components/PKILearning/common/executive'
+import {
+  DataDrivenScorecard,
+  KpiPersonaSelector,
+  type ScorecardObservation,
+} from '@/components/PKILearning/common/executive'
 import { CompleteStepAction } from '@/components/PKILearning/common/CompleteStepAction'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { MarkdownView } from '@/components/ui/MarkdownView'
@@ -27,11 +31,14 @@ const METHODOLOGY_MD = `## How this score is computed
 
 The **Overall Score** is the weighted average of the KPI sliders below, using the
 per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
-measure; the weighted average is rounded to a whole number.
+measure; the weighted average is rounded to a whole number. A combined score is
+withheld until at least 70% of intended KPI weight has organization-specific
+evidence. Missing rows remain visible and never improve the result by disappearing.
 
 The KPI set follows the Applied Quantum framework's Board-Level KPI Pack —
 Coverage, Trust, Inventory, Vendors, and Agility, each with year-1/2/3 targets
-(see Program Foundations · Metrics, KPIs & Reporting).
+(see Program Foundations · Metrics, KPIs & Reporting). Catalog-wide figures are
+shown only as an educational comparison and never enter the organization score.
 `
 
 interface KPIDashboardBuilderProps {
@@ -43,7 +50,14 @@ interface SavedKpiInputs {
   scores?: Record<string, number>
   weights?: Record<string, number>
   activePersona?: KpiPersonaId
+  observations?: Record<string, ScorecardObservation>
 }
+
+interface KpiSnapshot extends SavedKpiInputs {
+  savedAt: string
+}
+
+const SNAPSHOT_KEY = 'pqctoday-kpi-dashboard-snapshots-v1'
 
 /** Extracted (07192026, Batch 2) so the simulation's real-tool doc generator
  *  renders THIS logic — persistScorecard delegates here. */
@@ -51,31 +65,43 @@ export function buildKpiDashboardMarkdown(
   dimensions: ReturnType<typeof buildDimensions>,
   activePersona: KpiPersonaId,
   scores: Record<string, number>,
-  weights: Record<string, number>
+  weights: Record<string, number>,
+  observations: Record<string, ScorecardObservation> = {}
 ): string {
   const ew = (d: (typeof dimensions)[number]) => (d.id in weights ? (weights[d.id] ?? 0) : d.weight)
 
   let weightedSum = 0
   let totalWeight = 0
+  let intendedWeight = 0
   for (const d of dimensions) {
-    if (d.disabled) continue
-    weightedSum += (scores[d.id] ?? 0) * ew(d)
+    intendedWeight += ew(d)
+    const value = scores[d.id] ?? d.autoScore
+    if (d.disabled || value === undefined) continue
+    weightedSum += value * ew(d)
     totalWeight += ew(d)
   }
   const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
+  const coverage = intendedWeight > 0 ? totalWeight / intendedWeight : 0
 
   let md = '# PQC Governance KPI Dashboard\n\n'
   md += `**Persona Lens:** ${activePersona}\n`
-  md += `**Overall Score: ${overall}/100**\n\n`
+  md +=
+    coverage >= 0.7
+      ? `**Overall Score: ${overall}/100**\n\n`
+      : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-  md += '| KPI | Score | Weight | Target |\n'
-  md += '|-----|-------|--------|--------|\n'
+  md += '| KPI | Score | Weight | Target | Period | Owner | Evidence | Verification |\n'
+  md += '|-----|-------|--------|--------|--------|-------|----------|--------------|\n'
   for (const d of dimensions) {
+    const observation = observations[d.id]
+    const lineage = ` | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
     if (d.disabled) {
-      md += `| ${d.label} | _locked_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
+      md += `| ${d.label} | _locked_ | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
       continue
     }
-    md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} |\n`
+    const value = scores[d.id] ?? d.autoScore
+    md += `| ${d.label} | ${value === undefined ? '_not yet scored_' : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
+    md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
   }
 
   // Honest methodology — the weighted-average score the dashboard computes.
@@ -104,11 +130,40 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const scoresRef = useRef<Record<string, number>>(savedInputs?.scores ?? {})
   const weightsRef = useRef<Record<string, number>>(savedInputs?.weights ?? {})
+  const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
+    () => savedInputs?.observations ?? {}
+  )
+  const observationsRef = useRef<Record<string, ScorecardObservation>>(
+    savedInputs?.observations ?? {}
+  )
+  const [snapshotCount, setSnapshotCount] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) ?? '[]') as unknown
+      return Array.isArray(saved) ? saved.length : 0
+    } catch {
+      return 0
+    }
+  })
+  const [trendSummary, setTrendSummary] = useState<string | null>(null)
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
   }, [])
+
+  useEffect(() => {
+    const next = { ...scoresRef.current }
+    for (const dimension of dimensions) {
+      if (
+        !dimension.disabled &&
+        dimension.autoScore !== undefined &&
+        next[dimension.id] === undefined
+      ) {
+        next[dimension.id] = dimension.autoScore
+      }
+    }
+    scoresRef.current = next
+  }, [dimensions])
 
   // Persist using the SAME effective weights the on-screen scorecard shows — the
   // user's weight edits, falling back to the per-persona defaults — so the saved
@@ -118,7 +173,8 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       dimensions,
       activePersona,
       scoresRef.current,
-      weightsRef.current
+      weightsRef.current,
+      observationsRef.current
     )
 
     addExecutiveDocument({
@@ -129,7 +185,12 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       data: md,
       // Persist the structured scorecard so it is restorable (round-trips through
       // useSavedArtifactInputs on next mount).
-      inputs: { scores: scoresRef.current, weights: weightsRef.current, activePersona },
+      inputs: {
+        scores: scoresRef.current,
+        weights: weightsRef.current,
+        activePersona,
+        observations: observationsRef.current,
+      },
       createdAt: Date.now(),
     })
   }, [dimensions, addExecutiveDocument, activePersona])
@@ -147,9 +208,40 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
 
   const handleSaveNow = useCallback(() => {
     persistScorecard()
+    try {
+      const parsed = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) ?? '[]') as unknown
+      const history: KpiSnapshot[] = Array.isArray(parsed) ? (parsed as KpiSnapshot[]) : []
+      const previous = history[0]
+      if (previous?.scores) {
+        let improving = 0
+        let unchanged = 0
+        let worsening = 0
+        for (const [id, value] of Object.entries(scoresRef.current)) {
+          const prior = previous.scores[id]
+          if (prior === undefined) continue
+          if (value > prior) improving++
+          else if (value < prior) worsening++
+          else unchanged++
+        }
+        setTrendSummary(
+          `Compared with the previous snapshot: ${improving} improving, ${unchanged} unchanged, ${worsening} worsening.`
+        )
+      }
+      history.unshift({
+        savedAt: new Date().toISOString(),
+        scores: { ...scoresRef.current },
+        weights: { ...weightsRef.current },
+        activePersona,
+        observations: { ...observationsRef.current },
+      })
+      localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(history.slice(0, 12)))
+      setSnapshotCount(Math.min(12, history.length))
+    } catch {
+      // Artifact save still succeeds when browser storage is unavailable.
+    }
     setWasSaved(true)
     setDirtySinceSave(false)
-  }, [persistScorecard])
+  }, [persistScorecard, activePersona])
 
   const handleScoreChange = useCallback(
     (scores: Record<string, number>) => {
@@ -163,6 +255,18 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   const handleWeightChange = useCallback(
     (weights: Record<string, number>) => {
       weightsRef.current = weights
+      scheduleSave()
+    },
+    [scheduleSave]
+  )
+
+  const handleObservationChange = useCallback(
+    (dimensionId: string, observation: ScorecardObservation) => {
+      setObservations((previous) => {
+        const next = { ...previous, [dimensionId]: observation }
+        observationsRef.current = next
+        return next
+      })
       scheduleSave()
     },
     [scheduleSave]
@@ -200,8 +304,16 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         />
       )}
       {seedSources.length > 0 && (
-        <PreFilledBanner summary={`KPI defaults derived from ${seedSources.join(' + ')}.`} />
+        <PreFilledBanner
+          summary={`Organizational context available from ${seedSources.join(' + ')}.`}
+        />
       )}
+      <div className="rounded-md border border-border bg-muted/20 p-3 text-xs text-muted-foreground">
+        <strong className="text-foreground">Catalog comparison — not part of your score:</strong>{' '}
+        PQC Today currently records {execData.totalProducts} products; its tier-weighted readiness
+        benchmark is {Math.round(execData.vendorReadinessWeighted * 100)}%. Your organizational
+        vendor and FIPS KPIs use only products you explicitly select in Migrate.
+      </div>
       {lockedDimensions.length > 0 && (
         <div className="rounded-md border border-status-warning/30 bg-status-warning/5 p-3 text-xs text-foreground/80">
           <strong className="text-status-warning">
@@ -213,9 +325,9 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground flex-1">
-          Adjust KPI sliders to reflect your organization&apos;s PQC migration progress. Vendor
-          Readiness and threat-scoped KPIs auto-populate from the catalog, industry threats, and
-          your assessment; weights adapt to the selected persona lens.
+          Enter evidence-backed KPI values for your organization. Vendor and FIPS rows use only
+          products you selected in Migrate; catalog-wide figures stay in the separate comparison
+          above. Weights adapt to the selected persona lens.
         </p>
         <div className="flex max-w-full flex-wrap items-center gap-2">
           <CompleteStepAction
@@ -227,6 +339,16 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
           <KpiPersonaSelector value={activePersona} onChange={setPersonaOverride} />
         </div>
       </div>
+      <p className="text-xs text-muted-foreground">
+        {snapshotCount === 0
+          ? 'Save creates the first dated browser-local snapshot for later trend comparison.'
+          : `${snapshotCount} dated snapshot${snapshotCount === 1 ? '' : 's'} stored locally in this browser (maximum 12).`}
+      </p>
+      {trendSummary && (
+        <p className="text-xs text-foreground" role="status">
+          {trendSummary}
+        </p>
+      )}
 
       <CollapsibleSection
         title="How this score is computed"
@@ -239,10 +361,12 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       {execData.migrationDeadlineYear && (
         <div className="glass-panel p-4 border-primary/20">
           <p className="text-sm text-foreground">
-            <span className="font-semibold text-primary">Country Deadline:</span>{' '}
+            <span className="font-semibold text-primary">
+              {execData.migrationDeadlineBinding ? 'Binding milestone:' : 'Planning milestone:'}
+            </span>{' '}
             {execData.migrationDeadlineYear}
             {execData.country ? ` (${execData.country})` : ''} — Pace-to-Deadline weights adjust
-            accordingly for the {activePersona} lens.
+            only after you enter organization-specific progress for the {activePersona} lens.
           </p>
         </div>
       )}
@@ -261,6 +385,9 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         exportFilename={`pqc-governance-kpi-${activePersona}`}
         exportFormats={['markdown', 'csv', 'pdf']}
         includeTargetsInExport={true}
+        minimumCoverageForOverall={0.7}
+        observations={observations}
+        onObservationChange={handleObservationChange}
       />
     </div>
   )

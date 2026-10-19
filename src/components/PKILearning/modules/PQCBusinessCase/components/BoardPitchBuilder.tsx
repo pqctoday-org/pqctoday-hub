@@ -59,6 +59,11 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
   const effectiveRoiOutput = roiOutput ?? savedRoiOutput ?? null
   const effectiveBreachOutput = breachOutput ?? savedBreachOutput ?? null
   const effectiveInactionOutput = inactionOutput ?? savedInactionOutput ?? null
+  const inactionSummary = effectiveInactionOutput
+    ? effectiveInactionOutput.costOfInactionUSD >= 0
+      ? `Incremental NPV of a ${effectiveInactionOutput.delayYears}-year delay: ${formatCurrency(effectiveInactionOutput.costOfInactionUSD)}`
+      : `A ${effectiveInactionOutput.delayYears}-year delay lowers discounted NPV by ${formatCurrency(Math.abs(effectiveInactionOutput.costOfInactionUSD))}, while exposure remains higher for longer`
+    : null
 
   // Key the variant (and therefore the whole ArtifactBuilder below) on persona
   // so switching roles resets the form state to the new persona's defaults.
@@ -80,9 +85,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
             )
           }
           if (effectiveInactionOutput) {
-            parts.push(
-              `Cost of inaction (delaying ${effectiveInactionOutput.delayYears}yr): ${formatCurrency(effectiveInactionOutput.costOfInactionUSD)}`
-            )
+            parts.push(`${inactionSummary} (illustrative scenario; validate assumptions)`)
           }
           return { ...f, defaultValue: parts.join('\n') }
         }
@@ -101,7 +104,13 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         return f
       }),
     }))
-  }, [variant.sections, effectiveRoiOutput, effectiveBreachOutput, effectiveInactionOutput])
+  }, [
+    variant.sections,
+    effectiveRoiOutput,
+    effectiveBreachOutput,
+    effectiveInactionOutput,
+    inactionSummary,
+  ])
 
   const sources: string[] = []
   if (!seedCleared) {
@@ -195,7 +204,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
             effectiveBreachOutput &&
               `Breach scenario data ${breachOutput ? 'from Step 3' : 'from your last Breach Scenario Simulator export'} (delta: ${formatCurrency(effectiveBreachOutput.deltaUSD)})`,
             effectiveInactionOutput &&
-              `Cost of inaction ${inactionOutput ? 'from Step 4' : 'from your last Cost of Inaction Analyzer export'} (${formatCurrency(effectiveInactionOutput.costOfInactionUSD)} over ${effectiveInactionOutput.delayYears}yr)`,
+              `${inactionOutput ? 'Step 4' : 'Saved Cost of Inaction scenario'} (${inactionSummary})`,
           ]
             .filter(Boolean)
             .join(' + ')}

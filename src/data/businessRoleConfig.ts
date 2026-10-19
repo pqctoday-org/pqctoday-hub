@@ -98,6 +98,52 @@ export const DEVELOPER_SEQUENCE: BusinessRoleSequence = {
   ],
 }
 
+export const ARCHITECT_SEQUENCE: BusinessRoleSequence = {
+  heading: 'New here? Turn scope into a reviewable architecture',
+  guidance: 'Make the boundary visible, model responsibility and transition, then verify closure.',
+  steps: [
+    { step: 1, label: 'Scope', id: 'initial-scoping' },
+    { step: 2, label: 'Architecture', id: 'crypto-architecture-diagram' },
+    { step: 3, label: 'Cloud ownership', id: 'cloud-responsibility-matrix' },
+    { step: 4, label: 'Transition', id: 'hybrid-transition-planner' },
+    { step: 5, label: 'Verify', id: 'migration-verification' },
+  ],
+}
+
+export const CERT_ENGINEER_SEQUENCE: BusinessRoleSequence = {
+  heading: 'New here? Build an evidence trail without claiming certification',
+  guidance: 'Organize requirements and supplied evidence, then test whether the record closes.',
+  steps: [
+    { step: 1, label: 'Requirements', id: 'compliance-checklist' },
+    { step: 2, label: 'Vendor evidence', id: 'vendor-scorecard' },
+    { step: 3, label: 'Audit record', id: 'audit-checklist' },
+    { step: 4, label: 'Verify closure', id: 'migration-verification' },
+  ],
+}
+
+export const OPS_SEQUENCE: BusinessRoleSequence = {
+  heading: 'New here? Turn the migration plan into an operable change',
+  guidance: 'Scope dependencies, align refresh windows, write the runbook and verify the result.',
+  steps: [
+    { step: 1, label: 'Scope', id: 'initial-scoping' },
+    { step: 2, label: 'Infrastructure', id: 'infra-modernization-planner' },
+    { step: 3, label: 'Refresh windows', id: 'refresh-cycle-alignment' },
+    { step: 4, label: 'Runbook', id: 'deployment-playbook' },
+    { step: 5, label: 'Verify', id: 'migration-verification' },
+  ],
+}
+
+export const CURIOUS_SEQUENCE: BusinessRoleSequence = {
+  heading: 'New here? Explore one decision at a time',
+  guidance:
+    'Start with a small scope, vary one threat assumption, then see how a roadmap is organized.',
+  steps: [
+    { step: 1, label: 'Scope', id: 'initial-scoping' },
+    { step: 2, label: 'Scenario', id: 'crqc-scenario' },
+    { step: 3, label: 'Roadmap', id: 'roadmap-builder' },
+  ],
+}
+
 /**
  * Researcher / Academic: the researcher's questions are answered by the
  * Library, the Playground, Threats and Patents rather than by Command Center
@@ -119,7 +165,11 @@ const BUSINESS_ROLE_SEQUENCES: Partial<Record<PersonaId, BusinessRoleSequence>> 
   executive: EXECUTIVE_SEQUENCE,
   grc: GRC_SEQUENCE,
   developer: DEVELOPER_SEQUENCE,
+  architect: ARCHITECT_SEQUENCE,
   researcher: RESEARCHER_SEQUENCE,
+  'cert-engineer': CERT_ENGINEER_SEQUENCE,
+  ops: OPS_SEQUENCE,
+  curious: CURIOUS_SEQUENCE,
 }
 
 /** Resolve the recommended sequence for a persona, falling back to the

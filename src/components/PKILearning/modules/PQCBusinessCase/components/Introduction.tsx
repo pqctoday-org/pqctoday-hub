@@ -540,7 +540,7 @@ const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> 
             {
               n: 4,
               t: 'Cost of Inaction',
-              d: 'Quantify the compounding cost of delaying migration — breach risk, complexity premiums, and penalties over five years.',
+              d: 'Compare start-now and delayed-migration scenarios over the same ten-year horizon, with assumptions and uncertainty visible.',
             },
             {
               n: 5,

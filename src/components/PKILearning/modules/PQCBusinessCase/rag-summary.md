@@ -20,7 +20,7 @@ The workshop has 5 interactive steps:
 1. **Cost Model Explorer** — compares six costing models on one scenario before committing to a single number
 2. **ROI Calculator** — computes estimated migration cost, annual benefit, payback period, and 3-year ROI percentage from live migration-catalog data
 3. **Breach Scenario Simulator** — adjustable sliders for data records, regulatory fines, and HNDL years; compares classical vs. quantum breach costs with industry-specific baselines; generates key findings and cost-of-inaction analysis
-4. **Cost of Inaction** — models the compounding 5-year cost of delaying migration (breach risk, complexity premiums, regulatory penalties), using the Breach Scenario Simulator's output
+4. **Cost of Inaction** — compares start-now and delayed-migration scenarios over the same 10-year horizon, carries compatible Breach Scenario Simulator inputs, exposes slow/consensus/fast CRQC uncertainty, and includes no framework-derived dollar penalty unless the learner enters an organization-verified consequence
 5. **Board Pitch Builder** — 6-section artifact builder pre-populated from the earlier steps; produces a formatted board memo with date, industry, country, and confidentiality classification; exports as Markdown
 
 ## Related Standards

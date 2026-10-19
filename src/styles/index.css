@@ -1106,3 +1106,11 @@
     color: hsl(var(--destructive-legible));
   }
 }
+
+/* Long algorithm names, OIDs and mechanism constants must not widen phone
+   layouts. Code blocks keep their own horizontal scrolling; only inline code
+   is allowed to wrap. */
+code:not(pre code) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

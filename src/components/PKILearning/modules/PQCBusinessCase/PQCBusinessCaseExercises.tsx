@@ -43,8 +43,8 @@ const EXERCISES = [
     badge: 'Risk',
     badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
     scenario:
-      'A business unit leader proposes deferring PQC migration by 2 years to align with a major platform refresh. You need to show the board exactly how much this delay costs — in accumulated breach risk, migration complexity premiums, and regulatory fines — compared to migrating now.',
-    hint: 'Use the Cost of Inaction Analyzer (Step 4). Select your industry, set delay to 2 years, and read off the cumulative cost delta. Use the 5-year comparison table to build your argument.',
+      'A business unit leader proposes deferring PQC migration by 2 years to align with a major platform refresh. Compare the scenarios, identify the largest driver and show which assumptions must be validated before the result can support a board decision.',
+    hint: 'Use the Cost of Inaction Analyzer (Step 4). Select your industry, compare start now with a 2-year delay, and read the incremental NPV. Use the 10-year comparison table and assumption panel to explain what drives the result.',
     step: 3,
   },
 ]

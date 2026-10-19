@@ -1,25 +1,29 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { CostOfInactionAnalyzer } from './CostOfInactionAnalyzer'
 import { DELAY_COST_PROFILES } from '../data/businessCaseScenarios'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { BreachOutput, InactionOutput } from '../types'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 vi.mock('@/components/PKILearning/common/executive/ExportableArtifact', () => ({
   ExportableArtifact: ({
     title,
     children,
     formats,
+    exportData,
   }: {
     title: string
     children: React.ReactNode
     formats?: string[]
+    exportData?: string
   }) => (
     <div data-testid="exportable" data-formats={(formats ?? []).join(',')}>
       <h3>{title}</h3>
       {children}
+      <pre data-testid="export-data">{exportData}</pre>
     </div>
   ),
 }))
@@ -98,26 +102,30 @@ const chainedBreachOutput: BreachOutput = {
 describe('CostOfInactionAnalyzer', () => {
   beforeEach(() => {
     mockData = { ...baseMockData }
+    usePersonaStore.setState({ selectedPersona: null })
   })
 
-  it('renders the four controls and the three headline metrics', () => {
+  it('renders the editable scenario controls and the three headline metrics', () => {
     render(<CostOfInactionAnalyzer />)
     expect(screen.getByText('Industry')).toBeInTheDocument()
     expect(screen.getByLabelText(/Migration delay/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Annual breach probability/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Migration takes/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Migration cost/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Discount rate/i)).toBeInTheDocument()
     // "Migrate Now" and "Cost of Inaction" each legitimately appear more than
     // once (headline card, table header, export title) — assert on each
     // card's unique caption instead of the ambiguous headline text.
     expect(screen.getByText(/Migration \+ residual HNDL exposure/i)).toBeInTheDocument()
     expect(screen.getByText(/Accumulated exposure \+ delay premium/i)).toBeInTheDocument()
-    expect(screen.getByText(/Extra cost from delaying/i)).toBeInTheDocument()
+    expect(screen.getByText(/Delay scenario minus migrate-now scenario/i)).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: /Scenario assumptions/i })).toBeInTheDocument()
   })
 
   it("renders Mosca's inequality and the crossover-year panels", () => {
     render(<CostOfInactionAnalyzer />)
     expect(screen.getAllByText(/Mosca's inequality/i).length).toBeGreaterThan(0)
-    expect(screen.getByText(/Crossover year/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Crossover year/i).length).toBeGreaterThan(0)
   })
 
   it('shows no chained-source chip when the Breach Simulator has not run', () => {
@@ -158,6 +166,47 @@ describe('CostOfInactionAnalyzer', () => {
     expect(typeof lastCall.latestSafeStartYear).toBe('number')
     expect(typeof lastCall.alreadyLate).toBe('boolean')
     expect(lastCall.crossoverYear === null || typeof lastCall.crossoverYear === 'number').toBe(true)
+    expect(lastCall.scenario?.modelVersion).toBe('coi-2')
+    expect(lastCall.scenario?.verifiedConsequence.annualUSD).toBe(0)
+    expect(lastCall.scenario?.sourceStatus.breachBaseline).toMatch(/one edition behind/i)
+  })
+
+  it('does not infer a dollar penalty from framework matches', () => {
+    const onOutput = vi.fn<(output: InactionOutput) => void>()
+    render(<CostOfInactionAnalyzer onOutput={onOutput} />)
+    const lastCall = onOutput.mock.calls.at(-1)?.[0]
+    expect(lastCall?.scenario?.verifiedConsequence.annualUSD).toBe(0)
+    expect(screen.getByText(/\$0 by default/i)).toBeInTheDocument()
+  })
+
+  it('uses an explicitly entered verified consequence and records its source', () => {
+    const onOutput = vi.fn<(output: InactionOutput) => void>()
+    render(<CostOfInactionAnalyzer onOutput={onOutput} />)
+    fireEvent.change(screen.getByLabelText(/Verified annual consequence/i), {
+      target: { value: '1000000' },
+    })
+    fireEvent.change(screen.getByLabelText(/Verified consequence source or owner/i), {
+      target: { value: 'Legal memo 2026-10-01' },
+    })
+    const lastCall = onOutput.mock.calls.at(-1)?.[0]
+    expect(lastCall?.scenario?.verifiedConsequence.annualUSD).toBe(1_000_000)
+    expect(lastCall?.scenario?.verifiedConsequence.sourceNote).toBe('Legal memo 2026-10-01')
+  })
+
+  it('shows an executive decision brief only for the executive runtime role', () => {
+    const { rerender } = render(<CostOfInactionAnalyzer />)
+    expect(screen.queryByRole('region', { name: /Executive decision brief/i })).toBeNull()
+    act(() => usePersonaStore.setState({ selectedPersona: 'executive' }))
+    rerender(<CostOfInactionAnalyzer />)
+    expect(screen.getByRole('region', { name: /Executive decision brief/i })).toBeInTheDocument()
+    expect(screen.getByText(/Before using this result/i)).toBeInTheDocument()
+  })
+
+  it('surfaces the stale baseline and CRQC scenario uncertainty beside the result', () => {
+    render(<CostOfInactionAnalyzer />)
+    expect(screen.getAllByText(/one edition behind/i).length).toBeGreaterThan(0)
+    expect(screen.getByText(/CRQC scenario range/i)).toBeInTheDocument()
+    expect(screen.getByText(/not a confidence interval/i)).toBeInTheDocument()
   })
 
   it('updates the cost-of-inaction figure when the delay slider changes', () => {
@@ -175,6 +224,10 @@ describe('CostOfInactionAnalyzer', () => {
     render(<CostOfInactionAnalyzer />)
     const exportable = screen.getByTestId('exportable')
     expect(exportable.dataset.formats).toBe('markdown,pdf,docx')
+    const exported = screen.getByTestId('export-data').textContent ?? ''
+    expect(exported).toMatch(/Reproducible scenario inputs \(model coi-2\)/i)
+    expect(exported).toMatch(/No framework-derived fine is included automatically/i)
+    expect(exported).toMatch(/one edition behind and not independently verified/i)
   })
 
   it('shows the methodology section', () => {
@@ -186,7 +239,7 @@ describe('CostOfInactionAnalyzer', () => {
     for (const p of DELAY_COST_PROFILES) {
       mockData = { ...baseMockData, industry: p.industry }
       const { unmount } = render(<CostOfInactionAnalyzer />)
-      expect(screen.getByText(/Extra cost from delaying/i)).toBeInTheDocument()
+      expect(screen.getByText(/Delay scenario minus migrate-now scenario/i)).toBeInTheDocument()
       unmount()
     }
   })

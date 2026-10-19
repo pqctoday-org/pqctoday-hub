@@ -31,6 +31,19 @@ export interface ScorecardDimension {
   disabledActionLabel?: string
 }
 
+export type ScorecardVerificationState = 'not-verified' | 'owner-reviewed' | 'independently-checked'
+
+export interface ScorecardObservation {
+  numerator?: string
+  denominator?: string
+  unit?: string
+  reportingPeriod?: string
+  asOfDate?: string
+  owner?: string
+  evidenceReference?: string
+  verificationState: ScorecardVerificationState
+}
+
 export type ExportFormat = 'markdown' | 'json' | 'csv' | 'pdf' | 'docx' | 'pptx'
 
 interface DataDrivenScorecardProps {
@@ -57,6 +70,11 @@ interface DataDrivenScorecardProps {
   /** Restore previously-saved scores / weight overrides on mount (e.g. from a persisted artifact). */
   initialScores?: Record<string, number>
   initialWeights?: Record<string, number>
+  /** Hide the composite until this share of intended KPI weight has evidence. */
+  minimumCoverageForOverall?: number
+  /** Structured evidence fields shared by screen, saved artifacts and exports. */
+  observations?: Record<string, ScorecardObservation>
+  onObservationChange?: (dimensionId: string, observation: ScorecardObservation) => void
 }
 
 function getScoreColor(value: number, scale: 'risk' | 'readiness' | 'maturity'): string {
@@ -96,6 +114,9 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
   includeTargetsInExport = false,
   initialScores,
   initialWeights,
+  minimumCoverageForOverall = 0,
+  observations = {},
+  onObservationChange,
 }) => {
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {}
@@ -131,43 +152,35 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
 
   // Sync auto-scored dimensions from props when they change (e.g., data loads after mount)
   useEffect(() => {
-    setScores((prev) => {
-      const next = { ...prev }
-      let changed = false
-      for (const d of dimensions) {
-        if (d.disabled) continue
-        // No `> 0` guard here: `notYetScored`/`isPending` (below) already
-        // distinguishes "no computed baseline" (autoScore undefined) from a
-        // real, legitimate 0 — excluding 0 here would mean a dimension whose
-        // live score drops to exactly 0 after mount never gets that update.
-        if (
-          d.autoScore !== undefined &&
-          !userOverriddenRef.current.has(d.id) &&
-          next[d.id] !== d.autoScore
-        ) {
-          next[d.id] = d.autoScore
-          changed = true
-        }
+    const next = { ...scores }
+    let changed = false
+    for (const d of dimensions) {
+      if (d.disabled) continue
+      if (
+        d.autoScore !== undefined &&
+        !userOverriddenRef.current.has(d.id) &&
+        next[d.id] !== d.autoScore
+      ) {
+        next[d.id] = d.autoScore
+        changed = true
       }
-      if (changed) {
-        onScoreChange?.(next)
-      }
-      return changed ? next : prev
-    })
-  }, [dimensions, onScoreChange])
+    }
+    if (changed) {
+      setScores(next)
+      onScoreChange?.(next)
+    }
+  }, [dimensions, onScoreChange, scores])
 
   const handleScoreChange = useCallback(
     (dimId: string, value: number) => {
       const clamped = Math.max(0, Math.min(100, value))
       userOverriddenRef.current.add(dimId)
       setUserOverridden((prev) => (prev.has(dimId) ? prev : new Set(prev).add(dimId)))
-      setScores((prev) => {
-        const updated = { ...prev, [dimId]: clamped }
-        onScoreChange?.(updated)
-        return updated
-      })
+      const updated = { ...scores, [dimId]: clamped }
+      setScores(updated)
+      onScoreChange?.(updated)
     },
-    [onScoreChange]
+    [onScoreChange, scores]
   )
 
   const effectiveWeight = useCallback(
@@ -217,22 +230,34 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     return s
   }, [dimensions, effectiveWeight, isPending])
 
+  const intendedWeight = useMemo(
+    () => dimensions.reduce((sum, dimension) => sum + effectiveWeight(dimension), 0),
+    [dimensions, effectiveWeight]
+  )
+  const evidenceCoverage = intendedWeight > 0 ? Math.min(1, weightSum / intendedWeight) : 0
+  const overallAvailable = evidenceCoverage >= minimumCoverageForOverall
+
   const exportMarkdown = useMemo(() => {
     let md = `# ${title}\n\n`
     if (description) md += `${description}\n\n`
-    md += `**Overall Score: ${weightedTotal}/100**\n\n`
+    md += overallAvailable
+      ? `**Overall Score: ${weightedTotal}/100**\n\n`
+      : `**Overall Score: not available — evidence coverage ${Math.round(evidenceCoverage * 100)}%**\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
     const hasTargets = includeTargetsInExport && dimensions.some((d) => d.target !== undefined)
-    md += `| Dimension | Score | Weight${hasTargets ? ' | Target' : ''} |\n`
-    md += `|-----------|-------|--------${hasTargets ? '|--------' : ''}|\n`
+    md += `| Dimension | Score | Weight${hasTargets ? ' | Target' : ''} | Period | Owner | Evidence | Verification |\n`
+    md += `|-----------|-------|--------${hasTargets ? '|--------' : ''}|--------|-------|----------|--------------|\n`
     for (const d of dimensions) {
+      const observation = observations[d.id]
+      const lineage = ` | ${observation?.reportingPeriod || 'not provided'} | ${observation?.owner || 'not provided'} | ${observation?.evidenceReference || 'not provided'} | ${observation?.verificationState ?? 'not-verified'} |`
       if (d.disabled) {
-        md += `| ${d.label} | _disabled — ${d.disabledReason ?? 'no data'}_ | ${Math.round(effectiveWeight(d) * 100)}%${hasTargets ? ' | —' : ''} |\n`
+        md += `| ${d.label} | _disabled — ${d.disabledReason ?? 'no data'}_ | ${Math.round(effectiveWeight(d) * 100)}%${hasTargets ? ' | —' : ''}${lineage}\n`
         continue
       }
       const target = hasTargets ? ` | ${d.target !== undefined ? `${d.target}` : '—'}` : ''
       const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? 0}/100`
-      md += `| ${d.label} | ${scoreCell} | ${Math.round(effectiveWeight(d) * 100)}%${target} |\n`
+      md += `| ${d.label} | ${scoreCell} | ${Math.round(effectiveWeight(d) * 100)}%${target}${lineage}\n`
+      md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
     }
     return md
   }, [
@@ -244,6 +269,9 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     includeTargetsInExport,
     effectiveWeight,
     isPending,
+    overallAvailable,
+    evidenceCoverage,
+    observations,
   ])
 
   // Markdown/PDF read the markdown body; `.csv` reads a structured rows export
@@ -258,18 +286,43 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       'Target',
       'Disabled',
       'Disabled Reason',
+      'Origin',
+      'Numerator',
+      'Denominator',
+      'Unit',
+      'Reporting Period',
+      'As Of',
+      'Owner',
+      'Evidence Reference',
+      'Verification State',
     ]
-    const rows = dimensions.map((d) => [
-      d.id,
-      d.label,
-      d.disabled ? '' : isPending(d) ? 'not yet scored' : String(scores[d.id] ?? 0),
-      (effectiveWeight(d) * 100).toFixed(0),
-      d.target ?? '',
-      d.disabled ? 'true' : 'false',
-      d.disabledReason ?? '',
-    ])
+    const rows = dimensions.map((d) => {
+      const observation = observations[d.id]
+      return [
+        d.id,
+        d.label,
+        d.disabled ? '' : isPending(d) ? 'not yet scored' : String(scores[d.id] ?? 0),
+        (effectiveWeight(d) * 100).toFixed(0),
+        d.target ?? '',
+        d.disabled ? 'true' : 'false',
+        d.disabledReason ?? '',
+        d.autoScore !== undefined
+          ? userOverridden.has(d.id)
+            ? 'learner override'
+            : 'derived from selected organizational scope'
+          : 'learner entered',
+        observation?.numerator ?? '',
+        observation?.denominator ?? '',
+        observation?.unit ?? '',
+        observation?.reportingPeriod ?? '',
+        observation?.asOfDate ?? '',
+        observation?.owner ?? '',
+        observation?.evidenceReference ?? '',
+        observation?.verificationState ?? 'not-verified',
+      ]
+    })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, scores, effectiveWeight, isPending])
+  }, [dimensions, scores, effectiveWeight, isPending, observations, userOverridden])
 
   return (
     <div className="space-y-6">
@@ -279,10 +332,23 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
             kpi-dashboard were the only on-page structure their pages had at
             all before this (no h1/h2/h3), a real screen-reader nav gap. */}
         <h2 className="text-sm font-normal text-muted-foreground mb-2">{title} — Overall Score</h2>
-        <p className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal, colorScale)}`}>
-          {weightedTotal}
+        {overallAvailable ? (
+          <>
+            <p
+              className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal, colorScale)}`}
+            >
+              {weightedTotal}
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">/100</p>
+          </>
+        ) : (
+          <p className="text-xl md:text-2xl font-bold text-muted-foreground">Not yet available</p>
+        )}
+        <p className="text-sm text-muted-foreground mt-2">
+          Evidence coverage: {Math.round(evidenceCoverage * 100)}% of intended KPI weight
+          {!overallAvailable &&
+            ` — enter organization-specific evidence before interpreting a combined score.`}
         </p>
-        <p className="text-sm text-muted-foreground mt-1">/100</p>
         {description && <p className="text-sm text-muted-foreground mt-3">{description}</p>}
         {allowWeightEditing && Math.abs(weightSum - 1) > 0.01 && (
           <p className="text-xs text-status-warning mt-2">
@@ -373,6 +439,14 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                 <div>
                   <p className="text-sm font-medium text-foreground">{d.label}</p>
                   <p className="text-xs text-muted-foreground">{d.description}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Origin:{' '}
+                    {d.autoScore !== undefined
+                      ? userOverridden.has(d.id)
+                        ? 'learner override of derived value'
+                        : 'derived from selected organizational scope'
+                      : 'learner-entered organizational evidence'}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   {pending ? (
@@ -404,7 +478,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                   <Target
                     size={12}
                     className="text-muted-foreground"
-                    aria-label={`Target ${d.target}`}
+                    aria-label={`Example target ${d.target}`}
                   />
                 )}
                 {d.userOverride !== false && (
@@ -419,6 +493,72 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                   />
                 )}
               </div>
+              <details className="mt-3 rounded-md border border-border/70 bg-muted/20 p-3">
+                <summary className="cursor-pointer text-xs font-medium text-foreground">
+                  Evidence details
+                </summary>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {(
+                    [
+                      ['numerator', 'Numerator', 'Completed or conforming items'],
+                      ['denominator', 'Denominator', 'Total in the measured scope'],
+                      ['unit', 'Unit', 'systems, products, controls…'],
+                      ['reportingPeriod', 'Reporting period', '2026 Q4'],
+                      ['asOfDate', 'As-of date', 'YYYY-MM-DD'],
+                      ['owner', 'Evidence owner', 'Team or accountable role'],
+                      [
+                        'evidenceReference',
+                        'Evidence reference',
+                        'Ticket, report, or repository URL',
+                      ],
+                    ] as const
+                  ).map(([field, label, placeholder]) => (
+                    <label key={field} className="space-y-1 text-xs text-muted-foreground">
+                      <span>{label}</span>
+                      <input
+                        type={field === 'asOfDate' ? 'date' : 'text'}
+                        value={observations[d.id]?.[field] ?? ''}
+                        placeholder={placeholder}
+                        onChange={(event) =>
+                          onObservationChange?.(d.id, {
+                            ...observations[d.id],
+                            [field]: event.target.value,
+                            verificationState:
+                              observations[d.id]?.verificationState ?? 'not-verified',
+                          })
+                        }
+                        className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-foreground"
+                        aria-label={`${d.label} ${label}`}
+                      />
+                    </label>
+                  ))}
+                  <label className="space-y-1 text-xs text-muted-foreground">
+                    <span>Verification state</span>
+                    {/* Native select is intentional: this evidence-state field needs a compact,
+                        form-associated control inside each repeated KPI row. */}
+                    {/* eslint-disable-next-line no-restricted-syntax */}
+                    <select
+                      value={observations[d.id]?.verificationState ?? 'not-verified'}
+                      onChange={(event) =>
+                        onObservationChange?.(d.id, {
+                          ...observations[d.id],
+                          verificationState: event.target.value as ScorecardVerificationState,
+                        })
+                      }
+                      className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-foreground"
+                      aria-label={`${d.label} Verification state`}
+                    >
+                      <option value="not-verified">Not verified</option>
+                      <option value="owner-reviewed">Reviewed by evidence owner</option>
+                      <option value="independently-checked">Independently checked</option>
+                    </select>
+                  </label>
+                </div>
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  The slider is the normalized 0–100 score. Record the underlying measure and
+                  lineage here; verification is a learner declaration, not a PQC Today attestation.
+                </p>
+              </details>
             </div>
           )
         })}

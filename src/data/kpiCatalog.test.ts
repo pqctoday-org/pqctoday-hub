@@ -259,33 +259,39 @@ function mockData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModule
 }
 
 describe('buildDimensions', () => {
-  it('marks HNDL horizon disabled when no assessment', () => {
+  it('keeps HNDL coverage unscored until organizational evidence is entered', () => {
     const dims = buildDimensions('executive', 'governance', mockData())
     const hndl = dims.find((d) => d.id === 'hndl-horizon')
-    expect(hndl?.disabled).toBe(true)
-    expect(hndl?.disabledReason).toBeDefined()
+    expect(hndl?.disabled).toBe(false)
+    expect(hndl?.notYetScored).toBe(true)
+    expect(hndl?.autoScore).toBe(0)
   })
 
-  it('computes vendor-readiness auto-score from vendorReadinessWeighted', () => {
-    // Architect now gets per-layer rows instead of the global vendor-readiness
-    // KPI, so assert against a persona that still sees the global roll-up.
+  it('computes vendor readiness only from products explicitly selected by the learner', () => {
     const dims = buildDimensions(
       'ops',
       'migration',
-      mockData({ vendorReadinessWeighted: 0.5, totalProducts: 10 })
+      mockData({
+        vendorReadinessWeighted: 0.1,
+        totalProducts: 100,
+        myProducts: [
+          { pqcSupport: 'Yes (ML-KEM production)' },
+          { pqcSupport: 'Planned' },
+        ] as ExecutiveModuleData['myProducts'],
+      })
     )
     const vr = dims.find((d) => d.id === 'vendor-readiness')
-    expect(vr?.autoScore).toBe(50)
+    expect(vr?.autoScore).toBe(60)
     expect(vr?.disabled).toBe(false)
   })
 
-  it('disables vendor-readiness when totalProducts is zero', () => {
-    const dims = buildDimensions('ops', 'migration', mockData({ totalProducts: 0 }))
+  it('disables vendor readiness when no organizational products are selected', () => {
+    const dims = buildDimensions('ops', 'migration', mockData({ totalProducts: 100 }))
     const vr = dims.find((d) => d.id === 'vendor-readiness')
     expect(vr?.disabled).toBe(true)
   })
 
-  it('computes compliance-gaps auto-score from selected frameworks', () => {
+  it('does not treat selecting a PQC framework as closing a compliance gap', () => {
     const frameworks = [
       {
         id: 'fips-203',
@@ -326,52 +332,22 @@ describe('buildDimensions', () => {
       mockData({ frameworks, complianceSelections: ['fips-203', 'cmmc'] })
     )
     const cg = dims.find((d) => d.id === 'compliance-gaps')
-    // 1 of 2 frameworks requires PQC → 50%
-    expect(cg?.autoScore).toBe(50)
+    expect(cg?.notYetScored).toBe(true)
+    expect(cg?.autoScore).toBe(0)
   })
 
   it('attaches country-specific target to algorithms-migrated for US executive', () => {
     const dims = buildDimensions('executive', 'governance', mockData(), 'United States')
     const am = dims.find((d) => d.id === 'algorithms-migrated')
     expect(am?.target).toBe(80)
-    expect(am?.targetLabel).toContain('Target: 80')
+    expect(am?.targetLabel).toContain('Example target: 80')
   })
 })
 
-// ── E4: Board-ready NIST CSF composite ─────────────────────────────────────
-
-describe('board-ready-composite (E4)', () => {
-  it('is included in the executive governance set', () => {
+describe('removed executive composites', () => {
+  it('does not present the authored board-ready composite as an organizational KPI', () => {
     const ids = getKpiSet('executive', 'governance').map((k) => k.id)
-    expect(ids).toContain('board-ready-composite')
-  })
-
-  it('disabled when assessment categoryScores missing', () => {
-    const dims = buildDimensions('executive', 'governance', mockData({ categoryScores: null }))
-    const brc = dims.find((d) => d.id === 'board-ready-composite')
-    expect(brc?.disabled).toBe(true)
-    expect(brc?.disabledActionHref).toBe('/assess')
-  })
-
-  it('computes 100 - avg(categoryScores) when assessment present', () => {
-    const dims = buildDimensions(
-      'executive',
-      'governance',
-      mockData({
-        categoryScores: {
-          quantumExposure: 80,
-          migrationComplexity: 60,
-          regulatoryPressure: 40,
-          // higher-is-better readiness of 80 → concern 20, matching the other
-          // three concern terms' average
-          organizationalReadiness: 80,
-        },
-      })
-    )
-    const brc = dims.find((d) => d.id === 'board-ready-composite')
-    // concern avg = (80 + 60 + 40 + (100-80)) / 4 = 50 → KPI = 100 - 50 = 50
-    expect(brc?.autoScore).toBe(50)
-    expect(brc?.disabled).toBe(false)
+    expect(ids).not.toContain('board-ready-composite')
   })
 })
 
@@ -383,24 +359,24 @@ describe('board-ready-composite (E4)', () => {
 
 describe('vendor-readiness-by-domain (D9)', () => {
   it('expands into one dimension per non-empty migration domain', () => {
-    const domains = new Map([
-      ['network', { weighted: 0.6, count: 5 }],
-      ['identity', { weighted: 0.3, count: 3 }],
-      ['atrest', { weighted: 0.9, count: 2 }],
-    ] as const)
+    const selectedProducts = [
+      { categoryName: 'Network Security', infrastructureLayer: 'Network', pqcSupport: 'Planned' },
+      { categoryName: 'Identity', infrastructureLayer: 'Application', pqcSupport: 'Hybrid' },
+      { categoryName: 'Data Storage', infrastructureLayer: 'Database', pqcSupport: 'Yes' },
+    ] as ExecutiveModuleData['myProducts']
     const dims = buildDimensions(
       'architect',
       'governance',
-      mockData({ vendorReadinessByDomain: new Map(domains) })
+      mockData({ myProducts: selectedProducts })
     )
     const domainRows = dims.filter((d) => d.id.startsWith('vendor-readiness-by-domain:'))
     expect(domainRows).toHaveLength(3)
     const networkRow = domainRows.find((d) => d.label.includes('Network'))
-    expect(networkRow?.autoScore).toBe(60)
+    expect(networkRow?.autoScore).toBe(20)
     const identityRow = domainRows.find((d) => d.label.includes('Identity'))
-    expect(identityRow?.autoScore).toBe(30)
+    expect(identityRow?.autoScore).toBe(70)
     const dataRow = domainRows.find((d) => d.label.includes('Data-at-rest'))
-    expect(dataRow?.autoScore).toBe(90)
+    expect(dataRow?.autoScore).toBe(100)
   })
 
   it('falls back to disabled meta row when no domains are populated', () => {
@@ -414,14 +390,14 @@ describe('vendor-readiness-by-domain (D9)', () => {
   })
 
   it('splits the meta weight evenly across expanded rows', () => {
-    const domains = new Map([
-      ['network', { weighted: 0.5, count: 4 }],
-      ['identity', { weighted: 0.5, count: 2 }],
-    ] as const)
+    const selectedProducts = [
+      { categoryName: 'Network Security', infrastructureLayer: 'Network', pqcSupport: 'Hybrid' },
+      { categoryName: 'Identity', infrastructureLayer: 'Application', pqcSupport: 'Planned' },
+    ] as ExecutiveModuleData['myProducts']
     const dims = buildDimensions(
       'architect',
       'governance',
-      mockData({ vendorReadinessByDomain: new Map(domains) })
+      mockData({ myProducts: selectedProducts })
     )
     const domainRows = dims.filter((d) => d.id.startsWith('vendor-readiness-by-domain:'))
     const totalDomainWeight = domainRows.reduce((acc, d) => acc + d.weight, 0)
@@ -442,85 +418,10 @@ describe('vendor-readiness-by-domain (D9)', () => {
 
 // ── E2: Regulatory exposure index ──────────────────────────────────────────
 
-describe('regulatory-exposure-index (E2)', () => {
-  it('is in the executive governance set only', () => {
-    expect(
-      getKpiSet('executive', 'governance')
-        .map((k) => k.id)
-        .includes('regulatory-exposure-index')
-    ).toBe(true)
-    expect(
-      getKpiSet('executive', 'migration')
-        .map((k) => k.id)
-        .includes('regulatory-exposure-index')
-    ).toBe(false)
-  })
-
-  it('disabled when no compliance selections', () => {
-    const dims = buildDimensions('executive', 'governance', mockData({ complianceSelections: [] }))
-    const rei = dims.find((d) => d.id === 'regulatory-exposure-index')
-    expect(rei?.disabled).toBe(true)
-  })
-
-  it('scores lower for a single high-fine framework vs no fines', () => {
-    const frameworks = [
-      {
-        id: 'GDPR',
-        label: 'GDPR',
-        description: '',
-        industries: [],
-        countries: [],
-        requiresPQC: true,
-        pqcRequirement: 'yes' as const,
-        deadline: '',
-        deadlinePhase: 'ongoing' as const,
-        notes: '',
-        enforcementBody: '',
-        libraryRefs: [],
-        timelineRefs: [],
-        bodyType: 'compliance_framework' as const,
-      },
-    ]
-    const dims = buildDimensions(
-      'executive',
-      'governance',
-      mockData({ frameworks, complianceSelections: ['GDPR'] })
-    )
-    const rei = dims.find((d) => d.id === 'regulatory-exposure-index')
-    // GDPR max fine = $25M in the lookup → score should be well below 100
-    expect(rei?.disabled).toBe(false)
-    expect(rei?.autoScore).toBeGreaterThan(0)
-    expect(rei?.autoScore).toBeLessThan(100)
-  })
-
-  it('saturates to a low score when many high-fine frameworks are stacked', () => {
-    // CNSA-2 (not CNSA-2.0) -- the real compliance CSV id, and the correct
-    // frameworkFines.ts key as of the 2026-07-10 CNSA-2.0->CNSA-2 fix. This
-    // fixture used to accidentally pass by matching the stale buggy key.
-    const frameworks = ['GDPR', 'NIS2', 'CNSA-2', 'DORA', 'HIPAA'].map((id) => ({
-      id,
-      label: id,
-      description: '',
-      industries: [],
-      countries: [],
-      requiresPQC: true,
-      pqcRequirement: 'yes' as const,
-      deadline: '',
-      deadlinePhase: 'ongoing' as const,
-      notes: '',
-      enforcementBody: '',
-      libraryRefs: [],
-      timelineRefs: [],
-      bodyType: 'compliance_framework' as const,
-    }))
-    const dims = buildDimensions(
-      'executive',
-      'governance',
-      mockData({ frameworks, complianceSelections: frameworks.map((f) => f.id) })
-    )
-    const rei = dims.find((d) => d.id === 'regulatory-exposure-index')
-    // Total ≈ $551M → log-scaled score should be very low
-    expect(rei?.autoScore).toBeLessThan(20)
+describe('regulatory exposure', () => {
+  it('does not convert framework penalties into an executive KPI', () => {
+    const ids = getKpiSet('executive', 'governance').map((k) => k.id)
+    expect(ids).not.toContain('regulatory-exposure-index')
   })
 })
 
