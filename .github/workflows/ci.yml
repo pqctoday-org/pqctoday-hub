@@ -104,6 +104,9 @@ jobs:
       - name: Verify engine files against the lock
         run: node --experimental-strip-types scripts/ci/verify-engines.ts
 
+      - name: README facts, claims and links match the repository
+        run: npm run gen:readme-facts:check && npm run audit:readme
+
       - name: Lint
         # Carries the eslint-plugin-security rules — a security gate, not style.
         # It therefore has to actually RUN; a lint step that aborts gates nothing.

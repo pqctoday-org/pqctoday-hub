@@ -41,6 +41,10 @@ run on this exact commit is not paid twice):
 - `gen:timeline-facts:check` — `timelineFacts.generated.ts` matches the CSV.
 - ~~automatic~~ `sync:wasm:check` is **manual only since 2026-09-27** (owner decision — it failed every hub push whenever pqctoday-hsm moved; run it by hand during a wasm rebuild) — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here). Since 2026-09-26 a Rust bundle's inputs come from its Cargo build graph (`cargoManifest` in `public/wasm/wasm-provenance.json`, derived by `scripts/ci/wasm-build-inputs.ts`) rather than a hand-written `sourceDirs` list. That hand-written list had missed a linked crate: cacp-kmip never saw a Rust engine change. It had also flagged changes that cannot alter the binary (reports, committed wasm output, the bench crate). `scripts/ci/wasm-build-inputs.local.test.ts` replays both kinds of error against real hsm commits. On CI's blobless clone the derivation reads each Rust source once, lazily: measured at ~96 s for cacp-kmip.
 - `gen:landing-counts:check` — landing hero counts match the CSVs.
+- `gen:readme-facts:check` — the bounded README snapshot matches the current
+  release and committed data lineages.
+- `audit:readme` — README repository links, canonical product routes, source
+  boundaries and product-positioning claims satisfy the documentation contract.
 - `gen:sbom-versions:check` — the committed SBOM version list matches `package.json`.
 - `audit:test-reachability` — every test-shaped file in the repo is actually run by some enforced gate (~2.5 min: it asks `vitest list` and `playwright --list` which files each gate resolves, rather than re-implementing their glob/filter semantics). Added 2026-09-26 after three misses in one day from files that existed, ran and FAILED while no gate ran them; its first run named 87 such files. Deliberately here rather than only as a manual command — a check for ungated checks that is itself ungated is the joke it exists to prevent. Anything intentionally left out goes in the script's own `ALLOWLIST` with a reason, and a rotted allowlist entry fails too.
 - `test` — the full vitest suite (also in GitHub, sharded; the local run is the fast path on an M-series machine).
@@ -68,7 +72,7 @@ outside this repository on each PR head before merge. (`gate:cacp` was removed f
   loudly**; set `ALLOW_MISSING_HSM=1` to skip knowingly (a WARNING names each skipped guard) or
   `HSM_REPO_PATH` to point at the checkout. GitHub CI never runs them.
 
-## GitHub — `.github/workflows/ci.yml` (push to main, every PR)
+## GitHub — `.github/workflows/ci.yml` (push to main)
 
 `checks` (the required status check) ≈ 13–15 min:
 
