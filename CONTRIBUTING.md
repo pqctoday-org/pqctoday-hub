@@ -101,9 +101,9 @@ npm run format       # auto-fix
 ```bash
 npm run test         # unit tests (Vitest)
 npm run test:e2e     # end-to-end tests (Playwright, full suite)
-npm run gate:local   # format + lint + data gates + editorial audits + unit tests —
-                      # what the pre-push hook runs (see GATES.md)
-npm run gate:release # gate:local + full Playwright suite + gate:cacp — before a release
+npm run gate:prepush # fast checks run by the pre-push hook
+npm run gate:local   # the same checks plus CI-visible and local unit suites
+npm run gate:release # gate:local + engine verification + browser suites — before a release
 ```
 
 See [TESTING.md](TESTING.md) for the full test layout, the local-only data-integrity
@@ -112,8 +112,8 @@ gate works.
 
 #### The CACP / KMIP playground gate
 
-`npm run gate:cacp` is the pre-push gate for `/playground/cacp` and the KMIP wasm
-bundle. It runs three legs, all scoped to KMIP so a failure means a KMIP problem:
+`npm run gate:cacp` is the manual focused gate for `/playground/cacp` and the
+KMIP wasm bundle. Run it for changes in that area. It has three scoped legs:
 
 1. `npm run test -- src/components/Playground/kmip src/wasm/kmip` — CI-visible suites
 2. `npm run test:local:cacp` — the local-only suites for those same two directories,

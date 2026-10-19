@@ -12,7 +12,10 @@ npm run gate:prepush  # format + lint + version bumps + protocol-matrix and
                       # reachability — what .husky/pre-push runs
 npm run gate:local    # gate:prepush's checks + the unit suites
 npm run gate:e2e      # build + the full Playwright suite
-npm run gate:release  # gate:local + gate:e2e + gate:cacp, then the receipt
+npm run gate:release  # gate:local + engine-release verification + gate:e2e +
+                      # the local browser tier, then the receipt
+npm run gen:readme-facts:check # README snapshot matches committed data
+npm run audit:readme           # README claims, routes and local links are valid
 ```
 
 The authoritative map of what runs where (pre-commit, pre-push, GitHub,
@@ -28,8 +31,8 @@ npm run gate:cacp   # src/components/Playground/kmip + src/wasm/kmip: the
                      # and the cacp-kmip wasm-provenance check
 ```
 
-Wired into `.husky/pre-push` (2026-08-28, gaps-remediation plan WS-10) —
-runs on every push, unconditionally, like every other check in that hook.
+This focused gate is manual. Run it when changing the KMIP/CACP Playground or
+rebuilding its WebAssembly bundle; it is not part of pre-push or `gate:release`.
 
 Two of its `*.local.test.ts` drift guards
 (`ruleCatalog.local.test.ts`'s catalog ↔ grammar and scope guards,
@@ -213,15 +216,16 @@ test('should navigate to playground', async ({ page }) => {
 
 ### CI Pipeline
 
-E2E is split into two tiers — a fast **smoke** tier that gates every PR, and
-a **nightly** tier that runs the full suite once a day. This split was
-introduced 2026-04-02 (E2E had been dropped from CI entirely for being too
-slow; the smoke tier re-gates a lean, curated subset rather than the whole
-suite).
+Browser tests are split across the required PR workflow, the main-branch
+workflow and a nightly full suite. See [GATES.md](GATES.md) for the exact
+ownership and merge rules.
 
-The required PR check, `.github/workflows/ci.yml`'s `checks` job (the only
-job branch protection requires), runs — see [GATES.md](GATES.md)
-for the full list and what each step guards:
+Every PR to `main` runs `.github/workflows/pr-check.yml`: `pr-check` installs
+from the lockfile, verifies generated metadata, lints, verifies attestations,
+builds and exercises the bounded Playground and Business Tool browser projects.
+Its two `pr-test` shards run the CI-visible Vitest suite in parallel.
+
+After a merge, `.github/workflows/ci.yml` runs the `checks` job on `main`:
 
 - ✅ Linting
 - ✅ Trust-engine attestation verification
@@ -231,13 +235,12 @@ for the full list and what each step guards:
   accessibility, timeline freshness badge, trust-tier filtering, the compliance
   persona deep-link, and the Cryptographic Validation Workbench (`e2e/acvp-validator.spec.ts`,
   the only WASM/crypto spec in the allowlist — promoted 2026-08-23 because it
-  measured cheap enough to gate every PR rather than wait for nightly).
+  measured cheap enough for the main-branch smoke tier rather than waiting for nightly).
 
 - ✅ Security audit (last, on purpose)
 
-Two other jobs in the same workflow run in parallel: `test` (the Vitest unit
-suite, sharded ×2) and `gate-cacp` (the CACP/KMIP playground gate against a
-sparse clone of pqctoday-hsm).
+The `test` job runs the Vitest suite in two parallel shards. `gate:cacp` is not
+part of either GitHub workflow; it is the manual focused gate described above.
 
 The **nightly** tier, `.github/workflows/e2e-nightly.yml` (cron `0 7 * * *`
 UTC + manual `workflow_dispatch`, sharded 2-way), runs the full `chromium`
@@ -257,9 +260,9 @@ The `local`-only tier (`*.local.spec.ts`) never runs in CI at all — see
 wired up but **not yet added to `ci.yml`**; run it locally via
 `npx playwright test --project=mobile-smoke`.
 
-See `npm run gate:local` above for checks that run
-locally (pre-push) but not in CI at all — a red local gate can and should
-block a push even when this CI pipeline would be green.
+See `npm run gate:prepush` above for checks that run locally before a push but
+not in CI. `npm run gate:local` adds both unit tiers when a maintainer needs the
+complete local gate.
 
 ## Test File Naming Conventions
 

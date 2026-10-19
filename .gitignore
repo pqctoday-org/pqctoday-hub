@@ -338,6 +338,7 @@ scripts/*
 !scripts/acvp-xplat-wasm.ts
 !scripts/acvp-xplat-compare.ts
 !scripts/gen-acvp-native-constants.ts
+!scripts/gen-readme-facts.mjs
 # The check that stops occurrence five (2026-08-10). Local-only, wired into
 # .husky/pre-push rather than ci.yml — a CI step that checks whether CI's files
 # are present can only run once they are. Needs its own re-include here for the
