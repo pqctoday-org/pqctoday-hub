@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   USE_CASES,
+  ALGO_LABELS,
   SIZE_PRESETS,
   ORG_PARAM_DEFAULTS,
   deriveUseCaseTps,
@@ -10,12 +11,17 @@ import {
 
 describe('HSM capacity defaults — estimation narrative drift guard', () => {
   it.each(USE_CASES.map((uc) => [uc.id, uc] as const))(
-    '%s: "math" narrative TPS matches defaultTps.medium',
+    '%s: narrative exposes each operation in the underlying recipes',
     (_id, uc) => {
-      const match = uc.estimation.math.match(/At medium \(([\d,]+) TPS\)/)
-      expect(match, `${uc.id}: math string must start "At medium (N TPS)"`).not.toBeNull()
-      const narrativeTps = Number(match![1].replace(/,/g, ''))
-      expect(narrativeTps).toBe(uc.defaultTps.medium)
+      for (const recipe of [uc.classicalOps, uc.pqcOps]) {
+        for (const [algo, count] of Object.entries(recipe)) {
+          expect(uc.estimation.math).toContain(
+            `${count} × ${ALGO_LABELS[algo as keyof typeof ALGO_LABELS]}`
+          )
+        }
+      }
+      expect(uc.estimation.rationale).toContain('Fictional per-site workload')
+      expect(uc.estimation.math).toContain('per-site TPS')
     }
   )
 

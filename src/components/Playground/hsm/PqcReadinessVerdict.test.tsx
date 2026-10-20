@@ -20,7 +20,7 @@ function stateForMedium() {
 }
 
 describe('PqcReadinessVerdict', () => {
-  it('reports insufficient today + multiplier when the deployed fleet is undersized', () => {
+  it('reports model shortfall without a replacement ratio or readiness claim', () => {
     const scenarios = computeScenarios({
       useCases: USE_CASES,
       state: stateForMedium(),
@@ -31,9 +31,13 @@ describe('PqcReadinessVerdict', () => {
       numLocations: 1,
     })
     render(<PqcReadinessVerdict scenarios={scenarios} numLocations={1} />)
-    expect(screen.getByText('insufficient')).toBeInTheDocument()
-    expect(screen.getByText(String(scenarios[1].requiredWithRedundancy))).toBeInTheDocument()
-    expect(screen.getByText(String(scenarios[2].requiredWithRedundancy))).toBeInTheDocument()
+    expect(screen.getAllByText(/At least one site falls short/)).toHaveLength(3)
+    expect(screen.getByText(/do not establish production readiness/)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        new RegExp(`PQC · profile A: ${scenarios[1].requiredWithRedundancy} modelled devices`)
+      )
+    ).toBeInTheDocument()
   })
 
   it('reports sufficient today when deployed meets the requirement', () => {
@@ -47,6 +51,6 @@ describe('PqcReadinessVerdict', () => {
       numLocations: 1,
     })
     render(<PqcReadinessVerdict scenarios={scenarios} numLocations={1} />)
-    expect(screen.getByText('sufficient')).toBeInTheDocument()
+    expect(screen.getByText(/All sites meet the selected model/)).toBeInTheDocument()
   })
 })

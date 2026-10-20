@@ -16,8 +16,14 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { EMVPaymentPQCModule } from './index'
+import { PAYMENT_NETWORKS } from './data/paymentNetworkData'
+import { sumVolumeTrillions } from './workshop/NetworkComparator'
 
 describe('EMVPaymentPQC render parity', () => {
+  it('normalizes billion- and trillion-denominated network volumes', () => {
+    expect(sumVolumeTrillions(PAYMENT_NETWORKS)).toBeCloseTo(46.6)
+  })
+
   it('renders the gradient header, the in-page description, and all six tabs', () => {
     render(
       <EmbedProvider>

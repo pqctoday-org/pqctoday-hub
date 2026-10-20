@@ -132,6 +132,7 @@ describe('workshopRegistry — Wave C intro strip (2026-09-18)', () => {
     expect(withIntro.map((t) => t.id).sort()).toEqual(
       [
         'api-security-jwt',
+        'cert-capacity',
         'bitcoin-flow',
         'cacp-kmip',
         'digital-id',

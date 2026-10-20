@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { computeScenarios } from './HsmCapacityCalculator'
+import { computeScenarios as computeModel } from '@/data/hsmCapacityModel'
+
+// Legacy worked examples explicitly isolate arithmetic at 100%; default-70%
+// and fleet separation regressions are exercised separately below/in the model suite.
+const computeScenarios = (p: Parameters<typeof computeModel>[0]) =>
+  computeModel({ targetUtilizationPct: 100, ...p })
 import {
   USE_CASES,
   CLASSICAL_HSM_DEFAULT,
@@ -162,22 +167,6 @@ describe('HSM capacity — computeScenarios', () => {
     expect(r[1].sufficient).toBe(false) // 10 deployed < 45 required
   })
 
-  it('inventory mode: equivalentNextGenTotal formula matches expected replacement ratio', () => {
-    // With N=10 classical HSMs: equivalent next-gen = ceil(10 × 150 / 8000) = 1
-    const inventoryHsmCount = 10
-    const equivalentNextGenTotal = Math.ceil(
-      (inventoryHsmCount * CLASSICAL_HSM_DEFAULT.opsPerSec['ml-dsa-65']) /
-        PQC_HSM_DEFAULT.opsPerSec['ml-dsa-65']
-    )
-    expect(equivalentNextGenTotal).toBe(1) // 10 classical → 1 next-gen for ML-DSA
-
-    // With N=20 classical HSMs: ceil(20 × 150 / 8000) = ceil(0.375) = 1
-    const equivalentFor20 = Math.ceil(
-      (20 * CLASSICAL_HSM_DEFAULT.opsPerSec['ml-dsa-65']) / PQC_HSM_DEFAULT.opsPerSec['ml-dsa-65']
-    )
-    expect(equivalentFor20).toBe(1) // 20 classical → 1 next-gen
-  })
-
   it('inventory mode: large fleet — 1000 HSMs across 10 locations, N+1', () => {
     // 1000 HSMs ÷ 10 locations = 100/location.
     // TLS at 5000 per-site TPS PQC → shared-fleet raw = 44 (see above) PER LOCATION
@@ -282,7 +271,7 @@ function siteExpect(R: number, L: number, mode: 'n+1' | '2n', bottleneck?: strin
 const RAW_BY_SIZE: Record<DeploymentSize, { today: number; tomorrow: number; upgraded: number }> = {
   small: { today: 1, tomorrow: 5, upgraded: 1 },
   medium: { today: 1, tomorrow: 49, upgraded: 2 },
-  large: { today: 10, tomorrow: 487, upgraded: 13 },
+  large: { today: 9, tomorrow: 486, upgraded: 13 },
 }
 
 function caseFor(size: DeploymentSize, locations: number, mode: 'n+1' | '2n'): MatrixCase {
@@ -500,7 +489,7 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
   )
 
   it('per-site 2N totals scale linearly with L (no divisibility quirks)', () => {
-    // R=487 (shared-fleet), 2N → perLocRaw=487, perLocReq=974, total = L × 974.
+    // R=486 (shared-fleet), 2N → perLocRaw=486, perLocReq=974, total = L × 974.
     const r2 = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('large'),
@@ -510,7 +499,7 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 2,
     })
-    expect(r2[1].requiredWithRedundancy).toBe(2 * 487 * 2) // 1948
+    expect(r2[1].requiredWithRedundancy).toBe(2 * 486 * 2) // 1948
 
     const r3 = computeScenarios({
       useCases: USE_CASES,
@@ -521,7 +510,7 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 3,
     })
-    expect(r3[1].requiredWithRedundancy).toBe(3 * 487 * 2) // 2922
+    expect(r3[1].requiredWithRedundancy).toBe(3 * 486 * 2) // 2922
   })
 })
 
@@ -536,11 +525,11 @@ describe('HSM capacity — single-DC (numLocations = 1) at all sizes, both redun
     // N+1 at L=1: perLocReq = R + 1. Total = R + 1. (R = shared-fleet raw, see RAW_BY_SIZE.)
     { size: 'small', redundancy: 'n+1', today: 2, tomorrow: 6, upgraded: 2 },
     { size: 'medium', redundancy: 'n+1', today: 2, tomorrow: 50, upgraded: 3 },
-    { size: 'large', redundancy: 'n+1', today: 11, tomorrow: 488, upgraded: 14 },
+    { size: 'large', redundancy: 'n+1', today: 10, tomorrow: 487, upgraded: 14 },
     // 2N at L=1: perLocReq = R × 2. Total = R × 2.
     { size: 'small', redundancy: '2n', today: 2, tomorrow: 10, upgraded: 2 },
     { size: 'medium', redundancy: '2n', today: 2, tomorrow: 98, upgraded: 4 },
-    { size: 'large', redundancy: '2n', today: 20, tomorrow: 974, upgraded: 26 },
+    { size: 'large', redundancy: '2n', today: 18, tomorrow: 972, upgraded: 26 },
   ]
 
   it.each(SINGLE_DC)(
@@ -748,8 +737,8 @@ describe('HSM capacity — shared-fleet sum-model regression (2026-07-05 accurac
 })
 
 describe('HSM capacity — target-utilization headroom', () => {
-  it('defaults to 100% (no headroom) — identical to omitting the parameter', () => {
-    const withDefault = computeScenarios({
+  it('defaults to 70% — identical to explicitly selecting 70%', () => {
+    const withDefault = computeModel({
       useCases: USE_CASES,
       state: stateWith(['tls'], 10_000),
       classical: CLASSICAL_HSM_DEFAULT,
@@ -758,7 +747,7 @@ describe('HSM capacity — target-utilization headroom', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 1,
     })
-    const withExplicit100 = computeScenarios({
+    const withExplicit70 = computeModel({
       useCases: USE_CASES,
       state: stateWith(['tls'], 10_000),
       classical: CLASSICAL_HSM_DEFAULT,
@@ -766,9 +755,9 @@ describe('HSM capacity — target-utilization headroom', () => {
       redundancy: 'n+1',
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 1,
-      targetUtilizationPct: 100,
+      targetUtilizationPct: 70,
     })
-    expect(withExplicit100[1].requiredRaw).toBe(withDefault[1].requiredRaw)
+    expect(withExplicit70[1].requiredRaw).toBe(withDefault[1].requiredRaw)
   })
 
   it('70% target inflates the raw count by 1/0.7 relative to 100%', () => {
@@ -885,7 +874,7 @@ describe('HSM capacity — transition-window hybrid signing', () => {
     const onEcdh = on[1].perAlgoHsms.find((x) => x.algo === 'ecdh-p256')!
     expect(onEcdh.load).toBe(offEcdh.load) // unchanged — KEM load is not doubled
     const onEcdsa = on[1].perAlgoHsms.find((x) => x.algo === 'ecdsa-p256')!
-    expect(onEcdsa.load).toBe(1_000) // classical signature added back on top
+    expect(onEcdsa.load).toBe(0) // TLS retains one homogeneous PQC authentication signature.
   })
 
   it('never decreases requiredRaw relative to the same load without the toggle', () => {

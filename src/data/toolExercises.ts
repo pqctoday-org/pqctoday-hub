@@ -106,14 +106,14 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   'hsm-capacity': [
     {
       prompt:
-        'Switch a scenario from Standards today to Full end-state with ML-DSA-65. What moves the HSM count?',
+        'A workload consumes one nominal device under the assumed rates. At 70% target utilisation and N+1, how many devices does the model require per site?',
       options: [
-        'Signatures per second per HSM fall, so more HSMs are needed for the same load',
-        'The number of locations changes',
-        'The headroom percentage resets',
+        'Three: round 1 ÷ 0.70 up to two, then add one local spare',
+        'Two: add a spare before accounting for headroom',
+        'One: the utilisation target changes only the display',
       ],
       answer: 0,
-      why: 'Post-quantum signing is slower per operation on the same hardware; the calculator divides your peak transactions by the per-HSM rate and applies N+1 or 2N.',
+      why: 'Sum assumed device-time shares, divide by the target utilisation, round up, then apply local redundancy. This is a fictional shared-time model, not measured hardware capacity.',
     },
   ],
   'hybrid-sigs': [
@@ -311,14 +311,15 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'cert-capacity': [
     {
-      prompt: 'Set Relative to ECDSA and raise the renewal cadence. Which figure grows?',
+      prompt:
+        'Shorten the leaf renewal interval without changing certificate count or full-handshake rate. Which estimate grows?',
       options: [
-        'CA archive storage, because more certificates are issued per year',
-        'Handshake bandwidth',
-        'The number of HSMs',
+        'Annual leaf issuance storage, because more leaf certificates are issued per year',
+        'Certificate-related payload per full handshake',
+        'Transmitted chain size',
       ],
       answer: 0,
-      why: 'Cadence sets how many certificates are issued and archived over time; handshake bandwidth depends on the chain size per connection, not on cadence.',
+      why: 'Annual issuance uses leaf count × certificate bytes × 365 ÷ renewal days, without rounding renewals first. Chain size and payload per full handshake do not depend on renewal interval. Retained archives are outside this estimate.',
     },
   ],
   'digital-id': [

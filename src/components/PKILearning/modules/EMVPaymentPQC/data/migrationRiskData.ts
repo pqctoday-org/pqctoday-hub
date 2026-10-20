@@ -111,7 +111,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     pqcSolution: [
       'Hybrid ML-KEM + X25519 TLS 1.3 (already available in major TLS libraries)',
       'ISO 8583 MAC remains AES \u2014 quantum-safe',
-      'Mastercard already achieving double-digit % PQC TLS connections',
+      'Use staged interoperability testing before production rollout; no network in this comparator has published a production PQC TLS percentage',
     ],
     dependencies: [],
     networkSpecific: [],

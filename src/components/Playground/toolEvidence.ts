@@ -31,7 +31,7 @@ export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
   'hsm-capacity': {
     primary: 'calculator',
     summary:
-      'Assumption-driven fleet sizing; results are estimates, not measured product capacity.',
+      'Educational per-site capacity with fictional profiles, separate payment fleets, and explicit headroom and redundancy assumptions.',
   },
   'hybrid-encrypt': {
     primary: 'real-crypto',
@@ -152,7 +152,7 @@ export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
   'cert-capacity': {
     primary: 'calculator',
     summary:
-      'Certificate and transport sizing from documented inputs and assumptions, not a benchmark.',
+      'Educational three-level chain size and annual leaf issuance estimates; two certificates transmitted, no CPU prediction or complete TLS bandwidth model.',
   },
   'hybrid-certs': {
     primary: 'real-crypto',

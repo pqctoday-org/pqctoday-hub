@@ -44,7 +44,10 @@ export const PlaygroundToolRoute = () => {
   const { revisions } = useRevisions()
 
   useEffect(() => {
-    if (tool) useAchievementStore.getState().recordPlaygroundToolUsage(tool.id)
+    // Arithmetic exploration must not award the "ran real cryptography" achievement.
+    if (tool && !['cert-capacity', 'hsm-capacity'].includes(tool.id)) {
+      useAchievementStore.getState().recordPlaygroundToolUsage(tool.id)
+    }
   }, [tool])
 
   // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
@@ -188,7 +191,9 @@ export const PlaygroundToolRoute = () => {
           <span className="font-semibold text-foreground">Runtime and privacy:</span>{' '}
           {tool.sandbox
             ? 'This scenario requires a separately operated, access-gated Docker runtime. The public page explains the exercise but does not send inputs to or start a container unless you configure and connect that runtime.'
-            : 'The cryptographic exercise runs in this browser. Review the site privacy terms before entering sensitive material; use synthetic inputs for learning and evaluation.'}
+            : ['cert-capacity', 'hsm-capacity'].includes(tool.id)
+              ? 'This educational calculator performs arithmetic in your browser; it does not run cryptographic benchmarks or measure hardware. Use synthetic planning inputs.'
+              : 'The cryptographic exercise runs in this browser. Review the site privacy terms before entering sensitive material; use synthetic inputs for learning and evaluation.'}
         </p>
         <p className="mt-2 text-sm">
           <Link className="text-primary underline-offset-2 hover:underline" to="/playground">

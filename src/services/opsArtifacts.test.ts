@@ -13,6 +13,7 @@ import {
   vpnSimRunMarkdown,
 } from './opsArtifacts'
 import { generateConfig as sshConfig } from '@/components/PKILearning/modules/VPNSSHModule/components/SSHConfigGenerator'
+import { computeCertificateCapacity, CERT_CAPACITY_ASSUMPTIONS } from '@/data/certCapacityDefaults'
 
 describe('operations scope', () => {
   it('marks empty fields as not stated and summarises the systems line', () => {
@@ -62,8 +63,8 @@ describe('HSM capacity plan', () => {
   it('labels every rate with its evidence type and flags no headroom', () => {
     const md = hsmCapacityPlanMarkdown(base)
     expect(md).toContain('Claim status: Estimate.')
-    expect(md).toContain('| ML-DSA-65 | 150 | Editorial estimate (not a measurement) |')
-    expect(md).toContain('| ECDSA P-256 | 18,000 | User-entered |')
+    expect(md).toContain('| ML-DSA-65 | 150 | Fictional educational input |')
+    expect(md).toContain('| ECDSA P-256 | 18,000 | User-entered assumption (unverified) |')
     expect(md).toContain('Target utilisation: 100% (no headroom)')
     expect(md).toContain('1 of 2 use cases enabled, 5,000 transactions per second')
     expect(md).toContain('| Today | Classical HSM | ECDSA P-256 | 2 | 2 | Yes | 47% |')
@@ -79,27 +80,25 @@ describe('HSM capacity plan', () => {
 
 describe('certificate capacity plan', () => {
   it('states the inputs as user-entered and cites each source', () => {
-    const md = certCapacityPlanMarkdown({
+    const inputs = {
       certCount: 1_000_000,
-      renewalDays: 90,
+      renewalDays: 240,
       handshakesPerSec: 1000,
-      rows: [
-        {
-          algorithm: 'ML-DSA-65',
-          storageMB: 23474.1,
-          renewalsPerYear: 4,
-          tlsKBPerHandshake: 8.9,
-          aggregateMBPerSec: 8.69,
-          signOpsPerSecPerCore: 3500,
-          cpuCorePercent: 28.6,
-          sizeSource: 'FIPS 204',
-          perfSource: 'liboqs',
-        },
-      ],
+      templateBytes: 512,
+    }
+    const md = certCapacityPlanMarkdown({
+      ...inputs,
+      modelVersion: '2',
+      assumptions: CERT_CAPACITY_ASSUMPTIONS,
+      rows: computeCertificateCapacity(inputs),
     })
     expect(md).toContain('## Inputs (user-entered)')
     expect(md).toContain('- Certificates: 1,000,000')
-    expect(md).toContain('| ML-DSA-65 | FIPS 204 | liboqs |')
+    expect(md).toContain('| ML-DSA-65 | FIPS 204 / RFC 9881;')
+    expect(md).toContain('1.520833')
+    expect(md).toContain('Model version: 2')
+    expect(md).not.toContain('CPU %')
+    expect(md).not.toContain('liboqs')
   })
 })
 

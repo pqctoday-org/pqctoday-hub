@@ -33,10 +33,10 @@ const REGION_ITEMS = [
 
 const POSTURE_ITEMS = [
   { id: 'All', label: 'All Postures' },
-  { id: 'active-pilot', label: 'Active Pilot' },
-  { id: 'research', label: 'Research' },
-  { id: 'announced', label: 'Announced' },
-  { id: 'no-public-stance', label: 'No Public Stance' },
+  { id: 'prototype-testing', label: 'Prototype Testing' },
+  { id: 'published-guidance', label: 'Published Guidance' },
+  { id: 'readiness-program', label: 'Readiness Program' },
+  { id: 'shared-standards', label: 'Shared Standards Work' },
 ]
 
 const OFFLINE_ITEMS = [
@@ -51,7 +51,8 @@ const COMPARE_ROWS = [
   'Offline Auth',
   'Token Platform',
   'PQC Posture',
-  'PQC Timeline',
+  'Official Stance',
+  'Public / Tentative Plan',
 ] as const
 
 /** Format large numbers for summary stats */
@@ -60,6 +61,16 @@ function sumCards(networks: PaymentNetwork[]): string {
   if (total >= 1_000_000_000) return `${(total / 1_000_000_000).toFixed(1)}B`
   if (total >= 1_000_000) return `${(total / 1_000_000).toFixed(0)}M`
   return total.toLocaleString()
+}
+
+/** Normalize the network-reported annual volumes to trillions. */
+export function sumVolumeTrillions(networks: PaymentNetwork[]): number {
+  return networks.reduce((sum, network) => {
+    const match = network.annualTransactionVolume.match(/\$([\d.]+)\s*(trillion|billion)/i)
+    if (!match) return sum
+    const value = Number.parseFloat(match[1])
+    return sum + (match[2].toLowerCase() === 'billion' ? value / 1_000 : value)
+  }, 0)
 }
 
 // ---------------------------------------------------------------------------
@@ -206,11 +217,8 @@ export const NetworkComparator: React.FC = () => {
 
   // Summary stats
   const totalCards = sumCards(filtered)
-  const activePqcCount = filtered.filter((n) => n.pqcPosture === 'active-pilot').length
-  const totalVolume = filtered.reduce((s, n) => {
-    const match = n.annualTransactionVolume.match(/([\d.]+)/)
-    return s + (match ? parseFloat(match[1]) : 0)
-  }, 0)
+  const reviewedProfileCount = filtered.filter((n) => n.officialSources.length > 0).length
+  const totalVolume = sumVolumeTrillions(filtered)
 
   const compareValue = (net: PaymentNetwork, row: (typeof COMPARE_ROWS)[number]): string => {
     switch (row) {
@@ -224,7 +232,9 @@ export const NetworkComparator: React.FC = () => {
         return net.tokenizationPlatform
       case 'PQC Posture':
         return PQC_POSTURE_LABELS[net.pqcPosture]
-      case 'PQC Timeline':
+      case 'Official Stance':
+        return net.pqcStance
+      case 'Public / Tentative Plan':
         return net.pqcTimeline
     }
   }
@@ -278,8 +288,8 @@ export const NetworkComparator: React.FC = () => {
         </div>
         <div className="glass-panel p-4 text-center">
           <ShieldCheck size={20} className="mx-auto text-status-success mb-1" />
-          <div className="text-2xl font-bold text-foreground">{activePqcCount}</div>
-          <div className="text-xs text-muted-foreground">Active PQC Programs</div>
+          <div className="text-2xl font-bold text-foreground">{reviewedProfileCount}</div>
+          <div className="text-xs text-muted-foreground">Evidence-Reviewed Profiles</div>
         </div>
         <div className="glass-panel p-4 text-center">
           <TrendingUp size={20} className="mx-auto text-primary mb-1" />
@@ -362,13 +372,38 @@ export const NetworkComparator: React.FC = () => {
               </div>
 
               {/* Initiatives */}
+              <div className="space-y-1">
+                <h5 className="text-xs font-medium text-secondary">Official Stance</h5>
+                <p className="text-xs text-muted-foreground">{net.pqcStance}</p>
+              </div>
+
               <div>
-                <h5 className="text-xs font-medium text-secondary mb-1">PQC Initiatives</h5>
+                <h5 className="text-xs font-medium text-secondary mb-1">Public Evidence</h5>
                 <ul className="text-xs text-muted-foreground space-y-0.5 list-disc list-inside">
                   {net.pqcInitiatives.map((init, i) => (
                     <li key={i}>{init}</li>
                   ))}
                 </ul>
+              </div>
+
+              <div className="space-y-1">
+                <h5 className="text-xs font-medium text-secondary">Public / Tentative Plan</h5>
+                <p className="text-xs text-muted-foreground">{net.pqcTimeline}</p>
+                <p className="text-[11px] text-muted-foreground italic">{net.evidenceBasis}</p>
+              </div>
+
+              <div className="flex flex-wrap gap-x-3 gap-y-1">
+                {net.officialSources.map((source) => (
+                  <a
+                    key={source.url}
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary hover:underline"
+                  >
+                    {source.label}
+                  </a>
+                ))}
               </div>
             </div>
           )

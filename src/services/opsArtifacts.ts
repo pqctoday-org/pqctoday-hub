@@ -126,13 +126,19 @@ export interface HsmScenarioSnapshot {
   label: string
   hsmProfile: string
   bottleneck: string
-  hsmsRequired: number
+  hsmsRequired: number | null
   hsmsDeployed: number
   sufficient: boolean
-  fleetUtilizationPct: number
+  fleetUtilizationPct: number | null
+  fleet?: string
+  supported?: boolean
+  unsupportedAlgorithms?: string[]
+  siteAllocations?: number[]
+  requiredPerSite?: number | null
 }
 
 export interface HsmCapacityPlanInputs {
+  modelVersion?: string
   deploymentSize: string
   redundancy: string
   locations: number
@@ -140,7 +146,15 @@ export interface HsmCapacityPlanInputs {
   migrationHorizon: string
   hybridSigningTransition: boolean
   codeSigningAlgorithm: string
-  useCases: { label: string; enabled: boolean; tps: number }[]
+  useCases: {
+    label: string
+    enabled: boolean
+    tps: number
+    fleet?: string
+    scope?: string
+    classicalRecipe?: Record<string, number>
+    pqcRecipe?: Record<string, number>
+  }[]
   profiles: HsmProfileSnapshot[]
   scenarios: HsmScenarioSnapshot[]
   /** The calculator's own caveats, copied verbatim so the plan carries them. */
@@ -151,17 +165,26 @@ export function hsmCapacityPlanMarkdown(p: HsmCapacityPlanInputs): string {
   const enabled = p.useCases.filter((u) => u.enabled)
   const total = enabled.reduce((a, u) => a + u.tps, 0)
   return [
-    '# HSM capacity plan',
+    '# HSM educational capacity estimate',
     '',
-    'Claim status: Estimate. The result is only as good as the rates below; replace editorial estimates with measurements from your own HSM, firmware, mechanism and configuration before using it for procurement or a change board.',
+    `Model version: ${p.modelVersion ?? 'legacy — original assumptions retained'}`,
+    '',
+    'Claim status: Estimate. Fictional profiles and user assumptions illustrate a resource-sharing model. Measurements of individual operations alone do not validate production mixed-workload performance.',
     '',
     '## Results',
     '',
-    '| Scenario | HSM profile | Bottleneck | HSMs required | HSMs deployed | Sufficient | Fleet utilisation |',
+    '| Scenario | HSM profile | Largest time share | HSMs required | HSMs allocated | Meets model | Fleet utilisation |',
     '|---|---|---|---|---|---|---|',
     ...p.scenarios.map(
       (s) =>
-        `| ${cell(s.label)} | ${cell(s.hsmProfile)} | ${cell(s.bottleneck)} | ${s.hsmsRequired} | ${s.hsmsDeployed} | ${s.sufficient ? 'Yes' : 'No'} | ${Math.round(s.fleetUtilizationPct)}% |`
+        `| ${cell(s.label)} | ${cell(s.hsmProfile)} | ${cell(s.bottleneck)} | ${s.hsmsRequired ?? 'Unsupported'} | ${s.hsmsDeployed} | ${s.supported === false ? 'Unsupported' : s.sufficient ? 'Yes' : 'No'} | ${s.fleetUtilizationPct === null ? 'Unavailable' : `${Math.round(s.fleetUtilizationPct)}%`} |`
+    ),
+    '',
+    '## Actual site allocations',
+    '',
+    ...p.scenarios.map(
+      (s) =>
+        `- ${s.fleet ?? 'legacy fleet'} / ${s.label}: ${s.siteAllocations?.join(' / ') ?? 'Not recorded'} devices by site; requirement per site: ${s.requiredPerSite ?? 'unavailable'}.${s.supported === false ? ` Unsupported: ${s.unsupportedAlgorithms?.join(', ') ?? 'rate missing'}.` : ''}`
     ),
     '',
     '## Settings',
@@ -176,11 +199,18 @@ export function hsmCapacityPlanMarkdown(p: HsmCapacityPlanInputs): string {
     '',
     '## Workload',
     '',
-    `${enabled.length} of ${p.useCases.length} use cases enabled, ${num(total)} transactions per second in total.`,
+    `${enabled.length} of ${p.useCases.length} use cases enabled, ${num(total)} transactions per second per site; ${num(total * p.locations)} across equally loaded sites. These are transaction counts, not cryptographic operation counts. Payment and general-purpose capacity are calculated separately.`,
     '',
-    '| Use case | Enabled | Transactions/s |',
-    '|---|---|---|',
-    ...p.useCases.map((u) => `| ${cell(u.label)} | ${u.enabled ? 'Yes' : 'No'} | ${num(u.tps)} |`),
+    '| Use case | Fleet | Enabled | Transactions/s per site | Classical recipe | PQC recipe |',
+    '|---|---|---|---|---|---|',
+    ...p.useCases.map(
+      (u) =>
+        `| ${cell(u.label)} | ${cell(u.fleet ?? 'legacy')} | ${u.enabled ? 'Yes' : 'No'} | ${num(u.tps)} | ${cell(JSON.stringify(u.classicalRecipe ?? {}))} | ${cell(JSON.stringify(u.pqcRecipe ?? {}))} |`
+    ),
+    '',
+    '### Recipe scope and limitations',
+    '',
+    ...p.useCases.filter((u) => u.scope).map((u) => `- ${u.label}: ${u.scope}`),
     '',
     '## HSM throughput assumptions',
     '',
@@ -194,7 +224,7 @@ export function hsmCapacityPlanMarkdown(p: HsmCapacityPlanInputs): string {
       ...prof.rates.map(
         (r) =>
           `| ${cell(r.algorithm)} | ${num(r.opsPerSec)} | ${
-            EVIDENCE_TYPE_LABELS[r.userEntered ? 'user-entered' : 'editorial-estimate']
+            r.userEntered ? 'User-entered assumption (unverified)' : 'Fictional educational input'
           } |`
       ),
       '',
@@ -210,17 +240,21 @@ export function hsmCapacityPlanMarkdown(p: HsmCapacityPlanInputs): string {
 
 export interface CertCapacityRow {
   algorithm: string
-  storageMB: number
+  certificateBytes: number
+  chainBytes: number
+  signatureBytes: number
+  payloadBytes: number
+  storageMiB: number
   renewalsPerYear: number
-  tlsKBPerHandshake: number
-  aggregateMBPerSec: number
-  signOpsPerSecPerCore: number
-  cpuCorePercent: number
+  payloadKiB: number
+  aggregateMiBPerSec: number
   sizeSource: string
-  perfSource: string
 }
 
 export interface CertCapacityPlanInputs {
+  modelVersion: string
+  assumptions: string
+  templateBytes: number
   certCount: number
   renewalDays: number
   handshakesPerSec: number
@@ -229,32 +263,34 @@ export interface CertCapacityPlanInputs {
 
 export function certCapacityPlanMarkdown(p: CertCapacityPlanInputs): string {
   return [
-    '# Certificate capacity plan',
+    '# Certificate educational size estimate',
     '',
-    'Claim status: Estimate. Sizes follow the published algorithm parameters plus a fixed 512-byte allowance for the rest of the certificate; signing speeds are reference single-core benchmarks, not your servers.',
+    `Model version: ${p.modelVersion}`,
+    '',
+    p.assumptions,
     '',
     '## Inputs (user-entered)',
     '',
     `- Certificates: ${num(p.certCount)}`,
     `- Renewal interval: ${p.renewalDays} days`,
-    `- TLS handshakes per second: ${num(p.handshakesPerSec)}`,
+    `- Full TLS handshakes per second: ${num(p.handshakesPerSec)}`,
+    `- Other certificate structure and extensions: ${p.templateBytes} B per certificate`,
+    '- Chain: root CA → one intermediate CA → leaf; intermediate and leaf transmitted; root excluded.',
     '',
     '## Results',
     '',
-    '| Algorithm | CA archive MB/year | Renewals/year | TLS KB/handshake | MB/s at this rate | Sign ops/s (1 core) | % of one core |',
-    '|---|---|---|---|---|---|---|',
+    '| Chain algorithm | Certificate B | Sent chain B | Server signature B | Certificate-related payload KiB/full handshake | Payload MiB/s | Annual leaf issuance MiB | Annualized renewals |',
+    '|---|---|---|---|---|---|---|---|',
     ...p.rows.map(
       (r) =>
-        `| ${cell(r.algorithm)} | ${r.storageMB} | ${r.renewalsPerYear} | ${r.tlsKBPerHandshake} | ${r.aggregateMBPerSec} | ${num(r.signOpsPerSecPerCore)} | ${r.cpuCorePercent} |`
+        `| ${cell(r.algorithm)} | ${r.certificateBytes} | ${r.chainBytes} | ${r.signatureBytes} | ${r.payloadKiB.toFixed(3)} | ${r.aggregateMiBPerSec.toFixed(3)} | ${r.storageMiB.toFixed(3)} | ${r.renewalsPerYear.toFixed(6)} |`
     ),
     '',
     '## Sources',
     '',
-    '| Algorithm | Size source | Performance source |',
-    '|---|---|---|',
-    ...p.rows.map(
-      (r) => `| ${cell(r.algorithm)} | ${cell(r.sizeSource)} | ${cell(r.perfSource)} |`
-    ),
+    '| Algorithm | Size source |',
+    '|---|---|',
+    ...p.rows.map((r) => `| ${cell(r.algorithm)} | ${cell(r.sizeSource)} |`),
     '',
   ].join('\n')
 }

@@ -206,10 +206,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hsm-capacity',
     pt_id: 'PT-026',
-    version: '1.0.3',
+    version: '2.0.0',
     name: 'HSM Capacity Calculator',
     description:
-      'Size your HSM fleet for the top 10 enterprise use cases. Compare classical vs next-gen PQC HSM, tune per-algorithm TPS, and see whether your fleet is sufficient.',
+      'Explore fictional HSM workloads, utilisation headroom and local redundancy. Preserve per-site inventory and size payment workloads separately; not a production capacity prediction.',
     category: 'HSM / PKCS#11',
     algorithms: [
       'RSA-2048',
@@ -251,9 +251,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['architect', 'ops', 'executive', 'grc'],
     intro: {
       whatYouWillDo:
-        "Pick a Small, Medium or Large deployment, switch on enterprise use cases and set each one's transactions per second, choose N+1 or 2N redundancy and the number of locations, then read the three fleet-sizing cards.",
+        'Explore fictional per-site workloads, assumed operation rates, utilisation headroom and local redundancy. Inspect actual site allocations and separate payment-fleet results.',
       workedExample:
-        'Keep the Medium preset (about 7,145 TPS) and compare Today, Post-PQC on the existing fleet and Post-PQC on next-gen HSM: each card reads Sufficient, Demand only or Overloaded, with the bottleneck algorithm explained.',
+        'Enter ten general-purpose devices and three sites: the allocations are 4/3/3, not twelve devices. Compare each site against the model requirement at 70% target utilisation, then apply N+1.',
     },
     hasOutput: false,
   },
@@ -986,10 +986,16 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cert-capacity',
     pt_id: 'PT-025',
-    version: '1.0.4',
+    version: '2.0.0',
     name: 'Cert Capacity Calculator',
+    intro: {
+      whatYouWillDo:
+        'Compare estimated certificate-related TLS payload and annual leaf issuance for classical and PQC three-level chains, without CPU predictions.',
+      workedExample:
+        'Set a 240-day renewal interval: the annualized rate is 365/240, about 1.520833. TLS sends the intermediate and leaf, excludes the root, and adds one server signature contribution.',
+    },
     description:
-      'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert counts and renewal cadence.',
+      'Estimate certificate-related TLS payload and annual leaf issuance storage for classical and PQC three-level chains. Adjust renewal cadence and encoding assumptions; no CPU prediction.',
     category: 'Certificates & Proofs',
     algorithms: ['RSA-2048', 'ECDSA P-256', 'ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'],
     icon: BarChart2,
@@ -999,7 +1005,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'capacity',
       'storage',
       'bandwidth',
-      'cpu',
       'ml-dsa',
       'pki',
       'migration',

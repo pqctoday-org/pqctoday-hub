@@ -120,12 +120,10 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
       return (
         <div className="space-y-2">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            Swapping RSA/ECDSA signing for ML-DSA-65 on an HSM fleet changes the operation, not just
-            the algorithm label: ML-DSA verification is fast, but today's HSM firmware signing
-            throughput for lattice signatures trails hardware-accelerated RSA/ECDSA on published
-            vendor datasheets (Thales Luna 7 PCIe, Entrust nShield 5c, Utimaco SecurityServer Se
-            Gen2) — no vendor yet publishes a hardware-accelerated ML-DSA signing TPS figure, so
-            fleet sizing has to plan on a software-path number until one does.
+            The HSM calculator explores fictional operation rates, shared device time, utilisation
+            headroom and local redundancy. Payment capacity is calculated separately. Its results
+            are conditional on these assumptions, not measured hardware performance or a replacement
+            recommendation.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Stat
@@ -134,14 +132,14 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
               note="vs RSA-2048's 256 bytes"
             />
             <Stat
-              label="ML-DSA-65 public key"
+              label="ML-DSA-65 raw public key"
               value={`${MLDSA65.publicKeyBytes} bytes`}
-              note="vs RSA-2048's 256 bytes"
+              note="vs RSA-2048's 256-byte modulus; encoding excluded"
             />
           </div>
           <p className="text-[10.5px] text-muted-foreground">
-            Sizes: NIST FIPS 204, Table 2. Run the real HSM Capacity Calculator on a laptop for a
-            fleet-sized TPS estimate across your top 10 use cases.
+            Sizes: NIST FIPS 204, Table 2. Key and signature sizes do not establish signing
+            throughput or physical HSM storage limits.
           </p>
         </div>
       )
@@ -152,9 +150,10 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
       return (
         <div className="space-y-2">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            An ML-DSA-65 certificate is meaningfully bigger on the wire than its RSA-2048/ECDSA
-            equivalent — every TLS handshake that presents this certificate carries the difference,
-            and every certificate store/HSM slot budget needs to account for it too.
+            Compare classical and PQC three-level certificate chains. The model transmits the leaf
+            and intermediate, excludes the root, and adds one server signature contribution per full
+            handshake. It estimates certificate-related payload and annual leaf issuance, not the
+            entire TLS handshake, CPU demand or physical HSM storage slots.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Stat
@@ -163,7 +162,7 @@ export function WorkshopResultCard({ workshopId }: { workshopId: string }) {
               note={`${RSA2048.signatureBytes}B → ${MLDSA65.signatureBytes}B`}
             />
             <Stat
-              label="Public key size Δ"
+              label="Raw key-material size Δ"
               value={`+${deltaKey} bytes`}
               note={`${RSA2048.publicKeyBytes}B → ${MLDSA65.publicKeyBytes}B`}
             />

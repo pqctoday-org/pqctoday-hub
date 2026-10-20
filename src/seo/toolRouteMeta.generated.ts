@@ -521,7 +521,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/cert-capacity',
     title: 'Cert Capacity Calculator — PQC Crypto Lab | PQC Today',
     description:
-      'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert counts and renewal cadence.',
+      'Estimate certificate-related TLS payload and annual leaf issuance storage for classical and PQC three-level chains.',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [
@@ -643,7 +643,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/hsm-capacity',
     title: 'HSM Capacity Calculator — PQC Crypto Lab | PQC Today',
     description:
-      'Size your HSM fleet for the top 10 enterprise use cases. Compare classical vs next-gen PQC HSM, tune per-algorithm TPS, and see whether your fleet is…',
+      'Explore fictional HSM workloads, utilisation headroom and local redundancy. Preserve per-site inventory and size payment workloads separately; not a…',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [

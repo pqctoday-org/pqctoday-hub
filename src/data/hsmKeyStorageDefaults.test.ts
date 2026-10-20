@@ -110,4 +110,23 @@ describe('computeKeyStorage', () => {
     expect(r.numKeys).toBe(0)
     expect(r.remainderBytes).toBe(100)
   })
+  it('can exclude the certificate entirely and keep just the expanded key', () => {
+    const r = computeKeyStorage({
+      ...base,
+      mode: 'pure-pqc',
+      includeCertificate: false,
+      includeSeedOverhead: false,
+    })
+    expect(r.certBytes).toBe(0)
+    expect(r.perKeyBytes).toBe(4032)
+    expect(r.effectivePerKeyBytes).toBe(4032 * 1.05)
+  })
+  it.each([
+    { capacityBytes: -1 },
+    { overheadPct: Infinity },
+    { pqcVariant: 'unknown' },
+    { certTemplateBytes: NaN },
+  ])('rejects invalid storage inputs %j', (bad) => {
+    expect(() => computeKeyStorage({ ...base, mode: 'pure-pqc', ...bad })).toThrow(RangeError)
+  })
 })

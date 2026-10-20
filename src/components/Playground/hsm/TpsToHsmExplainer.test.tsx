@@ -20,6 +20,22 @@ function stateForMedium() {
 }
 
 describe('TpsToHsmExplainer — per-site figures must match the scenario cards', () => {
+  it('uses the selected 2N setting in the worked total, not an N+1 total', () => {
+    const scenarios = computeScenarios({
+      useCases: USE_CASES,
+      state: stateForMedium(),
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: '2n',
+      numLocations: 3,
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+    })
+    const largest = Math.max(...scenarios.map((s) => s.perLocationRaw))
+    render(<TpsToHsmExplainer scenarios={scenarios} redundancy="2n" numLocations={3} />)
+    expect(
+      screen.getByText(`Total fleet = 3 × ${largest * 2} = ${largest * 6} HSMs`)
+    ).toBeInTheDocument()
+  })
   it.each([1, 5])('at numLocations=%d, R/N+1/2N/total agree with computeScenarios', (L) => {
     const scenarios = computeScenarios({
       useCases: USE_CASES,

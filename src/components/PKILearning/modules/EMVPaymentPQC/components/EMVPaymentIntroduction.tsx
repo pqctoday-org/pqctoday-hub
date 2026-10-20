@@ -61,9 +61,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
   // this module completes on their path's sections rather than all eleven.
   useActiveLearnPath()
 
-  const activeNetworks = PAYMENT_NETWORKS.filter(
-    (n) => n.pqcPosture === 'active-pilot' || n.pqcPosture === 'research'
-  ).length
+  const reviewedNetworks = PAYMENT_NETWORKS.filter((n) => n.officialSources.length > 0).length
   const criticalVectors = MIGRATION_VECTORS.filter((v) => v.severity === 'critical').length
 
   return (
@@ -710,9 +708,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           </div>
           <div className="glass-panel p-3 text-center">
             <div className="text-2xl font-bold text-primary">
-              {activeNetworks}/{PAYMENT_NETWORKS.length}
+              {reviewedNetworks}/{PAYMENT_NETWORKS.length}
             </div>
-            <div className="text-xs text-muted-foreground">Networks Active</div>
+            <div className="text-xs text-muted-foreground">Network Profiles Reviewed</div>
           </div>
         </div>
       </LearnSection>
@@ -732,9 +730,14 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           horizon. The G7 CEG is explicit that this is not a deadline: the period &ldquo;is
           reflective of the variety of envisaged approaches taken across G7 jurisdictions&rdquo;,
           and the statement &ldquo;does not set guidance or regulatory expectations&rdquo;. Among
-          the card networks, <strong className="text-foreground">Mastercard</strong> is the one that
-          has published a dedicated PQC white paper; the rest engage through the EMVCo study group
-          without public timetables.
+          the card networks, <strong className="text-foreground">Mastercard</strong> has published
+          financial-sector migration guidance and described prototype testing;{' '}
+          <strong className="text-foreground">Visa</strong> has published quantum-readiness steps
+          for stablecoins and digital payments; and{' '}
+          <strong className="text-foreground">American Express</strong> publicly describes an
+          enterprise PQC-readiness and crypto-agility program. UnionPay and Discover have no
+          network-specific public roadmap located in this review, so their rows show the shared
+          EMVCo work separately from a clearly labelled tentative dependency plan.
         </p>
 
         <div className="glass-panel p-4 space-y-3">

@@ -1,20 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * HSM Capacity Calculator defaults.
- *
- * Models the top 10 enterprise HSM use cases and how much work each one
- * places on a fleet, in two scenarios:
- *   - Classical workload  (today: RSA-2048 / ECDSA P-256 signatures; ECDH P-256 key exchange)
- *   - PQC workload        (post-migration: ML-DSA-65 replaces RSA/ECDSA signatures;
- *                          ML-KEM-768 replaces ECDH P-256 key exchange; symmetric unchanged)
- *
- * HSM performance numbers are illustrative reference values derived from
- * publicly available vendor datasheets (Thales Luna 7 PCIe, Entrust nShield 5c,
- * Utimaco SecurityServer Se Gen2). No public vendor currently publishes
- * ML-DSA hardware-accelerated TPS — the "next-gen PQC HSM" ML-DSA number is
- * an estimate based on FPGA / ASIC prototype measurements in NIST PQC
- * evaluation reports. All values are exposed as sliders so operators can
- * replace them with their own benchmarked numbers.
+ * Fictional workloads and performance profiles for educational sensitivity analysis.
+ * Values are not vendor measurements or standards-mandated transaction rates.
  */
 
 export type AlgoId =
@@ -40,9 +27,8 @@ export const ALGO_LABELS: Record<AlgoId, string> = {
 
 /**
  * Which "post-PQC" op profile the calculator applies:
- *  - 'standards-today' — only algorithm swaps whose protocol-layer standard is
- *    actually published/deployed per src/data/pqcProtocolMatrix.ts (hybrid KEM
- *    everywhere; PQC signatures only where the sig RFC is published).
+ *  - 'standards-today' — legacy scenario identifier for a partial transition recipe.
+ *    Matrix context is not proof of product support or workload performance.
  *  - 'end-state' — every use case fully migrated (hypothetical final state).
  * Alignment between profiles and the matrix is enforced by
  * hsmCapacityMatrixLink.test.ts.
@@ -57,9 +43,9 @@ export type DeploymentSize = 'small' | 'medium' | 'large'
 export interface UseCaseEstimation {
   /** Plain-language explanation of why the default TPS range was chosen. */
   rationale: string
-  /** Formula walkthrough at the medium deployment size. */
+  /** Operation recipe independent of the selected transaction rate. */
   math: string
-  /** Cited standards and benchmarks. */
+  /** Scope and provenance of the fictional inputs. */
   sources: string[]
   /** How switching to PQC algorithms changes the ops count for this use case. */
   pqcImpact: string
@@ -74,10 +60,8 @@ export interface UseCase {
   /** Ops per transaction under the FULL end-state PQC workload (every use case migrated). */
   pqcOps: Partial<Record<AlgoId, number>>
   /**
-   * Ops per transaction under the "standards today" horizon — only swaps whose
-   * protocol-layer standardization is published/deployed per pqcProtocolMatrix:
-   * hybrid ML-KEM key exchange where standardized; PQC signatures only where the
-   * signature RFC is published (X.509 / CMS); classical signatures otherwise.
+   * Legacy partial-transition recipe. Not proof of deployed product support.
+   * Retained for saved-scenario compatibility; the UI uses the hypothetical end state.
    */
   pqcTodayOps: Partial<Record<AlgoId, number>>
   /** Default transactions/sec for each deployment size. */
@@ -87,273 +71,133 @@ export interface UseCase {
   estimation: UseCaseEstimation
 }
 
+type Recipe = Partial<Record<AlgoId, number>>
+function example(
+  id: string,
+  name: string,
+  description: string,
+  classicalOps: Recipe,
+  pqcOps: Recipe,
+  pqcTodayOps: Recipe,
+  rates: [number, number, number]
+): UseCase {
+  const recipe = (ops: Recipe) =>
+    Object.entries(ops)
+      .map(([a, n]) => `${n} × ${ALGO_LABELS[a as AlgoId]}`)
+      .join(' + ')
+  return {
+    id,
+    name,
+    description,
+    classicalOps,
+    pqcOps,
+    pqcTodayOps,
+    defaultTps: { small: rates[0], medium: rates[1], large: rates[2] },
+    defaultEnabled: true,
+    estimation: {
+      rationale:
+        'Fictional per-site workload. Organization presets illustrate sensitivity; replace the transaction rate to explore your own assumptions.',
+      math: `Classical recipe per transaction: ${recipe(classicalOps)}. Hypothetical PQC recipe: ${recipe(pqcOps)}. Multiply each recipe by per-site TPS.`,
+      sources: [
+        'Model assumptions, not measured workloads or mandated ratios. Algorithm definitions: FIPS 203 / 204 / 205. Protocol availability must be checked separately.',
+      ],
+      pqcImpact:
+        'The rates and operation ratios are hypothetical. Encapsulation, decapsulation and signing are distinct operations; a generic KEM recipe uses an explicitly assumed effective exchange rate. A protocol specification does not establish product integration or HSM support.',
+    },
+  }
+}
+
 export const USE_CASES: UseCase[] = [
-  {
-    id: 'tls',
-    name: 'TLS / HTTPS termination',
-    description:
-      'Web tier and API gateway TLS handshakes. 1 server signature + 1 hybrid KEM (ML-KEM-768 + ECDH P-256) per handshake. Assumes full-handshake offload to the HSM (both the certificate signature and the ephemeral KEM); keyless-TLS designs that only offload the signature would charge substantially less HSM load.',
-    classicalOps: { 'ecdsa-p256': 1, 'ecdh-p256': 1 },
-    pqcOps: { 'ml-dsa-65': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
-    // Hybrid KEM is production (RFC 10024); ML-DSA in
-    // TLS (draft-ietf-tls-mldsa) is still at IESG — server sig stays ECDSA today.
-    pqcTodayOps: { 'ecdsa-p256': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
-    defaultTps: { small: 500, medium: 5_000, large: 50_000 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is driven by concurrent active users, session duration, TLS session-resumption rate, and microservice-to-microservice mTLS traffic. A medium enterprise (~10,000 active users each generating ~3 HTTPS requests/sec) produces ~30,000 requests/sec. With ~80% served via TLS session resumption, the remaining 20% require a full HSM-backed handshake → ~6,000 new handshakes/sec, averaging to ~5,000 TPS. A small org (~1,000 active users) reaches ~500 TPS at the same ratio. A large CDN-scale enterprise spans 10+ PoPs, each handling thousands of simultaneous connections, pushing TPS to 50,000 — because every additional PoP, user cohort, or microservice fan-out multiplies the raw handshake rate.',
-      math: 'At medium (5,000 TPS): 5,000 ECDSA P-256 + 5,000 ECDH P-256 ops/s (classical); 5,000 ML-DSA-65 + 5,000 ML-KEM-768 + 5,000 ECDH P-256 ops/s (PQC hybrid — SecP256r1MLKEM768).',
-      sources: [
-        'RFC 8446 §4.4 (TLS 1.3 Certificate Verify)',
-        'NIST SP 800-52 Rev. 2 (TLS guidance)',
-        'Cloudflare/Fastly published TLS handshake rate data',
-      ],
-      pqcImpact:
-        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → hybrid ML-KEM-768 + ECDH P-256 (SecP256r1MLKEM768, RFC 10024 — the P-256 hybrid group used in FIPS/CNSA-constrained deployments; browsers instead default to the X25519MLKEM768 hybrid group). Hybrid KEM adds an extra ECDH operation per handshake alongside ML-KEM-768. ML-DSA-65 at 150 ops/s on a classical HSM is the primary bottleneck (~133× slower than ECDSA); ECDH P-256 hardware throughput is unchanged.',
-    },
-  },
-  {
-    id: 'code-signing',
-    name: 'Code signing (CI/CD, containers)',
-    description: 'Release artifact, container image, and SBOM signatures. 1 signature per build.',
-    classicalOps: { 'rsa-2048': 1 },
-    pqcOps: { 'ml-dsa-65': 1 },
-    // X.509-layer PQC sig RFCs are published (RFC 9881 ML-DSA, RFC 9909 SLH-DSA) and
-    // UEFI/Authenticode pilots inherit them — signing artifacts with a PQC key is
-    // standards-grounded today even though Sigstore's own PQC track is experimental.
-    pqcTodayOps: { 'ml-dsa-65': 1 },
-    defaultTps: { small: 2, medium: 20, large: 200 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is driven by the number of developers, commit frequency, and artifacts signed per build. A medium enterprise with 1,000 active developers each committing 20 times/day and signing 3 artifacts per commit (binary, container image, SBOM) generates 60,000 signing operations/day. With 50% of commits landing in a 1-hour peak deployment window and a 2.4× sprint-end surge: (1,000 × 20 × 3 × 50%) / 3,600s × 2.4 ≈ 20 TPS. A small org (100 developers, same pattern) → 2 TPS; a large hyperscaler (10,000 developers) → 200 TPS. Each additional developer multiplies the daily commit and artifact count proportionally.',
-      math: 'At medium (20 TPS): 20 RSA-2048 ops/s on the HSM (<0.2% of 10,000 ops/s capacity — code signing is never the sizing constraint).',
-      sources: [
-        'NIST SP 800-218 §2.4 (SSDF — sign all release artifacts)',
-        'Sigstore/cosign adoption data',
-        'CNSA 2.0 (NSA) — LMS/XMSS or ML-DSA for software/firmware signing',
-        'NIST SP 800-208 (stateful hash-based signatures)',
-        'RFC 9909 (SLH-DSA X.509 certificates)',
-      ],
-      pqcImpact:
-        'RSA-2048 → ML-DSA-65 by default, or SLH-DSA-128s via the algorithm selector on this card. CNSA 2.0 and NIST SP 800-208 favor hash-based signatures (LMS/XMSS, SLH-DSA) for software/firmware signing; SLH-DSA X.509 certificates are RFC 9909. The capacity trade-off is dramatic: SLH-DSA-128s signs ~75× slower than ML-DSA-65 on classical HSM firmware (~2 vs ~150 ops/s) and produces 7,856-byte signatures (vs 3,309 for ML-DSA-65, 256 for RSA-2048) — with hash-based signing, code signing can become a genuine HSM sizing constraint instead of a rounding error.',
-    },
-  },
-  {
-    id: 'doc-signing',
-    name: 'Document / PDF signing (eIDAS)',
-    description:
-      'Advanced / qualified electronic signatures on documents. 1 signature per document.',
-    classicalOps: { 'rsa-2048': 1 },
-    pqcOps: { 'ml-dsa-65': 1 },
-    // CMS ML-DSA is a published RFC (RFC 9882) — PQC document signatures are
-    // standards-grounded today (eIDAS/ETSI qualified-signature layer still pending).
-    pqcTodayOps: { 'ml-dsa-65': 1 },
-    defaultTps: { small: 1, medium: 5, large: 50 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is driven by the volume of documents requiring electronic signatures per hour. A medium national institution (insurance company, national bank) processes 18,000 signed documents per hour at business peak (loan applications, policy contracts, compliance filings, HR onboarding packets): 18,000 / 3,600 = 5 documents/sec → 5 TPS. A small regional firm (clinic, branch office, law practice) processes 1,800 documents/hour → 1 TPS. A large national e-signature platform or major bank processes 180,000 documents/hour → 50 TPS. Larger organizations sign more due to higher client volume, more regulated workflows, and more employees in contract-heavy roles.',
-      math: 'At medium (5 TPS): 5 RSA-2048 ops/s. At large (50 TPS): still not the bottleneck — throughput is I/O-bound (PDF rendering, network) before it is HSM-bound.',
-      sources: [
-        'ETSI EN 319 102-1 (AdES signature formats)',
-        'eIDAS Regulation 910/2014 Art. 26 (QES requirements)',
-        'ETSI TS 119 312 (cryptographic suites for qualified signatures)',
-      ],
-      pqcImpact:
-        "RSA-2048 → ML-DSA-65. ETSI signature suites (TS 119 312) do not yet define ML-DSA OIDs for qualified electronic signatures — the latest published version (v1.5.1, 2024-12) has no PQC content; ETSI ESI tracks PQC AdES suites as in-progress work. ML-DSA OIDs themselves are assigned in NIST's CSOR arc. Signature payload growth (~3 KB) requires PDF container (PAdES) and long-term validation (LTV) infrastructure updates.",
-    },
-  },
-  {
-    id: 'payment',
-    name: 'Payment / PIN translation (PCI, EMV)',
-    description:
-      'PIN block encrypt and MAC for cardholder transactions. Mostly symmetric, occasional RSA. Modelled here on a shared general-purpose fleet; in practice PIN translation runs on a dedicated payment-HSM segment (payShield-class), sized separately.',
-    classicalOps: { 'aes-128': 2, 'rsa-2048': 0.05 },
-    pqcOps: { 'aes-256': 2, 'ml-kem-768': 0.05 },
-    // No published PQC standard for payment zone-key exchange (no protocol-matrix row;
-    // ANSI X9 / EMVCo work in progress) — AES-256 upgrade is policy-only, zone keys stay RSA.
-    pqcTodayOps: { 'aes-256': 2, 'rsa-2048': 0.05 },
-    defaultTps: { small: 50, medium: 500, large: 5_000 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is driven by peak payment transaction volume, number of active POS terminals and ATMs, number of acquiring regions (each with its own zone keys), and key rotation frequency. Each card transaction requires PIN block translation: decrypt under the inbound zone key (1 AES op) and re-encrypt under the outbound zone key (1 AES op) — AES-128 today, AES-256 post-PQC migration. Zone-key exchange uses RSA at ~1 per 20 transactions (per PCI PIN §18 rotation requirements). A medium national acquirer processes ~500 peak payment TPS. A small regional processor handles ~50 TPS. A large national processor reaches 5,000 TPS because it supports more POS terminals, more concurrent acquiring regions, and higher peak hours (end-of-day retail, holiday spikes).',
-      math: 'At medium (500 TPS): classical — 1,000 AES-128 + 25 RSA-2048 ops/s; PQC — 1,000 AES-256 + 25 ML-KEM-768 ops/s. AES-256 at ~20,000 ops/s on classical HSM handles this load easily.',
-      sources: [
-        'PCI DSS v4.0 §3.7 (key management)',
-        'EMV® Book 2 §6 (key hierarchy)',
-        'ANSI X9.24-1 (retail financial services key management)',
-        'PCI PIN Security Requirements §18',
-      ],
-      pqcImpact:
-        'AES-128 PIN block encryption → AES-256 (NIST SP 800-57 post-quantum recommendation). RSA-2048 zone-key exchange → ML-KEM-768 (FIPS 203). AES-256 throughput on classical HSMs (~20,000 ops/s) comfortably handles the symmetric load; ML-KEM-768 at ~500 ops/s is negligible at this TPS.',
-    },
-  },
-  {
-    id: 'tde',
-    name: 'Database TDE (Oracle / SQL Server)',
-    description:
-      'Transparent data encryption. AES-256 DEK unwrap per key rotation + RSA master key wrap.',
-    classicalOps: { 'aes-256': 1, 'rsa-2048': 0.1 },
-    pqcOps: { 'aes-256': 1, 'ml-kem-768': 0.1 },
-    // ML-KEM key-wrap mechanisms exist at the token layer today (PKCS#11 v3.2 CS01,
-    // CMS KEMRecipientInfo RFC 9629/9936) — MEK wrap can move to ML-KEM now.
-    pqcTodayOps: { 'aes-256': 1, 'ml-kem-768': 0.1 },
-    defaultTps: { small: 20, medium: 200, large: 2_000 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is driven by the number of databases and tablespaces, size of connection pools, and the key material TTL — how often applications request fresh DEK material from the HSM on connection renewal. A medium enterprise runs 20 production databases, each with 10 active connection pools of 100 connections: 20 × 10 × 100 = 20,000 concurrent DB connections. With a key material TTL of 100 seconds: 20,000 / 100 = 200 DEK operations/sec → 200 TPS. A small org (2 databases × 10 pools × 100 connections → 2,000 connections / 100s = 20 TPS); a large enterprise (200 databases × 10 pools × 100 connections → 200,000 / 100 = 2,000 TPS). More databases, larger connection pools, and stricter (shorter) TTLs all increase the DEK fetch rate.',
-      math: 'At medium (200 TPS): 200 × 1 = 200 AES-256 ops/s; 200 × 0.1 = 20 RSA-2048 ops/s.',
-      sources: [
-        'Oracle Advanced Security TDE documentation (Oracle 19c)',
-        'Microsoft SQL Server TDE architecture (SQL Server 2022)',
-        'NIST SP 800-57 Part 1 Rev. 5 §5.3 (key hierarchy)',
-        'PCI DSS v4.0 §3.5 (encryption of stored data)',
-      ],
-      pqcImpact:
-        "AES-256 is quantum-resistant (Grover's algorithm requires 2^128 operations at 256-bit keys). RSA-2048 MEK wrapping → ML-KEM-768 (FIPS 203). At 2,000 TPS (large), the 200 ML-KEM-768 ops/s demand is well within classical HSM firmware capacity.",
-    },
-  },
-  {
-    id: 'pki-ca',
-    name: 'PKI CA issuance / OCSP',
-    description:
-      'Certificate issuance and OCSP response signing. 1 signature per cert or OCSP reply.',
-    classicalOps: { 'rsa-2048': 1 },
-    pqcOps: { 'ml-dsa-65': 1 },
-    // ML-DSA X.509 certificates are a published RFC (RFC 9881) — CA issuance/OCSP
-    // signing with ML-DSA is the most standards-grounded PQC signature use of all.
-    pqcTodayOps: { 'ml-dsa-65': 1 },
-    defaultTps: { small: 2, medium: 20, large: 200 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is driven by the total employee and device population and how frequently each entity triggers certificate validation. A medium enterprise with 10,000 employees, each generating 50 OCSP validation events per day (VPN reconnects, HTTPS session checks, S/MIME email, software downloads), concentrated 3.4× during business hours: 10,000 × 50 / 86,400 × 3.4 ≈ 20 TPS. A small org (1,000 employees × 50 events × 3.4× / 86,400 = 2 TPS); a large enterprise with 100,000 employees or an equivalent IoT device fleet (100,000 × 50 × 3.4 / 86,400 ≈ 200 TPS). More employees, more managed devices (typically 3–10× employee count), and shorter certificate lifetimes all multiply the daily validation event count.',
-      math: 'At medium (20 TPS): 20 RSA-2048 ops/s (<0.2% of HSM capacity). PKI CA is rarely the bottleneck — TLS termination runs 250× larger at the same org scale.',
-      sources: [
-        'RFC 5280 §4 (X.509 certificate profile)',
-        'RFC 6960 §2 (OCSP)',
-        'NIST SP 800-57 Part 3 Rev. 1 (CA key management guidance)',
-        'CA/Browser Forum Baseline Requirements v2.0',
-      ],
-      pqcImpact:
-        "RSA-2048 → ML-DSA-65 (FIPS 204). CA/B Forum is evaluating PQC OIDs for publicly-trusted certificates. ML-DSA-65 grows OCSP responses and CRLs substantially — the signature alone adds ~3.3 KB (3,309 B, FIPS 204) vs. RSA-2048's 256 bytes, and ~5 KB+ once the responder's ML-DSA public key (1,952 bytes) is also transmitted — bandwidth impact may exceed HSM throughput impact at scale.",
-    },
-  },
-  {
-    id: 'kms',
-    name: 'KMS envelope encryption',
-    description: 'Cloud KMS pattern — AES-256 key wrap for data keys, ECDH for recipient delivery.',
-    classicalOps: { 'aes-256': 1, 'ecdh-p256': 0.2 },
-    pqcOps: { 'aes-256': 1, 'ml-kem-768': 0.2 },
-    // ML-KEM objects/mechanisms exist at the KMS token layer (PKCS#11 v3.2 CS01
-    // production posture; KMIP CSD01 pilot) — data-key delivery can move to ML-KEM now.
-    pqcTodayOps: { 'aes-256': 1, 'ml-kem-768': 0.2 },
-    defaultTps: { small: 100, medium: 1_000, large: 10_000 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is driven by the number of microservices and applications calling KMS, volume of encrypted objects, data-key cache TTL (shorter = more KMS calls per app), and number of tenants or encryption contexts. A medium enterprise with ~200 microservices each making ~5 KMS decrypt calls/sec (to unwrap cached data keys) generates 1,000 KMS TPS; every 5th call triggers a new data-key via ECDH. A small org (20 services at 5 calls/sec) reaches 100 TPS. A large multi-tenant SaaS platform reaches 10,000 TPS because it runs thousands of services, enforces short key cache TTLs for compliance, and handles per-tenant key isolation that multiplies HSM operations per request.',
-      math: "At medium (1,000 TPS): 1,000 AES-256 ops/s + 200 ECDH P-256 ops/s (classical); 1,000 AES-256 ops/s + 200 ML-KEM-768 ops/s (PQC). ML-KEM-768 at ~500 ops/s on a classical HSM means the 200 ops/s KEM share consumes ~40% of one HSM's capacity — no longer negligible the way AES/ECDH throughput is.",
-      sources: [
-        'AWS KMS Developer Guide (envelope encryption pattern)',
-        'Google Cloud KMS architecture whitepaper',
-        'NIST SP 800-57 Part 1 Rev. 5 §6.2.5',
-        'NIST SP 800-175B Rev. 1',
-      ],
-      pqcImpact:
-        'ECDH P-256 data-key delivery → ML-KEM-768 (FIPS 203). AES-256 key wrapping is quantum-resistant. ML-KEM-768 at 500 ops/s on classical HSM firmware handles small/medium deployments, but becomes a ~4-HSM bottleneck at the large-deployment KMS key-delivery load (2,000 ops/s) — unlike AES/ECDH, this does not scale for free.',
-    },
-  },
-  {
-    id: 'vpn-ike',
-    name: 'VPN / IPsec IKE',
-    description:
-      'Site-to-site and remote-access IKEv2 tunnel negotiation. 1 hybrid KEM (ML-KEM-768 + ECDH, RFC 9370 multi-KE) + 2 AUTH (mutual) per setup.',
-    classicalOps: { 'ecdh-p256': 1, 'ecdsa-p256': 2 },
-    // Hybrid KEX: RFC 9370 multi-KE keeps the classical (EC)DH exchange alongside
-    // ML-KEM (draft-ietf-ipsecme-ikev2-mlkem) — the classical op stays in the PQC mix.
-    pqcOps: { 'ml-kem-768': 1, 'ecdh-p256': 1, 'ml-dsa-65': 2 },
-    // ML-DSA IKEv2 authentication is an IESG-submitted draft, not an RFC — AUTH
-    // signatures stay ECDSA today; only the key exchange goes hybrid ML-KEM.
-    pqcTodayOps: { 'ml-kem-768': 1, 'ecdh-p256': 1, 'ecdsa-p256': 2 },
-    defaultTps: { small: 10, medium: 100, large: 1_000 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS represents the peak IKEv2 handshake rate during the business-hours login window — the key sizing event for the HSM fleet. A medium enterprise with 5,000 remote workers whose VPN clients connect within a 50-second window at shift start (staggered by calendar and time zones): 5,000 / 50 = 100 new IKEv2 handshakes/sec → 100 TPS. A small org (500 workers / 50s = 10 TPS); a large global enterprise (50,000 endpoints / 50s = 1,000 TPS). More endpoints and more distributed time zones create larger and more frequent reconnect waves during shift starts, failover events, and software-triggered re-authentications.',
-      math: 'At medium (100 TPS): 100 ECDH P-256 + 200 ECDSA P-256 ops/s (classical, mutual auth); 100 ML-KEM-768 + 100 ECDH P-256 + 200 ML-DSA-65 ops/s (PQC hybrid, mutual auth). RFC 7296 §2.15: both initiator and responder send AUTH.',
-      sources: [
-        'RFC 7296 §2.15 (IKEv2 AUTH payload)',
-        'RFC 8031 (ECDH groups in IKE)',
-        'RFC 9370 (Multiple Key Exchanges in IKEv2)',
-        'NIST SP 800-77 Rev. 1 (IPsec guidance)',
-        'draft-ietf-ipsecme-ikev2-mlkem (ML-KEM key exchange for IKEv2)',
-      ],
-      pqcImpact:
-        'ECDSA P-256 AUTH × 2 → ML-DSA-65 × 2 (RFC 7296 §2.15 mutual auth: both initiator and responder authenticate); ECDH P-256 → ML-KEM-768 (RFC 9370 hybrid framework + draft-ietf-ipsecme-ikev2-mlkem). At 1,000 TPS (large), 2,000 ML-DSA-65 ops/s on a classical HSM (150 ops/s) requires 14 HSMs just for IKE AUTH. The ×2 assumes both tunnel endpoints are org-owned HSMs (site-to-site); for pure remote-access VPN, the client authenticates on its own device and only 1× AUTH lands on the org fleet.',
-    },
-  },
-  {
-    id: 'ssh',
-    name: 'SSH user / host authentication',
-    description:
-      'Privileged access and machine-to-machine SSH. 1 signature + 1 hybrid KEM (ML-KEM-768 + classical ECDH, as in mlkem768x25519) per session. Assumes a centralized SSH CA / bastion architecture where host keys and session KEM are HSM-resident, not per-server local keys.',
-    classicalOps: { 'ecdsa-p256': 1, 'ecdh-p256': 1 },
-    // Hybrid KEX: the standardized/deployed SSH PQC key exchange is hybrid
-    // (mlkem768x25519 — OpenSSH 10.0 default; RFC 9941 sntrup761x25519) — the
-    // classical op stays in the PQC mix, mirroring TLS.
-    pqcOps: { 'ml-dsa-65': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
-    // ML-DSA host-key auth is only an individual draft (draft-sfluhrer-ssh-mldsa) —
-    // host keys stay classical today; only the key exchange goes hybrid ML-KEM.
-    pqcTodayOps: { 'ecdsa-p256': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
-    defaultTps: { small: 20, medium: 200, large: 2_000 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'TPS is dominated by automated tooling rather than human operators. A medium enterprise managing 2,000 servers and containers, each polled by monitoring and configuration-management automation (Ansible, Prometheus exporters, health-check scripts) via SSH every 10 seconds: 2,000 / 10 = 200 new SSH sessions/sec → 200 TPS. A small org with 200 servers at the same polling interval → 200 / 10 = 20 TPS; a large container platform with 20,000 ephemeral pods → 20,000 / 10 = 2,000 TPS. Larger infrastructure footprints and higher automation density multiply the SSH session rate in direct proportion to server count.',
-      math: 'At medium (200 TPS): 200 ECDSA P-256 + 200 ECDH P-256 ops/s (classical); 200 ML-DSA-65 + 200 ML-KEM-768 + 200 ECDH P-256 ops/s (PQC hybrid).',
-      sources: [
-        'RFC 4253 §6.6 (SSH transport layer — host key signature)',
-        'RFC 5656 (ECDSA curves in SSH)',
-        'RFC 8731 (Curve25519 key exchange in SSH)',
-        'draft-ietf-sshm-mlkem-hybrid-kex (ML-KEM hybrid key exchange for SSH, RFC Editor queue)',
-      ],
-      pqcImpact:
-        'ECDSA P-256 → ML-DSA-65; ECDH P-256 → ML-KEM-768 (draft-ietf-sshm-mlkem-hybrid-kex — OpenSSH 10.0, released 2025, made the ML-KEM hybrid group the default key exchange). Full KEM migration modelled as the most conservative capacity estimate. At 2,000 TPS (large), ML-DSA-65 at 150 ops/s on a classical HSM requires 14 HSMs for SSH AUTH; ML-KEM-768 at 500 ops/s adds 4 more HSMs.',
-    },
-  },
-  {
-    id: 'dnssec',
-    name: 'DNSSEC zone signing',
-    description:
-      'Authoritative DNSSEC zone and RRset signing. 1 signature per record on zone re-sign.',
-    classicalOps: { 'ecdsa-p256': 1 },
-    pqcOps: { 'ml-dsa-65': 1 },
-    // PQC DNSSEC has no WG draft and no IANA DNSKEY code point (matrix stage:
-    // identified) — nothing to migrate to yet; signing stays ECDSA today.
-    pqcTodayOps: { 'ecdsa-p256': 1 },
-    defaultTps: { small: 10, medium: 100, large: 1_000 },
-    defaultEnabled: true,
-    estimation: {
-      rationale:
-        'DNSSEC TPS equals the continuous RRset re-signing rate determined by RRSIG TTL. With a 1-hour RRSIG TTL (common for production zones balancing security and performance), every zone must be fully re-signed every hour. A medium enterprise managing 1,000 DNS zones with ~360 RRsets each: 1,000 × 360 / 3,600s = 100 signatures/sec → 100 TPS. A small org (100 zones × 360 RRsets / 3,600s = 10 TPS); a TLD operator or large CDN (10,000 zones × 360 RRsets / 3,600s = 1,000 TPS). Larger operators manage more zones (more services, subdomains, delegations, partner zones) and often enforce shorter RRSIG TTLs for security, both directly multiplying the continuous signing rate.',
-      math: 'At medium (100 TPS): 100 ECDSA P-256 ops/s on the HSM (<1% of capacity — negligible classical load).',
-      sources: [
-        'RFC 4034 §3 (DNSSEC RRSIG record format)',
-        'RFC 6605 (ECDSA curves for DNSSEC)',
-        'RFC 9276 (NSEC3 operational guidance)',
-        'NIST SP 800-81r3 (2026, secure DNS deployment guide)',
-        'draft-sheth-pqc-dnssec-strategy',
-        'draft-fregly-dnsop-slh-dsa-mtl-dnssec',
-      ],
-      pqcImpact:
-        'ECDSA P-256 ZSK/KSK signing → ML-DSA-65. At 1,000 TPS (large), classical HSM re-signing throughput drops to 150 ops/s — requiring 7 HSMs. More critically, ML-DSA-65 signatures are 3,309 bytes vs. 64 bytes for ECDSA P-256, forcing TCP fallback for virtually all signed DNS responses (exceeds the EDNS0 1,232-byte default recommended since DNS Flag Day 2020), significantly impacting DNS infrastructure design and resolver latency.',
-    },
-  },
+  example(
+    'tls',
+    'TLS / HTTPS termination',
+    'Full server handshakes with signing and key exchange inside the HSM. One server signature, one classical exchange, plus one ML-KEM encapsulation in the PQC example. The classical exchange rate includes ephemeral key generation. PQC certificates use an entirely PQC chain; the exchange remains hybrid. CA issuance and peer verification are separate.',
+    { 'ecdsa-p256': 1, 'ecdh-p256': 1 },
+    { 'ml-dsa-65': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
+    { 'ecdsa-p256': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
+    [500, 5000, 50000]
+  ),
+  example(
+    'code-signing',
+    'Code signing',
+    'One artifact signature per transaction. ML-DSA or SLH-DSA is a hypothetical algorithm choice, not CNSA or product-compliance advice. SP 800-208 specifies LMS/XMSS families, not SLH-DSA.',
+    { 'rsa-2048': 1 },
+    { 'ml-dsa-65': 1 },
+    { 'ml-dsa-65': 1 },
+    [2, 20, 200]
+  ),
+  example(
+    'doc-signing',
+    'Document signing',
+    'One document signature per transaction. This model makes no qualified-signature or eIDAS status claim.',
+    { 'rsa-2048': 1 },
+    { 'ml-dsa-65': 1 },
+    { 'ml-dsa-65': 1 },
+    [1, 5, 50]
+  ),
+  example(
+    'payment',
+    'Payment / PIN translation',
+    'Separate fictional payment fleet. Two symmetric operations per transaction and an illustrative 0.05 key-management operations per transaction. The ratio is not a PCI/EMV requirement; RSA-to-KEM mapping is a hypothetical key-delivery scenario.',
+    { 'aes-128': 2, 'rsa-2048': 0.05 },
+    { 'aes-256': 2, 'ml-kem-768': 0.05 },
+    { 'aes-256': 2, 'rsa-2048': 0.05 },
+    [50, 500, 5000]
+  ),
+  example(
+    'tde',
+    'Database key management',
+    'Illustrative external key-service requests: one symmetric operation and 0.1 asymmetric key-delivery operations per request. This is not a claim that database connections directly cause TDE key operations.',
+    { 'aes-256': 1, 'rsa-2048': 0.1 },
+    { 'aes-256': 1, 'ml-kem-768': 0.1 },
+    { 'aes-256': 1, 'ml-kem-768': 0.1 },
+    [20, 200, 2000]
+  ),
+  example(
+    'pki-ca',
+    'PKI issuance / OCSP signing',
+    'One new CA or responder signature per transaction. Use actual signing events, not certificate validations: cached OCSP responses do not require a fresh signature for every request.',
+    { 'rsa-2048': 1 },
+    { 'ml-dsa-65': 1 },
+    { 'ml-dsa-65': 1 },
+    [2, 20, 200]
+  ),
+  example(
+    'kms',
+    'KMS envelope encryption',
+    'Illustrative recipe: one symmetric wrap/unwrap plus 0.2 key-delivery exchanges per request. ML-KEM needs an appropriate derivation and wrapping construction; it is not a direct replacement for an encryption API.',
+    { 'aes-256': 1, 'ecdh-p256': 0.2 },
+    { 'aes-256': 1, 'ml-kem-768': 0.2 },
+    { 'aes-256': 1, 'ml-kem-768': 0.2 },
+    [100, 1000, 10000]
+  ),
+  example(
+    'vpn-ike',
+    'VPN / IPsec IKE',
+    'Fictional shared fleet operating both tunnel endpoints: two AUTH signatures and an assumed exchange service per tunnel. Remote-access clients may use a different fleet. This simplified recipe excludes peer verification and protocol processing costs.',
+    { 'ecdh-p256': 1, 'ecdsa-p256': 2 },
+    { 'ml-kem-768': 1, 'ecdh-p256': 1, 'ml-dsa-65': 2 },
+    { 'ml-kem-768': 1, 'ecdh-p256': 1, 'ecdsa-p256': 2 },
+    [10, 100, 1000]
+  ),
+  example(
+    'ssh',
+    'SSH session example',
+    'Fictional HSM-resident host signing and hybrid exchange. The classical curve rate is a modelling proxy, not a measured X25519 rate or an SSH configuration recipe.',
+    { 'ecdsa-p256': 1, 'ecdh-p256': 1 },
+    { 'ml-dsa-65': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
+    { 'ecdsa-p256': 1, 'ml-kem-768': 1, 'ecdh-p256': 1 },
+    [20, 200, 2000]
+  ),
+  example(
+    'dnssec',
+    'DNSSEC signing example',
+    'One RRset signature per transaction. Input is a signing rate, not DNS request traffic. PQC signatures here are a hypothetical end state, not a deployable DNSSEC recommendation.',
+    { 'ecdsa-p256': 1 },
+    { 'ml-dsa-65': 1 },
+    { 'ecdsa-p256': 1 },
+    [10, 100, 1000]
+  ),
 ]
 
 export interface HsmProfile {
@@ -366,51 +210,57 @@ export interface HsmProfile {
   sourceNote: string
 }
 
-/**
- * Classical HSM — no PQC hardware acceleration. ML-DSA is handled in software
- * on the HSM firmware controller, which is 1–2 orders of magnitude slower
- * than classical signature primitives with dedicated modular-arithmetic
- * engines.
- */
 export const CLASSICAL_HSM_DEFAULT: HsmProfile = {
   id: 'classical',
-  name: 'Classical HSM',
+  name: 'Fictional profile A',
   description:
-    'General-purpose network HSM without PQC hardware acceleration. ML-DSA and ML-KEM run in firmware (software fallback). ML-KEM requires a vendor firmware update with PKCS#11 v3.2 support; some models may not support it without hardware replacement.',
+    'Educational general-purpose profile A. All rates are invented for sensitivity analysis.',
   opsPerSec: {
-    'rsa-2048': 10_000,
-    'ecdsa-p256': 20_000,
-    'ecdh-p256': 10_000,
+    'rsa-2048': 10000,
+    'ecdsa-p256': 20000,
+    'ecdh-p256': 10000,
     'ml-dsa-65': 150,
     'ml-kem-768': 500,
     'slh-dsa-128s': 2,
-    'aes-128': 25_000,
-    'aes-256': 20_000,
+    'aes-128': 25000,
+    'aes-256': 20000,
   },
   sourceNote:
-    'Reference class: Thales Luna 7 PCIe / Entrust nShield 5c / Utimaco SecurityServer Se Gen2 public datasheets. RSA-2048 ~10k ops/s, ECDSA P-256 ~20k ops/s (vendor datasheets). ML-DSA software fallback ~150 ops/s (NIST PQC evaluation reports). ML-KEM-768 software estimate ~500 ops/s (lattice KEM operations; no vendor publishes this figure). SLH-DSA-128s firmware fallback ~2 sign/s (hash-based signing is orders of magnitude slower than lattice; extrapolated from SUPERCOP/liboqs-class benchmarks).',
+    'Fictional inputs, not vendor measurements. Signature rates mean signing; ECDH means an exchange including ephemeral key generation; ML-KEM means server encapsulation for TLS and an assumed effective exchange rate for other recipes; AES means the selected recipe operation, not bulk bytes/s.',
 }
-
-/**
- * Next-gen PQC HSM — dedicated ML-KEM / ML-DSA hardware engine.
- */
 export const PQC_HSM_DEFAULT: HsmProfile = {
   id: 'pqc',
-  name: 'Next-gen PQC HSM',
+  name: 'Fictional profile B',
   description:
-    'Next-generation HSM with dedicated ML-DSA / ML-KEM hardware accelerator. Newer silicon delivers higher classical TPS than legacy HSMs; PQC ops ~16–24× faster than classical software fallback.',
+    'Educational general-purpose profile B. It does not represent a product generation or upgrade guarantee.',
   opsPerSec: {
-    'rsa-2048': 100_000,
-    'ecdsa-p256': 100_000,
-    'ecdh-p256': 100_000,
-    'ml-dsa-65': 8_000,
-    'ml-kem-768': 12_000,
+    'rsa-2048': 100000,
+    'ecdsa-p256': 100000,
+    'ecdh-p256': 100000,
+    'ml-dsa-65': 8000,
+    'ml-kem-768': 12000,
     'slh-dsa-128s': 40,
-    'aes-128': 250_000,
-    'aes-256': 200_000,
+    'aes-128': 250000,
+    'aes-256': 200000,
+  },
+  sourceNote: CLASSICAL_HSM_DEFAULT.sourceNote,
+}
+export const PAYMENT_HSM_DEFAULT: HsmProfile = {
+  id: 'classical',
+  name: 'Fictional payment profile',
+  description: 'Separate educational payment fleet with independent rates and inventory.',
+  opsPerSec: {
+    'rsa-2048': 1000,
+    'ecdsa-p256': 0,
+    'ecdh-p256': 0,
+    'ml-dsa-65': 0,
+    'ml-kem-768': 100,
+    'slh-dsa-128s': 0,
+    'aes-128': 10000,
+    'aes-256': 8000,
   },
   sourceNote:
-    'Illustrative estimate — no vendor publishes production ML-DSA or ML-KEM HW-accel TPS as of 2026-04. ML-DSA-65 extrapolated from NIST PQC FPGA/ASIC prototype benchmarks. ML-KEM-768 extrapolated from Samsung S3SSE2A eSE (18× hardware speedup vs software, CES 2026 Innovation Award) and Marvell LS2 HSM (FIPS 140-3 Level 3 module, certificate #4703; PQC coverage via separate CAVP algorithm certifications — the module certificate itself lists no PQC algorithms). SLH-DSA-128s ~40 sign/s assumes dedicated hashing acceleration — still ~200× slower than accelerated ML-DSA.',
+    'Fictional payment operations and rates. Not a PCI/EMV recommendation or product measurement. Zero denotes an unsupported operation.',
 }
 
 export interface SizePreset {
@@ -520,14 +370,14 @@ export const PQC_SIG_ALGOS: AlgoId[] = ['ml-dsa-65', 'slh-dsa-128s']
  * Step size matches the order of magnitude so sliders feel responsive.
  */
 export const ALGO_SLIDER_RANGES: Record<AlgoId, { min: number; max: number; step: number }> = {
-  'rsa-2048': { min: 100, max: 50_000, step: 100 },
-  'ecdsa-p256': { min: 100, max: 100_000, step: 100 },
-  'ecdh-p256': { min: 100, max: 50_000, step: 100 },
-  'ml-dsa-65': { min: 50, max: 50_000, step: 50 },
-  'ml-kem-768': { min: 100, max: 100_000, step: 100 },
-  'slh-dsa-128s': { min: 1, max: 2_000, step: 1 },
-  'aes-128': { min: 1_000, max: 1_000_000, step: 1_000 },
-  'aes-256': { min: 1_000, max: 1_000_000, step: 1_000 },
+  'rsa-2048': { min: 0, max: 200_000, step: 100 },
+  'ecdsa-p256': { min: 0, max: 200_000, step: 100 },
+  'ecdh-p256': { min: 0, max: 200_000, step: 100 },
+  'ml-dsa-65': { min: 0, max: 50_000, step: 50 },
+  'ml-kem-768': { min: 0, max: 200_000, step: 100 },
+  'slh-dsa-128s': { min: 0, max: 2_000, step: 1 },
+  'aes-128': { min: 0, max: 1_000_000, step: 1_000 },
+  'aes-256': { min: 0, max: 1_000_000, step: 1_000 },
 }
 
 // ---------------------------------------------------------------------------

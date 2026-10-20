@@ -19,13 +19,29 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       keyManagement: ['RSA-2048 key transport', 'ECDSA P-256 (newer terminals)'],
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
     },
-    pqcPosture: 'research',
+    pqcPosture: 'published-guidance',
+    pqcStance:
+      'Visa says quantum readiness requires proactive planning now. Its February 2026 publication is scoped to stablecoins and blockchain-based payment infrastructure, not an announced migration of the Visa card network.',
     pqcInitiatives: [
-      'Visa Research quantum computing lab (since 2022)',
-      'EMVCo PQC study group participation',
-      'Internal crypto-agility framework development',
+      'Visa Research lists quantum-safe payments as a Quantum Security focus area',
+      'Visa Research and Visa Crypto published 2026 guidance for stablecoins and digital payments',
+      'The guidance calls for cryptographic inventory, algorithm evaluation, agile key management, standards coordination and non-production testing',
+      'Visa is an equal owner of EMVCo, whose Security Working Group is assessing quantum risk to EMV Chip',
     ],
-    pqcTimeline: 'No public timeline; monitoring NIST and EMVCo guidance',
+    pqcTimeline:
+      'Published near-term plan (stablecoin scope): inventory vulnerable cryptography, prepare agile key management, join standards work and test in non-production. No public Visa card-network rollout sequence or commitment was found.',
+    evidenceBasis:
+      'Direct Visa publications plus EMVCo documents. The module does not extend Visa’s stablecoin guidance into a card-network deployment claim.',
+    officialSources: [
+      {
+        label: 'Visa — Preparing stablecoins for the quantum era (2026)',
+        url: 'https://global-corporate.review.visa.com/en/sites/visa-perspectives/trends-insights/stablecoins-post-quantum-cryptography-threats.html',
+      },
+      {
+        label: 'Visa Research — Quantum information and computation',
+        url: 'https://usa.visa.com/about-visa/visa-research/research-areas.html',
+      },
+    ],
     radarScores: {
       scale: 4,
       offlineExposure: 4,
@@ -52,7 +68,9 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       keyManagement: ['RSA-2048 key transport', 'ECDSA P-256'],
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
     },
-    pqcPosture: 'active-pilot',
+    pqcPosture: 'prototype-testing',
+    pqcStance:
+      'Mastercard calls the threat urgent and says financial organizations should plan a migration. It has publicly described laboratory and cloud prototypes, but not a production card-network pilot or rollout commitment.',
     /**
      * PROOF NOTE (2026-07-31, updated). The "Migration to Post-Quantum
      * Cryptography" white paper (Mastercard R&D, 2025) was manually acquired
@@ -74,13 +92,27 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
      *   timeline — quoted below instead of the invented "5 years".
      */
     pqcInitiatives: [
-      'Published "Migration to Post-Quantum Cryptography" white paper (Mastercard R&D, 2025) — the only card network to publish a dedicated PQC paper',
+      'Launched a Quantum Security and Communications project in 2021',
+      'Built a cloud virtual network to test NIST candidate PQC algorithms between simulated businesses',
+      'Tested whether existing network hardware could add PQC through software updates and separately modelled QKD',
+      'Published "Migration to Post-Quantum Cryptography" guidance for financial institutions in 2025',
       'Paper frames HNDL as the central driver and compares PQC against Quantum Key Distribution (QKD), favoring PQC for deployability',
       'Cites Cloudflare’s internet-wide TLS 1.3 PQC adoption data (~2% of connections by March 2024, reaching double digits by end of 2024) as evidence of momentum — an industry-wide figure the paper quotes, not a claim about Mastercard’s own network',
-      'EMVCo PQC study group participation',
     ],
     pqcTimeline:
-      'No pilot or dated commitment described in the paper. Its guidance to financial institutions: invest in cryptographic inventory tooling now, "regardless of the timeline for PQC migration that it deems to be ideal"',
+      'Public sequence: inventory cryptography now, continue prototype and hardware-integration testing, and prepare migration away from RSA/ECC. No production rollout date or network-wide deployment commitment is public.',
+    evidenceBasis:
+      'Direct Mastercard newsroom and white-paper evidence. “Prototype testing” replaces the unsupported “Active Pilot” label.',
+    officialSources: [
+      {
+        label: 'Mastercard — Quantum cyber security and a post-quantum world (2024)',
+        url: 'https://www.mastercard.com/news/perspectives/2024/quantum-cyber-threats-are-likely-years-away-why-and-how-we-re-working-today-to-stop-them',
+      },
+      {
+        label: 'Mastercard — Migration to post-quantum cryptography (2025)',
+        url: 'https://www.mastercard.com/global/en/news-and-trends/Insights/2025/post-quantum-cryptography-white-paper.html',
+      },
+    ],
     radarScores: {
       scale: 3,
       offlineExposure: 4,
@@ -107,12 +139,29 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       keyManagement: ['RSA-2048 key transport'],
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', 'SafeKey 2.0 (3DS-based)'],
     },
-    pqcPosture: 'no-public-stance',
+    pqcPosture: 'readiness-program',
+    pqcStance:
+      'American Express publicly describes post-quantum readiness and crypto-agility as an enterprise architecture responsibility spanning payment and non-payment systems. It has not published a network rollout commitment.',
     pqcInitiatives: [
-      'EMVCo PQC study group participation (as founding member)',
-      'No public white papers or pilot announcements',
+      'A 2026 cryptographic architecture role is charged with leading PQC readiness and crypto-agility',
+      'The stated work includes cryptographic inventory and CBOM, vulnerable-implementation discovery, migration patterns and modernization roadmaps',
+      'The role connects standards to architecture-as-code, reusable patterns, enterprise services and automated assurance',
+      'American Express is an equal owner of EMVCo and contributes experts to its working groups',
     ],
-    pqcTimeline: 'No public timeline',
+    pqcTimeline:
+      'Publicly observable plan: build inventory and CBOM capability, identify vulnerable implementations, define migration patterns, and turn them into reusable engineering services and automated assurance. No Amex network deployment sequence or date is public.',
+    evidenceBasis:
+      'Direct American Express careers material is evidence of an active readiness capability, not proof of a deployed network migration.',
+    officialSources: [
+      {
+        label: 'American Express — Director, Cryptographic Architecture & Engineering (2026)',
+        url: 'https://careers.americanexpress.com/en/sites/CX_1/job/26014795',
+      },
+      {
+        label: 'EMVCo — Organisation structure',
+        url: 'https://www.emvco.com/about-us/organization-structure/',
+      },
+    ],
     radarScores: {
       scale: 1,
       offlineExposure: 2,
@@ -139,18 +188,31 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       keyManagement: ['RSA-2048 key transport', 'SM2 key exchange'],
       ecommerce: ['TLS 1.2/1.3 RSA/SM2', 'UnionPay 3DS-like protocol'],
     },
-    pqcPosture: 'announced',
+    pqcPosture: 'shared-standards',
+    pqcStance:
+      'No network-specific UnionPay PQC stance or roadmap was found on official UnionPay properties. UnionPay is an equal owner of EMVCo, so the verified public baseline is the shared EMVCo position—not a UnionPay deployment claim.',
     pqcInitiatives: [
-      'Governed by China ICCS national PQC competition (Feb 2025 call for quantum-resistant algorithms)',
-      'GB/T PQC standards not yet final — in March 2026 Wang Xiaoyun (Tsinghua) said China expects to finalize them within three years',
-      'National approach: a main algorithm plus a backup algorithm',
-      'SM2/SM9 → national PQC algorithm transition planned',
+      'UnionPay representatives participate in EMVCo governance and working groups',
+      'EMVCo is monitoring the quantum threat, considering mitigations for vulnerable offline authentication, and expects PQC algorithms to enter e-commerce protection in due course',
+      'No official UnionPay publication was found that commits its SM2/SM9 or card-network estate to a named PQC algorithm, pilot or schedule',
     ],
     // The "2029-2034, 80%+ migration" figure previously carried here traces to
     // an academic recommendation, not a published national commitment, and had
     // no cached source. Dropped 2026-07-31 rather than re-attributed.
     pqcTimeline:
-      'Tied to GB/T standards that are still in development — finalization expected around 2029 on the most recent public statement, with scale migration after',
+      'Tentative dependency-led plan: participate in EMVCo assessment, preserve crypto agility, then test and adopt future EMV mitigations and applicable Chinese standards. This is an inference from standards dependencies; UnionPay has not published its own sequence.',
+    evidenceBasis:
+      'EMVCo ownership and working-group evidence only. Earlier national-standard forecasts were removed because they were not an official UnionPay roadmap.',
+    officialSources: [
+      {
+        label: 'EMVCo — Organisation structure',
+        url: 'https://www.emvco.com/about-us/organization-structure/',
+      },
+      {
+        label: 'EMVCo — Quantum Computing and EMV Chip: What’s the Threat? (updated 2026)',
+        url: 'https://www.emvco.com/news-publications/quantum-computing-and-emv-chip-whats-the-threat/',
+      },
+    ],
     radarScores: {
       scale: 5,
       offlineExposure: 5,
@@ -177,12 +239,32 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       keyManagement: ['RSA-2048 key transport'],
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', 'ProtectBuy (3DS-based)'],
     },
-    pqcPosture: 'no-public-stance',
+    pqcPosture: 'shared-standards',
+    pqcStance:
+      'No network-specific Discover PQC stance or roadmap was found on official Discover or Capital One properties. Discover Network remains operationally distinct inside Capital One and is an equal owner of EMVCo.',
     pqcInitiatives: [
-      'EMVCo PQC study group participation',
-      'No public announcements or white papers',
+      'Discover representatives participate in EMVCo governance and standards work',
+      'The verified shared baseline is EMVCo’s ongoing assessment of offline public-key risk and future protection of remote payments',
+      'Capital One says Discover Network, PULSE and Diners Club continue to operate independently after the acquisition',
     ],
-    pqcTimeline: 'No public timeline; expected to follow PCI SSC and EMVCo guidance',
+    pqcTimeline:
+      'Tentative dependency-led plan: continue EMVCo standards work, inventory Discover-specific dependencies, then test and adopt future EMV and payment-security changes. This is an inference; no Discover-specific rollout sequence is public.',
+    evidenceBasis:
+      'Direct EMVCo and Capital One evidence. The absence of a public Discover roadmap is stated explicitly rather than scored as inactivity.',
+    officialSources: [
+      {
+        label: 'EMVCo — Organisation structure',
+        url: 'https://www.emvco.com/about-us/organization-structure/',
+      },
+      {
+        label: 'Capital One — Discover is now part of Capital One',
+        url: 'https://www.capitalone.com/about/capital-one-discover/',
+      },
+      {
+        label: 'EMVCo — Quantum Computing and EMV Chip: What’s the Threat? (updated 2026)',
+        url: 'https://www.emvco.com/news-publications/quantum-computing-and-emv-chip-whats-the-threat/',
+      },
+    ],
     radarScores: {
       scale: 1,
       offlineExposure: 1,

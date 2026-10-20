@@ -18,10 +18,10 @@ export interface CapacityOption {
 }
 
 export const CAPACITY_OPTIONS: CapacityOption[] = [
-  { label: '16 MB', bytes: 16 * 1024 * 1024 },
-  { label: '64 MB', bytes: 64 * 1024 * 1024 },
-  { label: '128 MB', bytes: 128 * 1024 * 1024 },
-  { label: '1 GB', bytes: 1024 * 1024 * 1024 },
+  { label: '16 MiB', bytes: 16 * 1024 * 1024 },
+  { label: '64 MiB', bytes: 64 * 1024 * 1024 },
+  { label: '128 MiB', bytes: 128 * 1024 * 1024 },
+  { label: '1 GiB', bytes: 1024 * 1024 * 1024 },
 ]
 
 export const RSA_ALGS: RsaAlg[] = ['RSA-2048', 'RSA-3072']
@@ -41,11 +41,10 @@ export const PQC_FAMILY_DEFAULT_VARIANT: Record<PqcFamily, string> = {
 }
 
 /**
- * FIPS 203/204 private keys are typically stored as both the compact seed
- * (used to regenerate the expanded key) and the expanded key material (used
- * for fast sign/decaps) — so HSM storage is expanded-key size + seed size.
+ * Optional model assumption: store both the compact seed and expanded key.
+ * Actual HSMs may store either representation or vendor-specific objects.
  * ML-KEM seed = d‖z (FIPS 203 sec 7.2), ML-DSA seed = ξ (FIPS 204 sec 6.1).
- * SLH-DSA's "private key" is already just a seed — nothing to add.
+ * The SLH-DSA secret-key encoding already includes its seeds and root.
  */
 export const SEED_OVERHEAD_BYTES: Record<PqcFamily, number> = {
   'ML-DSA': 32,
@@ -56,7 +55,8 @@ export const SEED_OVERHEAD_BYTES: Record<PqcFamily, number> = {
 /**
  * ML-KEM keys cannot sign their own certificate (KEM, not a signature
  * scheme), so a cert carrying an ML-KEM public key is signed by a CA using
- * the ML-DSA variant at the matching NIST security category (1/3/5).
+ * an illustrative ML-DSA variant. This mapping is an educational issuer
+ * choice, not a required security-category equivalence (ML-DSA-44 is category 2).
  */
 export const ML_KEM_TO_ML_DSA: Record<string, string> = {
   'ML-KEM-512': 'ML-DSA-44',
@@ -64,16 +64,20 @@ export const ML_KEM_TO_ML_DSA: Record<string, string> = {
   'ML-KEM-1024': 'ML-DSA-87',
 }
 
-/** Enterprise-PKI leaf cert: issuer/subject DN, validity, serial, extensions (key usage, SAN, AIA/CRL/OCSP, policy OIDs), algorithm-identifier OIDs — everything in the TBS besides the SPKI and the signature itself. */
+/** Illustrative allowance for all remaining certificate structure and extensions,
+ * excluding public-key material, its encoding allowance, and issuer signature bytes. */
 export const CERT_TEMPLATE_BYTES = 600
-/** SubjectPublicKeyInfo's AlgorithmIdentifier/OID wrapper around the raw public key bytes. */
+/** Editable public-key encoding allowance. A generic estimate, not exact DER for every family. */
 export const SPKI_WRAPPER_BYTES = 24
 
 export const DEFAULT_BLOB_OVERHEAD_PCT = 5
 
 function sizeOf(algoKey: string): { pub: number; priv: number; sig: number } {
   const facts = ALGO_FACTS[algoKey]
-  return { pub: facts?.pub ?? 0, priv: facts?.priv ?? 0, sig: facts?.sig ?? 0 }
+  if (!facts || facts.pub === undefined || facts.priv === undefined) {
+    throw new RangeError(`Unknown key parameter set: ${algoKey}`)
+  }
+  return { pub: facts.pub, priv: facts.priv, sig: facts.sig ?? 0 }
 }
 
 export interface KeyStorageParams {
@@ -85,6 +89,8 @@ export interface KeyStorageParams {
   overheadPct: number
   /** Count the seed alongside the expanded key for ML-DSA/ML-KEM private-key storage — see SEED_OVERHEAD_BYTES. Default true. */
   includeSeedOverhead?: boolean
+  /** Store one certificate alongside the key, an explicit deployment assumption. */
+  includeCertificate?: boolean
   /** Editable override for CERT_TEMPLATE_BYTES. */
   certTemplateBytes?: number
   /** Editable override for SPKI_WRAPPER_BYTES. */
@@ -112,9 +118,21 @@ export function computeKeyStorage(params: KeyStorageParams): KeyStorageResult {
     pqcVariant,
     overheadPct,
     includeSeedOverhead = true,
+    includeCertificate = true,
     certTemplateBytes = CERT_TEMPLATE_BYTES,
     spkiWrapperBytes = SPKI_WRAPPER_BYTES,
   } = params
+  if (
+    ![capacityBytes, overheadPct, certTemplateBytes, spkiWrapperBytes].every(Number.isFinite) ||
+    capacityBytes < 0 ||
+    overheadPct < 0 ||
+    certTemplateBytes < 0 ||
+    spkiWrapperBytes < 0 ||
+    !['classical', 'hybrid', 'pure-pqc'].includes(mode) ||
+    !PQC_VARIANTS[pqcFamily]?.includes(pqcVariant)
+  ) {
+    throw new RangeError('Invalid key-storage inputs.')
+  }
 
   const rsa = sizeOf(rsaAlg)
   const pqc = sizeOf(pqcVariant)
@@ -134,13 +152,15 @@ export function computeKeyStorage(params: KeyStorageParams): KeyStorageResult {
     certPubBytes = pqc.pub
     certSigBytes = pqcCertSig
   } else {
-    // Hybrid: composite key + dual-signature certificate (both algorithms present).
+    // Approximate sum of both materials, not a particular composite certificate encoding.
     privBytes = rsa.priv + pqcPriv
     certPubBytes = rsa.pub + pqc.pub
     certSigBytes = rsa.sig + pqcCertSig
   }
 
-  const certBytes = certTemplateBytes + spkiWrapperBytes + certPubBytes + certSigBytes
+  const certBytes = includeCertificate
+    ? certTemplateBytes + spkiWrapperBytes + certPubBytes + certSigBytes
+    : 0
   const perKeyBytes = privBytes + certBytes
   const effectivePerKeyBytes = perKeyBytes * (1 + overheadPct / 100)
   const numKeys = Math.floor(capacityBytes / effectivePerKeyBytes)

@@ -30,11 +30,11 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/hsm-capacity': {
     architect:
-      'Pick Demand sizing or Inventory sizing, enable the workloads you run (TLS termination, VPN IKE, SSH, DNSSEC, code signing, document signing) with their transactions per second, and choose N + 1 or 2N: the fleet sizing model gives HSMs per location under ML-DSA-65 or SLH-DSA-128s.',
-    ops: 'Start from the Small, Medium or Large organisation profile, set the number of locations and the sizing headroom, and read the per-location capacity formula: the result is the HSM count to put in front of a change board, with Model limits & caveats stating what it does not cover.',
+      'Explore per-site workload recipes, TLS signing and hybrid key-exchange offload, and independent payment capacity. Compare assumed shared device time at 70% utilisation before N+1 or 2N; these fictional profiles do not establish vendor capability or whole-site failover.',
+    ops: 'Enter per-site transaction rates and total inventory. Check each site allocation, including uneven splits, and keep utilisation headroom separate from local spares. Export the assumptions, then validate real workloads and failure scenarios on the target system before making an operational sizing decision.',
     executive:
-      'Choose the organisation profile closest to yours and toggle Standards today against Full end-state: the difference in HSM count is the capital question post-quantum signatures raise, before any vendor quote.',
-    grc: 'Model transition-window hybrid signing shows the period when both classical and post-quantum signatures run at once; the How we estimated this notes under each workload are the assumptions to record with the figure.',
+      'Explore which workload and resilience assumptions drive an illustrative device count. Fictional profiles A and B are sensitivity examples, not a procurement forecast, vendor comparison or hardware-replacement ratio.',
+    grc: 'Export the model version, operation recipes, rate assumptions and site allocations as an assumption record. Separate payment scope and unsupported capabilities remain visible; the result is not measured evidence, certification or production readiness.',
   },
   '/playground/hybrid-encrypt': {
     developer:
@@ -229,11 +229,11 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/playground/cert-capacity': {
     architect:
-      'Enter your certificate count, renewal cadence and TLS handshakes per second and switch between Absolute and Relative to ECDSA: the Business Impact Summary states the archive storage and handshake bandwidth growth for the staged hybrid PKI.',
-    ops: 'Fill in the three parameters from your inventory and Export CSV: the figures are the storage and bandwidth the CA and the edge need for the renewal cadence you run.',
+      'Compare homogeneous classical and PQC three-level chains: root, intermediate and leaf. Only the intermediate and leaf are transmitted, plus one server signature contribution. Adjust template overhead; key shares and other TLS traffic are outside this payload model.',
+    ops: 'Enter active leaf count, renewal interval and full-handshake rate, then export the annual leaf issuance and certificate-related payload estimates. Initial issuance, retained archives, backups, resumed sessions and complete network traffic need separate accounting.',
     executive:
-      'Three inputs, one summary: how much CA storage and handshake bandwidth grow when certificates move from ECDSA to ML-DSA, with the staged hybrid path shown as the alternative.',
-    grc: "The Business Impact Summary and the Export CSV give a sourced figure for the certificate side of the migration, with the model's benchmark caveat stated on the page.",
+      'Compare how certificate choices and renewal frequency affect illustrative storage and traffic volumes. These estimates help frame planning questions; they are not a cost forecast or a hardware-capacity commitment.',
+    grc: 'Export the model version, source references, inputs and scope exclusions. Algorithm sizes are reference facts; certificate template overhead and deployment inputs are assumptions. The model does not predict CPU performance or certify a deployment.',
   },
   '/playground/hybrid-certs': {
     developer:

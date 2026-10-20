@@ -1,132 +1,104 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-/**
- * Reference sizes and performance characteristics for certificate lifecycle capacity planning.
- *
- * Size sources:
- * - RSA-2048 / ECDSA-P256: RFC 5280, RFC 3279, RFC 5480
- * - ML-DSA variants: NIST FIPS 204, Table 2
- * - SLH-DSA: NIST FIPS 205, Table 2 (SLH-DSA-SHA2-128s)
- *
- * Performance sources (all AVX2-optimised, 3 GHz x86-64):
- * - RSA-2048: OpenSSL 3.x with CRT + AVX2 (Haswell-class server)
- * - ECDSA P-256: OpenSSL 3.x with AVX2 scalar-multiplication optimisations
- * - ML-DSA-44/65/87: CRYSTALS-Dilithium AVX2 implementation, Haswell benchmarks
- *   published in the NIST PQC Round 3 submission package (Appendix B).
- *   Cycle counts: ML-DSA-44 sign 86 252 / verify 57 789;
- *                 ML-DSA-65 sign 130 676 / verify 84 906;
- *                 ML-DSA-87 sign 197 960 / verify 126 839.
- *
- * CAVEAT — the *CpuMicros figures are a single-platform reference point, NOT a
- * cross-algorithm CPU verdict. Sign latency in particular is heavily
- * implementation- and platform-dependent: ML-DSA signing is SHAKE/AVX2-bound
- * (and includes a variable rejection-sampling loop), ECDSA is
- * modular-arithmetic-bound, and published numbers disagree by 2–3× across
- * SUPERCOP/eBACS, liboqs, and OpenSSL on different CPUs. The robust, reproducible
- * migration cost captured here is SIZE/bandwidth; the CPU columns are indicative
- * only and must not drive a confident "faster/slower than ECDSA" claim in the UI.
- * - SLH-DSA-128s: reference impl (SIMD gives negligible speedup for hash-tree traversal)
- */
-
+/** Size inputs only. Public keys are raw material; encoding allowances are separate. */
 export interface AlgoCapacityProfile {
-  /** Human-readable algorithm name */
   name: string
-  /** NIST security category (1 = AES-128 … 5 = AES-256). 0 = below category 1 (~112-bit classical, e.g. RSA-2048). */
-  securityLevel: 0 | 1 | 2 | 3 | 5
-  /** Approximate classical security in bits, for pre-quantum baselines (RSA/ECC). */
-  approxClassicalBits?: number
-  /** Public key size in bytes */
   publicKeyBytes: number
-  /** Private key size in bytes */
-  privateKeyBytes: number
-  /** Signature / ciphertext size in bytes */
   signatureBytes: number
-  /** AVX2-optimised sign latency (µs on a 3 GHz x86-64) */
-  signCpuMicros: number
-  /** AVX2-optimised verify latency (µs) */
-  verifyCpuMicros: number
-  /** Approximate TLS Certificate message overhead vs RSA-2048 baseline (bytes, metadata only) */
-  tlsCertOverheadBytes: number
-  /** Citation for sizes */
+  /** Public-key encoding and SPKI wrapper, excluded from template overhead. */
+  publicKeyEncodingBytes: number
   sizeSource: string
-  /** Citation for performance */
-  perfSource: string
 }
 
 export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
   {
     name: 'RSA-2048',
-    securityLevel: 0,
-    approxClassicalBits: 112,
     publicKeyBytes: 256,
-    privateKeyBytes: 1192,
+    publicKeyEncodingBytes: 38,
     signatureBytes: 256,
-    signCpuMicros: 400, // OpenSSL 3.x + CRT + AVX2, ~2500 sign/s at 3 GHz
-    verifyCpuMicros: 5, // e=65537 — single modexp, very fast
-    tlsCertOverheadBytes: 0, // baseline
-    sizeSource: 'RFC 8017, RFC 5280',
-    perfSource: 'OpenSSL 3.x + AVX2 + CRT, 3 GHz x86-64 (Haswell-class)',
+    sizeSource: 'RFC 8017 / RFC 5280; 256-byte modulus, estimated 294-byte encoded SPKI',
   },
   {
     name: 'ECDSA P-256',
-    securityLevel: 1,
-    approxClassicalBits: 128,
     publicKeyBytes: 64,
-    privateKeyBytes: 32,
+    publicKeyEncodingBytes: 27,
     signatureBytes: 72,
-    signCpuMicros: 40, // OpenSSL 3.x + AVX2 scalar-mult, ~25 000 sign/s at 3 GHz
-    verifyCpuMicros: 80, // two scalar multiplications
-    tlsCertOverheadBytes: -184,
-    sizeSource: 'RFC 5480, RFC 3279',
-    perfSource: 'OpenSSL 3.x + AVX2, 3 GHz x86-64 (Haswell-class)',
+    sizeSource:
+      'RFC 5480 / RFC 3279; 65-byte uncompressed point plus SPKI wrapper; 72-byte DER signature upper bound',
   },
   {
     name: 'ML-DSA-44',
-    securityLevel: 2,
     publicKeyBytes: 1312,
-    privateKeyBytes: 2560,
+    publicKeyEncodingBytes: 22,
     signatureBytes: 2420,
-    signCpuMicros: 29, // 86 252 cycles ÷ 3 GHz — CRYSTALS Dilithium2 AVX2, Haswell
-    verifyCpuMicros: 19, // 57 789 cycles ÷ 3 GHz
-    tlsCertOverheadBytes: 2164,
-    sizeSource: 'NIST FIPS 204, Table 2',
-    perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
+    sizeSource: 'FIPS 204 / RFC 9881; raw sizes plus 22-byte DER SPKI wrapper',
   },
   {
     name: 'ML-DSA-65',
-    securityLevel: 3,
     publicKeyBytes: 1952,
-    privateKeyBytes: 4032,
+    publicKeyEncodingBytes: 22,
     signatureBytes: 3309,
-    signCpuMicros: 44, // 130 676 cycles ÷ 3 GHz
-    verifyCpuMicros: 28, // 84 906 cycles ÷ 3 GHz
-    tlsCertOverheadBytes: 3037,
-    sizeSource: 'NIST FIPS 204, Table 2',
-    perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
+    sizeSource: 'FIPS 204 / RFC 9881; raw sizes plus 22-byte DER SPKI wrapper',
   },
   {
     name: 'ML-DSA-87',
-    securityLevel: 5,
     publicKeyBytes: 2592,
-    privateKeyBytes: 4896,
+    publicKeyEncodingBytes: 22,
     signatureBytes: 4627,
-    signCpuMicros: 66, // 197 960 cycles ÷ 3 GHz
-    verifyCpuMicros: 42, // 126 839 cycles ÷ 3 GHz
-    tlsCertOverheadBytes: 4339,
-    sizeSource: 'NIST FIPS 204, Table 2',
-    perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
-  },
-  {
-    name: 'SLH-DSA-128s',
-    securityLevel: 1,
-    publicKeyBytes: 32,
-    privateKeyBytes: 64,
-    signatureBytes: 7856,
-    signCpuMicros: 280000, // ~280 ms — hash-tree traversal; SIMD gives negligible speedup
-    verifyCpuMicros: 1200,
-    tlsCertOverheadBytes: 7600,
-    sizeSource: 'NIST FIPS 205, Table 2 (SLH-DSA-SHA2-128s)',
-    perfSource: 'NIST FIPS 205 reference implementation benchmarks',
+    sizeSource: 'FIPS 204 / RFC 9881; raw sizes plus 22-byte DER SPKI wrapper',
   },
 ]
 
-export const BASELINE_ALGO = CERT_CAPACITY_DEFAULTS[0] // RSA-2048
+export const CERT_CAPACITY_MODEL_VERSION = '2'
+export const CERT_CAPACITY_ASSUMPTIONS =
+  'Educational estimate. Root CA → one intermediate CA → leaf, with one algorithm and parameter set throughout. ' +
+  'TLS sends the intermediate and leaf; root excluded. Payload = two estimated certificates + one server CertificateVerify signature contribution. ' +
+  'Excludes TLS framing, key shares, other handshake messages, optional OCSP/SCT additions and client authentication. ' +
+  'Rate means full handshakes, excluding resumed connections. Annual storage covers steady-state leaf issuance only, without initial issuance, CA renewals, backups or retention. ' +
+  'Template overhead excludes the encoded public key and signature; all other certificate structure and extensions use this adjustable allowance. No CPU prediction.'
+
+export interface CertCapacityInputs {
+  certCount: number
+  renewalDays: number
+  handshakesPerSec: number
+  templateBytes: number
+}
+
+export function computeCertificateCapacity(inputs: CertCapacityInputs) {
+  const { certCount, renewalDays, handshakesPerSec, templateBytes } = inputs
+  if (
+    ![certCount, renewalDays, handshakesPerSec, templateBytes].every(Number.isFinite) ||
+    !Number.isInteger(certCount) ||
+    certCount < 0 ||
+    renewalDays <= 0 ||
+    handshakesPerSec < 0 ||
+    templateBytes < 0
+  ) {
+    throw new RangeError(
+      'Use a nonnegative certificate count and rates, and a positive renewal interval.'
+    )
+  }
+  const renewalsPerYear = 365 / renewalDays
+  return CERT_CAPACITY_DEFAULTS.map((algo) => {
+    const certificateBytes =
+      algo.publicKeyBytes + algo.publicKeyEncodingBytes + algo.signatureBytes + templateBytes
+    const chainBytes = 2 * certificateBytes
+    const payloadBytes = chainBytes + algo.signatureBytes
+    const storageMiB = (certCount * certificateBytes * renewalsPerYear) / 1024 ** 2
+    const aggregateMiBPerSec = (payloadBytes * handshakesPerSec) / 1024 ** 2
+    if (![payloadBytes, renewalsPerYear, storageMiB, aggregateMiBPerSec].every(Number.isFinite)) {
+      throw new RangeError('Certificate estimate exceeds numeric range.')
+    }
+    return {
+      algorithm: algo.name,
+      certificateBytes,
+      chainBytes,
+      signatureBytes: algo.signatureBytes,
+      payloadBytes,
+      storageMiB,
+      renewalsPerYear,
+      payloadKiB: payloadBytes / 1024,
+      aggregateMiBPerSec,
+      sizeSource: algo.sizeSource,
+    }
+  })
+}

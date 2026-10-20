@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'emv-payment-pqc',
-  version: '2.1.4',
-  lastReviewed: '2026-08-23',
-  lastEdited: '2026-10-04',
+  version: '2.2.0',
+  lastReviewed: '2026-10-19',
+  lastEdited: '2026-10-19',
 
   standards: [
     getStandard('FIPS 186-5'),
@@ -128,7 +128,7 @@ export const content: ModuleContent = {
     keyConcepts:
       'EMV card authentication: SDA (static RSA), DDA (dynamic RSA per transaction), CDA (combined with application cryptogram), all resting on RSA-2048 certificate chains. Settlement rails: Swift messaging, domestic RTGS, and correspondent chains, where the weakest hop sets the security of the whole path and no participant can migrate it alone. Key blocks: a key wrapped together with its usage attributes so it cannot be repurposed — the attribute binding is the security property, and the current standard is ANSI X9.143, not the far more frequently cited X9 TR-31. Harvest-now-decrypt-later drives the timetable: exposure is a function of how long data stays sensitive, not of a guessed CRQC date.',
     workshopSummary:
-      'Payment Network Comparator. Transaction Simulator. Card Provisioning Visualizer. Tokenization Explorer. POS Crypto Analyzer. Migration Risk Matrix. Settlement Exposure Modeller — HNDL exposure per rail, driven by retention rather than a guessed CRQC year. Sector Regulation Timeline — sector bodies filtered by jurisdiction, each linked to its cached source document.',
+      'Payment Network Comparator — official stance, public evidence, and a clearly labelled public or tentative plan for Visa, Mastercard, American Express, UnionPay and Discover. Transaction Simulator. Card Provisioning Visualizer. Tokenization Explorer. POS Crypto Analyzer. Migration Risk Matrix. Settlement Exposure Modeller — HNDL exposure per rail, driven by retention rather than a guessed CRQC year. Sector Regulation Timeline — sector bodies filtered by jurisdiction, each linked to its cached source document.',
     relatedStandards:
       'EPC 342-08 v16.0.1 (24 June 2026) anchors the banking half: it names ML-KEM, ML-DSA, SLH-DSA and FN-DSA. Planned FIPS 206 remains in development with no public draft, so this hub cites the distinct Falcon v1.2 candidate specification rather than presenting it as FIPS text. EPC also cites ANSI X9.143 as the current key-block standard. Swift CSCF v2026 controls 2.1/2.4/2.5A/2.6 point at Swift cryptography guidance that Swift states will follow its post-quantum strategy. BIS Project Leap Phase 2 is the central-bank experiment. PCI DSS v4.0.1 is current — there is no v5.0 — but only the Quick Reference Guide is freely downloadable. ANSI X9.143, X9.24-1/-2 and TR-31 are paywalled, and are cited here as normative but unobtainable rather than paraphrased.',
   },

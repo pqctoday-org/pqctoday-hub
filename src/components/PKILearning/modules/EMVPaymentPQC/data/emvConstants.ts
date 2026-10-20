@@ -6,7 +6,13 @@
 
 export type PaymentNetworkId = 'visa' | 'mastercard' | 'amex' | 'unionpay' | 'discover'
 
-export type PQCPosture = 'active-pilot' | 'research' | 'announced' | 'no-public-stance'
+export type PQCPosture =
+  'prototype-testing' | 'published-guidance' | 'readiness-program' | 'shared-standards'
+
+export interface PaymentNetworkSource {
+  label: string
+  url: string
+}
 
 export interface PaymentNetwork {
   id: PaymentNetworkId
@@ -28,8 +34,13 @@ export interface PaymentNetwork {
     ecommerce: string[]
   }
   pqcPosture: PQCPosture
+  /** What the network or its owner has said or demonstrated publicly. */
+  pqcStance: string
   pqcInitiatives: string[]
+  /** Public next steps, or a clearly labelled inference when no network plan is published. */
   pqcTimeline: string
+  evidenceBasis: string
+  officialSources: PaymentNetworkSource[]
   /** 0-5 scores for radar chart */
   radarScores: {
     scale: number
@@ -272,17 +283,17 @@ export interface AlgorithmSizeProfile {
 // ---------------------------------------------------------------------------
 
 export const PQC_POSTURE_COLORS: Record<PQCPosture, string> = {
-  'active-pilot': 'bg-status-success/20 text-status-success border-status-success/50',
-  research: 'bg-primary/20 text-primary border-primary/50',
-  announced: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-  'no-public-stance': 'bg-muted text-muted-foreground border-border',
+  'prototype-testing': 'bg-status-success/20 text-status-success border-status-success/50',
+  'published-guidance': 'bg-primary/20 text-primary border-primary/50',
+  'readiness-program': 'bg-status-warning/20 text-status-warning border-status-warning/50',
+  'shared-standards': 'bg-muted text-muted-foreground border-border',
 }
 
 export const PQC_POSTURE_LABELS: Record<PQCPosture, string> = {
-  'active-pilot': 'Active Pilot',
-  research: 'Research',
-  announced: 'Announced',
-  'no-public-stance': 'No Public Stance',
+  'prototype-testing': 'Prototype Testing',
+  'published-guidance': 'Published Guidance',
+  'readiness-program': 'Readiness Program',
+  'shared-standards': 'Shared Standards Work',
 }
 
 export const SEVERITY_COLORS: Record<MigrationSeverity, string> = {
