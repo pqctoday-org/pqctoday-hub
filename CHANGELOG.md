@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.168.0] - 2026-10-18
+
+The repository entry point now reflects the current educational product, its evidence boundaries and its actual maintenance process. Generated facts and documentation checks prevent release, dataset and navigation claims from silently becoming stale again.
+
+### Changed
+
+- **The project guide now starts learners and contributors in the right place** [view:/about] [persona:curious] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: the README replaces its historical feature ledger with role-specific routes, clear browser and optional-service boundaries, reproducible setup instructions and the explicit statement that PQC Today is an education and demonstration platform rather than a production cryptographic, certification or GRC system.
+- **Published evidence follows the official-source boundary** [view:/library] [persona:curious] [persona:grc] [persona:researcher] [persona:cert-engineer]: repository guidance now explains that public records retain official publisher URLs and reviewed educational extractions without publishing downloaded third-party documents or private maintenance artifacts.
+
+### Fixed
+
+- **Repository facts can no longer drift silently** [view:/about] [persona:developer] [persona:researcher] [persona:cert-engineer] [persona:ops]: release, module, catalogue, glossary and assistant-corpus figures are derived from the committed sources. Local and pull-request checks reject stale figures, broken repository links, product routes that would misdirect GitHub readers and superseded claims about GRC, scraping, archives or unfinished-tool badges.
+- **Testing guidance matches the gates that actually run** [view:/changelog] [persona:developer] [persona:ops]: the contributor and testing guides now distinguish fast pre-push checks, full local suites, the final release gate and manual KMIP/CACP checks without promising repeated work that is not wired into the workflow.
+
 ## [4.167.0] - 2026-10-18
 
 The browser Playground and Business Tools now tell learners what each result represents, what it can establish, and where an educational demonstration or planning artifact stops short of certification, compliance, approval or production evidence. Role journeys, phone layouts, standards references, exports and exercises follow the same evidence-first model.

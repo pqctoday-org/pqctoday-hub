@@ -67,6 +67,9 @@ jobs:
       - name: Tool route metadata matches the registries
         run: npm run gen:tool-route-meta:check
 
+      - name: README facts, claims and links match the repository
+        run: npm run gen:readme-facts:check && npm run audit:readme
+
       - name: Lint
         # Carries the eslint-plugin-security rules. Heap note: see ci.yml.
         env:
