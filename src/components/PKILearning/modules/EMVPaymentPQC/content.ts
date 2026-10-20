@@ -10,7 +10,9 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'emv-payment-pqc',
   version: '2.2.0',
-  lastReviewed: '2026-10-19',
+  // The latest recorded claim review is 24 Aug. This release changes content,
+  // so it updates lastEdited without presenting the edit as an evidence review.
+  lastReviewed: '2026-08-24',
   lastEdited: '2026-10-19',
 
   standards: [

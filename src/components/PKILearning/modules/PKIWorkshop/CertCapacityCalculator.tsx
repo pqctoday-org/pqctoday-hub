@@ -73,6 +73,10 @@ export function CertCapacityCalculator() {
           TLS sends two certificates: intermediate + leaf. The root is excluded. The PQC example is
           a size comparison, not a claim of deployment support.
         </p>
+        <p className="text-sm text-muted-foreground">
+          The PQC rows cover the ML-DSA signature family; each parameter set is shown separately
+          because its public-key and signature sizes differ.
+        </p>
       </div>
       <div className="glass-panel p-4 grid gap-4 md:grid-cols-2">
         {fields.map((f) => (
