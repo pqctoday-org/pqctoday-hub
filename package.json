@@ -127,7 +127,7 @@
     "uuid": "^14.0.0",
     "sharp": "^0.35.5",
     "monaco-editor": {
-      "dompurify": "3.4.16"
+      "dompurify": "3.4.17"
     },
     "mermaid": {
       "katex": "0.18.2"

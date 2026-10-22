@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:65209da6-a60c-57d7-9166-4b7f563741b3",
+  "serialNumber": "urn:uuid:60687bdd-c5cc-5337-ac96-8218b1bed677",
   "version": 1,
   "metadata": {
     "component": {
@@ -3561,8 +3561,8 @@
     {
       "type": "library",
       "name": "dompurify",
-      "version": "3.4.16",
-      "purl": "pkg:npm/dompurify@3.4.16",
+      "version": "3.4.17",
+      "purl": "pkg:npm/dompurify@3.4.17",
       "licenses": [
         {
           "expression": "(MPL-2.0 OR Apache-2.0)"
@@ -3571,7 +3571,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "b2aa3ea4da77a918422296e0462d72f13824dbb068d91cbbc34742d4d05e3537590a15a3cfd5dbfca3a865b44ffd1ea9419f34430f18857c35de159605b3119d"
+          "content": "07fa52958547439f24a88483ff20e3b89d727f3237e26d60178940a1dd9bc1246188de0ae429771fc01fee1a81d8f9932fdd75b5d12e7679d79f9167851a33d3"
         }
       ],
       "properties": [
