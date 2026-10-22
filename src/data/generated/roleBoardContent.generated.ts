@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10222026_r1.csv
+ * Source: src/data/role_board_content_10222026_r2.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2788,7 +2788,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
@@ -2863,7 +2862,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
@@ -2939,7 +2937,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
@@ -3015,7 +3012,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
@@ -3087,7 +3083,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
