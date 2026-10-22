@@ -44,7 +44,11 @@ export const content: ModuleContent = {
     getStandard('draft-ietf-hpke-pq'), // PQ/PQ-T hybrid HPKE KEM IDs (MLKEM768-X25519/P256, MLKEM1024-P384)
     getStandard('draft-ietf-cose-hpke'), // HPKE use case: COSE
     getStandard('draft-ietf-jose-hpke-encrypt'), // HPKE use case: JOSE
-    getStandard('draft-ietf-pquip-hybrid-signature-spectrums'),
+    getStandard('RFC-9955-Hybrid-Signature-Spectrums'),
+    // X25519MLKEM768 deployment and measured cost (sourced 2026-10-22, owner: "source or trim")
+    getStandard('Google-Security-Blog-A-new-path-for-Kyber-on-the-web'),
+    getStandard('Cloudflare-PQ-Internet-2025'),
+    getStandard('AWS-Security-Blog-ML-KEM-Post-Quantum-TLS-in-KMS-ACM-Secrets'),
     getStandard('draft-sheffer-tls-pqc-continuity'),
     // DECLARED 2026-08-23: this module labels a hashing mechanism it describes as conforming to FIPS 180-4
     // (the Secure Hash Standard) and cited nothing for it. Found by

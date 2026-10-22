@@ -60,7 +60,7 @@ export const content: ModuleContent = {
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('IETF RFC 6979'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
-    getStandard('SSLkeys'), // m-entropy-randomness: 32,768
+    getStandard('SSLkeys'), // m-entropy-randomness: 32,767 per key type, size and architecture
     getStandard('ChaCha20-and-Poly1305-for-IETF-Protocols'), // pt-qrng-demo: ChaCha20
     getStandard('Quantinuum-s-Quantum-Origin-Becomes-First-Software-Quantum-R'), // pt-qrng-demo: 2025; pt-qrng-demo: April 2025
     getStandard('qStream-High-speed-Full-Entropy-RNG'), // pt-qrng-demo: 200
@@ -75,7 +75,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'Entropy fundamentals: Why entropy quality determines cryptographic strength; historical failures like the 2008 Debian OpenSSL bug (PID-only seeding produced only ~32,768 possible keys). NIST SP 800-90 family: SP 800-90A (DRBG mechanisms), SP 800-90B (entropy source validation), SP 800-90C (RBG constructions combining sources with DRBGs).',
+      'Entropy fundamentals: Why entropy quality determines cryptographic strength; historical failures like the 2008 Debian OpenSSL bug (PID-only seeding left only ~32,767 possible keys per key type, size and CPU architecture). NIST SP 800-90 family: SP 800-90A (DRBG mechanisms), SP 800-90B (entropy source validation), SP 800-90C (RBG constructions combining sources with DRBGs).',
     workshopSummary:
       'Random Byte Generation: compare Web Crypto API and OpenSSL WASM with deliberately weak generators — random-looking is not unpredictable. Entropy Testing: visualizations, SP 800-90B health tests, estimators and known-answer tests shown as separate groups with no combined pass count. ESV Validation Walkthrough: the NIST Entropy Source Validation process and the separate Entropy and RBG Validation Certificates. DRBG State Machine: an SP 800-90A HMAC_DRBG-SHA-256 checked against NIST known-answer vectors. Combining Sources: raw-boundary health tests and an assumption-driven verdict that can end in "not enough evidence" or "construction is unsafe". Entropy Evidence Lab: NIST\'s SP 800-90B estimator tool in WebAssembly on real CPU-jitter recordings (KV260, i.MX 95, Mac), a DRBG-output contrast set and synthetic failures — estimator output for one dataset, never a validation. The TRNG-vs-QRNG comparison is a Playground simulation: its "QRNG" sample comes from crypto.getRandomValues(), and no QRNG hardware is involved.',
     relatedStandards:

@@ -1318,7 +1318,9 @@ export const FipsLandscape = () => (
         <strong>Superseded:</strong> every FIPS 140-2 validation moved to the Historical list on
         21/22 September 2026 (NIST’s pages give both dates). Certificate #4282, for example, now
         reads “Moved to historical list due to sunsetting”. This is a live example of a scheme
-        transition: the certificates did not fail; the scheme moved on.
+        transition: the certificates did not fail; the scheme moved on. NIST: historical modules
+        should not be included in new systems but &ldquo;can be procured for legacy systems&rdquo;,
+        so a new procurement needs a FIPS 140-3 validation.
       </li>
       <li>
         <strong>In process:</strong> a MIP entry is a queue state and date — pipeline, not proof
