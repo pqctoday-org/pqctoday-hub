@@ -405,8 +405,36 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <p>
             <InlineTooltip term="X25519MLKEM768">X25519MLKEM768</InlineTooltip> is the leading
             hybrid <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip>, combining
-            Curve25519 ECDH with <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-768. It&apos;s
-            already deployed in Chrome, Cloudflare, and AWS.
+            Curve25519 ECDH with <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-768. Chrome
+            enabled it by default in version 131 (November 2024,{' '}
+            <a
+              href="https://security.googleblog.com/2024/09/a-new-path-for-kyber-on-web.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Google
+            </a>
+            ); by October 2025 it protected most human traffic to Cloudflare (
+            <a
+              href="https://blog.cloudflare.com/pq-2025/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Cloudflare
+            </a>
+            ); and AWS KMS, ACM and Secrets Manager endpoints support it (non-FIPS endpoints, April
+            2025,{' '}
+            <a
+              href="https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              AWS
+            </a>
+            ).
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h3 className="text-sm font-bold text-foreground mb-3">How X25519MLKEM768 Works</h3>
@@ -806,9 +834,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">Performance</div>
               <p className="text-xs text-muted-foreground">
-                ML-KEM-768 encap/decap adds ~0.1&ndash;0.3 ms per handshake (indicative). The
-                dominant cost is the larger key_share payload, not computation. Real-world
-                measurements (Chrome, Cloudflare) show &lt;1% latency increase at the P50.
+                The dominant cost is the larger key_share payload, not computation. Chrome reported
+                about a 4% slowdown in TLS handshake time, larger on slow connections (as cited by
+                Cloudflare, October 2025). AWS measured a 0.05% throughput drop for KMS calls that
+                reuse connections, and 2.3% when every request opens a new handshake (April 2025).
               </p>
             </div>
           </div>

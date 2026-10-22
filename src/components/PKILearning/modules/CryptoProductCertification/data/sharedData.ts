@@ -68,6 +68,13 @@ export const SHARED_SOURCES = {
   acm3Draft: getStandard('ECCG-ACM-v3-Draft-2026'),
   bsiTr021021: getStandard('BSI TR-02102-1'),
   anssiPqcFaq: getStandard('ANSSI-PQC-FAQ-2025'),
+  // PCI SSC blog guest posts (vendor views, not PCI requirements); owner 2026-10-22: "Yes, one line"
+  pciQuantumLeapFuturex: getStandard(
+    'PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry'
+  ),
+  pciQuantumLeapUtimaco: getStandard(
+    'PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2'
+  ),
   compositeMlDsa: getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
 } satisfies Record<string, StandardRef>
 

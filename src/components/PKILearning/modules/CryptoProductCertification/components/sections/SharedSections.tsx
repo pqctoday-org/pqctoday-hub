@@ -191,7 +191,10 @@ export const PqcImpact = () => (
       ), and PCI DSS v4.0.1 Requirement 12.3.3 — a cipher inventory, monitoring and a response plan
       — supports crypto-agility but is not a PQC mandate (
       <SourceLink source={SHARED_SOURCES.dss} label="PCI DSS v4.0.1" />
-      ).
+      ). PCI SSC&rsquo;s blog does host guest posts in which HSM vendors discuss ML-KEM and ML-DSA (
+      <SourceLink source={SHARED_SOURCES.pciQuantumLeapFuturex} label="Futurex" />,{' '}
+      <SourceLink source={SHARED_SOURCES.pciQuantumLeapUtimaco} label="Utimaco" />, September and
+      October 2026); these are vendor views, not PCI requirements.
     </p>
 
     <Callout tone="warning" title="Two things that are not true yet">

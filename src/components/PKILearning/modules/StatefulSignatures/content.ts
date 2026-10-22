@@ -24,7 +24,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('NSA CNSA 2.0'),
     getStandard('RFC 9858'),
-    getStandard('draft-ietf-pquip-hbs-state'),
+    getStandard('RFC-10033-Hash-Based-Signatures-State-and-Backup-Management'),
     // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
     // validated module and cited nothing for it. Found by
     // audit_module_designation_aliases.py — the literal-id check could not match the
