@@ -3,8 +3,10 @@
 // v33DraftFeatures — the "v3.3 draft features" check group (plan D1–D4).
 //
 // SEPARATE FROM EVERY v3.2 VERDICT. Nothing here feeds profileConditions.ts,
-// Tier A (the OASIS v3.2 XML test cases), the v3.2 error-path expansion, the
-// test registry, or any v3.2 pass count. The group is labelled exactly as
+// Tier A (the OASIS v3.2 XML test cases), the v3.2 error-path expansion, or
+// any v3.2 pass count. The coverage matrix's test registry lists these checks
+// under their own runner ('v33DraftFeatures', Rust engine only), as v3.3
+// working-draft tests of the composite mechanisms. The group is labelled exactly as
 // V33_DRAFT_GROUP_LABEL says: no OASIS v3.3 profile or test case exists, so
 // these checks test the engine against the v3.3 working draft and the IETF
 // composite drafts, never against an invented OASIS case.
@@ -20,6 +22,7 @@
 // The Build tab's v3.3 test bench and the conformance runner both call
 // these functions, so the bench and the compliance group cannot disagree.
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { sha256, sha512 } from '@noble/hashes/sha2.js'
 import { shake256 } from '@noble/hashes/sha3.js'
 import {
   CKA_KEYS_REMAINING,
@@ -260,6 +263,11 @@ export const roundTripKemSet = (ctx: V33Ctx, set: CompositeKemSet): V33CheckRow 
 const MSG = new TextEncoder().encode('PKCS#11 v3.3 composite check')
 const CTX = new TextEncoder().encode('pqctoday v3.3 bench')
 
+/** A KEM set every engine with composite KEM should support (no brainpool). */
+const X25519_KEM = () => COMPOSITE_KEM_SETS.find((s) => s.trad === 'X25519')!
+const P256_SIG = () =>
+  COMPOSITE_SIG_SETS.find((s) => s.trad === 'ECDSA-P256' && s.ml === 'ML-DSA-65')!
+
 /** One real round trip for a composite signature set: generate, sign with a
  * context, verify, then verify a signature with one half stripped. */
 export const roundTripSigSet = (ctx: V33Ctx, set: CompositeSigSet): V33CheckRow => {
@@ -298,6 +306,66 @@ export const roundTripSigSet = (ctx: V33Ctx, set: CompositeSigSet): V33CheckRow 
       ...base,
       status: ok ? 'pass' : 'fail',
       observed: `signature ${s.signature!.length} B; verify → ${rv(v.rv)}; ML-DSA half only → ${rv(v2.rv)}`,
+      ms: Math.round(now() - t0),
+    }
+  } finally {
+    destroyAll(M, hSession, handles)
+  }
+}
+
+/** CKM_COMP_SIG_EXTERNAL_HASH round trip on one set: the pre-hash is computed
+ * outside the engine (noble), signed and verified with the external-hash
+ * mechanism, and the same signature must also verify over the full message
+ * with CKM_COMP_SIG (both mechanisms sign the same M′). */
+export const roundTripSigExternalHash = (
+  ctx: V33Ctx,
+  set: CompositeSigSet = P256_SIG()
+): V33CheckRow => {
+  const { M, hSession, support } = ctx
+  const base = {
+    id: `v33.coverage.sig-external-hash.${set.ckpName}`,
+    section: 'coverage' as const,
+    title: `Composite signature, external hash · ${set.ckpName}`,
+    ckpName: set.ckpName,
+    expected: `sign a ${set.preHash} pre-hash → verify with CKM_COMP_SIG_EXTERNAL_HASH and with CKM_COMP_SIG over the message`,
+  }
+  if (!support.compSigExternalHash)
+    return {
+      ...base,
+      status: 'not-in-engine',
+      observed: 'CKM_COMP_SIG_EXTERNAL_HASH not advertised',
+    }
+  const ph = set.preHash === 'SHA256' ? sha256(MSG) : set.preHash === 'SHA512' ? sha512(MSG) : null
+  if (!ph) return { ...base, status: 'fail', observed: `no offline pre-hash for ${set.preHash}` }
+  const handles: number[] = []
+  const t0 = now()
+  try {
+    let pair: { pubHandle: number; privHandle: number }
+    try {
+      pair = hsm_generateCompositeKeyPair(M, hSession, 'sig', set.ckp)
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      if (msg.includes('CKR_PARAMETER_SET_NOT_SUPPORTED'))
+        return { ...base, status: 'not-supported', observed: msg }
+      return { ...base, status: 'fail', observed: msg }
+    }
+    handles.push(pair.pubHandle, pair.privHandle)
+    const s = hsm_compositeSignRv(M, hSession, pair.privHandle, ph, {
+      externalHash: true,
+      context: CTX,
+    })
+    if (s.rv !== 0) return { ...base, status: 'fail', observed: `${s.step} → ${rv(s.rv)}` }
+    const v1 = hsm_compositeVerifyRv(M, hSession, pair.pubHandle, ph, s.signature!, {
+      externalHash: true,
+      context: CTX,
+    })
+    const v2 = hsm_compositeVerifyRv(M, hSession, pair.pubHandle, MSG, s.signature!, {
+      context: CTX,
+    })
+    return {
+      ...base,
+      status: v1.rv === 0 && v2.rv === 0 ? 'pass' : 'fail',
+      observed: `signature ${s.signature!.length} B; verify (external hash) → ${rv(v1.rv)}; verify (CKM_COMP_SIG, full message) → ${rv(v2.rv)}`,
       ms: Math.round(now() - t0),
     }
   } finally {
@@ -625,11 +693,6 @@ const importKemPrivateWithSpki = (
   }
 }
 
-/** A KEM set every engine with composite KEM should support (no brainpool). */
-const X25519_KEM = () => COMPOSITE_KEM_SETS.find((s) => s.trad === 'X25519')!
-const P256_SIG = () =>
-  COMPOSITE_SIG_SETS.find((s) => s.trad === 'ECDSA-P256' && s.ml === 'ML-DSA-65')!
-
 /** Run one error-path case; returns the observed rv, or null when not runnable. */
 const runErrorPathCase = (
   ctx: V33Ctx,
@@ -813,6 +876,8 @@ export const runV33DraftFeatures = async (
     push([roundTripSigSet(ctx, s)])
     await yieldUi()
   }
+  push([roundTripSigExternalHash(ctx)])
+  await yieldUi()
   let vectors: V33Vectors | null = null
   if (ctx.support.compKem || ctx.support.compSig) {
     vectors = await loadV33Vectors()

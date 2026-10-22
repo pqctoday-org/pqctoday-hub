@@ -146,6 +146,8 @@ export interface MechanismDecl {
   section: string | null
   vendorDefined?: boolean
   historical?: boolean
+  /** Defined only in the unpublished PKCS #11 v3.3 working draft (no section number yet). */
+  workingDraft?: boolean
   parameterSets?: string
   signVariants?: string[]
   preHash?: string
@@ -254,6 +256,8 @@ export type RunnerId =
   | 'profileConditions'
   | 'oasisProfileXml'
   | 'errorPathProbes'
+  /** PKCS#11 v3.3 working-draft checks (v33DraftFeatures.ts) — not a v3.2 verdict. */
+  | 'v33DraftFeatures'
 
 export interface RegisteredTest {
   id: string
