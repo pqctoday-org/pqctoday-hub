@@ -1098,11 +1098,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-lamps-pq-composite-sigs-19.html',
       },
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-21',
-        title: 'draft-ietf-lamps-pq-composite-kem-21 — Composite ML-KEM in X.509 (IESG Evaluation)',
+        id: 'draft-ietf-lamps-pq-composite-kem-23',
+        title:
+          'draft-ietf-lamps-pq-composite-kem-23 — Composite ML-KEM in X.509 (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-09-01',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-21.html',
+        date: '2026-10-14',
+        localFile: '/library/draft-ietf-lamps-pq-composite-kem-23.html',
       },
       {
         // Active LAMPS WG draft. Its id-ad-certDiscovery access method and

@@ -23,7 +23,7 @@ The Hybrid Cryptography module teaches how to combine classical and post-quantum
   - **Alt-Sig / Catalyst** — classical primary cert with PQC key and signature in X.509 extensions (SubjectAltPublicKeyInfo 2.5.29.72, AltSignatureAlgorithm 2.5.29.73, AltSignatureValue 2.5.29.74); legacy verifiers ignore the extensions; defined in ITU-T X.509 (2019) §7.2.2 and §9.8; relying-party policy decides whether one or both signatures are required
   - **Related Certificates (RFC 9763)** — a NEW certificate (Cert B) carries a RelatedCertificate extension holding the hash of the complete final DER of an EXISTING certificate (Cert A); the binding is one-way and Cert A is never modified; the CA issues Cert B only after a relatedCertRequest proves possession of Cert A's key; a protocol may use either certificate or both — RFC 9763 does not require both
   - **Pure PQC KEM (ML-KEM, RFC 9935)** — an ML-KEM public key in X.509; if keyUsage is present, keyEncipherment must be the only bit; the certificate is CA-issued, never self-signed; the key is used e.g. in CMS KEMRecipientInfo (RFC 9629, ML-KEM in CMS: RFC 9936)
-  - **Composite KEM** — ML-KEM plus a classical KEM under one OID, ML-KEM first; defined in draft-ietf-lamps-pq-composite-kem-21, in IESG Evaluation (still an Internet-Draft)
+  - **Composite KEM** — ML-KEM plus a classical KEM under one OID, ML-KEM first; defined in draft-ietf-lamps-pq-composite-kem-23, approved by the IESG and in the RFC Editor queue since 2026-10-21 (not yet an RFC)
 - **Advanced examples (outside the main comparison)**: Certificate Discovery (draft-ietf-lamps-certdiscovery-03, active LAMPS WG draft) lets a primary certificate advertise in subjectInfoAccess where a related secondary certificate can be fetched and which algorithms it uses; a fetched secondary must still pass full path validation; the draft's OIDs are TBD, so the workshop uses documentation-arc placeholders (1.3.6.1.4.1.32473) and its encoding is illustrative. RFC 9925 unsigned certificates use id-alg-unsigned (1.3.6.1.5.5.7.6.36), a zero-length signature and a placeholder issuer (id-rdna-unsigned); they suit keys trusted by other means and are never valid in a certification path
 - **Historical design — Chameleon Certificates**: a single cert with a DeltaCertificateDescriptor extension encoding the differences needed to rebuild a paired cert; draft-bonnell-lamps-chameleon-certs-07 is an expired individual draft never adopted by the LAMPS working group; kept for study only and not recommended for new deployments
 - **Watchlist**: FN-DSA (planned FIPS 206, not yet final) has an IETF certificate draft, draft-ietf-lamps-fn-dsa-certificates, whose OIDs are still TBD — no deployable FN-DSA certificate exists yet
@@ -64,7 +64,7 @@ Note: No official test vector exists for Related Certificates (RFC 9763) — the
 - RFC 9763 (Related Certificates for PKI)
 - draft-ietf-lamps-pq-composite-sigs-19 (Composite Signatures, RFC Editor queue)
 - RFC 9935 (ML-KEM OIDs in X.509)
-- draft-ietf-lamps-pq-composite-kem-21 (Composite ML-KEM, IESG Evaluation)
+- draft-ietf-lamps-pq-composite-kem-23 (Composite ML-KEM, RFC Editor queue)
 - RFC 9629 (CMS KEMRecipientInfo) and RFC 9936 (ML-KEM in CMS)
 - ITU-T X.509 (2019) §7.2.2 and §9.8 — Alt-Sig / Catalyst extensions (2.5.29.72/73/74)
 - draft-bonnell-lamps-chameleon-certs-07 (Chameleon Certificates — expired individual draft, historical)

@@ -305,14 +305,14 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-primary">Composite KEM</h3>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
-                    IESG Evaluation
+                    RFC Editor queue
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  <strong>draft-ietf-lamps-pq-composite-kem-21</strong> puts an ML-KEM key and a
+                  <strong>draft-ietf-lamps-pq-composite-kem-23</strong> puts an ML-KEM key and a
                   classical KEM key (X25519, ECDH, RSA) under one OID, ML-KEM component first.
-                  Encapsulation runs both and combines the shared secrets. Still an Internet-Draft;
-                  not backward compatible.
+                  Encapsulation runs both and combines the shared secrets. Approved by the IESG and
+                  awaiting publication as an RFC; not backward compatible.
                 </p>
               </div>
             </div>
