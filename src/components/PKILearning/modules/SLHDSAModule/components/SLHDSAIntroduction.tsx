@@ -22,8 +22,8 @@ const Step1Overview: React.FC = () => (
         competition.
       </p>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        Its security rests entirely on the collision resistance and preimage resistance of the
-        underlying hash function —{' '}
+        FIPS 205 §1: its security &ldquo;relies on the presumed difficulty of finding preimages for
+        hash functions as well as several related properties of the same hash functions&rdquo; —{' '}
         <strong className="text-foreground">no new hardness assumptions</strong> beyond what we
         already rely on for HMAC and TLS.
       </p>
@@ -50,7 +50,10 @@ const Step1Overview: React.FC = () => (
             <li>No per-key leaf counter; this does not mean unlimited signatures</li>
             <li>No persistent state to manage, back up, or synchronize</li>
             <li>Safe for serverless, distributed, and HSM-pooled environments</li>
-            <li>Randomized by default (opt_rand from RNG prevents fault attacks)</li>
+            <li>
+              Hedged (randomized) signing is the default, recommended where side-channel attacks are
+              a concern (§9.2)
+            </li>
             <li>Standardized in FIPS 205 (Aug 2024)</li>
           </ul>
         </div>
@@ -159,7 +162,7 @@ const Step2Internals: React.FC = () => (
   <div className="space-y-8 w-full">
     <section className="glass-panel p-6 space-y-4">
       <h2 className="text-xl font-bold text-foreground">
-        FIPS 205 §3–5: The Three Building Blocks
+        FIPS 205 §§5–8: The Three Building Blocks
       </h2>
       <p className="text-sm text-muted-foreground leading-relaxed">
         SLH-DSA stacks three primitives. Understanding them explains why signatures are large, why
@@ -172,7 +175,7 @@ const Step2Internals: React.FC = () => (
         <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0">
           1
         </span>
-        <h3 className="font-bold text-foreground">WOTS+ — Winternitz One-Time Signature (§4)</h3>
+        <h3 className="font-bold text-foreground">WOTS+ — Winternitz One-Time Signature (§5)</h3>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
         WOTS+ signs a single <em>n</em>-byte hash value by representing it as a sequence of base-
@@ -181,9 +184,9 @@ const Step2Internals: React.FC = () => (
         forging requires inverting the hash (infeasible).
       </p>
       <div className="bg-muted/40 rounded-lg p-4 text-xs font-mono space-y-1 text-muted-foreground">
-        <div>sk_i → H(sk_i) → H²(sk_i) → … → Hʷ(sk_i) = pk_i</div>
+        <div>sk_i → H(sk_i) → H²(sk_i) → … → H^(w−1)(sk_i) = pk_i</div>
         <div className="text-muted-foreground mt-1">
-          Sign digit d: output chain[d]. Verify: apply w−d more hashes and compare to pk_i.
+          Sign digit d: output chain[d]. Verify: apply w−1−d more hashes and compare to pk_i.
         </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-3 text-xs">
@@ -209,7 +212,7 @@ const Step2Internals: React.FC = () => (
         <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0">
           2
         </span>
-        <h3 className="font-bold text-foreground">FORS — Forest of Random Subsets (§5.1)</h3>
+        <h3 className="font-bold text-foreground">FORS — Forest of Random Subsets (§8)</h3>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
         FORS is a <em>few-time</em> signature scheme. It holds <em>k</em> binary trees each of
@@ -242,7 +245,7 @@ const Step2Internals: React.FC = () => (
         <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0">
           3
         </span>
-        <h3 className="font-bold text-foreground">HT — Hypertree (§5.2)</h3>
+        <h3 className="font-bold text-foreground">HT — Hypertree (§7)</h3>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
         The hypertree is a <em>d</em>-layer stack of XMSS trees, each of height <em>h/d</em>. Each
@@ -372,7 +375,7 @@ const PARAM_TABLE = [
 const Step3Parameters: React.FC = () => (
   <div className="space-y-8 w-full">
     <section className="glass-panel p-6 space-y-4">
-      <h2 className="text-xl font-bold text-foreground">FIPS 205 §6 — Parameter Sets</h2>
+      <h2 className="text-xl font-bold text-foreground">FIPS 205 §11 — Parameter Sets</h2>
       <p className="text-sm text-muted-foreground leading-relaxed">
         FIPS 205 defines 12 parameter sets (6 SHA-2 variants shown, each has a SHAKE counterpart
         with identical parameters). Every set uses{' '}

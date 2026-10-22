@@ -322,7 +322,7 @@ export function silithiumKeygen(): HybridSigKeyPair {
  *  1. EC commitment:     k = DRBG(sk_ec, msg),  R = k·G  (secp256k1)
  *  2. Shared challenge:  μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)  expanded to 64 bytes
  *  3. EC response:       s = (k + e·sk_ec) mod n,  e = μ[:32] as bigint mod n
- *  4. ML-DSA response:   z = ML-DSA.Sign_internal(sk_ml, μ)  [FIPS 204 §5.2 external-μ]
+ *  4. ML-DSA response:   z = ML-DSA.Sign_internal(sk_ml, μ)  [FIPS 204 §6.2, Alg. 7, external μ]
  *  Signature: R(33) ‖ s(32) ‖ z
  *
  * NOTE: the paper's full Silithium also binds the ML-DSA round-1 lattice commitment w1

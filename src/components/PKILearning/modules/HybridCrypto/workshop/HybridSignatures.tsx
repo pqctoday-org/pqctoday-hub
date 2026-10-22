@@ -95,7 +95,7 @@ const CONSTRUCTIONS: Array<{
     description:
       'Two independent signatures concatenated. Either component can be stripped and verified alone. Provides defence in depth but no separability resistance.',
     reference: 'IETF draft §1.3.3',
-    referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
   },
   {
     id: 'nesting',
@@ -107,7 +107,7 @@ const CONSTRUCTIONS: Array<{
     description:
       'The outer ML-DSA signature covers msg ‖ ecSig, binding the EC component. Swapping the EC signature invalidates the outer layer, but the EC component still verifies alone on the original message.',
     reference: 'IETF draft §1.3.3',
-    referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
   },
   {
     id: 'silithium',
@@ -627,8 +627,8 @@ export const HybridSignatures: React.FC = () => {
             security. This is the non-separability problem this tool demonstrates.
           </p>
           <p className="text-xs">
-            Standards: IETF draft-ietf-lamps-pq-composite-sigs (Concatenation),
-            draft-ietf-pquip-hybrid-signature-spectrums (Nesting/Silithium).
+            Standards: IETF draft-ietf-lamps-pq-composite-sigs (Concatenation), RFC 9955, Hybrid
+            Signature Spectrums (Nesting/Silithium).
           </p>
         </div>
       </details>

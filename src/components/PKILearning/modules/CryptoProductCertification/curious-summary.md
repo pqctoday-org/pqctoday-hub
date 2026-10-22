@@ -12,4 +12,4 @@ Read what a certificate covers before you read its grade. A deadline to move to 
 
 ### What's Happening
 
-As of 24 September 2026, the FIPS 140-3 standard itself is unchanged, the EU's scheme already lists post-quantum algorithms in its approved cryptography guidance, and PCI's newest HSM standard adds post-quantum definitions without naming a required algorithm or deadline.
+As of 22 October 2026, the FIPS 140-3 standard itself is unchanged, the EU's scheme already lists post-quantum algorithms in its approved cryptography guidance, and PCI's newest HSM standard adds post-quantum definitions without naming a required algorithm or deadline.

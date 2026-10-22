@@ -14,4 +14,4 @@ Enterprises should adopt a hybrid approach for TLS and network encryption (using
 
 ## What's Happening
 
-Major tech companies, including Google and Cloudflare, have already deployed hybrid configurations (like X25519Kyber768Draft00) across Chrome and their web infrastructure, proving that hybrid math can be run at scale without severe performance drops.
+Major tech companies, including Google and Cloudflare, have already deployed hybrid configurations (now X25519MLKEM768, which replaced the earlier X25519Kyber768Draft00) across Chrome and their web infrastructure, proving that hybrid math can be run at scale without severe performance drops.

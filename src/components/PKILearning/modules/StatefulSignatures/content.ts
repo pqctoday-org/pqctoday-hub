@@ -24,7 +24,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('NSA CNSA 2.0'),
     getStandard('RFC 9858'),
-    getStandard('draft-ietf-pquip-hbs-state'),
+    getStandard('RFC-10033-Hash-Based-Signatures-State-and-Backup-Management'),
     // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
     // validated module and cited nothing for it. Found by
     // audit_module_designation_aliases.py — the literal-id check could not match the
@@ -53,12 +53,12 @@ export const content: ModuleContent = {
       source: 'CNSA 2.0',
     },
     {
-      label: 'All deployed NSS must use CNSA 2.0 signatures',
+      label: 'Software and firmware signing must use CNSA 2.0 exclusively',
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
     },
     {
-      label: 'Full quantum-resistant enforcement for all NSS',
+      label: 'CNSA 2.0 algorithms mandated for all NSS unless otherwise noted',
       year: CNSA_2_0.fullEnforcement,
       source: 'CNSA 2.0',
     },
@@ -72,7 +72,7 @@ export const content: ModuleContent = {
     stateManagement:
       'State must be persistent, atomic, and never cloned. Hardware Security Modules (HSMs) with non-volatile monotonic counters are the standard approach.',
     lmsVsXmss:
-      'LMS is simpler with faster key generation — preferred by NSA CNSA 2.0. XMSS has stronger security proofs with forward security — preferred by BSI Germany.',
+      'LMS is simpler with faster key generation; NSA CNSA 2.0 allows single-tree LMS and XMSS and prefers LMS with SHA-256/192. XMSS has a tighter security proof (forward security only in a research variant, not in SP 800-208 / RFC 8391); BSI recommends both families.',
     w4Size: '2.5 KB',
     w8Size: '1.7 KB',
   },
