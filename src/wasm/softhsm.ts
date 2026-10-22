@@ -18,6 +18,7 @@
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { MECH_TABLE, type MechanismFamily } from './softhsm/mechanismTable'
 import { derOctetString } from './softhsm/helpers'
+import { hsm_getKeysRemaining } from './softhsm/stateful'
 export type { SoftHSMModule }
 
 // Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
@@ -353,6 +354,7 @@ export const RV_NAMES: Record<number, string> = {
   0x00000006: 'CKR_FUNCTION_FAILED',
   0x00000007: 'CKR_ARGUMENTS_BAD',
   0x00000010: 'CKR_ATTRIBUTE_READ_ONLY',
+  0x00000011: 'CKR_ATTRIBUTE_SENSITIVE',
   0x00000012: 'CKR_ATTRIBUTE_TYPE_INVALID',
   0x00000013: 'CKR_ATTRIBUTE_VALUE_INVALID',
   0x00000020: 'CKR_DATA_INVALID',
@@ -402,6 +404,8 @@ export const RV_NAMES: Record<number, string> = {
   0x000001b9: 'CKR_PUBLIC_KEY_INVALID',
   0x00000200: 'CKR_FUNCTION_REJECTED',
   0x00000201: 'CKR_TOKEN_RESOURCE_EXCEEDED',
+  0x00000203: 'CKR_KEY_EXHAUSTED',
+  0x00000209: 'CKR_PARAMETER_SET_NOT_SUPPORTED',
 }
 
 export const rvName = (rv: number): string =>
@@ -738,8 +742,13 @@ export const CKA_ALWAYS_SENSITIVE = 0x00000165
 export const CKA_KEY_GEN_MECHANISM = 0x00000166
 export const CKA_ENCAPSULATE = 0x00000633
 export const CKA_DECAPSULATE = 0x00000634
-export const CKA_HSS_KEYS_REMAINING = 0x0000061c // PKCS#11 v3.2 §6.14
-export const CKA_XMSS_KEYS_REMAINING = 0x80000106 // vendor extension
+// PKCS#11 v3.3 working draft renames CKA_HSS_KEYS_REMAINING to
+// CKA_KEYS_REMAINING (same value 0x61c) and extends it to XMSS / XMSS^MT.
+// The retired vendor id 0x8000_0106 is read only by hsm_getKeysRemaining's
+// fallback list (softhsm/stateful.ts), never exported.
+export const CKA_KEYS_REMAINING = 0x0000061c
+/** @deprecated v3.3 alias of {@link CKA_KEYS_REMAINING} (same value). */
+export const CKA_HSS_KEYS_REMAINING = CKA_KEYS_REMAINING
 // Storage-object attributes (v3.2 Table 23) — mandatory for every object,
 // default TRUE. Values verified against pqctoday-hsm/rust/src/constants.rs.
 export const CKA_UNIQUE_ID = 0x00000004
@@ -6189,10 +6198,11 @@ export interface KeyAttributeSet {
   ckValueLen: number | null
   /** CKA_CHECK_VALUE (KCV) bytes; present on symmetric/secret keys */
   ckCheckValue?: Uint8Array | null
-  /** CKA_HSS_KEYS_REMAINING: remaining sign ops for HSS keys (PKCS#11 v3.2 §6.14) */
-  ckHssKeysRemaining: number | null
-  /** CKA_XMSS_KEYS_REMAINING: remaining sign ops for XMSS keys (vendor extension 0x8000_0106) */
-  ckXmssKeysRemaining: number | null
+  /** CKA_KEYS_REMAINING (0x61c): remaining signatures on an HSS, XMSS or
+   * XMSS^MT key. PKCS#11 v3.3 working draft name; v3.2 called it
+   * CKA_HSS_KEYS_REMAINING. Read through hsm_getKeysRemaining, which also
+   * tries the ids older engine builds used. */
+  ckKeysRemaining: number | null
   // ── Storage object (v3.2 Table 23) — every object ─────────────────────────
   /** CKA_UNIQUE_ID: token-assigned unique identifier string */
   ckUniqueId: string | null
@@ -6338,11 +6348,16 @@ export const hsm_getKeyAttributes = (
           }
         })()
       : null,
-    ckHssKeysRemaining:
-      ckKeyType === CKK_HSS ? u('ckHssKeysRemaining', CKA_HSS_KEYS_REMAINING) : null,
-    ckXmssKeysRemaining:
-      ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT
-        ? u('ckXmssKeysRemaining', CKA_XMSS_KEYS_REMAINING)
+    ckKeysRemaining:
+      ckKeyType === CKK_HSS || ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT
+        ? (() => {
+            try {
+              return hsm_getKeysRemaining(M, hSession, handle)
+            } catch (e) {
+              console.warn('[softhsm] CKA_KEYS_REMAINING read failed for handle', handle, e)
+              return null
+            }
+          })()
         : null,
     // Storage object (Table 23) — every object
     ckUniqueId: str('ckUniqueId', CKA_UNIQUE_ID),
@@ -7133,3 +7148,4 @@ export {
   hsm_statefulVerifyBytes,
   hsm_getKeysRemaining,
 } from './softhsm/stateful'
+export * from './softhsm/v33'

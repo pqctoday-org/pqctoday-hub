@@ -737,8 +737,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // there's no CKR_* to classify — the empty map correctly says "unknown
       // reason" rather than fabricating one.
       unavailable: {},
-      ckHssKeysRemaining: null,
-      ckXmssKeysRemaining: null,
+      ckKeysRemaining: null,
       ckCheckValue: null,
     }),
     []

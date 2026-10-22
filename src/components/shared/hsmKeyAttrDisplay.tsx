@@ -512,8 +512,7 @@ const RAW_FIELDS: Array<{
   { label: 'CKA_ALLOWED_MECHANISMS', key: 'ckAllowedMechanisms', kind: 'bytes' },
   { label: 'CKA_VALUE_LEN', key: 'ckValueLen', kind: 'ulong' },
   { label: 'CKA_CHECK_VALUE', key: 'ckCheckValue', kind: 'bytes' },
-  { label: 'CKA_HSS_KEYS_REMAINING', key: 'ckHssKeysRemaining', kind: 'ulong' },
-  { label: 'CKA_XMSS_KEYS_REMAINING', key: 'ckXmssKeysRemaining', kind: 'ulong' },
+  { label: 'CKA_KEYS_REMAINING', key: 'ckKeysRemaining', kind: 'ulong' },
   { label: 'CKA_EC_PARAMS', key: 'ckEcParams', kind: 'bytes' },
   { label: 'CKA_EC_POINT', key: 'ckEcPoint', kind: 'bytes' },
   { label: 'CKA_MODULUS_BITS', key: 'ckModulusBits', kind: 'ulong' },
@@ -646,17 +645,13 @@ export const KeyAttrModal = ({
                   </span>
                 </Row>
               )}
-              {attrs.ckHssKeysRemaining !== null && (
-                <Row label="CKA_HSS_KEYS_REMAINING">
+              {attrs.ckKeysRemaining !== null && (
+                <Row label="CKA_KEYS_REMAINING">
                   <span className="tabular-nums">
-                    {attrs.ckHssKeysRemaining.toLocaleString()} remaining
+                    {attrs.ckKeysRemaining.toLocaleString()} remaining
                   </span>
-                </Row>
-              )}
-              {attrs.ckXmssKeysRemaining !== null && (
-                <Row label="CKA_XMSS_KEYS_REMAINING">
-                  <span className="tabular-nums">
-                    {attrs.ckXmssKeysRemaining.toLocaleString()} remaining
+                  <span className="ml-1 text-muted-foreground">
+                    (v3.2 name CKA_HSS_KEYS_REMAINING)
                   </span>
                 </Row>
               )}

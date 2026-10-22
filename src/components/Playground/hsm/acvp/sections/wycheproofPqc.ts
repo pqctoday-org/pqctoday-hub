@@ -57,7 +57,7 @@ import {
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import { CKM_ML_KEM, CKM_ML_DSA, CKM_ML_DSA_KEY_PAIR_GEN } from '@/wasm/softhsm/constants'
 import {
-  CKM_ML_DSA_EXTERNAL_MU_VENDOR,
+  CKM_ML_DSA_EXTERNAL_MU,
   CKR_OK,
   destroy,
   firstDiff,
@@ -571,7 +571,7 @@ function signVerdict(
   preObserved: string
 ): RowOutcome {
   const internal = isInternal(t)
-  const mech = internal ? CKM_ML_DSA_EXTERNAL_MU_VENDOR : CKM_ML_DSA
+  const mech = internal ? CKM_ML_DSA_EXTERNAL_MU : CKM_ML_DSA
   const data = hexToBytes(internal ? (t.mu ?? '') : (t.msg ?? ''))
   // External µ: context has no meaning once µ exists (it is inside µ), so the
   // parameter carries an empty context, as sections/mldsaAcvp.ts does.
@@ -611,8 +611,8 @@ export async function runWycheproofMldsaSection(ctx: MldsaAcvpSectionCtx): Promi
   const whyKg = unsupportedReason(mechs, CKM_ML_DSA_KEY_PAIR_GEN, 'CKM_ML_DSA_KEY_PAIR_GEN')
   const whyMu = unsupportedReason(
     mechs,
-    CKM_ML_DSA_EXTERNAL_MU_VENDOR,
-    'vendor-defined CKM_ML_DSA_EXTERNAL_MU (not a PKCS#11 v3.2 mechanism)'
+    CKM_ML_DSA_EXTERNAL_MU,
+    'CKM_ML_DSA_EXTERNAL_MU (PKCS#11 v3.3 working draft, approved codepoint; not in v3.2)'
   )
 
   for (const v of MLDSA_SETS) {

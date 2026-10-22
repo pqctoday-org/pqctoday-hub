@@ -16,6 +16,7 @@
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { MECH_TABLE } from './softhsm/mechanismTable'
+import { COMPOSITE_KEM_SETS, COMPOSITE_SIG_SETS } from './softhsm/compositeParams'
 
 // ── Exported types ────────────────────────────────────────────────────────────
 
@@ -149,8 +150,9 @@ export const CKA_TABLE: Record<number, ConstEntry> = {
   0x00000618: { name: 'CKA_HSS_LMS_TYPE', description: 'HSS parameter set types (FIPS 208)' },
   0x00000619: { name: 'CKA_HSS_LMOTS_TYPE', description: 'LM-OTS parameter set types (FIPS 208)' },
   0x0000061c: {
-    name: 'CKA_HSS_KEYS_REMAINING',
-    description: 'Signatures remaining on stateful key',
+    name: 'CKA_KEYS_REMAINING',
+    description:
+      'Signatures remaining on a stateful key (HSS, XMSS, XMSS^MT). PKCS#11 v3.3 working-draft name; v3.2 called it CKA_HSS_KEYS_REMAINING (same value)',
   },
   0x00000601: { name: 'CKA_PROFILE_ID', description: 'Conformance profile identifier (v3.2 §3)' },
   0x00000086: {
@@ -195,6 +197,14 @@ export const CKK_TABLE: Record<number, ConstEntry> = {
   0x49: { name: 'CKK_ML_KEM', description: 'ML-KEM (FIPS 203)' },
   0x4a: { name: 'CKK_ML_DSA', description: 'ML-DSA (FIPS 204)' },
   0x4b: { name: 'CKK_SLH_DSA', description: 'SLH-DSA (FIPS 205)' },
+  0x4c: {
+    name: 'CKK_COMP_KEM',
+    description: 'Composite ML-KEM key, both halves in one object (PKCS#11 v3.3 working draft)',
+  },
+  0x4d: {
+    name: 'CKK_COMP_SIG',
+    description: 'Composite ML-DSA key, both halves in one object (PKCS#11 v3.3 working draft)',
+  },
 }
 
 // CKH_ hedging variants
@@ -372,6 +382,28 @@ export const CKP_FRODOKEM: Record<number, ConstEntry> = {
   0x5: { name: 'CKP_FRODOKEM_1344_AES', description: 'NIST Level 5 — FrodoKEM-1344-AES' },
 }
 
+// CKP_ composite parameter sets (PKCS#11 v3.3 working draft, pkcs11t.h:2780-2812),
+// built from the single table in softhsm/compositeParams.ts.
+export const CKP_COMP_SIG: Record<number, ConstEntry> = Object.fromEntries(
+  COMPOSITE_SIG_SETS.map((s) => [
+    s.ckp,
+    {
+      name: s.ckpName,
+      description: `${s.ml} + ${s.trad}, pre-hash ${s.preHash} — ${s.draftName} (${s.oid}); signature ${s.signatureIsMax ? 'up to ' : ''}${s.signatureBytes} B`,
+    },
+  ])
+)
+
+export const CKP_COMP_KEM: Record<number, ConstEntry> = Object.fromEntries(
+  COMPOSITE_KEM_SETS.map((s) => [
+    s.ckp,
+    {
+      name: s.ckpName,
+      description: `${s.ml} + ${s.trad} — ${s.draftName} (${s.oid}); ciphertext ${s.ciphertextBytes} B, 32-byte secret`,
+    },
+  ])
+)
+
 export const CKP_CLASSIC_MCELIECE: Record<number, ConstEntry> = {
   0x1: {
     name: 'CKP_CLASSIC_MCELIECE_6688128',
@@ -402,11 +434,15 @@ export const describeParameterSetByKeyType = (
             ? CKP_XMSS
             : ckKeyType === 0x48 // CKK_XMSSMT
               ? CKP_XMSSMT
-              : ckKeyType === 0x80000001 // CKK_PQCTODAY_FRODOKEM
-                ? CKP_FRODOKEM
-                : ckKeyType === 0x80000002 // CKK_PQCTODAY_CLASSIC_MCELIECE
-                  ? CKP_CLASSIC_MCELIECE
-                  : null
+              : ckKeyType === 0x4c // CKK_COMP_KEM
+                ? CKP_COMP_KEM
+                : ckKeyType === 0x4d // CKK_COMP_SIG
+                  ? CKP_COMP_SIG
+                  : ckKeyType === 0x80000001 // CKK_PQCTODAY_FRODOKEM
+                    ? CKP_FRODOKEM
+                    : ckKeyType === 0x80000002 // CKK_PQCTODAY_CLASSIC_MCELIECE
+                      ? CKP_CLASSIC_MCELIECE
+                      : null
   return table?.[paramSet] ?? null
 }
 
@@ -668,7 +704,8 @@ const decodeFlagsBitmask = (flags: number): string => {
 }
 
 /** Determine algo context from mechanism type (for CKP_ dispatch). */
-type AlgoContext = 'ml-kem' | 'ml-dsa' | 'slh-dsa' | 'xmss' | 'xmssmt' | undefined
+type AlgoContext =
+  'ml-kem' | 'ml-dsa' | 'slh-dsa' | 'xmss' | 'xmssmt' | 'comp-sig' | 'comp-kem' | undefined
 
 const algoFromMechType = (mechType: number): AlgoContext => {
   if (mechType === 0x0000000f || mechType === 0x00000017) return 'ml-kem'
@@ -676,6 +713,10 @@ const algoFromMechType = (mechType: number): AlgoContext => {
   if (mechType >= 0x0000002d && mechType <= 0x0000003f) return 'slh-dsa'
   if (mechType === 0x00004034) return 'xmss' // CKM_XMSS_KEY_PAIR_GEN
   if (mechType === 0x00004035) return 'xmssmt' // CKM_XMSSMT_KEY_PAIR_GEN
+  // PKCS#11 v3.3 working draft: CKM_COMP_SIG_KEY_PAIR_GEN / _SIG / _SIG_EXTERNAL_HASH
+  if (mechType >= 0x0000403d && mechType <= 0x0000403f) return 'comp-sig'
+  // CKM_COMP_KEM_KEY_PAIR_GEN / CKM_COMP_KEM
+  if (mechType === 0x00004040 || mechType === 0x00004041) return 'comp-kem'
   return undefined
 }
 
@@ -716,7 +757,11 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
               ? CKP_XMSS
               : algo === 'xmssmt'
                 ? CKP_XMSSMT
-                : null
+                : algo === 'comp-sig'
+                  ? CKP_COMP_SIG
+                  : algo === 'comp-kem'
+                    ? CKP_COMP_KEM
+                    : null
     const entry = table ? table[v] : null
     return entry
       ? { kind: 'constant', display: `${entry.name} (${hex})`, description: entry.description }
@@ -728,7 +773,9 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
 /** Return true if the mechanism type uses CK_SIGN_ADDITIONAL_CONTEXT as its parameter. */
 const isPqcSignMech = (mechType: number): boolean =>
   (mechType >= 0x0000001c && mechType <= 0x0000002c) || // ML-DSA range
-  (mechType >= 0x0000002d && mechType <= 0x0000003f) // SLH-DSA range
+  (mechType >= 0x0000002d && mechType <= 0x0000003f) || // SLH-DSA range
+  mechType === 0x0000403e || // CKM_COMP_SIG (v3.3 draft, same struct as ML-DSA)
+  mechType === 0x0000403f // CKM_COMP_SIG_EXTERNAL_HASH
 
 // ── WASM memory readers ───────────────────────────────────────────────────────
 
@@ -992,6 +1039,10 @@ const decodeGenerateKeyPair = (M: SoftHSMModule, args: number[], rv: number): Pk
     'ml-kem': 'PKCS#11 v3.2 §5.14 · FIPS 203 §4 (ML-KEM key generation)',
     'ml-dsa': 'PKCS#11 v3.2 §5.14 · FIPS 204 §5 (ML-DSA key generation)',
     'slh-dsa': 'PKCS#11 v3.2 §5.14 · FIPS 205 (SLH-DSA key generation)',
+    'comp-sig':
+      'PKCS#11 v3.3 working draft comp_sig.md · draft-ietf-lamps-pq-composite-sigs (composite ML-DSA key generation)',
+    'comp-kem':
+      'PKCS#11 v3.3 working draft comp_kem.md · draft-ietf-lamps-pq-composite-kem (composite ML-KEM key generation)',
   }
   return {
     inputs,

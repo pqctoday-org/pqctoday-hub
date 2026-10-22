@@ -197,9 +197,16 @@ export const CKA_HSS_LMS_TYPE = 0x00000618 // CK_ULONG LMS type for single-level
 export const CKA_HSS_LMOTS_TYPE = 0x00000619 // CK_ULONG LMOTS type for single-level
 export const CKA_HSS_LMS_TYPES = 0x0000061a // packed CK_ULONG[] for multi-level
 export const CKA_HSS_LMOTS_TYPES = 0x0000061b // packed CK_ULONG[] for multi-level
-export const CKA_HSS_KEYS_REMAINING = 0x0000061c // remaining signature operations (HSS, PKCS#11 v3.2 §6.14)
-// Vendor extension — XMSS remaining signature operations (0x8000_0106, mirrors CKA_XMSS_KEYS_REMAINING in Rust)
-export const CKA_XMSS_KEYS_REMAINING = 0x80000106
+// Remaining signature operations on a stateful key. PKCS#11 v3.3 working
+// draft (OASIS TC header pkcs11t.h:644-645) renames CKA_HSS_KEYS_REMAINING to
+// CKA_KEYS_REMAINING, same value, and extends it to XMSS and XMSS^MT keys;
+// the old name stays as a deprecated alias. The vendor id 0x8000_0106 an
+// older Rust engine used for XMSS is retired: it is no longer exported, and
+// only hsm_getKeysRemaining (stateful.ts) still reads it, so a hub running an
+// older bundle keeps showing a count.
+export const CKA_KEYS_REMAINING = 0x0000061c
+/** @deprecated v3.3 alias of {@link CKA_KEYS_REMAINING} (same value). */
+export const CKA_HSS_KEYS_REMAINING = CKA_KEYS_REMAINING
 
 // LMS parameter set values — IANA registry type IDs (RFC 8554 + SP 800-208)
 // https://www.iana.org/assignments/leighton-micali-signatures/
@@ -446,3 +453,85 @@ export const EC_OID_ED25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x70])
 export const EC_OID_ED448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x71])
 export const EC_OID_X25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6e])
 export const EC_OID_SECP256K1 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x0a])
+
+// ── PKCS#11 v3.3 working draft identifiers ──────────────────────────────────
+// v3.3 is an UNPUBLISHED OASIS working draft. These codepoints are marked
+// approved in the TC header (github.com/oasis-tcs/pkcs11, commit 9ef73f9,
+// working/headers/pkcs11t.h — line numbers below), but the header still
+// declares Cryptoki 3.2.0 and the chapter text may change. Engines that
+// implement them still report version 3.2.0.
+
+// Composite key types (pkcs11t.h:443-444)
+export const CKK_COMP_KEM = 0x0000004c
+export const CKK_COMP_SIG = 0x0000004d
+
+// Composite mechanisms (pkcs11t.h:1225-1229)
+export const CKM_COMP_SIG_KEY_PAIR_GEN = 0x0000403d
+export const CKM_COMP_SIG = 0x0000403e
+export const CKM_COMP_SIG_EXTERNAL_HASH = 0x0000403f
+export const CKM_COMP_KEM_KEY_PAIR_GEN = 0x00004040
+export const CKM_COMP_KEM = 0x00004041
+
+// ML-DSA external mu (pkcs11t.h:1232-1233). Approved in the v3.3 draft;
+// before that these were engine-specific extension values.
+export const CKM_ML_DSA_EXTERNAL_MU_GEN = 0x0000403b
+export const CKM_ML_DSA_EXTERNAL_MU = 0x0000403c
+
+// Composite ML-DSA parameter sets, CK_COMP_SIG_PARAMETER_SET_TYPE (pkcs11t.h:2780-2797)
+export const CKP_COMP_SIG_MLDSA44_RSA2048_PSS_SHA256 = 0x00000001
+export const CKP_COMP_SIG_MLDSA44_RSA2048_PKCS15_SHA256 = 0x00000002
+export const CKP_COMP_SIG_MLDSA44_ED25519_SHA512 = 0x00000003
+export const CKP_COMP_SIG_MLDSA44_ECDSA_P256_SHA256 = 0x00000004
+export const CKP_COMP_SIG_MLDSA65_RSA3072_PSS_SHA512 = 0x00000005
+export const CKP_COMP_SIG_MLDSA65_RSA3072_PKCS15_SHA512 = 0x00000006
+export const CKP_COMP_SIG_MLDSA65_RSA4096_PSS_SHA512 = 0x00000007
+export const CKP_COMP_SIG_MLDSA65_RSA4096_PKCS15_SHA512 = 0x00000008
+export const CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512 = 0x00000009
+export const CKP_COMP_SIG_MLDSA65_ECDSA_P384_SHA512 = 0x0000000a
+export const CKP_COMP_SIG_MLDSA65_ECDSA_BRAINPOOLP256R1_SHA512 = 0x0000000b
+export const CKP_COMP_SIG_MLDSA65_ED25519_SHA512 = 0x0000000c
+export const CKP_COMP_SIG_MLDSA87_ECDSA_P384_SHA512 = 0x0000000d
+export const CKP_COMP_SIG_MLDSA87_ECDSA_BRAINPOOLP384R1_SHA512 = 0x0000000e
+export const CKP_COMP_SIG_MLDSA87_ED448_SHAKE256 = 0x0000000f
+export const CKP_COMP_SIG_MLDSA87_RSA3072_PSS_SHA512 = 0x00000010
+export const CKP_COMP_SIG_MLDSA87_RSA4096_PSS_SHA512 = 0x00000011
+export const CKP_COMP_SIG_MLDSA87_ECDSA_P521_SHA512 = 0x00000012
+
+// Composite ML-KEM parameter sets, CK_COMP_KEM_PARAMETER_SET_TYPE (pkcs11t.h:2801-2812)
+export const CKP_COMP_KEM_MLKEM768_RSA2048 = 0x00000001
+export const CKP_COMP_KEM_MLKEM768_RSA3072 = 0x00000002
+export const CKP_COMP_KEM_MLKEM768_RSA4096 = 0x00000003
+export const CKP_COMP_KEM_MLKEM768_X25519 = 0x00000004
+export const CKP_COMP_KEM_MLKEM768_ECDH_P256 = 0x00000005
+export const CKP_COMP_KEM_MLKEM768_ECDH_P384 = 0x00000006
+export const CKP_COMP_KEM_MLKEM768_ECDH_BRAINPOOLP256R1 = 0x00000007
+export const CKP_COMP_KEM_MLKEM1024_RSA3072 = 0x00000008
+export const CKP_COMP_KEM_MLKEM1024_ECDH_P384 = 0x00000009
+export const CKP_COMP_KEM_MLKEM1024_ECDH_BRAINPOOLP384R1 = 0x0000000a
+export const CKP_COMP_KEM_MLKEM1024_X448 = 0x0000000b
+export const CKP_COMP_KEM_MLKEM1024_ECDH_P521 = 0x0000000c
+
+// Mechanism-info flags the v3.3 checks read (pkcs11t.h:1333-1334, v3.2 §5.6)
+export const CKF_GENERATE_KEY_PAIR = 0x00010000
+export const CKF_SIGN = 0x00000800
+export const CKF_VERIFY = 0x00002000
+export const CKF_DIGEST = 0x00000400
+export const CKF_ENCAPSULATE = 0x10000000
+export const CKF_DECAPSULATE = 0x20000000
+
+// Return codes the composite checks expect (PKCS#11 v3.2 pkcs11t.h)
+export const CKR_ARGUMENTS_BAD = 0x00000007
+export const CKR_ATTRIBUTE_SENSITIVE = 0x00000011
+export const CKR_ATTRIBUTE_VALUE_INVALID = 0x00000013
+export const CKR_DATA_LEN_RANGE = 0x00000021
+export const CKR_KEY_TYPE_INCONSISTENT = 0x00000063
+export const CKR_MECHANISM_INVALID = 0x00000070
+export const CKR_MECHANISM_PARAM_INVALID = 0x00000071
+export const CKR_OPERATION_NOT_INITIALIZED = 0x00000091
+export const CKR_SIGNATURE_INVALID = 0x000000c0
+export const CKR_SIGNATURE_LEN_RANGE = 0x000000c1
+export const CKR_TEMPLATE_INCOMPLETE = 0x000000d0
+export const CKR_TEMPLATE_INCONSISTENT = 0x000000d1
+export const CKR_WRAPPED_KEY_INVALID = 0x00000110
+export const CKR_WRAPPED_KEY_LEN_RANGE = 0x00000112
+export const CKR_PARAMETER_SET_NOT_SUPPORTED = 0x00000209

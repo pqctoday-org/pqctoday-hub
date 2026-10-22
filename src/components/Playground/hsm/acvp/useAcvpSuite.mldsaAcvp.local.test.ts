@@ -198,7 +198,7 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
       expect(r.caseMeta?.observed).toBe('byte-equal')
       expect(classesOf(r!.id)).toEqual(['nist-acvp-reference-sample'])
     }
-    // External µ (vendor 0x403c) really ran on both engines — not skipped.
+    // External µ (v3.3 working draft 0x403c) really ran on both engines — not skipped.
     const mu = det.filter((r) => r.caseMeta?.mode === 'externalMu')
     expect(mu.map(engineOf).sort()).toEqual(['C++', 'C++', 'C++', 'Rust', 'Rust', 'Rust'])
   })
