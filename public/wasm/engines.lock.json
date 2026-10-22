@@ -5,7 +5,7 @@
     "cacp-kmip": {
       "hsmCommit": "48967aeeb31aadf487238c4102894a779377ba20",
       "release": {
-        "tag": "engines-4",
+        "tag": "engines-5",
         "asset": "cacp-kmip-48967aee.tar.gz",
         "tarballSha256": "3df8ac3525e4e0009538e3800ddb27bdd31c994dcf0be24b37b9df9b5ed1a34d"
       },
@@ -95,7 +95,7 @@
     "openssh-pkcs11": {
       "hsmCommit": "bc92034d12d32b3a1b32111d2114e6a1fb8a6205",
       "release": {
-        "tag": "engines-4",
+        "tag": "engines-5",
         "asset": "openssh-pkcs11-bc92034d.tar.gz",
         "tarballSha256": "7959697c3d786376d070f25ac1716297f63fa597fc581b298a29230ede9d424e"
       },
@@ -113,7 +113,7 @@
     "openssl-pkcs11": {
       "hsmCommit": "07b1264903eaeae124a4df08acb77ec71bca3792",
       "release": {
-        "tag": "engines-4",
+        "tag": "engines-5",
         "asset": "openssl-pkcs11-07b12649.tar.gz",
         "tarballSha256": "e66c556c4b0b4a21bf712b8d6c45812ac914b25accf52ec78f72d3d44895378f"
       },
@@ -146,7 +146,11 @@
     },
     "softhsm-cpp-engine": {
       "hsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
-      "release": null,
+      "release": {
+        "tag": "engines-5",
+        "asset": "softhsm-cpp-engine-d1f62a41.tar.gz",
+        "tarballSha256": "e25ca4a0bef036ea17ac7f20a7b9d992619176a29ad40f86bf071ad26501537b"
+      },
       "files": {
         "public/wasm/libsofthsmv3.wasm": {
           "sha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
@@ -164,7 +168,11 @@
     },
     "softhsmrustv3-engine": {
       "hsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
-      "release": null,
+      "release": {
+        "tag": "engines-5",
+        "asset": "softhsmrustv3-engine-d1f62a41.tar.gz",
+        "tarballSha256": "80988c3a06073125e86007a40ba044d230ef2de4416a1d26fd014d9e5d96a804"
+      },
       "files": {
         "public/wasm/rust/softhsmrustv3_bg.wasm": {
           "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
@@ -183,7 +191,7 @@
     "strongswan": {
       "hsmCommit": "bf53023b78b42078b5936dab91809eaeb9f756e3",
       "release": {
-        "tag": "engines-4",
+        "tag": "engines-5",
         "asset": "strongswan-bf53023b.tar.gz",
         "tarballSha256": "1e006b30f8af82710c01274c7791b2fa749d3731d3be6f603a539150c2337dda"
       },
