@@ -222,7 +222,9 @@ export function evaluateRestart(json: NistToolJson | null, hI: number): RestartE
   if (json.errorLevel !== 0) {
     const msg = json.errorMessage ?? `error level ${json.errorLevel}`
     return {
-      status: /sanity/i.test(msg) ? 'sanity-check-failed' : 'error',
+      status: /^Restart Sanity Check Failed\.?$/i.test(msg.trim())
+        ? 'sanity-check-failed'
+        : 'error',
       hI,
       hR: null,
       hC: null,
@@ -300,6 +302,13 @@ export const VERDICT_LABELS: Record<Verdict, string> = {
 
 export type CaseProvenance = 'device-raw-noise' | 'conditioned-output-contrast' | 'synthetic'
 
+/** Recognise only the pinned tool's explicit single-symbol diagnostic. */
+export function isSingleSymbolFailure(message: string | undefined): boolean {
+  return /^Symbol alphabet consists of 1 symbol\.(?: No entropy awarded\.\.\.)?$/.test(
+    message?.trim() ?? ''
+  )
+}
+
 export interface SequentialOutcome {
   status: 'not-run' | 'ok' | 'error'
   /** Minimum of the estimators (or the IID-track MCV result). */
@@ -312,6 +321,8 @@ export interface SequentialOutcome {
 }
 
 export interface ConclusionInput {
+  /** Failed identity/consistency checks; absence of a reference is not a failure. */
+  integrityIssues?: string[]
   provenance: CaseProvenance
   /** Synthetic cases only: SHA-256-conditioned output (hides a failed source). */
   syntheticConditioned?: boolean
@@ -349,14 +360,47 @@ const DEVICE_LIMITS = [
 export function concludeEvidence(input: ConclusionInput): Conclusion {
   const { provenance, sequential: seq, restart } = input
   const reasons: string[] = []
+  if (input.integrityIssues?.length) {
+    return {
+      verdict: 'insufficient-evidence',
+      h: null,
+      reasons: [...input.integrityIssues],
+      limits: [
+        'Investigate the failed checks before relying on this run. This is not evidence that the noise source itself failed.',
+      ],
+    }
+  }
+
+  if (seq.status === 'error' && !isSingleSymbolFailure(seq.errorMessage)) {
+    return {
+      verdict: 'insufficient-evidence',
+      h: null,
+      reasons: [
+        `Analysis incomplete: ${seq.errorMessage ?? 'No usable tool result was produced.'}`,
+      ],
+      limits: [
+        'Investigate the diagnostic and rerun. This error does not establish that the noise source failed a test.',
+      ],
+    }
+  }
+  if (restart?.status === 'error') {
+    return {
+      verdict: 'insufficient-evidence',
+      h: null,
+      reasons: [`Restart analysis incomplete: ${restart.message}`],
+      limits: [
+        'Investigate the diagnostic and rerun. An incomplete restart analysis is not a failed restart test.',
+      ],
+    }
+  }
 
   if (provenance === 'conditioned-output-contrast') {
     reasons.push(
-      'This is conditioned/DRBG output. SP 800-90B assesses raw noise-source samples; an estimate on generator output says nothing about the noise source behind it, however high it is.'
+      'These bytes have already been processed by the operating system’s random generator. A high estimate on this file does not tell us how much unpredictable noise originally entered that generator. We need evidence about the underlying source too. The mistake would be drawing that conclusion from this result alone, not simply running the test.'
     )
     if (seq.status === 'ok' && seq.h !== null)
       reasons.push(
-        `The estimators reported ${fmt(seq.h)} bits per sample — output that "passes" is still not evidence about a noise source.`
+        `The estimators reported ${fmt(seq.h)} bits per sample for this processed-output file. That number alone does not establish the entropy of the underlying noise source.`
       )
     return { verdict: 'not-noise-source-evidence', h: null, reasons, limits: [] }
   }

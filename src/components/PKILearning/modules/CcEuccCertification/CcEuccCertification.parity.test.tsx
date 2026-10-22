@@ -73,6 +73,19 @@ describe('CcEuccCertification render parity', () => {
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
   })
 
+  it('keeps the criteria/scheme distinction visible on the EUCC path', async () => {
+    await renderModule('?path=eucc')
+    expect(
+      screen.getByRole('region', { name: 'Separate certification contexts' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Common Criteria — evaluation criteria' })
+    ).toHaveAttribute('href', '/learn/cc-eucc-certification?path=cc')
+    expect(
+      screen.getByText(/EUCC rules are not automatically requirements for every CC evaluation/)
+    ).toBeInTheDocument()
+  })
+
   it('ships no draft placeholder — every owner file has real content', async () => {
     await renderModule()
     expect(screen.queryByTestId('draft-pending')).not.toBeInTheDocument()
@@ -80,15 +93,55 @@ describe('CcEuccCertification render parity', () => {
   })
 
   it('hides the other path’s sections on a chosen path (offPathSections: hide)', async () => {
-    await renderModule('?path=eucc-eidas')
+    await renderModule('?path=eucc')
     const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
     expect(heading('EUCC is a scheme, not a PP')).toBeInTheDocument()
     expect(heading('PP case: Security IC Platform')).toBeInTheDocument()
     expect(heading('The Common Criteria model')).not.toBeInTheDocument()
+    expect(heading('From eIDAS to a certified device')).not.toBeInTheDocument()
+  })
+
+  it('preserves the legacy eIDAS link without including the EUCC-only lessons', async () => {
+    await renderModule('?path=eucc-eidas')
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'From eIDAS to a certified device' })
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { level: 2, name: 'EUCC is a scheme, not a PP' })
+    ).not.toBeInTheDocument()
   })
 })
 
 describe('CcEuccCertification scaffold contract (build spec §4)', () => {
+  it('keeps PP history optional and distinguishes it from a PQC product change', () => {
+    render(
+      <MemoryRouter>
+        <CcEuSections.CcContinuity />
+      </MemoryRouter>
+    )
+    const history = screen
+      .getByText('Optional history: why EN 419221-5 appears as both v0.15 and v1.0')
+      .closest('details')
+    expect(history).not.toHaveAttribute('open')
+    expect(history).toHaveTextContent('16 December 2016')
+    expect(history).toHaveTextContent('18 May 2020')
+    expect(history).toHaveTextContent('not a particular HSM product')
+    expect(history).toHaveTextContent(
+      'does not establish that adding PQC to an HSM is a minor change'
+    )
+  })
+  it('presents ACM alignment as guidance rather than a certification verdict', () => {
+    render(
+      <MemoryRouter>
+        <CcEuSections.EuccPqcToday />
+      </MemoryRouter>
+    )
+    expect(screen.getByText(/they are not certification verdicts/)).toBeInTheDocument()
+    expect(
+      screen.getByRole('columnheader', { name: 'Alignment with cited ACM v2 guidance' })
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Fits ACM v2?')).not.toBeInTheDocument()
+  })
   it('every Learn section id has exactly one owner component, and nothing else does', () => {
     expect([...SECTION_COMPONENTS.keys()].sort()).toEqual([...sectionIds].sort())
   })
@@ -144,5 +197,43 @@ describe('CcEuccCertification scaffold contract (build spec §4)', () => {
       expect(stepIds, key).toContain(stepId)
       expect(shared.get(key), `${key} must also be appended to stepExercises.ts`).toEqual(exercise)
     }
+  })
+})
+
+describe('CcEuccCertification CC/EUCC separation (2026-10-21)', () => {
+  const wrapSection = (node: React.ReactNode) =>
+    render(
+      <EmbedProvider>
+        <MemoryRouter>{node}</MemoryRouter>
+      </EmbedProvider>
+    )
+
+  it('keeps EUCC facts on the CC path as labelled pointers', () => {
+    wrapSection(
+      <>
+        <CcEuSections.CcModel />
+        <CcEuSections.CcLifecycle />
+      </>
+    )
+    expect(screen.getAllByText('Under EUCC:').length).toBeGreaterThanOrEqual(4)
+    expect(screen.queryByText(/commercial CBs such as TrustCB/)).not.toBeInTheDocument()
+    expect(screen.queryByText('The European picture changed in 2025–2026')).not.toBeInTheDocument()
+    expect(
+      screen.getByText(/Expect the certification body to classify it as major/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/keeps older protection profiles \(CC 3\.1 revisions 1–4\) usable/)
+    ).toHaveTextContent('with no end date')
+  })
+
+  it('opens the EUCC path with what EUCC takes from Common Criteria and what it adds', () => {
+    wrapSection(<CcEuSections.EuccScheme />)
+    expect(
+      screen.getByRole('heading', {
+        name: 'What EUCC takes from Common Criteria, and what it adds',
+      })
+    ).toBeInTheDocument()
+    expect(screen.getByText('What changed in Europe in 2025–2026')).toBeInTheDocument()
+    expect(screen.getByText(/SOG-IS, the older European recognition agreement/)).toBeInTheDocument()
   })
 })

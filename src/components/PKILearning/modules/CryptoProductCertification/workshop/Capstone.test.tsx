@@ -28,6 +28,7 @@ import {
 } from '../components/sections/SharedSections'
 import {
   capstoneJson,
+  EIDAS_SCENARIO_SCOPE,
   capstoneMarkdown,
   checkCapstone,
   emptyCapstone,
@@ -83,6 +84,24 @@ describe('checkCapstone', () => {
     const s = emptyCapstone('eucc-eidas')
     s.eidas.links.pp = 'eidas-pp'
     expect(checkCapstone(s).find((x) => x.id === 'eidas-not-pp')?.status).toBe('fail')
+  })
+
+  it('keeps the selected EUCC scenario explicit in the UI and both exports', () => {
+    const s = emptyCapstone('eucc-eidas')
+    renderStep(<Capstone config={{ path: 'eucc-eidas' }} />)
+    expect(screen.getByText(EIDAS_SCENARIO_SCOPE)).toBeInTheDocument()
+    expect(capstoneMarkdown(s, '2026-10-21')).toContain(EIDAS_SCENARIO_SCOPE)
+    expect(JSON.parse(capstoneJson(s, '2026-10-21')).scenarioScope).toBe(EIDAS_SCENARIO_SCOPE)
+  })
+
+  it('does not interpret the legacy record key as an EUCC certificate', () => {
+    const s = emptyCapstone('cc')
+    const report = JSON.parse(capstoneJson(s, '2026-10-21'))
+    expect(report.certificateContext).toContain('does not identify EUCC')
+    expect(report.artifacts.release).toHaveProperty('cc-eucc')
+    const md = capstoneMarkdown(s, '2026-10-21')
+    expect(md).toContain('CC-based product certificate — identify the issuing scheme')
+    expect(md).not.toContain('CC / EUCC certificate')
   })
 
   it('passes every condition on an empty draft (nothing false asserted yet)', () => {
@@ -207,6 +226,15 @@ describe('BoundaryDrawer step (RTL)', () => {
 })
 
 describe('Shared author sections and steps render', () => {
+  it('separates CC evidence from the conditional EUCC procedure', () => {
+    renderStep(<ChangeAnalyzer />)
+    fireEvent.click(
+      within(screen.getByRole('group', { name: 'Your prediction' })).getAllByRole('button')[0]
+    )
+    expect(screen.getByText('Common Criteria — evidence review')).toBeInTheDocument()
+    expect(screen.queryByText('CC / EUCC')).not.toBeInTheDocument()
+    expect(screen.getByText('EUCC only — apply the scheme’s change procedure')).toBeInTheDocument()
+  })
   it.each([
     ['FourQuestions', FourQuestions],
     ['ScopeBeforeLevel', ScopeBeforeLevel],
@@ -222,6 +250,9 @@ describe('Shared author sections and steps render', () => {
 
   it('TransitionDeadlines lists the timeline markets, not typed dates', () => {
     renderStep(<TransitionDeadlines />)
+    expect(
+      screen.getByText(/not a global CC deadline or automatic expiry date/)
+    ).toBeInTheDocument()
     const table = screen.getByRole('table', { name: 'Market deadlines' })
     for (const [market, year] of Object.entries(TIMELINE_COUNTRY_DEADLINE_BY_NAME)) {
       const row = within(table).getByText(market).closest('tr')
@@ -241,7 +272,7 @@ describe('Shared author sections and steps render', () => {
   it('EvidenceExchange is labelled as a teaching model', () => {
     renderStep(<EvidenceExchange />)
     expect(screen.getByTestId('exchange-disclaimer')).toHaveTextContent(
-      /not accepted by NIST, CC\/EUCC bodies or PCI SSC/
+      /not an official submission format for NIST, a CC certification scheme \(including EUCC\), or PCI SSC/
     )
   })
 })

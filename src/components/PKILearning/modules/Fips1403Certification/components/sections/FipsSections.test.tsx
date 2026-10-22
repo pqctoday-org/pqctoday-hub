@@ -21,7 +21,12 @@ import {
   FipsWhatItIs,
 } from './FipsSections'
 import { FipsLevelPlanner } from '../../workshop/FipsLevelPlanner'
-import { CMVP_ROUTES, SP_LEVEL_ROWS, VERIFIED_PQC_LEVEL3_CERTS } from '../../data/fipsData'
+import {
+  CMVP_ROUTES,
+  ROUTE_OPTIONS,
+  SP_LEVEL_ROWS,
+  VERIFIED_PQC_LEVEL3_CERTS,
+} from '../../data/fipsData'
 
 const wrap = (node: ReactNode) => render(<MemoryRouter>{node}</MemoryRouter>)
 
@@ -30,6 +35,13 @@ afterEach(() => {
 })
 
 describe('FIPS sections render', () => {
+  it('distinguishes the lab proposal from CMVP review of the PQC update route', () => {
+    const explanation = ROUTE_OPTIONS.find((option) => option.id === 'updt-fs')?.why
+    expect(explanation).toContain('The lab assesses those changes and proposes')
+    expect(explanation).toContain('CMVP reviews that proposal and may require a full submission.')
+    expect(explanation).not.toContain('Your lab decides the route')
+  })
+
   it('what-it-is: pins the ISO editions and reads a real certificate', () => {
     wrap(<FipsWhatItIs />)
     expect(screen.getByText(/ISO published 2025 editions of both documents/)).toBeInTheDocument()
@@ -42,6 +54,18 @@ describe('FIPS sections render', () => {
     const rowHeaders = screen.getAllByRole('rowheader').map((h) => h.textContent ?? '')
     for (const [i, row] of SP_LEVEL_ROWS.entries()) expect(rowHeaders).toContain(`${i + 1}. ${row}`)
     expect(screen.getAllByRole('columnheader')).toHaveLength(5)
+    expect(
+      screen.getByText(/It does not mean every validated module forbids every plaintext export/)
+    ).toBeInTheDocument()
+    expect(screen.getByText(/it does not establish FIPS validation/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/so expect a PQC addition to be treated as a significant change/)
+    ).toHaveTextContent('the CMVP may require a full submission')
+    expect(screen.queryByText(/is a security-relevant revalidation/)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Open the PKCS#11 Learn exercises' })).toHaveAttribute(
+      'href',
+      '/playground/hsm?tab=learn'
+    )
   })
 
   it('levels: corrects "Level 1 = software-only" and teaches the FIPS-L3 / PCI PIN nuance', () => {
@@ -64,6 +88,25 @@ describe('FIPS sections render', () => {
       </>
     )
     expect(screen.getByLabelText('From algorithm to certificate')).toBeInTheDocument()
+    expect(screen.getByText(/Do not stop at the name “ML-DSA”/)).toHaveTextContent(
+      'SigVer means checking signatures'
+    )
+    expect(screen.getByText(/A signing entry alone does not establish coverage/)).toHaveTextContent(
+      'do not assume every parameter set is covered'
+    )
+    expect(screen.getByRole('link', { name: /^Algorithm validation A5631/ })).toHaveAttribute(
+      'href',
+      'https://csrc.nist.gov/projects/Cryptographic-Algorithm-Validation-Program/details?validation=38241'
+    )
+    const checks = screen.getByRole('list', { name: 'Three different ML-DSA checks' })
+    expect(within(checks).getAllByRole('listitem')).toHaveLength(3)
+    expect(checks).toHaveTextContent('External algorithm testing:')
+    expect(checks).toHaveTextContent('before its first approved use')
+    expect(checks).toHaveTextContent('it does not test every customer key')
+    expect(checks).toHaveTextContent('Pair-wise consistency test:')
+    expect(screen.getByText(/Passing one does not replace the others/)).toHaveTextContent(
+      'how failures are reported'
+    )
     for (const r of CMVP_ROUTES) expect(screen.getAllByText(r.code).length).toBeGreaterThan(0)
   })
 })

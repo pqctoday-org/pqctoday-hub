@@ -20,6 +20,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { CertificationContexts } from './CertificationContexts'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PRACTITIONER_DISCLAIMER, type SectionEntry, type SectionGroup } from './sectionRegistry'
@@ -82,6 +83,12 @@ export const CertIntroduction = ({
             : 'Focus on what each certificate can support, where its boundary stops, and which claims need confirmation. Exact component and submission details remain available as cited reference material.'}
         </p>
       </div>
+
+      {[
+        'crypto-product-certification',
+        'fips-140-3-certification',
+        'cc-eucc-certification',
+      ].includes(manifest.id) && <CertificationContexts />}
 
       {(manifest.learnSections ?? []).map((section, index) => {
         const entry = sections.get(section.id)

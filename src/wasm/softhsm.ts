@@ -2034,8 +2034,9 @@ export type SLHDSAPreHash =
 
 export interface SLHDSASignOptions {
   preHash?: SLHDSAPreHash // all PKCS#11 v3.2 CKM_HASH_SLH_DSA_* variants
-  context?: Uint8Array // FIPS 205 §9.2: optional 0–255 byte context string (pure SLH-DSA only)
+  context?: Uint8Array // FIPS 205 §10: optional 0–255 bytes, pure and pre-hash
   deterministic?: boolean // FIPS 205 §10: deterministic mode via CKH_DETERMINISTIC_REQUIRED
+  hedgedRequired?: boolean // Require fresh randomness rather than merely preferring it.
 }
 
 // Map preHash option to CKM mechanism constant (PKCS#11 v3.2 §6.x, FIPS 205 HashSLH-DSA)
@@ -2102,11 +2103,19 @@ const buildSlhDsaSignContext = (
   M: SoftHSMModule,
   opts: SLHDSASignOptions
 ): { paramPtr: number; paramLen: number; allocPtrs: number[] } => {
+  if ((opts.context?.length ?? 0) > 255)
+    throw new Error('SLH-DSA context must be at most 255 bytes')
+  if (opts.deterministic && opts.hedgedRequired)
+    throw new Error('Select either deterministic or hedged SLH-DSA signing, not both')
   const allocPtrs: number[] = []
   const paramPtr = M._malloc(12)
   allocPtrs.push(paramPtr)
 
-  const hedge = opts.deterministic ? CKH_DETERMINISTIC_REQUIRED : CKH_HEDGE_PREFERRED
+  const hedge = opts.deterministic
+    ? CKH_DETERMINISTIC_REQUIRED
+    : opts.hedgedRequired
+      ? CKH_HEDGE_REQUIRED
+      : CKH_HEDGE_PREFERRED
   M.setValue(paramPtr, hedge, 'i32')
 
   if (opts.context && opts.context.length > 0) {
@@ -5971,17 +5980,16 @@ export const hsm_slhdsaSign = (
   opts?: SLHDSASignOptions
 ): Uint8Array => {
   const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
-  // Build context params for pure SLH-DSA only (FIPS 205 §9.2 context + §10 deterministic)
-  const needsCtxParam =
-    mechType === CKM_SLH_DSA && opts && (opts.context?.length || opts.deterministic)
+  // Pure and fixed-hash pre-hash mechanisms accept CK_SIGN_ADDITIONAL_CONTEXT.
+  const needsCtxParam = opts && (opts.context?.length || opts.deterministic || opts.hedgedRequired)
   const ctxAlloc = needsCtxParam ? buildSlhDsaSignContext(M, opts!) : null
   const mech = buildMech(M, mechType, ctxAlloc?.paramPtr ?? 0, ctxAlloc?.paramLen ?? 0)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)
   const sigLenPtr = allocUlong(M)
   let sigPtr = 0
-  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit(SLH-DSA)')
   try {
+    checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit(SLH-DSA)')
     checkRV(
       M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, 0, sigLenPtr),
       'C_SignMessage(SLH-DSA,len)'
@@ -6017,17 +6025,18 @@ export const hsm_slhdsaVerify = (
   opts?: SLHDSASignOptions
 ): boolean => {
   const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
-  // Pass context for pure SLH-DSA verify (FIPS 205 §9.2); deterministic is irrelevant for verify
-  const needsCtxParam = mechType === CKM_SLH_DSA && opts?.context && opts.context.length > 0
+  // Context applies to pure and pre-hash; deterministic is irrelevant for verification.
+  const needsCtxParam = opts?.context && opts.context.length > 0
   const ctxAlloc = needsCtxParam ? buildSlhDsaSignContext(M, opts!) : null
   const mech = buildMech(M, mechType, ctxAlloc?.paramPtr ?? 0, ctxAlloc?.paramLen ?? 0)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)
   const sigPtr = writeBytes(M, sigBytes)
-  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(SLH-DSA)')
   try {
+    checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(SLH-DSA)')
     const rv =
       M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    if (rv !== 0 && rv !== 0xc0 && rv !== 0xc1) checkRV(rv, 'C_VerifyMessage(SLH-DSA)')
     return rv === 0
   } finally {
     M._C_MessageVerifyFinal(hSession) // close multi-message context; ignore RV in cleanup
@@ -6053,15 +6062,16 @@ export const hsm_slhdsaVerifyBytes = (
   opts?: SLHDSASignOptions
 ): boolean => {
   const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
-  const needsCtxParam = mechType === CKM_SLH_DSA && opts?.context && opts.context.length > 0
+  const needsCtxParam = opts?.context && opts.context.length > 0
   const ctxAlloc = needsCtxParam ? buildSlhDsaSignContext(M, opts!) : null
   const mech = buildMech(M, mechType, ctxAlloc?.paramPtr ?? 0, ctxAlloc?.paramLen ?? 0)
   const msgPtr = writeBytes(M, messageBytes)
   const sigPtr = writeBytes(M, sigBytes)
-  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(SLH-DSA)')
   try {
+    checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(SLH-DSA)')
     const rv =
       M._C_VerifyMessage(hSession, 0, 0, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
+    if (rv !== 0 && rv !== 0xc0 && rv !== 0xc1) checkRV(rv, 'C_VerifyMessage(SLH-DSA)')
     return rv === 0
   } finally {
     M._C_MessageVerifyFinal(hSession)

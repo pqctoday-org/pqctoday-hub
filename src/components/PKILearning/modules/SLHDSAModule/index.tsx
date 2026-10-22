@@ -27,7 +27,7 @@ const PARTS: WorkshopPart[] = [
     id: 'context-deterministic',
     title: 'Step 3: Context Strings & Deterministic Mode',
     description:
-      'Explore FIPS 205 §9.2 context strings for domain separation and §10 deterministic mode. Observe how context mismatches cause CKR_SIGNATURE_INVALID.',
+      'Explore context strings in pure and pre-hash signing. Verify with matching and mismatched contexts, then explicitly select deterministic or hedged signing and compare two signatures.',
     icon: Lock,
   },
   {

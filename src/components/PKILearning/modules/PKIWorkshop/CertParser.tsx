@@ -527,7 +527,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
       note: 'The subject key is ML-KEM-768 (1,184 bytes); it encapsulates and decapsulates but cannot sign, so the ML-DSA-65 workshop CA signs the certificate. Critical keyUsage keyEncipherment only.',
     },
     'hybrid-composite-kem.pem': {
-      title: 'Composite ML-KEM (draft-ietf-lamps-pq-composite-kem-21)',
+      title: 'Composite ML-KEM (draft-ietf-lamps-pq-composite-kem-23)',
       note: 'An ML-KEM-768 + X25519 composite public key under id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58), ML-KEM component first, issued by the ML-DSA-65 workshop CA. Encoding only — no encapsulation is performed. OpenSSL 3.6.3 cannot parse the composite key.',
     },
     'hybrid-chameleon.pem': {

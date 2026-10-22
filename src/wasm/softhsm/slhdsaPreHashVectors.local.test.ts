@@ -254,6 +254,85 @@ describe('SLH-DSA pre-hash NIST ACVP vectors against the real Rust engine', () =
     }
   )
 
+  it('Hub contexts: pure/pre-hash match, mismatch, empty, whitespace and byte limits', () => {
+    const [ps, , t] = sgAll.find(
+      ([ps, , t]) => ps === 'SLH-DSA-SHA2-128f' && t.hashAlg === 'SHA2-256'
+    )!
+    const pub = SoftHSM.hsm_importSLHDSAPublicKey(M, session, CKP[ps], hexToBytes(t.pk))
+    const priv = importPriv(ps, hexToBytes(t.sk))
+    const enc = (s: string) => new TextEncoder().encode(s)
+    try {
+      // Independent upstream signature must verify through the corrected byte helper.
+      expect(
+        SoftHSM.hsm_slhdsaVerifyBytes(
+          M,
+          session,
+          pub,
+          hexToBytes(t.message),
+          hexToBytes(t.signature),
+          {
+            preHash: 'sha256',
+            context: hexToBytes(t.context),
+          }
+        )
+      ).toBe(true)
+      for (const preHash of [undefined, 'sha256'] as const) {
+        for (const deterministic of [true, false]) {
+          const opts = { preHash, deterministic, hedgedRequired: !deterministic }
+          const first = SoftHSM.hsm_slhdsaSign(M, session, priv, 'repeat', opts)
+          const second = SoftHSM.hsm_slhdsaSign(M, session, priv, 'repeat', opts)
+          expect(hex(first) === hex(second)).toBe(deterministic)
+          expect(SoftHSM.hsm_slhdsaVerify(M, session, pub, 'repeat', first, opts)).toBe(true)
+          expect(SoftHSM.hsm_slhdsaVerify(M, session, pub, 'repeat', second, opts)).toBe(true)
+        }
+        expect(() =>
+          SoftHSM.hsm_slhdsaSign(M, session, priv, 'repeat', {
+            preHash,
+            deterministic: true,
+            hedgedRequired: true,
+          })
+        ).toThrow(/not both/)
+        for (const context of ['', 'firmware-update', ' ', 'x'.repeat(255), 'é'.repeat(127)]) {
+          const opts = { preHash, context: enc(context), deterministic: true }
+          const sig = SoftHSM.hsm_slhdsaSign(M, session, priv, 'message', opts)
+          expect(SoftHSM.hsm_slhdsaVerify(M, session, pub, 'message', sig, opts)).toBe(true)
+          expect(
+            SoftHSM.hsm_slhdsaVerify(M, session, pub, 'message', sig, {
+              preHash,
+              context: enc(context === '' ? ' ' : ''),
+            })
+          ).toBe(false)
+          if (context === 'firmware-update') {
+            expect(
+              SoftHSM.hsm_slhdsaVerify(M, session, pub, 'message', sig, {
+                preHash,
+                context: enc('document-signing'),
+              })
+            ).toBe(false)
+          }
+        }
+        const empty = SoftHSM.hsm_slhdsaSign(M, session, priv, 'message', { preHash })
+        expect(
+          SoftHSM.hsm_slhdsaVerify(M, session, pub, 'message', empty, { preHash, context: enc('') })
+        ).toBe(true)
+        for (const context of ['x'.repeat(256), 'é'.repeat(128)]) {
+          expect(() =>
+            SoftHSM.hsm_slhdsaSign(M, session, priv, 'message', { preHash, context: enc(context) })
+          ).toThrow(/255 bytes/)
+          expect(() =>
+            SoftHSM.hsm_slhdsaVerify(M, session, pub, 'message', empty, {
+              preHash,
+              context: enc(context),
+            })
+          ).toThrow(/255 bytes/)
+        }
+      }
+    } finally {
+      M._C_DestroyObject(session, pub)
+      M._C_DestroyObject(session, priv)
+    }
+  })
+
   // ── 2. negatives ──────────────────────────────────────────────────────────
   it('carries 22 upstream negatives across all six upstream reasons', () => {
     const negs = svAll.filter(([, , t]) => !t.testPassed)

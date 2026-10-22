@@ -343,8 +343,23 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               applicable.
             </li>
             <li>
-              Each certificate records a reuse status — for example, &quot;Reuse restricted to
-              vendor&quot;.
+              <strong>Reusing an entropy-validation certificate:</strong> this means relying on
+              existing validation evidence in another cryptographic module’s certification, not
+              simply using the vendor’s software. “Reuse restricted to vendor” allows the same
+              vendor to reuse the certificate when the entropy source meets the Public Use
+              Document’s portability conditions, such as the environment and configuration. Another
+              vendor needs written, signed permission from the certificate vendor’s named contact,
+              and must still meet the applicable technical conditions. “Open for reuse” removes that
+              specific permission requirement; it does not remove the technical conditions or allow
+              another vendor to rebrand the validation as its own.{' '}
+              <a
+                href="https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS-140-3-CMVP%20Management%20Manual.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                NIST CMVP Management Manual, §4.8.1
+              </a>
             </li>
             <li>
               RBG constructions are a separate step: CMVP also issues Random Bit Generator
@@ -448,8 +463,28 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <p className="text-xs text-foreground/80 mb-3">
             Random-input length is not security strength. A 32-byte input does not by itself mean
             256 bits of entropy or a 256-bit RBG requirement: each standard sets the minimum RBG
-            security strength per parameter set, and signing randomness has no mandatory strength at
-            all.
+            security strength per parameter set. Only the additional randomness used for hedged
+            signing has no mandatory minimum strength; key generation does.
+          </p>
+          <p data-testid="pqc-length-example" className="text-xs text-foreground/80 mb-3">
+            <strong>Example.</strong> ML-KEM-768 encapsulation uses a 32-byte random input, but the
+            length alone does not tell you whether the generator is suitable. FIPS 203 requires an
+            approved random bit generator with at least 192-bit security strength for ML-KEM-768.
+            Read the generator&rsquo;s documented strength and approval evidence rather than infer
+            them from the output length. An algorithm test matching the expected output does not, by
+            itself, establish that the randomness source meets its requirements.
+          </p>
+          <p data-testid="mldsa-two-inputs" className="text-xs text-foreground/80 mb-3">
+            <strong>ML-DSA uses randomness for two different purposes.</strong> Creating the key
+            pair uses a fresh 32-byte seed (ξ) that must come from an approved random bit generator
+            &mdash; for example, at least 192-bit strength for ML-DSA-65 (FIPS 204 §3.6.1). Signing
+            in the default hedged mode uses an additional fresh 32-byte value (rnd) that helps
+            protect against side-channel and fault attacks. An approved generator is recommended,
+            but other methods of generating fresh random values are allowed, with no numerical
+            minimum strength; it must be generated inside the signing module (§5.4). Both inputs are
+            32 bytes long, but their generator requirements are not the same. The flexibility
+            allowed for the signing input does not apply to key generation. The table below gives
+            the rule for every parameter set.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">

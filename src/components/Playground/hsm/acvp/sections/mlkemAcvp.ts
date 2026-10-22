@@ -22,9 +22,12 @@
 //     buffer boundaries at the PKCS#11 interface, exact CK_RV pinned per engine.
 //
 // Details text never prints a shared secret or private key byte: a mismatch is
-// reported as a position, not a value (D1-4).
+// reported as a position, not a value (D1-4). The execution log additionally
+// exposes expected/computed k ONLY for the pinned public NIST decapsulation
+// samples below, for learning. Never use this for user-provided keys or data.
 import { shake256 } from '@noble/hashes/sha3.js'
 import { hexToBytes } from '@/utils/dataInputUtils'
+import { logByteComparison } from '../comparisonLog'
 import {
   rvName,
   hsm_extractKeyValue,
@@ -377,6 +380,14 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
         const dk = new Uint8Array(hsm_extractKeyValue(M, hSession, pair.priv))
         const ekDiff = firstDiff(ek, hexToBytes(t.ek))
         const dkDiff = firstDiff(dk, hexToBytes(t.dk))
+        logByteComparison(addLog, `[${eName}] [id:${id}]`, ek, t.ek, 'public encapsulation key')
+        logByteComparison(
+          addLog,
+          `[${eName}] [id:${id}]`,
+          dk,
+          t.dk,
+          'private decapsulation key from public test vector'
+        )
         const ok = ekDiff === 'identical' && dkDiff === 'identical'
         const observed = ok ? 'byte-equal' : `ek: ${ekDiff}; dk: ${dkDiff}`
         await pushResult({
@@ -495,6 +506,14 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
             caseMeta: { ...meta, observed },
           })
           addLog(`[${eName}] [id:${id}] ${ps} ${testCase}: ${ok ? 'PASS' : 'FAIL'}`)
+          addLog(
+            `[${eName}] [id:${id}] Public NIST test-vector comparison (hex; not production secrets)\n` +
+              `  Source: ${srcTag(VAL)} · tg${g.tgId}/tc${t.tcId}\n` +
+              `  Expected k (${hexToBytes(t.k!).length} bytes): ${t.k!.toLowerCase()}\n` +
+              `  Computed k (${k.length} bytes): ${Array.from(k, (b) => b.toString(16).padStart(2, '0')).join('')}\n` +
+              `  Comparison: ${ok ? 'MATCH — byte for byte' : `MISMATCH — ${diff}`}\n` +
+              `  Expected meaning: ${modified ? 'implicit-rejection fallback secret' : 'valid-ciphertext shared secret'}`
+          )
         } catch (err: unknown) {
           const msg = err instanceof Error ? err.message : String(err)
           await pushResult({

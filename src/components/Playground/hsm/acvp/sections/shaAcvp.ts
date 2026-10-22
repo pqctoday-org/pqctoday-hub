@@ -16,7 +16,6 @@ import { srcOf, srcTag, unsupportedReason, type AcvpCaseMeta, type Provenance } 
 import {
   WSE_MECH,
   digestRv,
-  eqHex,
   hexUp,
   runRow,
   skipRow,
@@ -153,7 +152,7 @@ export async function runShaAcvpSection(ctx: ClassicalSectionCtx): Promise<void>
         testCase,
         meta,
         source: srcTag(P),
-        exec: () => {
+        exec: (compare) => {
           let failure: string | null = null
           const digest = (m: Uint8Array): Uint8Array => {
             const r = digestRv(M, h, mech!, m)
@@ -173,7 +172,7 @@ export async function runShaAcvpSection(ctx: ClassicalSectionCtx): Promise<void>
             const o = failure ?? (e instanceof Error ? e.message : String(e))
             return { ok: false, observed: o, details: o }
           }
-          const ok = eqHex(out, want)
+          const ok = compare(out, want, 'digest')
           return {
             ok,
             observed: ok ? 'byte-equal' : `md ${hexUp(out)}`,

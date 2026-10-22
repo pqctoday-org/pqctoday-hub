@@ -29,7 +29,6 @@ import {
 import { pinnedVerdict, type PinnedRv } from './pkcs11Raw'
 import {
   cryptRv,
-  eqHex,
   hexUp,
   importSecretRv,
   pGcm,
@@ -121,7 +120,7 @@ export async function runAesGcmAcvpSection(ctx: ClassicalSectionCtx): Promise<vo
         testCase,
         meta,
         source: srcTag(P),
-        exec: () => {
+        exec: (compare) => {
           const k = importSecretRv(M, h, CKK_AES, hexToBytes(t.key), {
             encrypt: true,
             decrypt: true,
@@ -142,7 +141,7 @@ export async function runAesGcmAcvpSection(ctx: ClassicalSectionCtx): Promise<vo
                 const o = `${r.step} → ${rvName(r.rv)}`
                 return { ok: false, observed: o, details: o }
               }
-              const ok = eqHex(r.out, t.ct + t.tag)
+              const ok = compare(r.out, t.ct + t.tag, 'ciphertext || tag')
               return {
                 ok,
                 observed: ok ? 'byte-equal' : `ct||tag ${hexUp(r.out)}`,
@@ -157,7 +156,7 @@ export async function runAesGcmAcvpSection(ctx: ClassicalSectionCtx): Promise<vo
                 const o = `${r.step} → ${rvName(r.rv)}`
                 return { ok: false, observed: o, details: `${o} — NIST case is valid` }
               }
-              const ok = eqHex(r.out, t.pt)
+              const ok = compare(r.out, t.pt, 'plaintext')
               return {
                 ok,
                 observed: ok ? 'byte-equal' : `pt ${hexUp(r.out)}`,

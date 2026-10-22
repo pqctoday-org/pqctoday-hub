@@ -136,7 +136,7 @@ export function calculateJWTSize(
 // Real sign/verify for the API Security & JWT workshop.
 //
 // Algorithms follow RFC 9964 (ML-DSA for JOSE and COSE, published May 2026)
-// and draft-ietf-jose-pq-composite-sigs-04 for the hybrid family.
+// and draft-ietf-jose-pq-composite-sigs-06 for the hybrid family.
 //
 // Two backends are supported:
 //   - 'noble'    — @noble/post-quantum + @noble/curves (pure JS)
@@ -154,9 +154,10 @@ export type JwsAlg =
   | 'SLH-DSA-SHAKE-128s'
   | 'SLH-DSA-SHA2-192s'
   | 'SLH-DSA-SHA2-256s'
-  // draft-ietf-jose-pq-composite-sigs-04 Table 5 (all 6 JOSE composite algs)
+  // draft-ietf-jose-pq-composite-sigs-06 Table 4 (all 7 JOSE composite algs)
   | 'ML-DSA-44-ES256'
   | 'ML-DSA-65-ES256'
+  | 'ML-DSA-65-ES384'
   | 'ML-DSA-87-ES384'
   | 'ML-DSA-44-Ed25519'
   | 'ML-DSA-65-Ed25519'
@@ -165,6 +166,7 @@ export type JwsAlg =
 export type CompositeAlg =
   | 'ML-DSA-44-ES256'
   | 'ML-DSA-65-ES256'
+  | 'ML-DSA-65-ES384'
   | 'ML-DSA-87-ES384'
   | 'ML-DSA-44-Ed25519'
   | 'ML-DSA-65-Ed25519'
@@ -276,10 +278,17 @@ const slhDsaParamSet = (): Record<SlhDsaAlg, number> => ({
   'SLH-DSA-SHA2-256s': CKP_SLH_DSA_SHA2_256S,
 })
 
-// ── Composite-sig wire format (draft-ietf-jose-pq-composite-sigs-04) ────────
+// ── Composite-sig wire format (draft-ietf-jose-pq-composite-sigs-06) ────────
 //
 // Conformance is checked against the draft's own Appendix A.1 JOSE examples
-// (src/data/acvp/composite-sigs-04-jose-examples.json) — all six algorithms.
+// (src/data/acvp/composite-sigs-06-jose-examples.json) — all seven algorithms.
+//
+// -06 (October 2026) no longer restates the algorithm: §4 defers key
+// generation, signing, verification and serialization to
+// draft-ietf-lamps-pq-composite-sigs, and §4.1 fixes the JOSE/COSE context
+// string to empty, which gives the same M' as below. -06 adds ML-DSA-65-ES384.
+// Section numbers below are -04's (§4.1-§4.4 are now -06 §4/§4.1; §4.5.x is
+// now §4.2.x).
 //
 // §4.4 (Encoding Rules): byte streams of the keys and signatures are directly
 // concatenated, ML-DSA first then traditional. The ML-DSA part is fixed-length,
@@ -294,8 +303,8 @@ const slhDsaParamSet = (): Record<SlhDsaAlg, number> => ({
 //
 // §4.2 Composite Sign:
 //   Prefix = "CompositeAlgorithmSignatures2025"  (32 bytes ASCII)
-//   Label  = per-alg COMPSIG-* string from Table 7
-//   PH(M)  = pre-hash per Table 5 (SHA256 / SHA512 / SHAKE256)
+//   Label  = per-alg COMPSIG-* string from Table 7 (-06: Table 6)
+//   PH(M)  = pre-hash per Table 5 (-06: Table 4) (SHA256 / SHA512 / SHAKE256)
 //   M'     = Prefix || Label || 0x00 || PH(M)
 //   "M' is signed as a raw octet string in both JOSE and COSE." (-01 and -02
 //   base64url-encoded M' for JOSE; -03 dropped that, and this code did not
@@ -343,6 +352,15 @@ const COMPOSITE_SPECS: Record<CompositeAlg, CompositeSpec> = {
     label: new TextEncoder().encode('COMPSIG-MLDSA65-ECDSA-P256-SHA512'),
     preHash: 'SHA512',
     traditional: 'ecdsa-p256',
+  },
+  'ML-DSA-65-ES384': {
+    mlDsaVariant: 65,
+    mlDsaPkLen: 1952,
+    mlDsaSigLen: 3309,
+    tradPkLen: 97,
+    label: new TextEncoder().encode('COMPSIG-MLDSA65-ECDSA-P384-SHA512'),
+    preHash: 'SHA512',
+    traditional: 'ecdsa-p384',
   },
   'ML-DSA-87-ES384': {
     mlDsaVariant: 87,
@@ -516,7 +534,7 @@ function traditionalVerify(
 }
 
 /**
- * Composite sign per draft-ietf-jose-pq-composite-sigs-04 §4.2.
+ * Composite sign per draft-ietf-jose-pq-composite-sigs-06 §4 (sign per draft-ietf-lamps-pq-composite-sigs).
  *   M' = Prefix || Label || 0x00 || PH(signing_input)   (raw octets)
  *   ML-DSA signs M' with ctx=Label, using the key re-derived from its seed;
  *   the traditional component signs M'; output = ML-DSA sig || trad sig.
@@ -649,7 +667,7 @@ export async function generateJwsKeyPair(opts: {
   }
 
   if (isComposite(alg)) {
-    // Composite key per draft-ietf-jose-pq-composite-sigs-04 §4.1: ML-DSA
+    // Composite key per draft-ietf-jose-pq-composite-sigs-06 §4.1 (encoding per draft-ietf-lamps-pq-composite-sigs): ML-DSA
     // component first, then traditional. The private key holds the 32-byte
     // ML-DSA seed, not the expanded key, so it is also the AKP `priv` value.
     const spec = COMPOSITE_SPECS[alg]

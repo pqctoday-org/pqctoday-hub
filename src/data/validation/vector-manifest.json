@@ -38,7 +38,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -1008,7 +1008,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -1300,7 +1300,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -1532,7 +1532,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -1866,7 +1866,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -3657,7 +3657,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -5159,26 +5159,26 @@
       "publishabilityGaps": []
     },
     {
-      "id": "composite-sigs-04-jose-examples",
-      "path": "src/data/acvp/composite-sigs-04-jose-examples.json",
-      "sha256": "16df11a7605e7b0a08488c6d036e56267f080317f4b8499296af94e9faa6b652",
+      "id": "composite-sigs-06-jose-examples",
+      "path": "src/data/acvp/composite-sigs-06-jose-examples.json",
+      "sha256": "8487123a842fee3495124acf3912a77b1b2f3534fb96ac75a585b1483a538e83",
       "status": "quarantined",
       "evidenceClass": "published-standard-kat",
       "source": {
         "kind": "published-document",
         "documentStatus": "internet-draft",
-        "citation": "draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 (JOSE examples, all six composite algorithms) — an Internet-Draft (work in progress), not an RFC",
-        "url": "https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt",
-        "revision": "draft-ietf-jose-pq-composite-sigs-04",
+        "citation": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 (JOSE examples, all seven composite algorithms) — an Internet-Draft (work in progress), not an RFC",
+        "url": "https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-06.txt",
+        "revision": "draft-ietf-jose-pq-composite-sigs-06",
         "verification": {
-          "date": "2026-10-01",
-          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py (fetch_bytes_resilient); the archived text is hashed below. Mechanical RFC 8792 line-unwrapping of Appendix A.1 from the archived draft text. Each example then checked for internal consistency: the JWS signature segment equals raw_composite_signature, jwk.pub equals raw_composite_public_key, raw_to_be_signed equals the JWS signing input. The ML-DSA and traditional public keys re-derive from the printed seeds.",
+          "date": "2026-10-22",
+          "method": "Fetched 2026-10-22 from the IETF archive; the archived text is hashed below. Mechanical RFC 8792 line-unwrapping of Appendix A.1 from the archived draft text. Each example then checked for internal consistency: the JWS signature segment equals raw_composite_signature, jwk.pub equals raw_composite_public_key, raw_to_be_signed equals the JWS signing input. The ML-DSA and traditional public keys re-derive from the printed seeds.",
           "result": "match",
           "evidence": [
             {
-              "title": "draft-ietf-jose-pq-composite-sigs-04",
-              "url": "https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt",
-              "sha256": "6c4288d87a14eddf8c9eaa2453edb6ea96d7134fa8673c19910048bac3315de6"
+              "title": "draft-ietf-jose-pq-composite-sigs-06",
+              "url": "https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-06.txt",
+              "sha256": "ca22076b1e405ef97a0301169eb2f03f1f3fa856dae1adbea227802f2718a8f2"
             }
           ]
         }
@@ -5195,11 +5195,11 @@
       ],
       "cases": [
         {
-          "caseId": "composite-sigs-04-jose-examples#/vectors/0",
+          "caseId": "composite-sigs-06-jose-examples#/vectors/0",
           "pointer": "/vectors/0",
           "algorithm": {
             "name": "Composite ML-DSA JWS",
-            "revision": "draft-ietf-jose-pq-composite-sigs-04"
+            "revision": "draft-ietf-jose-pq-composite-sigs-06"
           },
           "operation": "jws-verify",
           "parameters": {
@@ -5208,16 +5208,16 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 ML-DSA-44-ES256 JOSE example"
+            "label": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 ML-DSA-44-ES256 JOSE example"
           },
-          "lineage": ["composite-sigs-04-jose-examples-1"]
+          "lineage": ["composite-sigs-06-jose-examples-1"]
         },
         {
-          "caseId": "composite-sigs-04-jose-examples#/vectors/1",
+          "caseId": "composite-sigs-06-jose-examples#/vectors/1",
           "pointer": "/vectors/1",
           "algorithm": {
             "name": "Composite ML-DSA JWS",
-            "revision": "draft-ietf-jose-pq-composite-sigs-04"
+            "revision": "draft-ietf-jose-pq-composite-sigs-06"
           },
           "operation": "jws-verify",
           "parameters": {
@@ -5226,16 +5226,16 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 ML-DSA-44-Ed25519 JOSE example"
+            "label": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 ML-DSA-44-Ed25519 JOSE example"
           },
-          "lineage": ["composite-sigs-04-jose-examples-1"]
+          "lineage": ["composite-sigs-06-jose-examples-1"]
         },
         {
-          "caseId": "composite-sigs-04-jose-examples#/vectors/2",
+          "caseId": "composite-sigs-06-jose-examples#/vectors/2",
           "pointer": "/vectors/2",
           "algorithm": {
             "name": "Composite ML-DSA JWS",
-            "revision": "draft-ietf-jose-pq-composite-sigs-04"
+            "revision": "draft-ietf-jose-pq-composite-sigs-06"
           },
           "operation": "jws-verify",
           "parameters": {
@@ -5244,16 +5244,34 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 ML-DSA-65-ES256 JOSE example"
+            "label": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 ML-DSA-65-ES256 JOSE example"
           },
-          "lineage": ["composite-sigs-04-jose-examples-1"]
+          "lineage": ["composite-sigs-06-jose-examples-1"]
         },
         {
-          "caseId": "composite-sigs-04-jose-examples#/vectors/3",
+          "caseId": "composite-sigs-06-jose-examples#/vectors/3",
           "pointer": "/vectors/3",
           "algorithm": {
             "name": "Composite ML-DSA JWS",
-            "revision": "draft-ietf-jose-pq-composite-sigs-04"
+            "revision": "draft-ietf-jose-pq-composite-sigs-06"
+          },
+          "operation": "jws-verify",
+          "parameters": {
+            "alg": "ML-DSA-65-ES384"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 ML-DSA-65-ES384 JOSE example"
+          },
+          "lineage": ["composite-sigs-06-jose-examples-1"]
+        },
+        {
+          "caseId": "composite-sigs-06-jose-examples#/vectors/4",
+          "pointer": "/vectors/4",
+          "algorithm": {
+            "name": "Composite ML-DSA JWS",
+            "revision": "draft-ietf-jose-pq-composite-sigs-06"
           },
           "operation": "jws-verify",
           "parameters": {
@@ -5262,16 +5280,16 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 ML-DSA-65-Ed25519 JOSE example"
+            "label": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 ML-DSA-65-Ed25519 JOSE example"
           },
-          "lineage": ["composite-sigs-04-jose-examples-1"]
+          "lineage": ["composite-sigs-06-jose-examples-1"]
         },
         {
-          "caseId": "composite-sigs-04-jose-examples#/vectors/4",
-          "pointer": "/vectors/4",
+          "caseId": "composite-sigs-06-jose-examples#/vectors/5",
+          "pointer": "/vectors/5",
           "algorithm": {
             "name": "Composite ML-DSA JWS",
-            "revision": "draft-ietf-jose-pq-composite-sigs-04"
+            "revision": "draft-ietf-jose-pq-composite-sigs-06"
           },
           "operation": "jws-verify",
           "parameters": {
@@ -5280,16 +5298,16 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 ML-DSA-87-ES384 JOSE example"
+            "label": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 ML-DSA-87-ES384 JOSE example"
           },
-          "lineage": ["composite-sigs-04-jose-examples-1"]
+          "lineage": ["composite-sigs-06-jose-examples-1"]
         },
         {
-          "caseId": "composite-sigs-04-jose-examples#/vectors/5",
-          "pointer": "/vectors/5",
+          "caseId": "composite-sigs-06-jose-examples#/vectors/6",
+          "pointer": "/vectors/6",
           "algorithm": {
             "name": "Composite ML-DSA JWS",
-            "revision": "draft-ietf-jose-pq-composite-sigs-04"
+            "revision": "draft-ietf-jose-pq-composite-sigs-06"
           },
           "operation": "jws-verify",
           "parameters": {
@@ -5298,21 +5316,22 @@
           "testType": "published-example",
           "expectation": "positive",
           "upstream": {
-            "label": "draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 ML-DSA-87-Ed448 JOSE example"
+            "label": "draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 ML-DSA-87-Ed448 JOSE example"
           },
-          "lineage": ["composite-sigs-04-jose-examples-1"]
+          "lineage": ["composite-sigs-06-jose-examples-1"]
         }
       ],
       "lineage": [
         {
-          "id": "composite-sigs-04-jose-examples-1",
+          "id": "composite-sigs-06-jose-examples-1",
           "appliesTo": [
-            "composite-sigs-04-jose-examples#/vectors/0",
-            "composite-sigs-04-jose-examples#/vectors/1",
-            "composite-sigs-04-jose-examples#/vectors/2",
-            "composite-sigs-04-jose-examples#/vectors/3",
-            "composite-sigs-04-jose-examples#/vectors/4",
-            "composite-sigs-04-jose-examples#/vectors/5"
+            "composite-sigs-06-jose-examples#/vectors/0",
+            "composite-sigs-06-jose-examples#/vectors/1",
+            "composite-sigs-06-jose-examples#/vectors/2",
+            "composite-sigs-06-jose-examples#/vectors/3",
+            "composite-sigs-06-jose-examples#/vectors/4",
+            "composite-sigs-06-jose-examples#/vectors/5",
+            "composite-sigs-06-jose-examples#/vectors/6"
           ],
           "upstreamOperation": "JWS example produced by the draft authors (ML-DSA seed of 32 zero bytes; ECDSA d = 1 or the RFC 8032 EdDSA seed printed with each example)",
           "localOperation": "jws-verify (verifyJWS on the published token under the published AKP public key), plus re-derivation of the public key from the seeds and byte-comparison of the deterministic signature parts (compositeKat.test.ts)",
@@ -5326,7 +5345,7 @@
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "Added 2026-10-01 (api-security-jwt remediation) to replace the self-pinned composite-sigs-jose-kat snapshot. QUARANTINED pending the WS-I two-person vector-source review: it is a contributed file, so it needs src/data/validation/reviews/<id>.review.json (two named reviewers) before it may be promoted to active. Class is published-standard-kat but documentStatus is internet-draft: a claim must name the draft, never call it a standard.",
+      "notes": "Added 2026-10-22 when the JOSE workshop moved to -06 (owner: \"fix the gaps\"). -06 defers the composite process to draft-ietf-lamps-pq-composite-sigs with an empty JOSE context (same M' as -04) and adds ML-DSA-65-ES384. Replaces composite-sigs-04-jose-examples (deleted, in git history), as the -04 move replaced its predecessor.",
       "statusReason": "Contributed 2026-10-01; awaiting the WS-I two-person vector-source review before promotion to active."
     },
     {
@@ -5510,7 +5529,7 @@
       "source": {
         "kind": "published-document",
         "documentStatus": "internet-draft",
-        "citation": "draft-ietf-cose-dilithium-11 Appendix A.1 (JOSE examples, ML-DSA-44/65/87) \u2014 an Internet-Draft (work in progress), not an RFC",
+        "citation": "draft-ietf-cose-dilithium-11 Appendix A.1 (JOSE examples, ML-DSA-44/65/87) — an Internet-Draft (work in progress), not an RFC",
         "url": "https://www.ietf.org/archive/id/draft-ietf-cose-dilithium-11.txt",
         "revision": "draft-ietf-cose-dilithium-11",
         "verification": {
@@ -5662,7 +5681,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -6185,7 +6204,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -7402,7 +7421,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -10514,7 +10533,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -10609,7 +10628,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -10983,7 +11002,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -11733,7 +11752,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -12450,7 +12469,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -13258,7 +13277,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13282,7 +13301,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13306,7 +13325,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13330,7 +13349,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13354,7 +13373,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13378,7 +13397,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13402,7 +13421,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13426,7 +13445,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13450,7 +13469,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13474,7 +13493,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13498,7 +13517,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13522,7 +13541,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13546,7 +13565,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13570,7 +13589,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13594,7 +13613,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13618,7 +13637,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13642,7 +13661,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13666,7 +13685,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13690,7 +13709,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13714,7 +13733,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13738,7 +13757,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13762,7 +13781,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13786,7 +13805,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13810,7 +13829,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13834,7 +13853,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13858,7 +13877,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13882,7 +13901,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13906,7 +13925,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13930,7 +13949,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -13954,7 +13973,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId \u2014 every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
             }
           ]
         }
@@ -14206,7 +14225,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -15662,7 +15681,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15689,7 +15708,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15716,7 +15735,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15742,7 +15761,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15769,7 +15788,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15796,7 +15815,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15823,7 +15842,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15850,7 +15869,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15876,7 +15895,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15903,7 +15922,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15930,7 +15949,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them \u2014 not claimed."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Per digest (all 11 HMAC digests both engines advertise), from the single upstream AFT group, excluding tcIds already carried by hmac_test/hmac_sha384_test/hmac_sha512_test: the case with the shortest key, the longest key, the shortest message (0 bytes where present), the longest message, the shortest MAC and the longest MAC, de-duplicated, ties by lowest tcId. The pinned upstream samples register macLen 80..160 bits only, so no full-length (untruncated) HMAC tag and no CKM_<hash>_HMAC (non-general) case exists in them — not claimed."
             },
             {
               "type": "field-add",
@@ -15976,7 +15995,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -16066,7 +16085,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -16156,7 +16175,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -17359,7 +17378,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -20317,7 +20336,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -20408,7 +20427,7 @@
       "source": {
         "kind": "published-document",
         "documentStatus": "nist-example-set",
-        "citation": "NIST CSRC Cryptographic Standards and Guidelines examples: KMAC_samples.pdf Sample #1 (KMAC128) and Sample #4 (KMAC256) \u2014 the SP 800-185 example set; SP 800-185 itself prints no KMAC outputs",
+        "citation": "NIST CSRC Cryptographic Standards and Guidelines examples: KMAC_samples.pdf Sample #1 (KMAC128) and Sample #4 (KMAC256) — the SP 800-185 example set; SP 800-185 itself prints no KMAC outputs",
         "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/KMAC_samples.pdf",
         "revision": null,
         "verification": {
@@ -20551,7 +20570,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -20906,7 +20925,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -21081,7 +21100,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -21568,7 +21587,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -22059,7 +22078,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -22439,7 +22458,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -24540,7 +24559,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -25555,7 +25574,7 @@
             "mldsa_sigver_test#/localMutations/0",
             "mldsa_sigver_test#/localMutations/1"
           ],
-          "upstreamOperation": "none \u2014 the upstream sigVer file provides no modified-public-key or modified-context cases (file negative_classes_not_upstream)",
+          "upstreamOperation": "none — the upstream sigVer file provides no modified-public-key or modified-context cases (file negative_classes_not_upstream)",
           "localOperation": "sigVer (expect CKR_SIGNATURE_INVALID)",
           "transformations": [
             {
@@ -25637,7 +25656,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -25874,7 +25893,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -26424,7 +26443,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -27620,7 +27639,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -28065,7 +28084,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -28318,7 +28337,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -28704,7 +28723,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -29284,7 +29303,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -29903,7 +29922,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express \u2014 PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits \u2014 the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
             }
           ]
         },
@@ -29926,7 +29945,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express \u2014 PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits \u2014 the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
             }
           ]
         },
@@ -29949,7 +29968,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express \u2014 PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits \u2014 the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
             }
           ]
         },
@@ -29972,7 +29991,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express \u2014 PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits \u2014 the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. For each (modulus, sigType, hashAlg, maskFunction, saltLen) combination PKCS#11 v3.2 can express — PKCS#1 v1.5 with SHA2-256 at 2048/3072/4096 bits and PSS with SHA3-256 + MGF1 at 2048 bits — the first upstream group (one public exponent) with all 6 of its cases (1 valid + message, key, signature, IR-trailer and IR-location modifications). PSS groups hashing with SHAKE-128/256 or masking with SHAKE-128/256 are listed in notExecuted: PKCS#11 v3.2 has no RSA mechanism or CKG_MGF for them."
             }
           ]
         }
@@ -30015,7 +30034,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -30212,7 +30231,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -30363,7 +30382,7 @@
           "kind": "shared-upstream-value",
           "cases": ["sha384_test#/testGroups/0/tests/0"],
           "fields": ["md"],
-          "note": "Digest of the empty message \u2014 a well-known constant this hook carries independently; not derived from the vector file."
+          "note": "Digest of the empty message — a well-known constant this hook carries independently; not derived from the vector file."
         }
       ],
       "publishabilityGaps": []
@@ -30402,7 +30421,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -30564,7 +30583,7 @@
           "kind": "shared-upstream-value",
           "cases": ["sha3_256_test#/testGroups/0/tests/0"],
           "fields": ["md"],
-          "note": "Digest of the empty message \u2014 a well-known constant this hook carries independently; not derived from the vector file."
+          "note": "Digest of the empty message — a well-known constant this hook carries independently; not derived from the vector file."
         }
       ],
       "publishabilityGaps": []
@@ -30603,7 +30622,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -30782,7 +30801,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -31018,7 +31037,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -32606,7 +32625,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -33162,7 +33181,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -34390,7 +34409,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -35503,7 +35522,7 @@
         },
         "verification": {
           "date": "2026-09-26",
-          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) \u2014 checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
+          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) — checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
           "result": "match",
           "evidence": [
             {
@@ -35516,7 +35535,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -37260,7 +37279,7 @@
         },
         "verification": {
           "date": "2026-09-26",
-          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) \u2014 checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
+          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) — checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
           "result": "match",
           "evidence": [
             {
@@ -37273,7 +37292,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -39017,7 +39036,7 @@
         },
         "verification": {
           "date": "2026-09-26",
-          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) \u2014 checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
+          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) — checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
           "result": "match",
           "evidence": [
             {
@@ -39030,7 +39049,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -39401,7 +39420,7 @@
         },
         "verification": {
           "date": "2026-09-26",
-          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) \u2014 checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
+          "method": "Recomputed the SHA-256 of the upstream file staged at the pinned commit: it equals the recorded upstreamSha256, and every field of every local case is byte-equal to the upstream case with the same tgId/tcId (no renumbering, no re-derivation) — checked programmatically for all 144 cases of the four slhdsa_prehash_* files.",
           "result": "match",
           "evidence": [
             {
@@ -39414,7 +39433,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -39798,7 +39817,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -40334,7 +40353,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -40577,7 +40596,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [
@@ -41012,7 +41031,7 @@
         }
       },
       "license": {
-        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice \u2014 use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
+        "note": "usnistgov/ACVP-Server README 'License' section at the pinned commit: NIST-developed software notice — use, copy and distribute permitted with the notice kept intact; modified works should carry a notice of the change and date; acknowledge NIST as the source; NIST-employee work is not subject to US copyright. The local file is a modified subset (see lineage).",
         "reviewed": true
       },
       "caseContainers": [

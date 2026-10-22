@@ -16,19 +16,19 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "17d4ae2f579ae006e69a8821832a2d1f72eaa76363bef218465b54febb6b5769",
+    "public/data/validation/coverage-matrix.json": "edc0851e89be716f1877f963ccc67089d72deae38053064b2e2a4b8410591658",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/native-conformance.generated.json": "098981d3ccaa95a89f7cc33c699d2b50aade7580e392e4dc95af0f60b84b8a88",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "b3bf680b0962890bfc9d803fa67a01b41e3ecf02369f7bef01f937783e3cefbc",
     "src/data/validation/run-results/wasm-node-katRunner.json": "f9a037d1eda294fb36bb240849cba78062e94d4e9cce257b8541be21a6b84cf7",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "fcdf1102dc8b1f30ca25c4a425d02b43c3272feff17fdc8a0df3d5508ad7822f",
-    "src/data/validation/validation-counts.generated.json": "2c3c06565f30bc0d41da0223c63cbd3af94aa9b9556aa605b1e23cdbf2ed9ca4",
-    "src/data/validation/vector-manifest.json": "f52edeb6ac35dd795fb9800f30d1b67fc59e9340f1b6dac75207144f6778c286"
+    "src/data/validation/validation-counts.generated.json": "0c81c8e04d7d24910d2a4b686586f48644298b8d5f83182836e8c5ab540edf48",
+    "src/data/validation/vector-manifest.json": "c8cc3e89a478981c3a6de1b494a0b9bd49550d762b4eb68704384a3928b73791"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "a66f85bd5fc80426d6f902bbe58bc5be0cb244c352223b196c0f7dae3c834df8",
+    "manifestCanonicalSha256": "b72af4dd2095c4ba9ed82a7aa7dcfc47203ad6535b9221e790614ffb3a8000d8",
     "nistReferenceSampleFiles": 53,
     "nistReferenceSampleCases": 964,
     "vectorFiles": {
@@ -48,9 +48,9 @@
       "unverified": 0
     },
     "cases": {
-      "total": 5295,
+      "total": 5296,
       "active": 5241,
-      "quarantined": 54
+      "quarantined": 55
     },
     "activeCasesByClass": {
       "nist-acvp-reference-sample": 964,
@@ -3348,7 +3348,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "93 active vector files, 0 without provenance; 54 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1."
+      "basis": "93 active vector files, 0 without provenance; 55 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1."
     },
     {
       "n": 3,

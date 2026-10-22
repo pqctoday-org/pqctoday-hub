@@ -1131,7 +1131,7 @@
     "crypto-product-certification": [
       {
         "id": "four-questions",
-        "label": "Four schemes, four questions"
+        "label": "Standards, evaluation criteria and certification schemes"
       },
       {
         "id": "scope-before-level",
@@ -2584,7 +2584,7 @@
       {
         "id": "cc-claim-decoder",
         "label": "Decode the certificate claim",
-        "paths": ["cc"]
+        "paths": ["cc", "eucc"]
       },
       {
         "id": "eidas-trace",

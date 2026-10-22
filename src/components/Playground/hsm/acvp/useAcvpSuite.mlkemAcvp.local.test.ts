@@ -93,6 +93,7 @@ vi.mock('../HsmContext', async () => {
   }
 })
 
+let lastRunLogs: string[] = []
 const runMlKem = async (): Promise<TestResult[]> => {
   const { useAcvpSuite } = await import('./useAcvpSuite')
   const { result } = renderHook(() => useAcvpSuite())
@@ -105,6 +106,7 @@ const runMlKem = async (): Promise<TestResult[]> => {
   )
   const critical = result.current.logs.filter((l) => /Critical Error/.test(l))
   if (critical.length > 0) throw new Error(critical.join('\n'))
+  lastRunLogs = [...result.current.logs]
   return out
 }
 
@@ -169,6 +171,30 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
           if (t.reason === 'modified ciphertext') modified++
         }
     expect(modified).toBe(12) // 2 per parameter set × 3 × 2 engines
+  })
+
+  it('logs expected and computed public sample secrets with case identity and comparison', () => {
+    const val = readVectors('mlkem_encapdecap_val_test.json')
+    const comparisons = lastRunLogs.filter((l) => l.includes('Public NIST test-vector comparison'))
+    expect(comparisons).toHaveLength(24)
+    for (const engine of ['C++', 'Rust'])
+      for (const g of val.testGroups.filter(
+        (g: { function: string }) => g.function === 'decapsulation'
+      ))
+        for (const t of g.tests) {
+          const id = `mlkem-decap-val-${g.parameterSet}-tg${g.tgId}-tc${t.tcId}-${engine}`
+          const log = comparisons.find((l) => l.includes(`[id:${id}]`))!
+          expect(log).toContain(`Expected k (32 bytes): ${t.k.toLowerCase()}`)
+          expect(log).toContain(`Computed k (32 bytes): ${t.k.toLowerCase()}`)
+          expect(log).toContain('MATCH — byte for byte')
+          expect(log).toContain('Source:')
+          expect(log).toContain(
+            t.reason === 'modified ciphertext'
+              ? 'implicit-rejection fallback secret'
+              : 'valid-ciphertext shared secret'
+          )
+          expect(log).not.toContain(t.dk.toLowerCase())
+        }
   })
 
   it('C++ enforces the FIPS 203 key checks on every NIST VAL key', () => {
@@ -285,6 +311,7 @@ describe('ML-KEM reference samples — sabotaged expectations fail', () => {
     const val = readVectors('mlkem_encapdecap_val_test.json')
     const decap = val.testGroups[0]
     const modCase = decap.tests.find((t: { reason: string }) => t.reason === 'modified ciphertext')
+    const originalK = modCase.k
     modCase.k = flipHex(modCase.k) // claim a different implicit-rejection value
     const dkc = val.testGroups.find(
       (g: { function: string }) => g.function === 'decapsulationKeyCheck'
@@ -309,6 +336,12 @@ describe('ML-KEM reference samples — sabotaged expectations fail', () => {
         )
         expect(d?.status).toBe('fail')
         expect(d?.details).toMatch(/value not shown/)
+        const comparison = lastRunLogs.find((l) =>
+          l.includes(`[id:${d!.id}] Public NIST test-vector comparison`)
+        )!
+        expect(comparison).toContain(`Expected k (32 bytes): ${modCase.k.toLowerCase()}`)
+        expect(comparison).toContain(`Computed k (32 bytes): ${originalK.toLowerCase()}`)
+        expect(comparison).toContain('MISMATCH — first difference at byte 0')
         const c = row(
           `mlkem-keycheck-dk-${dkc.parameterSet}-tg${dkc.tgId}-tc${validKey.tcId}-${engine}`
         )

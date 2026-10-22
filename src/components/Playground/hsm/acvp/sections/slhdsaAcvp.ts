@@ -24,6 +24,7 @@
 //     injected), backed by the runtime C_GetMechanismList.
 import slhdsaCtxTestVectors from '@/data/acvp/slhdsa_ctx_test.json'
 import { hexToBytes } from '@/utils/dataInputUtils'
+import { logByteComparison } from '../comparisonLog'
 import {
   rvName,
   hsm_importSLHDSAPublicKey,
@@ -480,6 +481,7 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
       )
       if (!s.sig) throw new Error(`${s.step} → ${rvName(s.rv)}`)
       const diff = firstDiff(s.sig, hexToBytes(c.signature))
+      logByteComparison(addLog, `[${eName}] [id:${id}]`, s.sig, c.signature, 'signature')
       const ok = diff === 'identical'
       await pushResult({
         id,

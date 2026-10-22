@@ -242,7 +242,7 @@ export const D4_DATASETS: readonly D4DatasetSpec[] = [
     seed: seedFor(1),
     parameters: { samples: SEQUENTIAL_SAMPLES, p1: 0.75 },
     teachingNote:
-      'Independent but biased bits, P(1)=0.75: the true min-entropy is -log2(0.75) ≈ 0.415 bit/sample. The estimators should land near, and not above, that value.',
+      'Repeatable simulation: ones occur about 75% of the time. Always guessing “1” therefore succeeds more often than with equally likely bits. For an ideal independent source, this lowers min-entropy from 1 to about 0.415 bits per sample.',
     build: () => genBiasedBits(SEQUENTIAL_SAMPLES, 0.75, seedFor(1)),
   },
   {

@@ -232,7 +232,12 @@ const COMPARISON_ROWS = [
   { label: 'Standard', lms: 'SP 800-208', slhdsa: 'FIPS 205', mldsa: 'FIPS 204' },
   { label: 'Basis', lms: 'Hash function', slhdsa: 'Hash function', mldsa: 'Lattice' },
   { label: 'Statefulness', lms: 'Stateful', slhdsa: 'Stateless', mldsa: 'Stateless' },
-  { label: 'Max signatures', lms: 'Bounded (2^h)', slhdsa: 'Unlimited', mldsa: 'Unlimited' },
+  {
+    label: 'Signing capacity / analysis scope',
+    lms: 'Bounded (2^h)',
+    slhdsa: 'At most 2^64 messages/key in the FIPS 205 §11 security analysis; no leaf counter',
+    mldsa: 'No leaf-exhaustion counter (not an unlimited-use claim)',
+  },
   { label: 'Pub key (L3)', lms: '60 B', slhdsa: '48 B', mldsa: '1,952 B' },
   { label: 'Signature (L3)', lms: '2,644 B', slhdsa: '16,224 B', mldsa: '3,309 B' },
   { label: 'Signing speed', lms: 'Fast', slhdsa: 'Slow', mldsa: 'Fast' },
@@ -259,6 +264,21 @@ export const SLHDSALiveDemo: React.FC = () => {
   // Parameter set & pre-hash selection
   const [paramSetId, setParamSetId] = useState('sha2-128s')
   const [preHash, setPreHash] = useState('')
+  const [signContext, setSignContext] = useState('')
+  const [verifyContext, setVerifyContext] = useState('')
+  const [signedContext, setSignedContext] = useState('')
+  const [signingMode, setSigningMode] = useState('hedged')
+  const [comparison, setComparison] = useState<{
+    mode: string
+    context: string
+    message: string
+    parameter: string
+    preHash: string
+    first: Uint8Array
+    second: Uint8Array
+    validFirst: boolean
+    validSecond: boolean
+  } | null>(null)
   const [showAdvancedPreHash, setShowAdvancedPreHash] = useState(false)
   const [message, setMessage] = useState('SLH-DSA test message for stateful signatures module')
 
@@ -278,6 +298,7 @@ export const SLHDSALiveDemo: React.FC = () => {
   const selectedParam = paramSets().find((p) => p.id === paramSetId) ?? paramSets()[0]
 
   const resetResults = useCallback(() => {
+    setComparison(null)
     setKeyHandles(null)
     setPubKeyHex(null)
     setSignature(null)
@@ -332,6 +353,7 @@ export const SLHDSALiveDemo: React.FC = () => {
   )
 
   const handleGenerateKey = useCallback(async () => {
+    setComparison(null)
     if (!hsm.isReady || !hsm.moduleRef.current) return
     setLoading('keygen')
     setError(null)
@@ -372,43 +394,109 @@ export const SLHDSALiveDemo: React.FC = () => {
     if (!hsm.isReady || !hsm.moduleRef.current || !keyHandles) return
     setLoading('sign')
     setError(null)
+    setSignature(null)
     setVerifyResult(null)
     try {
-      await runOp(`Signing message with SLH-DSA (${selectedParam.label})…`, () => {
-        const M = hsm.moduleRef.current as unknown as SoftHSMModule
-        const hSession = hsm.hSessionRef.current
-        const opts = preHash ? { preHash: preHash as SLHDSAPreHash } : undefined
-        const sig = hsm_slhdsaSign(M, hSession, keyHandles.priv, message, opts)
-        setSignature(sig)
-        setSignedPreHash(preHash)
-        signPreHashRef.current = preHash
-      })
+      await runOp(
+        `Signing SLH-DSA ${selectedParam.label}, ${preHash || 'Pure'}, context=${JSON.stringify(signContext)}…`,
+        () => {
+          const M = hsm.moduleRef.current as unknown as SoftHSMModule
+          const hSession = hsm.hSessionRef.current
+          const opts = {
+            preHash: (preHash || undefined) as SLHDSAPreHash | undefined,
+            context: new TextEncoder().encode(signContext),
+            deterministic: signingMode === 'deterministic',
+            hedgedRequired: signingMode === 'hedged',
+          }
+          const sig = hsm_slhdsaSign(M, hSession, keyHandles.priv, message, opts)
+          setSignature(sig)
+          setSignedContext(signContext)
+          setSignedPreHash(preHash)
+          signPreHashRef.current = preHash
+        }
+      )
     } catch (err) {
       setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
-  }, [hsm, keyHandles, message, preHash, selectedParam.label, runOp])
+  }, [hsm, keyHandles, message, preHash, signContext, signingMode, selectedParam.label, runOp])
+
+  const handleCompare = async () => {
+    if (!hsm.isReady || !hsm.moduleRef.current || !keyHandles) return
+    setComparison(null)
+    setError(null)
+    setLoading('compare')
+    try {
+      await runOp(
+        `Compare two ${signingMode} signatures (${selectedParam.label}, ${preHash || 'Pure'})…`,
+        () => {
+          const M = hsm.moduleRef.current as unknown as SoftHSMModule
+          const session = hsm.hSessionRef.current
+          const opts = {
+            preHash: (preHash || undefined) as SLHDSAPreHash | undefined,
+            context: new TextEncoder().encode(signContext),
+            deterministic: signingMode === 'deterministic',
+            hedgedRequired: signingMode === 'hedged',
+          }
+          const first = hsm_slhdsaSign(M, session, keyHandles.priv, message, opts)
+          const second = hsm_slhdsaSign(M, session, keyHandles.priv, message, opts)
+          const validFirst = hsm_slhdsaVerify(M, session, keyHandles.pub, message, first, opts)
+          const validSecond = hsm_slhdsaVerify(M, session, keyHandles.pub, message, second, opts)
+          setComparison({
+            mode: signingMode,
+            context: signContext,
+            message,
+            parameter: selectedParam.label,
+            preHash,
+            first,
+            second,
+            validFirst,
+            validSecond,
+          })
+        }
+      )
+    } catch (err) {
+      setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
+    } finally {
+      setLoading(null)
+    }
+  }
 
   const handleVerify = useCallback(async () => {
     if (!hsm.isReady || !hsm.moduleRef.current || !keyHandles || !signature) return
     setLoading('verify')
     setError(null)
+    setVerifyResult(null)
     try {
-      await runOp(`Verifying SLH-DSA signature…`, () => {
-        const M = hsm.moduleRef.current as unknown as SoftHSMModule
-        const hSession = hsm.hSessionRef.current
-        // Must use same pre-hash as signing
-        const opts = signPreHashRef.current
-          ? { preHash: signPreHashRef.current as SLHDSAPreHash }
-          : undefined
-        const ok = hsm_slhdsaVerify(M, hSession, keyHandles.pub, message, signature, opts)
-        setVerifyResult(ok)
-      })
+      await runOp(
+        `Verifying SLH-DSA ${selectedParam.label}, ${signedPreHash || 'Pure'}, signed context=${JSON.stringify(signedContext)}, verification context=${JSON.stringify(verifyContext)}…`,
+        () => {
+          const M = hsm.moduleRef.current as unknown as SoftHSMModule
+          const hSession = hsm.hSessionRef.current
+          // Must use same pre-hash as signing
+          const opts = {
+            preHash: (signPreHashRef.current || undefined) as SLHDSAPreHash | undefined,
+            context: new TextEncoder().encode(verifyContext),
+          }
+          const ok = hsm_slhdsaVerify(M, hSession, keyHandles.pub, message, signature, opts)
+          setVerifyResult(ok)
+        }
+      )
     } catch (err) {
       setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
-  }, [hsm, keyHandles, signature, message, runOp])
+  }, [
+    hsm,
+    keyHandles,
+    signature,
+    message,
+    verifyContext,
+    signedContext,
+    signedPreHash,
+    selectedParam.label,
+    runOp,
+  ])
 
   return (
     <div className="space-y-6">
@@ -523,11 +611,111 @@ export const SLHDSALiveDemo: React.FC = () => {
             <Input
               id="slhdsa-message-input"
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                setMessage(e.target.value)
+                setVerifyResult(null)
+              }}
               placeholder="Enter message..."
               className="font-mono text-sm"
             />
           </div>
+
+          <div className="space-y-3 text-xs">
+            <p>
+              Context is optional: leave empty for zero bytes. A space is not empty. The same
+              context must be used for signing and verification, in pure and pre-hash modes. The
+              limit is 255 UTF-8 bytes, not characters; whitespace is preserved.
+            </p>
+            <label className="block" htmlFor="slhdsa-sign-context">
+              Signing context ({new TextEncoder().encode(signContext).length} bytes)
+            </label>
+            <Input
+              id="slhdsa-sign-context"
+              value={signContext}
+              onChange={(e) => setSignContext(e.target.value)}
+            />
+            <label className="block" htmlFor="slhdsa-verify-context">
+              Verification context ({new TextEncoder().encode(verifyContext).length} bytes)
+            </label>
+            <Input
+              id="slhdsa-verify-context"
+              value={verifyContext}
+              onChange={(e) => {
+                setVerifyContext(e.target.value)
+                setVerifyResult(null)
+              }}
+            />
+            <p>
+              Try “firmware-update” in both fields: sign, then verify. Change only the verification
+              context to “document-signing” and verify again. Rejection is expected: it demonstrates
+              that the signature binds the context. An engine error is not a successful mismatch
+              test.
+            </p>
+            {signature && (
+              <p className="font-mono break-all">
+                Signed context: {JSON.stringify(signedContext)}; verification context:{' '}
+                {JSON.stringify(verifyContext)}; signed mode: {signedPreHash || 'Pure'}; parameter
+                set: {selectedParam.label}.
+              </p>
+            )}
+          </div>
+
+          <fieldset disabled={!!loading} className="space-y-2 text-sm">
+            <legend className="text-xs">Signing mode</legend>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="slhdsa-signing-mode"
+                checked={signingMode === 'hedged'}
+                onChange={() => setSigningMode('hedged')}
+              />
+              Hedged — fresh randomness required
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="slhdsa-signing-mode"
+                checked={signingMode === 'deterministic'}
+                onChange={() => setSigningMode('deterministic')}
+              />
+              Deterministic — repeatable signatures required
+            </label>
+          </fieldset>
+          <Button onClick={handleCompare} disabled={!!loading || !keyHandles} variant="outline">
+            Sign twice and compare
+          </Button>
+          {comparison && (
+            <section
+              aria-label="Signing-mode comparison"
+              className="space-y-2 text-xs border border-border rounded p-3"
+            >
+              <p>
+                Saved run: {comparison.mode}; {comparison.parameter}; {comparison.preHash || 'Pure'}
+                ; context {JSON.stringify(comparison.context)}; message{' '}
+                {JSON.stringify(comparison.message)}. Both operations used the same key and these
+                saved inputs, regardless of later field edits.
+              </p>
+              <p>
+                Signatures:{' '}
+                {toHex(comparison.first) === toHex(comparison.second) ? 'identical' : 'different'}.
+              </p>
+              <p>
+                First signature: {comparison.validFirst ? 'valid' : 'invalid'}. Second signature:{' '}
+                {comparison.validSecond ? 'valid' : 'invalid'}.
+              </p>
+              <p>
+                Deterministic mode should produce identical signatures; hedged mode normally
+                produces different signatures. Both should verify. Unexpected results need
+                investigation; this comparison does not prove randomness quality, attack resistance
+                or certification compliance.
+              </p>
+              <details>
+                <summary>Inspect both signatures (hex)</summary>
+                <p className="break-all font-mono">First: {toHex(comparison.first)}</p>
+                <p className="break-all font-mono">Second: {toHex(comparison.second)}</p>
+              </details>
+            </section>
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3">

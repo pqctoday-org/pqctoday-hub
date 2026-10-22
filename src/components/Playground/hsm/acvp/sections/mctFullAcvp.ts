@@ -32,7 +32,6 @@ import {
   WSE_CK,
   WSE_MECH,
   digestRv,
-  eqHex,
   hexUp,
   importSecretRv,
   multipartRv,
@@ -186,7 +185,7 @@ export async function runShaMctFullSection(ctx: ClassicalSectionCtx): Promise<vo
         testCase,
         meta,
         source: srcTag(P),
-        exec: async (): Promise<RowOutcome> => {
+        exec: async (compare): Promise<RowOutcome> => {
           const digest = (m: Uint8Array) => {
             const r = digestRv(M, h, mech!, m)
             if (!r.out) throw new Error(`${r.step} → ${rvName(r.rv)}`)
@@ -200,7 +199,7 @@ export async function runShaMctFullSection(ctx: ClassicalSectionCtx): Promise<vo
             // the preceding iteration's garbage is collectable (see yieldToGc).
             await yieldToGc()
             const md = shaMctOuter(digest, seed, kind, seed0.length)
-            if (!eqHex(md, t.resultsArray[j].md))
+            if (!compare(md, t.resultsArray[j].md, `digest at outer iteration ${j}`))
               return {
                 ok: false,
                 observed: `outer ${j}: md ${hexUp(md)}`,
@@ -255,7 +254,7 @@ export async function runAesCbcMctFullSection(ctx: ClassicalSectionCtx): Promise
         testCase,
         meta,
         source: srcTag(P),
-        exec: async (): Promise<RowOutcome> => {
+        exec: async (compare): Promise<RowOutcome> => {
           let key = hexToBytes(t.key)
           let iv = hexToBytes(t.iv)
           let input = hexToBytes(enc ? t.pt! : t.ct!)
@@ -295,7 +294,7 @@ export async function runAesCbcMctFullSection(ctx: ClassicalSectionCtx): Promise
             }
             const last = outs[999]
             const want = enc ? t.resultsArray[j].ct : t.resultsArray[j].pt // eslint-disable-line security/detect-object-injection
-            if (!eqHex(last, want))
+            if (!compare(last, want, `${enc ? 'ciphertext' : 'plaintext'} at outer iteration ${j}`))
               return {
                 ok: false,
                 observed: `outer ${j}: ${hexUp(last)}`,

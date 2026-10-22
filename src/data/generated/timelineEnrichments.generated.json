@@ -33419,7 +33419,10 @@
   "migrationUrgency": "Long-Term",
   "phaseTransition": "Moves from Awareness to Planning — signals the need for financial institutions to begin inventorying cryptographic assets and developing crypto-agility strategies in anticipation of future quantum threats.",
   "historicalSignificance": "Represents a significant regulatory guidance milestone for the Singapore financial sector, explicitly directing institutions to prepare for quantum cybersecurity risks and maintain cryptographic inventories.",
-  "implementationDates": [],
+  "implementationDates": [
+   "2026: initial risk assessments and cryptographic inventories",
+   "2028: submit detailed PQC migration plans"
+  ],
   "successorDependencies": "Requires NIST PQC standardization finalization; Enables financial institutions to develop crypto-agility and risk mitigation strategies."
  },
  "Spain:CCN — Five-Phase PQC Transition Approach": {
@@ -34836,5 +34839,209 @@
   "historicalSignificance": null,
   "implementationDates": [],
   "successorDependencies": null
+ },
+ "India:DST/NQM — CII Full PQC Adoption Deadline": {
+  "mainTopic": "A strategic roadmap and testing framework for India's transition to Post-Quantum Cryptography (PQC) and Quantum Key Distribution (QKD) under the National Quantum Mission.",
+  "pqcAlgorithms": [
+   "ML-KEM",
+   "ML-DSA",
+   "SLH-DSA",
+   "FALCON",
+   "HQC",
+   "XMSS",
+   "LMS"
+  ],
+  "quantumThreats": [
+   "CRQC",
+   "Harvest Now",
+   "Decrypt Later"
+  ],
+  "migrationTimeline": [
+   "31 Dec 2027: CII Resiliency Organisation Preparatory stage; 31 Dec 2028: CII Migration of High Priority Systems; 31 Dec 2029: CII Full PQC Adoption; 31 Dec 2033: Regular Enterprises Full PQC Adoption"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "Department of Science and Technology",
+    "National Quantum Mission",
+    "NIST",
+    "NCSC",
+    "CISA"
+   ]
+  },
+  "leadersContributions": [
+   "Dr. Rajkumar Upadhyay",
+   "Chief Executive Officer",
+   "C-DOT (Task Force Chair)"
+  ],
+  "pqcProducts": [],
+  "protocols": [
+   "TLS",
+   "IPsec",
+   "IKEv2",
+   "SSH",
+   "X.509"
+  ],
+  "infrastructureLayers": [
+   "PKI",
+   "HSM",
+   "KMS",
+   "QKD Networks"
+  ],
+  "standardizationBodies": [
+   "NIST",
+   "IETF",
+   "ETSI",
+   "ITU-T",
+   "ISO/IEC",
+   "OASIS",
+   "BIS",
+   "TEC"
+  ],
+  "complianceFrameworks": [
+   "FIPS 140-3",
+   "FIPS 203",
+   "FIPS 204",
+   "FIPS 205",
+   "FIPS 206",
+   "Common Criteria",
+   "CNSA 2.0",
+   "NIST SP 800-193"
+  ],
+  "classicalAlgorithms": [
+   "RSA",
+   "ECC",
+   "AES",
+   "SHA-2",
+   "SHA-3",
+   "HMAC",
+   "KMAC",
+   "ChaCha20-Poly1305",
+   "DSA",
+   "ECDSA"
+  ],
+  "keyTakeaways": [
+   "India has established a phased PQC migration roadmap with specific deadlines for Critical Information Infrastructure (CII) and regular enterprises",
+   "The National Quantum Mission Task Force has defined a testing and certification framework for PQC products aligned with global standards",
+   "Hybrid PQC mechanisms are recommended as the primary mitigation strategy alongside QKD",
+   "Vendor readiness and supply chain PQC capability are identified as critical risks to migration timelines",
+   "Cryptographic inventory and risk assessment are mandatory preparatory steps before migration."
+  ],
+  "securityLevels": [
+   "FIPS 140-3 Level",
+   "EAL",
+   "NIST L1-L5 (implied by FIPS references",
+   "but specific levels not explicitly mapped to algorithms in text)",
+   "2048-bit RSA",
+   "256-bit ECC"
+  ],
+  "hybridApproaches": [
+   "Hybrid PQC mechanisms",
+   "PQC–Quantum Key Distribution (QKD) combinations",
+   "Crypto-agility",
+   "Phased migration"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Policy Maker",
+   "Security Architect",
+   "Compliance Officer"
+  ],
+  "implementationPrereqs": [
+   "Cryptographic inventory",
+   "Risk assessment",
+   "Vendor PQC capability declarations",
+   "Testing and certification framework adoption"
+  ],
+  "relevantFeatures": [
+   "Timeline",
+   "Migrate",
+   "Compliance",
+   "Threats",
+   "qkd"
+  ],
+  "implementationAttackSurface": [
+   "Side-Channel Analysis",
+   "Differential Power Analysis",
+   "Simple Power Analysis",
+   "Fault Injection",
+   "Tampering"
+  ],
+  "cryptoDiscovery": [
+   "CBOM",
+   "SBOM",
+   "Cryptographic asset inventory",
+   "Risk assessment"
+  ],
+  "testingValidation": [
+   "ACVP",
+   "CAVP",
+   "KAT",
+   "TVLA",
+   "Conformance testing",
+   "Interoperability testing"
+  ],
+  "qkdProtocols": [
+   "QKD",
+   "QKD network architecture",
+   "QKD key management",
+   "QKD security proofs",
+   "QKD orchestration"
+  ],
+  "qrngEntropy": [
+   "QRNG",
+   "TRNG",
+   "NIST SP 800-90A/B/C"
+  ],
+  "constrainedDeviceIoT": [
+   "IoT",
+   "OT",
+   "SCADA",
+   "PLC",
+   "Lightweight Cryptography (Ascon)"
+  ],
+  "supplyChainRisk": [
+   "Vendor PQC readiness",
+   "SBOM",
+   "CBOM",
+   "Third-party vendor compliance",
+   "Supply chain delays"
+  ],
+  "deploymentComplexity": [
+   "Phased migration",
+   "Backward compatibility",
+   "Layered risk management",
+   "Vendor oversight"
+  ],
+  "financialBusinessImpact": [
+   "USD 7.1 billion (US migration cost estimate)"
+  ],
+  "organizationalReadiness": [
+   "Governance prerequisites",
+   "Dedicated Task Force",
+   "Sector-specific migration planning",
+   "Coordinated procurement"
+  ],
+  "phaseClassification": "The document outlines a strategic roadmap with specific milestones for preparation, high-priority migration, and full adoption, indicating a transition from planning to active deployment phases.",
+  "mandateLevel": "Mandatory",
+  "sectorApplicability": [
+   "Critical Infrastructure",
+   "Defense",
+   "Energy",
+   "Telecommunications",
+   "Finance",
+   "Banking"
+  ],
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from Pilot/Research to Deployment-led leadership, establishing clear mandates and phased migration timelines for national infrastructure.",
+  "historicalSignificance": "Establishes India's first comprehensive national roadmap and testing framework for PQC adoption under the National Quantum Mission, setting specific deadlines for Critical Information Infrastructure.",
+  "implementationDates": [
+   "31 Dec 2027: CII Resiliency Organisation Preparatory stage",
+   "31 Dec 2028: CII Migration of High Priority Systems",
+   "31 Dec 2029: CII Full PQC Adoption",
+   "31 Dec 2030: Regular Enterprises Migration of High Priority Systems",
+   "31 Dec 2033: Regular Enterprises Full PQC Adoption"
+  ],
+  "successorDependencies": "Requires harmonization with global standards (NIST, IETF, ETSI); Enables indigenous PQC product development and certification; Depends on vendor ecosystem readiness and supply chain compliance."
  }
 }

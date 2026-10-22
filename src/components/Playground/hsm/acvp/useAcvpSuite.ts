@@ -25,6 +25,7 @@ import sha512TestVectors from '@/data/acvp/sha512_test.json'
 import sha3_256TestVectors from '@/data/acvp/sha3_256_test.json'
 import sha3_512TestVectors from '@/data/acvp/sha3_512_test.json'
 import { hexToBytes } from '@/utils/dataInputUtils'
+import { logByteComparison } from './comparisonLog'
 import {
   hsm_initialize,
   hsm_finalize,
@@ -416,6 +417,16 @@ export function useAcvpSuite() {
     // static spinner for 19–29s. (Avoids the literal `.push(` so the
     // global push→pushResult rewrite below doesn't recurse into this helper.)
     const pushResult = async (r: Omit<TestResult, 'category'>) => {
+      if (r.caseMeta) {
+        const m = r.caseMeta
+        addLog(
+          `[id:${r.id}] ${r.algorithm} · ${r.testCase}\n` +
+            `  Source: ${m.origin} · ${m.source.path} · ${m.source.commit}\n` +
+            `  Expected behaviour: ${m.expected}${m.expectedRv ? ` · ${m.expectedRv}` : ''}${m.expectedReason ? ` · ${m.expectedReason}` : ''}\n` +
+            `  Observed: ${r.status === 'skip' ? 'NOT RUN — no computed value' : (m.observed ?? r.details)}\n` +
+            `  Case verdict: ${r.status.toUpperCase()} · ${r.details}`
+        )
+      }
       newResults[newResults.length] = { ...r, category: currentCategory }
       progressBufRef.current = { done: newResults.length, current: r.algorithm }
       commitStream()
@@ -652,6 +663,13 @@ export function useAcvpSuite() {
                 recoveredPt.length === expectedPt.length &&
                 // eslint-disable-next-line security/detect-object-injection
                 recoveredPt.every((b: number, i: number) => b === expectedPt[i])
+              logByteComparison(
+                addLog,
+                `[${eName}] AES-GCM gcmDecrypt256.rsp count ${tv.count}`,
+                recoveredPt,
+                tv.pt,
+                'plaintext'
+              )
 
               const ptHex = toHex(recoveredPt)
               await pushResult({
@@ -1379,6 +1397,13 @@ export function useAcvpSuite() {
                 recoveredSs.length === expectedSsBytes.length &&
                 // eslint-disable-next-line security/detect-object-injection
                 recoveredSs.every((b: number, i: number) => b === expectedSsBytes[i])
+              logByteComparison(
+                addLog,
+                `[${eName}] [id:${id7}]`,
+                recoveredSs,
+                test.ss,
+                'shared secret'
+              )
 
               if (matches) {
                 const ssHex = toHex(recoveredSs)
@@ -1823,6 +1848,13 @@ export function useAcvpSuite() {
                   digest.length === expectedMd.length &&
                   // eslint-disable-next-line security/detect-object-injection
                   digest.every((b: number, i: number) => b === expectedMd[i])
+                logByteComparison(
+                  addLog,
+                  `[${eName}] SHA-256 tc${test.tcId}`,
+                  digest,
+                  test.md,
+                  'digest'
+                )
 
                 const mdHex = toHex(digest)
                 await pushResult({
@@ -1912,6 +1944,13 @@ export function useAcvpSuite() {
                   digest.length === expectedMd.length &&
                   // eslint-disable-next-line security/detect-object-injection
                   digest.every((b: number, i: number) => b === expectedMd[i])
+                logByteComparison(
+                  addLog,
+                  `[${eName}] Digest tc${test.tcId}`,
+                  digest,
+                  test.md,
+                  'digest'
+                )
 
                 const mdHex = toHex(digest)
                 await pushResult({
@@ -2035,6 +2074,13 @@ export function useAcvpSuite() {
                 recoveredPt.length === expectedPt.length &&
                 // eslint-disable-next-line security/detect-object-injection
                 recoveredPt.every((b: number, i: number) => b === expectedPt[i])
+              logByteComparison(
+                addLog,
+                `[${eName}] AES-CBC tc${tv.tcId}`,
+                recoveredPt,
+                tv.pt,
+                'plaintext'
+              )
 
               const ptHex = toHex(recoveredPt)
               await pushResult({
@@ -2115,6 +2161,13 @@ export function useAcvpSuite() {
                 recoveredPt.length === expectedPt.length &&
                 // eslint-disable-next-line security/detect-object-injection
                 recoveredPt.every((b: number, i: number) => b === expectedPt[i])
+              logByteComparison(
+                addLog,
+                `[${eName}] AES-CTR SP 800-38A F.5.6`,
+                recoveredPt,
+                tv.pt,
+                'plaintext'
+              )
 
               const ptHex = toHex(recoveredPt)
               await pushResult({
@@ -2562,6 +2615,13 @@ export function useAcvpSuite() {
                 derived.length === expectedDk.length &&
                 // eslint-disable-next-line security/detect-object-injection
                 derived.every((b: number, i: number) => b === expectedDk[i])
+              logByteComparison(
+                addLog,
+                `[${eName}] PBKDF2 reference case`,
+                derived,
+                pbkdf2Tv.dk,
+                'derived test key'
+              )
 
               const dkHex = toHex(derived)
               await pushResult({
@@ -2637,6 +2697,13 @@ export function useAcvpSuite() {
                 okm.length === expectedOkm.length &&
                 // eslint-disable-next-line security/detect-object-injection
                 okm.every((b: number, i: number) => b === expectedOkm[i])
+              logByteComparison(
+                addLog,
+                `[${eName}] HKDF reference case`,
+                okm,
+                toHex(expectedOkm, expectedOkm.length),
+                'derived test key'
+              )
 
               const dkHex = toHex(okm)
               await pushResult({
@@ -2769,6 +2836,13 @@ export function useAcvpSuite() {
                 wrapped.length === expectedWrapped.length &&
                 // eslint-disable-next-line security/detect-object-injection
                 wrapped.every((b: number, i: number) => b === expectedWrapped[i])
+              logByteComparison(
+                addLog,
+                `[${eName}] AES-KW reference case`,
+                wrapped,
+                tv.wrapped,
+                'wrapped key'
+              )
 
               const wrappedHex = toHex(wrapped)
               await pushResult({
@@ -4350,6 +4424,13 @@ export function useAcvpSuite() {
                   const decrypted = hsm_rsaDecrypt(M, hSession, privHandle, hexToBytes(tv.ct), hash)
                   const decryptedHex = toHex(decrypted, decrypted.length)
                   const matches = decryptedHex.toLowerCase() === tv.pt.toLowerCase()
+                  logByteComparison(
+                    addLog,
+                    `[${eName}] [id:${id36}]`,
+                    decrypted,
+                    tv.pt,
+                    'plaintext'
+                  )
                   await pushResult({
                     id: id36,
                     algorithm: `RSA-OAEP (${eName})`,

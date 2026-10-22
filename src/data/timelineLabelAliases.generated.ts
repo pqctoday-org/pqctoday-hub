@@ -351,6 +351,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'India:CERT-In — BOM Guidelines Expanded',
     'India:CERT-In — BOM Guidelines Version 2.0 Cover QBOM & CBOM',
   ],
+  'india-dst-nqm-cii-full-pqc-adoption-deadline': [
+    'India:DST/NQM — CII Full PQC Adoption Deadline',
+  ],
   'india-dst-nqm-cii-pqc-foundations-deadline': ['India:DST/NQM — CII PQC Foundations Deadline'],
   'india-dst-nqm-full-nationwide-pqc-adoption': ['India:DST/NQM — Full Nationwide PQC Adoption'],
   'india-dst-nqm-india-national-pqc-migration': ['India:DST/NQM — India National PQC Migration'],
