@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input'
 import {
   AGILE_ARCHITECTURE,
   HONESTY_TIERS,
-  HYBRID_AS_OF,
+  PQC_POSITIONS_AS_OF,
   HYBRID_POSITIONS,
   LIFECYCLE_STEPS,
   MAINTAIN_VALID,
@@ -134,7 +134,7 @@ export const PqcImpact = () => (
     </p>
 
     <H3>
-      Where each scheme stands on PQC <AsOf />
+      Where each scheme stands on PQC <AsOf label={`as of ${PQC_POSITIONS_AS_OF}`} />
     </H3>
     <p>
       Keep two columns apart: what applies <strong>today</strong>, and what is only a{' '}
@@ -179,13 +179,14 @@ export const PqcImpact = () => (
     <p>
       Three distinct observations matter here. First, <strong>EUCC has PQC guidance</strong>: the
       applicable ECCG ACM v2 (<SourceLink source={SHARED_SOURCES.acm2} />) already names the PQC
-      mechanisms and recommends hybridisation for lattice schemes. Do not turn that recommendation
-      into a blanket legal requirement; check the applicable scheme rules, PP and Security Target.
-      Second, <strong>FIPS 140-3 certificates with PQC already exist</strong>: four active Level 3
-      HSM certificates approve ML-KEM and ML-DSA, so “no validated PQC module exists” is false (
+      mechanisms and parameter sets (its hybrid rules are in the table below). Do not turn that
+      guidance into a blanket legal requirement; check the applicable scheme rules, PP and Security
+      Target. Second, <strong>FIPS 140-3 certificates with PQC already exist</strong>: four active
+      Level 3 HSM certificates approve ML-KEM and ML-DSA, so “no validated PQC module exists” is
+      false (
       <SourceLink source={SHARED_SOURCES.cmvpValidated} />
-      ). Third, <strong>PCI names no PQC algorithm or date</strong> in its public material: the
-      listing notation says only that PQC support exists (
+      ). Third, <strong>PCI names no PQC algorithm or date</strong> in its standards: the listing
+      notation says only that PQC support exists (
       <SourceLink source={SHARED_SOURCES.ptsListing} />
       ), and PCI DSS v4.0.1 Requirement 12.3.3 — a cipher inventory, monitoring and a response plan
       — supports crypto-agility but is not a PQC mandate (
@@ -207,7 +208,7 @@ export const PqcImpact = () => (
     <p>
       A “hybrid” combines a post-quantum algorithm with a classical one, so the result stays secure
       as long as either one holds. The schemes do not agree on whether you must use one (as of{' '}
-      {HYBRID_AS_OF}):
+      {PQC_POSITIONS_AS_OF}):
     </p>
     <div className="overflow-x-auto rounded-lg border border-border">
       <table className="w-full min-w-[720px] text-left text-xs">

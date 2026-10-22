@@ -82,7 +82,8 @@ export interface HybridPositionRow {
   sources: StandardRef[]
 }
 
-export const HYBRID_AS_OF = '22 October 2026'
+/** Date both the scheme-position table and the hybrid table were last checked against their sources. */
+export const PQC_POSITIONS_AS_OF = '22 October 2026'
 
 export const HYBRID_POSITIONS: HybridPositionRow[] = [
   {
@@ -265,10 +266,10 @@ export const PQC_SCHEME_TABLE: SchemePqcRow[] = [
   {
     scheme: 'EUCC',
     current:
-      'The applicable ECCG Agreed Cryptographic Mechanisms v2 lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS and LMS; says (M)LWE mechanisms should be combined with a classical mechanism rather than used standalone; and recommends ML-KEM-768/1024 and ML-DSA-65/87. This is the strongest current PQC requirement in any of the four schemes.',
+      'The applicable ECCG Agreed Cryptographic Mechanisms v2 lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS and LMS, and recommends ML-KEM-768/1024 and ML-DSA-65/87. Its rules on combining them with classical algorithms are in the hybrid table below. This is the strongest current PQC requirement in any of the four schemes.',
     currentSources: [SHARED_SOURCES.acm2],
     planning:
-      'ACM v3 is a draft (its public review closed at the end of July 2026). ENISA’s hybridisation report (30 April 2026) and the NIS Cooperation Group roadmap v1.1 are guidance, not EUCC mandates.',
+      'ACM v3 is a draft and not yet adopted (its public review closed at the end of July 2026). ENISA’s hybridisation report (30 April 2026) and the NIS Cooperation Group roadmap v1.1 are guidance, not EUCC mandates.',
     planningSources: [SHARED_SOURCES.enisaHybrid, SHARED_SOURCES.nisCgRoadmap],
   },
   {
@@ -282,7 +283,7 @@ export const PQC_SCHEME_TABLE: SchemePqcRow[] = [
   {
     scheme: 'PCI',
     current:
-      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. No PQC algorithm, parameter set or deadline is named in public PCI material.',
+      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. No PCI standard or listing rule names a PQC algorithm, parameter set or deadline.',
     currentSources: [SHARED_SOURCES.ptsV5, SHARED_SOURCES.ptsListing],
     planning:
       'KMO v1.0 (14 September 2026) and its evolution. The Cryptography Guidance (August 2025) is non-mandatory; its PQC content is an open question for this v1 (licence-gated, not read).',
