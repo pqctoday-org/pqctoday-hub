@@ -18,8 +18,9 @@
  *    cell are kept as "\n"; runs of spaces are collapsed. An empty string means
  *    the listing cell was blank.
  *
- * Re-verify before the 19 October 2026 freeze: a listing can change (new
- * firmware, a PQC notation, end-of-life) without notice.
+ * Checked 22 October 2026: 4-40266 and 4-70041 were unchanged (version 3.x,
+ * expiry 30 April 2028, no PQC notation). A listing can change (new firmware, a
+ * PQC notation, end-of-life) without notice.
  */
 
 /** The listing columns, in the order the public popup shows them. */

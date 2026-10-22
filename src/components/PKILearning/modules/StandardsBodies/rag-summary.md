@@ -15,13 +15,13 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 ### The Three Roles
 
-| Role                                     | Function                                                          | Example                          | Creates                             |
-| ---------------------------------------- | ----------------------------------------------------------------- | -------------------------------- | ----------------------------------- |
-| Standards Body                           | Defines algorithms, protocols, and technical requirements         | NIST, ISO/IEC, ETSI, IETF        | FIPS 203, RFC 9629, ETSI TS 103 744 |
-| Certification Body                       | Validates that a specific product/implementation meets a standard | CMVP, ENISA (EUCC), CCRA         | Validation certificates             |
-| Regulatory Agency / Compliance Framework | Mandates use of certified products in a regulated context         | NSA (CNSA 2.0), NIS2, FIPS 140-3 | Binding mandates, procurement rules |
+| Role                                     | Function                                                          | Example                               | Creates                             |
+| ---------------------------------------- | ----------------------------------------------------------------- | ------------------------------------- | ----------------------------------- |
+| Standards Body                           | Defines algorithms, protocols, and technical requirements         | NIST, ISO/IEC, ETSI, IETF             | FIPS 203, RFC 9629, ETSI TS 103 744 |
+| Certification Body                       | Validates that a specific product/implementation meets a standard | CMVP, EUCC certification bodies, CCRA | Validation certificates             |
+| Regulatory Agency / Compliance Framework | Mandates use of certified products in a regulated context         | NSA (CNSA 2.0), NIS2, FIPS 140-3      | Binding mandates, procurement rules |
 
-**Key distinction**: NIST wrote FIPS 203 (standards body), but the CMVP certifies that your HSM implements it correctly (certification body), and CNSA 2.0 mandates you use a CMVP-validated HSM (regulatory mandate).
+**Key distinction**: NIST wrote FIPS 203 (standards body), but the CAVP validates your ML-KEM implementation and the CMVP validates your HSM module (certification bodies), and CNSA 2.0 requires National Security Systems to use NIAP-validated products with CMVP-validated modules (regulatory mandate).
 
 ---
 
@@ -53,7 +53,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **CMVP** — Joint NIST/CSE (Canada) program. Validates cryptographic module implementations against FIPS 140-3. Required for US federal procurement under FISMA. Validation time varies by module and queue (the public Modules in Process list shows each submission's status; a queue position is not evidence of the outcome). The CAVP validates the individual algorithm implementations (FIPS 203/204/205); that testing runs through NIST's ACVTS over the ACVP protocol. An algorithm certificate is not a module certificate.
 
-**ENISA** — EU Agency for Cybersecurity. Manages EUCC (EU Cybersecurity Certification Scheme — the EU adaptation of Common Criteria). Issues certificates valid across all EU member states. Maintains the Agreed Cryptographic Mechanisms (ACM) list specifying approved PQC algorithms.
+**ENISA** — EU Agency for Cybersecurity. Supports EUCC (EU Cybersecurity Certification Scheme — the EU adaptation of Common Criteria) and publishes its supporting documents. EUCC certificates, valid across all EU member states, are issued by accredited certification bodies (CIR (EU) 2024/482 Art. 3), not by ENISA. Maintains the Agreed Cryptographic Mechanisms (ACM) list specifying approved PQC algorithms.
 
 **Common Criteria / CCRA** — 31-nation mutual recognition arrangement for IT security evaluations (ISO/IEC 15408). Products evaluated by accredited labs; certificates issued by national Certification Bodies (BSI, ANSSI, NCSC, NIAP). EUCC is the EU-specific adaptation.
 
