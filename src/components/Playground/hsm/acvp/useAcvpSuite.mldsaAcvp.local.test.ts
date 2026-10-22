@@ -128,8 +128,9 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
     const cpp = section().filter((r) => engineOf(r) === 'C++')
     const rust = section().filter((r) => engineOf(r) === 'Rust')
     // 15 pure (1 positive + 4 NIST negative reasons × 3) + 6 External-µ
-    // + 6 product-authored + 9 deterministic SigGen + 3 KeyGen + 3 skips.
-    expect(cpp).toHaveLength(42)
+    // + 6 product-authored + 9 deterministic SigGen + 3 KeyGen + 1 skip
+    // (SHA2-512/t sigVer). Hedged and internal groups: optionalInput test.
+    expect(cpp).toHaveLength(40)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
@@ -208,10 +209,6 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
     expect(skips.map(caseKey).sort()).toEqual([
       'mldsa-skip-hash-sha512t',
       'mldsa-skip-hash-sha512t',
-      'mldsa-skip-hedged-rnd',
-      'mldsa-skip-hedged-rnd',
-      'mldsa-skip-internal',
-      'mldsa-skip-internal',
     ])
     for (const r of skips) {
       expect(classesOf(r.id)).toEqual([])

@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:slhdsa_prehash_siggen_sha2_test",
-  "subjectSha256": "6c70d098c084cdffc6727b7ce8e6a8a87938b1ef0793fc075721eab648018ebb",
-  "fileSha256": "93676c151cb2f82864463f296a4c971c5be078c860b6cdf6bf58bc9dc021f9e5",
+  "subjectSha256": "ac9afb611bc8c18a0f480ad48f4bfa43d02ce65affc6b50a6a559725fc2ec0f7",
+  "fileSha256": "cc6f9c356869de8dab94448fe8ce650669ac52946ce2044a8cc4cfff65729c23",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id slhdsa_prehash_siggen_sha2_test --strict",
@@ -20,5 +20,5 @@
     "cases": 60,
     "values": 456
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-10-22"
 }

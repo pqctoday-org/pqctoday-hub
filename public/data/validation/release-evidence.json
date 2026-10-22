@@ -16,28 +16,28 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "7de0119b35e62543998f8a1594d1b7f07d9153c73e81e3a5a0ce89b04bed3e87",
-    "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
-    "src/data/validation/native-conformance.generated.json": "b27598492c38a724f1fedc23d4d5fae04fde61f3097b678a3ca608e975ec5b74",
-    "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
-    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "d9cd5f795330a0dfa4051c3d2be4fc8ec718b68f730a3c918cd9ec810bb14640",
-    "src/data/validation/run-results/wasm-node-katRunner.json": "0e4362af530627f12b7bae5be1f27a8a9cff1c59296c575de3e5ebc0d33d0858",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "20c271412ef7a8c93a347da477b72989e01638e20aa213aaa500ca9603ca1fc2",
-    "src/data/validation/validation-counts.generated.json": "0c81c8e04d7d24910d2a4b686586f48644298b8d5f83182836e8c5ab540edf48",
-    "src/data/validation/vector-manifest.json": "c8cc3e89a478981c3a6de1b494a0b9bd49550d762b4eb68704384a3928b73791"
+    "public/data/validation/coverage-matrix.json": "19e02f558c5869e965ced154262195cbb5f406e53bc6d54e4c389f44949d0f04",
+    "src/data/validation/coverage-waivers.json": "868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130",
+    "src/data/validation/native-conformance.generated.json": "3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2",
+    "src/data/validation/open-gaps.json": "608b06aff8d80f7460909d2106c4ea450cd9085eb53376c9a2fc28b05a2b3e58",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21",
+    "src/data/validation/run-results/wasm-node-katRunner.json": "42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29",
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "7ee706406ecd274291af45b186c5c98324cee4afbe6005d2414de0b29ad6ca88",
+    "src/data/validation/validation-counts.generated.json": "21341336ec13a7cc41900f7b6735c782a286b96738c960f1c80a0b82ff64587e",
+    "src/data/validation/vector-manifest.json": "78d1e7a27934e48e2ec3a5faf45099307e9114da56b150fd1733e4fcb675d252"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "b72af4dd2095c4ba9ed82a7aa7dcfc47203ad6535b9221e790614ffb3a8000d8",
-    "nistReferenceSampleFiles": 53,
-    "nistReferenceSampleCases": 964,
+    "manifestCanonicalSha256": "7b3d0c8e5364b3608a41a90e13eb9e8b5ae6281c13998edbb19b44e1caccc240",
+    "nistReferenceSampleFiles": 58,
+    "nistReferenceSampleCases": 1145,
     "vectorFiles": {
-      "total": 99,
-      "active": 93,
+      "total": 104,
+      "active": 98,
       "quarantined": 6
     },
     "filesByClass": {
-      "nist-acvp-reference-sample": 53,
+      "nist-acvp-reference-sample": 58,
       "acvts-issued-vector": 0,
       "published-standard-kat": 17,
       "independent-oracle": 29,
@@ -48,12 +48,12 @@
       "unverified": 0
     },
     "cases": {
-      "total": 5296,
-      "active": 5241,
+      "total": 5477,
+      "active": 5422,
       "quarantined": 55
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 964,
+      "nist-acvp-reference-sample": 1145,
       "acvts-issued-vector": 0,
       "published-standard-kat": 22,
       "independent-oracle": 4253,
@@ -64,8 +64,8 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 3508,
-      "negative": 1733
+      "positive": 3674,
+      "negative": 1748
     },
     "filesWithPublishabilityGap": {
       "oracle-version-not-recorded": 1
@@ -91,75 +91,75 @@
       "unsupported"
     ],
     "polarities": ["positive", "negative", "boundary", "state-error"],
-    "matrixRows": 2262,
+    "matrixRows": 2243,
     "byEngine": {
       "cpp": {
         "label": "C++",
-        "mechanismCount": 166,
-        "advertisedCells": 2215,
-        "unsupportedCells": 47,
+        "mechanismCount": 165,
+        "advertisedCells": 2211,
+        "unsupportedCells": 32,
         "overall": {
           "covered": 15,
-          "sampled": 2158,
-          "untested": 42
+          "sampled": 2164,
+          "untested": 32
         },
         "byPolarity": {
           "positive": {
-            "covered": 190,
-            "sampled": 1867,
-            "untested": 158,
-            "denominator": 2215,
+            "covered": 213,
+            "sampled": 1853,
+            "untested": 145,
+            "denominator": 2211,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 673,
+              "nist-reference": 719,
               "standard-kat": 2,
-              "oracle": 33,
+              "oracle": 24,
               "differential": 0,
-              "round-trip": 880,
-              "behavior-only": 469,
-              "untested": 158,
+              "round-trip": 863,
+              "behavior-only": 458,
+              "untested": 145,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 84,
-            "sampled": 64,
-            "untested": 2067,
-            "denominator": 2215,
+            "covered": 87,
+            "sampled": 61,
+            "untested": 2063,
+            "denominator": 2211,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 106,
+              "nist-reference": 110,
               "standard-kat": 0,
               "oracle": 11,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 31,
-              "untested": 2067,
+              "behavior-only": 27,
+              "untested": 2063,
               "unsupported": 0
             }
           },
           "boundary": {
             "covered": 41,
-            "sampled": 173,
-            "untested": 2001,
-            "denominator": 2215,
+            "sampled": 178,
+            "untested": 1992,
+            "denominator": 2211,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 155,
+              "nist-reference": 162,
               "standard-kat": 0,
-              "oracle": 9,
+              "oracle": 7,
               "differential": 0,
               "round-trip": 50,
               "behavior-only": 0,
-              "untested": 2001,
+              "untested": 1992,
               "unsupported": 0
             }
           },
           "state-error": {
             "covered": 917,
             "sampled": 0,
-            "untested": 1298,
-            "denominator": 2215,
+            "untested": 1294,
+            "denominator": 2211,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 0,
@@ -168,7 +168,7 @@
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 917,
-              "untested": 1298,
+              "untested": 1294,
               "unsupported": 0
             }
           }
@@ -176,8 +176,8 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2173,
-            "passedCells": 2172,
+            "registeredCells": 2179,
+            "passedCells": 2178,
             "failedCells": 1,
             "skippedCells": 0
           },
@@ -199,71 +199,71 @@
       },
       "rust": {
         "label": "Rust",
-        "mechanismCount": 180,
-        "advertisedCells": 2239,
-        "unsupportedCells": 23,
+        "mechanismCount": 179,
+        "advertisedCells": 2235,
+        "unsupportedCells": 8,
         "overall": {
           "covered": 15,
-          "sampled": 2175,
-          "untested": 49
+          "sampled": 2181,
+          "untested": 39
         },
         "byPolarity": {
           "positive": {
-            "covered": 194,
-            "sampled": 1887,
-            "untested": 158,
-            "denominator": 2239,
+            "covered": 217,
+            "sampled": 1873,
+            "untested": 145,
+            "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 673,
+              "nist-reference": 719,
               "standard-kat": 5,
-              "oracle": 34,
+              "oracle": 25,
               "differential": 0,
-              "round-trip": 896,
-              "behavior-only": 473,
-              "untested": 158,
+              "round-trip": 879,
+              "behavior-only": 462,
+              "untested": 145,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 85,
-            "sampled": 67,
-            "untested": 2087,
-            "denominator": 2239,
+            "covered": 88,
+            "sampled": 64,
+            "untested": 2083,
+            "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 106,
+              "nist-reference": 110,
               "standard-kat": 0,
               "oracle": 11,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 35,
-              "untested": 2087,
+              "behavior-only": 31,
+              "untested": 2083,
               "unsupported": 0
             }
           },
           "boundary": {
             "covered": 42,
-            "sampled": 173,
-            "untested": 2024,
-            "denominator": 2239,
+            "sampled": 178,
+            "untested": 2015,
+            "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 155,
+              "nist-reference": 162,
               "standard-kat": 1,
-              "oracle": 9,
+              "oracle": 7,
               "differential": 0,
               "round-trip": 50,
               "behavior-only": 0,
-              "untested": 2024,
+              "untested": 2015,
               "unsupported": 0
             }
           },
           "state-error": {
             "covered": 923,
             "sampled": 1,
-            "untested": 1315,
-            "denominator": 2239,
+            "untested": 1311,
+            "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 0,
@@ -272,7 +272,7 @@
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 924,
-              "untested": 1315,
+              "untested": 1311,
               "unsupported": 0
             }
           }
@@ -280,8 +280,8 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2190,
-            "passedCells": 2181,
+            "registeredCells": 2196,
+            "passedCells": 2187,
             "failedCells": 2,
             "skippedCells": 0
           },
@@ -304,34 +304,34 @@
     },
     "parity": {
       "positive": {
-        "parity": 2034,
+        "parity": 2044,
         "divergent": 1,
-        "not-established": 173,
-        "single-engine": 54
+        "not-established": 159,
+        "single-engine": 39
       },
       "negative": {
         "parity": 148,
         "divergent": 0,
-        "not-established": 2060,
-        "single-engine": 54
+        "not-established": 2056,
+        "single-engine": 39
       },
       "boundary": {
-        "parity": 214,
+        "parity": 219,
         "divergent": 0,
-        "not-established": 1994,
-        "single-engine": 54
+        "not-established": 1985,
+        "single-engine": 39
       },
       "state-error": {
         "parity": 913,
         "divergent": 0,
-        "not-established": 1295,
-        "single-engine": 54
+        "not-established": 1291,
+        "single-engine": 39
       }
     },
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 13726 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -345,12 +345,12 @@
     "engines": {
       "cpp": {
         "label": "C++",
-        "sourceCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
-        "inventorySha256": "be8c60dc0759eba0573308bd2a445d927ea3f899af6f3ec2196f1e3ddd5f87df",
+        "sourceCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
+        "inventorySha256": "3d7d00d25931940d12f33c90a19cd02f71c7a88836b94dca4cf64b202b2202cd",
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410"
+            "sha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b"
           },
           {
             "path": "public/wasm/softhsm.js",
@@ -360,12 +360,12 @@
       },
       "rust": {
         "label": "Rust",
-        "sourceCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
-        "inventorySha256": "9ddca57385f648565b83611d54564e3492671b75828ed06e090093f955e153d6",
+        "sourceCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
+        "inventorySha256": "e14b4db3a4785dd1c8bdaf46db1f4fd427f8500a4970b20280479ded04973ed6",
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575"
+            "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
@@ -382,8 +382,8 @@
       "baseline-pending-review": 22
     },
     "approvedEntries": 0,
-    "waivedCells": 91,
-    "pendingReviewCells": 91,
+    "waivedCells": 71,
+    "pendingReviewCells": 71,
     "staleCells": 0,
     "statement": "All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
   },
@@ -426,10 +426,10 @@
           "commitsBehindPinnedHsmMain": 1,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
-          "wasmBundleHsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+          "wasmBundleHsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 0,
-          "commitsFromWasmBundleToEngine": 241
+          "commitsFromEngineToWasmBundle": 2,
+          "commitsFromWasmBundleToEngine": 0
         }
       },
       {
@@ -464,10 +464,10 @@
           "commitsBehindPinnedHsmMain": 1,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
-          "wasmBundleHsmCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
+          "wasmBundleHsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 0,
-          "commitsFromWasmBundleToEngine": 30
+          "commitsFromEngineToWasmBundle": 2,
+          "commitsFromWasmBundleToEngine": 0
         }
       },
       {
@@ -489,16 +489,16 @@
       "runner": "errorPathProbes (every registered error-path case, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
       "recordedAt": "2026-10-22",
-      "results": 4992,
+      "results": 4988,
       "byEngine": {
         "cpp": {
-          "pass": 2436,
+          "pass": 2434,
           "skip": 60
         },
         "rust": {
-          "pass": 2471,
+          "pass": 2469,
           "skip": 25
         }
       },
@@ -509,7 +509,7 @@
       "runner": "katRunner (every registered KatKind)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
       "recordedAt": "2026-10-22",
       "results": 96,
       "byEngine": {
@@ -524,17 +524,17 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
       "recordedAt": "2026-10-22",
-      "results": 13364,
+      "results": 13726,
       "byEngine": {
         "cpp": {
-          "pass": 6677,
+          "pass": 6858,
           "fail": 1,
           "skip": 4
         },
         "rust": {
-          "pass": 6663,
+          "pass": 6844,
           "fail": 19
         }
       },
@@ -2214,37 +2214,23 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 73,
+    "total": 71,
     "byStatus": {
       "open": 68,
-      "accepted-limitation": 4,
-      "in-progress": 1
+      "in-progress": 1,
+      "accepted-limitation": 2
     },
     "byOrigin": {
-      "curated": 29,
+      "curated": 27,
       "generated": 44
     },
-    "unassignedOwner": 73,
+    "unassignedOwner": 71,
     "curated": [
       {
-        "id": "d2-4-hedged-rnd",
-        "title": "ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11",
-        "status": "open",
-        "planItem": "D2-4",
-        "owner": "unassigned"
-      },
-      {
         "id": "mldsa-hash-sha512t-no-mechanism",
-        "title": "HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism",
-        "status": "accepted-limitation",
+        "title": "HashML-DSA / HashSLH-DSA with SHA2-512/224 or SHA2-512/256: deterministic NIST groups not yet byte-copied",
+        "status": "open",
         "planItem": "D2-6",
-        "owner": "unassigned"
-      },
-      {
-        "id": "mldsa-internal-interface",
-        "title": "ML-DSA internal interface (raw M′) is not expressible through PKCS #11",
-        "status": "accepted-limitation",
-        "planItem": "D2-5",
         "owner": "unassigned"
       },
       {
@@ -2435,7 +2421,7 @@
     "source": "src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)",
     "note": "Test groups per family as declared in the workbench CATEGORIES table; the file itself is not hashed here (it changes with every section edit), its parsed table is.",
     "families": 8,
-    "groups": 68,
+    "groups": 71,
     "categories": [
       {
         "id": "symmetric",
@@ -2460,17 +2446,17 @@
       {
         "id": "ml_dsa",
         "label": "ML-DSA",
-        "groups": 9
+        "groups": 10
       },
       {
         "id": "slh_stateful",
         "label": "SLH-DSA & Stateful",
-        "groups": 8
+        "groups": 9
       },
       {
         "id": "ml_kem",
         "label": "ML-KEM",
-        "groups": 4
+        "groups": 5
       },
       {
         "id": "wycheproof_pqc",
@@ -2481,9 +2467,9 @@
   },
   "reviews": {
     "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
-    "validRecords": 91,
+    "validRecords": 96,
     "statusCounts": {
-      "source-verified": 91,
+      "source-verified": 96,
       "awaiting-review": 28
     },
     "awaiting": {
@@ -2739,6 +2725,13 @@
         "status": "source-verified"
       },
       {
+        "id": "vector-source:mldsa_siggen_optional_input_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mldsa_siggen_optional_input_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
         "id": "vector-source:mldsa_siggen_prehash_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_siggen_prehash_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
@@ -2760,6 +2753,13 @@
         "status": "source-verified"
       },
       {
+        "id": "vector-source:mldsa_sigver_internal_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mldsa_sigver_internal_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigVer-FIPS204/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
         "id": "vector-source:mldsa_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mldsa_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-DSA-sigGen-FIPS204/internalProjection.json @ 975de31e)",
@@ -2777,6 +2777,13 @@
         "id": "vector-source:mlkem_encapdecap_val_test",
         "kind": "vector-source",
         "title": "src/data/acvp/mlkem_encapdecap_val_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:mlkem_encap_aft_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/mlkem_encap_aft_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json @ 975de31e)",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
         "status": "source-verified"
       },
@@ -2935,9 +2942,23 @@
         "status": "source-verified"
       },
       {
+        "id": "vector-source:slhdsa_siggen_optional_input_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_siggen_optional_input_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
         "id": "vector-source:slhdsa_sigver_sha2_test",
         "kind": "vector-source",
         "title": "src/data/acvp/slhdsa_sigver_sha2_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
+        "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
+        "status": "source-verified"
+      },
+      {
+        "id": "vector-source:slhdsa_sigver_internal_test",
+        "kind": "vector-source",
+        "title": "src/data/acvp/slhdsa_sigver_internal_test.json — nist-acvp-reference-sample (NIST ACVP-Server gen-val/json-files/SLH-DSA-sigVer-FIPS205/internalProjection.json @ 975de31e)",
         "requirement": "Automated source check (npm run acvp:source-check): every expected value re-verified against the pinned, trusted upstream (NIST ACVP-Server or Project Wycheproof) and recorded against these exact bytes — maintainer decision 2026-09-26. A named review record, if one is added, takes precedence.",
         "status": "source-verified"
       },
@@ -3147,7 +3168,7 @@
       {
         "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA (cpp, rust): 20 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_HASH_SLH_DSA (cpp, rust): 10 cell pattern(s), status baseline-pending-review",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -3338,7 +3359,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 9349 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 9528 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -3348,7 +3369,7 @@
         "src/data/validation/vector-manifest.json",
         "src/data/validation/validation-counts.generated.json"
       ],
-      "basis": "93 active vector files, 0 without provenance; 55 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1."
+      "basis": "98 active vector files, 0 without provenance; 55 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1."
     },
     {
       "n": 3,
@@ -3386,7 +3407,7 @@
         "src/data/validation/coverage-matrix.generated.json",
         "e2e/acvp-mldsa-evidence.spec.ts"
       ],
-      "basis": "52 NIST ACVP-Server reference-sample positive and 49 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
+      "basis": "73 NIST ACVP-Server reference-sample positive and 52 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
     },
     {
       "n": 6,

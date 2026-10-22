@@ -3,31 +3,13 @@
   "schema": "pqctoday.open-gaps/v1",
   "gaps": [
     {
-      "id": "d2-4-hedged-rnd",
-      "title": "ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11",
-      "detail": "CK_SIGN_ADDITIONAL_CONTEXT carries hedgeVariant and context only; there is no parameter for an explicit rnd, so NIST hedged sigGen expected signatures cannot be reproduced on either engine. Shown in the workbench as an explicit skip (mldsa-skip-hedged-rnd-*) and here as unsupported rows.",
-      "planItem": "D2-4",
+      "id": "mldsa-hash-sha512t-no-mechanism",
+      "title": "HashML-DSA / HashSLH-DSA with SHA2-512/224 or SHA2-512/256: deterministic NIST groups not yet byte-copied",
+      "detail": "PKCS #11 v3.2 defines no CKM_HASH_ML_DSA_<hash> / CKM_HASH_SLH_DSA_<hash> for these two hashes, but the generic CKM_HASH_ML_DSA / CKM_HASH_SLH_DSA take them as CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash = CKM_SHA512_224 / CKM_SHA512_256 (PQC Today HSM, both engines, from the optional-input release). The workbench runs that route for every hedged pre-hash group (mldsa_siggen_optional_input_test.json, slhdsa_siggen_optional_input_test.json). Still open: the SHA2-512/t cases of the deterministic pre-hash groups, which mldsa_sigver_test.json, mldsa_sigver_depth_test.json and the SLH-DSA pre-hash files list in notExecuted as no-pkcs11-hash-*-mechanism without their expected values.",
+      "planItem": "D2-6",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust (wasm)"
-    },
-    {
-      "id": "mldsa-hash-sha512t-no-mechanism",
-      "title": "HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism",
-      "detail": "PKCS #11 v3.2 §6.67.7 defines no CKM_HASH_ML_DSA_<hash> for these two hashes; the NIST sigVer groups for them are listed as notExecuted in mldsa_sigver_test.json.",
-      "planItem": "D2-6",
-      "owner": "unassigned",
-      "status": "accepted-limitation",
-      "scope": "C++ + Rust (specification limit)"
-    },
-    {
-      "id": "mldsa-internal-interface",
-      "title": "ML-DSA internal interface (raw M′) is not expressible through PKCS #11",
-      "detail": "No PKCS #11 v3.2 mechanism exposes Sign_internal/Verify_internal on a caller-supplied M′; the NIST internal-interface groups without external mu are listed as notExecuted.",
-      "planItem": "D2-5",
-      "owner": "unassigned",
-      "status": "accepted-limitation",
-      "scope": "C++ + Rust (specification limit)"
     },
     {
       "id": "kmac256-quarantined",

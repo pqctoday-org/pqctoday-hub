@@ -10,17 +10,17 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Figure                                                  |              Value | Source                                                            |
 | ------------------------------------------------------- | -----------------: | ----------------------------------------------------------------- |
-| Selected public NIST ACVP-Server reference-sample files |                 53 | `src/data/validation/validation-counts.generated.json`            |
-| NIST ACVP-Server reference-sample cases (active)        |                964 | `src/data/validation/validation-counts.generated.json`            |
-| Vector files (active / quarantined / total)             |        93 / 6 / 99 | `src/data/validation/validation-counts.generated.json`            |
-| Cases (active / quarantined / total)                    | 5,241 / 55 / 5,296 | `src/data/validation/validation-counts.generated.json`            |
-| Active cases: positive / negative                       |      3,508 / 1,733 | `src/data/validation/validation-counts.generated.json`            |
-| C++: advertised capability cells (denominator)          |              2,215 | `public/data/validation/coverage-matrix.json`                     |
-| Rust: advertised capability cells (denominator)         |              2,239 | `public/data/validation/coverage-matrix.json`                     |
+| Selected public NIST ACVP-Server reference-sample files |                 58 | `src/data/validation/validation-counts.generated.json`            |
+| NIST ACVP-Server reference-sample cases (active)        |              1,145 | `src/data/validation/validation-counts.generated.json`            |
+| Vector files (active / quarantined / total)             |       98 / 6 / 104 | `src/data/validation/validation-counts.generated.json`            |
+| Cases (active / quarantined / total)                    | 5,422 / 55 / 5,477 | `src/data/validation/validation-counts.generated.json`            |
+| Active cases: positive / negative                       |      3,674 / 1,748 | `src/data/validation/validation-counts.generated.json`            |
+| C++: advertised capability cells (denominator)          |              2,211 | `public/data/validation/coverage-matrix.json`                     |
+| Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 22 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                  0 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |                 73 | `public/data/validation/coverage-matrix.json`                     |
-| Workbench test groups / families                        |             68 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
+| Open gaps (register entries)                            |                 71 | `public/data/validation/coverage-matrix.json`                     |
+| Workbench test groups / families                        |             71 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
 
@@ -28,7 +28,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Evidence class                    | Files | Active cases |
 | --------------------------------- | ----: | -----------: |
-| nist-acvp-reference-sample        |    53 |          964 |
+| nist-acvp-reference-sample        |    58 |        1,145 |
 | acvts-issued-vector               |     0 |            0 |
 | published-standard-kat            |    17 |           22 |
 | independent-oracle                |    29 |        4,253 |
@@ -45,55 +45,55 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 ### C++ engine
 
-166 mechanisms · 2,215 advertised cells (denominator) · 47 unsupported cells shown separately · source commit `496f9e529d3d92248dc414e153b06afca8d3ff4f`
+165 mechanisms · 2,211 advertised cells (denominator) · 32 unsupported cells shown separately · source commit `d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     190 |   1,867 |      158 |       2,215 |
-| negative    |      84 |      64 |    2,067 |       2,215 |
-| boundary    |      41 |     173 |    2,001 |       2,215 |
-| state-error |     917 |       0 |    1,298 |       2,215 |
-| **overall** |      15 |   2,158 |       42 |       2,215 |
+| positive    |     213 |   1,853 |      145 |       2,211 |
+| negative    |      87 |      61 |    2,063 |       2,211 |
+| boundary    |      41 |     178 |    1,992 |       2,211 |
+| state-error |     917 |       0 |    1,294 |       2,211 |
+| **overall** |      15 |   2,164 |       32 |       2,211 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,173 |         2,172 |             1 |
+| wasm          | registered |            2,179 |         2,178 |             1 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
 Artifacts:
 
-- `public/wasm/softhsm.wasm` — SHA-256 `929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410`
+- `public/wasm/softhsm.wasm` — SHA-256 `9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b`
 - `public/wasm/softhsm.js` — SHA-256 `367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547`
 
 ### Rust engine
 
-180 mechanisms · 2,239 advertised cells (denominator) · 23 unsupported cells shown separately · source commit `68abd0ae472f9c722276fddd25f0341cc9af85bb`
+179 mechanisms · 2,235 advertised cells (denominator) · 8 unsupported cells shown separately · source commit `d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     194 |   1,887 |      158 |       2,239 |
-| negative    |      85 |      67 |    2,087 |       2,239 |
-| boundary    |      42 |     173 |    2,024 |       2,239 |
-| state-error |     923 |       1 |    1,315 |       2,239 |
-| **overall** |      15 |   2,175 |       49 |       2,239 |
+| positive    |     217 |   1,873 |      145 |       2,235 |
+| negative    |      88 |      64 |    2,083 |       2,235 |
+| boundary    |      42 |     178 |    2,015 |       2,235 |
+| state-error |     923 |       1 |    1,311 |       2,235 |
+| **overall** |      15 |   2,181 |       39 |       2,235 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,190 |         2,181 |             2 |
+| wasm          | registered |            2,196 |         2,187 |             2 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
 Artifacts:
 
-- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575`
+- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789`
 - `src/wasm/softhsmrustv3_bg.js` — SHA-256 `8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8`
 
 ## Recorded runs
 
-- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `80acb428f458`; 4,992 results: cpp 2,436 pass, 60 skip; rust 2,471 pass, 25 skip.
-- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `80acb428f458`; 96 results: rust 96 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `80acb428f458`; 13,364 results: cpp 6,677 pass, 1 fail, 4 skip; rust 6,663 pass, 19 fail.
+- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 4,988 results: cpp 2,434 pass, 60 skip; rust 2,469 pass, 25 skip.
+- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 96 results: rust 96 pass.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 13,726 results: cpp 6,858 pass, 1 fail, 4 skip; rust 6,844 pass, 19 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
@@ -119,11 +119,11 @@ Artifacts:
 
 Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `d1f62a418ce0` (2026-10-22).
 
-| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                      |
-| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | --------------------------------------------------------------------------------- |
-| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `496f9e529d3d`: 0 commit(s) ahead of the engine commit, 241 behind it |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,098 |    0 | not reported | 1,098 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `68abd0ae472f`: 0 commit(s) ahead of the engine commit, 30 behind it  |
-| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                 |
+| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                    |
+| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | ------------------------------------------------------------------------------- |
+| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,098 |    0 | not reported | 1,098 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it |
+| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                               |
 
 ## Cross-target evidence runs
 
@@ -245,13 +245,11 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-73 entries — by status: open 68, accepted-limitation 4, in-progress 1; by origin: curated 29, generated 44; owner unassigned: 73.
+71 entries — by status: open 68, in-progress 1, accepted-limitation 2; by origin: curated 27, generated 44; owner unassigned: 71.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
-| ML-DSA hedged signing with a caller-supplied rnd is not reachable through PKCS #11                                                                   | open                | D2-4            | unassigned |
-| HashML-DSA with SHA2-512/224 or SHA2-512/256 has no PKCS #11 mechanism                                                                               | accepted-limitation | D2-6            | unassigned |
-| ML-DSA internal interface (raw M′) is not expressible through PKCS #11                                                                               | accepted-limitation | D2-5            | unassigned |
+| HashML-DSA / HashSLH-DSA with SHA2-512/224 or SHA2-512/256: deterministic NIST groups not yet byte-copied                                            | open                | D2-6            | unassigned |
 | KMAC256 vector case is correct but not executed                                                                                                      | open                | B-2 / E (KMAC)  | unassigned |
 | 106 C++/Rust C_GetMechanismInfo disagreements                                                                                                        | open                | G-9             | unassigned |
 | 9 mechanisms advertised by Rust only                                                                                                                 | open                | G-9             | unassigned |
@@ -283,7 +281,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).
 
-Valid review records: 91.
+Valid review records: 96.
 
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
@@ -307,11 +305,11 @@ Machine-evaluated. A human item is never marked PASS.
 
 |   # | Item                                                                                                       | Status             | Evidence                                                                                                                                                                                                                                                                                                                                                                              | Basis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | --: | ---------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 9349 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
-|   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                                                                                  | 93 active vector files, 0 without provenance; 55 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1.                                                                                                                                                                                                                                                                                                                                                                                      |
+|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 9528 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
+|   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                                                                                  | 98 active vector files, 0 without provenance; 55 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1.                                                                                                                                                                                                                                                                                                                                                                                      |
 |   3 | Deck, script, UI and report counts are generated from the same manifest                                    | **HUMAN-REQUIRED** | `src/data/validation/validation-counts.generated.json`<br>`public/data/validation/release-evidence.json`<br>`scripts/audit-validation-claims.ts`                                                                                                                                                                                                                                      | This report and the UI read the generated counts (validation-counts.generated.json). The deck and script live outside this repo, so a person must run `npm run gen:release-evidence:check -- <presentation dir>` on the FINAL deck; `npm run release:freeze -- --presentation <dir>` records that result in the freeze manifest.                                                                                                                                                                                                                             |
 |   4 | The disclaimer is visible in the workbench and the report                                                  | **PASS**           | `src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx`<br>`src/components/Algorithms/KATView.tsx`<br>`src/components/Algorithms/CoverageMatrixView.tsx`<br>`public/data/validation/coverage-matrix.{md,html,json}`<br>`public/data/validation/release-evidence.md`<br>`e2e/validation-release-evidence.spec.ts`                                                       | Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); all three coverage exports (.md, .html and the machine-readable .json) and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.                                                                                                                                                                                                                                                           |
-|   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-errorPathProbes.json`<br>`src/data/validation/run-results/wasm-node-katRunner.json`<br>`src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                                                                                          | 52 NIST ACVP-Server reference-sample positive and 49 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                                                                                        |
+|   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-errorPathProbes.json`<br>`src/data/validation/run-results/wasm-node-katRunner.json`<br>`src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                                                                                          | 73 NIST ACVP-Server reference-sample positive and 52 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                                                                                        |
 |   6 | Dynamic mechanism inventory distinguishes advertised, tested, unsupported, skipped and untested            | **PASS**           | `public/data/validation/coverage-matrix.json`<br>`src/data/validation/mechanism-inventory.generated.json`                                                                                                                                                                                                                                                                             | The published matrix counts advertised (denominator), tested (per-status + recorded pass/fail), unsupported, skipped and untested cells separately per engine.                                                                                                                                                                                                                                                                                                                                                                                               |
 |   7 | All demonstrated artifacts and targets have frozen hashes and reproducible evidence bundles                | **FAIL**           | `evidence/acvp-xplat/2026-09-25-native/matrix.json`<br>`evidence/acvp-xplat/2026-09-25-native/targets.json`<br>`evidence/acvp-xplat/2026-09-25-boards/matrix.json`<br>`evidence/acvp-xplat/2026-09-25-boards/targets.json`<br>`evidence/acvp-xplat/2026-09-25-kv260-default/matrix.json`<br>`evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`<br>`evidence/release-freeze/` | Frozen and publishable: wasm-cpp (2026-09-25-native), wasm-rust (2026-09-25-native), macos-arm64-cpp (2026-09-25-native), macos-arm64-rust (2026-09-25-native), linux-x86_64-cpp (2026-09-25-native), linux-x86_64-rust (2026-09-25-native), linux-arm64-cpp (2026-09-25-native), linux-arm64-rust (2026-09-25-native), imx95-cpp (2026-09-25-boards), imx95-rust (2026-09-25-boards), kv260-cpp (2026-09-25-kv260-default), kv260-rust (2026-09-25-kv260-default). no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October). |
 |   8 | No slide claims ACVTS acceptance, NIST validation, exhaustive ACVP coverage or complete mechanism coverage | **HUMAN-REQUIRED** | `scripts/audit-validation-claims.ts`<br>`scripts/audit-validation-claims.allowlist.json`                                                                                                                                                                                                                                                                                              | The banned-claims lint covers UI copy, Learn content and the root docs in every gate run; it reads the deck text only when given the presentation path (`npm run gen:release-evidence:check -- <presentation dir>`). Slide images and the spoken script still need a person to read them.                                                                                                                                                                                                                                                                    |
@@ -334,12 +332,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `7de0119b35e62543998f8a1594d1b7f07d9153c73e81e3a5a0ce89b04bed3e87` |
-| `src/data/validation/coverage-waivers.json`                             | `466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e` |
-| `src/data/validation/native-conformance.generated.json`                 | `b27598492c38a724f1fedc23d4d5fae04fde61f3097b678a3ca608e975ec5b74` |
-| `src/data/validation/open-gaps.json`                                    | `5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b` |
-| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `d9cd5f795330a0dfa4051c3d2be4fc8ec718b68f730a3c918cd9ec810bb14640` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`              | `0e4362af530627f12b7bae5be1f27a8a9cff1c59296c575de3e5ebc0d33d0858` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `20c271412ef7a8c93a347da477b72989e01638e20aa213aaa500ca9603ca1fc2` |
-| `src/data/validation/validation-counts.generated.json`                  | `0c81c8e04d7d24910d2a4b686586f48644298b8d5f83182836e8c5ab540edf48` |
-| `src/data/validation/vector-manifest.json`                              | `c8cc3e89a478981c3a6de1b494a0b9bd49550d762b4eb68704384a3928b73791` |
+| `public/data/validation/coverage-matrix.json`                           | `19e02f558c5869e965ced154262195cbb5f406e53bc6d54e4c389f44949d0f04` |
+| `src/data/validation/coverage-waivers.json`                             | `868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130` |
+| `src/data/validation/native-conformance.generated.json`                 | `3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2` |
+| `src/data/validation/open-gaps.json`                                    | `608b06aff8d80f7460909d2106c4ea450cd9085eb53376c9a2fc28b05a2b3e58` |
+| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`              | `42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `7ee706406ecd274291af45b186c5c98324cee4afbe6005d2414de0b29ad6ca88` |
+| `src/data/validation/validation-counts.generated.json`                  | `21341336ec13a7cc41900f7b6735c782a286b96738c960f1c80a0b82ff64587e` |
+| `src/data/validation/vector-manifest.json`                              | `78d1e7a27934e48e2ec3a5faf45099307e9114da56b150fd1733e4fcb675d252` |

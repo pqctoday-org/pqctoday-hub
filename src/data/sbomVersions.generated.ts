@@ -430,13 +430,13 @@ export const SBOM_BUILDS: Readonly<
   },
   'softhsm-cpp-engine': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '496f9e529d3d92248dc414e153b06afca8d3ff4f',
-    sha256: '929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410',
+    commit: 'd1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0',
+    sha256: '9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b',
   },
   'softhsmrustv3-engine': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '68abd0ae472f9c722276fddd25f0341cc9af85bb',
-    sha256: '345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575',
+    commit: 'd1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0',
+    sha256: 'a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789',
   },
   strongswan: {
     repo: 'pqctoday-org/pqctoday-hsm',

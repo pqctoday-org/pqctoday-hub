@@ -12,10 +12,11 @@
 //    than CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE (a signature error
 //    means the point was never validated).
 //  - ECDSA SigGen (ECDSA-SigGen-FIPS186-5, P-256/384/521 × eight hashes), three
-//    rows per case: (1) NIST byte-match — C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K,
-//    pParameter = NIST's k left-padded to the order length) over the digest
-//    must return exactly NIST's r || s (hsm #281; skipped on a bundle that
-//    does not advertise the mechanism); (2) CKM_ECDSA_<hash> with the engine's
+//    rows per case: (1) NIST byte-match — C_Sign(CKM_ECDSA, pParameter = NIST's
+//    k left-padded to the order length) over the digest must return exactly
+//    NIST's r || s. k is an optional test input this HSM accepts outside the
+//    PKCS#11 standard (standard CKM_ECDSA takes no parameter and draws its own
+//    nonce); the row is labelled so; (2) CKM_ECDSA_<hash> with the engine's
 //    own nonce, verified back by the same engine (functional round-trip); (3)
 //    that signature verified by @noble/curves (independent oracle).
 //  - EdDSA SigGen (EDDSA-SigGen-1.0): EdDSA is deterministic — C_Sign with the
@@ -39,6 +40,7 @@ import {
   unsupportedReason,
   CKR_OK,
   CKR_SIGNATURE_INVALID,
+  TEST_INPUT_LABEL,
   type AcvpCaseMeta,
   type Provenance,
 } from './mldsaAcvp'
@@ -308,8 +310,8 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
   }
   const P = f._provenance
   const { verify: verifyOracle, digest } = await ecdsaOracle()
-  const kMech = WSE_MECH.CKM_PQCTODAY_ECDSA_EXPLICIT_K
-  const kWhy = unsupportedReason(mechs, kMech, 'CKM_PQCTODAY_ECDSA_EXPLICIT_K')
+  const kMech = WSE_MECH.CKM_ECDSA
+  const kWhy = unsupportedReason(mechs, kMech, 'CKM_ECDSA')
   for (const g of f.testGroups) {
     const mechName = ECDSA_SIGGEN_MECH[g.hashAlg]
     const mech = mechName ? WSE_MECH[mechName] : undefined // eslint-disable-line security/detect-object-injection
@@ -341,8 +343,9 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
         ...meta,
         localOperation: 'sigGen-explicit-k',
         expected: 'byte-match',
+        testInput: 'k',
       }
-      const katCase = `SigGen · NIST ECDSA sigGen tg${g.tgId}/tc${t.tcId} · ${g.curve} · ${g.hashAlg} · msg ${msg.length}B · C_Sign(CKM_PQCTODAY_ECDSA_EXPLICIT_K, NIST k) over the ${g.hashAlg} digest · expect NIST r || s byte-match`
+      const katCase = `SigGen · NIST ECDSA sigGen tg${g.tgId}/tc${t.tcId} · ${g.curve} · ${g.hashAlg} · msg ${msg.length}B · C_Sign(CKM_ECDSA, NIST k) over the ${g.hashAlg} digest · expect NIST r || s byte-match · ${TEST_INPUT_LABEL}`
       if (kWhy) {
         await skipRow(ctx, {
           id: `${base}-kat-${eName}`,
@@ -382,7 +385,7 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
                 ? {
                     ok: true,
                     observed: 'r || s byte-equal',
-                    details: `r || s [${out.out.length}B] byte-equal to NIST's (${sha256Tag(out.out)})`,
+                    details: `r || s [${out.out.length}B] byte-equal to NIST's (${sha256Tag(out.out)}) · ${TEST_INPUT_LABEL}: NIST's k as the CKM_ECDSA parameter`,
                   }
                 : {
                     ok: false,
@@ -474,13 +477,13 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
       })
     }
   }
-  // Explicit-k is defined for P-256/384/521 only (hsm #281); the EC parameter
-  // group also lists secp256k1, so pin the documented refusal there:
-  // C_SignInit with a secp256k1 key → CKR_KEY_TYPE_INCONSISTENT.
+  // A supplied k is accepted for P-256/384/521 only; the EC parameter group
+  // also lists secp256k1, so pin the documented refusal there:
+  // C_SignInit(CKM_ECDSA, k) with a secp256k1 key → CKR_KEY_TYPE_INCONSISTENT.
   const probeId = `ecdsa-explicit-k-secp256k1-refused-${eName}`
   const probeAlg = `ECDSA explicit-k secp256k1 (${eName})`
   const probeCase =
-    'Probe · C_SignInit(CKM_PQCTODAY_ECDSA_EXPLICIT_K) with a generated secp256k1 key · expect CKR_KEY_TYPE_INCONSISTENT (the mechanism covers P-256/384/521 only)'
+    'Probe · C_SignInit(CKM_ECDSA, pParameter = k) with a generated secp256k1 key · expect CKR_KEY_TYPE_INCONSISTENT (a supplied k is accepted for P-256/384/521 only)'
   const probeMeta: AcvpCaseMeta = {
     origin: 'product-authored-probe',
     upstreamOperation: 'none',

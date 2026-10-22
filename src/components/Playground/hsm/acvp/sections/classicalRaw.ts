@@ -522,7 +522,9 @@ export const WSE_MECH = {
   CKM_EDDSA: 0x1057,
   CKM_SHA256_RSA_PKCS: 0x40,
   CKM_SHA256_RSA_PKCS_PSS: 0x43,
-  CKM_PQCTODAY_ECDSA_EXPLICIT_K: 0x80000015,
+  // Standard CKM_ECDSA (raw digest input). This HSM also accepts NIST's k as an
+  // optional parameter on C_SignInit (a test input outside the PKCS#11 standard).
+  CKM_ECDSA: 0x1041,
   CKM_SHA3_256_RSA_PKCS_PSS: 0x63,
   CKM_AES_CBC: 0x1082,
   CKM_AES_CTR: 0x1086,

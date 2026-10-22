@@ -21,6 +21,7 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import type { CategoryId, TestResult } from './useAcvpSuite'
 import { evidenceForRowId } from '@/data/validation/acvpRowEvidence.static'
+import { TEST_INPUT_LABEL } from './sections/mldsaAcvp'
 
 const classesOf = (rowId: string) =>
   [...new Set(evidenceForRowId(rowId).map((e) => e.evidenceClass))].sort()
@@ -192,7 +193,7 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
     }
   })
 
-  it('ECDSA sigGen: NIST r || s byte-match with NIST k (hsm #281), plus engine round-trip + independent oracle, on both engines including SHA-224', () => {
+  it('ECDSA sigGen: NIST r || s byte-match with NIST k supplied to CKM_ECDSA, plus engine round-trip + independent oracle, on both engines including SHA-224', () => {
     const v = readVectors('ecdsa_siggen_acvp_test.json')
     for (const g of v.testGroups)
       for (const t of g.tests)
@@ -201,11 +202,15 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
           const kat = row(`${base}-kat-${engine}`)!
           const rt = row(`${base}-rt-${engine}`)!
           const or = row(`${base}-oracle-${engine}`)!
-          // hsm #281: NIST's own k through CKM_PQCTODAY_ECDSA_EXPLICIT_K must
-          // reproduce NIST's r || s exactly, on both engines, every curve/hash.
+          // NIST's own k as the optional CKM_ECDSA parameter (a test input
+          // outside the PKCS#11 standard) must reproduce NIST's r || s exactly,
+          // on both engines, every curve/hash, and the row must say so.
           expect(classesOf(kat.id)).toEqual(['nist-acvp-reference-sample'])
           expect(kat.status, kat.details).toBe('pass')
           expect(kat.caseMeta?.observed).toBe('r || s byte-equal')
+          expect(kat.caseMeta?.testInput).toBe('k')
+          expect(kat.testCase).toContain('C_Sign(CKM_ECDSA, NIST k)')
+          expect(kat.testCase).toContain(TEST_INPUT_LABEL)
           expect(classesOf(rt.id)).toEqual(['functional-round-trip'])
           expect(classesOf(or.id)).toEqual(['independent-oracle'])
           expect(rt.status, rt.details).toBe('pass')
@@ -214,7 +219,7 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
         }
   })
 
-  it('explicit-k refuses a secp256k1 key with CKR_KEY_TYPE_INCONSISTENT on both engines', () => {
+  it('CKM_ECDSA with a supplied k refuses a secp256k1 key with CKR_KEY_TYPE_INCONSISTENT on both engines', () => {
     for (const engine of ENGINES) {
       const r = results.find((x) => x.id === `ecdsa-explicit-k-secp256k1-refused-${engine}`)!
       expect(r.status, r.details).toBe('pass')

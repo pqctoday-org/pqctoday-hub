@@ -12,7 +12,7 @@
     "upstream_operation": "sigVer (dedicated SigVer vectors with upstream testPassed + reason)",
     "local_operation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with CK_SIGN_ADDITIONAL_CONTEXT (upstream context): CKM_SLH_DSA for pure groups, CKM_HASH_SLH_DSA_<hash> for preHash groups. Positive cases must return CKR_OK; modified-content negatives CKR_SIGNATURE_INVALID; too-small/too-large signatures CKR_SIGNATURE_LEN_RANGE (PKCS#11 v3.2 section 5.1.6: the signature is invalid solely on the basis of its length)",
     "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived",
-    "subset_policy": "Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family.",
+    "subset_policy": "Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family. Update 2026-10-22: the 6 upstream group(s) formerly listed in notExecuted as no-pkcs11-internal-interface now run from slhdsa_sigver_internal_test.json, through optional test inputs this HSM accepts outside the PKCS#11 standard (caller-supplied random value; internal message encoding for SLH-DSA; the standard CKM_ML_DSA_EXTERNAL_MU for ML-DSA internal).",
     "parameter_sets": [
       "SLH-DSA-SHAKE-128s",
       "SLH-DSA-SHAKE-128f",
@@ -238,33 +238,6 @@
       "why": "subset-size-budget"
     },
     {
-      "tgId": 16,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHAKE-128f",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 14,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 17,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHAKE-192f",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 14,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 18,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHAKE-256f",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 14,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
       "tgId": 26,
       "testType": "AFT",
       "parameterSet": "SLH-DSA-SHAKE-128s",
@@ -320,33 +293,6 @@
       "preHash": "preHash",
       "cases": 14,
       "why": "subset-size-budget"
-    },
-    {
-      "tgId": 34,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHAKE-128s",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 14,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 35,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHAKE-192s",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 14,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 36,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHAKE-256s",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 14,
-      "why": "no-pkcs11-internal-interface"
     }
   ]
 }

@@ -61,7 +61,7 @@ export const CONCEPT_CHECKS: ConceptCheck[] = [
     ],
     correct: 1,
     explanation:
-      'The ML-KEM sub-specification says the encapDecap AFT tests Algorithm 17 ML-KEM.Encaps_internal(ek, m) with a server-generated m. FIPS 203 keeps that interface for testing only and requires the module to generate the random seeds; the PKCS#11 v3.2 C_EncapsulateKey signature has no input for m.',
+      'The ML-KEM sub-specification says the encapDecap AFT tests Algorithm 17 ML-KEM.Encaps_internal(ek, m) with a server-generated m. FIPS 203 keeps that interface for testing only and requires the module to generate the random seeds; the PKCS#11 v3.2 C_EncapsulateKey signature has no input for m. (The Hub’s HSM accepts m as an optional test input outside the standard — something a validated module would keep out of its approved mode.)',
     cites: [
       { s: 'acvpMlKem' },
       { s: 'fips203', at: '§6, Alg. 17' },

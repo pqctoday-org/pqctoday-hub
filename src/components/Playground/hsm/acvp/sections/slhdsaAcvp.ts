@@ -771,7 +771,7 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
       details:
         `Skipped — PKCS#11 v3.2 §6.69.7 defines no CKM_HASH_SLH_DSA_<hash> mechanism for ${hashes.join(' or ')}; ` +
         `C_GetMechanismList on this engine advertises ${advertised} of the 10 that do exist and none for these hashes. ` +
-        `Generic CKM_HASH_SLH_DSA (caller-supplied digest) is not exercised here. Not run: ` +
+        `The generic CKM_HASH_SLH_DSA takes these hashes (CKM_SHA512_224 / CKM_SHA512_256) and runs in the hedged pre-hash groups (optional-input rows); these deterministic cases are not byte-copied yet. Not run: ` +
         noMech.map((r) => `tg${r.tgId}/tc${r.tcId}`).join(', ') +
         ` · ${srcTag(SV)}`,
       caseMeta: {
@@ -786,57 +786,7 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
       },
     })
   }
-  const internal = notRun.filter((r) => r.why === 'no-pkcs11-internal-interface')
-  if (internal.length > 0) {
-    await pushResult({
-      id: `slhdsa-skip-internal-${eName}`,
-      algorithm: `SLH-DSA (${eName})`,
-      testCase: `SigVer/SigGen internal interface (slh_sign_internal on a raw M′) · ${internal.length} groups`,
-      referenceUrl,
-      status: 'skip',
-      details:
-        'Skipped — no PKCS#11 v3.2 mechanism exposes slh_sign_internal / slh_verify_internal (CKM_SLH_DSA always ' +
-        'applies the FIPS 205 §10.2 domain-separation prefix). Not run: sigVer ' +
-        svNotRun
-          .filter((r) => r.why === 'no-pkcs11-internal-interface')
-          .map((r) => `tg${r.tgId}`)
-          .join(', ') +
-        '; sigGen (deterministic) ' +
-        detNotRun
-          .filter((r) => r.why === 'no-pkcs11-internal-interface')
-          .map((r) => `tg${r.tgId}`)
-          .join(', '),
-      caseMeta: {
-        origin: 'not-executed',
-        upstreamOperation: 'sigVer',
-        localOperation: 'none',
-        parameterSet: 'SLH-DSA',
-        mode: 'internal',
-        expected: 'not-run',
-        source: srcOf(SV),
-      },
-    })
-  }
-  const hedged = notRun.filter((r) => r.why === 'hedged-additional-randomness-not-injectable')
-  if (hedged.length > 0) {
-    await pushResult({
-      id: `slhdsa-skip-hedged-rnd-${eName}`,
-      algorithm: `SLH-DSA (${eName})`,
-      testCase: `SigGen hedged · byte-match against NIST additionalRandomness · ${hedged.length} groups`,
-      referenceUrl,
-      status: 'skip',
-      details:
-        'Skipped — CK_SIGN_ADDITIONAL_CONTEXT carries hedgeVariant and context only; there is no PKCS#11 parameter for ' +
-        'opt_rand, so a hedged NIST signature cannot be reproduced (randomization itself is shown by the hedged probe row). ' +
-        `Not run: sigGen ${hedged.map((r) => `tg${r.tgId}`).join(', ')} · ${srcTag(DET)}`,
-      caseMeta: {
-        origin: 'not-executed',
-        upstreamOperation: 'sigGen',
-        localOperation: 'none',
-        parameterSet: 'SLH-DSA',
-        expected: 'not-run',
-        source: srcOf(DET),
-      },
-    })
-  }
+  // The internal-interface and hedged (addrnd) groups run in
+  // sections/optionalInputAcvp.ts, through optional test inputs this HSM
+  // accepts outside the PKCS#11 standard.
 }

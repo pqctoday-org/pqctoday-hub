@@ -1227,13 +1227,6 @@
       "section": null,
       "vendorDefined": true
     },
-    "CKM_PQCTODAY_ECDSA_EXPLICIT_K": {
-      "algorithm": "ECDSA sign with a caller-supplied nonce k (sign only; the digest is the input)",
-      "revision": "FIPS 186-5",
-      "section": null,
-      "vendorDefined": true,
-      "parameterSets": "EC"
-    },
     "CKM_CONCATENATE_BASE_AND_KEY": {
       "algorithm": "Concatenate base key and key",
       "revision": "PKCS #11 v3.2",
@@ -1614,33 +1607,6 @@
     }
   },
   "declaredUnreachable": [
-    {
-      "id": "mldsa-hash-sha512t",
-      "algorithm": "HashML-DSA with SHA2-512/224 or SHA2-512/256",
-      "revision": "FIPS 204",
-      "operations": ["sign", "verify"],
-      "parameterSets": "ML-DSA",
-      "reason": "PKCS #11 v3.2 §6.67.7 defines no CKM_HASH_ML_DSA_<hash> mechanism for SHA2-512/224 or SHA2-512/256, so no engine can advertise one; the NIST ACVP sigVer groups for these hashes are listed in mldsa_sigver_test.json notExecuted.",
-      "openGap": "mldsa-hash-sha512t-no-mechanism"
-    },
-    {
-      "id": "mldsa-hedged-rnd",
-      "algorithm": "ML-DSA hedged signing with caller-supplied rnd",
-      "revision": "FIPS 204",
-      "operations": ["sign"],
-      "parameterSets": "ML-DSA",
-      "reason": "CK_SIGN_ADDITIONAL_CONTEXT carries hedgeVariant and context only; PKCS #11 v3.2 has no parameter for an explicit rnd, so the NIST hedged sigGen expected signatures cannot be reproduced through either engine (plan D2-4).",
-      "openGap": "d2-4-hedged-rnd"
-    },
-    {
-      "id": "mldsa-internal-interface",
-      "algorithm": "ML-DSA Sign_internal / Verify_internal on a caller-supplied M′",
-      "revision": "FIPS 204",
-      "operations": ["sign", "verify"],
-      "parameterSets": "ML-DSA",
-      "reason": "No PKCS #11 v3.2 mechanism exposes the internal interface on a raw M′ (CKM_ML_DSA always applies the external domain-separation prefix); NIST groups with signatureInterface=internal and externalMu=false are listed in the vector files notExecuted.",
-      "openGap": "mldsa-internal-interface"
-    },
     {
       "id": "x963-kdf-caller-z",
       "algorithm": "ANSI X9.63 KDF on a caller-supplied shared secret Z",
