@@ -18,7 +18,7 @@
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
     "public/data/validation/coverage-matrix.json": "7de0119b35e62543998f8a1594d1b7f07d9153c73e81e3a5a0ce89b04bed3e87",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
-    "src/data/validation/native-conformance.generated.json": "9f8d4f0fb52de9578580f3b77fc5705caffdd5b36346e22412fdc2cc6bd793f0",
+    "src/data/validation/native-conformance.generated.json": "b27598492c38a724f1fedc23d4d5fae04fde61f3097b678a3ca608e975ec5b74",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "d9cd5f795330a0dfa4051c3d2be4fc8ec718b68f730a3c918cd9ec810bb14640",
     "src/data/validation/run-results/wasm-node-katRunner.json": "0e4362af530627f12b7bae5be1f27a8a9cff1c59296c575de3e5ebc0d33d0858",
@@ -391,7 +391,7 @@
     "source": "src/data/validation/native-conformance.generated.json",
     "executedByHub": false,
     "note": "Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser.",
-    "hsmPinnedCommit": "3cd1c86a6ab348c523cebcc6d294eb34fd93fed1",
+    "hsmPinnedCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
     "hsmPinnedCommitDate": "2026-10-22",
     "hsmPinnedCommitPublished": true,
     "suites": [
@@ -404,32 +404,32 @@
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
           "The report does not record the build target (platform/ABI) of the engine under test.",
-          "The report was produced at an engine commit 239 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 1 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s C++ WASM bundle was built from, so these results are not results for the engine running in this browser."
         ],
         "report": {
           "counts": {
-            "pass": 963,
+            "pass": 962,
             "fail": 0,
             "skip": 2,
             "xfail": 3,
-            "total": 968
+            "total": 967
           },
           "groups": 68,
           "caseIdentity": "suite-assigned",
-          "engineCommit": "7b4c723613b87e7bffe746ea07c163be12bbd185",
-          "engineCommitDate": "2026-10-02",
-          "reportCommit": "ea0e072bbcf8611dd1832db3b920cf08d05b007c",
-          "reportDate": "2026-10-02 16:34:56 UTC",
+          "engineCommit": "7dee23c2ea403d7b8e8811af1375e1776f8c07de",
+          "engineCommitDate": "2026-10-22",
+          "reportCommit": "f81cfac9b52171daa5fa35045f18af4092350e4d",
+          "reportDate": "2026-10-22 15:34:25 UTC",
           "target": "not recorded",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 239,
+          "commitsBehindPinnedHsmMain": 1,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
           "wasmBundleHsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 60,
-          "commitsFromWasmBundleToEngine": 0
+          "commitsFromEngineToWasmBundle": 0,
+          "commitsFromWasmBundleToEngine": 241
         }
       },
       {
@@ -440,34 +440,34 @@
         "reportFiles": ["rust/RUST_P11_V32_CONFORMANCE_REPORT.md"],
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
-          "The report was produced at an engine commit 29 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 1 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
           "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
           "The harness has no skip status: an unsupported case can only pass or fail."
         ],
         "report": {
           "counts": {
-            "pass": 1099,
+            "pass": 1098,
             "fail": 0,
             "skip": null,
             "xfail": null,
-            "total": 1099
+            "total": 1098
           },
           "groups": 52,
           "caseIdentity": "derived-from-transcript",
-          "engineCommit": "d192acf8c3d7d400497c79401ad51f60e4352f21",
-          "engineCommitDate": "2026-10-21",
-          "reportCommit": "cab858fe634c38260b796ef6273c304df4feab2d",
-          "reportDate": "2026-10-22T01:00:32.816Z",
+          "engineCommit": "7dee23c2ea403d7b8e8811af1375e1776f8c07de",
+          "engineCommitDate": "2026-10-22",
+          "reportCommit": "f81cfac9b52171daa5fa35045f18af4092350e4d",
+          "reportDate": "2026-10-22T15:29:16.287Z",
           "target": "wasm32 build with `--features acvp`",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 29,
+          "commitsBehindPinnedHsmMain": 1,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
           "wasmBundleHsmCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 26,
-          "commitsFromWasmBundleToEngine": 0
+          "commitsFromEngineToWasmBundle": 0,
+          "commitsFromWasmBundleToEngine": 30
         }
       },
       {
