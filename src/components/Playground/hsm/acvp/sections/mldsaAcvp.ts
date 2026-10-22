@@ -149,7 +149,7 @@ export interface AcvpCaseMeta {
     // gap-closure P5: KDF derivation; randomized signing verified back (no byte-match)
     | 'derive'
     | 'sigGen-verify-back'
-    // hsm #281: ECDSA with NIST's own k (CKM_PQCTODAY_ECDSA_EXPLICIT_K) → byte-match r || s
+    // ECDSA with NIST's own k (CKM_ECDSA + k, a test input outside the standard) → byte-match r || s
     | 'sigGen-explicit-k'
     // multi-part message signing round-trip (sections/multiMessageSign.ts)
     | 'message-sign-multipart'
@@ -184,7 +184,15 @@ export interface AcvpCaseMeta {
   tcId?: number
   source: { repo: string; commit: string; path: string; sha256: string }
   observed?: string
+  /** Set when the row handed the HSM a value the standard has no field for (an
+   * optional test input outside PKCS#11: ML-KEM m, ECDSA k, ML-DSA rnd, SLH-DSA
+   * addrnd, or SLH-DSA internal message encoding). Rows that set it also carry
+   * TEST_INPUT_LABEL in their visible text. */
+  testInput?: 'm' | 'k' | 'rnd' | 'addrnd' | 'internal-encoding' | 'addrnd+internal-encoding'
 }
+
+/** Visible label on every row that used an optional test input (plan M4). */
+export const TEST_INPUT_LABEL = 'test input supplied (outside the standard)'
 
 export interface Provenance {
   producer?: string
@@ -875,7 +883,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
 
   // ── 4. Honest skips: upstream groups PKCS#11 cannot express ─────────────
   const svNotRun = sigVerVectors.notExecuted as NotExecuted[]
-  const sgNotRun = sigGenDetVectors.notExecuted as NotExecuted[]
   const ids = (rows: NotExecuted[]) =>
     rows.map((r) => (r.tcId ? `tg${r.tgId}/tc${r.tcId}` : `tg${r.tgId}`)).join(', ')
 
@@ -895,7 +902,7 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
       details:
         `Skipped — PKCS#11 v3.2 Table 284 defines no CKM_HASH_ML_DSA_<hash> mechanism for ${hashes.join(' or ')}; ` +
         `C_GetMechanismList on this engine advertises ${advertisedHashMechs} of the 10 that do exist and none for these hashes. ` +
-        `Generic CKM_HASH_ML_DSA (caller-supplied digest) is not exercised here. Not run: ${ids(noHashMech)} · ${srcTag(SV_PROV)}`,
+        `The generic CKM_HASH_ML_DSA takes these hashes (CKM_SHA512_224 / CKM_SHA512_256) and runs in the hedged pre-hash groups (optional-input rows); these deterministic sigVer cases are not byte-copied yet. Not run: ${ids(noHashMech)} · ${srcTag(SV_PROV)}`,
       caseMeta: {
         origin: 'not-executed',
         upstreamOperation: 'sigVer',
@@ -909,54 +916,7 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
     })
   }
 
-  const hedged = sgNotRun.filter((r) => r.why === 'hedged-rnd-not-injectable')
-  if (hedged.length > 0) {
-    await pushResult({
-      id: `mldsa-skip-hedged-rnd-${eName}`,
-      algorithm: `ML-DSA-44/65/87 (${eName})`,
-      testCase: `SigGen hedged · byte-match against NIST rnd · ${hedged.length} groups`,
-      referenceUrl,
-      status: 'skip',
-      details:
-        'Skipped — CK_SIGN_ADDITIONAL_CONTEXT carries hedgeVariant and context only; there is no PKCS#11 parameter for an ' +
-        'explicit rnd, so with CKH_HEDGE_REQUIRED the token draws its own randomness and the NIST hedged signature cannot be ' +
-        `reproduced through this interface. Not run: sigGen ${ids(hedged)} · ${srcTag(SG_PROV)}`,
-      caseMeta: {
-        origin: 'not-executed',
-        upstreamOperation: 'sigGen',
-        localOperation: 'none',
-        parameterSet: 'ML-DSA-44/65/87',
-        expected: 'not-run',
-        source: srcOf(SG_PROV),
-      },
-    })
-  }
-
-  const internal = [
-    ...svNotRun.filter((r) => r.why === 'no-pkcs11-internal-interface'),
-    ...sgNotRun.filter((r) => r.why === 'no-pkcs11-internal-interface'),
-  ]
-  if (internal.length > 0) {
-    await pushResult({
-      id: `mldsa-skip-internal-${eName}`,
-      algorithm: `ML-DSA-44/65/87 (${eName})`,
-      testCase: 'SigVer/SigGen internal interface (raw M′, externalMu=false)',
-      referenceUrl,
-      status: 'skip',
-      details:
-        'Skipped — no PKCS#11 v3.2 mechanism exposes ML-DSA.Sign_internal/Verify_internal on a caller-supplied M′ ' +
-        '(CKM_ML_DSA always applies the external domain-separation prefix). ' +
-        `Not run: sigVer ${ids(svNotRun.filter((r) => r.why === 'no-pkcs11-internal-interface'))}; ` +
-        `sigGen ${ids(sgNotRun.filter((r) => r.why === 'no-pkcs11-internal-interface'))}`,
-      caseMeta: {
-        origin: 'not-executed',
-        upstreamOperation: 'sigVer',
-        localOperation: 'none',
-        parameterSet: 'ML-DSA-44/65/87',
-        mode: 'internal',
-        expected: 'not-run',
-        source: srcOf(SV_PROV),
-      },
-    })
-  }
+  // The hedged (rnd) and internal-interface groups run in
+  // sections/optionalInputAcvp.ts, through optional test inputs this HSM
+  // accepts outside the PKCS#11 standard and the standard CKM_ML_DSA_EXTERNAL_MU.
 }

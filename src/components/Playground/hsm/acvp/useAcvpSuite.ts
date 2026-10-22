@@ -144,6 +144,7 @@ import { useHsmContext } from '../HsmContext'
 import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
 import { runMldsaDepthSection } from './sections/mldsaDepth'
 import { runMlkemAcvpSection } from './sections/mlkemAcvp'
+import { runOptionalInputSection } from './sections/optionalInputAcvp'
 import { runMldsaNegBoundarySection } from './sections/mldsaNegBoundary'
 import { runMlkemKeyCheckDepthSection } from './sections/mlkemKeyCheckDepth'
 import { runSlhdsaCoverageSection } from './sections/slhdsaCoverage'
@@ -215,9 +216,9 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
   { id: 'hashing_mac', label: 'Hashing & MAC', groups: 10 },
   { id: 'kdf', label: 'KDF', groups: 8 },
   { id: 'classical', label: 'Classical Asymmetric', groups: 17 },
-  { id: 'ml_dsa', label: 'ML-DSA', groups: 9 },
-  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 8 },
-  { id: 'ml_kem', label: 'ML-KEM', groups: 4 },
+  { id: 'ml_dsa', label: 'ML-DSA', groups: 10 },
+  { id: 'slh_stateful', label: 'SLH-DSA & Stateful', groups: 9 },
+  { id: 'ml_kem', label: 'ML-KEM', groups: 5 },
   // Project Wycheproof ML-KEM + ML-DSA (sections/wycheproofPqc.ts): its own
   // category because its 2,458 cases per engine take ~10 s in Node but
   // minutes in a browser (each row streams into the table), which the
@@ -1239,6 +1240,22 @@ export function useAcvpSuite() {
             addLog,
           })
 
+          // ── 5d+. ML-DSA hedged (NIST rnd) and internal-interface groups, through
+          // optional test inputs outside the PKCS#11 standard and the standard
+          // CKM_ML_DSA_EXTERNAL_MU. sections/optionalInputAcvp.ts.
+          await runOptionalInputSection(
+            {
+              M,
+              hSession,
+              eName,
+              mechs: engine.mechs,
+              referenceUrl: REF.mldsa,
+              pushResult,
+              addLog,
+            },
+            'ml_dsa'
+          )
+
           // ── 5e. ML-DSA context / message-length / pre-hash depth — NIST
           // deterministic SigGen at ctx 0/255, 8192-byte messages and the
           // remaining HashML-DSA functions, plus product-authored 1-byte and
@@ -1488,6 +1505,22 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+
+          // ── 7b+. ML-KEM encapsulation AFT with NIST's m as the CKM_ML_KEM
+          // parameter (a test input outside the PKCS#11 standard).
+          // sections/optionalInputAcvp.ts.
+          await runOptionalInputSection(
+            {
+              M,
+              hSession,
+              eName,
+              mechs: engine.mechs,
+              referenceUrl: REF.mlkem,
+              pushResult,
+              addLog,
+            },
+            'ml_kem'
+          )
 
           // ── 7c. ML-KEM encapsulation-key check depth — every remaining
           // invalid NIST ek of the encapsulationKeyCheck groups (FIPS 203 §7.2).
@@ -1819,6 +1852,22 @@ export function useAcvpSuite() {
             pushResult,
             addLog,
           })
+
+          // ── 9f. SLH-DSA hedged (NIST addrnd) and internal-interface groups, through
+          // optional test inputs outside the PKCS#11 standard.
+          // sections/optionalInputAcvp.ts.
+          await runOptionalInputSection(
+            {
+              M,
+              hSession,
+              eName,
+              mechs: engine.mechs,
+              referenceUrl: REF.slhdsa,
+              pushResult,
+              addLog,
+            },
+            'slh_dsa'
+          )
         }
 
         // ── 10. SHA-256 Digest KAT (FIPS 180-4) ─────────────────────────

@@ -48,6 +48,14 @@ export const CKA_KEY_GEN_MECHANISM = 0x00000166
 export const CKA_ENCAPSULATE = 0x00000633
 export const CKA_DECAPSULATE = 0x00000634
 
+// Generic pre-hash mechanisms (PKCS#11 v3.2): the caller supplies PH(M) and
+// names the hash in CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash. Single-part only.
+export const CKM_HASH_ML_DSA = 0x1f
+export const CKM_HASH_SLH_DSA = 0x34
+// SHA-512/t digests (PKCS#11 v3.2): usable as the generic pre-hash `hash`.
+export const CKM_SHA512_224 = 0x48
+export const CKM_SHA512_256 = 0x4c
+
 // ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2, pkcs11t.h:1221-1231)
 export const CKM_HASH_ML_DSA_SHA224 = 0x23
 export const CKM_HASH_ML_DSA_SHA256 = 0x24

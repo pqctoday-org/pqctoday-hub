@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:mldsa_siggen_det_test",
-  "subjectSha256": "0afad4e33936d5295b26edfe6559780beca41bee1a560f9653166a7d3f15149f",
-  "fileSha256": "7eb838cde840c9489f87e2743ef3d984b73f6f8577bf54629291f7d2b79382f0",
+  "subjectSha256": "c9bf54a8795948fe6829b0d0a4ef25610c97dce95e211aac8efa458b044038ff",
+  "fileSha256": "b162fe3c7a07aab125796a28e3aceb8223e03a012f021cec4867959c1e7ad7f4",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id mldsa_siggen_det_test --strict",
@@ -20,5 +20,5 @@
     "cases": 9,
     "values": 123
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-10-22"
 }

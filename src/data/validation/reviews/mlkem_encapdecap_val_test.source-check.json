@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:mlkem_encapdecap_val_test",
-  "subjectSha256": "116a59085a9c3a0dd96053bcbb481d6a09963b038d2e09dca26281841953d4b6",
-  "fileSha256": "37eb014669b217da709ce0fa50a3564011281ee90a045e53405d4c712ca202a7",
+  "subjectSha256": "ffcbbdf0c6572a67e660fcf6a398770d5be7549d2c05e2753ed48de458cb0624",
+  "fileSha256": "50428fb2ff91c2288791525ee613cac204ced379cf22ddadc9f7e1b90f20eb92",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id mlkem_encapdecap_val_test --strict",
@@ -20,5 +20,5 @@
     "cases": 24,
     "values": 144
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-10-22"
 }

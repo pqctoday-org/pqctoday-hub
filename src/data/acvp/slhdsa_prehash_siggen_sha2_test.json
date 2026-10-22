@@ -12,7 +12,7 @@
     "upstream_operation": "sigGen (external interface, preHash groups, deterministic=true)",
     "local_operation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKO_PRIVATE_KEY, CKK_SLH_DSA, CKA_VALUE = upstream sk) then C_SignInit(CKM_HASH_SLH_DSA_<hash>) with CK_SIGN_ADDITIONAL_CONTEXT hedgeVariant = CKH_DETERMINISTIC_REQUIRED and the upstream context, C_Sign; the output is byte-compared to the upstream signature. The same tuple also drives: verify of the upstream signature (C_VerifyInit/C_Verify), a hedged (CKH_HEDGE_REQUIRED) sign+verify round-trip, and the PKCS#11 v3.2 message-based C_MessageSignInit/C_SignMessage and C_MessageVerifyInit/C_VerifyMessage pair.",
     "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived and no tcId or tgId is renumbered",
-    "subset_policy": "Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family.",
+    "subset_policy": "Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family. Update 2026-10-22: the 18 upstream group(s) formerly listed in notExecuted as no-additional-randomness-injection, no-pkcs11-internal-interface now run from slhdsa_siggen_optional_input_test.json, through optional test inputs this HSM accepts outside the PKCS#11 standard (caller-supplied random value; internal message encoding for SLH-DSA; the standard CKM_ML_DSA_EXTERNAL_MU for ML-DSA internal).",
     "parameter_sets": [
       "SLH-DSA-SHA2-128f",
       "SLH-DSA-SHA2-192f",
@@ -710,36 +710,6 @@
       "why": "no-pkcs11-hash-slh-dsa-mechanism"
     },
     {
-      "tgId": 13,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-128f",
-      "deterministic": true,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 14,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-192f",
-      "deterministic": true,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 15,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-256f",
-      "deterministic": true,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
       "tgId": 19,
       "testType": "AFT",
       "parameterSet": "SLH-DSA-SHA2-128s",
@@ -818,36 +788,6 @@
       "why": "no-pkcs11-hash-slh-dsa-mechanism"
     },
     {
-      "tgId": 31,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-128s",
-      "deterministic": true,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 32,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-192s",
-      "deterministic": true,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 33,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-256s",
-      "deterministic": true,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
       "tgId": 37,
       "testType": "AFT",
       "parameterSet": "SLH-DSA-SHA2-128f",
@@ -856,16 +796,6 @@
       "preHash": "pure",
       "cases": 7,
       "why": "covered-elsewhere-pure"
-    },
-    {
-      "tgId": 38,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-128f",
-      "deterministic": false,
-      "signatureInterface": "external",
-      "preHash": "preHash",
-      "cases": 12,
-      "why": "no-additional-randomness-injection"
     },
     {
       "tgId": 39,
@@ -878,16 +808,6 @@
       "why": "covered-elsewhere-pure"
     },
     {
-      "tgId": 40,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-192f",
-      "deterministic": false,
-      "signatureInterface": "external",
-      "preHash": "preHash",
-      "cases": 12,
-      "why": "no-additional-randomness-injection"
-    },
-    {
       "tgId": 41,
       "testType": "AFT",
       "parameterSet": "SLH-DSA-SHA2-256f",
@@ -896,46 +816,6 @@
       "preHash": "pure",
       "cases": 7,
       "why": "covered-elsewhere-pure"
-    },
-    {
-      "tgId": 42,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-256f",
-      "deterministic": false,
-      "signatureInterface": "external",
-      "preHash": "preHash",
-      "cases": 12,
-      "why": "no-additional-randomness-injection"
-    },
-    {
-      "tgId": 49,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-128f",
-      "deterministic": false,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 50,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-192f",
-      "deterministic": false,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 51,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-256f",
-      "deterministic": false,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
     },
     {
       "tgId": 55,
@@ -948,16 +828,6 @@
       "why": "covered-elsewhere-pure"
     },
     {
-      "tgId": 56,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-128s",
-      "deterministic": false,
-      "signatureInterface": "external",
-      "preHash": "preHash",
-      "cases": 12,
-      "why": "no-additional-randomness-injection"
-    },
-    {
       "tgId": 57,
       "testType": "AFT",
       "parameterSet": "SLH-DSA-SHA2-192s",
@@ -968,16 +838,6 @@
       "why": "covered-elsewhere-pure"
     },
     {
-      "tgId": 58,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-192s",
-      "deterministic": false,
-      "signatureInterface": "external",
-      "preHash": "preHash",
-      "cases": 12,
-      "why": "no-additional-randomness-injection"
-    },
-    {
       "tgId": 59,
       "testType": "AFT",
       "parameterSet": "SLH-DSA-SHA2-256s",
@@ -986,46 +846,6 @@
       "preHash": "pure",
       "cases": 7,
       "why": "covered-elsewhere-pure"
-    },
-    {
-      "tgId": 60,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-256s",
-      "deterministic": false,
-      "signatureInterface": "external",
-      "preHash": "preHash",
-      "cases": 12,
-      "why": "no-additional-randomness-injection"
-    },
-    {
-      "tgId": 67,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-128s",
-      "deterministic": false,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 68,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-192s",
-      "deterministic": false,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 69,
-      "testType": "AFT",
-      "parameterSet": "SLH-DSA-SHA2-256s",
-      "deterministic": false,
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "cases": 7,
-      "why": "no-pkcs11-internal-interface"
     }
   ]
 }
