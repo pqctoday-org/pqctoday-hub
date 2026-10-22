@@ -3,7 +3,7 @@
 /**
  * Composite JWS conformance — draft-ietf-jose-pq-composite-sigs-06 Appendix A.1.
  *
- * These are the draft authors' published JOSE examples for all six composite
+ * These are the draft authors' published JOSE examples for all seven composite
  * algorithms (src/data/acvp/composite-sigs-06-jose-examples.json), not our own
  * output. For each one this checks that:
  *   - the composite public key re-derives from the published seeds
