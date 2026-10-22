@@ -8,15 +8,9 @@
       "current_date": "2025-11-15",
       "status": "IESG (submitted)",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/",
-      "alg_codes_introduced": [
-        "ML-DSA-44",
-        "ML-DSA-65",
-        "ML-DSA-87"
-      ],
+      "alg_codes_introduced": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87"],
       "key_type_introduced": "AKP",
-      "covers": [
-        "pureSig (JOSE inherits)"
-      ],
+      "covers": ["pureSig (JOSE inherits)"],
       "title": "ML-DSA for JOSE and COSE",
       "state": "RFC",
       "iesg_state": "RFC Published",
@@ -35,9 +29,7 @@
         "ML-DSA-65-Ed25519",
         "ML-DSA-87-Ed448"
       ],
-      "covers": [
-        "hybridSig"
-      ],
+      "covers": ["hybridSig"],
       "title": "PQ/T Hybrid Composite Signatures for JOSE and COSE",
       "state": "Active",
       "iesg_state": "I-D Exists",
@@ -48,14 +40,8 @@
       "current_date": "2026-07-06",
       "status": "WG draft",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/",
-      "alg_codes_introduced": [
-        "ML-KEM-512",
-        "ML-KEM-768",
-        "ML-KEM-1024"
-      ],
-      "covers": [
-        "historical: direct ML-KEM JWE (-05 and earlier); -06 is COSE-only"
-      ],
+      "alg_codes_introduced": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"],
+      "covers": ["historical: direct ML-KEM JWE (-05 and earlier); -06 is COSE-only"],
       "title": "Post-Quantum Key Encapsulation Mechanisms (PQ KEMs) for COSE",
       "state": "Active",
       "iesg_state": "I-D Exists",
@@ -65,10 +51,7 @@
       "current_version": "22",
       "current_date": "2026-07-06",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/",
-      "covers": [
-        "pureKem",
-        "hybridKem"
-      ],
+      "covers": ["pureKem", "hybridKem"],
       "note": "Algorithm-agnostic HPKE plumbing for JWE (Integrated Encryption + Key Encryption modes).",
       "title": "Use of Hybrid Public Key Encryption (HPKE) with JSON Web Encryption (JWE)",
       "state": "Active",
@@ -79,10 +62,7 @@
       "current_version": "01",
       "current_date": "2026-07-06",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/",
-      "covers": [
-        "pureKem",
-        "hybridKem"
-      ],
+      "covers": ["pureKem", "hybridKem"],
       "note": "Registers the PQ and PQ/T HPKE suites for JOSE. Replaces draft-reddy-cose-jose-pqc-hybrid-hpke.",
       "title": "JOSE HPKE PQ & PQ/T Algorithm Registrations",
       "state": "Active",
@@ -105,13 +85,8 @@
       "current_version": "10",
       "current_date": "2026-07-28",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-sphincs-plus/",
-      "alg_codes_introduced": [
-        "SLH-DSA-SHA2-128s",
-        "SLH-DSA-SHAKE-128s"
-      ],
-      "covers": [
-        "pureSig (SLH-DSA)"
-      ],
+      "alg_codes_introduced": ["SLH-DSA-SHA2-128s", "SLH-DSA-SHAKE-128s"],
+      "covers": ["pureSig (SLH-DSA)"],
       "title": "SLH-DSA for JOSE and COSE",
       "state": "Active",
       "iesg_state": "AD Evaluation",
