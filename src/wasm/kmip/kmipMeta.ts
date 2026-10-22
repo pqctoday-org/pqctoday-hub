@@ -621,11 +621,15 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'hybrid-migration-window.yaml',
-    files: ['hybrid-migration-window-signing.yaml', 'hybrid-migration-window-global.yaml'],
+    files: [
+      'hybrid-migration-window-signing.yaml',
+      'hybrid-migration-window-key-establishment.yaml',
+      'hybrid-migration-window-global.yaml',
+    ],
     name: 'hybrid-migration-window',
     label: 'Hybrid window (2026–2029)',
     blurb:
-      'Classical signing ends 2026; PQC or LAMPS composites only. Tag x-pqctoday-dual-sign=required to mandate the composite.',
+      'Classical signing ends 2026; PQC or LAMPS composites only. Tag x-pqctoday-dual-sign=required to mandate the composite signature; tagged key establishment uses composite ML-KEM.',
     tone: 'hybrid',
     category: 'Migration & transition',
     illustrates: 'Class-based cutoffs + opt-in hybrid dual-sign inside a time window.',

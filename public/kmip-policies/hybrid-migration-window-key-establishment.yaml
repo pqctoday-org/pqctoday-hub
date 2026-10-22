@@ -1,0 +1,61 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Hybrid migration window — key-establishment share (2026-10-21). The
+# composite ML-KEM opt-in of the single-file `hybrid-migration-window.yaml`
+# (its rule 2b), as a `key-establishment` module beside
+# `hybrid-migration-window-signing.yaml` and
+# `hybrid-migration-window-global.yaml`; activated together they behave
+# exactly like the single file (tests/policy_dual_form_parity.rs).
+
+schema_version: 3
+
+metadata:
+  name: hybrid-migration-window-key-establishment
+  description: |
+    During the 2026-01-01 to 2029-12-31 migration window, key-establishment
+    requests that opt into a composite are held to it: x-pqctoday-composite-kem
+    =required → composite ML-KEM-768 + X25519; x-pqctoday-assurance=high →
+    composite ML-KEM-1024 + ECDH-P384 (LAMPS
+    draft-ietf-lamps-pq-composite-kem-23, one CKK_COMP_KEM key with the
+    SHA3-256 combiner — PKCS#11 v3.3 working draft). The TLS hybrid groups
+    (X25519MLKEM768 …) concatenate their secrets and are not composites.
+    Applies to creating key-agreement key pairs and to Encapsulate;
+    Decapsulate stays open so existing ciphertexts can still be opened.
+    Pure ML-KEM remains allowed untagged.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "LAMPS composite-kem-23", status: implemented }
+
+rules:
+
+  # 1. Composite ML-KEM opt-in (added 2026-10-21 with the PKCS#11 v3.3
+  #     working-draft composites). The key-establishment counterpart of rules
+  #     1b/2: a request tagged x-pqctoday-composite-kem=required is held to
+  #     the LAMPS draft-ietf-lamps-pq-composite-kem-23 composite ML-KEM-768 +
+  #     X25519 (one CKK_COMP_KEM key, the §3.4 SHA3-256 combiner), and one
+  #     tagged x-pqctoday-assurance=high to ML-KEM-1024 + ECDH-P384. NOT the
+  #     TLS hybrid group X25519MLKEM768, whose secret is the plain
+  #     concatenation. Scoped to creating key-agreement key pairs and to
+  #     Encapsulate; Decapsulate stays open so existing ciphertexts can
+  #     still be opened.
+  - type: hybrid_dual_sign_requirement
+    primary:   ML-KEM-768
+    secondary: X25519
+    effective_from: "2026-01-01"
+    effective_until: "2029-12-31"
+    ops_affected: ["CreateKeyPair:KeyAgreement", Encapsulate]
+    # id-MLKEM768-X25519-SHA3-256 — draft-ietf-lamps-pq-composite-kem-23 §6.
+    composite_oid: "1.3.6.1.5.5.7.6.58"
+    triggered_by_custom_attribute: { name: pqctoday-composite-kem, value: required }
+    reason: "Request opted into composite key establishment: composite ML-KEM-768 + X25519 required"
+  - type: hybrid_dual_sign_requirement
+    primary:   ML-KEM-1024
+    secondary: ECDH-P384
+    effective_from: "2026-01-01"
+    effective_until: "2029-12-31"
+    ops_affected: ["CreateKeyPair:KeyAgreement", Encapsulate]
+    # id-MLKEM1024-ECDH-P384-SHA3-256 — draft-ietf-lamps-pq-composite-kem-23 §6.
+    composite_oid: "1.3.6.1.5.5.7.6.63"
+    triggered_by_custom_attribute: { name: pqctoday-assurance, value: high }
+    reason: "High-assurance context: composite ML-KEM-1024 + ECDH-P384 required"

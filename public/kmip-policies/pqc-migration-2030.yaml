@@ -98,9 +98,10 @@ rules:
   #    rewrite: was a hand list [ECDSA-P256, ECDSA-P384] that missed
   #    ECDSA-P521, RSA and EdDSA; class-based now. The companion rule that
   #    mandated the composite for ALL new signing keys 2027–2029 is gone — it
-  #    also denied pure-PQC creation, and composites cannot be instantiated
-  #    by Plane 2 yet, so from 2027 NO new signing key could be created at
-  #    all. Composite opt-in below, rule 3b.)
+  #    also denied pure-PQC creation, and composites could not then be
+  #    instantiated by Plane 2, so from 2027 NO new signing key could be
+  #    created at all. CreateKeyPair has since gained composite keygen; the
+  #    opt-in shape is kept. Composite opt-in below, rule 3b.)
   - type: temporal_cutoff
     op: "CreateKeyPair:Sign"
     algorithm_class: classical

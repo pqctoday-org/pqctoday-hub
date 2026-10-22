@@ -3,7 +3,7 @@
   "producer": "pqctoday-org/pqctoday-hsm",
   "bundles": {
     "cacp-kmip": {
-      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+      "hsmCommit": "48967aeeb31aadf487238c4102894a779377ba20",
       "release": {
         "tag": "engines-2",
         "asset": "cacp-kmip-496f9e52.tar.gz",
@@ -11,8 +11,8 @@
       },
       "files": {
         "public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm": {
-          "sha256": "b45dc0d7ba294eadc61d0d1239007c8c015e8470fab3a4c222efa45cae177fcb",
-          "bytes": 5595753
+          "sha256": "77fd95ff3b72e7cc91450a4755dae1f05d774f570c0e5cc5a392076207fc1dab",
+          "bytes": 6061866
         },
         "src/wasm/kmip/pqctoday_kmip_wasm.d.ts": {
           "sha256": "a451e8abf7e279cde030f8e5354ac46c09984051e10435a784d6708d2c5b8eb6",
@@ -31,8 +31,8 @@
           "bytes": 79836
         },
         "src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm": {
-          "sha256": "b45dc0d7ba294eadc61d0d1239007c8c015e8470fab3a4c222efa45cae177fcb",
-          "bytes": 5595753
+          "sha256": "77fd95ff3b72e7cc91450a4755dae1f05d774f570c0e5cc5a392076207fc1dab",
+          "bytes": 6061866
         },
         "src/wasm/kmip/pqctoday_kmip_wasm_bg.wasm.d.ts": {
           "sha256": "ff4b211e6c4190367cb41c655d157fdb7edc9c452b1afb4f657cc8c1434742bd",
@@ -167,7 +167,7 @@
       }
     },
     "softhsmrustv3-engine": {
-      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+      "hsmCommit": "48967aeeb31aadf487238c4102894a779377ba20",
       "release": {
         "tag": "engines-2",
         "asset": "softhsmrustv3-engine-496f9e52.tar.gz",
@@ -175,16 +175,16 @@
       },
       "files": {
         "public/wasm/rust/softhsmrustv3_bg.wasm": {
-          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25",
-          "bytes": 2853800
+          "sha256": "822eb2806546103f96fdac75b9911403ec81f50147588bb8f62f74ab8a33c1c0",
+          "bytes": 3235569
         },
         "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25",
-          "bytes": 2853800
+          "sha256": "822eb2806546103f96fdac75b9911403ec81f50147588bb8f62f74ab8a33c1c0",
+          "bytes": 3235569
         },
         "src/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25",
-          "bytes": 2853800
+          "sha256": "822eb2806546103f96fdac75b9911403ec81f50147588bb8f62f74ab8a33c1c0",
+          "bytes": 3235569
         }
       }
     },
