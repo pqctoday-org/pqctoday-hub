@@ -13,7 +13,7 @@ const PARTS: WorkshopPart[] = [
     id: 'keygen',
     title: 'Step 1: Key Generation & Parameter Explorer',
     description:
-      'Generate SLH-DSA key pairs across all 12 FIPS 205 parameter sets. Observe key sizes and explore the FIPS 205 §6 internal parameter table.',
+      'Generate SLH-DSA key pairs across all 12 FIPS 205 parameter sets. Observe key sizes and explore the FIPS 205 §11 internal parameter table.',
     icon: KeyRound,
   },
   {
