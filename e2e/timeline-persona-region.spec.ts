@@ -28,7 +28,12 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('developer persona without stored region lands on Americas timeline by default', async ({
+// Developer's PERSONA_TIMELINE_REGION changed from 'americas' to 'global' in
+// 7f6d137a7 (2026-10-15, owner decision D2: a job title does not imply a
+// jurisdiction), and every other persona followed (curious last, fddc687ac).
+// 'global' is not a narrowing region (storedRegionDefault), so a developer with
+// no stored region now lands on every region, like the researcher below.
+test('developer persona without stored region lands on All regions (no implied region)', async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -38,7 +43,7 @@ test('developer persona without stored region lands on Americas timeline by defa
         state: {
           selectedPersona: 'developer',
           // selectedRegion: null — explicit so the PERSONA_TIMELINE_REGION
-          // fallback path is exercised. Developer's default = 'americas'.
+          // fallback path is exercised. Developer's default = 'global'.
           selectedRegion: null,
           selectedIndustry: null,
           selectedIndustries: [],
@@ -52,13 +57,42 @@ test('developer persona without stored region lands on Americas timeline by defa
 
   await page.goto('/timeline')
 
-  // Wait for the page to mount.
   await expect(page.getByRole('heading', { name: /Migration timeline/i })).toBeVisible({
     timeout: 15000,
   })
+  await expect(page.getByTestId('timeline-coverage-by-region')).toBeVisible({ timeout: 10000 })
 
-  // The region pill for Americas should be `aria-pressed="true"` (active)
-  // when the persona-default region applied.
+  const anyActiveRegionPill = page.getByRole('button', {
+    pressed: true,
+    name: /Americas|EU|MENA|APAC|Global/i,
+  })
+  await expect(anyActiveRegionPill).toHaveCount(0)
+  await expect(page).not.toHaveURL(/[?&]region=/)
+})
+
+test("developer's own stored region still narrows the timeline", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'pqc-learning-persona',
+      JSON.stringify({
+        state: {
+          selectedPersona: 'developer',
+          selectedRegion: 'americas',
+          selectedIndustry: null,
+          selectedIndustries: [],
+          experienceLevel: 'expert',
+          viewAccess: { allowed: [] },
+        },
+        version: 0,
+      })
+    )
+  })
+
+  await page.goto('/timeline')
+
+  await expect(page.getByRole('heading', { name: /Migration timeline/i })).toBeVisible({
+    timeout: 15000,
+  })
   const americasPill = page.getByRole('button', { pressed: true, name: /Americas/i }).first()
   await expect(americasPill).toBeVisible({ timeout: 10000 })
 })
@@ -120,8 +154,8 @@ test('?region=eu deep-link wins over persona default for developer', async ({ pa
     timeout: 15000,
   })
 
-  // URL deep-link wins: EU pill is active even though developer's
-  // persona default would have been Americas.
+  // URL deep-link wins: EU pill is active although developer's persona
+  // default ('global') would show every region.
   const euPill = page.getByRole('button', { pressed: true, name: /EU/i }).first()
   await expect(euPill).toBeVisible({ timeout: 5000 })
 })
