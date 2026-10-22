@@ -9,16 +9,16 @@
         "artifacts": [
           {
             "path": "public/wasm/softhsm.wasm",
-            "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410"
+            "sha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b"
           },
           {
             "path": "public/wasm/softhsm.js",
             "sha256": "367f93cfbcd2bab3575cd05d8e5aeb244ec7e054b69445ae7cdd018e5fbd0547"
           }
         ],
-        "sourceCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+        "sourceCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
-        "builtAt": "2026-10-02",
+        "builtAt": "2026-10-22",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
       },
       "capture": {
@@ -27,8 +27,8 @@
       },
       "inventory": {
         "schema": "pqctoday.mechanism-inventory/v1",
-        "mechanismCount": 166,
-        "inventorySha256": "be8c60dc0759eba0573308bd2a445d927ea3f899af6f3ec2196f1e3ddd5f87df",
+        "mechanismCount": 165,
+        "inventorySha256": "3d7d00d25931940d12f33c90a19cd02f71c7a88836b94dca4cf64b202b2202cd",
         "mechanisms": [
           {
             "type": 0,
@@ -3350,20 +3350,6 @@
             "findings": []
           },
           {
-            "type": 2147483669,
-            "infoRv": 0,
-            "ulMinKeySize": 256,
-            "ulMaxKeySize": 521,
-            "flags": 26216448,
-            "typeHex": "0x80000015",
-            "name": "CKM_PQCTODAY_ECDSA_EXPLICIT_K",
-            "family": "asymmetric",
-            "flagsHex": "0x01900800",
-            "flagNames": ["CKF_SIGN", "CKF_EC_F_P", "CKF_EC_OID", "CKF_EC_UNCOMPRESS"],
-            "requiredOperations": ["sign"],
-            "findings": []
-          },
-          {
             "type": 2147483904,
             "infoRv": 0,
             "ulMinKeySize": 16,
@@ -3489,14 +3475,14 @@
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575"
+            "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
             "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
           }
         ],
-        "sourceCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
+        "sourceCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
         "builtAt": "2026-10-22",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
@@ -3507,8 +3493,8 @@
       },
       "inventory": {
         "schema": "pqctoday.mechanism-inventory/v1",
-        "mechanismCount": 180,
-        "inventorySha256": "9ddca57385f648565b83611d54564e3492671b75828ed06e090093f955e153d6",
+        "mechanismCount": 179,
+        "inventorySha256": "e14b4db3a4785dd1c8bdaf46db1f4fd427f8500a4970b20280479ded04973ed6",
         "mechanisms": [
           {
             "type": 0,
@@ -7073,26 +7059,6 @@
             "findings": []
           },
           {
-            "type": 2147483669,
-            "infoRv": 0,
-            "ulMinKeySize": 256,
-            "ulMaxKeySize": 521,
-            "flags": 93325312,
-            "typeHex": "0x80000015",
-            "name": "CKM_PQCTODAY_ECDSA_EXPLICIT_K",
-            "family": "asymmetric",
-            "flagsHex": "0x05900800",
-            "flagNames": [
-              "CKF_SIGN",
-              "CKF_EC_F_P",
-              "CKF_EC_OID",
-              "CKF_EC_UNCOMPRESS",
-              "CKF_EC_CURVENAME"
-            ],
-            "requiredOperations": ["sign"],
-            "findings": []
-          },
-          {
             "type": 2147483904,
             "infoRv": 0,
             "ulMinKeySize": 16,
@@ -8335,22 +8301,6 @@
           "ulMinKeySize": 256,
           "flagNames": [
             "CKF_GENERATE_KEY_PAIR",
-            "CKF_EC_F_P",
-            "CKF_EC_OID",
-            "CKF_EC_UNCOMPRESS",
-            "CKF_EC_CURVENAME"
-          ]
-        }
-      },
-      {
-        "typeHex": "0x80000015",
-        "name": "CKM_PQCTODAY_ECDSA_EXPLICIT_K",
-        "cpp": {
-          "flagNames": ["CKF_SIGN", "CKF_EC_F_P", "CKF_EC_OID", "CKF_EC_UNCOMPRESS"]
-        },
-        "rust": {
-          "flagNames": [
-            "CKF_SIGN",
             "CKF_EC_F_P",
             "CKF_EC_OID",
             "CKF_EC_UNCOMPRESS",

@@ -145,46 +145,38 @@
       }
     },
     "softhsm-cpp-engine": {
-      "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
-      "release": {
-        "tag": "engines-4",
-        "asset": "softhsm-cpp-engine-496f9e52.tar.gz",
-        "tarballSha256": "9086ace00fd17e6fda7b024192df845b9c0581b340b0aa9f5061480c487498b9"
-      },
+      "hsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
+      "release": null,
       "files": {
         "public/wasm/libsofthsmv3.wasm": {
-          "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410",
-          "bytes": 2472888
+          "sha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+          "bytes": 2474377
         },
         "public/wasm/softhsm.wasm": {
-          "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410",
-          "bytes": 2472888
+          "sha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+          "bytes": 2474377
         },
         "src/vendor/softhsm-wasm/wasm/softhsm.wasm": {
-          "sha256": "929244b67474eb668b112827f5efaa26f6d5e7e21bc82f81779175323b833410",
-          "bytes": 2472888
+          "sha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+          "bytes": 2474377
         }
       }
     },
     "softhsmrustv3-engine": {
-      "hsmCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
-      "release": {
-        "tag": "engines-4",
-        "asset": "softhsmrustv3-engine-68abd0ae.tar.gz",
-        "tarballSha256": "4c092d7469ce5690d677867acffb401b4dbfd0ce6ada3da5428c70450814e335"
-      },
+      "hsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
+      "release": null,
       "files": {
         "public/wasm/rust/softhsmrustv3_bg.wasm": {
-          "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575",
-          "bytes": 3250206
+          "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+          "bytes": 3309158
         },
         "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575",
-          "bytes": 3250206
+          "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+          "bytes": 3309158
         },
         "src/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575",
-          "bytes": 3250206
+          "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+          "bytes": 3309158
         }
       }
     },
