@@ -74,7 +74,7 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   three: '0.185.1',
   tsx: '4.23.15',
   typescript: '5.9.3',
-  vite: '7.3.6',
+  vite: '7.3.7',
   'vite-plugin-pwa': '1.3.0',
   'vite-plugin-top-level-await': '1.6.0',
   'vite-plugin-wasm': '3.6.0',
