@@ -129,7 +129,7 @@ export const HybridJWT: React.FC = () => {
           outerSignatureBytes: outerSigned.signature.length,
         })
       } else {
-        // ── Composite: ML-DSA-65-Ed25519 per draft-ietf-jose-pq-composite-sigs-04
+        // ── Composite: ML-DSA-65-Ed25519 per draft-ietf-jose-pq-composite-sigs-06
         // Composite always uses noble — no softhsmv3 path for Ed25519 traditional component.
         setStep(1)
         const kp = await generateJwsKeyPair({ alg: 'ML-DSA-65-Ed25519', backend: 'noble' })
@@ -218,7 +218,7 @@ export const HybridJWT: React.FC = () => {
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-04
+            draft-ietf-jose-pq-composite-sigs-06
           </a>{' '}
           and verifies against that draft&apos;s published examples; it is a work-in-progress
           Internet-Draft, so treat this tab as experimental.
@@ -504,7 +504,7 @@ export const HybridJWT: React.FC = () => {
             <CheckCircle size={16} className="text-success" />
             <h4 className="text-sm font-bold text-foreground">Composite JWT (ML-DSA-65-Ed25519)</h4>
             <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-warning/20 text-warning border-warning/50">
-              draft-ietf-jose-pq-composite-sigs-04 · experimental
+              draft-ietf-jose-pq-composite-sigs-06 · experimental
             </span>
           </div>
           <div className="bg-background rounded-lg p-3 border border-border overflow-x-auto">

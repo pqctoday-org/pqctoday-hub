@@ -18,7 +18,7 @@ const ROWS = [
     label: 'Max signatures',
     lms: 'Up to 2^H (H=5…20)',
     xmss: 'Up to 2^H (H=10…20)',
-    slhdsa: 'Unlimited',
+    slhdsa: 'At most 2^64 messages/key in the FIPS 205 §11 security analysis; no leaf counter',
   },
   { label: 'Public key (Level 3)', lms: '56 B', xmss: '64 B', slhdsa: '48 B (192-bit)' },
   {

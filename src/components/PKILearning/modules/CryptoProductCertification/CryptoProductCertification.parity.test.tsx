@@ -79,7 +79,7 @@ describe('CryptoProductCertification render parity', () => {
     expect(manifest.learnPaths ?? []).toEqual([])
     renderModule()
     const heading = (name: string) => screen.queryByRole('heading', { level: 2, name })
-    expect(heading('Four schemes, four questions')).toBeInTheDocument()
+    expect(heading('Standards, evaluation criteria and certification schemes')).toBeInTheDocument()
     expect(heading('What PQC changes in certification')).toBeInTheDocument()
     // the scheme deep dives moved to LM-067 / LM-068 / LM-071
     expect(heading('FIPS 140-3 and the CMVP')).not.toBeInTheDocument()

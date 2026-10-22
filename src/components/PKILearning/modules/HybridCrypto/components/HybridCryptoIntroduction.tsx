@@ -305,14 +305,14 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-primary">Composite KEM</h3>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
-                    IESG Evaluation
+                    RFC Editor queue
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  <strong>draft-ietf-lamps-pq-composite-kem-21</strong> puts an ML-KEM key and a
+                  <strong>draft-ietf-lamps-pq-composite-kem-23</strong> puts an ML-KEM key and a
                   classical KEM key (X25519, ECDH, RSA) under one OID, ML-KEM component first.
-                  Encapsulation runs both and combines the shared secrets. Still an Internet-Draft;
-                  not backward compatible.
+                  Encapsulation runs both and combines the shared secrets. Approved by the IESG and
+                  awaiting publication as an RFC; not backward compatible.
                 </p>
               </div>
             </div>
@@ -831,40 +831,102 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             SP 800-227 §4 is explicit: a compliant ML-KEM deployment is more than &ldquo;call the
-            library.&rdquo; Decapsulation must not leak any signal about whether a ciphertext was
-            valid, and the implementation must resist timing and side-channel analysis.
+            library.&rdquo; After the required input checks, decapsulation must conceal the result
+            of its internal ciphertext comparison. Implementations must also address timing and
+            other side-channel leakage.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border md:col-span-2">
               <div className="text-xs font-bold text-foreground mb-1">
-                Implicit Rejection (FIPS 203 §7.1)
+                ML-KEM Decapsulation and Implicit Rejection
               </div>
-              <p className="text-xs text-muted-foreground">
-                On decapsulation failure, ML-KEM returns a pseudorandom key derived from the
-                decapsulation key and ciphertext &mdash; <strong>never</strong> an error. Attackers
-                cannot distinguish a real key from a rejection, so chosen-ciphertext probing gives
-                them nothing. The workshop demo already follows this rule (&ldquo;includes ek for
-                implicit rejection&rdquo;).
-              </p>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  ML-KEM is the key-encapsulation algorithm defined in FIPS 203. Alice uses
+                  Bob&apos;s public encapsulation key to produce a shared secret and a ciphertext.
+                  Bob uses his private decapsulation key and that ciphertext to recover the same
+                  secret. A protocol can then derive encryption and authentication keys from it.
+                </p>
+                <p>
+                  <strong className="text-foreground">Input checks can fail.</strong> For example,
+                  an ML-KEM-768 ciphertext must be 1,088 bytes long. A 1,087-byte ciphertext fails
+                  the length check, and decapsulation must not run. FIPS 203 also requires checks on
+                  the decapsulation key. Normal library argument and operational errors still apply.
+                </p>
+                <p>
+                  <strong className="text-foreground">An internal mismatch is different.</strong>{' '}
+                  For inputs that pass those checks, ML-KEM decrypts and re-encrypts internally,
+                  then compares the reconstructed ciphertext with the received one. If they differ,
+                  it selects a fallback shared secret derived from the secret rejection value{' '}
+                  <code>z</code> and the received ciphertext. The implementation returns that secret
+                  without exposing the mismatch as an error or through timing. This is implicit
+                  rejection.
+                </p>
+                <p>
+                  <strong className="text-foreground">What happens to the encrypted data?</strong>{' '}
+                  Suppose an attacker changes Alice&apos;s ciphertext without changing its length
+                  and triggers implicit rejection. Bob obtains a different secret. If the protocol
+                  derives an AES-GCM key from it, authentication of Alice&apos;s encrypted message
+                  fails, and the receiver rejects the message without releasing unauthenticated
+                  plaintext. Successful decapsulation alone does not confirm that both parties share
+                  a key; the protocol needs authentication or key confirmation.
+                </p>
+                <p>
+                  <strong className="text-foreground">
+                    Why hide the mismatch if authentication fails later?
+                  </strong>{' '}
+                  A specific decapsulation error would answer an attacker&apos;s repeated queries
+                  about the internal ciphertext check, creating a validity oracle. Implicit
+                  rejection conceals that answer. A later authentication failure only says that the
+                  message did not authenticate with the resulting key; a wrong tag can cause the
+                  same failure even after valid decapsulation. The protocol must preserve this
+                  distinction in its error handling and timing.
+                </p>
+                <p>
+                  <a
+                    href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    FIPS 203 §§6.3 and 7.3: internal decapsulation and input checks
+                  </a>
+                  {' · '}
+                  <a
+                    href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-227.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    SP 800-227: secure KEM use and key confirmation
+                  </a>
+                </p>
+              </div>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">
                 Constant-Time Decapsulation
               </div>
               <p className="text-xs text-muted-foreground">
-                Execution time, memory access, and branch behaviour must not depend on secret key
-                bits or on whether the ciphertext verifies. SP 800-227 §4.2 requires this for FIPS
-                validation &mdash; a timing-variable implementation is non-conformant regardless of
-                correctness.
+                Correct results alone do not show that an implementation protects its secrets.
+                Attackers may learn information by measuring execution time or observing memory
+                access. Constant-time techniques help prevent these behaviours from revealing secret
+                values; they do not mean every call takes exactly the same number of milliseconds.
+                NIST recommends appropriate protections against these attacks. Their effectiveness
+                depends on the implementation and the device running it.
+              </p>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Sources: SP 800-227 §3.3; RFC 7748 §5.1 for the X25519 component.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">Randomness Requirements</div>
               <p className="text-xs text-muted-foreground">
-                Encapsulation calls an approved <InlineTooltip term="DRBG">DRBG</InlineTooltip> (SP
-                800-90A/B/C) for the 32-byte <code className="text-[11px]">m</code>. Weak or
-                predictable RNG collapses ML-KEM security to zero &mdash; this is the single most
-                common real-world failure mode for KEMs.
+                ML-KEM encapsulation requires fresh, unpredictable random input (the 32-byte{' '}
+                <code className="text-[11px]">m</code>). If an attacker knows that input, they can
+                reproduce the encapsulation using the recipient&rsquo;s public key and recover the
+                same shared secret. FIPS 203 specifies the randomness requirements (§3.3), including
+                use of an approved <InlineTooltip term="DRBG">DRBG</InlineTooltip>.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -872,10 +934,17 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 Side-Channel &amp; Fault Resistance
               </div>
               <p className="text-xs text-muted-foreground">
-                In hybrid constructions, both halves must be hardened: a timing leak in X25519 or
-                ML-KEM-768 can compromise the combined session key even if the other half is safe.
-                Hardware (HSM/TPM) deployments should enable their PQC side-channel countermeasures
-                explicitly &mdash; they are not always on by default.
+                Consider X25519 and ML-KEM combined to derive a session key. If a leak exposes only
+                the X25519 shared secret, a suitable combiner can still protect the session key
+                through the uncompromised ML-KEM secret. If the leak exposes both secrets or the
+                final session key, that protection is lost. Assess what information the
+                implementation leaks, including during combination and key handling.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                For an HSM, TPM or other hardware device, check the manufacturer&rsquo;s
+                documentation to understand which protections are provided, which settings affect
+                them, and which attacks they address. Do not assume every device has a switch to
+                enable PQC protections.
               </p>
             </div>
           </div>

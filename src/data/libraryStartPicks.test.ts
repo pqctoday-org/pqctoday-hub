@@ -14,8 +14,8 @@ describe('Library "Start here" picks', () => {
   it('the certification engineer gets exactly the three curated documents, in order', () => {
     expect(getLibraryStartPicks('cert-engineer').map((p) => p.referenceId)).toEqual([
       'NIST-FIPS140-3-IG-PQC',
-      'CMVP-MGMT-MANUAL',
-      'usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets',
+      'NIST SP 800-227',
+      'EUCC v2.0 ACM',
     ])
   })
 

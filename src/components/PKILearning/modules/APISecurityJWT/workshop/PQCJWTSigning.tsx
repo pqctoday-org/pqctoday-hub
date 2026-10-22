@@ -63,6 +63,7 @@ type SigningAlgorithm =
   | 'SLH-DSA-SHA2-256s'
   | 'ML-DSA-44-ES256'
   | 'ML-DSA-65-ES256'
+  | 'ML-DSA-65-ES384'
   | 'ML-DSA-87-ES384'
   | 'ML-DSA-44-Ed25519'
   | 'ML-DSA-65-Ed25519'
@@ -70,7 +71,7 @@ type SigningAlgorithm =
 
 // `primitiveOnly`: exercised as an SLH-DSA primitive, but NOT a registered JOSE
 // algorithm — draft-ietf-cose-sphincs-plus-10 registers only SHA2-128s and SHAKE-128s.
-// Composite sizes are maxima: the -04 ECDSA component is a DER Ecdsa-Sig-Value
+// Composite sizes are maxima: the ECDSA component is a DER Ecdsa-Sig-Value
 // (≤ 72 B for P-256, ≤ 104 B for P-384).
 const SIGNABLE_ALGS: {
   jose: SigningAlgorithm
@@ -87,6 +88,7 @@ const SIGNABLE_ALGS: {
   { jose: 'SLH-DSA-SHA2-256s', nistLevel: 5, sigBytes: 29792, primitiveOnly: true },
   { jose: 'ML-DSA-44-ES256', nistLevel: 2, sigBytes: 2492 },
   { jose: 'ML-DSA-65-ES256', nistLevel: 3, sigBytes: 3381 },
+  { jose: 'ML-DSA-65-ES384', nistLevel: 3, sigBytes: 3413 },
   { jose: 'ML-DSA-87-ES384', nistLevel: 5, sigBytes: 4731 },
   { jose: 'ML-DSA-44-Ed25519', nistLevel: 2, sigBytes: 2484 },
   { jose: 'ML-DSA-65-Ed25519', nistLevel: 3, sigBytes: 3373 },
@@ -265,7 +267,7 @@ export const PQCJWTSigning: React.FC = () => {
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-04
+            draft-ietf-jose-pq-composite-sigs-06
           </a>{' '}
           — both still Internet-Drafts.
         </p>

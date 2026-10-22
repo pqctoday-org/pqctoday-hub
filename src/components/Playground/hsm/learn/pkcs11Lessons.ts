@@ -34,6 +34,13 @@ import {
   CKA_ENCRYPT,
   CKA_DECRYPT,
   CKA_EXTRACTABLE,
+  CKA_SENSITIVE,
+  CKM_AES_KEY_GEN,
+  buildMech,
+  buildTemplate,
+  freeTemplate,
+  checkRV,
+  Pkcs11Error,
   CKA_VALUE_LEN,
   CKA_KEY_TYPE,
   CKK_AES,
@@ -628,13 +635,58 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         },
       },
       {
-        op: 'C_GenerateKey + C_WrapKey + C_UnwrapKey',
-        label: 'Generate an extractable key, wrap it, and unwrap it back',
+        op: 'C_GenerateKey + C_GetAttributeValue',
+        label: 'Create a sensitive, extractable key and confirm plaintext reads are refused',
+        run: (hsm) => {
+          const M = requireModule(hsm)
+          const session = hsm.hSessionRef.current
+          const attrs: AttrDef[] = [
+            { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+            { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+            { type: CKA_TOKEN, boolVal: false },
+            { type: CKA_SENSITIVE, boolVal: true },
+            { type: CKA_EXTRACTABLE, boolVal: true },
+            { type: CKA_ENCRYPT, boolVal: true },
+            { type: CKA_DECRYPT, boolVal: true },
+            { type: CKA_VALUE_LEN, ulongVal: 32 },
+          ]
+          const mech = buildMech(M, CKM_AES_KEY_GEN)
+          const template = buildTemplate(M, attrs)
+          const out = M._malloc(4)
+          let handle: number
+          try {
+            checkRV(
+              M._C_GenerateKey(session, mech, template.ptr, attrs.length, out),
+              'C_GenerateKey'
+            )
+            handle = M.getValue(out, 'i32') >>> 0
+          } finally {
+            freeTemplate(M, template, attrs.length)
+            M._free(mech)
+            M._free(out)
+          }
+          const policy = hsm_getKeyAttributes(M, session, handle)
+          if (!policy.ckSensitive || !policy.ckExtractable)
+            throw new Error('Requested key policy was not retained.')
+          try {
+            hsm_extractKeyValue(M, session, handle)
+          } catch (error) {
+            if (!(error instanceof Pkcs11Error) || error.rv !== 0x11) throw error
+            return {
+              detail: `protected=${handle} — sensitive=true, extractable=true; plaintext read refused with CKR_ATTRIBUTE_SENSITIVE.`,
+            }
+          }
+          throw new Error('Plaintext key read unexpectedly succeeded.')
+        },
+      },
+      {
+        op: 'C_WrapKey + C_UnwrapKey + C_Encrypt + C_Decrypt',
+        label: 'Wrap and restore the protected key, then prove the restored key works',
         spot: { rail: 'wrap', target: '[data-tour="pkcs-op-wrap-wrap"]', algo: 'AES-KWP' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
-          const extractableHandle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256) // extractable=true default
+          const extractableHandle = Number((results[2]?.detail.match(/protected=(\d+)/) ?? [])[1])
           const wrapped = hsm_aesWrapKeyKwp(
             M,
             hsm.hSessionRef.current,
@@ -648,18 +700,59 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
             { type: CKA_ENCRYPT, boolVal: true },
             { type: CKA_DECRYPT, boolVal: true },
             { type: CKA_EXTRACTABLE, boolVal: true },
+            { type: CKA_SENSITIVE, boolVal: true },
             { type: CKA_VALUE_LEN, ulongVal: 32 },
           ]
           const unwrapped = hsm_unwrapKey(M, hsm.hSessionRef.current, wrapHandle, wrapped, template)
+          const policy = hsm_getKeyAttributes(M, hsm.hSessionRef.current, unwrapped)
+          if (!policy.ckSensitive || !policy.ckExtractable)
+            throw new Error('Restored key policy differs.')
+          const message = new TextEncoder().encode('protected backup verification')
+          const { ciphertext, iv } = hsm_aesEncrypt(
+            M,
+            hsm.hSessionRef.current,
+            extractableHandle,
+            message,
+            'gcm'
+          )
+          const recovered = hsm_aesDecrypt(
+            M,
+            hsm.hSessionRef.current,
+            unwrapped,
+            ciphertext,
+            iv,
+            'gcm'
+          )
+          if (!bytesEqual(message, recovered))
+            throw new Error('Restored key failed the original-key ciphertext check.')
           return {
-            detail: `Wrapped to ${wrapped.length} bytes, unwrapped to a fresh handle ${unwrapped} — a real, complete round trip.`,
+            detail: `restored=${unwrapped} — ${wrapped.length} encrypted backup bytes; restored key decrypted the original key’s test ciphertext correctly, with sensitive=true and extractable=true.`,
           }
+        },
+      },
+      {
+        op: 'C_GetAttributeValue (CKA_VALUE)',
+        label: 'Confirm the restored key still refuses plaintext reads',
+        run: (hsm, results) => {
+          const M = requireModule(hsm)
+          const handle = Number((results[3]?.detail.match(/restored=(\d+)/) ?? [])[1])
+          try {
+            hsm_extractKeyValue(M, hsm.hSessionRef.current, handle)
+          } catch (error) {
+            if (!(error instanceof Pkcs11Error) || error.rv !== 0x11) throw error
+            return {
+              detail:
+                'Restored key plaintext read refused with CKR_ATTRIBUTE_SENSITIVE. Encrypted backup worked without allowing plaintext reads.',
+            }
+          }
+          throw new Error('Restored key plaintext read unexpectedly succeeded.')
         },
       },
     ],
     notes: [
       'The refusal above is enforced by the SOURCE key (the one being wrapped), not the wrapping key — CKA_EXTRACTABLE is a property of the key being protected.',
       'Unwrapping produces a NEW object with its own handle — it never reuses the original handle from before wrapping, even within the same session.',
+      'The same protected AES key refuses plaintext reads but permits encrypted backup. The restore template explicitly requests sensitive=true; a successful unwrap alone does not prove that protection was retained. We check the attributes, use the restored key, and test plaintext-read refusal again. This demonstrates AES policy behavior, not PQC seed restoration or hardware isolation.',
     ],
     whyItMatters:
       'CKA_EXTRACTABLE is the control that decides whether a key can ever leave a token at all. Getting the wrap/extractable model right is foundational to any real key-custody design.',

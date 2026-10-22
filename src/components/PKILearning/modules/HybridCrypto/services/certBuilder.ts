@@ -9,7 +9,7 @@
 //   4. Alt-Sig / Catalyst — ITU-T X.509 (10/2019) §7.2.2, §9.8
 //   5. Related Certificates — RFC 9763 (new Cert B references existing Cert A)
 //   6. Pure PQC KEM (ML-KEM-768) — RFC 9935, CA-issued end entity
-//   7. Composite KEM (ML-KEM-768 + X25519) — draft-ietf-lamps-pq-composite-kem-21
+//   7. Composite KEM (ML-KEM-768 + X25519) — draft-ietf-lamps-pq-composite-kem-23
 //   Historical: Chameleon — draft-bonnell-lamps-chameleon-certs-07 (EXPIRED)
 //
 // Signing is performed by async signer functions — SoftHSM PKCS#11 (C_Sign).
@@ -75,7 +75,7 @@ import {
 /** ML-DSA-65 — 2.16.840.1.101.3.4.3.18 (RFC 9881) */
 export const ML_DSA_65_OID_STR = '2.16.840.1.101.3.4.3.18'
 
-/** id-MLKEM768-X25519-SHA3-256 — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem-21). Re-verified 2026-09-30 against the -21 text (allocated block 1.3.6.1.5.5.7.6.55–.66). Not X-Wing: this is the LAMPS composite construction with its own combiner. */
+/** id-MLKEM768-X25519-SHA3-256 — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem-23). Re-verified 2026-10-22 against the -23 text (OIDs unchanged from -21); originally checked 2026-09-30 against the -21 text (allocated block 1.3.6.1.5.5.7.6.55–.66). Not X-Wing: this is the LAMPS composite construction with its own combiner. */
 export const COMPOSITE_KEM_MLKEM768_X25519_OID_STR = '1.3.6.1.5.5.7.6.58'
 
 /** id-MLKEM768-ECDH-P256-SHA3-256 — 1.3.6.1.5.5.7.6.59 (draft-ietf-lamps-pq-composite-kem §6; unchanged -17→-19) */
@@ -488,7 +488,7 @@ export async function buildSelfSignedX509(
 }
 
 // ---------------------------------------------------------------------------
-// 1b. Composite KEM certificate — draft-ietf-lamps-pq-composite-kem-21
+// 1b. Composite KEM certificate — draft-ietf-lamps-pq-composite-kem-23
 //
 //     Subject public key: id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58)
 //     SubjectPublicKey:   mlkem768PublicKey(1184B) || x25519PublicKey(32B)

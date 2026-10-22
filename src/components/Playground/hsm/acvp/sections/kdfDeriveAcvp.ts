@@ -44,7 +44,6 @@ import { createObjectRv, withTemplate } from './pkcs11Raw'
 import {
   WSE_CK,
   WSE_MECH,
-  hexUp,
   rawMech,
   runRow,
   skipRow,
@@ -384,7 +383,7 @@ export async function runHkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<void
         testCase,
         meta,
         source: srcTag(P),
-        exec: (): RowOutcome => {
+        exec: (compare): RowOutcome => {
           const base = importDeriveBase(M, h, WSE_CK.CKK_GENERIC_SECRET, ikm)
           if (base.rv !== CKR_OK) {
             const o = `C_CreateObject → ${rvName(base.rv)}`
@@ -403,7 +402,7 @@ export async function runHkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<void
               const o = `C_DeriveKey → ${rvName(r.rv)}`
               return { ok: false, observed: o, details: o }
             }
-            const equal = hexUp(r.value) === t.dkm.toUpperCase()
+            const equal = compare(r.value, t.dkm, 'derived test key')
             const ok = negative ? !equal : equal
             const observed = equal ? 'byte-equal' : 'differs'
             return {
@@ -483,7 +482,7 @@ export async function runKbkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<voi
         testCase,
         meta,
         source: srcTag(P),
-        exec: (): RowOutcome => {
+        exec: (compare): RowOutcome => {
           const keyType = g.macMode.startsWith('CMAC') ? WSE_CK.CKK_AES : WSE_CK.CKK_GENERIC_SECRET
           const base = importDeriveBase(M, h, keyType, hexToBytes(t.keyIn))
           if (base.rv !== CKR_OK) {
@@ -507,7 +506,7 @@ export async function runKbkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<voi
                 details: `${o} for the §6.42 data-parameter layout ${segText(segs)}`,
               }
             }
-            const ok = hexUp(r.value) === t.keyOut.toUpperCase()
+            const ok = compare(r.value, t.keyOut, 'derived test key')
             return {
               ok,
               observed: ok ? 'byte-equal' : 'differs',

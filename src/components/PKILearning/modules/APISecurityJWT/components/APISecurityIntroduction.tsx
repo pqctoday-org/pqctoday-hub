@@ -218,7 +218,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             JWT signing. The rest of the JOSE PQC stack is still in draft: SLH-DSA (
             <code className="text-foreground/70">draft-ietf-cose-sphincs-plus-10</code>, two
             parameter sets), PQ/T composite signatures (
-            <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs-04</code>), and
+            <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs-06</code>), and
             ML-KEM encryption for JWE, which now goes through HPKE (
             <code className="text-foreground/70">draft-ietf-jose-hpke-encrypt</code>, in the RFC
             Editor queue, plus the PQ suites in{' '}

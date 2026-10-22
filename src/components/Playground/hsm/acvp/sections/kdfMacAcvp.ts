@@ -28,7 +28,6 @@ import {
   type Provenance,
 } from './mldsaAcvp'
 import {
-  eqHex,
   hexUp,
   importSecretRv,
   rawMech,
@@ -117,7 +116,7 @@ export async function runPbkdf2AcvpSection(ctx: ClassicalSectionCtx): Promise<vo
         testCase,
         meta,
         source: srcTag(P),
-        exec: (): RowOutcome => {
+        exec: (compare): RowOutcome => {
           const handle = { current: 0 }
           try {
             const dk = hsm_pbkdf2(
@@ -131,7 +130,7 @@ export async function runPbkdf2AcvpSection(ctx: ClassicalSectionCtx): Promise<vo
               handle
             )
             const out = new Uint8Array(dk)
-            const ok = eqHex(out, t.derivedKey)
+            const ok = compare(out, t.derivedKey, 'derived test key')
             return {
               ok,
               observed: ok ? 'byte-equal' : `dk ${hexUp(out)}`,

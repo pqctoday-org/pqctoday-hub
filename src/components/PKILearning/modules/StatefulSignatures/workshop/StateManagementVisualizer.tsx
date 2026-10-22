@@ -19,6 +19,7 @@ import { hsm_extractKeyValue } from '@/wasm/softhsm'
 import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Button } from '@/components/ui/button'
+import { StateReviewGuide } from './StateReviewGuide'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
@@ -1231,6 +1232,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           </div>
 
           {/* State loss explainer toggle */}
+          <StateReviewGuide />
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <Button
               variant="ghost"
@@ -1281,11 +1283,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                   </div>
                 </div>
                 <p className="text-muted-foreground">
-                  <strong>Mitigation:</strong> Always use hardware monotonic counters (TPM/HSM),
-                  write-ahead logging, and never duplicate stateful signing keys. NIST SP 800-208
-                  §5.2 requires the state to be written to stable storage and updated atomically
-                  before each signature; FIPS 140-3 validated HSMs enforce this with hardware-backed
-                  counters.
+                  <strong>Mitigation:</strong> SP 800-208 §8.1 requires a durable leaf-index update
+                  before signature output or acceptance of another signing request. Section 9.1
+                  discusses hardware monotonic counters as a possible aid; do not assume every
+                  validated HSM uses them. Inspect the actual implementation.
                 </p>
               </div>
             )}

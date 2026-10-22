@@ -19,7 +19,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import compositeExamples from '@/data/acvp/composite-sigs-04-jose-examples.json'
+import compositeExamples from '@/data/acvp/composite-sigs-06-jose-examples.json'
 import sphincsExamples from '@/data/acvp/cose-sphincs-plus-10-examples.json'
 import hpkeExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
 import snapshot from '../../../../../public/data/jose-drafts-snapshot.json'

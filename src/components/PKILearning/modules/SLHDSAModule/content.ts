@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'slh-dsa',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-22',
 
   standards: [
     getStandard('FIPS 205'),
@@ -33,6 +33,6 @@ export const content: ModuleContent = {
     context:
       'FIPS 205 §9.2 context strings provide domain separation — they bind a signature to a specific protocol or application context, preventing cross-context forgery.',
     deterministic:
-      'FIPS 205 §10 deterministic mode (opt_rand = none) produces identical signatures for the same (SK, M, context) triple, enabling auditable and reproducible signing.',
+      'FIPS 205 §9.2 deterministic signing uses PK.seed for opt_rand and produces identical signatures with the same key, message, context and settings. This demonstrates repeatability, not random-generator quality or resistance to attacks.',
   },
 }

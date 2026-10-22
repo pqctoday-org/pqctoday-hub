@@ -163,8 +163,9 @@ const SYNTHETIC_CASES: Array<{
   },
   {
     id: 'syn-biased',
-    title: 'Biased bits (P(1) = 0.75)',
-    lesson: 'True min-entropy is −log2(0.75) ≈ 0.415 bit per sample.',
+    title: 'Biased bits (75% ones; repeatable simulation)',
+    lesson:
+      'Ones occur about 75% of the time. Always guessing “1” therefore succeeds more often than with equally likely bits. For an ideal independent source, this lowers min-entropy from 1 to about 0.415 bits per sample.',
     seq: 'd4-biased-1bit',
   },
   {
@@ -200,6 +201,26 @@ export function d4Spec(id: string): D4DatasetSpec {
   const s = D4_DATASETS.find((d) => d.id === id)
   if (!s) throw new Error(`Unknown synthetic dataset ${id}`)
   return s
+}
+
+/** Plain-language descriptions of the actual generators, not entropy claims. */
+export function syntheticCollectionSummary(caseId: string): string {
+  switch (caseId) {
+    case 'syn-stuck':
+      return 'The browser fills the sample with zeros. Every value is identical: this deliberately models a source stuck on one value.'
+    case 'syn-biased':
+      return 'The browser uses a fixed-seed generator to choose bits with a 75% chance of one and a 25% chance of zero. The same seed reproduces the same sample.'
+    case 'syn-markov':
+      return 'The browser uses a fixed-seed generator that repeats the previous bit with a 70% chance. This creates dependence between successive bits, even when the overall counts of zeros and ones look balanced.'
+    case 'syn-healthy':
+      return 'The browser generates random-looking bytes from a fixed seed. For the restart dataset, it derives a different seed for each row. Both datasets are repeatable simulations, not measurements of fresh physical noise.'
+    case 'syn-restart-correlated':
+      return 'The long-run sample is fixed-seed, random-looking output. The separate restart dataset mostly copies the same sequence into every row, selecting about 2% of positions for replacement with generated values. This models repeated startup behaviour hidden by a healthy-looking long run.'
+    case 'syn-conditioned-stuck':
+      return 'The browser hashes blocks of zeros together with a counter using SHA-256. The changing counter makes the output vary even though the input source is stuck. Everything is repeatable; no fresh noise is collected.'
+    default:
+      return 'The browser generates this repeatable teaching sample using the generator and settings listed below. No hardware measurement is taken.'
+  }
 }
 
 const DEVICE_LESSONS: Record<string, string> = {
@@ -290,13 +311,26 @@ export async function loadData(
     const res = await fetchImpl(`/${d.file}`)
     if (!res.ok) throw new Error(`Could not load ${d.file} (HTTP ${res.status}).`)
     const bytes = new Uint8Array(await res.arrayBuffer())
-    return { bytes, sha256: await sha256Hex(bytes), expectedSha256: d.sha256 }
+    if (bytes.length !== d.bytes)
+      throw new Error(
+        'Dataset size does not match the manifest. Reload the original sample file before running the assessment.'
+      )
+    const sha256 = await sha256Hex(bytes)
+    if (sha256 !== d.sha256)
+      throw new Error(
+        'Dataset SHA-256 does not match the manifest. Reload the original sample file before running the assessment.'
+      )
+    return { bytes, sha256, expectedSha256: d.sha256 }
   }
   const bytes = d4Spec(ref.d4Id).build()
   const sha = await sha256Hex(bytes)
   const pinned = Object.entries(manifest.nativeReference.bySha256).find(
     ([, e]) => e.parityId === ref.d4Id
   )
+  if (pinned && sha !== pinned[0])
+    throw new Error(
+      'Generated dataset SHA-256 does not match its pinned reference. Investigate before running the assessment.'
+    )
   return { bytes, sha256: sha, expectedSha256: pinned ? pinned[0] : null }
 }
 
@@ -315,6 +349,8 @@ export interface EsvCertificateRef {
   /** As listed on the certificate page (vetted conditioning / output). */
   listedOutput: string
   operatingEnvironments: string[]
+  reuseStatus: string
+  sourceNote?: string
   url: string
   publicUseDocument: string
   checked: string
@@ -328,6 +364,7 @@ export interface EsvCertificateRef {
 export const ESV_CERTIFICATES: EsvCertificateRef[] = [
   {
     number: 'E19',
+    reuseStatus: 'Reuse restricted to vendor',
     implementation: 'Kernel CPU Time Jitter RNG',
     vendor: 'SUSE LLC',
     version: '2.2.0',
@@ -350,6 +387,7 @@ export const ESV_CERTIFICATES: EsvCertificateRef[] = [
   },
   {
     number: 'E200',
+    reuseStatus: 'Reuse restricted to vendor',
     implementation: 'Userspace Standalone CPU Time Jitter RNG',
     vendor: 'SUSE LLC',
     version: '3.4.0',
@@ -371,6 +409,9 @@ export const ESV_CERTIFICATES: EsvCertificateRef[] = [
   },
   {
     number: 'E280',
+    reuseStatus: 'Reuse restricted to vendor',
+    sourceNote:
+      'Server naming differs between the public sources: the certificate page says c7a.metal; the Public Use Document (page 4, Table 2) says c7a.metal-48xl. This list follows the certificate page. The naming difference alone does not establish different hardware or a defective validation.',
     implementation: 'AWS-LC CPU Jitter RNG Entropy Source',
     vendor: 'Amazon Web Services, Inc.',
     version: '3.6.3',
@@ -381,8 +422,10 @@ export const ESV_CERTIFICATES: EsvCertificateRef[] = [
     listedOutput:
       'Full entropy, 256-bit output (vetted conditioning SHA3-256, CAVP A6881 and A7962)',
     operatingEnvironments: [
-      'Amazon Linux 2 / 2023 on EC2 m5dn.metal (Intel Xeon Platinum 8259CL)',
-      'Amazon Linux 2 / 2023 on EC2 m7i.metal-24xl (Intel Xeon Platinum 8488C)',
+      'Amazon Linux 2 on EC2 m5dn.metal (Intel Xeon Platinum 8259CL)',
+      'Amazon Linux 2 on EC2 m7i.metal-24xl (Intel Xeon Platinum 8488C)',
+      'Amazon Linux 2023 on EC2 m5dn.metal (Intel Xeon Platinum 8259CL)',
+      'Amazon Linux 2023 on EC2 m7i.metal-24xl (Intel Xeon Platinum 8488C)',
       'Amazon Linux 2023 on EC2 c6i.metal (Intel Xeon Platinum 8375C)',
       'Amazon Linux 2023 on EC2 c7a.metal (AMD EPYC 4th Generation)',
       'Amazon Linux 2023 on EC2 r8g.metal-24xl (AWS Graviton4)',

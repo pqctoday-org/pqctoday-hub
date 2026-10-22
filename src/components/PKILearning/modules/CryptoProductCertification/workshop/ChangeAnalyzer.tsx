@@ -97,7 +97,7 @@ export const ChangeAnalyzer: FC<CertWorkshopStepProps> = ({ config }) => {
               <table className="w-full min-w-[640px] text-left text-xs">
                 <thead className="bg-muted/60 text-muted-foreground">
                   <tr>
-                    <th className="p-3 font-semibold">Scheme</th>
+                    <th className="p-3 font-semibold">Evaluation context</th>
                     <th className="p-3 font-semibold">Evidence likely affected</th>
                     <th className="p-3 font-semibold">Candidate routes to discuss</th>
                   </tr>
@@ -106,7 +106,7 @@ export const ChangeAnalyzer: FC<CertWorkshopStepProps> = ({ config }) => {
                   {(
                     [
                       ['FIPS 140-3 / CMVP', change.fips],
-                      ['CC / EUCC', change.ccEucc],
+                      ['Common Criteria — evidence review', change.cc],
                       ['PCI PTS HSM', change.pci],
                     ] as const
                   ).map(([scheme, impact]) => (
@@ -119,6 +119,21 @@ export const ChangeAnalyzer: FC<CertWorkshopStepProps> = ({ config }) => {
                 </tbody>
               </table>
             </div>
+            <Callout title="EUCC only — apply the scheme’s change procedure">
+              <p>
+                For an EUCC certificate, review the CC evidence above under EUCC’s own rules. The
+                certification body examines the impact analysis and determines whether the change is
+                minor or major. A major change requires re-evaluation; do not infer the decision
+                from the algorithm name alone. Check the applicable EUCC cryptographic guidance
+                separately. These rules do not automatically apply to other CC schemes.
+              </p>
+              <a
+                className="text-primary underline"
+                href="https://eur-lex.europa.eu/eli/reg_impl/2024/482/2025-12-29/eng"
+              >
+                EUCC regulation — assurance continuity
+              </a>
+            </Callout>
             <p className="flex items-start gap-2 text-xs text-foreground">
               <HelpCircle size={14} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
               <span>

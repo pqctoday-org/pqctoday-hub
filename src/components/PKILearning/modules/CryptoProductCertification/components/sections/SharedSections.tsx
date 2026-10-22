@@ -17,6 +17,8 @@ import { Input } from '@/components/ui/input'
 import {
   AGILE_ARCHITECTURE,
   HONESTY_TIERS,
+  HYBRID_AS_OF,
+  HYBRID_POSITIONS,
   LIFECYCLE_STEPS,
   MAINTAIN_VALID,
   MANDATE_LABEL,
@@ -37,6 +39,7 @@ import {
 } from '../../data/sharedData'
 import { ANCHOR_RELEASES, ANCHOR_SCENARIO } from '../../data/anchorScenario'
 import { AsOf, Callout, FictionalBadge, PlainSource, SourceLink } from './CoreSections'
+import { PqcParameterComparison } from '../PqcParameterComparison'
 
 const Prose = ({ children }: { children: ReactNode }) => (
   <div className="space-y-4 text-sm leading-relaxed text-foreground/85">{children}</div>
@@ -67,6 +70,8 @@ export const PqcImpact = () => (
       the certification schemes’ job — and it is why “we support ML-KEM” and “our ML-KEM is
       certified” are different sentences.
     </p>
+
+    <PqcParameterComparison />
 
     <H3>What stays the same</H3>
     <ul className="list-disc space-y-1 pl-5">
@@ -172,12 +177,12 @@ export const PqcImpact = () => (
     </div>
 
     <p>
-      Three things in this table surprise most readers. First, <strong>EUCC is ahead</strong>: the
+      Three distinct observations matter here. First, <strong>EUCC has PQC guidance</strong>: the
       applicable ECCG ACM v2 (<SourceLink source={SHARED_SOURCES.acm2} />) already names the PQC
-      mechanisms and expects lattice schemes to be hybridised — a concrete requirement on any EUCC
-      evaluation that claims PQC. Second,{' '}
-      <strong>FIPS 140-3 certificates with PQC already exist</strong>: four active Level 3 HSM
-      certificates approve ML-KEM and ML-DSA, so “no validated PQC module exists” is false (
+      mechanisms and recommends hybridisation for lattice schemes. Do not turn that recommendation
+      into a blanket legal requirement; check the applicable scheme rules, PP and Security Target.
+      Second, <strong>FIPS 140-3 certificates with PQC already exist</strong>: four active Level 3
+      HSM certificates approve ML-KEM and ML-DSA, so “no validated PQC module exists” is false (
       <SourceLink source={SHARED_SOURCES.cmvpValidated} />
       ). Third, <strong>PCI names no PQC algorithm or date</strong> in its public material: the
       listing notation says only that PQC support exists (
@@ -197,6 +202,59 @@ export const PqcImpact = () => (
         unchanged; the validation process is under an order to speed up.
       </p>
     </Callout>
+
+    <H3>Hybrid or standalone: what each scheme expects</H3>
+    <p>
+      A “hybrid” combines a post-quantum algorithm with a classical one, so the result stays secure
+      as long as either one holds. The schemes do not agree on whether you must use one (as of{' '}
+      {HYBRID_AS_OF}):
+    </p>
+    <div className="overflow-x-auto rounded-lg border border-border">
+      <table className="w-full min-w-[720px] text-left text-xs">
+        <caption className="sr-only">Hybrid or standalone PQC, by scheme</caption>
+        <thead className="bg-muted/60 text-muted-foreground">
+          <tr>
+            <th className="p-3 font-semibold">Scheme or authority</th>
+            <th className="p-3 font-semibold">Key establishment (ML-KEM)</th>
+            <th className="p-3 font-semibold">Signatures (ML-DSA, SLH-DSA, LMS/XMSS)</th>
+            <th className="p-3 font-semibold">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {HYBRID_POSITIONS.map((r) => (
+            <tr key={r.scheme} className="border-t border-border align-top">
+              <td className="p-3 font-semibold text-foreground">{r.scheme}</td>
+              <td className="p-3">{r.keyEstablishment}</td>
+              <td className="p-3">{r.signatures}</td>
+              <td className="p-3">
+                <p>{r.sourceNote}</p>
+                <p className="mt-1 flex flex-wrap gap-x-2">
+                  {r.sources.map((s) => (
+                    <SourceLink key={s.id} source={s} label={s.id} />
+                  ))}
+                </p>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      <strong>What this means for a certification engineer:</strong> a product sold into both the US
+      and the EU should be designed with hybrid in mind. Standalone ML-KEM or ML-DSA can be fine for
+      a FIPS 140-3 validation but falls short of the EUCC guidance and the German and French
+      positions. If the product offers a hybrid, check that its FIPS module meets the IG D.S
+      conditions — a hybrid the module does not enforce cannot be claimed as an approved service.
+      Hash-based signatures are the exception almost everywhere: they may stand alone.
+    </p>
+    <p className="text-xs text-muted-foreground">
+      How to build a hybrid signature is being standardised now: IETF Composite ML-DSA (ML-DSA
+      paired with RSA, ECDSA, Ed25519 or Ed448) is approved and awaiting RFC publication (
+      <SourceLink source={SHARED_SOURCES.compositeMlDsa} label="draft -19" />; tracked in ENISA’s{' '}
+      <SourceLink source={SHARED_SOURCES.enisaHybrid} label="hybridisation status report" />
+      ). Neither the FIPS 140-3 Implementation Guidance nor the ECCG mechanisms (v2 or the v3 draft)
+      names it yet. Re-check before relying on this table.
+    </p>
 
     <H3>Five strengths of claim</H3>
     <p>
@@ -261,8 +319,9 @@ export const PqcImpact = () => (
         analysis; very likely re-evaluation of the affected claims.
       </li>
       <li>
-        <strong>EUCC:</strong> the same, with ACM v2 deciding which mechanisms and parameter sets
-        the evaluation accepts, and hybrid key establishment expected for ML-KEM.
+        <strong>EUCC:</strong> review the applicable scheme rules and cryptographic guidance. ACM v2
+        recommends mechanisms, parameter choices and hybridisation for ML-KEM; the mechanism name
+        alone does not determine acceptance of an implementation.
       </li>
       <li>
         <strong>PCI:</strong> a new firmware version to scope with a recognized lab; the Security
@@ -679,9 +738,12 @@ export const TransitionDeadlines = () => {
           open question in this v1.
         </li>
         <li>
-          <strong>CC 3.1 end dates, 31 December 2027:</strong> plan the EUCC re-evaluation under
-          CC:2022, and ask the certification body how the eIDAS carve-out for older Protection
-          Profiles (CIR 2024/3144) applies to an EN 419221-5 claim.
+          <strong>EUCC transitional issuance rules, through 31 December 2027:</strong> Article 3(2)
+          permits EUCC certificates using the specified older CC/CEM editions; Article 3(3)
+          separately permits newer-standard certificates claiming the specified older PPs. This is
+          not a global CC deadline or automatic expiry date for existing certificates. Check the
+          planned evaluation basis and whether Article 3(4)’s conditional older-PP provision applies
+          to the device. <SourceLink source={SHARED_SOURCES.eucc3144} />
         </li>
       </ul>
       <p>
@@ -779,7 +841,8 @@ export const ChangeRoutesDetail = () => (
 
     <H3>EUCC</H3>
     <p>
-      EUCC applies the same continuity model under EU law. Under CIR 2025/2462 (
+      EUCC uses CC evaluation evidence but sets its own continuity rules in EU law. Under CIR
+      2025/2462 (
       <SourceLink source={SHARED_SOURCES.eucc2462} />
       ), a minor change leads to a maintenance report, and “no new certificate shall be issued”; a
       subset evaluation or partial ETR is optional. After a successful re-assessment, the
@@ -842,8 +905,9 @@ export const ChangeRoutesDetail = () => (
         were already met; otherwise a Full Submission.
       </li>
       <li>
-        <strong>CC / EUCC:</strong> prepare the Impact Analysis Report; expect re-evaluation if the
-        new service changes the ST, the SFRs, the TSF or the vulnerability analysis materially.
+        <strong>CC-based certification — check the issuing scheme:</strong> prepare the impact
+        analysis required by that scheme; discuss re-evaluation if the new service changes the ST,
+        the SFRs, the TSF or the vulnerability analysis materially.
       </li>
       <li>
         <strong>PCI:</strong> ask a recognized lab to scope a delta against the device’s

@@ -1377,7 +1377,7 @@ export class HybridCryptoService {
   }
 
   /**
-   * Composite KEM certificate (draft-ietf-lamps-pq-composite-kem-21):
+   * Composite KEM certificate (draft-ietf-lamps-pq-composite-kem-23):
    * id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58), subjectPublicKey =
    * mlkem768PK (1184 B) ‖ x25519PK (32 B), ML-KEM first. Both keys live in the
    * playground HSM; the certificate is issued by the ML-DSA-65 workshop CA.

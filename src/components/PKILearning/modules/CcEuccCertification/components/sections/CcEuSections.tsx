@@ -226,9 +226,13 @@ export const CcModel = () => (
       having an accredited laboratory check them. The criteria are published by the Common Criteria
       Recognition Arrangement (CCRA) participants as CC:2022, and by ISO/IEC as ISO/IEC 15408:2022.
       The evaluator follows the Common Evaluation Methodology, CEM:2022 (ISO/IEC 18045:2022). A
-      certification scheme — a national one such as France’s ANSSI or Singapore’s CSA, or in the EU
-      the EUCC scheme — oversees the laboratory and issues the certificate. The CCRA then decides
-      which certificates its member countries accept from one another.
+      certification scheme — for example France’s ANSSI or Singapore’s CSA — oversees the laboratory
+      and issues the certificate. The CCRA then decides which certificates its member countries
+      accept from one another.
+    </P>
+    <P>
+      <strong>Under EUCC:</strong> in the EU, certificates are issued under the EUCC scheme, which
+      adds its own rules on top of Common Criteria (see the EUCC path).
     </P>
 
     <Callout tone="current" title="Use CC:2022 R1 with its mandatory errata">
@@ -348,9 +352,10 @@ export const CcModel = () => (
       <Code>FCS_CKM</Code> (key management) and <Code>FCS_COP</Code> (cryptographic operation) —
       iterated once per algorithm or operation. A PP can constrain them. The EN 419221-5 HSM PP, for
       example, requires algorithms “approved for the identified purpose” and tells the ST author to
-      consult the relevant national body. Schemes add their own rules: ANSSI analysed TrustWay
-      Proteccio’s mechanisms against its own cryptographic guide, and EUCC uses the ECCG Agreed
-      Cryptographic Mechanisms.
+      consult the relevant national body. Schemes add their own rules: ANSSI, for example, analysed
+      TrustWay Proteccio’s mechanisms against its own cryptographic guide.{' '}
+      <strong>Under EUCC:</strong> the ECCG Agreed Cryptographic Mechanisms play this role (see the
+      EUCC path).
     </P>
     <Callout tone="warn" title="So: is ML-KEM in the certificate?">
       <p>
@@ -387,7 +392,7 @@ export const CcModel = () => (
         [
           'Certification body',
           'Oversees the lab, reviews the ETR, issues certificate and report',
-          'CSA (Singapore), ANSSI (France); under EUCC, commercial CBs such as TrustCB',
+          'CSA (Singapore), ANSSI (France)',
         ],
         [
           'CCRA participants',
@@ -513,8 +518,8 @@ export const CcEalDecoding = () => (
     <P>
       The AVA_VAN component matters most for devices that hold keys: it sets the attack potential
       the evaluator’s penetration testing assumes — Basic for AVA_VAN.1–2, Enhanced-Basic for .3,
-      Moderate for .4 and High for .5. EUCC builds its assurance levels on exactly this component
-      (the EUCC path covers it).
+      Moderate for .4 and High for .5. <strong>Under EUCC:</strong> the ‘substantial’ and ‘high’
+      assurance levels are defined by this component (see the EUCC path).
     </P>
 
     <H3>A real example: one certificate, two headlines</H3>
@@ -532,8 +537,10 @@ export const CcEalDecoding = () => (
       ALC_FLR family (or at collaborative PPs). Above that, recognition depends on other agreements.
       For this certificate that was SOG-IS, whose European agreement recognised higher levels for
       “hardware devices with security boxes” — and SOG-IS stopped issuing certificates on 27
-      February 2026 (sogis.eu, read {AS_OF_LABEL}). Singapore’s report for the nShield5s HSM puts it
-      plainly: its EAL4 augmented certification “is partially covered by the CCRA”.
+      February 2026 (
+      <SourceCite id="SOGIS-Certificate-Issuance-Ceased-2026" label="SOG-IS notice" />, read{' '}
+      {AS_OF_LABEL}). Singapore’s report for the nShield5s HSM puts it plainly: its EAL4 augmented
+      certification “is partially covered by the CCRA”.
     </P>
 
     <H3>Why you cannot rank certificates by EAL</H3>
@@ -556,7 +563,10 @@ export const CcEalDecoding = () => (
         <li>the PP or cPP the ST claims, with its version;</li>
         <li>the TOE name, version and evaluated configuration;</li>
         <li>the scheme, certificate identifier, date and validity;</li>
-        <li>who recognises it (CCRA, SOG-IS, EUCC) and at what level.</li>
+        <li>
+          who recognises it (the CCRA or another arrangement) and at what level; for an EUCC
+          certificate, also its EUCC assurance level.
+        </li>
       </ul>
     </Callout>
 
@@ -602,7 +612,7 @@ export const CcLifecycle = () => (
       </li>
       <li>
         <strong>Publication:</strong> the sanitised ST, certificate and report appear on the
-        scheme’s site and the CC portal (and, for EUCC, on ENISA’s certification website).
+        scheme’s site and the CC portal.
       </li>
       <li>
         <strong>Life after certification:</strong> flaw remediation, vulnerability handling, and
@@ -676,9 +686,8 @@ export const CcLifecycle = () => (
     <P>
       Each scheme sets a validity period. The three real certificates in this path’s workshop all
       run five years: ANSSI’s report gives five years from the signature date, Singapore’s CSA gives
-      a fixed end date, and EUCC caps certificates at five years unless the national authority
-      approves longer (CIR 2024/482 Art 12). Validity does not freeze the threat landscape — that is
-      what re-assessment is for.
+      a fixed end date, and the EUCC certificate follows EUCC’s own limit (see the EUCC path).
+      Validity does not freeze the threat landscape — that is what re-assessment is for.
     </P>
 
     <H3>The CC:2022 transition</H3>
@@ -710,45 +719,35 @@ export const CcLifecycle = () => (
       The same policy lets a CC:2022 certification reuse CC 3.1 R5 life-cycle (ALC) results and CC
       3.1 R5 platform certificates in a composite evaluation. PP maintainers must move their PPs to
       CC:2022; new or updated PPs published after 30 June 2024 must use CC:2022. All three
-      certificates in this path’s workshop use CC 3.1 R5: the two HSMs under national schemes, and
-      the EUCC certificate under EUCC’s own rule allowing CC 3.1 R5 until 31 December 2027.
+      certificates in this path’s workshop use CC 3.1 R5. <strong>Under EUCC:</strong> a separate
+      EUCC rule allows CC 3.1 R5 certificates until 31 December 2027 (see the EUCC path).
     </P>
 
-    <H3>The European picture changed in 2025–2026</H3>
-    <ul className="list-disc space-y-2 pl-5 text-sm text-foreground/90">
-      <li>
-        EUCC (
-        <SourceCite
-          id="CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme"
-          label="CIR (EU) 2024/482"
-        />
-        ) applies from 27 February 2025. Under its Article 49, national EU certification schemes
-        covered by EUCC ceased to produce effects, with a limited window to finish processes already
-        started.
-      </li>
-      <li>
-        SOG-IS, the older European recognition agreement, stopped issuing certificates on 27
-        February 2026 (sogis.eu).
-      </li>
-      <li>
-        EUCC certificates can carry the CCRA mark only through extra, per-certificate government
-        oversight (
-        <PlainSource>CCMC-011 v1.0, “CCRA and EUCC Co-existence”, 19 March 2025</PlainSource>). If
-        the CCRA requirements stop being met, the EUCC certificate is not nullified; the CCRA can
-        ask for the mark to be removed.
-      </li>
-    </ul>
+    <P>
+      <strong>Under EUCC:</strong> in the EU, EUCC replaced the national schemes from 27 February
+      2025, and EUCC certificates carry the CCRA mark only through a separate process (see the EUCC
+      path).
+    </P>
 
     <Callout
       tone="planning"
       title="Planning implication for PQC (scheme clocks, not market deadlines)"
     >
       <p>
-        Adding ML-KEM or ML-DSA to a certified product means new <Code>FCS_COP</Code>/
-        <Code>FCS_CKM</Code> iterations in the ST — a change to the claimed SFRs, which CCDB-014
-        lists as a typical major change. Plan it as a re-evaluation on CC:2022. If your PP is still
-        CC 3.1, the 31 December 2027 limit on claiming it applies to that re-evaluation, unless an
-        EUCC carve-out covers the PP (see the EUCC path).
+        <strong>Under Common Criteria:</strong> Adding ML-KEM or ML-DSA to a certified product means
+        new <Code>FCS_COP</Code>/<Code>FCS_CKM</Code> iterations in the ST — a change to the claimed
+        SFRs, which CCDB-014 lists as a typical major change. Expect the certification body to
+        classify it as major and require a re-evaluation, and plan that re-evaluation on CC:2022. If
+        your PP is still CC 3.1, the CCRA transition policy allows claiming it only until 31
+        December 2027.
+      </p>
+      <p>
+        <strong>Under EUCC:</strong> The change must also use post-quantum mechanisms that the ECCG
+        Agreed Cryptographic Mechanisms accept — for example, lattice schemes combined with a
+        classical mechanism — and EUCC’s own change rules (CIR 2025/2462) decide whether it is minor
+        or major. An EUCC carve-out keeps older protection profiles (CC 3.1 revisions 1–4) usable
+        where eIDAS, Decision 2016/650 or the tachograph rules require them, with no end date (see
+        the EUCC path).
       </p>
     </Callout>
 
@@ -760,7 +759,8 @@ export const CcLifecycle = () => (
       />
       , <SourceCite id="CCDB-014-Assurance-Continuity-v3-1" />,{' '}
       <SourceCite id="CC-2022-CEM" label="CEM:2022" />;{' '}
-      <PlainSource>CCMC-011 v1.0 (19 March 2025)</PlainSource>; sogis.eu home page.
+      <SourceCite id="CCMC-011-CCRA-EUCC-Coexistence" label="CCMC-011 v1.0 (19 March 2025)" />;{' '}
+      <SourceCite id="SOGIS-Certificate-Issuance-Ceased-2026" label="SOG-IS notice" />.
     </Sources>
   </Section>
 )
@@ -775,8 +775,8 @@ export const CcContinuity = () => (
         id="CCDB-014-Assurance-Continuity-v3-1"
         label="CCDB-014 “Assurance Continuity: CCRA Requirements” v3.1"
       />{' '}
-      (29 February 2024). Schemes may add to them; EUCC restates them in its own law (see the EUCC
-      path).
+      (29 February 2024). Schemes may add to them. <strong>Under EUCC:</strong> EUCC sets its own
+      change rules in law (see the EUCC path).
     </P>
 
     <DataTable
@@ -824,22 +824,52 @@ export const CcContinuity = () => (
       requiring exact conformance makes even an editorial change to the ST’s objectives major.
     </P>
 
-    <H3>A real maintenance: the EN 419221-5 PP itself</H3>
-    <P>
-      PPs have assurance continuity too. ANSSI certified EN 419221-5 as a draft, v0.15, in December
-      2016 (ANSSI-CC-PP-2016/05). When CEN published it as EN 419221-5:2018 v1.0, the changes were
-      standardisation edits, editorial fixes and systematic use of “shall” instead of “must”. ANSSI
-      judged them minor and issued maintenance report{' '}
-      <SourceCite id="ANSSI-CC-PP-2016-05-M01" label="ANSSI-CC-PP-2016/05-M01" /> (18 May 2020) — no
-      new certificate.
-    </P>
+    <details className="rounded-lg border border-border p-4">
+      <summary className="cursor-pointer font-semibold">
+        Optional history: why EN 419221-5 appears as both v0.15 and v1.0
+      </summary>
+      <div className="mt-3 space-y-3">
+        <P>
+          In this example, ANSSI assessed a Protection Profile—the document describing requirements
+          for a class of cryptographic modules—not a particular HSM product.
+        </P>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            <strong>16 December 2016:</strong> ANSSI certified the draft Protection Profile, prEN
+            419221-5 v0.15, under reference ANSSI-CC-PP-2016/05.
+          </li>
+          <li>
+            <strong>18 May 2020:</strong> its maintenance report identified the published EN
+            419221-5:2018 E v1.0 as the maintained profile. The report describes standardisation
+            edits, editorial fixes and replacing “must” with “shall”. ANSSI judged their impact
+            minor.
+          </li>
+        </ul>
+        <P>
+          The lesson: different version labels need an explanation, not an assumption that the
+          documents are unrelated or interchangeable. Check the exact profile claimed and the
+          maintenance report connecting the versions. The Hub quotes the public v0.15 text; it does
+          not claim to have independently compared every line of the published CEN edition.
+        </P>
+        <P>
+          The limit: this report does not establish that adding PQC to an HSM is a minor change. It
+          assesses changes to the requirements document, not new cryptographic code, services or
+          security claims in a product. It also does not establish a product certificate’s current
+          validity.
+        </P>
+        <SourceCite
+          id="ANSSI-CC-PP-2016-05-M01"
+          label="ANSSI maintenance report, 18 May 2020, §§1–4"
+        />
+      </div>
+    </details>
 
     <Callout tone="warn" title="What this means for adding PQC">
       <p>
-        A new ML-DSA signing service adds SFR iterations, changes interfaces and design, and needs
-        new vulnerability analysis. That is the “claimed functional requirements” case — expect a
-        re-evaluation, not maintenance. A market deadline does not change the classification. Only
-        the impact on the assurance does.
+        Adding an ML-DSA signing service can change the product’s security requirements, interfaces,
+        implementation and vulnerability evidence. Assess those actual changes under the issuing
+        scheme’s rules; the certification body determines the route. The editorial PP update above
+        is not evidence that this product change qualifies for maintenance.
       </p>
     </Callout>
 
@@ -859,10 +889,68 @@ export const EuccScheme = () => (
       <p>
         The European Common Criteria-based cybersecurity certification scheme (EUCC) is EU law
         adopted under the Cybersecurity Act (Regulation (EU) 2019/881). It says how CC evaluations
-        are run and how certificates are issued in the EU. The security requirements still come from
-        a Security Target and, where claimed, a Protection Profile.
+        are run and how certificates are issued under EUCC. It is not another name for Common
+        Criteria, and its rules must not be applied indiscriminately to other CC certification
+        schemes. The security requirements still come from a Security Target and, where claimed, a
+        Protection Profile.
       </p>
     </Callout>
+
+    <H3>What EUCC takes from Common Criteria, and what it adds</H3>
+    <P>An EUCC evaluation is a Common Criteria evaluation run under EU law.</P>
+    <P>
+      <strong>Taken from Common Criteria:</strong> the CC:2022 criteria and the CEM evaluation
+      method, the Security Target, Protection Profiles, and assurance components such as{' '}
+      <Code>AVA_VAN</Code>. If these are new to you, read “The Common Criteria model” on the Common
+      Criteria path first.
+    </P>
+    <P>
+      <strong>Added by EUCC:</strong>
+    </P>
+    <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/90">
+      <li>
+        two assurance levels, ‘substantial’ and ‘high’, defined by the <Code>AVA_VAN</Code>{' '}
+        component;
+      </li>
+      <li>technical domains and listed Protection Profiles (Annexes I and II);</li>
+      <li>the ECCG Agreed Cryptographic Mechanisms, including the post-quantum rules;</li>
+      <li>
+        certification bodies authorised under EU law, no self-assessment, and at most five years’
+        validity;
+      </li>
+      <li>its own change rules;</li>
+      <li>a separate, per-certificate route to the CCRA mark.</li>
+    </ul>
+
+    <H3>What changed in Europe in 2025–2026</H3>
+    <ul className="list-disc space-y-2 pl-5 text-sm text-foreground/90">
+      <li>
+        EUCC (
+        <SourceCite
+          id="CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme"
+          label="CIR (EU) 2024/482"
+        />
+        ) applies from 27 February 2025. Under its Article 49, national EU certification schemes
+        covered by EUCC ceased to produce effects, with a limited window to finish processes already
+        started.
+      </li>
+      <li>
+        SOG-IS, the older European recognition agreement, stopped issuing certificates on 27
+        February 2026 (
+        <SourceCite id="SOGIS-Certificate-Issuance-Ceased-2026" label="SOG-IS notice" />
+        ).
+      </li>
+      <li>
+        EUCC certificates can carry the CCRA mark only through extra, per-certificate government
+        oversight (
+        <SourceCite
+          id="CCMC-011-CCRA-EUCC-Coexistence"
+          label="CCMC-011 v1.0, “CCRA and EUCC Co-existence”, 19 March 2025"
+        />
+        ). If the CCRA requirements stop being met, the EUCC certificate is not nullified; the CCRA
+        can ask for the mark to be removed.
+      </li>
+    </ul>
 
     <H3>The legal text, and its two amendments</H3>
     <DataTable
@@ -1037,7 +1125,12 @@ export const EuccScheme = () => (
         ENISA product-series methodology v1 (9 July 2025); ENISA assurance-continuity change
         scenarios v1 (10 December 2025)
       </PlainSource>
-      ; ENISA certificate page EUCC-3110-2025-12-2500098-01.
+      ; ENISA certificate page EUCC-3110-2025-12-2500098-01;{' '}
+      <SourceCite
+        id="CCMC-011-CCRA-EUCC-Coexistence"
+        label="CCMC-011 v1.0, “CCRA and EUCC Co-existence”, 19 March 2025"
+      />
+      ; <SourceCite id="SOGIS-Certificate-Issuance-Ceased-2026" label="SOG-IS notice" />.
     </Sources>
   </Section>
 )
@@ -1049,8 +1142,10 @@ export const EidasChain = () => (
       <p>
         eIDAS is a regulation. It defines roles — qualified trust service providers (QTSPs),
         qualified signature and seal creation devices (QSCDs) — and obliges QSCDs to be certified.
-        It contains no security functional requirements a device can conform to. Those are in
-        Protection Profiles, which are CEN standards evaluated under Common Criteria.
+        Annex II sets device-security requirements, including protection of signing secrets and the
+        data being signed. These legal requirements are not the same as formal CC security
+        functional components. Where CC is used, the applicable Protection Profile and Security
+        Target describe the technical claims to be evaluated.
       </p>
     </Callout>
 
@@ -1093,7 +1188,9 @@ export const EidasChain = () => (
           'Certification scheme',
           <>
             Certification by public or private bodies designated by Member States (Art 30), using
-            Common Criteria evaluations — under EUCC where that scheme applies.
+            the applicable Article 30 assessment basis. CC evaluations may support that basis; EUCC
+            applies where that scheme is used. Article 30(3)(b) also provides for notified
+            alternative processes under its stated conditions.
           </>,
         ],
         [
@@ -1165,6 +1262,18 @@ export const EidasChain = () => (
     />
 
     <H3>Two assessments, not one</H3>
+    <P>
+      An HSM component certificate is not automatically certification of the complete QSCD. Check
+      the device configuration and certification report, then assess the trust service separately.
+      The Commission publishes{' '}
+      <a
+        className="text-primary underline"
+        href="https://eidas.ec.europa.eu/efda/browse/notification/alternative-process"
+      >
+        notified alternative assessment processes
+      </a>
+      ; do not assume that every eIDAS device certificate must be an EUCC certificate.
+    </P>
     <DataTable
       caption="Service assessment versus product certification"
       head={['', 'Trust service (the QTSP)', 'Device (the QSCD or HSM)']}
@@ -1378,8 +1487,9 @@ export const PpEn4192215 = () => (
     </P>
     <OpenQuestion>
       Whether the carve-out covers a particular EN 419221-5 evaluation depends on whether eIDAS
-      rules require the PP for that use — confirm with the certification body. The CC portal lists
-      no CC:2022 revision of EN 419221-5 <AsOf />; whether CEN is preparing one was not verified.
+      rules require the PP for that use — confirm with the certification body. The historical
+      maintenance report does not establish whether a newer CC:2022 edition exists or is being
+      prepared; check the current publication and certification records before selecting an edition.
     </OpenQuestion>
 
     <H3>What PQC changes for an EN 419221-5 product</H3>
@@ -1481,7 +1591,7 @@ export const PpSecurityIc = () => (
         </p>
       </Callout>
     </PathScopedContent>
-    <PathScopedContent paths={['eucc-eidas']}>
+    <PathScopedContent paths={['eucc', 'eucc-eidas']}>
       <Callout tone="key" title="On the EUCC & eIDAS path">
         <p>
           A chip certified to this PP falls in the Annex I technical domain “smart cards and similar
@@ -1503,13 +1613,14 @@ export const PpSecurityIc = () => (
 export const EuccPqcToday = () => (
   <Section>
     <P>
-      Of the four schemes this certification series covers — FIPS 140-3, Common Criteria, EUCC and
-      PCI — EUCC has the most specific post-quantum guidance in force today. It sits in a guideline,
-      not in the regulation — but it is the version ENISA marks as applicable, and it is addressed
-      to developers and evaluators.
+      EUCC cryptographic guidance helps developers and evaluators select mechanisms for an EUCC
+      evaluation. It does not establish a universal rule for all CC evaluations or eIDAS
+      assessments. The ENISA guidance recommends preferred mechanisms; distinguish those
+      recommendations from requirements in the applicable scheme rules, Protection Profile and
+      Security Target.
     </P>
 
-    <Callout tone="current" title={`Applicable today (as of ${AS_OF_LABEL})`}>
+    <Callout tone="current" title="Applicable guidance checked 21 October 2026">
       <p>
         <SourceCite id="EUCC v2.0 ACM" label="ECCG Agreed Cryptographic Mechanisms v2" /> and the
         EUCC Guidelines on Cryptography v2, both published 6 May 2025:
@@ -1547,11 +1658,11 @@ export const EuccPqcToday = () => (
     <H3>What that means for the anchor HSM</H3>
     <DataTable
       caption="ACM v2 applied to the Orrin N7 change"
-      head={['Plan', 'Fits ACM v2?', 'Why']}
+      head={['Plan', 'Alignment with cited ACM v2 guidance', 'Why']}
       rows={[
         [
           'ML-KEM-768 or -1024 combined with ECDH (hybrid KEM)',
-          'Yes',
+          'Aligned at mechanism/parameter level',
           'Recommended parameters, hybridised',
         ],
         [
@@ -1559,24 +1670,28 @@ export const EuccPqcToday = () => (
           'Not as recommended',
           'Not a recommended parameter set, and lattice schemes should not be standalone',
         ],
-        ['ML-DSA-65 or -87 alongside ECDSA or RSA', 'Yes', 'Recommended parameters, hybridised'],
+        [
+          'ML-DSA-65 or -87 alongside ECDSA or RSA',
+          'Aligned at mechanism/parameter level',
+          'Recommended parameters, hybridised',
+        ],
         [
           'SLH-DSA at security level 3 or 5, standalone',
-          'Yes',
+          'Aligned at mechanism/parameter level',
           'Hash-based: hybridisation optional',
         ],
         [
           'LMS for firmware signing',
-          'Yes, with state protection',
+          'Conditional on state protection and other applicable constraints',
           'Agreed; state must be protected in integrity and against replay',
         ],
       ]}
     />
     <P>
-      Remember the chain: ACM tells the ST author which mechanisms to claim; the EN 419221-5 PP
-      requires “approved” algorithms; and adding any of them to a certified product is a change to
-      the claimed SFRs — the case CCDB-014 lists as a typical major change, which the CB classifies
-      under CIR 2025/2462. The guidance says what to build, not how fast it can be certified.
+      These rows compare selected mechanisms with cited guidance; they are not certification
+      verdicts. The evaluator must also examine the construction, implementation, applicable PP and
+      Security Target. The certification body classifies a product change under the applicable EUCC
+      continuity rules. Following an ACM recommendation alone does not establish conformity.
     </P>
 
     <H3>What changes in the evaluation when PQC enters</H3>

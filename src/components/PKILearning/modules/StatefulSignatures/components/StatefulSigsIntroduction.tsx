@@ -314,17 +314,18 @@ const Step2LmsXmss: React.FC = () => (
         </div>
         <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
           <div className="text-xs font-bold text-warning mb-1">
-            SP 800-208 Operational Recommendation
+            SP 800-208 key-generation and signing requirements
           </div>
           <p className="text-xs text-muted-foreground">
-            NIST SP 800-208 recommends that key generation and signing be performed inside a{' '}
+            NIST SP 800-208 §8.1 requires key generation and signing within a{' '}
             <strong>
               <InlineTooltip term="FIPS 140-3">FIPS 140-validated</InlineTooltip> hardware
               cryptographic module
             </strong>{' '}
-            with no private key export. <InlineTooltip term="HSM">HSMs</InlineTooltip> with atomic
-            state management are therefore not merely a best-practice &mdash; they are the basis of
-            the standard&rsquo;s security model.
+            with no private keying material export. The profile specifies Level 3 or higher physical
+            security and a non-modifiable or limited operational environment. Consult applicable
+            CMVP implementation guidance for validation details. The workshop explains how to review
+            state protection and what its demonstration cannot prove.
           </p>
         </div>
       </div>
@@ -531,7 +532,9 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
                 <tr className="border-b border-border/50">
                   <td className="py-2 pr-4 font-medium text-foreground">Max signatures</td>
                   <td className="py-2 pr-4">Bounded by 2^H (plan ahead)</td>
-                  <td className="py-2 text-success font-medium">Effectively unlimited</td>
+                  <td className="py-2 text-success font-medium">
+                    At most 2^64 messages/key in the FIPS 205 §11 security analysis; no leaf counter
+                  </td>
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="py-2 pr-4 font-medium text-foreground">CNSA 2.0</td>

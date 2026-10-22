@@ -26,7 +26,7 @@ const PARTS: WorkshopPart[] = [
     id: 'eidas-trace',
     title: 'Regulation-to-certificate trace',
     description:
-      'Trace an eIDAS requirement through EUCC and a Protection Profile to a certified device.',
+      'Distinguish eIDAS obligations from the selected EUCC evidence route and Protection Profile in each scenario.',
     icon: Scale,
   },
 ]
@@ -37,7 +37,7 @@ const stepIndex = (stepId: string): number =>
 export const CcEuccCertificationModule: FC = () => (
   <ModuleShell
     manifest={manifest}
-    description="Common Criteria, EUCC and eIDAS in depth: the evaluation model, EAL claims, Protection Profiles, and how a PQC change travels from regulation to a certified device. Start with LM-065 for the fundamentals the schemes share."
+    description="Common Criteria, EUCC and eIDAS in depth, with distinct roles: CC supplies evaluation criteria; EUCC is an EU scheme using CC; eIDAS supplies separate legal requirements for applicable trust services and devices. Choose the CC, EUCC or eIDAS path below."
     learn={(api) => (
       <CertIntroduction
         manifest={manifest}

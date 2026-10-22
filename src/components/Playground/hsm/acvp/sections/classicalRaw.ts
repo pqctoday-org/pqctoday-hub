@@ -28,6 +28,7 @@ import {
 } from '@/wasm/softhsm/constants'
 import { CKR_OK, type AcvpCaseMeta, type MldsaAcvpSectionCtx } from './mldsaAcvp'
 import { createObjectRv, withTemplate, type AttrDef } from './pkcs11Raw'
+import { logByteComparison } from '../comparisonLog'
 
 /** Section context for the WS-E sections: the ML-DSA one plus the engine's slot,
  * so a section can read C_GetMechanismInfo (advertised key-size range). */
@@ -429,13 +430,23 @@ export async function runRow(
     // 100 000 WASM calls per row) can yield to the event loop between outer
     // iterations — without that the allocation churn never gets a full GC and
     // the renderer OOMs. See sections/mctFullAcvp.ts.
-    exec: () => RowOutcome | Promise<RowOutcome>
+    exec: (
+      compare: (computed: Uint8Array | null, expected: string, field?: string) => boolean
+    ) => RowOutcome | Promise<RowOutcome>
   }
 ): Promise<void> {
   const { pushResult, addLog, referenceUrl, eName } = ctx
   let out: RowOutcome
   try {
-    out = await row.exec()
+    out = await row.exec((computed, expected, field) =>
+      logByteComparison(
+        addLog,
+        `[${eName}] [id:${row.id}] ${row.source}`,
+        computed,
+        expected,
+        field
+      )
+    )
   } catch (err: unknown) {
     const m = err instanceof Error ? err.message : String(err)
     out = { ok: false, observed: m, details: m }
