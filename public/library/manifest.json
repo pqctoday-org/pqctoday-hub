@@ -22846,6 +22846,21 @@
       "unified": "converted",
       "admittedAt": "2026-10-22T03:53:06.081489+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "draft-ietf-lamps-pq-composite-kem-23",
+      "title": "Composite ML-KEM for use in X.509 Public Key Infrastructure (draft-ietf-lamps-pq-composite-kem-23)",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-kem-23.html",
+      "status": "downloaded",
+      "filename": "draft-ietf-lamps-pq-composite-kem-23.html",
+      "sizeBytes": 476483,
+      "contentType": "text/html",
+      "sha256": "886661360aefc4c55d0f8d6faf062d6100d868dc0b682d87358fbe89d9203fea",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-22T04:06:20.956858+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
