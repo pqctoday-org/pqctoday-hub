@@ -138,18 +138,21 @@ export const FourQuestions = () => (
   <Prose>
     <Callout tone="warning" title="Read this first">
       <p>
-        FIPS 140-3, Common Criteria, EUCC and PCI PTS HSM answer different assurance questions. A
-        product may need more than one. A certificate applies only to the named version,
-        configuration, security boundary or TOE, claims and conditions shown in its official record.
+        FIPS 140-3 specifies cryptographic-module requirements. Common Criteria provides product
+        evaluation criteria; EUCC is one certification scheme that uses those criteria. PCI PTS HSM
+        addresses payment HSMs. These are not four interchangeable standards. A certificate applies
+        only to the named version, configuration, security boundary or TOE, claims and conditions
+        shown in its official record.
       </p>
     </Callout>
 
     <p>
       Most confusion about certification starts with one sentence: <em>“our HSM is certified.”</em>{' '}
-      Certified by whom, for what, and which part of it? This module teaches each scheme by the{' '}
-      <strong>single question its certificate answers</strong>. Once you know the question, you also
-      know which questions a certificate leaves open — and those are the ones a buyer, an evaluator
-      or an auditor will ask next.
+      Certified by whom, for what, and which part of it? This module distinguishes evaluation
+      criteria from certification schemes and asks{' '}
+      <strong>what each certificate actually covers</strong>. Once you know the scope, you also know
+      which questions a certificate leaves open — and those are the ones a buyer, an evaluator or an
+      auditor will ask next.
     </p>
 
     <p>
@@ -285,7 +288,9 @@ export const FourQuestions = () => (
       </li>
       <li>
         <strong>EU qualified trust service provider:</strong> nothing about the Protection Profile
-        its eIDAS conformity assessment expects. It needs a CC evaluation under EUCC.
+        its eIDAS assessment expects. Identify the device, its Article 30 assessment basis and the
+        designated certification body. EUCC evidence may be relevant where that scheme is used; a
+        FIPS certificate alone does not establish QSCD certification or qualified-service status.
       </li>
       <li>
         <strong>Secure-element manufacturer:</strong> possibly useful evidence about a tool in its

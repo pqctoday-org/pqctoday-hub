@@ -27,6 +27,7 @@ import sigVerVectors from '@/data/acvp/mldsa_sigver_test.json'
 import sigGenDetVectors from '@/data/acvp/mldsa_siggen_det_test.json'
 import keyGenVectors from '@/data/acvp/mldsa_keygen_test.json'
 import { hexToBytes } from '@/utils/dataInputUtils'
+import { logByteComparison } from '../comparisonLog'
 import {
   buildTemplate,
   freeTemplate,
@@ -765,6 +766,13 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
         if (!s.sig) throw new Error(`${s.step} → ${rvText(s.rv)}`)
         const expected = hexToBytes(t.signature)
         const diff = firstDiff(s.sig, expected)
+        logByteComparison(
+          addLog,
+          `[${eName}] [id:${id}]`,
+          s.sig,
+          Array.from(expected, (b) => b.toString(16).padStart(2, '0')).join(''),
+          'signature'
+        )
         const ok = diff === 'identical'
         await pushResult({
           id,
@@ -831,6 +839,7 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
         if (pair.rv !== CKR_OK) throw new Error(`C_GenerateKeyPair(CKA_SEED) → ${rvText(pair.rv)}`)
         const pk = new Uint8Array(hsm_extractKeyValue(M, hSession, pair.pubHandle))
         const diff = firstDiff(pk, hexToBytes(t.pk))
+        logByteComparison(addLog, `[${eName}] [id:${id}]`, pk, t.pk, 'public key')
         const ok = diff === 'identical'
         await pushResult({
           id,

@@ -389,6 +389,24 @@ export const FipsRequirementAreas = () => (
       “operational environment”.
     </p>
     <p>
+      FIPS validation includes requirements for protecting keys and controlling their entry and
+      output. It does not mean every validated module forbids every plaintext export: the applicable
+      requirements depend on the security level, module type and transfer method. See{' '}
+      <Cite std={IG}>Implementation Guidance §9.5.A</Cite>.
+    </p>
+    <p>
+      In a PKCS#11 interface, a key can be configured to refuse plaintext reads while permitting
+      encrypted backup. Check the module’s Security Policy to understand which services and
+      protections its validation covers. The linked Hub exercise demonstrates this selected key
+      policy; it does not establish FIPS validation.
+    </p>
+    <p>
+      <Link to="/playground/hsm?tab=learn" className="text-primary underline">
+        Open the PKCS#11 Learn exercises
+      </Link>{' '}
+      — choose Foundations → “Key wrap &amp; the extraction question” for the AES demonstration.
+    </p>
+    <p>
       A module is not rated once. Each published Security Policy opens with a{' '}
       <strong>Security Levels</strong> table, in the format{' '}
       <Cite std={SP_800_140B}>SP 800-140B</Cite> requires. It gives every area a level from 1 to 4,
@@ -495,8 +513,9 @@ export const FipsRequirementAreas = () => (
         Adding ML-KEM or ML-DSA is not “one more algorithm”. It touches the module specification
         (new approved functions), SSP management (new key types and seeds), services (new approved
         services and their indicator) and self-tests (the IG 10.3.A tests for each PQC algorithm).
-        Those are four of the five categories the Manual uses to size a change — which is why a PQC
-        addition is a security-relevant revalidation (see the optional route table).
+        Those are four of the five categories the Manual uses to size a change — so expect a PQC
+        addition to be treated as a significant change: the lab assesses it and proposes the
+        submission route, and the CMVP may require a full submission (see the optional route table).
       </p>
     </Callout>
   </Body>
@@ -818,6 +837,25 @@ export const FipsAcvpBridge = () => (
       authentication mechanisms in <Cite std={SP_800_140E}>SP 800-140E</Cite>.
     </p>
 
+    <SubHeading>Check the operation and parameter set</SubHeading>
+    <p>
+      Do not stop at the name “ML-DSA”. Identify the operation you need: KeyGen means generating
+      keys, SigGen means signing, and SigVer means checking signatures. Follow its
+      algorithm-validation link and inspect the listed capabilities, including parameter sets. Then
+      check the module’s Security Policy for the approved service and configuration.
+    </p>
+    <p>
+      A signing entry alone does not establish coverage for key generation or verification.
+      Likewise, do not assume every parameter set is covered.
+    </p>
+    <p>
+      For the example above, inspect{' '}
+      <Ext href="https://csrc.nist.gov/projects/Cryptographic-Algorithm-Validation-Program/details?validation=38241">
+        Algorithm validation A5631
+      </Ext>
+      .
+    </p>
+
     <SubHeading>Four shortcuts that fail</SubHeading>
     <ul className="space-y-1">
       <ClaimRow ok={false}>
@@ -846,6 +884,28 @@ export const FipsAcvpBridge = () => (
       that a key pair regenerated from a stored FIPS 203 or FIPS 204 seed needs its pair-wise
       consistency test only before the first export or first use. Entropy is a separate track again:
       entropy source validation (<Cite std={ESV}>ESV</Cite>).
+    </p>
+    <p>For ML-DSA, three checks answer different questions:</p>
+    <ul className="list-disc space-y-2 pl-5" aria-label="Three different ML-DSA checks">
+      <li>
+        <strong>External algorithm testing:</strong> does the implementation produce the expected
+        results for the supplied test cases?
+      </li>
+      <li>
+        <strong>Algorithm self-test:</strong> does the module’s own implementation pass an internal
+        check before its first approved use? A known-answer self-test uses fixed test inputs and an
+        expected result; it does not test every customer key.
+      </li>
+      <li>
+        <strong>Pair-wise consistency test:</strong> do a newly generated private key and its public
+        key work together?
+      </li>
+    </ul>
+    <p>
+      These checks complement each other. Passing one does not replace the others. When reviewing
+      self-tests, check when they run, how failures are reported, and how the module prevents use or
+      output that its error state must block. See <Cite std={IG}>IG §10.3.A</Cite> for the algorithm
+      self-test and pair-wise consistency requirements.
     </p>
     <p>
       Going deeper: the algorithm-testing workflow is taught in{' '}
@@ -1050,7 +1110,13 @@ const AUTOMATION_LAYERS: readonly {
         Production ESVTS is now “the only mechanism” for a new submission that needs an entropy
         source or RBG construction validated: the module cites an existing certificate, which the
         same vendor can reuse in another module if the entropy source is portable (
-        <Cite std={MGMT_MANUAL}>Management Manual</Cite>).
+        <Cite std={MGMT_MANUAL}>Management Manual</Cite>).{' '}
+        <Link
+          to="/learn/entropy-randomness?tab=learn&section=esv"
+          className="text-primary underline"
+        >
+          See how certificate reuse works, including permission for another vendor.
+        </Link>
       </>
     ),
   },

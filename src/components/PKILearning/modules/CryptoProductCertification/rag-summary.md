@@ -2,19 +2,23 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-065) teaches what a cryptographic product certificate proves under four schemes — FIPS 140-3 (CMVP), Common Criteria, EUCC (with eIDAS), and PCI — why scope comes before level, and what adding post-quantum cryptography changes in a certified product. It is the shared foundation for three scheme deep dives: LM-067 _FIPS 140-3 Certification_, LM-068 _Common Criteria, EUCC & eIDAS Certification_ and LM-071 _PCI Certification_. It is written for product vendors and product-assurance leads; it also serves buyers and evaluators. Version 1 is labelled "Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body." Facts are as of 24 September 2026.
+This advanced Hardware Infrastructure module (LM-065) distinguishes FIPS 140-3 module validation, Common Criteria product evaluation, EUCC scheme rules and PCI approval. Common Criteria supplies evaluation criteria; EUCC uses those criteria under an EU certification scheme. eIDAS is a separate legal context where applicable. The module explains certificate scope and what adding PQC changes, with links to LM-067 _FIPS 140-3 Certification_, LM-068 _Common Criteria, EUCC & eIDAS Certification_ and LM-071 _PCI Certification_. It is written for product vendors, product-assurance leads, buyers and evaluators. It is labelled "Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body." The context-separation correction was checked on 21 October 2026; other dated claims retain their individual source dates.
 
 The module is a single ~60-minute route with no learn paths. Deeper material is kept as optional reference sections that do not count toward duration or completion.
 
 ## Key Concepts
 
-- **Four schemes, four questions** — each scheme answers a different question, so the first step is choosing the scheme that can answer the question being asked.
+- **Hybrid or standalone, by scheme (as of 22 October 2026)** — FIPS 140-3 approves ML-KEM, ML-DSA and SLH-DSA on their own; a hybrid KEM is allowed under IG D.S Scenario 2 conditions (approved key combiner, module-enforced fixed combinations); the IG has no hybrid-signature scenario. EUCC (ECCG ACM v2, unchanged in the v3 draft): (M)LWE mechanisms such as ML-KEM and ML-DSA should not be used standalone but combined with a classical mechanism; hash-based signatures may stand alone. BSI TR-02102-1 (2026-01) recommends PQC key agreement and signatures only in hybrid form; ANSSI's FAQ calls hybridisation essential, except for hash-based signatures. IETF Composite ML-DSA is approved and awaiting RFC publication but not yet named by FIPS IG or the ECCG mechanisms.
+
+- **Standards, criteria and schemes have different roles** — FIPS 140-3 specifies module requirements validated through CMVP; CC provides product evaluation criteria; EUCC is a scheme using CC, not a separate alternative to CC. PCI addresses payment-device approval. Name the applicable scheme before applying its rules.
 - **Scope before level** — a certificate covers a defined module, target or device at a version and configuration. The anchor is a fictional network HSM ("Orrin N7") sold as an appliance and as a multi-tenant cloud service into four markets.
 - **What PQC changes in certification** — adding ML-KEM or ML-DSA changes the certified product, and each scheme has its own route for that change.
 - **Crypto agility versus certification latency** — a product can be agile in code and still wait on a scheme's change route.
 - **A market deadline creates urgency, not a shortcut** — it does not make a PQC addition eligible for a scheme's lighter change route.
 
 ## Workshop / Interactive Activities
+
+The PQC-impact lesson compares ML-KEM, ML-DSA and SLH-DSA parameter sets and applicable modes, not only sizes. It distinguishes standard-defined choices, product support and actual tested combinations; includes ML-DSA-44's random-generator-strength caveat; separates security categories from assurance levels; and asks readers to identify interfaces, key representations, implementation versions and environments. It links existing SLH-DSA and state-management exercises rather than claiming they certify products.
 
 _Which scheme answers the question?_, _Draw the certification boundary_, and the capstone _One product, four markets_ (the learner picks one scheme at full depth and the other three at applicability level). Optional reference steps: _PQC change analyzer_ and _Evidence exchange demo_ (a synthetic teaching demo).
 

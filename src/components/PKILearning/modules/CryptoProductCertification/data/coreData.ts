@@ -219,7 +219,7 @@ export const SHORTCUTS: Shortcut[] = [
   {
     wrong: 'eIDAS 2.0 is a Protection Profile.',
     right:
-      'eIDAS is a regulation. It leads, through implementing acts and EUCC, to Protection Profiles such as EN 419221-5, against which devices are certified.',
+      'eIDAS is a regulation with device and trust-service requirements. Establish the applicable Article 30 assessment basis and designated certification body. A Protection Profile may support that assessment; EUCC applies only where that scheme is used.',
   },
   {
     wrong:
@@ -342,9 +342,9 @@ export const SELECTOR_CLAIMS: SelectorClaim[] = [
     id: 'qtsp-pp',
     customer: 'eu-qtsp',
     claim:
-      'Show that the HSM was certified against the EN 419221-5 Protection Profile, as our eIDAS conformity assessment expects.',
+      'Show an EUCC certificate for the HSM claiming the EN 419221-5 Protection Profile, as requested for this scenario.',
     answer: 'eucc',
-    why: 'Protection Profile conformance is a Common Criteria concept. In the EU, CC-based certification now runs under EUCC (2024/482), and EUCC Annex II lists EN 419221-5 for remote QSCDs. eIDAS itself is the regulation, not the certificate.',
+    why: 'This scenario explicitly requests EUCC, a scheme using Common Criteria. Protection Profile conformance alone does not identify the scheme: inspect the certificate. eIDAS is a separate regulation, not the certificate or the evaluation criteria.',
     timed: true,
   },
   {
@@ -449,12 +449,12 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
       {
         scheme: 'EUCC',
         status: 'applies',
-        note: 'CC evaluation under EUCC, claiming the Protection Profile the conformity assessment expects (EN 419221-5 is listed in EUCC Annex II for remote QSCDs).',
+        note: 'This teaching scenario explicitly requests an EUCC certificate for the HSM against EN 419221-5. That is not a universal eIDAS route and does not alone establish certification of the complete QSCD or qualification of the trust service.',
       },
       {
-        scheme: 'Common Criteria (CCRA)',
+        scheme: 'CC-based product evidence; recognition checked separately',
         status: 'may-apply',
-        note: 'An existing CCRA certificate may carry weight, but national EU schemes ceased under 2024/482 and SOG-IS stopped issuing certificates on 27 February 2026. Check what the conformity assessment body accepts.',
+        note: 'Check the issuing scheme, evaluated configuration and accepted assessment basis. CCRA recognition is separate from eIDAS device certification; a CC-based certificate alone does not establish QSCD status.',
       },
       {
         scheme: 'FIPS 140-3 (CMVP)',
@@ -469,9 +469,9 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
     ],
     clarify: [
       'Which PP and which version does the conformity assessment expect? (EN 419221-5’s certified PP is written against CC 3.1 R4. It may stay usable through the 2024/3144 carve-out for PPs that eIDAS requires — confirm with the certification body.)',
-      'Is the HSM part of a remote QSCD? Then QSCD certification is valid for at most 5 years, with a vulnerability assessment every 2 years (Reg. 2024/1183, Art 30(3a)).',
+      'Which complete device is certified under Article 30, by which designated body and assessment route? An HSM component certificate is not automatically certification of the complete remote QSCD.',
       'Which EUCC assurance level? High means AVA_VAN 3–5; EN 419221-5 requires EAL4 augmented with AVA_VAN.5.',
-      'For PQC, the applicable ECCG ACM v2 expects lattice schemes such as ML-KEM to be combined with a classical mechanism.',
+      'For this EUCC scenario, check the applicable ECCG ACM guidance for the PQC mechanism. Do not apply that guidance automatically to every eIDAS assessment route.',
     ],
     cloudNote:
       'If tenants share one appliance, ask whether tenant isolation is a security function of the certified TOE or only a service feature outside it.',
@@ -564,10 +564,10 @@ export const BOUNDARY_LENSES: { id: BoundaryLens; label: string; object: string;
     },
     {
       id: 'cc',
-      label: 'Common Criteria / EUCC TOE',
+      label: 'Common Criteria TOE — identify the issuing scheme',
       object: 'Target of Evaluation, as the Security Target defines it',
       level:
-        'An EAL with every augmentation named (or, under EUCC, substantial / high) — for this TOE only.',
+        'CC assurance: read the package or component list, named augmentations and AVA_VAN. Not every evaluation uses an EAL. For an EUCC certificate, also read the separate substantial/high scheme level; it does not replace the CC assurance claim.',
     },
     {
       id: 'pci',
@@ -718,7 +718,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Load the EU qualified trust service provider in the cloud offering and read the applicability output and its clarification questions.',
     observe:
-      'eIDAS is the regulation. The certificate comes from EUCC, against a Protection Profile the conformity assessment expects — and assurance level, PP version and ACM v2 cryptography are all separate questions.',
+      'eIDAS is the regulation. This scenario requests EUCC evidence for an HSM component; other assessment routes must be identified from the applicable Article 30 basis. HSM certification, complete QSCD certification and qualified trust-service status are separate claims.',
     stepId: 'scheme-selector',
     config: { customer: 'eu-qtsp', deployment: 'cloud' },
   },
@@ -756,7 +756,7 @@ export const exercises: ExerciseItem[] = [
     id: 'core-tenant-outside-toe',
     title: 'Tenant isolation outside the TOE',
     description:
-      'The boundary drawer opens with the CC / EUCC lens, the cloud offering, and the tenant partition left out of the TOE.',
+      'The boundary drawer opens with the CC TOE lens, the cloud offering, and the tenant partition left out of the TOE. Identify the issuing scheme separately; a TOE is a CC concept, not evidence that the scheme is EUCC.',
     observe:
       'The Security Target defines what is evaluated. Leave isolation out of the TOE and the trust service provider gets no evaluated assurance for it, however good the feature is.',
     stepId: 'boundary-drawer',

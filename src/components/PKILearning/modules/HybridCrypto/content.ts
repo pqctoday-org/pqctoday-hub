@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-22',
 
   standards: [
     getStandard('FIPS 203'),
@@ -23,7 +23,7 @@ export const content: ModuleContent = {
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
-    getStandard('draft-ietf-lamps-pq-composite-kem-21'), // Composite ML-KEM (draft -21, IESG Evaluation; supersedes -20, 2026-09-30)
+    getStandard('draft-ietf-lamps-pq-composite-kem-23'), // Composite ML-KEM (draft -23, RFC Editor queue since 2026-10-21; supersedes -21 — editorial: OIDs and test vectors unchanged)
     getStandard('RFC-9763'), // Related Certificates
     getStandard('RFC 9629'), // CMS KEMRecipientInfo — how a KEM certificate key is used
     getStandard('RFC-9936'), // ML-KEM in CMS
@@ -111,9 +111,9 @@ export const content: ModuleContent = {
     anssiMandate:
       'ANSSI recommends hybrid mode for PQC deployments and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Exception: hash-based signatures (SLH-DSA, LMS, XMSS) leveraging functions like SHA-3 may be used standalone due to their conservative security assumptions.',
     nistRecommendation:
-      'NIST SP 800-227 recommends hybrid key exchange during the transition period to maintain backward compatibility while adding quantum resistance.',
+      'NIST SP 800-227 describes how to combine key-establishment mechanisms securely (§4.6). A suitably designed classical/PQC combination can retain security if one component remains secure. Compatibility with existing systems depends on the protocol and the mechanisms each participant supports.',
     certFormatExplain:
-      'Seven certificate formats make up the main comparison — five that carry signature keys and two that carry KEM (encryption) keys. Signature formats: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify, draft-ietf-lamps-pq-composite-sigs-19, in the RFC Editor queue), Alt-Sig (a PQC key and signature in X.509 extensions, ITU-T X.509 (2019)), and Related Certificates (RFC 9763: a new certificate carries a hash of an existing one). KEM formats: Pure PQC KEM (ML-KEM, RFC 9935) and Composite KEM (draft-ietf-lamps-pq-composite-kem-21, in IESG Evaluation). The subject key and the certificate signature are independent: an ML-KEM key cannot sign, so a KEM certificate is always signed by a separate signing-capable CA. Only Alt-Sig and the classical certificate of a Related Certificates pair remain verifiable by a validator that does not understand PQC; composite is not backward compatible. Two Advanced examples sit outside the main comparison: Certificate Discovery (draft-ietf-lamps-certdiscovery-03, an active draft whose OIDs are still TBD, so its encoding is illustrative) and the RFC 9925 unsigned certificate (no issuer signature, never valid in a certification path). Chameleon certificates (an expired individual draft, never adopted by the LAMPS working group) are shown separately as a historical design.',
+      'Seven certificate formats make up the main comparison — five that carry signature keys and two that carry KEM (encryption) keys. Signature formats: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify, draft-ietf-lamps-pq-composite-sigs-19, in the RFC Editor queue), Alt-Sig (a PQC key and signature in X.509 extensions, ITU-T X.509 (2019)), and Related Certificates (RFC 9763: a new certificate carries a hash of an existing one). KEM formats: Pure PQC KEM (ML-KEM, RFC 9935) and Composite KEM (draft-ietf-lamps-pq-composite-kem-23, in the RFC Editor queue). The subject key and the certificate signature are independent: an ML-KEM key cannot sign, so a KEM certificate is always signed by a separate signing-capable CA. Only Alt-Sig and the classical certificate of a Related Certificates pair remain verifiable by a validator that does not understand PQC; composite is not backward compatible. Two Advanced examples sit outside the main comparison: Certificate Discovery (draft-ietf-lamps-certdiscovery-03, an active draft whose OIDs are still TBD, so its encoding is illustrative) and the RFC 9925 unsigned certificate (no issuer signature, never valid in a certification path). Chameleon certificates (an expired individual draft, never adopted by the LAMPS working group) are shown separately as a historical design.',
     compositeSigSize: '~3,379 bytes (3,309 B ML-DSA-65 + 64 B ECDSA P-256 + 6 B of encoding)',
     altSigSize: '2,017 bytes',
     relatedStandards:

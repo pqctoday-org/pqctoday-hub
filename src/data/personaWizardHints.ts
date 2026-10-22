@@ -720,9 +720,10 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
   },
   'cert-engineer': {
     industry: {
-      hint: 'Pick the sector the module or product is sold into. The sector decides which certification schemes buyers will ask for — FIPS 140-3 for US federal buyers, Common Criteria or EUCC in Europe, PCI for payments.',
+      hint: 'Pick the sector the module or product is sold into. Buyer requirements may call for FIPS 140-3 module validation, product evaluation using Common Criteria under a named scheme (such as EUCC), or PCI approval for payments. Common Criteria is not a competing scheme to EUCC.',
       title: 'Which sector is the product sold into?',
-      description: 'Sector decides which certification schemes buyers will expect.',
+      description:
+        'Sector helps identify buyer requirements; confirm the applicable standard and scheme.',
     },
     country: {
       hint: 'Jurisdiction decides which scheme and which deadline apply — CNSA 2.0 and the CMVP in the US, national guidance such as BSI or ANSSI and the EUCC scheme in Europe. Deadlines come from the PQC timeline data.',

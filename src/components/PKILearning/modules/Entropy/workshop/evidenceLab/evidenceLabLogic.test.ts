@@ -244,6 +244,33 @@ function device(over: Partial<ConclusionInput> = {}): ConclusionInput {
 }
 
 describe('conclusion', () => {
+  it.each(['device-raw-noise', 'synthetic', 'conditioned-output-contrast'] as const)(
+    'keeps technical errors distinct from source failure for %s',
+    (provenance) => {
+      const result = concludeEvidence({
+        ...device(),
+        provenance,
+        sequential: {
+          status: 'error',
+          h: null,
+          errorMessage: 'Unable to read input file.',
+          hashConfirmed: true,
+        },
+      })
+      expect(result.verdict).toBe('insufficient-evidence')
+      expect(result.reasons.join(' ')).toContain('Analysis incomplete')
+    }
+  )
+
+  it('does not mistake a sanity-check execution error for a failed sanity check', () => {
+    const restart = evaluateRestart(
+      { errorLevel: -1, errorMessage: 'Unable to run sanity check.' },
+      2.8
+    )
+    expect(restart.status).toBe('error')
+    expect(concludeEvidence(device({ restart })).verdict).toBe('insufficient-evidence')
+  })
+
   it('can reach "insufficient evidence" on real device data', () => {
     const cases: ConclusionInput[] = [
       device({ sequential: { status: 'not-run', h: null, hashConfirmed: false } }),
@@ -268,13 +295,13 @@ describe('conclusion', () => {
     expect(r.reasons.join(' ')).toMatch(/under the recorded conditions/)
   })
 
-  it('a failed restart test or a tool error awards nothing', () => {
+  it('distinguishes a failed restart test from an incomplete analysis', () => {
     expect(concludeEvidence(device({ restart: failedRestart })).verdict).toBe('no-entropy-awarded')
     expect(
       concludeEvidence(
         device({ sequential: { status: 'error', h: null, errorMessage: 'x', hashConfirmed: true } })
       ).verdict
-    ).toBe('no-entropy-awarded')
+    ).toBe('insufficient-evidence')
   })
 
   it('contrast (conditioned/DRBG) data NEVER yields a noise-source claim', () => {
@@ -295,7 +322,9 @@ describe('conclusion', () => {
               restart,
               restartAvailable,
             })
-            expect(r.verdict).toBe('not-noise-source-evidence')
+            expect(r.verdict).toBe(
+              sequential.status === 'error' ? 'insufficient-evidence' : 'not-noise-source-evidence'
+            )
             expect(r.h).toBeNull()
           }
   })

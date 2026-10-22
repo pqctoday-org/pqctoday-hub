@@ -725,7 +725,7 @@ export const AcvpSuiteWorkbench = () => {
               <span className="text-muted-foreground/80 italic">Ready to engage HSM suite…</span>
             ) : (
               logs.map((log, i) => (
-                <div key={i} className="mb-0.5">
+                <div key={i} className="mb-0.5 whitespace-pre-wrap break-all">
                   {log}
                 </div>
               ))

@@ -83,6 +83,43 @@ describe('adaptiveProportionTest — SP 800-90B §4.4.2', () => {
 })
 
 describe('SP 800-90B cutoffs — published values', () => {
+  it('applies the displayed cutoffs without silently raising low entropy estimates', () => {
+    const data = new Uint8Array(1024)
+    for (const h of [0.005, 0.05, 0.1, 0.415, 1, 8]) {
+      expect(repetitionCountTest(data, h).threshold).toBe(rctCutoff(h))
+      expect(adaptiveProportionTest(data, h).threshold).toBe(aptCutoff(512, h))
+    }
+    expect(adaptiveProportionTest(data, 0.05).threshold).toBe(511)
+    expect(repetitionCountTest(data, 0.005).threshold).toBe(4001)
+  })
+
+  it('preserves an unreachable cutoff instead of lowering it to the window size', () => {
+    expect(aptCutoff(512, 0.005)).toBe(513)
+    expect(aptCutoff(512, Number.MIN_VALUE)).toBe(513)
+    const result = adaptiveProportionTest(new Uint8Array(512), 0.005)
+    expect(result.threshold).toBe(513)
+    expect(result.detail).toContain('No count within this window can reach the cutoff')
+  })
+
+  it('signals failure at the exact low-entropy cutoff, not below it', () => {
+    const at = new Uint8Array(512)
+    at[511] = 1
+    const below = at.slice()
+    below[510] = 1
+    expect(adaptiveProportionTest(at, 0.05).passed).toBe(false)
+    expect(adaptiveProportionTest(below, 0.05).passed).toBe(true)
+  })
+
+  it('rejects invalid assumptions rather than substituting different ones', () => {
+    for (const h of [0, -1, NaN, Infinity, 9]) {
+      expect(() => rctCutoff(h)).toThrow(RangeError)
+      expect(() => aptCutoff(512, h)).toThrow(RangeError)
+    }
+    for (const alpha of [0, 1, NaN]) expect(() => aptCutoff(512, 1, alpha)).toThrow(RangeError)
+    expect(() => adaptiveProportionTest(new Uint8Array(1024), 2, undefined, true)).toThrow(
+      RangeError
+    )
+  })
   // SP 800-90B Table 2 "Example cutoff values of the Adaptive Proportion Test",
   // alpha = 2^-20. Byte-for-byte the table, so a wrong window or tail formula fails.
   const TABLE_2_BINARY_W1024: Array<[number, number]> = [

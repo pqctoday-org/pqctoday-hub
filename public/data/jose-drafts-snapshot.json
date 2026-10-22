@@ -1,6 +1,6 @@
 {
   "$schema": "internal: JOSE/COSE PQC draft snapshot. Refresh with npx tsx scripts/refresh-jose-drafts-snapshot.ts; the audit panel treats a snapshot older than max_age_days as expired.",
-  "generated_at": "2026-10-01",
+  "generated_at": "2026-10-22",
   "source": "datatracker.ietf.org doc.json, via scripts/refresh-jose-drafts-snapshot.ts",
   "drafts": {
     "draft-ietf-cose-dilithium": {
@@ -17,8 +17,8 @@
       "rfceditor_state": null
     },
     "draft-ietf-jose-pq-composite-sigs": {
-      "current_version": "04",
-      "current_date": "2026-09-11",
+      "current_version": "06",
+      "current_date": "2026-10-20",
       "status": "WG draft",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/",
       "alg_codes_introduced": [

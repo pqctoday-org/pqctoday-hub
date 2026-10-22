@@ -31,7 +31,6 @@ import { pinnedVerdict, type PinnedRv } from './pkcs11Raw'
 import {
   WSE_MECH,
   cryptRv,
-  eqHex,
   hexUp,
   importSecretRv,
   multipartRv,
@@ -148,8 +147,13 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
       destroy(M, h, k.handle)
     }
   }
-  const compare = (out: Uint8Array, want: string, what: string): RowOutcome => {
-    const ok = eqHex(out, want)
+  const compare = (
+    out: Uint8Array,
+    want: string,
+    what: string,
+    logCompare: (out: Uint8Array, want: string, what: string) => boolean
+  ): RowOutcome => {
+    const ok = logCompare(out, want, what)
     return {
       ok,
       observed: ok ? 'byte-equal' : `${what} ${hexUp(out)}`,
@@ -197,7 +201,7 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
         testCase,
         meta,
         source: srcTag(P),
-        exec: () =>
+        exec: (logCompare) =>
           withKey(t.key, (k) => {
             const m = rawMech(M, WSE_MECH.CKM_AES_CBC, pBytes(M, hexToBytes(t.iv)))
             try {
@@ -207,7 +211,7 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
                   const o = `${r.step} → ${rvName(r.rv)}`
                   return { ok: false, observed: o, details: o }
                 }
-                return compare(r.out, enc ? t.ct! : t.pt!, enc ? 'ct' : 'pt')
+                return compare(r.out, enc ? t.ct! : t.pt!, enc ? 'ct' : 'pt', logCompare)
               }
               const op = multipartRv(M, h, g.direction, m, k)
               if (op.initRv !== CKR_OK) {
@@ -231,7 +235,7 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
               )
               op.final()
               const want = enc ? t.resultsArray![0].ct : t.resultsArray![0].pt
-              const res = compare(out, want, enc ? 'CT[999]' : 'PT[999]')
+              const res = compare(out, want, enc ? 'CT[999]' : 'PT[999]', logCompare)
               return { ...res, details: `${res.details} (MCT outer iteration 0)` }
             } catch (e: unknown) {
               const o = e instanceof Error ? e.message : String(e)
@@ -355,7 +359,7 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
         testCase,
         meta,
         source: srcTag(Q),
-        exec: () =>
+        exec: (logCompare) =>
           withKey(t.key, (k) => {
             const once = (op: 'encrypt' | 'decrypt', data: string) => {
               const m = rawMech(M, WSE_MECH.CKM_AES_CTR, pCtr(M, 32, hexToBytes(t.iv)))
@@ -370,13 +374,14 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
               const o = `${d.step} → ${rvName(d.rv)}`
               return { ok: false, observed: o, details: o }
             }
-            if (!eqHex(d.out, t.pt)) return compare(d.out, t.pt, 'pt')
+            const plaintextResult = compare(d.out, t.pt, 'pt', logCompare)
+            if (!plaintextResult.ok) return plaintextResult
             const e = once('encrypt', t.pt)
             if (!e.out) {
               const o = `decrypt byte-equal; ${e.step} → ${rvName(e.rv)}`
               return { ok: false, observed: o, details: o }
             }
-            const r = compare(e.out, t.ct, 'ct')
+            const r = compare(e.out, t.ct, 'ct', logCompare)
             return r.ok
               ? { ...r, details: `pt and ct [${e.out.length}B] byte-equal to NIST expected` }
               : r

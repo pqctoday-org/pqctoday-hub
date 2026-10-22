@@ -301,6 +301,7 @@ export const EVIDENCE_LAB_LIMITATIONS = [
 ]
 
 export interface EvidenceLabRunInput {
+  integrityIssues?: string[]
   moduleVersion: string
   /** The lab's evidence export, kept as it was (schema pqctoday.entropy.evidence-lab-export/1). */
   evidence: Record<string, unknown> & {
@@ -322,6 +323,14 @@ export function evidenceLabRunManifest(
   userAgent?: string
 ): RunManifest {
   const cases: RunCase[] = []
+  if (i.integrityIssues?.length) {
+    cases.push({
+      id: 'result integrity and consistency',
+      expected: 'no failed file-identity, reference or estimate-consistency checks',
+      actual: i.integrityIssues.join(' '),
+      pass: false,
+    })
+  }
   if (i.sequential.ran) {
     cases.push({
       id: 'sequential estimator run',

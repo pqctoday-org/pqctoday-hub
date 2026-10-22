@@ -15,6 +15,16 @@ import { EidasTrace } from './EidasTrace'
 const wrap = (node: React.ReactNode) => render(<MemoryRouter>{node}</MemoryRouter>)
 
 describe('CC certificate claim decoder', () => {
+  it('states the selected EUCC scope instead of teaching a universal eIDAS route', () => {
+    for (const scenario of EIDAS_TRACE_SCENARIOS) {
+      expect(scenario.setup).toMatch(/EUCC/)
+      expect(scenario.setup).toMatch(/not a universal|does not make EUCC mandatory/)
+    }
+    const legal = EIDAS_TRACE_SCENARIOS[0].layers.find((layer) => layer.id === 'legal')
+    const correct = legal?.options.find((option) => option.correct)
+    expect(correct?.feedback).toContain('legal device-security requirements in Annex II')
+    expect(correct?.feedback).not.toContain('does not contain security functional requirements')
+  })
   it('checks a component against its exact meaning and exports the current CC baseline', () => {
     const record = CC_DECODER_RECORDS[0]
     const code = record.components[0]

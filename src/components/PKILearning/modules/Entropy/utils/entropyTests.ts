@@ -249,7 +249,17 @@ export function chiSquaredTest(data: Uint8Array): TestResult {
  *   C = 1 + ceil(-log2(alpha) / H)
  * "the smallest integer satisfying the inequality alpha >= 2^(-H(C-1))".
  */
+function validateHealthInputs(h: number, alpha: number, maxBits = 8): void {
+  if (!Number.isFinite(h) || h <= 0 || h > maxBits)
+    throw new RangeError(
+      `Min-entropy must be greater than 0 and at most ${maxBits} bits per sample.`
+    )
+  if (!Number.isFinite(alpha) || alpha <= 0 || alpha >= 1)
+    throw new RangeError('False-positive probability must be greater than 0 and less than 1.')
+}
+
 export function rctCutoff(assumedMinEntropy: number, alpha = SP800_90B_DEFAULT_ALPHA): number {
+  validateHealthInputs(assumedMinEntropy, alpha)
   return 1 + Math.ceil(-Math.log2(alpha) / assumedMinEntropy)
 }
 
@@ -263,7 +273,8 @@ export function repetitionCountTest(
   alpha = SP800_90B_DEFAULT_ALPHA
 ): TestResult {
   const n = data.length
-  const H = Math.max(0.01, Math.min(8, assumedMinEntropy))
+  const H = assumedMinEntropy
+  validateHealthInputs(H, alpha)
   if (n < 2) {
     return {
       name: 'Repetition Count',
@@ -336,13 +347,16 @@ function binomialCutoff(w: number, p: number, alpha: number): number {
   const logChoose = (n: number, k: number) => lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1)
 
   const lp = Math.log(p)
+  // Tiny positive H can round 2^-H to 1. No count within the window
+  // satisfies the requested false-positive bound in that case.
+  if (p === 1) return w + 1
   const lq = Math.log1p(-p)
   // Walk down from the top so the accumulated tail is monotonically increasing
   // and we can stop at the first C whose tail exceeds alpha.
   let tail = 0
   for (let k = w; k >= 0; k--) {
     tail += Math.exp(logChoose(w, k) + k * lp + (w - k) * lq)
-    if (tail > alpha) return Math.min(w, k + 1)
+    if (tail > alpha) return k + 1
   }
   return 1
 }
@@ -358,6 +372,9 @@ export function aptCutoff(
   assumedMinEntropy: number,
   alpha = SP800_90B_DEFAULT_ALPHA
 ): number {
+  validateHealthInputs(assumedMinEntropy, alpha)
+  if (!Number.isSafeInteger(windowSize) || windowSize < 1 || windowSize > 1024)
+    throw new RangeError('Health-test window must contain between 1 and 1024 samples.')
   return binomialCutoff(windowSize, 2 ** -assumedMinEntropy, alpha)
 }
 
@@ -380,7 +397,8 @@ export function adaptiveProportionTest(
 ): TestResult {
   const W = aptWindowSize(binary)
   const n = data.length
-  const H = Math.max(0.1, Math.min(binary ? 1 : 8, assumedMinEntropy))
+  const H = assumedMinEntropy
+  validateHealthInputs(H, alpha, binary ? 1 : 8)
   const window = Math.min(W, n)
 
   if (n < 2) {
@@ -440,7 +458,10 @@ export function adaptiveProportionTest(
     detail:
       `Worst window: byte 0x${worstValue.toString(16).padStart(2, '0')} seen ` +
       `${worstCount}/${window} times across ${windows} window${windows === 1 ? '' : 's'}. ` +
-      `C threshold: ${cutoff}${shortSample}`,
+      `C threshold: ${cutoff}${shortSample}` +
+      (cutoff > window
+        ? ' No count within this window can reach the cutoff at the specified entropy and false-positive probability; no failure signalled is not evidence of a healthy source.'
+        : ''),
     group: 'health',
     sampleLimit: healthLimit(n, H),
   }

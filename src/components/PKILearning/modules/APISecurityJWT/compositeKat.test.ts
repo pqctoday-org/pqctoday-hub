@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 /**
- * Composite JWS conformance — draft-ietf-jose-pq-composite-sigs-04 Appendix A.1.
+ * Composite JWS conformance — draft-ietf-jose-pq-composite-sigs-06 Appendix A.1.
  *
  * These are the draft authors' published JOSE examples for all six composite
- * algorithms (src/data/acvp/composite-sigs-04-jose-examples.json), not our own
+ * algorithms (src/data/acvp/composite-sigs-06-jose-examples.json), not our own
  * output. For each one this checks that:
  *   - the composite public key re-derives from the published seeds
  *     (ML-DSA seed || X9.62 uncompressed ECDSA point / RFC 8032 EdDSA key);
@@ -32,7 +32,7 @@ import {
   verifyJWS,
   type CompositeAlg,
 } from './jwtUtils'
-import examples from '@/data/acvp/composite-sigs-04-jose-examples.json'
+import examples from '@/data/acvp/composite-sigs-06-jose-examples.json'
 
 interface Example {
   alg: CompositeAlg
@@ -67,13 +67,14 @@ function tradPublicKey(alg: CompositeAlg, v: Example): Uint8Array {
 
 const vectors = (examples as { vectors: Example[] }).vectors
 
-describe('Composite JWS — draft-ietf-jose-pq-composite-sigs-04 Appendix A.1', () => {
-  it('carries all six JOSE composite algorithms', () => {
+describe('Composite JWS — draft-ietf-jose-pq-composite-sigs-06 Appendix A.1', () => {
+  it('carries all seven JOSE composite algorithms', () => {
     expect(vectors.map((v) => v.alg).sort()).toEqual(
       [
         'ML-DSA-44-ES256',
         'ML-DSA-44-Ed25519',
         'ML-DSA-65-ES256',
+        'ML-DSA-65-ES384',
         'ML-DSA-65-Ed25519',
         'ML-DSA-87-ES384',
         'ML-DSA-87-Ed448',

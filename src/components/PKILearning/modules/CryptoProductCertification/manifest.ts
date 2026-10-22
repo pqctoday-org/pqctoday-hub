@@ -24,7 +24,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'crypto-product-certification',
-  contentVersion: 9,
+  contentVersion: 18,
   lm_id: 'LM-065',
   title: 'Cryptographic Product Certification: Fundamentals',
   description:
@@ -37,7 +37,7 @@ const manifest: ModuleManifest = {
   track: 'Hardware Infrastructure',
   trackOrder: 6,
   learnSections: [
-    { id: 'four-questions', label: 'Four schemes, four questions' },
+    { id: 'four-questions', label: 'Standards, evaluation criteria and certification schemes' },
     { id: 'scope-before-level', label: 'Scope before level' },
     { id: 'pqc-impact', label: 'What PQC changes in certification' },
     { id: 'agility-latency', label: 'Crypto agility vs certification latency' },

@@ -65,7 +65,64 @@ export const SHARED_SOURCES = {
   kmo: getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
   pciCryptoGuidance: getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
   dss: getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
+  acm3Draft: getStandard('ECCG-ACM-v3-Draft-2026'),
+  bsiTr021021: getStandard('BSI TR-02102-1'),
+  anssiPqcFaq: getStandard('ANSSI-PQC-FAQ-2025'),
+  compositeMlDsa: getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
 } satisfies Record<string, StandardRef>
+
+// ── hybrid or standalone (owner-approved 2026-10-22; every quote checked
+//    against the cited document on 2026-10-22) ────────────────────────────
+
+export interface HybridPositionRow {
+  scheme: string
+  keyEstablishment: string
+  signatures: string
+  sourceNote: string
+  sources: StandardRef[]
+}
+
+export const HYBRID_AS_OF = '22 October 2026'
+
+export const HYBRID_POSITIONS: HybridPositionRow[] = [
+  {
+    scheme: 'FIPS 140-3 (US)',
+    keyEstablishment:
+      'ML-KEM alone is approved. A hybrid is allowed only under conditions: an approved key combiner, and a fixed list of combinations the module enforces (for example X25519MLKEM768), not arbitrary pairings.',
+    signatures:
+      'ML-DSA and SLH-DSA are approved on their own. The Implementation Guidance has no hybrid-signature scenario.',
+    sourceNote: 'IG D.S, Scenarios 1 and 2 (IG last updated 19 August 2026)',
+    sources: [SHARED_SOURCES.ig],
+  },
+  {
+    scheme: 'EUCC (EU)',
+    keyEstablishment:
+      '“(M)LWE based cryptographic mechanisms shouldn’t be used in a standalone way … but should be combined with a classical cryptomechanism.”',
+    signatures:
+      'ML-DSA: the same rule — combine with a classical scheme. Hash-based (SLH-DSA, LMS, XMSS): “may however also be used in a standalone way.”',
+    sourceNote:
+      'ECCG Agreed Cryptographic Mechanisms v2, Notes 51, 53 and 60 (applicable); unchanged in the v3 draft for public review (Notes 53, 55 and 63)',
+    sources: [SHARED_SOURCES.acm2, SHARED_SOURCES.acm3Draft],
+  },
+  {
+    scheme: 'Germany (BSI)',
+    keyEstablishment:
+      '“this Technical Guideline currently only recommends the hybrid use … of quantum-safe methods in combination with classical methods.”',
+    signatures:
+      'Recommends a quantum-safe signature “only in combination with a classic signature scheme”; hash-based signatures are treated more permissively.',
+    sourceNote: 'BSI TR-02102-1, version 2026-01, §2 and §5.3.4',
+    sources: [SHARED_SOURCES.bsiTr021021],
+  },
+  {
+    scheme: 'France (ANSSI)',
+    keyEstablishment:
+      'Hybrid use is essential wherever PQC is deployed, and mandatory in the regulated perimeter.',
+    signatures:
+      'Same, except hash-based signatures (SLH-DSA, XMSS, LMS), for which ANSSI does not recommend systematic hybridisation.',
+    sourceNote: 'ANSSI PQC FAQ (October 2025)',
+    sources: [SHARED_SOURCES.anssiPqcFaq],
+  },
+]
 
 // ── pqc-impact ──────────────────────────────────────────────────────────────
 
@@ -632,7 +689,7 @@ export interface ChangeCase {
   likely: ChangeKind[]
   explanation: string
   fips: SchemeImpact
-  ccEucc: SchemeImpact
+  cc: SchemeImpact
   pci: SchemeImpact
   ask: string
 }
@@ -651,11 +708,11 @@ export const CHANGE_CASES: ChangeCase[] = [
       candidates:
         'UPDT if the change stays under 30% in each of the five categories; otherwise FS. Not CVE (no new cryptography), not TRNS (not a CMVP transition), not ALG (code changes).',
     },
-    ccEucc: {
+    cc: {
       affected:
         'Cryptographic SFRs in the Security Target, TSF interfaces, guidance, vulnerability analysis.',
       candidates:
-        'Impact analysis first; a new mechanism usually points to re-evaluation. Under EUCC, ACM v2 expects ML-KEM to be hybridised with a classical mechanism.',
+        'Review the changed claims and evidence, then apply the issuing scheme’s continuity procedure. Adding an algorithm alone does not decide the outcome.',
     },
     pci: {
       affected:
@@ -679,7 +736,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       candidates:
         'Likely FS if the boundary changes; discuss UPDT only if the lab can justify the boundary is unchanged.',
     },
-    ccEucc: {
+    cc: {
       affected: 'TOE definition, TSF architecture and self-protection, secure-loading claims.',
       candidates: 'Re-evaluation; the TOE itself has changed.',
     },
@@ -699,10 +756,11 @@ export const CHANGE_CASES: ChangeCase[] = [
       'A new hardware implementation of an algorithm is a new implementation to test, with new leakage surfaces.',
     fips: {
       affected:
-        'Algorithm testing of the new implementation; accelerator guidance (IG 2.3.B sub-chip subsystems, 2.3.C accelerators); physical-security evidence.',
-      candidates: 'UPDT or FS, depending on scope.',
+        'Moving ML-KEM calculations into an FPGA changes the implementation, even though the algorithm stays the same. First establish where the FPGA logic sits within the cryptographic module and which hardware guidance applies. Do not automatically treat a custom FPGA accelerator as a processor accelerator.',
+      candidates:
+        'Review which algorithm tests, self-tests and security evidence the change affects. Existing evidence may remain usable where it still applies; the change does not automatically require repeating the entire validation.',
     },
-    ccEucc: {
+    cc: {
       affected: 'Implementation representation, side-channel and fault analysis (AVA_VAN).',
       candidates: 'Impact analysis; the vulnerability work is likely to be repeated.',
     },
@@ -724,7 +782,7 @@ export const CHANGE_CASES: ChangeCase[] = [
         'Hybrid-KEM guidance (IG D.S Scenario 2, 9 April 2026); services; the Security Policy.',
       candidates: 'UPDT or FS.',
     },
-    ccEucc: {
+    cc: {
       affected: 'Cryptographic SFRs and key-derivation claims.',
       candidates: 'Impact analysis; likely re-evaluation of the cryptographic claims.',
     },
@@ -747,7 +805,7 @@ export const CHANGE_CASES: ChangeCase[] = [
         'SSP definitions, storage and zeroisation; self-tests (IG 10.3.A includes a 19 August 2026 note on stored seeds).',
       candidates: 'UPDT is the natural candidate; SSPs are one of the five categories.',
     },
-    ccEucc: {
+    cc: {
       affected: 'Key-management SFRs and their evidence.',
       candidates:
         'Impact analysis; possibly maintenance if the authority agrees the impact is minor.',
@@ -770,7 +828,7 @@ export const CHANGE_CASES: ChangeCase[] = [
         'RBG algorithm testing; entropy evidence (IG D.K, 16 April 2026; ESV for the entropy source); SSP generation.',
       candidates: 'UPDT or FS.',
     },
-    ccEucc: { affected: 'RNG claims and their evidence.', candidates: 'Impact analysis.' },
+    cc: { affected: 'RNG claims and their evidence.', candidates: 'Impact analysis.' },
     pci: { affected: 'Random-number requirements.', candidates: 'Lab scoping.' },
     ask: 'Does the entropy source change too, and is its entropy evidence still valid?',
   },
@@ -788,7 +846,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       candidates:
         'OEUP — add tested OEs without changing the module; broader fixes cannot be bundled.',
     },
-    ccEucc: {
+    cc: {
       affected: 'The TOE environment, if the library is a TOE.',
       candidates: 'Impact analysis; possibly maintenance.',
     },
@@ -809,7 +867,7 @@ export const CHANGE_CASES: ChangeCase[] = [
         'Physical-security evidence (IG 7.A covers reusable physical-security evidence, 2 September 2025).',
       candidates: 'PHYS for eligible enclosure-related changes; otherwise UPDT or FS.',
     },
-    ccEucc: {
+    cc: {
       affected:
         'Physical-protection SFRs (FPT_PHP; for EN 419221-5, ENISA’s state-of-the-art interpretation of FPT_PHP applies under EUCC).',
       candidates: 'Impact analysis; the physical attack work is likely to be repeated.',
@@ -832,7 +890,10 @@ export const CHANGE_CASES: ChangeCase[] = [
       affected: 'Roles, services, SSP separation and the finite-state model.',
       candidates: 'UPDT is unlikely to fit; expect FS.',
     },
-    ccEucc: { affected: 'New isolation SFRs and TOE interfaces.', candidates: 'Re-evaluation.' },
+    cc: {
+      affected: 'New isolation SFRs and TOE interfaces.',
+      candidates: 'Discuss re-evaluation under the issuing scheme.',
+    },
     pci: {
       affected:
         'PTS HSM v5.0 multi-tenant isolation, tenant key erasure, and the HSM Solution Security and Remote Administration modules.',
@@ -851,7 +912,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       affected: 'The affected algorithm code (algorithm retesting may be needed) and regression.',
       candidates: 'CVE — changes “shall not introduce new features or cryptography”.',
     },
-    ccEucc: {
+    cc: {
       affected: 'Vulnerability analysis; EUCC vulnerability-handling duties.',
       candidates: 'Maintenance or re-assessment, as the authority decides.',
     },
@@ -865,7 +926,10 @@ export const CHANGE_CASES: ChangeCase[] = [
     likely: ['administrative'],
     explanation: 'Administrative information that affects no security requirement.',
     fips: { affected: 'Record metadata only.', candidates: 'VUP — administrative vendor update.' },
-    ccEucc: { affected: 'Certificate metadata.', candidates: 'Administrative notification.' },
+    cc: {
+      affected: 'Certificate metadata.',
+      candidates: 'Check the issuing scheme’s administrative change procedure.',
+    },
     pci: { affected: 'Listing metadata.', candidates: 'Administrative change request.' },
     ask: 'None beyond the scheme’s administrative form.',
   },
@@ -874,7 +938,7 @@ export const CHANGE_CASES: ChangeCase[] = [
 // ── evidence-exchange (optional) ────────────────────────────────────────────
 
 export const EXCHANGE_DISCLAIMER =
-  'Teaching model — not accepted by NIST, CC/EUCC bodies or PCI SSC. Synthetic data only; the exchange format is invented for this exercise.'
+  'Teaching model — not an official submission format for NIST, a CC certification scheme (including EUCC), or PCI SSC. Synthetic data only; the exchange format is invented for this exercise.'
 
 export type EvidenceRole =
   'vendor-assertion' | 'automated-result' | 'lab-attestation' | 'authority-decision'
@@ -1053,14 +1117,14 @@ export type CertPathId = 'fips' | 'cc' | 'eucc-eidas' | 'pci'
 export const PATH_LABEL: Record<CertPathId, string> = {
   fips: 'FIPS 140-3 / CMVP',
   cc: 'Common Criteria',
-  'eucc-eidas': 'EUCC & eIDAS',
+  'eucc-eidas': 'eIDAS scenario — selected EUCC evidence route',
   pci: 'PCI (full stack)',
 }
 
 /** Artifact number (plan r1 capstone list) of each path's full-depth artifact. */
 export const PATH_ARTIFACT: Record<CertPathId, { n: number; title: string }> = {
   fips: { n: 3, title: 'Proposed FIPS target and justification' },
-  cc: { n: 4, title: 'CC / EUCC Security Target and PP strategy' },
+  cc: { n: 4, title: 'CC Security Target and PP strategy — identify the scheme' },
   'eucc-eidas': { n: 5, title: 'eIDAS legal-to-PP trace' },
   pci: { n: 6, title: 'PCI PTS HSM approval scope' },
 }
@@ -1115,7 +1179,7 @@ export const COVERAGE_LABEL: Record<Coverage, string> = {
 
 export const RELEASE_SCHEMES: { id: ReleaseScheme; label: string }[] = [
   { id: 'fips', label: 'FIPS 140-3 validation' },
-  { id: 'cc-eucc', label: 'CC / EUCC certificate' },
+  { id: 'cc-eucc', label: 'CC-based product certificate — identify the issuing scheme' },
   { id: 'pci-pts', label: 'PCI PTS HSM listing' },
 ]
 
@@ -1125,6 +1189,9 @@ export interface EidasLink {
   options: { id: string; label: string }[]
   expected: string
 }
+
+export const EIDAS_SCENARIO_SCOPE =
+  'This exercise assumes the buyer requests EUCC certification of the HSM against EN 419221-5. It is not a universal eIDAS route. Certification of the complete QSCD under the applicable Article 30 assessment basis and qualification of the trust service must be established separately.'
 
 export const EIDAS_LINKS: EidasLink[] = [
   {
@@ -1234,7 +1301,7 @@ export const PCI_ENTITY_ASSESSMENTS = ['PIN Security', 'P2PE', 'KMO']
 
 export const EXTENDED_ARTIFACTS: { key: string; n: number; title: string }[] = [
   { key: 'a3', n: 3, title: 'Proposed FIPS target and justification' },
-  { key: 'a4', n: 4, title: 'CC / EUCC Security Target and PP strategy' },
+  { key: 'a4', n: 4, title: 'CC Security Target and PP strategy — identify the scheme' },
   { key: 'a5', n: 5, title: 'eIDAS legal-to-PP trace' },
   { key: 'a6', n: 6, title: 'PCI PTS HSM approval scope' },
   { key: 'a7', n: 7, title: 'PQC algorithm / self-test / entropy / interface evidence changes' },
@@ -1612,7 +1679,7 @@ function chosenPathCheck(s: CapstoneState): CapstoneCheck {
       detail:
         s.eidas.change === 'minor'
           ? 'A new primitive is rarely minor — the certification body classifies it.'
-          : 'The trace runs from the regulation to the certificate, with the applicable ACM.',
+          : 'The selections match this exercise’s EUCC HSM scenario. They do not establish complete QSCD certification or qualified trust-service status.',
     }
   }
   const p = s.pci
@@ -1734,7 +1801,7 @@ export function capstoneMarkdown(s: CapstoneState, generatedAt: string): string 
       const outside = ANCHOR_SCENARIO.components
         .map((c) => c.id)
         .filter((id) => !inside.includes(id))
-      return `| ${l === 'fips' ? 'FIPS 140-3 module' : l === 'cc' ? 'CC / EUCC TOE' : 'PCI PTS HSM device'} | ${inside.map(label).join(', ') || '—'} | ${outside.map(label).join(', ') || '—'} |`
+      return `| ${l === 'fips' ? 'FIPS 140-3 module' : l === 'cc' ? 'CC TOE (issuing scheme must be identified separately)' : 'PCI PTS HSM device'} | ${inside.map(label).join(', ') || '—'} | ${outside.map(label).join(', ') || '—'} |`
     }),
     '',
     '## Artifact 2 — Scheme applicability matrix',
@@ -1812,6 +1879,7 @@ function pathArtifactLines(s: CapstoneState): string[] {
     ]
   if (s.path === 'eucc-eidas')
     return [
+      `Scenario scope: ${EIDAS_SCENARIO_SCOPE}`,
       ...EIDAS_LINKS.map(
         (l) =>
           `- **${l.label}:** ${l.options.find((o) => o.id === s.eidas.links[l.id])?.label ?? '—'}`
@@ -1841,6 +1909,9 @@ export function capstoneJson(s: CapstoneState, generatedAt: string): string {
       notice: EDUCATION_NOTICE_TEXT,
       product: { name: ANCHOR_SCENARIO.name, fictional: true, releases: ANCHOR_RELEASES },
       chosenPath: s.path,
+      certificateContext:
+        'The legacy cc-eucc record key denotes CC-based product evidence; it does not identify EUCC or establish the issuing scheme. Read the actual certificate.',
+      ...(s.path === 'eucc-eidas' ? { scenarioScope: EIDAS_SCENARIO_SCOPE } : {}),
       artifacts: s,
       marketDeadlines: marketDeadlineRows().filter((m) => m.customers.length),
       checks: checkCapstone(s),

@@ -20,6 +20,26 @@ describe('SLHDSAModule render parity', () => {
         </MemoryRouter>
       </EmbedProvider>
     )
+    expect(screen.getByText(/security claims assume at most 2\^64 messages/)).toHaveTextContent(
+      'about 585 years'
+    )
+    expect(screen.getByText(/Technical enforcement is a separate challenge/)).toHaveTextContent(
+      'does not establish that an HSM counts these signatures or enforces a cutoff'
+    )
+    expect(screen.getByText(/Technical enforcement is a separate challenge/)).toHaveTextContent(
+      'backup restore or rollback'
+    )
+    expect(screen.queryByText(/unlimited signatures from one key pair/)).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Practical example: organizational controls' })
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Set a maximum signing-key lifetime/)).toBeInTheDocument()
+    expect(screen.getByText(/Record where each key is deployed/)).toBeInTheDocument()
+    expect(screen.getByText(/Estimate total signing volume/)).toBeInTheDocument()
+    expect(screen.getByText(/Preserve the original key's retirement date/)).toBeInTheDocument()
+    expect(screen.getByText(/These controls support a documented estimate/)).toHaveTextContent(
+      'They do not enforce an exact signature count'
+    )
     // header title (renders the FIPS 205 suffix; differs from manifest.title)
     expect(
       screen.getByRole('heading', { name: 'SLH-DSA: Stateless Hash Signatures (FIPS 205)' })

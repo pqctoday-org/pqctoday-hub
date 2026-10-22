@@ -47,13 +47,56 @@ const Step1Overview: React.FC = () => (
         <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-4 space-y-2">
           <div className="font-semibold text-status-success text-sm">Stateless (SLH-DSA)</div>
           <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside leading-relaxed">
-            <li>No per-key signing counter — unlimited signatures from one key pair</li>
+            <li>No per-key leaf counter; this does not mean unlimited signatures</li>
             <li>No persistent state to manage, back up, or synchronize</li>
             <li>Safe for serverless, distributed, and HSM-pooled environments</li>
             <li>Randomized by default (opt_rand from RNG prevents fault attacks)</li>
             <li>Standardized in FIPS 205 (Aug 2024)</li>
           </ul>
         </div>
+      </div>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        For the 12 parameter sets in{' '}
+        <a href="https://doi.org/10.6028/NIST.FIPS.205" className="text-primary underline">
+          FIPS 205 §11
+        </a>
+        , the security claims assume at most 2^64 messages signed with one key pair. This is a limit
+        assumed by the security analysis, not a leaf counter that must be saved after every
+        signature as in LMS or XMSS. It does not predict an immediate failure on the next signature
+        beyond that limit. Keep planned use within this bound. For scale, even one billion
+        signatures per second with the same key would take about 585 years to reach 2^64.
+      </p>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        Technical enforcement is a separate challenge: a counter on one HSM does not account for
+        signatures made by other copies of the same key. An exact cutoff would need coordinated
+        accounting across devices and protection against resetting the count through backup restore
+        or rollback. This lesson does not establish that an HSM counts these signatures or enforces
+        a cutoff. A practical planning approach is to bound total signing volume across all key
+        copies over the key lifetime and keep it far below the analysis limit. This is not a
+        recommendation to add an LMS/XMSS-style per-signature counter to SLH-DSA.
+      </p>
+      <div className="rounded-lg border border-border p-4 space-y-2 text-xs text-muted-foreground">
+        <h3 className="font-semibold text-foreground">
+          Practical example: organizational controls
+        </h3>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Set a maximum signing-key lifetime and rotate keys on schedule.</li>
+          <li>Record where each key is deployed, including copies and backups.</li>
+          <li>
+            Estimate total signing volume across all deployments over that lifetime, with a generous
+            safety margin. Revisit the estimate when volume or deployments change.
+          </li>
+          <li>
+            Preserve the original key&apos;s retirement date when restoring a backup: restoring the
+            same key does not start a new usage lifetime.
+          </li>
+        </ul>
+        <p>
+          These controls support a documented estimate that expected use stays far below the
+          analysis bound. They do not enforce an exact signature count. This is a practical planning
+          example, not a claim that FIPS 205 prescribes this checklist or that it alone establishes
+          certification compliance.
+        </p>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
         The tradeoff: SLH-DSA signatures are significantly larger (8–50 KB vs LMS ~1–4 KB) and
@@ -449,13 +492,15 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
 }) => (
   <div className="space-y-8 w-full">
     <section className="glass-panel p-6 space-y-4">
-      <h2 className="text-xl font-bold text-foreground">Pure SLH-DSA vs HashSLH-DSA (§9 vs §11)</h2>
+      <h2 className="text-xl font-bold text-foreground">
+        Pure SLH-DSA vs HashSLH-DSA (§10.2.1 vs §10.2.2)
+      </h2>
       <div className="grid sm:grid-cols-2 gap-4 text-sm">
         <div className="bg-muted/40 rounded-lg p-4 space-y-2">
           <div className="font-semibold text-foreground">Pure SLH-DSA (CKM_SLH_DSA)</div>
           <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside leading-relaxed">
             <li>Hashes the raw message M internally</li>
-            <li>Context strings (§9.2) are supported</li>
+            <li>Context strings (§10.2.1) are supported</li>
             <li>Deterministic mode (§10) is supported</li>
             <li>Best for most applications</li>
           </ul>
@@ -464,21 +509,30 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           <div className="font-semibold text-foreground">HashSLH-DSA (CKM_HASH_SLH_DSA_*)</div>
           <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside leading-relaxed">
             <li>Pre-hashes M with an external hash function before signing</li>
-            <li>Approved hashes (FIPS 205 §11): SHA-256, SHA-512, SHAKE-128, SHAKE-256</li>
+            <li>
+              Pre-hash examples (§10.2.2): SHA-256, SHA-512, SHAKE128 and SHAKE256. SHA-256 and
+              SHAKE128 are appropriate only for category 1 parameter sets.
+            </li>
             <li>Context strings (0–255 bytes) are supported, identically to pure SLH-DSA</li>
             <li>Use when the protocol mandates pre-hashing (e.g. legacy interop)</li>
           </ul>
         </div>
       </div>
       <div className="bg-muted/40 rounded-lg px-3 py-2 text-xs text-muted-foreground">
-        <strong className="text-foreground">HashSLH-DSA message construction (§11):</strong> M&apos;
-        = <span className="font-mono">0x01 ‖ len(ctx) ‖ ctx ‖ OID_DER ‖ H(M)</span>. The OID
-        identifies the pre-hash algorithm; DER encoding is specified in FIPS 205 Appendix B.
+        <strong className="text-foreground">HashSLH-DSA message construction (§10.2.2):</strong>{' '}
+        M&apos; = <span className="font-mono">0x01 ‖ len(ctx) ‖ ctx ‖ OID_DER ‖ H(M)</span>. The OID
+        identifies the pre-hash algorithm; example DER encodings appear in Algorithm 23.
       </div>
     </section>
 
     <section className="glass-panel p-6 space-y-4">
-      <h2 className="text-xl font-bold text-foreground">Context Strings — FIPS 205 §9.2</h2>
+      <h2 className="text-xl font-bold text-foreground">Context Strings — FIPS 205 §§10.2–10.3</h2>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        The live demo provides separate signing and verification contexts for pure and pre-hash
+        modes. Leave both empty for zero bytes, or use the same label in both fields. Change only
+        the verification context to test rejection. A space is not empty. An engine error does not
+        demonstrate correct rejection; it means the test did not complete successfully.
+      </p>
       <p className="text-sm text-muted-foreground leading-relaxed">
         A context string is an optional 0–255 byte value passed at sign and verify time. It binds
         the signature to a{' '}
@@ -507,36 +561,42 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
     </section>
 
     <section className="glass-panel p-6 space-y-4">
-      <h2 className="text-xl font-bold text-foreground">Deterministic Mode — FIPS 205 §10</h2>
+      <h2 className="text-xl font-bold text-foreground">
+        Why can two signatures of the same message differ?
+      </h2>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        By default, SLH-DSA signing is randomized: a fresh random value <em>opt_rand</em> is drawn
-        from the RNG and incorporated into the signature. This provides{' '}
-        <strong className="text-foreground">hedging</strong> — protection against fault attacks that
-        exploit RNG failures.
+        SLH-DSA offers two signing modes:
       </p>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        In <strong className="text-foreground">deterministic mode</strong> (FIPS 205 §10),{' '}
-        <em>opt_rand</em> is set to <span className="font-mono">PK.seed</span> instead of an RNG
-        output. The same (SK, M, context) triple always produces the same signature bytes.
+        <strong>Deterministic:</strong> signing the same message with the same key, context and
+        settings produces the same signature.
       </p>
-      <div className="grid sm:grid-cols-2 gap-3 text-xs">
-        <div className="bg-muted/40 rounded p-3 space-y-1">
-          <div className="font-semibold text-foreground">When to use randomized (default)</div>
-          <ul className="text-muted-foreground space-y-1 list-disc list-inside leading-relaxed">
-            <li>Production environments</li>
-            <li>When RNG quality is trusted</li>
-            <li>Protects against fault injection attacks on the RNG</li>
-          </ul>
-        </div>
-        <div className="bg-muted/40 rounded p-3 space-y-1">
-          <div className="font-semibold text-foreground">When to use deterministic</div>
-          <ul className="text-muted-foreground space-y-1 list-disc list-inside leading-relaxed">
-            <li>Reproducible builds / auditable systems</li>
-            <li>Test vectors and KAT validation</li>
-            <li>Environments where RNG output cannot be trusted</li>
-          </ul>
-        </div>
-      </div>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        <strong>Hedged:</strong> signing adds fresh randomness, so repeating the operation normally
+        produces a different signature. Both signatures should still verify.
+      </p>
+      <h3 className="font-semibold text-foreground">What should you learn from the test?</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        Sign the same inputs twice and compare the results. Identical signatures are expected in
+        deterministic mode; different signatures are normally expected in hedged mode.
+      </p>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        This demonstrates the difference between signing modes. It does not prove that the random
+        generator is good or that the implementation resists attacks.
+      </p>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        Deterministic signing does not need fresh randomness for each signature, but generating the
+        key still requires randomness.
+      </p>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        Technical note: in deterministic SLH-DSA, opt_rand uses PK.seed, a public value belonging to
+        the key, not zeros. See{' '}
+        <a className="text-primary underline" href="https://doi.org/10.6028/NIST.FIPS.205">
+          FIPS 205 §9.2
+        </a>
+        . In the existing demo, select a signing mode and use “Sign twice and compare” to inspect
+        both signatures and their verification results with identical inputs.
+      </p>
       <p className="text-xs text-muted-foreground leading-relaxed">
         PKCS#11 v3.2: set{' '}
         <span className="font-mono">hedgeVariant = CKH_DETERMINISTIC_REQUIRED</span> in the{' '}

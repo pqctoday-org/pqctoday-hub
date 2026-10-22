@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import Papa from 'papaparse'
+import timelineReviewPolicy from './timelineReviewPolicy.json'
 import {
   timelineData,
   computeTimelineConfidence,
@@ -226,8 +227,14 @@ describe('parseTimelineCSV — malformed year hardening', () => {
       header: true,
       skipEmptyLines: true,
     })
+    // Unreviewed rows are withheld from every public surface
+    // (timelineReviewPolicy.json), so only published rows are held to this set.
+    const unreviewed = new Set(
+      timelineReviewPolicy.unreviewedStatuses.map((s) => s.trim().toLowerCase())
+    )
     const blanks = rows
       .filter((r) => (r['status'] ?? 'active').trim().toLowerCase() !== 'deprecated')
+      .filter((r) => !unreviewed.has((r['Status'] ?? '').trim().toLowerCase()))
       .filter((r) => !(r['StartYear'] ?? '').trim() || !(r['EndYear'] ?? '').trim())
       .map((r) => r['event_id'])
       .sort()

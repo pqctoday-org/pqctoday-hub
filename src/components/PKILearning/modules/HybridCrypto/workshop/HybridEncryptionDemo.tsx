@@ -161,7 +161,8 @@ const STEPS: Step[] = [
       {
         label: 'Decapsulation Key (dk)',
         value: '2,400 bytes',
-        description: 'Includes ek for implicit rejection (FIPS 203 §7.1)',
+        description:
+          'Includes ek for internal re-encryption and z for implicit rejection (FIPS 203 §6.3)',
       },
       {
         label: 'Shared Secret',
