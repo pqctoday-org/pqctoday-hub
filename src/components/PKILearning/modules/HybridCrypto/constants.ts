@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// ── Hybrid Signature Spectrum (IETF draft-ietf-pquip-hybrid-signature-spectrums) ──
+// ── Hybrid Signature Spectrum (RFC 9955, formerly draft-ietf-pquip-hybrid-signature-spectrums) ──
 
 import type { CompositeProfileDraft19 } from './services/certBuilder'
 
@@ -32,7 +32,7 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
     description:
       'Two independent signatures concatenated. Either component verifies alone. Easiest to implement and most backwards-compatible, but provides no protection against separability attacks.',
     reference: 'IETF draft §1.3.3',
-    referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
     separable: true,
     backwardsCompatible: true,
   },
@@ -46,7 +46,7 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
     description:
       'ML-DSA outer covers msg ‖ ecSig. Swapping the EC signature invalidates the outer layer. EC component still verifies alone — Weak Non-Separability (WNS).',
     reference: 'IETF draft §1.3.3',
-    referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
     separable: true,
     backwardsCompatible: true,
   },

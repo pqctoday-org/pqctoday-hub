@@ -76,10 +76,11 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <InlineTooltip term="NIST">NIST</InlineTooltip> SP 800-227
               </div>
               <p className="text-xs text-muted-foreground">
-                NIST SP 800-227 §1 frames hybrid key exchange as an <strong>interim measure</strong>{' '}
-                during the PQC transition &mdash; recommended for TLS, IKE, and similar protocols.
-                The spec ties the move to pure PQC to <em>algorithm maturation</em> (extended
-                cryptanalysis, broad deployment), not calendar deadlines alone.
+                NIST SP 800-227 §4.6 notes that combining key-establishment schemes (a PQ/T hybrid)
+                &ldquo;can be advantageous&rdquo; for some applications, for example{' '}
+                <strong>during the migration</strong>, and approves key combiners for it. It does
+                not set migration timing: &ldquo;This recommendation does not discuss how or when to
+                migrate&rdquo; (§1.2).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -193,7 +194,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </div>
                 <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
                   <div className="text-muted-foreground">{`Certificate {`}</div>
-                  <div className="text-primary pl-3">{`algorithm: id-MLDSA65-ECDSA-P256`}</div>
+                  <div className="text-primary pl-3">{`algorithm: id-MLDSA65-ECDSA-P256-SHA512`}</div>
                   <div className="text-primary pl-3">{`  OID: 1.3.6.1.5.5.7.6.45`}</div>
                   <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key || ECDSA-key`}</div>
                   <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig || ECDSA-sig`}</div>
@@ -450,7 +451,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               Choosing a KEM Parameter Set (NIST SP 800-227)
             </h4>
             <p className="text-xs text-muted-foreground">
-              SP 800-227 approves three ML-KEM parameter sets, each mapped to a NIST security
+              FIPS 203 (§8) approves three ML-KEM parameter sets, each mapped to a NIST security
               category matching the strength of a given AES key size. Pick the set by threat model,
               not by default.
             </p>
@@ -527,9 +528,11 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 shared-secret input. SP 800-56C-Rev2 approves this when the first secret comes from
                 a FIPS-approved scheme, so X25519MLKEM768 puts ML-KEM first (X25519 is not
                 approved), while the NIST-curve groups put ECDHE first because certified P-256 and
-                P-384 implementations are more widely available (RFC 10024 §5). Swapping order
-                silently breaks interop. Order does not add security, but binding to a known order
-                prevents cross-protocol confusion.
+                P-384 implementations are more widely available (RFC 10024 §5). SP 800-227 §4.6.2
+                (September 2025) relaxes the ordering rule: its key combiner is approved when at
+                least one shared secret, in any position, comes from an approved scheme. Swapping
+                order silently breaks interop. Order does not add security, but binding to a known
+                order prevents cross-protocol confusion.
               </li>
               <li>
                 <strong>HKDF vs KMAC.</strong> SP 800-56C permits either an HMAC-based extractor
@@ -543,9 +546,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 half is kept during the transition.
               </li>
               <li>
-                <strong>Domain separation is mandatory, not optional.</strong> Every context (TLS
-                handshake, KEMTLS, S/MIME, IKE) must feed a unique label/context string into the KDF
-                so shared secrets cannot be replayed across protocols.
+                <strong>Domain separation is strongly recommended.</strong> SP 800-227 §4.6.3 says a
+                domain separator should uniquely identify the composite scheme; each context (TLS
+                handshake, KEMTLS, S/MIME, IKE) should feed a unique label/context string into the
+                KDF so shared secrets cannot be replayed across protocols.
               </li>
             </ul>
             <p className="text-[10px] text-muted-foreground italic">
@@ -830,7 +834,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            SP 800-227 §4 is explicit: a compliant ML-KEM deployment is more than &ldquo;call the
+            SP 800-227 §3 is explicit: a compliant ML-KEM deployment is more than &ldquo;call the
             library.&rdquo; After the required input checks, decapsulation must conceal the result
             of its internal ciphertext comparison. Implementations must also address timing and
             other side-channel leakage.
@@ -949,8 +953,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground italic">
-            In short: hybrid gets you algorithmic safety (dual-PRF), but SP 800-227 §4 is what gets
-            you <em>deployment</em> safety. Both are required.
+            In short: hybrid gets you algorithmic safety (dual-PRF), but SP 800-227 §§3–4 are what
+            get you <em>deployment</em> safety. Both are required.
           </p>
         </div>
       </section>
@@ -1088,15 +1092,15 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <ExternalLink size={15} className="text-primary shrink-0 mt-0.5" />
           <div>
             <span className="font-semibold text-foreground">
-              IETF draft-ietf-pquip-hybrid-signature-spectrums-07
+              RFC 9955: Hybrid Signature Spectrums
             </span>{' '}
-            <span className="text-muted-foreground">(AUTH48 — near-RFC, Informational)</span>
+            <span className="text-muted-foreground">(Informational, July 2026)</span>
             <p className="text-muted-foreground mt-1">
               Defines the taxonomy of hybrid signature constructions and a non-separability
               spectrum. Basis for evaluating all hybrid signature proposals including Silithium.
             </p>
             <a
-              href="https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/"
+              href="https://www.rfc-editor.org/rfc/rfc9955"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline text-xs mt-1 inline-block"
@@ -1233,7 +1237,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               [
                 '4',
                 'ML-DSA response',
-                'z = ML-DSA.Sign_internal(sk_ml, μ)   (FIPS 204 §5.2 external-μ mode)',
+                'z = ML-DSA.Sign_internal(sk_ml, μ)   (FIPS 204 §6.2, Algorithm 7, external μ)',
               ],
               [
                 '5',
