@@ -72,7 +72,8 @@ const ListingReader: FC<{ initialListing?: string }> = ({ initialListing }) => {
           </h3>
           <p className="text-sm text-muted-foreground">
             Three real listings, copied verbatim from PCI’s public listing popups on{' '}
-            {PCI_AS_OF_LABEL}. Listings change; follow the link for the live entry.
+            {PCI_AS_OF_LABEL}. Listings 4-40266 and 4-70041 were checked again on 22 October 2026
+            and were unchanged. Listings change; follow the link for the live entry.
           </p>
         </div>
         <FilterDropdown

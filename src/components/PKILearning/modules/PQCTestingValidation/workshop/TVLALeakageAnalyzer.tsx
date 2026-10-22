@@ -124,7 +124,9 @@ export const TVLALeakageAnalyzer: React.FC = () => {
             TVLA Threshold |t| ={' '}
             <span className="text-primary font-mono">{threshold.toFixed(1)}</span>
           </span>
-          <span className="text-xs text-muted-foreground">NIST standard: 4.5 | Strict: 3.0</span>
+          <span className="text-xs text-muted-foreground">
+            Common threshold: 4.5 (Goodwill et al. 2011) | Strict: 3.0
+          </span>
         </div>
         <input
           type="range"
@@ -138,7 +140,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
         />
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>Strict (2.0)</span>
-          <span>NIST standard (4.5)</span>
+          <span>Common (4.5)</span>
           <span>Lenient (8.0)</span>
         </div>
       </div>
@@ -234,17 +236,15 @@ export const TVLALeakageAnalyzer: React.FC = () => {
       <div className="p-3 rounded-lg bg-muted border border-border space-y-2">
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <Info size={13} className="text-primary" />
-          Why classical fixed-vs-random TVLA fails for PQC
+          Why a fixed-vs-random test alone is not enough for PQC
         </div>
         <p className="text-xs text-muted-foreground">
-          Classical TVLA uses a fixed plaintext set vs random plaintexts to distinguish
-          key-dependent leakage. For ML-KEM/ML-DSA, the public key and ciphertext are structurally
-          coupled — a fixed ciphertext always uses the same secret polynomial, making the
-          &quot;fixed&quot; set trivially distinguishable regardless of implementation quality.
-          Instead, target specific algorithmic stages: NTT/INTT (dominant leakage), polynomial
-          multiplication (nonce leakage in ML-DSA), and modular reduction (q=3329 conditional
-          subtraction). Keysight Inspector&apos;s Dilithium TVLA generator (ML-DSA, FIPS 204)
-          targets these operations directly.
+          The non-specific fixed-vs-random test flags any input-dependent difference, including
+          leakage of public data such as the ciphertext, so on its own it cannot show that secret
+          data leaks. Add specific tests on the stages that handle secrets: NTT/INTT (dominant
+          leakage), polynomial multiplication (nonce leakage in ML-DSA), and modular reduction
+          (q=3329 conditional subtraction). Keysight Inspector&apos;s Dilithium TVLA generator
+          (ML-DSA, FIPS 204) targets these operations directly.
         </p>
       </div>
     </div>

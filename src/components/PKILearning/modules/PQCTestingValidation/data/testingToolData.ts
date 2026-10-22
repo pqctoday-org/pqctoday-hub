@@ -37,7 +37,7 @@ export const TESTING_TOOLS: TestingTool[] = [
     pqcSupport: 'ML-KEM, ML-DSA, SLH-DSA (NIST CAVP certified)',
     strengths: [
       'Zero packet injection — production-safe',
-      'NIST NCCoE recommended',
+      'NCCoE PQC migration project collaborator',
       'First EU vendor with all 3 NIST PQC CAVP certifications',
       '100+ IT/OT protocols',
       'Hardened appliance with PQC-secured management',
@@ -50,7 +50,7 @@ export const TESTING_TOOLS: TestingTool[] = [
     productUrl:
       'https://www.cryptonext-security.com/en/products-cryptography-discovery-and-inventory/',
     bestFor:
-      'Critical infrastructure, regulated industries requiring NIST NCCoE-recommended tooling',
+      'Critical infrastructure and regulated industries needing passive, production-safe discovery',
   },
   {
     id: 'pqc-flow',
@@ -291,7 +291,7 @@ export const TESTING_TOOLS: TestingTool[] = [
       'Purpose-built TVLA for ML-DSA/ML-KEM',
       'Captures millions of traces/second',
       'Fault injection testing',
-      'FIPS 140-3 Level 4 validation support',
+      'Leakage testing in the TVLA style (CMVP has no approved non-invasive test metrics yet, SP 800-140F)',
       'NXP + PQShield validated',
     ],
     limitations: [

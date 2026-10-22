@@ -58,12 +58,12 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     roadmapYear: '2026',
     products: ['APTIO V (Intel)', 'APTIO V (AMD)', 'APTIO OpenEdition'],
     pqcAlgorithm:
-      'ML-DSA-65 (UEFI Secure Boot), ML-DSA-87 (PK); CNSA 2.0 firmware signing uses LMS/XMSS (SP 800-208)',
+      'ML-DSA-65 (UEFI Secure Boot), ML-DSA-87 (PK); CNSA 2.0 prefers LMS/XMSS (SP 800-208) for firmware signing and also approves validated ML-DSA-87',
     migrationGuidance:
       'AMI has announced ML-DSA-65 support in APTIO V for Xeon Scalable 5th/6th Gen and EPYC Genoa/Turin platforms. Customers must upgrade firmware to APTIO V 5.35+ and re-enroll PK/KEK/db with ML-DSA certificates. AMI provides a BIOS Signing Upgrade Kit with migration utilities.',
     notes:
-      'APTIO V is the most widely deployed UEFI firmware in enterprise servers. ML-DSA support targets H1 2026. Hybrid (RSA + ML-DSA) dual-signature mode available for transition. CNSA 2.0 compliance certification expected Q3 2026.',
-    certifications: ['FIPS 140-3 (target Q3 2026)', 'CNSA 2.0'],
+      'APTIO V is the most widely deployed UEFI firmware in enterprise servers. ML-DSA support targets H1 2026. Hybrid (RSA + ML-DSA) dual-signature mode available for transition.',
+    certifications: ['FIPS 140-3 (target Q3 2026)', 'CNSA 2.0 alignment (vendor claim)'],
   },
   {
     id: 'insyde',

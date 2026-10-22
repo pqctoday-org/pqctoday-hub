@@ -87,7 +87,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     situation:
       'Your software company wants to sell a secure communication product to an EU government ministry. The procurement specification requires a Common Criteria certification. You need to understand which EU body manages this certification and under which scheme.',
     question:
-      'Which EU agency manages the EUCC (the EU version of Common Criteria), and under which framework?',
+      'Who issues the EUCC certificate (the EU version of Common Criteria), and under which scheme?',
     bodyTypeOptions: [
       { id: 'standards-body', label: 'Standards Body' },
       { id: 'certification-body', label: 'Certification Body' },
@@ -97,7 +97,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     orgOptions: [
       { id: 'etsi', label: 'ETSI' },
       { id: 'enisa', label: 'ENISA' },
-      { id: 'bsi', label: 'BSI (Germany only)' },
+      { id: 'accredited-cb', label: 'An accredited certification body' },
       { id: 'common-criteria', label: 'CCRA (international scheme)' },
     ],
     standardOptions: [
@@ -107,12 +107,12 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
       { id: 'iso-15408', label: 'ISO/IEC 15408 (global CC, no EU-specific recognition)' },
     ],
     correctBodyType: 'certification-body',
-    correctOrg: 'enisa',
+    correctOrg: 'accredited-cb',
     correctStandard: 'eucc',
     briefFeedback:
-      'ENISA manages the EUCC (EU Cybersecurity Certification Scheme). The EUCC is the EU-specific adaptation of Common Criteria, valid across all EU member states.',
+      'An accredited certification body issues the EUCC certificate (Implementing Regulation (EU) 2024/482, Art. 4: "Certification bodies shall issue EUCC certificates"). ENISA supports the scheme but does not issue certificates.',
     detailedExplanation:
-      "The EUCC (EU Cybersecurity Certification Scheme for CC-based evaluations) was established under the EU Cybersecurity Act (2019) and is managed by ENISA. It's an EU-wide adaptation of Common Criteria (ISO/IEC 15408) that creates a harmonized certification valid across all 27 EU member states, eliminating the previous need for separate national certifications in each country. ENISA maintains the scheme rules and the Agreed Cryptographic Mechanisms (ACM) list, which specifies which PQC algorithms are approved for products seeking EUCC certification. National Certification Authorities (e.g., BSI in Germany, ANSSI in France) can issue EUCC certificates, and these are mutually recognized across the EU. For your product, you'd work with an accredited lab (ITSEF) to evaluate it against a Protection Profile, then a National CA would issue the EUCC certificate.",
+      "The EUCC (EU Cybersecurity Certification Scheme on Common Criteria) was adopted by Commission Implementing Regulation (EU) 2024/482 under the EU Cybersecurity Act (2019). It applies Common Criteria (ISO/IEC 15408) and its evaluation methodology across all 27 EU member states, so one certificate is recognised EU-wide. Certificates are issued by accredited certification bodies, at assurance level 'substantial' or 'high'; national cybersecurity certification authorities (for example BSI in Germany or ANSSI in France) supervise them, and some act as certification bodies themselves. ENISA supports the European Commission and the European Cybersecurity Certification Group (ECCG) in running the scheme; the ECCG publishes the Agreed Cryptographic Mechanisms (ACM) that products must use. For your product, an accredited lab (ITSEF) evaluates it, often against a protection profile, and a certification body issues the EUCC certificate.",
   },
   {
     id: 'tls-ietf',

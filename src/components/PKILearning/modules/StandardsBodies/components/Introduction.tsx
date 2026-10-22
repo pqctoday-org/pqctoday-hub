@@ -166,8 +166,8 @@ const Step1ThreeRoles: React.FC = () => (
             },
             {
               step: '2',
-              who: 'CMVP',
-              what: 'Certifies HSM implementations of FIPS 203 (FIPS 140-3 certificate)',
+              who: 'CAVP / CMVP',
+              what: 'CAVP validates the ML-KEM implementation (algorithm certificate); CMVP validates the HSM module (FIPS 140-3 certificate)',
               color: 'bg-secondary/5 border-secondary/30',
             },
             {
@@ -180,7 +180,7 @@ const Step1ThreeRoles: React.FC = () => (
             {
               step: '3',
               who: 'NSA / CNSA 2.0',
-              what: 'Mandates that federal agencies use CMVP-certified modules implementing ML-KEM-1024',
+              what: 'Requires National Security Systems to use ML-KEM-1024, in NIAP-validated products that use CMVP-validated modules',
               color: 'bg-status-warning/5 border-status-warning/30',
             },
           ].map((item, idx) =>
@@ -552,7 +552,12 @@ const Step4AppPagesGuide: React.FC = () => (
                   type: 'Standards Body',
                   scope: 'EU/Global',
                 },
-                { fw: 'EUCC', body: 'ENISA', type: 'Certification Body', scope: 'EU' },
+                {
+                  fw: 'EUCC',
+                  body: 'Accredited certification bodies',
+                  type: 'Certification Body',
+                  scope: 'EU',
+                },
               ].map((row) => (
                 <tr key={row.fw} className="border-b border-border/50">
                   <td className="py-2 px-3 font-medium text-foreground">{row.fw}</td>
@@ -815,7 +820,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {
             when: 'You see "EUCC"',
             meaning:
-              'ENISA manages it (EU certification body); EU adaptation of Common Criteria; valid across all EU member states.',
+              'EU adaptation of Common Criteria; certificates are issued by accredited certification bodies, supervised by national cybersecurity certification authorities; ENISA supports the scheme and publishes its supporting documents; valid across all EU member states.',
           },
         ].map((item) => (
           <div key={item.when} className="bg-muted/50 rounded-lg p-3 border border-border">

@@ -214,8 +214,10 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         <p>
           <InlineTooltip term="ML-DSA">ML-DSA-65</InlineTooltip> (FIPS 204, formerly
           CRYSTALS-Dilithium3) is the NIST-standardized post-quantum signature algorithm at NIST
-          Security Level 3. It is the recommended choice for firmware signing because its signature
-          size (3,309 bytes) balances security and UEFI storage overhead better than ML-DSA-87.
+          Security Level 3. It is a common choice for firmware signing because its signature size
+          (3,309 bytes) balances security and UEFI storage overhead better than ML-DSA-87. For
+          National Security Systems, CNSA 2.0 specifies ML-DSA-87 for all classification levels, so
+          firmware for NSS customers uses ML-DSA-87 or LMS/XMSS.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -310,8 +312,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             SLH-DSA-SHA2-128s has the smallest public key (32 B) but the largest signature (7,856
             B). For firmware signing where signature size is the bottleneck, ML-DSA-65 is a common
             choice. SLH-DSA may suit long-lived root keys where signing is rare. Note: CNSA 2.0
-            firmware/software signing specifically calls for stateful hash-based signatures (LMS or
-            XMSS, NIST SP 800-208); ML-DSA is CNSA 2.0&apos;s general-purpose signature.
+            prefers stateful hash-based signatures (LMS or XMSS, NIST SP 800-208) to start
+            firmware/software signing now; validated ML-DSA-87 is also approved for
+            firmware/software signing.
           </p>
         </div>
 
@@ -472,7 +475,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               title: 'Build-Time Code Signing',
               icon: Lock,
               description:
-                'ML-DSA private keys used for firmware signing must be stored in FIPS 140-3 Level 3 HSMs within air-gapped signing infrastructure. Key ceremony procedures must be updated for ML-DSA-65 key generation.',
+                'ML-DSA private keys used for firmware signing should be stored in FIPS 140-3 Level 3 HSMs within air-gapped signing infrastructure (best practice); LMS/XMSS signing keys must be, per NIST SP 800-208 §8.1. Key ceremony procedures must be updated for ML-DSA-65 key generation.',
             },
             {
               title: 'Supply Chain Verification',

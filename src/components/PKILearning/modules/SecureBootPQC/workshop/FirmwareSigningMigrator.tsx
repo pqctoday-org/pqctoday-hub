@@ -1262,8 +1262,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               </li>
               <li>
                 <span className="font-mono font-semibold text-foreground">ML-DSA-87</span> — NIST
-                Level 5 · CNSA 2.0&rsquo;s general-purpose signature (its firmware-signing pick is
-                LMS/XMSS, SP 800-208)
+                Level 5 · required by CNSA 2.0 for NSS; approved for firmware signing alongside the
+                preferred LMS/XMSS (SP 800-208)
               </li>
               <li>
                 <span className="font-mono font-semibold text-foreground">SLH-DSA-SHA2-128S</span> —
@@ -1900,10 +1900,11 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs flex gap-2">
             <Info size={13} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-muted-foreground">
-              <strong className="text-foreground">NSA CNSA 2.0</strong> designates LMS/XMSS (SP
-              800-208, stateful hash-based signatures) specifically for software/firmware signing by
-              2030 — ML-DSA-87 is CNSA 2.0&rsquo;s general-purpose signature algorithm, not its
-              firmware-signing one.{' '}
+              <strong className="text-foreground">NSA CNSA 2.0</strong> prefers LMS/XMSS (SP
+              800-208, stateful hash-based signatures) to start software/firmware signing now, with
+              CNSA 2.0 required exclusively by 2030. Validated ML-DSA-87 is also approved for
+              software/firmware signing and may suit cases that need many signatures or distributed
+              signing.{' '}
               <a
                 href="/library?ref=NSA CNSA 2.0"
                 target="_blank"

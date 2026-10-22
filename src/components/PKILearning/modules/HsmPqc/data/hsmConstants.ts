@@ -832,7 +832,7 @@ export const SIDE_CHANNEL_VECTORS: SideChannelVector[] = [
     description:
       'If an HSM loses track of which one-time signature leaves have been used (e.g., power failure during NVRAM write), the same leaf may be used twice. Two signatures from the same leaf completely compromise the key.',
     countermeasure:
-      'Atomic NVRAM state updates, write-ahead logging, pre-reservation of signature indices. HSMs are the only safe platform for stateful signatures because they provide atomic state persistence.',
+      'Atomic NVRAM state updates, write-ahead logging, pre-reservation of signature indices. NIST SP 800-208 §8.1 requires LMS/XMSS key and signature generation to be validated only within hardware cryptographic modules at Level 3 or higher physical security (see FIPS 140-3 IG C.N).',
     hsmRelevance: 'high',
   },
 ]

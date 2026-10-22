@@ -99,8 +99,8 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             <p className="font-semibold text-status-info mb-1">Interop Fragility</p>
             <p className="text-xs">
               Larger hybrid ClientHello messages (1120 bytes vs 320 bytes classical) trigger silent
-              rejection by faulty server implementations. Pure PQC clients fail on servers requiring
-              hybrid per RFC 9794.
+              rejection by faulty server implementations. Pure PQC clients fail on servers that
+              accept only hybrid key exchange.
             </p>
           </div>
           <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
@@ -414,8 +414,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         sectionId="interop-testing"
       >
         <p>
-          <InlineTooltip term="RFC 9794">RFC 9794</InlineTooltip> standardizes hybrid PQC scheme
-          terminology and design rules. Two rules drive interoperability testing:
+          <InlineTooltip term="RFC 9794">RFC 9794</InlineTooltip> (Informational, June 2025) defines
+          the terminology for post-quantum/traditional hybrid schemes; it does not set protocol
+          rules. The two rules below are this module&apos;s test practice, not RFC requirements:
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
@@ -459,20 +460,21 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         sectionId="side-channel-tvla"
       >
         <p>
-          <InlineTooltip term="TVLA">Test Vector Leakage Assessment</InlineTooltip> is the standard
-          method for detecting side-channel leakage in cryptographic implementations. Classical TVLA
-          uses fixed-vs-random test vectors — but this approach breaks down for lattice-based PQC.
+          <InlineTooltip term="TVLA">Test Vector Leakage Assessment</InlineTooltip> is a widely used
+          method for detecting side-channel leakage in cryptographic implementations. Its
+          non-specific test compares fixed-input and random-input trace groups; its specific tests
+          target chosen intermediate values.
         </p>
 
         <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 mt-2">
           <p className="font-semibold text-destructive text-sm mb-2">
-            Why Classical TVLA Fails for PQC
+            Why a Fixed-vs-Random Test Alone Is Not Enough for PQC
           </p>
           <p className="text-xs">
-            In ML-KEM and ML-DSA, the public key and private key are mathematically tightly coupled.
-            Using a fixed public key with random plaintexts creates inputs that are not
-            statistically independent — violating the assumptions of the standard t-test. Leakage at
-            the NTT (Number Theoretic Transform) stage may not be detected at all.
+            A non-specific fixed-vs-random test flags any input-dependent difference, including
+            leakage of public data such as ciphertexts, so a failing result does not by itself show
+            that secret data leaks. PQC labs therefore add specific tests on the operations that
+            handle secrets: the NTT, sampling and, in ML-KEM, the Fujisaki–Okamoto re-encryption.
           </p>
         </div>
 
@@ -506,8 +508,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         </p>
 
         <p className="text-xs text-muted-foreground mt-2">
-          Tools: Keysight Inspector Crypto 3 (commercial, FIPS 140-3 Level 4), ChipWhisperer (open
-          source, power analysis + fault injection)
+          Tools: Keysight Inspector Crypto 3 (commercial leakage testing), ChipWhisperer (open
+          source, power analysis + fault injection). CMVP has no approved non-invasive attack test
+          metrics yet: SP 800-140F §6.2 says &ldquo;No additional requirements at this time&rdquo;.
         </p>
 
         <ReadingCompleteButton />

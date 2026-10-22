@@ -576,8 +576,6 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Use the foundations path to choose the scheme and parameter envelope; the advanced path then maps secrets, public evaluation keys, ciphertexts and controlled decryption across trust zones.',
     researcher:
       'Compare the four ISO/IEC 28033 draft scheme families and the measured implementation evidence, then use the advanced path for decryption-oracle, flooding and threshold limitations.',
-    'cert-engineer':
-      'Your default advanced path separates FHE behavior from approved surrounding functions and labels each result as measured, reproduced or independently reviewed rather than implying certification.',
     ops: 'Start with the operational cost and failure boundary, then use the advanced path for controlled decryption, audit, rate limits, rotation, backup and recovery.',
     curious:
       'Follow the foundations path for the central idea: a server can calculate on encrypted data, but it pays a large performance cost and still reveals some metadata. The HSM custody material is intentionally left out of this path.',
@@ -601,8 +599,6 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG and Bouncy Castle across seven languages, then work through the provider-pattern examples for KeyGen, Sign, Verify, Encrypt and KEM and the API-by-algorithm support matrix.',
     researcher:
       'The eight-library deep dive (liboqs, AWS-LC, Bouncy Castle and others) and the support matrix with status badges and versions are the current state of PQC library support, with the build-versus-buy scoring wizard on top.',
-    'cert-engineer':
-      'Compare PKCS#11 with JCA/JCE, OpenSSL EVP and Windows CNG in the API-by-algorithm support matrix, then use the eight-library deep dive for the versions to check against a certificate record.',
   },
   '/learn/crypto-mgmt-modernization': {
     executive:
@@ -869,8 +865,6 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The animated visualisers for MPCitH, multivariate, isogeny and lattice families, the cryptanalysis timeline with every attack and reparameterisation, and the worldwide map of KpqC, CACR and ISO/IEC tracks.',
     curious:
       'How a new cryptographic algorithm becomes a standard: pick a candidate and advance it through the rounds, watching what an attack does to it along the way.',
-    'cert-engineer':
-      'The cryptanalysis timeline, with every attack and reparameterisation, and the Standardisation Lifecycle step show which schemes could reach algorithm testing and which are still moving.',
   },
   '/learn/pqc-governance': {
     executive:

@@ -47,7 +47,7 @@ const PARTS: WorkshopPart[] = [
     id: 'interop-test-matrix',
     title: 'Step 4: Interop Matrix',
     description:
-      'Build a PQC interoperability test matrix. Validate which client/server algorithm combinations are compatible, partial, or blocked by RFC 9794.',
+      'Build a PQC interoperability test matrix. Validate which client/server algorithm combinations are compatible, partial, or blocked by hybrid policy.',
     icon: GitBranch,
   },
   {

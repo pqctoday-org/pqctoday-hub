@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10222026.csv
+ * Source: src/data/role_board_content_10222026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2780,9 +2780,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 10 hours 40 minutes of essentials, not the full 19½ hours.',
+          'Then, the background: 10 hours 40 minutes of essentials, not the full 14½ hours.',
         trackNote:
-          "Eight essentials against the full 17-module path plus the quiz, 1175 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
+          "Eight essentials against the full 13-module path plus the quiz, 875 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
         trackChips: [
           'Product certification',
           'FIPS 140-3',
@@ -2791,7 +2791,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
-          'Hardware acceleration',
+          'PCI certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -2856,7 +2856,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 10 hours 40 minutes of essentials, not the full 19½ hours.',
+          'Then, the background: 10 hours 40 minutes of essentials, not the full 14½ hours.',
 
         trackChips: [
           'Product certification',
@@ -2866,7 +2866,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
-          'Hardware acceleration',
+          'PCI certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -2932,7 +2932,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 10 hours 40 minutes of essentials, not the full 19½ hours.',
+          'Then, the background: 10 hours 40 minutes of essentials, not the full 14½ hours.',
 
         trackChips: [
           'Product certification',
@@ -2942,7 +2942,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
-          'Hardware acceleration',
+          'PCI certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -3008,7 +3008,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 10 hours 40 minutes of essentials, not the full 19½ hours.',
+          'Then, the background: 10 hours 40 minutes of essentials, not the full 14½ hours.',
 
         trackChips: [
           'Product certification',
@@ -3018,7 +3018,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
-          'Hardware acceleration',
+          'PCI certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -3080,7 +3080,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 10 hours 40 minutes of essentials, not the full 19½ hours.',
+          'Then, the background: 10 hours 40 minutes of essentials, not the full 14½ hours.',
 
         trackChips: [
           'Product certification',
@@ -3090,7 +3090,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSMs',
           'Testing & validation',
           'CC criteria and EUCC scheme rules',
-          'Hardware acceleration',
+          'PCI certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
