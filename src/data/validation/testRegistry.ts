@@ -41,6 +41,12 @@ import sha512V from '../acvp/sha512_test.json'
 import sha3_256V from '../acvp/sha3_256_test.json'
 import sha3_512V from '../acvp/sha3_512_test.json'
 import { MULTIPART_TARGETS, multipartRowStem } from './multipartTargets'
+import {
+  COMPOSITE_KEM_SETS,
+  COMPOSITE_SIG_SETS,
+  isBrainpoolSet,
+} from '../../wasm/softhsm/compositeParams'
+import v33Provenance from '../pkcs11-v33/_provenance.json'
 import type { EvidenceClassId } from './evidenceClasses'
 import type { CaseRecord, ValidationCaseManifest } from './validationCaseManifest'
 import type {
@@ -2882,6 +2888,166 @@ const errorPathTests = (existing: RegisteredTest[]): RegisteredTest[] => {
   return [...byTest.values()]
 }
 
+// ── PKCS#11 v3.3 working draft (v33DraftFeatures) ────────────────────────────
+//
+// The "v3.3 draft features" group (src/wasm/pkcs11ConformanceRunner/
+// v33DraftFeatures.ts), which the conformance runner, the Build tab's v3.3
+// test bench and v33DraftFeatures.local.test.ts all call. These are tests of
+// the Rust engine against the UNPUBLISHED OASIS PKCS#11 v3.3 working draft and
+// the IETF LAMPS composite drafts: no OASIS v3.3 profile or test case exists,
+// so nothing here is a v3.2 profile verdict. They are registered so the
+// composite mechanisms the Rust engine advertises have a test of record.
+// Only the parameter sets the local test requires to pass are registered
+// (brainpool sets may be refused with CKR_PARAMETER_SET_NOT_SUPPORTED).
+// The LAMPS vectors are produced by the draft authors, not printed in a
+// consensus RFC, so the known-answer cases are `independent-oracle`, not
+// `published-standard-kat` (see evidenceClasses.ts).
+const V33_DRAFT_NOTE =
+  'PKCS#11 v3.3 working draft (unpublished OASIS draft; IETF LAMPS composite drafts). Not part of any v3.2 profile verdict.'
+const V33_KEM_SETS = COMPOSITE_KEM_SETS.filter((s) => !isBrainpoolSet(s))
+const V33_SIG_SETS = COMPOSITE_SIG_SETS.filter((s) => !isBrainpoolSet(s))
+const V33_KEM_FILE = v33Provenance.files['composite-kem/testvectors.json']
+const V33_SIG_FILE = v33Provenance.files['composite-sig/testvectors.json']
+
+const v33Test = (
+  id: string,
+  ref: string,
+  title: string,
+  cases: RegisteredCase[]
+): RegisteredTest => ({
+  id: `v33.${id}`,
+  runner: 'v33DraftFeatures',
+  ref,
+  title,
+  engines: RUST,
+  cases,
+  note: V33_DRAFT_NOTE,
+})
+
+const V33_DRAFT_FEATURES: RegisteredTest[] = [
+  v33Test(
+    'composite-kem-roundtrip',
+    'v33DraftFeatures roundTripKemSet()',
+    'Composite ML-KEM round trip per parameter set (generate, encapsulate, decapsulate, equal 32-byte secrets)',
+    V33_KEM_SETS.map((s) =>
+      lc(
+        'v33.composite-kem-roundtrip',
+        s.ckpName,
+        RT,
+        'positive',
+        [
+          x('CKM_COMP_KEM_KEY_PAIR_GEN', 'generate-key-pair'),
+          x('CKM_COMP_KEM', 'encapsulate'),
+          x('CKM_COMP_KEM', 'decapsulate'),
+        ],
+        { rowId: `v33.coverage.kem.${s.ckpName}`, parameters: { parameterSet: s.ckpName } }
+      )
+    )
+  ),
+  v33Test(
+    'composite-sig-roundtrip',
+    'v33DraftFeatures roundTripSigSet()',
+    'Composite ML-DSA round trip per parameter set (sign with a context, verify; the ML-DSA half alone is rejected)',
+    V33_SIG_SETS.map((s) =>
+      lc(
+        'v33.composite-sig-roundtrip',
+        s.ckpName,
+        RT,
+        'positive',
+        [
+          x('CKM_COMP_SIG_KEY_PAIR_GEN', 'generate-key-pair'),
+          x('CKM_COMP_SIG', 'sign'),
+          x('CKM_COMP_SIG', 'verify'),
+        ],
+        {
+          rowId: `v33.coverage.sig.${s.ckpName}`,
+          parameters: { parameterSet: s.ckpName },
+          note: 'The same row also checks that the ML-DSA half alone does not verify.',
+        }
+      )
+    )
+  ),
+  v33Test(
+    'composite-sig-external-hash-roundtrip',
+    'v33DraftFeatures roundTripSigExternalHash()',
+    'CKM_COMP_SIG_EXTERNAL_HASH: sign an offline pre-hash, verify with the external-hash mechanism and with CKM_COMP_SIG over the message',
+    [
+      lc(
+        'v33.composite-sig-external-hash-roundtrip',
+        'CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512',
+        RT,
+        'positive',
+        [
+          x('CKM_COMP_SIG_KEY_PAIR_GEN', 'generate-key-pair'),
+          x('CKM_COMP_SIG_EXTERNAL_HASH', 'sign'),
+          x('CKM_COMP_SIG_EXTERNAL_HASH', 'verify'),
+          x('CKM_COMP_SIG', 'verify'),
+        ],
+        {
+          rowId: 'v33.coverage.sig-external-hash.CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512',
+          parameters: { parameterSet: 'CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512' },
+        }
+      ),
+    ]
+  ),
+  v33Test(
+    'composite-kem-kat',
+    'v33DraftFeatures kemKat()',
+    'Composite ML-KEM known answer: decapsulate the LAMPS vector ciphertext, compare k',
+    V33_KEM_SETS.map((s) =>
+      lc(
+        'v33.composite-kem-kat',
+        s.ckpName,
+        ORACLE,
+        'positive',
+        [x('CKM_COMP_KEM', 'decapsulate')],
+        {
+          rowId: `v33.kat.kem.${s.ckpName}`,
+          parameters: { parameterSet: s.ckpName, tcId: s.draftName },
+          source: {
+            citation: `lamps-wg/draft-composite-kem test vectors @ ${V33_KEM_FILE.source_commit.slice(0, 7)} (${V33_KEM_FILE.source_commit_date}), tcId ${s.draftName}; draft authors' values, not a consensus RFC`,
+            url: V33_KEM_FILE.source_url,
+          },
+        }
+      )
+    )
+  ),
+  v33Test(
+    'composite-sig-kat',
+    'v33DraftFeatures sigKat()',
+    'Composite ML-DSA known answer: the LAMPS vector signatures verify (with and without context); sWithContext without its context is rejected',
+    V33_SIG_SETS.map((s) =>
+      lc('v33.composite-sig-kat', s.ckpName, ORACLE, 'positive', [x('CKM_COMP_SIG', 'verify')], {
+        rowId: `v33.kat.sig.${s.ckpName}`,
+        parameters: { parameterSet: s.ckpName, tcId: s.draftName },
+        source: {
+          citation: `lamps-wg/draft-composite-sigs test vectors @ ${V33_SIG_FILE.source_commit.slice(0, 7)} (${V33_SIG_FILE.source_commit_date}), tcId ${s.draftName}; draft authors' values, not a consensus RFC`,
+          url: V33_SIG_FILE.source_url,
+        },
+      })
+    )
+  ),
+  v33Test(
+    'composite-error-paths',
+    'v33DraftFeatures runV33ErrorPaths() / errorPathCatalog V33_DRAFT_ERROR_PATHS',
+    'Composite error paths: each returns the code the v3.3 draft and the engine cite',
+    (
+      [
+        ['comp-sig-external-hash-wrong-length', 'negative', 'CKM_COMP_SIG_EXTERNAL_HASH', 'sign'],
+        ['comp-sig-external-hash-sign-update', 'state-error', 'CKM_COMP_SIG_EXTERNAL_HASH', 'sign'],
+        ['comp-kem-with-parameter', 'negative', 'CKM_COMP_KEM', 'encapsulate'],
+        ['comp-kem-ciphertext-wrong-length', 'negative', 'CKM_COMP_KEM', 'decapsulate'],
+        ['comp-sig-key-with-comp-kem', 'negative', 'CKM_COMP_KEM', 'decapsulate'],
+        ['comp-kem-key-with-comp-sig', 'negative', 'CKM_COMP_SIG', 'sign'],
+      ] as const
+    ).map(([id, polarity, mech, op]) =>
+      lc('v33.composite-error-paths', id, PROBE, polarity, [x(mech, op)], {
+        rowId: `v33.errpath.${id}`,
+      })
+    )
+  ),
+]
+
 /** Every registered test, in runner order. */
 /**
  * The skip row each workbench section emits (pushSkip) when the engine does
@@ -2935,7 +3101,13 @@ const BASE_REGISTRY: RegisteredTest[] = [
   ...CONFORMANCE,
 ]
 
-export const TEST_REGISTRY: RegisteredTest[] = [...BASE_REGISTRY, ...errorPathTests(BASE_REGISTRY)]
+// The v3.3 draft tests are appended AFTER the v3.2 error-path expansion so they
+// never change which v3.2 error-path cases are generated.
+export const TEST_REGISTRY: RegisteredTest[] = [
+  ...BASE_REGISTRY,
+  ...errorPathTests(BASE_REGISTRY),
+  ...V33_DRAFT_FEATURES,
+]
 
 /** Exposed for the registry's own consistency test. */
 export const __registryInternals = { manifestCase, hashMlDsaMech }

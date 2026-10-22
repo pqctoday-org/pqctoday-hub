@@ -1,0 +1,28 @@
+{
+  "source": "IETF LAMPS working group composite test vectors (draft-ietf-lamps-pq-composite-kem and draft-ietf-lamps-pq-composite-sigs)",
+  "retrieved": "2026-10-21",
+  "producer": "The draft authors (lamps-wg GitHub repositories). Not a certification body: NIST ACVP has no composite family.",
+  "note": "Vendored verbatim, byte-for-byte, no re-formatting (listed in .prettierignore). Each sha256 below is the hash of the upstream file at the pinned commit; the same files and hashes are pinned in the pqctoday-hsm engine repository (rust/kat/pkcs11-v33/PROVENANCE.md), and src/data/pkcs11-v33/vectorProvenance.test.ts fails if either copy drifts. These are single known-answer vectors per parameter set. Encapsulation and signing are randomised, so the vectors prove decapsulation and verification only. They predate the current drafts (composite-kem -23, composite-sigs -19); the OIDs, labels and signature prefix were compared with the current drafts on 2026-10-21 and are unchanged.",
+  "pkcs11_status": "PKCS#11 v3.3 is an unpublished OASIS working draft. The composite identifiers are marked approved in the OASIS PKCS 11 TC header (github.com/oasis-tcs/pkcs11 commit 9ef73f9f44ed8a240b05484427a0851ab36be251, working/headers/pkcs11t.h). No OASIS v3.3 profile or test case exists.",
+  "licence": "Both upstream repositories carry the same license.txt (sha256 df6e10567fa902dfe43d23fcfbb3ff2d1e9a01c2aca8f8cdc26b4f2773e92c2c): Copyright (c) 2022 IETF Trust and the persons identified as the document authors. Subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info). Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.",
+  "files": {
+    "composite-kem/testvectors.json": {
+      "source_url": "https://raw.githubusercontent.com/lamps-wg/draft-composite-kem/d77e75420034d826e14cbef0b779986511f114e9/src/testvectors.json",
+      "source_repo": "https://github.com/lamps-wg/draft-composite-kem",
+      "source_commit": "d77e75420034d826e14cbef0b779986511f114e9",
+      "source_commit_date": "2026-02-21",
+      "entries": "14: the 12 composite ML-KEM sets plus plain ML-KEM-768 and ML-KEM-1024. Fields tcId, ek, dk, dk_pkcs8, c, k, x5c (base64); top-level cacert.",
+      "size_bytes": 183539,
+      "sha256": "1b8d80f3ce623f368466eda44820f8b82ca67c9955e213d212c997137ef9ff24"
+    },
+    "composite-sig/testvectors.json": {
+      "source_url": "https://raw.githubusercontent.com/lamps-wg/draft-composite-sigs/f0627ab34acfe1aee0abce4bee91ed2b577eab76/src/testvectors.json",
+      "source_repo": "https://github.com/lamps-wg/draft-composite-sigs",
+      "source_commit": "f0627ab34acfe1aee0abce4bee91ed2b577eab76",
+      "source_commit_date": "2026-01-07",
+      "entries": "21: the 18 composite ML-DSA sets plus plain ML-DSA-44/65/87. Fields tcId, pk, sk, sk_pkcs8, s, sWithContext, x5c (base64); top-level message m and context ctx.",
+      "size_bytes": 491883,
+      "sha256": "a60f697f9fd94c3cd5e4501a40c4396d9a9ffc7cf0f8a1ddd87dedbb46a7abf0"
+    }
+  }
+}

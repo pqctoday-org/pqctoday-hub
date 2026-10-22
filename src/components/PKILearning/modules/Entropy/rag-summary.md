@@ -4,7 +4,7 @@ This module teaches the critical role of entropy and randomness in cryptographic
 
 ## Key Concepts
 
-- **Entropy fundamentals**: Why entropy quality determines cryptographic strength; historical failures like the 2008 Debian OpenSSL bug (PID-only seeding produced only ~32,768 possible keys)
+- **Entropy fundamentals**: Why entropy quality determines cryptographic strength; historical failures like the 2008 Debian OpenSSL bug (PID-only seeding left only ~32,767 possible keys per key type, size and CPU architecture)
 - **NIST SP 800-90 family**: SP 800-90A (DRBG mechanisms), SP 800-90B (entropy source validation), SP 800-90C (RBG constructions combining sources with DRBGs)
 - **DRBG mechanisms**: SP 800-90A Rev. 1 (June 2015, the current final version) specifies Hash_DRBG, HMAC_DRBG (§10.1) and CTR_DRBG (§10.2); RFC 6979 deterministic (EC)DSA derives its nonce from HMAC_DRBG. SP 800-90A Rev. 2 is only a pre-draft call for comments (published 2025-09-04, comments closed 2025-11-04) announcing a planned SHAKE/XOF-based DRBG; no draft text exists, so no such mechanism is specified
 - **Entropy testing (SP 800-90B)**: Continuous health tests (Repetition Count, Adaptive Proportion) and min-entropy estimators (Most Common Value, Collision, Markov, Compression, t-Tuple, Longest Repeated Substring, predictor tests)

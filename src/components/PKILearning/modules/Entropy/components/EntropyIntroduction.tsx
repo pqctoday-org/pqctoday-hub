@@ -48,7 +48,10 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-status-error mb-1">Bad Entropy</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>Debian OpenSSL bug (2008): PID-only seeding produced ~32,768 possible keys</li>
+              <li>
+                Debian OpenSSL bug (2008): PID-only seeding left ~32,767 possible keys per key type,
+                size and CPU architecture
+              </li>
               <li>Predictable seeds lead to key recovery attacks</li>
               <li>Hardware failures (stuck-at) can produce constant output</li>
               <li>

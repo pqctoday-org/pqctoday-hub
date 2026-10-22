@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
-// HsmLearnView — the HSM playground's "Learn" tab: two tracks ("PKCS#11
-// Foundations" and "v3.2 & the PQC transformation"), each a sequence of
+// HsmLearnView — the HSM playground's "Learn" tab: three tracks ("PKCS#11
+// Foundations", "v3.2 & the PQC transformation" and "PKCS#11 v3.3 (working
+// draft)"), each a sequence of
 // guided lessons whose steps run real calls against the shared HsmContext
 // session — the same session the rest of the playground's tabs use. Mirrors
 // the KMIP playground's Learn tab shape (glossary rail, per-lesson quiz,
@@ -16,6 +17,8 @@ import {
   PlayCircle,
   XCircle,
   Crosshair,
+  FlaskConical,
+  MinusCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -29,6 +32,8 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { classifyStepOutcome, ensureEngineForStep } from './lessonRunner'
 import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
 import { V32_LESSONS } from './pkcs11LessonsV32'
+import { V33_LESSONS } from './pkcs11LessonsV33'
+import { isNotInEngine, V33_DRAFT_NOTE } from '@/wasm/softhsm/v33'
 import { QUIZZES } from './pkcs11Quiz'
 import { PKCS11_GLOSSARY_DATA } from './pkcs11Glossary'
 import type { LinearLessonBase } from '@/components/Playground/learnkit/lessonTypes'
@@ -36,9 +41,15 @@ import { MiniPkcsLog } from '@/components/Playground/components/MiniPkcsLog'
 import { HsmKeyTable } from '@/components/Playground/keystore/HsmKeyTable'
 import { discoverHsmObjects } from '@/components/Playground/keystore/discoverHsmObjects'
 
-type Track = 'foundations' | 'v32'
+import type { LearnTrack } from './learnTracks'
+export type { LearnTrack } from './learnTracks'
 
-type StepStatus = 'pending' | 'running' | 'ok' | 'refused-ok' | 'failed'
+/** 'not-in-engine': the step needs a v3.3 mechanism the loaded engine does
+ * not advertise. Shown neutrally, counted as done so the lesson can go on,
+ * and never shown as a pass or a failure. */
+type StepStatus = 'pending' | 'running' | 'ok' | 'refused-ok' | 'not-in-engine' | 'failed'
+
+const isDone = (s: StepStatus) => s === 'ok' || s === 'refused-ok' || s === 'not-in-engine'
 
 interface StepRunState {
   status: StepStatus
@@ -119,6 +130,14 @@ function StepRow({
               Refused, as expected
             </span>
           )}
+          {state.status === 'not-in-engine' && (
+            <span
+              className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground"
+              title="The loaded engine does not advertise the mechanism this step needs"
+            >
+              <MinusCircle size={11} aria-hidden="true" /> Not in this engine yet
+            </span>
+          )}
           {state.status === 'failed' && <XCircle size={15} className="text-destructive" />}
           {done && step.spot && onSpotlight && (
             <Button
@@ -158,6 +177,7 @@ function LessonRunner({
   analyticsCategory,
   onTryInWorkbench,
   onSpotlight,
+  initialLessonId,
 }: {
   lessons: LinearLessonBase<Pkcs11LessonStep>[]
   /** Nav badge prefix, e.g. "A" for A1/A2/… or "B" for B1/B2/… */
@@ -167,9 +187,16 @@ function LessonRunner({
   analyticsCategory: string
   onTryInWorkbench: (tab: string) => void
   onSpotlight?: (step: Pkcs11LessonStep) => void
+  /** Open this lesson first (deep link), when it exists in `lessons`. */
+  initialLessonId?: string
 }) {
   const hsm = useHsmContext()
-  const [lessonIdx, setLessonIdx] = useState(0)
+  const [lessonIdx, setLessonIdx] = useState(() =>
+    Math.max(
+      0,
+      lessons.findIndex((l) => l.id === initialLessonId)
+    )
+  )
   const lesson = lessons[lessonIdx]
   const [stepStates, setStepStates] = useState<StepRunState[]>(() =>
     lesson.steps.map(() => ({ status: 'pending' }))
@@ -223,7 +250,9 @@ function LessonRunner({
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e)
       const entries = stepEntries()
-      const outcome = classifyStepOutcome(lesson.steps[i].expect, entries)
+      const outcome: StepStatus = isNotInEngine(e)
+        ? 'not-in-engine'
+        : classifyStepOutcome(lesson.steps[i].expect, entries)
       logEvent(
         'Playground',
         `${analyticsCategory} Step`,
@@ -237,13 +266,13 @@ function LessonRunner({
 
   const runAll = async () => {
     for (let i = 0; i < lesson.steps.length; i++) {
-      if (stepStates[i].status === 'ok' || stepStates[i].status === 'refused-ok') continue
+      if (isDone(stepStates[i].status)) continue
       // Steps are deliberately sequential — each may read prior results.
       await runStep(i)
     }
   }
 
-  const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
+  const allDone = stepStates.every((s) => isDone(s.status))
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
@@ -302,7 +331,7 @@ function LessonRunner({
         <ol className="space-y-2">
           {lesson.steps.map((step, i) => {
             const prev = i > 0 ? stepStates[i - 1].status : null
-            const prevDone = prev === null || prev === 'ok' || prev === 'refused-ok'
+            const prevDone = prev === null || isDone(prev)
             return (
               <StepRow
                 key={i}
@@ -427,12 +456,28 @@ function LessonRunner({
 export function HsmLearnView({
   onTryInWorkbench,
   onSpotlight,
+  track: trackProp,
+  onTrackChange,
+  focus,
 }: {
   onTryInWorkbench: (tab: string) => void
   /** "Show me on Operate" — the shell spotlights the step's real control. */
   onSpotlight?: (step: Pkcs11LessonStep) => void
+  /** Controlled track (the playground's `?ltrack=` deep link). */
+  track?: LearnTrack
+  onTrackChange?: (t: LearnTrack) => void
+  /** Open a specific lesson; `nonce` re-applies the same lesson on a new request. */
+  focus?: { lessonId: string; nonce: number }
 }) {
-  const [track, setTrack] = useState<Track>('foundations')
+  const [trackState, setTrackState] = useState<LearnTrack>(trackProp ?? 'foundations')
+  const track = trackProp ?? trackState
+  const setTrack = (t: LearnTrack) => {
+    setTrackState(t)
+    onTrackChange?.(t)
+  }
+  // The runner remounts on every lesson request (a new nonce), so it opens
+  // on that lesson even when the same lesson is requested twice.
+  const runnerKey = focus?.nonce ?? 0
 
   return (
     <GlossaryProvider data={PKCS11_GLOSSARY_DATA}>
@@ -447,6 +492,7 @@ export function HsmLearnView({
               [
                 { id: 'foundations', label: 'PKCS#11 Foundations' },
                 { id: 'v32', label: 'v3.2 & the PQC transformation' },
+                { id: 'v33', label: 'PKCS#11 v3.3 (working draft)' },
               ] as const
             ).map((t) => (
               <Button
@@ -486,6 +532,36 @@ export function HsmLearnView({
               onTryInWorkbench={onTryInWorkbench}
               onSpotlight={onSpotlight}
             />
+          )}
+          {track === 'v33' && (
+            <>
+              <div
+                role="note"
+                data-testid="v33-draft-note"
+                className="flex items-start gap-2 rounded-lg border border-status-warning/40 bg-status-warning/10 p-3 text-[12px] leading-relaxed text-foreground"
+              >
+                <FlaskConical
+                  size={15}
+                  className="mt-0.5 shrink-0 text-status-warning"
+                  aria-hidden="true"
+                />
+                <p>
+                  <span className="font-semibold">Working draft. </span>
+                  {V33_DRAFT_NOTE} Each step first asks the engine which mechanisms it has; a step
+                  it cannot run yet says &ldquo;not in this engine yet&rdquo; instead of failing.
+                </p>
+              </div>
+              <LessonRunner
+                key={runnerKey}
+                lessons={V33_LESSONS}
+                navPrefix="C"
+                namespace="hsm-pkcs11-v33"
+                analyticsCategory="PKCS11 v3.3 draft"
+                onTryInWorkbench={onTryInWorkbench}
+                onSpotlight={onSpotlight}
+                initialLessonId={focus?.lessonId}
+              />
+            </>
           )}
         </div>
         <GlossaryRail />

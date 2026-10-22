@@ -17,6 +17,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CNSA_2_0 } from '@/data/regulatoryTimelines'
 
 interface StatefulSigsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -51,9 +52,8 @@ const Step1WhyAndMerkle: React.FC = () => (
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <blockquote className="text-sm italic text-foreground/90">
-            &ldquo;LMS, HSS, XMSS, and XMSS^MT are approved for use by federal agencies for the
-            protection of sensitive information when implemented in accordance with this
-            recommendation.&rdquo;
+            &ldquo;This recommendation specifies profiles of LMS, HSS, XMSS, and XMSS^MT that are
+            appropriate for use by the U.S. Federal Government.&rdquo;
           </blockquote>
           <p className="text-xs text-muted-foreground mt-2">
             &mdash; <InlineTooltip term="NIST SP 800-208">NIST SP 800-208</InlineTooltip>:
@@ -78,20 +78,22 @@ const Step1WhyAndMerkle: React.FC = () => (
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-primary mb-1">CNSA 2.0 Required</div>
             <p className="text-xs text-muted-foreground mb-2">
-              NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> mandates LMS/XMSS for
-              firmware and software signing in national security systems, ahead of ML-DSA adoption.
-              Phased timeline:
+              NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> approves single-tree LMS
+              and XMSS (not HSS or XMSS^MT) for firmware and software signing in national security
+              systems, and prefers LMS with SHA-256/192. Phased timeline:
             </p>
             <ul className="text-xs text-muted-foreground space-y-0.5">
               <li>
-                &bull; <strong>2025:</strong> New software/firmware should support &amp; prefer CNSA
-                2.0
+                &bull; <strong>{CNSA_2_0.softwarePreferred}:</strong> New software/firmware should
+                support &amp; prefer CNSA 2.0
               </li>
               <li>
-                &bull; <strong>2030:</strong> All deployed NSS must use CNSA 2.0 signatures
+                &bull; <strong>{CNSA_2_0.softwareExclusive}:</strong> Software and firmware signing
+                must use CNSA 2.0 exclusively
               </li>
               <li>
-                &bull; <strong>2033&ndash;35:</strong> Full quantum-resistant enforcement
+                &bull; <strong>{CNSA_2_0.fullEnforcement}:</strong> CNSA 2.0 algorithms mandated for
+                all NSS unless otherwise noted (CNSA 2.0 FAQ)
               </li>
             </ul>
           </div>
@@ -394,15 +396,18 @@ const Step2LmsXmss: React.FC = () => (
                     <InlineTooltip term="Forward Secrecy">Forward Security</InlineTooltip>
                   </td>
                   <td className="py-2 pr-4 text-muted-foreground">No</td>
-                  <td className="py-2 text-success font-medium">
-                    Yes &mdash; past signatures stay secure even if current key is compromised
+                  <td className="py-2 text-muted-foreground">
+                    No, as standardised (SP 800-208, RFC 8391): every one-time key is derived from
+                    one fixed secret seed, so a stolen seed exposes all of them. Forward-secure XMSS
+                    exists only as a research variant.
                   </td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4 font-medium text-foreground">Adoption</td>
-                  <td className="py-2 pr-4">NSA CNSA 2.0, broader industry</td>
+                  <td className="py-2 pr-4">NSA CNSA 2.0 (single-tree LMS only), BSI</td>
                   <td className="py-2">
-                    <InlineTooltip term="BSI">BSI</InlineTooltip> (Germany), European preference
+                    NSA CNSA 2.0 (single-tree XMSS only),{' '}
+                    <InlineTooltip term="BSI">BSI</InlineTooltip>
                   </td>
                 </tr>
               </tbody>
@@ -420,8 +425,9 @@ const Step2LmsXmss: React.FC = () => (
             second-preimage-only security proof.
           </p>
           <p>
-            Both LMS and XMSS are approved by NIST SP 800-208. Regulatory preference: NSA CNSA 2.0
-            favors LMS/HSS; BSI guidelines favor XMSS/XMSS^MT.
+            Both LMS and XMSS are approved by NIST SP 800-208. NSA CNSA 2.0 allows only the
+            single-tree LMS and XMSS (HSS and XMSS^MT are not allowed) and prefers LMS with
+            SHA-256/192; BSI TR-02102-1 recommends all SP 800-208 parameter sets of both families.
           </p>
         </div>
       </div>
@@ -613,7 +619,7 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
           </div>
         </Link>
         <a
-          href="https://datatracker.ietf.org/doc/draft-ietf-pquip-hbs-state/"
+          href="https://www.rfc-editor.org/rfc/rfc10033"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
@@ -621,7 +627,7 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
           <ExternalLink size={18} className="text-primary shrink-0" />
           <div>
             <div className="text-sm font-medium text-foreground">
-              IETF HBS State Management Draft
+              RFC 10033: Hash-Based Signatures: State and Backup Management
             </div>
             <div className="text-xs text-muted-foreground">
               Practical guidance on state, backup, and recovery for LMS/XMSS deployments

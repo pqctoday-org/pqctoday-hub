@@ -3,12 +3,12 @@
   "$disclaimer": "PQC Today executes selected public reference vectors, standards tests, conformance cases, and implementation probes. A passing result is evidence only for the identified test, operation, parameters, implementation build, and target. It is not an ACVTS verdict, a CAVP/CMVP certificate, or proof of exhaustive conformance.",
   "schema": "pqctoday.coverage-matrix/v1",
   "inputs": {
-    "src/data/validation/mechanism-inventory.generated.json": "9f17d2fedfdbef8d1fc0b407dc93a28e29bd264a7331f7713f93df586724a215",
-    "src/data/validation/capability-map.json": "5e728d04aabfa26aa9c135ca7d78a2716823b1f7f260c2663bb9d516a0416923",
+    "src/data/validation/mechanism-inventory.generated.json": "9efa00b7077b1de4e3e61fe00c76ccf2d0b77372b9e078d4e3bf9f91d1dca19c",
+    "src/data/validation/capability-map.json": "2f29ec90584fb8fbf01613846b79ed60bb4106ded04c3af840455aad492ecc5f",
     "src/data/validation/vector-manifest.json": "c8cc3e89a478981c3a6de1b494a0b9bd49550d762b4eb68704384a3928b73791",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
-    "src/data/validation/testRegistry.ts": "b50ad0efe6feb2763d34ca1dc79152c781ed93f25c35cfe3e6473b62685d9fd8"
+    "src/data/validation/testRegistry.ts": "48bf7451f0be58bd7a1d3b490d30b7e964137f72a4454304615dea4ec9eac4a1"
   },
   "statuses": [
     "acvts-issued",
@@ -74,13 +74,13 @@
     },
     "rust": {
       "label": "Rust",
-      "mechanismCount": 175,
-      "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
-      "sourceCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+      "mechanismCount": 180,
+      "inventorySha256": "9ddca57385f648565b83611d54564e3492671b75828ed06e090093f955e153d6",
+      "sourceCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
       "artifacts": [
         {
           "path": "src/wasm/softhsmrustv3_bg.wasm",
-          "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25"
+          "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575"
         },
         {
           "path": "src/wasm/softhsmrustv3_bg.js",
@@ -92,7 +92,7 @@
   "artifactKinds": {
     "wasm": {
       "status": "registered; partly recorded",
-      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242). Tests without a recorded result are never reported as passed."
+      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f). Tests without a recorded result are never reported as passed."
     },
     "native": {
       "status": "not-run",
@@ -114,8 +114,8 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
-      "recordedAt": "2026-10-03",
+      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "recordedAt": "2026-10-22",
       "results": 4992
     },
     {
@@ -128,8 +128,8 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
-      "recordedAt": "2026-10-03",
+      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "recordedAt": "2026-10-22",
       "results": 96
     },
     {
@@ -142,18 +142,18 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
-      "recordedAt": "2026-10-03",
+      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "recordedAt": "2026-10-22",
       "results": 13364
     }
   ],
   "totals": {
-    "rows": 2254,
+    "rows": 2262,
     "declaredUnreachableRows": 16,
     "byEngine": {
       "cpp": {
         "advertisedCells": 2215,
-        "unsupportedCells": 39,
+        "unsupportedCells": 47,
         "overall": {
           "covered": 15,
           "sampled": 2158,
@@ -262,46 +262,46 @@
         }
       },
       "rust": {
-        "advertisedCells": 2231,
+        "advertisedCells": 2239,
         "unsupportedCells": 23,
         "overall": {
           "covered": 15,
-          "sampled": 2167,
+          "sampled": 2175,
           "untested": 49
         },
         "byDimension": {
           "algorithm": {
-            "covered": 243,
-            "sampled": 1374,
+            "covered": 245,
+            "sampled": 1380,
             "untested": 614
           },
           "api": {
-            "covered": 923,
-            "sampled": 23,
-            "untested": 1285
+            "covered": 924,
+            "sampled": 26,
+            "untested": 1289
           }
         },
         "byPolarity": {
           "positive": {
-            "covered": 192,
-            "sampled": 1881,
+            "covered": 194,
+            "sampled": 1887,
             "untested": 158,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 673,
               "standard-kat": 5,
-              "oracle": 32,
+              "oracle": 34,
               "differential": 0,
-              "round-trip": 890,
+              "round-trip": 896,
               "behavior-only": 473,
               "untested": 158,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 84,
-            "sampled": 64,
-            "untested": 2083,
+            "covered": 85,
+            "sampled": 67,
+            "untested": 2087,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 106,
@@ -309,15 +309,15 @@
               "oracle": 11,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 31,
-              "untested": 2083,
+              "behavior-only": 35,
+              "untested": 2087,
               "unsupported": 0
             }
           },
           "boundary": {
             "covered": 42,
             "sampled": 173,
-            "untested": 2016,
+            "untested": 2024,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 155,
@@ -326,14 +326,14 @@
               "differential": 0,
               "round-trip": 50,
               "behavior-only": 0,
-              "untested": 2016,
+              "untested": 2024,
               "unsupported": 0
             }
           },
           "state-error": {
             "covered": 923,
-            "sampled": 0,
-            "untested": 1308,
+            "sampled": 1,
+            "untested": 1315,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 0,
@@ -341,8 +341,8 @@
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 923,
-              "untested": 1308,
+              "behavior-only": 924,
+              "untested": 1315,
               "unsupported": 0
             }
           }
@@ -350,7 +350,7 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2182,
+            "registeredCells": 2190,
             "passedCells": 2181,
             "failedCells": 2,
             "skippedCells": 0
@@ -377,25 +377,25 @@
         "parity": 2034,
         "divergent": 1,
         "not-established": 173,
-        "single-engine": 46
+        "single-engine": 54
       },
       "negative": {
         "parity": 148,
         "divergent": 0,
         "not-established": 2060,
-        "single-engine": 46
+        "single-engine": 54
       },
       "boundary": {
         "parity": 214,
         "divergent": 0,
         "not-established": 1994,
-        "single-engine": 46
+        "single-engine": 54
       },
       "state-error": {
         "parity": 913,
         "divergent": 0,
         "not-established": 1295,
-        "single-engine": 46
+        "single-engine": 54
       }
     },
     "waivers": {
@@ -917,47 +917,47 @@
     },
     {
       "id": "polarity-untested:negative",
-      "title": "negative coverage missing on 4150 of 4446 advertised cells",
-      "detail": "No registered negative case exists for 4150 advertised (row × engine) cells. Positive tests never count toward this column.",
+      "title": "negative coverage missing on 4154 of 4454 advertised cells",
+      "detail": "No registered negative case exists for 4154 advertised (row × engine) cells. Positive tests never count toward this column.",
       "planItem": "D1-4 / D2-2 / D3-2 / G-8",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust",
       "origin": "generated",
-      "cells": 4150
+      "cells": 4154
     },
     {
       "id": "polarity-untested:boundary",
-      "title": "boundary coverage missing on 4017 of 4446 advertised cells",
-      "detail": "No registered boundary case exists for 4017 advertised (row × engine) cells. Positive tests never count toward this column.",
+      "title": "boundary coverage missing on 4025 of 4454 advertised cells",
+      "detail": "No registered boundary case exists for 4025 advertised (row × engine) cells. Positive tests never count toward this column.",
       "planItem": "D2-6 / D3-3",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust",
       "origin": "generated",
-      "cells": 4017
+      "cells": 4025
     },
     {
       "id": "polarity-untested:state-error",
-      "title": "state-error coverage missing on 2606 of 4446 advertised cells",
-      "detail": "No registered state-error case exists for 2606 advertised (row × engine) cells. Positive tests never count toward this column.",
+      "title": "state-error coverage missing on 2613 of 4454 advertised cells",
+      "detail": "No registered state-error case exists for 2613 advertised (row × engine) cells. Positive tests never count toward this column.",
       "planItem": "G-8",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust",
       "origin": "generated",
-      "cells": 2606
+      "cells": 2613
     },
     {
       "id": "unsupported-cells",
-      "title": "62 unsupported (row × engine) cells kept in the denominator",
+      "title": "70 unsupported (row × engine) cells kept in the denominator",
       "detail": "Cells one engine does not advertise (mechanism absent, CKF_ flag not set, or parameter set outside its key-size range) and declared capabilities no PKCS #11 mechanism can express. Listed per row in the matrix; never dropped.",
       "planItem": "J-7 / G-9",
       "owner": "unassigned",
       "status": "open",
       "scope": "C++ + Rust",
       "origin": "generated",
-      "cells": 62
+      "cells": 70
     },
     {
       "id": "recorded-fail:acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3:cpp",
@@ -1333,6 +1333,11 @@
     "CKM_XMSSMT": {"mechanism":"CKM_XMSSMT","typeHex":"0x00004037","algorithm":"XMSS^MT","revision":"SP 800-208 / RFC 8391","section":"§6.66.8","family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
     "CKM_ML_DSA_EXTERNAL_MU_GEN": {"mechanism":"CKM_ML_DSA_EXTERNAL_MU_GEN","typeHex":"0x0000403b","algorithm":"ML-DSA external-mu computation","revision":"FIPS 204 (external μ)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
     "CKM_ML_DSA_EXTERNAL_MU": {"mechanism":"CKM_ML_DSA_EXTERNAL_MU","typeHex":"0x0000403c","algorithm":"ML-DSA sign/verify from external mu","revision":"FIPS 204","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"declared","mapping":"reviewed"}},
+    "CKM_COMP_SIG_KEY_PAIR_GEN": {"mechanism":"CKM_COMP_SIG_KEY_PAIR_GEN","typeHex":"0x0000403d","algorithm":"Composite ML-DSA","revision":"draft-ietf-lamps-pq-composite-sigs (PKCS #11 v3.3 working draft)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
+    "CKM_COMP_SIG": {"mechanism":"CKM_COMP_SIG","typeHex":"0x0000403e","algorithm":"Composite ML-DSA","revision":"draft-ietf-lamps-pq-composite-sigs (PKCS #11 v3.3 working draft)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
+    "CKM_COMP_SIG_EXTERNAL_HASH": {"mechanism":"CKM_COMP_SIG_EXTERNAL_HASH","typeHex":"0x0000403f","algorithm":"Composite ML-DSA (caller-supplied pre-hash)","revision":"draft-ietf-lamps-pq-composite-sigs (PKCS #11 v3.3 working draft)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
+    "CKM_COMP_KEM_KEY_PAIR_GEN": {"mechanism":"CKM_COMP_KEM_KEY_PAIR_GEN","typeHex":"0x00004040","algorithm":"Composite ML-KEM","revision":"draft-ietf-lamps-pq-composite-kem (PKCS #11 v3.3 working draft)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
+    "CKM_COMP_KEM": {"mechanism":"CKM_COMP_KEM","typeHex":"0x00004041","algorithm":"Composite ML-KEM","revision":"draft-ietf-lamps-pq-composite-kem (PKCS #11 v3.3 working draft)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
     "unreachable:mldsa-hash-sha512t": {"mechanism":null,"typeHex":null,"algorithm":"HashML-DSA with SHA2-512/224 or SHA2-512/256","revision":"FIPS 204","section":null,"family":"pqc","source":{"mechanism":"declared","parameterSet":"declared","mapping":"reviewed"}},
     "unreachable:mldsa-hedged-rnd": {"mechanism":null,"typeHex":null,"algorithm":"ML-DSA hedged signing with caller-supplied rnd","revision":"FIPS 204","section":null,"family":"pqc","source":{"mechanism":"declared","parameterSet":"declared","mapping":"reviewed"}},
     "CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN": {"mechanism":"CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN","typeHex":"0x80000001","algorithm":"FrodoKEM","revision":"FrodoKEM standard proposal (2025-09-29)","section":null,"family":"pqc","source":{"mechanism":"discovered","parameterSet":"not-enumerated","mapping":"reviewed"}},
@@ -10644,7 +10649,66 @@
     {"id":"errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL","test":"errpath.message-verify.key-type-inconsistent","runner":"errorPathProbes","caseId":"local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_HMAC_GENERAL","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"state-error","engines":["cpp","rust"]},
     {"id":"errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS","test":"errpath.message-verify.key-type-inconsistent","runner":"errorPathProbes","caseId":"local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"state-error","engines":["cpp","rust"]},
     {"id":"errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS","test":"errpath.message-verify.key-type-inconsistent","runner":"errorPathProbes","caseId":"local:errpath.message-verify.key-type-inconsistent/CKM_SHA512_RSA_PKCS_PSS","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"state-error","engines":["cpp","rust"]},
-    {"id":"errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SLH_DSA","test":"errpath.message-verify.key-type-inconsistent","runner":"errorPathProbes","caseId":"local:errpath.message-verify.key-type-inconsistent/CKM_SLH_DSA","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"state-error","engines":["cpp","rust"]}
+    {"id":"errpath.message-verify.key-type-inconsistent#local:errpath.message-verify.key-type-inconsistent/CKM_SLH_DSA","test":"errpath.message-verify.key-type-inconsistent","runner":"errorPathProbes","caseId":"local:errpath.message-verify.key-type-inconsistent/CKM_SLH_DSA","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"state-error","engines":["cpp","rust"]},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_RSA2048","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_RSA2048","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM768_RSA2048"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_RSA3072","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_RSA3072","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM768_RSA3072"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_RSA4096","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_RSA4096","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM768_RSA4096"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_X25519","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_X25519","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM768_X25519"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_ECDH_P256","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_ECDH_P256","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM768_ECDH_P256"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_ECDH_P384","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM768_ECDH_P384","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM768_ECDH_P384"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_RSA3072","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_RSA3072","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM1024_RSA3072"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_ECDH_P384","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_ECDH_P384","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM1024_ECDH_P384"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_X448","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_X448","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM1024_X448"},
+    {"id":"v33.composite-kem-roundtrip#local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_ECDH_P521","test":"v33.composite-kem-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-roundtrip/CKP_COMP_KEM_MLKEM1024_ECDH_P521","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.kem.CKP_COMP_KEM_MLKEM1024_ECDH_P521"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_RSA2048_PSS_SHA256","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_RSA2048_PSS_SHA256","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA44_RSA2048_PSS_SHA256"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_RSA2048_PKCS15_SHA256","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_RSA2048_PKCS15_SHA256","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA44_RSA2048_PKCS15_SHA256"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_ED25519_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_ED25519_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA44_ED25519_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_ECDSA_P256_SHA256","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA44_ECDSA_P256_SHA256","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA44_ECDSA_P256_SHA256"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA3072_PSS_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA3072_PSS_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA65_RSA3072_PSS_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA3072_PKCS15_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA3072_PKCS15_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA65_RSA3072_PKCS15_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA4096_PSS_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA4096_PSS_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA65_RSA4096_PSS_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA4096_PKCS15_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_RSA4096_PKCS15_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA65_RSA4096_PKCS15_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_ECDSA_P384_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_ECDSA_P384_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA65_ECDSA_P384_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_ED25519_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA65_ED25519_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA65_ED25519_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_ECDSA_P384_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_ECDSA_P384_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA87_ECDSA_P384_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_ED448_SHAKE256","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_ED448_SHAKE256","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA87_ED448_SHAKE256"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_RSA3072_PSS_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_RSA3072_PSS_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA87_RSA3072_PSS_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_RSA4096_PSS_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_RSA4096_PSS_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA87_RSA4096_PSS_SHA512"},
+    {"id":"v33.composite-sig-roundtrip#local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_ECDSA_P521_SHA512","test":"v33.composite-sig-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-roundtrip/CKP_COMP_SIG_MLDSA87_ECDSA_P521_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig.CKP_COMP_SIG_MLDSA87_ECDSA_P521_SHA512"},
+    {"id":"v33.composite-sig-external-hash-roundtrip#local:v33.composite-sig-external-hash-roundtrip/CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512","test":"v33.composite-sig-external-hash-roundtrip","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-external-hash-roundtrip/CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"],"rowId":"v33.coverage.sig-external-hash.CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_RSA2048","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_RSA2048","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM768_RSA2048"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_RSA3072","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_RSA3072","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM768_RSA3072"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_RSA4096","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_RSA4096","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM768_RSA4096"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_X25519","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_X25519","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM768_X25519"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_ECDH_P256","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_ECDH_P256","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM768_ECDH_P256"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_ECDH_P384","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM768_ECDH_P384","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM768_ECDH_P384"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_RSA3072","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_RSA3072","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM1024_RSA3072"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_ECDH_P384","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_ECDH_P384","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM1024_ECDH_P384"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_X448","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_X448","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM1024_X448"},
+    {"id":"v33.composite-kem-kat#local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_ECDH_P521","test":"v33.composite-kem-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-kem-kat/CKP_COMP_KEM_MLKEM1024_ECDH_P521","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.kem.CKP_COMP_KEM_MLKEM1024_ECDH_P521"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_RSA2048_PSS_SHA256","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_RSA2048_PSS_SHA256","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA44_RSA2048_PSS_SHA256"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_RSA2048_PKCS15_SHA256","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_RSA2048_PKCS15_SHA256","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA44_RSA2048_PKCS15_SHA256"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_ED25519_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_ED25519_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA44_ED25519_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_ECDSA_P256_SHA256","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA44_ECDSA_P256_SHA256","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA44_ECDSA_P256_SHA256"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA3072_PSS_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA3072_PSS_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA65_RSA3072_PSS_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA3072_PKCS15_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA3072_PKCS15_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA65_RSA3072_PKCS15_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA4096_PSS_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA4096_PSS_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA65_RSA4096_PSS_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA4096_PKCS15_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_RSA4096_PKCS15_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA65_RSA4096_PKCS15_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA65_ECDSA_P256_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_ECDSA_P384_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_ECDSA_P384_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA65_ECDSA_P384_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_ED25519_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA65_ED25519_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA65_ED25519_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_ECDSA_P384_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_ECDSA_P384_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA87_ECDSA_P384_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_ED448_SHAKE256","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_ED448_SHAKE256","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA87_ED448_SHAKE256"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_RSA3072_PSS_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_RSA3072_PSS_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA87_RSA3072_PSS_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_RSA4096_PSS_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_RSA4096_PSS_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA87_RSA4096_PSS_SHA512"},
+    {"id":"v33.composite-sig-kat#local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_ECDSA_P521_SHA512","test":"v33.composite-sig-kat","runner":"v33DraftFeatures","caseId":"local:v33.composite-sig-kat/CKP_COMP_SIG_MLDSA87_ECDSA_P521_SHA512","evidenceClass":"independent-oracle","status":"oracle","polarity":"positive","engines":["rust"],"rowId":"v33.kat.sig.CKP_COMP_SIG_MLDSA87_ECDSA_P521_SHA512"},
+    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-sig-external-hash-wrong-length","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-sig-external-hash-wrong-length","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-sig-external-hash-wrong-length"},
+    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-sig-external-hash-sign-update","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-sig-external-hash-sign-update","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"state-error","engines":["rust"],"rowId":"v33.errpath.comp-sig-external-hash-sign-update"},
+    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-kem-with-parameter","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-kem-with-parameter","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-kem-with-parameter"},
+    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-kem-ciphertext-wrong-length","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-kem-ciphertext-wrong-length","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-kem-ciphertext-wrong-length"},
+    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-sig-key-with-comp-kem","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-sig-key-with-comp-kem","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-sig-key-with-comp-kem"},
+    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-kem-key-with-comp-sig","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-kem-key-with-comp-sig","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-kem-key-with-comp-sig"}
   ],
   "rows": [
     {"k":"CKM_RSA_PKCS_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_RSA_PKCS_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[6783,6784,6785]],"state-error":["behavior-only","covered",[6819,6827,6835,6843]]},"run":[4,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[6765,6766,6783,6784,6785]],"state-error":["behavior-only","covered",[6819,6827,6835,6843]]},"run":[6,0]}},"par":{"positive":"not-established","negative":"not-established","boundary":"not-established","state-error":"parity"}},
@@ -12858,6 +12922,14 @@
     {"k":"CKM_ML_DSA_EXTERNAL_MU|verify|ML-DSA-44|*","c":"CKM_ML_DSA_EXTERNAL_MU","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","sampled",[542]],"negative":["nist-reference","sampled",[543]],"state-error":["behavior-only","covered",[7737,7823,7909,7995,8081]]},"run":[7,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","sampled",[542]],"negative":["nist-reference","sampled",[543]],"state-error":["behavior-only","covered",[7737,7823,7909,7995,8081]]},"run":[7,0]}},"par":{"positive":"parity","negative":"parity","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_ML_DSA_EXTERNAL_MU|verify|ML-DSA-65|*","c":"CKM_ML_DSA_EXTERNAL_MU","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","sampled",[544]],"negative":["nist-reference","sampled",[545]],"state-error":["behavior-only","covered",[7737,7823,7909,7995,8081]]},"run":[7,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","sampled",[544]],"negative":["nist-reference","sampled",[545]],"state-error":["behavior-only","covered",[7737,7823,7909,7995,8081]]},"run":[7,0]}},"par":{"positive":"parity","negative":"parity","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_ML_DSA_EXTERNAL_MU|verify|ML-DSA-87|*","c":"CKM_ML_DSA_EXTERNAL_MU","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","sampled",[546]],"negative":["nist-reference","sampled",[547]],"state-error":["behavior-only","covered",[7737,7823,7909,7995,8081]]},"run":[7,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","sampled",[546]],"negative":["nist-reference","sampled",[547]],"state-error":["behavior-only","covered",[7737,7823,7909,7995,8081]]},"run":[7,0]}},"par":{"positive":"parity","negative":"parity","boundary":"not-established","state-error":"parity"}},
+    {"k":"CKM_COMP_SIG_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_COMP_SIG_KEY_PAIR_GEN","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9300,9301,9302,9303,9304,9305,9306,9307,9308,9309,9310,9311,9312,9313,9314,9315,9316]]}}},"par":"single-engine"},
+    {"k":"CKM_COMP_SIG|sign|*|*","c":"CKM_COMP_SIG","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9300,9301,9302,9303,9304,9305,9306,9307,9308,9309,9310,9311,9312,9313,9314,9315]],"negative":["behavior-only","sampled",[9348]]}}},"par":"single-engine"},
+    {"k":"CKM_COMP_SIG|verify|*|*","c":"CKM_COMP_SIG","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["oracle","covered",[9300,9301,9302,9303,9304,9305,9306,9307,9308,9309,9310,9311,9312,9313,9314,9315,9316,9327,9328,9329,9330,9331,9332,9333,9334,9335,9336,9337,9338,9339,9340,9341,9342]]}}},"par":"single-engine"},
+    {"k":"CKM_COMP_SIG_EXTERNAL_HASH|sign|*|*","c":"CKM_COMP_SIG_EXTERNAL_HASH","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9316]],"negative":["behavior-only","sampled",[9343]],"state-error":["behavior-only","sampled",[9344]]}}},"par":"single-engine"},
+    {"k":"CKM_COMP_SIG_EXTERNAL_HASH|verify|*|*","c":"CKM_COMP_SIG_EXTERNAL_HASH","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9316]]}}},"par":"single-engine"},
+    {"k":"CKM_COMP_KEM_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_COMP_KEM_KEY_PAIR_GEN","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9290,9291,9292,9293,9294,9295,9296,9297,9298,9299]]}}},"par":"single-engine"},
+    {"k":"CKM_COMP_KEM|encapsulate|*|*","c":"CKM_COMP_KEM","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9290,9291,9292,9293,9294,9295,9296,9297,9298,9299]],"negative":["behavior-only","sampled",[9345]]}}},"par":"single-engine"},
+    {"k":"CKM_COMP_KEM|decapsulate|*|*","c":"CKM_COMP_KEM","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["oracle","covered",[9290,9291,9292,9293,9294,9295,9296,9297,9298,9299,9317,9318,9319,9320,9321,9322,9323,9324,9325,9326]],"negative":["behavior-only","covered",[9346,9347]]}}},"par":"single-engine"},
     {"k":"unreachable:mldsa-hash-sha512t|sign|ML-DSA-44|*","c":"unreachable:mldsa-hash-sha512t","e":{"cpp":{"adv":false,"why":6},"rust":{"adv":false,"why":6}},"par":"single-engine"},
     {"k":"unreachable:mldsa-hash-sha512t|sign|ML-DSA-65|*","c":"unreachable:mldsa-hash-sha512t","e":{"cpp":{"adv":false,"why":6},"rust":{"adv":false,"why":6}},"par":"single-engine"},
     {"k":"unreachable:mldsa-hash-sha512t|sign|ML-DSA-87|*","c":"unreachable:mldsa-hash-sha512t","e":{"cpp":{"adv":false,"why":6},"rust":{"adv":false,"why":6}},"par":"single-engine"},

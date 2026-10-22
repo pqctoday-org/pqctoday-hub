@@ -24,6 +24,9 @@ export const CKK_NAMES: Record<number, string> = {
   0x49: 'CKK_ML_KEM',
   0x4a: 'CKK_ML_DSA',
   0x4b: 'CKK_SLH_DSA',
+  // PKCS#11 v3.3 working draft (approved codepoints).
+  0x4c: 'CKK_COMP_KEM',
+  0x4d: 'CKK_COMP_SIG',
   // Vendor-defined (no v3.2 CKK_* assignment exists for these families).
   0x80000001: 'CKK_PQCTODAY_FRODOKEM',
   0x80000002: 'CKK_PQCTODAY_CLASSIC_MCELIECE',
@@ -49,6 +52,8 @@ export const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x49: 'ml-kem',
   0x4a: 'ml-dsa',
   0x4b: 'slh-dsa',
+  0x4c: 'composite-kem',
+  0x4d: 'composite-sig',
   0x46: 'hss',
   0x47: 'xmss',
   0x48: 'xmss',

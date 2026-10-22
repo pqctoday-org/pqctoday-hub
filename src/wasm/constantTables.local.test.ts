@@ -38,6 +38,20 @@ const parseHeader = (): Map<string, number> => {
   return out
 }
 
+/**
+ * The one registered PKCS#11 v3.3 correction, mirroring `V33_CORRECTIONS` in
+ * pqctoday-hsm's scripts/check_pkcs11_constants.py: v3.2 omits
+ * CKF_ARRAY_ATTRIBUTE (0x40000000) on these two array attributes, and the
+ * OASIS PKCS 11 TC working header sets it (working/headers/pkcs11t.h at
+ * commit 9ef73f9f44ed8a240b05484427a0851ab36be251). The tables carry both
+ * values under the same name; any other difference from the header still
+ * fails.
+ */
+const V33_CORRECTIONS: Record<string, number> = {
+  CKA_ENCAPSULATE_TEMPLATE: 0x4000062a,
+  CKA_DECAPSULATE_TEMPLATE: 0x4000062b,
+}
+
 const headerPresent = hsmAvailableOrExplicitSkip('constant-table header check', HEADER)
 const describeIfPresent = headerPresent ? describe : describe.skip
 
@@ -55,6 +69,7 @@ describeIfPresent('spec-sourced constant tables match the canonical v3.2 header'
         // (e.g. CKO_VENDOR_*), and are covered by other guards — skip rather
         // than fail, so this test only asserts what the header can settle.
         if (expected === undefined) continue
+        if (V33_CORRECTIONS[entry.name] === Number(ordinal)) continue
         if (expected !== Number(ordinal)) {
           wrong.push(
             `${entry.name}: table says 0x${Number(ordinal).toString(16)}, header says 0x${expected.toString(16)}`

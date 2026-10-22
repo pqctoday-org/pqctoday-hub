@@ -3489,16 +3489,16 @@
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25"
+            "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
             "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
           }
         ],
-        "sourceCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+        "sourceCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
-        "builtAt": "2026-10-03",
+        "builtAt": "2026-10-22",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
       },
       "capture": {
@@ -3507,8 +3507,8 @@
       },
       "inventory": {
         "schema": "pqctoday.mechanism-inventory/v1",
-        "mechanismCount": 175,
-        "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
+        "mechanismCount": 180,
+        "inventorySha256": "9ddca57385f648565b83611d54564e3492671b75828ed06e090093f955e153d6",
         "mechanisms": [
           {
             "type": 0,
@@ -6885,6 +6885,76 @@
             "findings": []
           },
           {
+            "type": 16445,
+            "infoRv": 0,
+            "ulMinKeySize": 1344,
+            "ulMaxKeySize": 3118,
+            "flags": 65536,
+            "typeHex": "0x0000403d",
+            "name": "CKM_COMP_SIG_KEY_PAIR_GEN",
+            "family": "pqc",
+            "flagsHex": "0x00010000",
+            "flagNames": ["CKF_GENERATE_KEY_PAIR"],
+            "requiredOperations": ["generate-key-pair"],
+            "findings": []
+          },
+          {
+            "type": 16446,
+            "infoRv": 0,
+            "ulMinKeySize": 1344,
+            "ulMaxKeySize": 3118,
+            "flags": 10240,
+            "typeHex": "0x0000403e",
+            "name": "CKM_COMP_SIG",
+            "family": "pqc",
+            "flagsHex": "0x00002800",
+            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
+            "requiredOperations": ["sign", "verify"],
+            "findings": []
+          },
+          {
+            "type": 16447,
+            "infoRv": 0,
+            "ulMinKeySize": 1344,
+            "ulMaxKeySize": 3118,
+            "flags": 10240,
+            "typeHex": "0x0000403f",
+            "name": "CKM_COMP_SIG_EXTERNAL_HASH",
+            "family": "pqc",
+            "flagsHex": "0x00002800",
+            "flagNames": ["CKF_SIGN", "CKF_VERIFY"],
+            "requiredOperations": ["sign", "verify"],
+            "findings": []
+          },
+          {
+            "type": 16448,
+            "infoRv": 0,
+            "ulMinKeySize": 1216,
+            "ulMaxKeySize": 1966,
+            "flags": 65536,
+            "typeHex": "0x00004040",
+            "name": "CKM_COMP_KEM_KEY_PAIR_GEN",
+            "family": "pqc",
+            "flagsHex": "0x00010000",
+            "flagNames": ["CKF_GENERATE_KEY_PAIR"],
+            "requiredOperations": ["generate-key-pair"],
+            "findings": []
+          },
+          {
+            "type": 16449,
+            "infoRv": 0,
+            "ulMinKeySize": 1216,
+            "ulMaxKeySize": 1966,
+            "flags": 805306368,
+            "typeHex": "0x00004041",
+            "name": "CKM_COMP_KEM",
+            "family": "pqc",
+            "flagsHex": "0x30000000",
+            "flagNames": ["CKF_ENCAPSULATE", "CKF_DECAPSULATE"],
+            "requiredOperations": ["encapsulate", "decapsulate"],
+            "findings": []
+          },
+          {
             "type": 2147483649,
             "infoRv": 0,
             "ulMinKeySize": 9616,
@@ -7157,6 +7227,26 @@
       {
         "typeHex": "0x00000242",
         "name": "CKM_RIPEMD160_HMAC_GENERAL"
+      },
+      {
+        "typeHex": "0x0000403d",
+        "name": "CKM_COMP_SIG_KEY_PAIR_GEN"
+      },
+      {
+        "typeHex": "0x0000403e",
+        "name": "CKM_COMP_SIG"
+      },
+      {
+        "typeHex": "0x0000403f",
+        "name": "CKM_COMP_SIG_EXTERNAL_HASH"
+      },
+      {
+        "typeHex": "0x00004040",
+        "name": "CKM_COMP_KEM_KEY_PAIR_GEN"
+      },
+      {
+        "typeHex": "0x00004041",
+        "name": "CKM_COMP_KEM"
       },
       {
         "typeHex": "0x80000001",

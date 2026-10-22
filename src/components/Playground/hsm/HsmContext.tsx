@@ -47,6 +47,10 @@ export type HsmFamily =
   | 'hmac'
   | 'sha'
   | 'hpke'
+  /** PKCS#11 v3.3 working draft: one key object, ML-DSA + classical half. */
+  | 'composite-sig'
+  /** PKCS#11 v3.3 working draft: one key object, ML-KEM + classical half. */
+  | 'composite-kem'
 
 export type EngineMode = 'software' | 'cpp' | 'rust' | 'dual'
 

@@ -129,3 +129,9 @@ public/data/fhe-evidence/
 
 # Engine licence notices, committed exactly as published in the engine release
 public/licenses/engines/
+
+# PKCS#11 v3.3 composite test vectors (IETF LAMPS): vendored byte-for-byte,
+# sha256-pinned in src/data/pkcs11-v33/_provenance.json and re-hashed by
+# src/data/pkcs11-v33/vectorProvenance.test.ts. Never reformat.
+src/data/pkcs11-v33/composite-kem/testvectors.json
+src/data/pkcs11-v33/composite-sig/testvectors.json

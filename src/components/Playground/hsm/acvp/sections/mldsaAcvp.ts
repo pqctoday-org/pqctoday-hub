@@ -66,12 +66,15 @@ import {
   CKM_HASH_ML_DSA_SHAKE256,
   CKH_HEDGE_PREFERRED,
   CKH_DETERMINISTIC_REQUIRED,
+  CKM_ML_DSA_EXTERNAL_MU,
 } from '@/wasm/softhsm/constants'
 import type { TestResult } from '../useAcvpSuite'
 
-/** Vendor-defined (NOT PKCS#11 v3.2) — pqctoday-hsm src/lib/vendor_mechanisms.h,
- * rust/src/constants.rs. µ travels as the C_Sign/C_Verify data argument. */
-export const CKM_ML_DSA_EXTERNAL_MU_VENDOR = 0x0000403c
+// CKM_ML_DSA_EXTERNAL_MU — not a PKCS#11 v3.2 mechanism; approved in the
+// PKCS#11 v3.3 working draft (OASIS TC header pkcs11t.h:1233, value 0x403c,
+// the value the engines already used). µ travels as the C_Sign/C_Verify data
+// argument. Imported, never re-exported: a re-export is read as this chunk
+// starts, before the wrapped softhsm chunk has run (gate:tla-imports).
 export const CKR_OK = 0x00000000
 export const CKR_SIGNATURE_INVALID = 0x000000c0
 
@@ -481,14 +484,14 @@ export const firstDiff = (a: Uint8Array, b: Uint8Array): string => {
 
 const modeLabel = (g: { preHash: string; externalMu: boolean }, hashAlg: string) =>
   g.externalMu
-    ? 'External μ (vendor 0x403c)'
+    ? 'External μ (v3.3 draft 0x403c)'
     : g.preHash === 'preHash'
       ? `HashML-DSA/${hashAlg}`
       : 'pure'
 
 const mechFor = (g: { preHash: string; externalMu: boolean }, hashAlg: string) =>
   g.externalMu
-    ? CKM_ML_DSA_EXTERNAL_MU_VENDOR
+    ? CKM_ML_DSA_EXTERNAL_MU
     : g.preHash === 'preHash'
       ? acvpHashToMech()[hashAlg] // eslint-disable-line security/detect-object-injection
       : CKM_ML_DSA
@@ -543,7 +546,9 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
       const skipWhy = unsupportedReason(
         mechs,
         mech,
-        g.externalMu ? 'vendor-defined CKM_ML_DSA_EXTERNAL_MU (not a PKCS#11 v3.2 mechanism)' : mode
+        g.externalMu
+          ? 'CKM_ML_DSA_EXTERNAL_MU (PKCS#11 v3.3 working draft, approved codepoint; not in v3.2)'
+          : mode
       )
       if (skipWhy) {
         addLog(`[${eName}] [SKIP] ${ps} ${testCase}: ${skipWhy}`)
@@ -736,7 +741,9 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
       const skipWhy = unsupportedReason(
         mechs,
         mech,
-        g.externalMu ? 'vendor-defined CKM_ML_DSA_EXTERNAL_MU (not a PKCS#11 v3.2 mechanism)' : mode
+        g.externalMu
+          ? 'CKM_ML_DSA_EXTERNAL_MU (PKCS#11 v3.3 working draft, approved codepoint; not in v3.2)'
+          : mode
       )
       if (skipWhy) {
         await pushResult({
