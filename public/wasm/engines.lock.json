@@ -5,7 +5,7 @@
     "cacp-kmip": {
       "hsmCommit": "48967aeeb31aadf487238c4102894a779377ba20",
       "release": {
-        "tag": "engines-3",
+        "tag": "engines-4",
         "asset": "cacp-kmip-48967aee.tar.gz",
         "tarballSha256": "3df8ac3525e4e0009538e3800ddb27bdd31c994dcf0be24b37b9df9b5ed1a34d"
       },
@@ -95,7 +95,7 @@
     "openssh-pkcs11": {
       "hsmCommit": "bc92034d12d32b3a1b32111d2114e6a1fb8a6205",
       "release": {
-        "tag": "engines-3",
+        "tag": "engines-4",
         "asset": "openssh-pkcs11-bc92034d.tar.gz",
         "tarballSha256": "7959697c3d786376d070f25ac1716297f63fa597fc581b298a29230ede9d424e"
       },
@@ -113,7 +113,7 @@
     "openssl-pkcs11": {
       "hsmCommit": "07b1264903eaeae124a4df08acb77ec71bca3792",
       "release": {
-        "tag": "engines-3",
+        "tag": "engines-4",
         "asset": "openssl-pkcs11-07b12649.tar.gz",
         "tarballSha256": "e66c556c4b0b4a21bf712b8d6c45812ac914b25accf52ec78f72d3d44895378f"
       },
@@ -147,7 +147,7 @@
     "softhsm-cpp-engine": {
       "hsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
       "release": {
-        "tag": "engines-3",
+        "tag": "engines-4",
         "asset": "softhsm-cpp-engine-496f9e52.tar.gz",
         "tarballSha256": "9086ace00fd17e6fda7b024192df845b9c0581b340b0aa9f5061480c487498b9"
       },
@@ -167,31 +167,31 @@
       }
     },
     "softhsmrustv3-engine": {
-      "hsmCommit": "48967aeeb31aadf487238c4102894a779377ba20",
+      "hsmCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
       "release": {
-        "tag": "engines-3",
-        "asset": "softhsmrustv3-engine-48967aee.tar.gz",
-        "tarballSha256": "dd50df3c334ec4220e9c75f6f3fa081a9a85837b3b088fd6bd11268a2fc12b99"
+        "tag": "engines-4",
+        "asset": "softhsmrustv3-engine-68abd0ae.tar.gz",
+        "tarballSha256": "4c092d7469ce5690d677867acffb401b4dbfd0ce6ada3da5428c70450814e335"
       },
       "files": {
         "public/wasm/rust/softhsmrustv3_bg.wasm": {
-          "sha256": "822eb2806546103f96fdac75b9911403ec81f50147588bb8f62f74ab8a33c1c0",
-          "bytes": 3235569
+          "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575",
+          "bytes": 3250206
         },
         "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "822eb2806546103f96fdac75b9911403ec81f50147588bb8f62f74ab8a33c1c0",
-          "bytes": 3235569
+          "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575",
+          "bytes": 3250206
         },
         "src/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "822eb2806546103f96fdac75b9911403ec81f50147588bb8f62f74ab8a33c1c0",
-          "bytes": 3235569
+          "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575",
+          "bytes": 3250206
         }
       }
     },
     "strongswan": {
       "hsmCommit": "bf53023b78b42078b5936dab91809eaeb9f756e3",
       "release": {
-        "tag": "engines-3",
+        "tag": "engines-4",
         "asset": "strongswan-bf53023b.tar.gz",
         "tarballSha256": "1e006b30f8af82710c01274c7791b2fa749d3731d3be6f603a539150c2337dda"
       },
