@@ -1034,3 +1034,201 @@ export function unrecipedMechanisms(
       if (m.name && !RECIPES[m.name] && m.requiredOperations.some(isOp)) out.add(m.name)
   return [...out].sort()
 }
+
+// ── PKCS#11 v3.3 working-draft error paths (plan D3) ────────────────────────
+//
+// Kept OUT of RECIPES / expandErrorPathCases on purpose: those feed the v3.2
+// test registry and every v3.2 pass count. These cases belong to the separate
+// "v3.3 draft features" group (v33DraftFeatures.ts), which is excluded from
+// the v3.2 profile verdict. No OASIS v3.3 profile or test case exists, so
+// none of these is presented as an OASIS case.
+//
+// `expected` is the code the engine returns, cited to where it is chosen.
+// The v3.3 chapters (comp_sig.md / comp_kem.md at OASIS TC commit 9ef73f9)
+// say an input is refused but mostly do not fix the code ("draft silent");
+// there the engine follows the PKCS#11 v3.2 convention named in `convention`.
+// `status: 'pending-engine'` marks a case whose code comes from engine work
+// that is not yet in an engine build the hub ships — it is shown, never run
+// as a pass/fail assertion, until the engine update lands.
+
+export const V33_DRAFT_SPEC =
+  'PKCS #11 v3.3 working draft (OASIS PKCS 11 TC, github.com/oasis-tcs/pkcs11 commit 9ef73f9, unpublished)'
+
+export const V33_RV = {
+  CKR_ARGUMENTS_BAD: 0x7,
+  CKR_ATTRIBUTE_SENSITIVE: 0x11,
+  CKR_ATTRIBUTE_VALUE_INVALID: 0x13,
+  CKR_DATA_LEN_RANGE: 0x21,
+  CKR_KEY_TYPE_INCONSISTENT: 0x63,
+  CKR_MECHANISM_PARAM_INVALID: 0x71,
+  CKR_OPERATION_NOT_INITIALIZED: 0x91,
+  CKR_TEMPLATE_INCONSISTENT: 0xd1,
+  CKR_WRAPPED_KEY_LEN_RANGE: 0x112,
+  CKR_PARAMETER_SET_NOT_SUPPORTED: 0x209,
+} as const
+export type V33RvName = keyof typeof V33_RV
+
+export type V33ErrorPathId =
+  | 'comp-sig-external-hash-wrong-length'
+  | 'comp-sig-external-hash-sign-update'
+  | 'comp-kem-with-parameter'
+  | 'comp-kem-ciphertext-wrong-length'
+  | 'comp-sig-key-with-comp-kem'
+  | 'comp-kem-key-with-comp-sig'
+  | 'comp-create-object-mismatched-halves'
+  | 'comp-create-object-bad-public-length'
+  | 'comp-private-value-sensitive'
+  | 'mu-gen-both-key-and-tr'
+  | 'mu-gen-neither-key-nor-tr'
+
+export interface V33ErrorPathCase {
+  id: V33ErrorPathId
+  title: string
+  /** Mechanism-info needs: the case runs only when these are advertised. */
+  needs: ('compSig' | 'compSigExternalHash' | 'compKem' | 'externalMu')[]
+  expected: V33RvName
+  /** Where the draft stands on the code. */
+  draft: 'draft-silent' | 'draft-fixes-refusal'
+  /** The draft text the refusal rests on (OASIS TC commit 9ef73f9). */
+  draftCitation: string
+  /** Where the engine chooses the code (pqctoday-hsm, rust/src). */
+  engineCitation: string
+  /** The PKCS#11 v3.2 convention the engine's choice follows. */
+  convention: string
+  status: 'confirmed' | 'pending-engine'
+}
+
+export const V33_DRAFT_ERROR_PATHS: readonly V33ErrorPathCase[] = [
+  {
+    id: 'comp-sig-external-hash-wrong-length',
+    title: 'CKM_COMP_SIG_EXTERNAL_HASH with a pre-hash of the wrong length',
+    needs: ['compSigExternalHash'],
+    expected: 'CKR_DATA_LEN_RANGE',
+    draft: 'draft-fixes-refusal',
+    draftCitation:
+      'comp_sig.md: the mechanism "MUST require PH(M)" to be the set’s hash length (64 bytes for a SHA512 set); no code named',
+    engineCitation: 'native/composite_sig.rs message_representative (engine work in progress)',
+    convention:
+      'v3.2 §5.1.6 CKR_DATA_LEN_RANGE, "the plaintext input data to a cryptographic operation has a bad length", listed for C_Sign and C_Verify',
+    status: 'pending-engine',
+  },
+  {
+    id: 'comp-sig-external-hash-sign-update',
+    title: 'CKM_COMP_SIG_EXTERNAL_HASH through C_SignUpdate (single-part only)',
+    needs: ['compSigExternalHash'],
+    expected: 'CKR_OPERATION_NOT_INITIALIZED',
+    draft: 'draft-fixes-refusal',
+    draftCitation: 'comp_sig.md mechanism table, footnote 1: single-part only; no code named',
+    engineCitation:
+      'ffi.rs multipart_op_mech / sign_mech_supports_multipart (engine work in progress)',
+    convention:
+      'v3.2 §5.13.3 / §5.15.3 list neither CKR_MECHANISM_INVALID nor CKR_FUNCTION_NOT_SUPPORTED; §5.1 CKR_OPERATION_NOT_INITIALIZED, "no active operation of an appropriate type"',
+    status: 'pending-engine',
+  },
+  {
+    id: 'comp-kem-with-parameter',
+    title: 'CKM_COMP_KEM given a mechanism parameter',
+    needs: ['compKem'],
+    expected: 'CKR_MECHANISM_PARAM_INVALID',
+    draft: 'draft-fixes-refusal',
+    draftCitation: 'comp_kem.md: CKM_COMP_KEM "has no parameters"',
+    engineCitation: 'ffi.rs comp_kem_refuse_parameter (engine commit 48480d2c)',
+    convention: 'v3.2 §5.1.6 CKR_MECHANISM_PARAM_INVALID, "invalid parameters were supplied"',
+    status: 'confirmed',
+  },
+  {
+    id: 'comp-kem-ciphertext-wrong-length',
+    title: 'Composite KEM ciphertext of the wrong length (C_DecapsulateKey)',
+    needs: ['compKem'],
+    expected: 'CKR_WRAPPED_KEY_LEN_RANGE',
+    draft: 'draft-silent',
+    draftCitation:
+      'draft-ietf-lamps-pq-composite-kem-23 §3.3 (decapsulation checks the ciphertext length); comp_kem.md names no code',
+    engineCitation: 'native/composite_kem.rs decapsulate (engine commit 48480d2c)',
+    convention:
+      'v3.2 §5.1.6 CKR_WRAPPED_KEY_LEN_RANGE, input invalid "solely on the basis of its length"; the same code as CKM_ML_KEM',
+    status: 'confirmed',
+  },
+  {
+    id: 'comp-sig-key-with-comp-kem',
+    title: 'A CKK_COMP_SIG key used with CKM_COMP_KEM',
+    needs: ['compKem', 'compSig'],
+    expected: 'CKR_KEY_TYPE_INCONSISTENT',
+    draft: 'draft-silent',
+    draftCitation: 'comp_kem.md: CKM_COMP_KEM operates on CKK_COMP_KEM keys',
+    engineCitation: 'ffi.rs check_key_for_mech / mech_key_types (engine commit 48480d2c)',
+    convention: 'v3.2 §5.1.6 CKR_KEY_TYPE_INCONSISTENT, "not the correct type of key"',
+    status: 'confirmed',
+  },
+  {
+    id: 'comp-kem-key-with-comp-sig',
+    title: 'A CKK_COMP_KEM key used with CKM_COMP_SIG',
+    needs: ['compKem', 'compSig'],
+    expected: 'CKR_KEY_TYPE_INCONSISTENT',
+    draft: 'draft-silent',
+    draftCitation: 'comp_sig.md: CKM_COMP_SIG operates on CKK_COMP_SIG keys',
+    engineCitation: 'ffi.rs comp_sig_key_params (engine work in progress)',
+    convention: 'v3.2 §5.13.1 / §5.15.1 CKR_KEY_TYPE_INCONSISTENT',
+    status: 'pending-engine',
+  },
+  {
+    id: 'comp-create-object-mismatched-halves',
+    title:
+      'C_CreateObject: composite private key whose CKA_PUBLIC_KEY_INFO belongs to a different key',
+    needs: ['compKem'],
+    expected: 'CKR_TEMPLATE_INCONSISTENT',
+    draft: 'draft-silent',
+    draftCitation:
+      'comp_kem.md / comp_sig.md: CKA_PARAMETER_SET and CKA_VALUE must be given at creation; no code named for inconsistent halves',
+    engineCitation: 'native/composite_key.rs check_imported_key (engine commit 48480d2c)',
+    convention: 'v3.2 §4.1.1 rule 5, attribute values that "are inconsistent"',
+    status: 'confirmed',
+  },
+  {
+    id: 'comp-create-object-bad-public-length',
+    title: 'C_CreateObject: composite public CKA_VALUE one byte short',
+    needs: ['compKem'],
+    expected: 'CKR_ATTRIBUTE_VALUE_INVALID',
+    draft: 'draft-silent',
+    draftCitation:
+      'draft-ietf-lamps-pq-composite-kem-23 §4.1 (the key splits at fixed ML-KEM length)',
+    engineCitation: 'native/composite_key.rs check_imported_key (engine commit 48480d2c)',
+    convention: 'v3.2 §4.1.1 rule 2, "an invalid value for a valid attribute"',
+    status: 'confirmed',
+  },
+  {
+    id: 'comp-private-value-sensitive',
+    title: 'Read CKA_VALUE of a sensitive composite private key',
+    needs: ['compKem'],
+    expected: 'CKR_ATTRIBUTE_SENSITIVE',
+    draft: 'draft-silent',
+    draftCitation:
+      'comp_kem.md: the private CKA_VALUE is mlkemSeed ‖ tradSK, a secret like any other private key value',
+    engineCitation: 'ffi.rs C_GetAttributeValue sensitive-attribute rule (engine commit 48480d2c)',
+    convention: 'v3.2 §5.7.5 C_GetAttributeValue, CKR_ATTRIBUTE_SENSITIVE',
+    status: 'confirmed',
+  },
+  {
+    id: 'mu-gen-both-key-and-tr',
+    title: 'CK_MU_GEN_PARAMS with both hKey and pTR',
+    needs: ['externalMu'],
+    expected: 'CKR_ARGUMENTS_BAD',
+    draft: 'draft-silent',
+    draftCitation:
+      'pkcs11t.h:2743-2749 CK_MU_GEN_PARAMS (hKey "public or private", pTR "pre computed TR"); ml_dsa.md names no code',
+    engineCitation: 'ffi.rs init_mu_gen_digest (exactly one of hKey / pTR)',
+    convention: 'v3.2 §5.1.6 CKR_ARGUMENTS_BAD, "inappropriate arguments"',
+    status: 'confirmed',
+  },
+  {
+    id: 'mu-gen-neither-key-nor-tr',
+    title: 'CK_MU_GEN_PARAMS with neither hKey nor pTR',
+    needs: ['externalMu'],
+    expected: 'CKR_ARGUMENTS_BAD',
+    draft: 'draft-silent',
+    draftCitation: 'pkcs11t.h:2743-2749 CK_MU_GEN_PARAMS; ml_dsa.md names no code',
+    engineCitation: 'ffi.rs init_mu_gen_digest (exactly one of hKey / pTR)',
+    convention: 'v3.2 §5.1.6 CKR_ARGUMENTS_BAD',
+    status: 'confirmed',
+  },
+]
