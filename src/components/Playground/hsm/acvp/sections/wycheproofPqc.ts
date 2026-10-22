@@ -55,9 +55,13 @@ import {
   CKM_ML_KEM_KEY_PAIR_GEN,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
-import { CKM_ML_KEM, CKM_ML_DSA, CKM_ML_DSA_KEY_PAIR_GEN } from '@/wasm/softhsm/constants'
 import {
+  CKM_ML_KEM,
+  CKM_ML_DSA,
   CKM_ML_DSA_EXTERNAL_MU,
+  CKM_ML_DSA_KEY_PAIR_GEN,
+} from '@/wasm/softhsm/constants'
+import {
   CKR_OK,
   destroy,
   firstDiff,

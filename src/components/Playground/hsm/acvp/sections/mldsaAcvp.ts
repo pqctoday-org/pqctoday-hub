@@ -70,11 +70,11 @@ import {
 } from '@/wasm/softhsm/constants'
 import type { TestResult } from '../useAcvpSuite'
 
-/** CKM_ML_DSA_EXTERNAL_MU — not a PKCS#11 v3.2 mechanism; approved in the
- * PKCS#11 v3.3 working draft (OASIS TC header pkcs11t.h:1233, value 0x403c,
- * the value the engines already used). µ travels as the C_Sign/C_Verify data
- * argument. */
-export { CKM_ML_DSA_EXTERNAL_MU }
+// CKM_ML_DSA_EXTERNAL_MU — not a PKCS#11 v3.2 mechanism; approved in the
+// PKCS#11 v3.3 working draft (OASIS TC header pkcs11t.h:1233, value 0x403c,
+// the value the engines already used). µ travels as the C_Sign/C_Verify data
+// argument. Imported, never re-exported: a re-export is read as this chunk
+// starts, before the wrapped softhsm chunk has run (gate:tla-imports).
 export const CKR_OK = 0x00000000
 export const CKR_SIGNATURE_INVALID = 0x000000c0
 
