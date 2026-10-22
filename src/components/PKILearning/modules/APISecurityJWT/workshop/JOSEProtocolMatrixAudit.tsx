@@ -119,7 +119,7 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
   }
 
   // ── Published composite examples (draft-ietf-jose-pq-composite-sigs-06 A.1) ─
-  // The draft authors' own JOSE examples for all six algorithms — external
+  // The draft authors' own JOSE examples for all seven algorithms — external
   // evidence, unlike the self-pinned -01 snapshot this replaced.
   for (const v of (
     compositeExamples as { vectors: { alg: string; jws: string; jwk: { pub: string } }[] }
@@ -1054,7 +1054,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           >
             RFC 9964
           </a>{' '}
-          Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87), the six published
+          Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87), the seven published
           composite examples in{' '}
           <a
             href="https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-06.txt"
