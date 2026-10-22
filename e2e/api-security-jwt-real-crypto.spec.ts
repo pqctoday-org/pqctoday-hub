@@ -339,10 +339,10 @@ test.describe('API Security & JWT workshop — real crypto', () => {
 
     await page.getByRole('button', { name: /Run JOSE KAT suite/ }).click()
 
-    // 11 vectors: 3 RFC 9964 ML-DSA JOSE KATs + the 6 published composite examples
-    // of draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 + the 2 published HPKE JWE
+    // 12 vectors: 3 RFC 9964 ML-DSA JOSE KATs + the 7 published composite examples
+    // of draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 + the 2 published HPKE JWE
     // examples of draft-ietf-jose-hpke-pq-pqt-01 Appendix A
-    await expect(page.getByText(/11 passed/)).toBeVisible({ timeout: 60_000 })
+    await expect(page.getByText(/12 passed/)).toBeVisible({ timeout: 60_000 })
     await expect(page.getByText(/0 failed/).first()).toBeVisible()
   })
 
