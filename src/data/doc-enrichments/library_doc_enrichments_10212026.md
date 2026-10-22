@@ -2,7 +2,7 @@
 generated: 2026-10-21
 collection: library
 documents_processed: 4
-enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
+enrichment_method: automated extraction, human-reviewed
 ---
 
 ## ECCG-ACM-v3-Draft-2026
@@ -58,7 +58,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Source Document**: ECCG-ACM-v3-Draft-2026.pdf (443,881 bytes, 18,310 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:49
 - **Evidence SHA-256**: e20d5d725f189a7e3ed75404d1f4d2e9b0ad6fb4a6a267a2d4f6e6fdf1ede10c
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: e20d5d725f189a7e
 - **Window Chars**: 18310
 
@@ -117,7 +117,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Source Document**: draft-ietf-lamps-pq-composite-kem-23.html (476,483 bytes, 14,108 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:50
 - **Evidence SHA-256**: 886661360aefc4c55d0f8d6faf062d6100d868dc0b682d87358fbe89d9203fea
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 886661360aefc4c5
 - **Window Chars**: 14108
 
@@ -176,7 +176,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Source Document**: RFC_10042.html (92,656 bytes, 10,454 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:51
 - **Evidence SHA-256**: b798296ac7177b0169fe3acfc0624c32352457aeebe62df353708a3da3cdf05b
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: b798296ac7177b01
 - **Window Chars**: 10454
 
@@ -235,7 +235,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Source Document**: draft-ietf-cose-hpke-pq-pqt-01.html (248,372 bytes, 10,636 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:51
 - **Evidence SHA-256**: b8a250f981a1c17f928793965f9e9e8d102c4ad83040778abe243754224b63ee
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: b8a250f981a1c17f
 - **Window Chars**: 10636
 

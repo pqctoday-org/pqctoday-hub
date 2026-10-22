@@ -2,7 +2,7 @@
 generated: 2026-10-22
 collection: library
 documents_processed: 3
-enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
+enrichment_method: automated extraction, human-reviewed
 ---
 
 ## RFC-9955-Hybrid-Signature-Spectrums
@@ -58,7 +58,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Source Document**: RFC-9955-Hybrid-Signature-Spectrums.html (133,783 bytes, 10,245 extracted chars)
 - **Extraction Timestamp**: 2026-10-22T06:46:15
 - **Evidence SHA-256**: e4de665c3fa938b72e5a8cd6dccafa2e35a56467467523c4544cb3a1ffa92b34
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: e4de665c3fa938b7
 - **Window Chars**: 10245
 
@@ -117,7 +117,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Source Document**: RFC-10033-Hash-Based-Signatures-State-and-Backup-Management.html (122,657 bytes, 8,027 extracted chars)
 - **Extraction Timestamp**: 2026-10-22T06:46:15
 - **Evidence SHA-256**: 47bfefc195dc3e011bec3d0f43b4221d32f552b307822edd8a5d48431ce637ab
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 47bfefc195dc3e01
 - **Window Chars**: 8027
 
@@ -176,7 +176,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Source Document**: PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2.html (92,479 bytes, 10,348 extracted chars)
 - **Extraction Timestamp**: 2026-10-22T06:46:16
 - **Evidence SHA-256**: 2747000677c677799351e9c32d9d1d5b4287670a8a937826f694fcf04a7cfabe
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 2747000677c67779
 - **Window Chars**: 10348
 
@@ -13346,7 +13346,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: ECCG-ACM-v3-Draft-2026.pdf (443,881 bytes, 18,310 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:49
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: e20d5d725f189a7e
 - **Window Chars**: 18310
 
@@ -44682,7 +44682,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: RFC_10042.html (92,656 bytes, 10,454 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:51
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: b798296ac7177b01
 - **Window Chars**: 10454
 
@@ -64154,7 +64154,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: draft-ietf-cose-hpke-pq-pqt-01.html (248,372 bytes, 10,636 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:51
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: b8a250f981a1c17f
 - **Window Chars**: 10636
 
@@ -66055,7 +66055,7 @@ enrichment_method: mlx-mlx-community/Qwen3.8-27B-8bit
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: draft-ietf-lamps-pq-composite-kem-23.html (476,483 bytes, 14,108 extracted chars)
 - **Extraction Timestamp**: 2026-10-21T23:38:50
-- **Generation Model**: mlx-community/Qwen3.8-27B-8bit (mlx)
+- **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 886661360aefc4c5
 - **Window Chars**: 14108
 
