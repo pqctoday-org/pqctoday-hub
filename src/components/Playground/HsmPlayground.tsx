@@ -37,6 +37,7 @@ import { HsmKeyTable } from './keystore/HsmKeyTable'
 import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
 import { HsmLearnView } from './hsm/learn/HsmLearnView'
+import { isLearnTrack, type LearnTrack } from './hsm/learn/learnTracks'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs'
@@ -85,6 +86,10 @@ export interface HsmLocation {
   rail?: RailId
   itab?: InspectView
   dtab?: TestSuite
+  /** Learn track (`?ltrack=`), only on the Learn tab. */
+  ltrack?: LearnTrack
+  /** Learn lesson id (`?lesson=`), only on the Learn tab. */
+  lesson?: string
   /** Set when a legacy `?tab=keystore` link was resolved — that tab was the
    *  manual 3-step walkthrough, deliberately NOT auto-initialising the
    *  engine; the Operate tab it now maps to must keep that contract. */
@@ -95,6 +100,7 @@ const DEFAULT_TAB: HsmTab = 'learn'
 const DEFAULT_RAIL: RailId = 'kem'
 const DEFAULT_INSPECT: InspectView = 'mechanisms'
 const DEFAULT_DEV_SUB_TAB: TestSuite = 'standard'
+const DEFAULT_LEARN_TRACK: LearnTrack = 'foundations'
 
 /**
  * Every pre-redesign `?tab=` value (the 12 flat tabs, plus the two even
@@ -128,11 +134,19 @@ const isInspectView = (v: string | null): v is InspectView =>
 const normalizeDevSubTab = (raw: string | null): TestSuite | null =>
   raw === 'pipeline'
     ? 'standard'
-    : raw === 'acvp' || raw === 'conformance'
+    : raw === 'acvp' || raw === 'conformance' || raw === 'v33'
       ? raw
       : raw === 'standard'
         ? raw
         : null
+
+/** Build suites gated for curious/executive personas (engineering workbenches). */
+const isGatedSuite = (t: TestSuite | undefined | null): boolean =>
+  t === 'acvp' || t === 'conformance' || t === 'v33'
+
+/** A lesson id: lowercase words and digits joined by hyphens. */
+const isLessonId = (v: string | null | undefined): v is string =>
+  !!v && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(v)
 
 /**
  * Resolve the incoming URL (or a legacy tab id handed over by Learn's
@@ -144,8 +158,10 @@ export function resolveHsmLocation(params: {
   rail?: string | null
   itab?: string | null
   dtab?: string | null
+  ltrack?: string | null
+  lesson?: string | null
 }): HsmLocation {
-  const { tab, rail, itab, dtab } = params
+  const { tab, rail, itab, dtab, ltrack, lesson } = params
   const dsub = normalizeDevSubTab(dtab ?? null)
   if (tab && tab in LEGACY_TABS) {
     // eslint-disable-next-line security/detect-object-injection -- guarded by `in` against a static literal map
@@ -163,6 +179,8 @@ export function resolveHsmLocation(params: {
           : DEFAULT_INSPECT
         : undefined,
     dtab: t === 'build' ? (dsub ?? DEFAULT_DEV_SUB_TAB) : undefined,
+    ...(t === 'learn' && isLearnTrack(ltrack) ? { ltrack } : {}),
+    ...(t === 'learn' && isLessonId(lesson) ? { lesson } : {}),
   }
 }
 
@@ -213,6 +231,8 @@ export const HsmPlayground = () => {
       rail: searchParams.get('rail'),
       itab: searchParams.get('itab'),
       dtab: searchParams.get('dtab'),
+      ltrack: searchParams.get('ltrack'),
+      lesson: searchParams.get('lesson'),
     })
   )
   const initialEngine = useRef(searchParams.get('engine') as EngineMode | null)
@@ -224,6 +244,12 @@ export const HsmPlayground = () => {
     initialLoc.current.itab ?? DEFAULT_INSPECT
   )
   const [devSubTab, setDevSubTab] = useState<TestSuite>(DEFAULT_DEV_SUB_TAB)
+  const [learnTrack, setLearnTrack] = useState<LearnTrack>(
+    initialLoc.current.ltrack ?? DEFAULT_LEARN_TRACK
+  )
+  const [learnFocus, setLearnFocus] = useState<{ lessonId: string; nonce: number } | undefined>(
+    initialLoc.current.lesson ? { lessonId: initialLoc.current.lesson, nonce: 1 } : undefined
+  )
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
 
@@ -324,11 +350,7 @@ export const HsmPlayground = () => {
     const engine = initialEngine.current
     const algo = initialAlgo.current
     if (engine) setEngineMode(engine)
-    if (
-      loc.tab === 'build' &&
-      (loc.dtab === 'acvp' || loc.dtab === 'conformance') &&
-      workbenchHidden
-    ) {
+    if (loc.tab === 'build' && isGatedSuite(loc.dtab) && workbenchHidden) {
       // ACVP and Conformance are engineering-workbench suites, gated for
       // curious/executive (matches the ExecutiveRedirectBanner) — don't
       // honor a stale or hand-crafted ?dtab= (or legacy ?tab=acvp/conformance)
@@ -378,6 +400,10 @@ export const HsmPlayground = () => {
         else next.delete('itab')
         if (activeTab === 'build' && devSubTab !== DEFAULT_DEV_SUB_TAB) next.set('dtab', devSubTab)
         else next.delete('dtab')
+        if (activeTab === 'learn' && learnTrack !== DEFAULT_LEARN_TRACK)
+          next.set('ltrack', learnTrack)
+        else next.delete('ltrack')
+        if (activeTab !== 'learn') next.delete('lesson')
         if (engineMode !== 'rust') next.set('engine', engineMode)
         else next.delete('engine')
         if (algoParam) next.set('algo', algoParam)
@@ -386,7 +412,7 @@ export const HsmPlayground = () => {
       },
       { replace: true }
     )
-  }, [activeTab, rail, inspectView, devSubTab, engineMode, algoParam, setSearchParams])
+  }, [activeTab, rail, inspectView, devSubTab, learnTrack, engineMode, algoParam, setSearchParams])
 
   useEffect(() => {
     if (error) errorRef.current?.focus()
@@ -409,7 +435,7 @@ export const HsmPlayground = () => {
   // gated ACVP/Conformance suite mid-session, fall back to Standard rather
   // than leaving them on a surface whose trigger is now hidden.
   useEffect(() => {
-    if ((devSubTab === 'acvp' || devSubTab === 'conformance') && workbenchHidden) {
+    if (isGatedSuite(devSubTab) && workbenchHidden) {
       setDevSubTab(DEFAULT_DEV_SUB_TAB)
     }
   }, [workbenchHidden, devSubTab])
@@ -420,7 +446,13 @@ export const HsmPlayground = () => {
   useEffect(() => {
     const railLabel = RAIL.find((r) => r.id === rail)?.label ?? rail
     const suiteLabel =
-      devSubTab === 'acvp' ? 'Validation' : devSubTab === 'conformance' ? 'Conformance' : 'Standard'
+      devSubTab === 'acvp'
+        ? 'Validation'
+        : devSubTab === 'conformance'
+          ? 'Conformance'
+          : devSubTab === 'v33'
+            ? 'v3.3 draft'
+            : 'Standard'
     if (activeTab === 'operate') setLogOrigin(`operate:${rail}`, `Operate · ${railLabel}`)
     else if (activeTab === 'build') setLogOrigin(`build:${devSubTab}`, `Build · ${suiteLabel}`)
     else if (activeTab === 'inspect') setLogOrigin('inspect', 'Inspect')
@@ -447,6 +479,11 @@ export const HsmPlayground = () => {
     if (loc.rail) setRail(loc.rail)
     if (loc.itab) setInspectView(loc.itab)
     if (loc.dtab && !(workbenchHidden && loc.dtab !== 'standard')) setDevSubTab(loc.dtab)
+    if (loc.ltrack) setLearnTrack(loc.ltrack)
+    if (loc.lesson) {
+      const lessonId = loc.lesson
+      setLearnFocus((prev) => ({ lessonId, nonce: (prev?.nonce ?? 0) + 1 }))
+    }
     handleTabChange(loc.tab)
   }
 
@@ -609,6 +646,9 @@ export const HsmPlayground = () => {
         <HsmLearnView
           onTryInWorkbench={(tab) => goTo(resolveHsmLocation({ tab }))}
           onSpotlight={spotlightStep}
+          track={learnTrack}
+          onTrackChange={setLearnTrack}
+          focus={learnFocus}
         />
       ),
     },
@@ -692,7 +732,13 @@ export const HsmPlayground = () => {
       content: (
         <div className="space-y-3">
           <div className="flex justify-end">{inspectChip}</div>
-          <DeveloperTab activeSubTab={devSubTab} onSubTabChange={setDevSubTab} />
+          <DeveloperTab
+            activeSubTab={devSubTab}
+            onSubTabChange={setDevSubTab}
+            onOpenLesson={(lessonId) =>
+              goTo(resolveHsmLocation({ tab: 'learn', ltrack: 'v33', lesson: lessonId }))
+            }
+          />
         </div>
       ),
     },

@@ -6,6 +6,7 @@ import { PkcsDevWorkbench } from './pipeline/PkcsDevWorkbench'
 import { AcvpSuiteWorkbench } from './pipeline/suites/AcvpSuiteWorkbench'
 import { ConformanceSuiteWorkbench } from './pipeline/suites/ConformanceSuiteWorkbench'
 import { AcvpFormatPrototypePanel } from '../acvpio/AcvpFormatPrototypePanel'
+import { V33TestBench } from './v33/V33TestBench'
 
 /**
  * Which content set the shared Builder/Code workbench (PkcsDevWorkbench)
@@ -15,11 +16,13 @@ import { AcvpFormatPrototypePanel } from '../acvpio/AcvpFormatPrototypePanel'
  * established term). `'pipeline'` was the pre-rename value; still accepted
  * on deep links via HsmPlayground.tsx's legacy alias, never produced fresh.
  */
-export type TestSuite = 'standard' | 'acvp' | 'conformance'
+export type TestSuite = 'standard' | 'acvp' | 'conformance' | 'v33'
 
 interface DeveloperTabProps {
   activeSubTab: TestSuite
   onSubTabChange: (tab: TestSuite) => void
+  /** Open a lesson of the Learn tab's v3.3 track (the bench links to it). */
+  onOpenLesson?: (lessonId: string) => void
 }
 
 /**
@@ -40,7 +43,7 @@ interface DeveloperTabProps {
  * "Builder" would collide with the inner one once both tablists are mounted
  * together.
  */
-export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps) => {
+export const DeveloperTab = ({ activeSubTab, onSubTabChange, onOpenLesson }: DeveloperTabProps) => {
   const role = usePersonaStore((s) => s.selectedPersona)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const workbenchHidden = hidesWorkbench(role, viewAccess)
@@ -63,6 +66,9 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
             ACVP-backed (remediation plan WS-A, A-1). */}
         {showWorkbenchTabs && <TabsTrigger value="acvp">Validation</TabsTrigger>}
         {showWorkbenchTabs && <TabsTrigger value="conformance">Conformance</TabsTrigger>}
+        {/* PKCS#11 v3.3 working-draft test bench (owner decision D5: under
+            Build, not a top-level tab). URL `?dtab=v33`. */}
+        {showWorkbenchTabs && <TabsTrigger value="v33">v3.3 draft</TabsTrigger>}
       </TabsList>
       <TabsContent value="standard">
         <PkcsDevWorkbench />
@@ -76,6 +82,14 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
       {showWorkbenchTabs && (
         <TabsContent value="conformance">
           <ConformanceSuiteWorkbench />
+        </TabsContent>
+      )}
+      {showWorkbenchTabs && (
+        <TabsContent value="v33">
+          <V33TestBench
+            onOpenLesson={onOpenLesson}
+            onOpenConformance={() => onSubTabChange('conformance')}
+          />
         </TabsContent>
       )}
     </Tabs>
