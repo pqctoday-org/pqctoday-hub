@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r33.csv
+ * Source: src/data/role_board_content_10222026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1301 documents, trust-tiered',
+          '1300 documents, trust-tiered',
           'Regulatory data verified 17 Oct 2026',
         ],
         sideCard: {
@@ -75,7 +75,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackNote:
           "Five essentials against the full 25-module path plus the quiz, 1090 minutes in all. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -143,7 +143,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -166,7 +166,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1301 documents, trust-tiered',
+          '1300 documents, trust-tiered',
           'Regulatory data verified 17 Oct 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -210,7 +210,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -282,7 +282,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -305,7 +305,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1301 documents, trust-tiered',
+          '1300 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -355,7 +355,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -423,7 +423,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
   ],
@@ -447,7 +447,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1301 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
+        proofChips: ['1300 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -519,7 +519,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1301 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1300 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -663,7 +663,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1301 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1300 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -733,7 +733,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1301 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
+        proofChips: ['1300 documents, trust-tiered', 'Regulatory data verified 17 Oct 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -2508,7 +2508,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1301 documents, trust-tiered',
+          '1300 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
