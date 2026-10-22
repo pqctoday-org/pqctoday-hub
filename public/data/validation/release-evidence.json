@@ -16,13 +16,13 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "17d4ae2f579ae006e69a8821832a2d1f72eaa76363bef218465b54febb6b5769",
+    "public/data/validation/coverage-matrix.json": "457da0bbcf7cbe9c157f14db45c8e40be12cb38a0496849140140e27f9286206",
     "src/data/validation/coverage-waivers.json": "466a4c9a03202ac40b093367ddfacaa87683dbd703a17f70654c041a5495b40e",
-    "src/data/validation/native-conformance.generated.json": "098981d3ccaa95a89f7cc33c699d2b50aade7580e392e4dc95af0f60b84b8a88",
+    "src/data/validation/native-conformance.generated.json": "9f8d4f0fb52de9578580f3b77fc5705caffdd5b36346e22412fdc2cc6bd793f0",
     "src/data/validation/open-gaps.json": "5c5d14a46d466646ff439dc8c1a2ae4a5cb79ebeaf4adb928fe6296551dfba3b",
-    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "b3bf680b0962890bfc9d803fa67a01b41e3ecf02369f7bef01f937783e3cefbc",
-    "src/data/validation/run-results/wasm-node-katRunner.json": "f9a037d1eda294fb36bb240849cba78062e94d4e9cce257b8541be21a6b84cf7",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "fcdf1102dc8b1f30ca25c4a425d02b43c3272feff17fdc8a0df3d5508ad7822f",
+    "src/data/validation/run-results/wasm-node-errorPathProbes.json": "d9cd5f795330a0dfa4051c3d2be4fc8ec718b68f730a3c918cd9ec810bb14640",
+    "src/data/validation/run-results/wasm-node-katRunner.json": "0e4362af530627f12b7bae5be1f27a8a9cff1c59296c575de3e5ebc0d33d0858",
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "20c271412ef7a8c93a347da477b72989e01638e20aa213aaa500ca9603ca1fc2",
     "src/data/validation/validation-counts.generated.json": "2c3c06565f30bc0d41da0223c63cbd3af94aa9b9556aa605b1e23cdbf2ed9ca4",
     "src/data/validation/vector-manifest.json": "f52edeb6ac35dd795fb9800f30d1b67fc59e9340f1b6dac75207144f6778c286"
   },
@@ -91,13 +91,13 @@
       "unsupported"
     ],
     "polarities": ["positive", "negative", "boundary", "state-error"],
-    "matrixRows": 2254,
+    "matrixRows": 2262,
     "byEngine": {
       "cpp": {
         "label": "C++",
         "mechanismCount": 166,
         "advertisedCells": 2215,
-        "unsupportedCells": 39,
+        "unsupportedCells": 47,
         "overall": {
           "covered": 15,
           "sampled": 2158,
@@ -199,37 +199,37 @@
       },
       "rust": {
         "label": "Rust",
-        "mechanismCount": 175,
-        "advertisedCells": 2231,
+        "mechanismCount": 180,
+        "advertisedCells": 2239,
         "unsupportedCells": 23,
         "overall": {
           "covered": 15,
-          "sampled": 2167,
+          "sampled": 2175,
           "untested": 49
         },
         "byPolarity": {
           "positive": {
-            "covered": 192,
-            "sampled": 1881,
+            "covered": 194,
+            "sampled": 1887,
             "untested": 158,
-            "denominator": 2231,
+            "denominator": 2239,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 673,
               "standard-kat": 5,
-              "oracle": 32,
+              "oracle": 34,
               "differential": 0,
-              "round-trip": 890,
+              "round-trip": 896,
               "behavior-only": 473,
               "untested": 158,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 84,
-            "sampled": 64,
-            "untested": 2083,
-            "denominator": 2231,
+            "covered": 85,
+            "sampled": 67,
+            "untested": 2087,
+            "denominator": 2239,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 106,
@@ -237,16 +237,16 @@
               "oracle": 11,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 31,
-              "untested": 2083,
+              "behavior-only": 35,
+              "untested": 2087,
               "unsupported": 0
             }
           },
           "boundary": {
             "covered": 42,
             "sampled": 173,
-            "untested": 2016,
-            "denominator": 2231,
+            "untested": 2024,
+            "denominator": 2239,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 155,
@@ -255,15 +255,15 @@
               "differential": 0,
               "round-trip": 50,
               "behavior-only": 0,
-              "untested": 2016,
+              "untested": 2024,
               "unsupported": 0
             }
           },
           "state-error": {
             "covered": 923,
-            "sampled": 0,
-            "untested": 1308,
-            "denominator": 2231,
+            "sampled": 1,
+            "untested": 1315,
+            "denominator": 2239,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 0,
@@ -271,8 +271,8 @@
               "oracle": 0,
               "differential": 0,
               "round-trip": 0,
-              "behavior-only": 923,
-              "untested": 1308,
+              "behavior-only": 924,
+              "untested": 1315,
               "unsupported": 0
             }
           }
@@ -280,7 +280,7 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2182,
+            "registeredCells": 2190,
             "passedCells": 2181,
             "failedCells": 2,
             "skippedCells": 0
@@ -307,31 +307,31 @@
         "parity": 2034,
         "divergent": 1,
         "not-established": 173,
-        "single-engine": 46
+        "single-engine": 54
       },
       "negative": {
         "parity": 148,
         "divergent": 0,
         "not-established": 2060,
-        "single-engine": 46
+        "single-engine": 54
       },
       "boundary": {
         "parity": 214,
         "divergent": 0,
         "not-established": 1994,
-        "single-engine": 46
+        "single-engine": 54
       },
       "state-error": {
         "parity": 913,
         "divergent": 0,
         "not-established": 1295,
-        "single-engine": 46
+        "single-engine": 54
       }
     },
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-03, hub f7ed8c242). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4992 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f); 13364 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 80acb428f). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -360,12 +360,12 @@
       },
       "rust": {
         "label": "Rust",
-        "sourceCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
-        "inventorySha256": "6790d2efdc85ce38bd9fe4afdaef534d33ed749cf02ce116d51531e0509219da",
+        "sourceCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
+        "inventorySha256": "9ddca57385f648565b83611d54564e3492671b75828ed06e090093f955e153d6",
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "5641ed97aa06ed619ec3f96f7a762ef525dc72316e5a94b4c9094f9669ee8c25"
+            "sha256": "345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
@@ -391,8 +391,8 @@
     "source": "src/data/validation/native-conformance.generated.json",
     "executedByHub": false,
     "note": "Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser.",
-    "hsmPinnedCommit": "272c9b0426e610812acfe49f97dc9e1905a7327f",
-    "hsmPinnedCommitDate": "2026-10-03",
+    "hsmPinnedCommit": "3cd1c86a6ab348c523cebcc6d294eb34fd93fed1",
+    "hsmPinnedCommitDate": "2026-10-22",
     "hsmPinnedCommitPublished": true,
     "suites": [
       {
@@ -404,7 +404,7 @@
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
           "The report does not record the build target (platform/ABI) of the engine under test.",
-          "The report was produced at an engine commit 27 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 239 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s C++ WASM bundle was built from, so these results are not results for the engine running in this browser."
         ],
         "report": {
@@ -423,7 +423,7 @@
           "reportDate": "2026-10-02 16:34:56 UTC",
           "target": "not recorded",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 27,
+          "commitsBehindPinnedHsmMain": 239,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsm-cpp-engine",
           "wasmBundleHsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
@@ -440,33 +440,33 @@
         "reportFiles": ["rust/RUST_P11_V32_CONFORMANCE_REPORT.md"],
         "openGaps": [
           "The report does not record the host OS or CPU architecture it ran on.",
-          "The report was produced at an engine commit 166 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
+          "The report was produced at an engine commit 29 hsm commit(s) behind the pinned hsm commit (report-only commits not counted); re-running the suite in pqctoday-hsm is needed for current results.",
           "The engine commit differs from the commit this Hub’s Rust WASM bundle was built from, so these results are not results for the engine running in this browser.",
           "The harness assigns no case ids: ids are derived from section heading + check label (ordinal-suffixed where a label repeats), and change if the harness rewords a label.",
           "The harness has no skip status: an unsupported case can only pass or fail."
         ],
         "report": {
           "counts": {
-            "pass": 1093,
+            "pass": 1099,
             "fail": 0,
             "skip": null,
             "xfail": null,
-            "total": 1093
+            "total": 1099
           },
           "groups": 52,
           "caseIdentity": "derived-from-transcript",
-          "engineCommit": "795907f49371d2bc5f8dcc0a118f958b943a2020",
-          "engineCommitDate": "2026-09-26",
-          "reportCommit": "258ffaff3efd520427d7f09b0e223257e2b5722f",
-          "reportDate": "2026-09-26T23:06:54.328Z",
+          "engineCommit": "d192acf8c3d7d400497c79401ad51f60e4352f21",
+          "engineCommitDate": "2026-10-21",
+          "reportCommit": "cab858fe634c38260b796ef6273c304df4feab2d",
+          "reportDate": "2026-10-22T01:00:32.816Z",
           "target": "wasm32 build with `--features acvp`",
           "hostPlatform": "not recorded",
-          "commitsBehindPinnedHsmMain": 166,
+          "commitsBehindPinnedHsmMain": 29,
           "engineCommitOnPinnedMainHistory": true,
           "wasmBundle": "softhsmrustv3-engine",
-          "wasmBundleHsmCommit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+          "wasmBundleHsmCommit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
           "engineCommitEqualsWasmBundleCommit": false,
-          "commitsFromEngineToWasmBundle": 231,
+          "commitsFromEngineToWasmBundle": 26,
           "commitsFromWasmBundleToEngine": 0
         }
       },
@@ -489,8 +489,8 @@
       "runner": "errorPathProbes (every registered error-path case, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
-      "recordedAt": "2026-10-03",
+      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "recordedAt": "2026-10-22",
       "results": 4992,
       "byEngine": {
         "cpp": {
@@ -509,8 +509,8 @@
       "runner": "katRunner (every registered KatKind)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
-      "recordedAt": "2026-10-03",
+      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "recordedAt": "2026-10-22",
       "results": 96,
       "byEngine": {
         "rust": {
@@ -524,8 +524,8 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "f7ed8c242ae304fec4b85a780f0fd9709d68f5ea",
-      "recordedAt": "2026-10-03",
+      "hubCommit": "80acb428f458db57cf7a46d1823f786b06c13bf2",
+      "recordedAt": "2026-10-22",
       "results": 13364,
       "byEngine": {
         "cpp": {
@@ -3338,7 +3338,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 9290 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 9349 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,

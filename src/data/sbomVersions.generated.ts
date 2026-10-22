@@ -435,8 +435,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'softhsmrustv3-engine': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '48967aeeb31aadf487238c4102894a779377ba20',
-    sha256: '822eb2806546103f96fdac75b9911403ec81f50147588bb8f62f74ab8a33c1c0',
+    commit: '68abd0ae472f9c722276fddd25f0341cc9af85bb',
+    sha256: '345ffb8e376c3a44629ce4217cff1f19e8ea62ac45775eb66c093027f33bd575',
   },
   strongswan: {
     repo: 'pqctoday-org/pqctoday-hsm',
