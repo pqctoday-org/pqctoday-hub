@@ -141,11 +141,23 @@ export const CKA_TABLE: Record<number, ConstEntry> = {
   },
   0x0000062a: {
     name: 'CKA_ENCAPSULATE_TEMPLATE',
-    description: 'Template for auto-generated shared-secret key (ML-KEM encapsulate)',
+    description:
+      'Template for the shared-secret key an encapsulation creates (ML-KEM or composite KEM). v3.2 value; the PKCS#11 v3.3 working draft sets CKF_ARRAY_ATTRIBUTE (0x4000062a)',
   },
   0x0000062b: {
     name: 'CKA_DECAPSULATE_TEMPLATE',
-    description: 'Template for auto-generated shared-secret key (ML-KEM decapsulate)',
+    description:
+      'Template for the shared-secret key a decapsulation creates (ML-KEM or composite KEM). v3.2 value; the PKCS#11 v3.3 working draft sets CKF_ARRAY_ATTRIBUTE (0x4000062b)',
+  },
+  0x4000062a: {
+    name: 'CKA_ENCAPSULATE_TEMPLATE',
+    description:
+      'Template for the shared-secret key an encapsulation creates (ML-KEM or composite KEM). PKCS#11 v3.3 working draft value (CKF_ARRAY_ATTRIBUTE | 0x62a)',
+  },
+  0x4000062b: {
+    name: 'CKA_DECAPSULATE_TEMPLATE',
+    description:
+      'Template for the shared-secret key a decapsulation creates (ML-KEM or composite KEM). PKCS#11 v3.3 working draft value (CKF_ARRAY_ATTRIBUTE | 0x62b)',
   },
   0x00000618: { name: 'CKA_HSS_LMS_TYPE', description: 'HSS parameter set types (FIPS 208)' },
   0x00000619: { name: 'CKA_HSS_LMOTS_TYPE', description: 'LM-OTS parameter set types (FIPS 208)' },
@@ -774,8 +786,190 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
 const isPqcSignMech = (mechType: number): boolean =>
   (mechType >= 0x0000001c && mechType <= 0x0000002c) || // ML-DSA range
   (mechType >= 0x0000002d && mechType <= 0x0000003f) || // SLH-DSA range
+  mechType === 0x0000403c || // CKM_ML_DSA_EXTERNAL_MU (v3.3 draft, same struct as ML-DSA)
   mechType === 0x0000403e || // CKM_COMP_SIG (v3.3 draft, same struct as ML-DSA)
   mechType === 0x0000403f // CKM_COMP_SIG_EXTERNAL_HASH
+
+// ── PKCS#11 v3.3 working draft: composite and external-µ helpers ─────────────
+
+const CKM_ML_DSA_EXTERNAL_MU_GEN = 0x0000403b
+const CKM_COMP_SIG = 0x0000403e
+const CKM_COMP_SIG_EXTERNAL_HASH = 0x0000403f
+const CKM_COMP_KEM = 0x00004041
+const CKA_PARAMETER_SET = 0x0000061d
+const V33_DRAFT = 'PKCS#11 v3.3 working draft'
+
+export interface CompositeSplit {
+  /** Parameter set the split was taken from, or null when only the ML part is certain. */
+  ckpName: string | null
+  mlName: string
+  mlBytes: number
+  tradName: string
+  tradBytes: number
+  /** 'key' = from the key's CKA_PARAMETER_SET; 'length' = inferred from the length. */
+  source: 'key' | 'length'
+}
+
+/**
+ * Split a composite ML-DSA signature (ML-DSA half || classical half). The
+ * ML-DSA half has a fixed length for its level; the classical half is the rest.
+ * With the key's parameter set the split is exact; otherwise the sets whose
+ * size fits the length are tried, and a split is returned only when all of
+ * them agree on the ML-DSA length.
+ */
+export const splitCompositeSignature = (
+  len: number,
+  ckp?: number | null
+): CompositeSplit | null => {
+  const known = ckp != null ? COMPOSITE_SIG_SETS.find((x) => x.ckp === ckp) : undefined
+  const fits = known
+    ? [known]
+    : COMPOSITE_SIG_SETS.filter((x) =>
+        x.signatureIsMax
+          ? len > x.mlSignatureBytes && len <= x.signatureBytes
+          : len === x.signatureBytes
+      )
+  if (!fits.length || len <= fits[0].mlSignatureBytes) return null
+  if (fits.some((x) => x.mlSignatureBytes !== fits[0].mlSignatureBytes)) return null
+  const one = fits.length === 1 ? fits[0] : null
+  return {
+    ckpName: one?.ckpName ?? null,
+    mlName: fits[0].ml,
+    mlBytes: fits[0].mlSignatureBytes,
+    tradName: one?.trad ?? 'classical',
+    tradBytes: len - fits[0].mlSignatureBytes,
+    source: known ? 'key' : 'length',
+  }
+}
+
+/**
+ * Split a composite ML-KEM ciphertext (ML-KEM part || classical part), from
+ * the key's parameter set or, failing that, the sets whose ciphertext length
+ * equals `len` (returned only when they agree on the ML-KEM length).
+ */
+export const splitCompositeCiphertext = (
+  len: number,
+  ckp?: number | null
+): CompositeSplit | null => {
+  const known = ckp != null ? COMPOSITE_KEM_SETS.find((x) => x.ckp === ckp) : undefined
+  const fits = known ? [known] : COMPOSITE_KEM_SETS.filter((x) => x.ciphertextBytes === len)
+  if (!fits.length || len <= fits[0].mlCiphertextBytes) return null
+  if (fits.some((x) => x.mlCiphertextBytes !== fits[0].mlCiphertextBytes)) return null
+  const one = fits.length === 1 ? fits[0] : null
+  return {
+    ckpName: one?.ckpName ?? null,
+    mlName: fits[0].ml,
+    mlBytes: fits[0].mlCiphertextBytes,
+    tradName: one?.trad ?? 'classical',
+    tradBytes: len - fits[0].mlCiphertextBytes,
+    source: known ? 'key' : 'length',
+  }
+}
+
+const splitRows = (
+  what: 'Signature' | 'Ciphertext',
+  sp: CompositeSplit
+): Array<{ name: string; value: string; note?: string }> => [
+  {
+    name: `${what} split`,
+    value: `${sp.mlName} ${sp.mlBytes} B + ${sp.tradName} ${sp.tradBytes} B`,
+    note: `${V33_DRAFT}: composite ${what.toLowerCase()} = ${sp.mlName} part || classical part${
+      sp.ckpName ? ` (${sp.ckpName}` : ' ('
+    }${sp.source === 'key' ? 'from the key’s CKA_PARAMETER_SET)' : sp.ckpName ? ', inferred from the length)' : 'inferred from the length)'}`,
+  },
+]
+
+/**
+ * Read a key's CKA_PARAMETER_SET through the live module (not the logging
+ * proxy, so the read is not itself logged). Returns null on any failure.
+ */
+const readKeyParamSet = (M: SoftHSMModule, hSession: number, hKey: number): number | null => {
+  if (!hKey || typeof M._malloc !== 'function' || typeof M._C_GetAttributeValue !== 'function')
+    return null
+  let tpl = 0
+  try {
+    tpl = M._malloc(16)
+    const val = tpl + 12
+    M.setValue(tpl, CKA_PARAMETER_SET, 'i32')
+    M.setValue(tpl + 4, val, 'i32')
+    M.setValue(tpl + 8, 4, 'i32')
+    if (M._C_GetAttributeValue(hSession, hKey, tpl, 1) >>> 0 !== 0) return null
+    return safeRead32(M, val)
+  } catch {
+    return null
+  } finally {
+    try {
+      if (tpl) M._free(tpl)
+    } catch {
+      // ignore
+    }
+  }
+}
+
+/**
+ * Mechanism and key parameter set of the active C_SignInit / C_VerifyInit per
+ * session, so C_Sign / C_Verify (which carry no mechanism) can split a
+ * composite signature.
+ */
+const _signVerifyOp = new Map<string, { mech: number; ckp: number | null }>()
+const isCompSigMech = (m: number) => m === CKM_COMP_SIG || m === CKM_COMP_SIG_EXTERNAL_HASH
+
+const noteSignVerifyInit = (
+  M: SoftHSMModule,
+  kind: 'sign' | 'verify',
+  hSession: number,
+  mechType: number | null,
+  hKey: number
+) => {
+  const key = `${kind}:${hSession}`
+  if (mechType === null || !isCompSigMech(mechType)) {
+    _signVerifyOp.delete(key)
+    return
+  }
+  _signVerifyOp.set(key, { mech: mechType, ckp: readKeyParamSet(M, hSession, hKey) })
+}
+
+const compositeSignatureRows = (kind: 'sign' | 'verify', hSession: number, sigLen: number) => {
+  const op = _signVerifyOp.get(`${kind}:${hSession}`)
+  if (!op) return []
+  const sp = splitCompositeSignature(sigLen, op.ckp)
+  return sp ? splitRows('Signature', sp) : []
+}
+
+/**
+ * CK_MU_GEN_PARAMS (PKCS#11 v3.3 working draft, CKM_ML_DSA_EXTERNAL_MU_GEN).
+ * wasm32 layout: hKey @0, pTR @4, ulTRLen @8, pContext @12, ulContextLen @16.
+ * Exactly one of hKey / pTR is meant to be given.
+ */
+const readMuGenParams = (
+  M: SoftHSMModule,
+  ptr: number,
+  len: number
+): Array<{ name: string; value: string; note?: string }> | null => {
+  if (!ptr || len < 20) return null
+  const hKey = safeRead32(M, ptr)
+  const pTR = safeRead32(M, ptr + 4)
+  const trLen = safeRead32(M, ptr + 8)
+  const pCtx = safeRead32(M, ptr + 12)
+  const ctxLen = safeRead32(M, ptr + 16)
+  if (hKey === null || trLen === null || ctxLen === null) return null
+  const rows: Array<{ name: string; value: string; note?: string }> = []
+  if (hKey)
+    rows.push({ name: 'hKey', value: String(hKey), note: 'tr is computed from this public key' })
+  if (pTR && trLen)
+    rows.push({
+      name: 'pTR',
+      value: `precomputed tr (${trLen} bytes)`,
+      note: trLen === 64 ? 'tr = H(pk), 64 bytes (FIPS 204)' : 'FIPS 204 tr is 64 bytes',
+    })
+  if (!hKey && !(pTR && trLen)) rows.push({ name: 'hKey / pTR', value: 'neither given' })
+  rows.push({
+    name: 'Context',
+    value:
+      ctxLen && pCtx ? `${ctxLen} bytes [${safeReadBytesAsHex(M, pCtx, ctxLen, 16)}]` : 'empty',
+  })
+  return rows
+}
 
 // ── WASM memory readers ───────────────────────────────────────────────────────
 
@@ -1082,8 +1276,10 @@ const decodeGenerateKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11
 const decodeEncapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
   const mechPtr = args[1] ?? 0
   const mech = readMechanism(M, mechPtr)
+  const mechType = safeRead32(M, mechPtr)
+  const isCompKem = mechType === CKM_COMP_KEM
   const hPublicKey = args[2] ?? 0
-  const secretTmpl = readTemplate(M, args[3] ?? 0, args[4] ?? 0, 'ml-kem')
+  const secretTmpl = readTemplate(M, args[3] ?? 0, args[4] ?? 0)
   const ctPtr = args[5] ?? 0
   const ctLenPtr = args[6] ?? 0
 
@@ -1107,18 +1303,30 @@ const decodeEncapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkc
   const isOk = rv === 0 || rv === 0x150
   if (isOk && ctLenPtr) {
     const ctLen = safeRead32(M, ctLenPtr)
-    if (ctLen !== null) outputs.push({ name: '*pulCiphertextLen', value: `${ctLen} bytes` })
+    if (ctLen !== null) {
+      outputs.push({ name: '*pulCiphertextLen', value: `${ctLen} bytes` })
+      if (isCompKem) {
+        const sp = splitCompositeCiphertext(ctLen, readKeyParamSet(M, args[0] ?? 0, hPublicKey))
+        if (sp) outputs.push(...splitRows('Ciphertext', sp))
+      }
+    }
   }
   if (rv === 0 && args[7]) {
     const phKey = safeRead32(M, args[7])
     if (phKey !== null)
-      outputs.push({ name: '*phKey', value: String(phKey), note: 'Shared secret handle' })
+      outputs.push({
+        name: '*phKey',
+        value: String(phKey),
+        note: 'Shared secret handle (the secret value is never shown)',
+      })
   }
 
   return {
     inputs,
     outputs: outputs.length ? outputs : undefined,
-    spec: 'PKCS#11 v3.2 §5.25 (new in v3.2) · FIPS 203 Algorithm 17 (ML-KEM.Encaps)',
+    spec: isCompKem
+      ? `${V33_DRAFT} (CKM_COMP_KEM, C_EncapsulateKey) · draft-ietf-lamps-pq-composite-kem`
+      : 'PKCS#11 v3.2 §5.25 (new in v3.2) · FIPS 203 Algorithm 17 (ML-KEM.Encaps)',
   }
 }
 
@@ -1130,9 +1338,14 @@ const decodeEncapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkc
 const decodeDecapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
   const mechPtr = args[1] ?? 0
   const mech = readMechanism(M, mechPtr)
+  const mechType = safeRead32(M, mechPtr)
+  const isCompKem = mechType === CKM_COMP_KEM
   const hPrivateKey = args[2] ?? 0
-  const secretTmpl = readTemplate(M, args[3] ?? 0, args[4] ?? 0, 'ml-kem')
+  const secretTmpl = readTemplate(M, args[3] ?? 0, args[4] ?? 0)
   const ctLen = args[6] ?? 0 // direct value, not pointer
+  const split = isCompKem
+    ? splitCompositeCiphertext(ctLen, readKeyParamSet(M, args[0] ?? 0, hPrivateKey))
+    : null
 
   const inputs: InspectSection[] = []
   if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
@@ -1141,6 +1354,7 @@ const decodeDecapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkc
     primitives: [
       { name: 'hPrivateKey', value: String(hPrivateKey) },
       { name: 'ulCiphertextLen', value: `${ctLen} bytes` },
+      ...(split ? splitRows('Ciphertext', split) : []),
     ],
   })
   if (secretTmpl.length) inputs.push({ label: 'Secret Key Template', attributes: secretTmpl })
@@ -1149,13 +1363,19 @@ const decodeDecapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkc
   if (rv === 0 && args[7]) {
     const phKey = safeRead32(M, args[7])
     if (phKey !== null)
-      outputs.push({ name: '*phKey', value: String(phKey), note: 'Shared secret handle' })
+      outputs.push({
+        name: '*phKey',
+        value: String(phKey),
+        note: 'Shared secret handle (the secret value is never shown)',
+      })
   }
 
   return {
     inputs,
     outputs: outputs.length ? outputs : undefined,
-    spec: 'PKCS#11 v3.2 §5.26 (new in v3.2) · FIPS 203 Algorithm 18 (ML-KEM.Decaps)',
+    spec: isCompKem
+      ? `${V33_DRAFT} (CKM_COMP_KEM, C_DecapsulateKey) · draft-ietf-lamps-pq-composite-kem`
+      : 'PKCS#11 v3.2 §5.26 (new in v3.2) · FIPS 203 Algorithm 18 (ML-KEM.Decaps)',
   }
 }
 
@@ -1496,6 +1716,7 @@ const decodeSignInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
   const mechPtr = args[1] ?? 0
   const mech = readMechanism(M, mechPtr)
   const hKey = args[2] ?? 0
+  noteSignVerifyInit(M, 'sign', args[0] ?? 0, safeRead32(M, mechPtr), hKey)
   const inputs: InspectSection[] = []
   if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
   inputs.push({
@@ -1538,6 +1759,7 @@ const decodeSign = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInsp
           name: 'Signature Payload',
           value: safeReadBytesAsHex(M, pSignature, sigLen),
         })
+        outputs.push(...compositeSignatureRows('sign', args[0] ?? 0, sigLen))
       }
     }
   }
@@ -1554,6 +1776,7 @@ const decodeVerifyInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =>
   const mechPtr = args[1] ?? 0
   const mech = readMechanism(M, mechPtr)
   const hKey = args[2] ?? 0
+  noteSignVerifyInit(M, 'verify', args[0] ?? 0, safeRead32(M, mechPtr), hKey)
   const inputs: InspectSection[] = []
   if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
   inputs.push({
@@ -1579,6 +1802,7 @@ const decodeVerify = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogIn
           { name: 'Data Payload', value: safeReadBytesAsHex(M, pData, dataLen) },
           { name: 'ulSignatureLen', value: `${sigLen} bytes` },
           { name: 'Signature Payload', value: safeReadBytesAsHex(M, pSignature, sigLen) },
+          ...compositeSignatureRows('verify', args[0] ?? 0, sigLen),
         ],
       },
     ],
@@ -1746,6 +1970,18 @@ const decodeDigestInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =>
   const mech = readMechanism(M, mechPtr)
   const inputs: InspectSection[] = []
   if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  if (safeRead32(M, mechPtr) === CKM_ML_DSA_EXTERNAL_MU_GEN) {
+    const rows = readMuGenParams(
+      M,
+      safeRead32(M, mechPtr + 4) ?? 0,
+      safeRead32(M, mechPtr + 8) ?? 0
+    )
+    if (rows) inputs.push({ label: `CK_MU_GEN_PARAMS (${V33_DRAFT})`, primitives: rows })
+    return {
+      inputs,
+      spec: `PKCS#11 v3.2 §5.17 (C_DigestInit) · ${V33_DRAFT} CKM_ML_DSA_EXTERNAL_MU_GEN · FIPS 204 µ`,
+    }
+  }
   return { inputs, spec: 'PKCS#11 v3.2 §5.17 (C_DigestInit)' }
 }
 
