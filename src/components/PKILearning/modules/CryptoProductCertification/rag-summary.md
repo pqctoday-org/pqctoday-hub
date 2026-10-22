@@ -8,6 +8,8 @@ The module is a single ~60-minute route with no learn paths. Deeper material is 
 
 ## Key Concepts
 
+- **Hybrid or standalone, by scheme (as of 22 October 2026)** — FIPS 140-3 approves ML-KEM, ML-DSA and SLH-DSA on their own; a hybrid KEM is allowed under IG D.S Scenario 2 conditions (approved key combiner, module-enforced fixed combinations); the IG has no hybrid-signature scenario. EUCC (ECCG ACM v2, unchanged in the v3 draft): (M)LWE mechanisms such as ML-KEM and ML-DSA should not be used standalone but combined with a classical mechanism; hash-based signatures may stand alone. BSI TR-02102-1 (2026-01) recommends PQC key agreement and signatures only in hybrid form; ANSSI's FAQ calls hybridisation essential, except for hash-based signatures. IETF Composite ML-DSA is approved and awaiting RFC publication but not yet named by FIPS IG or the ECCG mechanisms.
+
 - **Standards, criteria and schemes have different roles** — FIPS 140-3 specifies module requirements validated through CMVP; CC provides product evaluation criteria; EUCC is a scheme using CC, not a separate alternative to CC. PCI addresses payment-device approval. Name the applicable scheme before applying its rules.
 - **Scope before level** — a certificate covers a defined module, target or device at a version and configuration. The anchor is a fictional network HSM ("Orrin N7") sold as an appliance and as a multi-tenant cloud service into four markets.
 - **What PQC changes in certification** — adding ML-KEM or ML-DSA changes the certified product, and each scheme has its own route for that change.

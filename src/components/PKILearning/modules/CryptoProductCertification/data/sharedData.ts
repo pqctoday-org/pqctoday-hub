@@ -65,7 +65,64 @@ export const SHARED_SOURCES = {
   kmo: getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
   pciCryptoGuidance: getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
   dss: getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
+  acm3Draft: getStandard('ECCG-ACM-v3-Draft-2026'),
+  bsiTr021021: getStandard('BSI TR-02102-1'),
+  anssiPqcFaq: getStandard('ANSSI-PQC-FAQ-2025'),
+  compositeMlDsa: getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
 } satisfies Record<string, StandardRef>
+
+// ── hybrid or standalone (owner-approved 2026-10-22; every quote checked
+//    against the cited document on 2026-10-22) ────────────────────────────
+
+export interface HybridPositionRow {
+  scheme: string
+  keyEstablishment: string
+  signatures: string
+  sourceNote: string
+  sources: StandardRef[]
+}
+
+export const HYBRID_AS_OF = '22 October 2026'
+
+export const HYBRID_POSITIONS: HybridPositionRow[] = [
+  {
+    scheme: 'FIPS 140-3 (US)',
+    keyEstablishment:
+      'ML-KEM alone is approved. A hybrid is allowed only under conditions: an approved key combiner, and a fixed list of combinations the module enforces (for example X25519MLKEM768), not arbitrary pairings.',
+    signatures:
+      'ML-DSA and SLH-DSA are approved on their own. The Implementation Guidance has no hybrid-signature scenario.',
+    sourceNote: 'IG D.S, Scenarios 1 and 2 (IG last updated 19 August 2026)',
+    sources: [SHARED_SOURCES.ig],
+  },
+  {
+    scheme: 'EUCC (EU)',
+    keyEstablishment:
+      '“(M)LWE based cryptographic mechanisms shouldn’t be used in a standalone way … but should be combined with a classical cryptomechanism.”',
+    signatures:
+      'ML-DSA: the same rule — combine with a classical scheme. Hash-based (SLH-DSA, LMS, XMSS): “may however also be used in a standalone way.”',
+    sourceNote:
+      'ECCG Agreed Cryptographic Mechanisms v2, Notes 51, 53 and 60 (applicable); unchanged in the v3 draft for public review (Notes 53, 55 and 63)',
+    sources: [SHARED_SOURCES.acm2, SHARED_SOURCES.acm3Draft],
+  },
+  {
+    scheme: 'Germany (BSI)',
+    keyEstablishment:
+      '“this Technical Guideline currently only recommends the hybrid use … of quantum-safe methods in combination with classical methods.”',
+    signatures:
+      'Recommends a quantum-safe signature “only in combination with a classic signature scheme”; hash-based signatures are treated more permissively.',
+    sourceNote: 'BSI TR-02102-1, version 2026-01, §2 and §5.3.4',
+    sources: [SHARED_SOURCES.bsiTr021021],
+  },
+  {
+    scheme: 'France (ANSSI)',
+    keyEstablishment:
+      'Hybrid use is essential wherever PQC is deployed, and mandatory in the regulated perimeter.',
+    signatures:
+      'Same, except hash-based signatures (SLH-DSA, XMSS, LMS), for which ANSSI does not recommend systematic hybridisation.',
+    sourceNote: 'ANSSI PQC FAQ (October 2025)',
+    sources: [SHARED_SOURCES.anssiPqcFaq],
+  },
+]
 
 // ── pqc-impact ──────────────────────────────────────────────────────────────
 

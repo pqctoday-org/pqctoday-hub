@@ -22831,6 +22831,21 @@
       "unified": "converted",
       "admittedAt": "2026-10-22T02:47:36.419274+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "ECCG-ACM-v3-Draft-2026",
+      "title": "ECCG Agreed Cryptographic Mechanisms version 3 — draft for public review",
+      "url": "https://certification.enisa.europa.eu/document/download/9993abb8-5f27-47d0-bdb2-f6f284cd5141_en?filename=20260507-acm-draft.pdf",
+      "status": "downloaded",
+      "filename": "ECCG-ACM-v3-Draft-2026.pdf",
+      "sizeBytes": 443881,
+      "contentType": "application/pdf",
+      "sha256": "e20d5d725f189a7e3ed75404d1f4d2e9b0ad6fb4a6a267a2d4f6e6fdf1ede10c",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-22T03:53:06.081489+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [

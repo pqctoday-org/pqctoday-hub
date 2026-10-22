@@ -17,6 +17,8 @@ import { Input } from '@/components/ui/input'
 import {
   AGILE_ARCHITECTURE,
   HONESTY_TIERS,
+  HYBRID_AS_OF,
+  HYBRID_POSITIONS,
   LIFECYCLE_STEPS,
   MAINTAIN_VALID,
   MANDATE_LABEL,
@@ -200,6 +202,59 @@ export const PqcImpact = () => (
         unchanged; the validation process is under an order to speed up.
       </p>
     </Callout>
+
+    <H3>Hybrid or standalone: what each scheme expects</H3>
+    <p>
+      A “hybrid” combines a post-quantum algorithm with a classical one, so the result stays secure
+      as long as either one holds. The schemes do not agree on whether you must use one (as of{' '}
+      {HYBRID_AS_OF}):
+    </p>
+    <div className="overflow-x-auto rounded-lg border border-border">
+      <table className="w-full min-w-[720px] text-left text-xs">
+        <caption className="sr-only">Hybrid or standalone PQC, by scheme</caption>
+        <thead className="bg-muted/60 text-muted-foreground">
+          <tr>
+            <th className="p-3 font-semibold">Scheme or authority</th>
+            <th className="p-3 font-semibold">Key establishment (ML-KEM)</th>
+            <th className="p-3 font-semibold">Signatures (ML-DSA, SLH-DSA, LMS/XMSS)</th>
+            <th className="p-3 font-semibold">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {HYBRID_POSITIONS.map((r) => (
+            <tr key={r.scheme} className="border-t border-border align-top">
+              <td className="p-3 font-semibold text-foreground">{r.scheme}</td>
+              <td className="p-3">{r.keyEstablishment}</td>
+              <td className="p-3">{r.signatures}</td>
+              <td className="p-3">
+                <p>{r.sourceNote}</p>
+                <p className="mt-1 flex flex-wrap gap-x-2">
+                  {r.sources.map((s) => (
+                    <SourceLink key={s.id} source={s} label={s.id} />
+                  ))}
+                </p>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      <strong>What this means for a certification engineer:</strong> a product sold into both the US
+      and the EU should be designed with hybrid in mind. Standalone ML-KEM or ML-DSA can be fine for
+      a FIPS 140-3 validation but falls short of the EUCC guidance and the German and French
+      positions. If the product offers a hybrid, check that its FIPS module meets the IG D.S
+      conditions — a hybrid the module does not enforce cannot be claimed as an approved service.
+      Hash-based signatures are the exception almost everywhere: they may stand alone.
+    </p>
+    <p className="text-xs text-muted-foreground">
+      How to build a hybrid signature is being standardised now: IETF Composite ML-DSA (ML-DSA
+      paired with RSA, ECDSA, Ed25519 or Ed448) is approved and awaiting RFC publication (
+      <SourceLink source={SHARED_SOURCES.compositeMlDsa} label="draft -19" />; tracked in ENISA’s{' '}
+      <SourceLink source={SHARED_SOURCES.enisaHybrid} label="hybridisation status report" />
+      ). Neither the FIPS 140-3 Implementation Guidance nor the ECCG mechanisms (v2 or the v3 draft)
+      names it yet. Re-check before relying on this table.
+    </p>
 
     <H3>Five strengths of claim</H3>
     <p>
