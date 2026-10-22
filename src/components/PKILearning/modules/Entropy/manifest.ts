@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'entropy-randomness',
-  contentVersion: 24,
+  contentVersion: 25,
   lm_id: 'LM-003',
   title: 'Entropy & Randomness',
   description:

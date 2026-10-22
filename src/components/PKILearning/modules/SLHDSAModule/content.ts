@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'slh-dsa',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-22',
 
   standards: [
     getStandard('FIPS 205'),
