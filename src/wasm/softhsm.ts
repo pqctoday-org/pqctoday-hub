@@ -6199,7 +6199,7 @@ export interface KeyAttributeSet {
   /** CKA_CHECK_VALUE (KCV) bytes; present on symmetric/secret keys */
   ckCheckValue?: Uint8Array | null
   /** CKA_KEYS_REMAINING (0x61c): remaining signatures on an HSS, XMSS or
-   * XMSS^MT key. PKCS#11 v3.3 working draft name; v3.2 called it
+   * XMSS^MT private key (null on the public half). PKCS#11 v3.3 working draft name; v3.2 called it
    * CKA_HSS_KEYS_REMAINING. Read through hsm_getKeysRemaining, which also
    * tries the ids older engine builds used. */
   ckKeysRemaining: number | null
@@ -6348,8 +6348,10 @@ export const hsm_getKeyAttributes = (
           }
         })()
       : null,
+    // The counter lives on the PRIVATE key only (v3.3 draft; the engine
+    // answers CKR_ATTRIBUTE_TYPE_INVALID on the public half).
     ckKeysRemaining:
-      ckKeyType === CKK_HSS || ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT
+      isPrivate && (ckKeyType === CKK_HSS || ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT)
         ? (() => {
             try {
               return hsm_getKeysRemaining(M, hSession, handle)

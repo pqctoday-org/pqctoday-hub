@@ -84,12 +84,12 @@ const PKCS11_PATTERNS: Array<[RegExp, CryptoErrorHint]> = [
     },
   ],
   [
-    /CKR_KEY_EXHAUSTED|0x00000162/i,
+    /CKR_KEY_EXHAUSTED|0x00000203/i,
     {
       summary: 'This key has used all of its one-time signatures and cannot sign again.',
       action:
         'Generate a new key pair. Stateful hash-based keys (LMS/HSS, XMSS) have a fixed signature budget.',
-      technicalNote: 'CKR_KEY_EXHAUSTED (0x162) — all OTS indices consumed.',
+      technicalNote: 'CKR_KEY_EXHAUSTED (0x203) — all OTS indices consumed.',
     },
   ],
   [
