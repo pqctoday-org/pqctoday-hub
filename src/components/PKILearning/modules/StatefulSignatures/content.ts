@@ -72,7 +72,7 @@ export const content: ModuleContent = {
     stateManagement:
       'State must be persistent, atomic, and never cloned. Hardware Security Modules (HSMs) with non-volatile monotonic counters are the standard approach.',
     lmsVsXmss:
-      'LMS is simpler with faster key generation; NSA CNSA 2.0 allows single-tree LMS and XMSS and prefers LMS with SHA-256/192. XMSS has stronger security proofs with forward security; BSI recommends both families.',
+      'LMS is simpler with faster key generation; NSA CNSA 2.0 allows single-tree LMS and XMSS and prefers LMS with SHA-256/192. XMSS has a tighter security proof (forward security only in a research variant, not in SP 800-208 / RFC 8391); BSI recommends both families.',
     w4Size: '2.5 KB',
     w8Size: '1.7 KB',
   },

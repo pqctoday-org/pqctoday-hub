@@ -396,8 +396,10 @@ const Step2LmsXmss: React.FC = () => (
                     <InlineTooltip term="Forward Secrecy">Forward Security</InlineTooltip>
                   </td>
                   <td className="py-2 pr-4 text-muted-foreground">No</td>
-                  <td className="py-2 text-success font-medium">
-                    Yes &mdash; past signatures stay secure even if current key is compromised
+                  <td className="py-2 text-muted-foreground">
+                    No, as standardised (SP 800-208, RFC 8391): every one-time key is derived from
+                    one fixed secret seed, so a stolen seed exposes all of them. Forward-secure XMSS
+                    exists only as a research variant.
                   </td>
                 </tr>
                 <tr>
