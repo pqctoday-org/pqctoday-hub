@@ -11,7 +11,7 @@
 // replay + probe sequences as before; e2e/pkcs11-conformance.local.spec.ts's
 // testids are preserved.
 import { useMemo, useState } from 'react'
-import { CheckCircle, XCircle, MinusCircle, Copy } from 'lucide-react'
+import { CheckCircle, XCircle, MinusCircle, Copy, Clock, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -24,8 +24,18 @@ import {
   mechanismProbeCount,
   errorPathProbeSummary,
   tallyByTier,
+  selectionIsEmpty,
+  v33SummaryText,
   type RowStatus,
 } from '../../../hsm/conformance/usePkcs11Conformance'
+import {
+  V33_DRAFT_GROUP_LABEL,
+  V33_DRAFT_GROUP_TITLE,
+  V33_SECTION_TITLES,
+  type V33CheckStatus,
+} from '@/wasm/pkcs11ConformanceRunner/v33DraftFeatures'
+import { V33_DRAFT_ERROR_PATHS } from '@/wasm/pkcs11ConformanceRunner/errorPathCatalog'
+import { COMPOSITE_KEM_SETS, COMPOSITE_SIG_SETS } from '@/wasm/softhsm/compositeParams'
 import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { mechanismProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
@@ -37,6 +47,23 @@ const StatusIcon = ({ status }: { status: RowStatus }) => {
   if (status === 'pass') return <CheckCircle className="h-4 w-4 text-status-success shrink-0" />
   if (status === 'fail') return <XCircle className="h-4 w-4 text-destructive shrink-0" />
   return <MinusCircle className="h-4 w-4 text-muted-foreground shrink-0" />
+}
+
+/** v3.3 draft statuses: only 'fail' is ever drawn as a failure. */
+const V33_STATUS_LABEL: Record<V33CheckStatus, string> = {
+  pass: 'pass',
+  fail: 'fail',
+  'not-in-engine': 'not in this engine yet',
+  'not-supported': 'not supported',
+  'pending-engine': 'pending engine',
+}
+
+const V33StatusIcon = ({ status }: { status: V33CheckStatus }) => {
+  if (status === 'pass') return <CheckCircle className="h-4 w-4 text-status-success shrink-0" />
+  if (status === 'fail') return <XCircle className="h-4 w-4 text-destructive shrink-0" />
+  if (status === 'pending-engine')
+    return <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
+  return <Info className="h-4 w-4 text-muted-foreground shrink-0" />
 }
 
 export const ConformanceSuiteWorkbench = () => {
@@ -53,6 +80,9 @@ export const ConformanceSuiteWorkbench = () => {
     setTierB,
     setCoverage,
     setErrorPaths,
+    setV33Draft,
+    v33Rows,
+    v33Summary,
     run,
     pass,
     fail,
@@ -83,8 +113,7 @@ export const ConformanceSuiteWorkbench = () => {
   }
 
   const running = loading || codeRunning
-  const nothingSelected =
-    selection.tierA.size === 0 && !selection.tierB && !selection.coverage && !selection.errorPaths
+  const nothingSelected = selectionIsEmpty(selection)
   const errorPaths = errorPathProbeSummary()
   // WS-G G-4: every count below is counted from the case/probe definitions.
   const TIER_B_GROUPS = tierBGroups()
@@ -209,6 +238,28 @@ export const ConformanceSuiteWorkbench = () => {
           </span>
         </span>
       </label>
+      <label
+        className="flex items-start gap-2 p-1.5 rounded-md hover:bg-muted/50 cursor-pointer text-xs border-t pt-2"
+        data-testid="pkcs11-conformance-v33-toggle"
+      >
+        <input
+          type="checkbox"
+          aria-label="v3.3 draft features"
+          className="mt-0.5 accent-primary"
+          checked={selection.v33Draft ?? false}
+          onChange={(e) => setV33Draft(e.target.checked)}
+        />
+        <span className="flex-1 min-w-0">
+          <span className="block font-medium text-foreground">
+            {V33_DRAFT_GROUP_TITLE} · separate group
+          </span>
+          <span className="block text-[10.5px] text-muted-foreground">
+            {COMPOSITE_KEM_SETS.length + COMPOSITE_SIG_SETS.length} composite sets (round trip +
+            IETF LAMPS known answers), external µ, CKA_KEYS_REMAINING,{' '}
+            {V33_DRAFT_ERROR_PATHS.length} error paths — never counted in the v3.2 result
+          </span>
+        </span>
+      </label>
       <div className="mt-auto pt-3 border-t text-[10.5px] text-muted-foreground">
         <div className="font-semibold uppercase mb-1">Engine</div>
         <div className="font-mono">
@@ -232,7 +283,7 @@ export const ConformanceSuiteWorkbench = () => {
         </p>
       </div>
 
-      {ran && !loading && (
+      {ran && !loading && rows.length > 0 && (
         <div
           className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
             fail === 0
@@ -300,12 +351,89 @@ export const ConformanceSuiteWorkbench = () => {
             </div>
           ))}
         </div>
-      ) : (
+      ) : v33Rows.length > 0 ? null : (
         <p className="p-8 text-center text-xs text-muted-foreground/60 italic border border-dashed rounded-lg">
           {loading
             ? 'Running conformance checks…'
             : 'No rows yet. Pick cases on the left and press Run.'}
         </p>
+      )}
+
+      {v33Rows.length > 0 && (
+        <section
+          className="space-y-2 rounded-lg border border-dashed border-border p-3"
+          data-testid="pkcs11-conformance-v33-group"
+          aria-label={V33_DRAFT_GROUP_TITLE}
+        >
+          <div>
+            <h4 className="text-sm font-bold">
+              {V33_DRAFT_GROUP_TITLE}{' '}
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                working draft
+              </span>
+            </h4>
+            <p
+              className="text-xs text-muted-foreground mt-0.5"
+              data-testid="pkcs11-conformance-v33-label"
+            >
+              {V33_DRAFT_GROUP_LABEL}
+            </p>
+          </div>
+          <div
+            className="px-3 py-2 rounded-lg text-xs bg-muted/40 border border-border text-foreground"
+            data-testid="pkcs11-conformance-v33-summary"
+          >
+            {v33SummaryText(v33Summary, v33Rows.length)} · not part of the v3.2 result above
+          </div>
+          <div className="bg-background border border-border rounded-lg overflow-hidden divide-y divide-border/50 max-h-[50vh] overflow-y-auto">
+            {v33Rows.map((r) => (
+              <div
+                key={r.id}
+                className="flex items-start gap-2 px-3 py-2"
+                data-testid="pkcs11-conformance-v33-row"
+                data-status={r.status}
+              >
+                <V33StatusIcon status={r.status} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
+                      {r.engine}
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
+                      {V33_SECTION_TITLES[r.section]}
+                    </span>
+                    <span className="text-xs font-medium">{r.title}</span>
+                    <span
+                      className={`text-[10px] ml-auto shrink-0 ${
+                        r.status === 'fail'
+                          ? 'text-destructive'
+                          : r.status === 'pass'
+                            ? 'text-status-success'
+                            : 'text-muted-foreground'
+                      }`}
+                    >
+                      {V33_STATUS_LABEL[r.status]}
+                    </span>
+                  </div>
+                  <p
+                    className={`text-[11px] mt-0.5 font-mono break-all ${
+                      r.status === 'fail' ? 'text-destructive' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {r.observed}
+                  </p>
+                  <p className="text-[10.5px] text-muted-foreground">Expected: {r.expected}</p>
+                  {r.source && (
+                    <p className="text-[10.5px] text-muted-foreground">Vectors: {r.source}</p>
+                  )}
+                  {r.citation && (
+                    <p className="text-[10.5px] text-muted-foreground">Cited: {r.citation}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   )
@@ -330,6 +458,10 @@ export const ConformanceSuiteWorkbench = () => {
           <div className="flex justify-between">
             <span className="text-muted-foreground">Coverage</span>
             <span className="font-mono">{selection.coverage ? 'on' : 'off'}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">v3.3 draft</span>
+            <span className="font-mono">{selection.v33Draft ? 'on' : 'off'}</span>
           </div>
           {ran && (
             <div className="flex justify-between">
@@ -361,6 +493,14 @@ export const ConformanceSuiteWorkbench = () => {
           Mechanism Coverage runs {mechCount} PQC Today-authored probes ({mechFamilies}) of
           mechanisms no other suite here exercises, each gated only on C_GetMechanismList
           advertising it.
+        </p>
+        <p>
+          The {V33_DRAFT_GROUP_TITLE} group tests the PKCS#11 v3.3 working draft (composite ML-DSA
+          and ML-KEM, external µ, CKA_KEYS_REMAINING). It has its own summary and never enters the
+          v3.2 counts or profile verdict. A mechanism the engine does not advertise reads &quot;not
+          in this engine yet&quot;, a parameter set it refuses &quot;not supported&quot;, and an
+          error code that depends on engine work not yet shipped &quot;pending engine&quot; — none
+          of them is a failure.
         </p>
       </Card>
     </>

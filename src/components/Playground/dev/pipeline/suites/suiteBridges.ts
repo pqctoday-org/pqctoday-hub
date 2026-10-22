@@ -43,19 +43,28 @@ export const createAcvpBridge = (suite: AcvpSuite): AcvpBridge => ({
 
 export interface ConformanceBridge {
   claims: () => string
-  run_cases: (ids: unknown, tierB: unknown, coverage: unknown) => Promise<string>
+  run_cases: (
+    ids: unknown,
+    tierB: unknown,
+    coverage: unknown,
+    v33Draft?: unknown
+  ) => Promise<string>
+  /** The separate v3.3 draft group's rows from the last run (never in run_cases' rows). */
+  v33_rows: () => string
 }
 
 export const createConformanceBridge = (suite: Pkcs11ConformanceSuite): ConformanceBridge => ({
   claims: () => JSON.stringify(suite.claims),
-  run_cases: async (ids: unknown, tierB: unknown, coverage: unknown) => {
+  run_cases: async (ids: unknown, tierB: unknown, coverage: unknown, v33Draft?: unknown) => {
     const rows = await suite.run({
       tierA: new Set(toStringArray(ids)),
       tierB: Boolean(tierB),
       coverage: Boolean(coverage),
+      v33Draft: Boolean(v33Draft),
     })
     return JSON.stringify(rows)
   },
+  v33_rows: () => JSON.stringify(suite.v33RowsRef.current),
 })
 
 /** Run a generated suite script in Pyodide with the given JS modules
