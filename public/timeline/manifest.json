@@ -2,7 +2,7 @@
   "generated": "2026-10-22",
   "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_10222026_r2.csv",
+  "csv": "timeline_10222026_r3.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -686,7 +686,7 @@
       "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-27",
-      "admittedBy": "admit.py --stamp-existing",
+      "admittedBy": "evidence admission",
       "stampedAt": "2026-10-01T03:05:45.568350+00:00"
     },
     {
@@ -3478,5 +3478,5 @@
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-10-22T20:05:01.609469+00:00"
+  "rebuiltAt": "2026-10-22T20:06:15.130609+00:00"
 }
