@@ -42,7 +42,25 @@ async function showSandboxScenarios(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: 'Sandbox', exact: true }).click()
 }
 
+// Opening the Playground no longer probes the local sandbox (0ccbde22f, 2026-10-18,
+// CHANGELOG "Opening the Playground no longer probes a local Sandbox"): the runtime
+// stays idle until the learner presses the "Sandbox runtime" toggle. So a spec that
+// needs the runtime online asks for it the way a learner does, then waits for the
+// stubbed probe to settle online.
+async function connectSandboxRuntime(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: 'Sandbox runtime' }).click()
+  await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
+}
+
 test.describe('Crypto Lab Workbench — Sandbox facet', () => {
+  // The probe now runs on a click, after the PWA service worker has taken control
+  // of the page. The worker's catch-all handler re-issues cross-origin requests
+  // itself, so `page.route` never sees them: the stub above was bypassed, the real
+  // localhost:4000 was unreachable, and the worker answered 503 ("offline"). The
+  // old on-mount probe ran before the worker claimed the page, which hid this.
+  // Same remedy as rag-pipeline.spec.ts: keep requests on the page.
+  test.use({ serviceWorkers: 'block' })
+
   test.beforeEach(async ({ page }) => {
     // Suppress the blocking overlays that intercept pointer events.
     await page.addInitScript(() => {
@@ -62,9 +80,17 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
   test('sandbox scenarios live inside a domain category, carrying a Sandbox badge', async ({
     page,
   }) => {
+    // Count probe requests: an ordinary visit must not contact the local sandbox.
+    let probes = 0
+    page.on('request', (req) => {
+      if (req.url() === `${SANDBOX_ORIGIN}/api/status`) probes += 1
+    })
     await page.goto(PROTOCOL_SIMS_URL)
-    // Wait for the runtime probe to settle online.
-    await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText(/Docker scenarios locked/i)).toBeVisible({ timeout: 10000 })
+    expect(probes).toBe(0)
+
+    await connectSandboxRuntime(page)
+    expect(probes).toBe(1)
     await showSandboxScenarios(page)
 
     const card = page.locator('[data-tool-card]', { hasText: SANDBOX_TILE }).first()
@@ -111,7 +137,7 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
 
   test('opening an unlocked sandbox scenario routes to its embedded iframe', async ({ page }) => {
     await page.goto(PROTOCOL_SIMS_URL)
-    await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
+    await connectSandboxRuntime(page)
     await showSandboxScenarios(page)
 
     const card = page.locator('[data-tool-card]', { hasText: SANDBOX_TILE }).first()
