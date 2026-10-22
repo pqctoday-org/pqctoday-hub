@@ -39,6 +39,7 @@ import { evaluateBoundary, type Applicability, type BoundaryLens } from '../data
 import {
   COVERAGE_LABEL,
   EIDAS_LINKS,
+  EIDAS_SCENARIO_SCOPE,
   EXTENDED_ARTIFACTS,
   MANDATE_LABEL,
   MATRIX_SCHEMES,
@@ -72,7 +73,7 @@ const isPath = (v: unknown): v is CertPathId =>
 
 const LENSES: { id: BoundaryLens; label: string }[] = [
   { id: 'fips', label: 'FIPS 140-3 module' },
-  { id: 'cc', label: 'CC / EUCC TOE' },
+  { id: 'cc', label: 'CC TOE — identify the issuing scheme' },
   { id: 'pci', label: 'PCI PTS HSM device' },
 ]
 
@@ -463,7 +464,11 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
             />
             <TextField
               id="capstone-field-4"
-              label={<>Security Target changes and notes (cryptographic SFRs, TOE, CC version)</>}
+              label={
+                <>
+                  Issuing scheme and Security Target changes (cryptographic SFRs, TOE, CC version)
+                </>
+              }
 
               rows={3}
               value={s.cc.notes}
@@ -474,6 +479,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
 
         {s.path === 'eucc-eidas' ? (
           <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">{EIDAS_SCENARIO_SCOPE}</p>
             {EIDAS_LINKS.map((l) => (
               <Choice
                 key={l.id}

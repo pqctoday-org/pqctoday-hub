@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'slh-dsa',
-  contentVersion: 4,
+  contentVersion: 11,
   lm_id: 'LM-027',
   title: 'SLH-DSA: Stateless Hash Signatures',
   description:

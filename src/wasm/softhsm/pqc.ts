@@ -39,16 +39,6 @@ import {
   CKM_HASH_ML_DSA_SHA512,
   CKM_HASH_ML_DSA_SHAKE128,
   CKM_HASH_ML_DSA_SHAKE256,
-  CKM_HASH_SLH_DSA_SHA224,
-  CKM_HASH_SLH_DSA_SHA256,
-  CKM_HASH_SLH_DSA_SHA384,
-  CKM_HASH_SLH_DSA_SHA3_224,
-  CKM_HASH_SLH_DSA_SHA3_256,
-  CKM_HASH_SLH_DSA_SHA3_384,
-  CKM_HASH_SLH_DSA_SHA3_512,
-  CKM_HASH_SLH_DSA_SHA512,
-  CKM_HASH_SLH_DSA_SHAKE128,
-  CKM_HASH_SLH_DSA_SHAKE256,
   CKM_ML_DSA,
   CKM_ML_DSA_KEY_PAIR_GEN,
   CKM_ML_KEM,
@@ -755,22 +745,10 @@ export type SLHDSAPreHash =
 
 export interface SLHDSASignOptions {
   preHash?: SLHDSAPreHash // all PKCS#11 v3.2 CKM_HASH_SLH_DSA_* variants
+  context?: Uint8Array
+  deterministic?: boolean
+  hedgedRequired?: boolean
 }
-
-// Map preHash option to CKM mechanism constant (PKCS#11 v3.2 §6.x, FIPS 205 HashSLH-DSA).
-// Lazy for the same reason as prehashMech() above.
-const slhDsaPrehashMech = (): Record<string, number> => ({
-  sha224: CKM_HASH_SLH_DSA_SHA224,
-  sha256: CKM_HASH_SLH_DSA_SHA256,
-  sha384: CKM_HASH_SLH_DSA_SHA384,
-  sha512: CKM_HASH_SLH_DSA_SHA512,
-  'sha3-224': CKM_HASH_SLH_DSA_SHA3_224,
-  'sha3-256': CKM_HASH_SLH_DSA_SHA3_256,
-  'sha3-384': CKM_HASH_SLH_DSA_SHA3_384,
-  'sha3-512': CKM_HASH_SLH_DSA_SHA3_512,
-  shake128: CKM_HASH_SLH_DSA_SHAKE128,
-  shake256: CKM_HASH_SLH_DSA_SHAKE256,
-})
 
 /**
  * Allocate CK_SIGN_ADDITIONAL_CONTEXT in WASM memory.
@@ -1239,71 +1217,7 @@ export const hsm_importSLHDSAPublicKey = (
  * Supports both pure SLH-DSA (CKM_SLH_DSA) and pre-hash variants (CKM_HASH_SLH_DSA_*).
  * opts.preHash selects a fixed-hash variant per FIPS 205 HashSLH-DSA; omit for pure mode.
  */
-export const hsm_slhdsaSign = (
-  M: SoftHSMModule,
-  hSession: number,
-  privHandle: number,
-  message: string,
-  opts?: SLHDSASignOptions
-): Uint8Array => {
-  const mechType = opts?.preHash ? (slhDsaPrehashMech()[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
-  const mech = buildMech(M, mechType)
-  const msgBytes = new TextEncoder().encode(message)
-  const msgPtr = writeBytes(M, msgBytes)
-  const sigLenPtr = allocUlong(M)
-  let sigPtr = 0
-  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit(SLH-DSA)')
-  try {
-    checkRV(
-      M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, 0, sigLenPtr),
-      'C_SignMessage(SLH-DSA,len)'
-    )
-    const sigLen = readUlong(M, sigLenPtr)
-    sigPtr = M._malloc(sigLen)
-    writeUlong(M, sigLenPtr, sigLen)
-    checkRV(
-      M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigLenPtr),
-      'C_SignMessage(SLH-DSA)'
-    )
-    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
-  } finally {
-    M._C_MessageSignFinal(hSession) // close multi-message context; ignore RV in cleanup
-    M._free(mech)
-    M._free(msgPtr)
-    M._free(sigLenPtr)
-    if (sigPtr) M._free(sigPtr)
-  }
-}
-
-/**
- * SLH-DSA verify via C_MessageVerifyInit + C_VerifyMessage + C_MessageVerifyFinal (PKCS#11 v3.2).
- * opts.preHash must match the mechanism used during signing.
- */
-export const hsm_slhdsaVerify = (
-  M: SoftHSMModule,
-  hSession: number,
-  pubHandle: number,
-  message: string,
-  sigBytes: Uint8Array,
-  opts?: SLHDSASignOptions
-): boolean => {
-  const mechType = opts?.preHash ? (slhDsaPrehashMech()[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
-  const mech = buildMech(M, mechType)
-  const msgBytes = new TextEncoder().encode(message)
-  const msgPtr = writeBytes(M, msgBytes)
-  const sigPtr = writeBytes(M, sigBytes)
-  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(SLH-DSA)')
-  try {
-    const rv =
-      M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
-    return rv === 0
-  } finally {
-    M._C_MessageVerifyFinal(hSession) // close multi-message context; ignore RV in cleanup
-    M._free(mech)
-    M._free(msgPtr)
-    M._free(sigPtr)
-  }
-}
+export { hsm_slhdsaSign, hsm_slhdsaVerify } from '../softhsm'
 
 /**
  * Stateful hash-based signatures (HSS/LMS, XMSS, XMSS-MT).

@@ -29,7 +29,6 @@ import {
 import { pinnedVerdict, type PinnedRv } from './pkcs11Raw'
 import {
   WSE_MECH,
-  eqHex,
   hexUp,
   importSecretRv,
   rawMech,
@@ -128,7 +127,7 @@ export async function runAesKwAcvpSection(ctx: ClassicalSectionCtx): Promise<voi
         testCase,
         meta,
         source: srcTag(P),
-        exec: () => {
+        exec: (compare) => {
           const kek = importSecretRv(M, h, CKK_AES, hexToBytes(t.key), { wrap: true, unwrap: true })
           if (kek.rv !== CKR_OK) {
             const o = `C_CreateObject(KEK) → ${rvName(kek.rv)}`
@@ -149,7 +148,7 @@ export async function runAesKwAcvpSection(ctx: ClassicalSectionCtx): Promise<voi
                 const o = `${r.step} → ${rvName(r.rv)}`
                 return { ok: false, observed: o, details: o }
               }
-              const ok = eqHex(r.out, t.ct)
+              const ok = compare(r.out, t.ct, 'wrapped key')
               return {
                 ok,
                 observed: ok ? 'byte-equal' : `ct ${hexUp(r.out)}`,
@@ -178,7 +177,7 @@ export async function runAesKwAcvpSection(ctx: ClassicalSectionCtx): Promise<voi
               return { ok: false, observed: o, details: `${o} — the NIST case is valid` }
             }
             const value = valueOf(M, h, payload)
-            const ok = eqHex(value, t.pt)
+            const ok = compare(value, t.pt, 'unwrapped test key')
             return {
               ok,
               observed: ok ? 'byte-equal' : `value ${hexUp(value)}`,

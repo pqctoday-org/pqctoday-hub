@@ -46,5 +46,33 @@ describe('AcvpLabWorkflowModule render parity', () => {
     const notice = screen.getByTestId('acvp-lab-draft-notice')
     expect(notice).toHaveTextContent('awaiting review by a validation-lab practitioner')
     expect(notice).toHaveTextContent('It is not an ACVTS verdict, a CAVP/CMVP certificate')
+    const executionPath = screen.getByText('Confirm the execution path.').closest('li')
+    expect(executionPath).toHaveTextContent(
+      'An “acceleration enabled” setting does not prove that a test used the accelerator.'
+    )
+    expect(executionPath).toHaveTextContent('an implementation-specific execution trace or counter')
+    expect(executionPath).toHaveTextContent('say that the execution path was not confirmed')
+    expect(screen.getByText(/We deliberately give the module a bad signature/)).toHaveTextContent(
+      'the test passes—the module did its job correctly'
+    )
+    expect(
+      screen.getByText(/A failed internal self-test means something different/)
+    ).toHaveTextContent('This does not prove it correctly examined our bad signature')
+    expect(
+      screen.getByText(/Therefore, our test must check why the operation failed/)
+    ).toHaveTextContent('not treat every error as a correct rejection')
+    expect(screen.getByText(/so the signatures can differ without/)).toHaveTextContent(
+      'different bytes alone do not establish a fault'
+    )
+    expect(screen.getByText(/In an ACVP signature-generation test, however/)).toHaveTextContent(
+      'Successful verification alone is not enough to pass that test'
+    )
+    expect(screen.getByText(/The expected result is the fallback shared secret/)).toHaveTextContent(
+      'A wrong-length ciphertext is a separate input-error case'
+    )
+    expect(screen.getByRole('link', { name: 'ACVP suite' })).toHaveAttribute(
+      'href',
+      '/playground/hsm?tab=developer&dtab=acvp'
+    )
   })
 })

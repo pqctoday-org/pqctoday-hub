@@ -12,13 +12,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  * capstone). The anchor product (the fictional Orrin N7 network HSM) and the
  * shared types stay single-sourced in LM-065's data/ folder.
  *
- * Two alternative learn paths, one per scheme, each a timed ~60-minute route.
+ * Two alternative learn paths: CC evaluation criteria, and EUCC scheme/eIDAS context.
  * Depth beyond the timed route is `optional` reference material, excluded
  * from duration and completion. Off-path sections are hidden.
  */
 const manifest: ModuleManifest = {
   id: 'cc-eucc-certification',
-  contentVersion: 6,
+  contentVersion: 12,
   lm_id: 'LM-068',
   title: 'Common Criteria, EUCC & eIDAS Certification',
   description:
@@ -50,7 +50,7 @@ const manifest: ModuleManifest = {
   learnPaths: [
     {
       id: 'cc',
-      label: 'Common Criteria',
+      label: 'Common Criteria — evaluation criteria',
       entrySection: 'cc-model',
       // +10 min: the regional-schemes section (user request 2026-09-27)
       duration: '70 min',
@@ -65,11 +65,19 @@ const manifest: ModuleManifest = {
       ],
     },
     {
-      id: 'eucc-eidas',
-      label: 'EUCC & eIDAS',
+      id: 'eucc',
+      label: 'EUCC — scheme rules',
       entrySection: 'eucc-scheme',
+      duration: '35 min',
+      sections: ['eucc-scheme', 'eucc-pqc-today', 'pp-security-ic'],
+    },
+    {
+      // Preserve the legacy URL and section-progress IDs for existing learners.
+      id: 'eucc-eidas',
+      label: 'eIDAS — applicable devices and trust services',
+      entrySection: 'eidas-chain',
       duration: '60 min',
-      sections: ['eucc-scheme', 'eidas-chain', 'pp-en419221-5', 'pp-security-ic', 'eucc-pqc-today'],
+      sections: ['eidas-chain', 'pp-en419221-5', 'pp-security-ic'],
     },
   ],
   offPathSections: 'hide',
@@ -90,32 +98,32 @@ const manifest: ModuleManifest = {
     // ── EUCC, eIDAS and Protection Profiles (Path C) ──
     // The protection profiles are evaluated under Common Criteria and cited by
     // the EUCC path, so both paths get them.
-    'CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme': ['eucc-eidas'],
-    'CIR-EU-2024-3144-EUCC-Amendment': ['eucc-eidas'],
-    'CIR-EU-2025-2462-EUCC-Amendment': ['eucc-eidas'],
-    'EUCC v2.0 ACM': ['eucc-eidas'],
-    'ENISA-Hybridization-Standardisation-Status': ['eucc-eidas'],
+    'CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme': ['eucc', 'eucc-eidas'],
+    'CIR-EU-2024-3144-EUCC-Amendment': ['eucc', 'eucc-eidas'],
+    'CIR-EU-2025-2462-EUCC-Amendment': ['eucc', 'eucc-eidas'],
+    'EUCC v2.0 ACM': ['eucc', 'eucc-eidas'],
+    'ENISA-Hybridization-Standardisation-Status': ['eucc', 'eucc-eidas'],
     'EU-NIS-CG-Roadmap-v1.1': ['eucc-eidas'],
     'eIDAS-2-Regulation': ['eucc-eidas'],
     'CIR-EU-2025-1567-Remote-QSCD-Management': ['eucc-eidas'],
     'CIR-EU-2025-1570-QSCD-Certification-Notification': ['eucc-eidas'],
     'CID-EU-2016-650-QSCD-Security-Assessment': ['eucc-eidas'],
     'ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation': ['eucc-eidas'],
-    'ENISA-EUCC-Assurance-Continuity-Change-Scenarios': ['eucc-eidas'],
-    'ENISA-EUCC-Product-Series-Methodology': ['eucc-eidas'],
+    'ENISA-EUCC-Assurance-Continuity-Change-Scenarios': ['eucc', 'eucc-eidas'],
+    'ENISA-EUCC-Product-Series-Methodology': ['eucc', 'eucc-eidas'],
     'ANSSI-CC-PP-2016-05-EN-419221-5': ['cc', 'eucc-eidas'],
     'ANSSI-CC-PP-2016-05-M01': ['cc', 'eucc-eidas'],
     'ANSSI-CC-PP-2018-02-EN-419241-2': ['cc', 'eucc-eidas'],
-    'BSI-CC-PP-0084-V2-2026': ['cc', 'eucc-eidas'],
+    'BSI-CC-PP-0084-V2-2026': ['cc', 'eucc', 'eucc-eidas'],
     // Sources added 15 Oct 2026 for sentences the module already makes.
     // ISO/IEC 19790 security levels are read in both schemes' sections.
     'CMVP-MGMT-MANUAL': ['cc', 'eucc-eidas'],
     'NIAP-CCEVS-POLICY-33': ['cc'],
     'ENISA-State-of-Cybersecurity-2024': ['eucc-eidas'],
-    'EUCC-Guidelines-on-Cryptography': ['eucc-eidas'],
+    'EUCC-Guidelines-on-Cryptography': ['eucc', 'eucc-eidas'],
   },
   workshopSteps: [
-    { id: 'cc-claim-decoder', label: 'Decode the certificate claim', paths: ['cc'] },
+    { id: 'cc-claim-decoder', label: 'Decode the certificate claim', paths: ['cc', 'eucc'] },
     { id: 'eidas-trace', label: 'Regulation-to-certificate trace', paths: ['eucc-eidas'] },
   ],
   startHere: {

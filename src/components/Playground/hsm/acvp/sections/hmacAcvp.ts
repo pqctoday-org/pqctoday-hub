@@ -34,7 +34,6 @@ import {
 import { pinnedVerdict, type PinnedRv } from './pkcs11Raw'
 import {
   WSE_MECH,
-  eqHex,
   flipLastBit,
   hexUp,
   importSecretRv,
@@ -161,13 +160,13 @@ export async function runHmacAcvpSection(ctx: ClassicalSectionCtx): Promise<void
         testCase,
         meta,
         source: srcTag(P),
-        exec: () => {
+        exec: (compare) => {
           const r = withKey(hexToBytes(t.key), (k) => {
             const m = rawMech(M, mech!, pUlong(M, t.macLen / 8))
             try {
               const s = signRaw(M, h, m, k, hexToBytes(t.msg))
               if (!s.out) return { ok: false, observed: `${s.step} → ${rvName(s.rv)}` }
-              if (!eqHex(s.out, t.mac))
+              if (!compare(s.out, t.mac, 'MAC'))
                 return { ok: false, observed: `mac ${hexUp(s.out)} ≠ expected ${t.mac}` }
               const v = verifyRaw(M, h, m, k, hexToBytes(t.msg), hexToBytes(t.mac))
               if (v.rv !== CKR_OK)

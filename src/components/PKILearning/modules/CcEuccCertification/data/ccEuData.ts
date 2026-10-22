@@ -492,7 +492,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
     title: 'Remote qualified signing on the Orrin N7 appliance',
     customer: 'EU qualified trust service provider',
     setup:
-      'An EU qualified trust service provider (QTSP) wants to run remote qualified electronic signatures for its customers’ signatories. The signing keys will live in the fictional Orrin N7 network HSM, deployed as an appliance in the QTSP’s data centre. The vendor also plans to add ML-DSA. Trace the requirement from the regulation to the certificate the QTSP must see.',
+      'An EU qualified trust service provider (QTSP) wants to run remote qualified electronic signatures for its customers’ signatories. The signing keys will live in the fictional Orrin N7 network HSM. For this exercise, the buyer explicitly requests EUCC certification of the HSM against EN 419221-5. The vendor plans to add ML-DSA. Trace that selected evidence route; it is not a universal eIDAS route. Complete QSCD certification and qualified trust-service status remain separate questions.',
     layers: [
       {
         id: 'legal',
@@ -505,7 +505,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
               'Regulation (EU) No 910/2014 (eIDAS) as amended by Regulation (EU) 2024/1183 — Annex II requirements for QSCDs, Article 30 certification and Article 29a remote management',
             correct: true,
             feedback:
-              'Right. eIDAS is the law: it defines the roles (QTSP, QSCD), the device requirements (Annex II) and the certification duty (Article 30). It does not contain security functional requirements a device can “conform” to.',
+              'Right. eIDAS sets legal device-security requirements in Annex II and the certification duty in Article 30. These are distinct from the formal CC requirements in a Protection Profile or Security Target. This exercise selects an EUCC route; eIDAS does not make that route universal.',
           },
           {
             id: 'eidas-is-pp',
@@ -782,7 +782,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
     title: 'A qualified signature card from the secure-element customer',
     customer: 'Smart-card / secure-element manufacturer',
     setup:
-      'The anchor scenario’s smart-card customer builds a signature card: the signatory holds the card, and the signature creation data never leaves it. The card runs an applet on a certified security IC. Trace the chain for this user-managed device and compare it with the remote-signing case.',
+      'The anchor scenario’s smart-card customer builds a signature card: the signatory holds the card, and the signature creation data never leaves it. The card runs an applet on a certified security IC. For the EUCC-specific questions, assume the manufacturer has selected EUCC for the product evaluation. This does not make EUCC mandatory for every Article 30 assessment. Trace the basis for this user-managed device and compare it with the remote-signing case.',
     layers: [
       {
         id: 'legal',
@@ -1030,7 +1030,7 @@ export const exercises: ExerciseItem[] = [
   },
   {
     id: 'cc-cpp-low-eal',
-    paths: ['cc'],
+    paths: ['cc', 'eucc'],
     title: 'Why an EAL1 certificate is not “weaker”',
     description:
       'Open the Cisco Nexus 9000 EUCC record — EAL1 augmented, against the collaborative PP for network devices — and try to rank it against the two HSMs.',

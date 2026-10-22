@@ -358,7 +358,7 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
           testCase: katCase,
           meta: katMeta,
           source: srcTag(P),
-          exec: () => {
+          exec: (compare) => {
             const priv = importEcPrivate(
               M,
               h,
@@ -378,7 +378,7 @@ export async function runEcdsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
                 return { ok: false, observed: o, details: o }
               }
               const got = hexUp(out.out)
-              return got === want
+              return compare(out.out, want, 'signature r || s')
                 ? {
                     ok: true,
                     observed: 'r || s byte-equal',
@@ -572,7 +572,7 @@ export async function runEddsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
         testCase,
         meta,
         source: srcTag(P),
-        exec: (): RowOutcome => {
+        exec: (compare): RowOutcome => {
           const priv = importEcPrivate(
             M,
             h,
@@ -591,7 +591,7 @@ export async function runEddsaSigGenAcvpSection(ctx: ClassicalSectionCtx): Promi
               const o = `${s.step} → ${rvName(s.rv)}`
               return { ok: false, observed: o, details: o }
             }
-            const ok = hexUp(s.out) === t.signature.toUpperCase()
+            const ok = compare(s.out, t.signature, 'signature')
             return {
               ok,
               observed: ok ? 'byte-equal' : 'differs',

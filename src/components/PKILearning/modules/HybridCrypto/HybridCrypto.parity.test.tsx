@@ -10,6 +10,8 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { HybridCryptoModule } from './index'
+import { HybridCryptoIntroduction } from './components/HybridCryptoIntroduction'
+import { content } from './content'
 
 describe('HybridCrypto render parity', () => {
   it('renders the gradient header, the in-page description, and all six tabs', () => {
@@ -39,5 +41,31 @@ describe('HybridCrypto render parity', () => {
     ]) {
       expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
+  })
+
+  it('keeps the corrected SP 800-227, randomness and side-channel explanations', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter>
+          <HybridCryptoIntroduction onNavigateToWorkshop={() => {}} />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    expect(screen.getByText(/Correct results alone do not show/)).toHaveTextContent(
+      'they do not mean every call takes exactly the same number of milliseconds'
+    )
+    expect(screen.getByText(/If an attacker knows that input/)).toHaveTextContent(
+      'recover the same shared secret'
+    )
+    expect(screen.getByText(/If a leak exposes only the X25519 shared secret/)).toHaveTextContent(
+      'If the leak exposes both secrets or the final session key, that protection is lost'
+    )
+    expect(screen.getByText(/Do not assume every device has a switch/)).toBeInTheDocument()
+    expect(screen.queryByText(/single most common real-world failure/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/§4.2 requires this for FIPS/)).not.toBeInTheDocument()
+    expect(content.narratives?.nistRecommendation).toContain(
+      'Compatibility with existing systems depends on the protocol'
+    )
+    expect(content.narratives?.nistRecommendation).not.toContain('backward compatibility')
   })
 })

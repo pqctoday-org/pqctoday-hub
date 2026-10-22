@@ -39,6 +39,7 @@ function traceText(
     `REGULATION-TO-CERTIFICATE TRACE — ${s.title}`,
     `Product: ${ANCHOR_SCENARIO.name} (${ANCHOR_SCENARIO.fictionalLabel}); customer: ${s.customer}`,
     `Layers traced: ${solved} of ${s.layers.length}`,
+    `Scenario scope: ${s.setup}`,
     '',
   ]
   s.layers.forEach((l, i) => {

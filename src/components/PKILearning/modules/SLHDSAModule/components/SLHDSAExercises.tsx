@@ -44,7 +44,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
       title: '2. Context String Domain Separation',
       description:
         'Sign a message with context string "protocol:codesign", then attempt verification with a different context "protocol:tls". Observe CKR_SIGNATURE_INVALID.',
-      badge: 'FIPS 205 §9.2',
+      badge: 'FIPS 205 §10',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
         'The same (SK, M) pair produces valid signatures under each context, but cross-context verification fails. This prevents replay attacks across protocol boundaries.',
@@ -54,11 +54,11 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
       id: 'deterministic',
       title: '3. Randomized vs Deterministic Signing',
       description:
-        'Sign the same message twice in randomized mode — signatures differ. Then enable deterministic mode and sign again twice — signatures are identical.',
-      badge: 'FIPS 205 §10',
+        'Select deterministic signing and use “Sign twice and compare”. Repeat with hedged signing, keeping the key, message and context unchanged. Inspect both signatures and their verification results.',
+      badge: 'FIPS 205 §9.2',
       badgeColor: 'bg-accent/20 text-accent border-accent/50',
       observe:
-        'Deterministic mode (opt_rand = none) trades RNG-failure protection for reproducibility. Both modes produce valid signatures; verification succeeds for both.',
+        'Both signatures should verify. Repeatability does not prove random-generator quality or resistance to attacks. Deterministic signing still requires randomness for key generation.',
       config: { step: 2 },
     },
     {

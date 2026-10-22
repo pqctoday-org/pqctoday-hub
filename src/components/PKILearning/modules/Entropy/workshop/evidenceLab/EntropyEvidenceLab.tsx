@@ -293,8 +293,11 @@ export const EntropyEvidenceLab: FC = () => {
   const seqRecord = seqRun.status === 'done' ? seqRun.record : null
   const seqFlat = useMemo(() => flattenToolJson(seqRecord?.toolJson ?? null), [seqRecord])
   const seqError =
-    seqRecord && (seqRecord.toolJson === null || seqRecord.toolJson.errorLevel !== 0)
-      ? String(seqFlat.error ?? 'the tool wrote no result')
+    seqRecord &&
+    (seqRecord.toolJson === null ||
+      seqRecord.toolJson.errorLevel !== 0 ||
+      toolAssessed(seqFlat) === null)
+      ? String(seqFlat.error ?? 'the tool wrote no usable entropy estimate')
       : null
   const seqRows = useMemo(
     () => (labCase ? estimatorRows(seqFlat, labCase.bitsPerSymbol) : []),
@@ -347,6 +350,10 @@ export const EntropyEvidenceLab: FC = () => {
             })),
         }
       )
+      if (record.dataset.sha256 !== data.sha256)
+        throw new Error(
+          'The restart result identifies a different sample file. Investigate before relying on this run.'
+        )
       setRestartRun((r) => ({
         ...r,
         status: 'done',
@@ -411,10 +418,44 @@ export const EntropyEvidenceLab: FC = () => {
   }, [manifest, labCase])
 
   // ── Derived: conclusion and cutoffs ────────────────────────────────────────
+  const integrityIssues = useMemo(() => {
+    const issues: string[] = []
+    if (dataError) issues.push(dataError)
+    if (seqRun.status === 'error') issues.push(`Sequential analysis incomplete: ${seqRun.error}`)
+    if (restartRun.status === 'error')
+      issues.push(`Restart analysis incomplete: ${restartRun.error}`)
+    if (
+      seqRecord &&
+      (!seqRecord.datasetHashConfirmedByTool || seqRecord.dataset.sha256 !== seqData?.sha256)
+    )
+      issues.push('The sequential result could not be tied to the selected sample file.')
+    if (restartRecord && !restartRecord.datasetHashConfirmedByTool)
+      issues.push('The restart result could not be tied to its sample file.')
+    if (seqMin && !seqMin.agreesWithTool)
+      issues.push('The displayed minimum does not match the tool’s assessed estimate.')
+    if (seqReference?.matches === false || restartReference?.matches === false)
+      issues.push(
+        'The results did not match the reference. Investigate the difference before relying on this run.'
+      )
+    return issues
+  }, [
+    dataError,
+    seqRun.status,
+    seqRun.error,
+    restartRun.status,
+    restartRun.error,
+    seqRecord,
+    seqData,
+    restartRecord,
+    seqMin,
+    seqReference,
+    restartReference,
+  ])
   const conclusion = useMemo(
     () =>
       labCase
         ? concludeEvidence({
+            integrityIssues,
             provenance: labCase.provenance,
             syntheticConditioned: labCase.syntheticConditioned,
             track: track ?? 'non-iid',
@@ -429,12 +470,13 @@ export const EntropyEvidenceLab: FC = () => {
             restart: restartEval,
           })
         : null,
-    [labCase, track, seqRecord, seqError, seqH, iidPassed, restartEval]
+    [labCase, track, seqRecord, seqError, seqH, iidPassed, restartEval, integrityIssues]
   )
 
   const isOutputData =
     labCase?.provenance === 'conditioned-output-contrast' || !!labCase?.syntheticConditioned
   const cutoffBasis = useMemo(() => {
+    if (integrityIssues.length) return null
     if (conclusion?.verdict === 'estimate-for-dataset' && conclusion.h !== null)
       return { h: conclusion.h, basis: 'min(H_r, H_c, H_I) after the restart tests passed' }
     if (seqH === null || isOutputData) return null
@@ -445,7 +487,7 @@ export const EntropyEvidenceLab: FC = () => {
           ? 'the estimate for this synthetic file — a teaching figure, not a noise-source estimate'
           : 'the initial estimate H_I only — the restart tests have not passed, so no estimate stands yet',
     }
-  }, [conclusion, seqH, isOutputData, labCase])
+  }, [conclusion, seqH, isOutputData, labCase, integrityIssues])
   const bits = labCase?.bitsPerSymbol ?? 8
   const cutoffs = useMemo(
     () => (cutoffBasis ? healthCutoffs(cutoffBasis.h, bits) : null),
@@ -500,7 +542,12 @@ export const EntropyEvidenceLab: FC = () => {
       track,
       sequential: seqRecord,
       estimatorMinimum: seqMin,
+      integrityIssues,
       nativeReferenceComparison: { sequential: seqReference, restart: restartReference },
+      referenceAvailability: {
+        sequential: seqReference ? 'compared' : 'No reference comparison available',
+        restart: restartReference ? 'compared' : 'No reference comparison available',
+      },
       restart: restartRecord,
       restartEvaluation: restartEval,
       healthCutoffs: cutoffs ? { ...cutoffs, basis: cutoffBasis?.basis } : null,
@@ -508,6 +555,7 @@ export const EntropyEvidenceLab: FC = () => {
       learner: { verdict: chosen, check: verdictCheck, note },
     }
     return evidenceLabRunManifest({
+      integrityIssues,
       moduleVersion: `${entropyManifest.id} content ${entropyManifest.contentVersion}`,
       evidence,
       sequential: {
@@ -570,6 +618,15 @@ export const EntropyEvidenceLab: FC = () => {
           <Microscope size={20} className="text-primary" aria-hidden="true" />
           Entropy Evidence Lab (SP 800-90B)
         </h3>
+        <p className="text-sm text-foreground">
+          An ML-KEM or ML-DSA implementation can produce the correct test results without those
+          tests establishing that its random generator meets the algorithm’s requirements.
+        </p>
+        <p className="text-sm text-foreground">
+          This lab teaches you how to read the separate evidence about randomness. If your PQC
+          migration also changes the hardware, operating system or random generator, check whether
+          the existing evidence still applies.
+        </p>
         <p className="text-sm text-muted-foreground">
           Assess real CPU-jitter recordings from a KV260, an i.MX 95 and a Mac with the NIST SP
           800-90B estimator tool, compiled to WebAssembly and run in your browser. Every result is

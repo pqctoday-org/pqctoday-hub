@@ -725,7 +725,7 @@ export const ROUTE_OPTIONS: readonly {
     id: 'updt-fs',
     label: 'UPDT if each of the five change ratios stays under 30 %, otherwise FS',
     ok: true,
-    why: 'New approved algorithms, services and self-tests are security-relevant changes. UPDT allows under 30 % per category (functions, SSPs, services, self-tests, FSM states); CMVP may reclassify it as FS. Your lab decides the route.',
+    why: 'Adding PQC can change the module’s algorithms, key handling, services and self-tests. The lab assesses those changes and proposes the appropriate submission route. CMVP reviews that proposal and may require a full submission.',
   },
   {
     id: 'alg',
