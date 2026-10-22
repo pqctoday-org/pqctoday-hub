@@ -10,10 +10,10 @@
 //
 //  2. ENGINE-UPDATE-GATED (marked "[after engine update]"): composite
 //     round trips, the 30 LAMPS known-answer checks and the composite error
-//     paths. These detect support at run time; on an engine without
-//     CKM_COMP_KEM / CKM_COMP_SIG they call `skip()` (visible as skipped,
-//     never as passed), and they run real crypto once the updated engine
-//     bundle is copied in.
+//     paths. They detect support at run time and `skip()` on an engine
+//     without CKM_COMP_KEM / CKM_COMP_SIG. The shipped bundle (pqctoday-hsm
+//     48967aee) has them, and a separate test asserts it does, so here they
+//     run real crypto and can no longer skip silently.
 //
 // Venue: `*.local.test.ts` (real wasm), run by `npm run gate:pkcs11` and
 // `npm run test:local`.
@@ -73,6 +73,15 @@ describe('v3.3 draft features group (real Rust engine)', () => {
     expect(support.cryptokiVersion).toBe('3.2')
   })
 
+  // The shipped bundle (pqctoday-hsm 48967aee) has every v3.3 draft feature,
+  // so the engine-gated checks below run real crypto instead of skipping.
+  it('the shipped engine advertises composite KEM, composite signatures (incl. external hash) and external µ', () => {
+    expect(support.compKem).toBe(true)
+    expect(support.compSig).toBe(true)
+    expect(support.compSigExternalHash).toBe(true)
+    expect(support.externalMu).toBe(true)
+  })
+
   it('external µ: generated from a key and from TR, signed, verified with plain ML-DSA', () => {
     const rows = runExternalMuChecks(ctx())
     if (!support.externalMu) {
@@ -82,15 +91,15 @@ describe('v3.3 draft features group (real Rust engine)', () => {
     for (const r of rows) expect(r.status, `${r.title}: ${r.observed}`).toBe('pass')
   })
 
-  it('CKA_KEYS_REMAINING (0x61c) counts down on HSS; XMSS is pass or not-in-engine, never fail', () => {
+  it('CKA_KEYS_REMAINING (0x61c) counts down on HSS and XMSS private keys', () => {
     const rows = runKeysRemainingChecks(ctx(), ['hss', 'xmss'])
     const hss = rows.find((r) => r.id.endsWith('.hss'))!
     expect(hss.status, hss.observed).toBe('pass')
     const xmss = rows.find((r) => r.id.endsWith('.xmss'))!
-    expect(['pass', 'not-in-engine'], xmss.observed).toContain(xmss.status)
+    expect(xmss.status, xmss.observed).toBe('pass')
   }, 120_000)
 
-  it('µ error paths return CKR_ARGUMENTS_BAD; composite ones are not-in-engine or pending until the update', async () => {
+  it('µ error paths return CKR_ARGUMENTS_BAD; no error path fails', async () => {
     const rows = runV33ErrorPaths(ctx(), await loadV33Vectors())
     for (const r of rows.filter((x) => x.id.includes('mu-gen'))) {
       if (support.externalMu) expect(r.status, r.observed).toBe('pass')
@@ -127,20 +136,25 @@ describe('v3.3 draft features group (real Rust engine)', () => {
       if (isBrainpoolSet(set)) expect(['pass', 'not-supported']).toContain(r.status)
       else expect(r.status, `${r.title}: ${r.observed}`).toBe('pass')
     }
+    console.info(`[v3.3] KAT: ${rows.filter((r) => r.status === 'pass').length}/30 pass`)
   }, 300_000)
 
   it('[after engine update] composite round trips for all 30 sets', async (t) => {
     if (!support.compKem || !support.compSig) return t.skip()
     const rows = await runV33DraftFeatures(ctx(), { keysRemainingFamilies: ['hss'] })
-    for (const r of rows.filter((x) => x.section === 'coverage' && x.ckpName)) {
+    const cov = rows.filter((x) => x.section === 'coverage' && x.ckpName)
+    for (const r of cov) {
       expect(['pass', 'not-supported'], `${r.title}: ${r.observed}`).toContain(r.status)
     }
+    console.info(
+      `[v3.3] round trips: ${cov.filter((r) => r.status === 'pass').length}/${cov.length} pass`
+    )
   }, 600_000)
 
-  it('[after engine update] confirmed composite error paths return the cited codes', async (t) => {
+  it('[after engine update] every v3.3 error path returns its cited code', async (t) => {
     if (!support.compKem) return t.skip()
     const rows = runV33ErrorPaths(ctx(), await loadV33Vectors())
-    for (const r of rows) expect(r.status, `${r.title}: ${r.observed}`).not.toBe('fail')
-    expect(rows.some((r) => r.status === 'pass' && r.id.includes('comp-kem'))).toBe(true)
+    for (const r of rows) expect(r.status, `${r.title}: ${r.observed}`).toBe('pass')
+    console.info(`[v3.3] error paths: ${rows.length}/${rows.length} return the cited code`)
   }, 120_000)
 })

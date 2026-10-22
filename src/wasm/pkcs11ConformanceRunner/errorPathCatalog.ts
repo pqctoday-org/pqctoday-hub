@@ -1049,7 +1049,8 @@ export function unrecipedMechanisms(
 // there the engine follows the PKCS#11 v3.2 convention named in `convention`.
 // `status: 'pending-engine'` marks a case whose code comes from engine work
 // that is not yet in an engine build the hub ships — it is shown, never run
-// as a pass/fail assertion, until the engine update lands.
+// as a pass/fail assertion, until the engine update lands. Since the
+// pqctoday-hsm 48967aee engine every case is 'confirmed'.
 
 export const V33_DRAFT_SPEC =
   'PKCS #11 v3.3 working draft (OASIS PKCS 11 TC, github.com/oasis-tcs/pkcs11 commit 9ef73f9, unpublished)'
@@ -1060,6 +1061,7 @@ export const V33_RV = {
   CKR_ATTRIBUTE_VALUE_INVALID: 0x13,
   CKR_DATA_LEN_RANGE: 0x21,
   CKR_KEY_TYPE_INCONSISTENT: 0x63,
+  CKR_KEY_FUNCTION_NOT_PERMITTED: 0x68,
   CKR_MECHANISM_PARAM_INVALID: 0x71,
   CKR_OPERATION_NOT_INITIALIZED: 0x91,
   CKR_TEMPLATE_INCONSISTENT: 0xd1,
@@ -1107,10 +1109,10 @@ export const V33_DRAFT_ERROR_PATHS: readonly V33ErrorPathCase[] = [
     draft: 'draft-fixes-refusal',
     draftCitation:
       'comp_sig.md: the mechanism "MUST require PH(M)" to be the set’s hash length (64 bytes for a SHA512 set); no code named',
-    engineCitation: 'native/composite_sig.rs message_representative (engine work in progress)',
+    engineCitation: 'native/composite_sig.rs message_representative (engine commit 48967aee)',
     convention:
       'v3.2 §5.1.6 CKR_DATA_LEN_RANGE, "the plaintext input data to a cryptographic operation has a bad length", listed for C_Sign and C_Verify',
-    status: 'pending-engine',
+    status: 'confirmed',
   },
   {
     id: 'comp-sig-external-hash-sign-update',
@@ -1120,10 +1122,10 @@ export const V33_DRAFT_ERROR_PATHS: readonly V33ErrorPathCase[] = [
     draft: 'draft-fixes-refusal',
     draftCitation: 'comp_sig.md mechanism table, footnote 1: single-part only; no code named',
     engineCitation:
-      'ffi.rs multipart_op_mech / sign_mech_supports_multipart (engine work in progress)',
+      'ffi.rs multipart_op_mech / sign_mech_supports_multipart (engine commit 48967aee)',
     convention:
       'v3.2 §5.13.3 / §5.15.3 list neither CKR_MECHANISM_INVALID nor CKR_FUNCTION_NOT_SUPPORTED; §5.1 CKR_OPERATION_NOT_INITIALIZED, "no active operation of an appropriate type"',
-    status: 'pending-engine',
+    status: 'confirmed',
   },
   {
     id: 'comp-kem-with-parameter',
@@ -1153,11 +1155,13 @@ export const V33_DRAFT_ERROR_PATHS: readonly V33ErrorPathCase[] = [
     id: 'comp-sig-key-with-comp-kem',
     title: 'A CKK_COMP_SIG key used with CKM_COMP_KEM',
     needs: ['compKem', 'compSig'],
-    expected: 'CKR_KEY_TYPE_INCONSISTENT',
+    expected: 'CKR_KEY_FUNCTION_NOT_PERMITTED',
     draft: 'draft-silent',
     draftCitation: 'comp_kem.md: CKM_COMP_KEM operates on CKK_COMP_KEM keys',
-    engineCitation: 'ffi.rs check_key_for_mech / mech_key_types (engine commit 48480d2c)',
-    convention: 'v3.2 §5.1.6 CKR_KEY_TYPE_INCONSISTENT, "not the correct type of key"',
+    engineCitation:
+      'ffi.rs C_DecapsulateKey_impl: check_key_usage(CKA_DECAPSULATE) runs before the key-type check, and a CKK_COMP_SIG private key has no CKA_DECAPSULATE (engine commit 48967aee)',
+    convention:
+      'v3.2 §5.1.6 CKR_KEY_FUNCTION_NOT_PERMITTED, "the key\'s attributes are not set to allow" this use; v3.2 fixes no order between this and CKR_KEY_TYPE_INCONSISTENT',
     status: 'confirmed',
   },
   {
@@ -1167,9 +1171,9 @@ export const V33_DRAFT_ERROR_PATHS: readonly V33ErrorPathCase[] = [
     expected: 'CKR_KEY_TYPE_INCONSISTENT',
     draft: 'draft-silent',
     draftCitation: 'comp_sig.md: CKM_COMP_SIG operates on CKK_COMP_SIG keys',
-    engineCitation: 'ffi.rs comp_sig_key_params (engine work in progress)',
+    engineCitation: 'ffi.rs comp_sig_key_params (engine commit 48967aee)',
     convention: 'v3.2 §5.13.1 / §5.15.1 CKR_KEY_TYPE_INCONSISTENT',
-    status: 'pending-engine',
+    status: 'confirmed',
   },
   {
     id: 'comp-create-object-mismatched-halves',

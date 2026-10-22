@@ -11,11 +11,10 @@
 //    when that mechanism really is missing, so the safety net can never hide
 //    a broken step on an engine that has the feature.
 //
-// [after engine update]: on today's engine the composite steps of lessons
-// C2 and C3 (and XMSS in C5) end "not in this engine yet"; once the updated
-// engine bundle is copied in, the same test runs them as real composite
-// crypto with no change. The TLS-vs-composite combiner steps (C3 steps 4-5),
-// external µ (C4) and the HSS counter (C5) run real crypto today.
+// [after engine update]: the shipped engine (pqctoday-hsm 48967aee) has
+// composite ML-KEM / ML-DSA and CKA_KEYS_REMAINING on XMSS, so the composite
+// steps of lessons C2 and C3 and the XMSS step of C5 run real crypto; on an
+// older engine the same steps end "not in this engine yet".
 //
 // Venue: `*.local.test.ts` (real wasm), run by `npm run gate:pkcs11`.
 import { describe, it, expect, beforeAll } from 'vitest'

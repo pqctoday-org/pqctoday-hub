@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+//
 import { test, expect } from '@playwright/test'
 
 // PKCS#11 v3.3 (working draft) — the Learn track and the Build test bench in a
@@ -9,10 +11,10 @@ import { test, expect } from '@playwright/test'
 // engine yet" instead of failing), and the known-answer table carries the
 // vector source and commit with no failing row.
 //
-// [after engine update]: once the engine bundle with composite ML-DSA /
-// ML-KEM is copied in, the same spec runs the composite steps and the 30
-// known-answer checks as real crypto — the "no Fail" assertions then mean
-// "every set passed or is declared unsupported".
+// [after engine update]: the shipped engine (pqctoday-hsm 48967aee) has
+// composite ML-DSA / ML-KEM, so this spec runs the composite steps and the 30
+// known-answer checks as real crypto — the "no Fail" assertions mean "every
+// set passed or is declared unsupported".
 //
 // Local-only: `E2E_SERVER=dev npx playwright test --project=local
 // e2e/pkcs11-v33.local.spec.ts` (check the port is free first).
