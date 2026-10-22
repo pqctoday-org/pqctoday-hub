@@ -4,7 +4,8 @@
     "DISCOVERED at runtime (mechanism-inventory.generated.json): which mechanisms each engine lists (C_GetMechanismList), which operations its CKF_ flags make required, and the ulMinKeySize..ulMaxKeySize range (C_GetMechanismInfo).",
     "DECLARED here: algorithm name + revision, PKCS #11 section, enumerated parameter sets (kept only when their keySize falls inside the engine-reported range), sign variants (hedged/deterministic), pre-hash / external-mu / context options, and the length boundaries a boundary case must hit.",
     "Section numbers cite PKCS #11 Specification Version 3.2, OASIS Standard (pkcs11-spec-v3.2-os, 03 June 2026). vendorDefined = a 0x8000xxxx or engine-extension mechanism with no section in that standard. historical = defined only in the PKCS #11 historical-mechanisms document, not the v3.2 base specification.",
-    "A mechanism listed by an engine but absent here still produces capability rows (source: discovered-only) and is reported by the coverage gate as unmapped."
+    "A mechanism listed by an engine but absent here still produces capability rows (source: discovered-only) and is reported by the coverage gate as unmapped.",
+    "PKCS #11 v3.3 working-draft mechanisms (CKM_COMP_*): identifiers from the OASIS PKCS 11 TC header (github.com/oasis-tcs/pkcs11 commit 9ef73f9, working/headers/pkcs11t.h), algorithms from the IETF LAMPS composite drafts. v3.3 is unpublished, so they have no section number (section: null) and are not part of the v3.2 base specification; workingDraft = true marks them."
   ],
   "schema": "pqctoday.capability-map/v1",
   "specification": {
@@ -761,6 +762,39 @@
       "parameterSets": "ML-DSA",
       "signVariants": ["hedged", "deterministic"],
       "externalMu": true
+    },
+    "CKM_COMP_SIG_KEY_PAIR_GEN": {
+      "algorithm": "Composite ML-DSA",
+      "revision": "draft-ietf-lamps-pq-composite-sigs (PKCS #11 v3.3 working draft)",
+      "section": null,
+      "workingDraft": true
+    },
+    "CKM_COMP_SIG": {
+      "algorithm": "Composite ML-DSA",
+      "revision": "draft-ietf-lamps-pq-composite-sigs (PKCS #11 v3.3 working draft)",
+      "section": null,
+      "workingDraft": true,
+      "context": "0..255 bytes"
+    },
+    "CKM_COMP_SIG_EXTERNAL_HASH": {
+      "algorithm": "Composite ML-DSA (caller-supplied pre-hash)",
+      "revision": "draft-ietf-lamps-pq-composite-sigs (PKCS #11 v3.3 working draft)",
+      "section": null,
+      "workingDraft": true,
+      "preHash": "caller-supplied",
+      "context": "0..255 bytes"
+    },
+    "CKM_COMP_KEM_KEY_PAIR_GEN": {
+      "algorithm": "Composite ML-KEM",
+      "revision": "draft-ietf-lamps-pq-composite-kem (PKCS #11 v3.3 working draft)",
+      "section": null,
+      "workingDraft": true
+    },
+    "CKM_COMP_KEM": {
+      "algorithm": "Composite ML-KEM",
+      "revision": "draft-ietf-lamps-pq-composite-kem (PKCS #11 v3.3 working draft)",
+      "section": null,
+      "workingDraft": true
     },
     "CKM_HSS_KEY_PAIR_GEN": {
       "algorithm": "HSS/LMS",

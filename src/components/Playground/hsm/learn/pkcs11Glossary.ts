@@ -203,6 +203,50 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   CK_SIGN_ADDITIONAL_CONTEXT: {
     def: "Mechanism-parameter structure carrying an ML-DSA/SLH-DSA signature's optional context string and hedge preference — where CKH_HEDGE_* selects between randomized and deterministic signing.",
   },
+  // ── PKCS#11 v3.3 working draft (OASIS TC header, commit 9ef73f9) ───────────
+  CKK_COMP_SIG: {
+    hex: '0x0000004d',
+    def: 'Composite ML-DSA key type (v3.3 working draft). One object holds both halves: public CKA_VALUE = ML-DSA public key ‖ classical public key; private CKA_VALUE = ML-DSA seed ‖ classical private key.',
+  },
+  CKK_COMP_KEM: {
+    hex: '0x0000004c',
+    def: 'Composite ML-KEM key type (v3.3 working draft). Public CKA_VALUE = ML-KEM encapsulation key ‖ classical public key; private CKA_VALUE = ML-KEM seed ‖ classical private key.',
+  },
+  CKM_COMP_SIG_KEY_PAIR_GEN: {
+    hex: '0x0000403d',
+    def: 'Generates a composite ML-DSA key pair. The CKP_COMP_SIG_* parameter set goes in the PUBLIC key template.',
+  },
+  CKM_COMP_SIG: {
+    hex: '0x0000403e',
+    def: 'Composite ML-DSA sign / verify over M′ = Prefix ‖ Label ‖ len(ctx) ‖ ctx ‖ PH(M). Optional CK_SIGN_ADDITIONAL_CONTEXT; single- and multi-part.',
+  },
+  CKM_COMP_SIG_EXTERNAL_HASH: {
+    hex: '0x0000403f',
+    def: 'Composite ML-DSA over a pre-hash PH(M) the caller computed. Single-part only; the input must be exactly the set’s hash length.',
+  },
+  CKM_COMP_KEM_KEY_PAIR_GEN: {
+    hex: '0x00004040',
+    def: 'Generates a composite ML-KEM key pair. The CKP_COMP_KEM_* parameter set goes in the PUBLIC key template.',
+  },
+  CKM_COMP_KEM: {
+    hex: '0x00004041',
+    def: 'Composite ML-KEM through C_EncapsulateKey / C_DecapsulateKey, no mechanism parameter. Secret = SHA3-256(mlkemSS ‖ tradSS ‖ tradCT ‖ tradPK ‖ Label), returned as a 32-byte generic secret key.',
+  },
+  CKM_ML_DSA_EXTERNAL_MU_GEN: {
+    hex: '0x0000403b',
+    def: 'Digest mechanism that computes ML-DSA µ from a message, given either a key handle or a precomputed TR (CK_MU_GEN_PARAMS). Approved in the v3.3 draft.',
+  },
+  CKM_ML_DSA_EXTERNAL_MU: {
+    hex: '0x0000403c',
+    def: 'Signs or verifies a 64-byte ML-DSA µ instead of the message. The result is an ordinary ML-DSA signature. Approved in the v3.3 draft; earlier an engine-specific extension.',
+  },
+  CK_MU_GEN_PARAMS: {
+    def: 'Parameter of CKM_ML_DSA_EXTERNAL_MU_GEN: hKey (a public or private ML-DSA key) or pTR (a precomputed TR) — exactly one of them — plus an optional context.',
+  },
+  CKA_KEYS_REMAINING: {
+    hex: '0x0000061c',
+    def: 'Signatures left on a stateful hash-based key (HSS, XMSS, XMSS^MT). v3.3 draft name of v3.2’s CKA_HSS_KEYS_REMAINING; same value, old name kept as an alias.',
+  },
 }
 
 export type TermCategory = GlossaryTerm['cat']
@@ -304,6 +348,30 @@ export const TERMS: GlossaryTerm[] = [
     label: 'Validation objects (CKO_VALIDATION)',
     cat: 'protocol',
     def: 'v3.2 §4.15 — describes which third-party validation (e.g. NIST CMVP) a module conforms to. Session-level validation flags (§4.15.3.1, C_GetSessionValidationFlags) ARE implemented here — honestly, always empty, since this build has no such validation. Key-object-level flags (§4.15.3.2, CKA_OBJECT_VALIDATION_FLAGS) and CKO_VALIDATION objects themselves are not implemented at all — a distinct gap from trust objects above.',
+  },
+  {
+    id: 'composite',
+    label: 'Composite (v3.3)',
+    cat: 'pqc',
+    def: 'A hybrid packaged as one key: a post-quantum half and a classical half in a single PKCS#11 object, used through one mechanism. Defined by the IETF LAMPS composite drafts; the PKCS#11 v3.3 working draft gives it key types CKK_COMP_SIG and CKK_COMP_KEM.',
+  },
+  {
+    id: 'composite-kem-combiner',
+    label: 'Composite KEM combiner',
+    cat: 'pqc',
+    def: 'SHA3-256(mlkemSS ‖ tradSS ‖ tradCT ‖ tradPK ‖ Label). Unlike a TLS hybrid group, which concatenates the two secrets and relies on the handshake transcript, it binds the classical ciphertext, public key and a per-set label itself.',
+  },
+  {
+    id: 'external-mu',
+    label: 'External µ',
+    cat: 'pqc',
+    def: 'ML-DSA signs µ = SHAKE256(TR ‖ 0 ‖ len(ctx) ‖ ctx ‖ M). Computing µ outside the HSM lets it sign a 64-byte value instead of the whole message; the signature is still standard ML-DSA.',
+  },
+  {
+    id: 'v33-working-draft',
+    label: 'PKCS#11 v3.3 (working draft)',
+    cat: 'protocol',
+    def: 'The next PKCS#11 version, unpublished. Its new codepoints are approved in the OASIS TC header, but the text may change, and implementing engines still report Cryptoki 3.2.0.',
   },
 ]
 

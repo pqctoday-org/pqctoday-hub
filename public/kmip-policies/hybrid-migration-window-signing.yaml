@@ -24,11 +24,12 @@ metadata:
     signing are held to the composite: x-pqctoday-dual-sign=required →
     ML-DSA-65+Ed25519; x-pqctoday-assurance=high → ML-DSA-87+ECDSA-P384
     (tag one, not both — the two mandates conflict by design of the
-    single-composite rule type). Pure PQC remains allowed untagged, because
-    Plane 2 cannot instantiate composite keys yet — an unconditional
-    composite mandate left this policy with no signable algorithm at all
-    (2026-07-04 gap audit; the mandate becomes unconditional once composite
-    keygen lands).
+    single-composite rule type). Pure PQC remains allowed untagged. When
+    this was written (2026-07-04 gap audit) Plane 2 could not instantiate
+    composite keys, so an unconditional composite mandate left the policy
+    with no signable algorithm at all; CreateKeyPair now creates every
+    LAMPS composite profile, and the opt-in shape is kept as a policy
+    choice.
 
     SignatureVerify is never restricted (legacy artefacts must stay
     verifiable). Symmetric keys and key-agreement key pairs are outside
@@ -54,8 +55,9 @@ rules:
   #    classical signing-key creation are denied from 2026-01-01 (class-based,
   #    so every classical name is covered; PQC and symmetric are exempt by
   #    class). REWRITTEN 2026-07-04: the old unconditional composite mandate
-  #    denied pure PQC too, and composites cannot be instantiated by Plane 2
-  #    — no signature could be produced under this policy until 2030.
+  #    denied pure PQC too, and composites could not then be instantiated by
+  #    Plane 2 — no signature could be produced under this policy until 2030.
+  #    (CreateKeyPair has since gained composite keygen.)
   - type: temporal_cutoff
     op: "CreateKeyPair:Sign"
     algorithm_class: classical

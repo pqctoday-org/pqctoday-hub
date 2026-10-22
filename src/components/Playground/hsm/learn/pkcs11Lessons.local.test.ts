@@ -24,6 +24,7 @@ import {
 } from '@/wasm/softhsm'
 import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
 import { V32_LESSONS } from './pkcs11LessonsV32'
+import { V33_LESSONS } from './pkcs11LessonsV33'
 import { QUIZZES } from './pkcs11Quiz'
 import { PKCS11_GLOSSARY_DATA } from './pkcs11Glossary'
 import { classifyStepOutcome } from './lessonRunner'
@@ -130,13 +131,17 @@ describe('PKCS#11 Learn tab lesson step specs (real wasm engine)', () => {
     }
   }
 
-  const ALL_LESSONS = [...FOUNDATIONS_LESSONS, ...V32_LESSONS]
+  const ALL_LESSONS = [...FOUNDATIONS_LESSONS, ...V32_LESSONS, ...V33_LESSONS]
+  // The v3.3 track's steps are replayed by pkcs11LessonsV33.local.test.ts,
+  // which also accepts "not in this engine yet" for mechanisms the engine
+  // does not advertise. Its quiz banks and ids are still checked below.
+  const V33_IDS = new Set(V33_LESSONS.map((l) => l.id))
   // Runs on its own engine instance inside a Web Worker (no Worker in this
   // Node test); its engine work is replayed against a fresh engine by
   // certDiscovery/certDiscovery.local.test.ts instead.
   const WORKER_LESSONS = new Set(['certificate-discovery'])
 
-  for (const lesson of ALL_LESSONS.filter((l) => !WORKER_LESSONS.has(l.id))) {
+  for (const lesson of ALL_LESSONS.filter((l) => !WORKER_LESSONS.has(l.id) && !V33_IDS.has(l.id))) {
     it(
       `lesson "${lesson.id}" (${lesson.title}) — every step achieves its declared outcome`,
       { timeout: 30_000 },

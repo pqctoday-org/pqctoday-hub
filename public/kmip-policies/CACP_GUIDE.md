@@ -296,7 +296,7 @@ file encodes each fixed gap as a regression test.
 
 **Status.** The newest published OASIS *Standard* is **KMIP 2.1** (Dec 2020).
 KMIP 3.0 is in committee: CSD01 (Aug 2024) → **CSD02 (7 May 2026)**, the
-current draft vendored in `kmip/spec/oasis-kmip-3.0/` and implemented here.
+current draft, the one implemented here (documents listed in `kmip/spec/README.md`).
 CSD02 completed a 30-day **OASIS public review on 13 Aug 2026** (opened 14
 Jul) — the step before Committee Specification. It remains a committee draft;
 when the next revision lands, work the re-vendor checklist in
@@ -368,7 +368,7 @@ Sources: [KMIP 3.0 CSD02](https://docs.oasis-open.org/kmip/kmip-spec/v3.0/csd02/
 [P6R KMIP 2.1↔3.0 diff](https://www.p6r.com/articles/2024/06/16/detailed-differences-between-kmip-2-1-and-3-0/) ·
 [OASIS KMIP TC](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=kmip) ·
 [KMIP 2.1 OS announcement](https://www.oasis-open.org/2020/12/18/key-management-interoperability-protocol-specification-and-key-management-interoperability-protocol-profiles-oasis-standards-published/) ·
-vendored `kmip-spec-v3.0-csd02.pdf` (Table 552) + `kmip-spec-v3.0-csd02.html`.
+`kmip-spec-v3.0-csd02.pdf` (Table 552) + [`kmip-spec-v3.0-csd02.html`](https://docs.oasis-open.org/kmip/kmip-spec/v3.0/csd02/kmip-spec-v3.0-csd02.html).
 
 ## 5. Engine 0.12/0.13 — the "honest maximum" additions (verified 2026-07-09)
 

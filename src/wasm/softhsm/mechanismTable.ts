@@ -15,6 +15,9 @@
  * Sources of truth:
  *  - Standard values: the canonical OASIS PKCS#11 v3.2 header vendored in
  *    the pqctoday-hsm repo (docs/refs/pkcs11t-canonical-v3.2.h).
+ *  - v3.3 working-draft values (composites, external mu): the OASIS PKCS 11
+ *    TC header at github.com/oasis-tcs/pkcs11 commit 9ef73f9,
+ *    working/headers/pkcs11t.h — approved codepoints of an unpublished draft.
  *  - Vendor values (0x80000000+): the engines' own constant tables
  *    (pqctoday-hsm rust/src/constants.rs and src/lib/vendor_mechanisms.h).
  */
@@ -159,13 +162,43 @@ export const MECH_TABLE: Record<number, MechEntry> = {
   },
   0x0000403b: {
     name: 'CKM_ML_DSA_EXTERNAL_MU_GEN',
-    description: 'ML-DSA external-mu generation (vendor extension, src/lib/vendor_mechanisms.h)',
+    description:
+      'ML-DSA external-mu generation (PKCS#11 v3.3 working draft, approved codepoint; not in v3.2)',
     family: 'pqc',
   },
   0x0000403c: {
     name: 'CKM_ML_DSA_EXTERNAL_MU',
     description:
-      'ML-DSA signing/verification from a precomputed external mu (vendor extension, src/lib/vendor_mechanisms.h)',
+      'ML-DSA signing/verification from a precomputed external mu (PKCS#11 v3.3 working draft, approved codepoint; not in v3.2)',
+    family: 'pqc',
+  },
+  // ── Composite ML-DSA / ML-KEM (PKCS#11 v3.3 working draft, pkcs11t.h:1225-1229)
+  0x0000403d: {
+    name: 'CKM_COMP_SIG_KEY_PAIR_GEN',
+    description: 'Composite ML-DSA key pair generation (PKCS#11 v3.3 working draft)',
+    family: 'pqc',
+  },
+  0x0000403e: {
+    name: 'CKM_COMP_SIG',
+    description:
+      'Composite ML-DSA sign / verify, single- and multi-part (PKCS#11 v3.3 working draft, draft-ietf-lamps-pq-composite-sigs)',
+    family: 'pqc',
+  },
+  0x0000403f: {
+    name: 'CKM_COMP_SIG_EXTERNAL_HASH',
+    description:
+      'Composite ML-DSA over a caller-supplied pre-hash, single-part only (PKCS#11 v3.3 working draft)',
+    family: 'pqc',
+  },
+  0x00004040: {
+    name: 'CKM_COMP_KEM_KEY_PAIR_GEN',
+    description: 'Composite ML-KEM key pair generation (PKCS#11 v3.3 working draft)',
+    family: 'pqc',
+  },
+  0x00004041: {
+    name: 'CKM_COMP_KEM',
+    description:
+      'Composite ML-KEM encapsulate / decapsulate, SHA3-256 combiner (PKCS#11 v3.3 working draft, draft-ietf-lamps-pq-composite-kem)',
     family: 'pqc',
   },
   0x0000001f: {

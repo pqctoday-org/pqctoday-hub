@@ -52,7 +52,15 @@ const LogEntryRow = ({
       ? 'text-status-warning'
       : 'text-status-error'
 
-  const english = beginnerMode ? pkcs11PlainEnglish(entry.fn, entry.args || '') : ''
+  // The raw args are pointers; the decoded mechanism name (when the call
+  // log decoded one) is what lets a phrase say which algorithm ran.
+  const mechNames = (entry.inspect?.inputs ?? [])
+    .map((s) => s.mechanism?.name ?? '')
+    .filter(Boolean)
+    .join(' ')
+  const english = beginnerMode
+    ? pkcs11PlainEnglish(entry.fn, `${entry.args || ''} ${mechNames}`.trim())
+    : ''
 
   return (
     <div>

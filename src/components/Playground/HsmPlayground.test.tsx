@@ -24,7 +24,7 @@ import type { PersonaId } from '@/data/learningPersonas'
 // all) to the FIRST test's 5s budget. The file passed on its own in ~1.3s and
 // timed out only in a loaded full-suite run, where exactly one of the three
 // tests failed — whichever one happened to trigger the import.
-import { HsmPlayground } from './HsmPlayground'
+import { HsmPlayground, resolveHsmLocation } from './HsmPlayground'
 
 let mockPersona: PersonaId | null = 'developer'
 
@@ -107,6 +107,8 @@ describe('HsmPlayground persona gating', () => {
     expect(screen.getByRole('radio', { name: /rust/i })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: /^build$/i }))
     expect(screen.getByRole('tab', { name: /^validation$/i })).toBeInTheDocument()
+    // PKCS#11 v3.3 working-draft test bench (owner decision D5: under Build).
+    expect(screen.getByRole('tab', { name: /^v3\.3 draft$/i })).toBeInTheDocument()
   })
 
   it('hides the Validation (formerly ACVP) sub-tab and engine selector for curious, but still opens Build > Standard', () => {
@@ -118,6 +120,7 @@ describe('HsmPlayground persona gating', () => {
     expect(screen.getByRole('tab', { name: /^standard$/i })).toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^validation$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: /^v3\.3 draft$/i })).not.toBeInTheDocument()
   })
 
   it('hides the Validation (formerly ACVP) sub-tab and engine selector for executive, alongside the existing advisory banner', () => {
@@ -151,5 +154,51 @@ describe('HsmPlayground persona gating', () => {
     fireEvent.click(screen.getByRole('tab', { name: /^build$/i }))
     expect(screen.queryByRole('tab', { name: /^validation$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()
+  })
+})
+
+// A wrong or misspelt id silently falls back to a default (plan C9), so the
+// v3.3 deep links are pinned here: `?tab=learn&ltrack=v33&lesson=…` opens the
+// working-draft Learn track, `?tab=build&dtab=v33` opens the test bench.
+describe('resolveHsmLocation — PKCS#11 v3.3 deep links', () => {
+  it('?tab=learn&ltrack=v33 opens the v3.3 Learn track', () => {
+    expect(resolveHsmLocation({ tab: 'learn', ltrack: 'v33' })).toEqual({
+      tab: 'learn',
+      rail: undefined,
+      itab: undefined,
+      dtab: undefined,
+      ltrack: 'v33',
+    })
+  })
+
+  it('carries a lesson id, and drops a malformed one', () => {
+    expect(
+      resolveHsmLocation({ tab: 'learn', ltrack: 'v33', lesson: 'v33-composite-mlkem' }).lesson
+    ).toBe('v33-composite-mlkem')
+    expect(
+      resolveHsmLocation({ tab: 'learn', ltrack: 'v33', lesson: '../x<script>' }).lesson
+    ).toBeUndefined()
+  })
+
+  it('an unknown track is ignored (falls back to the default track)', () => {
+    expect(resolveHsmLocation({ tab: 'learn', ltrack: 'v34' }).ltrack).toBeUndefined()
+  })
+
+  it('ltrack only applies to the Learn tab', () => {
+    expect(resolveHsmLocation({ tab: 'build', ltrack: 'v33' }).ltrack).toBeUndefined()
+  })
+
+  it('?tab=build&dtab=v33 opens the v3.3 test bench', () => {
+    expect(resolveHsmLocation({ tab: 'build', dtab: 'v33' }).dtab).toBe('v33')
+  })
+
+  it('an unknown Build suite falls back to Standard', () => {
+    expect(resolveHsmLocation({ tab: 'build', dtab: 'v3.3' }).dtab).toBe('standard')
+  })
+
+  it('the existing tracks and suites still resolve', () => {
+    expect(resolveHsmLocation({ tab: 'learn', ltrack: 'v32' }).ltrack).toBe('v32')
+    expect(resolveHsmLocation({ tab: 'conformance' }).dtab).toBe('conformance')
+    expect(resolveHsmLocation({ tab: null }).tab).toBe('learn')
   })
 })

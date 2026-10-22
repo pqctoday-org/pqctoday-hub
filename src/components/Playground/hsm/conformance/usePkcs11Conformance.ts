@@ -56,6 +56,15 @@ import {
   expandErrorPathCases,
 } from '@/wasm/pkcs11ConformanceRunner/errorPathCatalog'
 import {
+  runV33DraftFeatures,
+  summarizeV33,
+  V33_DRAFT_GROUP_LABEL,
+  V33_DRAFT_GROUP_TITLE,
+  type V33CheckRow,
+  type V33Summary,
+} from '@/wasm/pkcs11ConformanceRunner/v33DraftFeatures'
+import { hsm_detectV33Support } from '@/wasm/softhsm/v33'
+import {
   captureMechanismInventory,
   compareToGenerated,
   type EngineArtifactFile,
@@ -293,7 +302,22 @@ export interface ConformanceSelection {
   coverage: boolean
   /** Error-path probes (G-8/G-2): ~2,300 per engine, opt-in — they take about a minute. */
   errorPaths?: boolean
+  /** The separate "v3.3 draft features" group (plan D1). Opt-in. Its rows go
+   *  to `v33Rows`, never to `rows`, so they never reach a v3.2 count, tier
+   *  tally or profile verdict. */
+  v33Draft?: boolean
 }
+
+/** One v3.3 draft-group row, tagged with the engine it ran on. */
+export type V33Row = V33CheckRow & { engine: string }
+
+/** The v3.3 group's own summary line — never added to the v3.2 result. */
+export const v33SummaryText = (s: V33Summary, total: number): string =>
+  `${s.pass} pass, ${s.fail} fail, ${s.notInEngine} not in this engine yet, ${s.notSupported} not supported, ${s.pendingEngine} pending engine (of ${total} rows)`
+
+/** True when the selection would run nothing at all. */
+export const selectionIsEmpty = (sel: ConformanceSelection): boolean =>
+  sel.tierA.size === 0 && !sel.tierB && !sel.coverage && !sel.errorPaths && !sel.v33Draft
 
 export const FULL_SELECTION = (): ConformanceSelection => ({
   tierA: new Set(TIER_A_IDS),
@@ -329,6 +353,9 @@ export function usePkcs11Conformance() {
   const [selection, setSelection] = useState<ConformanceSelection>(FULL_SELECTION)
   const [claims, setClaims] = useState<Record<string, ProfileClaim[]>>({})
   const [inventories, setInventories] = useState<EngineInventorySummary[]>([])
+  const [v33Rows, setV33Rows] = useState<V33Row[]>([])
+  /** Always-current mirror of v33Rows for the Code view's bridge. */
+  const v33RowsRef = useRef<V33Row[]>([])
   const loadingRef = useRef(false)
 
   const toggleCase = useCallback((id: string) => {
@@ -349,6 +376,10 @@ export function usePkcs11Conformance() {
   )
   const setErrorPaths = useCallback(
     (on: boolean) => setSelection((prev) => ({ ...prev, errorPaths: on })),
+    []
+  )
+  const setV33Draft = useCallback(
+    (on: boolean) => setSelection((prev) => ({ ...prev, v33Draft: on })),
     []
   )
 
@@ -400,6 +431,7 @@ export function usePkcs11Conformance() {
       const newRows: RunnerRow[] = []
       const newClaims: Record<string, ProfileClaim[]> = {}
       const newInventories: EngineInventorySummary[] = []
+      const newV33Rows: V33Row[] = []
       const generatedInventory = await loadGeneratedInventory()
 
       for (const engine of engines) {
@@ -565,6 +597,27 @@ export function usePkcs11Conformance() {
             hsm_finalize(M, epSession)
           }
 
+          if (use.v33Draft) {
+            // The v3.3 draft group (plan D1-D4): its own rows, its own
+            // summary, never mixed into newRows. Support is detected at run
+            // time; a missing mechanism reads "not in this engine yet".
+            hsm_initialize(M)
+            const v33Slot0 = hsm_getFirstSlot(M)
+            const v33Slot = hsm_initToken(M, v33Slot0, '12345678', 'SoftHSM3')
+            const v33Session = hsm_openUserSession(M, v33Slot, '12345678', 'user1234')
+            const support = hsm_detectV33Support(M, v33Slot)
+            await runV33DraftFeatures(
+              { M, hSession: v33Session, support },
+              {
+                onRow: (r) => {
+                  newV33Rows.push({ ...r, id: `${r.id}-${eName}`, engine: eName })
+                  setV33Rows(newV33Rows.slice())
+                },
+              }
+            )
+            hsm_finalize(M, v33Session)
+          }
+
           if (inventory.inventorySha256) {
             for (let i = rowsBefore; i < newRows.length; i++) {
               newRows[i] = { ...newRows[i], inventorySha256: inventory.inventorySha256 }
@@ -593,6 +646,8 @@ export function usePkcs11Conformance() {
 
       setClaims(newClaims)
       setInventories(newInventories)
+      v33RowsRef.current = newV33Rows
+      setV33Rows(newV33Rows)
       setRows(newRows)
       setLoading(false)
       loadingRef.current = false
@@ -606,6 +661,8 @@ export function usePkcs11Conformance() {
   const pass = rows.filter((r) => r.status === 'pass').length
   const fail = rows.filter((r) => r.status === 'fail').length
   const notClaimed = rows.filter((r) => r.status === 'not-claimed').length
+  // Separate from pass/fail/notClaimed above — never summed with them.
+  const v33Summary = summarizeV33(v33Rows)
 
   const reportText = () => {
     const lines = rows.map(
@@ -621,6 +678,18 @@ export function usePkcs11Conformance() {
       )
     )
     if (inventories.length > 0) lines.push('', ...inventories.map(describeInventory))
+    if (v33Rows.length > 0) {
+      lines.push(
+        '',
+        `${V33_DRAFT_GROUP_TITLE} (separate group, not part of the v3.2 result above)`,
+        V33_DRAFT_GROUP_LABEL,
+        ...v33Rows.map(
+          (r) =>
+            `[${r.status.toUpperCase()}] ${r.engine} ${r.title}: ${r.observed} (expected: ${r.expected})${r.source ? ` [vectors: ${r.source}]` : ''}`
+        ),
+        `v3.3 draft result: ${v33SummaryText(v33Summary, v33Rows.length)}`
+      )
+    }
     return lines.join('\n')
   }
 
@@ -634,6 +703,10 @@ export function usePkcs11Conformance() {
     setTierB,
     setCoverage,
     setErrorPaths,
+    setV33Draft,
+    v33Rows,
+    v33RowsRef,
+    v33Summary,
     claims,
     inventories,
     run,

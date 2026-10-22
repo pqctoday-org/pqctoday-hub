@@ -521,6 +521,7 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
       { name: 'rsa', crate: 'rsa' },
       { name: 'k256 (secp256k1)', crate: 'k256' },
       { name: 'p256 / p384 / p521', crate: ['p256', 'p384', 'p521'] },
+      { name: 'bp256 / bp384 (brainpool)', crate: ['bp256', 'bp384'] },
       { name: 'ecdsa', crate: 'ecdsa' },
       {
         name: 'aes / aes-gcm / aes-kw / ctr / cmac',
@@ -573,9 +574,11 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
           'num-bigint',
           'num-bigint-dig',
           'num-integer',
+          'primefield',
           'primeorder',
           'rfc6979',
           'sec1',
+          'wnaf',
         ],
       },
       {

@@ -1,7 +1,7 @@
 {
   "_comment": "Rust crates that a wasm scan cannot see: (1) vendored forks, whose source directory name is in the binary but whose version is not, and (2) crates that compiled with no panic path and so left no `registry/src/<crate>-<version>/` string. Presence of every fork is verified against the binary by `gen:sbom-versions:check`; versions here are read from the pqctoday-hsm sources at `commit` (rust/Cargo.lock and each fork's Cargo.toml). The check fails unless `commit` equals the hsmCommit that public/wasm/wasm-provenance.json records for `bundle`, so rebuilding the engine forces this file to be re-read. Licenses come from each crate's own Cargo.toml.",
   "bundle": "softhsmrustv3-engine",
-  "commit": "496f9e529d3d92248dc414e153b06afca8d3ff4f",
+  "commit": "68abd0ae472f9c722276fddd25f0341cc9af85bb",
   "forks": {
     "fips204-patched": { "crate": "fips204", "version": "0.4.6", "license": "MIT / Apache-2.0" },
     "fips205-patched": { "crate": "fips205", "version": "0.4.1", "license": "MIT / Apache-2.0" },
@@ -22,6 +22,8 @@
     "cbc": { "versions": ["0.2.1"], "license": "MIT / Apache-2.0" },
     "getrandom": { "versions": ["0.2.17"], "license": "MIT / Apache-2.0" },
     "pkcs8": { "versions": ["0.10.2", "0.11.0"], "license": "Apache-2.0 / MIT" },
-    "spki": { "versions": ["0.7.3", "0.8.0"], "license": "Apache-2.0 / MIT" }
+    "spki": { "versions": ["0.7.3", "0.8.0"], "license": "Apache-2.0 / MIT" },
+    "bp256": { "versions": ["0.14.0"], "license": "Apache-2.0 / MIT" },
+    "bp384": { "versions": ["0.14.0"], "license": "Apache-2.0 / MIT" }
   }
 }

@@ -20,6 +20,10 @@ import {
   CONFORMANCE_TIER_LABELS,
   type ConformanceSelection,
 } from '@/components/Playground/hsm/conformance/usePkcs11Conformance'
+import {
+  V33_DRAFT_GROUP_LABEL,
+  V33_DRAFT_GROUP_TITLE,
+} from '@/wasm/pkcs11ConformanceRunner/v33DraftFeatures'
 
 const ENGINE_NAME: Record<string, string> = {
   cpp: 'C++',
@@ -120,9 +124,10 @@ TIER_A = ${pyList(cases.map((c) => c.id))}
 ${cases.map((c) => `#   ${c.id.padEnd(12)} ${c.citation}`).join('\n') || '#   (no Tier A case selected)'}
 RUN_TIER_B_PROBES = ${sel.tierB ? 'True' : 'False'}      # generated probes per claimed profile: ${tierB.map((g) => `${g.label} ${g.probes}`).join(', ')}
 RUN_MECHANISM_COVERAGE = ${sel.coverage ? 'True' : 'False'}   # ${mechanismProbeCount()} product-authored mechanism probes
+RUN_V33_DRAFT = ${sel.v33Draft ? 'True' : 'False'}   # separate "${V33_DRAFT_GROUP_TITLE}" group, never in the v3.2 result
 
 claims = json.loads(conf.claims())          # engine → claimed profiles (after the last run)
-rows = json.loads(await conf.run_cases(TIER_A, RUN_TIER_B_PROBES, RUN_MECHANISM_COVERAGE))
+rows = json.loads(await conf.run_cases(TIER_A, RUN_TIER_B_PROBES, RUN_MECHANISM_COVERAGE, RUN_V33_DRAFT))
 for r in rows:
     kind = ${JSON.stringify(Object.fromEntries(Object.entries(CONFORMANCE_TIER_LABELS).map(([k, v]) => [k, v.short])))}[r["tier"]]
     print(f"[{r['status'].upper():>11}] {r['engine']:<5} {kind:<15} {r['name']} — {r['citation']}")
@@ -132,6 +137,17 @@ failed = sum(1 for r in rows if r["status"] == "fail")
 not_claimed = sum(1 for r in rows if r["status"] == "not-claimed")
 print(f"\\nResult: {passed} pass, {failed} fail, {not_claimed} not-claimed (of {len(rows)} rows)")
 print("FAILED" if failed else "OK")
+
+if RUN_V33_DRAFT:
+    # ${V33_DRAFT_GROUP_TITLE}: its own rows and its own summary. Statuses
+    # not-in-engine / not-supported / pending-engine are not failures.
+    print(${JSON.stringify(`\n${V33_DRAFT_GROUP_TITLE} — ${V33_DRAFT_GROUP_LABEL}`)})
+    v33 = json.loads(conf.v33_rows())
+    for r in v33:
+        src = f"  [vectors: {r['source']}]" if r.get("source") else ""
+        print(f"[{r['status'].upper():>14}] {r['engine']:<5} {r['title']} — {r['observed']}{src}")
+    counts = {k: sum(1 for r in v33 if r["status"] == k) for k in ("pass", "fail", "not-in-engine", "not-supported", "pending-engine")}
+    print(f"v3.3 draft result (separate from the v3.2 result): {counts} (of {len(v33)} rows)")
 print(${JSON.stringify(VALIDATION_DISCLAIMER)})
 `
 }

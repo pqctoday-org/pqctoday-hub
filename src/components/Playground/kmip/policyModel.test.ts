@@ -50,7 +50,8 @@ const EXPECTED_RULES: Record<string, number> = {
   'fips-only.yaml': 26,
   // 2026-07-04: unconditional composite → window cutoffs ×2 + opt-in composite;
   // the no-op post-2030 Create cutoff folded into one CreateKeyPair cutoff → 8.
-  'hybrid-migration-window.yaml': 8,
+  // 2026-10-21: composite ML-KEM opt-in for tagged key establishment → 10.
+  'hybrid-migration-window.yaml': 10,
   // Migration tab estate (2026-07-05): 9 label-pattern/generic defaults + the
   // PQC boundary denylist → 10.
   // 2026-08-28: reconciled to actual file content (drifted since 2026-07-05,

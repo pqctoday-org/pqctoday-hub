@@ -15,7 +15,15 @@ import {
 } from '@/data/validation/nativeConformance'
 import { profileConditionProbeCounts } from '@/wasm/pkcs11ConformanceRunner/profileConditions'
 import { mechanismProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
-import { TIER_A_CASES, type RunnerRow } from '../../../hsm/conformance/usePkcs11Conformance'
+import {
+  TIER_A_CASES,
+  type RunnerRow,
+  type V33Row,
+} from '../../../hsm/conformance/usePkcs11Conformance'
+import {
+  V33_DRAFT_GROUP_LABEL,
+  summarizeV33,
+} from '@/wasm/pkcs11ConformanceRunner/v33DraftFeatures'
 import { ConformanceSuiteWorkbench } from './ConformanceSuiteWorkbench'
 
 vi.mock('@monaco-editor/react', () => ({ default: () => null }))
@@ -70,6 +78,47 @@ const ROWS: RunnerRow[] = [
   },
 ]
 
+const V33_ROWS: V33Row[] = [
+  {
+    id: 'v33.mu.gen-from-key-Rust',
+    engine: 'Rust',
+    section: 'external-mu',
+    title: 'µ from a key handle',
+    status: 'pass',
+    observed: 'µ ab12… = independent µ',
+    expected: 'equals µ computed independently',
+  },
+  {
+    id: 'v33.kat.kem.CKP_COMP_KEM_MLKEM768_X25519-Rust',
+    engine: 'Rust',
+    section: 'kat',
+    title: 'Decapsulate the published ciphertext · id-MLKEM768-X25519-SHA3-256',
+    status: 'not-in-engine',
+    observed: 'CKM_COMP_KEM not advertised',
+    expected: 'secret = published k',
+    source: 'lamps-wg/draft-composite-kem @ d77e754 (2026-02-21)',
+  },
+  {
+    id: 'v33.kat.kem.CKP_COMP_KEM_MLKEM768_ECDH_BRAINPOOLP256R1-Rust',
+    engine: 'Rust',
+    section: 'kat',
+    title: 'brainpool',
+    status: 'not-supported',
+    observed: 'C_CreateObject → CKR_PARAMETER_SET_NOT_SUPPORTED',
+    expected: 'secret = published k',
+  },
+  {
+    id: 'v33.errpath.x-Rust',
+    engine: 'Rust',
+    section: 'error-path',
+    title: 'CKM_COMP_SIG_EXTERNAL_HASH with a pre-hash of the wrong length',
+    status: 'pending-engine',
+    observed: 'C_Sign → CKR_DATA_LEN_RANGE (code not asserted until the engine update)',
+    expected: 'CKR_DATA_LEN_RANGE',
+    citation: 'comp_sig.md',
+  },
+]
+
 vi.mock('../../../hsm/conformance/usePkcs11Conformance', async (importActual) => {
   const actual =
     await importActual<typeof import('../../../hsm/conformance/usePkcs11Conformance')>()
@@ -84,6 +133,10 @@ vi.mock('../../../hsm/conformance/usePkcs11Conformance', async (importActual) =>
       setTierB: vi.fn(),
       setCoverage: vi.fn(),
       setErrorPaths: vi.fn(),
+      setV33Draft: vi.fn(),
+      v33Rows: V33_ROWS,
+      v33RowsRef: { current: V33_ROWS },
+      v33Summary: summarizeV33(V33_ROWS),
       run: vi.fn(),
       pass: 3,
       fail: 2,
@@ -153,5 +206,31 @@ describe('ConformanceSuiteWorkbench', () => {
     expect(badges[3]).toMatch(/Product probe/)
     expect(badges[4]).toMatch(/Error-path probe/)
     expect(scope).toHaveTextContent('error-path probes')
+  })
+
+  it('shows the v3.3 draft group separately: verbatim label, own summary, no draft status drawn as a failure', async () => {
+    render(<ConformanceSuiteWorkbench />)
+    await screen.findByTestId('native-conformance-evidence')
+    expect(screen.getByTestId('pkcs11-conformance-v33-label')).toHaveTextContent(
+      V33_DRAFT_GROUP_LABEL
+    )
+    expect(screen.getByTestId('pkcs11-conformance-v33-summary')).toHaveTextContent(
+      '1 pass, 0 fail, 1 not in this engine yet, 1 not supported, 1 pending engine (of 4 rows)'
+    )
+    // The v3.2 summary and tier tallies are untouched by the 4 draft rows.
+    expect(screen.getByTestId('pkcs11-conformance-summary')).toHaveTextContent(
+      `3/${ROWS.length} rows conformant`
+    )
+    expect(screen.getAllByTestId('pkcs11-conformance-row')).toHaveLength(ROWS.length)
+    const v33 = screen.getAllByTestId('pkcs11-conformance-v33-row')
+    expect(v33).toHaveLength(4)
+    for (const row of v33) {
+      if (row.getAttribute('data-status') === 'fail') continue
+      expect(row.querySelector('.text-destructive')).toBeNull()
+    }
+    expect(v33[1]).toHaveTextContent('not in this engine yet')
+    expect(v33[1]).toHaveTextContent('lamps-wg/draft-composite-kem @ d77e754')
+    expect(v33[3]).toHaveTextContent('Cited: comp_sig.md')
+    expect(screen.getByRole('checkbox', { name: 'v3.3 draft features' })).toBeInTheDocument()
   })
 })
