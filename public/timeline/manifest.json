@@ -3475,6 +3475,24 @@
       "filename": "FIPS-140-2-certificates-move-to-the-Historical-List.html",
       "verifiedAt": "2026-10-16",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "india-dst-nqm-cii-full-pqc-adoption-deadline",
+      "label": "CII-Full-PQC-Adoption-Deadline",
+      "url": "https://dst.gov.in/sites/default/files/Quantum-Safe-Ecosystem-in-India.pdf",
+      "status": "downloaded",
+      "file": "timeline/CII-Full-PQC-Adoption-Deadline.pdf",
+      "sizeBytes": 2899651,
+      "contentType": "application/pdf",
+      "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
+      "filename": "CII-Full-PQC-Adoption-Deadline.pdf",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-22T03:21:01.818513+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "acquisition": "manual",
+      "acquiredAt": "2026-10-22"
     }
   ],
   "archivedEntries": [],
