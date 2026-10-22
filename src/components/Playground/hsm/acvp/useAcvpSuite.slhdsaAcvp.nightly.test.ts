@@ -169,8 +169,9 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
     const cpp = section().filter((r) => engineOf(r) === 'C++')
     const rust = section().filter((r) => engineOf(r) === 'Rust')
     // 16 NIST sigVer + 16 deterministic sigGen (12 ctx-255 + 4 empty-ctx/pre-hash)
-    // + 32 product-authored mutations (12 × pk/ctx, 4 × sig/msg) + 2 probes + 3 skips.
-    expect(cpp).toHaveLength(69)
+    // + 32 product-authored mutations (12 × pk/ctx, 4 × sig/msg) + 2 probes + 1 skip
+    // (SHA2-512/t). Hedged and internal groups: optionalInput local test.
+    expect(cpp).toHaveLength(67)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
@@ -326,10 +327,6 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
     expect(skips.map(caseKey).sort()).toEqual([
       'slhdsa-skip-hash-sha512t',
       'slhdsa-skip-hash-sha512t',
-      'slhdsa-skip-hedged-rnd',
-      'slhdsa-skip-hedged-rnd',
-      'slhdsa-skip-internal',
-      'slhdsa-skip-internal',
     ])
     for (const r of skips) {
       expect(classesOf(r.id)).toEqual([])

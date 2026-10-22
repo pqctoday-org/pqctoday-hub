@@ -128,9 +128,10 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
   it('runs the section on both engines with identical case sets', () => {
     const cpp = section().filter((r) => engineOf(r) === 'C++')
     const rust = section().filter((r) => engineOf(r) === 'Rust')
-    // 9 keyGen + 1 encapsulation skip + 12 decapsulation VAL + 12 key checks
-    // + 3 implicit-rejection mutations + 7 boundary probes.
-    expect(cpp).toHaveLength(44)
+    // 9 keyGen + 12 decapsulation VAL + 12 key checks + 3 implicit-rejection
+    // mutations + 7 boundary probes. (Encapsulation AFT runs with NIST m in
+    // sections/optionalInputAcvp.ts — useAcvpSuite.optionalInput.local.test.ts.)
+    expect(cpp).toHaveLength(43)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
@@ -252,14 +253,13 @@ describe('ML-KEM reference samples — both engines, real vectors', () => {
     expect(buf.details).toMatch(/\*pulCiphertextLen = 768 \(expected 768\)/)
   })
 
-  it('reports the encapsulation AFT groups as skip — never pass, never tiered', () => {
-    const skips = section().filter((r) => r.status === 'skip')
-    expect(skips.map(caseKey)).toEqual(['mlkem-skip-encap-m', 'mlkem-skip-encap-m'])
-    for (const r of skips) {
-      expect(classesOf(r.id)).toEqual([])
-      expect(r.details).toMatch(
-        /^Skipped — C_EncapsulateKey .* takes no caller-supplied randomness/
-      )
+  it('reports no skip: the encapsulation AFT groups run with NIST m (optional test input)', () => {
+    expect(section().filter((r) => r.status === 'skip')).toEqual([])
+    const encap = results.filter((r) => r.id.startsWith('optin-mlkem-encap-'))
+    expect(encap).toHaveLength(2 * 75)
+    for (const r of encap) {
+      expect(r.status, `${r.id}: ${r.details}`).toBe('pass')
+      expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
     }
   })
 

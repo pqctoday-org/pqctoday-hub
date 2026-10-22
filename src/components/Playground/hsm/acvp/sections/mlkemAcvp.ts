@@ -6,8 +6,8 @@
 //  1. KeyGen from seed — NIST ML-KEM-keyGen-FIPS203: d‖z supplied as CKA_SEED
 //     in the PRIVATE-key template of C_GenerateKeyPair; both the generated ek
 //     (public CKA_VALUE) and dk (private CKA_VALUE) are byte-compared.
-//  2. Encapsulation AFT — explicit skip: C_EncapsulateKey has no input for the
-//     upstream randomness m, so (ek, m) → (c, k) cannot be reproduced.
+//  2. Encapsulation AFT — runs in sections/optionalInputAcvp.ts (NIST m as an
+//     optional test input to CKM_ML_KEM, outside the PKCS#11 standard).
 //  3. Decapsulation VAL — NIST valid AND modified-ciphertext cases; both must
 //     return CKR_OK with the upstream k (for a modified ciphertext, k is the
 //     FIPS 203 implicit-rejection value).
@@ -424,33 +424,9 @@ export async function runMlkemAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
     }
   }
 
-  // ── 2. Encapsulation AFT: honest skip ─────────────────────────────────
-  const encapNotRun = (val.notExecuted ?? []).filter(
-    (r) => r.why === 'no-pkcs11-encapsulation-randomness-input'
-  )
-  if (encapNotRun.length > 0) {
-    await pushResult({
-      id: `mlkem-skip-encap-m-${eName}`,
-      algorithm: `ML-KEM-512/768/1024 (${eName})`,
-      testCase: `Encapsulation AFT · byte-match against NIST (ek, m) → (c, k) · ${encapNotRun.length} groups`,
-      referenceUrl,
-      status: 'skip',
-      details:
-        'Skipped — C_EncapsulateKey (PKCS#11 v3.2 §5.18.8) takes no caller-supplied randomness: the token draws m ' +
-        'itself, so the NIST encapsulation output cannot be reproduced through this interface. The same NIST cases ' +
-        'are exercised in the decapsulation direction (Decapsulate · upstream encapsulation rows). Not run: ' +
-        encapNotRun.map((r) => `tg${r.tgId} (${r.parameterSet}, ${r.cases} cases)`).join(', ') +
-        ` · ${srcTag(VAL)}`,
-      caseMeta: {
-        origin: 'not-executed',
-        upstreamOperation: 'encapsulation',
-        localOperation: 'none',
-        parameterSet: 'ML-KEM-512/768/1024',
-        expected: 'not-run',
-        source: srcOf(VAL),
-      },
-    })
-  }
+  // ── 2. Encapsulation AFT runs in sections/optionalInputAcvp.ts, with
+  // NIST's m as the CKM_ML_KEM parameter (a test input this HSM accepts
+  // outside the PKCS#11 standard).
 
   // ── 3/4. VAL groups ────────────────────────────────────────────────────
   for (const g of val.testGroups) {

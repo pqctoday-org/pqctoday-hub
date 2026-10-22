@@ -172,6 +172,16 @@ const mldsaMech = (c: CaseRecord): string =>
 /** The mechanism an SLH-DSA manifest case drives (mirrors sections/slhdsaAcvp.ts mechFor()). */
 const slhdsaMech = (c: CaseRecord): string =>
   c.parameters.preHash === 'preHash' ? hashMech('SLH_DSA', param(c, 'hashAlg')) : 'CKM_SLH_DSA'
+/** The mechanism an optional-input signing case drives (mirrors sections/optionalInputAcvp.ts planSign()). */
+const optSignMech = (family: 'ML_DSA' | 'SLH_DSA', c: CaseRecord): string => {
+  if (c.parameters.signatureInterface === 'internal')
+    return family === 'ML_DSA' ? 'CKM_ML_DSA_EXTERNAL_MU' : 'CKM_SLH_DSA'
+  if (c.parameters.preHash === 'preHash') {
+    const h = param(c, 'hashAlg')
+    return h.startsWith('SHA2-512/') ? `CKM_HASH_${family}` : hashMech(family, h)
+  }
+  return `CKM_${family}`
+}
 /** Manifest `contextBytes` / `messageBytes` of a case, for product-authored cases derived from it. */
 const lengthsOf = (c: CaseRecord): CaseParams => ({
   contextBytes: Number(param(c, 'contextBytes')),
@@ -514,7 +524,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   acvp(
     '04e.ecdsa-siggen',
     '§4e.2 (sections/ecKeyVerSigGenAcvp.ts)',
-    'ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_PQCTODAY_ECDSA_EXPLICIT_K), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)',
+    'ECDSA sigGen: NIST r || s byte-match with NIST k (CKM_ECDSA + k, a test input outside the PKCS#11 standard), plus the engine-nonce signature verified by the engine (round-trip) and by an independent verifier (oracle)',
     casesOf('ecdsa_siggen_acvp_test')
       .flatMap((c) => {
         const curve = param(c, 'curve')
@@ -523,13 +533,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         if (!mech) throw new Error(`testRegistry: no CKM_ECDSA_<hash> for ${hashAlg}`)
         const base = `ecdsa-siggen-${curve}-${hashAlg.toLowerCase()}-${upstreamIds(c)}`
         return [
-          mc(
-            c.caseId,
-            NIST,
-            'positive',
-            [x('CKM_PQCTODAY_ECDSA_EXPLICIT_K', 'sign', curve)],
-            `${base}-kat-{engine}`
-          ),
+          mc(c.caseId, NIST, 'positive', [x('CKM_ECDSA', 'sign', curve)], `${base}-kat-{engine}`),
           lc(
             'acvp.04e.ecdsa-siggen',
             `${curve}-${hashAlg}-rt`,
@@ -563,14 +567,14 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
           'explicit-k-secp256k1-refused',
           PROBE,
           'negative',
-          [x('CKM_PQCTODAY_ECDSA_EXPLICIT_K', 'sign', 'secp256k1')],
+          [x('CKM_ECDSA', 'sign', 'secp256k1')],
           {
             rowId: 'ecdsa-explicit-k-secp256k1-refused-{engine}',
-            note: 'The mechanism is defined for P-256/384/521 only (hsm #281); C_SignInit with a secp256k1 key must return CKR_KEY_TYPE_INCONSISTENT.',
+            note: 'A supplied k (the optional CKM_ECDSA parameter, outside the PKCS#11 standard) is accepted for P-256/384/521 only; C_SignInit with a secp256k1 key must return CKR_KEY_TYPE_INCONSISTENT.',
           }
         ),
       ]),
-    'Since hsm #281 the NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k. The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message.'
+    'The NIST case is a byte-match: the file carries NIST k, r, s and the -kat row signs with k, supplied as the optional CKM_ECDSA parameter (a test input outside the PKCS#11 standard). The -rt and -oracle rows are local cases (functional round-trip / independent oracle) over the same key and message.'
   ),
   acvp(
     '04e.eddsa-siggen',
@@ -696,9 +700,42 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   acvp(
     '05d.skips',
     '§5d.4 (sections/mldsaAcvp.ts)',
-    'ML-DSA honest skips (groups PKCS #11 cannot express)',
+    'ML-DSA honest skip (the SHA2-512/224 and SHA2-512/256 sigVer cases not yet byte-copied)',
     [],
-    'Skip rows are evidence of nothing; the capabilities they stand for are the capability map declaredUnreachable rows (mldsa-hash-sha512t, mldsa-hedged-rnd, mldsa-internal-interface), shown as unsupported.'
+    'Skip rows are evidence of nothing; the SHA2-512/t cases are listed under notExecuted in mldsa_sigver_test.json (open gap mldsa-hash-sha512t-no-mechanism). The hedged and internal-interface groups run in acvp.05g.optional-input.'
+  ),
+  acvp(
+    '05g.optional-input',
+    '§5g (sections/optionalInputAcvp.ts)',
+    'ML-DSA hedged sigGen byte-match with NIST rnd (extended signing structure: a test input outside the PKCS #11 standard), including the generic CKM_HASH_ML_DSA with SHA-512/224 and SHA-512/256; internal-interface sigGen and sigVer through the standard CKM_ML_DSA_EXTERNAL_MU (μ computed from pk and M′)',
+    [
+      ...casesOf('mldsa_siggen_optional_input_test').map((c) =>
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [
+            x(
+              optSignMech('ML_DSA', c),
+              'sign',
+              param(c, 'parameterSet'),
+              c.parameters.deterministic === true ? 'deterministic' : 'hedged'
+            ),
+          ],
+          `optin-mldsa-siggen-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      ),
+      ...casesOf('mldsa_sigver_internal_test').map((c) =>
+        mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x('CKM_ML_DSA_EXTERNAL_MU', 'verify', param(c, 'parameterSet'))],
+          `optin-mldsa-sigver-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      ),
+    ],
+    'Rows that hand the HSM NIST rnd say "test input supplied (outside the standard)". The internal-interface rows use only the standard external-μ mechanism; the workbench computes μ = SHAKE256(SHAKE256(pk, 64) ‖ M′, 64).'
   ),
   acvp(
     '05e.siggen-det',
@@ -779,7 +816,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     '§5e.3 (sections/mldsaDepth.ts)',
     'ML-DSA honest skip (the NIST 1-byte-context sigGen case)',
     [],
-    'Skip rows are evidence of nothing; the one NIST 1-byte-context case is hedged and uses SHA2-512/256 — the declaredUnreachable rows mldsa-hedged-rnd and mldsa-hash-sha512t.'
+    'Skip rows are evidence of nothing; the one NIST 1-byte-context case is hedged and uses SHA2-512/256. Both are now reachable (NIST rnd as an optional test input, the generic CKM_HASH_ML_DSA with CKM_SHA512_256), but this depth file does not carry the case yet.'
   ),
   acvp(
     '05f.sigver',
@@ -974,11 +1011,19 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     'import-dk-short is not registered: the Rust engine rejects the 1-byte-short dk at C_CreateObject, so on that engine the row drives no mechanism operation. import-ek-short is: both engines accept the short ek and the pinned code comes from C_EncapsulateKey.'
   ),
   acvp(
-    '07b.skips',
-    '§7b.2 (sections/mlkemAcvp.ts)',
-    'ML-KEM honest skip (encapsulation AFT: C_EncapsulateKey takes no caller-supplied randomness m)',
-    [],
-    'Skip rows are evidence of nothing; the encapsulation AFT groups are listed under notExecuted in mlkem_encapdecap_val_test.json.'
+    '07b.encap-optional-input',
+    '§7b.2 (sections/optionalInputAcvp.ts)',
+    'ML-KEM encapsulation AFT: NIST m as the CKM_ML_KEM parameter (a test input outside the PKCS #11 standard), c and k byte-match',
+    casesOf('mlkem_encap_aft_test').map((c) =>
+      mc(
+        c.caseId,
+        NIST,
+        'positive',
+        [x('CKM_ML_KEM', 'encapsulate', param(c, 'parameterSet'))],
+        `optin-mlkem-encap-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+      )
+    ),
+    'Every row says "test input supplied (outside the standard)": standard CKM_ML_KEM takes no parameter and draws m itself.'
   ),
   acvp(
     '07c.ekcheck-depth',
@@ -1150,9 +1195,42 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   acvp(
     '09c.skips',
     '§9c.5 (sections/slhdsaAcvp.ts)',
-    'SLH-DSA honest skips (pre-hash functions with no PKCS #11 mechanism, internal interface, hedged sigGen)',
+    'SLH-DSA honest skip (SHA2-512/224 and SHA2-512/256 pre-hash cases not yet byte-copied)',
     [],
-    'Skip rows are evidence of nothing; the upstream groups they stand for are listed under notExecuted in the SLH-DSA vector files. No capability-map declaredUnreachable row covers them yet.'
+    'Skip rows are evidence of nothing; the SHA2-512/t cases are listed under notExecuted in the SLH-DSA vector files (open gap mldsa-hash-sha512t-no-mechanism). The internal-interface and hedged groups run in acvp.09f.optional-input.'
+  ),
+  acvp(
+    '09f.optional-input',
+    '§9f (sections/optionalInputAcvp.ts)',
+    'SLH-DSA hedged sigGen byte-match with NIST addrnd and internal-interface sigGen / sigVer (messageEncoding = internal), both through the extended signing structure (test inputs outside the PKCS #11 standard), including the generic CKM_HASH_SLH_DSA with SHA-512/224 and SHA-512/256',
+    [
+      ...casesOf('slhdsa_siggen_optional_input_test').map((c) =>
+        mc(
+          c.caseId,
+          NIST,
+          'positive',
+          [
+            x(
+              optSignMech('SLH_DSA', c),
+              'sign',
+              param(c, 'parameterSet'),
+              c.parameters.deterministic === true ? 'deterministic' : 'hedged'
+            ),
+          ],
+          `optin-slhdsa-siggen-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      ),
+      ...casesOf('slhdsa_sigver_internal_test').map((c) =>
+        mc(
+          c.caseId,
+          NIST,
+          c.expectation,
+          [x('CKM_SLH_DSA', 'verify', param(c, 'parameterSet'))],
+          `optin-slhdsa-sigver-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
+        )
+      ),
+    ],
+    'Every row says "test input supplied (outside the standard)". A wrong-length upstream signature must return CKR_SIGNATURE_LEN_RANGE, a modified one CKR_SIGNATURE_INVALID.'
   ),
   acvp(
     '09d.keygen',

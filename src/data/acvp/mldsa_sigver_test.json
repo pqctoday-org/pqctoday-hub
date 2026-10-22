@@ -12,7 +12,7 @@
     "upstream_operation": "sigVer (dedicated SigVer vectors with upstream testPassed + reason)",
     "local_operation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
     "transformation": "subset only; every retained field is byte-copied from the upstream file (hex case preserved); no value is re-derived",
-    "subset_policy": "Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface.",
+    "subset_policy": "Deterministic. external/pure groups: the positive case plus one case per upstream negative reason (modified message, modified signature - commitment/hint/z), each chosen as the shortest message in its (group, reason), ties broken by lowest tcId. internal/externalMu=true groups: one positive and one negative, each the lowest tcId (mu is always 64 bytes). external/preHash groups: not byte-copied (HashML-DSA positive coverage comes from mldsa_extended_test.json and mldsa_siggen_det_test.json); only the cases whose hashAlg has no PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted as metadata. internal/externalMu=false groups (ML-DSA.Verify_internal on a raw M-prime) are listed in notExecuted: no PKCS#11 v3.2 mechanism exposes that interface. Update 2026-10-22: the 3 upstream group(s) formerly listed in notExecuted as no-pkcs11-internal-interface now run from mldsa_sigver_internal_test.json, through optional test inputs this HSM accepts outside the PKCS#11 standard (caller-supplied random value; internal message encoding for SLH-DSA; the standard CKM_ML_DSA_EXTERNAL_MU for ML-DSA internal).",
     "retained_fields": "tcId, testPassed, reason, hashAlg, pk, message|mu, context, signature (sk and deferred dropped)",
     "negative_classes_upstream": [
       "modified message",
@@ -20,7 +20,7 @@
       "modified signature - hint",
       "modified signature - z"
     ],
-    "negative_classes_not_upstream": "modified public key and modified context are NOT provided by this upstream file; the Hub derives them at run time from each parameter set's positive external/pure case and labels them product-authored (see localMutations) \u2014 they are never reported as NIST vectors"
+    "negative_classes_not_upstream": "modified public key and modified context are NOT provided by this upstream file; the Hub derives them at run time from each parameter set's positive external/pure case and labels them product-authored (see localMutations) — they are never reported as NIST vectors"
   },
   "vsId": 42,
   "algorithm": "ML-DSA",
@@ -404,33 +404,6 @@
       "testPassed": false,
       "reason": "modified signature - z",
       "why": "no-pkcs11-hash-ml-dsa-mechanism"
-    },
-    {
-      "tgId": 8,
-      "parameterSet": "ML-DSA-44",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "externalMu": false,
-      "cases": 15,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 10,
-      "parameterSet": "ML-DSA-65",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "externalMu": false,
-      "cases": 15,
-      "why": "no-pkcs11-internal-interface"
-    },
-    {
-      "tgId": 12,
-      "parameterSet": "ML-DSA-87",
-      "signatureInterface": "internal",
-      "preHash": "none",
-      "externalMu": false,
-      "cases": 15,
-      "why": "no-pkcs11-internal-interface"
     }
   ]
 }

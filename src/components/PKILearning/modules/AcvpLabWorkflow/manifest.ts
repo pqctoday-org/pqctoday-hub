@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'acvp-lab-workflow',
-  contentVersion: 9,
+  contentVersion: 10,
   lm_id: 'LM-066',
   title: 'ACVP Lab Workflow: From Vector Set to Evidence',
   description:

@@ -1,0 +1,24 @@
+{
+  "schema": "pqctoday.validation-source-check/v1",
+  "item": "vector-source:slhdsa_siggen_optional_input_test",
+  "subjectSha256": "e56d34eda23d9b58ab27361af113bb832a04d188a0e6d15e641bdf20d99419a4",
+  "fileSha256": "9b68289064a02947db15e34da1f3852b5c7560f4fd8f99df39efcf4bef47b0ce",
+  "result": "match",
+  "tool": "scripts/acvp/subset_reproduce.py",
+  "command": "python3 scripts/acvp/subset_reproduce.py --id slhdsa_siggen_optional_input_test --strict",
+  "upstream": {
+    "repository": "https://github.com/usnistgov/ACVP-Server",
+    "revision": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "files": [
+      {
+        "path": "gen-val/json-files/SLH-DSA-sigGen-FIPS205/internalProjection.json",
+        "sha256": "62b42e7c27fda5de8a94aba2943ae413b59b6ea08141f3bc035b1eceae235dba"
+      }
+    ]
+  },
+  "compared": {
+    "cases": 58,
+    "values": 658
+  },
+  "checkedAt": "2026-10-22"
+}

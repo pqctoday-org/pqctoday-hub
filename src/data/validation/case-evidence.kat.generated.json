@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.case-evidence/v1",
   "inputs": {
-    "manifestSha256": "b72af4dd2095c4ba9ed82a7aa7dcfc47203ad6535b9221e790614ffb3a8000d8",
-    "registrySha256": "6c8f268ed1b7837bf15775355ecc2ca7ec64656d8877d1474b47f484942fac8e"
+    "manifestSha256": "7b3d0c8e5364b3608a41a90e13eb9e8b5ae6281c13998edbb19b44e1caccc240",
+    "registrySha256": "fac8ecb3f9e696e8186237a768055ed9fe188861b9e7e115102cdd9b60c38044"
   },
   "records": {
     "kat.aes-kwp-wrap#local:kat.aes-kwp-wrap/1": {
@@ -3527,11 +3527,14 @@
     "acvp/mldsa_keygen_test.json": "nist-acvp-reference-sample",
     "acvp/mldsa_siggen_ctxmsg_test.json": "nist-acvp-reference-sample",
     "acvp/mldsa_siggen_det_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_siggen_optional_input_test.json": "nist-acvp-reference-sample",
     "acvp/mldsa_siggen_prehash_test.json": "nist-acvp-reference-sample",
     "acvp/mldsa_sigver_depth_test.json": "nist-acvp-reference-sample",
+    "acvp/mldsa_sigver_internal_test.json": "nist-acvp-reference-sample",
     "acvp/mldsa_sigver_test.json": "nist-acvp-reference-sample",
     "acvp/mldsa_test.json": "nist-acvp-reference-sample",
     "acvp/mlkem_ekcheck_depth_test.json": "nist-acvp-reference-sample",
+    "acvp/mlkem_encap_aft_test.json": "nist-acvp-reference-sample",
     "acvp/mlkem_encapdecap_val_test.json": "nist-acvp-reference-sample",
     "acvp/mlkem_keygen_test.json": "nist-acvp-reference-sample",
     "acvp/mlkem_test.json": "nist-acvp-reference-sample",
@@ -3556,6 +3559,8 @@
     "acvp/slhdsa_prehash_sigver_shake_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_siggen_ctx0_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_siggen_det_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_siggen_optional_input_test.json": "nist-acvp-reference-sample",
+    "acvp/slhdsa_sigver_internal_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_sigver_sha2_test.json": "nist-acvp-reference-sample",
     "acvp/slhdsa_sigver_shake_test.json": "nist-acvp-reference-sample",
     "acvp/wycheproof_aes_kwp_test.json": "independent-oracle",

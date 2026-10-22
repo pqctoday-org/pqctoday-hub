@@ -600,14 +600,16 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
         <p>
           ACVP talks to an implementation through whatever interface the test harness can reach{' '}
           <Cite s="acvpSpec" at="§4.2, §5" />. For the Hub that interface is PKCS#11 v3.2, on two
-          WASM engines (C++ and Rust). An ACVP test group can only be answered if PKCS#11 can carry
-          exactly the inputs the group supplies — nothing coerced, nothing defaulted.
+          WASM engines (C++ and Rust). An ACVP test group can only be answered if the interface
+          takes exactly the inputs the group supplies — nothing coerced, nothing defaulted. Where
+          standard PKCS#11 has no field for an input, this HSM accepts it as an optional test input
+          outside the standard, and every result that used one says so.
         </p>
-        <TableShell caption="Which ACVP test groups a PKCS#11 v3.2 interface can carry">
+        <TableShell caption="How each ACVP test group reaches the HSM: standard PKCS#11, or an optional test input outside it">
           <thead>
             <tr>
               <Th>ACVP test group</Th>
-              <Th>PKCS#11 v3.2 path</Th>
+              <Th>Interface path</Th>
               <Th>Hub disposition</Th>
             </tr>
           </thead>
@@ -623,10 +625,16 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             <tr>
               <Td>ML-KEM encapsulation (AFT)</Td>
               <Td>
-                None: C_EncapsulateKey takes a public-key handle and a template, with no input for{' '}
-                <code>m</code> <Cite s="pkcs11" at="§5.18.8" />
+                Standard PKCS#11 has no field for <code>m</code>: C_EncapsulateKey takes a
+                public-key handle and a template <Cite s="pkcs11" at="§5.18.8" />. This HSM accepts{' '}
+                <code>m</code> (32 bytes) as an optional test input, the CKM_ML_KEM mechanism
+                parameter <Cite s="fips203" at="Alg. 17" />
               </Td>
-              <Td>Unsupported — {UNSUPPORTED_REASONS.mlKemEncapsulation}</Td>
+              <Td>
+                Playground suite: executed on both engines, c and k byte-compared, each result
+                labelled “test input supplied (outside the standard)”. ACVP-format prototype
+                (standard calls only): unsupported — {UNSUPPORTED_REASONS.mlKemEncapsulation}
+              </Td>
             </tr>
             <tr>
               <Td>ML-KEM key checks (VAL)</Td>
@@ -646,17 +654,20 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 CK_SIGN_ADDITIONAL_CONTEXT <Cite s="pkcs11" at="§6.67.5–6.67.7" />
               </Td>
               <Td>
-                Executed; hashAlgs SHA2-512/224 and SHA2-512/256 have no CKM_HASH_ML_DSA_* mechanism
-                and are unsupported per test
+                Executed. SHA2-512/224 and SHA2-512/256 have no CKM_HASH_ML_DSA_&lt;hash&gt;
+                mechanism; the generic CKM_HASH_ML_DSA takes them as its <code>hash</code>{' '}
+                (CKM_SHA512_224 / CKM_SHA512_256) with the caller computing PH(M)
               </Td>
             </tr>
             <tr>
               <Td>ML-DSA internal interface on M′ (externalMu false)</Td>
               <Td>
-                None: CKM_ML_DSA implements FIPS 204 Algorithms 2 and 3 on the message M{' '}
-                <Cite s="pkcs11" at="§6.67.5" />
+                CKM_ML_DSA implements FIPS 204 Algorithms 2 and 3 on the message M{' '}
+                <Cite s="pkcs11" at="§6.67.5" />, but the internal interface only ever signs μ =
+                SHAKE256(tr ‖ M′, 64) <Cite s="fips204" at="Alg. 7, line 6" />. The harness computes
+                μ from the public key and M′ and uses the external-μ mechanism below — no extension
               </Td>
-              <Td>Unsupported</Td>
+              <Td>Playground suite: executed on both engines (sigGen byte-match and sigVer)</Td>
             </tr>
             <tr>
               <Td>ML-DSA internal interface with external μ</Td>
@@ -666,9 +677,8 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 <Cite s="fips204" at="Alg. 7, line 6" />
               </Td>
               <Td>
-                Product-specific: executed (Playground suite and ACVP-format prototype) only where
-                an engine advertises 0x403c, and labelled vendor-defined in evidence.json; shown as
-                a skip otherwise
+                Executed (Playground suite and ACVP-format prototype) where an engine advertises
+                0x403c, labelled vendor-defined in evidence.json
               </Td>
             </tr>
             <tr>
@@ -682,10 +692,40 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             <tr>
               <Td>ML-DSA sigGen, hedged</Td>
               <Td>
-                CKH_HEDGE_REQUIRED demands hedging but offers no input for <code>rnd</code>{' '}
-                <Cite s="pkcs11" at="§6.67.5" />
+                Standard PKCS#11 has no field for <code>rnd</code>: CKH_HEDGE_REQUIRED demands
+                hedging but offers no input for it <Cite s="pkcs11" at="§6.67.5" />. This HSM
+                accepts <code>rnd</code> as an optional test input in an extended signing structure:
+                the standard CK_SIGN_ADDITIONAL_CONTEXT fields, then <code>pRandom</code>,{' '}
+                <code>ulRandomLen</code> and <code>messageEncoding</code>
               </Td>
-              <Td>Not reachable on either engine; shown as an explicit skip</Td>
+              <Td>
+                Playground suite: byte-comparable with NIST’s hedged sigGen, labelled “test input
+                supplied (outside the standard)”
+              </Td>
+            </tr>
+            <tr>
+              <Td>SLH-DSA sigGen hedged, and sign / verify on the internal interface</Td>
+              <Td>
+                Standard PKCS#11 has no field for <code>addrnd</code> and no internal-interface
+                mechanism <Cite s="pkcs11" at="§6.69" />. This HSM accepts <code>addrnd</code> and{' '}
+                <code>messageEncoding = internal</code> (slh_sign_internal / slh_verify_internal) in
+                the same extended structure <Cite s="fips205" at="§9.2–9.3, Alg. 19–20" />
+              </Td>
+              <Td>
+                Playground suite: executed on both engines, labelled “test input supplied (outside
+                the standard)”
+              </Td>
+            </tr>
+            <tr>
+              <Td>ECDSA sigGen (AFT, NIST’s k)</Td>
+              <Td>
+                Standard CKM_ECDSA takes no parameter and draws k itself. This HSM accepts k as the
+                optional CKM_ECDSA parameter
+              </Td>
+              <Td>
+                Playground suite: r ‖ s byte-compared with NIST’s, labelled “test input supplied
+                (outside the standard)”
+              </Td>
             </tr>
             <tr>
               <Td>ML-DSA keyGen (AFT)</Td>
@@ -699,6 +739,24 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             </tr>
           </tbody>
         </TableShell>
+        <Callout title="Optional test inputs: outside the standard, for testing only">
+          <p>
+            Standard PKCS#11 has no field for the random value an operation draws (ML-KEM{' '}
+            <code>m</code>, ML-DSA <code>rnd</code>, SLH-DSA <code>addrnd</code>, ECDSA k) or for
+            the SLH-DSA internal interface. This HSM accepts each as an{' '}
+            <strong>optional test input</strong>: left out, the HSM draws the value itself exactly
+            as the standard says, so a caller using only standard PKCS#11 sees no difference.
+          </p>
+          <p>
+            FIPS 203, 204 and 205 reserve these internal interfaces for testing; outside testing the
+            module must generate the random values itself <Cite s="fips203" at="§6" />{' '}
+            <Cite s="fips204" at="§6" /> <Cite s="fips205" at="§9" />. A validated module would keep
+            such inputs out of its approved mode. ML-DSA’s internal interface needs no input of this
+            kind: it goes through the external-μ mechanism with a μ the harness computes. A known
+            ECDSA k recovers the private key from one signature, which is why no real module should
+            accept one outside testing.
+          </p>
+        </Callout>
         <Callout title="The adapter’s three honest outcomes">
           <p>
             For every test case the Hub’s dispatcher produces exactly one of: an{' '}
