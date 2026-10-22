@@ -22861,6 +22861,36 @@
       "unified": "converted",
       "admittedAt": "2026-10-22T04:06:20.956858+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "RFC 10042",
+      "title": "RFC 10042: Post-Quantum/Traditional Hybrid Key Exchange with ML-KEM for SSH",
+      "url": "https://www.rfc-editor.org/rfc/rfc10042.html",
+      "status": "downloaded",
+      "filename": "RFC_10042.html",
+      "sizeBytes": 92656,
+      "contentType": "text/html",
+      "sha256": "b798296ac7177b0169fe3acfc0624c32352457aeebe62df353708a3da3cdf05b",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-22T04:20:46.955264+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "draft-ietf-cose-hpke-pq-pqt-01",
+      "title": "COSE HPKE PQ & PQ/T Algorithm Registrations (draft-ietf-cose-hpke-pq-pqt-01)",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-hpke-pq-pqt/",
+      "status": "downloaded",
+      "filename": "draft-ietf-cose-hpke-pq-pqt-01.html",
+      "sizeBytes": 248372,
+      "contentType": "text/html",
+      "sha256": "b8a250f981a1c17f928793965f9e9e8d102c4ad83040778abe243754224b63ee",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-22T04:21:15.168621+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
