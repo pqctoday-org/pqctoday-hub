@@ -44,8 +44,11 @@ import {
   CKP_XMSSMT,
   CKP_FRODOKEM,
   CKP_CLASSIC_MCELIECE,
+  CKP_COMP_KEM,
+  CKP_COMP_SIG,
   type ConstEntry,
 } from '@/wasm/pkcs11Inspect'
+import { compositeKemSet, compositeSigSet } from '@/wasm/softhsm/compositeParams'
 import { bytesToHex } from '@/utils/dataInputUtils'
 import {
   CKK_EC,
@@ -73,6 +76,8 @@ const PARAMETER_SET_NAMES_BY_KEY_TYPE: Record<number, Record<number, string>> = 
   0x4b: namesOf(CKP_SLH_DSA), // CKK_SLH_DSA
   0x47: namesOf(CKP_XMSS), // CKK_XMSS
   0x48: namesOf(CKP_XMSSMT), // CKK_XMSSMT
+  0x4c: namesOf(CKP_COMP_KEM), // CKK_COMP_KEM (v3.3 working draft)
+  0x4d: namesOf(CKP_COMP_SIG), // CKK_COMP_SIG (v3.3 working draft)
   0x80000001: namesOf(CKP_FRODOKEM), // CKK_PQCTODAY_FRODOKEM
   0x80000002: namesOf(CKP_CLASSIC_MCELIECE), // CKK_PQCTODAY_CLASSIC_MCELIECE
 }
@@ -91,6 +96,30 @@ export const CKM_KEYGEN_NAMES: Record<number, string> = {
   0x00004032: 'CKM_HSS_KEY_PAIR_GEN',
   0x00004034: 'CKM_XMSS_KEY_PAIR_GEN',
   0x00004035: 'CKM_XMSSMT_KEY_PAIR_GEN',
+  0x0000403d: 'CKM_COMP_SIG_KEY_PAIR_GEN',
+  0x00004040: 'CKM_COMP_KEM_KEY_PAIR_GEN',
+}
+
+/**
+ * The two halves of a composite key (PKCS#11 v3.3 working draft): CKA_VALUE
+ * is mlPK ‖ tradPK (public) or mlSeed ‖ tradSK (private). Sizes come from
+ * the parameter-set table (draft Appendix A); "≤" marks a draft maximum.
+ * Null for any other key type or an unknown parameter set.
+ */
+export const compositeHalves = (
+  ckKeyType: number | null,
+  ckParameterSet: number | null
+): string | null => {
+  if (ckParameterSet === null) return null
+  const set =
+    ckKeyType === 0x4d
+      ? compositeSigSet(ckParameterSet)
+      : ckKeyType === 0x4c
+        ? compositeKemSet(ckParameterSet)
+        : undefined
+  if (!set) return null
+  const trad = set.publicKeyBytes - set.mlPublicKeyBytes
+  return `${set.ml} public key ${set.mlPublicKeyBytes} B ‖ ${set.trad} public key ${set.publicKeyIsMax ? '≤' : ''}${trad} B (${set.draftName}, OID ${set.oid})`
 }
 
 // ── PQC key material sizes (bytes) by CKA_KEY_TYPE + CKA_PARAMETER_SET ──────
@@ -631,6 +660,11 @@ export const KeyAttrModal = ({
                       : undefined
                   }
                 />
+              )}
+              {compositeHalves(attrs.ckKeyType, attrs.ckParameterSet) && (
+                <Row label="Composite halves (v3.3 draft)">
+                  {compositeHalves(attrs.ckKeyType, attrs.ckParameterSet)}
+                </Row>
               )}
               {attrs.ckValueLen !== null && (
                 <Row label="CKA_VALUE_LEN">{attrs.ckValueLen} bytes</Row>

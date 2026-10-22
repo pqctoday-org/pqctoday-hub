@@ -76,6 +76,8 @@ export const makeHsmKeyLabel = (family: HsmFamily, role: HsmKeyRole, variant?: s
     hmac: 'HMAC',
     sha: 'SHA',
     hpke: 'HPKE (CKK_HPKE_KEM)',
+    'composite-sig': 'Composite ML-DSA (CKK_COMP_SIG)',
+    'composite-kem': 'Composite ML-KEM (CKK_COMP_KEM)',
   }
   const roleLabel: Record<HsmKeyRole, string> = {
     public: 'Public Key',
