@@ -69,7 +69,9 @@ test.describe('TLS 1.3 Simulator — Phase 1', () => {
   }) => {
     await page.goto('/playground/tls-simulator')
 
-    await expect(page.getByText('RFC 8446').first()).toBeVisible({ timeout: 15000 })
+    // TLS 1.3 is cited as RFC 9846, which obsoletes RFC 8446 (e4a8eb280, 2026-10-16).
+    await expect(page.getByText('RFC 9846').first()).toBeVisible({ timeout: 15000 })
+    await expect(page.getByText('RFC 8446', { exact: true })).toHaveCount(0)
     await expect(page.getByText('FIPS 203').first()).toBeVisible()
     await expect(page.getByText('FIPS 204').first()).toBeVisible()
     await expect(page.getByText('FIPS 205').first()).toBeVisible()
