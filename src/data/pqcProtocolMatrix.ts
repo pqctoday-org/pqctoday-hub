@@ -1643,12 +1643,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       // "PQ KEMs for COSE" and no longer covers JOSE/JWE. JWE PQ encryption is
       // the HPKE pair below.
       {
-        id: 'draft-ietf-jose-pq-composite-sigs-04',
+        id: 'draft-ietf-jose-pq-composite-sigs-06',
         title:
-          'draft-ietf-jose-pq-composite-sigs-04 — PQ/T Hybrid Composite Signatures for JOSE and COSE',
+          'draft-ietf-jose-pq-composite-sigs-06 — PQ/T Hybrid Composite Signatures for JOSE and COSE',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-        date: '2026-09-11',
-        localFile: '/library/draft-ietf-jose-pq-composite-sigs-04.html',
+        date: '2026-10-20',
       },
       {
         id: 'draft-ietf-jose-hpke-encrypt-22',
@@ -1794,7 +1793,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           // Names the revision explicitly: this says what the tool was verified against,
           // not which revision is current. Bump only together with the implementation
           // and the fixture.
-          "All six composite algorithms per draft-ietf-jose-pq-composite-sigs-04, verified against that draft's published Appendix A.1 JOSE examples. Work-in-progress draft.",
+          "All seven composite algorithms per draft-ietf-jose-pq-composite-sigs-06, verified against that draft's published Appendix A.1 JOSE examples. Work-in-progress draft.",
       },
     ],
     liveDeployments: [

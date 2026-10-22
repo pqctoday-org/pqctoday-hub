@@ -44,7 +44,7 @@ import {
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import coseDilithiumKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'
-import compositeExamples from '@/data/acvp/composite-sigs-04-jose-examples.json'
+import compositeExamples from '@/data/acvp/composite-sigs-06-jose-examples.json'
 import hpkeExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
 import { type HpkeJweAlg, hpkeJweDecrypt } from '../hpkeJwe'
 
@@ -118,7 +118,7 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
     })
   }
 
-  // ── Published composite examples (draft-ietf-jose-pq-composite-sigs-04 A.1) ─
+  // ── Published composite examples (draft-ietf-jose-pq-composite-sigs-06 A.1) ─
   // The draft authors' own JOSE examples for all six algorithms — external
   // evidence, unlike the self-pinned -01 snapshot this replaced.
   for (const v of (
@@ -141,9 +141,9 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
       evidence = `threw: ${e instanceof Error ? e.message : String(e)}`
     }
     out.push({
-      id: `composite-sigs-04-${v.alg}`,
-      spec: 'draft-ietf-jose-pq-composite-sigs-04 Appendix A.1 (published example)',
-      reference: 'https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt',
+      id: `composite-sigs-06-${v.alg}`,
+      spec: 'draft-ietf-jose-pq-composite-sigs-06 Appendix A.1 (published example)',
+      reference: 'https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-06.txt',
       vector: v.alg,
       description: `Verify the draft's published ${v.alg} JWS under its published AKP public key`,
       passed,
@@ -399,7 +399,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
     evidence: 'verifyJWS({tampered header}) returned valid=false',
   })
 
-  // ── 8. draft-ietf-jose-pq-composite-sigs-04 — composite framing (self round-trip) ─
+  // ── 8. draft-ietf-jose-pq-composite-sigs-06 — composite framing (self round-trip) ─
   const compKp = await generateJwsKeyPair({ alg: 'ML-DSA-65-Ed25519', backend: 'noble' })
   const compSigned = await signJWS({
     alg: 'ML-DSA-65-Ed25519',
@@ -411,7 +411,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   const compAlg = compDecoded?.header?.['alg']
   checks.push({
     id: 'composite-sigs-alg-code',
-    spec: 'draft-ietf-jose-pq-composite-sigs-04 §5.1',
+    spec: 'draft-ietf-jose-pq-composite-sigs-06 §5.1',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
     description: 'Composite token uses the ML-DSA-65-Ed25519 alg identifier',
     passed: compAlg === 'ML-DSA-65-Ed25519',
@@ -419,7 +419,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   })
   checks.push({
     id: 'composite-sigs-size',
-    spec: 'draft-ietf-jose-pq-composite-sigs-04 §4.4',
+    spec: 'draft-ietf-jose-pq-composite-sigs-06 §4',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
     description:
       'Composite signature = direct concat: 3309 B ML-DSA-65 || 64 B Ed25519 (ML-DSA first per §4.4)',
@@ -433,7 +433,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   })
   checks.push({
     id: 'composite-sigs-verify',
-    spec: 'draft-ietf-jose-pq-composite-sigs-04 §4.3',
+    spec: 'draft-ietf-jose-pq-composite-sigs-06 §4.1',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
     description: 'Composite verify accepts a freshly signed token (self round-trip)',
     passed: compVerify.valid === true,
@@ -959,7 +959,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-04
+            draft-ietf-jose-pq-composite-sigs-06
           </a>
           . The test panel below runs the same primitives the workshop uses: ML-DSA and ML-KEM
           functional round-trips plus one HMAC-SHA256 check against a public NIST ACVP-Server
@@ -1057,12 +1057,12 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87), the six published
           composite examples in{' '}
           <a
-            href="https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-04.txt"
+            href="https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-06.txt"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-04
+            draft-ietf-jose-pq-composite-sigs-06
           </a>{' '}
           Appendix A.1, and the HPKE-12 and HPKE-9 JWE examples in{' '}
           <a

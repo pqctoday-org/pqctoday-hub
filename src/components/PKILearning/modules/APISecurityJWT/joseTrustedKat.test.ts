@@ -3,7 +3,7 @@
 /**
  * Trusted-source known-answer tests for the workshop paths that are not
  * already covered by joseKat.test.ts (RFC 9964 ML-DSA) or compositeKat.test.ts
- * (draft-ietf-jose-pq-composite-sigs-04). Every vector here was published by a
+ * (draft-ietf-jose-pq-composite-sigs-06). Every vector here was published by a
  * standards body or the draft's authors — none is our own output:
  *
  *  - SLH-DSA (PQC JWT Signing tab): draft-ietf-cose-sphincs-plus-10 Appendix B —
