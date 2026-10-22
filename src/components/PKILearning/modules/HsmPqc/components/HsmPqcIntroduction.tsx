@@ -806,10 +806,15 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <p className="text-xs text-muted-foreground">
                   After every signing operation, the HSM must atomically write the updated state
                   counter to NVRAM. A power failure during this write can result in state loss,
-                  causing the same leaf to be used twice. This is why{' '}
-                  <strong>HSMs are the only safe platform for stateful signatures</strong> &mdash;
-                  they provide atomic NVRAM writes, write-ahead logging, and pre-reservation of
-                  signature indices.
+                  causing the same leaf to be used twice. NIST SP 800-208 &sect;8.1 requires that
+                  LMS/XMSS key and signature generation{' '}
+                  <strong>
+                    &ldquo;shall only be validated for use within hardware cryptographic
+                    modules&rdquo;
+                  </strong>{' '}
+                  at FIPS 140-2 or FIPS 140-3 Level 3 or higher physical security (see also FIPS
+                  140-3 IG C.N, Requirements for SP 800-208 Schemes). HSMs meet it with atomic NVRAM
+                  writes, write-ahead logging, and pre-reservation of signature indices.
                 </p>
               </div>
             </div>
@@ -835,11 +840,18 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 CNSA 2.0 Requirements
               </h3>
               <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; LMS/HSS or XMSS required for firmware signing</li>
-                <li>&bull; National Security Systems must comply by 2030</li>
-                <li>&bull; Full quantum-resistant enforcement by 2033&ndash;35</li>
+                <li>
+                  &bull; LMS or XMSS (single-tree only; HSS and XMSS^MT are not allowed in NSS)
+                  preferred to start firmware signing now; validated ML-DSA-87 is also approved
+                </li>
+                <li>&bull; Software and firmware signing: CNSA 2.0 exclusively by 2030</li>
+                <li>&bull; CNSA 2.0 mandated for National Security Systems by 31 Dec 2031</li>
+                <li>&bull; NSM-10 goal: quantum-resistant NSS by 2035</li>
                 <li>&bull; Tree height H=20 provides ~1M signatures per key</li>
-                <li>&bull; HSS (multi-tree) extends to practically unlimited signatures</li>
+                <li>
+                  &bull; HSS (multi-tree) extends the signature count, for commercial (non-NSS) use
+                  only
+                </li>
               </ul>
             </div>
           </div>

@@ -71,7 +71,7 @@ export const InteropTestMatrix: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">Reference:</span> OQS Test Server
           (test.openquantumsafe.org) + real-world browser/library compatibility data. Click a cell
-          to see test details and RFC 9794 compliance notes.
+          to see test details and hybrid test notes.
         </p>
       </div>
 
@@ -179,12 +179,12 @@ export const InteropTestMatrix: React.FC = () => {
           </div>
           <p className="text-xs text-foreground/80">{displayEntry.note}</p>
 
-          {/* RFC 9794 callout for partial/incompatible */}
+          {/* Hybrid test-practice callout for partial/incompatible */}
           {(displayEntry.status === 'partial' || displayEntry.status === 'incompatible') && (
             <div className="mt-3 flex items-start gap-2 p-2 rounded bg-background/50 border border-border/50">
               <Info size={12} className="text-primary mt-0.5 shrink-0" />
               <div className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">RFC 9794 rule:</span> In a hybrid
+                <span className="font-semibold text-foreground">Test practice:</span> In a hybrid
                 scheme, both the classical and PQC components must complete successfully. If either
                 fails, the shared secret is invalid — no silent downgrade is permitted.
               </div>

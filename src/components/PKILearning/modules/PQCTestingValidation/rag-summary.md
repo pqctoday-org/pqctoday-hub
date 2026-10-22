@@ -18,7 +18,7 @@ PQC testing introduces challenges absent from classical cryptography assessments
 
 1. **Algorithm size explosion** — ML-KEM public keys (1,184B), ciphertexts (1,088B), and ML-DSA signatures (3,309B) are orders of magnitude larger than ECDH/ECDSA equivalents. This causes TCP fragmentation, ClientHello oversize, and certificate chain size issues that standard TLS testing tools miss.
 
-2. **Hybrid scheme complexity** — Testing hybrid PQC (X25519+ML-KEM-768) requires validating that both the classical and PQC components complete successfully. RFC 9794 prohibits silent downgrade — if either component fails, the shared secret is invalid.
+2. **Hybrid scheme complexity** — Testing hybrid PQC (X25519+ML-KEM-768) requires validating that both the classical and PQC components complete successfully. Test practice: no silent downgrade — if either component fails, the shared secret is invalid. (RFC 9794 defines the hybrid terminology; it does not set this rule.)
 
 3. **Side-channel failure modes are different** — Classical TVLA (fixed-vs-random) fails for lattice-based PQC because public keys and ciphertexts are structurally coupled, making fixed test vectors trivially distinguishable. NTT/INTT, polynomial multiplication, and modular reduction are the actual leakage targets.
 
@@ -37,7 +37,7 @@ PQC testing introduces challenges absent from classical cryptography assessments
 
 Key limitation: passive tools can only detect algorithms in _current_ flows. If no ML-KEM-capable connection is being made, ML-KEM support cannot be detected passively.
 
-**Tools**: CryptoNext COMPASS (commercial, NIST NCCoE recommended, NIST CAVP certified for all 3 PQC standards), pqc-flow (open source, CipherIQ), VIAVI Observer Analyzer (commercial, PQC detection in development).
+**Tools**: CryptoNext COMPASS (commercial, NCCoE PQC migration project collaborator, NIST CAVP certified for all 3 PQC standards), pqc-flow (open source, CipherIQ), VIAVI Observer Analyzer (commercial, PQC detection in development).
 
 **Active scanning** initiates TLS/SSH/IKEv2 connections to probe which algorithms an endpoint supports. Provides complete algorithm support matrix but generates detectable connection attempts — requires security operations coordination.
 
@@ -106,9 +106,9 @@ These numbers represent **clean-path** overhead. Enterprise middlebox chains (NG
 
 ---
 
-## Interoperability Testing & RFC 9794 Compliance
+## Interoperability Testing and Hybrid Terminology (RFC 9794)
 
-RFC 9794 (IETF, 2025) defines hybrid scheme design rules:
+RFC 9794 (IETF, June 2025, Informational) defines terminology for post-quantum/traditional hybrid schemes; it does not set protocol rules. This module tests against the following practice:
 
 1. Both classical and PQC components must run to completion
 2. Shared secret = KDF(classical_secret ∥ pqc_secret)
@@ -117,12 +117,12 @@ RFC 9794 (IETF, 2025) defines hybrid scheme design rules:
 
 ### Real-world interoperability status (as of 2025):
 
-| Client                | OQS Server | Cloudflare                         | Legacy TLS 1.2     |
-| --------------------- | ---------- | ---------------------------------- | ------------------ |
-| Chrome 130+ (hybrid)  | Compatible | Compatible                         | Partial (fallback) |
-| Firefox 128+ (hybrid) | Compatible | Compatible                         | Partial (fallback) |
-| Pure PQC client       | Compatible | **Incompatible** (RFC 9794 policy) | **Incompatible**   |
-| Classical-only        | Partial    | Partial                            | Compatible         |
+| Client                | OQS Server | Cloudflare                       | Legacy TLS 1.2     |
+| --------------------- | ---------- | -------------------------------- | ------------------ |
+| Chrome 130+ (hybrid)  | Compatible | Compatible                       | Partial (fallback) |
+| Firefox 128+ (hybrid) | Compatible | Compatible                       | Partial (fallback) |
+| Pure PQC client       | Compatible | **Incompatible** (server policy) | **Incompatible**   |
+| Classical-only        | Partial    | Partial                          | Compatible         |
 
 **Oversized ClientHello risk**: Pure PQC ClientHellos (1,536B) exceed TCP MSS on some network devices — load balancers and firewalls may silently drop fragmented ClientHellos.
 
@@ -134,7 +134,7 @@ RFC 9794 (IETF, 2025) defines hybrid scheme design rules:
 
 ### Why TVLA is different for PQC
 
-Classical fixed-vs-random TVLA divides measurements into "fixed plaintext" and "random plaintext" groups, then uses Welch's t-test to detect key-dependent power differences. For ML-KEM/ML-DSA, this approach fails: the public key and ciphertext are mathematically coupled, so a fixed ciphertext always uses the same secret polynomial — making the groups trivially distinguishable regardless of implementation quality.
+The non-specific fixed-vs-random TVLA test divides measurements into "fixed input" and "random input" groups and uses Welch's t-test to detect input-dependent power differences. It flags leakage of public data (such as ciphertexts) as well as secret data, so a failing result alone does not show a secret leaks. PQC labs therefore add specific tests on the operations that handle secrets: the NTT, sampling and, in ML-KEM, the Fujisaki–Okamoto re-encryption.
 
 **Correct approach**: Target specific algorithmic stages:
 
@@ -142,7 +142,7 @@ Classical fixed-vs-random TVLA divides measurements into "fixed plaintext" and "
 - **Polynomial multiplication** — coefficient-wise multiplication in the Zq ring; leaks nonce information in ML-DSA signing
 - **Modular reduction** — conditional subtraction for q=3329 (ML-KEM); leaks in unmasked implementations
 
-**TVLA threshold**: |t| > 4.5 (NIST standard) indicates statistically significant leakage. |t| > 3.0 is used in strict evaluations.
+**TVLA threshold**: |t| > 4.5 (the common threshold from Goodwill et al., NIST NIAT workshop 2011) indicates statistically significant leakage. |t| > 3.0 is used in strict evaluations.
 
 ### Implementation comparison:
 
@@ -154,7 +154,7 @@ Classical fixed-vs-random TVLA divides measurements into "fixed plaintext" and "
 
 First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication still leaks under masking (higher-order attack required).
 
-**Tools**: Keysight Inspector Crypto 3 (commercial, Dilithium TVLA generator (ML-DSA, FIPS 204), Known Key Analysis, FIPS 140-3 Level 4 support), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
+**Tools**: Keysight Inspector Crypto 3 (commercial, Dilithium TVLA generator (ML-DSA, FIPS 204), Known Key Analysis; CMVP has no approved non-invasive test metrics yet, SP 800-140F), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
 
 ---
 
@@ -206,9 +206,9 @@ Focus: Enterprise-wide enforcement, continuous compliance scanning, policy autom
 
 ## Key Terms
 
-- **TVLA** — Test Vector Leakage Assessment; Welch's t-test on power traces; |t| > 4.5 = leakage
+- **TVLA** — Test Vector Leakage Assessment; Welch's t-test on power traces; |t| > 4.5 = leakage (common threshold, Goodwill et al. 2011)
 - **CBOM** — Cryptography Bill of Materials; cryptoProperties entered the spec at CycloneDX 1.6, 1.7 is current; generated by CBOMkit
-- **RFC 9794** — Hybrid PQC design rules; both components must complete; no silent downgrade
+- **RFC 9794** — Informational terminology for post-quantum/traditional hybrid schemes (not protocol rules)
 - **Passive Discovery** — SPAN/TAP probe; no packet injection; production-safe
 - **Active Scanning** — Connection-initiating probes; detects full capability; requires coordination
 - **Interoperability Matrix** — Client × server compatibility map for hybrid PQC algorithm combinations

@@ -752,7 +752,7 @@ export const INTEROP_MATRIX: Record<string, Record<string, InteropEntry>> = {
       client: 'oqs-openssl',
       server: 'legacy-server',
       status: 'partial',
-      note: 'Falls back to classical ECDH — PQC not used; RFC 9794 fallback path',
+      note: 'Falls back to classical ECDH — PQC not used (downgrade path)',
     },
     'aws-pqc': {
       client: 'oqs-openssl',
@@ -868,7 +868,7 @@ export const INTEROP_MATRIX: Record<string, Record<string, InteropEntry>> = {
       client: 'pure-pqc',
       server: 'cloudflare',
       status: 'incompatible',
-      note: 'Cloudflare requires hybrid (both classical + PQC) — pure PQC rejected per RFC 9794 policy',
+      note: 'Cloudflare requires hybrid (both classical + PQC) — pure PQC rejected by server policy',
     },
     'nginx-hybrid': {
       client: 'pure-pqc',
