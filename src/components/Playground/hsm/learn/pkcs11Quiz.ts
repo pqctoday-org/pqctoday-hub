@@ -294,4 +294,117 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       why: '§5.7.5 case 3: a NULL pValue returns just the exact length. That two-call pattern is the safe default when sizes are unknown; when the caller can bound them (labels, IDs, subject names), one call per object is enough.',
     },
   ],
+  // ── PKCS#11 v3.3 (working draft) track ─────────────────────────────────────
+  'v33-what-is-v33': [
+    {
+      q: 'An engine implements every v3.3 composite mechanism. What Cryptoki version does C_GetInfo report?',
+      options: [
+        '3.3, because it implements v3.3',
+        '3.2 — the v3.3 draft header itself still declares version 3.2, so the mechanism list is the only reliable test',
+        'It depends on the parameter set',
+      ],
+      answer: 1,
+      why: 'v3.3 is an unpublished working draft. Its codepoints are approved, but CRYPTOKI_VERSION_MINOR is still 2, so feature detection goes through C_GetMechanismList / C_GetMechanismInfo.',
+    },
+    {
+      q: 'Which kind of hybrid has its own PKCS#11 key type?',
+      options: [
+        'TLS hybrid groups such as X25519MLKEM768',
+        'HPKE hybrid KEMs',
+        'Composites — CKK_COMP_KEM and CKK_COMP_SIG hold both halves in one object',
+      ],
+      answer: 2,
+      why: 'TLS hybrid groups and HPKE are built by the caller out of ordinary keys. Only composites get a key type, and with it one handle for both halves.',
+    },
+  ],
+  'v33-composite-mldsa': [
+    {
+      q: 'Why did verification fail after the ECDSA half was stripped, even though the ML-DSA half was valid?',
+      options: [
+        'Because ML-DSA signatures expire',
+        'A composite signature is valid only if BOTH halves verify over M′; one valid half is not enough',
+        'Because the context was lost',
+      ],
+      answer: 1,
+      why: 'Composite verification checks both component signatures. Stripping a half — the attack composites are designed to stop — leaves an invalid composite signature.',
+    },
+    {
+      q: 'What does CKM_COMP_SIG_EXTERNAL_HASH take as input?',
+      options: [
+        'The full message, streamed through C_SignUpdate',
+        'The pre-hash PH(M), exactly the set’s hash length, in one single-part call',
+        'The ML-DSA µ value',
+      ],
+      answer: 1,
+      why: 'The caller hashes M itself. The mechanism is single-part only and refuses an input of the wrong length, as the 63-byte step showed.',
+    },
+  ],
+  'v33-composite-mlkem': [
+    {
+      q: 'The same ML-KEM and X25519 secrets went into a TLS hybrid group and into the composite combiner. Why were the results different?',
+      options: [
+        'One of the two calculations is wrong',
+        'TLS concatenates the two secrets; the composite combiner hashes them together with the classical ciphertext, the classical public key and a per-set label',
+        'Composite KEM uses a different ML-KEM',
+      ],
+      answer: 1,
+      why: 'Both are correct for their setting. TLS binds the key shares through its transcript hash; a composite KEM used outside TLS has no transcript, so it binds them in the combiner. Treating one as the other gives two different keys.',
+    },
+    {
+      q: 'What does C_DecapsulateKey(CKM_COMP_KEM) return?',
+      options: [
+        'The two component secrets',
+        'A handle to a generic secret key holding the 32-byte combined secret',
+        'The classical ciphertext',
+      ],
+      answer: 1,
+      why: 'Only the combined secret leaves the decapsulation, as a key object. Its bytes need never leave the token.',
+    },
+  ],
+  'v33-external-mu': [
+    {
+      q: 'Why does CKM_ML_DSA_EXTERNAL_MU take no context?',
+      options: [
+        'Contexts are not allowed in v3.3',
+        'The context is already inside µ, which was computed from TR, the context and the message',
+        'Because µ is signed with SHA-256',
+      ],
+      answer: 1,
+      why: 'µ = SHAKE256(TR ‖ 0 ‖ len(ctx) ‖ ctx ‖ M). Once µ exists, the context has been applied.',
+    },
+    {
+      q: 'Who can verify a signature made with CKM_ML_DSA_EXTERNAL_MU?',
+      options: [
+        'Only a verifier that also supports external µ',
+        'Any ordinary ML-DSA verifier, given the message and context',
+        'Nobody without the TR value',
+      ],
+      answer: 1,
+      why: 'The lesson verified it with plain CKM_ML_DSA over the message. External µ changes where µ is computed, not the signature.',
+    },
+  ],
+  'v33-keys-remaining': [
+    {
+      q: 'What changed between CKA_HSS_KEYS_REMAINING and CKA_KEYS_REMAINING?',
+      options: [
+        'The value moved to a new codepoint',
+        'Only the name: same value 0x61c, the old name kept as an alias, and the attribute now covers XMSS and XMSS^MT too',
+        'The counter now counts up',
+      ],
+      answer: 1,
+      why: 'The v3.3 draft renames the attribute and widens it. Code using either name reads the same attribute.',
+    },
+  ],
+  'v33-renamed-deprecated': [
+    {
+      q: 'You upgrade to the v3.3 header and get deprecation warnings for CKM_TLS12_KDF. Does your token stop working?',
+      options: [
+        'Yes — deprecated mechanisms are removed',
+        'No — no value changed; deprecated means "do not use in new code"',
+        'Only on v3.3 tokens',
+      ],
+      answer: 1,
+      why: 'Deprecation and historical markings change no values. They tell you what to move away from, here TLS 1.2-era key derivation.',
+    },
+  ],
 }

@@ -93,6 +93,9 @@ export interface Pkcs11LessonStep {
    * is not running yet (see lessonRunner.ensureEngineForStep), and must skip
    * these so they do not boot twice. */
   bootsEngine?: boolean
+  /** v3.3 track: the engine feature this step needs. Without it the step
+   * throws NotInEngineError and shows "not in this engine yet". */
+  requires?: 'compSig' | 'compSigExternalHash' | 'compKem' | 'externalMu' | 'xmssKeysRemaining'
 }
 
 export type Pkcs11Lesson = LinearLessonBase<Pkcs11LessonStep>

@@ -22,6 +22,9 @@ const byFn: Record<string, Translator> = {
   C_GetMechanismInfo: () => 'read details for one mechanism',
 
   C_GenerateKeyPair: (args) => {
+    // PKCS#11 v3.3 working draft: one key object, two halves.
+    if (/COMP_SIG/i.test(args)) return 'generate one composite ML-DSA keypair (v3.3 draft)'
+    if (/COMP_KEM/i.test(args)) return 'generate one composite ML-KEM keypair (v3.3 draft)'
     if (/ML[-_]KEM/i.test(args)) return 'generate ML-KEM keypair (PQC)'
     if (/ML[-_]DSA/i.test(args)) return 'generate ML-DSA signing keypair (PQC)'
     if (/MONTGOMERY|X25519/i.test(args)) return 'generate X25519 keypair'
@@ -67,6 +70,9 @@ const byFn: Record<string, Translator> = {
   C_DecryptFinal: () => 'finalize decryption',
 
   C_SignInit: (args) => {
+    if (/COMP_SIG_EXTERNAL_HASH/i.test(args)) return 'prepare composite signature over a pre-hash'
+    if (/COMP_SIG/i.test(args)) return 'prepare composite ML-DSA signature (v3.3 draft)'
+    if (/EXTERNAL_MU/i.test(args)) return 'prepare ML-DSA signature over external µ'
     if (/HMAC/i.test(args)) return 'prepare HMAC computation'
     if (/ML[-_]DSA/i.test(args)) return 'prepare ML-DSA signature (PQC)'
     if (/ECDSA/i.test(args)) return 'prepare ECDSA signature'
@@ -80,12 +86,17 @@ const byFn: Record<string, Translator> = {
   C_SignUpdate: () => 'hash more data to sign',
   C_SignFinal: () => 'finalize the signature',
 
-  C_VerifyInit: () => 'prepare signature verification',
+  C_VerifyInit: (args) => {
+    if (/COMP_SIG/i.test(args)) return 'prepare composite signature verification (both halves)'
+    if (/EXTERNAL_MU/i.test(args)) return 'prepare ML-DSA verification from external µ'
+    return 'prepare signature verification'
+  },
   C_Verify: () => 'verify a signature',
   C_VerifyUpdate: () => 'hash more data to verify',
   C_VerifyFinal: () => 'finalize verification',
 
   C_DigestInit: (args) => {
+    if (/EXTERNAL_MU_GEN/i.test(args)) return 'prepare ML-DSA µ (message digest for signing)'
     if (/SHA3[-_]?256/i.test(args)) return 'prepare SHA3-256 digest'
     if (/SHA[-_]?256/i.test(args)) return 'prepare SHA-256 digest'
     if (/SHA/i.test(args)) return 'prepare hash digest'
@@ -95,8 +106,14 @@ const byFn: Record<string, Translator> = {
   C_DigestUpdate: () => 'hash more data (streaming)',
   C_DigestFinal: () => 'finalize the hash',
 
-  C_EncapsulateKey: () => 'ML-KEM encapsulate (produce PQC ciphertext + secret)',
-  C_DecapsulateKey: () => 'ML-KEM decapsulate (recover secret from ciphertext)',
+  C_EncapsulateKey: (args) =>
+    /COMP_KEM/i.test(args)
+      ? 'composite encapsulate: two KEMs, one combined secret'
+      : 'ML-KEM encapsulate (produce PQC ciphertext + secret)',
+  C_DecapsulateKey: (args) =>
+    /COMP_KEM/i.test(args)
+      ? 'composite decapsulate: both halves, one combined secret'
+      : 'ML-KEM decapsulate (recover secret from ciphertext)',
 
   // PKCS#11 v3.2 message-based signing (ML-DSA / SLH-DSA single-shot path)
   C_MessageSignInit: (args) => {

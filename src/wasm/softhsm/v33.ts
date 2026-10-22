@@ -295,9 +295,9 @@ export const hsm_detectV33Support = (M: SoftHSMModule, slotId: number): V33Suppo
  * Callers show its message as an informational result, not a failure. */
 export class NotInEngineError extends Error {
   readonly notInEngine = true
-  constructor(what: string) {
+  constructor(what: string, detail?: string) {
     super(
-      `${what}: ${NOT_IN_ENGINE_YET}. The loaded engine does not advertise it in C_GetMechanismList.`
+      `${what}: ${NOT_IN_ENGINE_YET}. ${detail ?? 'The loaded engine does not advertise it in C_GetMechanismList.'}`
     )
     this.name = 'NotInEngineError'
   }
