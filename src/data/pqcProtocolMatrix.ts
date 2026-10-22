@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-10-17'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-10-22'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -1152,9 +1152,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          'IESG Evaluation (iesg-submitted is step 5, after ietf-last-call, on this file\'s DraftStage scale). draft-ietf-lamps-pq-composite-kem-21 (2026-09-01) is current; the IESG state has been "Revised I-D Needed" since the 2026-09-03 telechat. Re-verified live 2026-09-30.',
+          'RFC Editor queue: the IESG approved draft-ietf-lamps-pq-composite-kem; the datatracker shows IESG state "RFC Ed Queue" (changed 2026-10-21), current revision -23 (2026-10-14). Not yet published as an RFC. Re-verified live 2026-10-22.',
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1162,7 +1162,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-lamps-pq-composite-kem',
             title: 'Composite ML-KEM in X.509',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-            publishedOn: '2026-09-01',
+            publishedOn: '2026-10-14',
           },
         ],
       },
@@ -1869,9 +1869,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          "Corrects the 2026-08-17 note, which claimed 'this scale has no iesg-evaluation member' — it does: iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition. Inherits draft-ietf-lamps-pq-composite-kem-19: IESG Evaluation since 2026-08-13, on the 2026-09-03 telechat agenda. Re-verified live 2026-09-01.",
+          'Inherits draft-ietf-lamps-pq-composite-kem (see X.509 row): IESG state "RFC Ed Queue" since 2026-10-21, current revision -23 (2026-10-14); not yet published as an RFC. Re-verified live 2026-10-22.',
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -2031,7 +2031,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'individual-draft',
         stageNote:
           "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — the protocol-matrix refresh's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
-        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still pre-RFC at the X.509 layer (IESG Evaluation) (see X.509 row).',
+        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, approved at the X.509 layer and in the RFC Editor queue since 2026-10-21 (see X.509 row). The Kerberos-side mechanism itself remains an individual draft.',
         refs: [
           {
             kind: 'draft',
@@ -3588,7 +3588,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'wg-document',
+        stage: 'wg-last-call',
+        stageNote: 'wg last call (datatracker 2026-10-15)',
         note: 'EAP-TLS/TTLS/PEAP/TEAP inherit ML-DSA/SLH-DSA certificates via TLS 1.3 + X.509 (see those rows). The resulting oversized certificate chains are exactly the problem RFC 9191 anticipated (“lattice-based cryptography would have public keys of approximately 1000 bytes and signatures of approximately 2000 bytes”) and draft-ietf-emu-pqc-eap-tls now addresses directly. EAP-AKA’ is a symmetric SIM-credential method with no signature dimension — N/A for that variant.',
         refs: [
           {
