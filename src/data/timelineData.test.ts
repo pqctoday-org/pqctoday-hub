@@ -197,7 +197,7 @@ describe('parseTimelineCSV — malformed year hardening', () => {
     expect(errorSpy).toHaveBeenCalled()
   })
 
-  // Three real rows in the live CSV have one empty year boundary, and each is a
+  // Four real rows in the live CSV have one empty year boundary, and each is a
   // DELIBERATE record of what its source does and does not say — not an oversight.
   // Updated 2026-09-26 (timeline r11): the membership of this set changed wholesale.
   //   • france-anssi-phase-2-hybridization-required — EndYear BLANKED in r11.
@@ -207,11 +207,14 @@ describe('parseTimelineCSV — malformed year hardening', () => {
   //     "2035" appears nowhere in any ANSSI source; the only Phase 3 bound is the
   //     floor "probably not earlier than 2030".
   //   • singapore-csa-mas-financial-sector-planning — EndYear genuinely open-ended.
+  //   • france-anssi-stop-buying-products-without-pqc-from-2030 — added 2026-10-22.
+  //     ANSSI's FAQ: "Ne plus acheter des produits n'intégrant pas de PQC à partir
+  //     de 2030" — a start ("from 2030") with no end.
   // Left this set in r11: france-anssi-phase-1-pre-quantum-security gained
   // EndYear=2025 (the roadmap figure's "≈ 2025" boundary), and
   // canada-cccs-remaining-systems-migration (blank StartYear) was merged away
   // into canada-cccs-high-priority-migration-phase's Transition Phase row.
-  it('the live CSV has exactly the three deliberate empty-year-boundary rows', async () => {
+  it('the live CSV has exactly the four deliberate empty-year-boundary rows', async () => {
     const { DATA_FILENAMES } = await import('./generated/dataFilenames.generated')
     const name = DATA_FILENAMES.timeline
     if (!name) throw new Error('DATA_FILENAMES.timeline is not set — run generate:data-filenames')
@@ -242,6 +245,7 @@ describe('parseTimelineCSV — malformed year hardening', () => {
     expect(blanks).toEqual([
       'france-anssi-phase-2-hybridization-required',
       'france-anssi-phase-3-standalone-pqc-optional',
+      'france-anssi-stop-buying-products-without-pqc-from-2030',
       'singapore-csa-mas-financial-sector-planning',
     ])
   })
