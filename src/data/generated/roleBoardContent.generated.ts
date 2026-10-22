@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10162026_r33.csv
+ * Source: src/data/role_board_content_10222026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -75,7 +75,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackNote:
           "Five essentials against the full 25-module path plus the quiz, 1090 minutes in all. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -143,7 +143,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -210,7 +210,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -282,7 +282,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -355,7 +355,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
     {
@@ -423,7 +423,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
 
         trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
-        capstoneChip: { label: 'Board-Ready' },
+        capstoneChip: { label: 'Governing' },
       },
     },
   ],
