@@ -187,7 +187,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
       },
       {
         label: 'Defined by',
-        a: 'draft-ietf-tls-ecdhe-mlkem (e.g. X25519MLKEM768)',
+        a: 'RFC 10024 (e.g. X25519MLKEM768)',
         b: 'draft-ietf-lamps-pq-composite-kem / -sigs, PKCS#11 v3.3 draft',
         same: false,
       },
