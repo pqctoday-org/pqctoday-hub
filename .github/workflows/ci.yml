@@ -147,10 +147,21 @@ jobs:
         # private. Security — must run on a clean machine.
         run: npm run verify-attestations
 
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install Playwright Chromium
         # Needed twice below: `npm run build` prerenders routes with Playwright
         # (scripts/prerender.ts), and the smoke tier drives the built site.
-        run: npx playwright install chromium --with-deps
+        # No --with-deps: the runner image already carries Chrome's system
+        # libraries, and the apt step (fonts from the Ubuntu mirror) took up to
+        # 11 minutes, pushing the job past its timeout.
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
 
       - name: Build
         # Proves a clean-checkout build (tsc -b + vite + prerender + precache
