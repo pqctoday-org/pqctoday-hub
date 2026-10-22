@@ -207,6 +207,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'france-anssi-pqc-market-studies-published': ['France:ANSSI — PQC Market Studies Published'],
   'france-anssi-pqc-position-paper-follow-up': ['France:ANSSI — PQC Position Paper Follow-up'],
   'france-anssi-pqc-qualification-requirement': ['France:ANSSI — PQC Qualification Requirement'],
+  'france-anssi-stop-buying-products-without-pqc-from-2030': [
+    'France:ANSSI — Stop Buying Products Without PQC (Recommendation)',
+  ],
   'france-idemia-first-pqc-hardware-accelerator-announced': [
     'France:IDEMIA — First PQC Hardware Accelerator Announced',
   ],
@@ -355,7 +358,10 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'India:DST/NQM — CII Full PQC Adoption Deadline',
   ],
   'india-dst-nqm-cii-pqc-foundations-deadline': ['India:DST/NQM — CII PQC Foundations Deadline'],
-  'india-dst-nqm-full-nationwide-pqc-adoption': ['India:DST/NQM — Full Nationwide PQC Adoption'],
+  'india-dst-nqm-full-nationwide-pqc-adoption': [
+    'India:DST/NQM — Full Nationwide PQC Adoption',
+    'India:DST/NQM — Full PQC Adoption (Regular Enterprises)',
+  ],
   'india-dst-nqm-india-national-pqc-migration': ['India:DST/NQM — India National PQC Migration'],
   'india-dst-nqm-national-quantum-safe-roadmap-published': [
     'India:DST/NQM — National Quantum-Safe Roadmap Published',
