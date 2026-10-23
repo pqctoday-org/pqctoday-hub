@@ -104,11 +104,23 @@ const merged: MaturityRequirement[] = []
 // eIDAS rows deprecated in an _r1 generation kept loading as active. Measured
 // across both merge-all families at the time of the fix, the change moved
 // exactly those four rows and nothing else (2026 active rows -> 2022).
+//
+// merge-all-order: date-revision
+// Since 2026-10-22 the order is by (date, revision number), not by name: by
+// name, '..._r10' sorts below '..._r9' and a January 2027 file
+// ('..._01152027') below an October 2026 one, so a newer generation would
+// silently lose its dedup keys. Names are pqc_maturity_governance_requirements_
+// MMDDYYYY[_rN].csv; a name that does not match sorts last (it never wins).
 const basename = (p: string) => p.slice(p.lastIndexOf('/') + 1)
+export const generationRank = (name: string): [number, number] => {
+  const m = /_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/.exec(name)
+  if (!m) return [-1, -1]
+  return [Number(m[3] + m[1] + m[2]), m[4] ? Number(m[4]) : 0]
+}
 const orderedEntries = Object.entries(modules).sort(([a], [b]) => {
-  const x = basename(a)
-  const y = basename(b)
-  return x < y ? 1 : x > y ? -1 : 0
+  const [dx, rx] = generationRank(basename(a))
+  const [dy, ry] = generationRank(basename(b))
+  return dy - dx || ry - rx
 })
 for (const [, content] of orderedEntries) {
   if (typeof content !== 'string') continue
