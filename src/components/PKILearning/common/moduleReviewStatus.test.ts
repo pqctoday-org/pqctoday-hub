@@ -85,7 +85,9 @@ describe('the five certification modules show one review status', () => {
 
       it("the summary's sign-off line matches the module's lastReviewed", () => {
         if (signedOff) {
-          expect(rag).toContain('signed off by the PQC Today owner on 22 October 2026')
+          expect(rag).toContain(
+            `signed off by the PQC Today owner on ${longDate(MODULE_LAST_REVIEWED[id] as string)}`
+          )
           expect(rag).not.toContain('awaiting re-sign-off')
         } else {
           expect(rag).toContain('awaiting re-sign-off')

@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.172.0] - 2026-10-23
+
+Three new lessons for certification engineers explain what a FIPS 140-3 certificate shows about side-channel and fault attacks, how a hybrid appears in a certificate's scope, and what carries over to a new platform. The change analyzer's Common Criteria and EUCC answers are corrected.
+
+### Added
+
+- **A lesson on side-channel and fault attacks in FIPS 140-3** [view:/learn/fips-140-3-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: it explains that non-invasive security has no CMVP test metrics yet, what a lab does check under "Mitigation of other attacks", where attack testing does exist (Common Criteria vulnerability analysis) and what to ask a vendor. Passages that are the module's own reading of the sources are marked "Module analysis". Study time goes from 60 to 65 minutes.
+- **Two lessons on hybrids and new platforms in Cryptographic Product Certification** [view:/learn/crypto-product-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: "Reading a hybrid in a certificate's scope" maps each part of a hybrid key exchange to where it shows on paper and what is tested; "A new platform, chip or accelerator: what carries over?" covers vendor affirmation, the operational environment, revalidation, processor acceleration and the Common Criteria view. Study time goes from 90 to 95 minutes, and the role learning-path totals follow.
+
+### Fixed
+
+- **The change analyzer answers Common Criteria and EUCC cases correctly** [view:/learn/crypto-product-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: adding ML-KEM is shown as a typical major change under Common Criteria and EUCC, beside the CMVP answer that now uses the Management Manual's own limits (under 30% overall and no category above 30%). Random number generator, tamper-sensor, new isolation and exploitable-vulnerability changes are shown as major, the FIPS enclosure route is limited to enclosure-only changes with no operational impact, the FPGA case names the bitstream and hardware-description rules, and an Intel-to-Arm move is rated as ENISA rates it.
+- **The CCRA assurance-continuity document is named CCDB-015** [view:/learn/cc-eucc-certification] [view:/learn/crypto-product-certification] [persona:cert-engineer] [persona:grc]: the lessons called it CCDB-014; its own front page gives 015. The document and its links are unchanged.
+
 ## [4.171.0] - 2026-10-23
 
 The certification engineer journey now follows what the standards and vendors actually say: wrong statements in the Learn modules, quizzes and answers are corrected against their sources, the Product Records and validation workbench pages are easier to read, and HSM post-quantum statements are re-checked against each vendor's newest release notes.

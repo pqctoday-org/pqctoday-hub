@@ -40,6 +40,7 @@ import {
 import { ANCHOR_RELEASES, ANCHOR_SCENARIO } from '../../data/anchorScenario'
 import { AsOf, Callout, FictionalBadge, PlainSource, SourceLink } from './CoreSections'
 import { PqcParameterComparison } from '../PqcParameterComparison'
+import { ModuleAnalysisNote } from '@/components/PKILearning/common/ModuleAnalysisNote'
 
 const Prose = ({ children }: { children: ReactNode }) => (
   <div className="space-y-4 text-sm leading-relaxed text-foreground/85">{children}</div>
@@ -340,6 +341,199 @@ export const PqcImpact = () => (
   </Prose>
 )
 
+// ── hybrid-scope ────────────────────────────────────────────────────────────
+
+const IG_DS = <SourceLink source={SHARED_SOURCES.ig} label="IG D.S" />
+
+const HYBRID_SCOPE_ROWS: readonly { part: ReactNode; paper: ReactNode; tested: ReactNode }[] = [
+  {
+    part: 'ML-KEM half',
+    paper: (
+      <>
+        A CAVP certificate for “ML-KEM EncapDecap” for each implemented parameter set (512, 768,
+        1024), with “Decapsulation Key Check” and “Encapsulation Key Check” under Functions; “ML-KEM
+        KeyGen” if the module generates key pairs
+      </>
+    ),
+    tested: 'Algorithm test vectors',
+  },
+  {
+    part: 'Classical half (X25519, P-256, ...)',
+    paper: (
+      <>
+        If approved: key-agreement testing under IG D.F. If not (X25519, X448): the Security Policy
+        lists it as a “non-approved but allowed algorithm with no security claimed”
+      </>
+    ),
+    tested:
+      'No algorithm test of the non-approved half; only approved algorithms inside it, such as a KDF',
+  },
+  {
+    part: 'Key combiner',
+    paper: <>SP 800-56C key derivation (“KDA HKDF” counts) or an SP 800-133 §6.3 method</>,
+    tested: (
+      <>
+        Algorithm test vectors for the KDF (“KDA HKDF” for HKDF); for SP 800-133, HMAC testing if
+        HMAC is used for key extraction, plus a key-generation claim that is not CAVP-testable
+      </>
+    ),
+  },
+  {
+    part: (
+      <>
+        The fixed set of combinations and the order the secrets are joined (for example
+        SecP256r1MLKEM768, X25519MLKEM768, SecP384r1MLKEM1024)
+      </>
+    ),
+    paper: <>The Security Policy’s hybrid entries and the lab’s compliance demonstration</>,
+    tested: (
+      <>
+        Not an algorithm test: the lab checks it “via source code review and/or functional testing”
+      </>
+    ),
+  },
+  {
+    part: 'Self-tests',
+    paper: 'Each approved scheme is self-tested on its own',
+    tested: (
+      <>“There is currently no separate self-test requirement for the approved key combiner”</>
+    ),
+  },
+]
+
+/** Learn section `hybrid-scope` */
+export const HybridScope = () => (
+  <Prose>
+    <p>
+      A hybrid key establishment is not one line on a certificate. IG D.S sets five conditions, and
+      they are evidenced in different places: CAVP certificates, the Security Policy and the lab’s
+      own review. Several of them no algorithm test can show.{' '}
+      <ModuleAnalysisNote>(Module analysis, summarising the table below.)</ModuleAnalysisNote>
+    </p>
+    <p>
+      The FIPS 140-3 Implementation Guidance (
+      <SourceLink source={SHARED_SOURCES.ig} label="IG D.S, Scenario 2" />) says a module claims a
+      hybrid only if it has an approved ML-KEM, one or more other key-establishment schemes, an
+      approved key combiner, a fixed set of combinations, and control of how the secrets are joined.
+      The Security Policy records the claim as “KEM-Hybrid” or “KEM-Hybrid-Full” in its
+      security-function table (for the “Full” variants the key-establishment method must also be
+      listed under AS09.10), and the lab shows compliance for each hybrid set the module implements.
+    </p>
+
+    <div className="overflow-x-auto rounded-lg border border-border">
+      <table className="w-full min-w-[640px] text-left text-xs">
+        <caption className="sr-only">
+          Where each part of a hybrid key establishment shows on paper, and what “tested” means for
+          it
+        </caption>
+        <thead className="bg-muted/60 text-muted-foreground">
+          <tr>
+            <th className="p-3 font-semibold">Part</th>
+            <th className="p-3 font-semibold">Where it should show on paper</th>
+            <th className="p-3 font-semibold">What “tested” means</th>
+          </tr>
+        </thead>
+        <tbody>
+          {HYBRID_SCOPE_ROWS.map((r, i) => (
+            <tr key={i} className="border-t border-border align-top">
+              <td className="p-3 font-semibold text-foreground">
+                {r.part}
+                <div className="mt-1 font-normal">{IG_DS}</div>
+              </td>
+              <td className="p-3">{r.paper}</td>
+              <td className="p-3">{r.tested}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <strong className="text-foreground">Four things the certificate can hide.</strong>
+    </p>
+    <ol className="list-decimal space-y-2 pl-5">
+      <li>
+        <strong className="text-foreground">An approved ML-KEM is not a hybrid claim.</strong> If
+        the module lacks any of the five items, “Scenario 2 of this IG shall not be claimed”, and a
+        non-approved classical scheme must stay in the non-approved mode.
+      </li>
+      <li>
+        <strong className="text-foreground">The module must enforce it.</strong> A non-approved
+        classical half such as X25519 is allowed in the approved mode only inside an approved
+        hybrid, and the module has to enforce that: “It cannot be enforced by operator guidance
+        within the Security Policy.” (An approved classical scheme, such as P-256 under IG D.F, can
+        also be used on its own.) <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+      </li>
+      <li>
+        <strong className="text-foreground">A named hybrid is not automatic.</strong> The IG says
+        the TLS 1.3 hybrid sets “may meet” Scenario 2 and that the X-Wing hybrid KEM “cannot yet
+        meet” it; it adds that the specifications “may still be in draft form and thus subject to
+        change”. Check the date of the guidance you rely on.
+      </li>
+      <li>
+        <strong className="text-foreground">There is no end-to-end hybrid test yet.</strong> The IG
+        leaves room for one “if available within CAVP” and says it will be updated when it is. Until
+        then, each part is evidenced separately.
+      </li>
+    </ol>
+
+    <p>
+      <strong className="text-foreground">In a Common Criteria or EUCC certificate</strong> the
+      algorithm claims sit in the Security Target’s cryptographic requirements, not in the assurance
+      level. The EU’s agreed cryptographic mechanisms (
+      <SourceLink source={SHARED_SOURCES.acm2} label="ECCG ACM v2.0, Note 40" />) say LWE- or
+      MLWE-based mechanisms “shouldn’t be used in a standalone way to provide the intended security
+      functionality, but should be combined with a well established classical cryptomechanism”, and
+      ENISA’s <SourceLink source={SHARED_SOURCES.enisaHybrid} label="survey of hybrid standards" />{' '}
+      states that its alignment tables are “indicative, not recommendations”. Ask whether the
+      Security Target lists the combined construction or only its components, and what the
+      evaluator’s cryptographic assessment covered.{' '}
+      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+    </p>
+
+    <H3>Related in the Hub</H3>
+    <ul className="list-disc space-y-1 pl-5">
+      <li>
+        The five conditions in full:{' '}
+        <Link to="/learn/hybrid-crypto?tab=learn&section=kem" className="text-primary underline">
+          Hybrid Cryptography, Hybrid in a validated module (IG D.S)
+        </Link>
+      </li>
+      <li>
+        The two meanings of “hybrid” in FIPS 140-3:{' '}
+        <Link
+          to="/learn/fips-140-3-certification?tab=learn&section=fips-landscape"
+          className="text-primary underline"
+        >
+          FIPS 140-3 Certification, Today’s landscape and the 2026 horizon
+        </Link>
+      </li>
+      <li>
+        Common Criteria and EUCC:{' '}
+        <Link
+          to="/learn/cc-eucc-certification?tab=learn&section=eucc-pqc-today"
+          className="text-primary underline"
+        >
+          PQC under EUCC today (ACM v2)
+        </Link>
+      </li>
+      <li>
+        Where to read a real certificate’s Approved Algorithms:{' '}
+        <Link to="/compliance?tab=records" className="text-primary underline">
+          Compliance, Product Records
+        </Link>
+      </li>
+      <li>
+        What the algorithm test covers:{' '}
+        <Link to="/playground/hsm?tab=build&dtab=acvp" className="text-primary underline">
+          Validation Workbench
+        </Link>
+        , run the ML-KEM cases
+      </li>
+    </ul>
+  </Prose>
+)
+
 // ── agility-latency ─────────────────────────────────────────────────────────
 
 /** Learn section `agility-latency` */
@@ -467,7 +661,7 @@ export const AgilityLatency = () => (
       ))}
     </div>
     <p className="text-xs text-muted-foreground">
-      Route definitions: CMVP Management Manual v2.7 (9 April 2026) §7.1; CCDB-014 v3.1 (29 February
+      Route definitions: CMVP Management Manual v2.7 (9 April 2026) §7.1; CCDB-015 v3.1 (29 February
       2024); CIR (EU) 2025/2462. <AsOf /> Link to the live documents rather than memorising the
       tables — they change.
     </p>
@@ -510,6 +704,208 @@ export const AgilityLatency = () => (
       artifact and which mechanisms are covered, which are being evaluated, and which are outside
       scope.
     </p>
+  </Prose>
+)
+
+// ── new-platform ────────────────────────────────────────────────────────────
+
+const MANUAL_LINK = (label: string) => (
+  <SourceLink source={SHARED_SOURCES.cmvpManual} label={label} />
+)
+
+const PLATFORM_ROUTE_ROWS: readonly {
+  situation: ReactNode
+  route: ReactNode
+  result: ReactNode
+}[] = [
+  {
+    situation:
+      'The same binary moved, or unmodified source code recompiled, for a platform not on the certificate',
+    route: <>Vendor affirmation (VAOE; {MANUAL_LINK('Management Manual 7.9')})</>,
+    result: (
+      <>
+        The vendor “bears all responsibility”. “The CMVP makes no statement as to the correct
+        operation of the module or the security strengths of the generated keys” there, and the
+        Security Policy must say so. Not available when Physical Security is validated at Level 2 or
+        higher; it applies to software modules, and to firmware or hybrid modules at Physical
+        Security Level 1.
+      </>
+    ),
+  },
+  {
+    situation:
+      'You want the new environment on the certificate, with no module change beyond non-security-relevant edits needed to run there',
+    route: <>Operational Environment Update (OEUP; {MANUAL_LINK('Management Manual 7.1.7')})</>,
+    result: (
+      <>
+        “This shall require CAVP-testing the algorithm validations on the new/modified OEs”,
+        entropy-source validation covering the new environments where applicable, and the full
+        regression test. Code changes only if non-security-relevant and needed to run there. The
+        CMVP then “provides the same assurance as the original OE(s)”.
+      </>
+    ),
+  },
+  {
+    situation: 'Other source changes are needed to run there',
+    route: <>Revalidation (UPDT, NSRL; {MANUAL_LINK('Management Manual 7.1')})</>,
+    result: (
+      <>
+        “This is not porting or vendor affirming the OE” but putting the new environment onto the
+        certificate as part of a changed module.
+      </>
+    ),
+  },
+]
+
+/** Learn section `new-platform` */
+export const NewPlatform = () => (
+  <Prose>
+    <p>
+      A validation is a statement about one module on the environments it was tested on. Move the
+      module, and the statement stops where the testing stopped.
+    </p>
+
+    <p>
+      <strong className="text-foreground">Why the environment is part of the claim.</strong> The
+      FIPS 140-3 Implementation Guidance (
+      <SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.A" />) puts it plainly: “The validation
+      certificate serves as a benchmark for the configuration and operational environment used
+      during the validation testing.” The rule reaches down to the algorithm certificates the module
+      uses. If an implementation was tested on a 32-bit processor, “a claim cannot be made that the
+      implementation also runs on different bit size processors”, and likewise for another operating
+      system. For a software module, the algorithm implementation “must have been tested on every
+      operating environment claimed by the software module.”
+    </p>
+
+    <p>
+      <strong className="text-foreground">Three routes when the environment changes.</strong>
+    </p>
+    <div className="overflow-x-auto rounded-lg border border-border">
+      <table className="w-full min-w-[640px] text-left text-xs">
+        <caption className="sr-only">
+          Three routes when the operating environment of a validated module changes, and what each
+          one gives
+        </caption>
+        <thead className="bg-muted/60 text-muted-foreground">
+          <tr>
+            <th className="p-3 font-semibold">Situation</th>
+            <th className="p-3 font-semibold">Route</th>
+            <th className="p-3 font-semibold">What you get, and what you do not</th>
+          </tr>
+        </thead>
+        <tbody>
+          {PLATFORM_ROUTE_ROWS.map((r, i) => (
+            <tr key={i} className="border-t border-border align-top">
+              <td className="p-3 text-foreground">{r.situation}</td>
+              <td className="p-3 font-semibold text-foreground">{r.route}</td>
+              <td className="p-3">{r.result}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <strong className="text-foreground">Hardware acceleration built into the processor.</strong>{' '}
+      (This section is about functions in a general-purpose processor that a software or firmware
+      module can use. A dedicated accelerator built into a hardware module is part of that module’s
+      own design and is covered by the rules for hardware modules, not by the IG’s list below; for
+      example, algorithm logic written in HDL on an FPGA is validated as hardware (
+      <SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.A" />
+      ). <ModuleAnalysisNote>Module analysis.</ModuleAnalysisNote>) The IG (
+      <SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.C" />) separates two cases. A Processor
+      Algorithm Acceleration (PAA) function is “simply a mathematical construct”; a Processor
+      Algorithm Implementation (PAI) is a complete cryptographic algorithm in hardware. Where a
+      software or firmware module can run with or without a PAA, “the accelerated algorithms shall
+      be tested in both software/firmware only execution and PAA execution”, and the same holds for
+      a PAI. The chip’s part number or version, family and microarchitecture go in the submission,
+      and the accelerator must be a “known” one: the IG’s list (19 August 2026) names accelerators
+      for AES and SHA sub-functions on Intel, AMD, Arm, IBM Power and Oracle SPARC processors, plus
+      IBM’s CPACF. It names no accelerator for ML-KEM, ML-DSA or SLH-DSA.{' '}
+      <ModuleAnalysisNote>(Module analysis from reading the list.)</ModuleAnalysisNote> New ones are
+      added by asking the CMVP, with evidence the lab has verified. The testing can be done on the
+      same environment, or without the accelerator on one environment and with it on another
+      “similar” one, and then the lab has to justify that the environments are “similar”; a 64-bit
+      environment “is not ‘similar’ to a 32 bit-OE”, and the CMVP can refuse the claim.
+    </p>
+
+    <p>
+      <strong className="text-foreground">The Common Criteria view.</strong> ENISA’s
+      assurance-continuity guidance (
+      <SourceLink source={SHARED_SOURCES.enisaContinuity} label="change scenarios" />) sorts a
+      platform change by what the Security Target says about the platform. If the new platform does
+      not meet the stated assumptions, the change is “Always major regardless of the assurance level
+      – requires re-evaluation”. A move between near-identical operating system releases is rated
+      Minor; a change from Intel to Arm hardware is rated Major because of “Changes in boot chain,
+      memory model, crypto acceleration”. And a migration that shifts timing or power behaviour is
+      “Always major at AVA_VAN.4 and 5”, because of side-channel attacks.
+    </p>
+
+    <p>
+      <strong className="text-foreground">
+        What to ask a vendor who says “it runs the same on our new hardware”.
+      </strong>{' '}
+      Is the new platform on the certificate, or only affirmed by the vendor? Which route was used?
+      Was the accelerated path tested, and is it a known accelerator? Were the algorithm
+      certificates re-tested on that platform, and the entropy source? If a Common Criteria
+      certificate exists, does the Security Target’s platform assumption still hold?
+    </p>
+
+    <H3>Related in the Hub</H3>
+    <ul className="list-disc space-y-1 pl-5">
+      <li>
+        Try it:{' '}
+        {/* The module keeps its open tab and step in state read once on load, so a link to its own
+            workshop must reload the page for the tab and step in the URL to take effect. */}
+        <Link
+          to="/learn/crypto-product-certification?tab=workshop&step=3"
+          reloadDocument
+          className="text-primary underline"
+        >
+          PQC change analyzer, case “Add an Arm operating environment”
+        </Link>
+      </li>
+      <li>
+        The submission routes (OEUP, VAOE):{' '}
+        <Link
+          to="/learn/fips-140-3-certification?tab=learn&section=fips-route-table"
+          className="text-primary underline"
+        >
+          FIPS 140-3 Certification, CMVP submission routes
+        </Link>
+        ; timing and power:{' '}
+        <Link
+          to="/learn/fips-140-3-certification?tab=learn&section=fips-attack-evidence"
+          className="text-primary underline"
+        >
+          FIPS 140-3 Certification, side-channel and fault attacks
+        </Link>
+      </li>
+      <li>
+        Entropy-source validation for new environments (IG 9.3.A):{' '}
+        <Link
+          to="/learn/entropy-randomness?tab=learn&section=esv"
+          className="text-primary underline"
+        >
+          Entropy &amp; Randomness, CMVP ESV Process
+        </Link>
+      </li>
+      <li>
+        The Common Criteria equivalent:{' '}
+        <Link
+          to="/learn/cc-eucc-certification?tab=learn&section=cc-continuity"
+          className="text-primary underline"
+        >
+          Common Criteria, EUCC &amp; eIDAS Certification, assurance continuity
+        </Link>
+      </li>
+      <li>
+        The tested operating environments listed on a real certificate:{' '}
+        <Link to="/compliance?tab=records" className="text-primary underline">
+          Compliance, Product Records
+        </Link>
+      </li>
+    </ul>
   </Prose>
 )
 
@@ -818,7 +1214,7 @@ export const ChangeRoutesDetail = () => (
 
     <H3>Common Criteria / CCRA — assurance continuity</H3>
     <p>
-      Under CCDB-014 v3.1 (<SourceLink source={SHARED_SOURCES.ccdb014} />
+      Under CCDB-015 v3.1 (<SourceLink source={SHARED_SOURCES.ccdb014} />
       ), the developer proposes and documents the impact in an Impact Analysis Report; the
       certification body classifies it.
     </p>

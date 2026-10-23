@@ -25,9 +25,10 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-product-certification',
-  // No lastReviewed: facts were corrected after the owner's 22 October 2026 sign-off, so the
-  // sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts); the on-page notice
-  // follows it (common/moduleReviewStatus.ts).
+  lastReviewed: '2026-10-23',
+  // lastReviewed is the owner's sign-off of 23 October 2026 (moduleReviewHonesty.test.ts), which
+  // renewed the 22 October one after the corrections; the on-page notice follows it
+  // (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until the owner renews it.
   version: '0.1.0',
   lastEdited: '2026-10-23',
 
@@ -66,6 +67,7 @@ export const content: ModuleContent = {
     getStandard('CIR-EU-2025-2462-EUCC-Amendment'),
     getStandard('EUCC v2.0 ACM'), // not the duplicate row ECCG-ACM-v2 (same PDF)
     getStandard('ENISA-Hybridization-Standardisation-Status'),
+    getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'), // new-platform section
     getStandard('EU-NIS-CG-Roadmap-v1.1'),
     getStandard('eIDAS-2-Regulation'),
     getStandard('ANSSI-CC-PP-2016-05-EN-419221-5'),

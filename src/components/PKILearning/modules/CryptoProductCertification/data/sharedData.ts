@@ -58,6 +58,7 @@ export const SHARED_SOURCES = {
   eucc2462: getStandard('CIR-EU-2025-2462-EUCC-Amendment'),
   acm2: getStandard('EUCC v2.0 ACM'),
   enisaHybrid: getStandard('ENISA-Hybridization-Standardisation-Status'),
+  enisaContinuity: getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
   nisCgRoadmap: getStandard('EU-NIS-CG-Roadmap-v1.1'),
   eidas: getStandard('eIDAS-2-Regulation'),
   ptsV5: getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
@@ -711,18 +712,18 @@ export const CHANGE_CASES: ChangeCase[] = [
     detail: `Firmware ${ANCHOR_RELEASES[1]?.firmware ?? ''} adds ML-KEM-768 and ML-KEM-1024 as approved-mode key-establishment services.`,
     likely: ['bounded', 'broad'],
     explanation:
-      'New cryptography is a security-relevant change in every scheme. Whether a bounded route fits depends on its size relative to what was certified — never on a deadline.',
+      'New cryptography is a security-relevant change in every scheme. Under the CMVP a bounded route (an Update) can fit when the change is small enough relative to what was certified — never because of a deadline. Under Common Criteria and EUCC, new claimed cryptographic requirements are typically a major change.',
     fips: {
       affected:
         'Algorithm testing for ML-KEM; SSPs, services and self-tests (IG 10.3.A); KEM guidance (IG D.S); the Security Policy.',
       candidates:
-        'UPDT if the change stays under 30% in each of the five categories; otherwise FS. Not CVE (no new cryptography), not TRNS (not a CMVP transition), not ALG (code changes).',
+        'UPDT if security changes are under 30% overall and none of the five categories (algorithms, SSPs, services, self-tests, FSM states) exceeds 30%, and the CMVP accepts the rationale; otherwise FS. Not CVE (CVE changes may not introduce new features or cryptography), not TRNS (not made solely in response to a published CMVP transition), not ALG (code and configuration changes are not permitted).',
     },
     cc: {
       affected:
-        'Cryptographic SFRs in the Security Target, TSF interfaces, guidance, vulnerability analysis.',
+        'Cryptographic SFRs (FCS_COP, FCS_CKM) in the Security Target, TSF interfaces, guidance, vulnerability analysis (AVA_VAN) and side-channel and fault testing.',
       candidates:
-        'Review the changed claims and evidence, then apply the issuing scheme’s continuity procedure. Adding an algorithm alone does not decide the outcome.',
+        'Expect a major change and re-evaluation: CCDB-015 lists changes to the set of claimed functional requirements as a typical major change, and ENISA’s EUCC continuity scenarios list adding support for post-quantum cryptography as a major change. The certification body decides from the impact analysis.',
     },
     pci: {
       affected:
@@ -730,7 +731,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       candidates:
         'Lab scoping for a delta or fuller evaluation under the current Program Guide (v2.3 decides).',
     },
-    ask: 'Does the lab agree the per-category change ratios stay under 30%? Will the certification body treat the new service as a major change?',
+    ask: 'Do the change ratios stay within the Manual’s 30% limits in a way the CMVP will accept? Will the certification body treat the new claims as a major change?',
   },
   {
     id: 'mldsa-dynamic-lib',
@@ -744,7 +745,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       affected:
         'The module definition and boundary; integrity test coverage of the loaded package; ML-DSA algorithm testing.',
       candidates:
-        'Likely FS if the boundary changes; discuss UPDT only if the lab can justify the boundary is unchanged.',
+        'Settle the boundary first. UPDT if the change still fits the Update limits (under 30% overall, none of the five categories above 30%); FS if it does not. The lab proposes and the CMVP decides.',
     },
     cc: {
       affected: 'TOE definition, TSF architecture and self-protection, secure-loading claims.',
@@ -766,19 +767,20 @@ export const CHANGE_CASES: ChangeCase[] = [
       'A new hardware implementation of an algorithm is a new implementation to test, with new leakage surfaces.',
     fips: {
       affected:
-        'Moving ML-KEM calculations into an FPGA changes the implementation, even though the algorithm stays the same. First establish where the FPGA logic sits within the cryptographic module and which hardware guidance applies. Do not automatically treat a custom FPGA accelerator as a processor accelerator.',
+        'Moving ML-KEM calculations into an FPGA changes the implementation, even though the algorithm stays the same. First establish where the FPGA logic sits within the cryptographic module and which hardware guidance applies. The configuration bitstream counts as firmware for loading and integrity purposes (IG 10.3.F); algorithm logic written in HDL on an FPGA is validated as hardware and is re-validated if moved to new FPGA hardware (IG 2.3.A). Do not automatically treat a custom FPGA accelerator as a processor accelerator.',
       candidates:
         'Review which algorithm tests, self-tests and security evidence the change affects. Existing evidence may remain usable where it still applies; the change does not automatically require repeating the entire validation.',
     },
     cc: {
       affected: 'Implementation representation, side-channel and fault analysis (AVA_VAN).',
-      candidates: 'Impact analysis; the vulnerability work is likely to be repeated.',
+      candidates:
+        'Impact analysis. ENISA’s EUCC continuity scenarios class changed cryptographic implementations as major and call for side-channel and fault-injection tests, so expect the vulnerability work to be repeated.',
     },
     pci: {
       affected: 'Hardware / firmware version identity; side-channel requirements.',
       candidates: 'Lab scoping for a delta or fuller evaluation.',
     },
-    ask: 'Does the bitstream change any physical-security or side-channel claim?',
+    ask: 'How is the FPGA logic classified and bounded, which algorithm tests must be repeated, and does the bitstream change any physical-security or side-channel claim?',
   },
   {
     id: 'hybrid-kex',
@@ -786,7 +788,7 @@ export const CHANGE_CASES: ChangeCase[] = [
     detail: 'A new service combines ECDH and ML-KEM into one shared secret.',
     likely: ['bounded', 'broad'],
     explanation:
-      'Combining mechanisms is a new service with its own guidance — and under EUCC it is what the applicable ACM v2 expects for lattice KEMs.',
+      'Combining mechanisms is a new service with its own guidance — and under EUCC the applicable ACM v2 asks for lattice mechanisms to be combined with a classical one.',
     fips: {
       affected:
         'Hybrid-KEM guidance (IG D.S Scenario 2, 9 April 2026); services; the Security Policy.',
@@ -794,7 +796,8 @@ export const CHANGE_CASES: ChangeCase[] = [
     },
     cc: {
       affected: 'Cryptographic SFRs and key-derivation claims.',
-      candidates: 'Impact analysis; likely re-evaluation of the cryptographic claims.',
+      candidates:
+        'Impact analysis; expect re-evaluation of the cryptographic claims (changes to the cryptographic mechanisms a product uses are a major change in ENISA’s EUCC continuity scenarios).',
     },
     pci: {
       affected: 'Key-management functions and the Security Policy.',
@@ -807,18 +810,18 @@ export const CHANGE_CASES: ChangeCase[] = [
     label: 'Store seeds instead of expanded private keys',
     detail:
       'The firmware stores the 64-byte ML-KEM / 32-byte ML-DSA seed and re-expands keys on use.',
-    likely: ['bounded'],
+    likely: ['bounded', 'broad'],
     explanation:
-      'A change to how a sensitive parameter is represented and protected — security-relevant, but narrow.',
+      'A change to how a sensitive parameter is represented and protected. Under the CMVP it is security-relevant but narrow. Under Common Criteria and EUCC it may be treated as a cryptographic-implementation change, which ENISA’s continuity scenarios class as major.',
     fips: {
       affected:
         'SSP definitions, storage and zeroisation; self-tests (IG 10.3.A includes a 19 August 2026 note on stored seeds).',
       candidates: 'UPDT is the natural candidate; SSPs are one of the five categories.',
     },
     cc: {
-      affected: 'Key-management SFRs and their evidence.',
+      affected: 'Key-management SFRs and their evidence (key generation, storage and destruction).',
       candidates:
-        'Impact analysis; possibly maintenance if the authority agrees the impact is minor.',
+        'Impact analysis; the certification body may treat this as a major change affecting the key generation, storage and destruction evidence.',
     },
     pci: {
       affected: 'Key-storage and key-erasure requirements.',
@@ -835,10 +838,15 @@ export const CHANGE_CASES: ChangeCase[] = [
       'Random-bit generation underlies every key; its evidence is shared by every algorithm.',
     fips: {
       affected:
-        'RBG algorithm testing; entropy evidence (IG D.K, 16 April 2026; ESV for the entropy source); SSP generation.',
+        'RBG algorithm testing; entropy evidence (IG D.K interprets SP 800-90B, 16 April 2026; ESV for the entropy source); SSP generation.',
       candidates: 'UPDT or FS.',
     },
-    cc: { affected: 'RNG claims and their evidence.', candidates: 'Impact analysis.' },
+    cc: {
+      affected:
+        'RNG claims and their evidence, integration with the cryptographic functions, and AVA_VAN work.',
+      candidates:
+        'Major change: ENISA’s EUCC continuity scenarios class changes to random number generation as major and call for re-evaluating the whole RNG pipeline — entropy source, conditioning, seeding and health testing.',
+    },
     pci: { affected: 'Random-number requirements.', candidates: 'Lab scoping.' },
     ask: 'Does the entropy source change too, and is its entropy evidence still valid?',
   },
@@ -857,8 +865,10 @@ export const CHANGE_CASES: ChangeCase[] = [
         'OEUP — add tested OEs without changing the module; broader fixes cannot be bundled.',
     },
     cc: {
-      affected: 'The TOE environment, if the library is a TOE.',
-      candidates: 'Impact analysis; possibly maintenance.',
+      affected:
+        'The TOE environment, if the library is a TOE; the platform assumptions in the Security Target.',
+      candidates:
+        'Impact analysis. ENISA’s EUCC continuity scenarios rate a move from Intel to Arm hardware as major (boot chain, memory model, crypto acceleration) and a move between close OS releases as minor; the Security Target’s platform assumptions decide.',
     },
     pci: {
       affected: 'Nothing on the HSM listing — the library is not the approved device.',
@@ -871,22 +881,25 @@ export const CHANGE_CASES: ChangeCase[] = [
     label: 'Change the enclosure or tamper sensors',
     detail: 'A new chassis revision with different tamper-detection sensors.',
     likely: ['bounded', 'broad'],
-    explanation: 'Physical protection is central to an HSM in all three schemes.',
+    explanation:
+      'Physical protection is central to an HSM in all three schemes. A passive enclosure change that keeps the same protection may fit a bounded FIPS route; changing the tamper sensors is a major change for Common Criteria and EUCC.',
     fips: {
       affected:
         'Physical-security evidence (IG 7.A covers reusable physical-security evidence, 2 September 2025).',
-      candidates: 'PHYS for eligible enclosure-related changes; otherwise UPDT or FS.',
+      candidates:
+        'PHYS only if the change is confined to the physical enclosure, has no operational impact and keeps the same physical protection; changes to tamper sensors or response logic may not qualify, in which case UPDT or FS.',
     },
     cc: {
       affected:
         'Physical-protection SFRs (FPT_PHP; for EN 419221-5, ENISA’s state-of-the-art interpretation of FPT_PHP applies under EUCC).',
-      candidates: 'Impact analysis; the physical attack work is likely to be repeated.',
+      candidates:
+        'Major change: ENISA’s EUCC continuity scenarios class tamper-response modifications (tamper sensors, mesh logic, erase logic) as major, with physical penetration, response-latency and environmental testing repeated.',
     },
     pci: {
       affected: 'Physical-security requirements — core to device approval.',
       candidates: 'Lab scoping; expect significant work.',
     },
-    ask: 'Which tamper claims change, and can any existing physical-security evidence be reused?',
+    ask: 'Which tamper claims change, does the change affect how the module operates, and can any existing physical-security evidence be reused?',
   },
   {
     id: 'multi-tenancy',
@@ -898,11 +911,13 @@ export const CHANGE_CASES: ChangeCase[] = [
       'New roles, services and isolation claims change what the product is evaluated to do.',
     fips: {
       affected: 'Roles, services, SSP separation and the finite-state model.',
-      candidates: 'UPDT is unlikely to fit; expect FS.',
+      candidates:
+        'Calculate the five Update ratios; with new roles, services and states, UPDT is unlikely to fit and FS is the expected route.',
     },
     cc: {
       affected: 'New isolation SFRs and TOE interfaces.',
-      candidates: 'Discuss re-evaluation under the issuing scheme.',
+      candidates:
+        'Major change: new isolation requirements change the claimed functional requirements, a typical major change in CCDB-015. Expect re-evaluation under the issuing scheme.',
     },
     pci: {
       affected:
@@ -917,14 +932,15 @@ export const CHANGE_CASES: ChangeCase[] = [
     detail: 'A timing leak in the existing ECDSA code is fixed. No new features.',
     likely: ['bounded'],
     explanation:
-      'A fix without new features or cryptography is exactly what the maintenance routes are for — as long as nothing else is bundled in.',
+      'Under the CMVP, a fix without new features or cryptography is what the CVE route is for — as long as nothing else is bundled in. Under Common Criteria and EUCC, a change made to resolve an exploitable vulnerability is listed as a major change.',
     fips: {
       affected: 'The affected algorithm code (algorithm retesting may be needed) and regression.',
       candidates: 'CVE — changes “shall not introduce new features or cryptography”.',
     },
     cc: {
       affected: 'Vulnerability analysis; EUCC vulnerability-handling duties.',
-      candidates: 'Maintenance or re-assessment, as the authority decides.',
+      candidates:
+        'Under EUCC expect re-evaluation of the affected parts (ENISA lists changes to resolve an exploitable vulnerability as major); other schemes classify the change through their own impact analysis.',
     },
     pci: { affected: 'Firmware version on the listing.', candidates: 'Lab scoping for a delta.' },
     ask: 'Is the PQC work kept out of this release, so the fix can use the narrow route?',

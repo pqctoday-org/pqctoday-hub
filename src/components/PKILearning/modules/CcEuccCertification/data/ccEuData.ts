@@ -751,7 +751,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
               'The holder submits an impact analysis report; the CB classifies the change. Adding a signature service changes the claimed SFRs, which is typically major → re-evaluation reusing prior results, then a new certificate',
             correct: true,
             feedback:
-              'Right. Under Annex IV (as amended by 2025/2462) the CB decides minor vs major. CCDB-014 lists “changes to the set of claimed functional requirements” as a typical major change. Only a minor change keeps the certificate — with a maintenance report and no new certificate.',
+              'Right. Under Annex IV (as amended by 2025/2462) the CB decides minor vs major. CCDB-015 lists “changes to the set of claimed functional requirements” as a typical major change. Only a minor change keeps the certificate — with a maintenance report and no new certificate.',
           },
           {
             id: 'minor-new-cert',

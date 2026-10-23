@@ -131,7 +131,7 @@
       "lm_id": "LM-065",
       "title": "Cryptographic Product Certification: Fundamentals",
       "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).",
-      "duration": "90 min",
+      "duration": "95 min",
       "difficulty": "advanced",
       "frameworkPhase": "p7"
     },
@@ -239,7 +239,7 @@
       "lm_id": "LM-067",
       "title": "FIPS 140-3 Certification",
       "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
-      "duration": "60 min",
+      "duration": "65 min",
       "difficulty": "advanced",
       "frameworkPhase": "p7"
     },
@@ -953,7 +953,7 @@
       },
       {
         "id": "cc-continuity",
-        "label": "Assurance continuity (CCDB-014)",
+        "label": "Assurance continuity (CCDB-015)",
         "optional": true
       },
       {
@@ -1141,8 +1141,16 @@
         "label": "What PQC changes in certification"
       },
       {
+        "id": "hybrid-scope",
+        "label": "Reading a hybrid in a certificate’s scope"
+      },
+      {
         "id": "agility-latency",
         "label": "Crypto agility vs certification latency"
+      },
+      {
+        "id": "new-platform",
+        "label": "A new platform, chip or accelerator: what carries over?"
       },
       {
         "id": "transition-deadlines",
@@ -1413,6 +1421,10 @@
       {
         "id": "fips-levels",
         "label": "Security Levels 1–4"
+      },
+      {
+        "id": "fips-attack-evidence",
+        "label": "Side-channel and fault attacks: what a certificate does and does not show"
       },
       {
         "id": "fips-lifecycle",
@@ -4257,7 +4269,7 @@
           "lm_id": "LM-065",
           "title": "Cryptographic Product Certification: Fundamentals",
           "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).",
-          "duration": "90 min",
+          "duration": "95 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
         },
@@ -4266,7 +4278,7 @@
           "lm_id": "LM-067",
           "title": "FIPS 140-3 Certification",
           "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
-          "duration": "60 min",
+          "duration": "65 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
         },

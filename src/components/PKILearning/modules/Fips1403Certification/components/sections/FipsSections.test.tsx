@@ -13,6 +13,7 @@ import '@testing-library/jest-dom'
 import type { ReactNode } from 'react'
 import {
   FipsAcvpBridge,
+  FipsAttackEvidence,
   FipsLandscape,
   FipsLevels,
   FipsLifecycle,
@@ -21,6 +22,10 @@ import {
   FipsWhatItIs,
 } from './FipsSections'
 import { FipsLevelPlanner } from '../../workshop/FipsLevelPlanner'
+import { content } from '../../content'
+import manifest from '../../manifest'
+import { getStandard } from '@/data/standardsRegistry'
+import { unresolvedInAppLinks } from '@/test/inAppLinks'
 import {
   CMVP_ROUTES,
   ROUTE_OPTIONS,
@@ -108,6 +113,107 @@ describe('FIPS sections render', () => {
       'how failures are reported'
     )
     for (const r of CMVP_ROUTES) expect(screen.getAllByText(r.code).length).toBeGreaterThan(0)
+  })
+})
+
+describe('FIPS attack-evidence section', () => {
+  const CITED_LIBRARY_IDS = [
+    'FIPS-140-3-STANDARD',
+    'NIST-SP-800-140F',
+    'CMVP-MGMT-MANUAL',
+    'NIST-FIPS140-3-IG-PQC',
+    'NIST-PQC-Seminar-FaultInjection-Lattice',
+    'PROACT-2025-SCA-Lattice-PQC',
+    'CC-2022-PART3',
+    'ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation',
+    'ENISA-EUCC-Assurance-Continuity-Change-Scenarios',
+  ]
+
+  it('sits after Security Levels and before the validation lifecycle', () => {
+    const ids = (manifest.learnSections ?? []).map((s) => s.id)
+    const pos = ids.indexOf('fips-attack-evidence')
+    expect(ids.at(pos - 1)).toBe('fips-levels')
+    expect(ids.at(pos + 1)).toBe('fips-lifecycle')
+    expect(manifest.learnSections?.at(pos)?.optional).toBeUndefined()
+    expect(manifest.learnSections?.at(pos)?.label).toBe(
+      'Side-channel and fault attacks: what a certificate does and does not show'
+    )
+  })
+
+  it('states the gap: no test metrics for non-invasive security', () => {
+    wrap(<FipsAttackEvidence />)
+    expect(
+      screen.getByText(/The standard has an area for it; the program has no test metrics for it\./)
+    ).toBeInTheDocument()
+    expect(screen.getByText(/No additional requirements at this time\./)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Non-invasive security is N\/A by default as there are currently no/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/Variety of FIA are possible on unprotected Kyber and Dilithium/)
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Always major at AVA_VAN\.4 and 5/)).toBeInTheDocument()
+  })
+
+  it('compares what a FIPS 140-3 and a CC / EUCC certificate show, risk by risk', () => {
+    wrap(<FipsAttackEvidence />)
+    const table = screen.getByRole('table', { name: /side-channel, fault, random-number/ })
+    const rows = within(table).getAllByRole('row')
+    expect(rows).toHaveLength(5)
+    expect(
+      within(table)
+        .getAllByRole('columnheader')
+        .map((h) => h.textContent)
+    ).toEqual(['Risk', 'FIPS 140-3 certificate', 'CC / EUCC certificate'])
+    expect(
+      within(table)
+        .getAllByRole('rowheader')
+        .map((h) => h.textContent)
+    ).toEqual([
+      'Side-channel (timing, power, EM)',
+      'Fault injection',
+      'Random numbers',
+      'Implementation correctness',
+    ])
+  })
+
+  it('marks every passage that is the module’s own analysis, in one muted italic form', () => {
+    wrap(<FipsAttackEvidence />)
+    const marks = screen.getAllByTestId('module-analysis')
+    // four prose passages, four table cells and the vendor questions
+    expect(marks).toHaveLength(9)
+    for (const mark of marks) {
+      expect(mark.tagName).toBe('EM')
+      expect(mark).toHaveTextContent(/module analysis/i)
+    }
+    expect(marks[0]).toHaveTextContent('(Module analysis, following from SP 800-140F.)')
+  })
+
+  it('cites each Library document it relies on, and the module declares it', () => {
+    wrap(<FipsAttackEvidence />)
+    const declared = new Set(content.standards.map((s) => s.id))
+    for (const id of CITED_LIBRARY_IDS) {
+      const std = getStandard(id) // throws on an unknown id
+      expect(declared.has(id), `${id} is in content.standards`).toBe(true)
+      expect(
+        screen.getAllByRole('link').some((a) => a.getAttribute('href') === std.deepLink),
+        `${id} is cited in the section`
+      ).toBe(true)
+    }
+  })
+
+  it('links only to modules, sections, steps and pages that exist', () => {
+    wrap(<FipsAttackEvidence />)
+    const hrefs = screen
+      .getAllByRole('link')
+      .map((a) => a.getAttribute('href') ?? '')
+      .filter((h) => !h.startsWith('/library'))
+    expect(hrefs).toContain('/learn/entropy-randomness?tab=learn&section=esv')
+    expect(hrefs).toContain('/learn/pqc-testing-validation?tab=learn&section=side-channel-tvla')
+    expect(hrefs).toContain('/playground/entropy-test')
+    expect(hrefs).toContain('/compliance?tab=records')
+    expect(hrefs).toContain('/learn/crypto-product-certification?tab=learn&section=new-platform')
+    expect(unresolvedInAppLinks(hrefs)).toEqual([])
   })
 })
 

@@ -24,16 +24,16 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'crypto-product-certification',
-  contentVersion: 21,
+  contentVersion: 22,
   lm_id: 'LM-065',
   title: 'Cryptographic Product Certification: Fundamentals',
   description:
     'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).',
   whyThisMatters:
     'A certificate proves something narrow — a defined module, target or device, at a version and configuration, against one scheme’s requirements. Adding PQC changes the product, and each scheme has its own route for that change: a market deadline creates urgency, but no shortcut.',
-  // Five required Learn sections (about 8,200 words of text and tables) plus three required
+  // Seven required Learn sections (about 9,700 words of text and tables) plus three required
   // workshop steps, one of them the 20-minute timed capstone; the optional sections are excluded.
-  duration: '90 min',
+  duration: '95 min',
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
@@ -42,7 +42,9 @@ const manifest: ModuleManifest = {
     { id: 'four-questions', label: 'Standards, evaluation criteria and certification schemes' },
     { id: 'scope-before-level', label: 'Scope before level' },
     { id: 'pqc-impact', label: 'What PQC changes in certification' },
+    { id: 'hybrid-scope', label: 'Reading a hybrid in a certificate’s scope' },
     { id: 'agility-latency', label: 'Crypto agility vs certification latency' },
+    { id: 'new-platform', label: 'A new platform, chip or accelerator: what carries over?' },
     { id: 'transition-deadlines', label: 'Deadlines: urgency without shortcuts' },
     { id: 'change-routes-detail', label: 'Incremental-change routes by scheme', optional: true },
     { id: 'electronic-exchange', label: 'Electronic evidence exchange', optional: true },

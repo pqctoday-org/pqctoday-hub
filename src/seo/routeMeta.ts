@@ -532,7 +532,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/crypto-product-certification`,
     structuredData: buildModuleSchema(
       'Cryptographic Product Certification: Fundamentals',
-      'PT90M',
+      'PT95M',
       'Advanced'
     ),
   },
@@ -542,7 +542,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'FIPS 140-3 and the CMVP in depth: what a certificate proves, security levels, the validation queue, and what adding post-quantum cryptography means for a validated module.',
     canonical: `${BASE_URL}/learn/fips-140-3-certification`,
-    structuredData: buildModuleSchema('FIPS 140-3 Certification', 'PT60M', 'Advanced'),
+    structuredData: buildModuleSchema('FIPS 140-3 Certification', 'PT65M', 'Advanced'),
   },
 
   '/learn/pci-certification': {

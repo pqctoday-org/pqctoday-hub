@@ -26,9 +26,10 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'fips-140-3-certification',
-  // No lastReviewed: facts were corrected after the owner's 22 October 2026 sign-off, so the
-  // sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts); the on-page notice
-  // follows it (common/moduleReviewStatus.ts).
+  lastReviewed: '2026-10-23',
+  // lastReviewed is the owner's sign-off of 23 October 2026 (moduleReviewHonesty.test.ts), which
+  // renewed the 22 October one after the corrections; the on-page notice follows it
+  // (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until the owner renews it.
   version: '0.1.0',
   lastEdited: '2026-10-23',
 
@@ -70,6 +71,12 @@ export const content: ModuleContent = {
     getStandard('NIST-CMVP-Cert-5223'), // second source for claim:18d14b3a7815ab38
     getStandard('NIST-CMVP-FIPS-140-3-Standards-page'), // second source for claim:5be7a52c8654adee
     getStandard('ISO-IEC-19790-2025'), // second source for claim:e462fd5c6b804f37
+    // Side-channel and fault attacks section (fips-attack-evidence)
+    getStandard('CC-2022-PART3'),
+    getStandard('NIST-PQC-Seminar-FaultInjection-Lattice'),
+    getStandard('PROACT-2025-SCA-Lattice-PQC'),
+    getStandard('ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation'),
+    getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

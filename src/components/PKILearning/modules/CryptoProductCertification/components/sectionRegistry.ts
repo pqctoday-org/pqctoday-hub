@@ -15,7 +15,9 @@ import type { FC } from 'react'
 import { FourQuestions, ScopeBeforeLevel } from './sections/CoreSections'
 import {
   PqcImpact,
+  HybridScope,
   AgilityLatency,
+  NewPlatform,
   TransitionDeadlines,
   ChangeRoutesDetail,
   ElectronicExchange,
@@ -39,7 +41,9 @@ export const SECTION_COMPONENTS: ReadonlyMap<string, SectionEntry> = new Map<str
   ['four-questions', { Component: FourQuestions, group: 'core' }],
   ['scope-before-level', { Component: ScopeBeforeLevel, group: 'core' }],
   ['pqc-impact', { Component: PqcImpact, group: 'shared' }],
+  ['hybrid-scope', { Component: HybridScope, group: 'shared' }],
   ['agility-latency', { Component: AgilityLatency, group: 'shared' }],
+  ['new-platform', { Component: NewPlatform, group: 'shared' }],
   ['transition-deadlines', { Component: TransitionDeadlines, group: 'shared' }],
   ['change-routes-detail', { Component: ChangeRoutesDetail, group: 'shared' }],
   ['electronic-exchange', { Component: ElectronicExchange, group: 'shared' }],

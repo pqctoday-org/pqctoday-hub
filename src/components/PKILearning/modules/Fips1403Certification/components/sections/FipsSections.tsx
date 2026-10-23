@@ -27,6 +27,7 @@ import {
 import { getStandard, type StandardRef } from '@/data/standardsRegistry'
 import { readCmvpDetails, type CmvpDetails } from '@/components/Compliance/cmvpDetails'
 import type { ComplianceRecord } from '@/components/Compliance/types'
+import { ModuleAnalysisNote } from '@/components/PKILearning/common/ModuleAnalysisNote'
 import {
   CMVP_MIP_LIST_URL,
   CMVP_ROUTES,
@@ -75,6 +76,11 @@ const PCI_P2PE = getStandard('PCI-P2PE-Security-Requirements-v3-1')
 const CMVP_STANDARDS_PAGE = getStandard('NIST-CMVP-FIPS-140-3-Standards-page')
 const ISO_19790_2025 = getStandard('ISO-IEC-19790-2025')
 const ISO_24759_2025 = getStandard('ISO-IEC-24759-2025-Test-requirements-for-cryptographic-modul')
+const PQC_SEMINAR_FAULT = getStandard('NIST-PQC-Seminar-FaultInjection-Lattice')
+const PROACT_SCA = getStandard('PROACT-2025-SCA-Lattice-PQC')
+const CC_PART3 = getStandard('CC-2022-PART3')
+const HSM_PP_INTERPRETATION = getStandard('ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation')
+const CC_CONTINUITY_SCENARIOS = getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios')
 
 // ── Small presentational helpers ────────────────────────────────────────────
 
@@ -657,6 +663,245 @@ export const FipsLevels = () => (
         answers to different questions.
       </p>
     </Callout>
+  </Body>
+)
+
+// ── fips-attack-evidence ────────────────────────────────────────────────────
+
+const ATTACK_EVIDENCE_ROWS: readonly { risk: string; fips: ReactNode; cc: ReactNode }[] = [
+  {
+    risk: 'Side-channel (timing, power, EM)',
+    fips: (
+      <>
+        Area N/A by default; a publicly documented countermeasure must be addressed under
+        “Mitigation of other attacks”
+      </>
+    ),
+    cc: (
+      <>
+        <Cite std={CC_PART3}>AVA_VAN</Cite> analysis and penetration testing at the level’s attack
+        potential, if such attacks are within the Security Target’s scope{' '}
+        <ModuleAnalysisNote>(module analysis)</ModuleAnalysisNote>
+      </>
+    ),
+  },
+  {
+    risk: 'Fault injection',
+    fips: <>Same: “Mitigation of other attacks”</>,
+    cc: <>Same</>,
+  },
+  {
+    risk: 'Random numbers',
+    fips: (
+      <>
+        Entropy source assessed separately (ESV, IG 9.3.A;{' '}
+        <Cite std={MGMT_MANUAL}>Management Manual, section 7.1.7</Cite>); see the{' '}
+        <Link
+          to="/learn/entropy-randomness?tab=learn&section=esv"
+          className="text-primary underline"
+        >
+          Entropy module
+        </Link>
+      </>
+    ),
+    cc: (
+      <>
+        Read the Security Target’s claims for the random number generator{' '}
+        <ModuleAnalysisNote>(module analysis)</ModuleAnalysisNote>
+      </>
+    ),
+  },
+  {
+    risk: 'Implementation correctness',
+    fips: (
+      <>
+        CAVP vectors and the self-tests check correct outputs, not leakage{' '}
+        <ModuleAnalysisNote>(module analysis)</ModuleAnalysisNote>
+      </>
+    ),
+    cc: (
+      <>
+        Functional testing in the evaluation{' '}
+        <ModuleAnalysisNote>(module analysis)</ModuleAnalysisNote>
+      </>
+    ),
+  },
+]
+
+/** Learn section `fips-attack-evidence` */
+export const FipsAttackEvidence = () => (
+  <Body>
+    <p>
+      A FIPS 140-3 certificate tells you the module met the requirements the CMVP can test.
+      Resistance to side-channel and fault attacks is, today, mostly not among them.
+    </p>
+
+    <p>
+      <strong className="text-foreground">
+        The standard has an area for it; the program has no test metrics for it.
+      </strong>{' '}
+      <Cite std={FIPS_140_3}>FIPS 140-3</Cite> names non-invasive security as the major change from
+      FIPS 140-2: “Major changes in FIPS 140-3 are limited to the introduction of non-invasive
+      physical requirements.” But the publication that would say how a lab measures it,{' '}
+      <Cite std={SP_800_140F}>SP 800-140F</Cite>, has an empty requirements list: “No additional
+      requirements at this time.” (March 2020). So the{' '}
+      <Cite std={MGMT_MANUAL}>Management Manual</Cite> treats the area as not applicable by default:
+      “Section 6.8, Non-invasive security is N/A by default as there are currently no requirements
+      in SP 800-140F.”
+    </p>
+    <p>
+      That leaves a gap you can read straight off the Security Policy. With no approved metric,
+      there is no CMVP-set leakage limit that a PQC implementation has to meet.{' '}
+      <ModuleAnalysisNote>(Module analysis, following from SP 800-140F.)</ModuleAnalysisNote>
+    </p>
+
+    <p>
+      <strong className="text-foreground">What a lab does check.</strong> Until SP 800-140F defines
+      requirements, non-invasive mechanisms fall under “Mitigation of other attacks” (
+      <Cite std={IG}>Implementation Guidance 12.A</Cite>). If a module “has been purposely designed,
+      built and publicly documented” (public documents count, not only the Security Policy) “to
+      mitigate one or more specific attacks”, the lab must address that area “regardless if the
+      vendor of the module wishes to address the claim or not”, and “shall verify the implemented
+      mitigation mechanisms and/or mitigations claimed by the vendor”. A module that documents
+      nothing can mark the area N/A (<Cite std={MGMT_MANUAL}>Management Manual, section 6.12</Cite>
+      ). So a module with no documented countermeasure gets no leakage evidence at all, and for one
+      that has a documented countermeasure, how far the lab’s verification goes is not set by any
+      published CMVP test metric. <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+    </p>
+
+    <p>
+      <strong className="text-foreground">Why it matters for ML-KEM and ML-DSA.</strong> Published
+      research shows attacks on lattice implementations that have no countermeasures. A{' '}
+      <Cite std={PQC_SEMINAR_FAULT}>NIST PQC seminar on fault injection</Cite> concludes that
+      “Variety of FIA are possible on unprotected Kyber and Dilithium”, and a{' '}
+      <Cite std={PROACT_SCA}>2025 lecture</Cite> covers side-channel and fault attacks on software
+      implementations of ML-KEM and ML-DSA. These are research findings, not certification
+      requirements. They explain why the question is worth asking a vendor.{' '}
+      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+    </p>
+
+    <p>
+      <strong className="text-foreground">Where attack testing does exist: Common Criteria.</strong>{' '}
+      In a CC or EUCC evaluation, the <Cite std={CC_PART3}>AVA_VAN</Cite> family has the evaluator
+      look for vulnerabilities and test them by penetration testing. The levels rise with “an
+      increasing rigour of vulnerability analysis by the evaluator and increased levels of attack
+      potential”: Basic (AVA_VAN.1 and .2), Enhanced-Basic (.3), Moderate (.4), High (.5). At
+      AVA_VAN.5 “penetration testing is performed by the evaluator assuming an attack potential of
+      High”. The limit is scope: the analysis asks whether vulnerabilities “can allow attackers to
+      violate the SFRs”, so it covers what the Security Target claims, under the Security Target’s
+      assumptions. The{' '}
+      <Cite std={HSM_PP_INTERPRETATION}>ENISA note on the HSM protection profile</Cite> shows the
+      effect: the profile assumes the HSM sits in “a protected environment that limits physical
+      access to the TOE to authorised administrators”. Whether power, electromagnetic or fault
+      testing takes place therefore depends on whether such attacks are within the Security Target’s
+      scope. <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+    </p>
+
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[560px] text-left text-xs">
+        <caption className="sr-only">
+          What a FIPS 140-3 certificate and a CC or EUCC certificate show about side-channel, fault,
+          random-number and implementation risks
+        </caption>
+        <thead>
+          <tr className="border-b border-border align-bottom text-muted-foreground">
+            <th scope="col" className="py-2 pr-3 font-semibold">
+              Risk
+            </th>
+            <th scope="col" className="py-2 pr-3 font-semibold">
+              FIPS 140-3 certificate
+            </th>
+            <th scope="col" className="py-2 font-semibold">
+              CC / EUCC certificate
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {ATTACK_EVIDENCE_ROWS.map((row) => (
+            <tr key={row.risk} className="border-b border-border/50 align-top">
+              <th scope="row" className="py-2 pr-3 font-medium text-foreground">
+                {row.risk}
+              </th>
+              <td className="py-2 pr-3">{row.fips}</td>
+              <td className="py-2">{row.cc}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <strong className="text-foreground">Questions to put to the vendor</strong>{' '}
+      <ModuleAnalysisNote>(module analysis)</ModuleAnalysisNote>. Which attack classes does the
+      module claim to resist, and is that written in the Security Policy under “Mitigation of other
+      attacks”? Is there a CC or EUCC certificate for the same product, at which AVA_VAN level, with
+      which assumptions? Which build and platform was tested? And what changed since?
+    </p>
+
+    <p>
+      <strong className="text-foreground">One more reason to ask again.</strong> After a platform
+      change, ENISA’s assurance-continuity guidance (
+      <Cite std={CC_CONTINUITY_SCENARIOS}>change scenarios</Cite>) rates a migration that causes
+      “measurable changes to timing or resource behaviour” as “Always major at AVA_VAN.4 and 5, due
+      to side-channel attacks.”
+    </p>
+
+    <SubHeading>Related in the Hub</SubHeading>
+    <ul className="list-disc space-y-1 pl-5">
+      <li>
+        Side-channel testing in practice:{' '}
+        <Link
+          to="/learn/pqc-testing-validation?tab=learn&section=side-channel-tvla"
+          className="text-primary underline"
+        >
+          PQC Network Testing &amp; Validation, TVLA Side-Channel Testing
+        </Link>
+      </li>
+      <li>
+        Randomness:{' '}
+        <Link
+          to="/learn/entropy-randomness?tab=learn&section=esv"
+          className="text-primary underline"
+        >
+          Entropy &amp; Randomness, CMVP ESV Process
+        </Link>{' '}
+        and the{' '}
+        <Link to="/playground/entropy-test" className="text-primary underline">
+          Entropy Testing tool
+        </Link>
+      </li>
+      <li>
+        Common Criteria view:{' '}
+        <Link
+          to="/learn/cc-eucc-certification?tab=learn&section=cc-eal-decoding"
+          className="text-primary underline"
+        >
+          Common Criteria, EUCC &amp; eIDAS Certification, the AVA_VAN content
+        </Link>{' '}
+        and its{' '}
+        <Link
+          to="/learn/cc-eucc-certification?tab=workshop&step=0"
+          className="text-primary underline"
+        >
+          “Decode the certificate claim” workshop
+        </Link>
+      </li>
+      <li>
+        Reading a real certificate’s Security Policy:{' '}
+        <Link to="/compliance?tab=records" className="text-primary underline">
+          Compliance, Product Records
+        </Link>
+      </li>
+      <li>
+        Platform change and side-channel assurance:{' '}
+        <Link
+          to="/learn/crypto-product-certification?tab=learn&section=new-platform"
+          className="text-primary underline"
+        >
+          A new platform, chip or accelerator: what carries over?
+        </Link>
+      </li>
+    </ul>
   </Body>
 )
 
