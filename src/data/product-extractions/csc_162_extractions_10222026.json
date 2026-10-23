@@ -1,0 +1,48 @@
+[
+  {
+    "platform_name": "Kiteworks File Sharing and Collaboration",
+    "category": "Secure File Transfer",
+    "product_name": "Kiteworks File Sharing and Collaboration",
+    "product_brief": "Secure file sharing and transfer platform (Kiteworks Private Data Network) with FIPS 140-3 Level 1 validated encryption, on-premises or hosted.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "AES-256 (at rest), TLS 1.3 (in transit), RSA 4096; key stretching, salting, hashing and message authentication algorithms",
+    "key_management_model": "Customer-owned keys; each file encrypted with its own unique key; organizations can rotate keys at will; Kiteworks cannot access customer data",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "AppServers",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "FIPS 140-3 Level 1 validated module (on-premises and hosted deployments)",
+    "primary_platforms": "On-premises and hosted deployments",
+    "target_industries": "Government agencies and contractors, healthcare, financial services",
+    "regulatory_status": "Supports compliance with FedRAMP, NIST 800-171, CMMC 2.0, GDPR, HIPAA, GLBA, PCI DSS (and SOX per FAQ); FIPS 140-3 Level 1 validated",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "FIPS Validated": "Kiteworks offers a FIPS 140-3 Level 1 validated module for secure file sharing and secure file transfer, available in both on-premises and hosted deployments",
+      "Crypto Primitives": "FIPS 140-3 validated solutions employ advanced encryption techniques like key stretching, salting, and robust algorithms such as AES-256 and RSA 4096"
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

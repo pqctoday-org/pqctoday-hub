@@ -1,0 +1,49 @@
+[
+  {
+    "platform_name": "Sequre Quantum and MMRAD medical-data deployment (Chile)",
+    "category": "PQC Programs & Research Initiatives",
+    "product_name": "Sequre Quantum and MMRAD medical-data deployment (Chile)",
+    "product_brief": "Self-certified quantum keys combined with post-quantum algorithms to protect electronic medical records and clinical data in real time in Chile.",
+    "pqc_support": "Yes — post-quantum algorithms combined with self-certified quantum keys in a medical-data protection deployment in Chile",
+    "pqc_capability_description": "The document states the solution combines self-certified quantum keys with post-quantum algorithms to actively protect medical information, described as implemented (\"first in Chile\"). Specific PQC algorithms, versions and maturity details are not named.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Self-certified quantum keys combined with post-quantum algorithms (hybrid)",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Hybrid quantum key + post-quantum algorithm",
+    "infrastructure_layer": "Application, Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "2025-07-03",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Electronic medical records and other clinical systems",
+    "target_industries": "Healthcare",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "a solution combines self-certified quantum keys with post-quantum algorithms to actively protect medical information",
+      "PQC Capability Description": "a solution combines self-certified quantum keys with post-quantum algorithms to actively protect medical information",
+      "Release Date": "2025-07-03"
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

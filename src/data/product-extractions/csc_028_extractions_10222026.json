@@ -1,0 +1,52 @@
+[
+  {
+    "platform_name": "Cloudflare Workers",
+    "category": "Cloud Encryption Gateways",
+    "product_name": "Cloudflare Workers",
+    "product_brief": "Serverless developer platform (built on the workerd runtime) that now exposes ML-KEM and ML-DSA post-quantum primitives through the Web Crypto API.",
+    "pqc_support": "Yes — opt-in ML-KEM and ML-DSA in Workers Web Crypto behind the webcrypto_modern_algorithms compatibility flag",
+    "pqc_capability_description": "Workers adds post-quantum Web Crypto algorithms from the WICG Modern Algorithms draft: ML-KEM-768/1024 and ML-DSA-44/65/87, plus encapsulate/decapsulate APIs, getPublicKey(), SubtleCrypto.supports() and JWK import/export. Backed by BoringSSL in workerd. ML-KEM-512 unsupported. Opt-in via compatibility flag; spec still a draft.",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "ML-KEM-768, ML-KEM-1024, ML-DSA-44, ML-DSA-65, ML-DSA-87, AES-GCM, HKDF-SHA256, Ed25519, ECDSA, RSA (the latter three mentioned only as comparisons)",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "2026-10-01",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Cloudflare Workers (workerd runtime, built on V8); library-compatible with Node.js, Deno, browsers",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Not yet implemented and under review: SHA-3, ChaCha20-Poly1305 (XChaCha20-Poly1305 discussed), cSHAKE, TurboSHAKE, and HPKE. All algorithms remain gated behind a compatibility flag; making them default is an open question pending library-author feedback.",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA-44, ML-DSA-65, ML-DSA-87",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "SubtleCrypto.supports() lets libraries check runtime support for specific algorithms; no scanning or CBOM capability stated.",
+    "testing_&_validation_methods": "Web Platform Tests for the modern algorithms API surface, Workers-specific compatibility-flag tests, and tests against the panva/hpke and panva/jose test suites.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Open-source workerd runtime; uses BoringSSL primitives; implementation originated from a contribution by Filip Skokan (panva).",
+    "deployment_&_migration_complexity": "Opt-in via the webcrypto_modern_algorithms flag in wrangler.jsonc. Described as building blocks rather than a full migration path; libraries may need runtime-specific changes. ML-DSA keys and signatures are substantially larger than RSA or Ed25519.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "Today, Cloudflare Workers is adding support for post-quantum-resistant algorithms within Web Crypto.",
+      "PQC Capability Description": "ML-KEM-768 and ML-KEM-1024 for key encapsulation ML-DSA-44, ML-DSA-65, and ML-DSA-87 for signatures",
+      "Release Date": "Page dates (from the page markup): article:published_time 2026-10-01",
+      "Crypto Primitives": "HPKE.KEM_ML_KEM_768, HPKE.KDF_HKDF_SHA256, HPKE.AEAD_AES_128_GCM",
+      "Signature Schemes": "ML-DSA-44, ML-DSA-65, and ML-DSA-87 for signatures",
+      "PQC Roadmap Details": "For now, all these algorithms are gated behind a compatibility flag."
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

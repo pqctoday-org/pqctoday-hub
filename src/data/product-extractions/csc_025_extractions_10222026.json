@@ -1,0 +1,48 @@
+[
+  {
+    "platform_name": "Qinsight Atlas — Cryptographic Discovery & Posture Management Platform",
+    "category": "Cryptographic Agility Frameworks",
+    "product_name": "Qinsight Atlas",
+    "product_brief": "Cryptographic posture management platform that discovers, inventories, and risk-assesses cryptography (keys, certificates, algorithms) for quantum readiness.",
+    "pqc_support": "Partial — discovery, inventory, and risk assessment of quantum-vulnerable vs. PQC-ready algorithms; no PQC algorithm implementation stated",
+    "pqc_capability_description": "The platform classifies algorithms and flags what is \"at risk\" vs. PQC-ready, flags classical and post-quantum risks, and maps reports to NIST PQC migration frameworks and CNSA 2.0. It provides PQC risk assessment and guided remediation, not PQC cryptographic implementations. No specific PQC algorithms named.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Lightweight sensors and API integrations for discovery; REST API; deployment model (SaaS vs on-prem) not stated",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Cloud, code, endpoints, IT and OT environments (discovery targets)",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Automated discovery of keys, certificates, algorithms, protocols, and secrets across cloud, code, endpoints, IT and OT; builds a CBOM for each source scanned; enriches with CMDB context; rules engine flags weak/quantum-vulnerable or non-compliant crypto; continuous monitoring and scheduled scans.",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Guided remediation workflows with fixes prioritized by severity; guided crypto-agility workflows and APIs support remediation; lightweight sensors used for discovery. Effort, rollback, and compatibility not stated.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "Qinsight classifies algorithms and flags what's \"at risk\" vs. PQC-ready so teams can see exposure at a glance.",
+      "PQC Capability Description": "Built-in reports and dashboards map to compliance requirements like PCI-DSS and CNSA 2.0 as well as NIST PQC migration frameworks."
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

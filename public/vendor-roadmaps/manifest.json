@@ -1994,6 +1994,23 @@
       "unified": "converted",
       "admittedAt": "2026-10-23T00:13:33.771832+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "vendorId": "VND-434",
+      "refId": "VND-434",
+      "label": "A10 Networks, Inc.",
+      "file": "vendor-roadmaps/VND-434_A10_Networks_Inc_www_a10networks_com_blog_post_quantum_cr.html",
+      "filename": "VND-434_A10_Networks_Inc_www_a10networks_com_blog_post_quantum_cr.html",
+      "url": "https://www.a10networks.com/blog/post-quantum-cryptography-comes-to-a10-ssl-tls-data-plane/",
+      "status": "downloaded",
+      "sizeBytes": 735372,
+      "contentType": "text/html",
+      "sha256": "ebb25340425a436124b6ceb75053900f7bb881735164dda310c36be40bb60e4e",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T05:11:26.417927+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
