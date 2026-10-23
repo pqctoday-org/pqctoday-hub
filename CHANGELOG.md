@@ -31,16 +31,19 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.173.0] - 2026-10-23
 
-Two NIAP documents join the Library, and the NIAP entries and two other recent entries show their details.
+A new lesson in Common Criteria, EUCC & eIDAS Certification explains what NIAP's protection profiles offer and require for post-quantum cryptography, and 15 NIAP documents join the Library.
 
 ### Added
 
-- **Two NIAP documents for dedicated security components** [view:/library] [persona:cert-engineer] [persona:grc] [persona:architect]: the Collaborative Protection Profile for a Dedicated Security Component, version 2.1, and its mandatory Supporting Document, which lists the evaluation activities an evaluator must perform.
+- **A lesson on NIAP and post-quantum cryptography** [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc] [persona:architect]: "NIAP and post-quantum cryptography: what its profiles require" leads with the Dedicated Security Component profile, explains that NIAP's Technical Decisions add the CNSA rule for the Product Compliant List so post-quantum is one allowed route rather than the only one, separates a NIAP certificate from a CMVP module certificate, and ends with questions to put to the lab. A table lists the 11 NIAP documents that carry post-quantum selections beside the classical ones, with the algorithms, the classical choices still allowed, the date NIAP shows for each and a quote from each. Passages that are the module's own reading are marked "Module analysis". The Common Criteria path goes from 70 to 76 minutes and the module from 60 to 66; the role learning-path totals follow.
+- **15 NIAP documents in the Library** [view:/library] [persona:cert-engineer] [persona:grc] [persona:architect]: the protection profiles and modules for dedicated security components (with their Supporting Document), network devices, general-purpose computing platforms, full-drive encryption, virtualization, VPN clients, hardcopy devices and file encryption; NIAP Technical Decisions 1010, 1011 and 1064; and NIAP's announcements notice on its Policy 33 decisions.
 
 ### Changed
 
+- **Patents in the certification engineer's main page list** [view:/patents] [view:/] [persona:cert-engineer]: certification engineers now see Patents in their main page list, next to Leaders, instead of only under More.
 - **Recent Library entries show their key details** [view:/library] [persona:cert-engineer] [persona:grc] [persona:architect]: NIAP's Protection Profile for Application Software v2.0 (published 16 June 2025) and the FS-ISAC paper on post-quantum risk in ATM and card-terminal PIN handling now carry a description, publisher, region, category and urgency taken from the documents themselves, instead of appearing as unverified entries. NIAP's Policy Letter 26 and its CCEVS manual are tagged for government and defense readers.
 - **The NSA CSfC post-quantum addendum is shown as a draft** [view:/library] [persona:grc] [persona:architect] [persona:cert-engineer]: its status read Published; the document is still a draft.
+- **Common Criteria, EUCC & eIDAS Certification shows its review date again** [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc]: the module reads reviewed and signed off by the PQC Today owner on 23 October 2026, after the ACM v2 date correction and the new lesson.
 
 ## [4.172.0] - 2026-10-23
 

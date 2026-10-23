@@ -25,10 +25,12 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'cc-eucc-certification',
-  // No lastReviewed: a fact (the date of ACM v2) was corrected after the owner's 22 October 2026
-  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts).
-  // The on-page notice follows it (common/moduleReviewStatus.ts). v1 ships as "practitioner
-  // orientation", not reviewed by a lab or certification body.
+  lastReviewed: '2026-10-23',
+  // lastReviewed is the owner's sign-off of 23 October 2026 (moduleReviewHonesty.test.ts), which
+  // renewed the 22 October one after the ACM v2 date correction and the NIAP lesson; the on-page
+  // notice follows it (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until
+  // the owner renews it. v1 ships as "practitioner orientation", not reviewed by a lab or
+  // certification body.
   version: '0.1.0',
   lastEdited: '2026-10-23',
 
@@ -76,6 +78,21 @@ export const content: ModuleContent = {
     getStandard('CNSSP 15'),
     getStandard('BSI-CC-PP-0114-V2X-HSM'),
     getStandard('CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile'),
+    getStandard('NIAP-Protection-Profile-for-Application-Software-Version-2-0'),
+    getStandard('NIAP-cPP-Dedicated-Security-Component-Version-2-1'),
+    getStandard('NIAP-cPP-Network-Devices-Version-4-0'),
+    getStandard('NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0'),
+    getStandard('NIAP-PP-Virtualization-Version-2-0'),
+    getStandard('NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0'),
+    getStandard('NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0'),
+    getStandard('NIAP-cPP-Hardcopy-Devices-Version-2-0'),
+    getStandard('NIAP-PP-Module-VPN-Client-Version-3-0'),
+    getStandard('NIAP-PP-Module-File-Encryption-Version-2-0'),
+    getStandard('NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0'),
+    getStandard('NIAP-cPP-DSC-Supporting-Document-Version-2-1'),
+    getStandard('NIAP-TD1010-Network-Devices-v4-0-Endorsement'),
+    getStandard('NIAP-TD1011-DSC-v2-1-Endorsement'),
+    getStandard('NIAP-Announcements-Policy-33-Technical-Decisions-Notice'),
     getStandard('EUCC-Guidelines-on-Cryptography'), // second source for claim:48f91fd0621d1352
   ],
 
