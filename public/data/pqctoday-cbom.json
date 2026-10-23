@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:1decf1df-17ef-4efa-adef-72c09bed8131",
+  "serialNumber": "urn:uuid:f8260226-1690-4c76-b5fc-9c7c2406489e",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-22T00:00:00.000Z",
+    "timestamp": "2026-10-23T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -36846,6 +36846,268 @@
         {
           "name": "pqctoday:layer",
           "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "6f45b5f6cfee2625",
+      "name": "Samsung Evan FW Crypto Engine",
+      "version": "SS0500100",
+      "manufacturer": {
+        "name": "Samsung Electronics Co."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "CAVP certificate A8889 lists ML-KEM KeyGen and EncapDecap, ML-DSA KeyGen, SigGen and SigVer, and LMS SigVer for Samsung Evan S4LQ020. Validated firmware implementation embedded in Samsung Security Subsystem version SS0500100.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Samsung-Evan-FW-Crypto-Engine"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "66226cc1e13c88dd",
+      "name": "PS5028-E28",
+      "version": "PS5028-E28 Module V1.00",
+      "manufacturer": {
+        "name": "Phison Electronics Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "The CAVP page lists validated algorithm capabilities including ML-KEM KeyGen, ML-KEM EncapDecap, ML-DSA KeyGen, ML-DSA SigGen, ML-DSA SigVer and LMS SigVer on PS5028-E28 with Andes N45. These are algorithm validations (certificate A8840), not a statement of FIPS 140-3 module validation.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PS5028-E28"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No FIPS 140 module validation stated; CAVP algorithm validation A8840 (first validated 8/11/2026)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8357aba5a85f1929",
+      "name": "TrustedKMS Cryptographic Module",
+      "version": "2.15.1",
+      "manufacturer": {
+        "name": "Two Six Technologies"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "CAVP certificate A8857 lists ML-DSA KeyGen/SigGen/SigVer and ML-KEM EncapDecap/KeyGen as validated algorithm capabilities, alongside classical algorithms, on AlmaLinux 9 on AMD EPYC 9224. Software module, version 2.15.1.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "TrustedKMS-Cryptographic-Module"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e197fe96a45ffd23",
+      "name": "CrossBar Daric PQC Cryptographic Library",
+      "manufacturer": {
+        "name": "Crossbar, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Library deployed on the Daric security chip implementing ML-DSA (FIPS 204) and ML-KEM (FIPS 203). Core computations use the dedicated hardware crypto engine; certain PQC-specific operations are in firmware. Runs on Arm Cortex-M7 and RISC-V cores. CAVP entry A9051 lists ML-DSA KeyGen/SigGen/SigVer and ML-KEM KeyGen/EncapDecap.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "CrossBar-Daric-PQC-Cryptographic-Library"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No FIPS 140-2/140-3 stated; CAVP algorithm validation A9051 (ML-DSA, ML-KEM)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d17bd471e3e719d5",
+      "name": "Provision Cryptographic library",
+      "version": "3.0",
+      "manufacturer": {
+        "name": "Provision"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "The CAVP entry A9146 lists ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (EncapDecap, KeyGen) and SLH-DSA (KeyGen, SigGen, SigVer) on ProHarden OS 6 on Intel Xeon Silver 4310. Validation is of algorithm implementations (CAVP); parameter sets not stated.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Provision-Cryptographic-library"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "77e23d584e654af7",
+      "name": "Cloudflare Workers",
+      "manufacturer": {
+        "name": "Cloudflare Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Workers adds post-quantum Web Crypto algorithms from the WICG Modern Algorithms draft: ML-KEM-768/1024 and ML-DSA-44/65/87, plus encapsulate/decapsulate APIs, getPublicKey(), SubtleCrypto.supports() and JWK import/export. Backed by BoringSSL in workerd. ML-KEM-512 unsupported. Opt-in via compatibility flag; spec still a draft.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cloudflare-Workers"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cloud Encryption Gateways"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Cloud"
         },
         {
           "name": "pqctoday:fips_validated",
