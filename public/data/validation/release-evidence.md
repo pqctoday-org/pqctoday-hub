@@ -11,10 +11,10 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Figure                                                  |              Value | Source                                                            |
 | ------------------------------------------------------- | -----------------: | ----------------------------------------------------------------- |
 | Selected public NIST ACVP-Server reference-sample files |                 58 | `src/data/validation/validation-counts.generated.json`            |
-| NIST ACVP-Server reference-sample cases (active)        |              1,201 | `src/data/validation/validation-counts.generated.json`            |
+| NIST ACVP-Server reference-sample cases (active)        |              1,280 | `src/data/validation/validation-counts.generated.json`            |
 | Vector files (active / quarantined / total)             |       98 / 6 / 104 | `src/data/validation/validation-counts.generated.json`            |
-| Cases (active / quarantined / total)                    | 5,478 / 55 / 5,533 | `src/data/validation/validation-counts.generated.json`            |
-| Active cases: positive / negative                       |      3,706 / 1,772 | `src/data/validation/validation-counts.generated.json`            |
+| Cases (active / quarantined / total)                    | 5,557 / 55 / 5,612 | `src/data/validation/validation-counts.generated.json`            |
+| Active cases: positive / negative                       |      3,775 / 1,782 | `src/data/validation/validation-counts.generated.json`            |
 | C++: advertised capability cells (denominator)          |              2,211 | `public/data/validation/coverage-matrix.json`                     |
 | Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 22 | `src/data/validation/coverage-waivers.json`                       |
@@ -28,7 +28,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Evidence class                    | Files | Active cases |
 | --------------------------------- | ----: | -----------: |
-| nist-acvp-reference-sample        |    58 |        1,201 |
+| nist-acvp-reference-sample        |    58 |        1,280 |
 | acvts-issued-vector               |     0 |            0 |
 | published-standard-kat            |    17 |           22 |
 | independent-oracle                |    29 |        4,253 |
@@ -342,5 +342,5 @@ Machine-evaluated. A human item is never marked PASS.
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29` |
 | `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `d64b3a9fbd64b86ba6b4bb2f4e6569f309a8fa57b174dfffc2d0996713178474` |
-| `src/data/validation/validation-counts.generated.json`                  | `998bf488ff69dcbc53d5507c7c4f8f639fb958bfd9e1cc236b5d34d40d98cef4` |
+| `src/data/validation/validation-counts.generated.json`                  | `3a16c1b98df47d2085091466020b38ce6ec1cb94ab084d9ec4cc89beb29d3075` |
 | `src/data/validation/vector-manifest.json`                              | `666b8de1a8d575f35c544e20ebcf1a8508c002f3682af90bab438e354a213d97` |

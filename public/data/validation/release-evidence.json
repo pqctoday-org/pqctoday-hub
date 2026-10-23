@@ -23,14 +23,14 @@
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21",
     "src/data/validation/run-results/wasm-node-katRunner.json": "42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "d64b3a9fbd64b86ba6b4bb2f4e6569f309a8fa57b174dfffc2d0996713178474",
-    "src/data/validation/validation-counts.generated.json": "998bf488ff69dcbc53d5507c7c4f8f639fb958bfd9e1cc236b5d34d40d98cef4",
+    "src/data/validation/validation-counts.generated.json": "3a16c1b98df47d2085091466020b38ce6ec1cb94ab084d9ec4cc89beb29d3075",
     "src/data/validation/vector-manifest.json": "666b8de1a8d575f35c544e20ebcf1a8508c002f3682af90bab438e354a213d97"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "39158f36980149bc960aeeee0a9af1cc6cc041016be817f33ce61370c3568936",
+    "manifestCanonicalSha256": "ce371fbdb3c4b1dbde2a5fd271f1e77f34b1f62a0809153a97d3902a0c5fc546",
     "nistReferenceSampleFiles": 58,
-    "nistReferenceSampleCases": 1201,
+    "nistReferenceSampleCases": 1280,
     "vectorFiles": {
       "total": 104,
       "active": 98,
@@ -48,12 +48,12 @@
       "unverified": 0
     },
     "cases": {
-      "total": 5533,
-      "active": 5478,
+      "total": 5612,
+      "active": 5557,
       "quarantined": 55
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 1201,
+      "nist-acvp-reference-sample": 1280,
       "acvts-issued-vector": 0,
       "published-standard-kat": 22,
       "independent-oracle": 4253,
@@ -64,8 +64,8 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 3706,
-      "negative": 1772
+      "positive": 3775,
+      "negative": 1782
     },
     "filesWithPublishabilityGap": {
       "oracle-version-not-recorded": 1
