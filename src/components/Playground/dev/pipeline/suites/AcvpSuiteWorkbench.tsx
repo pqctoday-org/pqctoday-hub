@@ -91,15 +91,18 @@ const AcvpResultRow = memo(({ res }: { res: TestResult; evidenceReady: boolean }
     data-status={res.status}
     className="hover:bg-muted/30 transition-colors"
   >
-    <td className="p-2 text-[10.5px] text-muted-foreground whitespace-nowrap">
+    {/* Cell order is a contract (e2e reads Details as the 5th cell). The table is fixed-layout
+        (see the <colgroup> below), so a long label wraps inside its cell and Details truncates
+        with its full text in the hover title; nothing widens the table past its panel. */}
+    <td className="px-1.5 py-2 text-[10.5px] text-muted-foreground break-words">
       {CATEGORIES.find((c) => c.id === res.category)?.label ?? res.category}
     </td>
-    <td className="p-2 font-medium text-foreground">{res.algorithm}</td>
-    <td className="p-2 text-muted-foreground">
+    <td className="px-1.5 py-2 font-medium text-foreground break-words">{res.algorithm}</td>
+    <td className="px-1.5 py-2 text-muted-foreground break-words">
       {res.testCase}
       <CaseEvidenceBadge records={evidenceForRowId(res.id)} className="mt-1" />
     </td>
-    <td className="p-2">
+    <td className="px-1.5 py-2">
       <span
         className={clsx(
           'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
@@ -120,10 +123,10 @@ const AcvpResultRow = memo(({ res }: { res: TestResult; evidenceReady: boolean }
         {res.status}
       </span>
     </td>
-    <td className="p-2 text-muted-foreground truncate max-w-[200px]" title={res.details}>
+    <td className="px-1.5 py-2 text-muted-foreground truncate" title={res.details}>
       {res.details}
     </td>
-    <td className="p-2">
+    <td className="px-1.5 py-2">
       <a
         href={res.referenceUrl}
         target="_blank"
@@ -596,15 +599,23 @@ export const AcvpSuiteWorkbench = () => {
 
       <div className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full table-fixed text-left text-xs">
+            <colgroup>
+              <col className="w-[13%]" />
+              <col className="w-[17%]" />
+              <col className="w-[30%]" />
+              <col className="w-[12%]" />
+              <col className="w-[22%]" />
+              <col className="w-[6%]" />
+            </colgroup>
             <thead className="bg-muted/30 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md">
               <tr>
-                <th className="p-2 font-bold">Category</th>
-                <th className="p-2 font-bold">Algorithm</th>
-                <th className="p-2 font-bold">Test Case</th>
-                <th className="p-2 font-bold">Status</th>
-                <th className="p-2 font-bold">Details</th>
-                <th className="p-2 font-bold">Ref</th>
+                <th className="px-1.5 py-2 font-bold">Category</th>
+                <th className="px-1.5 py-2 font-bold">Algorithm</th>
+                <th className="px-1.5 py-2 font-bold">Test Case</th>
+                <th className="px-1.5 py-2 font-bold">Status</th>
+                <th className="px-1.5 py-2 font-bold">Details</th>
+                <th className="px-1.5 py-2 font-bold">Ref</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
