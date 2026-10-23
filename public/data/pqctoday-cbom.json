@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:1a25722d-ce87-43c8-a22b-ed0e7f285433",
+  "serialNumber": "urn:uuid:1decf1df-17ef-4efa-adef-72c09bed8131",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-16T00:00:00.000Z",
+    "timestamp": "2026-10-22T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -2619,9 +2619,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "03af42b812caeada",
+      "bom-ref": "0b2aeba5c2915600",
       "name": "OpenSSH",
-      "version": "10.3p1",
+      "version": "10.6p1",
       "purl": "pkg:github/openssh/openssh-portable",
       "cpe": "cpe:2.3:a:openbsd:openssh:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
