@@ -16,7 +16,7 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "5e8972dd9c1079cf2477b0a8aa7c8c93375c510c9b576ecadc15e16cda53f3a8",
+    "public/data/validation/coverage-matrix.json": "9b86037a7a575fb4f696ac5474fb7ea99986f9950486241dacca31dca8b5db6d",
     "src/data/validation/coverage-waivers.json": "868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130",
     "src/data/validation/native-conformance.generated.json": "3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2",
     "src/data/validation/open-gaps.json": "a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f",
@@ -24,7 +24,7 @@
     "src/data/validation/run-results/wasm-node-katRunner.json": "42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "d64b3a9fbd64b86ba6b4bb2f4e6569f309a8fa57b174dfffc2d0996713178474",
     "src/data/validation/validation-counts.generated.json": "998bf488ff69dcbc53d5507c7c4f8f639fb958bfd9e1cc236b5d34d40d98cef4",
-    "src/data/validation/vector-manifest.json": "31976e1dcab426ee9fe32056229be4d82cf255de4ef2416c5390c220503b91bd"
+    "src/data/validation/vector-manifest.json": "666b8de1a8d575f35c544e20ebcf1a8508c002f3682af90bab438e354a213d97"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
@@ -3380,7 +3380,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 9632 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 9711 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
