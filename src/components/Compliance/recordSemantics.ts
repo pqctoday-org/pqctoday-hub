@@ -229,6 +229,10 @@ export function scopeNotice(meta: ComplianceMeta | null | undefined): string {
     : DEFAULT_SCOPE_NOTICE
 }
 
+/** Shown next to the retrieval dates: the records are a published snapshot, not a live query. */
+export const SNAPSHOT_NOTICE =
+  'Snapshot, not a live feed — confirm status on the official register (links in each row) before citing it.'
+
 export interface RetrievalEntry {
   key: string
   label: string

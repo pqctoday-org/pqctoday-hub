@@ -40,6 +40,7 @@ import {
   recordTypeDescription,
   recordTypeLabel,
   scopeNotice,
+  SNAPSHOT_NOTICE,
   snapshotRetrievalEntries,
   statusBadgeClass,
   type RecordScope,
@@ -891,11 +892,18 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               }
             >
               <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
-              Reload Snapshot
+              Reload this snapshot
             </Button>
           )}
         </div>
       </div>
+      <p
+        className="flex items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground"
+        data-testid="records-snapshot-notice"
+      >
+        <Info size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+        <span>{SNAPSHOT_NOTICE}</span>
+      </p>
 
       {/* Mobile Drawer & Filters */}
       <div className="md:hidden mt-2">
