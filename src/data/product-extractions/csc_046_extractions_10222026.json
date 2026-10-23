@@ -1,0 +1,48 @@
+[
+  {
+    "platform_name": "IBM Hyper Protect Crypto Services",
+    "category": "Cloud Hardware Security Module (HSM)",
+    "product_name": "IBM Hyper Protect Crypto Services",
+    "product_brief": "Cloud HSM service from IBM that provides quantum-safe digital signing for enhanced key control.",
+    "pqc_support": "Partial — quantum-safe digital signing for IBM Cloud Hyper Protect Crypto Services",
+    "pqc_capability_description": "The document states that IBM Cloud Hyper Protect Crypto Services provides quantum-safe digital signing, enhancing key control. No specific algorithms, versions, or maturity levels are named for this product.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "IBM Cloud",
+    "target_industries": "Telecom, Finance",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "Enhance your key control with IBM Cloud Hyper Protect Crypto Services, which provides quantum-safe digital signing.",
+      "PQC Capability Description": "Enhance your key control with IBM Cloud Hyper Protect Crypto Services, which provides quantum-safe digital signing."
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

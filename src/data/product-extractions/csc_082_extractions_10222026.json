@@ -1,0 +1,50 @@
+[
+  {
+    "platform_name": "Isidore Quantum® - High Throughput Space Router (HTSR)",
+    "category": "Network Security Appliances",
+    "product_name": "Isidore Quantum® - High Throughput Space Router (HTSR)",
+    "product_brief": "All-domain quantum-resistant encryption platform with AI enhancements, validated across air, land, sea, and space.",
+    "pqc_support": "Yes — quantum-resistant encryption with CNSA Suite 2.0 compliance, validated across air, land, sea, and space",
+    "pqc_capability_description": "Described as an all-domain quantum-resistant encryption solution combining CNSA Suite 2.0 compliance with zero-trust, AI-enhanced encryption. Field-tested with U.S. military branches and deployed aboard a CubeSat in low-Earth orbit. Specific PQC algorithms are not named.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Eliminates legacy PKI, key management infrastructure, and human error (zero-trust, AI-enhanced encryption)",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Air, land, sea, and space deployments; deployed aboard Rogue Space's Barry CubeSat on SpaceX's Transporter-13 mission",
+    "target_industries": "Government, defense, SCADA, telecom, aerospace, finance, private sector",
+    "regulatory_status": "Authorized for export under ITAR and EAR exemptions; FIPS 140-3 compliance; CNSA Suite 2.0 compliance",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Field-tested with the U.S. Air Force, Army, Navy, and Space Force; deployed in low-Earth orbit on a CubeSat; FIPS 140-3 validation",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Deployed aboard a CubeSat in low-Earth orbit (described as the first encryption module of its kind to reach LEO); embedded suitability details not stated",
+    "supply_chain_&_vendor_risk": "Built on NSA-developed cryptographic frameworks enhanced with Forward Edge-AI's patented innovations (proprietary enhancements)",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Over $700 million in pipeline demand; positioned in a stated $1.2 trillion post-quantum encryption market",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "Isidore Quantum® is an all-domain quantum-resistant encryption solution validated across air, land, sea, and space",
+      "PQC Capability Description": "The solution combines Commercial National Security Algorithm (CNSA) Suite 2.0 compliance with zero-trust, AI-enhanced encryption—eliminating legacy PKI, key management infrastructure, and human error."
+    },
+    "withheld_no_excerpt": [
+      "FIPS Validated"
+    ],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

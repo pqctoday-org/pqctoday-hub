@@ -1,0 +1,50 @@
+[
+  {
+    "platform_name": "PQConnect",
+    "category": "VPN and IPsec Software",
+    "product_name": "PQConnect",
+    "product_brief": "Easy-to-install Internet security layer that automatically applies end-to-end post-quantum cryptography between computers running PQConnect.",
+    "pqc_support": "Yes — automatically applies post-quantum cryptography end to end between computers running PQConnect",
+    "pqc_capability_description": "PQConnect automatically applies post-quantum cryptography from end to end between computers running it. It adds cryptographic protection to unencrypted applications, adds post-quantum protection to existing pre-quantum applications, and adds a second application-independent defense layer. Specific algorithms are not named in this page. Latest release: 1.2.3.",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Network, Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "1.2.3",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unknown",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "https://www.pqconnect.net",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Works with unmodified applications; clients automatically detect PQConnect-supporting servers and transparently encrypt traffic to them; sysadmins configure a server name to announce PQConnect support, described as easy.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "PQConnect automatically applies post-quantum cryptography from end to end between computers running PQConnect.",
+      "PQC Capability Description": "PQConnect adds cryptographic protection to unencrypted applications, works in concert with existing pre-quantum applications to add post-quantum protection",
+      "Latest Version": "Latest release: 1.2.3 .",
+      "Authoritative Source URL": "We have restored https://www.pqconnect.net but we don't have the chat server back yet, sorry."
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]
