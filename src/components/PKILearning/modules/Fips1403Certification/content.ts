@@ -26,12 +26,10 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'fips-140-3-certification',
-  lastReviewed: '2026-10-22',
+  // No lastReviewed: facts were corrected after the owner's 22 October 2026 sign-off, so the
+  // sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts); the on-page notice
+  // follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  // lastReviewed is the owner's sign-off of 22 October 2026 (moduleReviewHonesty.test.ts), not a
-  // lab or certification-body review: v1 ships as "practitioner orientation". Remove it when a
-  // fact is corrected, until the owner renews the sign-off; the on-page notice follows it
-  // (common/moduleReviewStatus.ts).
   lastEdited: '2026-10-23',
 
   standards: [

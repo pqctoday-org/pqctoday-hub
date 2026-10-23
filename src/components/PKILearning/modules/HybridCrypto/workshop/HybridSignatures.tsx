@@ -117,7 +117,7 @@ const CONSTRUCTIONS: Array<{
     nonSeparability: 'SNS',
     nsColor: 'text-status-success',
     description:
-      'Fused Fiat-Shamir: both components share a single challenge μ that includes the EC commitment R. Neither component verifies without the shared μ. Achieves Strong Non-Separability.',
+      'Fused Fiat-Shamir: both components share a single challenge μ that includes the EC commitment R. Neither component verifies without the shared μ. Targets Strong Non-Separability; the paper reports no separability issues for its construction.',
     reference: 'ePrint 2025/2059',
     referenceUrl: 'https://eprint.iacr.org/2025/2059',
   },
@@ -959,8 +959,10 @@ export const HybridSignatures: React.FC = () => {
                 <p className="text-muted-foreground">
                   The EC-Schnorr component cannot be verified with the standard challenge H(R ‖ pk ‖
                   msg). The signer used the fused challenge μ that also incorporates pk_ml — so any
-                  attempt to verify just the EC part with the wrong challenge fails. This is Strong
-                  Non-Separability (SNS).
+                  attempt to verify just the EC part with the wrong challenge fails. This is the
+                  property RFC 9955 §1.3.4 calls Strong Non-Separability (SNS), shown here with a
+                  simplified Silithium (see the note under the shared challenge above); the security
+                  argument for the full scheme is in the paper (ePrint 2025/2059), not in this demo.
                 </p>
               )}
             </div>

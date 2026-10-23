@@ -29,7 +29,7 @@ Firmware signing has two sides that are validated differently: the verifier (cod
 
 ## Known-answer checks in the Firmware Signing Migrator
 
-The known-answer area compares the engine with answers NIST published (rows tagged "NIST ACVP sample"): ML-DSA-87 verification of a NIST reference signature, one NIST sigVer case that must verify and one that must be rejected (FIPS 204), and SHA-256 and SHA-512 digests (FIPS 180-4). The row tagged "Functional" (ML-DSA-87 sign + verify round trip) generates a fresh key and only checks that the engine accepts its own signature, so it has no NIST expected value. None of this establishes a validation.
+The known-answer area compares the engine with answers NIST published (rows tagged "NIST ACVP sample"): ML-DSA-87 verification of a NIST reference signature; for ML-DSA-87 and for ML-DSA-65 (the default) one NIST sigVer case that must verify and one that must be rejected (FIPS 204); verification of a NIST-generated SLH-DSA-SHA2-128s signature (FIPS 205); and SHA-256 and SHA-512 digests (FIPS 180-4). The checks run fixed parameter sets, not the one selected in the tool. The row tagged "Functional" (ML-DSA-87 sign + verify round trip) generates a fresh key and only checks that the engine accepts its own signature, so it has no NIST expected value. None of this establishes a validation.
 
 ## Workshop Steps
 

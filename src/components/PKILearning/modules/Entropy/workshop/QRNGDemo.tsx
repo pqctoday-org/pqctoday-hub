@@ -84,7 +84,8 @@ const PassFailIcon: React.FC<{ result: TestResult }> = ({ result }) => {
 /** Format a test value for display */
 function formatTestValue(result: TestResult): string {
   if (result.name === 'Frequency (Monobit)') {
-    return `${(result.value * 100).toFixed(1)}%`
+    // value is the deviation of the proportion of 1-bits from 0.5
+    return `${(result.value * 100).toFixed(1)}% off 50%`
   }
   if (result.name === 'Repetition Count') {
     return String(result.value)

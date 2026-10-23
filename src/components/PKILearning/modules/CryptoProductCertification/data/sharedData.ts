@@ -46,6 +46,7 @@ export const SHARED_SOURCES = {
   sp180040b: getStandard('NIST-SP-1800-40B-IPD'),
   sp180040a: getStandard('NIST-SP-1800-40A-PD'),
   cswp37a: getStandard('NIST-CSWP-37A'),
+  cswp37b: getStandard('NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va'),
   acvp: getStandard('NIST-ACVP'),
   esv: getStandard('NIST-CMVP-ESV'),
   ir8547: getStandard('NIST IR 8547'),

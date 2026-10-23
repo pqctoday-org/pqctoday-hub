@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { CheckCircle2, Circle, ChevronDown, Lock, Trophy, CheckSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +17,7 @@ import {
   computePathProgress,
   isCheckpointPassed,
   formatHours,
+  pathSkipsPqcBasics,
 } from '@/components/PKILearning/redesign/learnRedesign.helpers'
 import { MobileProgress } from '../primitives/Progress'
 import { cn } from '@/lib/utils'
@@ -138,6 +139,24 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
           )
         })}
       </div>
+
+      {/* A path that starts at the certificate, not at PQC 101: same optional pointer as desktop. */}
+      {pathSkipsPqcBasics(persona) && (
+        <p data-testid="new-to-pqc-note" className="text-[11.5px] text-muted-foreground">
+          If ML-KEM and ML-DSA are new to you,{' '}
+          <Link
+            to="/learn/pqc-101"
+            className="font-medium text-primary underline underline-offset-2"
+          >
+            PQC 101
+          </Link>{' '}
+          and the{' '}
+          <Link to="/algorithms" className="font-medium text-primary underline underline-offset-2">
+            Algorithms page
+          </Link>{' '}
+          are optional background.
+        </p>
+      )}
 
       {tier === 'essentials' ? (
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3.5">

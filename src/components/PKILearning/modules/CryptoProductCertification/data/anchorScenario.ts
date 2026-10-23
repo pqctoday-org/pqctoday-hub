@@ -57,6 +57,16 @@ export const ANCHOR_SCENARIO: AnchorScenario = {
   change: 'Adding ML-KEM and ML-DSA, with optional hybrid',
 }
 
+/**
+ * Lower-cases the first letter of a label so it reads inside a sentence, keeping an acronym that
+ * opens it ("US federal agency", "EU qualified trust service provider", "ML-KEM …"). Never use
+ * `.toLowerCase()` on these strings: it turns "HSM", "US", "EU" and "ML-KEM" into "hsm", "us"…
+ */
+export function inSentence(text: string): string {
+  const firstWord = text.split(/\s/, 1)[0] ?? ''
+  return /^[A-Z]{2,}\b/.test(firstWord) ? text : text.charAt(0).toLowerCase() + text.slice(1)
+}
+
 /** Display name with the fictional label, e.g. "Orrin N7 (fictional)". */
 export const ANCHOR_DISPLAY_NAME = `${ANCHOR_SCENARIO.name} (${ANCHOR_SCENARIO.fictionalLabel})`
 

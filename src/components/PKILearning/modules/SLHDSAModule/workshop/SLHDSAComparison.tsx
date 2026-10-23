@@ -121,10 +121,13 @@ export const SLHDSAComparison: React.FC = () => (
     </p>
 
     <div className="bg-muted/40 rounded-lg px-4 py-3 text-xs text-muted-foreground leading-relaxed">
-      <strong className="text-foreground">Recommendation:</strong> For new deployments, prefer
-      SLH-DSA unless signing frequency is very high and signature size is a concern. For embedded or
-      HSM-only environments where state management is well-controlled, LMS remains a strong choice
-      due to smaller signature sizes.
+      <strong className="text-foreground">How to choose:</strong> start with the policy that applies
+      to you. Under CNSA 2.0, SLH-DSA is not approved for any use in national security systems,
+      while single-tree LMS and XMSS are approved for firmware and software signing (ML-DSA-87 is
+      also allowed). Outside that scope, the main difference is state: SLH-DSA has no leaf counter
+      to protect, at the cost of the larger signatures above. SP 800-208 requires LMS and XMSS key
+      and signature generation to run in a hardware cryptographic module that does not allow secret
+      keying material to be exported, even in encrypted form.
     </div>
   </div>
 )

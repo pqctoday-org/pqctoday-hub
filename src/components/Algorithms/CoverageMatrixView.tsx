@@ -20,6 +20,7 @@ import {
   Grid3x3,
 } from 'lucide-react'
 import clsx from 'clsx'
+import { Link, useInRouterContext } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -170,6 +171,8 @@ export function CoverageMatrixView({
   polarityParam,
   onUpdateParams,
 }: CoverageMatrixViewProps = {}) {
+  // Unit tests and embeds render this view outside a router: fall back to a plain link.
+  const inRouter = useInRouterContext()
   const [matrix, setMatrix] = useState<CoverageMatrix | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [engine, setEngine] = useState<EngineId>(() => toEngine(engineParam))
@@ -331,6 +334,29 @@ export function CoverageMatrixView({
               </a>
             </span>
           ))}
+        </p>
+        <p className="text-xs text-muted-foreground" data-testid="coverage-lab-comparison">
+          <span className="font-medium text-foreground">How this compares to a lab.</span> An ACVP
+          registration declares the capabilities of an implementation, and NIST&apos;s test service
+          generates test vectors to match them. This matrix keeps the same capability-by-capability
+          accounting for PQC Today&apos;s engines, but against this project&apos;s own registered
+          tests, so it is not a CAVP result.{' '}
+          {inRouter ? (
+            <Link
+              to="/learn/acvp-lab-workflow"
+              className="text-primary underline underline-offset-2"
+            >
+              The ACVP Lab Workflow module
+            </Link>
+          ) : (
+            <a
+              href="/learn/acvp-lab-workflow"
+              className="text-primary underline underline-offset-2"
+            >
+              The ACVP Lab Workflow module
+            </a>
+          )}{' '}
+          walks through the real process.
         </p>
       </div>
 

@@ -11,7 +11,7 @@
 // replay + probe sequences as before; e2e/pkcs11-conformance.local.spec.ts's
 // testids are preserved.
 import { useMemo, useState } from 'react'
-import { CheckCircle, XCircle, MinusCircle, Copy, Clock, Info } from 'lucide-react'
+import { CheckCircle, XCircle, MinusCircle, Copy, Download, Clock, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -37,6 +37,8 @@ import {
 import { V33_DRAFT_ERROR_PATHS } from '@/wasm/pkcs11ConformanceRunner/errorPathCatalog'
 import { COMPOSITE_KEM_SETS, COMPOSITE_SIG_SETS } from '@/wasm/softhsm/compositeParams'
 import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
+import { siteBuildInfo } from '@/services/runManifest'
+import { bundleFilename, downloadBlob } from '@/services/exportBundle'
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
 import { mechanismProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
@@ -112,6 +114,33 @@ export const ConformanceSuiteWorkbench = () => {
       setCodeRunning(false)
     }
   }
+
+  // Same content as the copied report, structured: the disclaimer, the build, every row and the
+  // engine inventories each row was produced against.
+  const downloadReportJson = () =>
+    downloadBlob(
+      new Blob(
+        [
+          JSON.stringify(
+            {
+              title: 'PKCS#11 v3.2 Conformance Runner report',
+              notice: VALIDATION_DISCLAIMER_TEXT,
+              generatedAt: new Date().toISOString(),
+              site: siteBuildInfo(),
+              engineMode,
+              counts: { pass, fail, notClaimed, rows: rows.length },
+              rows,
+              engineInventories: suite.inventories,
+              v33Draft: { summary: v33Summary, rows: v33Rows },
+            },
+            null,
+            2
+          ),
+        ],
+        { type: 'application/json' }
+      ),
+      bundleFilename('pkcs11-conformance-report', 'json')
+    )
 
   const running = loading || codeRunning
   const nothingSelected = selectionIsEmpty(selection)
@@ -519,17 +548,30 @@ export const ConformanceSuiteWorkbench = () => {
       subtitle="PKCS#11 Profiles v3.2 — Tier A OASIS cases · Tier B generated probes · product mechanism probes"
       actions={
         ran && !loading ? (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() =>
-              void navigator.clipboard.writeText(`${VALIDATION_DISCLAIMER_TEXT}\n\n${reportText()}`)
-            }
-            className="h-8 w-8 text-muted-foreground hover:text-primary"
-            title="Copy report"
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                void navigator.clipboard.writeText(
+                  `${VALIDATION_DISCLAIMER_TEXT}\n\n${reportText()}`
+                )
+              }
+              title="Copy the report text to the clipboard"
+            >
+              <Copy className="h-3.5 w-3.5 mr-1" aria-hidden="true" />
+              Copy report
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={downloadReportJson}
+              title="Download the rows, counts and engine inventories as a JSON file"
+            >
+              <Download className="h-3.5 w-3.5 mr-1" aria-hidden="true" />
+              Download JSON
+            </Button>
+          </>
         ) : null
       }
       running={running}

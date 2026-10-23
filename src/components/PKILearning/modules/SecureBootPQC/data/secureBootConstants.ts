@@ -68,6 +68,8 @@ export interface AlgorithmSizeRecord {
   publicKeyBytes: number
   privateKeyBytes: number
   signatureBytes: number
+  /** PQC rows: the NIST security category (FIPS 204 / 205). Classical rows: the comparable security
+   *  strength in bits (SP 800-57 Part 1 Rev. 5 Table 2), which is a different measure. */
   nistLevel: string
   quantumSafe: boolean
 }
@@ -383,7 +385,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 256,
     privateKeyBytes: 1192,
     signatureBytes: 256,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '112-bit (classical)',
     quantumSafe: false,
   },
   {
@@ -392,7 +394,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 512,
     privateKeyBytes: 2350,
     signatureBytes: 512,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '128–192-bit (classical)',
     quantumSafe: false,
   },
   {
@@ -401,7 +403,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 65,
     privateKeyBytes: 32,
     signatureBytes: 72,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '128-bit (classical)',
     quantumSafe: false,
   },
   {
@@ -410,7 +412,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 97,
     privateKeyBytes: 48,
     signatureBytes: 104,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '192-bit (classical)',
     quantumSafe: false,
   },
   {

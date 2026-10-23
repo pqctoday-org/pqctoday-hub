@@ -393,7 +393,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Pick one of the 12 FIPS 205 parameter sets and a pre-hash mode, then Generate Key Pair, Sign Message and Verify Signature on a real PKCS#11 v3.2 HSM emulator in the browser.',
       workedExample:
-        'With the default SHA2-128s set the 32-byte public key appears, the message signs into a 7.7 KB signature, Verify Signature reports Signature Valid, and the PKCS#11 call log lists every call.',
+        'With the default SHA2-128s set the 32-byte public key appears, the message signs into a 7,856 B (7.7 KB) signature, Verify Signature reports Signature Valid, and the PKCS#11 call log lists every call.',
     },
     hasOutput: true,
     outputSpec:

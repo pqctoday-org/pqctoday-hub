@@ -110,6 +110,9 @@ function healthLimit(n: number, H: number): string {
 /**
  * Frequency / Monobit check (group 1, SP 800-22-style).
  * Counts the proportion of 1-bits in the data; for uniform data it is near 0.5.
+ * `value` and `threshold` are both the deviation |proportion − 0.5|, so the two
+ * numbers shown side by side are in the same unit (the proportion itself is in
+ * `detail`).
  */
 export function frequencyTest(data: Uint8Array): TestResult {
   let ones = 0
@@ -125,11 +128,12 @@ export function frequencyTest(data: Uint8Array): TestResult {
   const threshold = 0.05
   return {
     name: 'Frequency (Monobit)',
-    value: proportion,
+    value: deviation,
     passed: total > 0 && deviation <= threshold,
     threshold,
-    description: 'Proportion of 1-bits should be close to 0.5',
-    detail: `${ones} ones out of ${total} bits (${(proportion * 100).toFixed(1)}%). Deviation: ${(deviation * 100).toFixed(2)}%`,
+    description:
+      'Deviation of the proportion of 1-bits from 0.5; passes at or below 0.05 (a proportion of 0.45 to 0.55)',
+    detail: `${ones} ones out of ${total} bits (proportion ${proportion.toFixed(4)}, ${(proportion * 100).toFixed(1)}%). Deviation from 0.5: ${deviation.toFixed(4)}`,
     group: 'visualization',
     sampleLimit: visualizationLimit(total),
   }

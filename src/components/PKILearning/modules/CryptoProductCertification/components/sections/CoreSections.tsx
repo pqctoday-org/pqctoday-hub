@@ -22,6 +22,7 @@ import {
   ANCHOR_COMPONENT_DETAILS,
   ANCHOR_RELEASES,
   ANCHOR_SCENARIO,
+  inSentence,
 } from '../../data/anchorScenario'
 
 // ── Shared helpers (used by SharedSections and the Shared workshops) ────────
@@ -157,9 +158,9 @@ export const FourQuestions = () => (
 
     <p>
       Throughout the module we follow one product: the <strong>{ANCHOR_SCENARIO.name}</strong>
-      <FictionalBadge />, {ANCHOR_SCENARIO.description.toLowerCase()}. It sells into four markets —{' '}
-      {ANCHOR_SCENARIO.customers.map((c) => c.label.toLowerCase()).join(', ')} — and its vendor is{' '}
-      {ANCHOR_SCENARIO.change.toLowerCase()}. Every scheme sees a different object inside this one
+      <FictionalBadge />, {inSentence(ANCHOR_SCENARIO.description)}. It sells into four markets —{' '}
+      {ANCHOR_SCENARIO.customers.map((c) => inSentence(c.label)).join(', ')} — and its vendor is{' '}
+      {inSentence(ANCHOR_SCENARIO.change)}. Every scheme sees a different object inside this one
       product.
     </p>
 
@@ -442,7 +443,7 @@ export const ScopeBeforeLevel = () => {
         The {ANCHOR_SCENARIO.name} certified baseline is firmware{' '}
         <strong>{baseline?.firmware}</strong> ({baseline?.algorithms.join(', ')}). The PQC release
         is firmware <strong>{candidate?.firmware}</strong> (the change:{' '}
-        {ANCHOR_SCENARIO.change.toLowerCase()}
+        {inSentence(ANCHOR_SCENARIO.change)}
         ). Until a scheme evaluates {candidate?.firmware}, none of the baseline’s certificates or
         listings covers it — even though the hardware, the product name and most of the code are the
         same. A certificate follows the evaluated artifact, not the brand.

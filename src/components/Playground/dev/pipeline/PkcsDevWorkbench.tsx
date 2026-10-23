@@ -752,7 +752,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
           </aside>
 
           {/* CENTER */}
-          <main className="flex flex-col overflow-auto">
+          <section aria-label="Pipeline canvas" className="flex flex-col overflow-auto">
             <DevSandboxDiffNote
               points={[
                 `Module() resolves to the ${ENGINE_LABEL[engineMode]} build of softhsmv3, compiled to WebAssembly and running in this browser tab — not the real libsofthsmv3.so shared library the dev sandbox loads. Switch the Engine selector on this playground's other tabs to run your sequence on either build; the Engine row on the right names which one actually ran it.`,
@@ -857,7 +857,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
                 </div>
               </div>
             </div>
-          </main>
+          </section>
 
           {/* RIGHT RAIL — run panel: summary + validation only, the editor lives in Code now */}
           <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">

@@ -315,7 +315,9 @@ const toHex = (bytes: Uint8Array): string =>
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')
 
-const formatBytes = (n: number): string => (n >= 1024 ? `${(n / 1024).toFixed(1)} KB` : `${n} B`)
+// Exact byte count first (cert engineers compare it with the FIPS 205 tables), then the rounded size.
+const formatBytes = (n: number): string =>
+  n >= 1024 ? `${n.toLocaleString('en-US')} B (${(n / 1024).toFixed(1)} KB)` : `${n} B`
 
 interface SLHDSALiveDemoProps {
   /** Which page hosts the demo; picks the intro sentence and the checks shown. Default: standalone. */
@@ -882,8 +884,9 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
               </div>
               <CodeBlock code={`${toHex(signature).slice(0, 120)}...`} />
               <p className="text-[11px] text-muted-foreground mt-1">
-                SLH-DSA signatures contain: WOTS+ one-time signature, FORS forest signatures, and a
-                Merkle hypertree authentication path — see FIPS 205 §6.
+                An SLH-DSA signature is a randomizer R, a FORS signature and a hypertree signature
+                (d XMSS signatures, each a WOTS+ signature plus a Merkle authentication path) — see
+                FIPS 205 §9.2, Figure 17 (FORS is §8, the hypertree §7).
               </p>
             </div>
           )}

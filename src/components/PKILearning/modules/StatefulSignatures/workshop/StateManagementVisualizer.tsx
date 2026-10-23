@@ -49,7 +49,10 @@ function computeLMSConfig(hash: LMSHash, m: LMSm, h: LMSHeight, w: LMSW) {
   // IANA CKP_LMOTS_* base: SHA-256/N32=0x01, SHA-256/N24=0x05, SHAKE/N32=0x09, SHAKE/N24=0x0d
   const lmotsBase = hash === 'SHA-256' ? (m === 32 ? 0x01 : 0x05) : m === 32 ? 0x09 : 0x0d
   const lmotsParam = lmotsBase + LMS_W_VALUES.indexOf(w)
-  const security = m === 32 ? '128-bit (NIST Level 1)' : '96-bit'
+  const security =
+    m === 32
+      ? 'n = 32: collision bound 2^128 (SP 800-208 §9.2)'
+      : 'n = 24: collision bound 2^96 (SP 800-208 §9.2)'
   const hashLabel = hash === 'SHA-256' ? 'SHA256' : 'SHAKE256'
   const pkcs11Name = `LMS_${hashLabel}_M${m}_H${h} / LMOTS_W${w}`
   const keygenNote =
@@ -808,8 +811,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 value: `M${lmsM} (${lmsM} bytes = ${lmsM * 8} bits)`,
                 body:
                   lmsM === 32
-                    ? 'M32: 32-byte hash output → 128-bit security (NIST Level 1 minimum). Recommended for new deployments.'
-                    : 'M24: 24-byte output → 96-bit security. SP 800-208 approved, but M32 is preferred. Use only if bandwidth is constrained.',
+                    ? 'M32: 32-byte hash output. SP 800-208 §9.2: a generic collision in a 256-bit hash may be found as the number of sampled inputs approaches 2^128.'
+                    : 'M24: 24-byte output (SHA-256/192 or SHAKE256/192), approved by SP 800-208. §9.2: a generic collision may be found as the number of sampled inputs approaches 2^96, which weakens a verifier\u2019s assurance that the signer cannot change a message after signing; the formal security of the scheme is not affected. NSA CNSA 2.0 prefers LMS with SHA-256/192 (CNSA 2.0 FAQ v2.2); M24 signatures are also smaller.',
               },
               {
                 label: 'H — Tree Height',

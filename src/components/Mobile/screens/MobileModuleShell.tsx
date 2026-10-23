@@ -11,6 +11,8 @@ import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/le
 // its own mobile-styled list off the same computed relations instead of
 // reusing that component. See eslint.config.js's no-restricted-imports rule.
 import { moduleRelations } from '@/data/moduleRelations'
+import { PERSONAS } from '@/data/learningPersonas'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { MobileNextStepCard } from '../MobileNextStepCard'
 import { MobileUnderstandingCheckCard } from '../MobileUnderstandingCheckCard'
 import { MobilePersonaBlock } from '../MobilePersonaBlock'
@@ -130,7 +132,12 @@ export function MobileModuleShell({
   const sections = (LEARN_SECTIONS[manifest.id] ?? []).filter((s) => requiredIds.has(s.id))
   const checks = modules[manifest.id]?.learnSectionChecks ?? {}
   const checkedCount = sections.filter((s) => checks[s.id]).length
-  const { entries: relatedModules } = moduleRelations(manifest.id)
+  const persona = usePersonaStore((state) => state.selectedPersona)
+  const { entries: relatedModules } = moduleRelations(
+    manifest.id,
+    undefined,
+    persona ? PERSONAS[persona]?.recommendedPath : undefined
+  )
 
   return (
     <div className="flex flex-col gap-4 px-4 pb-4 pt-4">

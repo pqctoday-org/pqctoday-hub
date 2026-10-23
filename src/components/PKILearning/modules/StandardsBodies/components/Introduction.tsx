@@ -880,7 +880,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
               n: 3,
               icon: '🔗',
               t: 'Standards → Certification → Compliance Chain',
-              d: 'Click-to-connect: trace 4 real-world chains from algorithm standard to certification to mandate.',
+              d: 'Match the links of 4 real-world chains to their jobs: algorithm standard, certification, or mandate.',
             },
             {
               n: 4,

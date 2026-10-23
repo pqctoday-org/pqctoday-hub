@@ -50,7 +50,7 @@ describe('SLH-DSA: what the lab tests', () => {
       expect(page, `Learn tab: ${fact}`).toContain(flat(fact))
       expect(rag, `rag-summary: ${fact}`).toContain(flat(fact))
     }
-    // the caveat sits next to the "Good fit" list
+    // the caveat sits next to the list of contexts where the trade-offs are usually acceptable
     expect(page).toContain('national security systems: this list does not apply')
   })
 

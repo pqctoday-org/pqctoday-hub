@@ -11,6 +11,35 @@ const termLookup = new Map<string, GlossaryTerm>(
   })
 )
 
+/**
+ * Keys the glossary writes only in capitals ("CAN", "HE", "FAIR", "NIST"). The match is
+ * case-insensitive so that "Entropy" and "entropy" both link, but a capitals-only key that is also
+ * an ordinary word ("can", "he", "fair", "cast") must be written the way the glossary writes it:
+ * otherwise every "can" in a sentence becomes a glossary chip for the CAN bus.
+ */
+const CAPITALS_ONLY_KEYS = new Map<string, Set<string>>()
+for (const t of glossaryTerms) {
+  for (const spelling of [t.term, t.acronym]) {
+    if (!spelling) continue
+    const key = spelling.toLowerCase()
+    const spellings = CAPITALS_ONLY_KEYS.get(key) ?? new Set<string>()
+    spellings.add(spelling)
+    CAPITALS_ONLY_KEYS.set(key, spellings)
+  }
+}
+for (const [key, spellings] of CAPITALS_ONLY_KEYS) {
+  const capitalsOnly = [...spellings].every((x) => x === x.toUpperCase() && /[A-Z]/.test(x))
+  if (!capitalsOnly) CAPITALS_ONLY_KEYS.delete(key)
+}
+
+/** True when `matched` (as written in the text) is a glossary term, in the case it requires. */
+const isGlossaryMatch = (matched: string): boolean => {
+  const key = matched.toLowerCase()
+  if (!termLookup.has(key)) return false
+  const required = CAPITALS_ONLY_KEYS.get(key)
+  return !required || required.has(matched)
+}
+
 const GLOSSARY_KEYS = [...termLookup.keys()].sort((a, b) => b.length - a.length)
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const patterns = GLOSSARY_KEYS.map(escapeRegExp).join('|')
@@ -25,7 +54,9 @@ export const extractGlossaryTerms = (text: string) => {
   const matches = text.match(GLOSSARY_REGEX)
   if (!matches) return []
 
-  const uniqueTerms = Array.from(new Set(matches.map((m) => m.toLowerCase())))
+  const uniqueTerms = Array.from(
+    new Set(matches.filter(isGlossaryMatch).map((m) => m.toLowerCase()))
+  )
   return uniqueTerms
     .map((term) => {
       const entry = termLookup.get(term)
@@ -53,7 +84,7 @@ export const parseGlossaryText = (text: string): ReactNode => {
 
   return parts.map((part, i) => {
     if (i % 2 === 1) {
-      const entry = termLookup.get(part.toLowerCase())
+      const entry = isGlossaryMatch(part) ? termLookup.get(part.toLowerCase()) : undefined
       if (entry) {
         return <GlossarySpan key={`${i}-${part}`} entry={entry} displayText={part} />
       }

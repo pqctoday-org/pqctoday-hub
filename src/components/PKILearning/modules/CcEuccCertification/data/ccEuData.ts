@@ -691,7 +691,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
             label: 'ACM v3 applies, so follow its PQC list',
             correct: false,
             feedback:
-              'ACM v3 is a draft (public review until end of July 2026). As of 24 September 2026 the applicable version is ACM v2 (6 May 2025).',
+              'ACM v3 is a draft (public review until end of July 2026). As of 24 September 2026 the applicable version is ACM v2 (document dated April 2025; ENISA lists it on 6 May 2025).',
           },
           {
             id: 'fips-enough',
@@ -1090,7 +1090,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Jump to the algorithms layer of the remote-signing trace and pick what the applicable EUCC cryptography guidance says.',
     observe:
-      'Current vs draft: ACM v2 (6 May 2025) already lists ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS and FrodoKEM, and expects lattice schemes hybridised; ACM v3 is still a draft.',
+      'Current vs draft: ACM v2 (document dated April 2025) already lists ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS and FrodoKEM, and expects lattice schemes hybridised; ACM v3 is still a draft.',
     stepId: 'eidas-trace',
     config: { scenario: 'remote-signing', layer: 'algorithms' },
   },

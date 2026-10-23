@@ -43,7 +43,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **BSI** (Germany) — Governmental regulatory agency. TR-02102 series: Technical Guidelines that recommend cryptographic mechanisms and key lengths, including PQC. BSI describes them as recommendations; binding specifications exist only for certain applications, in other BSI documents. Reviewed annually. TR-02102-1 (cryptographic mechanisms), -2 (TLS), -3 (IPsec), -4 (SSH).
 
-**ANSSI** (France) — Governmental regulatory agency. Recommends hybrid PQC (classical + PQC), and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Unique position: permits standalone SLH-DSA (hash-only security assumption). Three-phase roadmap: Phase 1 classical preferred (2022–2025), Phase 2 hybrid preferred (2025–2030), Phase 3 PQC preferred (2030+).
+**ANSSI** (France) — Governmental regulatory agency. Recommends hybrid PQC (classical + PQC), and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Hash-based signatures (SLH-DSA, XMSS, LMS) are the exception: ANSSI does not recommend systematic hybridisation for them (ANSSI PQC FAQ 2025; position paper 2022: a well-studied underlying problem, but a limited range of application). Three-phase roadmap: Phase 1 classical preferred (2022–2025), Phase 2 hybrid preferred (2025–2030), Phase 3 PQC preferred (2030+).
 
 **NSA** (US) — Governmental regulatory agency. CNSA 2.0 (September 2022) mandates ML-KEM-1024 and ML-DSA-87 for National Security Systems (NSS). Binding for US government and DoD contractors.
 
@@ -119,7 +119,7 @@ NIST FIPS 203 → CAVP algorithm validation (via ACVP) → CMVP module certifica
 
 1. **NIST vs CMVP**: NIST wrote the standard; CMVP certifies implementations against it.
 2. **ETSI TS vs ETSI TR**: TS = normative ("shall"), TR = informational guidance.
-3. **ANSSI's unique position**: recommends hybrid PQC (classical + PQC) and makes it mandatory in the French regulated perimeter; permits standalone SLH-DSA.
+3. **ANSSI's position**: recommends hybrid PQC (classical + PQC) and makes it mandatory in the French regulated perimeter; hash-based signatures (SLH-DSA, XMSS, LMS) are the exception to systematic hybridisation.
 4. **CCRA vs EUCC**: the CCRA is the global arrangement (36 countries; recognition limited to collaborative Protection Profiles or up to EAL2 + ALC_FLR); EUCC is a separate EU scheme set up by Commission Implementing Regulation (EU) 2024/482 that applies Common Criteria under EU rules. Certification bodies issue EUCC certificates, national cybersecurity certification authorities supervise, and ENISA publishes.
 5. **IETF vs NIST**: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).
 6. **ISO/IEC vs ETSI**: ISO/IEC SC 27 is global (56 participating and 38 observing national bodies, 5-stage IS process); ETSI is European (800+ members, TC-based TS/TR process).

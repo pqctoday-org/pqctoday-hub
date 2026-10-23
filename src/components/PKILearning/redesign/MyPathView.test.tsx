@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { MyPathView } from './MyPathView'
 import { useModuleStore } from '@/store/useModuleStore'
 import { PERSONAS } from '@/data/learningPersonas'
 
-const renderMyPath = (personaId: 'developer' | 'architect' | 'researcher' = 'developer') =>
+const renderMyPath = (
+  personaId: 'developer' | 'architect' | 'researcher' | 'cert-engineer' = 'developer'
+) =>
   render(
     <MemoryRouter initialEntries={['/learn']}>
       <MyPathView personaId={personaId} onOpenCatalog={() => {}} />
@@ -53,6 +55,25 @@ describe('MyPathView — Essentials tier (A1)', () => {
     expect(screen.getByText('Check our work: reproduce a known-answer test')).toBeInTheDocument()
     expect(screen.queryByText(/Your capstone/i)).toBeNull()
     expect(screen.getByText(`Capstone (locked) — ${PERSONAS.researcher.label}`)).toBeInTheDocument()
+  })
+
+  it('a path that starts at the certificate points a reader new to PQC at PQC 101 and the Algorithms page', () => {
+    renderMyPath('cert-engineer')
+    const note = screen.getByTestId('new-to-pqc-note')
+    expect(note).toHaveTextContent(/If ML-KEM and ML-DSA are new to you/)
+    expect(within(note).getByRole('link', { name: 'PQC 101' })).toHaveAttribute(
+      'href',
+      '/learn/pqc-101'
+    )
+    expect(within(note).getByRole('link', { name: 'Algorithms page' })).toHaveAttribute(
+      'href',
+      '/algorithms'
+    )
+  })
+
+  it('a path that already opens with PQC 101 shows no such note', () => {
+    renderMyPath('developer')
+    expect(screen.queryByTestId('new-to-pqc-note')).toBeNull()
   })
 
   it('switches to the Full track journey via the toggle', () => {

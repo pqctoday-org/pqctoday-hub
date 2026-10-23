@@ -846,10 +846,11 @@ export const FIPS_FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cert-module-fips-140-3-unchanged',
     claim:
-      'FIPS 140-3 (2019) is unchanged, Level 3 included; it pins ISO/IEC 19790:2012/Cor.1:2015 and 24759:2017, and CMVP has not adopted the 2025 ISO editions',
+      'FIPS 140-3 (2019) is unchanged, Level 3 included; it names ISO/IEC 19790:2012/Cor.1:2015 and 24759:2017, and the CMVP’s FIPS 140-3 Standards page lists no 2025 ISO edition',
     source: SECTIONS_SOURCE,
     asOf: FIPS_AS_OF,
-    recheck: 'https://csrc.nist.gov/pubs/fips/140-3/final',
+    recheck:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/fips-140-3-standards',
   },
   {
     id: 'cert-module-cmvp-manual-v2-7',

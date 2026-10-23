@@ -80,7 +80,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       'Entries show cited resources and, where available, when profile sources were last checked; absence from this curated directory proves nothing about a person or contribution.',
     'cert-engineer':
-      'Government and Industry Vendor profiles can lead you to scheme or vendor sources; confirm certificates, status, scope, and effective versions in official registers.',
+      'Government and Industry Vendor profiles link to agency and vendor publications; the directory lists few certification-programme or laboratory profiles, so confirm certificates, status, scope, and effective versions in the official registers.',
     ops: 'Use Industry Vendor and Open Source Maintainer to locate support and release sources, then confirm the exact product, version, platform, and distribution you operate.',
     curious:
       'This is a curated, evidence-linked introduction to people appearing in post-quantum sources—not a complete census, ranking, or endorsement list.',

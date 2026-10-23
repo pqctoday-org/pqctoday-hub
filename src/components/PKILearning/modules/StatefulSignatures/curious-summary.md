@@ -8,11 +8,11 @@ Because each One-Time Signature (OTS) key in the Merkle tree can only be used sa
 
 ### The Key Takeaway
 
-Stateful signatures are so secure they are already authorized by NIST and strictly mandated by NSA's CNSA 2.0 for firmware. However, they require flawless state management, almost always implemented inside a secure hardware module (HSM) with a non-volatile monotonic counter.
+Stateful signatures are among the most conservative post-quantum designs: NIST standardized them in SP 800-208, and NSA's CNSA 2.0 approves LMS and XMSS for signing firmware and software (it prefers LMS with SHA-256/192, and ML-DSA-87 is also allowed for that use). However, they require flawless state management, almost always implemented inside a secure hardware module (HSM) with a non-volatile monotonic counter.
 
 ### What's Happening
 
-LMS and XMSS are the first PQC algorithms to see real-world deployment, already standardized under NIST SP 800-208 and mandated by NSA CNSA 2.0 for firmware and software signing in national security systems.
+LMS and XMSS are the first PQC algorithms to see real-world deployment, already standardized under NIST SP 800-208 and approved by NSA CNSA 2.0 for firmware and software signing in national security systems (ML-DSA-87 is also allowed for that use).
 
 ### How It Is Tested
 

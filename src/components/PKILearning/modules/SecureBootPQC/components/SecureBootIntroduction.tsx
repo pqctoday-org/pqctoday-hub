@@ -298,7 +298,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                     Priv Key
                   </th>
                   <th className="text-right py-2 px-2 text-muted-foreground font-medium">Sig</th>
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">Level</th>
+                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
+                    Strength / category
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -341,13 +343,18 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             </table>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
-            SLH-DSA-SHA2-128s has the smallest public key (32 B) but the largest signature (7,856
-            B). For firmware signing where signature size is the bottleneck, ML-DSA-65 is a common
-            choice. Outside National Security Systems, SLH-DSA may suit long-lived root keys where
-            signing is rare; for NSS it is not an option, because the CNSA 2.0 FAQ (p. 11) says
-            SLH-DSA is not part of CNSA and is not approved for any use in NSS. CNSA 2.0 prefers
-            stateful hash-based signatures (LMS or XMSS, NIST SP 800-208) to start firmware/software
-            signing now; validated ML-DSA-87 is also approved for firmware/software signing.
+            The last column uses two different measures. PQC rows show the NIST security category
+            from FIPS 204 and FIPS 205. Classical rows show the comparable security strength in bits
+            from NIST SP 800-57 Part 1 Rev. 5, Table 2 (RSA-2048: 112, P-256: 128, P-384: 192;
+            RSA-4096 is not a listed size and falls between RSA-3072 at 128 and RSA-7680 at 192),
+            which assumes no large quantum computer. SLH-DSA-SHA2-128s has the smallest public key
+            (32 B) but the largest signature (7,856 B). For firmware signing where signature size is
+            the bottleneck, ML-DSA-65 is a common choice. Outside National Security Systems, SLH-DSA
+            may suit long-lived root keys where signing is rare; for NSS it is not an option,
+            because the CNSA 2.0 FAQ (p. 11) says SLH-DSA is not part of CNSA and is not approved
+            for any use in NSS. CNSA 2.0 prefers stateful hash-based signatures (LMS or XMSS, NIST
+            SP 800-208) to start firmware/software signing now; validated ML-DSA-87 is also approved
+            for firmware/software signing.
           </p>
         </div>
 
@@ -359,8 +366,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             During the transition period, firmware images can carry both an RSA-2048 and ML-DSA-65
             signature. Legacy systems that do not support ML-DSA fall back to RSA verification. New
             systems validate the ML-DSA signature. This dual-signature approach requires careful
-            UEFI variable budget planning — the combined overhead is approximately 3,800 bytes
-            (3,309 B ML-DSA-65 + 512 B RSA-4096 ≈ 3,800 B) per signed component.
+            UEFI variable budget planning — the combined overhead is approximately 3,565 bytes
+            (3,309 B ML-DSA-65 + 256 B RSA-2048 ≈ 3,565 B) per signed component; with an RSA-4096
+            second signature it is about 3,821 bytes (3,309 B + 512 B).
           </p>
         </div>
 

@@ -29,7 +29,10 @@ interface NavigateGuideProps {
 export function NavigateGuide({ persona, onTour, onList, onDismiss }: NavigateGuideProps) {
   return (
     <section
-      className="glass-panel absolute left-3 right-3 top-3 z-10 max-w-xl space-y-2 p-3 sm:left-4 sm:right-auto sm:top-4"
+      // Narrow on a tablet or desktop: the graph is centred in the canvas, so a
+      // 288 px card stays in the empty left margin and does not cover the
+      // category labels (a wide card hid the "Trusted source" label).
+      className="glass-panel absolute left-3 right-3 top-3 z-10 max-w-xl space-y-2 p-3 sm:left-4 sm:right-auto sm:top-4 sm:w-72"
       aria-labelledby="navigate-guide-title"
       data-testid="navigate-guide"
     >

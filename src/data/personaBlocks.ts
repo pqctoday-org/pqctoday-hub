@@ -99,7 +99,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'Sign the same message under all three constructions and compare signature layouts: the trace and the descriptions let you reproduce each composition and its separability property.',
     'cert-engineer':
-      'Sign one message under Concatenation, Nesting and Silithium (Fused): the PKCS#11 trace isolates the ML-DSA-65 calls — the primitive that algorithm testing covers — from the composition wrapped around them.',
+      'Sign one message under Concatenation, Nesting and Silithium (Fused): for Concatenation and Nesting the PKCS#11 trace isolates the ML-DSA-65 calls — the primitive that algorithm testing covers — from the composition wrapped around them. Silithium runs below the PKCS#11 boundary, so its trace stays empty; the IETF LAMPS composite ML-DSA specification (draft-ietf-lamps-pq-composite-sigs) is the standards-track route a lab would test.',
   },
   '/playground/kdf-derivation': {
     developer:
@@ -740,7 +740,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The IETF reference artifacts in the certificate deep-dive and the three signature compositions with their non-separability properties are the material to check against the drafts.',
     ops: 'Generate the classical and PQC root CAs and the hybrid certificate formats: which one a relying party that only knows ECDSA still validates is the property your fleet needs during migration.',
     'cert-engineer':
-      'The three signature compositions and the hybrid X.509 formats with their IETF reference artifacts show which part is a tested primitive and which is composition built on top of it.',
+      'Start with the “Hybrid in a validated module (IG D.S)” callout in the Learn tab, then Step 2 (hybrid KEM encapsulation and signing) and Step 5 (inspect the hybrid certificates against their IETF reference artifacts): they show which part is a tested primitive and which is composition built on top of it. Steps 6 and 7 (hybrid signature constructions, including the Silithium research proposal, and HPKE) are background for this role.',
   },
   '/learn/iam-pqc': {
     executive:

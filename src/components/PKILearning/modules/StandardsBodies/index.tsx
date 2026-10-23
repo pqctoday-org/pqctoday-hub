@@ -34,7 +34,7 @@ const PARTS: WorkshopPart[] = [
     id: 'chain-builder',
     title: 'Step 3: Standards → Certification → Compliance Chain',
     description:
-      'Trace the chain from algorithm standard to certification program to compliance mandate in 4 real scenarios.',
+      'Place the three links of 4 real chains (algorithm standard, certification program, compliance mandate) in their jobs, with feedback on each.',
     icon: Link,
   },
   {

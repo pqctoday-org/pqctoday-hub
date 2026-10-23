@@ -776,7 +776,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           (FIPS 205)
         </div>
 
-        {/* FIPS 205 §6 internal parameters — collapsible */}
+        {/* FIPS 205 §11 Table 2 internal parameters — collapsible */}
         <Button
           variant="ghost"
           type="button"
@@ -784,7 +784,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           className="flex items-center gap-1 text-[11px] text-primary/80 hover:text-primary transition-colors"
         >
           {showInternalParams ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-          FIPS 205 §6 internal parameters (n, h, d, a, k, lg_w)
+          FIPS 205 §11 Table 2 internal parameters (n, h, d, a, k, lg_w)
         </Button>
         {showInternalParams &&
           (() => {

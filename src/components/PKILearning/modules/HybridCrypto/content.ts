@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -114,7 +114,7 @@ export const content: ModuleContent = {
     hybridRationale:
       'Hybrid cryptography solves the dilemma of PQC being newer (less cryptanalysis) while the HNDL threat is real now. For key exchange, the shared secret stays secret as long as either component KEM is unbroken, provided the combiner is a sound one (for example the TLS hybrid design or X-Wing). For signatures, a forgery requires breaking both algorithms, provided the verifier requires both signatures to be valid.',
     anssiMandate:
-      'ANSSI recommends hybrid mode for PQC deployments and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Exception: hash-based signatures (SLH-DSA, LMS, XMSS) leveraging functions like SHA-3 may be used standalone due to their conservative security assumptions.',
+      'ANSSI recommends hybrid mode for PQC deployments and makes it mandatory inside the French regulated perimeter (classified and Diffusion Restreinte data, vital information systems, certified or qualified products). Exception: for hash-based signatures (SLH-DSA, XMSS, LMS) ANSSI does not recommend systematic hybridisation (ANSSI PQC FAQ 2025).',
     nistRecommendation:
       'NIST SP 800-227 describes how to combine key-establishment mechanisms securely (§4.6). A suitably designed classical/PQC combination can retain security if one component remains secure. Compatibility with existing systems depends on the protocol and the mechanisms each participant supports.',
     certFormatExplain:

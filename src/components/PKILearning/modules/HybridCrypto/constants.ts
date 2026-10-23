@@ -317,7 +317,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'SLH-DSA (SPHINCS+) uses hash-based constructions with no lattice assumptions. RFC 9909 (published December 2025) defines the X.509 profile, but CA/browser ecosystem adoption is still nascent — significantly behind ML-DSA (RFC 9881). ANSSI allows standalone use of hash-based signatures (SLH-DSA, LMS, XMSS) even without hybrid mode, since their security relies only on hash function properties.',
+      'SLH-DSA (SPHINCS+) uses hash-based constructions with no lattice assumptions. RFC 9909 (published December 2025) defines the X.509 profile, but CA/browser ecosystem adoption is still nascent — significantly behind ML-DSA (RFC 9881). ANSSI does not recommend systematic hybridisation for hash-based signatures (SLH-DSA, XMSS, LMS); its 2022 position paper gives their well-studied underlying problem as the reason.',
     classicalAlg: null,
     pqcAlg: 'SLH-DSA-128s',
   },

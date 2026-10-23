@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
+import React, { useContext } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useWorkshopNavigation } from '../contexts/WorkshopNavigationContext'
+import {
+  ModuleWorkshopNextContext,
+  useWorkshopNavigation,
+} from '../contexts/WorkshopNavigationContext'
 
 interface PlaygroundNextStepProps {
   toolId: string
@@ -18,6 +21,11 @@ export const PlaygroundNextStep: React.FC<PlaygroundNextStepProps> = ({
   className = '',
 }) => {
   const { selectTool } = useWorkshopNavigation()
+  const inModule = useContext(ModuleWorkshopNextContext)
+  // Inside a Learn module's stepper the module names the next step on the learner's path; on its
+  // last step there is no next card.
+  if (inModule === null) return null
+  const card = inModule ?? { name, description, open: () => selectTool(toolId) }
   return (
     <div className={`mt-8 border-t border-border pt-6 ${className}`}>
       <div className="flex items-center justify-between gap-4 p-4 rounded-lg border border-primary/20 bg-primary/5">
@@ -25,10 +33,10 @@ export const PlaygroundNextStep: React.FC<PlaygroundNextStepProps> = ({
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
             Next in sequence
           </p>
-          <p className="text-sm font-semibold text-foreground">{name}</p>
-          <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
+          <p className="text-sm font-semibold text-foreground">{card.name}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">{card.description}</p>
         </div>
-        <Button variant="outline" onClick={() => selectTool(toolId)} className="shrink-0 gap-2">
+        <Button variant="outline" onClick={card.open} className="shrink-0 gap-2">
           Open
           <ArrowRight size={14} />
         </Button>

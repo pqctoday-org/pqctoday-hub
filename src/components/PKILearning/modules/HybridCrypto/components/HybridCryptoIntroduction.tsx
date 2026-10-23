@@ -178,10 +178,11 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Hash-based signature (SPHINCS+) with no lattice assumptions. OIDs in{' '}
-                  <strong>RFC 9909</strong>. <InlineTooltip term="ANSSI">ANSSI</InlineTooltip>{' '}
-                  allows standalone SLH-DSA without hybrid &mdash; security relies only on hash
-                  function properties. Larger signatures (7,856 B, about 7.9 KB, for
-                  SLH-DSA-SHA2-128s per FIPS 205) are the trade-off.
+                  <strong>RFC 9909</strong>. <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> does
+                  not recommend systematic hybridisation for hash-based signatures such as SLH-DSA,
+                  XMSS and LMS, because it considers their underlying problem well studied (its 2022
+                  position paper also notes their limited range of application). Larger signatures
+                  (7,856 B, about 7.9 KB, for SLH-DSA-SHA2-128s per FIPS 205) are the trade-off.
                 </p>
               </div>
               {/* Composite */}

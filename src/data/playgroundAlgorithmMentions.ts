@@ -59,6 +59,11 @@ export const PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS: Record<string, Incidental
       reason:
         'Comparison and lab-test text: the size table and ACVP notes name XMSS beside LMS; the tool itself runs SLH-DSA, not XMSS.',
     },
+    'lms-hss:ML-DSA': {
+      coverage: 'teaches',
+      reason:
+        'CNSA 2.0 and comparison text: the notes say ML-DSA-87 is also approved for firmware signing; the tool itself signs and verifies LMS and HSS only.',
+    },
     'lms-hss:SLH-DSA': {
       coverage: 'teaches',
       reason:

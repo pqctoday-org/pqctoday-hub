@@ -1622,8 +1622,9 @@ export const EuccPqcToday = () => (
 
     <Callout tone="current" title="Applicable guidance checked 21 October 2026">
       <p>
-        <SourceCite id="EUCC v2.0 ACM" label="ECCG Agreed Cryptographic Mechanisms v2" /> and the
-        EUCC Guidelines on Cryptography v2, both published 6 May 2025:
+        <SourceCite id="EUCC v2.0 ACM" label="ECCG Agreed Cryptographic Mechanisms v2" /> (the
+        document is dated April 2025) and the EUCC Guidelines on Cryptography v2; ENISA’s page lists
+        both with the date 6 May 2025:
       </p>
       <ul className="list-disc space-y-1 pl-5">
         <li>

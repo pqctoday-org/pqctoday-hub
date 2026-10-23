@@ -104,8 +104,11 @@ const Step1Overview: React.FC = () => (
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
         The tradeoff: SLH-DSA signatures are significantly larger (8–50 KB vs LMS ~1–4 KB) and
-        signing is slower due to the hypertree traversal. For most applications the stateless safety
-        is worth it.
+        signing is slower due to the hypertree traversal. Whether the stateless design is worth that
+        cost depends on the deployment: a signing key that is used from several places, or restored
+        from a backup, makes a leaf counter hard to keep safe. The three lists below are planning
+        heuristics drawn from the sizes and speeds above, not requirements of FIPS 205 or of any
+        policy.
       </p>
     </section>
 
@@ -114,7 +117,7 @@ const Step1Overview: React.FC = () => (
       <div className="grid sm:grid-cols-3 gap-3 text-xs">
         {[
           {
-            title: 'Good fit',
+            title: 'Where the trade-offs are usually acceptable',
             items: [
               'Code signing',
               'Certificate issuance',
@@ -134,7 +137,7 @@ const Step1Overview: React.FC = () => (
             color: 'text-status-warning',
           },
           {
-            title: 'Prefer ML-DSA instead',
+            title: 'Where ML-DSA is usually the better match',
             items: [
               'Real-time signing (e.g. TLS)',
               'IoT with tiny payloads',

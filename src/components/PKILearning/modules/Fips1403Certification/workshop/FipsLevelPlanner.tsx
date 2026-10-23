@@ -26,6 +26,7 @@ import { OptionTile } from '@/components/common/OptionTile'
 import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 import {
   ANCHOR_SCENARIO,
+  inSentence,
   type AnchorComponentId,
 } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import {
@@ -269,7 +270,7 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
       `Outside: ${outside.join(', ') || '(nothing)'}`,
       `Target: ${levelLabel}`,
       `Entropy architecture: ${entropyArchitecture ?? '(not chosen)'}`,
-      `Evidence for ${ANCHOR_SCENARIO.change.toLowerCase()}: ${evidenceLabels.join('; ') || '(none)'}`,
+      `Evidence for ${inSentence(ANCHOR_SCENARIO.change)}: ${evidenceLabels.join('; ') || '(none)'}`,
       `CMVP route: ${routeLabel}`,
       `Procurement claim: "${claimText}"`,
       'Assumptions to record: physical access; operator controls; operational environment; entropy-source location; tested configurations.',
@@ -314,9 +315,8 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
         <p className="text-sm text-foreground/80">
           Plan one FIPS 140-3 validation for a deployment of {ANCHOR_SCENARIO.name}: draw the module
           boundary, choose the target level, then plan the evidence, route and claim for{' '}
-          {ANCHOR_SCENARIO.change.charAt(0).toLowerCase() + ANCHOR_SCENARIO.change.slice(1)}. The
-          planner scores <strong>fit</strong>, not height: a level above what the threat model needs
-          is marked over-specified.
+          {inSentence(ANCHOR_SCENARIO.change)}. The planner scores <strong>fit</strong>, not height:
+          a level above what the threat model needs is marked over-specified.
         </p>
       </div>
 

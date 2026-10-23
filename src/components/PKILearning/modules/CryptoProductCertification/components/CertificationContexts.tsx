@@ -78,3 +78,21 @@ export const CertificationContexts = () => (
     </p>
   </section>
 )
+
+/**
+ * One line for the scheme deep dives that follow the Fundamentals module, which carries the full
+ * side-by-side comparison above.
+ */
+export const CertificationContextsPointer = () => (
+  <section
+    aria-label="Separate certification contexts"
+    className="rounded-lg border border-border p-4 text-sm"
+  >
+    FIPS 140-3, Common Criteria and EUCC answer different questions, and evidence accepted in one
+    does not automatically satisfy another. The side-by-side comparison is in{' '}
+    <Link className="text-primary underline" to="/learn/crypto-product-certification">
+      Cryptographic Product Certification: Fundamentals
+    </Link>
+    .
+  </section>
+)

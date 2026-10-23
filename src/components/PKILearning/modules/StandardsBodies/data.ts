@@ -167,12 +167,12 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       'French national cybersecurity agency. It strongly recommends hybrid (classical + PQC) cryptography, and hybridisation is mandatory only inside the regulated perimeter: defence-classified and Diffusion Restreinte information, vital information systems, and products certified or qualified through ANSSI security visas. ANSSI published influential PQC position papers in 2022 and 2023 distinguishing hash-based algorithms (no systematic hybridisation recommended) from lattice-based algorithms (hybrid recommended).',
     decisionMaking:
-      'Government agency (under Prime Minister). Issues position papers and technical notes through expert review. Three-phase PQC roadmap: Phase 1 (2022–2025, classical preferred) → Phase 2 (2025–2030, hybrid preferred) → Phase 3 (2030+, PQC preferred). Unique stance: permits standalone SLH-DSA due to hash-only security assumption.',
+      'Government agency (under Prime Minister). Issues position papers and technical notes through expert review. Three-phase PQC roadmap: Phase 1 (2022–2025, classical preferred) → Phase 2 (2025–2030, hybrid preferred) → Phase 3 (2030+, PQC preferred). The one exception to systematic hybridisation is hash-based signatures (SLH-DSA, XMSS, LMS): ANSSI considers them usable without hybridisation because of their well-studied underlying problem, while noting their limited range of application.',
     keyPqcOutputs: [
       'ANSSI PQC Position Paper (2022)',
       'ANSSI PQC Follow-up Paper (2023)',
       'Hybrid PQC position: strongly recommended for lattice-based schemes such as ML-DSA, mandatory inside the regulated perimeter',
-      'SLH-DSA standalone approved (hash-based, distinct security assumption)',
+      'Hash-based signatures (SLH-DSA, XMSS, LMS): systematic hybridisation not recommended',
     ],
     libraryRefs: ['ANSSI PQC Position Paper', 'ANSSI PQC Follow-up Paper'],
     websiteUrl:
@@ -281,7 +281,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     decisionMaking:
       'Issues mandates via CNSSP (Committee on National Security Systems Policy). CNSA 2.0 issued September 2022 with phased deadlines. NSA CSfC (Commercial Solutions for Classified) program certifies commercial products for classified use.',
     keyPqcOutputs: [
-      'CNSA 2.0 (September 2022) – mandates ML-KEM-1024, ML-DSA-87, LMS and XMSS (software/firmware signing)',
+      'CNSA 2.0 (September 2022) – specifies ML-KEM-1024 and ML-DSA-87, and approves LMS and XMSS for software/firmware signing',
       'NSA CNSA 2.0 FAQ',
       'NSA CSfC PQC Guidance Addendum',
     ],
@@ -376,7 +376,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'anssi',
     name: 'ANSSI',
     acronym: "Agence nationale de la sécurité des systèmes d'information (France)",
-    hint: 'Strongly recommends hybrid PQC (classical + PQC); mandatory inside the French regulated perimeter. Unique position on SLH-DSA.',
+    hint: 'Strongly recommends hybrid PQC (classical + PQC); mandatory inside the French regulated perimeter. Hash-based signatures (SLH-DSA, XMSS, LMS) are the exception.',
     correctType: 'regulatory-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',

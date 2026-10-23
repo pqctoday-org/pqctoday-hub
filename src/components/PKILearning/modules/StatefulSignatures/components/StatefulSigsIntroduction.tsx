@@ -77,11 +77,14 @@ const Step1WhyAndMerkle: React.FC = () => (
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-xs font-bold text-primary mb-1">CNSA 2.0 Required</div>
+            <div className="text-xs font-bold text-primary mb-1">
+              CNSA 2.0 for national security systems
+            </div>
             <p className="text-xs text-muted-foreground mb-2">
               NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> approves single-tree LMS
               and XMSS (not HSS or XMSS^MT) for firmware and software signing in national security
-              systems, and prefers LMS with SHA-256/192. Phased timeline:
+              systems, and prefers LMS with SHA-256/192; ML-DSA-87 is also allowed for this use.
+              Phased timeline:
             </p>
             <ul className="text-xs text-muted-foreground space-y-0.5">
               <li>
@@ -546,7 +549,8 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
                 <tr className="border-b border-border/50">
                   <td className="py-2 pr-4 font-medium text-foreground">CNSA 2.0</td>
                   <td className="py-2 pr-4 text-success font-medium">
-                    Required for firmware/software
+                    Approved for firmware/software signing (LMS SHA-256/192 recommended; ML-DSA-87
+                    also allowed)
                   </td>
                   <td className="py-2 text-muted-foreground">Not included in CNSA 2.0</td>
                 </tr>

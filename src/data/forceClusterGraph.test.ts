@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { buildForceClusterGraph, type ForceClusterNodeType } from './forceClusterGraph'
+import { buildForceClusterGraph, humanizeSub, type ForceClusterNodeType } from './forceClusterGraph'
 import { leadersData } from './leadersData'
 
 describe('buildForceClusterGraph', () => {
@@ -69,5 +69,29 @@ describe('buildForceClusterGraph', () => {
       const value = new URL(n.href!, 'https://x.test').searchParams.get('leader')
       expect(ids.has(value!)).toBe(true)
     }
+  })
+  it('shows sub-category labels as plain words, without underscores', async () => {
+    const graph = await buildForceClusterGraph()
+    const subs = new Set(graph.nodes.map((n) => n.sub))
+    for (const sub of subs) expect(sub).not.toMatch(/_/)
+    // The registry's "needs human classification" marker is not shown to readers.
+    for (const sub of subs) expect(sub).not.toMatch(/^PENDING/)
+    // The compliance registry stores these as snake_case; the label is spaced.
+    const complianceSubs = new Set(
+      graph.nodes.filter((n) => n.type === 'compliance').map((n) => n.sub)
+    )
+    expect(complianceSubs.has('Certification body')).toBe(true)
+    expect(complianceSubs.has('Technical standard')).toBe(true)
+    expect(complianceSubs.has('Compliance framework')).toBe(true)
+  })
+
+  it('humanizeSub spaces underscores, capitalises the first letter and keeps good labels', () => {
+    expect(humanizeSub('certification_body')).toBe('Certification body')
+    expect(humanizeSub('software_security')).toBe('Software security')
+    expect(humanizeSub('telecom')).toBe('Telecom')
+    expect(humanizeSub('Standards Body')).toBe('Standards Body')
+    expect(humanizeSub('IoT')).toBe('IoT')
+    expect(humanizeSub('Cross-sector')).toBe('Cross-sector')
+    expect(humanizeSub('PENDING — needs human classification')).toBe('Unclassified')
   })
 })

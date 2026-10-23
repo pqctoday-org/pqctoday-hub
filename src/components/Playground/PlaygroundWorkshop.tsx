@@ -874,6 +874,8 @@ export const PlaygroundWorkshop = () => {
 
   // Local UI state.
   const [searchText, setSearchText] = useState('')
+  // The tools tagged for the role beyond the few picks shown first (overview only).
+  const [showAllForRole, setShowAllForRole] = useState(false)
   const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
   const caps = useDeviceCapabilities()
   const isBelowLg = useIsBelowLgViewport()
@@ -1102,6 +1104,15 @@ export const PlaygroundWorkshop = () => {
       return tool && !isLocked(tool) ? [tool] : []
     })
   }, [role, roleJourney, visibleTools, isLocked, sortTools])
+
+  // The role-tagged tools the picks above do not show, in the role journey's order. Respects the
+  // difficulty and run filters, like the picks do.
+  const roleTaggedRest = useMemo(() => {
+    if (!role) return []
+    const shown = new Set(recommendedPool.map((t) => t.id))
+    const visible = new Set(visibleTools.map((t) => t.id))
+    return playgroundToolsForRole(role).filter((t) => visible.has(t.id) && !shown.has(t.id))
+  }, [role, recommendedPool, visibleTools])
 
   // ── Actions ──────────────────────────────────────────────────────────────
   const openTool = useCallback(
@@ -1577,6 +1588,26 @@ export const PlaygroundWorkshop = () => {
             title="Nothing at this difficulty"
             subtitle="Switch the difficulty filter back to All."
           />
+        )}
+        {role && roleTaggedRest.length > 0 && (
+          <div className="mt-3">
+            <Button
+              type="button"
+              variant="ghost"
+              aria-expanded={showAllForRole}
+              onClick={() => setShowAllForRole((open) => !open)}
+              className="h-auto gap-1.5 px-2 py-1 text-[12.5px] font-semibold text-primary"
+            >
+              {showAllForRole
+                ? 'Show fewer'
+                : `Show the other ${roleTaggedRest.length} tools tagged for ${roleLabel(role)}`}
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform ${showAllForRole ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              />
+            </Button>
+            {showAllForRole && renderGrid(roleTaggedRest)}
+          </div>
         )}
         {roleJourney && (
           <div className="mt-3 flex flex-col gap-2 rounded-xl border border-border bg-muted/25 p-4 sm:flex-row sm:items-center sm:justify-between">

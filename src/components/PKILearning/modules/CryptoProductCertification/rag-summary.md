@@ -2,9 +2,9 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-065) distinguishes FIPS 140-3 module validation, Common Criteria product evaluation, EUCC scheme rules and PCI approval. Common Criteria supplies evaluation criteria; EUCC uses those criteria under an EU certification scheme. eIDAS is a separate legal context where applicable. The module explains certificate scope and what adding PQC changes, with links to LM-067 _FIPS 140-3 Certification_, LM-068 _Common Criteria, EUCC & eIDAS Certification_ and LM-071 _PCI Certification_. It is written for product vendors, product-assurance leads, buyers and evaluators. It is labelled "Practitioner orientation — not laboratory training." It was reviewed and signed off by the PQC Today owner on 22 October 2026; it has not been reviewed by an accredited laboratory or certification body. The context-separation correction was checked on 21 October 2026; other dated claims retain their individual source dates.
+This advanced Hardware Infrastructure module (LM-065) distinguishes FIPS 140-3 module validation, Common Criteria product evaluation, EUCC scheme rules and PCI approval. Common Criteria supplies evaluation criteria; EUCC uses those criteria under an EU certification scheme. eIDAS is a separate legal context where applicable. The module explains certificate scope and what adding PQC changes, with links to LM-067 _FIPS 140-3 Certification_, LM-068 _Common Criteria, EUCC & eIDAS Certification_ and LM-071 _PCI Certification_. It is written for product vendors, product-assurance leads, buyers and evaluators. It is labelled "Practitioner orientation — not laboratory training." It was reviewed and signed off by the PQC Today owner on 22 October 2026; corrections made since then are awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. The context-separation correction was checked on 21 October 2026; other dated claims retain their individual source dates.
 
-The module is a single ~60-minute route with no learn paths. Deeper material is kept as optional reference sections that do not count toward duration or completion.
+The module is a single ~90-minute route with no learn paths. Deeper material is kept as optional reference sections that do not count toward duration or completion.
 
 ## Key Concepts
 
