@@ -1547,6 +1547,18 @@
         {
           "pointer": "/testGroups/2/tests",
           "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/3/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/4/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/5/tests",
+          "kind": "array"
         }
       ],
       "cases": [
@@ -1702,7 +1714,7 @@
             "tgId": 1,
             "tcId": 9
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/1",
@@ -1724,7 +1736,7 @@
             "tgId": 1,
             "tcId": 11
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/2",
@@ -1746,7 +1758,7 @@
             "tgId": 1,
             "tcId": 12
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/3",
@@ -1768,7 +1780,7 @@
             "tgId": 1,
             "tcId": 13
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/4",
@@ -1790,7 +1802,7 @@
             "tgId": 1,
             "tcId": 14
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/5",
@@ -1812,7 +1824,7 @@
             "tgId": 1,
             "tcId": 15
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/6",
@@ -1834,7 +1846,7 @@
             "tgId": 1,
             "tcId": 16
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/7",
@@ -1856,7 +1868,7 @@
             "tgId": 1,
             "tcId": 17
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/8",
@@ -1878,7 +1890,7 @@
             "tgId": 1,
             "tcId": 18
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/9",
@@ -1900,7 +1912,7 @@
             "tgId": 1,
             "tcId": 19
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/10",
@@ -1922,7 +1934,7 @@
             "tgId": 1,
             "tcId": 20
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/11",
@@ -1944,7 +1956,7 @@
             "tgId": 1,
             "tcId": 21
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/12",
@@ -1966,7 +1978,7 @@
             "tgId": 1,
             "tcId": 22
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/13",
@@ -1988,7 +2000,7 @@
             "tgId": 1,
             "tcId": 23
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/14",
@@ -2010,7 +2022,7 @@
             "tgId": 1,
             "tcId": 24
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/3/tests/15",
@@ -2032,7 +2044,7 @@
             "tgId": 1,
             "tcId": 25
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-4"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/0",
@@ -2054,7 +2066,7 @@
             "tgId": 2,
             "tcId": 29
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/1",
@@ -2076,7 +2088,7 @@
             "tgId": 2,
             "tcId": 36
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/2",
@@ -2098,7 +2110,7 @@
             "tgId": 2,
             "tcId": 37
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/3",
@@ -2120,7 +2132,7 @@
             "tgId": 2,
             "tcId": 38
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/4",
@@ -2142,7 +2154,7 @@
             "tgId": 2,
             "tcId": 39
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/5",
@@ -2164,7 +2176,7 @@
             "tgId": 2,
             "tcId": 40
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/6",
@@ -2186,7 +2198,7 @@
             "tgId": 2,
             "tcId": 41
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/7",
@@ -2208,7 +2220,7 @@
             "tgId": 2,
             "tcId": 42
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/8",
@@ -2230,7 +2242,7 @@
             "tgId": 2,
             "tcId": 43
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/9",
@@ -2252,7 +2264,7 @@
             "tgId": 2,
             "tcId": 44
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/10",
@@ -2274,7 +2286,7 @@
             "tgId": 2,
             "tcId": 45
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/11",
@@ -2296,7 +2308,7 @@
             "tgId": 2,
             "tcId": 46
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/12",
@@ -2318,7 +2330,7 @@
             "tgId": 2,
             "tcId": 47
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/13",
@@ -2340,7 +2352,7 @@
             "tgId": 2,
             "tcId": 48
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/14",
@@ -2362,7 +2374,7 @@
             "tgId": 2,
             "tcId": 49
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/4/tests/15",
@@ -2384,7 +2396,7 @@
             "tgId": 2,
             "tcId": 50
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-5"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/0",
@@ -2406,7 +2418,7 @@
             "tgId": 3,
             "tcId": 53
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/1",
@@ -2428,7 +2440,7 @@
             "tgId": 3,
             "tcId": 58
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/2",
@@ -2450,7 +2462,7 @@
             "tgId": 3,
             "tcId": 61
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/3",
@@ -2472,7 +2484,7 @@
             "tgId": 3,
             "tcId": 62
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/4",
@@ -2494,7 +2506,7 @@
             "tgId": 3,
             "tcId": 63
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/5",
@@ -2516,7 +2528,7 @@
             "tgId": 3,
             "tcId": 64
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/6",
@@ -2538,7 +2550,7 @@
             "tgId": 3,
             "tcId": 65
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/7",
@@ -2560,7 +2572,7 @@
             "tgId": 3,
             "tcId": 66
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/8",
@@ -2582,7 +2594,7 @@
             "tgId": 3,
             "tcId": 67
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/9",
@@ -2604,7 +2616,7 @@
             "tgId": 3,
             "tcId": 68
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/10",
@@ -2626,7 +2638,7 @@
             "tgId": 3,
             "tcId": 69
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/11",
@@ -2648,7 +2660,7 @@
             "tgId": 3,
             "tcId": 70
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/12",
@@ -2670,7 +2682,7 @@
             "tgId": 3,
             "tcId": 71
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/13",
@@ -2692,7 +2704,7 @@
             "tgId": 3,
             "tcId": 72
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/14",
@@ -2714,7 +2726,7 @@
             "tgId": 3,
             "tcId": 73
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/15",
@@ -2736,7 +2748,7 @@
             "tgId": 3,
             "tcId": 74
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         },
         {
           "caseId": "aesctr_acvp_test#/testGroups/5/tests/16",
@@ -2758,7 +2770,7 @@
             "tgId": 3,
             "tcId": 75
           },
-          "lineage": ["aesctr-acvp-test-1"]
+          "lineage": ["aesctr-acvp-test-6"]
         }
       ],
       "lineage": [
@@ -2828,6 +2840,118 @@
             {
               "type": "operation-change",
               "detail": "In addition to the upstream decryption, the same (key, counter block, pt, ct) tuple is run as an encryption: CTR encryption and decryption are the same keystream XOR, so ct is the expected encryption output."
+            }
+          ]
+        },
+        {
+          "id": "aesctr-acvp-test-4",
+          "appliesTo": [
+            "aesctr_acvp_test#/testGroups/3/tests/0",
+            "aesctr_acvp_test#/testGroups/3/tests/1",
+            "aesctr_acvp_test#/testGroups/3/tests/2",
+            "aesctr_acvp_test#/testGroups/3/tests/3",
+            "aesctr_acvp_test#/testGroups/3/tests/4",
+            "aesctr_acvp_test#/testGroups/3/tests/5",
+            "aesctr_acvp_test#/testGroups/3/tests/6",
+            "aesctr_acvp_test#/testGroups/3/tests/7",
+            "aesctr_acvp_test#/testGroups/3/tests/8",
+            "aesctr_acvp_test#/testGroups/3/tests/9",
+            "aesctr_acvp_test#/testGroups/3/tests/10",
+            "aesctr_acvp_test#/testGroups/3/tests/11",
+            "aesctr_acvp_test#/testGroups/3/tests/12",
+            "aesctr_acvp_test#/testGroups/3/tests/13",
+            "aesctr_acvp_test#/testGroups/3/tests/14",
+            "aesctr_acvp_test#/testGroups/3/tests/15"
+          ],
+          "upstreamOperation": "ACVP-AES-CTR 1.0 AFT encrypt (keyLen 128, RFC 3686 test mode, ivGenMode internal)",
+          "localOperation": "C_Encrypt (CKM_AES_CTR) with NIST's sample IV supplied as the counter block, byte-compared to ct, then C_Decrypt of ct byte-compared to pt; the module's own IV generation is not tested",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "16 case(s) (the byte-aligned ones, upstream tcId 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25) taken from upstream tgId 1 (150 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups (AES-128/192/256): the shortest and the longest byte-aligned payload per group. Encrypt groups (ivGenMode internal, deferred=true): every byte-aligned case, with the IV and ciphertext the NIST reference generated; NIST's sample IV is supplied as the counter block, so the module's own IV generation is not tested. PKCS#11 processes whole bytes, so the bit-length payloads are not carried; the encrypt groups' bit-length cases are listed in notExecuted."
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream lets the implementation choose the IV (ivGenMode internal, deferred=true); the sample IV and ciphertext the NIST reference generated are used as given, so this checks the cipher, not IV generation. The same tuple is also run as a decryption."
+            }
+          ]
+        },
+        {
+          "id": "aesctr-acvp-test-5",
+          "appliesTo": [
+            "aesctr_acvp_test#/testGroups/4/tests/0",
+            "aesctr_acvp_test#/testGroups/4/tests/1",
+            "aesctr_acvp_test#/testGroups/4/tests/2",
+            "aesctr_acvp_test#/testGroups/4/tests/3",
+            "aesctr_acvp_test#/testGroups/4/tests/4",
+            "aesctr_acvp_test#/testGroups/4/tests/5",
+            "aesctr_acvp_test#/testGroups/4/tests/6",
+            "aesctr_acvp_test#/testGroups/4/tests/7",
+            "aesctr_acvp_test#/testGroups/4/tests/8",
+            "aesctr_acvp_test#/testGroups/4/tests/9",
+            "aesctr_acvp_test#/testGroups/4/tests/10",
+            "aesctr_acvp_test#/testGroups/4/tests/11",
+            "aesctr_acvp_test#/testGroups/4/tests/12",
+            "aesctr_acvp_test#/testGroups/4/tests/13",
+            "aesctr_acvp_test#/testGroups/4/tests/14",
+            "aesctr_acvp_test#/testGroups/4/tests/15"
+          ],
+          "upstreamOperation": "ACVP-AES-CTR 1.0 AFT encrypt (keyLen 192, RFC 3686 test mode, ivGenMode internal)",
+          "localOperation": "C_Encrypt (CKM_AES_CTR) with NIST's sample IV supplied as the counter block, byte-compared to ct, then C_Decrypt of ct byte-compared to pt; the module's own IV generation is not tested",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "16 case(s) (the byte-aligned ones, upstream tcId 29, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50) taken from upstream tgId 2 (150 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups (AES-128/192/256): the shortest and the longest byte-aligned payload per group. Encrypt groups (ivGenMode internal, deferred=true): every byte-aligned case, with the IV and ciphertext the NIST reference generated; NIST's sample IV is supplied as the counter block, so the module's own IV generation is not tested. PKCS#11 processes whole bytes, so the bit-length payloads are not carried; the encrypt groups' bit-length cases are listed in notExecuted."
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream lets the implementation choose the IV (ivGenMode internal, deferred=true); the sample IV and ciphertext the NIST reference generated are used as given, so this checks the cipher, not IV generation. The same tuple is also run as a decryption."
+            }
+          ]
+        },
+        {
+          "id": "aesctr-acvp-test-6",
+          "appliesTo": [
+            "aesctr_acvp_test#/testGroups/5/tests/0",
+            "aesctr_acvp_test#/testGroups/5/tests/1",
+            "aesctr_acvp_test#/testGroups/5/tests/2",
+            "aesctr_acvp_test#/testGroups/5/tests/3",
+            "aesctr_acvp_test#/testGroups/5/tests/4",
+            "aesctr_acvp_test#/testGroups/5/tests/5",
+            "aesctr_acvp_test#/testGroups/5/tests/6",
+            "aesctr_acvp_test#/testGroups/5/tests/7",
+            "aesctr_acvp_test#/testGroups/5/tests/8",
+            "aesctr_acvp_test#/testGroups/5/tests/9",
+            "aesctr_acvp_test#/testGroups/5/tests/10",
+            "aesctr_acvp_test#/testGroups/5/tests/11",
+            "aesctr_acvp_test#/testGroups/5/tests/12",
+            "aesctr_acvp_test#/testGroups/5/tests/13",
+            "aesctr_acvp_test#/testGroups/5/tests/14",
+            "aesctr_acvp_test#/testGroups/5/tests/15",
+            "aesctr_acvp_test#/testGroups/5/tests/16"
+          ],
+          "upstreamOperation": "ACVP-AES-CTR 1.0 AFT encrypt (keyLen 256, RFC 3686 test mode, ivGenMode internal)",
+          "localOperation": "C_Encrypt (CKM_AES_CTR) with NIST's sample IV supplied as the counter block, byte-compared to ct, then C_Decrypt of ct byte-compared to pt; the module's own IV generation is not tested",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "17 case(s) (the byte-aligned ones, upstream tcId 53, 58, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75) taken from upstream tgId 3 (150 case(s) in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups (AES-128/192/256): the shortest and the longest byte-aligned payload per group. Encrypt groups (ivGenMode internal, deferred=true): every byte-aligned case, with the IV and ciphertext the NIST reference generated; NIST's sample IV is supplied as the counter block, so the module's own IV generation is not tested. PKCS#11 processes whole bytes, so the bit-length payloads are not carried; the encrypt groups' bit-length cases are listed in notExecuted."
+            },
+            {
+              "type": "operation-change",
+              "detail": "Upstream lets the implementation choose the IV (ivGenMode internal, deferred=true); the sample IV and ciphertext the NIST reference generated are used as given, so this checks the cipher, not IV generation. The same tuple is also run as a decryption."
             }
           ]
         }
@@ -13516,7 +13640,7 @@
     {
       "id": "hkdf_acvp_test",
       "path": "src/data/acvp/hkdf_acvp_test.json",
-      "sha256": "31c8114895b4e2bb18d604fa1f98050fae4ee462c47060d81a1a06ba0ed55577",
+      "sha256": "45644cccf62889e8c8d2b397e1f830d674d8fe16c5474ad2d2f972b8f3a4f726",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -13669,6 +13793,126 @@
         },
         {
           "pointer": "/testGroups/29/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/30/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/31/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/32/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/33/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/34/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/35/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/36/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/37/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/38/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/39/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/40/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/41/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/42/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/43/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/44/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/45/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/46/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/47/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/48/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/49/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/50/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/51/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/52/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/53/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/54/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/55/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/56/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/57/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/58/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/59/tests",
           "kind": "array"
         }
       ],
@@ -14332,6 +14576,666 @@
             "tcId": 1982
           },
           "lineage": ["hkdf-acvp-test-30"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/30/tests/0",
+          "pointer": "/testGroups/30/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "saltMethod": "default",
+            "expansions": 2,
+            "ikmBytes": 129
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 8,
+            "tcId": 36
+          },
+          "lineage": ["hkdf-acvp-test-31"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/31/tests/0",
+          "pointer": "/testGroups/31/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "saltMethod": "random",
+            "expansions": 2,
+            "ikmBytes": 42
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 16,
+            "tcId": 76
+          },
+          "lineage": ["hkdf-acvp-test-32"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/32/tests/0",
+          "pointer": "/testGroups/32/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-256",
+            "saltMethod": "default",
+            "expansions": 3,
+            "ikmBytes": 106
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 22,
+            "tcId": 106
+          },
+          "lineage": ["hkdf-acvp-test-33"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/33/tests/0",
+          "pointer": "/testGroups/33/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-256",
+            "saltMethod": "random",
+            "expansions": 2,
+            "ikmBytes": 96
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 36,
+            "tcId": 176
+          },
+          "lineage": ["hkdf-acvp-test-34"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/34/tests/0",
+          "pointer": "/testGroups/34/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-384",
+            "saltMethod": "default",
+            "expansions": 3,
+            "ikmBytes": 43
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 42,
+            "tcId": 206
+          },
+          "lineage": ["hkdf-acvp-test-35"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/35/tests/0",
+          "pointer": "/testGroups/35/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-384",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 127
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 58,
+            "tcId": 286
+          },
+          "lineage": ["hkdf-acvp-test-36"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/36/tests/0",
+          "pointer": "/testGroups/36/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512",
+            "saltMethod": "default",
+            "expansions": 2,
+            "ikmBytes": 73
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 70,
+            "tcId": 346
+          },
+          "lineage": ["hkdf-acvp-test-37"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/37/tests/0",
+          "pointer": "/testGroups/37/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 221
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 80,
+            "tcId": 396
+          },
+          "lineage": ["hkdf-acvp-test-38"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/38/tests/0",
+          "pointer": "/testGroups/38/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512/224",
+            "saltMethod": "default",
+            "expansions": 3,
+            "ikmBytes": 57
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 86,
+            "tcId": 426
+          },
+          "lineage": ["hkdf-acvp-test-39"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/39/tests/0",
+          "pointer": "/testGroups/39/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512/224",
+            "saltMethod": "random",
+            "expansions": 3,
+            "ikmBytes": 180
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 98,
+            "tcId": 486
+          },
+          "lineage": ["hkdf-acvp-test-40"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/40/tests/0",
+          "pointer": "/testGroups/40/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512/256",
+            "saltMethod": "default",
+            "expansions": 2,
+            "ikmBytes": 181
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 110,
+            "tcId": 546
+          },
+          "lineage": ["hkdf-acvp-test-41"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/41/tests/0",
+          "pointer": "/testGroups/41/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512/256",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 68
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 116,
+            "tcId": 576
+          },
+          "lineage": ["hkdf-acvp-test-42"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/42/tests/0",
+          "pointer": "/testGroups/42/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-224",
+            "saltMethod": "default",
+            "expansions": 2,
+            "ikmBytes": 53
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 124,
+            "tcId": 616
+          },
+          "lineage": ["hkdf-acvp-test-43"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/43/tests/0",
+          "pointer": "/testGroups/43/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-224",
+            "saltMethod": "random",
+            "expansions": 2,
+            "ikmBytes": 405
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 132,
+            "tcId": 656
+          },
+          "lineage": ["hkdf-acvp-test-44"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/44/tests/0",
+          "pointer": "/testGroups/44/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-256",
+            "saltMethod": "default",
+            "expansions": 3,
+            "ikmBytes": 44
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 150,
+            "tcId": 746
+          },
+          "lineage": ["hkdf-acvp-test-45"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/45/tests/0",
+          "pointer": "/testGroups/45/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-256",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 381
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 154,
+            "tcId": 766
+          },
+          "lineage": ["hkdf-acvp-test-46"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/46/tests/0",
+          "pointer": "/testGroups/46/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-384",
+            "saltMethod": "default",
+            "expansions": 3,
+            "ikmBytes": 156
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 164,
+            "tcId": 816
+          },
+          "lineage": ["hkdf-acvp-test-47"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/47/tests/0",
+          "pointer": "/testGroups/47/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-384",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 55
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 172,
+            "tcId": 856
+          },
+          "lineage": ["hkdf-acvp-test-48"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/48/tests/0",
+          "pointer": "/testGroups/48/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-512",
+            "saltMethod": "default",
+            "expansions": 3,
+            "ikmBytes": 106
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 186,
+            "tcId": 926
+          },
+          "lineage": ["hkdf-acvp-test-49"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/49/tests/0",
+          "pointer": "/testGroups/49/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-512",
+            "saltMethod": "random",
+            "expansions": 3,
+            "ikmBytes": 42
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 198,
+            "tcId": 986
+          },
+          "lineage": ["hkdf-acvp-test-50"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/50/tests/0",
+          "pointer": "/testGroups/50/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-224",
+            "saltMethod": "random",
+            "expansions": 3,
+            "ikmBytes": 62
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 216,
+            "tcId": 1080
+          },
+          "lineage": ["hkdf-acvp-test-51"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/51/tests/0",
+          "pointer": "/testGroups/51/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-256",
+            "saltMethod": "default",
+            "expansions": 3,
+            "ikmBytes": 51
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 226,
+            "tcId": 1128
+          },
+          "lineage": ["hkdf-acvp-test-52"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/52/tests/0",
+          "pointer": "/testGroups/52/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-384",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 42
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 256,
+            "tcId": 1279
+          },
+          "lineage": ["hkdf-acvp-test-53"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/53/tests/0",
+          "pointer": "/testGroups/53/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512",
+            "saltMethod": "random",
+            "expansions": 3,
+            "ikmBytes": 92
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 274,
+            "tcId": 1368
+          },
+          "lineage": ["hkdf-acvp-test-54"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/54/tests/0",
+          "pointer": "/testGroups/54/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512/224",
+            "saltMethod": "default",
+            "expansions": 4,
+            "ikmBytes": 68
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 282,
+            "tcId": 1407
+          },
+          "lineage": ["hkdf-acvp-test-55"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/55/tests/0",
+          "pointer": "/testGroups/55/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA2-512/256",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 77
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 312,
+            "tcId": 1556
+          },
+          "lineage": ["hkdf-acvp-test-56"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/56/tests/0",
+          "pointer": "/testGroups/56/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-224",
+            "saltMethod": "default",
+            "expansions": 4,
+            "ikmBytes": 100
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 326,
+            "tcId": 1626
+          },
+          "lineage": ["hkdf-acvp-test-57"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/57/tests/0",
+          "pointer": "/testGroups/57/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-256",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 42
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 352,
+            "tcId": 1757
+          },
+          "lineage": ["hkdf-acvp-test-58"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/58/tests/0",
+          "pointer": "/testGroups/58/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-384",
+            "saltMethod": "random",
+            "expansions": 2,
+            "ikmBytes": 42
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 380,
+            "tcId": 1897
+          },
+          "lineage": ["hkdf-acvp-test-59"]
+        },
+        {
+          "caseId": "hkdf_acvp_test#/testGroups/59/tests/0",
+          "pointer": "/testGroups/59/tests/0",
+          "algorithm": {
+            "name": "KDA-HKDF",
+            "revision": "Sp800-56Cr2"
+          },
+          "operation": "derive",
+          "parameters": {
+            "hmacAlg": "SHA3-512",
+            "saltMethod": "random",
+            "expansions": 4,
+            "ikmBytes": 137
+          },
+          "testType": "VAL",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 398,
+            "tcId": 1987
+          },
+          "lineage": ["hkdf-acvp-test-60"]
         }
       ],
       "lineage": [
@@ -14355,7 +15259,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14379,7 +15283,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14403,7 +15307,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14427,7 +15331,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14451,7 +15355,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14475,7 +15379,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14499,7 +15403,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14523,7 +15427,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14547,7 +15451,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14571,7 +15475,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14595,7 +15499,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14619,7 +15523,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14643,7 +15547,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14667,7 +15571,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14691,7 +15595,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14715,7 +15619,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14739,7 +15643,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14763,7 +15667,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14787,7 +15691,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14811,7 +15715,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14835,7 +15739,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14859,7 +15763,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14883,7 +15787,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14907,7 +15811,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14931,7 +15835,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14955,7 +15859,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -14979,7 +15883,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -15003,7 +15907,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -15027,7 +15931,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         },
@@ -15051,14 +15955,494 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups only. AFT: per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt. VAL: per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups are listed in notExecuted as metadata only."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-31",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/30/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-224, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 36) taken from upstream tgId 8 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-32",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/31/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-224, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 76) taken from upstream tgId 16 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-33",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/32/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-256, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 106) taken from upstream tgId 22 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-34",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/33/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-256, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 176) taken from upstream tgId 36 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-35",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/34/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-384, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 206) taken from upstream tgId 42 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-36",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/35/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-384, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 286) taken from upstream tgId 58 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-37",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/36/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-512, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 346) taken from upstream tgId 70 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-38",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/37/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-512, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 396) taken from upstream tgId 80 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-39",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/38/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-512/224, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 426) taken from upstream tgId 86 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-40",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/39/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-512/224, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 486) taken from upstream tgId 98 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-41",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/40/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-512/256, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 546) taken from upstream tgId 110 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-42",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/41/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA2-512/256, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 576) taken from upstream tgId 116 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-43",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/42/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-224, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 616) taken from upstream tgId 124 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-44",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/43/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-224, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 656) taken from upstream tgId 132 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-45",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/44/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-256, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 746) taken from upstream tgId 150 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-46",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/45/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-256, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 766) taken from upstream tgId 154 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-47",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/46/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-384, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 816) taken from upstream tgId 164 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-48",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/47/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-384, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 856) taken from upstream tgId 172 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-49",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/48/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-512, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 926) taken from upstream tgId 186 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-50",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/49/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 AFT multi-expansion (hmacAlg SHA3-512, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 986) taken from upstream tgId 198 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-51",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/50/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA2-224, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1080) taken from upstream tgId 216 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-52",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/51/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA2-256, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1128) taken from upstream tgId 226 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-53",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/52/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA2-384, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1279) taken from upstream tgId 256 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-54",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/53/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA2-512, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1368) taken from upstream tgId 274 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-55",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/54/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA2-512/224, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1407) taken from upstream tgId 282 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-56",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/55/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA2-512/256, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1556) taken from upstream tgId 312 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-57",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/56/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA3-224, salt default)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1626) taken from upstream tgId 326 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-58",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/57/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA3-256, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1757) taken from upstream tgId 352 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-59",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/58/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA3-384, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1897) taken from upstream tgId 380 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
+            }
+          ]
+        },
+        {
+          "id": "hkdf-acvp-test-60",
+          "appliesTo": ["hkdf_acvp_test#/testGroups/59/tests/0"],
+          "upstreamOperation": "KDA HKDF Sp800-56Cr2 VAL multi-expansion (hmacAlg SHA3-512, salt random)",
+          "localOperation": "One C_DeriveKey(CKM_HKDF_DERIVE) per expansion over the generic secret Z || T with the upstream salt and that expansion's fixedInfo and L; each output compared to the matching dkm",
+          "transformations": [
+            {
+              "type": "subset",
+              "detail": "1 case(s) (upstream tcId 1987) taken from upstream tgId 398 (5 cases in that group; 2000 in the upstream file)."
+            },
+            {
+              "type": "subset",
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Single-expansion groups: AFT per (hmacAlg, saltMethod) the case with the shortest Z || T (hybrid shared secret), ties by lowest tcId — every HMAC hash of the sample (all ten have a PKCS#11 prfHashMechanism), default and random salt; VAL per hmacAlg the testPassed=false case with the shortest Z || T. Multi-expansion groups, by the same rule: AFT per (hmacAlg, saltMethod) the shortest Z || T, VAL per hmacAlg the testPassed=false case with the shortest Z || T; every expansion of a chosen case is run. The other multi-expansion cases are listed in notExecuted as metadata only."
             }
           ]
         }
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "200 upstream multi-expansion group(s) are listed in the file's notExecuted block as metadata only."
+      "notes": "200 upstream multi-expansion group(s) (970 case(s) not chosen by the subset policy) are listed in the file's notExecuted block as metadata only."
     },
     {
       "id": "hkdf_test",
