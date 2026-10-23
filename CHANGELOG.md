@@ -31,7 +31,11 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.174.0] - 2026-10-23
 
-Rosenpass and WireGuard are now described correctly across the Learn modules, the Library, the product catalogue and the glossary, and the VPN simulator says clearly when it is not ready.
+Rosenpass and WireGuard are now described correctly across the Learn modules, the Library, the product catalogue and the glossary, the VPN simulator says clearly when it is not ready, and the Migrate page gains a Vulnerabilities tab with refreshed data for cryptographic libraries.
+
+### Added
+
+- **A Vulnerabilities tab on the Migrate page** [view:/migrate] [persona:developer] [persona:architect] [persona:ops]: after "Evidence gaps", it lists the known vulnerabilities (CVEs) for the products you selected, the top 20 per product at Medium severity and above, with a link to the full NVD list. Products whose data was refreshed after the snapshot show a "refreshed" date. With nothing selected it points back to the Replace tab. It is shown on desktop; the Business Center tool is unchanged.
 
 ### Fixed
 
@@ -43,6 +47,7 @@ Rosenpass and WireGuard are now described correctly across the Learn modules, th
 ### Data
 
 - **Rosenpass records corrected** [view:/library] [view:/migrate] [persona:developer] [persona:architect] [persona:researcher]: the Library entry lists the algorithms Rosenpass really uses, the source-directory description names Classic McEliece and Kyber-512, and the Rosenpass and WireGuard product records carry the corrected descriptions, each checked against the vendor's white paper.
+- **Vulnerability data for cryptographic libraries refreshed, four product mappings corrected** [view:/migrate] [persona:developer] [persona:architect] [persona:ops]: the vulnerabilities shown for the cryptographic libraries in the Migrate catalog are refreshed from NIST's NVD. Four products pointed at the wrong NVD product and now show their own: Mbed TLS (20 of 40 shown), Bouncy Castle Java (20 of 42), BoringSSL (1) and CIRCL (1). OpenSSL 3.5.0 and wolfSSL counts are updated and Bouncy Castle Java LTS is included. Other products' data is unchanged.
 
 ## [4.173.0] - 2026-10-23
 
