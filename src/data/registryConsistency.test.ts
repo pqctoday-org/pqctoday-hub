@@ -168,7 +168,8 @@ describe('tiered registry ↔ authoritative catalog agreement', () => {
     const trustedById = new Map(trustedRows.map((r) => [r.source_id, r]))
     const conflicts: string[] = []
     for (const cat of catalogRows) {
-      const reg = trustedById.get(cat.id)
+      // trusted_source_id names the registry entry when the two ids differ
+      const reg = trustedById.get(cat.trusted_source_id?.trim() || cat.id)
       if (!reg) continue
       if (!domainsMatch(reg.primary_url, cat.Primary_URL)) {
         conflicts.push(
@@ -180,5 +181,18 @@ describe('tiered registry ↔ authoritative catalog agreement', () => {
       conflicts,
       `Catalog contradicts the tiered registry (source of truth) for:\n${conflicts.join('\n')}`
     ).toEqual([])
+  })
+
+  it('every trusted_source_id link names an active registry entry', () => {
+    const active = new Set(
+      trustedRows
+        .filter((r) => (r.status?.trim() || 'active') !== 'deprecated')
+        .map((r) => r.source_id)
+    )
+    const dangling = catalogRows
+      .filter((r) => (r.status?.trim() || 'active') !== 'deprecated')
+      .filter((r) => r.trusted_source_id?.trim() && !active.has(r.trusted_source_id.trim()))
+      .map((r) => `${r.id} -> ${r.trusted_source_id}`)
+    expect(dangling, `Links to no active registry entry:\n${dangling.join('\n')}`).toEqual([])
   })
 })
