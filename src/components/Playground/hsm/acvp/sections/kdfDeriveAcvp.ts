@@ -321,7 +321,7 @@ interface HkdfMultiCase {
   }
   dkms: string[]
 }
-interface HkdfMultiGroup {
+export interface HkdfMultiGroup {
   tgId: number
   testType: 'AFT' | 'VAL'
   multiExpansion: true
@@ -450,7 +450,7 @@ export async function runHkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<void
 }
 
 /** Multi-expansion: one C_DeriveKey per expansion over the same Z ‖ T and salt; every dkm must match. */
-async function runHkdfMultiGroup(
+export async function runHkdfMultiGroup(
   ctx: ClassicalSectionCtx,
   g: HkdfMultiGroup,
   P: Provenance,
