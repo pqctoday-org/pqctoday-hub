@@ -69,6 +69,13 @@ export const content: ModuleContent = {
     getStandard('CMVP-MGMT-MANUAL'), // second source for claim:3a3eeed3b35cd08b
     getStandard('ENISA-State-of-Cybersecurity-2024'), // second source for claim:aa6c2717399a14ad
     getStandard('NIAP-CCEVS-POLICY-33'), // second source for claim:e08838c7dd690915
+    getStandard('NIAP-CCEVS-MANUAL'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('NSA CSfC PQC Guidance Addendum'),
+    getStandard('CNSSP-11-IA-Product-Acquisition-Policy'),
+    getStandard('CNSSP 15'),
+    getStandard('BSI-CC-PP-0114-V2X-HSM'),
+    getStandard('CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile'),
     getStandard('EUCC-Guidelines-on-Cryptography'), // second source for claim:48f91fd0621d1352
   ],
 

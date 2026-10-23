@@ -25,7 +25,7 @@ const manifest: ModuleManifest = {
     'Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.',
   whyThisMatters:
     'In Europe, a Common Criteria evaluation may support an EUCC certificate and, for applicable qualified electronic-signature or seal devices, form part of an eIDAS conformity chain. CCRA recognition is separate and depends on the certificate, scheme, assurance claim and recognition rules. Reading the exact claim is what tells you whether adding PQC is a change the certificate survives.',
-  duration: '60 min',
+  duration: '64 min',
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
@@ -41,6 +41,10 @@ const manifest: ModuleManifest = {
       label: 'Regional schemes: per-scheme reference',
       optional: true,
     },
+    {
+      id: 'niap-pqc-route',
+      label: 'NIAP and post-quantum cryptography: what its profiles require',
+    },
     { id: 'eucc-scheme', label: 'EUCC is a scheme, not a PP' },
     { id: 'eidas-chain', label: 'From eIDAS to a certified device' },
     { id: 'pp-en419221-5', label: 'PP case: EN 419221-5 HSM' },
@@ -53,7 +57,8 @@ const manifest: ModuleManifest = {
       label: 'Common Criteria — evaluation criteria',
       entrySection: 'cc-model',
       // +10 min: the regional-schemes section (user request 2026-09-27)
-      duration: '70 min',
+      // +4 min: the NIAP section (about 800 words at reading speed plus one table)
+      duration: '74 min',
       sections: [
         'cc-model',
         'cc-eal-decoding',
@@ -61,6 +66,7 @@ const manifest: ModuleManifest = {
         'cc-continuity',
         'cc-regional-schemes',
         'cc-regional-reference',
+        'niap-pqc-route',
         'pp-security-ic',
       ],
     },
@@ -119,6 +125,14 @@ const manifest: ModuleManifest = {
     // ISO/IEC 19790 security levels are read in both schemes' sections.
     'CMVP-MGMT-MANUAL': ['cc', 'eucc-eidas'],
     'NIAP-CCEVS-POLICY-33': ['cc'],
+    // Sources for the NIAP section (23 Oct 2026).
+    'NIAP-CCEVS-MANUAL': ['cc'],
+    'NSA CNSA 2.0 FAQ': ['cc'],
+    'NSA CSfC PQC Guidance Addendum': ['cc'],
+    'CNSSP-11-IA-Product-Acquisition-Policy': ['cc'],
+    'CNSSP 15': ['cc'],
+    'BSI-CC-PP-0114-V2X-HSM': ['cc'],
+    'CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile': ['cc'],
     'ENISA-State-of-Cybersecurity-2024': ['eucc-eidas'],
     'EUCC-Guidelines-on-Cryptography': ['eucc', 'eucc-eidas'],
   },

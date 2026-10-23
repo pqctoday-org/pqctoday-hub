@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.173.0] - 2026-10-23
+
+Two NIAP documents join the Library, and the NIAP entries and two other recent entries show their details.
+
+### Added
+
+- **Two NIAP documents for dedicated security components** [view:/library] [persona:cert-engineer] [persona:grc] [persona:architect]: the Collaborative Protection Profile for a Dedicated Security Component, version 2.1, and its mandatory Supporting Document, which lists the evaluation activities an evaluator must perform.
+
+### Changed
+
+- **Recent Library entries show their key details** [view:/library] [persona:cert-engineer] [persona:grc] [persona:architect]: NIAP's Protection Profile for Application Software v2.0 (published 16 June 2025) and the FS-ISAC paper on post-quantum risk in ATM and card-terminal PIN handling now carry a description, publisher, region, category and urgency taken from the documents themselves, instead of appearing as unverified entries. NIAP's Policy Letter 26 and its CCEVS manual are tagged for government and defense readers.
+- **The NSA CSfC post-quantum addendum is shown as a draft** [view:/library] [persona:grc] [persona:architect] [persona:cert-engineer]: its status read Published; the document is still a draft.
+
 ## [4.172.0] - 2026-10-23
 
 Three new lessons for certification engineers explain what a FIPS 140-3 certificate shows about side-channel and fault attacks, how a hybrid appears in a certificate's scope, and what carries over to a new platform. The change analyzer's Common Criteria and EUCC answers are corrected.
