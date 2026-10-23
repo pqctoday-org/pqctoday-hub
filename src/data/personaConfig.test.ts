@@ -19,6 +19,8 @@ import {
   PERSONA_MIGRATE_LAYERS,
   PERSONA_LIBRARY_CATEGORIES,
   PERSONA_REPORT_CONFIG,
+  PERSONA_NAV_PATHS,
+  PERSONA_ABSENT_PATHS,
 } from './personaConfig'
 import { ROLE_CROSSWALK, personaToRoles } from './roleCrosswalk'
 import { PERSONAS, type PersonaId } from './learningPersonas'
@@ -388,4 +390,19 @@ describe('sourced side cards link every row to its source', () => {
       })
     }
   }
+})
+
+describe('certification engineer main page list', () => {
+  const paths = PERSONA_NAV_PATHS['cert-engineer'] ?? []
+
+  it('offers /patents between /leaders and /navigate, not under MORE', () => {
+    expect(paths.indexOf('/patents')).toBe(paths.indexOf('/leaders') + 1)
+    expect(paths.indexOf('/navigate')).toBe(paths.indexOf('/patents') + 1)
+  })
+
+  it('keeps /business and /simulation under MORE, and has no absent-path notice for /patents', () => {
+    expect(paths).not.toContain('/business')
+    expect(paths).not.toContain('/simulation')
+    expect(PERSONA_ABSENT_PATHS['cert-engineer']?.['/patents']).toBeUndefined()
+  })
 })

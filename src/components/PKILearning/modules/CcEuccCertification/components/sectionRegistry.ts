@@ -18,6 +18,7 @@ import {
   EuccPqcToday,
   CcRegionalSchemes,
   CcRegionalReference,
+  NiapPqcRoute,
 } from './sections/CcEuSections'
 
 export const SECTION_COMPONENTS: ReadonlyMap<string, SectionEntry> = new Map<string, SectionEntry>([
@@ -32,4 +33,5 @@ export const SECTION_COMPONENTS: ReadonlyMap<string, SectionEntry> = new Map<str
   ['eucc-pqc-today', { Component: EuccPqcToday, group: 'cc-eu' }],
   ['cc-regional-schemes', { Component: CcRegionalSchemes, group: 'cc-eu' }],
   ['cc-regional-reference', { Component: CcRegionalReference, group: 'cc-eu' }],
+  ['niap-pqc-route', { Component: NiapPqcRoute, group: 'cc-eu' }],
 ])
