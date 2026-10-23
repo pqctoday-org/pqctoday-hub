@@ -80,9 +80,9 @@ export const HSM_VENDORS: HSMVendor[] = [
     ],
     formFactor: 'network',
     notes:
-      'Firmware v13.8.0 adds native ML-DSA, ML-KEM and SLH-DSA; Entrust states the implementation is CAVP-validated. Through PKCS#11 only ML-DSA is exposed, with the standard mechanisms CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA and CKM_HASH_ML_DSA (with _SHA256, _SHA512, _SHAKE128 and _SHAKE256 variants); it needs firmware v13.8 or later and the PostQuantum feature enabled. ML-KEM and SLH-DSA are currently only available through the native nCore API (Security World v13.9.0 release notes). The Entrust pages checked do not describe LMS or XMSS support. CNG and JCE interfaces also supported. Hardware-accelerated PQC operations.',
+      'Firmware v13.8.0 adds native ML-DSA, ML-KEM and SLH-DSA; Entrust states the implementation is CAVP-validated. Through PKCS#11 the algorithms arrived one release at a time: ML-DSA in Security World v13.9.0 (CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_HASH_ML_DSA with _SHA256, _SHA512, _SHAKE128 and _SHAKE256 variants), ML-KEM in v13.9.3 (CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM; firmware v13.8.3 or later) and SLH-DSA in v13.9.5 (CKM_SLH_DSA_KEY_PAIR_GEN, CKM_SLH_DSA, CKM_HASH_SLH_DSA and variants; 12 parameter sets). The PostQuantum feature must be enabled and the firmware must be v13.8 or later. In v13.9.0 ML-KEM and SLH-DSA were nCore-only. The Entrust pages checked do not describe LMS or XMSS support. CNG and JCE interfaces also supported. Hardware-accelerated PQC operations.',
     firmwareVersion: '13.8.0+',
-    pkcs11Version: '3.0 (PQC extensions)',
+    pkcs11Version: 'Not stated in the release notes (PQC mechanisms are listed per release)',
     hybridSupport: true,
     sideChannelCountermeasures: [
       'Hardware PQC acceleration',
@@ -156,11 +156,11 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['ML-DSA-44/65/87'],
     formFactor: 'cloud',
     notes:
-      "Dedicated managed HSM. ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 15 Oct 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 15 Oct 2026), so FIPS mode is not the same as appearing on the certificate. Through its PKCS#11 library (version 2.40) ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA), not the standard v3.2 CKM_ML_DSA. (AWS KMS, a separate service, offers ML-DSA signing keys and uses ML-KEM only for hybrid post-quantum TLS to its endpoints; it does not offer ML-KEM KMS keys.) The HSM's Level 3 certificate is Marvell's #4703 (named on AWS's CloudHSM compliance page); AWS-LC's own certificates (e.g. #5314) are separate Level 1 software modules and do not make the HSM Level 3. Multi-AZ redundancy.",
+      "Dedicated managed HSM. ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 15 Oct 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 15 Oct 2026), so FIPS mode is not the same as appearing on the certificate. The NIST Security Policy for #4703 (dated January 29, 2026) lists ML-DSA and ML-KEM as non-approved ('non-compliant') algorithms and services (Table 6 p. 23, Table 11 p. 66), while AWS's documentation says ML-DSA is available in FIPS mode on hsm2m.medium from 1 September 2026. We have not found a document that reconciles the two. Through its PKCS#11 library (version 2.40) ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA), not the standard v3.2 CKM_ML_DSA. (AWS KMS, a separate service, offers ML-DSA signing keys and uses ML-KEM only for hybrid post-quantum TLS to its endpoints; it does not offer ML-KEM KMS keys.) The HSM's Level 3 certificate is Marvell's #4703 (named on AWS's CloudHSM compliance page); AWS-LC's own certificates (e.g. #5314) are separate Level 1 software modules and do not make the HSM Level 3. Multi-AZ redundancy.",
     firmwareVersion: 'Provider-managed',
     pkcs11Version: '2.40 (ML-DSA via vendor-defined mechanisms)',
     hybridSupport: false,
-    sideChannelCountermeasures: ['AWS Nitro System isolation', 'Dedicated hardware per customer'],
+    sideChannelCountermeasures: ['Single-tenant access to the HSM (AWS CloudHSM FAQ)'],
   },
   {
     id: 'azure-dhsm',
@@ -195,7 +195,9 @@ export const HSM_VENDORS: HSMVendor[] = [
     firmwareVersion: 'N/A',
     pkcs11Version: 'N/A (Cloud KMS API)',
     hybridSupport: false,
-    sideChannelCountermeasures: ['Google Titan chip', 'Physical security of Google data centers'],
+    sideChannelCountermeasures: [
+      'Marvell LiquidSecurity HSMs (Google Cloud HSM architecture page)',
+    ],
   },
   // On-prem — Crypto4A
   {
@@ -236,8 +238,8 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     command: `C_GenerateKeyPair(
   hSession,
   &mechanism,        // CKM_ML_KEM_KEY_PAIR_GEN
-  publicTemplate,    // CKA_TOKEN, CKA_ENCRYPT, CKA_WRAP
-  privateTemplate,   // CKA_PRIVATE, CKA_SENSITIVE, CKA_DECRYPT
+  publicTemplate,    // CKA_TOKEN, CKA_ENCAPSULATE, CKA_PARAMETER_SET (CKP_ML_KEM_768)
+  privateTemplate,   // CKA_PRIVATE, CKA_SENSITIVE, CKA_DECAPSULATE
   &hPublicKey,
   &hPrivateKey
 )`,
@@ -292,9 +294,9 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   hPublicKey,         // ML-KEM public key (encapsulation key)
   sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=AES
   ulAttributeCount,
-  &hSharedSecretKey,  // Handle to new AES key derived from shared secret
   ciphertext,         // Output: KEM ciphertext (1,088 bytes)
-  &ciphertextLen
+  &ciphertextLen,
+  &hSharedSecretKey   // Output: handle to new AES key derived from shared secret
 )`,
     description: 'Use ML-KEM encapsulation to derive a shared AES session key.',
     detail:
@@ -307,7 +309,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP → 256-byte ciphertext (direct encryption)',
     vendorNotes: {
       onPrem:
-        'Thales/Entrust: native CKM_ML_KEM via C_EncapsulateKey. Utimaco: via Q-safe extension',
+        'Thales: native firmware support (see the vendor card). Entrust nShield: ML-KEM reached the PKCS#11 API in Security World v13.9.3 (firmware v13.8.3 or later, PostQuantum feature enabled); in v13.9.0 it was nCore-only. Utimaco: via Q-safe extension',
       cloud: 'No cloud HSM supports native PKCS#11 KEM encapsulation yet',
     },
   },
@@ -335,7 +337,8 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   CKA_SENSITIVE:       TRUE`,
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP decrypt → recovers plaintext DEK directly',
     vendorNotes: {
-      onPrem: 'All three on-prem vendors support native decapsulation in firmware',
+      onPrem:
+        'All three on-prem vendors support ML-KEM decapsulation in firmware; check the API each exposes for the exact release (nShield: PKCS#11 from Security World v13.9.3)',
       cloud:
         'AWS CloudHSM: no ML-KEM, so no decapsulation. Azure Dedicated HSM: via Thales Luna firmware upgrade. Google Cloud HSM: no PQC at the HSM level',
     },
