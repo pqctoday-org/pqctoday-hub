@@ -856,9 +856,9 @@ export const ChangeRoutesDetail = () => (
     </p>
     <ul className="list-disc space-y-1 pl-5">
       <li>
-        the change-scenarios guideline, v1 of 10 December 2025, focused on AVA work{' '}
+        the change-scenarios guideline, v1, October 2025, focused on AVA work{' '}
         <PlainSource>
-          ENISA, EUCC assurance-continuity change scenarios v1, 10 December 2025
+          ENISA, EUCC assurance-continuity change scenarios v1, October 2025
         </PlainSource>
         ;
       </li>

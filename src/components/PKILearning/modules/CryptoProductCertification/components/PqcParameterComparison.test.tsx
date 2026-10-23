@@ -15,7 +15,11 @@ describe('PQC parameter coverage in the certification lesson', () => {
     const section = within(screen.getByRole('region', { name: 'PQC parameter coverage' }))
     expect(section.getAllByRole('row')).toHaveLength(4)
     expect(section.getByText(/there is no pure\/pre-hash signing choice/)).toBeInTheDocument()
-    expect(section.getByText(/below 192-bit strength reduces the claim/)).toBeInTheDocument()
+    expect(
+      section.getByText(
+        /approved RBG below 192-bit strength reduces ML-DSA-44 to category 1 \(§3\.6\.1\)/
+      )
+    ).toBeInTheDocument()
     expect(section.getByText(/does not identify the message pre-hash/)).toBeInTheDocument()
     expect(
       section.getByText(/not CC assurance levels or EUCC assurance levels/)
