@@ -62,7 +62,8 @@ export const content: ModuleContent = {
   narratives: {
     ikeClassicalSize: "1,400 bytes (this workshop's sample handshake)",
     ikeHybridSize: "3,784 bytes (this workshop's sample handshake)",
-    wireGuardIncrease: "about 9x with Rosenpass (this workshop's sample handshake)",
+    wireGuardIncrease:
+      "about 11x with Rosenpass (WireGuard's 240 B handshake plus Rosenpass's 2,464 B)",
     sshClassicalSize: "984 bytes (this workshop's sample handshake)",
     sshHybridSize: "3,296 bytes (this workshop's sample handshake)",
   },
