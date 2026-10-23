@@ -72,6 +72,8 @@ const AMVP = getStandard('NIST-ACMVP-Protocol-Workstream')
 const NCCOE_CMVP = getStandard('NCCoE-Automation-of-the-CMVP')
 const PCI_PIN = getStandard('PCI-PIN-v3-1-ROC-Reporting-Template')
 const PCI_P2PE = getStandard('PCI-P2PE-Security-Requirements-v3-1')
+const ISO_19790_2025 = getStandard('ISO-IEC-19790-2025')
+const ISO_24759_2025 = getStandard('ISO-IEC-24759-2025-Test-requirements-for-cryptographic-modul')
 
 // ── Small presentational helpers ────────────────────────────────────────────
 
@@ -270,10 +272,12 @@ export const FipsWhatItIs = () => (
     <p>
       The standard itself is short. Its §2 says FIPS 140-3 “is based on ISO/IEC
       19790:2012/Cor.1:2015(E) and ISO/IEC 24759:2017(E)”, and the SP 800-140 series lists what NIST
-      supersedes or modifies. ISO published 2025 editions of both documents. The CMVP has{' '}
-      <strong>not</strong> adopted them, and the August 2026 IG still cites 19790:2012 <AsOf />.
-      Both ISO documents are paid, so this module does not reproduce them. It teaches from public
-      NIST documents and real Security Policies instead.
+      supersedes or modifies. ISO published 2025 editions of both documents (
+      <Cite std={ISO_19790_2025}>ISO/IEC 19790:2025</Cite> and{' '}
+      <Cite std={ISO_24759_2025}>ISO/IEC 24759:2025</Cite>). The CMVP has <strong>not</strong>{' '}
+      adopted them, and the August 2026 IG still cites 19790:2012 <AsOf />. Both ISO documents are
+      paid, so this module does not reproduce them. It teaches from public NIST documents and real
+      Security Policies instead.
     </p>
 
     <SubHeading>Five documents, five jobs</SubHeading>

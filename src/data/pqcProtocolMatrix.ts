@@ -756,16 +756,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-07',
         localFile: '/library/RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1.html',
       },
+      {
+        id: 'RFC 10024',
+        title:
+          'RFC 10024 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768 key agreement for TLS 1.3 (published from draft-ietf-tls-ecdhe-mlkem-05)',
+        url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+        date: '2026-08',
+      },
     ],
     latestDraft: [
-      {
-        id: 'draft-ietf-tls-ecdhe-mlkem-05',
-        title:
-          'draft-ietf-tls-ecdhe-mlkem-05 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768 (published 2026-08-10 as RFC 10024)',
-        url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
-        date: '2026-08-10',
-        localFile: '/library/draft-ietf-tls-ecdhe-mlkem-05.html',
-      },
       {
         id: 'draft-ietf-tls-mlkem-11',
         title: 'draft-ietf-tls-mlkem-11 — Standalone ML-KEM groups for TLS (RFC Editor queue)',
@@ -823,7 +822,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote:
-          'Published as RFC 10024 on 2026-08-10 — draft-ietf-tls-ecdhe-mlkem-05 is the revision that became the RFC, so the earlier "RFC Editor queue" note is superseded rather than contradicted. Verified against the datatracker: the draft carries state slug `rfc` and IESG state `pub`, and relateddocument records `became_rfc -> rfc10024`.',
+          'Published as RFC 10024 on 2026-08-10 — revision -05 of the hybrid ECDHE-MLKEM draft is the revision that became the RFC, so the earlier "RFC Editor queue" note is superseded rather than contradicted. Verified against the datatracker: the draft carries state slug `rfc` and IESG state `pub`, and relateddocument records `became_rfc -> rfc10024`.',
         note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — deployed in production since 2024, and standards-track as of 2026-08-10.',
         deploymentPosture: 'production',
         deploymentNote:
@@ -1504,16 +1503,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestDraft: [
       {
         id: 'draft-ietf-cose-falcon-04',
-        title: 'draft-ietf-cose-falcon-04 — FN-DSA for JOSE and COSE',
+        title: 'draft-ietf-cose-falcon-04 — FN-DSA for JOSE and COSE (expired 2026-09-16)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-falcon/',
         date: '2026-03-25',
         localFile: '/library/draft-ietf-cose-falcon-04.html',
       },
       {
-        id: 'draft-ietf-cose-hpke-25',
-        title: 'draft-ietf-cose-hpke-25 — HPKE with COSE (IESG AD evaluation)',
+        id: 'draft-ietf-cose-hpke-27',
+        title: 'draft-ietf-cose-hpke-27 — HPKE with COSE (IESG processing)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/',
-        date: '2026-04-07',
+        date: '2026-10-22',
       },
       {
         id: 'draft-ietf-jose-hpke-pq-pqt-01',
@@ -1995,11 +1994,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-bokovoy-kitten-pkinit-pqc-01',
+        id: 'draft-bokovoy-kitten-pkinit-pqc-02',
         title:
-          'draft-bokovoy-kitten-pkinit-pqc-01 — Post-Quantum ML-KEM for PKINIT (individual, not WG-adopted)',
-        url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
-        date: '2026-06-26',
+          'draft-bokovoy-kitten-pkinit-pqc-02 — Post-Quantum ML-KEM for PKINIT (individual, not WG-adopted)',
+        url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
+        date: '2026-10-16',
       },
     ],
     dimensions: {
@@ -2007,14 +2006,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote:
-          'Individual submission (draft-bokovoy-kitten-pkinit-pqc-01, 2026-06-26) — not adopted by the KITTEN working group',
+          'Individual submission (draft-bokovoy-kitten-pkinit-pqc-02, 2026-10-16) — not adopted by the KITTEN working group',
         note: "Core Kerberos (AS-REQ/AS-REP/TGS-REQ/TGS-REP without PKINIT) uses only symmetric long-term/session keys (RFC 3961 framework) — no KEM applies, and NIST/academic consensus treats symmetric crypto as already quantum-resistant (Grover gives only a quadratic speedup, already covered by AES-256/SHA-384+). PKINIT's key establishment is classical Diffie-Hellman with no PQC-safe path via existing agility mechanisms — this draft adds a new KDCKEMInfo structure carrying ML-KEM (RFC 9935 X.509 OIDs) alongside the existing DH fields. Red Hat is prototyping this under the EU-funded QARC consortium (2026–2028) against MIT krb5 + FreeIPA; no public code yet.",
         refs: [
           {
             kind: 'draft',
             id: 'draft-bokovoy-kitten-pkinit-pqc',
             title: 'Post-Quantum ML-KEM for PKINIT',
-            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
+            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
             publishedOn: '2026-06-26',
           },
           {
@@ -2030,14 +2029,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote:
-          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — the protocol-matrix refresh's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — the protocol-matrix refresh's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-02 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, approved at the X.509 layer and in the RFC Editor queue since 2026-10-21 (see X.509 row). The Kerberos-side mechanism itself remains an individual draft.',
         refs: [
           {
             kind: 'draft',
             id: 'draft-bokovoy-kitten-pkinit-pqc',
             title: 'Post-Quantum ML-KEM for PKINIT',
-            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
+            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
             publishedOn: '2026-06-26',
           },
           {
@@ -2081,7 +2080,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'draft',
             id: 'draft-bokovoy-kitten-pkinit-pqc',
             title: 'Post-Quantum ML-KEM for PKINIT (mentions optional composite ML-DSA)',
-            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-01',
+            url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
             publishedOn: '2026-06-26',
           },
         ],
@@ -2242,11 +2241,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-openpgp-nist-bp-comp-04',
-        title: 'draft-ietf-openpgp-nist-bp-comp-04 — NIST + Brainpool composites (In WG Last Call)',
+        id: 'draft-ietf-openpgp-nist-bp-comp-05',
+        title: 'draft-ietf-openpgp-nist-bp-comp-05 — NIST + Brainpool composites (In WG Last Call)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-nist-bp-comp/',
-        date: '2026-01-08',
-        localFile: '/library/draft-ietf-openpgp-nist-bp-comp-04.html',
+        date: '2026-09-24',
       },
     ],
     dimensions: {
@@ -2925,17 +2923,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestDraft: [
       {
         id: 'draft-fregly-dnsop-slh-dsa-mtl-dnssec-06',
-        title: 'draft-fregly-dnsop-slh-dsa-mtl-dnssec-06 — SLH-DSA Merkle Tree Ladder mode',
+        title:
+          'draft-fregly-dnsop-slh-dsa-mtl-dnssec-06 — SLH-DSA Merkle Tree Ladder mode (expired 2026-10-01)',
         url: 'https://datatracker.ietf.org/doc/draft-fregly-dnsop-slh-dsa-mtl-dnssec/',
         date: '2026-03-30',
         localFile: '/library/draft-fregly-dnsop-slh-dsa-mtl-dnssec-06.html',
       },
       {
-        id: 'draft-sheth-pqc-dnssec-strategy-01',
-        title: 'draft-sheth-pqc-dnssec-strategy-01 — PQC Strategy for DNSSEC',
+        id: 'draft-sheth-pqc-dnssec-strategy-02',
+        title: 'draft-sheth-pqc-dnssec-strategy-02 — PQC Strategy for DNSSEC',
         url: 'https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/',
-        date: '2026-04-17',
-        localFile: '/library/draft-sheth-pqc-dnssec-strategy-01.html',
+        date: '2026-10-16',
       },
       {
         id: 'draft-westerbaan-dnssec-mldsa-04',
@@ -3525,20 +3523,22 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-emu-pqc-eap-tls-00',
-        title: 'draft-ietf-emu-pqc-eap-tls-00 — Post-Quantum Enhancements to TLS-Based EAP Methods',
+        id: 'draft-ietf-emu-pqc-eap-tls-02',
+        title: 'draft-ietf-emu-pqc-eap-tls-02 — Post-Quantum Enhancements to TLS-Based EAP Methods',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eap-tls/',
-        date: '2026-05-13',
+        date: '2026-10-15',
       },
       {
         id: 'draft-ietf-emu-pqc-eapaka-02',
-        title: 'draft-ietf-emu-pqc-eapaka-02 — Post-Quantum ML-KEM for EAP-AKA’ (WG Last Call)',
+        title:
+          'draft-ietf-emu-pqc-eapaka-02 — Post-Quantum ML-KEM for EAP-AKA’ (WG Last Call; expired 2026-09-18)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eapaka/',
         date: '2026-06-19',
       },
       {
         id: 'draft-ietf-emu-hybrid-pqc-eapaka-01',
-        title: 'draft-ietf-emu-hybrid-pqc-eapaka-01 — Hybrid PQC for EAP-AKA’ (WG Last Call)',
+        title:
+          'draft-ietf-emu-hybrid-pqc-eapaka-01 — Hybrid PQC for EAP-AKA’ (WG Last Call; expired 2026-08-30)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-hybrid-pqc-eapaka/',
         date: '2026-02-26',
       },
