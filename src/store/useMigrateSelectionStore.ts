@@ -8,7 +8,7 @@ import { softwareData } from '@/data/migrateData'
 export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 
 /** Workbench redesign tabs (URL-synced via ?tab=). */
-export type MigrateTab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk'
+export type MigrateTab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk' | 'vulns'
 
 /** Return a shallow copy of `obj` without `key`. Lint-friendly omit. */
 function omitKey<T>(obj: Record<string, T>, key: string): Record<string, T> {
