@@ -131,11 +131,11 @@ describe('FIPS attack-evidence section', () => {
 
   it('sits after Security Levels and before the validation lifecycle', () => {
     const ids = (manifest.learnSections ?? []).map((s) => s.id)
-    const at = ids.indexOf('fips-attack-evidence')
-    expect(ids[at - 1]).toBe('fips-levels')
-    expect(ids[at + 1]).toBe('fips-lifecycle')
-    expect(manifest.learnSections?.[at]?.optional).toBeUndefined()
-    expect(manifest.learnSections?.[at]?.label).toBe(
+    const pos = ids.indexOf('fips-attack-evidence')
+    expect(ids.at(pos - 1)).toBe('fips-levels')
+    expect(ids.at(pos + 1)).toBe('fips-lifecycle')
+    expect(manifest.learnSections?.at(pos)?.optional).toBeUndefined()
+    expect(manifest.learnSections?.at(pos)?.label).toBe(
       'Side-channel and fault attacks: what a certificate does and does not show'
     )
   })
@@ -212,6 +212,7 @@ describe('FIPS attack-evidence section', () => {
     expect(hrefs).toContain('/learn/pqc-testing-validation?tab=learn&section=side-channel-tvla')
     expect(hrefs).toContain('/playground/entropy-test')
     expect(hrefs).toContain('/compliance?tab=records')
+    expect(hrefs).toContain('/learn/crypto-product-certification?tab=learn&section=new-platform')
     expect(unresolvedInAppLinks(hrefs)).toEqual([])
   })
 })

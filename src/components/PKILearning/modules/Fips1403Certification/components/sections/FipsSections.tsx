@@ -892,6 +892,15 @@ export const FipsAttackEvidence = () => (
           Compliance, Product Records
         </Link>
       </li>
+      <li>
+        Platform change and side-channel assurance:{' '}
+        <Link
+          to="/learn/crypto-product-certification?tab=learn&section=new-platform"
+          className="text-primary underline"
+        >
+          A new platform, chip or accelerator: what carries over?
+        </Link>
+      </li>
     </ul>
   </Body>
 )

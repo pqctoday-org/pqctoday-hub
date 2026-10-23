@@ -66,6 +66,7 @@ export const content: ModuleContent = {
     getStandard('CIR-EU-2025-2462-EUCC-Amendment'),
     getStandard('EUCC v2.0 ACM'), // not the duplicate row ECCG-ACM-v2 (same PDF)
     getStandard('ENISA-Hybridization-Standardisation-Status'),
+    getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'), // new-platform section
     getStandard('EU-NIS-CG-Roadmap-v1.1'),
     getStandard('eIDAS-2-Regulation'),
     getStandard('ANSSI-CC-PP-2016-05-EN-419221-5'),

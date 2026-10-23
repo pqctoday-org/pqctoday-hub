@@ -368,7 +368,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1000,
+    estimatedMinutes: 1005,
     essentials: [
       'pqc-101',
       'pqc-risk-management',
@@ -1167,7 +1167,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 910,
+    estimatedMinutes: 915,
     // pqc-testing-validation is on the full path but not an essential: it is network and
     // operations testing, and only its TVLA and FIPS 140-3 / ACVP parts serve this role
     // (its own certification-engineer learn path carries just those).
@@ -1179,7 +1179,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'cc-eucc-certification',
       'pci-certification',
     ],
-    essentialsMinutes: 495,
+    essentialsMinutes: 500,
     quizDescription:
       'Test your knowledge on product certification, FIPS 140-3, ACVP lab workflow, entropy sources, HSMs, PQC testing and validation, Common Criteria/EUCC, stateful and hash-based signatures, hybrid cryptography, secure boot, PCI certification, and standards bodies.',
     quizCategories: [

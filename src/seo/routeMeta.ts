@@ -532,7 +532,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/crypto-product-certification`,
     structuredData: buildModuleSchema(
       'Cryptographic Product Certification: Fundamentals',
-      'PT90M',
+      'PT95M',
       'Advanced'
     ),
   },

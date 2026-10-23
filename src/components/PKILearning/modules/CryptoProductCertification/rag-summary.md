@@ -4,7 +4,7 @@
 
 This advanced Hardware Infrastructure module (LM-065) distinguishes FIPS 140-3 module validation, Common Criteria product evaluation, EUCC scheme rules and PCI approval. Common Criteria supplies evaluation criteria; EUCC uses those criteria under an EU certification scheme. eIDAS is a separate legal context where applicable. The module explains certificate scope and what adding PQC changes, with links to LM-067 _FIPS 140-3 Certification_, LM-068 _Common Criteria, EUCC & eIDAS Certification_ and LM-071 _PCI Certification_. It is written for product vendors, product-assurance leads, buyers and evaluators. It is labelled "Practitioner orientation — not laboratory training." It was reviewed and signed off by the PQC Today owner on 22 October 2026; corrections made since then are awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. The context-separation correction was checked on 21 October 2026; other dated claims retain their individual source dates.
 
-The module is a single ~90-minute route with no learn paths. Deeper material is kept as optional reference sections that do not count toward duration or completion.
+The module is a single ~95-minute route with no learn paths. Deeper material is kept as optional reference sections that do not count toward duration or completion.
 
 ## Key Concepts
 
@@ -13,7 +13,9 @@ The module is a single ~90-minute route with no learn paths. Deeper material is 
 - **Standards, criteria and schemes have different roles** — FIPS 140-3 specifies module requirements validated through CMVP; CC provides product evaluation criteria; EUCC is a scheme using CC, not a separate alternative to CC. PCI addresses payment-device approval. Name the applicable scheme before applying its rules.
 - **Scope before level** — a certificate covers a defined module, target or device at a version and configuration. The anchor is a fictional network HSM ("Orrin N7") sold as an appliance and as a multi-tenant cloud service into four markets.
 - **What PQC changes in certification** — adding ML-KEM or ML-DSA changes the certified product, and each scheme has its own route for that change.
+- **Reading a hybrid in a certificate's scope** — a hybrid KEM claim (IG D.S Scenario 2) is evidenced in different places: CAVP certificates for the ML-KEM half and the key combiner, the Security Policy's "KEM-Hybrid" or "KEM-Hybrid-Full" entry, and the lab's source-code review for the fixed combinations and the order the secrets are joined. A non-approved classical half such as X25519 must be enforced inside an approved hybrid by the module, and there is no end-to-end hybrid algorithm test yet. Under Common Criteria and EUCC the algorithm claims sit in the Security Target's cryptographic requirements.
 - **Crypto agility versus certification latency** — a product can be agile in code and still wait on a scheme's change route.
+- **A new platform, chip or accelerator: what carries over** — a validation covers the environments it was tested on. A moved module goes through vendor affirmation (VAOE, no CMVP statement on correct operation), an Operational Environment Update (OEUP, with CAVP testing on the new environment and ESV where applicable) or revalidation. A processor accelerator must be on the IG's "known" list and be tested with and without it; the list names no ML-KEM, ML-DSA or SLH-DSA accelerator. Under Common Criteria, a platform that breaks the Security Target's assumptions is a major change.
 - **A market deadline creates urgency, not a shortcut** — it does not make a PQC addition eligible for a scheme's lighter change route.
 
 ## Workshop / Interactive Activities

@@ -58,6 +58,7 @@ export const SHARED_SOURCES = {
   eucc2462: getStandard('CIR-EU-2025-2462-EUCC-Amendment'),
   acm2: getStandard('EUCC v2.0 ACM'),
   enisaHybrid: getStandard('ENISA-Hybridization-Standardisation-Status'),
+  enisaContinuity: getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
   nisCgRoadmap: getStandard('EU-NIS-CG-Roadmap-v1.1'),
   eidas: getStandard('eIDAS-2-Regulation'),
   ptsV5: getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
