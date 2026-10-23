@@ -562,7 +562,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
   },
   {
     vendorId: 'aws-cloudhsm',
-    vendorName: 'AWS-LC Cryptographic Module (CloudHSM backend)',
+    vendorName: 'AWS-LC Cryptographic Module (static build) (C_SHA3)',
     certType: 'CAVP',
     certId: 'A7917',
     algorithms: ['ML-KEM', 'ML-DSA'],
@@ -570,7 +570,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     date: '2026-01-21',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20709',
-    note: 'CAVP validation is for the AWS-LC software library used by CloudHSM SDK — not for the HSM firmware itself.',
+    note: 'CAVP validation (AWS-LC FIPS 4.0.0, type SOFTWARE) is for the AWS-LC software library; it is separate from the CloudHSM HSM firmware, whose module certificate is CMVP #4703.',
   },
   {
     vendorId: 'futurex-cryptohub',
@@ -777,7 +777,7 @@ export const SIDE_CHANNEL_VECTORS: SideChannelVector[] = [
     description:
       'Number Theoretic Transform (NTT) operations in lattice-based algorithms show data-dependent power consumption patterns. An attacker with physical access can measure power traces to recover secret coefficients.',
     countermeasure:
-      'Constant-time NTT implementation, power noise injection, algorithmic masking. All production HSMs (Thales, Entrust, Utimaco) implement constant-time NTT.',
+      'Constant-time NTT implementation, power noise injection and algorithmic masking are the techniques discussed for this attack. Whether a given HSM implements them is stated, if at all, in the vendor documentation and in the Security Policy of the module.',
     hsmRelevance: 'high',
   },
   {
@@ -810,7 +810,7 @@ export const SIDE_CHANNEL_VECTORS: SideChannelVector[] = [
     description:
       'Table lookups in NTT or hash operations can be observed through CPU cache timing. Flush+Reload or Prime+Probe attacks can recover secret values in shared-hardware environments.',
     countermeasure:
-      'HSMs use dedicated crypto processors (no shared cache). On-prem HSMs are immune to cache-timing attacks. Cloud HSMs use dedicated hardware per customer (AWS Nitro, Azure confidential computing).',
+      'Cache-timing attacks need an attacker who can run code that shares a cache with the victim. An HSM that runs only its own firmware on dedicated crypto processors removes that route; a shared or multi-tenant platform needs its own isolation argument. Check the Security Policy of the module and the documentation of the provider for what applies to the product.',
     hsmRelevance: 'low',
   },
   {
@@ -821,7 +821,7 @@ export const SIDE_CHANNEL_VECTORS: SideChannelVector[] = [
     description:
       'Inducing faults during ML-DSA signing (e.g., voltage glitching, laser fault injection) can cause the signer to produce a faulty signature that leaks the secret key. This is why ML-DSA uses hedged signing.',
     countermeasure:
-      'ML-DSA hedged signing mode (FIPS 204 §3.4): rnd parameter is random, not zero. This makes the signing output non-deterministic, preventing fault attacks from producing exploitable faulty signatures. FIPS 140-3 Level 3+ HSMs also have tamper-responsive enclosures.',
+      'ML-DSA hedged signing mode (FIPS 204 §3.4): the rnd parameter is random, not zero. FIPS 204 says "The use of fresh randomness during signing helps mitigate side-channel attacks" and that the deterministic variant makes fault attacks "more difficult to mitigate". FIPS 140-3 Level 3 requires tamper-resistant enclosures.',
     hsmRelevance: 'high',
   },
   {
@@ -858,7 +858,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '1-2 hours per HSM',
     notes:
-      'ML-KEM, ML-DSA and SLH-DSA are native in firmware v13.8.0 with the PostQuantum feature enabled. Through PKCS#11 only ML-DSA is exposed (standard CKM_ML_DSA mechanisms); ML-KEM and SLH-DSA are currently only available through the native nCore API (Security World v13.9.0 release notes). The Entrust pages checked do not describe LMS or XMSS support. Entrust states the post-quantum implementation is CAVP-validated. CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
+      'ML-KEM, ML-DSA and SLH-DSA are native in firmware v13.8.0 with the PostQuantum feature enabled. The PKCS#11 API gained the algorithms one release at a time: ML-DSA in Security World v13.9.0 (standard CKM_ML_DSA mechanisms), ML-KEM in v13.9.3 (CKM_ML_KEM; firmware v13.8.3 or later) and SLH-DSA in v13.9.5 (12 parameter sets). In v13.9.0 ML-KEM and SLH-DSA were available only through the native nCore API (release notes sections 3.4 and 3.5). The Entrust pages checked do not describe LMS or XMSS support. Entrust states the post-quantum implementation is CAVP-validated. CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
   },
   {
     vendorId: 'utimaco',
