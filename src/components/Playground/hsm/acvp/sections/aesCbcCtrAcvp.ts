@@ -92,6 +92,7 @@ interface CtrCase {
 interface CtrGroup {
   tgId: number
   keyLen: number
+  direction: 'encrypt' | 'decrypt'
   tests: CtrCase[]
 }
 interface CtrNotExecuted {

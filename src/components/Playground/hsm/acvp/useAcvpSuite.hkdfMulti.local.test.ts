@@ -30,7 +30,7 @@ import * as SoftHSM from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import { CKM_HKDF_DERIVE } from '@/wasm/softhsm/constants'
 import type { TestResult } from './useAcvpSuite'
-import type { Provenance } from './sections/classicalRaw'
+import type { Provenance } from './sections/mldsaAcvp'
 import { runHkdfMultiGroup, type HkdfMultiGroup } from './sections/kdfDeriveAcvp'
 
 const require_ = createRequire(import.meta.url)
@@ -111,7 +111,10 @@ describe('NIST HKDF multi-expansion, both engines', () => {
     )
     for (const e of engines) {
       const bad = results.get(e.name)!.filter((r) => r.status !== 'pass')
-      expect(bad.map((r) => `${r.id}: ${r.details}`), e.name).toEqual([])
+      expect(
+        bad.map((r) => `${r.id}: ${r.details}`),
+        e.name
+      ).toEqual([])
     }
   })
 
@@ -125,9 +128,10 @@ describe('NIST HKDF multi-expansion, both engines', () => {
     for (const e of engines) {
       const rows = await run(e, copy)
       const red = rows.filter((r) => r.status !== 'pass')
-      expect(red.map((r) => r.id), e.name).toEqual([
-        rows.find((r) => r.id.includes(`-tg${g.tgId}-tc${t.tcId}-`))!.id,
-      ])
+      expect(
+        red.map((r) => r.id),
+        e.name
+      ).toEqual([rows.find((r) => r.id.includes(`-tg${g.tgId}-tc${t.tcId}-`))!.id])
     }
   })
 
