@@ -49,17 +49,17 @@ describe('niap-pqc-route section', () => {
     expect(screen.getByText('What forces the move: a chain')).toBeInTheDocument()
     expect(screen.getByText('Ask your lab')).toBeInTheDocument()
     expect(
-      screen.getByText(/CNSA 1.0 will be removed as an selection in a future update/)
+      screen.getByText(/The profile says: “ML-DSA and ML-KEM are not usable in any functions/)
     ).toBeInTheDocument()
   })
 
   it('marks every passage that is the module’s own reading', () => {
     wrap()
     const marks = screen.getAllByTestId('module-analysis').map((m) => m.textContent)
-    expect(marks.filter((m) => m === '(Module analysis.)')).toHaveLength(11)
+    expect(marks.filter((m) => m === '(Module analysis.)')).toHaveLength(13)
     expect(marks).toContain('(Module analysis, from reading the text.)')
     expect(marks).toContain('(Questions: Module analysis.)')
-    expect(marks).toHaveLength(13)
+    expect(marks).toHaveLength(15)
     // The plain facts in the two-agencies box carry no marker.
     const box = screen.getByText(/CAVP tests an algorithm and gives an algorithm certificate/)
     expect(within(box).queryByTestId('module-analysis')).not.toBeInTheDocument()
@@ -100,6 +100,61 @@ describe('niap-pqc-route section', () => {
     ])
     expect(table).toHaveTextContent('ML-KEM-1024 only')
     expect(table).toHaveTextContent('ML-DSA-87 only')
+  })
+
+  it('lists the 11 NIAP documents with post-quantum choices, the quotes and the reported-only names', () => {
+    wrap()
+    expect(
+      screen.getByText(/11 NIAP documents we checked \(8 profiles and 3 profile modules\)/)
+    ).toBeInTheDocument()
+    const table = screen.getByRole('table', {
+      name: 'NIAP profiles with post-quantum selections, as of 23 October 2026',
+    })
+    expect(within(table).getAllByRole('row')).toHaveLength(12)
+    expect(
+      within(table)
+        .getAllByRole('columnheader')
+        .map((h) => h.textContent)
+    ).toEqual([
+      'Profile',
+      'Version',
+      'Date in document',
+      'Post-quantum algorithms listed',
+      'Classical choices still allowed',
+    ])
+    expect(table).toHaveTextContent('cPP Hardcopy Devices')
+    expect(table).toHaveTextContent('31 Jul 2026')
+    expect(table).toHaveTextContent('2025-09-30')
+    // The table scrolls inside its own wrapper, not the page.
+    expect(table.parentElement).toHaveClass('overflow-x-auto')
+    // One verbatim quote per document sits below the table.
+    expect(screen.getByText(/Quote from each document/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/limitation of cryptographic algorithms to CNSA 1.0, incorporation of TDs/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText(/CNSA 1.0 will be removed as an selection in a future update/).length
+    ).toBeGreaterThanOrEqual(3)
+    // Corrections: Hardcopy Devices 2.0 against the v1.1 announcement; revision histories.
+    expect(document.body.textContent).toContain('names Hardcopy Devices version 1.1, not 2.0')
+    expect(document.body.textContent).toContain(
+      'the revision history in the document does not mention post-quantum cryptography'
+    )
+    const reported = screen.getByRole('heading', { name: 'Reported, not yet verified' })
+    expect(reported).toBeInTheDocument()
+    expect(
+      screen.getByText(/PP-Module for Email Client, version 1.0: 16 Jun 2025/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/PP-Module for Intrusion Prevention \(IPS\): date not captured/)
+    ).toBeInTheDocument()
+  })
+
+  it('carries NIAP’s statement of intent once, not twice', () => {
+    wrap()
+    expect(
+      screen.getAllByText(/NIAP will issue new or update applicable technical decisions/)
+    ).toHaveLength(1)
   })
 
   it('links to the Policy #33 callout and to places that exist', () => {
