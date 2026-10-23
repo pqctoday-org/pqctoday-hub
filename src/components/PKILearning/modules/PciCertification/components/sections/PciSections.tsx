@@ -419,8 +419,11 @@ export const PciPqcTruth = () => (
       Where the quantum exposure actually sits
     </h3>
     <p>
-      PIN encryption and DUKPT are symmetric (TDES/AES); a quantum computer weakens those only
-      generically, and AES with adequate key sizes is not the problem. The exposed links are the{' '}
+      PIN encryption and DUKPT are symmetric (TDES/AES). AES-128 and AES-256 are not the main
+      concern. TDES keys, especially 2-key TDES, carry their own strength limits and quantum risk:
+      an industry source says that if both the terminal master key and the PIN key are Triple-DES,
+      they would be vulnerable to quantum attack and PINs could be harvested from the channel.{' '}
+      <PciPlainCite sourceKey="fsisacAtmPos" /> The most exposed links are the{' '}
       <strong>public-key</strong> ones:
     </p>
     <ul className="ml-5 list-disc space-y-1">
@@ -547,7 +550,9 @@ export const PciOperatingStack = () => (
         “must not be listed as historical or revoked”. All FIPS 140-2 certificates moved to the CMVP
         Historical list on 21/22 September 2026.{' '}
         <PciCite refKey="fips140Historical" label="NIST CMVP transition" /> Under the P2PE v3.1
-        text, a FIPS 140-2-only HSM therefore no longer qualifies. P2PE v3.2 is current — check
+        text, a FIPS 140-2-only HSM therefore no longer qualifies. v3.2 replaced v3.1 for new
+        submissions and reassessments on 1 January 2026 (existing v3.1 validations are unaffected){' '}
+        <PciPlainCite sourceKey="p2pe32Blog" />; v3.2 is licence-gated and was not read, so check
         whether it keeps the note.
       </li>
     </ol>
@@ -572,8 +577,9 @@ export const PciOperatingStack = () => (
       <p>
         “{ANCHOR_SCENARIO.name} is PTS HSM approved (device, listed versions, up to deployment); our
         customer’s PIN environment is assessed by a QPA; the decryption HSMs in a P2PE solution must
-        be PTS-approved or current FIPS Level 3+; and an HSM-as-a-service operator’s key management
-        is an entity assessment — KMO now names it.” Payment brands decide who must validate.
+        hold a current PTS HSM approval or a current FIPS 140-2/140-3 Level 3+ certificate; and an
+        HSM-as-a-service operator’s key management is an entity assessment — KMO now names it.”
+        Payment brands decide who must validate.
       </p>
     </Panel>
   </Prose>
@@ -668,9 +674,10 @@ export const PciPinSecurity = () => (
       <PciCite refKey="listingFields" label="listing field definitions" />
     </p>
     <p>
-      <strong>PQC:</strong> the v3.1 text has no post-quantum content. A PQC-capable HSM does not
-      change what a QPA tests today; it changes what the entity can do about Annex A’s asymmetric
-      links when a requirement arrives.
+      <strong>PQC:</strong> the v3.1 requirements text has no post-quantum content (its algorithm
+      appendix, Normative Annex C, was not checked). A PQC-capable HSM does not change what a QPA
+      tests today; it changes what the entity can do about Annex A’s asymmetric links when a
+      requirement arrives.
     </p>
     <OpenQ id="pin-historical-fips" />
   </Prose>
@@ -698,7 +705,10 @@ export const PciP2peKif = () => (
         read. <strong>P2PE v3.2 is current</strong> (P2PE Standard and Summary of Changes listed in
         the Document Library on 30 June 2025) <AsOf />. v3.2 is licence-gated and was not read, so
         the v3.1 requirement numbers below are <em>not</em> presented as current. Check v3.2 for
-        changes. <PciCite refKey="p2pe31" label="P2PE v3.1" />
+        changes. v3.1 submissions were accepted through 31 December 2025; from 1 January 2026 all
+        new submissions and reassessments must comply with v3.2, and existing v3.1 validations are
+        unaffected. <PciPlainCite sourceKey="p2pe32Blog" />{' '}
+        <PciCite refKey="p2pe31" label="P2PE v3.1" />
       </p>
     </Panel>
 
@@ -730,10 +740,12 @@ export const PciP2peKif = () => (
     <h3 className="text-base font-bold text-foreground">Algorithms in v3.1</h3>
     <p>
       Domain 5 Normative Annex C sets minimum key sizes for approved algorithms — TDEA, RSA, ECC,
-      DSA/DH and AES — with an equivalence table up to 256-bit security. It names no post-quantum
-      algorithm. One footnote matters for PQC planning: “2048 RSA keys may be used to transport 128
-      AES keys when performing remote key distribution using asymmetric techniques.” That RSA
-      transport is the quantum-exposed link of a v3.1 solution.
+      DSA/DH and AES — with an equivalence table up to 256-bit security. It carries an advisory note
+      that IFC, FFC and ECC (RSA, DH and ECC keys) are vulnerable to large-scale quantum computers
+      and advises becoming aware of that threat, but it names no post-quantum algorithm and sets no
+      requirement or deadline. One footnote matters for PQC planning: “2048 RSA keys may be used to
+      transport 128 AES keys when performing remote key distribution using asymmetric techniques.”
+      That RSA transport is the quantum-exposed link of a v3.1 solution.
     </p>
   </Prose>
 )

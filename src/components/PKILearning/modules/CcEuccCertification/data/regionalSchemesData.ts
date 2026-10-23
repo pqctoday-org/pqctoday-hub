@@ -6,9 +6,7 @@
  *
  * Every row was read on 27 September 2026 from the scheme body, the CCRA
  * portal, EUR-Lex/ENISA or a national agency, and each one was checked a
- * second time against an independent tier-1 source by Codex (gpt-5.6-terra;
- * lineage log cx-20260927T205301Z-032749f1 Europe, cx-20260927T205504Z-3b2a6304
- * outside the CCRA, and cx-20260927T205837Z-253b5389 Americas/Asia-Pacific). Where no official
+ * second time against an independent tier-1 source. Where no official
  * source states a post-quantum position, the row says so — nothing is
  * inferred. `libraryId` citations resolve through getStandard(); the rest link
  * the official page.
@@ -280,7 +278,7 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
       },
       { kind: 'crypto', text: 'ANSSI’s cryptographic mechanisms guide (PG-083 v3).' },
     ],
-    pqc: 'Hybridisation is required in the cryptographic evaluation behind a security visa; PQC obligations enter product qualification from 2027. ANSSI issued a CC certificate for a PQC product on 29 September 2025.',
+    pqc: 'Hybridisation is required in the cryptographic evaluation behind a security visa; ANSSI aims to introduce PQC obligations for product qualification from 2027; in early October 2025 it issued its first two certifications for products with post-quantum cryptography (Thales, Samsung).',
     sources: [
       { label: 'ANSSI PQC FAQ', libraryId: 'ANSSI-PQC-FAQ-2025' },
       { label: 'ANSSI PG-083 v3', libraryId: 'ANSSI-PG-083-v3-2026' },
@@ -474,7 +472,7 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
         text: 'Prefers collaborative PPs, CSA national PPs or CSA-endorsed PPs. (Cybersecurity Labelling is a separate, non-CC scheme.)',
       },
     ],
-    pqc: 'CSA Quantum-Safe Handbook (July 2026) — guidance, stated as not mandatory.',
+    pqc: 'CSA Quantum-Safe Handbook (July 2026) — guidance, with deadlines for Critical Information Infrastructure (CII) owners: a quantum-safe migration plan submitted to CSA by 31 March 2027, procurement that supports quantum-safe algorithms or is quantum-safe ready from 1 January 2028, and migration across CII completed by 31 December 2031. No CC-scheme-specific rule.',
     sources: [
       { label: 'CSA Quantum-Safe Handbook', libraryId: 'Singapore-CSA-Quantum-Safe-Handbook' },
     ],
