@@ -56,10 +56,10 @@ describe('niap-pqc-route section', () => {
   it('marks every passage that is the module’s own reading', () => {
     wrap()
     const marks = screen.getAllByTestId('module-analysis').map((m) => m.textContent)
-    expect(marks.filter((m) => m === '(Module analysis.)')).toHaveLength(13)
+    expect(marks.filter((m) => m === '(Module analysis.)')).toHaveLength(15)
     expect(marks).toContain('(Module analysis, from reading the text.)')
     expect(marks).toContain('(Questions: Module analysis.)')
-    expect(marks).toHaveLength(15)
+    expect(marks).toHaveLength(17)
     // The plain facts in the two-agencies box carry no marker.
     const box = screen.getByText(/CAVP tests an algorithm and gives an algorithm certificate/)
     expect(within(box).queryByTestId('module-analysis')).not.toBeInTheDocument()
@@ -120,7 +120,7 @@ describe('niap-pqc-route section', () => {
       'Version',
       'Date in document',
       'Post-quantum algorithms listed',
-      'Classical choices still allowed',
+      'Classical choices in the document text',
     ])
     expect(table).toHaveTextContent('cPP Hardcopy Devices')
     expect(table).toHaveTextContent('31 Jul 2026')
@@ -128,13 +128,41 @@ describe('niap-pqc-route section', () => {
     // The table scrolls inside its own wrapper, not the page.
     expect(table.parentElement).toHaveClass('overflow-x-auto')
     // One verbatim quote per document sits below the table.
-    expect(screen.getByText(/Quote from each document/)).toBeInTheDocument()
+    expect(screen.getByText(/Quotes from each document/)).toBeInTheDocument()
     expect(
       screen.getByText(/limitation of cryptographic algorithms to CNSA 1.0, incorporation of TDs/)
     ).toBeInTheDocument()
     expect(
       screen.getAllByText(/CNSA 1.0 will be removed as an selection in a future update/).length
     ).toBeGreaterThanOrEqual(3)
+    // Over-reach fixed: classical entries stay in the requirements; some KEM tables list only ML-KEM-1024.
+    const text = document.body.textContent ?? ''
+    expect(text).toContain('though some key-encapsulation tables list only ML-KEM-1024')
+    expect(text).not.toContain('sit beside the classical choices')
+    expect(text).toContain(
+      'lists no Technical Decision (read 23 October 2026), and we found no such decision for version 2.0.'
+    )
+    for (const td of ['TD1009', 'TD1012', 'TD1013', 'TD1025', 'TD0966']) {
+      expect(screen.getAllByRole('link', { name: `Source: ${td}` })[0]).toHaveAttribute(
+        'href',
+        `https://www.niap-ccevs.org/technical-decisions/${td}`
+      )
+    }
+    expect(text).toContain('(a package, not a profile)')
+    expect(screen.getAllByText(/NIAP approved /)).toHaveLength(11)
+    expect(text).toContain('which lists all 11 as CC:2022')
+    // Quotes restored or added for terms that had none.
+    expect(text).toContain(
+      'ECC key generation with support for P-384 has been made mandatory in support of IPsec'
+    )
+    expect(text).toContain('EC-KCDSA-based key establishment schemes')
+    expect(text).toContain(
+      'as specified in FCS_CKM.2 (from the Base-PP ) and a key wrapping algorithm as specified in FCS_COP.1/KW'
+    )
+    expect(text).toContain(
+      'Note that ML-DSA and ML-KEM are not usable in any functions at the time of initial publication'
+    )
+    expect(text).toContain('All 11 refer to CC:2022 in their own text.')
     // Corrections: Hardcopy Devices 2.0 against the v1.1 announcement; revision histories.
     expect(document.body.textContent).toContain('names Hardcopy Devices version 1.1, not 2.0')
     expect(document.body.textContent).toContain(
@@ -178,11 +206,26 @@ describe('niap-pqc-route section', () => {
       'CNSSP 15',
       'BSI-CC-PP-0114-V2X-HSM',
       'CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile',
+      'NIAP-Protection-Profile-for-Application-Software-Version-2-0',
+      'NIAP-cPP-Dedicated-Security-Component-Version-2-1',
+      'NIAP-cPP-DSC-Supporting-Document-Version-2-1',
+      'NIAP-cPP-Network-Devices-Version-4-0',
+      'NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0',
+      'NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0',
+      'NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0',
+      'NIAP-PP-Virtualization-Version-2-0',
+      'NIAP-PP-Module-VPN-Client-Version-3-0',
+      'NIAP-cPP-Hardcopy-Devices-Version-2-0',
+      'NIAP-PP-Module-File-Encryption-Version-2-0',
+      'NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0',
+      'NIAP-TD1010-Network-Devices-v4-0-Endorsement',
+      'NIAP-TD1011-DSC-v2-1-Endorsement',
+      'NIAP-Announcements-Policy-33-Technical-Decisions-Notice',
     ]) {
       expect(hrefs(), id).toContain(getStandard(id).deepLink)
     }
     const external = links().filter((a) => (a.getAttribute('href') ?? '').startsWith('http'))
-    expect(external.length).toBeGreaterThanOrEqual(8)
+    expect(external.length).toBeGreaterThanOrEqual(7)
     for (const a of external) {
       expect(a).toHaveAttribute('target', '_blank')
       expect(a).toHaveAttribute('rel', 'noopener noreferrer')

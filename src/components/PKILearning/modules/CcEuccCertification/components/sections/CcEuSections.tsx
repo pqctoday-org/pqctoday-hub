@@ -2090,127 +2090,173 @@ const InLink = ({ to, children }: { to: string; children: ReactNode }) => (
   </Link>
 )
 
-const NIAP_DSC_CPP_URL =
-  'https://www.niap-ccevs.org/static_html/protection-profile/538/cPP_DSC_V2.1.html'
-const NIAP_DSC_SD_URL = 'https://dsc-itc.github.io/v2/2.1/SD_DSC_V2.1.html'
-const NIAP_APP_PP_URL =
-  'https://www.niap-ccevs.org/static_html/protection-profile/516/PP_APP_V2.0.htm'
 const NIAP_POLICY_5_URL =
   'https://www.niap-ccevs.org/Documents_and_Guidance/ccevs/policy-ltr-5-update3.pdf'
-const NIAP_TD1011_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1011'
-const NIAP_TD1010_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1010'
+const NIAP_PP_LIST_URL = 'https://www.niap-ccevs.org/protectionprofiles'
+const NIAP_TD1009_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1009'
+const NIAP_TD1012_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1012'
+const NIAP_TD1013_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1013'
+const NIAP_TD1025_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1025'
+const NIAP_TD0966_URL = 'https://www.niap-ccevs.org/technical-decisions/TD0966'
 
 type ProfileRow = {
   profile: string
+  /** Library reference id of the document. */
+  libraryId: string
   version: string
   date: string
+  /** The approval date as listed on NIAP's table of approved profiles (read 23 October 2026). */
+  approved: string
   pq: string
   classical: string
-  quote: string
+  /** Verbatim snippets from the document itself, in the order they are listed under the table. */
+  quotes: readonly string[]
   quoteSource?: string
 }
+
+const APP_NOTE =
+  'Note that ML-DSA and ML-KEM are not usable in any functions at the time of initial publication, they are added to this requirement in support of future protocol updates.'
+const REMOVAL_NOTE =
+  'As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future update.'
+const FE_NOTE =
+  'This PP-Module allows the use of ML-KEM key establishment schemes with the hybrid key-transport methods described in SP800-56B to provide a CNSA2-compliant key-transport method.'
+const FE_KT =
+  'CNSA 2.0 Compliant Algorithms: [ Hybrid Key-Transport Method ] that meets the following: [Section 9.3 of NIST SP 800-56B, Revision 2] using a key establishment algorithm [ML-KEM] as specified in FCS_CKM.2 (from the Base-PP ) and a key wrapping algorithm as specified in FCS_COP.1/KW'
 
 /** One row per NIAP document whose own text was read; quotes are verbatim from that document. */
 const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   {
     profile: 'Application Software PP',
+    libraryId: 'NIAP-Protection-Profile-for-Application-Software-Version-2-0',
     version: '2.0',
     date: '2025-06-16',
+    approved: '16 Jun 2025',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical: 'CNSA 1.0 branch: RSA 3072-bit or greater, P-384 (P-521), safe-prime groups',
-    quote:
-      'As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future update.',
+    quotes: [`${APP_NOTE} ${REMOVAL_NOTE}`],
   },
   {
     profile: 'cPP Dedicated Security Component',
+    libraryId: 'NIAP-cPP-Dedicated-Security-Component-Version-2-1',
     version: '2.1',
     date: '17 Nov 2025',
+    approved: '26 Mar 2026',
     pq: 'LMS, HSS, XMSS, XMSS MT, ML-KEM (512, 768, 1024), ML-DSA (44, 65, 87), HashML-DSA',
     classical:
-      'RSA 2048 or 3072, EC curves from P-256, finite-field, EdDSA and others; NIAP TD1011 lists CNSA 1.0 or 2.0',
-    quote: 'Final publication for v2.1 (post-quantum cryptography, respond to NIAP comments)',
+      'RSA 2048 or 3072, EC curves from P-256, finite-field groups, EdDSA; NIAP TD1011 lists CNSA 1.0 or 2.0',
+    quotes: [
+      'Final publication for v2.1 (post-quantum cryptography, respond to NIAP comments)',
+      'RSA Modulus of size [selection: 2048 bit, 3072 bit]',
+      'Elliptic Curve [selection: P-256, brainpoolP256r1, P-384, brainpoolP384r1, P-521, brainpoolP512r1]',
+      'Static domain parameters approved for [selection: IKE groups [selection: MODP-2048, MODP-3072, MODP-4096, MODP-6144, MODP-8192], TLS groups [selection: ffdhe2048, ffdhe3072, ffdhe4096, ffdhe6144, ffdhe8192]]',
+      'EdDSA Domain parameters approved for elliptic curves [selection: Edwards25519, Edwards448]',
+    ],
   },
   {
     profile: 'cPP Network Devices',
+    libraryId: 'NIAP-cPP-Network-Devices-Version-4-0',
     version: '4.0',
     date: '25 Nov 2025',
+    approved: '22 Dec 2025',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical:
       'RSA 2048 to 8192, ECDSA from P-256, finite-field groups; NIAP TD1010 lists CNSA 1.0 or 2.0',
-    quote:
+    quotes: [
       'Each applicable Cryptographic SFR (FCS_) must include at least one selection conforming to Commercial National Security Algorithm (CNSA) Suite V1.0 or V2.0;',
+    ],
     quoteSource: 'NIAP TD1010',
   },
   {
     profile: 'PP General-Purpose Computing Platforms',
+    libraryId: 'NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0',
     version: '2.0',
     date: '2026-04-16',
+    approved: '22 Apr 2026',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical: 'RSA 3072 to 8192, P-384 or P-521, finite-field groups (3072 bits and up)',
-    quote: 'ML-KEM-1024 is CNSA compliant.',
+    quotes: ['ML-KEM-1024 is CNSA compliant.'],
   },
   {
     profile: 'PP Virtualization',
+    libraryId: 'NIAP-PP-Virtualization-Version-2-0',
     version: '2.0',
     date: '2026-05-21',
+    approved: '21 May 2026',
     pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
     classical: 'RSA 3072 to 8192, P-384 or P-521, finite-field groups (3072 bits and up)',
-    quote:
+    quotes: [
       'the only anticipated use of key encapsulation is the use of ML-KEM as part of key establishment for trusted communications',
+    ],
   },
   {
     profile: 'cPP Full Drive Encryption, Authorization Acquisition',
+    libraryId: 'NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0',
     version: '3.0',
     date: '2026-03-12',
+    approved: '25 Mar 2026',
     pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
     classical: 'CNSA 1.0 branch: RSA 3072 to 8192, P-384 (P-521)',
-    quote:
-      'As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future update.',
+    quotes: [REMOVAL_NOTE],
   },
   {
     profile: 'cPP Full Drive Encryption, Encryption Engine',
+    libraryId: 'NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0',
     version: '3.0',
     date: '2026-03-12',
+    approved: '25 Mar 2026',
     pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
     classical: 'CNSA 1.0 branch: RSA 3072 to 8192, P-384 (P-521)',
-    quote:
-      'Note that ML-DSA and ML-KEM are not usable in any functions at the time of initial publication',
+    quotes: [`${APP_NOTE} ${REMOVAL_NOTE}`],
   },
   {
     profile: 'cPP Hardcopy Devices',
+    libraryId: 'NIAP-cPP-Hardcopy-Devices-Version-2-0',
     version: '2.0',
     date: '31 Jul 2026',
+    approved: '23 Sep 2026',
     pq: 'ML-KEM-1024, ML-DSA-87, LMS, XMSS',
     classical: 'RSA 2048 or more, ECDSA 256 bits or more, finite-field 2048 bits or more, KCDSA',
-    quote: 'Module-Lattice-based Digital Signature Algorithm using parameter set ML-DSA-87',
+    quotes: [
+      'Module-Lattice-based Digital Signature Algorithm using parameter set ML-DSA-87',
+      'RSA Digital Signature Algorithm and cryptographic key sizes (modulus) [assignment: 2048 bits or',
+      'FFC schemes using cryptographic key sizes of 2048-bit or greater',
+      'EC-KCDSA-based key establishment schemes',
+    ],
   },
   {
     profile: 'PP-Module VPN Client',
+    libraryId: 'NIAP-PP-Module-VPN-Client-Version-3-0',
     version: '3.0',
     date: '2025-09-30',
+    approved: '29 Sep 2025',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical:
       'ECC P-384 (the module text makes it mandatory), RSA 3072-bit or greater, safe-prime groups',
-    quote:
+    quotes: [
       'CC :2022 conversion, limitation of cryptographic algorithms to CNSA 1.0, incorporation of TDs',
+      'ECC key generation with support for P-384 has been made mandatory in support of IPsec',
+      'FFC schemes using "safe-prime" groups [ selection: MODP-3072, MODP-4096, MODP-6144, MODP-8192, ffdhe-3072, ffdhe-4096, ffdhe-6144, ffdhe-8192]',
+    ],
   },
   {
     profile: 'PP-Module File Encryption',
+    libraryId: 'NIAP-PP-Module-File-Encryption-Version-2-0',
     version: '2.0',
     date: '2025-09-29',
+    approved: '29 Sep 2025',
     pq: 'ML-KEM only, in a hybrid key-transport method',
     classical: 'RSA KTS-OAEP, 3072 or 4096 bits',
-    quote:
-      'This PP-Module allows the use of ML-KEM key establishment schemes with the hybrid key-transport methods described in SP800-56B to provide a CNSA2-compliant key-transport method.',
+    quotes: [FE_KT, FE_NOTE],
   },
   {
     profile: 'PP-Module File Encryption Enterprise Management',
+    libraryId: 'NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0',
     version: '2.0',
     date: '2025-09-29',
+    approved: '29 Sep 2025',
     pq: 'ML-KEM only, in a hybrid key-transport method',
     classical: 'RSA KTS-OAEP, 3072 or 4096 bits',
-    quote:
-      'This PP-Module allows the use of ML-KEM key establishment schemes with the hybrid key-transport methods described in SP800-56B to provide a CNSA2-compliant key-transport method.',
+    quotes: [FE_KT, FE_NOTE],
   },
 ]
 
@@ -2281,7 +2327,7 @@ export const NiapPqcRoute = () => (
       choices beside the classical ones, including ML-KEM (512, 768, 1024) and ML-DSA (44, 65, 87).
       The profile text offers them as selections and has no CNSA wording.{' '}
       <ModuleAnalysisNote>(Module analysis, from reading the text.)</ModuleAnalysisNote> (
-      <ExternalSource name="DSC cPP v2.1" href={NIAP_DSC_CPP_URL} />)
+      <SourceCite id="NIAP-cPP-Dedicated-Security-Component-Version-2-1" label="DSC cPP v2.1" />)
     </P>
     <P>
       NIAP adds the CNSA rule by Technical Decision TD1011, published 26 March 2026. NIAP endorsed
@@ -2294,8 +2340,9 @@ export const NiapPqcRoute = () => (
       preferred) for soft/firmware signature”, next to “ECDH 384”, “ECDSA 384” and “RSA with minimum
       3072-bit modulus”; and “Evaluations certified by NIAP must only make CNSA-compliant
       selections.” (
-      <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />) So post-quantum is one allowed route,
-      not the only one: CNSA 1.0 selections such as ECDSA 384 and RSA 3072 also count.
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" />) So post-quantum is one
+      allowed route, not the only one: CNSA 1.0 selections such as ECDSA 384 and RSA 3072 also
+      count.
     </P>
 
     <P>
@@ -2306,9 +2353,9 @@ export const NiapPqcRoute = () => (
       initial publication, they are added to this requirement in support of future protocol updates.
       As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future
       update.” It prepares for the move and does not force it. <MA /> (
-      <ExternalSource
-        name="NIAP Protection Profile for Application Software v2.0"
-        href={NIAP_APP_PP_URL}
+      <SourceCite
+        id="NIAP-Protection-Profile-for-Application-Software-Version-2-0"
+        label="NIAP Protection Profile for Application Software v2.0"
       />
       )
     </P>
@@ -2341,12 +2388,14 @@ export const NiapPqcRoute = () => (
     <H3>NIAP profiles that already list post-quantum choices</H3>
     <P>
       As of 23 October 2026, 11 NIAP documents we checked (8 profiles and 3 profile modules) list
-      post-quantum choices such as ML-KEM, ML-DSA, LMS and XMSS. In all 11 the post-quantum entries
-      sit beside the classical choices, and none of the 11 has removed the classical (CNSA 1.0)
-      choices; three of them (Application Software 2.0 and Full Drive Encryption Authorization
-      Acquisition 3.0 and Encryption Engine 3.0) say that will happen “in a future update”. The
-      checks cover only these 11 documents; the other NIAP profiles are listed below as reported and
-      not yet read. <MA />
+      post-quantum choices such as ML-KEM, ML-DSA, LMS and XMSS. All 11 refer to CC:2022 in their
+      own text. In all 11, classical algorithms remain in the cryptographic requirements alongside
+      the post-quantum entries, though some key-encapsulation tables list only ML-KEM-1024. <MA />{' '}
+      None of the 11 requires post-quantum cryptography, and none has removed the classical (CNSA
+      1.0) choices; three of them (Application Software 2.0 and Full Drive Encryption Authorization
+      Acquisition 3.0 and Encryption Engine 3.0) say that will happen “in a future update”. <MA />{' '}
+      The checks cover only these 11 documents; the other NIAP profiles are listed below as reported
+      and not yet read.
     </P>
     <DataTable
       caption="NIAP profiles with post-quantum selections, as of 23 October 2026"
@@ -2355,10 +2404,15 @@ export const NiapPqcRoute = () => (
         'Version',
         'Date in document',
         'Post-quantum algorithms listed',
-        'Classical choices still allowed',
+        'Classical choices in the document text',
       ]}
       rows={NIAP_PROFILE_ROWS.map((r) => [
-        <strong key="p">{r.profile}</strong>,
+        <span key="p">
+          <strong>
+            <SourceCite id={r.libraryId} label={r.profile} />
+          </strong>
+          <span className="block text-xs text-muted-foreground">NIAP approved {r.approved}</span>
+        </span>,
         r.version,
         r.date,
         r.pq,
@@ -2366,21 +2420,54 @@ export const NiapPqcRoute = () => (
       ])}
     />
     <p className="text-xs text-muted-foreground">
-      The date is the one the document itself shows; algorithm lists are written as the profile
-      lists them. Source pages: the{' '}
-      <ExternalSource name="Application Software profile" href={NIAP_APP_PP_URL} /> and the{' '}
-      <ExternalSource name="Dedicated Security Component cPP" href={NIAP_DSC_CPP_URL} />, with{' '}
-      <ExternalSource name="TD1010" href={NIAP_TD1010_URL} /> and{' '}
-      <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />.
+      “Date in document” is the one the document itself shows; “NIAP approved” is the approval date
+      as listed on{' '}
+      <ExternalSource name="NIAP’s table of approved profiles" href={NIAP_PP_LIST_URL} />
+      (read 23 October 2026), which lists all 11 as CC:2022. Algorithm lists are written as the
+      profile lists them. Source pages: the{' '}
+      <SourceCite
+        id="NIAP-Protection-Profile-for-Application-Software-Version-2-0"
+        label="Application Software profile"
+      />{' '}
+      and the{' '}
+      <SourceCite
+        id="NIAP-cPP-Dedicated-Security-Component-Version-2-1"
+        label="Dedicated Security Component cPP"
+      />
+      .
     </p>
-    <p className="text-sm font-medium text-foreground">Quote from each document</p>
+    <P>
+      Three of the profiles (Dedicated Security Component, Network Devices and Hardcopy Devices) are
+      international collaborative profiles whose text lists classical algorithms below CNSA 1.0,
+      such as RSA 2048 and P-256 (and KCDSA in Hardcopy Devices). NIAP restricts what can be posted
+      to the Product Compliant List by endorsement Technical Decisions that all say the same: each
+      applicable cryptographic requirement must include at least one selection conforming to CNSA
+      1.0 or 2.0, and an evaluation in another scheme may select other algorithms if the product can
+      be configured not to use them. These are{' '}
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" /> for Dedicated Security
+      Component, <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" label="TD1010" /> for
+      Network Devices, <ExternalSource name="TD1012" href={NIAP_TD1012_URL} /> and{' '}
+      <ExternalSource name="TD1013" href={NIAP_TD1013_URL} /> for Full Drive Encryption 3.0
+      (Authorization Acquisition and Encryption Engine), and{' '}
+      <ExternalSource name="TD1009" href={NIAP_TD1009_URL} /> for Hardcopy Devices version 1.1 only.
+      NIAP’s page for Hardcopy Devices 2.0 lists no Technical Decision (read 23 October 2026), and
+      we found no such decision for version 2.0. <MA /> For the Functional Package for TLS 2.1 (a
+      package, not a profile), <ExternalSource name="TD1025" href={NIAP_TD1025_URL} /> (1 April
+      2026) says the same for (D)TLS servers.
+    </P>
+    <p className="text-sm font-medium text-foreground">Quotes from each document</p>
     <ul className="list-disc space-y-1 pl-5 text-xs leading-relaxed text-foreground/90">
       {NIAP_PROFILE_ROWS.map((r) => (
         <li key={r.profile}>
           <span className="font-medium">
             {r.profile} {r.version}:
           </span>{' '}
-          “{r.quote}”{r.quoteSource ? ` (${r.quoteSource})` : ''}
+          {r.quotes.map((q, i) => (
+            <span key={q}>
+              {i > 0 ? ' ' : ''}“{q}”
+            </span>
+          ))}
+          {r.quoteSource ? ` (${r.quoteSource})` : ''}
         </li>
       ))}
     </ul>
@@ -2391,17 +2478,31 @@ export const NiapPqcRoute = () => (
       <li>
         “Listed” means a selectable entry in an allowed-choices table or a selection list. In the
         tables we read, post-quantum entries are options; we did not find a function where only a
-        post-quantum entry is available. Where a table has a single entry (for example ML-KEM-1024
-        as the only key-encapsulation entry in the Network Devices cPP, Table 14), the requirement
-        itself applies only if the Security Target selects ML-KEM.
+        post-quantum entry is available. Some key-encapsulation tables list only ML-KEM-1024 (the
+        Network Devices cPP, Table 14, and Virtualization, Table 18); in others (Dedicated Security
+        Component, General-Purpose Computing Platforms, Full Drive Encryption) RSA entries sit in
+        the same table. Where a table has a single entry, the requirement itself applies only if the
+        Security Target selects ML-KEM.
       </li>
       <li>
-        NIAP’s own posting dates differ from the dates inside the documents. From NIAP’s
-        announcements: Network Devices 4.0 endorsed 22 December 2025; Dedicated Security Component
-        2.1 endorsed 26 March 2026; Full Drive Encryption 3.0 (both) posted 25 March 2026;
-        General-Purpose Computing Platforms 2.0 posted 22 April 2026; Virtualization 2.0 posted 21
-        May 2026. The 25 March 2026 announcement names Hardcopy Devices version 1.1, not 2.0; the
-        Hardcopy Devices 2.0 document is dated 31 July 2026.
+        In two profiles, Application Software 2.0 and Full Drive Encryption Encryption Engine 3.0,
+        ML-KEM and ML-DSA are present as selections that the profile says cannot yet be used in any
+        function (see the quotes above).
+      </li>
+      <li>
+        “LMS and XMSS for verification” and “only” in the table state what we did not find in the
+        other tables of the same profile, from a search of the text; for example, Virtualization has
+        no LMS or XMSS entry in its signature-generation table.
+      </li>
+      <li>
+        The two File Encryption modules define a hybrid key-transport requirement (FCS_COP.1/KT)
+        that uses ML-KEM as specified in the base profile’s FCS_CKM.2, with a key wrapping
+        algorithm; their text has no match for ML-DSA, LMS or XMSS.
+      </li>
+      <li>
+        NIAP’s approval dates differ from the dates inside the documents. The 25 March 2026
+        announcement names Hardcopy Devices version 1.1, not 2.0; the Hardcopy Devices 2.0 document
+        is dated 31 July 2026 and NIAP’s table lists it approved 23 September 2026.
       </li>
       <li>
         Virtualization and General-Purpose Computing Platforms: NIAP’s announcement says each
@@ -2409,15 +2510,17 @@ export const NiapPqcRoute = () => (
         post-quantum cryptography, although the requirement tables carry post-quantum selections.
         The tables are what we used.
       </li>
-      <li>
-        The Hardcopy Devices text has no match for “CNSA”, and it allows RSA of 2048 bits and ECDSA
-        of 256 bits, which are below CNSA 1.0. Whether NIAP will place a listing condition on it
-        like TD1010 and TD1011 is not known to us.
-      </li>
+      <li>The Hardcopy Devices text has no match for “CNSA”.</li>
       <li>
         The VPN Client module’s revision history, dated 2025-09-30 in the document, says “limitation
         of cryptographic algorithms to CNSA 1.0”, while the same module text carries the CNSA 2.0
         selections. We quote both and make no reading of the difference.
+      </li>
+      <li>
+        <ExternalSource name="TD0966" href={NIAP_TD0966_URL} /> (8 January 2026) corrects the
+        brackets of the VPN Client module’s FCS_CKM.1. Its text states ECC “NIST curves” P-384
+        outside the later selection, puts ML-KEM-1024 and ML-DSA-87 in the CNSA 2.0 branch, and puts
+        the safe-prime groups in the CNSA 1.0 branch.
       </li>
     </ul>
 
@@ -2464,16 +2567,21 @@ export const NiapPqcRoute = () => (
         temporary use of select algorithms which are not CNSA 1.0 compliant for certain functions
         such as secure boot and trusted update. NIAP strongly recommends vendors adopt CNSA 2.0
         compliant algorithms as soon as possible.” (
-        <ExternalSource name="NIAP announcements" />) We found no such decision yet.
+        <SourceCite
+          id="NIAP-Announcements-Policy-33-Technical-Decisions-Notice"
+          label="NIAP announcements"
+        />
+        ) We found no such decision yet.
       </li>
       <li>
         The profiles and Technical Decisions. The two examples and their test methods (the DSC test
-        methods are in its <ExternalSource name="Supporting Document" href={NIAP_DSC_SD_URL} />
+        methods are in its{' '}
+        <SourceCite id="NIAP-cPP-DSC-Supporting-Document-Version-2-1" label="Supporting Document" />
         ); NIAP’s TD1011 for the DSC cPP, quoted above (
-        <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />
+        <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" />
         ), and TD1010 for the Network Devices cPP version 4.0 (24 March 2026); both require at least
         one selection conforming to CNSA 1.0 or 2.0 for the Product Compliant List (
-        <ExternalSource name="TD1010" href={NIAP_TD1010_URL} />
+        <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" label="TD1010" />
         ); and the DSC group’s own “Post-Quantum Algorithm Support” decision of 17 June 2025 (
         <ExternalSource name="DSC-iTC Technical Decisions page" />
         ).
@@ -2543,14 +2651,11 @@ export const NiapPqcRoute = () => (
       <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" />,{' '}
       <SourceCite id="BSI-CC-PP-0114-V2X-HSM" />
       , <SourceCite id="CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile" />,{' '}
-      <ExternalSource
-        name="NIAP Protection Profile for Application Software v2.0"
-        href={NIAP_APP_PP_URL}
-      />
-      , <ExternalSource name="Dedicated Security Component cPP v2.1" href={NIAP_DSC_CPP_URL} />,{' '}
-      <ExternalSource name="DSC Supporting Document v2.1" href={NIAP_DSC_SD_URL} />,{' '}
-      <ExternalSource name="Technical Decision TD1011" href={NIAP_TD1011_URL} />,{' '}
-      <ExternalSource name="Technical Decision TD1010" href={NIAP_TD1010_URL} />,{' '}
+      <SourceCite id="NIAP-Protection-Profile-for-Application-Software-Version-2-0" />
+      , <SourceCite id="NIAP-cPP-Dedicated-Security-Component-Version-2-1" />,{' '}
+      <SourceCite id="NIAP-cPP-DSC-Supporting-Document-Version-2-1" />,{' '}
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" />,{' '}
+      <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" />,{' '}
       <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />.
     </Sources>
   </div>
