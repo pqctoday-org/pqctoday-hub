@@ -51,7 +51,7 @@ export const content: ModuleContent = {
   narratives: {
     reviewStatus: 'Reviewed by the owner',
     acvpSpecRevision:
-      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)',
+      'draft-ietf-acvp-spec-01 (keeps its draft name; NIST revises its protocol sections in the repository, latest October 2025; usnistgov/ACVP @ d13c633)',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',
     publicSampleCommit: 'usnistgov/ACVP-Server @ 975de31',
     evidenceClassCount: '8',
