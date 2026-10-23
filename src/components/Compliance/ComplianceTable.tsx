@@ -38,8 +38,10 @@ import {
   pqcEvidenceLabel,
   pqcNames,
   recordTypeDescription,
+  NO_SCHEME_ID_LABEL,
   recordTypeLabel,
   retrievalSummary,
+  schemeCertificateId,
   scopeNotice,
   SNAPSHOT_NOTICE,
   snapshotRetrievalEntries,
@@ -142,9 +144,15 @@ export const ComplianceRow = ({
 
       {/* Certification # Column — with the record type and its verbatim status */}
       <td className="px-4 py-3 text-xs w-32">
-        <div className="font-mono truncate" title={record.id}>
-          {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
-        </div>
+        {schemeCertificateId(record) ? (
+          <div className="font-mono truncate" title={record.id}>
+            {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
+          </div>
+        ) : (
+          <div className="truncate italic text-muted-foreground" title={NO_SCHEME_ID_LABEL}>
+            {NO_SCHEME_ID_LABEL}
+          </div>
+        )}
         <div className="mt-0.5 flex flex-wrap items-center gap-1">
           <span
             className="text-[10px] text-muted-foreground truncate"
@@ -1715,7 +1723,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                           Cert ID
                         </span>
                         <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
-                          {record.id}
+                          {schemeCertificateId(record) ?? NO_SCHEME_ID_LABEL}
                         </span>
                       </div>
                       <div className="flex flex-col gap-0.5 items-end">

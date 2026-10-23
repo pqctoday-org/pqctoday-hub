@@ -63,6 +63,7 @@ import {
   pqcNames,
   recordTypeDescription,
   recordTypeLabel,
+  schemeCertificateId,
   statusBadgeClass,
 } from '@/components/Compliance/recordSemantics'
 import { MobileSheet } from '../primitives/Sheet'
@@ -911,7 +912,14 @@ export function MobileComplianceView({
                     >
                       <span className="text-[12px] font-bold text-foreground">{r.productName}</span>
                       <span className="text-[10.5px] text-muted-foreground">
-                        {r.vendor} · {recordTypeLabel(r.type)} #{r.id} · {r.date}
+                        {[
+                          r.vendor,
+                          recordTypeLabel(r.type),
+                          schemeCertificateId(r) ? `#${r.id}` : null,
+                          r.date,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ')}
                       </span>
                     </Button>
                   </li>
@@ -1263,7 +1271,9 @@ function MobileRecordDetailSheet({
             >
               {record.status || 'No status'}
             </span>
-            <span className="font-mono text-[10.5px] text-muted-foreground">{record.id}</span>
+            {schemeCertificateId(record) && (
+              <span className="font-mono text-[10.5px] text-muted-foreground">{record.id}</span>
+            )}
           </div>
           {record.vendor && <p className="text-[11.5px] text-muted-foreground">{record.vendor}</p>}
 

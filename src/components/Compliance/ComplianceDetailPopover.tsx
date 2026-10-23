@@ -26,6 +26,7 @@ import {
   pqcNames,
   recordTypeDescription,
   recordTypeLabel,
+  schemeCertificateId,
   statusBadgeClass,
   statusTone,
 } from './recordSemantics'
@@ -316,7 +317,9 @@ export const ComplianceDetailPopover = ({
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
                     <StatusBadge status={record.status} />
-                    <span className="text-xs text-muted-foreground font-mono">{record.id}</span>
+                    {schemeCertificateId(record) && (
+                      <span className="text-xs text-muted-foreground font-mono">{record.id}</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
                     <AskAssistantButton

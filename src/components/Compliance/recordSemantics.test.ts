@@ -9,6 +9,7 @@ import {
   recordTypeLabel,
   scopeNotice,
   retrievalSummary,
+  schemeCertificateId,
   snapshotRetrievalEntries,
   statusTone,
 } from './recordSemantics'
@@ -164,5 +165,26 @@ describe('sidecar helpers', () => {
     expect(csv).not.toMatch(/\nold,/)
     expect(csv).toMatch(/NIST CAVP/)
     expect(csv).not.toMatch(/,ACVP,/)
+  })
+})
+
+describe('schemeCertificateId', () => {
+  it('hides the generated slug of a Common Criteria Portal listing', () => {
+    expect(
+      schemeCertificateId(rec({ type: 'Common Criteria', id: 'cc-hsm-firmware-2-0-3881cf5c' }))
+    ).toBeNull()
+  })
+
+  it('keeps a real scheme certificate number', () => {
+    expect(schemeCertificateId(rec({ type: 'Common Criteria', id: 'anssi-cc-2024-39' }))).toBe(
+      'anssi-cc-2024-39'
+    )
+    expect(schemeCertificateId(rec({ type: 'FIPS 140-3', id: '4875' }))).toBe('4875')
+  })
+
+  it('does not treat a slug-shaped id of another record type as generated', () => {
+    expect(schemeCertificateId(rec({ type: 'EUCC', id: 'cc-abc-0123abcd' }))).toBe(
+      'cc-abc-0123abcd'
+    )
   })
 })

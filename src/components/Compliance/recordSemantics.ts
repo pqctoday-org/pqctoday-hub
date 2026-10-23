@@ -92,6 +92,23 @@ const TYPE_DESCRIPTION: Record<ComplianceType, string> = {
   CSPN: 'CSPN (ANSSI) — French national first-level certification, separate from Common Criteria',
 }
 
+/**
+ * The certificate number a reader can look up at the scheme. Common Criteria Portal
+ * listings carry no scheme certificate number in the data, so their record id is a
+ * slug generated from the product name plus a short hash ('cc-<product>-3881cf5c').
+ * That slug is an internal key (deep links, selection), not a certificate number,
+ * and must not be presented as one. ANSSI, EUCC, CSPN, CMVP and CAVP ids are the
+ * scheme's own numbers and are returned unchanged.
+ */
+const GENERATED_CC_ID = /^cc-.+-[0-9a-f]{8}$/
+
+export function schemeCertificateId(record: { id: string; type: string }): string | null {
+  return record.type === 'Common Criteria' && GENERATED_CC_ID.test(record.id) ? null : record.id
+}
+
+/** What to show where a certificate number would be, when the listing has none. */
+export const NO_SCHEME_ID_LABEL = 'No scheme number in the listing'
+
 /** User-facing short label for a record type. Unknown types render as-is. */
 export function recordTypeLabel(type: string): string {
   return type in TYPE_LABEL ? TYPE_LABEL[type as ComplianceType] : type
