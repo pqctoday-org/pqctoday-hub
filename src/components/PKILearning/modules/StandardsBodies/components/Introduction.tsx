@@ -439,7 +439,7 @@ const Step3GlobalRegional: React.FC = () => (
             region: 'European Union',
             bodies: [
               'ETSI TC CYBER — TS 103 744 (quantum-safe cryptography standard)',
-              'ENISA — EUCC certification scheme, ACM list',
+              'ENISA — supports the EUCC scheme and the ECCG, which agrees the ACM',
               'EC — NIS2 Directive, eIDAS 2.0, DORA (legally binding regulations)',
             ],
           },
