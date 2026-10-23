@@ -201,9 +201,11 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   researcher: null,
   // cert-engineer (2026-09-29): the certificate-facing routes — product
   // records on /compliance, the Validation tab on /algorithms, the validation
-  // workbench on /playground. /business, /patents and /simulation stay one
-  // click away under MORE: the Command Center plans a migration program, and
-  // this role owns no seat in it (see PERSONA_SIM_PRACTICE_NONE).
+  // workbench on /playground. /patents sits in the main list (23 Oct 2026,
+  // owner decision): certification work reads vendor patent filings. /business
+  // and /simulation stay one click away under MORE: the Command Center plans a
+  // migration program, and this role owns no seat in it (see
+  // PERSONA_SIM_PRACTICE_NONE).
   'cert-engineer': [
     '/migrate',
     '/compliance',
@@ -213,6 +215,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/leaders',
+    '/patents',
     '/navigate',
   ],
   ops: [
