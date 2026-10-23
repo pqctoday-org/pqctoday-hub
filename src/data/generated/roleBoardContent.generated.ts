@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10232026_r1.csv
+ * Source: src/data/role_board_content_10232026_r2.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -3062,9 +3062,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/timeline',
           },
           {
-            title: 'See where the cycles go',
-            body: "The PQC Hardware Acceleration module explains where ML-DSA and SLH-DSA spend their time and which parts are worth accelerating, with PQC Today's own measurements on three devices.",
-            href: '/learn/pqc-hw-acceleration',
+            title: 'Why the question is being asked',
+            body: 'The threat landscape: the CRQC capability watch and the expert survey behind it, with the source behind each figure.',
+            href: '/threats',
           },
         ] as [
           { title: string; body: string; href?: string },
