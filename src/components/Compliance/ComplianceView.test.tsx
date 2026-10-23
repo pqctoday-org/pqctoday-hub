@@ -275,6 +275,20 @@ describe('ComplianceView', () => {
     expect(screen.getByTestId('compliance-table')).toHaveTextContent('selected: A7285')
   }, 15000)
 
+  // Owner request U-5 (22 Oct 2026): Product Records opens on the search and the
+  // table; the glossary, evidence legend and trend chart are reading aids below.
+  it('records tab puts the table before its reading aids', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceView simEmbed initialTab="records" />
+      </MemoryRouter>
+    )
+    const table = screen.getByTestId('compliance-table')
+    const aids = screen.getByTestId('records-reading-aids')
+    expect(table.compareDocumentPosition(aids) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(aids).toContainElement(screen.getByTestId('pqc-trend-chart-stub'))
+  }, 15000)
+
   it('shows executive in-body CSV export when persona is executive', () => {
     // ExecutiveTimelineView early-returns to a ProfileEditor when no
     // country/industry is set, so we seed the assessment store before

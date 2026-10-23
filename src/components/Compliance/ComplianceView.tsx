@@ -1039,13 +1039,6 @@ export const ComplianceView = ({
               title="Product Certification Records"
               description="Certification records snapshot from NIST CMVP (FIPS 140-3), NIST CAVP and Common Criteria sources (CC Portal, ANSSI, ENISA EUCC) — searchable FIPS 140-3 module validations, NIST CAVP algorithm validations, Common Criteria / EUCC certificates and ANSSI CSPN certificates."
             />
-            <RecordsGlossaryStrip />
-            <EvidenceClassLegend />
-            <PqcCertificationTrendChart
-              data={scopedRecords}
-              asOf={lastUpdated}
-              recordScope={recScope}
-            />
             <ComplianceTable
               data={data}
               onRefresh={refresh}
@@ -1079,6 +1072,17 @@ export const ComplianceView = ({
               onSortDirectionChange={handleRecSortDirChange}
               onCurrentPageChange={handleRecPageChange}
             />
+            {/* Reading aids sit BELOW the search and table: the Records tab opens on the
+                search, not on three screens of context (owner request U-5, 22 Oct 2026). */}
+            <div className="space-y-4" data-testid="records-reading-aids">
+              <RecordsGlossaryStrip />
+              <EvidenceClassLegend />
+              <PqcCertificationTrendChart
+                data={scopedRecords}
+                asOf={lastUpdated}
+                recordScope={recScope}
+              />
+            </div>
           </div>
         )}
 
