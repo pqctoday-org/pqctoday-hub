@@ -87,4 +87,22 @@ describe('DisclaimerModal', () => {
     expect(banner.className).not.toMatch(/\bz-disclaimer\b/)
     expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
   })
+  it('banner placement (desktop first-run picker) is one in-flow strip with the same text and button', async () => {
+    const user = userEvent.setup()
+    render(
+      <BrowserRouter>
+        <DisclaimerModal placement="banner" />
+      </BrowserRouter>
+    )
+    const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+    expect(banner.className).not.toMatch(/\bfixed\b/)
+    expect(banner.className).not.toMatch(/\bz-disclaimer\b/)
+    expect(screen.getByText(/not received endorsement/)).toBeInTheDocument()
+    expect(screen.getByText(/may contain inaccuracies/)).toBeInTheDocument()
+    expect(screen.getByText(/written consent/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /GitHub Discussions/ })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'I Understand' }))
+    expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(true)
+    expect(screen.queryByText('Welcome to PQC Today')).not.toBeInTheDocument()
+  })
 })

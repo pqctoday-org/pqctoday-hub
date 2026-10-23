@@ -17,6 +17,7 @@ import type { CertWorkshopStepProps } from '../data/types'
 import {
   ANCHOR_CUSTOMER_PROFILES,
   ANCHOR_SCENARIO,
+  inSentence,
   type AnchorCustomerId,
 } from '../data/anchorScenario'
 import {
@@ -196,7 +197,7 @@ export const SchemeSelector: FC<CertWorkshopStepProps> = ({ config }) => {
         </div>
         {isCustomer(filter) ? (
           <p className="text-xs text-muted-foreground">
-            Showing the claims from the {customerLabel(filter).toLowerCase()}.
+            Showing the claims from the {inSentence(customerLabel(filter))}.
           </p>
         ) : null}
 

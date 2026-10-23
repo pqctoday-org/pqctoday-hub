@@ -12,6 +12,8 @@
  *
  * The states keep apart what a reader must not confuse:
  *   - module      the product (or its named module) holds a CMVP certificate
+ *   - historical  the only module certificate named is FIPS 140-2: those certificates moved to
+ *                 the CMVP Historical list on 21/22 September 2026
  *   - embedded    the product relies on someone else's validated module
  *   - cavp        algorithm validation only — no validated module boundary
  *   - in-process  submitted / in test / on the IUT list — not validated yet
@@ -21,13 +23,15 @@
  *   - unknown     the field is empty or says nothing usable
  */
 
-export type FipsState = 'module' | 'embedded' | 'cavp' | 'in-process' | 'claim' | 'none' | 'unknown'
+export type FipsState =
+  'module' | 'historical' | 'embedded' | 'cavp' | 'in-process' | 'claim' | 'none' | 'unknown'
 
 /** Whether the post-quantum algorithms sit inside a validated module boundary. */
 export type PqcBoundary = 'yes' | 'no' | 'not-stated'
 
 export const FIPS_STATE_LABEL: Record<FipsState, string> = {
   module: 'FIPS 140 validated',
+  historical: 'FIPS 140-2 certificate (historical since September 2026)',
   embedded: 'Uses a validated module',
   cavp: 'Algorithms only (CAVP)',
   'in-process': 'FIPS in process',
@@ -39,6 +43,7 @@ export const FIPS_STATE_LABEL: Record<FipsState, string> = {
 /** Short form for compact badges. */
 export const FIPS_STATE_SHORT: Record<FipsState, string> = {
   module: 'FIPS',
+  historical: 'FIPS 140-2 (historical)',
   embedded: 'FIPS (via module)',
   cavp: 'CAVP only',
   'in-process': 'FIPS pending',
@@ -99,6 +104,9 @@ export function classifyFips(raw: string | null | undefined): FipsState {
     const hasEvidence =
       /#\s?\d|level \d|\bl\d\b|status:? active|\bactive\b|\bvalidated\b|fips 140-2/.test(t)
     if (inProcess && !hasEvidence) return CAVP.test(t) ? 'cavp' : 'in-process'
+    // FIPS 140-2 certificates moved to the CMVP Historical list on 21/22 September 2026: a
+    // text that names only 140-2 is not a current validation.
+    if (/fips 140-2/.test(t) && !/fips 140-3/.test(t)) return 'historical'
     return EMBEDDED.test(t) ? 'embedded' : 'module'
   }
 

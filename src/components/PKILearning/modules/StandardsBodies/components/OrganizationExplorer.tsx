@@ -33,7 +33,7 @@ function typeLabel(type: OrgType): string {
     case 'compliance-framework':
       return 'Compliance Framework'
     case 'regulatory-agency':
-      return 'Regulatory Agency'
+      return 'Government Agency'
   }
 }
 

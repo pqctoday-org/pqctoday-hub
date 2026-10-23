@@ -269,14 +269,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'pqc-testing-validation/tvla-leakage-analyzer': {
     prompt:
-      'The note under the leakage bars says classical fixed-vs-random TVLA fails for ML-KEM/ML-DSA. Why?',
+      'The note under the leakage bars says a fixed-vs-random test alone is not enough for ML-KEM/ML-DSA. Why?',
     options: [
       'Lattice operations run in constant time, so there is no power variation to measure',
       "10,000 traces are too few for Welch's t-test to reach significance",
-      'Public key and ciphertext are structurally coupled, so a fixed ciphertext always uses the same secret polynomial and the fixed set is trivially distinguishable',
+      'It flags any difference between fixed-input and random-input traces, including leakage of public data such as the ciphertext, so a failing result does not by itself show that a secret leaks',
     ],
     answer: 2,
-    why: 'Because the fixed set is distinguishable by construction regardless of implementation quality, the test would flag every implementation; the step instead targets specific algorithmic stages such as NTT/INTT, polynomial multiplication and modular reduction.',
+    why: 'The non-specific test assumes nothing about how the device leaks, so it reacts to any input-dependent difference and says nothing about whether an attacker could exploit it. A masked implementation can pass it (the masked ML-KEM run stays below |t| = 4.5), and a pass is still not proof of security. Labs therefore add specific tests on intermediate values in the stages that handle secrets: NTT/INTT, polynomial multiplication and modular reduction.',
   },
   // verification-closure
   'verification-closure/closure-handover-register': {
@@ -763,11 +763,11 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'With M32 selected, you switch the Winternitz parameter from W1 to W8. According to the W explanation panel, what changes and what stays the same?',
     options: [
       'Security drops from 128-bit to 96-bit, but signing gets faster',
-      'The signature gets smaller (34 chains instead of 265) at about 8 times more hash work per signature; the security level is identical',
+      'The signature gets smaller (34 chains instead of 265) at about 33 times the chain hashing; W has little effect on security',
       'Nothing but the parameter-set name changes; signature size is fixed by the tree height',
     ],
     answer: 1,
-    why: 'The Winternitz parameter is a pure time-versus-bandwidth trade-off inside the one-time signature: a larger W lets each hash chain encode more bits, so fewer chains are needed and the signature shrinks, but each chain must be iterated up to W-1 times, which multiplies the signing work. Security depends on the hash output length, not on W.',
+    why: 'The Winternitz parameter is a time-versus-bandwidth trade-off inside the one-time signature: a larger W lets each hash chain encode more bits, so fewer chains are needed and the signature shrinks, but each chain runs up to 2^W - 1 hash steps. RFC 8554 section 4.1 puts public-key generation at p x (2^W - 1) + 1 hashes (signing and verifying take about half that on average): 34 x 255 + 1 = 8,671 at W8 against 265 x 1 + 1 = 266 at W1, about 33 times as many. The security level is set mainly by the hash output length; W has little effect on it.',
   },
   'stateful-signatures/slh-dsa-live': {
     prompt:

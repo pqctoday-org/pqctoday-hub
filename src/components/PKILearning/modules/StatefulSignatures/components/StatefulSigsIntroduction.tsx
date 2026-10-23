@@ -15,6 +15,7 @@ import {
   Library,
   KeyRound,
   ExternalLink,
+  ClipboardCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -76,11 +77,14 @@ const Step1WhyAndMerkle: React.FC = () => (
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-xs font-bold text-primary mb-1">CNSA 2.0 Required</div>
+            <div className="text-xs font-bold text-primary mb-1">
+              CNSA 2.0 for national security systems
+            </div>
             <p className="text-xs text-muted-foreground mb-2">
               NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> approves single-tree LMS
               and XMSS (not HSS or XMSS^MT) for firmware and software signing in national security
-              systems, and prefers LMS with SHA-256/192. Phased timeline:
+              systems, and prefers LMS with SHA-256/192; ML-DSA-87 is also allowed for this use.
+              Phased timeline:
             </p>
             <ul className="text-xs text-muted-foreground space-y-0.5">
               <li>
@@ -545,7 +549,8 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
                 <tr className="border-b border-border/50">
                   <td className="py-2 pr-4 font-medium text-foreground">CNSA 2.0</td>
                   <td className="py-2 pr-4 text-success font-medium">
-                    Required for firmware/software
+                    Approved for firmware/software signing (LMS SHA-256/192 recommended; ML-DSA-87
+                    also allowed)
                   </td>
                   <td className="py-2 text-muted-foreground">Not included in CNSA 2.0</td>
                 </tr>
@@ -563,6 +568,248 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
             is impractical.
           </p>
         </div>
+      </div>
+    </section>
+
+    {/* What the lab tests */}
+    <section className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <ClipboardCheck size={24} className="text-primary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">What the lab tests</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          A <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip> certificate for a module
+          that signs with LMS or XMSS rests on four different kinds of check. The algorithm tests
+          are only the first.
+        </p>
+        <div className="space-y-3">
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-2">
+              1. Algorithm tests (CAVP, run through ACVP)
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1.5">
+              <li>
+                &bull; ACVP has an LMS specification with three modes: keyGen, sigGen and sigVer.
+                Each has one test type, AFT (Algorithm Functional Test).
+              </li>
+              <li>
+                &bull; keyGen: the implementation must &ldquo;generate a key pair based on an
+                approved tree structure&rdquo;. sigGen: it must &ldquo;generate valid signatures
+                based on the ACVP provided message&rdquo;. sigVer: it must &ldquo;determine the
+                validity of the signature given the tree structure, key, and message&rdquo;.
+              </li>
+              <li>
+                &bull; A vendor registers LMS modes and LM-OTS modes by hash, tree height (for
+                example LMS_SHA256_M24_H5 through LMS_SHA256_M32_H25) and Winternitz setting (W1,
+                W2, W4, W8). The pair must follow SP 800-208 Section 4, &ldquo;namely M = N, and the
+                hash is the same&rdquo;.
+              </li>
+              <li>
+                &bull; On NIST&apos;s CAVP prerequisites page, LMS keyGen, sigGen and sigVer each
+                list &ldquo;All hash functions and XOFs used.&rdquo;
+              </li>
+              <li>
+                &bull; Not covered, in the specification&apos;s words: &ldquo;ACVP does not test the
+                inability of an implementation to export a private key. ACVP does not provide any
+                guarantees on the inability to reuse private OTS pairs of an implementation.&rdquo;
+              </li>
+              <li>
+                &bull; XMSS, XMSS^MT and HSS: no ACVP specification is published for them. The ACVP
+                index at pages.nist.gov/ACVP lists LMS, ML-DSA, ML-KEM and SLH-DSA as its
+                post-quantum entries (checked 23 October 2026). IG C.N, last modified 10 September
+                2024, says CAVP tests are &ldquo;available for LMS but not yet for XMSS, HSS, or
+                XMSSMT&rdquo;. IG C.O, of the same date, records that &ldquo;Support for the LMS
+                scheme was added to the ACVTS production server in April 2023&rdquo; and that
+                &ldquo;the other schemes (including HSS) remain untestable by the CAVP as of the
+                last modified date of this IG&rdquo;.
+              </li>
+            </ul>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-2">
+              2. Module self-tests (FIPS 140-3 IG 10.3.A)
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1.5">
+              <li>
+                &bull; The module runs cryptographic algorithm self-tests (CASTs). IG 10.3.A applies
+                its requirements &ldquo;prior to the first operational use of the cryptographic
+                algorithm&rdquo;.
+              </li>
+              <li>
+                &bull; A module that implements LMS signature generation must also implement key
+                generation and have CASTs for both. The same holds for HSS, XMSS and XMSS^MT.
+                Signature verification needs its own CAST. HSS builds on LMS, so the HSS CASTs cover
+                the LMS ones; XMSS^MT likewise covers XMSS.
+              </li>
+              <li>
+                &bull; Hash functions: a CAST for SHA-256 is required; for SHA-256/192 if it is
+                implemented without SHA-256; for SHAKE256/256; and for SHAKE256/192 if it is
+                implemented without SHAKE256/256. These can be satisfied as part of the LMS, HSS,
+                XMSS or XMSS^MT CASTs.
+              </li>
+              <li>
+                &bull; Testing cost depends on tree height, so the CASTs only need to exercise the
+                smallest (or any single) supported parameter set. &ldquo;It is also not necessary to
+                test both LM-OTS + LMS modes&rdquo;, but a CAST covering the different underlying
+                SHA or SHAKE functions is still required.
+              </li>
+              <li>
+                &bull; Every generated key pair also needs a pairwise consistency test. For SP
+                800-208 keys it &ldquo;may be limited to confirming the same key identifier (I in
+                the case of LMS, SEED in the case of XMSS and PK.SEED for SLH-DSA) is shared by the
+                resulting public and private key following generation&rdquo;.
+              </li>
+            </ul>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-2">
+              3. What the certificate covers (SP 800-208 §8.1, IG C.N)
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1.5">
+              <li>
+                &bull; SP 800-208 §8.1: &ldquo;Implementations of the key generation and signature
+                algorithms in this document shall only be validated for use within hardware
+                cryptographic modules.&rdquo; The module must also provide Level 3 or higher
+                physical security and a non-modifiable or limited operational environment, operate
+                only in an approved mode with no bypass mode, not allow export of private keying
+                material, and keep the entropy source of its random bit generator inside its
+                physical boundary.
+              </li>
+              <li>
+                &bull; Firmware modules (IG C.N, resolution 9): where the hardware components of a
+                certified module meet the Level 3 physical security and the non-modifiable or
+                limited operational environment, &ldquo;it is not required that modules are module
+                type: &apos;hardware&apos; and may separately include modules of type
+                &apos;firmware&apos; and &apos;hybrid firmware&apos;&rdquo;. Software and hybrid
+                software modules are excluded.
+              </li>
+              <li>
+                &bull; Signature verification only (IG C.N, resolution 1): the §8.1 requirements
+                &ldquo;exclusively apply to modules supporting HBS key generation and signature
+                generation&rdquo;. Modules that only support signature verification &ldquo;need to
+                comply with requirements from section 8.2 of SP 800-208, but do not need to meet
+                requirements from section 8.1&rdquo;.
+              </li>
+              <li>
+                &bull; Where ACVP is silent, the lab checks. IG C.N prohibits importing private
+                keys, including &ldquo;importing private keys as a restore operation from a
+                backup&rdquo; (resolution 3), seeding key generation from an external entropy source
+                outside the hardware perimeter (resolution 5), and creating &ldquo;independent
+                copies of keys internal to the cryptographic boundary&rdquo; (resolution 7). The
+                vendor &ldquo;shall justify the implementation strategy taken to eliminate the
+                possibility of OTS private key re-use&rdquo;, and &ldquo;Documentation review in
+                isolation is not sufficient&rdquo;: the tester confirms the module prevents the use
+                of an OTS key to generate a digital signature more than one time, cannot create an
+                independent copy of an HBS key, and, if it stores keys in non-volatile memory,
+                updates the leaf index there before exporting a signature value or accepting a
+                request to sign another message (resolution 12).
+              </li>
+            </ul>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-2">
+              4. CNSA 2.0: verifier and signer are validated differently (NSA CNSA 2.0 FAQ, version
+              2.2, October 2026)
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1.5 mb-3">
+              <li>
+                &bull; LMS and XMSS (NIST SP 800-208) are listed for digitally signing firmware and
+                software: &ldquo;All parameters approved for all classification levels. LMS
+                SHA-256/192 is recommended.&rdquo; &ldquo;The multi-tree algorithms HSS and XMSSMT
+                are not allowed.&rdquo; SLH-DSA &ldquo;is not part of CNSA and is not approved for
+                any use in NSS&rdquo;.
+              </li>
+            </ul>
+            <div
+              className="overflow-x-auto"
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as the comparison table above).
+              tabIndex={0}
+              role="region"
+              aria-label="Which validation NSA expects for LMS and XMSS verifiers and signers"
+            >
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 pr-4 text-muted-foreground font-bold">Who</th>
+                    <th className="text-left py-2 text-muted-foreground font-bold">
+                      What the FAQ says
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground align-top">
+                      A product that only verifies signatures
+                    </td>
+                    <td className="py-2">
+                      &ldquo;Signature verification is expected to be performed by code that has
+                      been validated by NIST&apos;s Cryptographic Algorithm Validation Program
+                      (CAVP).&rdquo; &ldquo;If your product is only verifying signatures, CAVP
+                      testing is all that is required.&rdquo;
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground align-top">
+                      A signer that is a national security system (NSS)
+                    </td>
+                    <td className="py-2">
+                      &ldquo;Code sources and signature generation processes (signers) that are NSS
+                      are required to produce signatures according to NIST SP 800-208, which
+                      requires hardware validated by NIST&apos;s Cryptographic Module Validation
+                      Program (CMVP), or via other NSA guidance. Waivers for this will not be
+                      granted.&rdquo;
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground align-top">
+                      A signer that is not itself an NSS (for example a commercial vendor&apos;s
+                      build environment)
+                    </td>
+                    <td className="py-2">
+                      &ldquo;Those signers are expected to use code in their signature generation
+                      processes that is at least at the same operational quality as the code being
+                      put on the device, but the only part NSA will validate is that the signature
+                      verification code on the device passes CAVP.&rdquo;
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground align-top">
+                      A product evaluated under a NIAP Protection Profile
+                    </td>
+                    <td className="py-2">
+                      Where signing occurs outside the Target of Evaluation boundary, Protection
+                      Profile requirements only apply to signature verification: &ldquo;if only
+                      signature verification is being performed only CAVP validation (not CMVP) will
+                      be expected to meet CNSA 2.0 for such products.&rdquo;
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              The FAQ adds: &ldquo;To avoid weakening the security of these signatures, one should
+              implement signing and state management in hardware, such as an HSM. Backup flows,
+              which may involve transferring keys between modules, must prevent state re-use.&rdquo;
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Sources: NIST ACVP draft specification for LMS and CAVP prerequisites page (October 2026);
+          CMVP Implementation Guidance for FIPS PUB 140-3 (IG 10.3.A, C.N; document updated 19
+          August 2026); NIST SP 800-208 (October 2020) §8.1; NSA CNSA 2.0 FAQ version 2.2. Check the
+          current versions: guidance and test coverage change. How labs run these steps end to end:{' '}
+          <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
+            FIPS 140-3 Certification
+          </Link>{' '}
+          and{' '}
+          <Link to="/learn/acvp-lab-workflow" className="text-primary hover:underline">
+            ACVP Lab Workflow
+          </Link>
+          .
+        </p>
       </div>
     </section>
 

@@ -15,6 +15,32 @@ describe('NavigateGuide', () => {
     expect(screen.getByText(/guided tour first/i)).toBeVisible()
   })
 
+  it('gives the certification role a start point that does not read a link as a validation', () => {
+    render(
+      <NavigateGuide
+        persona="cert-engineer"
+        onTour={() => {}}
+        onList={() => {}}
+        onDismiss={() => {}}
+      />
+    )
+
+    expect(
+      screen.getByText(/FIPS 140-3 compliance record or the CMVP trusted source/)
+    ).toBeVisible()
+    expect(screen.getByText(/not a validation/)).toBeVisible()
+  })
+
+  it('is a narrow card from the sm breakpoint up, so it stays in the left margin and does not cover category labels', () => {
+    render(
+      <NavigateGuide persona="curious" onTour={() => {}} onList={() => {}} onDismiss={() => {}} />
+    )
+    const card = screen.getByTestId('navigate-guide')
+    expect(card).toHaveClass('sm:w-72')
+    // The old max-w-xl card alone (576 px) reached the graph's labels.
+    expect(card.className).not.toMatch(/sm:w-(xl|2xl|full)/)
+  })
+
   it('offers working tour and keyboard-list entry points', () => {
     const onTour = vi.fn()
     const onList = vi.fn()

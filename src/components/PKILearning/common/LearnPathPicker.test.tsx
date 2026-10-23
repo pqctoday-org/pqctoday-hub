@@ -75,6 +75,14 @@ describe('LearnPathPicker', () => {
     )
   })
 
+  it('keeps "· 55 min" on one line: the duration never wraps when the label does (phone)', () => {
+    renderAt('/learn/emv-payment-pqc', <ModuleShell manifest={emv} learn={<div>L</div>} />)
+    const group = picker().getByRole('group', { name: 'Choose your learning path' })
+    const duration = within(group).getAllByText(/^· \d+ min$/)
+    expect(duration).toHaveLength(3)
+    for (const span of duration) expect(span).toHaveClass('whitespace-nowrap', 'shrink-0')
+  })
+
   it('picking a path stores it, presses it, and writes ?path=; All sections clears both', () => {
     renderAt('/learn/emv-payment-pqc', <ModuleShell manifest={emv} learn={<div>L</div>} />)
     fireEvent.click(picker().getByRole('button', { name: /Banking & Settlement/ }))

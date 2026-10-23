@@ -25,11 +25,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'cc-eucc-certification',
-  lastReviewed: '2026-10-22',
+  // No lastReviewed: a fact (the date of ACM v2) was corrected after the owner's 22 October 2026
+  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts).
+  // The on-page notice follows it (common/moduleReviewStatus.ts). v1 ships as "practitioner
+  // orientation", not reviewed by a lab or certification body.
   version: '0.1.0',
-  // No lastReviewed: nobody has reviewed this module's claims via
-  // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
-  // "practitioner orientation", not reviewed by a lab or certification body.
   lastEdited: '2026-10-23',
 
   standards: [

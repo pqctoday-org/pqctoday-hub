@@ -125,7 +125,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
             <span className="text-primary font-mono">{threshold.toFixed(1)}</span>
           </span>
           <span className="text-xs text-muted-foreground">
-            Common threshold: 4.5 (Goodwill et al. 2011) | Strict: 3.0
+            Common threshold: 4.5 (Goodwill et al. 2011) | Lower flags more, higher flags less
           </span>
         </div>
         <input
@@ -206,22 +206,21 @@ export const TVLALeakageAnalyzer: React.FC = () => {
         <div className="p-4 rounded-lg border border-destructive/30 bg-destructive/5 space-y-2">
           <div className="flex items-center gap-2 text-sm font-semibold text-destructive">
             <AlertTriangle size={14} />
-            {leakingStages.length} leaking stage{leakingStages.length !== 1 ? 's' : ''} detected
+            {leakingStages.length} stage{leakingStages.length !== 1 ? 's' : ''} above the threshold
+            (non-specific test)
           </div>
           {leakingStages.map((s) => (
             <div key={s.id} className="text-xs text-foreground/80">
               <span className="font-semibold">{s.label}:</span>{' '}
-              {s.leaksIn.includes(selectedTarget) ? (
-                <span>
-                  Side-channel leakage confirmed — t = {scores[s.id].toFixed(1)}. Key-dependent
-                  power variation at this stage enables key recovery with sufficient traces.
-                </span>
-              ) : (
-                <span>
-                  Score above threshold — possible higher-order leakage. Increase trace count for
-                  confirmation.
-                </span>
-              )}
+              <span>
+                {scores[s.id] > DEFAULT_THRESHOLD
+                  ? 'Data-dependent leakage detected'
+                  : 'Flagged only because the threshold is below the common 4.5 setting, so a false alarm is more likely'}
+                , |t| = {scores[s.id].toFixed(1)}.{' '}
+                {s.publicData
+                  ? 'This stage encodes public output, and a non-specific test cannot tell that apart from a secret leak: confirm with a specific test on an intermediate value before concluding anything.'
+                  : 'This stage handles secret values, so the next step is a specific test on its intermediate values. Detection alone is not proof of key recovery.'}
+              </span>
             </div>
           ))}
         </div>
@@ -232,7 +231,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
         </div>
       )}
 
-      {/* Key insight: why fixed-vs-random TVLA fails for PQC */}
+      {/* Key insight: why a fixed-vs-random TVLA test alone is not enough for PQC */}
       <div className="p-3 rounded-lg bg-muted border border-border space-y-2">
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <Info size={13} className="text-primary" />
@@ -241,7 +240,9 @@ export const TVLALeakageAnalyzer: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           The non-specific fixed-vs-random test flags any input-dependent difference, including
           leakage of public data such as the ciphertext, so on its own it cannot show that secret
-          data leaks. Add specific tests on the stages that handle secrets: NTT/INTT (dominant
+          data leaks. A pass is not proof of security either: the masked ML-KEM target stays below
+          4.5 at every stage, yet first-order masking can still leak at higher orders. Add specific
+          tests on intermediate values in the stages that handle secrets: NTT/INTT (dominant
           leakage), polynomial multiplication (nonce leakage in ML-DSA), and modular reduction
           (q=3329 conditional subtraction). Keysight Inspector&apos;s Dilithium TVLA generator
           (ML-DSA, FIPS 204) targets these operations directly.

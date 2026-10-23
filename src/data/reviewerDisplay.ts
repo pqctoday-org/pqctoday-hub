@@ -7,6 +7,8 @@
  */
 export const REVIEWER_DISPLAY_ALIASES: ReadonlyMap<string, string> = new Map([
   ['claude-agent (automated remediation)', 'maintainer (automated)'],
+  // The maintainer's own handle is not shown on public pages (owner decision, 23 Oct 2026).
+  ['eramusa', 'PQC Today maintainer'],
 ])
 
 /** The name to show for a stored `reviewer_display`. */

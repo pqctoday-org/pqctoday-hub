@@ -29,9 +29,26 @@ export const QRNG_SAMPLE_128: Uint8Array = new Uint8Array([
 /** Bad sample: all zeros (stuck-at failure) */
 export const BAD_SAMPLE_ZEROS: Uint8Array = new Uint8Array(64).fill(0)
 
-/** Bad sample: repeating 4-byte pattern */
+/** Bad sample: repeating 4-byte pattern, 64 bytes (one batch of the Live Monitor) */
 export const BAD_SAMPLE_PATTERN: Uint8Array = (() => {
   const arr = new Uint8Array(64)
+  const pattern = [0xde, 0xad, 0xbe, 0xef]
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = pattern[i % 4]
+  }
+  return arr
+})()
+
+/**
+ * Bad sample: the same 4-byte pattern, 1,024 bytes (0xDEADBEEF × 256).
+ *
+ * Long enough for the Adaptive Proportion test as specified: two full W = 512
+ * windows (SP 800-90B §4.4.2, non-binary), in each of which 0xDE recurs 128
+ * times against a cutoff of C = 13 (Table 2, H = 8, alpha = 2^-20). It also
+ * meets the 1,024-sample minimum for startup health testing (§4.3 item 4).
+ */
+export const BAD_SAMPLE_PATTERN_1024: Uint8Array = (() => {
+  const arr = new Uint8Array(1024)
   const pattern = [0xde, 0xad, 0xbe, 0xef]
   for (let i = 0; i < arr.length; i++) {
     arr[i] = pattern[i % 4]

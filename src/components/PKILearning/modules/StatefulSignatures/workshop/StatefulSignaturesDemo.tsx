@@ -450,6 +450,20 @@ export function StatefulSignaturesDemo() {
     tamperSignature,
   ])
 
+  // Why the cross-engine Verify button is disabled, in the order the reader fixes it (null = ready).
+  const verifyBlockedReason: string | null =
+    selectedPubHandle === null
+      ? 'select a key pair in step 1.'
+      : !verifySignatureHex
+        ? 'paste the signature hex in step 2 (use Copy on a signature in the signing log above).'
+        : !hsmCpp.isReady
+          ? 'the C++ verification engine is still loading.'
+          : cppHandleMap[selectedPubHandle] === undefined
+            ? 'the public key is still being imported into the C++ engine.'
+            : isVerifying
+              ? 'a verification is already running.'
+              : null
+
   return (
     <div className="space-y-6 max-h-[85vh] overflow-y-auto pr-2 pb-16">
       <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
@@ -719,17 +733,20 @@ export function StatefulSignaturesDemo() {
                     </fieldset>
                     <Button
                       variant="gradient"
-                      disabled={
-                        selectedPubHandle === null ||
-                        !verifySignatureHex ||
-                        cppHandleMap[selectedPubHandle] === undefined ||
-                        isVerifying ||
-                        !hsmCpp.isReady
-                      }
+                      disabled={verifyBlockedReason !== null}
+                      title={verifyBlockedReason ?? undefined}
+                      aria-describedby="cross-engine-verify-reason"
                       onClick={handleVerify}
                     >
                       Verify Signature (C++ engine)
                     </Button>
+                    <p
+                      id="cross-engine-verify-reason"
+                      className="text-[10px] text-muted-foreground"
+                      hidden={verifyBlockedReason === null}
+                    >
+                      {verifyBlockedReason ? `Verify is waiting: ${verifyBlockedReason}` : ''}
+                    </p>
                     {verifyResult !== null && (
                       <div
                         className={`flex items-center gap-2 text-sm font-semibold ${verifyResult ? 'text-status-success' : 'text-status-error'}`}
@@ -978,17 +995,20 @@ export function StatefulSignaturesDemo() {
                     </fieldset>
                     <Button
                       variant="gradient"
-                      disabled={
-                        selectedPubHandle === null ||
-                        !verifySignatureHex ||
-                        cppHandleMap[selectedPubHandle] === undefined ||
-                        isVerifying ||
-                        !hsmCpp.isReady
-                      }
+                      disabled={verifyBlockedReason !== null}
+                      title={verifyBlockedReason ?? undefined}
+                      aria-describedby="cross-engine-verify-reason"
                       onClick={handleVerify}
                     >
                       Verify Signature (C++ engine)
                     </Button>
+                    <p
+                      id="cross-engine-verify-reason"
+                      className="text-[10px] text-muted-foreground"
+                      hidden={verifyBlockedReason === null}
+                    >
+                      {verifyBlockedReason ? `Verify is waiting: ${verifyBlockedReason}` : ''}
+                    </p>
                     {verifyResult !== null && (
                       <div
                         className={`flex items-center gap-2 text-sm font-semibold ${verifyResult ? 'text-status-success' : 'text-status-error'}`}
@@ -1277,8 +1297,8 @@ export function StatefulSignaturesDemo() {
                           ],
                           [
                             'NSA CNSA 2.0',
-                            'LMS/HSS required for firmware/boot signing',
-                            'Permitted; LMS preferred for firmware',
+                            'Single-tree LMS and XMSS approved for firmware and software signing; HSS and XMSS^MT not allowed',
+                            'Not approved for any use in NSS (CNSA 2.0 FAQ v2.2); ML-DSA-87 is the allowed general-purpose signature',
                           ],
                           [
                             'Best use case',

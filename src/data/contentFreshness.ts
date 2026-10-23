@@ -228,7 +228,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cpc-cceu-acm-v2-applicable-v3-draft',
     claim:
-      'EUCC cryptography: ECCG ACM v2 (6 May 2025) is the applicable version and lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS, LMS with lattice hybridisation; ACM v3 is a draft (public review closed end of July 2026)',
+      'EUCC cryptography: ECCG ACM v2 (document dated April 2025; listed by ENISA 6 May 2025) is the applicable version and lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS, LMS with lattice hybridisation; ACM v3 is a draft (public review closed end of July 2026)',
     source:
       'src/components/PKILearning/modules/CcEuccCertification/components/sections/CcEuSections.tsx',
     asOf: '2026-09-24',

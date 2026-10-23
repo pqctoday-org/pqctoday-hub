@@ -42,7 +42,9 @@
  *                     block inside its tab content (2 modules today). Computed
  *                     output is suppressed entirely so the visitor never sees
  *                     two competing panels. See AUTHORED_INLINE_RELATED.
- *   computed        — this engine's tag-derived output (every other module).
+ *   computed        — this engine's tag-derived output (every other module). A learner who
+ *                     follows a persona path gets that path's neighbours first
+ *                     (pathRelations), then the tag-derived ones.
  *
  * `moduleRelations.driftguard.test.ts` asserts all three branches, that the
  * inline set matches a re-derivation from source, and that no module can end
@@ -193,6 +195,38 @@ export function relatedModules(id: string, all: ModuleManifest[]): RelatedModule
   return scored.map(({ id: cid, title, score, reason }) => ({ id: cid, title, score, reason }))
 }
 
+/** How many steps either side of a module on the learner's path count as related. */
+const PATH_REACH = 2
+
+/**
+ * Relations read from the learner's own path (a persona's `recommendedPath`, in order): the
+ * module before and after this one first, then the two beyond them. A path is an authored
+ * sequence, so its neighbours say more than shared tags do for a learner who follows it.
+ * Empty when the module is not on the path. Pure: the caller supplies the path.
+ */
+export function pathRelations(
+  id: string,
+  path: readonly string[],
+  all: ModuleManifest[]
+): RelatedModule[] {
+  const at = path.indexOf(id)
+  if (at === -1) return []
+  const candidates = new Map(all.filter(isCandidate).map((m) => [m.id, m]))
+  const out: RelatedModule[] = []
+  for (let reach = 1; reach <= PATH_REACH; reach++) {
+    const steps = [
+      { index: at - reach, reason: reach === 1 ? 'Previous on your path' : 'Earlier on your path' },
+      { index: at + reach, reason: reach === 1 ? 'Next on your path' : 'Later on your path' },
+    ]
+    for (const { index, reason } of steps) {
+      const target = index >= 0 ? candidates.get(path.at(index) ?? '') : undefined
+      if (target && target.id !== id && !out.some((r) => r.id === target.id))
+        out.push({ id: target.id, title: target.title, score: 0, reason })
+    }
+  }
+  return out
+}
+
 /**
  * The authored graph, if a module declares one.
  *
@@ -223,7 +257,8 @@ export function authoredRelations(
  */
 export function moduleRelations(
   id: string,
-  all: ModuleManifest[] = MANIFESTS
+  all: ModuleManifest[] = MANIFESTS,
+  learnerPath?: readonly string[]
 ): ModuleRelationsResult {
   const self = all.find((m) => m.id === id)
   if (!self) return { origin: 'computed', entries: [] }
@@ -233,5 +268,8 @@ export function moduleRelations(
 
   if (AUTHORED_INLINE_RELATED.includes(id)) return { origin: 'authored-inline', entries: [] }
 
-  return { origin: 'computed', entries: relatedModules(id, all).slice(0, RELATED_MODULES_CAP) }
+  // A learner who follows a path sees that path's neighbours first; tags fill what is left.
+  const onPath = learnerPath ? pathRelations(id, learnerPath, all) : []
+  const computed = relatedModules(id, all).filter((r) => !onPath.some((p) => p.id === r.id))
+  return { origin: 'computed', entries: [...onPath, ...computed].slice(0, RELATED_MODULES_CAP) }
 }

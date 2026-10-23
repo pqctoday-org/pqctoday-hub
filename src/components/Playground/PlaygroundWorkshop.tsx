@@ -97,6 +97,9 @@ const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 const GRID_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
 // The grid includes the Docker sandbox scenarios; only the rest run in the tab.
 const BROWSER_TOOL_COUNT = GRID_TOOL_COUNT - SANDBOX_TOOL_COUNT
+// One tool count on the page: GRID_TOOL_COUNT. The header splits it into browser and Docker, the
+// overview line and the search box use it as is, and the directory lists these tools plus the
+// full playgrounds (the pages that are not single tools), counted apart below.
 
 /**
  * One line explaining the three numbers a role sees on the overview: every
@@ -126,6 +129,9 @@ const ALL_PLAYGROUND_ROUTES = Array.from(
     ].map(([to, route]) => [to, route])
   ).values()
 )
+
+// The directory holds every tool once plus the full playgrounds that are not tools themselves.
+const FULL_PLAYGROUND_COUNT = ALL_PLAYGROUND_ROUTES.length - GRID_TOOL_COUNT
 
 type DifficultyValue = 'All' | ToolDifficulty
 const DIFFICULTY_CHIPS: { value: DifficultyValue; label: string }[] = [
@@ -868,6 +874,8 @@ export const PlaygroundWorkshop = () => {
 
   // Local UI state.
   const [searchText, setSearchText] = useState('')
+  // The tools tagged for the role beyond the few picks shown first (overview only).
+  const [showAllForRole, setShowAllForRole] = useState(false)
   const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
   const caps = useDeviceCapabilities()
   const isBelowLg = useIsBelowLgViewport()
@@ -1097,6 +1105,15 @@ export const PlaygroundWorkshop = () => {
     })
   }, [role, roleJourney, visibleTools, isLocked, sortTools])
 
+  // The role-tagged tools the picks above do not show, in the role journey's order. Respects the
+  // difficulty and run filters, like the picks do.
+  const roleTaggedRest = useMemo(() => {
+    if (!role) return []
+    const shown = new Set(recommendedPool.map((t) => t.id))
+    const visible = new Set(visibleTools.map((t) => t.id))
+    return playgroundToolsForRole(role).filter((t) => visible.has(t.id) && !shown.has(t.id))
+  }, [role, recommendedPool, visibleTools])
+
   // ── Actions ──────────────────────────────────────────────────────────────
   const openTool = useCallback(
     (tool: WorkshopTool) => {
@@ -1184,7 +1201,8 @@ export const PlaygroundWorkshop = () => {
         <div className="min-w-0">
           <p className="text-[15px] font-bold leading-tight text-foreground">Crypto Lab</p>
           <p className="text-[10.5px] text-muted-foreground">
-            {BROWSER_TOOL_COUNT} in-browser tools · {SANDBOX_TOOL_COUNT} Docker scenarios
+            {GRID_TOOL_COUNT} tools: {BROWSER_TOOL_COUNT} in-browser, {SANDBOX_TOOL_COUNT} Docker
+            scenarios
           </p>
         </div>
       </div>
@@ -1571,6 +1589,26 @@ export const PlaygroundWorkshop = () => {
             subtitle="Switch the difficulty filter back to All."
           />
         )}
+        {role && roleTaggedRest.length > 0 && (
+          <div className="mt-3">
+            <Button
+              type="button"
+              variant="ghost"
+              aria-expanded={showAllForRole}
+              onClick={() => setShowAllForRole((open) => !open)}
+              className="h-auto gap-1.5 px-2 py-1 text-[12.5px] font-semibold text-primary"
+            >
+              {showAllForRole
+                ? 'Show fewer'
+                : `Show the other ${roleTaggedRest.length} tools tagged for ${roleLabel(role)}`}
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform ${showAllForRole ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              />
+            </Button>
+            {showAllForRole && renderGrid(roleTaggedRest)}
+          </div>
+        )}
         {roleJourney && (
           <div className="mt-3 flex flex-col gap-2 rounded-xl border border-border bg-muted/25 p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">{roleJourney.rationale}</p>
@@ -1789,7 +1827,7 @@ export const PlaygroundWorkshop = () => {
 
       <details className="mt-6 rounded-xl border border-border bg-muted/20 p-4">
         <summary className="cursor-pointer text-sm font-semibold text-foreground">
-          Browse all {ALL_PLAYGROUND_ROUTES.length} Crypto Lab pages
+          Browse all {GRID_TOOL_COUNT} tools and {FULL_PLAYGROUND_COUNT} full playgrounds
         </summary>
         <nav
           aria-label="All Crypto Lab pages"

@@ -26,8 +26,10 @@ import {
   RELATED_MODULES_CAP,
   authoredRelations,
   moduleRelations,
+  pathRelations,
   relatedModules,
 } from './moduleRelations'
+import { PERSONAS } from './learningPersonas'
 import {
   TOOL_BY_MODULE_ID,
   TOOLS_BY_MODULE_ID,
@@ -342,5 +344,49 @@ describe('module → tool reverse links', () => {
     const declared = MANIFESTS.filter((m) => m.playgroundTool).length
     const covered = MANIFESTS.filter((m) => resolveModuleTool(m)).length
     expect(covered).toBeGreaterThan(declared)
+  })
+})
+
+describe('module relations — a learner on a persona path sees the path neighbours first', () => {
+  const path = PERSONAS['cert-engineer'].recommendedPath
+
+  it('puts the previous and next modules on the path first, then the two beyond them', () => {
+    const { origin, entries } = moduleRelations('acvp-lab-workflow', MANIFESTS, path)
+    expect(origin).toBe('computed')
+    expect(entries.map((e) => e.id)).toEqual([
+      'fips-140-3-certification',
+      'entropy-randomness',
+      'crypto-product-certification',
+      'hsm-pqc',
+    ])
+    expect(entries.map((e) => e.reason)).toEqual([
+      'Previous on your path',
+      'Next on your path',
+      'Earlier on your path',
+      'Later on your path',
+    ])
+  })
+
+  it('leaves the tag-derived list alone when there is no path or the module is not on it', () => {
+    const plain = moduleRelations('acvp-lab-workflow', MANIFESTS).entries
+    expect(moduleRelations('acvp-lab-workflow', MANIFESTS, undefined).entries).toEqual(plain)
+    expect(moduleRelations('acvp-lab-workflow', MANIFESTS, ['hsm-pqc']).entries).toEqual(plain)
+    expect(pathRelations('acvp-lab-workflow', ['hsm-pqc'], MANIFESTS)).toEqual([])
+  })
+
+  it('fills the rest with tag-derived modules at the ends of a path, without repeating one', () => {
+    const { entries } = moduleRelations('standards-bodies', MANIFESTS, path)
+    expect(entries).toHaveLength(RELATED_MODULES_CAP)
+    expect(entries.slice(0, 2).map((e) => e.id)).toEqual([
+      'crypto-product-certification',
+      'fips-140-3-certification',
+    ])
+    expect(new Set(entries.map((e) => e.id)).size).toBe(entries.length)
+  })
+
+  it('never offers the quiz, which is not a module with a track', () => {
+    const last = path.at(-2)!
+    const ids = moduleRelations(last, MANIFESTS, path).entries.map((e) => e.id)
+    expect(ids).not.toContain('quiz')
   })
 })

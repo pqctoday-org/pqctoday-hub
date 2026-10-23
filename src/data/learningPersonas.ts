@@ -368,7 +368,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 965,
+    estimatedMinutes: 995,
     essentials: [
       'pqc-101',
       'pqc-risk-management',
@@ -1103,7 +1103,11 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // Governance/business-case/risk modules are deliberately left to GRC and
     // Executive — that absence is what keeps this path distinct (max Jaccard
     // 0.21 vs any other persona at the time of adding).
+    // standards-bodies leads the path as optional orientation (decided 23 Oct 2026): it names who
+    // writes, certifies and mandates before the scheme modules go deep. It is not an essential and
+    // no checkpoint covers it; the final quiz still includes its category.
     recommendedPath: [
+      'standards-bodies',
       'crypto-product-certification',
       'fips-140-3-certification',
       'acvp-lab-workflow',
@@ -1116,10 +1120,10 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'hybrid-crypto',
       'secure-boot-pqc',
       'pci-certification',
-      'standards-bodies',
       'quiz',
     ],
     pathItems: [
+      { type: 'module', moduleId: 'standards-bodies' },
       { type: 'module', moduleId: 'crypto-product-certification' },
       { type: 'module', moduleId: 'fips-140-3-certification' },
       { type: 'module', moduleId: 'acvp-lab-workflow' },
@@ -1149,7 +1153,6 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'hybrid-crypto' },
       { type: 'module', moduleId: 'secure-boot-pqc' },
       { type: 'module', moduleId: 'pci-certification' },
-      { type: 'module', moduleId: 'standards-bodies' },
       {
         type: 'checkpoint',
         id: 'cert-mastery',
@@ -1160,22 +1163,23 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'hybrid-crypto',
           'secure-boot-pqc',
           'pci-certification',
-          'standards-bodies',
         ],
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 875,
+    estimatedMinutes: 905,
+    // pqc-testing-validation is on the full path but not an essential: it is network and
+    // operations testing, and only its TVLA and FIPS 140-3 / ACVP parts serve this role
+    // (its own certification-engineer learn path carries just those).
     essentials: [
       'crypto-product-certification',
       'fips-140-3-certification',
       'acvp-lab-workflow',
       'entropy-randomness',
-      'pqc-testing-validation',
       'cc-eucc-certification',
       'pci-certification',
     ],
-    essentialsMinutes: 580,
+    essentialsMinutes: 490,
     quizDescription:
       'Test your knowledge on product certification, FIPS 140-3, ACVP lab workflow, entropy sources, HSMs, PQC testing and validation, Common Criteria/EUCC, stateful and hash-based signatures, hybrid cryptography, secure boot, PCI certification, and standards bodies.',
     quizCategories: [

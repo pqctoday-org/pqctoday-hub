@@ -174,7 +174,7 @@ const OID_ECDSA_SHA: Record<HashAlgo, string> = {
 // ---------------------------------------------------------------------------
 // CMS SignedData encoder (minimal, per RFC 5652, RFC 9882, RFC 9814)
 // Hand-rolled DER using @peculiar/asn1-schema + low-level helpers.
-// Pure mode only — no pre-hash (RFC 9882 §3.1, RFC 9814 §1.2).
+// Pure mode only — no pre-hash (RFC 9882 §3.1, RFC 9814 §1).
 // ---------------------------------------------------------------------------
 
 function encodeDERLength(n: number): Uint8Array {
@@ -263,7 +263,7 @@ interface CmsInput {
 
 /**
  * Build a minimal CMS SignedData DER blob (RFC 5652).
- * Pure mode only — no pre-hash (RFC 9882 §3.1, RFC 9814 §1.2).
+ * Pure mode only — no pre-hash (RFC 9882 §3.1, RFC 9814 §1).
  * Does not include a certificate — educational demo only.
  */
 function buildCmsSignedData(input: CmsInput): Uint8Array {
@@ -335,16 +335,55 @@ const LibRef = ({ id, label }: { id: string; label: string }) => (
 const SECBOOT_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'secboot-uefi-sigver',
-    useCase: 'UEFI Secure Boot db verification (ML-DSA-87)',
-    standard: 'UEFI 2.10 + FIPS 204 ACVP',
+    useCase: 'ML-DSA-87 verification of a NIST reference signature',
+    standard: 'FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 87 },
   },
   {
+    id: 'secboot-nist-sigver-valid',
+    useCase: 'ML-DSA-87 sigVer: NIST case that must verify',
+    standard: 'FIPS 204 ACVP sigVer',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigVer-FIPS204',
+    kind: { type: 'mldsa-sigver-nist', variant: 87, expect: 'valid' },
+  },
+  {
+    id: 'secboot-nist-sigver-invalid',
+    useCase: 'ML-DSA-87 sigVer: NIST case that must be rejected',
+    standard: 'FIPS 204 ACVP sigVer',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigVer-FIPS204',
+    kind: { type: 'mldsa-sigver-nist', variant: 87, expect: 'invalid' },
+  },
+  {
+    id: 'secboot-nist-sigver-valid-65',
+    useCase: 'ML-DSA-65 sigVer: NIST case that must verify',
+    standard: 'FIPS 204 ACVP sigVer',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigVer-FIPS204',
+    kind: { type: 'mldsa-sigver-nist', variant: 65, expect: 'valid' },
+  },
+  {
+    id: 'secboot-nist-sigver-invalid-65',
+    useCase: 'ML-DSA-65 sigVer: NIST case that must be rejected',
+    standard: 'FIPS 204 ACVP sigVer',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigVer-FIPS204',
+    kind: { type: 'mldsa-sigver-nist', variant: 65, expect: 'invalid' },
+  },
+  {
+    id: 'secboot-slhdsa-sigver',
+    useCase: 'SLH-DSA-SHA2-128s verification of a NIST-generated signature',
+    standard: 'FIPS 205',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
+    kind: { type: 'slhdsa-sigver', variant: 'SHA2-128s' },
+  },
+  {
     id: 'secboot-firmware-sign',
-    useCase: 'Firmware image signing (ML-DSA-87)',
-    standard: 'UEFI 2.10 + FIPS 204',
+    useCase: 'ML-DSA-87 sign + verify round trip (functional check, no NIST expected value)',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 87 },
     message: 'UEFI Secure Boot db entry: CN=PQC-SecureBoot-2026,EKU=codeSigning',
@@ -359,7 +398,7 @@ const SECBOOT_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'secboot-firmware-digest',
     useCase: 'Firmware image digest (multi-part SHA-512)',
-    standard: 'UEFI 2.10 + FIPS 180-4',
+    standard: 'UEFI 2.11 + FIPS 180-4',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
     kind: { type: 'digest-multipart', hashAlg: 'SHA-512' },
   },
@@ -763,7 +802,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       })
       setClassicalCmsDer(classicalCms)
 
-      // --- PQC sign (pure mode — RFC 9882 §3.1 / RFC 9814 §1.2) ---
+      // --- PQC sign (pure mode — RFC 9882 §3.1 / RFC 9814 §1) ---
       let pqcSig: Uint8Array
       if (pqcAlgo === 'SLH-DSA-SHA2-128S') {
         pqcSig = hsm_slhdsaSign(M, hSession, pqcKeyRef.current.privHandle, content)
@@ -777,10 +816,15 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       // Build PQC CMS SignedData
       const pqcSigAlgOid =
         pqcAlgo === 'SLH-DSA-SHA2-128S' ? OID_SLH_DSA_SHA2_128S : OID_ML_DSA[pqcAlgo]
-      // Per RFC 9882/9814: digestAlgorithm in SignerInfo should be sha256 (matches hash used for messageDigest)
+      // No signed attributes are built, so SignerInfo.digestAlgorithm has no cryptographic meaning:
+      // RFC 9882 §3.3 says ML-DSA implementations MUST specify SHA-512; RFC 9814 §4 says SLH-DSA
+      // SHOULD match the hash inside the SLH-DSA tree (SHA-256 for SLH-DSA-SHA2-128s). The learner's
+      // hash choice applies to the classical signature only.
+      const pqcDigestAlgOid =
+        pqcAlgo === 'SLH-DSA-SHA2-128S' ? OID_SHA['SHA-256'] : OID_SHA['SHA-512']
       const pqcCms = buildCmsSignedData({
         sigAlgOid: pqcSigAlgOid,
-        digestAlgOid: OID_SHA[hashAlgo],
+        digestAlgOid: pqcDigestAlgOid,
         isPqc: true,
         content: contentBytes,
         sigBytes: pqcSig,
@@ -956,7 +1000,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           setWizardOutput(
             `Configured: ${pqcAlgo} vs ${classicalAlgo} / hash: ${hashAlgo}\n` +
               `Firmware: ${uploadedFile?.name ?? 'Mock UEFI manifest (AMI APTIO V)'}\n` +
-              `Signing mode: Pure (RFC 9882 §3.1 / RFC 9814 §1.2)`
+              `Signing mode: Pure (RFC 9882 §3.1 / RFC 9814 §1)`
           )
           break
         case 1:
@@ -971,7 +1015,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           await handleSignBoth()
           setWizardOutput(
             `Classical: ${classicalAlgo} ${classicalMechName} → ${CLASSICAL_SIG_BYTES[classicalAlgo]} B + CMS .p7s\n` +
-              `PQC: ${pqcAlgo} C_SignMessage (pure, ${pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1.2'}) → ${pqcAlgo === 'SLH-DSA-SHA2-128S' ? SLHDSA_SIG_BYTES : MLDSA_SIG_BYTES[pqcAlgo]} B + CMS .p7s`
+              `PQC: ${pqcAlgo} C_SignMessage (pure, ${pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1'}) → ${pqcAlgo === 'SLH-DSA-SHA2-128S' ? SLHDSA_SIG_BYTES : MLDSA_SIG_BYTES[pqcAlgo]} B + CMS .p7s`
           )
           break
         case 3:
@@ -1020,7 +1064,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       title: 'Upload & Configure',
       description:
         'Select algorithms, upload a firmware binary (or use the mock UEFI manifest), and review the pure-mode signing configuration.',
-      code: `// Pure mode per RFC 9882 §3.1 / RFC 9814 §1.2\n// No caller pre-hashing — algorithm handles internally`,
+      code: `// Pure mode per RFC 9882 §3.1 / RFC 9814 §1\n// No caller pre-hashing — algorithm handles internally`,
       language: 'javascript',
       actionLabel: 'Confirm Configuration',
       customControls: (
@@ -1031,7 +1075,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             <LibRef id="FIPS 205" label="FIPS 205" />
             <LibRef id="FIPS 186-5" label="FIPS 186-5" />
             <LibRef id="FIPS-180-4" label="FIPS 180-4" />
-            <LibRef id="UEFI-SPEC-2.10-SecureBoot" label="UEFI 2.10" />
+            <LibRef id="UEFI-SPEC-2.10-SecureBoot" label="UEFI 2.11" />
           </div>
 
           {/* Explanation */}
@@ -1061,41 +1105,58 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 Signing mode: Pure &nbsp;
                 <span className="font-normal text-muted-foreground">
                   [Standard per <span className="font-mono">RFC 9882 §3.1</span> &amp;{' '}
-                  <span className="font-mono">RFC 9814 §1.2</span>]
+                  <span className="font-mono">RFC 9814 §1</span>]
                 </span>
               </span>
             </div>
             <p className="text-muted-foreground pl-5">
-              ML-DSA uses SHAKE-256 internally; SLH-DSA-SHA2-128S uses SHA-256/SHA-512 internally
-              (the &quot;SHA2&quot; in the name). No caller pre-hashing is needed. HashML-DSA
-              (pre-hash) is <strong>explicitly excluded</strong> from CMS and X.509 (RFC 9882, RFC
-              9881). Your hash selection applies to: firmware digest display + classical signature
-              mechanism (e.g. CKM_SHA256_RSA_PKCS).
+              ML-DSA uses SHAKE-256 and SHAKE-128 internally (
+              <span className="font-mono">FIPS 204 §3.7</span>); SLH-DSA-SHA2-128S uses SHA-256
+              internally (the &quot;SHA2&quot; in the name; SHA-512 appears only in the 192- and
+              256-bit SHA2 sets, <span className="font-mono">FIPS 205 §11.2.2</span>). Both are
+              called in pure mode: the signer is handed the message directly, with no separate
+              pre-hash step. HashML-DSA (pre-hash) is not specified for CMS (
+              <span className="font-mono">RFC 9882 §3.1</span>) and must not be used in X.509
+              certificates (<span className="font-mono">RFC 9881 §8.3</span>). Your hash selection
+              applies to: firmware digest display + classical signature mechanism (e.g.
+              CKM_SHA256_RSA_PKCS).
             </p>
             <div className="pl-5 space-y-1 border-t border-border/50 pt-2">
-              <p className="font-semibold text-foreground">Why HashML-DSA is excluded from CMS</p>
+              <p className="font-semibold text-foreground">
+                Why HashML-DSA is not used in CMS (RFC 9882 §3.1)
+              </p>
+              <blockquote className="border-l-2 border-border pl-2 italic text-muted-foreground">
+                &ldquo;CMS signatures are computed over a set of signed attributes that contain a
+                hash of the content, rather than being computed over the message content itself.
+                Since signed attributes are typically small, use of pre-hash modes in the CMS
+                wouldn&apos;t significantly reduce the size of the data to be signed, and hence
+                offers no benefit.&rdquo;
+              </blockquote>
               <ul className="text-muted-foreground space-y-0.5 list-disc list-inside">
                 <li>
-                  <strong className="text-foreground">No separate hash dependency.</strong>{' '}
-                  HashML-DSA (pre-hash mode) introduces a second cryptographic hash algorithm as an
-                  independent security requirement. If that outer hash is weak, it becomes an attack
-                  surface — even if ML-DSA itself is sound. Pure mode avoids this entirely.
+                  <strong className="text-foreground">What ML-DSA is given</strong> (
+                  <span className="font-mono">RFC 9882 §3.2</span>
+                  ): with signedAttrs, the complete DER encoding of the signed attributes, which
+                  must include a content-type attribute and a message-digest attribute (the hash of
+                  the content). Without signedAttrs, the content itself. Signed attributes are the
+                  preferred form, and an HSM then receives only that small attribute set (
+                  <span className="font-mono">§5</span>).
                 </li>
                 <li>
-                  <strong className="text-foreground">
-                    SHAKE-256 is part of the security definition.
-                  </strong>{' '}
-                  FIPS 204 defines ML-DSA with SHAKE-256 bound into the algorithm&apos;s security
-                  proof. The security guarantees hold for the full message — pre-hashing by the
-                  caller steps outside that proof boundary.
+                  <strong className="text-foreground">This demo</strong> builds SignedData without
+                  signedAttrs and signs the short manifest text directly, so it shows the pure-mode
+                  signing call but not the signed-attributes step. With no signed attributes the
+                  SignerInfo digestAlgorithm carries no weight, and the PQC envelope names the value
+                  the RFCs prescribe: SHA-512 for ML-DSA (
+                  <span className="font-mono">RFC 9882 §3.3</span>, MUST) and the tree hash,
+                  SHA-256, for SLH-DSA-SHA2-128S (<span className="font-mono">RFC 9814 §4</span>,
+                  SHOULD), whatever hash you picked for the classical signature.
                 </li>
                 <li>
-                  <strong className="text-foreground">
-                    HashML-DSA is for constrained environments only.
-                  </strong>{' '}
-                  Pre-hash mode was designed for devices that cannot buffer the full message (e.g.
-                  streaming IoT sensors). In CMS, the complete content is always available — so RFC
-                  9882 §3.1 mandates pure mode to prevent misuse.
+                  <strong className="text-foreground">X.509 is a separate rule.</strong>{' '}
+                  <span className="font-mono">RFC 9881 §8.3</span> bars HashML-DSA from certificates
+                  mainly for interoperability: a verifier would have to be told whether to run
+                  ML-DSA.Verify or HashML-DSA.Verify.
                 </li>
               </ul>
             </div>
@@ -1283,8 +1344,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 ? 'CKM_SHA384_RSA_PKCS'
                 : 'CKM_SHA512_RSA_PKCS'}
             ) and digest display. PQC algorithms ({pqcAlgo}) use{' '}
-            {pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'SHA-256/SHA-512' : 'SHAKE-256'} internally — pure
-            mode per RFC 9882/9814.
+            {pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'SHA-256' : 'SHAKE-256 and SHAKE-128'} internally —
+            pure mode per RFC 9882/9814.
           </p>
         </div>
       ),
@@ -1515,11 +1576,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 <div className="text-[10px] text-muted-foreground">
                   Flow: raw msg →{' '}
                   <span className="font-mono">
-                    {pqcAlgo.startsWith('ML-DSA') ? 'SHAKE-256' : 'SHA-256/SHA-512'} internal
+                    {pqcAlgo.startsWith('ML-DSA') ? 'SHAKE-256 / SHAKE-128' : 'SHA-256'} internal
                   </span>
                   <span className="ml-1 text-[9px]">
-                    (no pre-hash, {pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1.2'}
-                    )
+                    (no pre-hash, {pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1'})
                   </span>
                 </div>
               </div>
@@ -1556,7 +1616,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               <div className="text-xs font-bold text-primary">
                 {pqcAlgo} — Pure mode
                 <span className="ml-1 text-[9px] font-normal text-muted-foreground">
-                  ({pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1.2'})
+                  ({pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1'})
                 </span>
               </div>
               <div className="text-lg font-bold text-primary text-center py-1">
@@ -1788,7 +1848,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                   </pre>
                   <span className="text-[10px] text-muted-foreground">
                     {pqcSigSize.toLocaleString()} bytes · pure mode ·{' '}
-                    {pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1.2'}
+                    {pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1'}
                   </span>
                 </div>
               )}
@@ -1842,8 +1902,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                       metric: 'Hash (digest)',
                       classical: hashAlgo,
                       pqc: pqcAlgo.startsWith('ML-DSA')
-                        ? 'SHAKE-256 (internal)'
-                        : 'SHA-256/SHA-512 (internal)',
+                        ? 'SHAKE-256 and SHAKE-128 (internal, FIPS 204 §3.7)'
+                        : 'SHA-256 (internal)',
                       change: '—',
                     },
                     {
@@ -2070,14 +2130,21 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       </div>
 
       <p className="text-xs text-muted-foreground px-1">
-        <span className="font-medium text-foreground">KAT note:</span> The known-answer tests below
-        validate ML-DSA-87 and SHA-256/SHA-512 fixed vectors (FIPS 204 / FIPS 180-4 ACVP) —
-        independent of the algorithm selected above.
+        <span className="font-medium text-foreground">KAT note:</span> These checks do not follow
+        the algorithm selected above; they run fixed parameter sets. Rows tagged &ldquo;NIST ACVP
+        sample&rdquo; compare the engine with an answer NIST published: ML-DSA-87 verification of a
+        NIST reference signature; for both ML-DSA-87 and ML-DSA-65 (the default above) one NIST
+        sigVer case that must verify and one that must be rejected (FIPS 204); verification of a
+        NIST-generated SLH-DSA-SHA2-128s signature (FIPS 205); and SHA-256 and SHA-512 digests (FIPS
+        180-4). The other ML-DSA and SLH-DSA parameter sets are covered on the SLH-DSA page and in
+        the Validation Workbench. The row tagged &ldquo;Functional&rdquo; (sign + verify round trip)
+        generates a fresh key and only checks that the engine accepts its own signature, so it has
+        no NIST expected value.
       </p>
       <KatValidationPanel
         specs={SECBOOT_KAT_SPECS}
         label="Secure Boot PQC Known Answer Tests"
-        authorityNote="UEFI 2.10 · TPM 2.0 · FIPS 204 · FIPS 205 · FIPS 180-4"
+        authorityNote="UEFI 2.11 · TPM 2.0 · FIPS 204 · FIPS 205 · FIPS 180-4"
       />
 
       {/* PKCS#11 Call Log & Key Inspector — per hsm-ui-layout-pattern.md §2.3-2.4 */}

@@ -23,7 +23,7 @@ import {
   type PrepareResult,
   type RunOutput,
 } from '@/services/acvp/run'
-import type { AcvpEngine, EngineIdentity } from '@/services/acvp/dispatch'
+import { UNSUPPORTED_REASONS, type AcvpEngine, type EngineIdentity } from '@/services/acvp/dispatch'
 import { DISCLAIMER_GENERAL, DISCLAIMER_IMPORT, PROTOTYPE_LABEL } from '@/services/acvp/evidence'
 import { PINNED_SCHEMAS } from '@/services/acvp/schemas/registry'
 import type { JsonObject } from '@/services/acvp/ir'
@@ -174,6 +174,14 @@ export const AcvpFormatPrototypePanel = ({
         v3.2) mechanism CKM_ML_DSA_EXTERNAL_MU. Every other group or test is listed as unsupported
         and left out of the response, never guessed or defaulted.
       </p>
+      <p className="text-xs text-muted-foreground" data-testid="acvp-io-revisions">
+        The upstream ACVP drafts also define newer test revisions for some modes: ML-KEM encapDecap
+        has FIPS203 and FIPS203-tr1, and ML-DSA sigGen has FIPS204-tr1 (ML-DSA sigVer has only
+        FIPS204). Only the revisions above are pinned; a prompt that names any other revision,
+        FIPS203-tr1 included, is rejected rather than mapped to the nearest one. A real ACVTS
+        session issues vector sets for the revision named in the algorithm registration (
+        <span className="font-mono">draft-celi-acvp-ml-kem</span> §7.3).
+      </p>
 
       <div
         role="note"
@@ -312,6 +320,16 @@ export const AcvpFormatPrototypePanel = ({
                     </li>
                   ))}
                 </ul>
+                {unsupportedRows.some(
+                  (u) => u.reason === UNSUPPORTED_REASONS.mlKemEncapsulation
+                ) && (
+                  <p className="mt-1 text-muted-foreground" data-testid="acvp-io-encap-note">
+                    The Validation Workbench in the PKCS#11 HSM playground runs the same ML-KEM
+                    encapsulation cases by passing the NIST m to C_EncapsulateKey as a non-standard
+                    parameter. That is test-harness evidence, not an ACVP response, and none of it
+                    is in response.json.
+                  </p>
+                )}
               </details>
             )}
             {errorCases.length > 0 && (

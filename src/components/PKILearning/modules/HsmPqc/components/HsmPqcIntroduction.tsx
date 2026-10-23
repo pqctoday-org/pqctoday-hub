@@ -72,6 +72,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   )
 }
 
+/** A verbatim quotation with its source, used by the AWS CloudHSM box and the "What the lab tests" panel. */
+const LabQuote: React.FC<{ source: string; children: React.ReactNode }> = ({
+  source,
+  children,
+}) => (
+  <blockquote className="border-l-2 border-primary/30 pl-3 text-xs text-foreground/80">
+    &ldquo;{children}&rdquo;{' '}
+    <cite className="text-[10px] not-italic text-muted-foreground">({source})</cite>
+  </blockquote>
+)
+
 export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNavigateToWorkshop }) => {
   // The data-section-id anchors below were already here and already
   // matched this module's manifest; nothing read them. One call makes
@@ -160,7 +171,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Thales Luna 7 (Network HSM, FIPS 140-3 L3)</li>
-                <li>&bull; Entrust nShield 5 (Network HSM, FIPS 140-3 L3)</li>
+                <li>
+                  &bull; Entrust nShield 5 (FIPS 140-3 L3 certificates #5329 and #4745 cover the
+                  nShield 5s module)
+                </li>
                 <li>
                   &bull; Utimaco SecurityServer (PCIe, FIPS 140-2 L3, certificate now Historical)
                 </li>
@@ -176,12 +190,15 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <span className="text-sm font-bold text-foreground">Cloud HSMs</span>
               </div>
               <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; AWS CloudHSM (ML-DSA in the HSM; FIPS mode on hsm2m.medium)</li>
+                <li>
+                  &bull; AWS CloudHSM (ML-DSA keys in the HSM; whether ML-DSA counts as
+                  FIPS-approved is unreconciled, see the Cloud HSM deep dive)
+                </li>
                 <li>
                   &bull; Azure Dedicated HSM (Thales Luna backend; PQC by firmware upgrade;
                   retiring)
                 </li>
-                <li>&bull; Google Cloud HSM (no PQC at the HSM level yet)</li>
+                <li>&bull; Google Cloud HSM (Cloud KMS lists no PQC algorithm for HSM keys)</li>
               </ul>
               <p className="text-xs text-warning mt-2 font-medium">
                 Cloud PQC support is uneven: check each service&apos;s own documentation (checked 15
@@ -402,31 +419,44 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
                     <span className="text-warning font-medium">
-                      FIPS 140-3 Level 3 (cert #5329; no PQC in its approved list)
+                      FIPS 140-3 Level 3 (nShield 5s certs #5329 and #4745: no PQC algorithm in
+                      their approved lists)
                     </span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
                     <span className="text-foreground">
-                      ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS
-                      (PQSDK), XMSS (PQSDK)
+                      ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (12 parameter sets); LMS (CAVP
+                      A7990, PQSDK)
                     </span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">PKCS#11:</span>{' '}
-                    <span className="text-foreground">v3.0 (PQC extensions)</span>
+                    <span className="text-muted-foreground">PKCS#11 PQC:</span>{' '}
+                    <span className="text-foreground">
+                      ML-DSA from Security World v13.9.0, ML-KEM from v13.9.3, SLH-DSA from v13.9.5
+                      (release notes)
+                    </span>
                   </div>
                 </div>
                 <div className="mt-3 space-y-1 text-xs text-muted-foreground">
                   <p>
-                    <strong>Upgrade Path:</strong> Firmware + PQSDK v1.2.1+ installation. 1&ndash;2
-                    hours per HSM. An nShield 5s module is on the CMVP Modules in Process list
-                    &mdash; a queue position, not evidence of the outcome.
+                    <strong>Upgrade Path:</strong> Through PKCS#11 the PostQuantum feature must be
+                    enabled and the firmware must be v13.8 or later (v13.8.3 or later for ML-KEM).
+                    1&ndash;2 hours per HSM. An nShield 5s module is on the CMVP Modules in Process
+                    list &mdash; a queue position, not evidence of the outcome.
                   </p>
                   <p>
-                    <strong>Unique Features:</strong> Broadest algorithm support (includes SLH-DSA
-                    and XMSS). Hardware-accelerated PQC. CodeSafe secure execution environment.
-                    Available via PKCS#11, CNG, and JCE interfaces.
+                    <strong>Interfaces:</strong> The PKCS#11 interface gained the PQC algorithms one
+                    release at a time. In Security World v13.9.0 (release notes, sections 3.4 and
+                    3.5) ML-KEM and SLH-DSA were &ldquo;currently only available via nCore&rdquo;,
+                    while ML-DSA was already in PKCS#11 (section 3.9); v13.9.3 added ML-KEM and
+                    v13.9.5 added SLH-DSA to PKCS#11. Check the release notes for the version you
+                    run. The Entrust pages we read do not describe HSS or XMSS.
+                  </p>
+                  <p>
+                    <strong>Other features:</strong> The HY acceleration profile (mid- and
+                    high-speed nShield 5 models) accelerates ML-DSA (v13.9.3) and ML-KEM (v13.9.6).
+                    CodeSafe secure execution environment.
                   </p>
                 </div>
               </div>
@@ -488,9 +518,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Cloud HSMs provide managed hardware security but currently lag behind on-prem vendors
-            for PQC support. PQC in cloud HSMs is primarily delivered through SDK updates rather
-            than firmware changes.
+            Cloud HSMs provide managed hardware security, and each service exposes a different PQC
+            algorithm list, API and protection level. Read the provider&apos;s own documentation for
+            what the service offers, and the module&apos;s CMVP certificate and Security Policy for
+            what is covered by a FIPS 140 validation.
           </p>
 
           <div className="bg-warning/10 rounded-lg p-4 border border-warning/20 mb-4">
@@ -500,13 +531,18 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) ship
                 PQC firmware, with different algorithm sets (Thales and Utimaco do not yet offer
                 SLH-DSA) and different FIPS 140 coverage: some module certificates list PQC
-                algorithms (Crypto4A #5497, Thales Luna T7 #5450), others do not (Entrust nShield 5
-                #5329). Cloud HSMs are uneven: AWS CloudHSM generates and uses ML-DSA keys inside
-                the HSM, in FIPS mode on hsm2m.medium from 1 September 2026, but its CMVP
-                certificate does not list ML-DSA yet; Azure Dedicated HSM has PQC available via
-                customer-requested firmware upgrade (note: Azure Dedicated HSM is retiring — no new
-                customer onboardings); Google Cloud KMS offers PQC keys only at the software
-                protection level, not in Cloud HSM (checked 15 Oct 2026).
+                algorithms (Crypto4A #5497, Thales Luna T7 #5450), others do not (Entrust nShield 5s
+                #5329 and #4745, Thales Luna K7 #4684). Cloud HSMs are uneven: AWS CloudHSM
+                generates and uses ML-DSA keys inside the HSM through vendor-defined PKCS#11
+                mechanisms. AWS documents ML-DSA as available in FIPS mode on hsm2m.medium clusters
+                from 1 September 2026, while the NIST Security Policy for the same module (CMVP
+                #4703) lists ML-DSA and ML-KEM as non-approved services and the certificate lists no
+                PQC algorithm among its approved ones; we have not found a document that reconciles
+                the two (see the AWS CloudHSM card). Azure Dedicated HSM has PQC available via
+                customer-requested firmware upgrade (note: Azure Dedicated HSM is retiring &mdash;
+                no new customer onboardings); Google Cloud KMS lists its PQC algorithms at the
+                software protection level only, with none for HSM keys (AWS and Google statements
+                checked 23 Oct 2026; the Azure statement checked 15 Oct 2026).
               </p>
             </div>
           </div>
@@ -523,27 +559,80 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
-                  <span className="text-foreground">ML-DSA-44/65/87 (no ML-KEM)</span>
+                  <span className="text-foreground">
+                    ML-DSA-44/65/87 (no ML-KEM mechanism documented)
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
                   <span className="text-foreground">
-                    FIPS 140-3 Level 3 (hsm2m.medium: CMVP #4703, Marvell LS2; no PQC approved)
+                    hsm2m.medium: FIPS 140-3 Level 3, CMVP #4703 (Marvell LS2 HSM Family); the
+                    certificate lists no PQC algorithm among its approved ones
                   </span>
                 </div>
               </div>
-              <div className="mt-3 text-xs text-muted-foreground space-y-1">
+              <div className="mt-3 text-xs text-muted-foreground space-y-2">
                 <p>
-                  ML-DSA-44/65/87 keys are generated and used inside the HSM, in FIPS mode on
-                  hsm2m.medium clusters from 1 September 2026, through vendor-defined PKCS#11
-                  mechanisms (CKM_CLOUDHSM_ML_DSA). AWS-LC has its own CMVP certificates as a Level
-                  1 software module (AWS-LC 3, #5298/#5314, approve ML-KEM but not ML-DSA); they do
-                  not change the HSM&apos;s Level 3 certificate, and #4703 lists no PQC algorithm.
-                  Checked 15 Oct 2026.
+                  ML-DSA-44/65/87 keys are generated and used inside the HSM through vendor-defined
+                  PKCS#11 mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA and
+                  CKM_CLOUDHSM_EXT_MU_ML_DSA), not the standard v3.2 CKM_ML_DSA; AWS&apos;s PKCS#11
+                  library is documented as compliant with PKCS#11 version 2.40. AWS-LC has its own
+                  CMVP certificates as a Level 1 software module (AWS-LC 3, #5298/#5314, approve
+                  ML-KEM but not ML-DSA); they do not change the HSM&apos;s Level 3 certificate.
+                  Checked 23 Oct 2026.
                 </p>
+                <div className="bg-warning/10 rounded-lg p-3 border border-warning/20 space-y-2">
+                  <h4 className="text-xs font-bold text-foreground">
+                    ML-DSA and FIPS: two statements we could not reconcile
+                  </h4>
+                  <p>
+                    &ldquo;Available in FIPS mode&rdquo; and &ldquo;listed on the certificate&rdquo;
+                    are different claims. FIPS mode is an AWS cluster setting; the certificate and
+                    its Security Policy are NIST CMVP documents, which speak of an &ldquo;approved
+                    mode of operation&rdquo;. The AWS pages we read do not say the two are the same.
+                    We show both statements and prefer neither.
+                  </p>
+                  <p className="font-medium text-foreground">AWS documentation says:</p>
+                  <LabQuote source="AWS CloudHSM User Guide, CloudHSM CLI, key generate-asymmetric-pair ml-dsa; read 23 Oct 2026">
+                    Starting September 1, 2026, ML-DSA is available in FIPS mode for hsm2m.medium
+                    clusters.
+                  </LabQuote>
+                  <LabQuote source="AWS CloudHSM User Guide, cluster modes; read 23 Oct 2026">
+                    In FIPS mode, only Federal Information Processing Standard (FIPS) validated keys
+                    and algorithms can be used.
+                  </LabQuote>
+                  <p className="font-medium text-foreground">
+                    The NIST Security Policy for the same module says (CMVP #4703, Marvell LS2 HSM
+                    Family, policy dated January 29, 2026; NIST&apos;s certificate page shows its
+                    latest update on 26 February 2026):
+                  </p>
+                  <p>
+                    Table 6, &ldquo;Non-Approved Algorithms Not Allowed in the Approved Mode of
+                    Operation&rdquo; (p. 23), lists &ldquo;ML-DSA (non-compliant)&rdquo; with the
+                    use &ldquo;Key generation, sign, verify&rdquo; and &ldquo;ML-KEM
+                    (non-compliant)&rdquo; with the use &ldquo;Key generation, Asymmetric key
+                    encapsulation and un-encapsulation&rdquo;. Table 11, &ldquo;Non-Approved
+                    Services&rdquo; (from p. 61), lists the services CN_PQC_GENERATE_KEY_PAIR,
+                    CN_PQC_CRYPTO_SIG_GEN and CN_PQC_CRYPTO_SIG_VERIFY, among others (p. 66), and
+                    the note under the table reads:
+                  </p>
+                  <LabQuote source="Security Policy for CMVP #4703, p. 66">
+                    The indicator is success for all non-approved services only when the partition
+                    is operated in the non-approved mode. The non-approved services will fail FIPS
+                    POLICY MISMATCH when partition is operated in the approved mode.
+                  </LabQuote>
+                  <p>
+                    <strong>What to do with it:</strong> for a procurement or an audit, ask AWS in
+                    writing which statement applies to your cluster, and which CMVP certificate or
+                    update covers ML-DSA. Until then treat ML-DSA on CloudHSM as available but not
+                    shown to be on the certificate.
+                  </p>
+                </div>
                 <p>
                   <strong>Limitation:</strong> no standard PKCS#11 v3.2 PQC mechanisms (CKM_ML_DSA)
-                  and no ML-KEM encapsulation/decapsulation.
+                  and no ML-KEM mechanism in the AWS CloudHSM pages we read (the PKCS#11 mechanisms
+                  list; the CloudHSM CLI key generate-asymmetric-pair category lists only ec, ml-dsa
+                  and rsa).
                 </p>
               </div>
             </div>
@@ -588,13 +677,16 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-foreground">Google Cloud HSM</h3>
                 <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-muted/50 text-muted-foreground border-border">
-                  ROADMAP
+                  NOT IN HSM
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
-                  <span className="text-foreground">Planned (via Cloud KMS integration)</span>
+                  <span className="text-foreground">
+                    None for HSM keys; Cloud KMS lists its PQC algorithms at the software protection
+                    level only
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
@@ -603,12 +695,16 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  Hardware HSM backing for Cloud KMS keys. PQC algorithms currently available in
-                  Cloud KMS software mode only. HSM-backed PQC keys expected as algorithms mature.
+                  Hardware HSM backing for Cloud KMS keys. Google&apos;s Cloud KMS algorithms page
+                  lists its PQC signing algorithms (ML-DSA-44/65/87, including external-mu, and
+                  SLH-DSA-SHA2-128S) and its key encapsulation algorithms (ML-KEM-768, ML-KEM-1024
+                  and X-Wing) for the software protection level; its tables for the HSM and
+                  single-tenant HSM protection levels list none (page read 23 Oct 2026).
                 </p>
                 <p>
-                  <strong>Context:</strong> Google already uses PQC internally for infrastructure
-                  protection (ALTS). Titan chip provides physical security.
+                  <strong>Hardware:</strong> Google&apos;s Cloud HSM architecture page says Cloud
+                  HSM uses Marvell LiquidSecurity HSMs (certificate #4399) in FIPS 140-2 Level 3
+                  certified hardware security modules.
                 </p>
               </div>
             </div>
@@ -623,10 +719,38 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            PQC algorithms introduce new side-channel attack surfaces. HSMs must implement specific
-            countermeasures for lattice-based and hash-based operations that differ from classical
-            protections.
+            PQC algorithms introduce new side-channel attack surfaces. An attacker with physical
+            access to a module, or one who can observe its timing, power draw, electromagnetic
+            emissions or the effect of injected faults, may learn about secret values from how a
+            computation runs rather than from its output. HSM designs use countermeasures for
+            lattice-based and hash-based operations that differ from classical protections.
           </p>
+
+          <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground space-y-2">
+            <p>
+              <strong>
+                Check the module&apos;s Security Policy, not the technique&apos;s name.
+              </strong>{' '}
+              The cards below describe attack classes and the countermeasure techniques discussed
+              for them. Whether a given HSM implements a technique is stated, if at all, in the
+              vendor&apos;s documentation and in the module&apos;s Security Policy; the existence of
+              a technique does not show that a product uses it. On the validation side, CMVP has no
+              approved non-invasive test metrics today:
+            </p>
+            <LabQuote source="NIST SP 800-140F, section 6.2, p. 2, March 2020">
+              No additional requirements at this time
+            </LabQuote>
+            <p>
+              If a vendor has publicly documented that a module mitigates a specific attack, FIPS
+              140-3 IG 12.A makes the lab address that claim:
+            </p>
+            <LabQuote source="FIPS 140-3 IG 12.A, Resolution, p. 132">
+              If a cryptographic module has been purposely designed, built and publicly documented
+              to mitigate one or more specific attacks, this section is applicable and AS12.01
+              through AS12.04 (as applicable) shall be addressed regardless if the vendor of the
+              module wishes to address the claim or not.
+            </LabQuote>
+          </div>
 
           <div className="grid grid-cols-1 gap-3">
             {SIDE_CHANNEL_VECTORS.map((vector) => (
@@ -691,10 +815,15 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <p className="text-xs text-muted-foreground">
                   ML-DSA supports a &quot;hedged&quot; signing mode where the{' '}
                   <span className="font-mono text-primary">rnd</span> parameter is set to a random
-                  value rather than zero. This makes signing non-deterministic, which prevents fault
-                  injection attacks from producing exploitable faulty signatures. All production
-                  HSMs implement hedged signing by default. This is critical for HSM environments
-                  where physical access may be possible.
+                  value rather than zero. FIPS 204 &sect;3.4 makes hedged signing the default
+                  variant and says &ldquo;The use of fresh randomness during signing helps mitigate
+                  side-channel attacks&rdquo;. It also permits a deterministic variant, and says
+                  that this variant &ldquo;should not be used on platforms where side-channel
+                  attacks are a concern and where they cannot be otherwise mitigated&rdquo;. PKCS#11
+                  v3.2 lets the caller choose the variant (CKH_HEDGE_PREFERRED, CKH_HEDGE_REQUIRED
+                  or CKH_DETERMINISTIC_REQUIRED), so which variant a given HSM uses unless told
+                  otherwise is a property of that product. Look for it in the module&apos;s
+                  documentation and Security Policy rather than assuming it.
                 </p>
               </div>
             </div>
@@ -779,6 +908,275 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               the PQC algorithms is issued, the firmware may run PQC algorithms, but the module
               certificate does not cover them.
             </div>
+
+            {/* What the lab tests: validation of a PQC-capable HSM. Every quotation is verbatim from the named document. */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+              <h3 className="text-sm font-bold text-foreground">What the lab tests</h3>
+              <p className="text-xs text-muted-foreground">
+                A PQC-capable HSM is checked in four separate places, and the single word
+                &ldquo;Required&rdquo; in the FIPS Recert column above covers all of them.{' '}
+                <strong>CAVP</strong> is NIST&apos;s algorithm validation program (its tests are
+                specified in ACVP documents). <strong>CMVP</strong> is NIST&apos;s cryptographic
+                module validation program; a module&apos;s certificate lists its approved
+                algorithms, and the Security Policy published with it lists its services. A{' '}
+                <strong>CAST</strong> is a cryptographic algorithm self-test that a validated module
+                runs on its own algorithms, and a <strong>PCT</strong> is a pairwise consistency
+                test on a generated key pair. A <strong>CSTL</strong> is an accredited testing
+                laboratory. In the quotations, IUT means implementation under test, OTS means
+                one-time signature, and FS means full submission. Every quotation below is verbatim
+                from the document named after it, with footnote and reference-number markers left
+                out.
+              </p>
+
+              <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+                <h4 className="text-xs font-bold text-foreground">
+                  1. Algorithm certificates (CAVP, run through ACVP)
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  NIST&apos;s ACVP specification drafts (all dated 2 October 2026) cover ML-KEM
+                  (keyGen and encapDecap), ML-DSA (keyGen, sigGen, sigVer), SLH-DSA (keyGen, sigGen,
+                  sigVer) and LMS (keyGen, sigGen, sigVer). The CAVP overview page says what such a
+                  certificate is for, and how it is tested:
+                </p>
+                <LabQuote source="CAVP overview page, read 23 Oct 2026">
+                  Cryptographic algorithm validation is a prerequisite of cryptographic module
+                  validation.
+                </LabQuote>
+                <LabQuote source="CAVP overview page, read 23 Oct 2026">
+                  Due to this structure, ACVTS testing is entirely black-box. The implementation is
+                  never provided to NIST or the CAVP in order to receive a validation certificate.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  For ML-KEM the ACVP draft includes checks that an HSM rejects bad keys:
+                </p>
+                <LabQuote source="ACVP draft-celi-acvp-ml-kem-01, section 6.1">
+                  For the encapsulation key check, the server will generate a potentially valid or
+                  invalid encapsulation key ek. The IUT SHALL determine if the provided ek is valid
+                  based on [FIPS203] Section 7.2.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  What the algorithm tests leave out, in the specifications&apos; own words:
+                </p>
+                <LabQuote source="ACVP draft-celi-acvp-ml-dsa-01, section 6.2.2">
+                  An ACVP server will not test the zeroization of intermediate values, security
+                  strength of the deterministic random bit generators (DRBGs), or incorrect length
+                  signatures or public keys.
+                </LabQuote>
+                <LabQuote source="ACVP draft-celi-acvp-lms-01, section 6.2.2">
+                  ACVP does not test the inability of an implementation to export a private key.
+                  ACVP does not provide any guarantees on the inability to reuse private OTS pairs
+                  of an implementation.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  Of the SP 800-208 schemes only LMS has an ACVP specification; none is published
+                  for XMSS, XMSS^MT or HSS (NIST&apos;s ACVP specification list, October 2026). The
+                  FIPS 140-3 Implementation Guidance (IG) C.N, last modified September 2024, says
+                  the same:
+                </p>
+                <LabQuote source="IG C.N, Background, p. 169">
+                  CAVP tests are undergoing development with testing available for LMS but not yet
+                  for XMSS, HSS, or XMSSMT.
+                </LabQuote>
+              </div>
+
+              <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+                <h4 className="text-xs font-bold text-foreground">
+                  2. The module certificate (CMVP) and its Security Policy
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  An algorithm certificate does not make a product validated. The CAVP overview page
+                  states the relationship:
+                </p>
+                <LabQuote source="CAVP overview page, read 23 Oct 2026">
+                  For an algorithm implementation to be listed on a cryptographic module validation
+                  certificate as an Approved security function, the algorithm implementation must
+                  meet all the requirements of FIPS 140 and must successfully complete the
+                  cryptographic algorithm validation process. However, a product or implementation
+                  does not meet the FIPS 140 module validation requirements by simply implementing
+                  an Approved security function and acquiring validations for each of the
+                  implemented algorithms.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  A Security Policy keeps approved and non-approved items apart. The Security Policy
+                  of CMVP certificate #4703 (an HSM), for example, has &ldquo;Table 10 Approved
+                  Services&rdquo; and &ldquo;Table 11 Non-Approved Services&rdquo;, and lists the
+                  non-approved algorithms the module also offers in its Tables 4, 5 and 6. For
+                  algorithms that are allowed with no security claimed, the IG says:
+                </p>
+                <LabQuote source="IG 2.4.A, p. 38">
+                  the algorithm shall be included in the Security Policy&apos;s list of non-approved
+                  algorithms allowed in the approved mode of operation with no security claimed (see
+                  SP 800-140B). However, the module&apos;s certificate shall not include these
+                  algorithms as they do not claim any security and are not used to meet any
+                  requirement of FIPS 140-3.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  So the question to put to a certificate is not &ldquo;does the vendor sell
+                  ML-DSA?&rdquo; but &ldquo;is ML-DSA among the approved algorithms of this
+                  certificate, and which approved services use it?&rdquo;
+                </p>
+              </div>
+
+              <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+                <h4 className="text-xs font-bold text-foreground">
+                  3. Self-tests inside the module (FIPS 140-3 IG 10.3.A)
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  IG 10.3.A (last modified 19 August 2026) sets when the self-tests run and what
+                  they must cover. Timing, and what happens outside the approved mode:
+                </p>
+                <LabQuote source="IG 10.3.A, p. 103">
+                  The requirements of this IG apply prior to the first operational use of the
+                  cryptographic algorithm.
+                </LabQuote>
+                <LabQuote source="IG 10.3.A, General Notes, p. 115">
+                  GeneralNote8: For all algorithms that require a CAST (e.g., approved algorithms,
+                  allowed algorithms with a claim of security as permitted by an IG, and legacy
+                  algorithms per IG C.M), a CAST shall be performed prior to first time algorithm
+                  execution in the approved mode; but CASTs are NOT required (but are certainly
+                  permissible) prior to first time algorithm execution in the non-approved mode.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  So firmware that runs ML-KEM or ML-DSA in a non-approved mode need not carry the
+                  CASTs that a validated approved mode needs. For ML-KEM:
+                </p>
+                <LabQuote source="IG 10.3.A, item 14, p. 110">
+                  if the module implements ML-KEM encapsulation, the module shall have a CAST for
+                  the ML-KEM encapsulation mechanism.
+                </LabQuote>
+                <LabQuote source="IG 10.3.A, item 14, Note21, p. 111">
+                  The ML-KEM decapsulation CASTs shall cover both the implicit rejection and
+                  (unnamed) non-rejection paths.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  For ML-DSA signing, the CAST may use either variant from the hedged-signing
+                  section above:
+                </p>
+                <LabQuote source="IG 10.3.A, item 15, p. 111">
+                  if the module implements digital signature generation, the module shall have an
+                  ML-DSA digital signature generation CAST for either the &lsquo;hedged&rsquo; or
+                  &lsquo;deterministic&rsquo; algorithm (per FIPS 204 Section 5.2).
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">For LMS:</p>
+                <LabQuote source="IG 10.3.A, item 5, p. 106">
+                  If the module implements LMS signature generation then it shall also implement key
+                  generation and shall have CASTs for both LMS signature generation and key
+                  generation.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  A key pair the HSM generates is also tested once, by a PCT, which is not a CAST:
+                </p>
+                <LabQuote source="IG 10.3.A, Additional Comments 1, p. 115">
+                  Though not a CAST, a pairwise consistency test (PCT) shall be conducted for every
+                  generated public and private key pair for the applicable approved algorithm (per
+                  ISO/IEC 19790:2012 Section 7.10.3.3).
+                </LabQuote>
+                <LabQuote source="IG 10.3.A, Additional Comments 1, p. 116">
+                  For key pairs generated for use with approved KEMs in FIPS 203, the PCT (described
+                  by the tester in TE10.35.01) shall consist of applying the encapsulation key ek to
+                  encapsulate a shared secret K leading to ciphertext c, and then applying
+                  decapsulation key dk to retrieve the same shared secret K. The PCT passes if the
+                  two shared secret K values are equal.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  An HSM that stores a seed and rebuilds the key pair from it later is covered by a
+                  separate sentence:
+                </p>
+                <LabQuote source="IG 10.3.A, Additional Comments 1, p. 116">
+                  For key pairs generated from stored seeds per FIPS 203 (section 3.3) or FIPS 204
+                  (section 3.6.3), a PCT is only required to be performed on the key pair prior to
+                  the first exportation of the seed or key pair or prior to the first operational
+                  use of the key pair after the seed has been generated within the module.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  For an approved ML-KEM, IG D.S (last modified 9 April 2026) ties the algorithm
+                  certificate to the module checks:
+                </p>
+                <LabQuote source="IG D.S, CAVP testing, Scenario 1, p. 225">
+                  ML-KEM shall be CAVP tested via &lsquo;ML-KEM EncapDecap&rsquo; for all
+                  implemented parameter sets (ML-KEM-1024, ML-KEM-512, ML-KEM-768) and functions
+                  (Decapsulation, Encapsulation). The module shall implement the encapsulation and
+                  decapsulation key checks specified in FIPS 203 Sections 7.2 and 7.3
+                </LabQuote>
+              </div>
+
+              <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+                <h4 className="text-xs font-bold text-foreground">
+                  4. Adding PQC to a validated HSM: which submission?
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  The FIPS 140-3 CMVP Management Manual (version 2.7, 9 April 2026) decides how a
+                  changed module is submitted. It lists twelve submission scenarios (section 7.1),
+                  among them the full submission (FS) and several revalidation routes. The starting
+                  point:
+                </p>
+                <LabQuote source="CMVP Management Manual 2.7, section 7.1, p. 50">
+                  An updated version of a previously validated cryptographic module can be
+                  considered for a revalidation rather than a full validation depending on the
+                  extent of the modifications from the previously validated version of the module.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  If no revalidation scenario fits, the module is treated as new:
+                </p>
+                <LabQuote source="CMVP Management Manual 2.7, section 7.1.2, p. 52">
+                  If modifications are made to hardware, software, or firmware components that do
+                  not meet any of the below revalidation criteria, then the cryptographic module
+                  shall be considered a new module and shall undergo a full validation testing by a
+                  CSTL and submitted as a FS.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  Some revalidation scenarios cannot carry new cryptography. Algorithm Update (ALG)
+                  is for algorithms that became CAVP-testable after validation, and Common
+                  Vulnerabilities and Exposures (CVE) is for security fixes:
+                </p>
+                <LabQuote source="CMVP Management Manual 2.7, section 7.1.6, p. 55">
+                  Code or configuration changes are not permitted under this revalidation scenario.
+                </LabQuote>
+                <LabQuote source="CMVP Management Manual 2.7, section 7.1.11, p. 60">
+                  Changes shall not introduce new features or cryptography
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  The scenario that allows security-relevant changes is Update (UPDT), up to a
+                  limit:
+                </p>
+                <LabQuote source="CMVP Management Manual 2.7, section 7.1.10, pp. 58-59">
+                  An updated cryptographic module can be considered in this scenario if less than a
+                  30% of security changes were made to the module. Security changes include impacts
+                  to: approved / allowed security functions/algorithms, SSPs, approved security
+                  services, self-tests, and security states within the FSM. None of these, assessed
+                  individually, can exceed 30% of changes.
+                </LabQuote>
+                <LabQuote source="CMVP Management Manual 2.7, section 7.1.10, p. 59">
+                  The CMVP upon review, may determine that the changes are &gt;30% and shall be
+                  submitted as an FS.
+                </LabQuote>
+                <p className="text-xs text-muted-foreground">
+                  The Manual&apos;s summary table (section 7.1.14, p. 65) gives UPDT a new
+                  certificate and a new sunset date, requires the latest guidance, and requires CAVP
+                  testing and, where IG 9.3.A applies, entropy source validation (ESV) testing.
+                  Adding ML-KEM, ML-DSA or SLH-DSA changes the approved algorithms, the approved
+                  services and the self-tests, which are categories the Manual counts toward the 30%
+                  limit; whether a particular firmware release is an UPDT or an FS is decided by the
+                  CMVP on the lab&apos;s submission, not something this page can state in advance.
+                </p>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Related: how the ACVP tests are run in{' '}
+                <Link to="/learn/acvp-lab-workflow" className="text-primary hover:underline">
+                  ACVP Lab Workflow
+                </Link>
+                , how the signing state is managed in{' '}
+                <Link to="/learn/stateful-signatures" className="text-primary hover:underline">
+                  Stateful Hash-Based Signatures
+                </Link>
+                , and how a module is validated in{' '}
+                <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
+                  FIPS 140-3 Certification
+                </Link>
+                .
+              </p>
+            </div>
           </div>
         </CollapsibleSection>
       </div>
@@ -804,10 +1202,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   Critical: State Persistence Requirement
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  After every signing operation, the HSM must atomically write the updated state
-                  counter to NVRAM. A power failure during this write can result in state loss,
-                  causing the same leaf to be used twice. NIST SP 800-208 &sect;8.1 requires that
-                  LMS/XMSS key and signature generation{' '}
+                  For every signing request, the HSM must write the updated state counter to NVRAM
+                  before the signature leaves the module. A power failure around this write can
+                  result in state loss, causing the same leaf to be used twice. NIST SP 800-208
+                  &sect;8.1 requires that LMS/XMSS key and signature generation{' '}
                   <strong>
                     &ldquo;shall only be validated for use within hardware cryptographic
                     modules&rdquo;
@@ -856,11 +1254,27 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             </div>
           </div>
 
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
-            <strong>Power failure recovery:</strong> If an HSM detects incomplete state during boot,
-            it must refuse to sign with the affected key until the state is manually verified.
-            Thales Luna, Entrust nShield, and Utimaco all implement this safety mechanism in their
-            LMS/HSS firmware.
+          <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground space-y-2">
+            <p>
+              <strong>Power failure recovery:</strong> the standard fixes the order of operations,
+              not the recovery procedure. How a particular product behaves when it finds incomplete
+              state after a power loss, for example whether it refuses to sign with that key until
+              an operator checks it, is product behaviour: read its Security Policy and
+              administrator guide. NIST SP 800-208 section 8.1 says:
+            </p>
+            <LabQuote source="NIST SP 800-208, section 8.1, p. 28">
+              In order to prevent the possible reuse of an OTS key, when the cryptographic module
+              accepts a request to sign a message, the cryptographic module shall increment the leaf
+              index of the private key (q in LMS, idx in XMSS, idx_sig in XMSSMT) and shall store
+              the incremented leaf index value in nonvolatile storage before exporting a signature
+              value or accepting another request to sign a message.
+            </LabQuote>
+            <p>
+              FIPS 140-3 IG C.N Resolution 12 has the lab check it: &ldquo;the tester shall confirm
+              that the state information for the key (at minimum the leaf index value) is updated in
+              the non-volatile memory before exporting a signature value or accepting a request to
+              sign another message.&rdquo;
+            </p>
           </div>
         </div>
       </CollapsibleSection>

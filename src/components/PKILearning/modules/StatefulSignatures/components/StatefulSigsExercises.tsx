@@ -77,13 +77,13 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
     },
     {
       id: 'state-loss-attack',
-      title: '5. State Loss Attack',
+      title: '5. Rolling Back State',
       description:
-        'Sign several messages, then click "Simulate State Loss" to roll back the counter. Observe how this creates a key reuse vulnerability that completely breaks the signature scheme.',
+        'Sign several messages, then click "Simulate State Loss". The simulator asks the HSM to take the key back to an earlier signature, the way a restored backup or a cloned key would, and prints the PKCS#11 reply to each attempt. Then sign again and read the leaf numbers in the log.',
       badge: 'Attack',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'After state loss, previously-used leaf indices become "available" again. Any signature produced with a reused leaf gives an attacker enough information to forge signatures. This is why VM snapshots and key cloning are forbidden for stateful schemes.',
+        'The HSM engine refuses all three attempts (counter write, state read-out, key copy), so the counter does not move and the next signature uses the next leaf. This is how this emulator answers, not proof that any certified module does. A signer that keeps its state in an ordinary file would reuse the rolled-back leaves, and two signatures on different messages from one one-time key make forgery computationally feasible (SP 800-208 §1.2). That is why §8.1 keeps the key inside the module and why VM snapshots and key cloning are forbidden for stateful schemes.',
       config: { step: 2 },
     },
   ]

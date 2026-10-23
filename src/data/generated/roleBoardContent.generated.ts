@@ -484,9 +484,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
         trackNote:
-          "Eight essentials against the full 22-module path plus the quiz, 965 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
+          "Eight essentials against the full 22-module path plus the quiz, 995 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
         trackChips: [
           'PQC 101',
           'Risk management',
@@ -556,7 +556,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -629,7 +629,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -698,7 +698,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -770,7 +770,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -844,7 +844,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -2780,9 +2780,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Learning path: Fundamentals, then FIPS 140-3 or CC/EUCC, the ACVP lab workflow, the workbench and product records (9 hours 40 minutes of essentials, not the full 14½ hours).',
+          'Learning path: Fundamentals, then FIPS 140-3 or CC/EUCC, the ACVP lab workflow, the workbench and product records (8 hours 10 minutes of essentials, not the full 15 hours).',
         trackNote:
-          "Seven essentials against the full 13-module path plus the quiz, 875 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
+          "Six essentials against the full 13-module path plus the quiz, 905 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
         trackChips: [
           'Product certification',
           'FIPS 140-3',
@@ -2855,7 +2855,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',
@@ -2930,7 +2930,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',
@@ -3005,7 +3005,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',
@@ -3076,7 +3076,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',

@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router'
 import { MobileModuleShell } from './MobileModuleShell'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { Button } from '@/components/ui/button'
 
 afterEach(() => {
   useModuleStore.setState({ modules: {} })
@@ -91,6 +92,78 @@ describe('MobileModuleShell', () => {
     )
     expect(screen.getByText(/guided workshop/)).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /practice on your phone/i })).not.toBeInTheDocument()
+  })
+
+  // 2026-10-23 (owner decision D6) — a workshop a phone cannot run is labelled "on a
+  // computer" at every entry point instead of being a button that does nothing.
+  describe('desktop-only workshop (no ready workshop, no twin)', () => {
+    const startHere = { step: 'a', text: 'Decode the claim.' }
+    const manifest: ModuleManifest = {
+      ...minimal,
+      workshopSteps: [{ id: 'a', label: 'A' }],
+      startHere,
+    }
+
+    it('replaces "Open this step" with the "on a computer" label', () => {
+      render(
+        <MemoryRouter>
+          <MobileModuleShell manifest={manifest} learnContent={<div />} onStartHere={vi.fn()} />
+        </MemoryRouter>
+      )
+      expect(screen.getByText('Decode the claim.')).toBeInTheDocument()
+      expect(screen.getByText('Workshop: on a computer')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Open this step' })).not.toBeInTheDocument()
+    })
+
+    it('keeps "Open this step" when the module has a phone twin tool', () => {
+      const onStartHere = vi.fn()
+      render(
+        <MemoryRouter>
+          <MobileModuleShell
+            manifest={manifest}
+            learnContent={<div />}
+            onStartHere={onStartHere}
+            practiceTool="slh-dsa"
+          />
+        </MemoryRouter>
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Open this step' }))
+      expect(onStartHere).toHaveBeenCalledTimes(1)
+      expect(screen.queryByText('Workshop: on a computer')).not.toBeInTheDocument()
+    })
+
+    it("relabels the Learn content's own Start Workshop button and keeps the reading", () => {
+      render(
+        <MemoryRouter>
+          <MobileModuleShell
+            manifest={manifest}
+            learnContent={
+              <div>
+                <p>READING STAYS</p>
+                <Button>Start Workshop</Button>
+              </div>
+            }
+          />
+        </MemoryRouter>
+      )
+      expect(screen.getByText('READING STAYS')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Start Workshop' })).not.toBeInTheDocument()
+      // the Start here line, the Learn content's own entry point and the standing banner
+      expect(screen.getAllByText('Workshop: on a computer').length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('leaves the Learn content Start Workshop button live when the module has a phone twin', () => {
+      render(
+        <MemoryRouter>
+          <MobileModuleShell
+            manifest={manifest}
+            learnContent={<Button>Start Workshop</Button>}
+            practiceTool="slh-dsa"
+          />
+        </MemoryRouter>
+      )
+      expect(screen.getByRole('button', { name: 'Start Workshop' })).toBeVisible()
+    })
   })
 
   // Wave D (2026-09-18) — modules on MOBILE_WORKSHOP_READY mount their real

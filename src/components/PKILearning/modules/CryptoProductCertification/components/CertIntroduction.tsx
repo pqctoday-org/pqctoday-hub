@@ -20,9 +20,11 @@ import {
 import { Button } from '@/components/ui/button'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
-import { CertificationContexts } from './CertificationContexts'
+import { CertificationContexts, CertificationContextsPointer } from './CertificationContexts'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { MODULE_LAST_REVIEWED } from '@/data/moduleContentRegistry'
+import { ownerReviewStatusText } from '@/components/PKILearning/common/moduleReviewStatus'
 import { PRACTITIONER_DISCLAIMER, type SectionEntry, type SectionGroup } from './sectionRegistry'
 
 const GROUP_ICON = new Map<SectionGroup, LucideIcon>([
@@ -67,7 +69,9 @@ export const CertIntroduction = ({
           className="mt-0.5 shrink-0 text-status-warning"
           aria-hidden="true"
         />
-        <p className="text-sm text-foreground">{PRACTITIONER_DISCLAIMER}</p>
+        <p className="text-sm text-foreground">
+          {PRACTITIONER_DISCLAIMER} {ownerReviewStatusText(MODULE_LAST_REVIEWED[manifest.id])}
+        </p>
       </div>
 
       <div
@@ -84,11 +88,10 @@ export const CertIntroduction = ({
         </p>
       </div>
 
-      {[
-        'crypto-product-certification',
-        'fips-140-3-certification',
-        'cc-eucc-certification',
-      ].includes(manifest.id) && <CertificationContexts />}
+      {['crypto-product-certification', 'cc-eucc-certification'].includes(manifest.id) && (
+        <CertificationContexts />
+      )}
+      {manifest.id === 'fips-140-3-certification' && <CertificationContextsPointer />}
 
       {(manifest.learnSections ?? []).map((section, index) => {
         const entry = sections.get(section.id)

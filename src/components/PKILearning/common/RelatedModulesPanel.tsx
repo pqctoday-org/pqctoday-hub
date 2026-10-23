@@ -16,13 +16,17 @@
 import { Link } from 'react-router'
 import { Network, ArrowRight } from 'lucide-react'
 import { moduleRelations } from '@/data/moduleRelations'
+import { PERSONAS } from '@/data/learningPersonas'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 export interface RelatedModulesPanelProps {
   moduleId: string
 }
 
 export function RelatedModulesPanel({ moduleId }: RelatedModulesPanelProps) {
-  const { origin, entries } = moduleRelations(moduleId)
+  const persona = usePersonaStore((state) => state.selectedPersona)
+  const learnerPath = persona ? PERSONAS[persona]?.recommendedPath : undefined
+  const { origin, entries } = moduleRelations(moduleId, undefined, learnerPath)
   if (entries.length === 0) return null
 
   return (

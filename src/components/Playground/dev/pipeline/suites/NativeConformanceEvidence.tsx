@@ -27,7 +27,7 @@ const executionWording = (s: NativeSuiteRecord): string => {
   const r = s.report
   if (!r) return 'Not executed in this browser.'
   if (s.engine === 'cpp')
-    return `Native suite (engine library ${r.engineAsStated}, as the report states), not executed in this browser.`
+    return "Native C++ library build, run by the engine project's own test suite, not executed in this browser."
   return `Run by pqctoday-hsm's own harness against a ${r.target} (as the report states), not executed in this browser.`
 }
 
@@ -51,6 +51,12 @@ const SuiteBlock = ({ s }: { s: NativeSuiteRecord }) => {
     >
       <p className="font-medium text-foreground">{s.name}</p>
       <p>{executionWording(s)}</p>
+      {s.engine === 'cpp' && r && (
+        <details>
+          <summary className="cursor-pointer">Library path the report states</summary>
+          <p className="font-mono break-all">{r.engineAsStated}</p>
+        </details>
+      )}
       {r ? (
         <>
           <p className="font-mono text-foreground" data-testid="native-suite-counts">

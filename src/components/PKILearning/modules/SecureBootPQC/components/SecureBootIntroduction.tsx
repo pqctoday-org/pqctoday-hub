@@ -67,6 +67,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   )
 }
 
+/** A verbatim quotation with its source, used by the "What the lab tests" panel. */
+const LabQuote: React.FC<{ source: string; children: React.ReactNode }> = ({
+  source,
+  children,
+}) => (
+  <blockquote className="border-l-2 border-primary/30 pl-3 text-xs text-foreground/80">
+    &ldquo;{children}&rdquo;{' '}
+    <cite className="text-[10px] not-italic text-muted-foreground">({source})</cite>
+  </blockquote>
+)
+
 export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
@@ -95,15 +106,30 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           </div>
           <p className="text-xs text-foreground/80">
             Every RSA-2048 and ECDSA key in the UEFI Secure Boot hierarchy can be broken by a
-            Cryptographically Relevant Quantum Computer (CRQC) via Shor&apos;s algorithm. An
-            attacker who harvests signed firmware images today can forge signatures once a CRQC is
-            available — enabling undetectable firmware rootkits.
+            Cryptographically Relevant Quantum Computer (CRQC) via Shor&apos;s algorithm. This is a
+            forgery risk (&ldquo;trust now, forge later&rdquo;), not a harvest-now-decrypt-later
+            one: a signature protects no secret, so nothing recorded today is exposed later. Once a
+            CRQC exists, anyone who holds a public key (the verifying keys are stored on every
+            device) could derive its private key and sign firmware that existing devices accept —
+            enabling undetectable firmware rootkits. How urgent that is depends on how long the
+            device and its trust anchors stay in the field. NSA&apos;s CNSA 2.0 FAQ (v2.2, p.13)
+            notes that in many firmware-signing cases the validation algorithm is not easily
+            updated, so firmware-signing algorithms are &ldquo;frequently locked in for the life of
+            a system&rdquo;. Harvest-now-decrypt-later applies to confidentiality, such as the TLS
+            key exchange that carries remote attestation, not to signatures.
           </p>
         </div>
 
         {/* Key type table */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-3">UEFI Key Hierarchy Summary</div>
+          <p className="text-xs text-muted-foreground mb-3">
+            ML-DSA-65 is this module&apos;s general-purpose target (NIST Security Level 3). For
+            National Security Systems (NSS), the NSA&apos;s CNSA 2.0 FAQ (Ver. 2.2, p. 7&ndash;8)
+            specifies ML-DSA-87 for all classification levels and allows LMS and XMSS (NIST SP
+            800-208) for signing firmware and software; HSS and XMSS<sup>MT</sup> are not allowed
+            and SLH-DSA is not approved for NSS (p. 11). The last column shows the NSS choice.
+          </p>
           <div
             className="overflow-x-auto"
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
@@ -119,6 +145,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                   <th className="text-left py-2 px-2 text-muted-foreground font-medium">Current</th>
                   <th className="text-left py-2 px-2 text-muted-foreground font-medium">
                     PQC Target
+                  </th>
+                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
+                    CNSA 2.0 / NSS
                   </th>
                   <th className="text-left py-2 px-2 text-muted-foreground font-medium">
                     Priority
@@ -140,6 +169,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                       </span>
                     </td>
                     <td className="py-2 px-2 text-primary text-[10px]">{kt.pqcAlgorithm}</td>
+                    <td className="py-2 px-2 text-muted-foreground text-[10px]">
+                      {kt.cnsaAlgorithm}
+                    </td>
                     <td className="py-2 px-2">
                       <span
                         className={`text-[10px] px-1.5 py-0.5 rounded capitalize font-bold ${
@@ -179,9 +211,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                      stage.hndlRisk === 'critical' || stage.hndlRisk === 'high'
+                      stage.forgeryUrgency === 'critical' || stage.forgeryUrgency === 'high'
                         ? 'bg-status-error/20 text-status-error'
-                        : stage.hndlRisk === 'medium'
+                        : stage.forgeryUrgency === 'medium'
                           ? 'bg-status-warning/20 text-status-warning'
                           : 'bg-status-success/20 text-status-success'
                     }`}
@@ -266,7 +298,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                     Priv Key
                   </th>
                   <th className="text-right py-2 px-2 text-muted-foreground font-medium">Sig</th>
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">Level</th>
+                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
+                    Strength / category
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -309,12 +343,18 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             </table>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
-            SLH-DSA-SHA2-128s has the smallest public key (32 B) but the largest signature (7,856
-            B). For firmware signing where signature size is the bottleneck, ML-DSA-65 is a common
-            choice. SLH-DSA may suit long-lived root keys where signing is rare. Note: CNSA 2.0
-            prefers stateful hash-based signatures (LMS or XMSS, NIST SP 800-208) to start
-            firmware/software signing now; validated ML-DSA-87 is also approved for
-            firmware/software signing.
+            The last column uses two different measures. PQC rows show the NIST security category
+            from FIPS 204 and FIPS 205. Classical rows show the comparable security strength in bits
+            from NIST SP 800-57 Part 1 Rev. 5, Table 2 (RSA-2048: 112, P-256: 128, P-384: 192;
+            RSA-4096 is not a listed size and falls between RSA-3072 at 128 and RSA-7680 at 192),
+            which assumes no large quantum computer. SLH-DSA-SHA2-128s has the smallest public key
+            (32 B) but the largest signature (7,856 B). For firmware signing where signature size is
+            the bottleneck, ML-DSA-65 is a common choice. Outside National Security Systems, SLH-DSA
+            may suit long-lived root keys where signing is rare; for NSS it is not an option,
+            because the CNSA 2.0 FAQ (p. 11) says SLH-DSA is not part of CNSA and is not approved
+            for any use in NSS. CNSA 2.0 prefers stateful hash-based signatures (LMS or XMSS, NIST
+            SP 800-208) to start firmware/software signing now; validated ML-DSA-87 is also approved
+            for firmware/software signing.
           </p>
         </div>
 
@@ -326,8 +366,324 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             During the transition period, firmware images can carry both an RSA-2048 and ML-DSA-65
             signature. Legacy systems that do not support ML-DSA fall back to RSA verification. New
             systems validate the ML-DSA signature. This dual-signature approach requires careful
-            UEFI variable budget planning — the combined overhead is approximately 3,800 bytes
-            (3,309 B ML-DSA-65 + 512 B RSA-4096 ≈ 3,800 B) per signed component.
+            UEFI variable budget planning — the combined overhead is approximately 3,565 bytes
+            (3,309 B ML-DSA-65 + 256 B RSA-2048 ≈ 3,565 B) per signed component; with an RSA-4096
+            second signature it is about 3,821 bytes (3,309 B + 512 B).
+          </p>
+        </div>
+
+        {/* What the lab tests: verifier vs signer. Every quotation is verbatim from the named document. */}
+        <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+          <h3 className="text-sm font-bold text-foreground">What the lab tests</h3>
+          <p className="text-xs text-muted-foreground">
+            Firmware signing has two sides, and they are tested differently. The{' '}
+            <strong>verifier</strong> is the code on the device that checks a signature. The{' '}
+            <strong>signer</strong> is the module that holds the private key and produces the
+            signature. CAVP is NIST&apos;s algorithm validation program (its tests are specified in
+            ACVP documents). CMVP is NIST&apos;s cryptographic module validation program. A CAST is
+            a cryptographic algorithm self-test that a validated module runs on its own algorithms.
+            In the quotations, IUT means implementation under test, OTS means one-time signature,
+            and HBS means hash-based signature. Every quotation below is verbatim from the document
+            named after it, with footnote and reference-number markers left out.
+          </p>
+
+          <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+            <h4 className="text-xs font-bold text-foreground">
+              1. The verifier: algorithm tests (CAVP)
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              NIST&apos;s ACVP specification drafts include signature verification for ML-DSA
+              (ML-DSA / sigVer / FIPS204) and for LMS (LMS / sigVer). Both use the test type AFT
+              (algorithm functional test). For LMS:
+            </p>
+            <LabQuote source="ACVP draft-celi-acvp-lms-01, 2 October 2026">
+              The ACVP server generates a series of signatures to communicate to the IUT. The IUT is
+              REQUIRED to determine the validity of the signature given the tree structure, key, and
+              message.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              For ML-DSA, the server starts from a valid signature and changes the message or one
+              part of the signature (commitment, z or hint); each changed version is not a valid
+              signature. The same specification says what ACVP does not test:
+            </p>
+            <LabQuote source="ACVP draft-celi-acvp-ml-dsa-01, 2 October 2026, section 6.2.2">
+              An ACVP server will not test the zeroization of intermediate values, security strength
+              of the deterministic random bit generators (DRBGs), or incorrect length signatures or
+              public keys.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              No ACVP specification is published for XMSS, XMSS^MT or HSS (NIST&apos;s ACVP
+              specification list, October 2026). The FIPS 140-3 Implementation Guidance (IG) C.N,
+              last modified September 2024, describes the same state:
+            </p>
+            <LabQuote source="IG C.N, Background, p. 169">
+              CAVP tests are undergoing development with testing available for LMS but not yet for
+              XMSS, HSS, or XMSSMT.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              So CNSA 2.0 accepts XMSS as well as LMS for firmware (see part 2), but of the SP
+              800-208 schemes only LMS has an ACVP test.
+            </p>
+          </div>
+
+          <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+            <h4 className="text-xs font-bold text-foreground">
+              2. The signer: SP 800-208 and the CNSA 2.0 FAQ
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              NIST SP 800-208 sets this rule for key generation and signing with its stateful
+              hash-based schemes (LMS and XMSS, and their multi-tree forms HSS and XMSS^MT):
+            </p>
+            <LabQuote source="NIST SP 800-208, section 8.1, p. 28">
+              Implementations of the key generation and signature algorithms in this document shall
+              only be validated for use within hardware cryptographic modules. The cryptographic
+              modules shall be validated to provide FIPS 140-2 or FIPS 140-3 Level 3 or higher
+              physical security, and the operational environment shall be non-modifiable or limited.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              That rule is for key generation and signing only. For a module that only verifies:
+            </p>
+            <LabQuote source="IG C.N, Resolution 1, p. 170">
+              Modules that only support signature verification need to comply with requirements from
+              section 8.2 of SP 800-208, but do not need to meet requirements from section 8.1.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              ACVP cannot check two of the signer requirements, the ban on exporting a private key
+              and the one-time use of each signing key:
+            </p>
+            <LabQuote source="ACVP draft-celi-acvp-lms-01, section 6.2.2">
+              Many requirements outlined in this section are not testable by ACVP. ACVP does not
+              test the inability of an implementation to export a private key. ACVP does not provide
+              any guarantees on the inability to reuse private OTS pairs of an implementation.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              The NSA CNSA 2.0 FAQ (version 2.2, October 2026, pp. 11-12) says which part needs
+              which validation for National Security Systems (NSS). A product that only verifies:
+            </p>
+            <LabQuote source="CNSA 2.0 FAQ, p. 11">
+              Signature verification is expected to be performed by code that has been validated by
+              NIST&apos;s Cryptographic Algorithm Validation Program (CAVP). &hellip; If your
+              product is only verifying signatures, CAVP testing is all that is required.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">A signer that is itself an NSS:</p>
+            <LabQuote source="CNSA 2.0 FAQ, pp. 11-12">
+              Code sources and signature generation processes (signers) that are NSS are required to
+              produce signatures according to NIST SP 800-208, which requires hardware validated by
+              NIST&apos;s Cryptographic Module Validation Program (CMVP), or via other NSA guidance.
+              Waivers for this will not be granted.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              A signer that is not an NSS, such as a commercial vendor&apos;s development
+              environment:
+            </p>
+            <LabQuote source="CNSA 2.0 FAQ, p. 12">
+              &hellip; the signature generation processes for that code (signers) are often not
+              themselves NSS. For example, for many commercial vendors with commodity products used
+              in an NSS, their development environments are not NSS. In this case, those signers are
+              expected to use code in their signature generation processes that is at least at the
+              same operational quality as the code being put on the device, but the only part NSA
+              will validate is that the signature verification code on the device passes CAVP.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              The same FAQ applies this to NIAP Protection Profile evaluations of products that only
+              verify:
+            </p>
+            <LabQuote source="CNSA 2.0 FAQ, p. 12">
+              Where signing occurs outside the Target of Evaluation (TOE) boundary, such as for
+              commercial products being certified where only firmware signature verification is
+              performed within the TOE while the firmware signing is performed outside the TOE by an
+              HSM or other external signing service, Protection Profile requirements only apply to
+              signature verification. As signature generation is the component of LMS/XMSS that
+              requires state management, if only signature verification is being performed only CAVP
+              validation (not CMVP) will be expected to meet CNSA 2.0 for such products.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">Which algorithms the FAQ allows:</p>
+            <ul className="text-xs text-muted-foreground space-y-1.5">
+              <li>
+                LMS and XMSS (the same table lists ML-DSA-87 for &ldquo;signing firmware and
+                software&rdquo;, p. 7):
+                <LabQuote source="CNSA 2.0 FAQ, algorithm table, p. 8">
+                  All parameters approved for all classification levels. LMS SHA-256/192 is
+                  recommended.
+                </LabQuote>
+              </li>
+              <li>
+                <LabQuote source="CNSA 2.0 FAQ, p. 11">
+                  From NIST SP 800-208, NSA has only approved LMS and XMSS for use in NSS. The
+                  multi-tree algorithms HSS and XMSSMT are not allowed.
+                </LabQuote>
+              </li>
+              <li>
+                <LabQuote source="CNSA 2.0 FAQ, p. 11">
+                  While SLH-DSA is hash-based, it is not part of CNSA and is not approved for any
+                  use in NSS.
+                </LabQuote>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+            <h4 className="text-xs font-bold text-foreground">
+              3. Module self-tests and module type (FIPS 140-3 IG)
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              A signer or verifier that is a FIPS 140-3 module also runs self-tests (CASTs). IG
+              10.3.A (last modified 19 August 2026) sets the timing and the content:
+            </p>
+            <LabQuote source="IG 10.3.A, p. 103">
+              The requirements of this IG apply prior to the first operational use of the
+              cryptographic algorithm.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              For a signer (XMSS has the same wording as LMS):
+            </p>
+            <LabQuote source="IG 10.3.A, item 5, p. 106">
+              If the module implements LMS signature generation then it shall also implement key
+              generation and shall have CASTs for both LMS signature generation and key generation.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">For a verifier:</p>
+            <LabQuote source="IG 10.3.A, item 5, p. 106">
+              If the module implements signature verification for LMS, it shall have a CAST for it.
+            </LabQuote>
+            <LabQuote source="IG 10.3.A, item 15, p. 111">
+              if the module implements digital signature verification, the module shall have an
+              ML-DSA digital signature verification CAST.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              For the hash-based schemes the size of the tree sets the testing effort:
+            </p>
+            <LabQuote source="IG 10.3.A, item 5, Note 5, p. 106">
+              it is sufficient that the CASTs exercise the smallest (or any other single) parameter
+              set (e.g., a single table row with the lowest height trees) supported by the module to
+              provide assurance that the algorithm is operating correctly.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              Every generated key pair also gets a pairwise consistency test (PCT), which for SP
+              800-208 key pairs may be limited:
+            </p>
+            <LabQuote source="IG 10.3.A, Additional Comment 1, p. 116">
+              may be limited to confirming the same key identifier (I in the case of LMS, SEED in
+              the case of XMSS and PK.SEED for SLH-DSA) is shared by the resulting public and
+              private key following generation.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              For ML-DSA keys rebuilt from a stored seed:
+            </p>
+            <LabQuote source="IG 10.3.A, Additional Comment 1, p. 116">
+              Subsequent generations of the key pair from the stored seed are considered a
+              reconstitution of the key pair and a PCT is not required.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              Module type. SP 800-208 asks for a hardware module. IG C.N Resolution 9 reads:
+            </p>
+            <LabQuote source="IG C.N, Resolution 9, pp. 171-172">
+              Provided the hardware components of any FIPS 140-3 certified module satisfies the
+              latter two requirements, it is not required that modules are module type:
+              &lsquo;hardware&rsquo; and may separately include modules of type
+              &lsquo;firmware&rsquo; and &lsquo;hybrid firmware&rsquo;. For any permitted module
+              type, these shall support a certification claim to the Level 3 requirements from
+              section 7.7, Physical security, of ISO/IEC 19790:2012. This resolution excludes
+              software and hybrid software modules on the basis that these are not by definition in
+              ISO/IEC 19790:2012 permitted to include a limited or non-modifiable operating
+              environment (OE) as required by SP 800-208.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              In this IG a hybrid firmware module is a module &ldquo;whose cryptographic boundary
+              delimits the composite of one or more firmware component(s) and a disjoint hardware
+              component&rdquo; (IG 1.B, p. 13). It has nothing to do with hybrid key exchange.
+            </p>
+          </div>
+
+          <div className="bg-background rounded-lg p-3 border border-border space-y-2">
+            <h4 className="text-xs font-bold text-foreground">
+              4. What a certificate for the signing module does and does not cover
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              <strong>It covers the module the lab tested.</strong> A module claiming SP 800-208 has
+              to meet its Section 8 conformance requirements:
+            </p>
+            <LabQuote source="IG 10.3.A, item 5, Note 8, p. 107">
+              Modules claiming compliance with SP 800-208 and use of the approved security functions
+              described therein shall meet, and make clear in the documentation, the conformance
+              requirements noted in Section 8 of the standard including, but not limited to, the
+              following that apply when a module implements key generation and signature generation:
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              These include requirements that ACVP cannot check:
+            </p>
+            <LabQuote source="NIST SP 800-208, section 8.1, p. 28">
+              The cryptographic module shall not allow for the export of private keying material.
+              The entropy source for any approved random bit generator used in the implementation
+              shall be located inside the cryptographic module&apos;s physical boundary.
+            </LabQuote>
+            <LabQuote source="IG C.N, Resolution 3, p. 170">
+              In addition to the prohibition of the export of private keys, this resolution extends
+              this to include the prohibition of the import of private key material for use with an
+              approved HBS service, including the prohibition of importing private keys as a restore
+              operation from a backup.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              The lab checks the one-time-key rule by testing, not by paperwork alone:
+            </p>
+            <LabQuote source="IG C.N, Resolution 12, p. 172">
+              Documentation review in isolation is not sufficient to confirm compliance with these
+              requirements.
+            </LabQuote>
+            <LabQuote source="IG C.N, Resolution 12 (m), p. 173">
+              the tester shall confirm they verified the module prevents the use of an OTS key to
+              generate a digital signature more than one time.
+            </LabQuote>
+            <p className="text-xs text-muted-foreground">
+              <strong>It does not cover</strong> the following.
+            </p>
+            <ul className="text-xs text-muted-foreground space-y-1.5 list-disc pl-4">
+              <li>
+                The verification code on the device. The FAQ (part 2) says that for a signer that is
+                not an NSS, &ldquo;the only part NSA will validate&rdquo; is that this on-device
+                code passes CAVP.
+              </li>
+              <li>
+                Anything outside the module boundary. For a signature scheme split across
+                components:
+                <LabQuote source="IG 10.3.A, item 5, Note 7, p. 107">
+                  If the module is part of a distributed signature scheme per Section 7 of SP
+                  800-208, the CASTs described above only apply to the functionality implemented
+                  within the module&apos;s boundary.
+                </LabQuote>
+              </li>
+              <li>
+                An algorithm validation on its own. NIST&apos;s CAVP page says:
+                <LabQuote source="CAVP overview page, NIST CSRC">
+                  a product or implementation does not meet the FIPS 140 module validation
+                  requirements by simply implementing an Approved security function and acquiring
+                  validations for each of the implemented algorithms.
+                </LabQuote>
+              </li>
+            </ul>
+            <p className="text-xs text-muted-foreground">
+              The FAQ also advises on where to keep the signing state and on backups:
+            </p>
+            <LabQuote source="CNSA 2.0 FAQ, p. 12">
+              Note: To avoid weakening the security of these signatures, one should implement
+              signing and state management in hardware, such as an HSM. Backup flows, which may
+              involve transferring keys between modules, must prevent state re-use.
+            </LabQuote>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Related: how the ACVP tests are run in{' '}
+            <Link to="/learn/acvp-lab-workflow" className="text-primary hover:underline">
+              ACVP Lab Workflow
+            </Link>
+            , how the signing state is managed in{' '}
+            <Link to="/learn/stateful-signatures" className="text-primary hover:underline">
+              Stateful Hash-Based Signatures
+            </Link>
+            , and how a module is validated in{' '}
+            <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
+              FIPS 140-3 Certification
+            </Link>
+            .
           </p>
         </div>
       </CollapsibleSection>
@@ -347,19 +703,31 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
 
         <div className="bg-status-warning/5 rounded-lg p-4 border border-status-warning/20">
           <div className="text-sm font-bold text-status-warning mb-2">
-            TPM 2.0 Does Not Support ML-DSA or ML-KEM Natively
+            TPM 2.0 Library v185 Defines ML-DSA and ML-KEM; Installed TPMs Predate It
           </div>
           <p className="text-xs text-foreground/80">
-            The current TPM 2.0 specification defines only RSA, ECC P-256/P-384, and symmetric
-            algorithms. The <strong>Trusted Computing Group (TCG) PQC Working Group</strong> is
-            developing a TPM Library Part 2 extension to add ML-DSA and ML-KEM algorithm support,
-            targeted for ratification in 2027. Hardware TPMs with native PQC will require new
-            silicon (2028+).
+            The <strong>Trusted Computing Group (TCG)</strong> published the TPM 2.0 Library
+            Specification v185 on 12 March 2026. Its change history (Part 0) states:
+            &ldquo;Introduced support for ML-DSA, HashML-DSA, and ML-KEM.&rdquo; TCG&rsquo;s
+            announcement of 22 March 2026 names ML-KEM for Endorsement Keys and ML-DSA for
+            Attestation Keys, and the PC Client Platform TPM Profile (PTP) 1.07 adds larger data
+            transport and defines which ML-KEM Endorsement Key certificates are required. The
+            ISO/IEC 11889:2015 edition dates from before ML-KEM and ML-DSA were standardized (FIPS
+            203 and FIPS 204).
+          </p>
+          <p className="text-xs text-foreground/80 mt-2">
+            A TPM offers these algorithms only if its vendor built it to v185 or later. A
+            TPM2_GetCapability query for TPM_PT_REVISION (specification version) and
+            TPM_PT_ML_PARAMETER_SETS (supported ML-KEM and ML-DSA parameter sets) shows what a given
+            part supports. Chips and platform firmware follow the specification, so check a
+            vendor&rsquo;s own documentation for which version a shipping part implements.
           </p>
         </div>
 
         <div className="space-y-3">
-          <div className="text-xs font-bold text-foreground">Near-Term Hybrid Approach:</div>
+          <div className="text-xs font-bold text-foreground">
+            Interim Hybrid Approach for TPMs Built to Earlier Versions:
+          </div>
           {[
             {
               step: 1,

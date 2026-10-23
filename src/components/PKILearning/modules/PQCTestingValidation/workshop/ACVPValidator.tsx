@@ -166,7 +166,7 @@ export const ACVPValidator: React.FC = () => {
           if (tc.md) details += `hash=${tc.md.toString().substring(0, 8)}... `
 
           tests.push(
-            `[Group ${tg.tgId || tgIdx + 1} | Test ${tc.tcId || tcIdx + 1}] Check: ${details || 'Validating schema'} -> PASS`
+            `[Group ${tg.tgId || tgIdx + 1} | Test ${tc.tcId || tcIdx + 1}] Entry: ${details || 'Listing schema'} -> listed, not checked`
           )
         })
       })
@@ -174,7 +174,9 @@ export const ACVPValidator: React.FC = () => {
     // Fallback if no robust testGroups
     if (tests.length === 0) {
       for (let i = 0; i < activeAlg.vectorCount; i++) {
-        tests.push(`[Vector ${i + 1}] Validating deterministic output stream... -> PASS`)
+        tests.push(
+          `[Vector ${i + 1}] Listing deterministic output stream... -> listed, not checked`
+        )
       }
     }
     return tests
@@ -240,8 +242,8 @@ export const ACVPValidator: React.FC = () => {
             <code className="text-[10px] bg-background px-1 rounded border border-border">
               /src/data/acvp/
             </code>
-            . No cryptography executes here and every entry is marked PASS regardless of content —
-            it shows what an ACVP run looks like, but it is not a real test and proves nothing about
+            . No cryptography executes here: every entry is only listed, never passed or failed — it
+            shows what an ACVP run looks like, but it is not a real test and proves nothing about
             FIPS 140-3 correctness. For a genuine pass/fail run against the real SoftHSMv3
             WebAssembly engine, use the test panel further below, which performs real PKCS#11
             operations and labels each result with its evidence class — a public NIST ACVP-Server
@@ -369,10 +371,7 @@ export const ACVPValidator: React.FC = () => {
           {(status === 'running' || status === 'generating' || status === 'done') && (
             <>
               {logs.map((log, i) => (
-                <div
-                  key={i}
-                  className="text-status-success/70 pl-2 border-l-2 border-status-success/30"
-                >
+                <div key={i} className="text-muted-foreground pl-2 border-l-2 border-border">
                   {log}
                 </div>
               ))}

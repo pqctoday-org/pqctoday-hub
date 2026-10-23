@@ -7,7 +7,7 @@
  */
 import { Building2, Bookmark, ExternalLink, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { LibraryItem } from '@/data/libraryData'
+import { parseDateMs, type LibraryItem } from '@/data/libraryData'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import {
   lifecycleLabel,
@@ -42,6 +42,12 @@ export function LibraryDocumentCard({
   const lifecycle = item.lifecycleLabel
   const statusText = publisherStatusText(item.documentStatus, lifecycle)
   const revisionCount = item.priorRevisions?.length ?? 0
+  const publishedMs = parseDateMs(item.initialPublicationDate)
+  const recordUpdatedMs = parseDateMs(item.lastUpdateDate)
+  const recordUpdatedLate =
+    publishedMs !== null &&
+    recordUpdatedMs !== null &&
+    recordUpdatedMs - publishedMs > 30 * 24 * 60 * 60 * 1000
   const sourceAction = resolveLibrarySourceAction(item)
 
   return (
@@ -154,16 +160,26 @@ export function LibraryDocumentCard({
             lastUpdateDate records catalog activity and is blank on many rows. */}
         {(item.initialPublicationDate || item.lastUpdateDate) && (
           <span
-            className="ml-auto shrink-0 font-mono text-[11px]"
+            className="ml-auto flex shrink-0 flex-col items-end font-mono text-[11px]"
             title={
               item.initialPublicationDate
                 ? `Published ${formatLibDate(item.initialPublicationDate)}`
                 : `Catalog record updated ${formatLibDate(item.lastUpdateDate)}`
             }
           >
-            {item.initialPublicationDate
-              ? formatLibDate(item.initialPublicationDate)
-              : formatLibDate(item.lastUpdateDate)}
+            <span>
+              {item.initialPublicationDate
+                ? formatLibDate(item.initialPublicationDate)
+                : formatLibDate(item.lastUpdateDate)}
+            </span>
+            {/* A living document (an Implementation Guidance edition, a management manual)
+                keeps its first-publication date for years, which makes a current edition
+                look stale. Say when the catalog record was last brought up to date. */}
+            {recordUpdatedLate && (
+              <span className="text-[10px]" title="When this catalog record was last updated">
+                record updated {formatLibDate(item.lastUpdateDate)}
+              </span>
+            )}
           </span>
         )}
       </div>

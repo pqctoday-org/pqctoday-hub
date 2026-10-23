@@ -12,6 +12,7 @@ import {
 
 const TONE: Record<FipsState, string> = {
   module: 'bg-status-success text-status-success',
+  historical: 'bg-status-warning text-status-warning',
   embedded: 'bg-status-success text-status-success',
   cavp: 'bg-status-warning text-status-warning',
   'in-process': 'bg-status-warning text-status-warning',

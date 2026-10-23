@@ -24,6 +24,7 @@ import {
   V33_DRAFT_GROUP_LABEL,
   summarizeV33,
 } from '@/wasm/pkcs11ConformanceRunner/v33DraftFeatures'
+import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
 import { ConformanceSuiteWorkbench } from './ConformanceSuiteWorkbench'
 
 vi.mock('@monaco-editor/react', () => ({ default: () => null }))
@@ -206,6 +207,15 @@ describe('ConformanceSuiteWorkbench', () => {
     expect(badges[3]).toMatch(/Product probe/)
     expect(badges[4]).toMatch(/Error-path probe/)
     expect(scope).toHaveTextContent('error-path probes')
+  })
+
+  it('shows the required validation disclaimer and what "conformant" means in the Builder view', async () => {
+    render(<ConformanceSuiteWorkbench />)
+    await screen.findByTestId('native-conformance-evidence')
+    expect(screen.getByTestId('validation-disclaimer')).toHaveTextContent(VALIDATION_DISCLAIMER)
+    expect(screen.getByTestId('pkcs11-conformance-meaning')).toHaveTextContent(
+      'it is not a module validation'
+    )
   })
 
   it('shows the v3.3 draft group separately: verbatim label, own summary, no draft status drawn as a failure', async () => {

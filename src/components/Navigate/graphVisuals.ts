@@ -33,7 +33,7 @@ export const GRAPH_TOKEN: Record<ForceClusterNodeType, { varName: string; fallba
 }
 
 export const TYPE_LABEL: Record<ForceClusterNodeType, string> = {
-  certbody: 'Certification body',
+  certbody: 'Trusted source',
   mechanism: 'Crypto mechanism',
   industry: 'Industry',
   usecase: 'Use case',

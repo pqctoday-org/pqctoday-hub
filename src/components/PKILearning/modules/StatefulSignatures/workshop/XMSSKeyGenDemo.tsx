@@ -25,6 +25,7 @@ import { useHSM, type UseHSMResult, type HsmKey } from '@/hooks/useHSM'
 import {
   XMSS_PARAMETER_SETS,
   LMS_PARAMETER_SETS,
+  HSS_FRAMING_BYTES,
   formatSignatureCount,
   formatBytes,
 } from '../data/statefulSigsConstants'
@@ -214,6 +215,13 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
     const sameHeight = LMS_PARAMETER_SETS.filter((p) => p.treeHeight === xmssHeight)
     return sameHeight.find((p) => p.winternitzParam === 4) || sameHeight[0] || null
   }, [xmssHeight])
+
+  // The LMS list holds the sizes the engine returns, which for a single-tree set carry the 4-byte
+  // HSS framing on the key and on the signature. XMSS has no such wrapper here, so the comparison
+  // uses the bare RFC 8554 sizes to compare like with like.
+  const lmsFraming = comparableLMS?.variant === 'multi-tree' ? 0 : HSS_FRAMING_BYTES
+  const lmsSigBare = comparableLMS ? comparableLMS.signatureSize - lmsFraming : 0
+  const lmsPkBare = comparableLMS ? comparableLMS.publicKeySize - lmsFraming : 0
 
   const treeDepth = Math.min(xmssHeight, 5)
   const totalLeaves = Math.pow(2, treeDepth)
@@ -551,7 +559,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
           <span className="text-muted-foreground">·</span>
           <span className="text-foreground">{formatBytes(sigSize)}/sig</span>
           <span className="text-muted-foreground">·</span>
-          <span className="text-foreground">128-bit (NIST Level 1)</span>
+          <span className="text-foreground">n = 32: collision bound 2^128</span>
         </div>
       </div>
 
@@ -601,7 +609,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               {
                 label: 'Selected Parameter Set',
                 value: selected.name,
-                body: `Sig size: ${formatBytes(sigSize)} · Max sigs: ${formatSignatureCount(maxSigs)} · Security: 128-bit (NIST Level 1)`,
+                body: `Sig size: ${formatBytes(sigSize)} · Max sigs: ${formatSignatureCount(maxSigs)} · n = 32: generic collision bound 2^128 (SP 800-208 §9.2)`,
               },
             ].map((tile) => (
               <div key={tile.label} className="bg-background rounded p-3 border border-border">
@@ -748,9 +756,12 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 { label: 'Parameter Set', value: selected.name },
                 { label: 'Hash Function', value: xmssHash },
                 { label: 'Tree Height', value: String(xmssHeight) },
-                { label: 'n (output length)', value: '32 bytes (fixed by SP 800-208)' },
+                {
+                  label: 'n (output length)',
+                  value: '32 bytes (the sets in this demo; SP 800-208 also approves n = 24)',
+                },
                 { label: 'w (Winternitz param)', value: '16 (fixed by RFC 8391)' },
-                { label: 'Security Level', value: '128-bit (NIST Level 1)' },
+                { label: 'Generic collision bound', value: '2^128 (SP 800-208 §9.2)' },
               ].map((row) => (
                 <div key={row.label} className="flex justify-between text-xs">
                   <span className="text-muted-foreground">{row.label}</span>
@@ -801,14 +812,14 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                     {
                       label: 'Signature Size',
                       xmss: formatBytes(sigSize),
-                      lms: formatBytes(comparableLMS.signatureSize),
-                      xmssWins: sigSize < comparableLMS.signatureSize,
+                      lms: formatBytes(lmsSigBare),
+                      xmssWins: sigSize < lmsSigBare,
                     },
                     {
                       label: 'Public Key',
                       xmss: formatBytes(selected.publicKeySize),
-                      lms: formatBytes(comparableLMS.publicKeySize),
-                      xmssWins: selected.publicKeySize <= comparableLMS.publicKeySize,
+                      lms: formatBytes(lmsPkBare),
+                      xmssWins: selected.publicKeySize <= lmsPkBare,
                     },
                     {
                       // LMS private-key size is an implementation-defined state

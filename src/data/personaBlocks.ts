@@ -77,7 +77,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'Compare SHA2-128s against the f variants and the 192/256 levels: the same message signs to very different signature sizes, and the Stateful vs Stateless comparison panel says when a stateless scheme is worth that size over LMS or XMSS.',
     researcher:
-      'Run the Stateful Signatures Known Answer Tests panel to see SLH-DSA sign and verify round-trips (no external expected value) and a SHA-256 NIST reference sample run in-browser, then switch between Pure and pre-hash mode to see what changes on the wire.',
+      'Open Algorithm checks to see the SLH-DSA sign and verify round trips (functional, no external expected value), a SHA-256 NIST reference sample and the NIST SLH-DSA sigVer reference cases run in-browser, then switch between Pure and pre-hash mode to see what changes on the wire.',
     'cert-engineer':
       'Pick a parameter set from the twelve FIPS 205 variants, keep Pure mode, then run 1. Generate Key Pair, 2. Sign Message and 3. Verify Signature: the PKCS#11 call log is the exact sequence a test harness drives through the module interface.',
   },
@@ -99,7 +99,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'Sign the same message under all three constructions and compare signature layouts: the trace and the descriptions let you reproduce each composition and its separability property.',
     'cert-engineer':
-      'Sign one message under Concatenation, Nesting and Silithium (Fused): the PKCS#11 trace isolates the ML-DSA-65 calls — the primitive that algorithm testing covers — from the composition wrapped around them.',
+      'Sign one message under Concatenation, Nesting and Silithium (Fused): for Concatenation and Nesting the PKCS#11 trace isolates the ML-DSA-65 calls — the primitive that algorithm testing covers — from the composition wrapped around them. Silithium runs below the PKCS#11 boundary, so its trace stays empty; the IETF LAMPS composite ML-DSA specification (draft-ietf-lamps-pq-composite-sigs) is the standards-track route a lab would test.',
   },
   '/playground/kdf-derivation': {
     developer:
@@ -740,7 +740,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The IETF reference artifacts in the certificate deep-dive and the three signature compositions with their non-separability properties are the material to check against the drafts.',
     ops: 'Generate the classical and PQC root CAs and the hybrid certificate formats: which one a relying party that only knows ECDSA still validates is the property your fleet needs during migration.',
     'cert-engineer':
-      'The three signature compositions and the hybrid X.509 formats with their IETF reference artifacts show which part is a tested primitive and which is composition built on top of it.',
+      'Start with the “Hybrid in a validated module (IG D.S)” callout in the Learn tab, then Step 2 (hybrid KEM encapsulation and signing) and Step 5 (inspect the hybrid certificates against their IETF reference artifacts): they show which part is a tested primitive and which is composition built on top of it. Steps 6 and 7 (hybrid signature constructions, including the Silithium research proposal, and HPKE) are background for this role.',
   },
   '/learn/iam-pqc': {
     executive:
@@ -937,9 +937,9 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'The parameter explorer shows the size-versus-speed trade-off across the twelve sets, and the LMS/XMSS/SLH-DSA comparison says when a stateless scheme is worth its signature size.',
     researcher:
-      'FIPS 205 §9.2 context strings for domain separation and the deterministic mode are explored directly; the KAT tool verifies the implementation against the published vectors.',
+      'FIPS 205 §9.2 context strings for domain separation and the deterministic mode are explored directly; the Algorithm checks area replays eight published NIST ACVP sigVer cases, valid and invalid, through the in-browser engine, and keeps the sign-and-verify rows apart as functional round trips, not known-answer tests.',
     'cert-engineer':
-      'Generate keys across all twelve FIPS 205 parameter sets, sign in Pure and HashSLH-DSA modes, and verify with the KAT tool against the published vectors: parameter set and mode are what an algorithm test has to name.',
+      'Generate keys across all twelve FIPS 205 parameter sets and sign in Pure and HashSLH-DSA modes, then run the NIST sigVer sample under Algorithm checks: eight published ACVP cases that the engine must accept or reject exactly as NIST expects (the sign-and-verify rows there are functional round trips, not known-answer tests). Parameter set, interface, pure or pre-hash and deterministic mode are what an algorithm test has to name; the HashSLH-DSA Modes Learn step, What the lab tests, lists them with the IG 10.3.A self-tests and the CNSA 2.0 position.',
   },
   '/learn/sbom': {
     executive:
@@ -990,18 +990,18 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     curious:
       'Who decides which cryptography is allowed, who checks products, and who makes rules: the module sorts the alphabet soup of organisations into three jobs and five regions.',
     'cert-engineer':
-      'The standard-to-certification-to-compliance chain separates who writes a standard, who certifies against it and who mandates it — the order in which a certificate should be read.',
+      'Optional orientation for this role, placed first on your path: the standard-to-certification-to-compliance chain separates who writes a standard, who certifies against it and who mandates it — the order in which a certificate should be read. The FIPS 140-3, ACVP, Common Criteria and EUCC modules that follow go into each scheme in depth.',
   },
   '/learn/stateful-signatures': {
     developer:
       'Explore LMS parameter sets and Merkle-tree structure, compare XMSS with LMS at equal security, simulate signing, key exhaustion and state loss, then generate real SLH-DSA keys over PKCS#11 for comparison.',
     architect:
-      'The state-loss simulation is the design constraint: a reused one-time key voids the scheme, which decides where these keys may live; the Haystack coalition step shows distributed key control.',
+      'The state-loss step shows the HSM refusing to rewind a key; the constraint behind it is that a reused one-time key voids the scheme, which decides where these keys may live. The Haystack coalition step shows distributed key control.',
     researcher:
       'The parameter explorer, the XMSS-versus-LMS comparison at equal security levels, and the Haystack coalition construction are the material to reproduce; the LMS tool runs cross-engine verification.',
-    ops: 'The exhaustion and state-loss simulation shows the operational failure mode: state must be tracked correctly, forever, and backups cannot restore it.',
+    ops: 'The exhaustion run and the state-loss step show the operational failure mode and its control: state must be tracked correctly, forever, and the HSM refuses to let a backup restore it.',
     'cert-engineer':
-      'Simulate signing, key exhaustion and state loss, then compare XMSS with LMS at equal security: state management is what a module signing under SP 800-208 has to get right.',
+      "Simulate signing, key exhaustion and a state rollback the HSM refuses, then compare XMSS with LMS at equal security: state management is what a module signing under SP 800-208 has to get right. Step 4 replays NIST's published LMS verification samples.",
   },
   '/learn/tls-basics': {
     developer:

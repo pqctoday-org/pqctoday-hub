@@ -101,7 +101,8 @@ const Step1ThreeRoles: React.FC = () => (
                 certificates
               </div>
               <div>
-                &bull; <InlineTooltip term="ENISA">ENISA</InlineTooltip>/EUCC → EU product certs
+                &bull; EUCC certification bodies → EU product certs (
+                <InlineTooltip term="ENISA">ENISA</InlineTooltip> publishes them)
               </div>
             </div>
           </div>
@@ -147,7 +148,7 @@ const Step1ThreeRoles: React.FC = () => (
         <p>
           The three roles form a chain: a standards body publishes an algorithm specification → a
           certification body validates that a product correctly implements it → a compliance
-          framework mandates that regulated entities use certified products.
+          framework can require regulated entities to use certified products.
         </p>
         <div className="flex flex-col sm:flex-row items-stretch gap-0">
           {[
@@ -246,10 +247,18 @@ const Step2GovVsNonGov: React.FC = () => (
                 { body: 'NSA', role: 'US: CNSA 2.0 mandate for NSS', region: '🇺🇸' },
                 { body: 'CISA', role: 'US: Federal procurement guidance', region: '🇺🇸' },
                 { body: 'BSI', role: 'Germany: TR-02102 series', region: '🇩🇪' },
-                { body: 'ANSSI', role: 'France: PQC hybrid requirement', region: '🇫🇷' },
+                {
+                  body: 'ANSSI',
+                  role: 'France: PQC hybrid position (mandatory in the regulated perimeter)',
+                  region: '🇫🇷',
+                },
                 { body: 'NCSC', role: 'UK: Three-phase migration roadmap', region: '🇬🇧' },
-                { body: 'ENISA', role: 'EU: EUCC certification scheme', region: '🇪🇺' },
-                { body: 'KISA', role: 'Korea: KpqC competition', region: '🇰🇷' },
+                { body: 'ENISA', role: 'EU: supports the EUCC certification scheme', region: '🇪🇺' },
+                {
+                  body: 'NIS / NSR',
+                  role: 'Korea: set up the KpqC research group behind the KpqC competition',
+                  region: '🇰🇷',
+                },
                 { body: 'OSCCA/NGCC', role: 'China: SM algorithm mandate', region: '🇨🇳' },
               ].map((item) => (
                 <div key={item.body} className="flex items-start gap-2 bg-muted/50 rounded p-2">
@@ -278,7 +287,7 @@ const Step2GovVsNonGov: React.FC = () => (
               {[
                 {
                   body: 'ISO/IEC JTC 1/SC 27',
-                  role: 'International standards (170+ national bodies vote)',
+                  role: 'International standards (56 participating national bodies)',
                 },
                 { body: 'IETF', role: 'Internet protocols (open membership, rough consensus)' },
                 { body: 'ETSI', role: 'European telecom standards (800+ member orgs)' },
@@ -326,13 +335,18 @@ const Step2GovVsNonGov: React.FC = () => (
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-sm font-bold text-foreground mb-1">
-              🇰🇷 Korea — KISA: KpqC Algorithms
+              🇰🇷 Korea — NIS / NSR: KpqC Algorithms
             </div>
             <p className="text-xs text-muted-foreground">
-              Korea&apos;s KpqC competition (2022–2025) selected HAETAE and AIMer (signatures),
-              SMAUG-T and NTRU+ (KEMs) as Korean national algorithms — distinct from NIST&apos;s
-              selections. Target standardization by 2029. Korean telecom operators may require
-              support for KpqC algorithms alongside FIPS 203/204/205.
+              Korea&apos;s KpqC competition (2022–2025), run by the research group that the National
+              Security Research Institute (NSR) and the National Intelligence Service (NIS) set up
+              in 2021, selected HAETAE and AIMer (signatures), SMAUG-T and NTRU+ (KEMs) as Korean
+              national algorithms — distinct from NIST&apos;s selections. As of April 2026, Korean
+              Standard proposals for the two KEMs have been submitted and the two signature
+              algorithms are under review; no standardization date is published. The national The
+              July 2023 national master plan (NIS and the Ministry of Science and ICT) targets 2035
+              for spreading PQC. Korean telecom operators may require support for KpqC algorithms
+              alongside FIPS 203/204/205.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -375,7 +389,7 @@ const Step3GlobalRegional: React.FC = () => (
               name: 'ISO/IEC JTC 1/SC 27',
               role: 'Information security standards',
               pqc: 'ISO/IEC 14888-4 (hash-based sigs), ISO/IEC 18033-2 Amd 2 (ML-KEM)',
-              members: '170+ national bodies',
+              members: '56 participating and 38 observing national bodies',
             },
             {
               name: 'IETF',
@@ -438,17 +452,17 @@ const Step3GlobalRegional: React.FC = () => (
             flag: '🇪🇺',
             region: 'European Union',
             bodies: [
-              'ETSI TC CYBER — TS 103 744 (quantum-safe cryptography standard)',
+              'ETSI TC CYBER — TS 103 744 (quantum-safe hybrid key establishment)',
               'ENISA — supports the EUCC scheme and the ECCG, which agrees the ACM',
-              'EC — NIS2 Directive, eIDAS 2.0, DORA (legally binding regulations)',
+              'EU legislators (Parliament and Council) — NIS2 Directive, eIDAS 2.0, DORA; the Commission proposes and adopts implementing acts',
             ],
           },
           {
             flag: '🇩🇪🇫🇷',
             region: 'Germany & France',
             bodies: [
-              'BSI — TR-02102 series (binding for German government)',
-              'ANSSI — PQC position papers, hybrid mandate (binding for French critical infra)',
+              'BSI — TR-02102 series (technical guidelines: recommendations on cryptographic mechanisms)',
+              'ANSSI — PQC position papers; hybrid strongly recommended, mandatory inside the regulated perimeter',
             ],
           },
           {
@@ -463,7 +477,7 @@ const Step3GlobalRegional: React.FC = () => (
             flag: '🌏',
             region: 'Asia-Pacific',
             bodies: [
-              'KISA (Korea) — KpqC competition, HAETAE/AIMer/SMAUG-T/NTRU+',
+              'NIS / NSR (Korea) — KpqC competition, HAETAE/AIMer/SMAUG-T/NTRU+',
               'AIST/METI (Japan) — CRYPTREC cipher list, PQC guidance',
               'OSCCA/NGCC (China) — SM2/SM3/SM4 mandate, parallel PQC track',
               'MAS (Singapore) — Technology Risk Management (TRM) guidelines',
@@ -486,9 +500,9 @@ const Step3GlobalRegional: React.FC = () => (
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Practical guidance:</strong> For most products,
             start with <strong>NIST FIPS 203/204/205</strong> (US procurement), add{' '}
-            <strong>ETSI TS 103 744</strong> (EU interoperability), then layer national guidance
-            (BSI TR-02102 for Germany, ANSSI hybrid for France). Check CMVP for US federal sales and
-            EUCC for EU government sales.
+            <strong>ETSI TS 103 744</strong> (hybrid key establishment, if you need it), then layer
+            national guidance (BSI TR-02102 for Germany, ANSSI hybrid for France). Check CMVP for US
+            federal sales and EUCC for EU government sales.
           </p>
         </div>
       </div>
@@ -536,16 +550,21 @@ const Step4AppPagesGuide: React.FC = () => (
                   type: 'Standards + Certification',
                   scope: 'US',
                 },
-                { fw: 'CNSA 2.0', body: 'NSA', type: 'Regulatory Agency', scope: 'US (NSS)' },
+                { fw: 'CNSA 2.0', body: 'NSA', type: 'Government Agency', scope: 'US (NSS)' },
                 {
                   fw: 'NIS2 Directive',
-                  body: 'EC / ENISA',
+                  body: 'EU Member States / ENISA',
                   type: 'Regulatory / Certification',
                   scope: 'EU',
                 },
-                { fw: 'eIDAS 2.0', body: 'European Commission', type: 'Regulatory', scope: 'EU' },
-                { fw: 'ANSSI PQC', body: 'ANSSI', type: 'Regulatory Agency', scope: 'France' },
-                { fw: 'BSI TR-02102', body: 'BSI', type: 'Regulatory Agency', scope: 'Germany' },
+                {
+                  fw: 'eIDAS 2.0',
+                  body: 'Member State supervisory bodies',
+                  type: 'Regulatory',
+                  scope: 'EU',
+                },
+                { fw: 'ANSSI PQC', body: 'ANSSI', type: 'Government Agency', scope: 'France' },
+                { fw: 'BSI TR-02102', body: 'BSI', type: 'Government Agency', scope: 'Germany' },
                 {
                   fw: 'ETSI TS 103 744',
                   body: 'ETSI TC CYBER',
@@ -604,9 +623,11 @@ const Step4AppPagesGuide: React.FC = () => (
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              The product has a current CMVP certificate (FIPS 140-3 or 140-2 approved). CMVP is the
-              certification body; NIST/CSE administers it. Vendor is on the official NIST CMVP
-              database.
+              The product has a CMVP certificate. FIPS 140-3 certificates are the current ones: FIPS
+              140-2 certificates moved to the CMVP Historical list on 21/22 September 2026; NIST
+              says agencies should not include historical modules in new systems, although they can
+              be procured for legacy systems. Check the certificate status on the official NIST CMVP
+              database. CMVP is the certification body; NIST/CSE administers it.
             </p>
           </div>
           <div className="bg-status-warning/5 rounded-lg p-3 border border-status-warning/20">
@@ -805,12 +826,12 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {
             when: 'You see "ETSI TS 103 744"',
             meaning:
-              'ETSI TC CYBER published it (EU SDO); normative requirements for quantum-safe cryptography harmonized with NIST.',
+              'ETSI TC CYBER published it (EU SDO); a normative specification for hybrid key establishment that combines a traditional exchange such as ECDH with ML-KEM (FIPS 203). It covers key establishment only.',
           },
           {
             when: 'You see "BSI TR-02102-1"',
             meaning:
-              'BSI published it (German governmental); binding for German critical infrastructure. Annual update.',
+              'BSI published it (German governmental); a technical guideline of recommendations, not a binding requirement. Reviewed annually.',
           },
           {
             when: 'You see "CNSA 2.0"',
@@ -820,7 +841,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {
             when: 'You see "EUCC"',
             meaning:
-              'EU adaptation of Common Criteria; certificates are issued by accredited certification bodies, supervised by national cybersecurity certification authorities; ENISA supports the scheme and publishes its supporting documents; valid across all EU member states.',
+              'The EU Common Criteria-based certification scheme, set up by Commission Implementing Regulation (EU) 2024/482; certificates are issued by accredited certification bodies, supervised by national cybersecurity certification authorities; ENISA supports the scheme and publishes the certificates and supporting documents; the Regulation applies in all EU Member States.',
           },
         ].map((item) => (
           <div key={item.when} className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -859,7 +880,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
               n: 3,
               icon: '🔗',
               t: 'Standards → Certification → Compliance Chain',
-              d: 'Click-to-connect: trace 4 real-world chains from algorithm standard to certification to mandate.',
+              d: 'Match the links of 4 real-world chains to their jobs: algorithm standard, certification, or mandate.',
             },
             {
               n: 4,

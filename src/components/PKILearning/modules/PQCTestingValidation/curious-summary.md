@@ -4,7 +4,7 @@ Testing post-quantum cryptography is fundamentally different from classical cryp
 
 ### Why It Matters
 
-Classical Test Vector Leakage Assessment (TVLA) fails for lattice-based PQC because public and private keys are mathematically locked together. Unmasked PQC implementations are highly vulnerable to power-analysis side-channel attacks, especially during the Number Theoretic Transform (NTT) stage.
+A single fixed-versus-random Test Vector Leakage Assessment (TVLA) test is not enough for lattice-based PQC: it flags any input-dependent difference, including leakage of public data such as ciphertexts, so labs add specific tests on the steps that handle secrets. Unmasked PQC implementations are highly vulnerable to power-analysis side-channel attacks, especially during the Number Theoretic Transform (NTT) stage.
 
 ### The Key Takeaway
 

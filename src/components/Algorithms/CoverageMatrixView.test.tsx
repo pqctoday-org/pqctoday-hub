@@ -13,6 +13,7 @@ import { FIXTURE_ARTIFACT, fixtureInputs } from '@/data/validation/coverageFixtu
 import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
 import { groupByMechanismOperation } from '@/data/validation/coverageExport'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { renderWithRouter } from '@/test/utils'
 
 const fail: RunResult = {
   engine: 'cpp',
@@ -51,6 +52,26 @@ describe('CoverageMatrixView', () => {
     expect(
       within(defs).getByText(/One happy-path case is always "sampled", never "covered"/)
     ).toBeInTheDocument()
+  })
+
+  it('says how the matrix compares to a lab and links the ACVP Lab Workflow module', async () => {
+    renderWithRouter(<CoverageMatrixView loader={loader} />)
+    const note = await screen.findByTestId('coverage-lab-comparison')
+    expect(note).toHaveTextContent(/How this compares to a lab/)
+    expect(note).toHaveTextContent(/not a CAVP result/)
+    expect(within(note).getByRole('link', { name: /ACVP Lab Workflow/ })).toHaveAttribute(
+      'href',
+      '/learn/acvp-lab-workflow'
+    )
+  })
+
+  it('still shows the lab comparison link outside a router', async () => {
+    render(<CoverageMatrixView loader={loader} />)
+    const note = await screen.findByTestId('coverage-lab-comparison')
+    expect(within(note).getByRole('link', { name: /ACVP Lab Workflow/ })).toHaveAttribute(
+      'href',
+      '/learn/acvp-lab-workflow'
+    )
   })
 
   it('shows statuses per mechanism × operation and a recorded failure', async () => {

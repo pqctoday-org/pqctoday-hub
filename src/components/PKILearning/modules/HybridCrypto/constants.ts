@@ -58,7 +58,7 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
     components: ['EC-Schnorr (secp256k1)', 'ML-DSA-65'],
     tagline: 'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)',
     description:
-      'Fused Fiat-Shamir: both components share a single challenge μ. Neither component verifies without the shared μ. Achieves Strong Non-Separability (SNS) with smaller signature than concatenation.',
+      'Fused Fiat-Shamir: both components share a single challenge μ. Neither component verifies without the shared μ. Targets Strong Non-Separability (SNS); the paper reports no separability issues for its construction. Smaller signature than concatenation.',
     reference: 'ePrint 2025/2059',
     referenceUrl: 'https://eprint.iacr.org/2025/2059',
     separable: false,
@@ -317,7 +317,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'SLH-DSA (SPHINCS+) uses hash-based constructions with no lattice assumptions. RFC 9909 (published December 2025) defines the X.509 profile, but CA/browser ecosystem adoption is still nascent — significantly behind ML-DSA (RFC 9881). ANSSI allows standalone use of hash-based signatures (SLH-DSA, LMS, XMSS) even without hybrid mode, since their security relies only on hash function properties.',
+      'SLH-DSA (SPHINCS+) uses hash-based constructions with no lattice assumptions. RFC 9909 (published December 2025) defines the X.509 profile, but CA/browser ecosystem adoption is still nascent — significantly behind ML-DSA (RFC 9881). ANSSI does not recommend systematic hybridisation for hash-based signatures (SLH-DSA, XMSS, LMS); its 2022 position paper gives their well-studied underlying problem as the reason.',
     classicalAlg: null,
     pqcAlg: 'SLH-DSA-128s',
   },

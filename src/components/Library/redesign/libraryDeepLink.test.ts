@@ -80,4 +80,23 @@ describe('libraryWideningFor', () => {
       libraryWideningFor(hidden, { ...base, selectedPersona: persona, prefsOff: true })
     ).toBeNull()
   })
+
+  it('leaves role narrowing alone for a document inside the Certification starter set', () => {
+    const persona = 'cert-engineer' as const
+    const preferred = PERSONA_LIBRARY_CATEGORIES[persona] ?? []
+    const hidden = libraryData.find((i) => !i.categories.some((c) => preferred.includes(c)))!
+    const starter = {
+      ...base,
+      selectedPersona: persona,
+      certRelevantOnly: true,
+      certRelevantIdSet: new Set([hidden.referenceId]),
+    }
+    expect(libraryWideningFor(hidden, starter)).toBeNull()
+    // A document outside the set is hidden by the quick view and by role narrowing.
+    const outside = libraryWideningFor(hidden, {
+      ...starter,
+      certRelevantIdSet: new Set(['FIPS 203']),
+    })
+    expect(outside?.drop).toEqual(['qv'])
+  })
 })

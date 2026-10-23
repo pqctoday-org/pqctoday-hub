@@ -22,7 +22,7 @@ const TYPE_OPTIONS: { id: OrgType; label: string }[] = [
   { id: 'standards-body', label: 'Standards Body' },
   { id: 'certification-body', label: 'Certification Body' },
   { id: 'compliance-framework', label: 'Compliance Framework' },
-  { id: 'regulatory-agency', label: 'Regulatory Agency' },
+  { id: 'regulatory-agency', label: 'Government Agency' },
 ]
 
 const SCOPE_OPTIONS: { id: OrgScope; label: string }[] = [

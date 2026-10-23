@@ -72,7 +72,7 @@ export const EntropyExercises: React.FC<EntropyExercisesProps> = ({
       borderColor: 'border-warning',
       icon: Eye,
       observe:
-        'Repetition Count signals nothing, because no byte repeats consecutively. Adaptive Proportion signals a failure: 0xDE recurs 16 times against a cutoff of 6. That is the split SP 800-90B describes — Repetition Count for a source stuck on one value (§4.4.1), Adaptive Proportion to detect "when some value begins to occur much more frequently than expected" (§4.4.2). With 64 samples the Adaptive Proportion window is partial (the specified window for 8-bit samples is 512), so this demonstrates the idea; it is not the test as specified.',
+        'Repetition Count signals nothing, because no byte repeats consecutively. Adaptive Proportion signals a failure: in each of the two 512-sample windows 0xDE recurs 128 times, against a cutoff of 13 (SP 800-90B Table 2: H = 8, W = 512, alpha = 2^-20). That is the split SP 800-90B describes — Repetition Count for a source stuck on one value (§4.4.1), Adaptive Proportion to detect "when some value begins to occur much more frequently than expected" (§4.4.2). This sample is 1,024 bytes, so the window is the full W = 512 that §4.4.2 specifies for 8-bit samples and the 1,024-sample startup minimum of §4.3 item 4 is met; the shorter 64-byte samples on this page only run a partial window.',
       config: { step: 1, sampleType: 'bad-pattern' },
     },
     {

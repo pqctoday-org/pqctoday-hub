@@ -8,7 +8,7 @@ import { useLearnStore } from '@/store/useLearnStore'
 import { PERSONAS } from '@/data/learningPersonas'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
-function renderPath(persona: 'executive' | 'developer' = 'executive') {
+function renderPath(persona: 'executive' | 'developer' | 'cert-engineer' = 'executive') {
   return render(
     <MemoryRouter initialEntries={['/learn']}>
       <MobileMyPathView persona={persona} />
@@ -43,6 +43,20 @@ beforeEach(() => {
   useModuleStore.setState({ modules: {} })
   useLearnStore.getState().reset()
   localStorage.clear()
+})
+
+describe('MobileMyPathView — new-to-PQC pointer', () => {
+  it('a path that starts at the certificate links PQC 101 and the Algorithms page as optional background', () => {
+    renderPath('cert-engineer')
+    const note = screen.getByTestId('new-to-pqc-note')
+    expect(note.querySelector('a[href="/learn/pqc-101"]')).not.toBeNull()
+    expect(note.querySelector('a[href="/algorithms"]')).not.toBeNull()
+  })
+
+  it('a path that already opens with PQC 101 shows no such note', () => {
+    renderPath('executive')
+    expect(screen.queryByTestId('new-to-pqc-note')).toBeNull()
+  })
 })
 
 describe('MobileMyPathView — Essentials tier (matches desktop exactly)', () => {

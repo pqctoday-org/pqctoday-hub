@@ -88,6 +88,20 @@ describe('MobileLibraryView', () => {
     expect(anyPick).toBeDefined()
   })
 
+  it('shows all seven starter documents to the certification role and does not call the list narrowed', () => {
+    usePersonaStore.getState().setPersona('cert-engineer')
+    renderView()
+    expect(screen.getByTestId('library-mobile-role-scope')).toHaveTextContent(
+      'Narrowed for Certification'
+    )
+    fireEvent.click(screen.getByText('Certification starter set'))
+    expect(screen.getByTestId('library-count')).toHaveTextContent(
+      `${LIBRARY_OPS_PICKS.length} documents`
+    )
+    expect(screen.getByTestId('library-count')).not.toHaveTextContent('narrowed')
+    expect(screen.queryByTestId('library-mobile-role-scope')).not.toBeInTheDocument()
+  })
+
   it('discloses persona narrowing and lets the learner show the full catalog', () => {
     usePersonaStore.getState().setPersona('curious')
     renderView()

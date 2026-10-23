@@ -414,7 +414,8 @@ export const DrbgArchitectureDemo: React.FC = () => {
                 {instantiated && (
                   <span className="text-muted-foreground">
                     {' '}
-                    (limit &gt; {DEMO_RESEED_INTERVAL})
+                    (demo limit &gt; {DEMO_RESEED_INTERVAL}; SP 800-90A Rev. 1 Table 2 allows up to
+                    2^48 requests)
                   </span>
                 )}
               </div>

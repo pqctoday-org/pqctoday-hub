@@ -148,10 +148,17 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
               type="button"
               onClick={onOpenRoleSwitch}
               aria-label={`Change role — currently ${fullRoleLabel}`}
-              className={mobileRolePill}
+              className={cn(
+                mobileRolePill,
+                // Below 430 px the five controls plus the back button left the page title
+                // 25–45 px ("PQ…", "PQC T…"), so the pill drops to its icon, the same width
+                // as the other buttons. The role still reads from the aria-label and from
+                // the role sheet it opens; the label returns on wider phones.
+                'max-[429px]:w-8 max-[429px]:justify-center max-[429px]:px-0'
+              )}
             >
               <User size={13} aria-hidden="true" />
-              <span className="max-w-[84px] truncate">{roleShortLabel}</span>
+              <span className="max-w-[84px] truncate max-[429px]:sr-only">{roleShortLabel}</span>
             </Button>
 
             <Button

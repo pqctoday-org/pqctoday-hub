@@ -144,9 +144,14 @@ export const SuiteShell = ({
           >
             {palette}
           </aside>
-          <main className="flex flex-col overflow-auto p-4" data-tour="pkcs-suite-canvas">
+          {/* A section, not a second <main>: the page already has one landmark of that kind. */}
+          <section
+            aria-label="Workbench results"
+            className="flex flex-col overflow-auto p-4"
+            data-tour="pkcs-suite-canvas"
+          >
             {canvas}
-          </main>
+          </section>
           <aside className="border-t lg:border-t-0 lg:border-l p-4 flex flex-col gap-3 overflow-auto">
             {aside}
           </aside>

@@ -393,7 +393,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Pick one of the 12 FIPS 205 parameter sets and a pre-hash mode, then Generate Key Pair, Sign Message and Verify Signature on a real PKCS#11 v3.2 HSM emulator in the browser.',
       workedExample:
-        'With the default SHA2-128s set the 32-byte public key appears, the message signs into a 7.7 KB signature, Verify Signature reports Signature Valid, and the PKCS#11 call log lists every call.',
+        'With the default SHA2-128s set the 32-byte public key appears, the message signs into a 7,856 B (7.7 KB) signature, Verify Signature reports Signature Valid, and the PKCS#11 call log lists every call.',
     },
     hasOutput: true,
     outputSpec:
@@ -429,7 +429,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.2',
     name: 'Hybrid Signature Spectrums',
     description:
-      'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to SNS',
+      'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to the SNS that Silithium targets',
     category: 'HSM / PKCS#11',
     algorithms: ['EC-Schnorr', 'secp256k1', 'ML-DSA-65', 'SHA-256'],
     icon: Fingerprint,
@@ -862,13 +862,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['researcher', 'architect', 'developer', 'cert-engineer'],
     intro: {
       whatYouWillDo:
-        'Load a 64-byte sample (Generate Random, All Zeros, Repeating Pattern, Incrementing, or Paste Hex), press Run the checks, and read each group separately: visual checks, health tests, estimators (not run here) and primitive self-checks.',
+        'Load a sample (Generate Random, All Zeros and Incrementing are 64 bytes; Repeating Pattern is 1,024 bytes; or Paste Hex), press Run the checks, and read each group separately: visual checks, health tests, estimators (not run here) and primitive self-checks.',
       workedExample:
-        'Load Repeating Pattern (deadbeef repeated over 64 bytes) and run: the visual checks flag the pattern, and each result shows its value, its cutoff and the limit of a 64-byte sample.',
+        'Load Repeating Pattern (deadbeef repeated over 1,024 bytes) and run: the visual checks flag the pattern, Adaptive Proportion signals a failure on two full 512-sample windows (0xDE recurs 128 times against a cutoff of 13), Repetition Count stays quiet, and each result shows its value, its cutoff and its limit.',
     },
     hasOutput: true,
     outputSpec:
-      'Produces grouped visual checks, SP 800-90B health-test outcomes and primitive self-checks for the displayed 64-byte sample; no entropy estimate.',
+      'Produces grouped visual checks, SP 800-90B health-test outcomes and primitive self-checks for the displayed sample (64 or 1,024 bytes); no entropy estimate.',
   },
   {
     id: 'drbg-demo',

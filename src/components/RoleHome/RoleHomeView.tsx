@@ -84,7 +84,7 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
   'cert-engineer': {
     urgency:
       'A certificate covers one module, one boundary, one algorithm list. Know exactly what yours will prove.',
-    firstWin: 'First win — run the ACVP vectors yourself · 5 min',
+    firstWin: 'First win — learn what a certificate actually covers · 90 min',
     track: 'essentials',
   },
   researcher: {

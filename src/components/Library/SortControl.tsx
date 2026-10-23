@@ -5,7 +5,8 @@ import clsx from 'clsx'
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 
-export type SortOption = 'newest' | 'published' | 'name' | 'referenceId' | 'urgency' | 'mostCited'
+export type SortOption =
+  'relevance' | 'newest' | 'published' | 'name' | 'referenceId' | 'urgency' | 'mostCited'
 
 export const LIBRARY_SORT_OPTIONS: { id: SortOption; label: string }[] = [
   // 'newest' orders by catalog activity (when we last touched the record);
@@ -17,6 +18,13 @@ export const LIBRARY_SORT_OPTIONS: { id: SortOption; label: string }[] = [
   { id: 'referenceId', label: 'Reference ID' },
   { id: 'urgency', label: 'Urgency' },
   { id: 'mostCited', label: 'Most referenced in this catalog' },
+]
+
+/** The menu while a search is active: "Best match" leads, the rest as usual.
+ *  'relevance' is only offered with a query — without one it has nothing to rank. */
+export const LIBRARY_SEARCH_SORT_OPTIONS: { id: SortOption; label: string }[] = [
+  { id: 'relevance', label: 'Best match' },
+  ...LIBRARY_SORT_OPTIONS,
 ]
 
 interface SortControlProps<T extends string = SortOption> {

@@ -201,6 +201,21 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     expect(within(rail).queryByRole('link', { name: /community view/i })).not.toBeInTheDocument()
   })
 
+  it('a selected persona: the "What this means for you" strip sits with its board, and an empty resume group takes no space above it', () => {
+    usePersonaStore.setState({ selectedPersona: 'cert-engineer' })
+    renderApp()
+    const note = screen.getByTestId('persona-page-note')
+    // The strip and the board share one tight group, not two 96 px-apart sections.
+    const group = note.parentElement as HTMLElement
+    expect(group.className).toMatch(/\bspace-y-6\b/)
+    expect(group.children.length).toBeGreaterThanOrEqual(2)
+    // The resume / "updated since" group renders nothing for a first-time reader, so it must be
+    // hidden when empty: its 96 px section gap was a blank band above the board.
+    const resumeGroup = (group.parentElement as HTMLElement).firstElementChild as HTMLElement
+    expect(resumeGroup).not.toBe(group)
+    expect(resumeGroup.className).toMatch(/\bempty:hidden\b/)
+  })
+
   it('curious on a desktop-width viewport gets PersonaBoardView, not CuriousMobileBoard', () => {
     mockViewport(false)
     usePersonaStore.setState({ selectedPersona: 'curious' })

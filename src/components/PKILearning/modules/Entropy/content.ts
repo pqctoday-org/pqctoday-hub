@@ -12,7 +12,7 @@ export const content: ModuleContent = {
   // Keep the review date tied to the latest recorded content review; this audit's
   // implementation work is tracked separately by lastEdited.
   lastReviewed: '2026-08-18',
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (the prose calls it a draft, which is right — Rev 3 is Initial Public Draft). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -65,6 +65,10 @@ export const content: ModuleContent = {
     getStandard('Quantinuum-s-Quantum-Origin-Becomes-First-Software-Quantum-R'), // pt-qrng-demo: 2025; pt-qrng-demo: April 2025
     getStandard('qStream-High-speed-Full-Entropy-RNG'), // pt-qrng-demo: 200
     getStandard('The-Art-of-Computer-Programming-Volume-2-Seminumerical-Algor'), // m-entropy-randomness: 1997
+    // 2026-10-23: the CMVP's own pages for the ESV process the Learn tab and the ESV
+    // walkthrough teach (the ESV Server and its protocol, and the ESV program page).
+    getStandard('NIST-CMVP-ESV'),
+    getStandard('NIST-CMVP-ESV-Program'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-1024')],
@@ -79,6 +83,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Random Byte Generation: compare Web Crypto API and OpenSSL WASM with deliberately weak generators — random-looking is not unpredictable. Entropy Testing: visualizations, SP 800-90B health tests, estimators and known-answer tests shown as separate groups with no combined pass count. ESV Validation Walkthrough: the NIST Entropy Source Validation process and the separate Entropy and RBG Validation Certificates. DRBG State Machine: an SP 800-90A HMAC_DRBG-SHA-256 checked against NIST known-answer vectors. Combining Sources: raw-boundary health tests and an assumption-driven verdict that can end in "not enough evidence" or "construction is unsafe". Entropy Evidence Lab: NIST\'s SP 800-90B estimator tool in WebAssembly on real CPU-jitter recordings (KV260, i.MX 95, Mac), a DRBG-output contrast set and synthetic failures — estimator output for one dataset, never a validation. The TRNG-vs-QRNG comparison is a Playground simulation: its "QRNG" sample comes from crypto.getRandomValues(), and no QRNG hardware is involved.',
     relatedStandards:
-      'NIST SP 800-90A Rev. 1 (DRBG Mechanisms; current final version). SP 800-90A Rev. 2 is only a pre-draft call for comments (2025-09-04, comments closed 2025-11-04) with no draft text. NIST SP 800-90B (Entropy Sources). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 draft (Security Strength Requirements). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) random-input and RBG security-strength requirements. CMVP Entropy Validation Certificates (SP 800-90B) and Random Bit Generator Validation Certificates (SP 800-90C, IG D.T)',
+      'NIST SP 800-90A Rev. 1 (DRBG Mechanisms; current final version). SP 800-90A Rev. 2 is only a pre-draft call for comments (2025-09-04, comments closed 2025-11-04) with no draft text. NIST SP 800-90B (Entropy Sources). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 draft (Security Strength Requirements). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) random-input and RBG security-strength requirements. CMVP Entropy Validation Certificates (SP 800-90B) and Random Bit Generator Validation Certificates (SP 800-90C; the CMVP Entropy Validations page names IG D.T, which is not yet in the published IG)',
   },
 }

@@ -263,22 +263,32 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
       <Button
         variant="ghost"
         onClick={() => setUserToggled(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
+        className="w-full flex items-center justify-between p-6 text-left max-sm:h-auto max-sm:min-h-12 max-sm:px-4 max-sm:py-3"
         aria-expanded={isOpen}
       >
         <div className="flex min-w-0 items-center gap-3">
           <div className="shrink-0 p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 id={headingId} className="min-w-0 text-xl font-bold text-gradient">
-            {title}
-          </h2>
-          {optional || offPath ? (
-            <span className="flex flex-wrap gap-1.5">
-              {optional ? <OptionalReferenceBadge /> : null}
-              {offPath ? (
-                <OffPathBadge pathLabel={resolveLearnPath(manifest, activePathId)?.label ?? ''} />
-              ) : null}
-            </span>
-          ) : null}
+          {/* On a phone the title gets the whole row and the labels sit under it (they
+              used to share the row, so a badge squeezed the title to "Regional sche…").
+              From `sm` up the layout is the original single row. The title wraps instead
+              of overflowing: the gradient text fill stops at the box, so overflow was
+              invisible rather than ellipsised. */}
+          <div className="flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-3">
+            <h2
+              id={headingId}
+              className="min-w-0 whitespace-normal text-xl font-bold text-gradient max-sm:text-lg"
+            >
+              {title}
+            </h2>
+            {optional || offPath ? (
+              <span className="flex flex-wrap gap-1.5">
+                {optional ? <OptionalReferenceBadge /> : null}
+                {offPath ? (
+                  <OffPathBadge pathLabel={resolveLearnPath(manifest, activePathId)?.label ?? ''} />
+                ) : null}
+              </span>
+            ) : null}
+          </div>
         </div>
         {isOpen ? (
           <ChevronUp size={20} className="text-muted-foreground shrink-0" />
