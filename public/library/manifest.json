@@ -1081,7 +1081,12 @@
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T12:59:39.837081+00:00"
+      "stampedAt": "2026-09-17T12:59:39.837081+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10222026/library/NIST-SP-800-90A-R1.html",
+      "supersededAt": "2026-10-23T00:54:55.668349+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "capture was the nist.gov publication landing page, not SP 800-90A Rev. 1 — replaced by NIST-SP-800-90A-R1.pdf"
     },
     {
       "refId": "NIST-SP-800-90B",
@@ -22971,6 +22976,24 @@
       "unified": "converted",
       "admittedAt": "2026-10-22T11:37:45.673387+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "NIST-SP-800-90A-R1",
+      "filename": "NIST-SP-800-90A-R1.pdf",
+      "sizeBytes": 2417007,
+      "contentType": "application/pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf",
+      "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T00:55:02.645909+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "UNCONFIRMED",
+      "file": "library/NIST-SP-800-90A-R1.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-23T00:54:55.668349+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "capture was the nist.gov publication landing page, not SP 800-90A Rev. 1"
     }
   ],
   "archivedEntries": [
