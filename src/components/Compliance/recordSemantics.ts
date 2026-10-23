@@ -241,6 +241,15 @@ export interface RetrievalEntry {
   date: string
 }
 
+/**
+ * The retrieval dates, as one line. They are the UTC calendar date of the
+ * retrieval time (the sidecar stores UTC), so a retrieval late in the evening in
+ * the Americas reads as the next day; the line says so.
+ */
+export function retrievalSummary(entries: readonly RetrievalEntry[], sep = ' · '): string {
+  return `${entries.map((e) => `${e.label} retrieved ${e.date}`).join(sep)} (dates in UTC)`
+}
+
 const PARTITION_ORDER = ['fips', 'cavp', 'cc', 'anssi', 'eucc']
 
 /** Per-partition snapshot retrieval dates from the sidecar, in a stable order. */

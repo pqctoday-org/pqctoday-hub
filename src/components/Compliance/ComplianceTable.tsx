@@ -39,6 +39,7 @@ import {
   pqcNames,
   recordTypeDescription,
   recordTypeLabel,
+  retrievalSummary,
   scopeNotice,
   SNAPSHOT_NOTICE,
   snapshotRetrievalEntries,
@@ -847,25 +848,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           />
         </div>
         <div className="flex items-center gap-2">
-          {(retrieval.length > 0 || lastUpdated) && (
-            <div className="hidden md:flex flex-col items-end text-xs text-muted-foreground">
-              {retrieval.length > 0 && (
-                <span
-                  className="flex items-center gap-1"
-                  title="When each source list was retrieved for this snapshot."
-                >
-                  <Calendar size={12} />
-                  {retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(' · ')}
-                </span>
-              )}
-              {newestRecordDate && (
-                <span title="Date of the most recent certificate in the snapshot — not when the snapshot was retrieved.">
-                  {retrieval.length === 0 && <Calendar size={12} className="mr-1 inline" />}
-                  Newest record date: {newestRecordDate}
-                </span>
-              )}
-            </div>
-          )}
           <Button
             variant="outline"
             size="sm"
@@ -885,7 +867,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               className="gap-2"
               title={
                 retrieval.length > 0
-                  ? `Reload the published snapshot (${retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(', ')}). Certificate data is not fetched live from the certification bodies.`
+                  ? `Reload the published snapshot (${retrievalSummary(retrieval, ', ')}). Certificate data is not fetched live from the certification bodies.`
                   : newestRecordDate
                     ? `Reload the published snapshot (newest record dated ${newestRecordDate}). Certificate data is not fetched live from the certification bodies.`
                     : 'Reload the published snapshot. Certificate data is not fetched live from the certification bodies.'
@@ -897,13 +879,28 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           )}
         </div>
       </div>
-      <p
-        className="flex items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground"
-        data-testid="records-snapshot-notice"
-      >
-        <Info size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
-        <span>{SNAPSHOT_NOTICE}</span>
-      </p>
+      {/* Below the toolbar, full width: five source dates in one line would otherwise squeeze
+          the search box. */}
+      <div className="space-y-0.5 text-[11px] leading-relaxed text-muted-foreground">
+        <p className="flex items-start gap-1.5" data-testid="records-snapshot-notice">
+          <Info size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+          <span>{SNAPSHOT_NOTICE}</span>
+        </p>
+        {(retrieval.length > 0 || newestRecordDate) && (
+          <p
+            className="flex items-start gap-1.5"
+            data-testid="records-retrieval"
+            title="When each source list was retrieved for this snapshot, and the date of the most recent certificate in it (not the retrieval date)."
+          >
+            <Calendar size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <span>
+              {retrieval.length > 0 && retrievalSummary(retrieval)}
+              {retrieval.length > 0 && newestRecordDate && ' · '}
+              {newestRecordDate && `Newest record date: ${newestRecordDate}`}
+            </span>
+          </p>
+        )}
+      </div>
 
       {/* Mobile Drawer & Filters */}
       <div className="md:hidden mt-2">

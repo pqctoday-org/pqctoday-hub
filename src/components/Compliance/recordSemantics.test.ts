@@ -8,6 +8,7 @@ import {
   pqcUnknownReason,
   recordTypeLabel,
   scopeNotice,
+  retrievalSummary,
   snapshotRetrievalEntries,
   statusTone,
 } from './recordSemantics'
@@ -120,6 +121,16 @@ describe('sidecar helpers', () => {
     const entries = snapshotRetrievalEntries(meta)
     expect(entries.map((e) => e.key)).toEqual(['fips', 'cavp', 'cc'])
     expect(entries[0].date).toBe('25 Sep 2026')
+  })
+
+  it('labels the retrieval dates as UTC (a late-evening Central retrieval reads as the next day)', () => {
+    const late: ComplianceMeta = {
+      schemaVersion: 1,
+      publicationId: 'x',
+      partitions: { fips: { label: 'NIST CMVP', retrievedAt: '2026-10-23T02:05:53+00:00' } },
+    }
+    const line = retrievalSummary(snapshotRetrievalEntries(late))
+    expect(line).toBe('NIST CMVP retrieved 23 Oct 2026 (dates in UTC)')
   })
 
   it('returns no retrieval entries without a sidecar', () => {

@@ -36,4 +36,26 @@ describe('ComplianceTable snapshot notice', () => {
     render(<ComplianceTable data={records} onRefresh={vi.fn()} />)
     expect(screen.getByRole('button', { name: /Reload this snapshot/ })).toBeInTheDocument()
   })
+
+  it('prints the retrieval dates as UTC, in a line of their own under the toolbar', () => {
+    render(
+      <ComplianceTable
+        data={records}
+        onRefresh={vi.fn()}
+        lastUpdated={new Date('2026-10-21T00:00:00Z')}
+        meta={{
+          schemaVersion: 1,
+          partitions: {
+            fips: { label: 'NIST CMVP', retrievedAt: '2026-10-23T02:05:53+00:00' },
+            cavp: { label: 'NIST CAVP', retrievedAt: '2026-10-22T23:10:00+00:00' },
+          },
+        }}
+      />
+    )
+    const line = screen.getByTestId('records-retrieval')
+    expect(line).toHaveTextContent(
+      'NIST CMVP retrieved 23 Oct 2026 · NIST CAVP retrieved 22 Oct 2026 (dates in UTC)'
+    )
+    expect(line).toHaveTextContent('Newest record date: 21 Oct 2026')
+  })
 })
