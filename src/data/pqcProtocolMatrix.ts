@@ -615,6 +615,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-composite-sigs/',
             publishedOn: '2026-08-21',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -881,6 +889,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
               'Composite ML-DSA authentication for TLS 1.3 (individual draft; not yet TLS WG-adopted)',
             url: 'https://datatracker.ietf.org/doc/draft-reddy-tls-composite-mldsa/',
             publishedOn: '2026-05-14',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },
@@ -1201,6 +1217,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -1438,6 +1462,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-sigs/',
             publishedOn: '2026-02',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -1591,6 +1623,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'PQ/T Composite Sigs for JOSE/COSE (cross-WG)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
             publishedOn: '2025-01',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },
@@ -1750,6 +1790,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'PQ/T Composite Sigs for JOSE/COSE',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
             publishedOn: '2026-09-11',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },
@@ -1918,6 +1966,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -2082,6 +2138,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'Post-Quantum ML-KEM for PKINIT (mentions optional composite ML-DSA)',
             url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
             publishedOn: '2026-06-26',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },
@@ -2297,6 +2361,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
             publishedOn: '2026-06',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -2467,6 +2539,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'PQ/T Hybrid Authentication for IKEv2',
             url: 'https://datatracker.ietf.org/doc/draft-hu-ipsecme-pqt-hybrid-auth/',
             publishedOn: '2026-04',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },
@@ -2716,6 +2796,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
             publishedOn: '2026-07-02',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -2845,6 +2933,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'experimental',
         stageNote: 'Composite sig not in TCG scope; experimental dual-key constructs only',
         note: 'TPM signatures are atomic per-key; TCG v1.85 does not standardize a hybrid signature mode. Experimental dual-key constructs sit outside the TCG profile.',
+        refs: [
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
+        ],
       },
     },
     ossLibraries: [
@@ -3133,6 +3231,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-yoshikawa-sidrops-pqc-rpki/',
             publishedOn: '2026-07-04',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -3270,6 +3376,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -3384,6 +3498,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
             publishedOn: '2025-01',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -3465,6 +3587,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'Composite ML-DSA in X.509 (inherited via TLS 1.3)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },
@@ -3613,6 +3743,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
           },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
+          },
         ],
       },
     },
@@ -3699,6 +3837,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'Composite ML-DSA in X.509 (inherited)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },
@@ -4126,6 +4272,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'PAR — Enhancements for Post-Quantum Cryptography',
             url: 'https://standards.ieee.org/ieee/802.11bt/12187/',
             publishedOn: '2025-09',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 9955',
+            title:
+              'RFC 9955 — Hybrid Signature Spectrums (properties of hybrid and composite signatures)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9955.html',
+            publishedOn: '2026-07',
           },
         ],
       },

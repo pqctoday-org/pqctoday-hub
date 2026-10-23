@@ -338,6 +338,8 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
     'round2-candidate', // SQIsign
   'NIST Additional Sig Round 2 — Eliminated (did not advance to Round 3, 2026-05)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
     'eliminated', // CROSS, LESS
+  'NIST Additional Sig Round 2 — Eliminated (did not advance to Round 3, 2026-05)|||NIST Additional Sig — did not advance to Round 3 (May 2026); not standardised':
+    'eliminated', // CROSS, LESS — fips_standard corrected 2026-10-22 (NIST's Round 3 list)
   // HAWK-512/1024 (2026-08-31): withdrawn by its own submission team on
   // 2026-07-29 after Anthropic's Claude Mythos Preview model found a lattice
   // key-recovery attack (2026-07-28) — confirmed directly on csrc.nist.gov's
