@@ -1,0 +1,56 @@
+[
+  {
+    "platform_name": "OpenSSH",
+    "category": "SSH Implementation Software",
+    "product_name": "OpenSSH",
+    "product_brief": "A 100% complete SSH protocol 2.0 implementation that includes sftp client and server support.",
+    "pqc_support": "Yes — Hybrid post-quantum key exchange (ML-KEM and Streamlined NTRU Prime) available in OpenSSH 9.9 and 10.6.",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Network",
+    "license_type": "Open Source",
+    "license": "Unknown",
+    "latest_version": "10.6p1",
+    "release_date": "2026-10-06",
+    "fips_validated": "Unknown",
+    "primary_platforms": "OpenBSD, Linux, FreeBSD, Cygwin, Android, Solaris",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "https://www.openssh.com/",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "add support for a new hybrid post-quantum key exchange based on the FIPS 203 Module-Lattice Key Enapsulation mechanism (ML-KEM) combined with X25519 ECDH",
+      "Latest Version": "OpenSSH 10.6 / 10.6p1 (2026-10-06)",
+      "Release Date": "OpenSSH 10.6 was released on 2026-10-06.",
+      "Authoritative Source URL": "https://www.openssh.com/"
+    },
+    "withheld_no_excerpt": [
+      "PQC Capability Description",
+      "FIPS Validated",
+      "Crypto Primitives",
+      "Signature Schemes",
+      "PQC Roadmap Details"
+    ],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "local",
+      "generated_at": "2026-10-22"
+    }
+  }
+]
