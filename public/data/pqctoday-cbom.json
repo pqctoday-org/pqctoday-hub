@@ -32014,12 +32014,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "parameterSetIdentifier": "ML-KEM, Classic-McEliece",
+          "primitive": "kem"
         }
       },
-      "description": "Rosenpass is a Rust post-quantum-secure VPN key-exchange daemon. It performs an ML-KEM-based handshake and rotates the WireGuard pre-shared key roughly every 2 minutes, giving WireGuard tunnels post-quantum forward secrecy. In the sandbox it replaces the prior fake-PQC WireGuard script (which used SHA-256 of an ML-KEM public key as the PSK). Architectural note: Rosenpass uses its own internal liboqs PQC backend, NOT the pqctoday-hsm PKCS#11 backend — the only sandbox scenario with this exception, disclosed in the scenario JSON.",
+      "description": "Rosenpass is a Rust post-quantum-secure VPN key-exchange daemon. It performs a handshake that combines Classic McEliece 460896 (static keys) and Kyber-512 (ephemeral keys), the NIST competition Round 3 versions rather than FIPS 203 ML-KEM, and rotates the WireGuard pre-shared key roughly every 2 minutes, giving WireGuard tunnels post-quantum forward secrecy. In the sandbox it replaces the prior fake-PQC WireGuard script (which used SHA-256 of an ML-KEM public key as the PSK). Architectural note: Rosenpass uses its own internal liboqs PQC backend, NOT the pqctoday-hsm PKCS#11 backend — the only sandbox scenario with this exception, disclosed in the scenario JSON.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -32057,7 +32056,7 @@
         },
         {
           "name": "pqctoday:cswp39_tags",
-          "value": "vpn;wireguard;mlkem;forward-secrecy"
+          "value": "vpn;wireguard;forward-secrecy"
         }
       ]
     },
