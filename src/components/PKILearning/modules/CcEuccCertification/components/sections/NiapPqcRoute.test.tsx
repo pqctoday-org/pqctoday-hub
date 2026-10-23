@@ -142,7 +142,7 @@ describe('niap-pqc-route section', () => {
     expect(text).toContain(
       'lists no Technical Decision (read 23 October 2026), and we found no such decision for version 2.0.'
     )
-    for (const td of ['TD1009', 'TD1010', 'TD1011', 'TD1012', 'TD1013', 'TD1025', 'TD0966']) {
+    for (const td of ['TD1009', 'TD1012', 'TD1013', 'TD1025', 'TD0966']) {
       expect(screen.getAllByRole('link', { name: `Source: ${td}` })[0]).toHaveAttribute(
         'href',
         `https://www.niap-ccevs.org/technical-decisions/${td}`
@@ -206,11 +206,26 @@ describe('niap-pqc-route section', () => {
       'CNSSP 15',
       'BSI-CC-PP-0114-V2X-HSM',
       'CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile',
+      'NIAP-Protection-Profile-for-Application-Software-Version-2-0',
+      'NIAP-cPP-Dedicated-Security-Component-Version-2-1',
+      'NIAP-cPP-DSC-Supporting-Document-Version-2-1',
+      'NIAP-cPP-Network-Devices-Version-4-0',
+      'NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0',
+      'NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0',
+      'NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0',
+      'NIAP-PP-Virtualization-Version-2-0',
+      'NIAP-PP-Module-VPN-Client-Version-3-0',
+      'NIAP-cPP-Hardcopy-Devices-Version-2-0',
+      'NIAP-PP-Module-File-Encryption-Version-2-0',
+      'NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0',
+      'NIAP-TD1010-Network-Devices-v4-0-Endorsement',
+      'NIAP-TD1011-DSC-v2-1-Endorsement',
+      'NIAP-Announcements-Policy-33-Technical-Decisions-Notice',
     ]) {
       expect(hrefs(), id).toContain(getStandard(id).deepLink)
     }
     const external = links().filter((a) => (a.getAttribute('href') ?? '').startsWith('http'))
-    expect(external.length).toBeGreaterThanOrEqual(8)
+    expect(external.length).toBeGreaterThanOrEqual(7)
     for (const a of external) {
       expect(a).toHaveAttribute('target', '_blank')
       expect(a).toHaveAttribute('rel', 'noopener noreferrer')

@@ -2090,16 +2090,9 @@ const InLink = ({ to, children }: { to: string; children: ReactNode }) => (
   </Link>
 )
 
-const NIAP_DSC_CPP_URL =
-  'https://www.niap-ccevs.org/static_html/protection-profile/538/cPP_DSC_V2.1.html'
-const NIAP_DSC_SD_URL = 'https://dsc-itc.github.io/v2/2.1/SD_DSC_V2.1.html'
-const NIAP_APP_PP_URL =
-  'https://www.niap-ccevs.org/static_html/protection-profile/516/PP_APP_V2.0.htm'
 const NIAP_POLICY_5_URL =
   'https://www.niap-ccevs.org/Documents_and_Guidance/ccevs/policy-ltr-5-update3.pdf'
 const NIAP_PP_LIST_URL = 'https://www.niap-ccevs.org/protectionprofiles'
-const NIAP_TD1011_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1011'
-const NIAP_TD1010_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1010'
 const NIAP_TD1009_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1009'
 const NIAP_TD1012_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1012'
 const NIAP_TD1013_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1013'
@@ -2108,6 +2101,8 @@ const NIAP_TD0966_URL = 'https://www.niap-ccevs.org/technical-decisions/TD0966'
 
 type ProfileRow = {
   profile: string
+  /** Library reference id of the document. */
+  libraryId: string
   version: string
   date: string
   /** The approval date as listed on NIAP's table of approved profiles (read 23 October 2026). */
@@ -2132,6 +2127,7 @@ const FE_KT =
 const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   {
     profile: 'Application Software PP',
+    libraryId: 'NIAP-Protection-Profile-for-Application-Software-Version-2-0',
     version: '2.0',
     date: '2025-06-16',
     approved: '16 Jun 2025',
@@ -2141,6 +2137,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'cPP Dedicated Security Component',
+    libraryId: 'NIAP-cPP-Dedicated-Security-Component-Version-2-1',
     version: '2.1',
     date: '17 Nov 2025',
     approved: '26 Mar 2026',
@@ -2157,6 +2154,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'cPP Network Devices',
+    libraryId: 'NIAP-cPP-Network-Devices-Version-4-0',
     version: '4.0',
     date: '25 Nov 2025',
     approved: '22 Dec 2025',
@@ -2170,6 +2168,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'PP General-Purpose Computing Platforms',
+    libraryId: 'NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0',
     version: '2.0',
     date: '2026-04-16',
     approved: '22 Apr 2026',
@@ -2179,6 +2178,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'PP Virtualization',
+    libraryId: 'NIAP-PP-Virtualization-Version-2-0',
     version: '2.0',
     date: '2026-05-21',
     approved: '21 May 2026',
@@ -2190,6 +2190,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'cPP Full Drive Encryption, Authorization Acquisition',
+    libraryId: 'NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0',
     version: '3.0',
     date: '2026-03-12',
     approved: '25 Mar 2026',
@@ -2199,6 +2200,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'cPP Full Drive Encryption, Encryption Engine',
+    libraryId: 'NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0',
     version: '3.0',
     date: '2026-03-12',
     approved: '25 Mar 2026',
@@ -2208,6 +2210,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'cPP Hardcopy Devices',
+    libraryId: 'NIAP-cPP-Hardcopy-Devices-Version-2-0',
     version: '2.0',
     date: '31 Jul 2026',
     approved: '23 Sep 2026',
@@ -2222,6 +2225,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'PP-Module VPN Client',
+    libraryId: 'NIAP-PP-Module-VPN-Client-Version-3-0',
     version: '3.0',
     date: '2025-09-30',
     approved: '29 Sep 2025',
@@ -2236,6 +2240,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'PP-Module File Encryption',
+    libraryId: 'NIAP-PP-Module-File-Encryption-Version-2-0',
     version: '2.0',
     date: '2025-09-29',
     approved: '29 Sep 2025',
@@ -2245,6 +2250,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
   },
   {
     profile: 'PP-Module File Encryption Enterprise Management',
+    libraryId: 'NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0',
     version: '2.0',
     date: '2025-09-29',
     approved: '29 Sep 2025',
@@ -2321,7 +2327,7 @@ export const NiapPqcRoute = () => (
       choices beside the classical ones, including ML-KEM (512, 768, 1024) and ML-DSA (44, 65, 87).
       The profile text offers them as selections and has no CNSA wording.{' '}
       <ModuleAnalysisNote>(Module analysis, from reading the text.)</ModuleAnalysisNote> (
-      <ExternalSource name="DSC cPP v2.1" href={NIAP_DSC_CPP_URL} />)
+      <SourceCite id="NIAP-cPP-Dedicated-Security-Component-Version-2-1" label="DSC cPP v2.1" />)
     </P>
     <P>
       NIAP adds the CNSA rule by Technical Decision TD1011, published 26 March 2026. NIAP endorsed
@@ -2334,8 +2340,9 @@ export const NiapPqcRoute = () => (
       preferred) for soft/firmware signature”, next to “ECDH 384”, “ECDSA 384” and “RSA with minimum
       3072-bit modulus”; and “Evaluations certified by NIAP must only make CNSA-compliant
       selections.” (
-      <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />) So post-quantum is one allowed route,
-      not the only one: CNSA 1.0 selections such as ECDSA 384 and RSA 3072 also count.
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" />) So post-quantum is one
+      allowed route, not the only one: CNSA 1.0 selections such as ECDSA 384 and RSA 3072 also
+      count.
     </P>
 
     <P>
@@ -2346,9 +2353,9 @@ export const NiapPqcRoute = () => (
       initial publication, they are added to this requirement in support of future protocol updates.
       As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future
       update.” It prepares for the move and does not force it. <MA /> (
-      <ExternalSource
-        name="NIAP Protection Profile for Application Software v2.0"
-        href={NIAP_APP_PP_URL}
+      <SourceCite
+        id="NIAP-Protection-Profile-for-Application-Software-Version-2-0"
+        label="NIAP Protection Profile for Application Software v2.0"
       />
       )
     </P>
@@ -2401,7 +2408,9 @@ export const NiapPqcRoute = () => (
       ]}
       rows={NIAP_PROFILE_ROWS.map((r) => [
         <span key="p">
-          <strong>{r.profile}</strong>
+          <strong>
+            <SourceCite id={r.libraryId} label={r.profile} />
+          </strong>
           <span className="block text-xs text-muted-foreground">NIAP approved {r.approved}</span>
         </span>,
         r.version,
@@ -2416,8 +2425,16 @@ export const NiapPqcRoute = () => (
       <ExternalSource name="NIAP’s table of approved profiles" href={NIAP_PP_LIST_URL} />
       (read 23 October 2026), which lists all 11 as CC:2022. Algorithm lists are written as the
       profile lists them. Source pages: the{' '}
-      <ExternalSource name="Application Software profile" href={NIAP_APP_PP_URL} /> and the{' '}
-      <ExternalSource name="Dedicated Security Component cPP" href={NIAP_DSC_CPP_URL} />.
+      <SourceCite
+        id="NIAP-Protection-Profile-for-Application-Software-Version-2-0"
+        label="Application Software profile"
+      />{' '}
+      and the{' '}
+      <SourceCite
+        id="NIAP-cPP-Dedicated-Security-Component-Version-2-1"
+        label="Dedicated Security Component cPP"
+      />
+      .
     </p>
     <P>
       Three of the profiles (Dedicated Security Component, Network Devices and Hardcopy Devices) are
@@ -2427,9 +2444,9 @@ export const NiapPqcRoute = () => (
       applicable cryptographic requirement must include at least one selection conforming to CNSA
       1.0 or 2.0, and an evaluation in another scheme may select other algorithms if the product can
       be configured not to use them. These are{' '}
-      <ExternalSource name="TD1011" href={NIAP_TD1011_URL} /> for Dedicated Security Component,{' '}
-      <ExternalSource name="TD1010" href={NIAP_TD1010_URL} /> for Network Devices,{' '}
-      <ExternalSource name="TD1012" href={NIAP_TD1012_URL} /> and{' '}
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" /> for Dedicated Security
+      Component, <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" label="TD1010" /> for
+      Network Devices, <ExternalSource name="TD1012" href={NIAP_TD1012_URL} /> and{' '}
       <ExternalSource name="TD1013" href={NIAP_TD1013_URL} /> for Full Drive Encryption 3.0
       (Authorization Acquisition and Encryption Engine), and{' '}
       <ExternalSource name="TD1009" href={NIAP_TD1009_URL} /> for Hardcopy Devices version 1.1 only.
@@ -2550,16 +2567,21 @@ export const NiapPqcRoute = () => (
         temporary use of select algorithms which are not CNSA 1.0 compliant for certain functions
         such as secure boot and trusted update. NIAP strongly recommends vendors adopt CNSA 2.0
         compliant algorithms as soon as possible.” (
-        <ExternalSource name="NIAP announcements" />) We found no such decision yet.
+        <SourceCite
+          id="NIAP-Announcements-Policy-33-Technical-Decisions-Notice"
+          label="NIAP announcements"
+        />
+        ) We found no such decision yet.
       </li>
       <li>
         The profiles and Technical Decisions. The two examples and their test methods (the DSC test
-        methods are in its <ExternalSource name="Supporting Document" href={NIAP_DSC_SD_URL} />
+        methods are in its{' '}
+        <SourceCite id="NIAP-cPP-DSC-Supporting-Document-Version-2-1" label="Supporting Document" />
         ); NIAP’s TD1011 for the DSC cPP, quoted above (
-        <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />
+        <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" />
         ), and TD1010 for the Network Devices cPP version 4.0 (24 March 2026); both require at least
         one selection conforming to CNSA 1.0 or 2.0 for the Product Compliant List (
-        <ExternalSource name="TD1010" href={NIAP_TD1010_URL} />
+        <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" label="TD1010" />
         ); and the DSC group’s own “Post-Quantum Algorithm Support” decision of 17 June 2025 (
         <ExternalSource name="DSC-iTC Technical Decisions page" />
         ).
@@ -2629,14 +2651,11 @@ export const NiapPqcRoute = () => (
       <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" />,{' '}
       <SourceCite id="BSI-CC-PP-0114-V2X-HSM" />
       , <SourceCite id="CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile" />,{' '}
-      <ExternalSource
-        name="NIAP Protection Profile for Application Software v2.0"
-        href={NIAP_APP_PP_URL}
-      />
-      , <ExternalSource name="Dedicated Security Component cPP v2.1" href={NIAP_DSC_CPP_URL} />,{' '}
-      <ExternalSource name="DSC Supporting Document v2.1" href={NIAP_DSC_SD_URL} />,{' '}
-      <ExternalSource name="Technical Decision TD1011" href={NIAP_TD1011_URL} />,{' '}
-      <ExternalSource name="Technical Decision TD1010" href={NIAP_TD1010_URL} />,{' '}
+      <SourceCite id="NIAP-Protection-Profile-for-Application-Software-Version-2-0" />
+      , <SourceCite id="NIAP-cPP-Dedicated-Security-Component-Version-2-1" />,{' '}
+      <SourceCite id="NIAP-cPP-DSC-Supporting-Document-Version-2-1" />,{' '}
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" />,{' '}
+      <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" />,{' '}
       <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />.
     </Sources>
   </div>

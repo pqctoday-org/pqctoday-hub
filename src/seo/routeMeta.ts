@@ -560,7 +560,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/cc-eucc-certification`,
     structuredData: buildModuleSchema(
       'Common Criteria, EUCC & eIDAS Certification',
-      'PT64M',
+      'PT66M',
       'Advanced'
     ),
   },

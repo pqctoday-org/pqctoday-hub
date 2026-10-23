@@ -25,7 +25,7 @@ const manifest: ModuleManifest = {
     'Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.',
   whyThisMatters:
     'In Europe, a Common Criteria evaluation may support an EUCC certificate and, for applicable qualified electronic-signature or seal devices, form part of an eIDAS conformity chain. CCRA recognition is separate and depends on the certificate, scheme, assurance claim and recognition rules. Reading the exact claim is what tells you whether adding PQC is a change the certificate survives.',
-  duration: '64 min',
+  duration: '66 min',
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
@@ -57,8 +57,8 @@ const manifest: ModuleManifest = {
       label: 'Common Criteria — evaluation criteria',
       entrySection: 'cc-model',
       // +10 min: the regional-schemes section (user request 2026-09-27)
-      // +4 min: the NIAP section (about 800 words at reading speed plus one table)
-      duration: '74 min',
+      // +4 min: the NIAP section; +2 min more: its table of profiles and the quoted decisions
+      duration: '76 min',
       sections: [
         'cc-model',
         'cc-eal-decoding',
@@ -133,6 +133,21 @@ const manifest: ModuleManifest = {
     'CNSSP 15': ['cc'],
     'BSI-CC-PP-0114-V2X-HSM': ['cc'],
     'CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile': ['cc'],
+    'NIAP-Protection-Profile-for-Application-Software-Version-2-0': ['cc'],
+    'NIAP-cPP-Dedicated-Security-Component-Version-2-1': ['cc'],
+    'NIAP-cPP-Network-Devices-Version-4-0': ['cc'],
+    'NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0': ['cc'],
+    'NIAP-PP-Virtualization-Version-2-0': ['cc'],
+    'NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0': ['cc'],
+    'NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0': ['cc'],
+    'NIAP-cPP-Hardcopy-Devices-Version-2-0': ['cc'],
+    'NIAP-PP-Module-VPN-Client-Version-3-0': ['cc'],
+    'NIAP-PP-Module-File-Encryption-Version-2-0': ['cc'],
+    'NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0': ['cc'],
+    'NIAP-cPP-DSC-Supporting-Document-Version-2-1': ['cc'],
+    'NIAP-TD1010-Network-Devices-v4-0-Endorsement': ['cc'],
+    'NIAP-TD1011-DSC-v2-1-Endorsement': ['cc'],
+    'NIAP-Announcements-Policy-33-Technical-Decisions-Notice': ['cc'],
     'ENISA-State-of-Cybersecurity-2024': ['eucc-eidas'],
     'EUCC-Guidelines-on-Cryptography': ['eucc', 'eucc-eidas'],
   },
