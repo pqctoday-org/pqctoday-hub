@@ -641,7 +641,7 @@
       "testType": "MCT",
       "mctVersion": "alternate",
       "cases": 1,
-      "why": "alternate-mct-not-implemented"
+      "why": "alternate-mct-runs-in-full-mct-file"
     },
     {
       "tgId": 3,
@@ -663,7 +663,7 @@
       "testType": "MCT",
       "mctVersion": "alternate",
       "cases": 1,
-      "why": "alternate-mct-not-implemented"
+      "why": "alternate-mct-runs-in-full-mct-file"
     },
     {
       "tgId": 3,
@@ -685,7 +685,7 @@
       "testType": "MCT",
       "mctVersion": "alternate",
       "cases": 1,
-      "why": "alternate-mct-not-implemented"
+      "why": "alternate-mct-runs-in-full-mct-file"
     },
     {
       "tgId": 3,
