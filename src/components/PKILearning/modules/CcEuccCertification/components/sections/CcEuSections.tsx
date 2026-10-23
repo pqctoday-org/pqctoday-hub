@@ -736,7 +736,7 @@ export const CcLifecycle = () => (
       <p>
         <strong>Under Common Criteria:</strong> Adding ML-KEM or ML-DSA to a certified product means
         new <Code>FCS_COP</Code>/<Code>FCS_CKM</Code> iterations in the ST — a change to the claimed
-        SFRs, which CCDB-014 lists as a typical major change. Expect the certification body to
+        SFRs, which CCDB-015 lists as a typical major change. Expect the certification body to
         classify it as major and require a re-evaluation, and plan that re-evaluation on CC:2022. If
         your PP is still CC 3.1, the CCRA transition policy allows claiming it only until 31
         December 2027.
@@ -773,7 +773,7 @@ export const CcContinuity = () => (
       learns that it must be evaluated again. The CCRA minimum rules are in{' '}
       <SourceCite
         id="CCDB-014-Assurance-Continuity-v3-1"
-        label="CCDB-014 “Assurance Continuity: CCRA Requirements” v3.1"
+        label="CCDB-015 “Assurance Continuity: CCRA Requirements” v3.1"
       />{' '}
       (29 February 2024). Schemes may add to them. <strong>Under EUCC:</strong> EUCC sets its own
       change rules in law (see the EUCC path).
@@ -805,7 +805,7 @@ export const CcContinuity = () => (
     />
 
     <H3>Minor or major?</H3>
-    <P>The developer proposes; the certification body decides. CCDB-014 gives typical cases:</P>
+    <P>The developer proposes; the certification body decides. CCDB-015 gives typical cases:</P>
     <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/90">
       <li>
         <strong>Typically minor:</strong> editorial changes; changes that do not affect the
@@ -820,7 +820,7 @@ export const CcContinuity = () => (
       </li>
     </ul>
     <P>
-      A bug fix can be either, CCDB-014 notes, because its extent cannot be predicted. And a PP
+      A bug fix can be either, CCDB-015 notes, because its extent cannot be predicted. And a PP
       requiring exact conformance makes even an editorial change to the ST’s objectives major.
     </P>
 

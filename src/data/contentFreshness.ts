@@ -273,7 +273,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   },
   {
     id: 'cpc-cceu-ccdb-014-v3-1',
-    claim: 'CCRA assurance continuity CCDB-014 v3.1 (29 Feb 2024) is the current version',
+    claim: 'CCRA assurance continuity CCDB-015 v3.1 (29 Feb 2024) is the current version',
     source:
       'src/components/PKILearning/modules/CcEuccCertification/components/sections/CcEuSections.tsx',
     asOf: '2026-09-24',

@@ -34,7 +34,7 @@ const manifest: ModuleManifest = {
     { id: 'cc-model', label: 'The Common Criteria model' },
     { id: 'cc-eal-decoding', label: 'EALs and "EAL4+"' },
     { id: 'cc-lifecycle', label: 'Certification lifecycle and CC:2022 transition' },
-    { id: 'cc-continuity', label: 'Assurance continuity (CCDB-014)', optional: true },
+    { id: 'cc-continuity', label: 'Assurance continuity (CCDB-015)', optional: true },
     { id: 'cc-regional-schemes', label: 'One criteria, many schemes: the regional schemes' },
     {
       id: 'cc-regional-reference',

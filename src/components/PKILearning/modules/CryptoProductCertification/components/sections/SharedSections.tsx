@@ -467,7 +467,7 @@ export const AgilityLatency = () => (
       ))}
     </div>
     <p className="text-xs text-muted-foreground">
-      Route definitions: CMVP Management Manual v2.7 (9 April 2026) §7.1; CCDB-014 v3.1 (29 February
+      Route definitions: CMVP Management Manual v2.7 (9 April 2026) §7.1; CCDB-015 v3.1 (29 February
       2024); CIR (EU) 2025/2462. <AsOf /> Link to the live documents rather than memorising the
       tables — they change.
     </p>
@@ -818,7 +818,7 @@ export const ChangeRoutesDetail = () => (
 
     <H3>Common Criteria / CCRA — assurance continuity</H3>
     <p>
-      Under CCDB-014 v3.1 (<SourceLink source={SHARED_SOURCES.ccdb014} />
+      Under CCDB-015 v3.1 (<SourceLink source={SHARED_SOURCES.ccdb014} />
       ), the developer proposes and documents the impact in an Impact Analysis Report; the
       certification body classifies it.
     </p>
