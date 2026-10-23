@@ -16,13 +16,13 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "e83936ce60fb8563d1eb9c75f66f44c0763f5dab417d65a86eb608a1e0d362d9",
+    "public/data/validation/coverage-matrix.json": "5e8972dd9c1079cf2477b0a8aa7c8c93375c510c9b576ecadc15e16cda53f3a8",
     "src/data/validation/coverage-waivers.json": "868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130",
     "src/data/validation/native-conformance.generated.json": "3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2",
     "src/data/validation/open-gaps.json": "a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21",
     "src/data/validation/run-results/wasm-node-katRunner.json": "42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "7ee706406ecd274291af45b186c5c98324cee4afbe6005d2414de0b29ad6ca88",
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "d64b3a9fbd64b86ba6b4bb2f4e6569f309a8fa57b174dfffc2d0996713178474",
     "src/data/validation/validation-counts.generated.json": "998bf488ff69dcbc53d5507c7c4f8f639fb958bfd9e1cc236b5d34d40d98cef4",
     "src/data/validation/vector-manifest.json": "31976e1dcab426ee9fe32056229be4d82cf255de4ef2416c5390c220503b91bd"
   },
@@ -177,7 +177,7 @@
           "wasm": {
             "status": "registered",
             "registeredCells": 2189,
-            "passedCells": 2178,
+            "passedCells": 2188,
             "failedCells": 1,
             "skippedCells": 0
           },
@@ -281,7 +281,7 @@
           "wasm": {
             "status": "registered",
             "registeredCells": 2206,
-            "passedCells": 2187,
+            "passedCells": 2197,
             "failedCells": 2,
             "skippedCells": 0
           },
@@ -304,21 +304,21 @@
     },
     "parity": {
       "positive": {
-        "parity": 2044,
+        "parity": 2056,
         "divergent": 1,
-        "not-established": 159,
+        "not-established": 147,
         "single-engine": 39
       },
       "negative": {
-        "parity": 148,
+        "parity": 156,
         "divergent": 0,
-        "not-established": 2056,
+        "not-established": 2048,
         "single-engine": 39
       },
       "boundary": {
-        "parity": 219,
+        "parity": 239,
         "divergent": 0,
-        "not-established": 1985,
+        "not-established": 1965,
         "single-engine": 39
       },
       "state-error": {
@@ -331,7 +331,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 13726 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 13934 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-23, hub 9db829b06). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -524,17 +524,17 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
-      "recordedAt": "2026-10-22",
-      "results": 13726,
+      "hubCommit": "9db829b068063dbd0712c5950686f6f3676bf4f5",
+      "recordedAt": "2026-10-23",
+      "results": 13934,
       "byEngine": {
         "cpp": {
-          "pass": 6858,
+          "pass": 6962,
           "fail": 1,
           "skip": 4
         },
         "rust": {
-          "pass": 6844,
+          "pass": 6948,
           "fail": 19
         }
       },
@@ -2487,7 +2487,7 @@
     ]
   },
   "reviews": {
-    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
+    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state owner-reviewed) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 96,
     "statusCounts": {
       "source-verified": 96,
@@ -3428,7 +3428,7 @@
         "src/data/validation/coverage-matrix.generated.json",
         "e2e/acvp-mldsa-evidence.spec.ts"
       ],
-      "basis": "73 NIST ACVP-Server reference-sample positive and 52 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
+      "basis": "75 NIST ACVP-Server reference-sample positive and 66 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
     },
     {
       "n": 6,
