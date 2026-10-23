@@ -53,7 +53,7 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-1800-40B-IPD'),
     getStandard('NIST-SP-1800-40A-PD'),
     getStandard('NIST-CSWP-37A'),
-    getStandard('NIST-CSWP-37B-IPD'),
+    getStandard('NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va'),
     // Validation automation (fips-automation section, 2026-09-27)
     getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP'),
     getStandard('NIST-CMVP-ESV-Program'),

@@ -2,21 +2,16 @@
 /**
  * Review status of the acvp-lab-workflow module.
  *
- * The ACVP validation remediation plan (2026-09-24, WS-I) requires this module
- * to be reviewed by at least one validation-lab practitioner before it may be
- * described as a lab training resource. Until that review is recorded, the
- * module ships as a draft: `workInProgress: true` in manifest.ts for internal
- * status/routing, no `lastReviewed` in content.ts, and this explicit notice on
- * every tab that teaches or exercises. Generic WIP logos are intentionally not
- * rendered.
- *
- * When the review happens: record it with record_module_review.py (which sets
- * content.ts lastReviewed), flip `state` to 'practitioner-reviewed', name the
- * reviewer role in `detail`, and drop `workInProgress` from the manifest.
+ * Owner decision, 22 October 2026: the module is reviewed by the owner, who
+ * signed it off after a fact-by-fact review; the earlier rule that a
+ * validation-lab practitioner must review it first was replaced by owner
+ * review. The module is not presented as a lab training resource, and the
+ * notice keeps the required validation disclaimers on every tab that teaches
+ * or exercises. content.ts lastReviewed records the review date.
  */
 export const REVIEW_STATUS = {
-  state: 'draft-awaiting-practitioner-review',
-  label: 'Draft — awaiting review by a validation-lab practitioner',
+  state: 'owner-reviewed',
+  label: 'Reviewed by the owner',
   detail:
-    'This module is a draft. It has not yet been reviewed by an accredited testing-laboratory practitioner and is not a lab training resource. Every factual statement cites its primary source; where the Hub Library does not carry a source yet, the citation links the source directly.',
+    'This module was reviewed and signed off by the PQC Today owner. It is not a laboratory training resource and not a substitute for an accredited testing laboratory. Every factual statement cites its primary source; where the Hub Library does not carry a source yet, the citation links the source directly.',
 } as const

@@ -32,9 +32,9 @@ describe('acvp-lab-workflow sources', () => {
     for (const s of all) expect(s.url, s.id).toMatch(/^https:\/\//)
   })
 
-  it('pins the current core draft publication and expiry metadata', () => {
+  it('pins the core draft by commit, not by a site rebuild date', () => {
     expect(SOURCES.acvpSpec.revision).toBe(
-      'draft-ietf-acvp-spec-01 (2 Oct 2026; expires 5 Apr 2027)'
+      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)'
     )
     expect(content.narratives.acvpSpecRevision).toBe(SOURCES.acvpSpec.revision)
   })
@@ -52,7 +52,8 @@ describe('acvp-lab-workflow sources', () => {
         .map((s) => s.id)
         .sort()
     )
-    expect(LIBRARY_ADDITIONS_NEEDED.length).toBeGreaterThan(0)
+    // Every cited source now has its Library row (acvpMlKem linked 22 Oct 2026).
+    expect(LIBRARY_ADDITIONS_NEEDED).toEqual([])
   })
 
   it('content.ts declares every Library-backed source as a module standard', () => {
@@ -104,11 +105,11 @@ describe('acvp-lab-workflow concept checks', () => {
   })
 })
 
-describe('acvp-lab-workflow draft status', () => {
-  it('stays marked as a draft until a practitioner review is recorded', () => {
-    // Flip all three together when the review lands (see reviewStatus.ts).
-    expect(REVIEW_STATUS.state).toBe('draft-awaiting-practitioner-review')
-    expect(manifest.workInProgress).toBe(true)
-    expect(content.lastReviewed).toBeUndefined()
+describe('acvp-lab-workflow review status', () => {
+  it('is owner-reviewed and no longer marked as a draft (owner decision, 22 Oct 2026)', () => {
+    expect(REVIEW_STATUS.state).toBe('owner-reviewed')
+    expect(REVIEW_STATUS.label).not.toMatch(/draft/i)
+    expect(manifest.workInProgress).toBeUndefined()
+    expect(manifest.description).not.toMatch(/draft/i)
   })
 })

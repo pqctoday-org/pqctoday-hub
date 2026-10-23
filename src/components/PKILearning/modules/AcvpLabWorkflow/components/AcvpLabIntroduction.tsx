@@ -23,7 +23,7 @@ import { EVIDENCE_CLASSES, EVIDENCE_CLASS_IDS } from '@/data/validation/evidence
 import validationCounts from '@/data/validation/validation-counts.generated.json'
 import { UNSUPPORTED_REASONS } from '@/services/acvp/dispatch'
 import { Cite } from './Cite'
-import { DraftStatusNotice } from './DraftStatusNotice'
+import { ReviewStatusNotice } from './ReviewStatusNotice'
 import { CLAIM_LADDER, HUB_REACHABLE_MAX_RUNG } from '../data/evidenceLevels'
 
 interface AcvpLabIntroductionProps {
@@ -115,7 +115,7 @@ const LIFECYCLE_STEPS: { step: string; call: string; note: React.ReactNode }[] =
   {
     step: 'Read the disposition',
     call: 'GET …/vectorSets/{vsId}/results',
-    note: 'The server reports passed, fail, incomplete, expired, missing, unreceived or error for the vector set and for each test case.',
+    note: 'The server reports a disposition for the vector set and for each test case: passed, fail, incomplete, expired, missing or unreceived. “error” applies to the vector set only, not to individual test cases.',
   },
   {
     step: 'Certify the session',
@@ -144,7 +144,7 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
 
   return (
     <div className="w-full space-y-8">
-      <DraftStatusNotice />
+      <ReviewStatusNotice />
 
       <div
         className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm text-foreground"
@@ -182,15 +182,17 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
 
       <Callout title="Revision discipline: ACVP is a moving protocol family">
         <p>
-          The core protocol used here is <strong>draft-ietf-acvp-spec-01</strong>, published 2
-          October 2026 and expiring 5 April 2027 <Cite s="acvpSpec" />. The algorithm JSON
-          specifications evolve separately, so evidence must name the exact core draft,
-          algorithm-specification revision, operational environment and vector-set source.
+          The core protocol used here is <strong>draft-ietf-acvp-spec-01</strong>, an independent
+          draft that has not changed since December 2020; this module pins it by repository commit{' '}
+          <Cite s="acvpSpec" />. What changes is the algorithm JSON specifications, which evolve
+          separately, so evidence must name the exact core draft, algorithm-specification revision,
+          operational environment and vector-set source.
         </p>
         <p>
-          The eight-rung evidence taxonomy in this module is PQC Today editorial policy, not a NIST
-          taxonomy. It prevents a public ACVP-Server sample, an imported prompt and an ACVTS-issued
-          vector set from being reported as if they were interchangeable.
+          The eight evidence classes and the nine-rung claim ladder in this module are PQC Today’s
+          own scale for describing test results; NIST does not define one. The scale prevents a
+          public ACVP-Server sample, an imported prompt and an ACVTS-issued vector set from being
+          reported as if they were interchangeable.
         </p>
       </Callout>
 
@@ -273,9 +275,10 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             The CMVP Management Manual requires the laboratory to confirm compliance with the
             algorithm standards’ “shall” statements that CAVP testing does not address{' '}
             <Cite s="cmvpMM" at="§2.6.2" />. The ACVP sub-specifications say the same from the other
-            side: the ML-KEM and ML-DSA test types do not test zeroization of intermediate values,
-            DRBG strength, or incorrect-length keys and signatures <Cite s="acvpMlKem" />{' '}
-            <Cite s="acvpMlDsa" />.
+            side: the ML-DSA test types do not test zeroization of intermediate values, DRBG
+            strength, or incorrect-length keys and signatures <Cite s="acvpMlDsa" />. The ML-KEM
+            sub-specification carries the same list word for word, including “signatures”, which
+            ML-KEM does not produce: the section was copied from ML-DSA <Cite s="acvpMlKem" />.
           </p>
         </Callout>
         <p className="text-xs text-muted-foreground">
@@ -655,8 +658,9 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
               </Td>
               <Td>
                 Executed. SHA2-512/224 and SHA2-512/256 have no CKM_HASH_ML_DSA_&lt;hash&gt;
-                mechanism; the generic CKM_HASH_ML_DSA takes them as its <code>hash</code>{' '}
-                (CKM_SHA512_224 / CKM_SHA512_256) with the caller computing PH(M)
+                mechanism <Cite s="pkcs11" at="§6.67" />; the generic CKM_HASH_ML_DSA takes them as
+                its <code>hash</code> (CKM_SHA512_224 / CKM_SHA512_256) with the caller computing
+                PH(M)
               </Td>
             </tr>
             <tr>
@@ -719,8 +723,9 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             <tr>
               <Td>ECDSA sigGen (AFT, NIST’s k)</Td>
               <Td>
-                Standard CKM_ECDSA takes no parameter and draws k itself. This HSM accepts k as the
-                optional CKM_ECDSA parameter
+                Standard CKM_ECDSA takes no parameter and draws k itself{' '}
+                <Cite s="pkcs11" at="§6.3" />. This HSM accepts k as the optional CKM_ECDSA
+                parameter
               </Td>
               <Td>
                 Playground suite: r ‖ s byte-compared with NIST’s, labelled “test input supplied
@@ -753,8 +758,9 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             <Cite s="fips204" at="§6" /> <Cite s="fips205" at="§9" />. A validated module would keep
             such inputs out of its approved mode. ML-DSA’s internal interface needs no input of this
             kind: it goes through the external-μ mechanism with a μ the harness computes. A known
-            ECDSA k recovers the private key from one signature, which is why no real module should
-            accept one outside testing.
+            ECDSA k recovers the private key from one signature, which is why FIPS 186-5 requires k
+            to be protected from disclosure and no real module should accept one outside testing{' '}
+            <Cite s="fips1865" at="§6.3, §6.3.2" />.
           </p>
         </Callout>
         <Callout title="The adapter’s three honest outcomes">
@@ -843,10 +849,12 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
         <p>
           Two kinds of negative testing sit outside ACVP.{' '}
           <strong>Requirements ACVP does not test</strong> — the sub-specifications list
-          zeroization, DRBG strength and incorrect-length ML-KEM/ML-DSA inputs{' '}
-          <Cite s="acvpMlKem" /> <Cite s="acvpMlDsa" />. And <strong>API behaviour</strong>: wrong
-          key type, wrong state, short buffers and other PKCS#11 return codes, which OASIS profile
-          cases and product probes exercise <Cite s="pkcs11Profiles" />.
+          zeroization, DRBG strength and incorrect-length keys and signatures for ML-DSA{' '}
+          <Cite s="acvpMlDsa" /> (the ML-KEM sub-specification repeats the ML-DSA list, a copy
+          error, as it names signatures <Cite s="acvpMlKem" />
+          ). And <strong>API behaviour</strong>: wrong key type, wrong state, short buffers and
+          other PKCS#11 return codes, which OASIS profile cases and product probes exercise{' '}
+          <Cite s="pkcs11Profiles" />.
         </p>
         <p className="text-xs text-muted-foreground">
           Vocabulary the Hub holds itself to: one happy-path case is “sampled”, never “covered”;

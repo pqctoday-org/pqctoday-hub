@@ -7,15 +7,11 @@ const manifest: ModuleManifest = {
   lm_id: 'LM-066',
   title: 'ACVP Lab Workflow: From Vector Set to Evidence',
   description:
-    'How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached. Draft — awaiting validation-lab practitioner review.',
+    'How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached.',
   whyThisMatters:
     'A passing test is only evidence for the exact operation, parameters, build and source it was run against. Laboratories, vendors and buyers who blur a public reference sample, an ACVTS-issued vector set and a validation certificate make claims no evidence supports.',
   duration: '90 min',
   difficulty: 'advanced',
-  // Draft (ACVP validation remediation plan 2026-09-24, WS-I): must be reviewed
-  // by a validation-lab practitioner before it is called a lab training
-  // resource. See data/reviewStatus.ts for what flips when that happens.
-  workInProgress: true,
   frameworkPhase: 'p6',
   track: 'Protocols',
   trackOrder: 10,

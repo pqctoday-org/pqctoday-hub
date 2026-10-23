@@ -63,7 +63,7 @@ const ESV = getStandard('NIST-CMVP-ESV')
 const SP_1800_40B = getStandard('NIST-SP-1800-40B-IPD')
 const SP_1800_40A = getStandard('NIST-SP-1800-40A-PD')
 const CSWP_37A = getStandard('NIST-CSWP-37A')
-const CSWP_37B = getStandard('NIST-CSWP-37B-IPD')
+const CSWP_37B = getStandard('NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va')
 const CAVP = getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP')
 const ESV_PROGRAM = getStandard('NIST-CMVP-ESV-Program')
 const ESV_ANNOUNCEMENTS = getStandard('NIST-CMVP-ESV-Announcements')
@@ -602,7 +602,8 @@ export const FipsLevels = () => (
       <li>
         <Cite std={MGMT_MANUAL}>Manual</Cite> §7.1.15: raising any section’s level, or changing the
         embodiment, makes it a <strong>new module</strong> that needs a Full Submission. Lowering a
-        level can go through an Update.
+        level is security-relevant: it may go through an Update (UPDT) with full testing of the
+        sections lowered or affected.
       </li>
     </ul>
     <p>
@@ -669,7 +670,7 @@ const LIFECYCLE_STEPS: readonly { title: string; body: ReactNode }[] = [
   },
   {
     title: 'Lab testing',
-    body: 'The vendor contracts an accredited CST lab. The lab may list the module on the Implementation Under Test list — voluntary, and entries drop off after 18 months.',
+    body: 'The vendor contracts an accredited CST lab. If the vendor chooses, the module can appear on the Implementation Under Test list (voluntary; entries are removed after 18 months).',
   },
   {
     title: 'Submission',
@@ -885,9 +886,11 @@ export const FipsAcvpBridge = () => (
       Algorithm testing checks outputs against test vectors. The module must also test{' '}
       <em>itself</em>. <Cite std={IG}>IG</Cite> 10.3.A names self-tests for ML-KEM key generation,
       encapsulation and decapsulation, and for ML-DSA and SLH-DSA. Its 19 August 2026 update adds
-      that a key pair regenerated from a stored FIPS 203 or FIPS 204 seed needs its pair-wise
-      consistency test only before the first export or first use. Entropy is a separate track again:
-      entropy source validation (<Cite std={ESV}>ESV</Cite>).
+      that the pair-wise consistency test is required only before the first export of the seed or
+      key pair, or before the first operational use of the key pair after the seed is generated in
+      the module; regenerating the key pair later from the stored seed is a reconstitution and needs
+      no new test. Entropy is a separate track again: entropy source validation (
+      <Cite std={ESV}>ESV</Cite>).
     </p>
     <p>For ML-DSA, three checks answer different questions:</p>
     <ul className="list-disc space-y-2 pl-5" aria-label="Three different ML-DSA checks">
@@ -1201,7 +1204,7 @@ export const FipsAutomation = () => (
       environment; ESV tests the entropy source on it; AMVP then submits the module-level test
       evidence and the request for FIPS 140-3 validation. The project’s status reports are{' '}
       <Cite std={CSWP_37A}>CSWP 37A</Cite> (final, 16 March 2026) and{' '}
-      <Cite std={CSWP_37B}>CSWP 37B</Cite> (Initial Public Draft, 10 September 2025).
+      <Cite std={CSWP_37B}>CSWP 37B</Cite> (final, 30 September 2026).
     </p>
     <Callout tone="warning" title="What automation does not change">
       <p>
@@ -1454,7 +1457,8 @@ export const FipsRouteTable = () => (
     <ul className="list-disc space-y-1 pl-5">
       <li>
         Raising a section’s level or changing the embodiment makes it a new module (FS); lowering a
-        level can be an UPDT (§7.1.15).
+        level is security-relevant and may be an UPDT with full testing of the sections lowered or
+        affected (§7.1.15).
       </li>
       <li>
         Routes combine only as the Manual allows. A rebrand of a ported sub-chip, for example, is

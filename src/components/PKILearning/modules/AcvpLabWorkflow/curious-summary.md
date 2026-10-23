@@ -12,4 +12,4 @@ Every test result is evidence only for the exact test, settings, software build 
 
 ### What's Happening
 
-This module is a draft and is waiting for review by someone who works in a validation laboratory before it can be called lab training material.
+This module has been reviewed and signed off by the PQC Today owner. It explains how laboratory testing works; it is not laboratory training material.

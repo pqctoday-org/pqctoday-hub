@@ -4,7 +4,7 @@ import { FileJson, ListChecks, Scale } from 'lucide-react'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import { AcvpLabIntroduction } from './components/AcvpLabIntroduction'
 import { AcvpLabExercises } from './components/AcvpLabExercises'
-import { DraftStatusNotice } from './components/DraftStatusNotice'
+import { ReviewStatusNotice } from './components/ReviewStatusNotice'
 import { EvidenceClassifier } from './workshop/EvidenceClassifier'
 import { VectorSetAnatomy } from './workshop/VectorSetAnatomy'
 import { ResponseArtifactLab } from './workshop/ResponseArtifactLab'
@@ -38,7 +38,7 @@ export const AcvpLabWorkflowModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     title="ACVP Lab Workflow: From Vector Set to Evidence"
-    description="How algorithm validation testing runs end to end — and how to state a result at exactly the evidence level it reached. Draft awaiting validation-lab practitioner review."
+    description="How algorithm validation testing runs end to end — and how to state a result at exactly the evidence level it reached."
     learn={(api) => <AcvpLabIntroduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
     exercises={(api) => (
       <AcvpLabExercises onOpenWorkshopStep={(step) => api.openWorkshopStep(step)} />
@@ -59,7 +59,7 @@ export const AcvpLabWorkflowModule: FC = () => (
       })()
       return (
         <div className="space-y-4">
-          <DraftStatusNotice includeImportDisclaimer={index === 2} />
+          <ReviewStatusNotice includeImportDisclaimer={index === 2} />
           {body}
         </div>
       )

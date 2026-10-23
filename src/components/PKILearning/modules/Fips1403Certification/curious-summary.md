@@ -8,7 +8,7 @@ Passing algorithm tests is only the first step toward FIPS 140-3; the module cer
 
 ### The Key Takeaway
 
-A queue position is not a certificate: a module is "in progress" only when NIST lists it, and certified only once NIST issues a FIPS 140-3 certificate.
+A listing on the Modules In Process list (voluntary, and not every module in review is shown) is a queue position, not a certificate; a module is validated only once NIST and CCCS issue a FIPS 140-3 certificate.
 
 ### What's Happening
 

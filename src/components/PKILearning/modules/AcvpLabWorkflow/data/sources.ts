@@ -56,8 +56,7 @@ export const SOURCES = {
     id: 'cmvpMM',
     short: 'CMVP Management Manual',
     title: 'FIPS 140-3 CMVP Management Manual',
-    // The v2.7 document itself. (On this branch the Library row still points
-    // at the FIPS 140-2-era CMVPMM.pdf; feat/cert-ws1-library repoints it.)
+    // The v2.7 document itself.
     url: 'https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS-140-3-CMVP%20Management%20Manual.pdf',
     libraryRefId: 'CMVP-MGMT-MANUAL',
     revision: 'v2.7, 2026-04-09',
@@ -91,13 +90,15 @@ export const SOURCES = {
     title: 'Automated Cryptographic Validation Protocol (ACVP) JSON Specification',
     url: 'https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html',
     libraryRefId: 'NIST-ACVP',
-    revision: 'draft-ietf-acvp-spec-01 (2 Oct 2026; expires 5 Apr 2027)',
+    revision:
+      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)',
   },
   acvpMlKem: {
     id: 'acvpMlKem',
     short: 'ACVP ML-KEM sub-spec',
     title: 'ACVP ML-KEM JSON Specification — Test Types and Test Coverage',
     url: acvpFile(ACVP_MLKEM_COMMIT, 'src/ml-kem/sections/04-testtypes.adoc'),
+    libraryRefId: 'usnistgov-ACVP-Automated-Cryptographic-Validation-Protocol-S',
     revision: `usnistgov/ACVP @ ${ACVP_MLKEM_COMMIT.slice(0, 7)}`,
   },
   acvpMlDsa: {
@@ -168,6 +169,13 @@ export const SOURCES = {
     title: 'FIPS 205, Stateless Hash-Based Digital Signature Standard',
     url: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
     libraryRefId: 'FIPS 205',
+  },
+  fips1865: {
+    id: 'fips1865',
+    short: 'FIPS 186-5',
+    title: 'FIPS 186-5, Digital Signature Standard (DSS)',
+    url: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf',
+    libraryRefId: 'FIPS 186-5',
   },
   pkcs11: {
     id: 'pkcs11',
