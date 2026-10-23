@@ -1977,6 +1977,23 @@
       "unified": "converted",
       "admittedAt": "2026-10-16T15:10:33.352134+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "vendorId": "VND-029",
+      "refId": "VND-029",
+      "label": "Oracle Corporation",
+      "file": "vendor-roadmaps/VND-029_Oracle_Corporation_blogs_oracle_com_java_post_quantum_crypt.html",
+      "filename": "VND-029_Oracle_Corporation_blogs_oracle_com_java_post_quantum_crypt.html",
+      "url": "https://blogs.oracle.com/java/post-quantum-cryptography-in-long-term-support-jdk-releases",
+      "status": "downloaded",
+      "sizeBytes": 67840,
+      "contentType": "text/html",
+      "sha256": "7b888ab47ff3dbbee332a19d4769f904d845d5afa02be466d73528f3972d7937",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T00:13:33.771832+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
