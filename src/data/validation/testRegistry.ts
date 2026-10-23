@@ -167,11 +167,22 @@ const mldsaMech = (c: CaseRecord): string =>
   c.parameters.externalMu === true
     ? 'CKM_ML_DSA_EXTERNAL_MU'
     : c.parameters.preHash === 'preHash'
-      ? hashMlDsaMech(param(c, 'hashAlg'))
+      ? isSha512t(c)
+        ? 'CKM_HASH_ML_DSA'
+        : hashMlDsaMech(param(c, 'hashAlg'))
       : 'CKM_ML_DSA'
 /** The mechanism an SLH-DSA manifest case drives (mirrors sections/slhdsaAcvp.ts mechFor()). */
 const slhdsaMech = (c: CaseRecord): string =>
-  c.parameters.preHash === 'preHash' ? hashMech('SLH_DSA', param(c, 'hashAlg')) : 'CKM_SLH_DSA'
+  c.parameters.preHash === 'preHash'
+    ? isSha512t(c)
+      ? 'CKM_HASH_SLH_DSA'
+      : hashMech('SLH_DSA', param(c, 'hashAlg'))
+    : 'CKM_SLH_DSA'
+/** SHA2-512/224 and SHA2-512/256 have no hash-specific pre-hash mechanism: the case runs
+ * through the generic CKM_HASH_ML_DSA / CKM_HASH_SLH_DSA (single-part only), as
+ * sections/mldsaAcvp.ts genericPreHash() routes it. */
+const isSha512t = (c: CaseRecord): boolean =>
+  c.parameters.preHash === 'preHash' && String(c.parameters.hashAlg ?? '').startsWith('SHA2-512/')
 /** The mechanism an optional-input signing case drives (mirrors sections/optionalInputAcvp.ts planSign()). */
 const optSignMech = (family: 'ML_DSA' | 'SLH_DSA', c: CaseRecord): string => {
   if (c.parameters.signatureInterface === 'internal')
@@ -698,13 +709,6 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     )
   ),
   acvp(
-    '05d.skips',
-    '§5d.4 (sections/mldsaAcvp.ts)',
-    'ML-DSA honest skip (the SHA2-512/224 and SHA2-512/256 sigVer cases not yet byte-copied)',
-    [],
-    'Skip rows are evidence of nothing; the SHA2-512/t cases are listed under notExecuted in mldsa_sigver_test.json (open gap mldsa-hash-sha512t-no-mechanism). The hedged and internal-interface groups run in acvp.05g.optional-input.'
-  ),
-  acvp(
     '05g.optional-input',
     '§5g (sections/optionalInputAcvp.ts)',
     'ML-DSA hedged sigGen byte-match with NIST rnd (extended signing structure: a test input outside the PKCS #11 standard), including the generic CKM_HASH_ML_DSA with SHA-512/224 and SHA-512/256; internal-interface sigGen and sigVer through the standard CKM_ML_DSA_EXTERNAL_MU (μ computed from pk and M′)',
@@ -821,7 +825,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   acvp(
     '05f.sigver',
     '§5f.1 (sections/mldsaNegBoundary.ts)',
-    'ML-DSA NIST sigVer depth: 0-byte and 255-byte context cases of each pure group and every HashML-DSA case with a mechanism, upstream disposition',
+    'ML-DSA NIST sigVer depth: 0-byte and 255-byte context cases of each pure group and every HashML-DSA case (SHA2-512/224 and SHA2-512/256 through the generic CKM_HASH_ML_DSA), upstream disposition',
     casesOf('mldsa_sigver_depth_test').map((c) =>
       mc(
         c.caseId,
@@ -1193,13 +1197,6 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
     })()
   ),
   acvp(
-    '09c.skips',
-    '§9c.5 (sections/slhdsaAcvp.ts)',
-    'SLH-DSA honest skip (SHA2-512/224 and SHA2-512/256 pre-hash cases not yet byte-copied)',
-    [],
-    'Skip rows are evidence of nothing; the SHA2-512/t cases are listed under notExecuted in the SLH-DSA vector files (open gap mldsa-hash-sha512t-no-mechanism). The internal-interface and hedged groups run in acvp.09f.optional-input.'
-  ),
-  acvp(
     '09f.optional-input',
     '§9f (sections/optionalInputAcvp.ts)',
     'SLH-DSA hedged sigGen byte-match with NIST addrnd and internal-interface sigGen / sigVer (messageEncoding = internal), both through the extended signing structure (test inputs outside the PKCS #11 standard), including the generic CKM_HASH_SLH_DSA with SHA-512/224 and SHA-512/256',
@@ -1311,7 +1308,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   acvp(
     '09e.prehash-siggen',
     '§9e.1 (sections/slhdsaPreHash.ts)',
-    'HashSLH-DSA NIST pre-hash sigGen — all 120 (CKM_HASH_SLH_DSA_<hash> × parameter set) pairs: deterministic byte-match, verify of the NIST signature, hedged sign verified back, and the same three over the PKCS#11 v3.2 message-based interface',
+    'HashSLH-DSA NIST pre-hash sigGen — all 120 (CKM_HASH_SLH_DSA_<hash> × parameter set) pairs: deterministic byte-match, verify of the NIST signature, hedged sign verified back, and the same three over the PKCS#11 v3.2 message-based interface; plus the 24 SHA2-512/224 and SHA2-512/256 cases through the generic CKM_HASH_SLH_DSA (single-part only)',
     [
       ...casesOf('slhdsa_prehash_siggen_sha2_test'),
       ...casesOf('slhdsa_prehash_siggen_shake_test'),
@@ -1344,30 +1341,35 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
           `slhdsa-prehash-siggen-hedged-${tag}-{engine}`,
           'siggen-hedged'
         ),
-        mc(
-          c.caseId,
-          NIST,
-          'positive',
-          [x(m, 'message-verify', ps)],
-          `slhdsa-prehash-msg-sigver-${tag}-{engine}`,
-          'msg-sigver'
-        ),
-        mc(
-          c.caseId,
-          NIST,
-          'positive',
-          [x(m, 'message-sign', ps, 'deterministic')],
-          `slhdsa-prehash-msg-siggen-det-${tag}-{engine}`,
-          'msg-siggen-det'
-        ),
-        mc(
-          c.caseId,
-          NIST,
-          'positive',
-          [x(m, 'message-sign', ps, 'hedged', { evidenceClass: RT })],
-          `slhdsa-prehash-msg-siggen-hedged-${tag}-{engine}`,
-          'msg-siggen-hedged'
-        ),
+        // The generic CKM_HASH_SLH_DSA (SHA2-512/t) is single-part only: no message rows.
+        ...(isSha512t(c)
+          ? []
+          : [
+              mc(
+                c.caseId,
+                NIST,
+                'positive',
+                [x(m, 'message-verify', ps)],
+                `slhdsa-prehash-msg-sigver-${tag}-{engine}`,
+                'msg-sigver'
+              ),
+              mc(
+                c.caseId,
+                NIST,
+                'positive',
+                [x(m, 'message-sign', ps, 'deterministic')],
+                `slhdsa-prehash-msg-siggen-det-${tag}-{engine}`,
+                'msg-siggen-det'
+              ),
+              mc(
+                c.caseId,
+                NIST,
+                'positive',
+                [x(m, 'message-sign', ps, 'hedged', { evidenceClass: RT })],
+                `slhdsa-prehash-msg-siggen-hedged-${tag}-{engine}`,
+                'msg-siggen-hedged'
+              ),
+            ]),
       ]
     }),
     'A hedged row is a round-trip, not a byte-match: CKH_HEDGE_REQUIRED draws fresh randomness the NIST vector cannot pin, so those exercises carry functional-round-trip, not the case-level NIST class.'
@@ -1392,14 +1394,19 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
           `slhdsa-prehash-nist-sigver-${tag}-{engine}`,
           'single'
         ),
-        mc(
-          c.caseId,
-          NIST,
-          c.expectation,
-          [x(m, 'message-verify', ps)],
-          `slhdsa-prehash-nist-msg-sigver-${tag}-{engine}`,
-          'message'
-        ),
+        // The generic CKM_HASH_SLH_DSA (SHA2-512/t) is single-part only: no message row.
+        ...(isSha512t(c)
+          ? []
+          : [
+              mc(
+                c.caseId,
+                NIST,
+                c.expectation,
+                [x(m, 'message-verify', ps)],
+                `slhdsa-prehash-nist-msg-sigver-${tag}-{engine}`,
+                'message'
+              ),
+            ]),
       ]
     }),
     'A too-small / too-large signature must return CKR_SIGNATURE_LEN_RANGE; any other invalid case CKR_SIGNATURE_INVALID.'

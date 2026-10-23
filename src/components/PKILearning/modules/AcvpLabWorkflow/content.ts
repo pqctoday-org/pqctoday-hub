@@ -7,8 +7,8 @@
  * the usnistgov/ACVP-Server repository were added to the Library 2026-09-25
  * (ACVP gap-closure plan P6) and are cited here directly, in addition to
  * their in-module citation from data/sources.ts (kept as the source of the
- * exact per-algorithm commit pins). LIBRARY_ADDITIONS_NEEDED in sources.ts
- * is now empty as a result.
+ * exact per-algorithm commit pins). Every source in sources.ts that is not
+ * PQC Today's own policy links its Library row (LIBRARY_ADDITIONS_NEEDED is empty).
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -16,11 +16,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'acvp-lab-workflow',
+  lastReviewed: '2026-10-22',
   version: '0.1.0',
-  // No lastReviewed: this is a DRAFT awaiting review by a validation-lab
-  // practitioner (plan WS-I). record_module_review.py sets it when that review
-  // is recorded — never by hand.
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
 
   standards: [
     getStandard('NIST-ACVP'),
@@ -37,6 +35,7 @@ export const content: ModuleContent = {
     getStandard('usnistgov-ACVP-Automated-Cryptographic-Validation-Protocol-S'),
     getStandard('usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets'),
     getStandard('ACVP-ML-DSA-JSON-Specification'), // second source for claim:de77165cc631ad51
+    getStandard('FIPS 186-5'),
   ],
 
   algorithms: [
@@ -50,8 +49,9 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    reviewStatus: 'Draft — awaiting review by a validation-lab practitioner',
-    acvpSpecRevision: 'draft-ietf-acvp-spec-01 (2 Oct 2026; expires 5 Apr 2027)',
+    reviewStatus: 'Reviewed by the owner',
+    acvpSpecRevision:
+      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',
     publicSampleCommit: 'usnistgov/ACVP-Server @ 975de31',
     evidenceClassCount: '8',

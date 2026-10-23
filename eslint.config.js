@@ -471,6 +471,10 @@ export default defineConfig([
                 // Both shells must make the same label, URL and warning decision.
                 '!@/components/Library/librarySourceAction',
                 '!@/components/Library/libraryClaimSemantics',
+                // ruleBasedConfidence.ts — pure provenance label for a
+                // rule-set confidence score, no JSX. Both shells must show the
+                // same "set by document-type rule" wording.
+                '!@/components/Library/ruleBasedConfidence',
                 '!@/components/Library/redesign',
                 '@/components/Library/redesign/*',
                 '!@/components/Library/redesign/useLibraryPipeline',

@@ -100,7 +100,7 @@ export function generateKeyPairRv(
   }
 }
 
-/** C_SignInit(mech, CK_SIGN_ADDITIONAL_CONTEXT{hedge, context}) + C_Sign (size query, then sign). */
+/** C_SignInit(mech, CK_SIGN_ADDITIONAL_CONTEXT{hedge, context[, hash]}) + C_Sign (size query, then sign). */
 export function signRv(
   M: SoftHSMModule,
   hSession: number,
@@ -108,9 +108,11 @@ export function signRv(
   mechType: number,
   hedge: number,
   data: Uint8Array,
-  context: Uint8Array
+  context: Uint8Array,
+  /** CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash, for the generic pre-hash mechanisms only. */
+  hash?: number
 ): { rv: number; step: 'C_SignInit' | 'C_Sign(length)' | 'C_Sign'; sig: Uint8Array | null } {
-  const { mech, allocs } = allocMech(M, mechType, { hedge, context })
+  const { mech, allocs } = allocMech(M, mechType, { hedge, context, hash })
   const dp = writeBytes(M, data)
   const lenPtr = M._malloc(4)
   let sp = 0

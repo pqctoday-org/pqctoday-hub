@@ -251,7 +251,14 @@ export const MIP_STATES: readonly MipState[] = [
   {
     state: 'Cost Recovery',
     whoActs: 'Lab',
-    meaning: 'Submitted; the NIST cost-recovery fee must be paid before review can be scheduled.',
+    meaning:
+      'Submitted; where it applies, the NIST cost-recovery fee must be paid before review can be scheduled (Cost Recovery is entered only if applicable).',
+  },
+  {
+    state: 'Pending Resubmission – Lab',
+    whoActs: 'Lab',
+    meaning:
+      'Triage found comments; the lab must resubmit before the module can move to Pending Review. Without triage comments the module goes straight to Pending Review.',
   },
   {
     state: 'Pending Review',

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { maturityRequirements } from './maturityGovernanceData'
+import { generationRank, maturityRequirements } from './maturityGovernanceData'
 
 /**
  * WHY THIS EXISTS (2026-08-23).
@@ -35,6 +35,37 @@ describe('merge-all generation ordering', () => {
     // assertion ever flips, the platform's collation changed and the guard
     // below is what still holds the line.
     expect(r1.localeCompare(base)).toBeLessThan(0)
+  })
+
+  it('orders generations by date, then revision number (not by name)', () => {
+    const names = [
+      'pqc_maturity_governance_requirements_10222026_r9.csv',
+      'pqc_maturity_governance_requirements_01152027.csv',
+      'pqc_maturity_governance_requirements_10222026_r10.csv',
+      'pqc_maturity_governance_requirements_10222026.csv',
+      'pqc_maturity_governance_requirements_10222026_r1.csv',
+    ]
+    const desc = [...names].sort((a, b) => {
+      const [da, ra] = generationRank(a)
+      const [db, rb] = generationRank(b)
+      return db - da || rb - ra
+    })
+    expect(desc).toEqual([
+      'pqc_maturity_governance_requirements_01152027.csv',
+      'pqc_maturity_governance_requirements_10222026_r10.csv',
+      'pqc_maturity_governance_requirements_10222026_r9.csv',
+      'pqc_maturity_governance_requirements_10222026_r1.csv',
+      'pqc_maturity_governance_requirements_10222026.csv',
+    ])
+    // The _r1 > base rule from 2026-08-23 still holds.
+    expect(generationRank('x_08232026_r1.csv')[1]).toBeGreaterThan(
+      generationRank('x_08232026.csv')[1]
+    )
+  })
+
+  it('carries the marker the maintenance flow checks before writing _r10+', () => {
+    const src = readFileSync('src/data/maturityGovernanceData.ts', 'utf8')
+    expect(src).toContain('// merge-all-order: date-revision')
   })
 
   it('does not sort generations with localeCompare', () => {

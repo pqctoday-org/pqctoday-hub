@@ -136,9 +136,10 @@ describe('P5 PQC coverage sections — both engines, real vectors', () => {
   it('runs every new section on both engines with identical case sets', () => {
     const cpp = rows().filter((r) => engineOf(r) === 'C++')
     const rust = rows().filter((r) => engineOf(r) === 'Rust')
-    // 43 NIST sigVer + 3 × (2 det negatives + 2 × 3 hedged rows) ML-DSA;
-    // 12 ML-KEM ek checks; 24 keyGen + 10 ctx-0 sigGen + 6 × (2 + 6) SLH-DSA + 1 skip.
-    expect(cpp).toHaveLength(43 + 3 * 8 + 12 + 24 + 10 + 6 * 8 + 1)
+    // 51 NIST sigVer (43 + 8 SHA2-512/t through the generic CKM_HASH_ML_DSA)
+    // + 3 × (2 det negatives + 2 × 3 hedged rows) ML-DSA; 12 ML-KEM ek checks;
+    // 24 keyGen + 10 ctx-0 sigGen + 6 × (2 + 6) SLH-DSA + 1 skip.
+    expect(cpp).toHaveLength(51 + 3 * 8 + 12 + 24 + 10 + 6 * 8 + 1)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
@@ -156,7 +157,7 @@ describe('P5 PQC coverage sections — both engines, real vectors', () => {
           expect(classesOf(r!.id)).toEqual(['nist-acvp-reference-sample'])
           n++
         }
-    expect(n).toBe(2 * 43)
+    expect(n).toBe(2 * 51) // 43 + 8 SHA2-512/t cases (generic CKM_HASH_ML_DSA), per engine
     // Each pure group reaches both context-length extremes.
     for (const g of v.testGroups.filter((x: { preHash: string }) => x.preHash === 'pure'))
       expect(g.tests.map((t: { context?: string }) => (t.context ?? '').length / 2).sort()).toEqual(

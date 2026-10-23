@@ -9,7 +9,7 @@
  *  - Exercises-tab items and the per-step `stepExercises` (build spec §4).
  *
  * Core certificate fixtures were read on 24 September 2026 from the document named next
- * to it (plan r2 §0; fetched through pqctoday-priv/scripts/fetch_resilient.py).
+ * to it (plan r2 §0).
  * Items the plan marks UNVERIFIED are carried as `openQuestion` text and must
  * stay labelled as open questions in the UI.
  */

@@ -11,15 +11,15 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Figure                                                  |              Value | Source                                                            |
 | ------------------------------------------------------- | -----------------: | ----------------------------------------------------------------- |
 | Selected public NIST ACVP-Server reference-sample files |                 58 | `src/data/validation/validation-counts.generated.json`            |
-| NIST ACVP-Server reference-sample cases (active)        |              1,145 | `src/data/validation/validation-counts.generated.json`            |
+| NIST ACVP-Server reference-sample cases (active)        |              1,201 | `src/data/validation/validation-counts.generated.json`            |
 | Vector files (active / quarantined / total)             |       98 / 6 / 104 | `src/data/validation/validation-counts.generated.json`            |
-| Cases (active / quarantined / total)                    | 5,422 / 55 / 5,477 | `src/data/validation/validation-counts.generated.json`            |
-| Active cases: positive / negative                       |      3,674 / 1,748 | `src/data/validation/validation-counts.generated.json`            |
+| Cases (active / quarantined / total)                    | 5,478 / 55 / 5,533 | `src/data/validation/validation-counts.generated.json`            |
+| Active cases: positive / negative                       |      3,706 / 1,772 | `src/data/validation/validation-counts.generated.json`            |
 | C++: advertised capability cells (denominator)          |              2,211 | `public/data/validation/coverage-matrix.json`                     |
 | Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 22 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                  0 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |                 71 | `public/data/validation/coverage-matrix.json`                     |
+| Open gaps (register entries)                            |                 73 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |             71 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
@@ -28,7 +28,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Evidence class                    | Files | Active cases |
 | --------------------------------- | ----: | -----------: |
-| nist-acvp-reference-sample        |    58 |        1,145 |
+| nist-acvp-reference-sample        |    58 |        1,201 |
 | acvts-issued-vector               |     0 |            0 |
 | published-standard-kat            |    17 |           22 |
 | independent-oracle                |    29 |        4,253 |
@@ -49,15 +49,15 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     213 |   1,853 |      145 |       2,211 |
-| negative    |      87 |      61 |    2,063 |       2,211 |
-| boundary    |      41 |     178 |    1,992 |       2,211 |
+| positive    |     250 |   1,828 |      133 |       2,211 |
+| negative    |      93 |      63 |    2,055 |       2,211 |
+| boundary    |      46 |     193 |    1,972 |       2,211 |
 | state-error |     917 |       0 |    1,294 |       2,211 |
-| **overall** |      15 |   2,164 |       32 |       2,211 |
+| **overall** |      16 |   2,173 |       22 |       2,211 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,179 |         2,178 |             1 |
+| wasm          | registered |            2,189 |         2,188 |             1 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -72,15 +72,15 @@ Artifacts:
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     217 |   1,873 |      145 |       2,235 |
-| negative    |      88 |      64 |    2,083 |       2,235 |
-| boundary    |      42 |     178 |    2,015 |       2,235 |
+| positive    |     254 |   1,848 |      133 |       2,235 |
+| negative    |      94 |      66 |    2,075 |       2,235 |
+| boundary    |      47 |     193 |    1,995 |       2,235 |
 | state-error |     923 |       1 |    1,311 |       2,235 |
-| **overall** |      15 |   2,181 |       39 |       2,235 |
+| **overall** |      16 |   2,190 |       29 |       2,235 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,196 |         2,187 |             2 |
+| wasm          | registered |            2,206 |         2,197 |             2 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -93,7 +93,7 @@ Artifacts:
 
 - `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 4,988 results: cpp 2,434 pass, 60 skip; rust 2,469 pass, 25 skip.
 - `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 96 results: rust 96 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 13,726 results: cpp 6,858 pass, 1 fail, 4 skip; rust 6,844 pass, 19 fail.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-23 at hub `9db829b06806`; 13,934 results: cpp 6,962 pass, 1 fail, 4 skip; rust 6,948 pass, 19 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
@@ -245,11 +245,10 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-71 entries — by status: open 68, in-progress 1, accepted-limitation 2; by origin: curated 27, generated 44; owner unassigned: 71.
+73 entries — by status: open 66, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 43; owner unassigned: 73.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
-| HashML-DSA / HashSLH-DSA with SHA2-512/224 or SHA2-512/256: deterministic NIST groups not yet byte-copied                                            | open                | D2-6            | unassigned |
 | KMAC256 vector case is correct but not executed                                                                                                      | open                | B-2 / E (KMAC)  | unassigned |
 | 106 C++/Rust C_GetMechanismInfo disagreements                                                                                                        | open                | G-9             | unassigned |
 | 9 mechanisms advertised by Rust only                                                                                                                 | open                | G-9             | unassigned |
@@ -276,10 +275,14 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 | Both engines compute with X25519/X448 points on the twist (defensible; posture recorded rather than assumed)                                         | open                | E               | unassigned |
 | 145 in-scope Wycheproof files (35,193 cases, 17,406 invalid) are not yet executed                                                                    | open                | E               | unassigned |
 | The hsm gate builds the WASM engine with a 2 MiB stack while the shipped artifact uses 8 MiB — it validates a configuration nobody ships             | open                | E               | unassigned |
+| Some NIST test groups have no PKCS #11 v3.2 mechanism to run them                                                                                    | accepted-limitation | E               | unassigned |
+| ECDSA key checks on curves the engines do not support                                                                                                | accepted-limitation | E               | unassigned |
+| Not in the engines yet: KMAC-XOF, and AES-CMAC, HKDF and Ed448 in the KMIP server                                                                    | accepted-limitation | E               | unassigned |
+| SHA Large Data Tests are not run in the browser                                                                                                      | accepted-limitation | E               | unassigned |
 
 ## Awaiting two-person review (plan J-5)
 
-Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).
+Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state owner-reviewed) additionally needs a validation-lab practitioner (plan WS-I).
 
 Valid review records: 96.
 
@@ -305,11 +308,11 @@ Machine-evaluated. A human item is never marked PASS.
 
 |   # | Item                                                                                                       | Status             | Evidence                                                                                                                                                                                                                                                                                                                                                                              | Basis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | --: | ---------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 9528 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
+|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 9632 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
 |   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                                                                                  | 98 active vector files, 0 without provenance; 55 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1.                                                                                                                                                                                                                                                                                                                                                                                      |
 |   3 | Deck, script, UI and report counts are generated from the same manifest                                    | **HUMAN-REQUIRED** | `src/data/validation/validation-counts.generated.json`<br>`public/data/validation/release-evidence.json`<br>`scripts/audit-validation-claims.ts`                                                                                                                                                                                                                                      | This report and the UI read the generated counts (validation-counts.generated.json). The deck and script live outside this repo, so a person must run `npm run gen:release-evidence:check -- <presentation dir>` on the FINAL deck; `npm run release:freeze -- --presentation <dir>` records that result in the freeze manifest.                                                                                                                                                                                                                             |
 |   4 | The disclaimer is visible in the workbench and the report                                                  | **PASS**           | `src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx`<br>`src/components/Algorithms/KATView.tsx`<br>`src/components/Algorithms/CoverageMatrixView.tsx`<br>`public/data/validation/coverage-matrix.{md,html,json}`<br>`public/data/validation/release-evidence.md`<br>`e2e/validation-release-evidence.spec.ts`                                                       | Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); all three coverage exports (.md, .html and the machine-readable .json) and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.                                                                                                                                                                                                                                                           |
-|   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-errorPathProbes.json`<br>`src/data/validation/run-results/wasm-node-katRunner.json`<br>`src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                                                                                          | 73 NIST ACVP-Server reference-sample positive and 52 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                                                                                        |
+|   5 | ML-DSA demo: externally expected positive and deliberately invalid negative cases pass on both engines     | **PASS**           | `src/data/validation/run-results/wasm-node-errorPathProbes.json`<br>`src/data/validation/run-results/wasm-node-katRunner.json`<br>`src/data/validation/run-results/wasm-node-useAcvpSuite.json`<br>`src/data/validation/coverage-matrix.generated.json`<br>`e2e/acvp-mldsa-evidence.spec.ts`                                                                                          | 75 NIST ACVP-Server reference-sample positive and 66 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly).                                                                                                                                                                        |
 |   6 | Dynamic mechanism inventory distinguishes advertised, tested, unsupported, skipped and untested            | **PASS**           | `public/data/validation/coverage-matrix.json`<br>`src/data/validation/mechanism-inventory.generated.json`                                                                                                                                                                                                                                                                             | The published matrix counts advertised (denominator), tested (per-status + recorded pass/fail), unsupported, skipped and untested cells separately per engine.                                                                                                                                                                                                                                                                                                                                                                                               |
 |   7 | All demonstrated artifacts and targets have frozen hashes and reproducible evidence bundles                | **FAIL**           | `evidence/acvp-xplat/2026-09-25-native/matrix.json`<br>`evidence/acvp-xplat/2026-09-25-native/targets.json`<br>`evidence/acvp-xplat/2026-09-25-boards/matrix.json`<br>`evidence/acvp-xplat/2026-09-25-boards/targets.json`<br>`evidence/acvp-xplat/2026-09-25-kv260-default/matrix.json`<br>`evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`<br>`evidence/release-freeze/` | Frozen and publishable: wasm-cpp (2026-09-25-native), wasm-rust (2026-09-25-native), macos-arm64-cpp (2026-09-25-native), macos-arm64-rust (2026-09-25-native), linux-x86_64-cpp (2026-09-25-native), linux-x86_64-rust (2026-09-25-native), linux-arm64-cpp (2026-09-25-native), linux-arm64-rust (2026-09-25-native), imx95-cpp (2026-09-25-boards), imx95-rust (2026-09-25-boards), kv260-cpp (2026-09-25-kv260-default), kv260-rust (2026-09-25-kv260-default). no release freeze manifest in evidence/release-freeze/ (plan J-4: freeze by 19 October). |
 |   8 | No slide claims ACVTS acceptance, NIST validation, exhaustive ACVP coverage or complete mechanism coverage | **HUMAN-REQUIRED** | `scripts/audit-validation-claims.ts`<br>`scripts/audit-validation-claims.allowlist.json`                                                                                                                                                                                                                                                                                              | The banned-claims lint covers UI copy, Learn content and the root docs in every gate run; it reads the deck text only when given the presentation path (`npm run gen:release-evidence:check -- <presentation dir>`). Slide images and the spoken script still need a person to read them.                                                                                                                                                                                                                                                                    |
@@ -332,12 +335,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `19e02f558c5869e965ced154262195cbb5f406e53bc6d54e4c389f44949d0f04` |
+| `public/data/validation/coverage-matrix.json`                           | `5e8972dd9c1079cf2477b0a8aa7c8c93375c510c9b576ecadc15e16cda53f3a8` |
 | `src/data/validation/coverage-waivers.json`                             | `868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130` |
 | `src/data/validation/native-conformance.generated.json`                 | `3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2` |
-| `src/data/validation/open-gaps.json`                                    | `608b06aff8d80f7460909d2106c4ea450cd9085eb53376c9a2fc28b05a2b3e58` |
+| `src/data/validation/open-gaps.json`                                    | `a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `7ee706406ecd274291af45b186c5c98324cee4afbe6005d2414de0b29ad6ca88` |
-| `src/data/validation/validation-counts.generated.json`                  | `21341336ec13a7cc41900f7b6735c782a286b96738c960f1c80a0b82ff64587e` |
-| `src/data/validation/vector-manifest.json`                              | `78d1e7a27934e48e2ec3a5faf45099307e9114da56b150fd1733e4fcb675d252` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `d64b3a9fbd64b86ba6b4bb2f4e6569f309a8fa57b174dfffc2d0996713178474` |
+| `src/data/validation/validation-counts.generated.json`                  | `998bf488ff69dcbc53d5507c7c4f8f639fb958bfd9e1cc236b5d34d40d98cef4` |
+| `src/data/validation/vector-manifest.json`                              | `31976e1dcab426ee9fe32056229be4d82cf255de4ef2416c5390c220503b91bd` |

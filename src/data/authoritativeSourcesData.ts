@@ -9,6 +9,9 @@ export interface AuthoritativeSource {
    * lockstep with the CSV always having had the column; kept optional to
    * match every other field's defensive style here. */
   id?: string
+  /** trusted_sources source_id for the same organization when it differs
+   * from `id` (ids are never renamed). Blank when the two ids are equal. */
+  trustedSourceId?: string
   sourceName: string
   sourceType: 'Government' | 'Academic' | 'Industry Workgroup' | 'Vendor'
   region: 'Americas' | 'EMEA' | 'APAC' | 'Global'
@@ -58,6 +61,7 @@ interface RawSourceRow {
   Migrate_CSV: string
   Patents_CSV: string
   Last_Verified_Date: string
+  trusted_source_id?: string
 }
 
 const modules = import.meta.glob('./pqc_authoritative_sources_reference_*.csv', {
@@ -71,6 +75,7 @@ const { data, metadata } = loadLatestCSV<RawSourceRow, AuthoritativeSource>(
   /pqc_authoritative_sources_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
     id: row.id,
+    trustedSourceId: row.trusted_source_id || undefined,
     sourceName: row.Source_Name,
     sourceType: row.Source_Type as AuthoritativeSource['sourceType'],
     region: row.Region as AuthoritativeSource['region'],

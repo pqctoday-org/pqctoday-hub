@@ -26,11 +26,12 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'fips-140-3-certification',
+  lastReviewed: '2026-10-22',
   version: '0.1.0',
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
   // "practitioner orientation", not reviewed by a lab or certification body.
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
@@ -53,7 +54,7 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-1800-40B-IPD'),
     getStandard('NIST-SP-1800-40A-PD'),
     getStandard('NIST-CSWP-37A'),
-    getStandard('NIST-CSWP-37B-IPD'),
+    getStandard('NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va'),
     // Validation automation (fips-automation section, 2026-09-27)
     getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP'),
     getStandard('NIST-CMVP-ESV-Program'),

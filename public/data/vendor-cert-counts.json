@@ -66,8 +66,8 @@
     "vendor": "NXP Semiconductors Germany GmbH",
     "fips": 0,
     "acvp": 0,
-    "cc": 30,
-    "total": 30
+    "cc": 32,
+    "total": 32
   },
   {
     "vendor": "IN SMART IDENTITY FRANCE",
@@ -106,10 +106,10 @@
   },
   {
     "vendor": "Qualcomm Technologies, Inc.",
-    "fips": 17,
+    "fips": 19,
     "acvp": 0,
     "cc": 0,
-    "total": 17
+    "total": 19
   },
   {
     "vendor": "Ricoh Company, Ltd.",
@@ -124,6 +124,13 @@
     "acvp": 12,
     "cc": 0,
     "total": 15
+  },
+  {
+    "vendor": "Google, LLC",
+    "fips": 11,
+    "acvp": 3,
+    "cc": 0,
+    "total": 14
   },
   {
     "vendor": "IBM Corporation",
@@ -147,10 +154,10 @@
     "total": 14
   },
   {
-    "vendor": "Google, LLC",
-    "fips": 10,
-    "acvp": 3,
-    "cc": 0,
+    "vendor": "Hewlett Packard Enterprise",
+    "fips": 7,
+    "acvp": 1,
+    "cc": 5,
     "total": 13
   },
   {
@@ -180,13 +187,6 @@
     "acvp": 0,
     "cc": 12,
     "total": 13
-  },
-  {
-    "vendor": "Hewlett Packard Enterprise",
-    "fips": 7,
-    "acvp": 1,
-    "cc": 4,
-    "total": 12
   },
   {
     "vendor": "Thales Trusted Cyber Technologies",
@@ -273,13 +273,6 @@
     "total": 10
   },
   {
-    "vendor": "Trellix",
-    "fips": 8,
-    "acvp": 0,
-    "cc": 2,
-    "total": 10
-  },
-  {
     "vendor": "Intel Corporation",
     "fips": 4,
     "acvp": 5,
@@ -319,6 +312,13 @@
     "fips": 1,
     "acvp": 0,
     "cc": 8,
+    "total": 9
+  },
+  {
+    "vendor": "Trellix",
+    "fips": 8,
+    "acvp": 0,
+    "cc": 1,
     "total": 9
   },
   {
@@ -532,6 +532,13 @@
     "total": 5
   },
   {
+    "vendor": "Micron Technology, Inc.",
+    "fips": 4,
+    "acvp": 1,
+    "cc": 0,
+    "total": 5
+  },
+  {
     "vendor": "SUSE, LLC",
     "fips": 5,
     "acvp": 0,
@@ -651,13 +658,6 @@
     "total": 4
   },
   {
-    "vendor": "Micron Technology, Inc.",
-    "fips": 3,
-    "acvp": 1,
-    "cc": 0,
-    "total": 4
-  },
-  {
     "vendor": "Cloud Linux Software, Inc. d/b/a TuxCare",
     "fips": 4,
     "acvp": 0,
@@ -694,6 +694,13 @@
   },
   {
     "vendor": "Open Text Corporation",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 4,
+    "total": 4
+  },
+  {
+    "vendor": "Broadcom",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
@@ -966,13 +973,6 @@
     "total": 3
   },
   {
-    "vendor": "Broadcom",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
     "vendor": "Check Point Software Technologies Ltd.",
     "fips": 0,
     "acvp": 0,
@@ -1180,6 +1180,13 @@
     "fips": 0,
     "acvp": 0,
     "cc": 2,
+    "total": 2
+  },
+  {
+    "vendor": "Renesas Electronics Corporation",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 0,
     "total": 2
   },
   {
@@ -1491,6 +1498,13 @@
     "total": 2
   },
   {
+    "vendor": "Fortanix, Inc.",
+    "fips": 1,
+    "acvp": 1,
+    "cc": 0,
+    "total": 2
+  },
+  {
     "vendor": "Symantec, A Division of Broadcom",
     "fips": 1,
     "acvp": 0,
@@ -1631,6 +1645,13 @@
     "total": 2
   },
   {
+    "vendor": "ALE USA Inc",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 2,
+    "total": 2
+  },
+  {
     "vendor": "Evertz Microsystems",
     "fips": 0,
     "acvp": 0,
@@ -1684,6 +1705,13 @@
     "fips": 0,
     "acvp": 0,
     "cc": 2,
+    "total": 2
+  },
+  {
+    "vendor": "Northrop Grumman Corporation",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 1,
     "total": 2
   },
   {
@@ -1802,6 +1830,13 @@
     "vendor": "Synology Inc.",
     "fips": 0,
     "acvp": 2,
+    "cc": 0,
+    "total": 2
+  },
+  {
+    "vendor": "Echo Software Inc.",
+    "fips": 2,
+    "acvp": 0,
     "cc": 0,
     "total": 2
   },
@@ -2101,13 +2136,6 @@
   },
   {
     "vendor": "EnQuanta",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Renesas Electronics Corporation",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -3031,13 +3059,6 @@
     "total": 1
   },
   {
-    "vendor": "Fortanix, Inc.",
-    "fips": 0,
-    "acvp": 1,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "Nasuni Corporation",
     "fips": 1,
     "acvp": 0,
@@ -3626,13 +3647,6 @@
     "total": 1
   },
   {
-    "vendor": "ALE USA Inc",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
-    "total": 1
-  },
-  {
     "vendor": "genua GmbH",
     "fips": 0,
     "acvp": 0,
@@ -3844,13 +3858,6 @@
   },
   {
     "vendor": "Infosys Gateway Sdn Bhd",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
-    "total": 1
-  },
-  {
-    "vendor": "Northrop Grumman Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 1,

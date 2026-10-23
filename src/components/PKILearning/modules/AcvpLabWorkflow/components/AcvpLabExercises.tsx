@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { CONCEPT_CHECKS } from '../data/conceptChecks'
 import { Cite } from './Cite'
-import { DraftStatusNotice } from './DraftStatusNotice'
+import { ReviewStatusNotice } from './ReviewStatusNotice'
 
 interface AcvpLabExercisesProps {
   onOpenWorkshopStep: (step: number) => void
@@ -36,7 +36,7 @@ export const AcvpLabExercises: React.FC<AcvpLabExercisesProps> = ({ onOpenWorksh
 
   return (
     <div className="w-full space-y-6">
-      <DraftStatusNotice />
+      <ReviewStatusNotice />
 
       <div className="glass-panel p-6">
         <h2 className="mb-2 text-xl font-bold text-gradient">Guided Workshop Tasks</h2>

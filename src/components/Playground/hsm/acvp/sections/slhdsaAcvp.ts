@@ -81,6 +81,7 @@ import {
   type AcvpCaseMeta,
   type MldsaAcvpSectionCtx,
   type Provenance,
+  genericPreHash,
 } from './mldsaAcvp'
 import { createObjectRv, pinnedVerdict, sha256Tag, signRv, type PinnedRv } from './pkcs11Raw'
 
@@ -270,7 +271,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
     shakeMod.default as unknown as VectorFile<SigVerGroup>,
   ]
   const det = detMod.default as unknown as VectorFile<SigGenGroup>
-  const SV = svFiles[0]._provenance
   const DET = det._provenance
 
   const pushSkip = async (
@@ -321,7 +321,11 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
           source: srcOf(f._provenance),
         }
         const algorithm = `${ps} (${eName})`
-        const mech = mechFor(g.preHash, t.hashAlg)
+        const gp =
+          g.preHash === 'preHash'
+            ? genericPreHash('SLH-DSA', t.hashAlg, hexToBytes(t.message))
+            : null
+        const mech = gp ? gp.mech : mechFor(g.preHash, t.hashAlg)
         const why = unsupportedReason(mechs, mech, g.preHash === 'preHash' ? mode : 'CKM_SLH_DSA')
         if (why) {
           await pushSkip(id, algorithm, testCase, meta, why)
@@ -351,9 +355,10 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
             hSession,
             pub,
             mech!,
-            hexToBytes(t.message),
+            gp ? gp.data : hexToBytes(t.message),
             hexToBytes(t.signature),
-            hexToBytes(t.context ?? '')
+            hexToBytes(t.context ?? ''),
+            gp?.hash
           )
           const ok = r.initRv === CKR_OK && r.rv === want
           const observed =
@@ -373,7 +378,7 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
             testCase,
             referenceUrl,
             status: ok ? 'pass' : 'fail',
-            details: `${observed} (expected ${rvName(want)})${verdict} · msg ${nBytes(t.message)}B · sig ${nBytes(t.signature)}B · ${srcTag(f._provenance)}`,
+            details: `${observed} (expected ${rvName(want)})${verdict} · msg ${nBytes(t.message)}B · sig ${nBytes(t.signature)}B${gp ? ` · ${gp.label}` : ''} · ${srcTag(f._provenance)}`,
             caseMeta: { ...meta, observed },
           })
           addLog(`[${eName}] [id:${id}] ${ps} ${testCase}: ${ok ? 'PASS' : 'FAIL'} (${observed})`)
@@ -459,7 +464,9 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
       source: srcOf(c.src),
     }
     const algorithm = `${c.ps} (${eName})`
-    const mech = mechFor(c.preHash, c.hashAlg)
+    const gp =
+      c.preHash === 'preHash' ? genericPreHash('SLH-DSA', c.hashAlg, hexToBytes(c.message)) : null
+    const mech = gp ? gp.mech : mechFor(c.preHash, c.hashAlg)
     const why = unsupportedReason(mechs, mech, c.preHash === 'preHash' ? mode : 'CKM_SLH_DSA')
     if (why) {
       await pushSkip(id, algorithm, testCase, meta, why)
@@ -476,8 +483,9 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
         priv,
         mech!,
         CKH_DETERMINISTIC_REQUIRED,
-        hexToBytes(c.message),
-        ctxBytes
+        gp ? gp.data : hexToBytes(c.message),
+        ctxBytes,
+        gp?.hash
       )
       if (!s.sig) throw new Error(`${s.step} → ${rvName(s.rv)}`)
       const diff = firstDiff(s.sig, hexToBytes(c.signature))
@@ -754,38 +762,6 @@ export async function runSlhdsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<vo
     }
   }
 
-  // ── 5. Honest skips ────────────────────────────────────────────────────
-  const svNotRun = svFiles.flatMap((f) => f.notExecuted ?? [])
-  const detNotRun = det.notExecuted ?? []
-  const notRun = [...svNotRun, ...detNotRun]
-  const noMech = notRun.filter((r) => r.why === 'no-pkcs11-hash-slh-dsa-mechanism')
-  if (noMech.length > 0) {
-    const hashes = [...new Set(noMech.map((r) => r.hashAlg!))].sort()
-    const advertised = Object.values(ACVP_HASH_TO_SLH_MECH).filter((m) => mechs.has(m)).length
-    await pushResult({
-      id: `slhdsa-skip-hash-sha512t-${eName}`,
-      algorithm: `SLH-DSA (${eName})`,
-      testCase: `HashSLH-DSA SigVer · ${hashes.join(', ')} · NIST sigVer ${noMech.length} cases`,
-      referenceUrl,
-      status: 'skip',
-      details:
-        `Skipped — PKCS#11 v3.2 §6.69.7 defines no CKM_HASH_SLH_DSA_<hash> mechanism for ${hashes.join(' or ')}; ` +
-        `C_GetMechanismList on this engine advertises ${advertised} of the 10 that do exist and none for these hashes. ` +
-        `The generic CKM_HASH_SLH_DSA takes these hashes (CKM_SHA512_224 / CKM_SHA512_256) and runs in the hedged pre-hash groups (optional-input rows); these deterministic cases are not byte-copied yet. Not run: ` +
-        noMech.map((r) => `tg${r.tgId}/tc${r.tcId}`).join(', ') +
-        ` · ${srcTag(SV)}`,
-      caseMeta: {
-        origin: 'not-executed',
-        upstreamOperation: 'sigVer',
-        localOperation: 'none',
-        parameterSet: 'SLH-DSA',
-        mode: 'preHash',
-        hashAlg: hashes.join(','),
-        expected: 'not-run',
-        source: srcOf(SV),
-      },
-    })
-  }
   // The internal-interface and hedged (addrnd) groups run in
   // sections/optionalInputAcvp.ts, through optional test inputs this HSM
   // accepts outside the PKCS#11 standard.

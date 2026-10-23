@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "publicationId": "91826888f70255a6debc697b43f7cc23d874287f02b8ba1d11bfbfcf8a285efd",
-  "generatedAt": "2026-10-16T14:44:16+00:00",
+  "publicationId": "85145a1148d30f81144bd008d9ba9a3ea643f98f7e50e08f87822bed3a1401e6",
+  "generatedAt": "2026-10-23T02:05:22+00:00",
   "scope": {
     "fips": "FIPS 140-3 only (NIST CMVP)",
     "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",
@@ -12,8 +12,8 @@
     "fips": {
       "label": "NIST CMVP \u2014 FIPS 140-3",
       "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active",
-      "retrievedAt": "2026-10-16T14:44:17+00:00",
-      "count": 804
+      "retrievedAt": "2026-10-23T02:05:53+00:00",
+      "count": 813
     },
     "cavp": {
       "label": "NIST CAVP \u2014 ML-KEM, ML-DSA, SLH-DSA, LMS",
@@ -24,20 +24,20 @@
     "cc": {
       "label": "Common Criteria Portal",
       "sourceUrl": "https://www.commoncriteriaportal.org/products/",
-      "retrievedAt": "2026-10-16T15:01:17+00:00",
-      "count": 881
+      "retrievedAt": "2026-10-23T02:23:04+00:00",
+      "count": 886
     },
     "anssi": {
       "label": "ANSSI (CC and CSPN)",
       "sourceUrl": "https://messervices.cyber.gouv.fr/visas/catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi.pdf",
-      "retrievedAt": "2026-10-16T15:01:25+00:00",
+      "retrievedAt": "2026-10-23T02:23:07+00:00",
       "count": 191
     },
     "eucc": {
       "label": "ENISA EUCC",
       "sourceUrl": "https://certification.enisa.europa.eu/certificates_en",
-      "retrievedAt": "2026-10-16T15:01:28+00:00",
-      "count": 110
+      "retrievedAt": "2026-10-23T02:23:12+00:00",
+      "count": 112
     }
   },
   "exclusions": {

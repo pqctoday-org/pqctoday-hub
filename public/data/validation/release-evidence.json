@@ -16,21 +16,21 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "19e02f558c5869e965ced154262195cbb5f406e53bc6d54e4c389f44949d0f04",
+    "public/data/validation/coverage-matrix.json": "5e8972dd9c1079cf2477b0a8aa7c8c93375c510c9b576ecadc15e16cda53f3a8",
     "src/data/validation/coverage-waivers.json": "868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130",
     "src/data/validation/native-conformance.generated.json": "3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2",
-    "src/data/validation/open-gaps.json": "608b06aff8d80f7460909d2106c4ea450cd9085eb53376c9a2fc28b05a2b3e58",
+    "src/data/validation/open-gaps.json": "a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21",
     "src/data/validation/run-results/wasm-node-katRunner.json": "42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29",
-    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "7ee706406ecd274291af45b186c5c98324cee4afbe6005d2414de0b29ad6ca88",
-    "src/data/validation/validation-counts.generated.json": "21341336ec13a7cc41900f7b6735c782a286b96738c960f1c80a0b82ff64587e",
-    "src/data/validation/vector-manifest.json": "78d1e7a27934e48e2ec3a5faf45099307e9114da56b150fd1733e4fcb675d252"
+    "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "d64b3a9fbd64b86ba6b4bb2f4e6569f309a8fa57b174dfffc2d0996713178474",
+    "src/data/validation/validation-counts.generated.json": "998bf488ff69dcbc53d5507c7c4f8f639fb958bfd9e1cc236b5d34d40d98cef4",
+    "src/data/validation/vector-manifest.json": "31976e1dcab426ee9fe32056229be4d82cf255de4ef2416c5390c220503b91bd"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "7b3d0c8e5364b3608a41a90e13eb9e8b5ae6281c13998edbb19b44e1caccc240",
+    "manifestCanonicalSha256": "39158f36980149bc960aeeee0a9af1cc6cc041016be817f33ce61370c3568936",
     "nistReferenceSampleFiles": 58,
-    "nistReferenceSampleCases": 1145,
+    "nistReferenceSampleCases": 1201,
     "vectorFiles": {
       "total": 104,
       "active": 98,
@@ -48,12 +48,12 @@
       "unverified": 0
     },
     "cases": {
-      "total": 5477,
-      "active": 5422,
+      "total": 5533,
+      "active": 5478,
       "quarantined": 55
     },
     "activeCasesByClass": {
-      "nist-acvp-reference-sample": 1145,
+      "nist-acvp-reference-sample": 1201,
       "acvts-issued-vector": 0,
       "published-standard-kat": 22,
       "independent-oracle": 4253,
@@ -64,8 +64,8 @@
       "unverified": 0
     },
     "activeCasesByExpectation": {
-      "positive": 3674,
-      "negative": 1748
+      "positive": 3706,
+      "negative": 1772
     },
     "filesWithPublishabilityGap": {
       "oracle-version-not-recorded": 1
@@ -99,59 +99,59 @@
         "advertisedCells": 2211,
         "unsupportedCells": 32,
         "overall": {
-          "covered": 15,
-          "sampled": 2164,
-          "untested": 32
+          "covered": 16,
+          "sampled": 2173,
+          "untested": 22
         },
         "byPolarity": {
           "positive": {
-            "covered": 213,
-            "sampled": 1853,
-            "untested": 145,
+            "covered": 250,
+            "sampled": 1828,
+            "untested": 133,
             "denominator": 2211,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 719,
+              "nist-reference": 744,
               "standard-kat": 2,
               "oracle": 24,
               "differential": 0,
-              "round-trip": 863,
+              "round-trip": 850,
               "behavior-only": 458,
-              "untested": 145,
+              "untested": 133,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 87,
-            "sampled": 61,
-            "untested": 2063,
+            "covered": 93,
+            "sampled": 63,
+            "untested": 2055,
             "denominator": 2211,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 110,
+              "nist-reference": 118,
               "standard-kat": 0,
               "oracle": 11,
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 27,
-              "untested": 2063,
+              "untested": 2055,
               "unsupported": 0
             }
           },
           "boundary": {
-            "covered": 41,
-            "sampled": 178,
-            "untested": 1992,
+            "covered": 46,
+            "sampled": 193,
+            "untested": 1972,
             "denominator": 2211,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 162,
+              "nist-reference": 178,
               "standard-kat": 0,
               "oracle": 7,
               "differential": 0,
-              "round-trip": 50,
+              "round-trip": 54,
               "behavior-only": 0,
-              "untested": 1992,
+              "untested": 1972,
               "unsupported": 0
             }
           },
@@ -176,8 +176,8 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2179,
-            "passedCells": 2178,
+            "registeredCells": 2189,
+            "passedCells": 2188,
             "failedCells": 1,
             "skippedCells": 0
           },
@@ -203,59 +203,59 @@
         "advertisedCells": 2235,
         "unsupportedCells": 8,
         "overall": {
-          "covered": 15,
-          "sampled": 2181,
-          "untested": 39
+          "covered": 16,
+          "sampled": 2190,
+          "untested": 29
         },
         "byPolarity": {
           "positive": {
-            "covered": 217,
-            "sampled": 1873,
-            "untested": 145,
+            "covered": 254,
+            "sampled": 1848,
+            "untested": 133,
             "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 719,
+              "nist-reference": 744,
               "standard-kat": 5,
               "oracle": 25,
               "differential": 0,
-              "round-trip": 879,
+              "round-trip": 866,
               "behavior-only": 462,
-              "untested": 145,
+              "untested": 133,
               "unsupported": 0
             }
           },
           "negative": {
-            "covered": 88,
-            "sampled": 64,
-            "untested": 2083,
+            "covered": 94,
+            "sampled": 66,
+            "untested": 2075,
             "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 110,
+              "nist-reference": 118,
               "standard-kat": 0,
               "oracle": 11,
               "differential": 0,
               "round-trip": 0,
               "behavior-only": 31,
-              "untested": 2083,
+              "untested": 2075,
               "unsupported": 0
             }
           },
           "boundary": {
-            "covered": 42,
-            "sampled": 178,
-            "untested": 2015,
+            "covered": 47,
+            "sampled": 193,
+            "untested": 1995,
             "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
-              "nist-reference": 162,
+              "nist-reference": 178,
               "standard-kat": 1,
               "oracle": 7,
               "differential": 0,
-              "round-trip": 50,
+              "round-trip": 54,
               "behavior-only": 0,
-              "untested": 2015,
+              "untested": 1995,
               "unsupported": 0
             }
           },
@@ -280,8 +280,8 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2196,
-            "passedCells": 2187,
+            "registeredCells": 2206,
+            "passedCells": 2197,
             "failedCells": 2,
             "skippedCells": 0
           },
@@ -304,21 +304,21 @@
     },
     "parity": {
       "positive": {
-        "parity": 2044,
+        "parity": 2056,
         "divergent": 1,
-        "not-established": 159,
+        "not-established": 147,
         "single-engine": 39
       },
       "negative": {
-        "parity": 148,
+        "parity": 156,
         "divergent": 0,
-        "not-established": 2056,
+        "not-established": 2048,
         "single-engine": 39
       },
       "boundary": {
-        "parity": 219,
+        "parity": 239,
         "divergent": 0,
-        "not-established": 1985,
+        "not-established": 1965,
         "single-engine": 39
       },
       "state-error": {
@@ -331,7 +331,7 @@
     "artifactKinds": {
       "wasm": {
         "status": "registered; partly recorded",
-        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 13726 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd). Tests without a recorded result are never reported as passed."
+        "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 13934 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-23, hub 9db829b06). Tests without a recorded result are never reported as passed."
       },
       "native": {
         "status": "not-run",
@@ -382,9 +382,9 @@
       "baseline-pending-review": 22
     },
     "approvedEntries": 0,
-    "waivedCells": 71,
-    "pendingReviewCells": 71,
-    "staleCells": 0,
+    "waivedCells": 51,
+    "pendingReviewCells": 51,
+    "staleCells": 20,
     "statement": "All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
   },
   "nativeSuites": {
@@ -524,17 +524,17 @@
       "runner": "useAcvpSuite (all categories, dual engine)",
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
-      "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
-      "recordedAt": "2026-10-22",
-      "results": 13726,
+      "hubCommit": "9db829b068063dbd0712c5950686f6f3676bf4f5",
+      "recordedAt": "2026-10-23",
+      "results": 13934,
       "byEngine": {
         "cpp": {
-          "pass": 6858,
+          "pass": 6962,
           "fail": 1,
           "skip": 4
         },
         "rust": {
-          "pass": 6844,
+          "pass": 6948,
           "fail": 19
         }
       },
@@ -2214,25 +2214,18 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 71,
+    "total": 73,
     "byStatus": {
-      "open": 68,
+      "open": 66,
       "in-progress": 1,
-      "accepted-limitation": 2
+      "accepted-limitation": 6
     },
     "byOrigin": {
-      "curated": 27,
-      "generated": 44
+      "curated": 30,
+      "generated": 43
     },
-    "unassignedOwner": 71,
+    "unassignedOwner": 73,
     "curated": [
-      {
-        "id": "mldsa-hash-sha512t-no-mechanism",
-        "title": "HashML-DSA / HashSLH-DSA with SHA2-512/224 or SHA2-512/256: deterministic NIST groups not yet byte-copied",
-        "status": "open",
-        "planItem": "D2-6",
-        "owner": "unassigned"
-      },
       {
         "id": "kmac256-quarantined",
         "title": "KMAC256 vector case is correct but not executed",
@@ -2414,6 +2407,34 @@
         "status": "open",
         "planItem": "E",
         "owner": "unassigned"
+      },
+      {
+        "id": "acvp-no-pkcs11-mechanism",
+        "title": "Some NIST test groups have no PKCS #11 v3.2 mechanism to run them",
+        "status": "accepted-limitation",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "acvp-curves-not-supported",
+        "title": "ECDSA key checks on curves the engines do not support",
+        "status": "accepted-limitation",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "acvp-not-in-engine-yet",
+        "title": "Not in the engines yet: KMAC-XOF, and AES-CMAC, HKDF and Ed448 in the KMIP server",
+        "status": "accepted-limitation",
+        "planItem": "E",
+        "owner": "unassigned"
+      },
+      {
+        "id": "acvp-sha-large-data-tests",
+        "title": "SHA Large Data Tests are not run in the browser",
+        "status": "accepted-limitation",
+        "planItem": "E",
+        "owner": "unassigned"
       }
     ]
   },
@@ -2466,7 +2487,7 @@
     ]
   },
   "reviews": {
-    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state draft-awaiting-practitioner-review) additionally needs a validation-lab practitioner (plan WS-I).",
+    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state owner-reviewed) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 96,
     "statusCounts": {
       "source-verified": 96,
@@ -3359,7 +3380,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 9528 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 9632 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,
@@ -3407,7 +3428,7 @@
         "src/data/validation/coverage-matrix.generated.json",
         "e2e/acvp-mldsa-evidence.spec.ts"
       ],
-      "basis": "73 NIST ACVP-Server reference-sample positive and 52 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
+      "basis": "75 NIST ACVP-Server reference-sample positive and 66 negative ML-DSA cases recorded as pass on BOTH the C++ and Rust WASM engines (e.g. acvp.05#mldsa_test#/testGroups/0/tests/0; acvp.05d.sigver#mldsa_sigver_test#/testGroups/0/tests/1). Recorded host: Node.js via vitest local venue (not a browser). The browser path is asserted by e2e/acvp-mldsa-evidence.spec.ts (nightly)."
     },
     {
       "n": 6,

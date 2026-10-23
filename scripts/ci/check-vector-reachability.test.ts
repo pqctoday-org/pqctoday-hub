@@ -373,6 +373,14 @@ describe('countCases', () => {
     )
   })
 
+  it('counts product-authored localMutations on top of the tcId cases', () => {
+    const text = JSON.stringify({
+      testGroups: [{ tests: [{ tcId: 1 }, { tcId: 2 }] }],
+      localMutations: [{ id: 'pk-bitflip' }, { id: 'sig-bitflip' }],
+    })
+    expect(countCases('a/b.json', text)).toEqual({ count: 4, basis: 'tcId' })
+  })
+
   it('treats a transcript as one case', () => {
     expect(countCases('a/b.xml', '<KMIP/>')).toEqual({ count: 1, basis: 'transcript-or-blob' })
   })

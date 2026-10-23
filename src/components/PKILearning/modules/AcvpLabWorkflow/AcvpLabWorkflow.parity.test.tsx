@@ -35,7 +35,7 @@ describe('AcvpLabWorkflowModule render parity', () => {
     }
   })
 
-  it('shows the draft notice and the required validation disclaimer on the Learn tab', () => {
+  it('shows the review status and the required validation disclaimer on the Learn tab', () => {
     render(
       <EmbedProvider>
         <MemoryRouter>
@@ -43,8 +43,9 @@ describe('AcvpLabWorkflowModule render parity', () => {
         </MemoryRouter>
       </EmbedProvider>
     )
-    const notice = screen.getByTestId('acvp-lab-draft-notice')
-    expect(notice).toHaveTextContent('awaiting review by a validation-lab practitioner')
+    const notice = screen.getByTestId('acvp-lab-status-notice')
+    expect(notice).toHaveTextContent('Reviewed by the owner')
+    expect(notice).not.toHaveTextContent(/draft/i)
     expect(notice).toHaveTextContent('It is not an ACVTS verdict, a CAVP/CMVP certificate')
     const executionPath = screen.getByText('Confirm the execution path.').closest('li')
     expect(executionPath).toHaveTextContent(

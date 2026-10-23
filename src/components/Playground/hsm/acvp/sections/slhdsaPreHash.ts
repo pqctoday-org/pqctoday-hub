@@ -8,7 +8,8 @@
 //   (mechanism × parameter set) pairs the PKCS#11 v3.2 §6.69.7 HashSLH-DSA
 //   mechanisms enumerate: the 12 upstream external/preHash deterministic=true
 //   sigGen groups × the 10 hashAlg values that HAVE a CKM_HASH_SLH_DSA_<hash>
-//   mechanism. src/data/acvp/slhdsa_prehash_sigver_{sha2,shake}_test.json carry
+//   mechanism, plus each group's SHA2-512/224 and SHA2-512/256 cases, which run
+//   through the generic CKM_HASH_SLH_DSA (single-part rows only). src/data/acvp/slhdsa_prehash_sigver_{sha2,shake}_test.json carry
 //   the two cheapest parameter sets' WHOLE external/preHash sigVer groups —
 //   22 upstream NEGATIVE cases with the upstream `reason` kept verbatim,
 //   covering all six upstream reasons in both hash families.
@@ -75,9 +76,16 @@ import {
   type AcvpCaseMeta,
   type MldsaAcvpSectionCtx,
   type Provenance,
+  genericPreHash,
 } from './mldsaAcvp'
 import { createObjectRv, signRv } from './pkcs11Raw'
 import { ACVP_HASH_TO_SLH_MECH, SLH_CKP } from './slhdsaAcvp'
+
+// PKCS#11 v3.2 defines the generic CKM_HASH_SLH_DSA (used for SHA2-512/224 and
+// SHA2-512/256, which have no hash-specific mechanism) for single-part sign and
+// verify only, so its message-based rows are skipped, not run.
+const GENERIC_SINGLE_PART =
+  'the generic CKM_HASH_SLH_DSA is single-part only (PKCS#11 v3.2); no message-based form exists'
 
 const CKR_SIGNATURE_LEN_RANGE = 0x000000c1
 
@@ -328,9 +336,11 @@ export async function runSlhdsaPreHashSection(ctx: MldsaAcvpSectionCtx): Promise
     for (const g of f.testGroups) {
       const ps = g.parameterSet
       for (const t of g.tests) {
-        const mech = ACVP_HASH_TO_SLH_MECH[t.hashAlg]
         const mode = `HashSLH-DSA/${t.hashAlg}`
         const msg = hexToBytes(t.message)
+        const gp = genericPreHash('SLH-DSA', t.hashAlg, msg)
+        const mech = gp ? gp.mech : ACVP_HASH_TO_SLH_MECH[t.hashAlg]
+        const data = gp ? gp.data : msg
         const ctxBytes = hexToBytes(t.context)
         const expSig = hexToBytes(t.signature)
         const algorithm = `${ps} ${mode} (${eName})`
@@ -376,7 +386,7 @@ export async function runSlhdsaPreHashSection(ctx: MldsaAcvpSectionCtx): Promise
 
           // 1a. single-part verify of the upstream signature
           {
-            const r = verifyRv(M, hSession, pub, mech!, msg, expSig, ctxBytes)
+            const r = verifyRv(M, hSession, pub, mech!, data, expSig, ctxBytes, gp?.hash)
             const observed =
               r.initRv !== CKR_OK
                 ? `C_VerifyInit → ${rvName(r.initRv)}`
@@ -396,7 +406,16 @@ export async function runSlhdsaPreHashSection(ctx: MldsaAcvpSectionCtx): Promise
 
           // 1b. deterministic sign, byte-compared to the upstream signature
           {
-            const s = signRv(M, hSession, priv, mech!, CKH_DETERMINISTIC_REQUIRED, msg, ctxBytes)
+            const s = signRv(
+              M,
+              hSession,
+              priv,
+              mech!,
+              CKH_DETERMINISTIC_REQUIRED,
+              data,
+              ctxBytes,
+              gp?.hash
+            )
             const diff = s.sig ? firstDiff(s.sig, expSig) : `${s.step} → ${rvName(s.rv)}`
             const ok = diff === 'identical'
             await push(
@@ -420,12 +439,12 @@ export async function runSlhdsaPreHashSection(ctx: MldsaAcvpSectionCtx): Promise
 
           // 1c. hedged sign, verified back (round-trip — no byte-match possible)
           {
-            const s = signRv(M, hSession, priv, mech!, CKH_HEDGE_REQUIRED, msg, ctxBytes)
+            const s = signRv(M, hSession, priv, mech!, CKH_HEDGE_REQUIRED, data, ctxBytes, gp?.hash)
             let observed: string
             let ok = false
             if (!s.sig) observed = `${s.step} → ${rvName(s.rv)}`
             else {
-              const v = verifyRv(M, hSession, pub, mech!, msg, s.sig, ctxBytes)
+              const v = verifyRv(M, hSession, pub, mech!, data, s.sig, ctxBytes, gp?.hash)
               ok = v.initRv === CKR_OK && v.rv === CKR_OK
               observed = ok
                 ? `hedged sig[${s.sig.length}B] verified back`
@@ -445,6 +464,18 @@ export async function runSlhdsaPreHashSection(ctx: MldsaAcvpSectionCtx): Promise
               },
               observed
             )
+          }
+
+          if (gp) {
+            for (const kind of ['msg-sigver', 'msg-siggen-det', 'msg-siggen-hedged'])
+              await pushSkip(
+                idFor(kind),
+                algorithm,
+                `${kind} · NIST sigGen ${tag}`,
+                base,
+                GENERIC_SINGLE_PART
+              )
+            continue
           }
 
           // 1d. message-based verify of the upstream signature
@@ -549,7 +580,8 @@ export async function runSlhdsaPreHashSection(ctx: MldsaAcvpSectionCtx): Promise
     for (const g of f.testGroups) {
       const ps = g.parameterSet
       for (const t of g.tests) {
-        const mech = ACVP_HASH_TO_SLH_MECH[t.hashAlg]
+        const gp = genericPreHash('SLH-DSA', t.hashAlg, hexToBytes(t.message))
+        const mech = gp ? gp.mech : ACVP_HASH_TO_SLH_MECH[t.hashAlg]
         const mode = `HashSLH-DSA/${t.hashAlg}`
         const want = expectedRvFor(t)
         const algorithm = `${ps} ${mode} (${eName})`
@@ -612,16 +644,25 @@ export async function runSlhdsaPreHashSection(ctx: MldsaAcvpSectionCtx): Promise
               prefix: 'SigVer',
               init: 'C_VerifyInit',
               call: 'C_Verify',
-              r: verifyRv(M, hSession, pub, mech!, msg, sig, ctxBytes),
+              r: verifyRv(M, hSession, pub, mech!, gp ? gp.data : msg, sig, ctxBytes, gp?.hash),
             },
-            {
+          ]
+          if (gp)
+            await pushSkip(
+              ids.message,
+              algorithm,
+              `Message SigVer · ${label}`,
+              meta,
+              GENERIC_SINGLE_PART
+            )
+          else
+            runs.push({
               id: ids.message,
               prefix: 'Message SigVer',
               init: 'C_MessageVerifyInit',
               call: 'C_VerifyMessage',
               r: messageVerifyRv(M, hSession, pub, mech!, msg, sig, ctxBytes),
-            },
-          ]
+            })
           for (const run of runs) {
             const ok = run.r.initRv === CKR_OK && run.r.rv === want
             const observed =

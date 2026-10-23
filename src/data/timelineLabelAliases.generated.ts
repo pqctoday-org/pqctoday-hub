@@ -543,6 +543,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'singapore-mas-quantum-resilience-supervisory-expectations-an': [
     'Singapore:MAS — Quantum-Resilience Supervisory Expectations Announced',
+    'Singapore:MAS — Quantum-Resilience Supervisory Expectations Announced for Later in 2026',
   ],
   'singapore-quantinuum-nqo-helios-quantum-computer-singapore-deployment': [
     'Singapore:Quantinuum/NQO — Helios Quantum Computer Singapore Deployment',

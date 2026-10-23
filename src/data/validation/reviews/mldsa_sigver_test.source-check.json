@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:mldsa_sigver_test",
-  "subjectSha256": "e5800e5053dea0b8328dbeacc90baadfe5e91e4336512f756e4befe3e0335b12",
-  "fileSha256": "3a6a7c37b05b196e8a6f5b041992fea946c2a9cc101d785aff70d3684633a84e",
+  "subjectSha256": "7746dd6747c8cb95d81e46315311223e35b041ee0ed32b8761048d8e58a230f5",
+  "fileSha256": "2fd0a32037ea1082913dbd80d83dc070bc2da6fabfdd31523ecad40975f07d57",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id mldsa_sigver_test --strict",
@@ -17,8 +17,8 @@
     ]
   },
   "compared": {
-    "cases": 23,
-    "values": 198
+    "cases": 31,
+    "values": 280
   },
-  "checkedAt": "2026-10-22"
+  "checkedAt": "2026-10-23"
 }
