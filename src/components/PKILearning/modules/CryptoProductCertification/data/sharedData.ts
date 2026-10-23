@@ -273,7 +273,7 @@ export const PQC_SCHEME_TABLE: SchemePqcRow[] = [
   {
     scheme: 'EUCC',
     current:
-      'The applicable ECCG Agreed Cryptographic Mechanisms v2 lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS and LMS, and recommends ML-KEM-768/1024 and ML-DSA-65/87. Its rules on combining them with classical algorithms are in the hybrid table below. This is the strongest current PQC requirement in any of the four schemes.',
+      'The applicable ECCG Agreed Cryptographic Mechanisms v2 lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS and LMS, and recommends ML-KEM-768/1024 and ML-DSA-65/87. Its rules on combining them with classical algorithms are in the hybrid table below. This is guidance: it does not make PQC mandatory (and only SLH-DSA security levels 3 and 5 are agreed).',
     currentSources: [SHARED_SOURCES.acm2],
     planning:
       'ACM v3 is a draft and not yet adopted (its public review closed at the end of July 2026). ENISA’s hybridisation report (30 April 2026) and the NIS Cooperation Group roadmap v1.1 are guidance, not EUCC mandates.',
@@ -577,7 +577,7 @@ export const SCHEME_CLOCKS: SchemeClock[] = [
     scheme: 'EUCC / Common Criteria',
     when: '31 December 2027',
     isoDate: '2027-12-31',
-    what: 'Under EUCC, CC 3.1 R5 certificates are allowed until this date (CIR 2024/3144). Under the CCRA transition policy, CC:2022 Security Targets may claim CC 3.1 Protection Profiles until the same date.',
+    what: 'Under EUCC, certificates may still be issued against CC 3.1 R5 until this date (CIR 2024/3144 Art 3(2)); this is an issuance cut-off, not an expiry of existing certificates. Under the CCRA transition policy, CC:2022 Security Targets may claim CC 3.1 Protection Profiles until the same date.',
     sources: [SHARED_SOURCES.eucc3144, SHARED_SOURCES.ccTransition],
   },
   {
@@ -1218,7 +1218,11 @@ export const EIDAS_LINKS: EidasLink[] = [
     expected: 'eucc-reg',
     options: [
       { id: 'eucc-reg', label: 'EUCC — CIR (EU) 2024/482, amended by 2024/3144 and 2025/2462' },
-      { id: 'sogis', label: 'SOG-IS (stopped issuing certificates 27 February 2026)' },
+      {
+        id: 'sogis',
+        label:
+          'SOG-IS MRA national schemes (no new national certificates for EUCC-covered products after 27 February 2026)',
+      },
       { id: 'eidas', label: 'eIDAS 2.0 itself' },
     ],
   },
