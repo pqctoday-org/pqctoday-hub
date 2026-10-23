@@ -55,10 +55,11 @@ describe('moscaClock', () => {
 
   // Deadlines are DERIVED from the timeline CSV (the is_sim_deadline-tagged row),
   // not hardcoded. The 10 REVIEWED tagged jurisdictions resolve (AU and KR were
-  // settled by the user on 2026-09-25 after the Claude + Codex review); SG
+  // settled by the user on 2026-09-25 after the Claude + Codex review; DE and UK
+  // were re-reviewed and published again on 2026-10-22); SG
   // (guidance-only, no tagged row) falls back to the Q-Day anchor.
   it('derives per-country deadlines from the timeline CSV (tagged rows)', () => {
-    for (const c of ['US', 'FR', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN'] as const) {
+    for (const c of ['US', 'FR', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN', 'DE', 'UK'] as const) {
       expect(typeof COUNTRY_DEADLINE_YEAR[c], `${c} deadline`).toBe('number')
       expect(COUNTRY_DEADLINE_PROVENANCE[c], `${c} provenance`).toBe('planning')
     }
@@ -66,13 +67,15 @@ describe('moscaClock', () => {
     expect(horizonYearFor('FR')).toBe(2027)
     // JP's deadline (2035) is after Q-Day → falls back to the Q-Day anchor.
     expect(horizonYearFor('JP')).toBe(SIM_CRQC_YEAR)
+    // DE and UK were withdrawn to Unverified on 2026-09-25 (the cited guidance
+    // used future-target language). The 2026-10-22 timeline review re-read both
+    // documents and published them again as reviewed recommendations
+    // (binding_force: recommendation, tagged as simulator deadlines): BSI's end of
+    // 2030 for very-high-protection applications, and the NCSC's indicative 2035.
+    expect(COUNTRY_DEADLINE_YEAR.DE).toBe(2030)
+    expect(COUNTRY_DEADLINE_YEAR.UK).toBe(2035)
     // Guidance-only jurisdictions have no national deadline milestone → fall back to Q-Day.
-    // DE and UK moved here 2026-09-25: both countries' only tagged deadline row
-    // was withdrawn to Unverified pending stronger evidence (the cited guidance
-    // used future-target language, not a confirmed regulatory deadline) — see
-    // timeline review disagreement resolution, germany-bsi-critical-applications-
-    // pqc-hybrid-no-longer-required and united-kingdom-ncsc-full-pqc-compliance.
-    for (const c of ['SG', 'DE', 'UK'] as const) {
+    for (const c of ['SG'] as const) {
       expect(COUNTRY_DEADLINE_YEAR[c], `${c} absent`).toBeUndefined()
       expect(horizonYearFor(c), `${c} fallback`).toBe(SIM_CRQC_YEAR)
     }
@@ -84,5 +87,8 @@ describe('moscaClock', () => {
     }
     // IN's CII deadline (2027) falls before Q-Day → binds the horizon directly.
     expect(horizonYearFor('IN'), 'IN horizon').toBe(2027)
+    // DE and UK bind only if their date is sooner than Q-Day.
+    expect(horizonYearFor('DE'), 'DE horizon').toBe(Math.min(SIM_CRQC_YEAR, 2030))
+    expect(horizonYearFor('UK'), 'UK horizon').toBe(Math.min(SIM_CRQC_YEAR, 2035))
   })
 })

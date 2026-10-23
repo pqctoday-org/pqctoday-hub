@@ -111,9 +111,19 @@ const svGroups = [
   ...(svShake.testGroups as unknown as Grp<SvCase>[]),
 ]
 
+// The files also carry the SHA2-512/224 and SHA2-512/256 cases. Those have no
+// dedicated CKM_HASH_SLH_DSA_<hash> mechanism: they run through the generic
+// CKM_HASH_SLH_DSA in the ACVP lab suite (useAcvpSuite.slhdsaAcvp, both
+// engines), so this per-mechanism check covers only the ten dedicated hashes.
+const hasDedicatedMech = (t: { hashAlg: string }) => t.hashAlg in HASH_MECH
+
 /** All 120 (mechanism x parameter set) pairs the two sigGen files carry. */
-const sgAll = sgGroups.flatMap((g) => g.tests.map((t) => [g.parameterSet, g.tgId, t] as const))
-const svAll = svGroups.flatMap((g) => g.tests.map((t) => [g.parameterSet, g.tgId, t] as const))
+const sgAll = sgGroups.flatMap((g) =>
+  g.tests.filter(hasDedicatedMech).map((t) => [g.parameterSet, g.tgId, t] as const)
+)
+const svAll = svGroups.flatMap((g) =>
+  g.tests.filter(hasDedicatedMech).map((t) => [g.parameterSet, g.tgId, t] as const)
+)
 
 const expectedRvFor = (t: SvCase) =>
   t.testPassed

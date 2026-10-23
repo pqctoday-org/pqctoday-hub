@@ -182,7 +182,7 @@ export function countCases(file: string, text: string): { count: number; basis: 
     return { count: 1, basis: 'transcript-or-blob' }
   }
   let tcIds = 0
-  const arrays = { vectors: 0, tests: 0, cases: 0 }
+  const arrays = { vectors: 0, tests: 0, cases: 0, localMutations: 0 }
   const walk = (node: unknown): void => {
     if (Array.isArray(node)) {
       for (const c of node) walk(c)
@@ -196,15 +196,19 @@ export function countCases(file: string, text: string): { count: number; basis: 
         if (k === 'vectors') arrays.vectors += v.length
         else if (k === 'tests') arrays.tests += v.length
         else if (k === 'cases') arrays.cases += v.length
+        // Product-authored negatives (no tcId): the manifest declares each as a
+        // case, so the counter must see them or it understates the file.
+        else if (k === 'localMutations') arrays.localMutations += v.length
       }
       walk(v)
     }
   }
   walk(parsed)
-  if (tcIds > 0) return { count: tcIds, basis: 'tcId' }
-  if (arrays.vectors > 0) return { count: arrays.vectors, basis: 'vectors[]' }
-  if (arrays.cases > 0) return { count: arrays.cases, basis: 'cases[]' }
-  if (arrays.tests > 0) return { count: arrays.tests, basis: 'tests[]' }
+  const extra = arrays.localMutations
+  if (tcIds > 0) return { count: tcIds + extra, basis: 'tcId' }
+  if (arrays.vectors > 0) return { count: arrays.vectors + extra, basis: 'vectors[]' }
+  if (arrays.cases > 0) return { count: arrays.cases + extra, basis: 'cases[]' }
+  if (arrays.tests > 0) return { count: arrays.tests + extra, basis: 'tests[]' }
   // A single-case KAT file carries one `vector` OBJECT, not an array (the
   // shape of the since-deleted composite-sigs-jose-kat / jose-pqc-kem-jwe-kat).
   if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
