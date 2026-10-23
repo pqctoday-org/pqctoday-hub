@@ -10,13 +10,21 @@ licence and where its full licence text is (LICENSES/ next to this file).
 Components
 ----------
 
+Code written by PQC Today, LLC (Rust PKCS#11 engine, KMIP server and policy engine)
+  Version:   this repository, rust/, kmip/ and wasm/
+  Licence:   AGPL-3.0-only
+  Copyright: Copyright (c) 2024-2026 PQC Today, LLC
+  Source:    this repository (see COPYRIGHT.md)
+  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/07b1264903eaeae124a4df08acb77ec71bca3792. It stays available there, and on request from PQC Today, LLC (pqctoday@proton.me), for at least three years after this bundle is published.
+  Text:      LICENSES/pqctoday-rust/AGPL-3.0-only.txt
+
 OpenSSL Studio shims (TLS, CMP and CMS simulators, static PKCS#11 binding)
   Version:   this repository, wasm/openssl-studio/shims
-  Licence:   GPL-3.0-only
+  Licence:   AGPL-3.0-only
   Copyright: Copyright (c) 2026 PQC Today, LLC
   Source:    wasm/openssl-studio/ in this repository (see its README.md)
   Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/07b1264903eaeae124a4df08acb77ec71bca3792 (shims, OpenSSL patch and build script) plus the OpenSSL 3.6.3 tarball and the pkcs11-provider source named in this file. It stays available there, and on request from PQC Today, LLC, for at least three years after this bundle is published.
-  Text:      LICENSES/openssl-studio-shims/GPL-3.0-only.txt
+  Text:      LICENSES/pqctoday-rust/AGPL-3.0-only.txt
 
 OpenSSL, library and openssl command-line tool
   Version:   3.6.3
@@ -54,7 +62,7 @@ Emscripten runtime (emscripten library code, musl libc, libc++, libc++abi, compi
   Text:      LICENSES/emscripten-runtime/libcxxabi-LICENSE.TXT
   Text:      LICENSES/emscripten-runtime/compiler-rt-LICENSE.TXT
 
-Rust crates (148, from rust/Cargo.lock, target wasm32-unknown-emscripten)
+Rust crates (160, from rust/Cargo.lock, target wasm32-unknown-emscripten)
 ----------------------------------------
 
 aead 0.6.1
@@ -122,6 +130,18 @@ block-padding 0.4.2
   Source:    https://github.com/RustCrypto/utils
   Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
   Text:      LICENSES/crates/block-buffer-0.12.0/LICENSE-MIT
+
+bp256 0.14.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/bp256-0.14.0/LICENSE-MIT
+
+bp384 0.14.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/bp256-0.14.0/LICENSE-MIT
 
 bumpalo 3.20.2
   Licence:   MIT OR Apache-2.0
@@ -301,6 +321,12 @@ ecdsa 0.16.9
   Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
   Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-MIT
 
+ecdsa 0.17.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/signatures
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
+  Text:      LICENSES/crates/ecdsa-0.17.0/LICENSE-MIT
+
 ed25519 2.2.3
   Licence:   Apache-2.0 OR MIT
   Source:    https://github.com/RustCrypto/signatures/tree/master/ed25519
@@ -316,7 +342,7 @@ ed448 0.5.0
   Licence:   Apache-2.0 OR MIT
   Source:    https://github.com/RustCrypto/signatures
   Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
-  Text:      LICENSES/crates/ed448-0.5.0/LICENSE-MIT
+  Text:      LICENSES/crates/ecdsa-0.17.0/LICENSE-MIT
 
 ed448-goldilocks 0.14.0-pre.15
   Licence:   Apache-2.0 OR MIT
@@ -429,6 +455,12 @@ hkdf 0.12.4
   Text:      LICENSES/crates/hkdf-0.12.4/LICENSE-MIT
 
 hmac 0.12.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/MACs
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/cmac-0.7.2/LICENSE-MIT
+
+hmac 0.13.0
   Licence:   MIT OR Apache-2.0
   Source:    https://github.com/RustCrypto/MACs
   Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
@@ -626,9 +658,21 @@ ppv-lite86 0.2.21
   Text:      LICENSES/crates/ppv-lite86-0.2.21/LICENSE-APACHE
   Text:      LICENSES/crates/ppv-lite86-0.2.21/LICENSE-MIT
 
+primefield 0.14.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/primefield-0.14.0/LICENSE-MIT
+
 primeorder 0.13.6
   Licence:   Apache-2.0 OR MIT
   Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/primeorder
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/p256-0.13.2/LICENSE-MIT
+
+primeorder 0.14.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves
   Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
   Text:      LICENSES/crates/p256-0.13.2/LICENSE-MIT
 
@@ -684,6 +728,12 @@ rfc6979 0.4.0
   Source:    https://github.com/RustCrypto/signatures/tree/master/rfc6979
   Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
   Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-MIT
+
+rfc6979 0.6.0
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/signatures
+  Text:      LICENSES/crates/ecdsa-0.16.9/LICENSE-APACHE
+  Text:      LICENSES/crates/ecdsa-0.17.0/LICENSE-MIT
 
 ripemd 0.1.3
   Licence:   MIT OR Apache-2.0
@@ -745,6 +795,12 @@ sha2 0.10.9
   Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
   Text:      LICENSES/crates/md-5-0.10.6/LICENSE-MIT
 
+sha2 0.11.1
+  Licence:   MIT OR Apache-2.0
+  Source:    https://github.com/RustCrypto/hashes
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/sha2-0.11.1/LICENSE-MIT
+
 sha3 0.10.8
   Licence:   MIT OR Apache-2.0
   Source:    https://github.com/RustCrypto/hashes
@@ -779,7 +835,7 @@ signature 3.0.0
   Licence:   Apache-2.0 OR MIT
   Source:    https://github.com/RustCrypto/traits
   Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
-  Text:      LICENSES/crates/ed448-0.5.0/LICENSE-MIT
+  Text:      LICENSES/crates/ecdsa-0.17.0/LICENSE-MIT
 
 smallvec 1.15.1
   Licence:   MIT OR Apache-2.0
@@ -853,6 +909,18 @@ tinyvec 1.11.0
   Text:      LICENSES/crates/tinyvec-1.11.0/LICENSE-MIT.md
   Text:      LICENSES/crates/tinyvec-1.11.0/LICENSE-ZLIB.md
 
+tls_codec 0.4.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/tls_codec-0.4.2/LICENSE-MIT
+
+tls_codec_derive 0.4.2
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/tls_codec-0.4.2/LICENSE-MIT
+
 typenum 1.20.1
   Licence:   MIT OR Apache-2.0
   Source:    https://github.com/paholg/typenum
@@ -903,6 +971,12 @@ web-sys 0.3.94
   Text:      LICENSES/crates/bumpalo-3.20.2/LICENSE-APACHE
   Text:      LICENSES/crates/cfg-if-1.0.4/LICENSE-MIT
 
+wnaf 0.14.1
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/elliptic-curves
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/wnaf-0.14.1/LICENSE-MIT
+
 x25519-dalek 2.0.1
   Licence:   BSD-3-Clause
   Source:    https://github.com/dalek-cryptography/curve25519-dalek/tree/main/x25519-dalek
@@ -913,6 +987,12 @@ x448 0.14.0-pre.8
   Source:    https://github.com/RustCrypto/elliptic-curves/tree/master/x448
   Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
   Text:      LICENSES/crates/ed448-goldilocks-0.14.0-pre.15/LICENSE-MIT
+
+x509-cert 0.2.5
+  Licence:   Apache-2.0 OR MIT
+  Source:    https://github.com/RustCrypto/formats/tree/master/x509-cert
+  Text:      LICENSES/crates/aes-0.8.4/LICENSE-APACHE
+  Text:      LICENSES/crates/crypto-bigint-0.5.5/LICENSE-MIT
 
 xmss 0.1.0-pre.0
   Licence:   MIT/Apache-2.0

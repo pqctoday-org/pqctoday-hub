@@ -21,15 +21,17 @@ OpenSSH portable
 
 SoftHSMv3, the PQC Today fork of SoftHSM2
   Version:   SoftHSM2 2.7.0 base
-  Licence:   BSD-2-Clause
+  Licence:   AGPL-3.0-only AND BSD-2-Clause
   Copyright: Copyright (c) 2008-2013 .SE (The Internet Infrastructure Foundation)
   Copyright: Copyright (c) 2010-2018 SURFnet bv
   Copyright: Copyright (c) 2022 NLnet Labs
   Copyright: Copyright (c) 2014, 2020 Red Hat, Inc.
-  Copyright: Copyright (c) 2024-2026 PQC Today
+  Copyright: Copyright (c) 2024-2026 PQC Today, LLC
   Source:    https://github.com/softhsm/SoftHSMv2 (upstream); this repository (fork)
-  Changes:   OpenSSL 3 EVP-only backend, PKCS#11 v3.2, ML-KEM, ML-DSA, SLH-DSA, HSS/LMS, XMSS; see LICENSE and CHANGELOG.md
-  Text:      LICENSES/softhsmv3/LICENSE
+  Changes:   OpenSSL 3 EVP-only backend, PKCS#11 v3.2, ML-KEM, ML-DSA, SLH-DSA, HSS/LMS, XMSS; the SoftHSM2 files keep BSD-2-Clause, the files written by PQC Today, LLC are AGPL-3.0-only; see COPYRIGHT.md and CHANGELOG.md
+  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/bc92034d12d32b3a1b32111d2114e6a1fb8a6205. It stays available there, and on request from PQC Today, LLC (pqctoday@proton.me), for at least three years after this bundle is published.
+  Text:      LICENSES/softhsmv3/AGPL-3.0-only.txt
+  Text:      LICENSES/softhsmv3/BSD-2-Clause.txt
 
 OASIS PKCS#11 v3.2 headers
   Version:   3.2
