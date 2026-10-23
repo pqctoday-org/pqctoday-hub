@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.174.0] - 2026-10-23
+
+Rosenpass and WireGuard are now described correctly across the Learn modules, the Library, the product catalogue and the glossary, and the VPN simulator says clearly when it is not ready.
+
+### Fixed
+
+- **Rosenpass uses Classic McEliece and Kyber-512, not ML-KEM** [view:/learn/vpn-ssh-pqc] [view:/library] [view:/migrate] [persona:developer] [persona:architect] [persona:ops] [persona:researcher]: the VPN and SSH module, its Q&A, the glossary, the protocol table, the Library entry and the product catalogue now say that Rosenpass pairs Classic McEliece 460896 with the pre-standard round-3 Kyber-512, not the standardized ML-KEM of FIPS 203. Its message sizes come from its white paper (four messages, 2,464 bytes in total) and WireGuard's normal handshake is 240 bytes (148 + 92) from WireGuard's own paper; the earlier 6,800-byte and "22x" figures had no source and are removed. WireGuard's catalogue entry now says the protocol has no post-quantum algorithm of its own and that Rosenpass supplies it.
+- **OpenSSH and strongSwan hybrid key exchange details corrected** [view:/learn/ops-quantum-impact] [view:/learn/os-pqc] [persona:ops] [persona:developer] [persona:architect]: OpenSSH made sntrup761x25519 its default from 9.0, added mlkem768x25519-sha256 in 9.9 and made it the default in 10.0; strongSwan's configuration uses the mlkem768 prefix. Planning timeframes in the Operations lesson are now marked as estimates, and the certificate size comparison is tied to its worked example. The Hybrid Cryptography summary now names RFC 10024 for hybrid TLS.
+- **The 2030 RSA and ECC deprecation date names its document** [view:/learn/migration-program] [persona:executive] [persona:grc] [persona:architect]: the Migration Program lesson attributes the date to the NIST IR 8547 initial public draft (November 2024) instead of presenting it as final.
+- **The VPN simulator works in headless browsers and shows clear states** [view:/learn/vpn-ssh-pqc] [persona:developer] [persona:ops]: it recognises headless Chromium, shows an honest idle state instead of a misleading badge, reports strongSwan load failures within 150 seconds and offers Retry.
+
+### Data
+
+- **Rosenpass records corrected** [view:/library] [view:/migrate] [persona:developer] [persona:architect] [persona:researcher]: the Library entry lists the algorithms Rosenpass really uses, the source-directory description names Classic McEliece and Kyber-512, and the Rosenpass and WireGuard product records carry the corrected descriptions, each checked against the vendor's white paper.
+
 ## [4.173.0] - 2026-10-23
 
 A new lesson in Common Criteria, EUCC & eIDAS Certification explains what NIAP's protection profiles offer and require for post-quantum cryptography, and 15 NIAP documents join the Library.
