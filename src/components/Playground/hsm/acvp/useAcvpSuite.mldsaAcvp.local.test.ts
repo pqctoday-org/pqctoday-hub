@@ -128,9 +128,9 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
     const cpp = section().filter((r) => engineOf(r) === 'C++')
     const rust = section().filter((r) => engineOf(r) === 'Rust')
     // 15 pure (1 positive + 4 NIST negative reasons × 3) + 6 External-µ
-    // + 6 product-authored + 9 deterministic SigGen + 3 KeyGen + 1 skip
-    // (SHA2-512/t sigVer). Hedged and internal groups: optionalInput test.
-    expect(cpp).toHaveLength(40)
+    // + 8 HashML-DSA SHA2-512/t sigVer (generic CKM_HASH_ML_DSA) + 6 product-authored
+    // + 9 deterministic SigGen + 3 KeyGen. Hedged and internal groups: optionalInput test.
+    expect(cpp).toHaveLength(47)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
