@@ -80,7 +80,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     ],
     formFactor: 'network',
     notes:
-      'Firmware v13.8.0 adds native ML-DSA, ML-KEM, SLH-DSA support (CAVP lists them for the nShield 5 Algorithm Library - nCore, certificate A7285). PKCS#11 mechanisms: CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM (512/768/1024), CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_ML_DSA_EXTERNAL_MU, CKM_HASH_ML_DSA_{SHA256,SHA512,SHAKE128,SHAKE256}. LMS/XMSS available via PQSDK C API only (not native PKCS#11). CNG and JCE interfaces also supported. Hardware-accelerated PQC operations.',
+      'Firmware v13.8.0 adds native ML-DSA, ML-KEM and SLH-DSA; Entrust states the implementation is CAVP-validated. Through PKCS#11 only ML-DSA is exposed, with the standard mechanisms CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA and CKM_HASH_ML_DSA (with _SHA256, _SHA512, _SHAKE128 and _SHAKE256 variants); it needs firmware v13.8 or later and the PostQuantum feature enabled. ML-KEM and SLH-DSA are currently only available through the native nCore API (Security World v13.9.0 release notes). The Entrust pages checked do not describe LMS or XMSS support. CNG and JCE interfaces also supported. Hardware-accelerated PQC operations.',
     firmwareVersion: '13.8.0+',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
