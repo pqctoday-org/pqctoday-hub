@@ -23039,6 +23039,21 @@
       "unified": "current",
       "admittedAt": "2026-10-23T02:23:31.737736+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va",
+      "title": "NIST CSWP 37B — Automation of the NIST Cryptographic Module Validation Program: April 2025 Status Report",
+      "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.37B.pdf",
+      "status": "downloaded",
+      "filename": "NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va.pdf",
+      "sizeBytes": 1952292,
+      "contentType": "application/pdf",
+      "sha256": "aaacb539efd2777a519d4cff73155e3dd97dec8ecb8e3f6f6c7165dce9f1bf80",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T02:50:44.056223+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
