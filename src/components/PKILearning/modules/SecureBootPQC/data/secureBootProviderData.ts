@@ -63,7 +63,7 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
       'AMI has announced ML-DSA-65 support in APTIO V for Xeon Scalable 5th/6th Gen and EPYC Genoa/Turin platforms. Customers must upgrade firmware to APTIO V 5.35+ and re-enroll PK/KEK/db with ML-DSA certificates. AMI provides a BIOS Signing Upgrade Kit with migration utilities.',
     notes:
       'APTIO V is the most widely deployed UEFI firmware in enterprise servers. ML-DSA support targets H1 2026. Hybrid (RSA + ML-DSA) dual-signature mode available for transition.',
-    certifications: ['FIPS 140-3 (target Q3 2026)', 'CNSA 2.0 alignment (vendor claim)'],
+    certifications: ['FIPS 140-3 (vendor target)', 'CNSA 2.0 alignment (vendor claim)'],
   },
   {
     id: 'insyde',
