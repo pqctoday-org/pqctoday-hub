@@ -33,6 +33,7 @@ import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { MobileSheet } from '../primitives/Sheet'
 import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
+import { ruleBasedConfidenceLabel } from '@/components/Library/ruleBasedConfidence'
 import {
   MISSING_REVIEWED_SUMMARY,
   SCOPE_VERIFICATION_NOTE,
@@ -510,6 +511,7 @@ export function MobileLibraryView() {
                 ['Catalog security-level tags', selected.securityLevels],
                 ['Region', selected.regionScope],
                 ['Migration urgency', selected.migrationUrgency],
+                ['Confidence', ruleBasedConfidenceLabel(selected)],
                 [
                   'Referenced by Library records',
                   selected.citationCount ? String(selected.citationCount) : undefined,
