@@ -35281,7 +35281,7 @@
     {
       "id": "sha_acvp_boundary_test",
       "path": "src/data/acvp/sha_acvp_boundary_test.json",
-      "sha256": "87209e8b945ebc2985ae2c2d3accb148b38d0049cb3f1bdb5d1c14b3df84dd28",
+      "sha256": "97a17e8bfc15fd3545dd4e105e08f100ce541e2a415b4f75373ffed033c4ed4f",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -36864,7 +36864,7 @@
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "13 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): alternate-mct-not-implemented, ldt-expanded-message-too-large-for-the-workbench."
+      "notes": "13 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): alternate-mct-runs-in-full-mct-file, ldt-expanded-message-too-large-for-the-workbench."
     },
     {
       "id": "sha_mct_full_test",
