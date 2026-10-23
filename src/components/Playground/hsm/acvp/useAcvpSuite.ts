@@ -229,6 +229,13 @@ export const CATEGORIES: { id: CategoryId; label: string; groups: number }[] = [
 
 export const ALL_CATEGORY_IDS: Set<CategoryId> = new Set(CATEGORIES.map((c) => c.id))
 
+/**
+ * What a first visit has ticked: ML-KEM only, the shortest family (5 groups) and the one
+ * most readers come for. "Run" is then a short run; the full suite (71 groups, minutes in a
+ * browser) stays one click away through "All" or "Run all".
+ */
+export const DEFAULT_CATEGORY_IDS: ReadonlySet<CategoryId> = new Set<CategoryId>(['ml_kem'])
+
 export interface TestResult {
   id: string
   algorithm: string
@@ -253,7 +260,7 @@ export function useAcvpSuite() {
   const [logs, setLogs] = useState<string[]>([])
   const [logCopied, setLogCopied] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState<Set<CategoryId>>(
-    () => new Set(ALL_CATEGORY_IDS)
+    () => new Set(DEFAULT_CATEGORY_IDS)
   )
   const logCopyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const {

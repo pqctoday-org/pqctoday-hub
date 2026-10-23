@@ -591,7 +591,8 @@ export const AcvpSuiteWorkbench = () => {
               {results.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-muted-foreground/80 italic">
-                    No results yet. Pick categories on the left and press Run.
+                    No results yet. Press Run for the ticked categories, or tick others on the left
+                    first.
                   </td>
                 </tr>
               ) : (
