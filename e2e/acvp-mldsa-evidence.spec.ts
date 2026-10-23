@@ -5,10 +5,13 @@ import type { Locator } from '@playwright/test'
 // rendered in the real workbench on BOTH engines (dual mode). Asserts row
 // semantics, not a row count: a NIST positive and a NIST negative case pass on
 // C++ and Rust with the NIST evidence class, a product-authored negative passes
-// without it, and unsupported upstream groups render as 'skip' — never pass.
+// without it, the SHA2-512/224 and SHA2-512/256 pre-hash cases run through the generic
+// mechanism, and the one group the depth section cannot express renders as 'skip' — never pass.
 //
-// Nightly only (deliberately NOT in SMOKE_SPECS): dual mode loads both WASM
-// engines, which is heavier than the smoke budget allows.
+// Runs in the smoke tier (SMOKE_SPECS in playwright.config.ts): dual mode loads
+// both WASM engines, about 20 s on a Mac. Because it gates every push to main, its
+// assertions track what the page really shows: when a case moves from skip to
+// pass (as the SHA2-512/224 and SHA2-512/256 pre-hash cases did), update it here.
 test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () => {
   test.setTimeout(180000)
 
@@ -111,14 +114,76 @@ test.describe('ACVP workbench — ML-DSA reference samples (dual engine)', () =>
         'nist-acvp-reference-sample'
       )
 
-      // Honest skip: an upstream group PKCS#11 cannot express.
+      // SHA2-512/224 and SHA2-512/256 pre-hash cases used to be an honest skip
+      // (no hash-specific mechanism). They now run through the generic
+      // CKM_HASH_ML_DSA with PH(M) supplied (single-part): the old skip row must be
+      // gone, and each case must PASS with the mechanism named in its details.
+      await expect(
+        row(`ML-DSA-44/65/87 (${engine})`, 'HashML-DSA SigVer · SHA2-512/224, SHA2-512/256')
+      ).toHaveCount(0)
+      const sigVerShaT: [string, string, string][] = [
+        ['ML-DSA-44', 'tg2/tc21', 'SHA2-512/256'],
+        ['ML-DSA-44', 'tg2/tc23', 'SHA2-512/256'],
+        ['ML-DSA-44', 'tg2/tc29', 'SHA2-512/224'],
+        ['ML-DSA-65', 'tg4/tc50', 'SHA2-512/256'],
+        ['ML-DSA-65', 'tg4/tc55', 'SHA2-512/256'],
+        ['ML-DSA-65', 'tg4/tc58', 'SHA2-512/224'],
+        ['ML-DSA-87', 'tg6/tc83', 'SHA2-512/256'],
+        ['ML-DSA-87', 'tg6/tc90', 'SHA2-512/224'],
+      ]
+      // Each of these cases is verified by two sections (sigVer and sigVer depth), so a
+      // case can show more than once: require at least one row and that EVERY row passes.
+      for (const [ps, tc, hashAlg] of sigVerShaT) {
+        const r = row(`${ps} (${engine})`, `NIST sigVer ${tc} · HashML-DSA/${hashAlg} ·`)
+        const n = await r.count()
+        expect(n, `${ps} ${tc} ${hashAlg} rows`).toBeGreaterThan(0)
+        const generic =
+          hashAlg === 'SHA2-512/224'
+            ? /CKM_HASH_ML_DSA \(generic, hash = CKM_SHA512_224, PH\(M\) supplied\)/
+            : /CKM_HASH_ML_DSA \(generic, hash = CKM_SHA512_256, PH\(M\) supplied\)/
+        for (let i = 0; i < n; i++) {
+          await expect(r.nth(i)).toHaveAttribute('data-status', 'pass')
+          await expect(r.nth(i).locator('td').nth(4)).toHaveAttribute('title', generic)
+        }
+      }
+      // A NIST positive and a NIST negative among them, with the expected CK_RV.
+      const shaPos = row(`ML-DSA-44 (${engine})`, 'NIST sigVer tg2/tc21 ·').first()
+      await expect(shaPos).toContainText('expect valid')
+      await expect(shaPos.locator('td').nth(4)).toHaveAttribute(
+        'title',
+        /C_Verify → CKR_OK \(expected CKR_OK\)/
+      )
+      const shaNeg = row(`ML-DSA-44 (${engine})`, 'NIST sigVer tg2/tc29 ·').first()
+      await expect(shaNeg).toContainText('expect invalid (modified signature - hint)')
+      await expect(shaNeg.locator('td').nth(4)).toHaveAttribute(
+        'title',
+        /C_Verify → CKR_SIGNATURE_INVALID \(expected CKR_SIGNATURE_INVALID\)/
+      )
+      // The three SHA2-512/t sigGen cases that carry a NIST rnd run (optional test input).
+      for (const [ps, tc] of [
+        ['ML-DSA-44', 'tg14/tc205'],
+        ['ML-DSA-65', 'tg16/tc239'],
+        ['ML-DSA-87', 'tg18/tc268'],
+      ]) {
+        const g = row(`${ps} (${engine})`, `NIST sigGen ${tc} · pre-hash · hedged`)
+        await expect(g, `${ps} ${tc}`).toHaveCount(1)
+        await expect(g).toHaveAttribute('data-status', 'pass')
+        await expect(g).toContainText('CKM_HASH_ML_DSA (generic')
+      }
+
+      // The one honest skip that remains in this category: the depth section cannot
+      // inject NIST's rnd for the hedged 1-byte-context case (the same case DOES run
+      // above, through the optional test input).
       const skip = row(
-        `ML-DSA-44/65/87 (${engine})`,
-        'HashML-DSA SigVer · SHA2-512/224, SHA2-512/256'
+        `ML-DSA-65 (${engine})`,
+        'NIST 1-byte-context case · sigGen tg16/tc239 (hedged, HashML-DSA/SHA2-512/256)'
       )
       await expect(skip).toHaveCount(1)
       await expect(skip).toHaveAttribute('data-status', 'skip')
-      await expect(skip.locator('td').nth(4)).toHaveAttribute('title', /^Skipped — PKCS#11 v3.2/)
+      await expect(skip.locator('td').nth(4)).toHaveAttribute(
+        'title',
+        /^Skipped — the pinned ML-DSA-sigGen-FIPS204 sample has exactly one 1-byte-context case and it is hedged/
+      )
     }
 
     // Nothing in the ML-DSA category may fail, on either engine.

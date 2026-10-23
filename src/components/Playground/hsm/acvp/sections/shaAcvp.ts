@@ -201,7 +201,7 @@ export async function runShaAcvpSection(ctx: ClassicalSectionCtx): Promise<void>
         source: srcOf(f._provenance),
       },
       why:
-        ne.why === 'alternate-mct-not-implemented'
+        ne.why === 'alternate-mct-runs-in-full-mct-file'
           ? 'this boundary subset carries no alternate-version MCT case; the alternate-version MCT runs in full (all 100 outer iterations) in section 10g from sha_mct_full_test.json'
           : 'the LDT expands a message to 1 GiB — not run in the browser workbench',
     })

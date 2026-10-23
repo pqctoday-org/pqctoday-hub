@@ -10555,6 +10555,84 @@
       "admittedAt": "2026-09-18T05:03:53.220140+00:00",
       "admittedBy": "admit.py",
       "identity": "MATCH"
+    },
+    {
+      "refId": "nrc",
+      "file": "nrc-709793b4.html",
+      "sizeBytes": 129525,
+      "content_type": "text/html",
+      "url": "https://www.nrc.gov/",
+      "sha256": "e3b6e609a92913afe1780ae01588e258033252703746ddec68c964eee8dfa0c5",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T03:15:47.408913+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "inforeg-za",
+      "file": "inforeg-za-b469c9e9.html",
+      "sizeBytes": 234740,
+      "content_type": "text/html",
+      "url": "https://inforegulator.org.za/",
+      "sha256": "a51364cc874d7c11009cacb0e4a3425ed9fd2c5f38d4e99c23539ae6c6ee0234",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T03:16:04.792968+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "web3-foundation",
+      "file": "web3-foundation-e63df55a.html",
+      "sizeBytes": 30492,
+      "content_type": "text/html",
+      "url": "https://web3.foundation",
+      "sha256": "07b9fc8934f466e4f8ce4ca7f570bb781df0e88b3abd9cc2c601f040919b62a7",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T03:16:38.589083+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "sanctuaire",
+      "file": "sanctuaire-9bb53f9a.html",
+      "sizeBytes": 61533,
+      "content_type": "text/html",
+      "url": "https://sanctuaire-pqc.com",
+      "sha256": "f09a33235181984ecf8dfecb558e9c7b638b4bff7dc084b783e893583834ec58",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T03:18:37.537212+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "sk-hynix",
+      "file": "sk-hynix-c8279621.html",
+      "sizeBytes": 24390,
+      "content_type": "text/html",
+      "url": "https://skhynix.com",
+      "sha256": "16a508b8fbe26fb3ea27f6c44de0978e83aae596f388f7a3866e5181ad462cde",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T03:18:42.126445+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH"
+    },
+    {
+      "refId": "micron-technology-inc",
+      "file": "micron-technology-inc-bdaa3edb.html",
+      "sizeBytes": 315560,
+      "content_type": "text/html",
+      "url": "https://micron.com",
+      "sha256": "32fa9757621b7f64c2d0371860f15106aca80635f607215e83c146fd789e1e92",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T03:18:44.916333+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH"
     }
   ]
 }

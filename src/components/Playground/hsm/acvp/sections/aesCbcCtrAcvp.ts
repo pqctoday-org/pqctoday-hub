@@ -92,6 +92,7 @@ interface CtrCase {
 interface CtrGroup {
   tgId: number
   keyLen: number
+  direction: 'encrypt' | 'decrypt'
   tests: CtrCase[]
 }
 interface CtrNotExecuted {
@@ -330,18 +331,22 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
     }
   }
 
-  // ── CTR (RFC 3686 test mode, decrypt groups) ───────────────────────────
+  // ── CTR (RFC 3686 test mode: decrypt groups, and the byte-aligned cases of the
+  //    ivGenMode=internal encrypt groups, run with NIST's sample IV) ─────────
   const Q = ctr._provenance
   const ctrWhy = unsupportedReason(mechs, WSE_MECH.CKM_AES_CTR, 'CKM_AES_CTR')
   for (const g of ctr.testGroups) {
     for (const t of g.tests) {
       const id = `aesctr-nist-k${g.keyLen}-tg${g.tgId}-tc${t.tcId}-${eName}`
       const algorithm = `AES-${g.keyLen}-CTR (${eName})`
-      const testCase = `Decrypt + encrypt · NIST AES-CTR tg${g.tgId}/tc${t.tcId} · RFC 3686 counter (32 bits) · payload ${t.payloadLen / 8}B · expect byte-match both ways`
+      const sampleIv = g.direction === 'encrypt'
+      const testCase = sampleIv
+        ? `Encrypt + decrypt · NIST AES-CTR tg${g.tgId}/tc${t.tcId} · RFC 3686 counter (32 bits) · payload ${t.payloadLen / 8}B · NIST's sample IV supplied as the counter block; the module's own IV generation is not tested · expect byte-match both ways`
+        : `Decrypt + encrypt · NIST AES-CTR tg${g.tgId}/tc${t.tcId} · RFC 3686 counter (32 bits) · payload ${t.payloadLen / 8}B · expect byte-match both ways`
       const meta: AcvpCaseMeta = {
         origin: 'nist-acvp-server',
-        upstreamOperation: 'decrypt',
-        localOperation: 'decrypt',
+        upstreamOperation: sampleIv ? 'encrypt' : 'decrypt',
+        localOperation: sampleIv ? 'encrypt' : 'decrypt',
         parameterSet: `AES-${g.keyLen}`,
         parameters: { keyLen: g.keyLen, payloadLen: t.payloadLen, counterBits: 32 },
         expected: 'byte-match',
@@ -403,7 +408,7 @@ export async function runAesCbcCtrAcvpSection(ctx: ClassicalSectionCtx): Promise
         tgId: ne.tgId,
         source: srcOf(Q),
       },
-      why: 'the upstream encrypt groups let the implementation choose the IV (ivGenMode internal, deferred) — the upstream ciphertext is not an expected value for a caller-supplied counter block',
+      why: 'the payload length is not a whole number of bytes, which PKCS#11 CKM_AES_CTR cannot express (bit-oriented payload)',
     })
   }
 }

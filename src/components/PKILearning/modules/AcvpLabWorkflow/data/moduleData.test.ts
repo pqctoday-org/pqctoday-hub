@@ -34,7 +34,7 @@ describe('acvp-lab-workflow sources', () => {
 
   it('pins the core draft by commit, not by a site rebuild date', () => {
     expect(SOURCES.acvpSpec.revision).toBe(
-      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)'
+      'draft-ietf-acvp-spec-01 (keeps its draft name; NIST revises its protocol sections in the repository, latest October 2025; usnistgov/ACVP @ d13c633)'
     )
     expect(content.narratives.acvpSpecRevision).toBe(SOURCES.acvpSpec.revision)
   })

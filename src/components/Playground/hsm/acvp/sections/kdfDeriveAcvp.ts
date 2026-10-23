@@ -305,8 +305,29 @@ interface HkdfCase {
 interface HkdfGroup {
   tgId: number
   testType: 'AFT' | 'VAL'
+  multiExpansion?: false
   kdfConfiguration: { hmacAlg: string; saltMethod: string }
   tests: HkdfCase[]
+}
+/** A multi-expansion case: one Z ‖ T and salt, several (fixedInfo, L) expansions, one dkm each. */
+interface HkdfMultiCase {
+  tcId: number
+  testPassed?: boolean
+  kdfMultiExpansionParameter: {
+    salt: string
+    z: string
+    t?: string
+    hmacAlg: string
+    iterationParameters: { l: number; fixedInfo: string }[]
+  }
+  dkms: string[]
+}
+export interface HkdfMultiGroup {
+  tgId: number
+  testType: 'AFT' | 'VAL'
+  multiExpansion: true
+  kdfMultiExpansionConfiguration: { hmacAlg: string; saltMethod: string }
+  tests: HkdfMultiCase[]
 }
 interface KbkdfCase {
   tcId: number
@@ -344,11 +365,15 @@ export async function runHkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<void
   const { M, hSession: h, eName, mechs } = ctx
   const f = (await import('@/data/acvp/hkdf_acvp_test.json')).default as unknown as {
     _provenance: Provenance
-    testGroups: HkdfGroup[]
+    testGroups: (HkdfGroup | HkdfMultiGroup)[]
   }
   const P = f._provenance
   const why = unsupportedReason(mechs, WSE_MECH.CKM_HKDF_DERIVE, 'CKM_HKDF_DERIVE')
   for (const g of f.testGroups) {
+    if (g.multiExpansion === true) {
+      await runHkdfMultiGroup(ctx, g, P, why)
+      continue
+    }
     const hashAlg = g.kdfConfiguration.hmacAlg
     for (const t of g.tests) {
       const negative = t.testPassed === false
@@ -422,6 +447,94 @@ export async function runHkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<void
         },
       })
     }
+  }
+}
+
+/** Multi-expansion: one C_DeriveKey per expansion over the same Z ‖ T and salt; every dkm must match. */
+export async function runHkdfMultiGroup(
+  ctx: ClassicalSectionCtx,
+  g: HkdfMultiGroup,
+  P: Provenance,
+  why: string | null
+): Promise<void> {
+  const { M, hSession: h, eName } = ctx
+  const hashAlg = g.kdfMultiExpansionConfiguration.hmacAlg
+  for (const t of g.tests) {
+    const p = t.kdfMultiExpansionParameter
+    const negative = t.testPassed === false
+    const ikm = hexToBytes(p.z + (p.t ?? ''))
+    const n = p.iterationParameters.length
+    const id = `hkdf-nist-${hashAlg.toLowerCase().replace('/', '-')}-tg${g.tgId}-tc${t.tcId}-${eName}`
+    const algorithm = `HKDF-${hashAlg} (${eName})`
+    const testCase = `Derive ×${n} · NIST KDA-HKDF multi-expansion ${g.testType} tg${g.tgId}/tc${t.tcId} · ${hashAlg} · salt ${g.kdfMultiExpansionConfiguration.saltMethod} · IKM Z‖T ${ikm.length}B · expect ${negative ? 'at least one output ≠ the (modified) NIST dkms' : 'every expansion byte-matches'}`
+    const meta: AcvpCaseMeta = {
+      origin: 'nist-acvp-server',
+      upstreamOperation: 'derive',
+      localOperation: 'derive',
+      parameterSet: `HKDF-${hashAlg}`,
+      hashAlg,
+      parameters: {
+        saltMethod: g.kdfMultiExpansionConfiguration.saltMethod,
+        ikmBytes: ikm.length,
+        expansions: n,
+      },
+      expected: negative ? 'invalid' : 'byte-match',
+      tgId: g.tgId,
+      tcId: t.tcId,
+      source: srcOf(P),
+    }
+    if (why) {
+      await skipRow(ctx, { id, algorithm, testCase, meta, why })
+      continue
+    }
+    await runRow(ctx, {
+      id,
+      algorithm,
+      testCase,
+      meta,
+      source: srcTag(P),
+      exec: (compare): RowOutcome => {
+        const base = importDeriveBase(M, h, WSE_CK.CKK_GENERIC_SECRET, ikm)
+        if (base.rv !== CKR_OK) {
+          const o = `C_CreateObject → ${rvName(base.rv)}`
+          return { ok: false, observed: o, details: o }
+        }
+        try {
+          let matched = 0
+          for (const [i, it] of p.iterationParameters.entries()) {
+            const r = deriveRv(
+              M,
+              h,
+              WSE_MECH.CKM_HKDF_DERIVE,
+              pHkdf(M, HKDF_PRF[hashAlg]!, hexToBytes(p.salt), hexToBytes(it.fixedInfo)), // eslint-disable-line security/detect-object-injection
+              base.handle,
+              it.l / 8
+            )
+            if (!r.value) {
+              const o = `expansion ${i + 1}/${n}: C_DeriveKey → ${rvName(r.rv)}`
+              return { ok: false, observed: o, details: o }
+            }
+            if (compare(r.value, t.dkms[i]!, `derived key ${i + 1}/${n}`)) matched += 1 // eslint-disable-line security/detect-object-injection
+          }
+          const all = matched === n
+          const ok = negative ? !all : all
+          const observed = all ? 'all byte-equal' : `${matched}/${n} byte-equal`
+          return {
+            ok,
+            observed,
+            details: negative
+              ? all
+                ? 'every derived key EQUALS the dkms NIST marks invalid'
+                : `${n - matched} of ${n} derived keys differ from the dkms NIST marks invalid (testPassed=false)`
+              : all
+                ? `${n} derived keys byte-equal to NIST dkms`
+                : `${n - matched} of ${n} derived keys differ from NIST dkms`,
+          }
+        } finally {
+          destroy(M, h, base.handle)
+        }
+      },
+    })
   }
 }
 
