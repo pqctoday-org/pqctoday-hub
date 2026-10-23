@@ -2097,13 +2097,21 @@ const NIAP_APP_PP_URL =
   'https://www.niap-ccevs.org/static_html/protection-profile/516/PP_APP_V2.0.htm'
 const NIAP_POLICY_5_URL =
   'https://www.niap-ccevs.org/Documents_and_Guidance/ccevs/policy-ltr-5-update3.pdf'
+const NIAP_PP_LIST_URL = 'https://www.niap-ccevs.org/protectionprofiles'
 const NIAP_TD1011_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1011'
 const NIAP_TD1010_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1010'
+const NIAP_TD1009_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1009'
+const NIAP_TD1012_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1012'
+const NIAP_TD1013_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1013'
+const NIAP_TD1025_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1025'
+const NIAP_TD0966_URL = 'https://www.niap-ccevs.org/technical-decisions/TD0966'
 
 type ProfileRow = {
   profile: string
   version: string
   date: string
+  /** The approval date as listed on NIAP's table of approved profiles (read 23 October 2026). */
+  approved: string
   pq: string
   classical: string
   /** Verbatim snippets from the document itself, in the order they are listed under the table. */
@@ -2126,6 +2134,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'Application Software PP',
     version: '2.0',
     date: '2025-06-16',
+    approved: '16 Jun 2025',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical: 'CNSA 1.0 branch: RSA 3072-bit or greater, P-384 (P-521), safe-prime groups',
     quotes: [`${APP_NOTE} ${REMOVAL_NOTE}`],
@@ -2134,6 +2143,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'cPP Dedicated Security Component',
     version: '2.1',
     date: '17 Nov 2025',
+    approved: '26 Mar 2026',
     pq: 'LMS, HSS, XMSS, XMSS MT, ML-KEM (512, 768, 1024), ML-DSA (44, 65, 87), HashML-DSA',
     classical:
       'RSA 2048 or 3072, EC curves from P-256, finite-field groups, EdDSA; NIAP TD1011 lists CNSA 1.0 or 2.0',
@@ -2149,6 +2159,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'cPP Network Devices',
     version: '4.0',
     date: '25 Nov 2025',
+    approved: '22 Dec 2025',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical:
       'RSA 2048 to 8192, ECDSA from P-256, finite-field groups; NIAP TD1010 lists CNSA 1.0 or 2.0',
@@ -2161,6 +2172,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'PP General-Purpose Computing Platforms',
     version: '2.0',
     date: '2026-04-16',
+    approved: '22 Apr 2026',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical: 'RSA 3072 to 8192, P-384 or P-521, finite-field groups (3072 bits and up)',
     quotes: ['ML-KEM-1024 is CNSA compliant.'],
@@ -2169,6 +2181,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'PP Virtualization',
     version: '2.0',
     date: '2026-05-21',
+    approved: '21 May 2026',
     pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
     classical: 'RSA 3072 to 8192, P-384 or P-521, finite-field groups (3072 bits and up)',
     quotes: [
@@ -2179,6 +2192,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'cPP Full Drive Encryption, Authorization Acquisition',
     version: '3.0',
     date: '2026-03-12',
+    approved: '25 Mar 2026',
     pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
     classical: 'CNSA 1.0 branch: RSA 3072 to 8192, P-384 (P-521)',
     quotes: [REMOVAL_NOTE],
@@ -2187,6 +2201,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'cPP Full Drive Encryption, Encryption Engine',
     version: '3.0',
     date: '2026-03-12',
+    approved: '25 Mar 2026',
     pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
     classical: 'CNSA 1.0 branch: RSA 3072 to 8192, P-384 (P-521)',
     quotes: [`${APP_NOTE} ${REMOVAL_NOTE}`],
@@ -2195,6 +2210,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'cPP Hardcopy Devices',
     version: '2.0',
     date: '31 Jul 2026',
+    approved: '23 Sep 2026',
     pq: 'ML-KEM-1024, ML-DSA-87, LMS, XMSS',
     classical: 'RSA 2048 or more, ECDSA 256 bits or more, finite-field 2048 bits or more, KCDSA',
     quotes: [
@@ -2208,6 +2224,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'PP-Module VPN Client',
     version: '3.0',
     date: '2025-09-30',
+    approved: '29 Sep 2025',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical:
       'ECC P-384 (the module text makes it mandatory), RSA 3072-bit or greater, safe-prime groups',
@@ -2221,6 +2238,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'PP-Module File Encryption',
     version: '2.0',
     date: '2025-09-29',
+    approved: '29 Sep 2025',
     pq: 'ML-KEM only, in a hybrid key-transport method',
     classical: 'RSA KTS-OAEP, 3072 or 4096 bits',
     quotes: [FE_KT, FE_NOTE],
@@ -2229,6 +2247,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     profile: 'PP-Module File Encryption Enterprise Management',
     version: '2.0',
     date: '2025-09-29',
+    approved: '29 Sep 2025',
     pq: 'ML-KEM only, in a hybrid key-transport method',
     classical: 'RSA KTS-OAEP, 3072 or 4096 bits',
     quotes: [FE_KT, FE_NOTE],
@@ -2381,7 +2400,10 @@ export const NiapPqcRoute = () => (
         'Classical choices in the document text',
       ]}
       rows={NIAP_PROFILE_ROWS.map((r) => [
-        <strong key="p">{r.profile}</strong>,
+        <span key="p">
+          <strong>{r.profile}</strong>
+          <span className="block text-xs text-muted-foreground">NIAP approved {r.approved}</span>
+        </span>,
         r.version,
         r.date,
         r.pq,
@@ -2389,19 +2411,32 @@ export const NiapPqcRoute = () => (
       ])}
     />
     <p className="text-xs text-muted-foreground">
-      The date is the one the document itself shows; algorithm lists are written as the profile
-      lists them. Source pages: the{' '}
+      “Date in document” is the one the document itself shows; “NIAP approved” is the approval date
+      as listed on{' '}
+      <ExternalSource name="NIAP’s table of approved profiles" href={NIAP_PP_LIST_URL} />
+      (read 23 October 2026), which lists all 11 as CC:2022. Algorithm lists are written as the
+      profile lists them. Source pages: the{' '}
       <ExternalSource name="Application Software profile" href={NIAP_APP_PP_URL} /> and the{' '}
-      <ExternalSource name="Dedicated Security Component cPP" href={NIAP_DSC_CPP_URL} />, with{' '}
-      <ExternalSource name="TD1010" href={NIAP_TD1010_URL} /> and{' '}
-      <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />.
+      <ExternalSource name="Dedicated Security Component cPP" href={NIAP_DSC_CPP_URL} />.
     </p>
     <P>
       Three of the profiles (Dedicated Security Component, Network Devices and Hardcopy Devices) are
       international collaborative profiles whose text lists classical algorithms below CNSA 1.0,
-      such as RSA 2048 and P-256 (and KCDSA in Hardcopy Devices). For the Dedicated Security
-      Component and Network Devices cPPs, NIAP restricts these for the Product Compliant List by
-      TD1011 and TD1010. For Hardcopy Devices 2.0 we found no such NIAP decision. <MA />
+      such as RSA 2048 and P-256 (and KCDSA in Hardcopy Devices). NIAP restricts what can be posted
+      to the Product Compliant List by endorsement Technical Decisions that all say the same: each
+      applicable cryptographic requirement must include at least one selection conforming to CNSA
+      1.0 or 2.0, and an evaluation in another scheme may select other algorithms if the product can
+      be configured not to use them. These are{' '}
+      <ExternalSource name="TD1011" href={NIAP_TD1011_URL} /> for Dedicated Security Component,{' '}
+      <ExternalSource name="TD1010" href={NIAP_TD1010_URL} /> for Network Devices,{' '}
+      <ExternalSource name="TD1012" href={NIAP_TD1012_URL} /> and{' '}
+      <ExternalSource name="TD1013" href={NIAP_TD1013_URL} /> for Full Drive Encryption 3.0
+      (Authorization Acquisition and Encryption Engine), and{' '}
+      <ExternalSource name="TD1009" href={NIAP_TD1009_URL} /> for Hardcopy Devices version 1.1 only.
+      NIAP’s page for Hardcopy Devices 2.0 lists no Technical Decision (read 23 October 2026), and
+      we found no such decision for version 2.0. <MA /> For the Functional Package for TLS 2.1 (a
+      package, not a profile), <ExternalSource name="TD1025" href={NIAP_TD1025_URL} /> (1 April
+      2026) says the same for (D)TLS servers.
     </P>
     <p className="text-sm font-medium text-foreground">Quotes from each document</p>
     <ul className="list-disc space-y-1 pl-5 text-xs leading-relaxed text-foreground/90">
@@ -2448,12 +2483,9 @@ export const NiapPqcRoute = () => (
         algorithm; their text has no match for ML-DSA, LMS or XMSS.
       </li>
       <li>
-        NIAP’s own posting dates differ from the dates inside the documents. From NIAP’s
-        announcements: Network Devices 4.0 endorsed 22 December 2025; Dedicated Security Component
-        2.1 endorsed 26 March 2026; Full Drive Encryption 3.0 (both) posted 25 March 2026;
-        General-Purpose Computing Platforms 2.0 posted 22 April 2026; Virtualization 2.0 posted 21
-        May 2026. The 25 March 2026 announcement names Hardcopy Devices version 1.1, not 2.0; the
-        Hardcopy Devices 2.0 document is dated 31 July 2026.
+        NIAP’s approval dates differ from the dates inside the documents. The 25 March 2026
+        announcement names Hardcopy Devices version 1.1, not 2.0; the Hardcopy Devices 2.0 document
+        is dated 31 July 2026 and NIAP’s table lists it approved 23 September 2026.
       </li>
       <li>
         Virtualization and General-Purpose Computing Platforms: NIAP’s announcement says each
@@ -2466,6 +2498,12 @@ export const NiapPqcRoute = () => (
         The VPN Client module’s revision history, dated 2025-09-30 in the document, says “limitation
         of cryptographic algorithms to CNSA 1.0”, while the same module text carries the CNSA 2.0
         selections. We quote both and make no reading of the difference.
+      </li>
+      <li>
+        <ExternalSource name="TD0966" href={NIAP_TD0966_URL} /> (8 January 2026) corrects the
+        brackets of the VPN Client module’s FCS_CKM.1. Its text states ECC “NIST curves” P-384
+        outside the later selection, puts ML-KEM-1024 and ML-DSA-87 in the CNSA 2.0 branch, and puts
+        the safe-prime groups in the CNSA 1.0 branch.
       </li>
     </ul>
 

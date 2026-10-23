@@ -139,8 +139,18 @@ describe('niap-pqc-route section', () => {
     const text = document.body.textContent ?? ''
     expect(text).toContain('though some key-encapsulation tables list only ML-KEM-1024')
     expect(text).not.toContain('sit beside the classical choices')
-    expect(text).toContain('For Hardcopy Devices 2.0 we found no such NIAP decision.')
-    expect(text).toContain('TD1011 and TD1010')
+    expect(text).toContain(
+      'lists no Technical Decision (read 23 October 2026), and we found no such decision for version 2.0.'
+    )
+    for (const td of ['TD1009', 'TD1010', 'TD1011', 'TD1012', 'TD1013', 'TD1025', 'TD0966']) {
+      expect(screen.getAllByRole('link', { name: `Source: ${td}` })[0]).toHaveAttribute(
+        'href',
+        `https://www.niap-ccevs.org/technical-decisions/${td}`
+      )
+    }
+    expect(text).toContain('(a package, not a profile)')
+    expect(screen.getAllByText(/NIAP approved /)).toHaveLength(11)
+    expect(text).toContain('which lists all 11 as CC:2022')
     // Quotes restored or added for terms that had none.
     expect(text).toContain(
       'ECC key generation with support for P-384 has been made mandatory in support of IPsec'
