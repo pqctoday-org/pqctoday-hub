@@ -6,8 +6,7 @@
  *
  * Provenance (read 24 September 2026):
  *  - Each entry was fetched from its public listing popup
- *    (listings.pcisecuritystandards.org/popups/pts_device.php?appnum=…) through
- *    pqctoday-priv/scripts/fetch_resilient.py. The popups answered HTTP 200
+ *    (listings.pcisecuritystandards.org/popups/pts_device.php?appnum=…). The popups answered HTTP 200
  *    with no licence or agreement step. The searchable device list
  *    (…/assessors_and_solutions/pin_transaction_devices) redirects to an
  *    agreement page; it was NOT accepted and NOT used (plan r2 D4).

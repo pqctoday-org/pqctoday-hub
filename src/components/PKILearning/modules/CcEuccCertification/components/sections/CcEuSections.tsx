@@ -1637,10 +1637,11 @@ export const EuccPqcToday = () => (
           at security levels 3 and 5.
         </li>
         <li>
-          <strong>Hybridisation of lattice schemes:</strong> “(M)LWE based cryptographic mechanisms
-          shouldn’t be used in a standalone way to provide the intended security functionality, but
-          should be combined with a classical cryptomechanism.” For signatures, concatenating
-          signatures that must all verify is acceptable.
+          <strong>Hybridisation of lattice schemes:</strong> “LWE or MLWE based cryptographic
+          mechanisms shouldn’t be used in a standalone way to provide the intended security
+          functionality, but should be combined with a well established classical cryptomechanism.”
+          (ACM v2.0, Note 40) For signatures, concatenating signatures that must all verify is
+          acceptable.
         </li>
         <li>
           <strong>Hash-based signatures:</strong> hybridisation optional — they “may however also be
@@ -1959,7 +1960,11 @@ export const CcRegionalSchemes = () => (
         January 2028 a product that does not meet CNSA 2.0 for every cryptographic function is not
         accepted into NIAP evaluation, and from 1 January 2029 it is not posted to the Product
         Compliant List — so a certificate from any CCRA scheme stops opening the US
-        national-security market unless its cryptography is CNSA 2.0.
+        national-security market unless its cryptography is CNSA 2.0. The same policy sets earlier
+        cut-offs for products that do not meet CNSA 1.0 minimum requirements: they can no longer
+        extend a certificate through Assurance Maintenance or hold one for more than two years, are
+        not accepted into NIAP evaluation from 1 January 2027, and are not posted to the Product
+        Compliant List from 1 July 2027.
       </p>
     </Callout>
 

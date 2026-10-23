@@ -114,6 +114,20 @@ export const PCI_PLAIN_SOURCES = {
     date: 'read 24 September 2026',
     url: 'https://www.pcisecuritystandards.org/document_library/',
   },
+  p2pe32Blog: {
+    title:
+      'PCI SSC Releases Version 3.2 of the PCI Point-to-Point Encryption (P2PE) Standard (PCI Perspectives blog)',
+    publisher: 'PCI SSC',
+    date: '30 June 2025',
+    url: 'https://blog.pcisecuritystandards.org/pci-ssc-releases-version-3-2-of-the-pci-point-to-point-encryption-p2pe-standard',
+  },
+  fsisacAtmPos: {
+    title:
+      'Post Quantum PCI Use Cases: ATM and POS Card Capture; ATM and POS Setup with Backend Acquiring Systems (industry source)',
+    publisher: 'FS-ISAC PQC Working Group',
+    date: '2025',
+    url: 'https://fsisac.com/hubfs/Knowledge/PQC/PCIUseCases-ATM&POSCardCapture_ATM&POSSetupWithBackendAcquiringSystems.pdf',
+  },
 } satisfies Record<string, PlainSource>
 
 export type PlainSourceKey = keyof typeof PCI_PLAIN_SOURCES
@@ -262,14 +276,15 @@ export const PCI_PQC_FINDINGS: PqcFinding[] = [
   },
   {
     source: 'PIN Security v3.1 (requirement text in the ROC template)',
-    says: 'No PQC content. Annex A covers symmetric key distribution using asymmetric (RSA-era) techniques.',
+    says: 'The requirements text has no PQC content; its algorithm appendix (Normative Annex C) was not checked. Annex A covers symmetric key distribution using asymmetric (RSA-era) techniques.',
     doesNotSay: 'Any quantum-safe replacement for that asymmetric key distribution.',
     status: 'read',
   },
   {
     source: 'P2PE v3.1 (September 2021)',
-    says: 'No PQC content. Normative Annex C lists classical algorithms only; a footnote lets RSA-2048 keys transport AES-128 keys in remote key distribution.',
-    doesNotSay: 'What v3.2 (June 2025) changed — check v3.2.',
+    says: 'Normative Annex C lists classical algorithms only. It carries an advisory note that RSA, DH and ECC keys are vulnerable to large-scale quantum computers, but names no post-quantum algorithm and sets no requirement or deadline. A footnote lets RSA-2048 keys transport AES-128 keys in remote key distribution.',
+    doesNotSay:
+      'What v3.2 changed. v3.2 replaced v3.1 for new submissions and reassessments on 1 January 2026 (existing v3.1 validations are unaffected); v3.2 is licence-gated and was not read.',
     status: 'read',
   },
   {
@@ -350,7 +365,7 @@ export const PCI_STACK: StackLayer[] = [
     artifact: 'CMVP certificate and Security Policy',
     listing: 'CMVP validated-modules list',
     anchorRole:
-      'Accepted as HSM evidence by PIN v3.1 Req 1-3 and P2PE v3.1 4A-1.1 at Level 3 or higher — but it is not PTS approval',
+      'Accepted as HSM evidence by PIN v3.1 Req 1-3 and P2PE v3.1 4A-1.1 at Level 3 or higher (v3.2 replaced v3.1 for new submissions and reassessments on 1 January 2026 (existing v3.1 validations are unaffected)) — but it is not PTS approval',
   },
 ]
 
@@ -637,7 +652,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
           'Under P2PE v3.1, an HSM whose FIPS 140-2 certificate is now on the Historical list still qualifies for decryption.',
         verdict: 'not-supported',
         doc: 'fips-certificate',
-        why: 'P2PE v3.1 4A-1.1 accepts FIPS 140-2/140-3 Level 3+ or PTS-approved HSMs, but its note says FIPS certificates "must not be listed as historical or revoked". FIPS 140-2 certificates moved to Historical on 21/22 September 2026. Check whether v3.2 keeps the note.',
+        why: 'P2PE v3.1 4A-1.1 accepts FIPS 140-2/140-3 Level 3+ or PTS-approved HSMs, but its note says FIPS certificates "must not be listed as historical or revoked". FIPS 140-2 certificates moved to Historical on 21/22 September 2026. v3.2 replaced v3.1 for new submissions and reassessments on 1 January 2026 (existing v3.1 validations are unaffected); check whether v3.2 keeps the note.',
       },
     ],
   },
@@ -747,7 +762,7 @@ export function readListing(fields: Record<string, string>, asOf: string): Listi
     out.push({
       label: 'Expiry',
       text: expired
-        ? `Expired ${expiry}, before this listing was read (${asOf}). Use of expired devices is a payment-brand question, not something the listing answers.`
+        ? `Expired ${expiry}, before this listing was read (${asOf}). For decryption HSMs in a P2PE solution the standard itself requires a current approval (P2PE v3.1 4A-1.1); elsewhere, continued use of expired devices is up to the payment brands.`
         : `Approval runs until ${expiry}. That date comes from the version’s row in the listing’s expiry table, not from this device.`,
       tone: expired ? 'warn' : 'ok',
     })
@@ -841,7 +856,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Open the real listing 4-40069 (payShield 9000, captured 24 September 2026) and read its version and expiry against the read date.',
     observe:
-      'An approval is tied to a requirements version and expires on that version’s schedule. Whether expired devices may stay in service is a payment-brand question.',
+      'An approval is tied to a requirements version and expires on that version’s schedule. P2PE decryption HSMs must hold a current approval under the P2PE standard; elsewhere, whether expired devices may stay in service is up to the payment brands.',
     stepId: 'pci-evidence-review',
     config: { listing: '4-40069' },
   },
