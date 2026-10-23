@@ -5,6 +5,7 @@ import { HYBRID_ALGORITHMS } from '../constants'
 import { hybridCryptoService, type KeyGenResult } from '../services/HybridCryptoService'
 import { silithiumKeygen } from '../services/HybridSignatureService'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import { MlKemAcvpEncapDecapPanel } from './MlKemAcvpEncapDecapPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
 
@@ -18,33 +19,66 @@ import {
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 
+// Rows are tagged in the panel by where their expected value comes from. The "round trip"
+// rows only check that the engine accepts its own output; the ML-KEM encapsulation and
+// decapsulation cases that compare with NIST's answers are in MlKemAcvpEncapDecapPanel.
 const HYBRID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'hybrid-mlkem-roundtrip',
-    useCase: 'ML-KEM-768 key encapsulation',
+    useCase: 'ML-KEM-768 encapsulate + decapsulate round trip (functional check)',
     standard: 'FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
   {
-    id: 'hybrid-eddsa-classical',
-    useCase: 'Ed25519 classical signature component',
-    standard: 'RFC 8032',
-    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8032',
-    kind: { type: 'eddsa-functional' },
-    message: 'X25519+ML-KEM-768 composite cert subject: CN=hybrid.pqc.example',
+    id: 'hybrid-mldsa-sigver-valid',
+    useCase: 'ML-DSA-65 sigVer: NIST case that must verify',
+    standard: 'FIPS 204 ACVP sigVer',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigVer-FIPS204',
+    kind: { type: 'mldsa-sigver-nist', variant: 65, expect: 'valid' },
+  },
+  {
+    id: 'hybrid-mldsa-sigver-invalid',
+    useCase: 'ML-DSA-65 sigVer: NIST case that must be rejected',
+    standard: 'FIPS 204 ACVP sigVer',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigVer-FIPS204',
+    kind: { type: 'mldsa-sigver-nist', variant: 65, expect: 'invalid' },
   },
   {
     id: 'hybrid-mldsa-pqc',
-    useCase: 'ML-DSA-65 PQC signature component',
+    useCase: 'ML-DSA-65 sign + verify round trip (functional check)',
     standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: 'Composite signature: classical=Ed25519,pqc=ML-DSA-65,format=CompositeML-DSA',
   },
   {
+    id: 'hybrid-eddsa-sigver',
+    useCase: 'Ed25519 verification of a published test signature',
+    standard: 'RFC 8032',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8032',
+    kind: { type: 'eddsa-sigver' },
+  },
+  {
+    id: 'hybrid-eddsa-classical',
+    useCase: 'Ed25519 sign + verify round trip (functional check)',
+    standard: 'RFC 8032',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8032',
+    kind: { type: 'eddsa-functional' },
+    message: 'X25519+ML-KEM-768 composite cert subject: CN=hybrid.pqc.example',
+  },
+  {
+    id: 'hybrid-ecdsa-sigver',
+    useCase: 'ECDSA P-256 verification of a published test signature',
+    standard: 'FIPS 186-5',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+    kind: { type: 'ecdsa-sigver', curve: 'P-256' },
+  },
+  {
     id: 'hybrid-ecdsa-classical',
-    useCase: 'ECDSA P-256 classical signature component',
+    useCase: 'ECDSA P-256 sign + verify round trip (functional check)',
     standard: 'FIPS 186-5',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
     kind: { type: 'ecdsa-functional', curve: 'P-256' },
@@ -52,7 +86,7 @@ const HYBRID_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'hybrid-ecdh-classical',
-    useCase: 'Classical ECDH P-256 key agreement',
+    useCase: 'ECDH P-256 key agreement, both directions (functional check)',
     standard: 'NIST SP 800-56A',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
     kind: { type: 'ecdh-derive', curve: 'P-256' },
@@ -462,10 +496,20 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
         </p>
       </div>
 
+      {category === 'kem' && <MlKemAcvpEncapDecapPanel />}
+
+      <p className="text-xs text-muted-foreground px-1">
+        <span className="font-medium text-foreground">About these checks:</span> a row tagged
+        &ldquo;Functional&rdquo; is a round trip (the engine makes a key, uses it, and accepts its
+        own output), so it shows the engine is self-consistent but has no published expected value.
+        Rows tagged &ldquo;NIST ACVP sample&rdquo; or &ldquo;Standard KAT&rdquo; compare the engine
+        with an answer someone else published. Neither a round trip nor a sample run establishes a
+        validation.
+      </p>
       <KatValidationPanel
         specs={HYBRID_KAT_SPECS}
         label="Hybrid Crypto Known Answer Tests"
-        authorityNote="FIPS 203 · FIPS 204 · RFC 8032"
+        authorityNote="FIPS 203 · FIPS 204 · FIPS 186-5 · RFC 8032"
       />
     </div>
   )

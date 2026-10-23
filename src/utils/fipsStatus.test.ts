@@ -91,4 +91,10 @@ describe('pqcBoundary', () => {
     // A CAVP row is not a module boundary.
     expect(pqcBoundary('Yes', [{ certType: 'ACVP', classicalOnly: false }])).toBe('not-stated')
   })
+
+  it('treats a certificate that names only FIPS 140-2 as historical (moved to the CMVP Historical list in September 2026)', () => {
+    expect(classifyFips('Yes (FIPS 140-2 Level 1, CMVP #3456, Status Active)')).toBe('historical')
+    expect(classifyFips('Yes (FIPS 140-2 and FIPS 140-3, CMVP #5313)')).toBe('module')
+    expect(classifyFips('Yes (FIPS 140-3 CMVP #5313)')).toBe('module')
+  })
 })

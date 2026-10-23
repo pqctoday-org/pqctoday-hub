@@ -56,11 +56,11 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       id: 'tpm-key-hierarchy',
       title: '3. TPM Key Hierarchy',
       description:
-        'Explore the TPM 2.0 key hierarchy — Endorsement Key (EK), Storage Root Key (SRK), Attestation Identity Key (AIK), and Device Identity Key (DevID). Understand why TPM 2.0 cannot support ML-DSA natively and learn the hybrid RSA TPM + ML-DSA software key approach.',
+        'Explore the TPM 2.0 key hierarchy — Endorsement Key (EK), Storage Root Key (SRK), Attestation Identity Key (AIK), and Device Identity Key (DevID). See what TPM 2.0 Library v185 adds (ML-KEM and ML-DSA) and learn the hybrid RSA TPM + ML-DSA software key approach for TPMs built to earlier versions.',
       badge: 'TPM',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The AIK key shows "Hybrid Available" status. Expanding the Hybrid Approach section reveals that TPM 2.0\'s hardware constraint requires a two-signature pattern: RSA TPM quote proves hardware binding, ML-DSA co-signature provides quantum safety. Full PQC likely requires future TPM hardware (per the TCG roadmap).',
+        'The EK, SRK and AIK show "Defined in TPM 2.0 v185"; the Device Identity key shows "Roadmap". Expanding the Hybrid Approach section shows the interim two-signature pattern for a TPM built to an earlier library version: an RSA TPM quote proves hardware binding and an ML-DSA software co-signature provides quantum safety. The timeline lists the March 2026 specification and the dated vendor statements on shipping silicon and TCG certification.',
       config: { step: 2 },
     },
     {
@@ -78,11 +78,11 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       id: 'attestation-design',
       title: '5. Attestation Design',
       description:
-        'Use the Attestation Flow Designer to explore all 5 attestation types (Measured Boot, TPM Quote, DICE, FIDO Device Onboard, Remote Attestation via TLS). For each type: identify vulnerable crypto operations, review the HNDL window, and understand the PQC migration path.',
+        'Use the Attestation Flow Designer to explore all 5 attestation types (Measured Boot, TPM Quote, DICE, FIDO Device Onboard, Remote Attestation via TLS). For each type: identify vulnerable crypto operations, review the migration urgency, and understand the PQC migration path.',
       badge: 'Attestation',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Measured Boot itself is quantum-safe (SHA-256 PCR extends). TPM Quote (RSA AIK) has a 10-year HNDL window — the most urgent attestation migration. Remote TLS attestation has a 15-year HNDL window because both the TLS key exchange AND the embedded attestation signatures are quantum-vulnerable.',
+        'Measured Boot itself is quantum-safe (SHA-256 PCR extends). A TPM Quote signed with an RSA AIK is a forgery risk once a CRQC exists, not a harvest-now-decrypt-later one: the signature protects no secret, so urgency follows how long the TPM and its AIK certificate chain stay in service (the designer estimates about 10 years). Remote TLS attestation carries both risks: the TLS key exchange can be recorded now and decrypted later, while the embedded attestation signatures can only be forged later (estimated about 15 years in service).',
       config: { step: 4 },
     },
     {

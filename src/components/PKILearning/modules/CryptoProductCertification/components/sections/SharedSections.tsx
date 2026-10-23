@@ -987,8 +987,9 @@ export const ElectronicExchange = () => (
       draft of 2023 (<SourceLink source={SHARED_SOURCES.sp180040a} />) and the ACMVP project
       description — as a question NIST is exploring, not an entitlement. It is <strong>not</strong>{' '}
       in SP 1800-40B. Status reports on the project history: CSWP 37A (
-      <SourceLink source={SHARED_SOURCES.cswp37a} />, final, 16 March 2026) and CSWP 37B{' '}
-      <PlainSource>NIST CSWP 37B, Initial Public Draft, 10 September 2025</PlainSource>.
+      <SourceLink source={SHARED_SOURCES.cswp37a} />, final, 16 March 2026) and CSWP 37B (
+      <SourceLink source={SHARED_SOURCES.cswp37b} label="NIST CSWP 37B" />, final, 30 September
+      2026).
     </p>
 
     <H3>A future-facing model — clearly labelled as one</H3>

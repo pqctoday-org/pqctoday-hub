@@ -46,7 +46,9 @@ describe('Crypto Lab Workbench', () => {
     const docker = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
     // Docker sandbox scenarios are in the grid but are not counted as in-browser.
     expect(
-      screen.getByText(`${GRID_COUNT - docker} in-browser tools · ${docker} Docker scenarios`)
+      screen.getByText(
+        `${GRID_COUNT} tools: ${GRID_COUNT - docker} in-browser, ${docker} Docker scenarios`
+      )
     ).toBeInTheDocument()
     expect(
       screen.getByRole('heading', { name: /Run real cryptography in your browser/i })
@@ -94,6 +96,23 @@ describe('Crypto Lab Workbench', () => {
         .map((link) => link.getAttribute('href'))
     )
     expect(actual).toEqual(expected)
+  })
+
+  it('states one tool count: header, search box and directory agree', () => {
+    usePersonaStore.setState({ selectedPersona: 'researcher' })
+    renderWorkbench()
+    const fullPlaygrounds = FEATURE_PLAYGROUNDS.filter(
+      (f) => !WORKSHOP_TOOLS.some((t) => !isEnvironmentTool(t.id) && f.to === `/playground/${t.id}`)
+    ).length
+    expect(screen.getByText(new RegExp(`^${GRID_COUNT} tools: `))).toBeInTheDocument()
+    expect(screen.getByRole('searchbox', { name: /search tools/i })).toHaveAttribute(
+      'placeholder',
+      expect.stringContaining(`Search ${GRID_COUNT} tools`)
+    )
+    expect(
+      screen.getByText(`Browse all ${GRID_COUNT} tools and ${fullPlaygrounds} full playgrounds`)
+    ).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(`^${GRID_COUNT} tools · `))).toBeInTheDocument()
   })
 
   it('has no page-local persona control and defaults to the no-role Overview heading', () => {

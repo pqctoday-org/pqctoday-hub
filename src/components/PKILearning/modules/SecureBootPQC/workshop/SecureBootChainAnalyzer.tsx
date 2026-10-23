@@ -219,6 +219,9 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                           <div className="text-[10px] text-muted-foreground mt-1">
                             Size: {keyType.pqcSize}
                           </div>
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            National Security Systems (CNSA 2.0): {keyType.cnsaAlgorithm}
+                          </div>
                         </div>
                       </div>
 
@@ -319,9 +322,9 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium text-foreground">{stage.name}</span>
                       <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded border font-bold capitalize ${PRIORITY_COLOR[stage.hndlRisk]} border-current/30`}
+                        className={`text-[10px] px-1.5 py-0.5 rounded border font-bold capitalize ${PRIORITY_COLOR[stage.forgeryUrgency]} border-current/30`}
                       >
-                        {stage.hndlRisk} HNDL risk
+                        {stage.forgeryUrgency} migration urgency
                       </span>
                     </div>
                     <div className="text-[10px] text-muted-foreground mt-0.5">

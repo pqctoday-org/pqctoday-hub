@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /** `?section=` write-back / re-read, `?attack=`, `?kat=` and `?polarity=` on the Validation tab. */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { AlgorithmValidationView } from './AlgorithmValidationView'
 import { matchAttackProfile, attackProfileId } from './attackDeepLink'
@@ -159,5 +159,38 @@ describe('AlgorithmValidationView — arrival scroll', () => {
     render(<AlgorithmValidationView sectionParam="kat" />)
     await vi.waitFor(() => expect(scroll).toHaveBeenCalled())
     expect(scroll).toHaveBeenCalledWith({ block: 'start', behavior: 'smooth' })
+  })
+})
+
+describe('AlgorithmValidationView — jump strip', () => {
+  beforeEach(() => usePersonaStore.setState({ selectedPersona: 'cert-engineer' }))
+
+  it('offers the three sections at the top of the tab, in page order', () => {
+    render(<AlgorithmValidationView />)
+    const strip = screen.getByRole('navigation', { name: 'Jump to a section of this tab' })
+    const links = within(strip).getAllByRole('link')
+    expect(links.map((l) => l.textContent)).toEqual([
+      'Implementation attacks',
+      'Known-answer checks',
+      'Coverage & open gaps',
+    ])
+  })
+
+  it('opens a closed section, writes ?section, and does not follow the hash', () => {
+    const onUpdateParams = vi.fn()
+    render(<AlgorithmValidationView onUpdateParams={onUpdateParams} />)
+    expect(screen.queryByText(/^coverage/)).toBeNull()
+    fireEvent.click(screen.getByRole('link', { name: 'Coverage & open gaps' }))
+    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: 'coverage' })
+    expect(screen.getByText(/^coverage/)).toBeInTheDocument()
+    expect(window.location.hash).toBe('')
+  })
+
+  it('leaves an open section open when its link is used', () => {
+    const onUpdateParams = vi.fn()
+    render(<AlgorithmValidationView onUpdateParams={onUpdateParams} />)
+    fireEvent.click(screen.getByRole('link', { name: 'Known-answer checks' }))
+    expect(onUpdateParams).toHaveBeenLastCalledWith({ section: 'kat' })
+    expect(screen.getByText(/^kat/)).toBeInTheDocument()
   })
 })

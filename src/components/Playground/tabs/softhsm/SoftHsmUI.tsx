@@ -46,7 +46,7 @@ export const PREHASH_OPTIONS = [
 ]
 
 // SLH-DSA parameter sets (FIPS 205 / PKCS#11 v3.2 CKP_SLH_DSA_*)
-// sk = 4n bytes (SK.seed + SK.prf + PK.seed + PK.root, each n bytes; FIPS 205 §6)
+// sk = 4n bytes (SK.seed + SK.prf + PK.seed + PK.root, each n bytes; FIPS 205 §9.1)
 //
 // A lazy function, not a top-level literal: the production build wraps this
 // module's softhsm import in vite-plugin-top-level-await, so a top-level
@@ -148,7 +148,7 @@ export const slhDsaParamSetOptions = () =>
     },
   ] as const
 
-// FIPS 205 §6 Table 1 — internal parameters for each parameter set
+// FIPS 205 §11 Table 2 — internal parameters for each parameter set
 // n=hash output bytes, h=total tree height, d=hypertree layers,
 // hp=height per layer (h/d), a=FORS tree height, k=FORS trees, lg_w=Winternitz log, m=index bits
 export const SLH_DSA_INTERNAL_PARAMS: Record<

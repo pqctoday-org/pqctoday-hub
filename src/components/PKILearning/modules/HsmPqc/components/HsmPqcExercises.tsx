@@ -51,7 +51,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Signing',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'ML-DSA-65 signatures are 3,309 bytes (vs 64 bytes for ECDSA P-256 — a 51x increase). Hedged signing mode (rnd != 0) is enabled by default in all production HSMs for side-channel protection per FIPS 204 section 3.4.',
+        'ML-DSA-65 signatures are 3,309 bytes (vs 64 bytes for ECDSA P-256 — a 51x increase). Hedged signing (rnd drawn from a random source instead of all zero) is the default variant in FIPS 204 section 3.4, which says the deterministic variant "should not be used on platforms where side-channel attacks are a concern and where they cannot be otherwise mitigated". PKCS#11 v3.2 lets the caller choose (CKH_HEDGE_PREFERRED, CKH_HEDGE_REQUIRED or CKH_DETERMINISTIC_REQUIRED), so which variant a given HSM uses by default is a product property: look for it in the module documentation and Security Policy rather than assuming it.',
       config: { step: 0 },
     },
     {
@@ -62,7 +62,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Vendor',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Thales Luna 7 and Entrust nShield 5 both have FIPS 140-3 Level 3 certification and GA ML-KEM + ML-DSA support. Entrust nShield 5 also supports SLH-DSA (all 12 param sets, native PKCS#11) and LMS/XMSS via the PQSDK C API — covering the full CNSA 2.0 signature suite. Crypto4A QxHSM supports all algorithms with FPGA-based crypto-agility.',
+        'Thales Luna 7 and Entrust nShield 5 both offer ML-KEM and ML-DSA in firmware on FIPS 140-3 Level 3 hardware, but the module certificates differ: Luna T7 #5450 lists ML-KEM, ML-DSA and LMS among its approved algorithms, while the nShield 5s certificates #5329 and #4745 list no PQC algorithm. Crypto4A #5497 lists ML-KEM, ML-DSA, SLH-DSA and LMS. The interface also differs by version. On nShield, ML-DSA reached the PKCS#11 interface in Security World v13.9.0, ML-KEM in v13.9.3 and SLH-DSA (12 parameter sets) in v13.9.5; in v13.9.0 ML-KEM and SLH-DSA were nCore-only, so check the release notes for the version you run. SLH-DSA support does not help with CNSA 2.0 firmware signing: the NSA FAQ approves LMS and XMSS (not HSS or XMSS^MT) and says SLH-DSA "is not part of CNSA and is not approved for any use in NSS". LMS for nShield has a CAVP certificate (A7990, PQSDK); we found no Entrust page describing XMSS.',
       config: { step: 1 },
     },
     {
@@ -73,7 +73,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Deployment',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Cloud HSM PQC support is uneven rather than absent: our own migrate catalogue records CAVP ML-KEM and ML-DSA validations for AWS CloudHSM and Securosys CloudHSM, while Azure Managed HSM and Azure Key Vault record none. Read those as ALGORITHM-level validations — a CAVP validation does not by itself tell you the ML-KEM encapsulation call is exposed through the provider PKCS#11 interface, which is the thing your integration actually needs, so confirm the API surface with the vendor before designing around it. On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) remain the safer assumption for ML-KEM key exchange today.',
+        'Cloud HSM PQC support is uneven rather than absent, and the interface differs from the standard one. AWS CloudHSM documents ML-DSA only, through vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA) rather than the standard CKM_ML_DSA, and no ML-KEM mechanism; Google Cloud KMS lists its PQC algorithms at the software protection level only, with none for HSM keys. Keep three statements apart for AWS: ML-DSA works in the HSM; AWS says it is available in FIPS mode on hsm2m.medium from 1 September 2026; and the NIST Security Policy for the same module (CMVP #4703) lists ML-DSA and ML-KEM as non-approved services, with no PQC algorithm on the certificate. We have not found a document that reconciles the last two, so ask the vendor which applies to your cluster. For ML-KEM key exchange, also check which interface exposes it in the exact firmware or release you run: nShield, for example, added ML-KEM to PKCS#11 only in Security World v13.9.3.',
       config: { step: 1 },
     },
     {
@@ -84,7 +84,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'With Thales Luna 7 (low complexity, 30-60 min/HSM), a rolling upgrade of 10 HSMs takes approximately 5-10 hours. The dual-partition strategy allows classical operations to continue during migration. Note that adding PQC algorithms in new firmware generally requires fresh CAVP algorithm validations and a FIPS 140-3 module re-validation — the existing certificate does not automatically cover the new firmware, so budget for the CMVP timeline.',
+        'With Thales Luna 7 (low complexity, 30-60 min/HSM), a rolling upgrade of 10 HSMs takes approximately 5-10 hours. The dual-partition strategy allows classical operations to continue during migration. Note that adding PQC algorithms in new firmware needs CAVP algorithm validations and a module revalidation — the existing certificate does not cover the new firmware, so budget for the CMVP timeline. Under the CMVP Management Manual (version 2.7, 9 April 2026) the route is an Update (UPDT) only if each category of security change (approved algorithms, SSPs, approved services, self-tests, FSM states) stays under 30%; otherwise the module goes through a Full Submission (FS). The Learn tab panel "What the lab tests" quotes the sources.',
       config: { step: 2 },
     },
     {
@@ -95,7 +95,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'FIPS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'ML-KEM and ML-DSA carry the most validations in the tracker, across both algorithm (CAVP) and module (CMVP) certificates. Several Level 3 HSM module certificates list ML-KEM and ML-DSA as approved (Thales Luna T7 #5450, Kryptus #5282, Crypto4A #5497, Sansec #5503), while others from the same vendors list none (Luna K7 #4684, Luna M7 #5300 lists only LMS). Read the approved-algorithm list of the exact certificate rather than a vendor name — that is the point of the exercise. An algorithm certificate is a prerequisite for listing an approved algorithm on a module certificate, but it is not a module certificate.',
+        'ML-KEM and ML-DSA carry the most validations in the tracker, across both algorithm (CAVP) and module (CMVP) certificates. Several Level 3 HSM module certificates list ML-KEM and ML-DSA as approved (Thales Luna T7 #5450, Kryptus #5282, Crypto4A #5497, Sansec #5503), while others from the same vendors list none (Luna K7 #4684, nShield 5s #5329 and #4745; Luna M7 #5300 lists only LMS). Read the approved-algorithm list of the exact certificate rather than a vendor name — that is the point of the exercise. An algorithm certificate is a prerequisite for listing an approved algorithm on a module certificate, but it is not a module certificate.',
       config: { step: 3 },
     },
   ]

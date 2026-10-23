@@ -1,0 +1,49 @@
+[
+  {
+    "platform_name": "Alibaba Cloud ESA (Edge Security Acceleration)",
+    "category": "CDN & Edge Security",
+    "product_name": "Alibaba Cloud ESA (Edge Security Acceleration)",
+    "product_brief": "Edge platform providing global acceleration, DDoS protection, WAF, bot management, and built-in post-quantum hybrid key exchange for web properties.",
+    "pqc_support": "Yes — X25519MLKEM768 hybrid key exchange enabled by default across ESA's global edge network for TLS 1.3 and QUIC (HTTP/3)",
+    "pqc_capability_description": "ESA natively integrates X25519MLKEM768 hybrid key exchange (X25519 + ML-KEM-768) across its global edge network, enabled by default with zero configuration. Works with TLS 1.3 and QUIC (HTTP/3) when clients support it (Chrome/Edge 131+, Firefox 132+). Key exchange only; no PQC signatures stated.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, ML-KEM-768, TLS 1.3 HKDF-based key schedule",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Network, Cloud, Security Stack",
+    "license_type": "Commercial",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Alibaba Cloud global edge network; TLS 1.3 and QUIC (HTTP/3)",
+    "target_industries": "Financial Services, Healthcare, Government and Defense, Intellectual Property, Automotive and IoT",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Verification of active PQC via browser DevTools Security tab or command `curl -vso /dev/null https://your-domain.com 2>&1 | grep -i mlkem`",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Zero-configuration default; no configuration changes, certificate replacements, or origin server modifications required. Additional handshake data ~2.3 KB, no additional round trips.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "ESA natively integrates X25519MLKEM768 hybrid key exchange across its global edge network.",
+      "PQC Capability Description": "Alibaba Cloud ESA (Edge Security Acceleration) has made it a zero-configuration default.",
+      "Crypto Primitives": "X25519MLKEM768 = X25519 (classical ECDH) + ML-KEM-768 (post-quantum KEM)"
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

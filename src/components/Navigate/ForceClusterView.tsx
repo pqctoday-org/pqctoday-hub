@@ -1133,8 +1133,10 @@ export function ForceClusterView() {
 
   const selectedNode = selectedNodeId ? (nodesById.get(selectedNodeId) ?? null) : null
 
+  // Hidden while the filter panel is open: both sit in the left margin, and the guide
+  // (about 400 px tall) would cover the top of a tall panel. It returns when the panel closes.
   const guideVisible =
-    !loading && !error && !selectedNode && !guideDismissed && motionMode !== 'tour'
+    !loading && !error && !selectedNode && !guideDismissed && motionMode !== 'tour' && !panelOpen
 
   // Picking a record means the reader has found their way around — the guide
   // should not come back when its drawer closes.

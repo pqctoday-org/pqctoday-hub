@@ -439,26 +439,33 @@ export const LandingView = () => {
             encouraged path), so a returning visitor's "continue where I left
             off" affordance needs to survive scanning, not require scrolling
             past the whole board to find it. */}
-        {/* Grouped so the container's space-y-24 applies once, not per line. */}
-        <div className="space-y-3">
+        {/* Grouped so the container's space-y-24 applies once, not per line.
+            `empty:hidden`: when neither shows (the usual case) the group has no
+            box, so its 96 px section gap does not become a blank band above the
+            board. */}
+        <div className="space-y-3 empty:hidden">
           <ResumeBanner dismissKey="landing-persona-board" />
           <UpdatedSinceLastVisit />
         </div>
 
-        <PersonaPageNote route="/" />
+        {/* The "What this means for you" strip belongs to the board under it: a
+            small gap, not the 96 px gap between page sections. */}
+        <div className="space-y-6">
+          <PersonaPageNote route="/" />
 
-        <PersonaBoardView
-          personaId={selectedPersona}
-          variantId={activeVariantId}
-          onSelectVariant={handleSelectVariant}
-          customSideCard={
-            selectedPersona === 'researcher' &&
-            resolveRoleBoardVariant(selectedPersona, activeVariantId).id ===
-              RESEARCHER_FIELD_WATCH_VARIANT_ID ? (
-              <ResearcherFieldWatchCard />
-            ) : undefined
-          }
-        />
+          <PersonaBoardView
+            personaId={selectedPersona}
+            variantId={activeVariantId}
+            onSelectVariant={handleSelectVariant}
+            customSideCard={
+              selectedPersona === 'researcher' &&
+              resolveRoleBoardVariant(selectedPersona, activeVariantId).id ===
+                RESEARCHER_FIELD_WATCH_VARIANT_ID ? (
+                <ResearcherFieldWatchCard />
+              ) : undefined
+            }
+          />
+        </div>
 
         <OnboardingCTAs persona={selectedPersona} region={selectedRegion} />
 

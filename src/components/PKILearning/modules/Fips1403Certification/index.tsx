@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 import type { FC } from 'react'
+import { Link } from 'react-router'
 import { Layers } from 'lucide-react'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import { CertIntroduction } from '@/components/PKILearning/modules/CryptoProductCertification/components/CertIntroduction'
@@ -30,7 +31,20 @@ const stepIndex = (stepId: string): number =>
 export const Fips1403CertificationModule: FC = () => (
   <ModuleShell
     manifest={manifest}
-    description="FIPS 140-3 and the CMVP in depth: what a certificate proves, how to read one, and what adding post-quantum cryptography changes for a validated module. Start with LM-065 for the fundamentals every scheme shares; PCI PTS HSM is covered in LM-071."
+    description={
+      <>
+        FIPS 140-3 and the CMVP in depth: what a certificate proves, how to read one, and what
+        adding post-quantum cryptography changes for a validated module. Start with{' '}
+        <Link className="text-primary underline" to="/learn/crypto-product-certification">
+          Cryptographic Product Certification: Fundamentals
+        </Link>{' '}
+        for the fundamentals every scheme shares; PCI PTS HSM is covered in{' '}
+        <Link className="text-primary underline" to="/learn/pci-certification">
+          PCI Certification
+        </Link>
+        .
+      </>
+    }
     learn={(api) => (
       <CertIntroduction
         manifest={manifest}

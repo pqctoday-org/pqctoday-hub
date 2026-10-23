@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-testing-validation',
-  contentVersion: 10,
+  contentVersion: 11,
   lm_id: 'LM-014',
   title: 'PQC Network Testing & Validation',
   description:
@@ -23,14 +23,71 @@ const manifest: ModuleManifest = {
     { id: 'side-channel-tvla', label: 'TVLA Side-Channel Testing' },
     { id: 'fips-acvp', label: 'FIPS 140-3 & ACVP Testing' },
   ],
+  // The whole module is network and operations testing, except two parts a certification
+  // engineer needs: side-channel (TVLA) assessment and FIPS 140-3 / ACVP testing. The
+  // certification path keeps only those; the other path is the whole module.
+  learnPaths: [
+    {
+      id: 'network-practitioner',
+      label: 'Network practitioner',
+      entrySection: 'why-pqc-testing',
+      duration: '120 min',
+      audience: 'Security and operations teams testing PQC in a live estate',
+      sections: [
+        'why-pqc-testing',
+        'passive-vs-active',
+        'performance-testing-method',
+        'interop-testing',
+        'side-channel-tvla',
+        'fips-acvp',
+      ],
+    },
+    {
+      id: 'certification-engineer',
+      label: 'Certification engineer',
+      entrySection: 'side-channel-tvla',
+      duration: '40 min',
+      audience: 'Accredited-lab testers and module vendors preparing validation evidence',
+      sections: ['side-channel-tvla', 'fips-acvp'],
+    },
+  ],
+  offPathSections: 'mark',
   workshopSteps: [
-    { id: 'passive-discovery-lab', label: 'Passive Crypto Discovery Lab' },
-    { id: 'active-pqc-scanner', label: 'Active PQC Server Scanner' },
-    { id: 'performance-benchmark-designer', label: 'Performance Benchmark Designer' },
-    { id: 'interop-test-matrix', label: 'Interoperability Test Matrix' },
-    { id: 'tvla-leakage-analyzer', label: 'TVLA Leakage Analyzer' },
-    { id: 'test-strategy-builder', label: 'Test Strategy Builder' },
-    { id: 'acvp-validator', label: 'ACVP Workflow & Validation Tests' },
+    {
+      id: 'passive-discovery-lab',
+      label: 'Passive Crypto Discovery Lab',
+      paths: ['network-practitioner'],
+    },
+    {
+      id: 'active-pqc-scanner',
+      label: 'Active PQC Server Scanner',
+      paths: ['network-practitioner'],
+    },
+    {
+      id: 'performance-benchmark-designer',
+      label: 'Performance Benchmark Designer',
+      paths: ['network-practitioner'],
+    },
+    {
+      id: 'interop-test-matrix',
+      label: 'Interoperability Test Matrix',
+      paths: ['network-practitioner'],
+    },
+    {
+      id: 'tvla-leakage-analyzer',
+      label: 'TVLA Leakage Analyzer',
+      paths: ['network-practitioner', 'certification-engineer'],
+    },
+    {
+      id: 'test-strategy-builder',
+      label: 'Test Strategy Builder',
+      paths: ['network-practitioner'],
+    },
+    {
+      id: 'acvp-validator',
+      label: 'ACVP Workflow & Validation Tests',
+      paths: ['network-practitioner', 'certification-engineer'],
+    },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

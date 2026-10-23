@@ -182,10 +182,11 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
 
       <Callout title="Revision discipline: ACVP is a moving protocol family">
         <p>
-          The core protocol used here is <strong>draft-ietf-acvp-spec-01</strong>. It keeps its
-          draft name, but NIST revises its protocol sections in the repository (latest: October
-          2025); this module pins that commit <Cite s="acvpSpec" />. The algorithm JSON
-          specifications evolve separately, so evidence must name the exact core draft,
+          The core protocol used here is <strong>draft-ietf-acvp-spec-01</strong>, an independent
+          draft whose name has stayed the same while NIST has kept revising its protocol sections in
+          the repository (the latest change is dated 16 October 2025); this module pins it by
+          repository commit <Cite s="acvpSpec" />. What changes is the algorithm JSON
+          specifications, which evolve separately, so evidence must name the exact core draft,
           algorithm-specification revision, operational environment and vector-set source.
         </p>
         <p>

@@ -711,6 +711,20 @@ function computeDegrees(nodes: Map<string, ForceClusterNode>, edges: ForceCluste
  * plan §2.8 — applied after the full edge set is known, so capping never
  * strands an edge pointing at a dropped node.
  */
+/**
+ * A registry value shown to readers as a sub-category label: underscores read
+ * as spaces and the first letter is a capital, so `certification_body` and
+ * `Standards Body` sit side by side as "Certification body" and "Standards Body".
+ * Values that already read well (`IoT`, `PKI`, `Cross-sector`) are unchanged.
+ */
+export function humanizeSub(sub: string): string {
+  // A registry row still waiting for classification carries the workflow marker
+  // "PENDING — needs human classification"; readers see "Unclassified".
+  if (/^pending\b/i.test(sub.trim())) return 'Unclassified'
+  const spaced = sub.replace(/_/g, ' ').trim()
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1)
+}
+
 export async function buildForceClusterGraph(): Promise<ForceClusterGraph> {
   const [algorithms, glossaryTerms, { libraryData }] = await Promise.all([
     loadPQCAlgorithmsData(),
@@ -728,7 +742,9 @@ export async function buildForceClusterGraph(): Promise<ForceClusterGraph> {
       .filter((n) => !CAPPED_TYPES.has(n.type) || n.degree > 0)
       .map((n) => n.id)
   )
-  const finalNodes = Array.from(nodes.values()).filter((n) => survivingIds.has(n.id))
+  const finalNodes = Array.from(nodes.values())
+    .filter((n) => survivingIds.has(n.id))
+    .map((n) => ({ ...n, sub: humanizeSub(n.sub) }))
   const finalEdges = edges.filter((e) => survivingIds.has(e.from) && survivingIds.has(e.to))
 
   return { nodes: finalNodes, edges: finalEdges }

@@ -72,6 +72,7 @@ const AMVP = getStandard('NIST-ACMVP-Protocol-Workstream')
 const NCCOE_CMVP = getStandard('NCCoE-Automation-of-the-CMVP')
 const PCI_PIN = getStandard('PCI-PIN-v3-1-ROC-Reporting-Template')
 const PCI_P2PE = getStandard('PCI-P2PE-Security-Requirements-v3-1')
+const CMVP_STANDARDS_PAGE = getStandard('NIST-CMVP-FIPS-140-3-Standards-page')
 const ISO_19790_2025 = getStandard('ISO-IEC-19790-2025')
 const ISO_24759_2025 = getStandard('ISO-IEC-24759-2025-Test-requirements-for-cryptographic-modul')
 
@@ -187,7 +188,7 @@ const DOCUMENT_STACK: readonly { doc: ReactNode; job: string; current: string }[
   {
     doc: <>ISO/IEC 19790:2012 (Cor.1:2015) and ISO/IEC 24759:2017</>,
     job: 'The security requirements (19790) and the test requirements (24759). Paid documents.',
-    current: 'These editions are pinned; the 2025 editions are not adopted',
+    current: 'The editions FIPS 140-3 names; the CMVP’s standards page lists no 2025 edition',
   },
   {
     doc: (
@@ -274,10 +275,17 @@ export const FipsWhatItIs = () => (
       19790:2012/Cor.1:2015(E) and ISO/IEC 24759:2017(E)”, and the SP 800-140 series lists what NIST
       supersedes or modifies. ISO published 2025 editions of both documents (
       <Cite std={ISO_19790_2025}>ISO/IEC 19790:2025</Cite> and{' '}
-      <Cite std={ISO_24759_2025}>ISO/IEC 24759:2025</Cite>). The CMVP has <strong>not</strong>{' '}
-      adopted them, and the August 2026 IG still cites 19790:2012 <AsOf />. Both ISO documents are
-      paid, so this module does not reproduce them. It teaches from public NIST documents and real
-      Security Policies instead.
+      <Cite std={ISO_24759_2025}>ISO/IEC 24759:2025</Cite>). Three statements have to be read
+      together. FIPS 140-3 §3.1 says: “When referring to ISO/IEC 19790:2012(E) and ISO/IEC
+      24759:2017(E), the latest edition of the referenced document (including any amendments)
+      applies.” The CMVP’s <Cite std={CMVP_STANDARDS_PAGE}>FIPS 140-3 Standards page</Cite> still
+      lists only the 19790:2012 and 24759:2017 editions, and the August 2026{' '}
+      <Cite std={IG}>IG</Cite> still cites 19790:2012 throughout. Yet one IG note (IG 4.4.B) says
+      the IG “is consistent with ISO/IEC 19790:2025”. The sources cited here contain no CMVP
+      statement that adopts the 2025 editions or sets a transition date (checked 23 October 2026),
+      so ask the laboratory which edition applies to a submission. Both ISO documents are paid, so
+      this module does not reproduce them. It teaches from public NIST documents and real Security
+      Policies instead.
     </p>
 
     <SubHeading>Five documents, five jobs</SubHeading>

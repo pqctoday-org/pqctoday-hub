@@ -9,6 +9,7 @@ import {
   PERSONA_ORDER,
   NICE_AFFINITY_PERSONAS,
   formatHours,
+  pathSkipsPqcBasics,
 } from './learnRedesign.helpers'
 import type { PersonaPathPhase } from '../usePersonaPathItems'
 
@@ -175,5 +176,14 @@ describe('formatHours', () => {
 
   it('floors at 1 minute rather than showing 0', () => {
     expect(formatHours(0)).toBe('1m')
+  })
+})
+
+describe('pathSkipsPqcBasics', () => {
+  it('is true only for a role whose path does not open with PQC 101', () => {
+    expect(pathSkipsPqcBasics('cert-engineer')).toBe(true)
+    for (const id of PERSONA_ORDER.filter((p) => p !== 'cert-engineer')) {
+      expect(pathSkipsPqcBasics(id), id).toBe(false)
+    }
   })
 })

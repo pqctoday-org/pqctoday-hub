@@ -179,3 +179,12 @@ export function formatHours(minutes: number): string {
   if (m === 0) return `${h}h`
   return `${h}h ${m}m`
 }
+
+/**
+ * True for a role whose path does not open with PQC 101 (the certification
+ * engineer's starts at the certificate): a reader new to PQC would otherwise
+ * find no pointer to the basics, so the path views add an optional note.
+ */
+export function pathSkipsPqcBasics(personaId: PersonaId): boolean {
+  return !PERSONAS[personaId].recommendedPath.includes('pqc-101')
+}

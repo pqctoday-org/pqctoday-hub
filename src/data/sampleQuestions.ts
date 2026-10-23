@@ -214,7 +214,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What learning progression system does PQC Today use?',
     'What is the difference between a composite certificate and an RFC 9763 related certificate?',
     'How large is an SLH-DSA-SHA2-128s certificate signature compared to ML-DSA-65?',
-    'Why does ANSSI permit standalone SLH-DSA certificates without a classical hybrid?',
+    'Why does ANSSI not recommend systematic hybridisation for hash-based signatures such as SLH-DSA?',
     'What is a chameleon certificate and how does it differ from related certs?',
     'How do I read X.509 DER structure in the Hybrid Cert Inspector?',
     'What are the IETF Hackathon pqc-certificates reference certs and why do they matter?',
@@ -586,7 +586,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   'PQC Testing & Validation': [
     'What is the difference between passive crypto discovery and active PQC scanning?',
     'How does PQC affect TLS handshake latency and IKEv2 SA setup times?',
-    'What is TVLA and why does classical fixed-vs-random testing fail for lattice-based PQC?',
+    'What is TVLA and why is a fixed-vs-random test alone not enough for lattice-based PQC?',
     'How does the interoperability test matrix validate hybrid PQC client-server combinations?',
     'What tools are available for PQC performance benchmarking (VIAVI TeraVM, PQC-LEO, Keysight CyPerf)?',
     'How does CryptoNext COMPASS perform passive PQC crypto discovery?',

@@ -88,6 +88,7 @@ type LibrarySort = Parameters<typeof useLibraryPipeline>[0]['sortBy']
 // Desktop's sort options (SortControl.tsx) — a `?sort` from a shared desktop
 // link orders the phone list the same way; anything else keeps the default.
 const SORT_OPTIONS: readonly LibrarySort[] = [
+  'relevance',
   'newest',
   'published',
   'name',
@@ -199,7 +200,8 @@ export function MobileLibraryView() {
     certRelevantIdSet,
     lifecycleBucket: lifecycle,
     topicFilter: topic,
-    sortBy: sortBy ?? 'published',
+    // A search is ranked by match quality unless a shared link carries a sort.
+    sortBy: sortBy ?? (searchText.trim() ? 'relevance' : 'published'),
     sortExplicit: sortBy !== undefined,
     selectedPersona,
     prefsOff,
@@ -218,6 +220,11 @@ export function MobileLibraryView() {
     setParams(next, { replace: true })
   }, [params, setParams])
 
+  // The Certification starter set is a fixed list that role narrowing leaves alone
+  // (see useLibraryPipeline), so while it is open the page does not claim the list
+  // is narrowed for the role.
+  const roleNarrowingApplies = !prefsOff && quickView !== 'cert'
+
   const displayedItems =
     quickView === 'new'
       ? pipeline.sortedItems.filter((i) => i.status === 'New' || i.status === 'Updated')
@@ -229,11 +236,13 @@ export function MobileLibraryView() {
         <h1 className="sr-only">Library</h1>
         <p className="text-[11.5px] text-muted-foreground" data-testid="library-count">
           {displayedItems.length} documents
-          {selectedPersona && !prefsOff && ` · narrowed for ${personaLabel ?? selectedPersona}`}
+          {selectedPersona &&
+            roleNarrowingApplies &&
+            ` · narrowed for ${personaLabel ?? selectedPersona}`}
         </p>
       </div>
 
-      {selectedPersona && (
+      {selectedPersona && (prefsOff || roleNarrowingApplies) && (
         <div
           className="mb-3 rounded-xl border border-primary/20 bg-primary/[0.06] p-3"
           data-testid="library-mobile-role-scope"

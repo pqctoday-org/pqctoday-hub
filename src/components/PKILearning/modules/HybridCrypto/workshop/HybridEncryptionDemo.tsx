@@ -16,11 +16,9 @@ import {
   hsm_ecdhDerive,
   hsm_encapsulate,
   hsm_decapsulate,
-  hsm_hkdf,
   hsm_extractKeyValue,
-  hsm_importGenericSecret,
-  CKM_SHA256,
 } from '@/wasm/softhsm'
+import { combineHybridSecrets, HYBRID_KEM_INFO } from '../services/hybridKemCombiner'
 
 // ── PKCS#11 operations exercised by this demo ────────────────────────────────
 const HYBRID_LIVE_OPERATIONS = [
@@ -125,12 +123,13 @@ const STEPS: Step[] = [
       {
         label: 'KDF',
         value: 'CKD_NULL',
-        description: 'Raw DH u-coordinate output; domain separation applied via HKDF in Step 6',
+        description:
+          'Raw DH u-coordinate output; combined with the ML-KEM secret and passed through HKDF in Step 6',
       },
       {
         label: 'Output',
         value: '32-byte CKK_GENERIC_SECRET (CKA_DERIVE=true)',
-        description: 'Stored in HSM session for direct use as HKDF base key in Step 6',
+        description: 'Its bytes become the second half of the HKDF input in Step 6',
       },
       {
         label: 'Verification',
@@ -203,21 +202,22 @@ const STEPS: Step[] = [
     id: 'hkdf-combine',
     title: 'Step 6 — Decapsulate & HKDF Combine',
     description:
-      'Bob decapsulates the ML-KEM ciphertext, then HKDF-SHA-256 combines both shared secrets into a 32-byte hybrid session key. Because HKDF is a sound combiner (dual-PRF assumption on HMAC), a quantum break of X25519 alone, or an unforeseen flaw in ML-KEM alone, does not expose the session key.',
-    code: `const kemSS = hsm_extractKeyValue(module, session,\n  hsm_decapsulate(module, session, kemPriv, ct, 768))\nconst hybridKey = hsm_hkdf(\n  module, session, ecdhHandle,\n  CKM_SHA256, true, true,\n  kemSS,\n  encode('hybrid-kem-x25519-mlkem768-v1'),\n  32\n)`,
+      'Bob decapsulates the ML-KEM ciphertext, then concatenates the two shared secrets, ML-KEM first and X25519 second (the order RFC 10024 §4.3 gives for X25519MLKEM768), and feeds the 64 bytes into HKDF-SHA-256 to get a 32-byte hybrid session key. Feeding the concatenation into an SP 800-56C KDF such as HKDF is the combiner form CMVP IG D.S accepts, and SP 800-227 §4.6 describes the aim: the result is secure if at least one component is. A quantum break of X25519 alone, or a flaw in ML-KEM alone, should not expose the session key.',
+    code: `const kemSS = hsm_extractKeyValue(module, session,\n  hsm_decapsulate(module, session, kemPriv, ct, 768))\n// RFC 10024 §4.3 order for X25519MLKEM768: ML-KEM_ss || X25519_ss\nconst ikm = concat(kemSS, ecdhSS)            // 64 bytes\nconst ikmHandle = hsm_importGenericSecret(module, session, ikm)\nconst hybridKey = hsm_hkdf(\n  module, session, ikmHandle,\n  CKM_SHA256, true, true,\n  undefined,                                  // no salt: HKDF uses HashLen zero bytes\n  encode('hybrid-kem-x25519-mlkem768-v1'),\n  32\n)`,
     language: 'javascript',
     actionLabel: 'Decapsulate & Combine',
     explanationTable: [
       {
         label: 'HKDF-Extract IKM',
-        value: 'ECDH shared secret (base key)',
-        description: 'X25519 DH output used as input key material (RFC 5869 §2.2)',
+        value: 'ML-KEM shared secret || X25519 shared secret (64 bytes)',
+        description:
+          'Both secrets are the input key material, concatenated in the RFC 10024 §4.3 order for X25519MLKEM768 (ML-KEM first). IG D.S approves a concatenation of the shared secrets fed into an SP 800-56C KDF, and names HKDF (RFC 5869) as included',
       },
       {
         label: 'HKDF-Extract Salt',
-        value: 'ML-KEM shared secret',
+        value: 'None (HKDF default: 32 zero bytes)',
         description:
-          'KEM output used as the HMAC key of HKDF-Extract. Under the standard assumption that HMAC is a dual PRF, the output stays secret if either input does',
+          'No secret goes in the salt. Placing one shared secret in the salt and the other in the input is not the combiner form IG D.S lists, so this demo concatenates them instead (RFC 5869 §2.2: with no salt, HKDF uses HashLen zero bytes)',
       },
       {
         label: 'Info',
@@ -229,7 +229,7 @@ const STEPS: Step[] = [
         label: 'Output',
         value: '32 bytes (256-bit hybrid session key)',
         description:
-          'Stays secret if either the X25519 or the ML-KEM-768 secret does (dual-PRF assumption on HMAC)',
+          'Meant to stay secret if either the X25519 or the ML-KEM-768 secret does (SP 800-227 §4.6: a well-designed multi-algorithm scheme is secure if at least one component is)',
       },
     ],
   },
@@ -475,41 +475,26 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
           generatedAt: new Date().toISOString(),
         })
 
-        // Import ECDH SS as a derivable generic secret for HKDF
-        const ecdhDerivableHandle = hsm_importGenericSecret(
+        // Combine: HKDF-SHA-256 over ML-KEM_ss || X25519_ss (RFC 10024 section 4.3 order), no salt
+        const combined = combineHybridSecrets(
           M,
           hSession,
+          decapSSBytes,
           stateRef.current.ecdhSSBytes
         )
+        stateRef.current.hybridKey = combined.key
 
         hsm.registerKey(M, hSession, {
-          handle: ecdhDerivableHandle,
-          label: 'ECDH SS (Derivable)',
+          handle: combined.ikmHandle,
+          label: 'Hybrid IKM (ML-KEM SS || X25519 SS)',
           family: 'aes',
           role: 'secret',
           purpose: 'application',
           generatedAt: new Date().toISOString(),
         })
 
-        // HKDF-SHA-256: IKM = ECDH SS (base key), salt = KEM SS, info = domain separator
-        const info = new TextEncoder().encode('hybrid-kem-x25519-mlkem768-v1')
-        const hybridKeyOut = { current: 0 }
-        const hybridKey = hsm_hkdf(
-          M,
-          hSession,
-          ecdhDerivableHandle,
-          CKM_SHA256,
-          true,
-          true,
-          decapSSBytes,
-          info,
-          32,
-          hybridKeyOut
-        )
-        stateRef.current.hybridKey = hybridKey
-
         hsm.registerKey(M, hSession, {
-          handle: hybridKeyOut.current,
+          handle: combined.keyHandle,
           label: 'Hybrid Session Key',
           family: 'aes',
           role: 'secret',
@@ -524,11 +509,12 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
           `KEM match: ${kemMatch ? '✓ Verified' : '✗ MISMATCH'}\n\n` +
           `─────────────────────────────────────────────\n` +
           `HKDF-SHA-256 inputs\n` +
-          `  IKM  (ECDH SS):  ${toHex(stateRef.current.ecdhSSBytes)}\n` +
-          `  Salt (KEM SS):   ${toHex(decapSSBytes)}\n` +
-          `  Info:            "hybrid-kem-x25519-mlkem768-v1"\n\n` +
-          `32-byte hybrid session key:\n${toHex(hybridKey)}\n\n` +
-          `With this HKDF combiner (dual-PRF assumption on HMAC), the key stays secret if either\n` +
+          `  IKM  (ML-KEM SS || X25519 SS, 64 B):\n    ${toHex(combined.ikm)}\n` +
+          `  Salt: none (HKDF default: 32 zero bytes)\n` +
+          `  Info: "${HYBRID_KEM_INFO}"\n\n` +
+          `32-byte hybrid session key:\n${toHex(combined.key)}\n\n` +
+          `Combiner form: both secrets concatenated, ML-KEM first (RFC 10024 §4.3), then HKDF\n` +
+          `  (an SP 800-56C KDF, as CMVP IG D.S accepts). Meant to stay secret if either\n` +
           `  • X25519 ECDH remains unbroken (classical assumption), or\n` +
           `  • ML-KEM-768 remains unbroken (MLWE lattice assumption)`
         )
@@ -552,9 +538,11 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
           Hybrid Key Establishment (X25519 + ML-KEM-768)
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Live PKCS#11 demo: X25519 ECDH + ML-KEM-768 encapsulation + HKDF-SHA-256 combiner. Both
-          secrets contribute to the 32-byte hybrid session key, which stays secret as long as either
-          component KEM is unbroken, given a sound combiner such as this HKDF construction (
+          Live PKCS#11 demo: X25519 ECDH + ML-KEM-768 encapsulation + HKDF-SHA-256 over the
+          concatenated secrets (ML-KEM first, as RFC 10024 §4.3 orders X25519MLKEM768). Both secrets
+          contribute to the 32-byte hybrid session key, which stays secret as long as either
+          component is unbroken, given an approved combiner form such as concatenation into an HKDF
+          (
           <a
             href="/library?ref=FIPS%20203"
             className="text-primary underline"
@@ -652,11 +640,14 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
             </li>
           </ul>
           <p>
-            What this construction does not do: it mixes in only the two secrets and a fixed label,
-            not the exchanged key shares or public keys. Deployed combiners bind those too (X-Wing
-            hashes the X25519 key share and public key into its output; TLS 1.3 feeds the whole
-            handshake transcript into its key schedule), so treat this as the idea, not a design to
-            copy.
+            What this construction does and does not do: its combiner has the form CMVP IG D.S
+            accepts (both secrets concatenated and fed into an SP 800-56C KDF, HKDF included), but
+            it mixes in only the two secrets and a fixed label, not the exchanged key shares or
+            public keys. Deployed combiners bind those too (X-Wing hashes the X25519 key share and
+            public key into its output; TLS 1.3 feeds the whole handshake transcript into its key
+            schedule). A validated module must also enforce a fixed set of hybrid schemes and
+            control the concatenation order itself, which this demo does not, so treat it as the
+            idea, not a design to copy.
           </p>
           <p>
             <Link to="/playground/tls-simulator" className="text-primary underline">

@@ -222,6 +222,42 @@ export interface CertificationXref {
   classicalOnly: boolean
 }
 
+/** Post-quantum algorithm families an HSM capability fact can be about. */
+export type HsmAlgorithm = 'ML-KEM' | 'ML-DSA' | 'SLH-DSA' | 'LMS' | 'XMSS'
+
+/**
+ * One checked fact about one algorithm on one HSM product, read from a named
+ * source on a named day. The Learn modules read these instead of carrying free
+ * text, so a vendor row cannot claim more than its source shows, and "available",
+ * "standard or vendor-defined PKCS#11 mechanism", "CAVP certificate", "approved
+ * mode" and "the CMVP certificate lists it" stay five separate answers.
+ * Anything not established is the literal 'unknown', never a guess.
+ */
+export interface HsmCapabilityFact {
+  productId: string
+  softwareName: string
+  algorithm: HsmAlgorithm
+  /** The HSM ships it ('preview' = documented as preview or beta). */
+  available: 'yes' | 'no' | 'preview' | 'unknown'
+  /** 'standard' = a mechanism defined in the OASIS PKCS#11 v3.2 standard. */
+  pkcs11Mechanism: 'standard' | 'vendor-defined' | 'none' | 'unknown'
+  /** Mechanism name as the source writes it, for example CKM_ML_DSA; '' when none or unknown. */
+  mechanismName: string
+  /** ACVP/CAVP certificate id such as A7285, or 'none' or 'unknown'. */
+  cavpCert: string
+  /** Usable in the module's FIPS-approved mode. */
+  approvedMode: 'yes' | 'no' | 'unknown'
+  /** The CMVP certificate's own algorithm list includes it. */
+  cmvpCertListsIt: 'yes' | 'no' | 'unknown'
+  /** CMVP certificate number the previous column refers to; '' when none or unknown. */
+  cmvpCert: string
+  /** ISO date the source was read. */
+  verifiedOn: string
+  sourceUrl: string
+  note: string
+  verificationStatus: string
+}
+
 export interface SoftwareCategoryGap {
   categoryId: string
   categoryName: string

@@ -95,7 +95,7 @@ export const SOURCES = {
     url: `https://github.com/usnistgov/ACVP/tree/${ACVP_PROTOCOL_COMMIT}/src/protocol`,
     libraryRefId: 'NIST-ACVP',
     revision:
-      'draft-ietf-acvp-spec-01 (keeps its draft name; NIST revises its protocol sections in the repository, latest October 2025; usnistgov/ACVP @ d13c633)',
+      'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
   },
   acvpMlKem: {
     id: 'acvpMlKem',

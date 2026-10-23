@@ -231,7 +231,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             )}
             <Insight
               label="Fragmentation adds hidden latency"
-              text={`When ClientHello exceeds the ~1,460-byte MSS (RFC 6928), TCP fragmentation adds exactly 1 RTT (${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms). Pure PQC ClientHellos (1,536B) and composite certificates (17KB) both trigger this. Plan for MTU tuning or QUIC migration.`}
+              text={`When ClientHello exceeds the ~1,460-byte MSS (RFC 6928), TCP fragmentation adds exactly 1 RTT (${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms). Hybrid ClientHellos (about 1,500B), pure PQC ClientHellos (1,536B) and composite certificates (17KB) all trigger this. Plan for MTU tuning or QUIC migration.`}
             />
           </div>
         )}

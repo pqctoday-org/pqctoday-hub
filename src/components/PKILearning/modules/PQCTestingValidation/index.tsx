@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { FC } from 'react'
+import { useEffect, type FC } from 'react'
 import {
   Radio,
   ScanSearch,
@@ -20,90 +20,107 @@ import { TestStrategyBuilder } from './workshop/TestStrategyBuilder'
 import { ACVPValidator } from './workshop/ACVPValidator'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { useModuleStore } from '@/store/useModuleStore'
+import { defaultPqcTestingLearnPath } from './learnPath'
 
+// Titles carry no "Step N:" prefix: the stepper numbers the steps on the learner's path, and the
+// certification-engineer path shows only two of the seven (chip "1" over a title saying "Step 5").
 const PARTS: WorkshopPart[] = [
   {
     id: 'passive-discovery-lab',
-    title: 'Step 1: Passive Discovery',
+    title: 'Passive Discovery',
     description:
       'Simulate a network tap/SPAN appliance. Classify TLS, SSH, and IKEv2 handshakes by quantum safety status across four network segments.',
     icon: Radio,
   },
   {
     id: 'active-pqc-scanner',
-    title: 'Step 2: Active Scanner',
+    title: 'Active Scanner',
     description:
       'Run an active PQC readiness scan against simulated endpoints. Detect PQC support, hybrid key exchange, and quantum-vulnerable configurations.',
     icon: ScanSearch,
   },
   {
     id: 'performance-benchmark-designer',
-    title: 'Step 3: Benchmark Designer',
+    title: 'Benchmark Designer',
     description:
       'Design a PQC performance test plan. Compare classical, hybrid, and pure-PQC latency and throughput across LAN, WAN, and satellite profiles.',
     icon: BarChart2,
   },
   {
     id: 'interop-test-matrix',
-    title: 'Step 4: Interop Matrix',
+    title: 'Interop Matrix',
     description:
       'Build a PQC interoperability test matrix. Validate which client/server algorithm combinations are compatible, partial, or blocked by hybrid policy.',
     icon: GitBranch,
   },
   {
     id: 'tvla-leakage-analyzer',
-    title: 'Step 5: TVLA Analyzer',
+    title: 'TVLA Analyzer',
     description:
       'Visualize Test Vector Leakage Assessment for ML-KEM and ML-DSA. Identify side-channel leakage points in NTT, polynomial multiplication, and compression stages.',
     icon: Cpu,
   },
   {
     id: 'test-strategy-builder',
-    title: 'Step 6: Strategy Builder',
+    title: 'Strategy Builder',
     description:
       'Compose a complete PQC validation program based on your migration phase, environment type, and compliance deadline.',
     icon: ClipboardList,
   },
   {
     id: 'acvp-validator',
-    title: 'Step 7: ACVP Workflow & Validation Tests',
+    title: 'ACVP Workflow & Validation Tests',
     description:
       'Watch a simulated ACVP run, then execute real known-answer and functional tests against the SoftHSMv3 WASM engine — each result labelled with its evidence class. Not an ACVTS verdict or a CAVP/CMVP certificate.',
     icon: FileCheck,
   },
 ]
 
-export const PQCTestingValidationModule: FC = () => (
-  <ModuleShell
-    manifest={manifest}
-    description="Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program."
-    learn={(api) => <PQCTestingIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={(api) => (
-      <PQCTestingExercises
-        onNavigateToWorkshop={api.goToWorkshop}
-        onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
-      />
-    )}
-    workshopParts={PARTS}
-    renderWorkshopStep={(index, configKey) => {
-      switch (index) {
-        case 0:
-          return <PassiveDiscoveryLab key={`passive-${configKey}`} />
-        case 1:
-          return <ActivePQCScanner key={`active-${configKey}`} />
-        case 2:
-          return <PerformanceBenchmarkDesigner key={`bench-${configKey}`} />
-        case 3:
-          return <InteropTestMatrix key={`interop-${configKey}`} />
-        case 4:
-          return <TVLALeakageAnalyzer key={`tvla-${configKey}`} />
-        case 5:
-          return <TestStrategyBuilder key={`strategy-${configKey}`} />
-        case 6:
-          return <ACVPValidator key={`acvp-${configKey}`} />
-        default:
-          return null
-      }
-    }}
-  />
-)
+export const PQCTestingValidationModule: FC = () => {
+  const persona = usePersonaStore((state) => state.selectedPersona)
+  const activePath = useModuleStore((state) => state.modules[manifest.id]?.activeLearnPath)
+  const setActiveLearnPath = useModuleStore((state) => state.setActiveLearnPath)
+
+  useEffect(() => {
+    if (!persona || activePath) return
+    const path = defaultPqcTestingLearnPath(persona)
+    if (path) setActiveLearnPath(manifest.id, path)
+  }, [activePath, persona, setActiveLearnPath])
+
+  return (
+    <ModuleShell
+      manifest={manifest}
+      description="Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program."
+      learn={(api) => <PQCTestingIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
+      exercises={(api) => (
+        <PQCTestingExercises
+          onNavigateToWorkshop={api.goToWorkshop}
+          onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
+        />
+      )}
+      workshopParts={PARTS}
+      renderWorkshopStep={(index, configKey) => {
+        switch (index) {
+          case 0:
+            return <PassiveDiscoveryLab key={`passive-${configKey}`} />
+          case 1:
+            return <ActivePQCScanner key={`active-${configKey}`} />
+          case 2:
+            return <PerformanceBenchmarkDesigner key={`bench-${configKey}`} />
+          case 3:
+            return <InteropTestMatrix key={`interop-${configKey}`} />
+          case 4:
+            return <TVLALeakageAnalyzer key={`tvla-${configKey}`} />
+          case 5:
+            return <TestStrategyBuilder key={`strategy-${configKey}`} />
+          case 6:
+            return <ACVPValidator key={`acvp-${configKey}`} />
+          default:
+            return null
+        }
+      }}
+    />
+  )
+}

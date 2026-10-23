@@ -52196,7 +52196,18 @@
           ]
         }
       ],
-      "copies": [],
+      "copies": [
+        {
+          "path": "src/components/PKILearning/modules/StatefulSignatures/data/slhdsaAcvpSigVerSample.json",
+          "kind": "embedded-values",
+          "cases": [
+            "slhdsa_sigver_sha2_test#/testGroups/2/tests/0",
+            "slhdsa_sigver_sha2_test#/testGroups/2/tests/1"
+          ],
+          "fields": ["pk", "signature"],
+          "note": "Stateful Signatures module embeds NIST's published ACVP signature-verification cases (public key and signature) in its SLH-DSA known-answer sample."
+        }
+      ],
       "publishabilityGaps": [],
       "notes": "11 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): no-pkcs11-hash-slh-dsa-mechanism, subset-size-budget."
     },
@@ -53968,7 +53979,15 @@
           ]
         }
       ],
-      "copies": [],
+      "copies": [
+        {
+          "path": "src/components/PKILearning/modules/StatefulSignatures/data/slhdsaAcvpSigVerSample.json",
+          "kind": "embedded-values",
+          "cases": ["slhdsa_sigver_shake_test#/testGroups/2/tests/0"],
+          "fields": ["pk", "signature"],
+          "note": "Stateful Signatures module embeds NIST's published ACVP signature-verification cases (public key and signature) in its SLH-DSA known-answer sample."
+        }
+      ],
       "publishabilityGaps": [],
       "notes": "11 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): no-pkcs11-hash-slh-dsa-mechanism, subset-size-budget."
     },

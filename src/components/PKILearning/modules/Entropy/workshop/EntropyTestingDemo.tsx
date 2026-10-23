@@ -24,7 +24,7 @@ import {
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
 import {
   BAD_SAMPLE_ZEROS,
-  BAD_SAMPLE_PATTERN,
+  BAD_SAMPLE_PATTERN_1024,
   BAD_SAMPLE_INCREMENT,
 } from '../utils/entropyConstants'
 import { BitMatrixGrid } from '../components/BitMatrixGrid'
@@ -94,7 +94,10 @@ function resolveInitialSample(type?: SampleType): { data: Uint8Array; label: str
     case 'bad-zeros':
       return { data: new Uint8Array(BAD_SAMPLE_ZEROS), label: 'All Zeros (64 bytes)' }
     case 'bad-pattern':
-      return { data: new Uint8Array(BAD_SAMPLE_PATTERN), label: 'Repeating Pattern (64 bytes)' }
+      return {
+        data: new Uint8Array(BAD_SAMPLE_PATTERN_1024),
+        label: 'Repeating Pattern (1,024 bytes)',
+      }
     case 'bad-increment':
       return { data: new Uint8Array(BAD_SAMPLE_INCREMENT), label: 'Incrementing (64 bytes)' }
   }
@@ -136,8 +139,8 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
         setSampleLabel('All Zeros (64 bytes)')
         break
       case 'bad-pattern':
-        setSampleData(new Uint8Array(BAD_SAMPLE_PATTERN))
-        setSampleLabel('Repeating Pattern (64 bytes)')
+        setSampleData(new Uint8Array(BAD_SAMPLE_PATTERN_1024))
+        setSampleLabel('Repeating Pattern (1,024 bytes)')
         break
       case 'bad-increment':
         setSampleData(new Uint8Array(BAD_SAMPLE_INCREMENT))
@@ -267,6 +270,11 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
               Paste Hex
             </Button>
           </div>
+          <p className="mt-2 text-[11px] text-muted-foreground leading-relaxed">
+            Samples are 64 bytes, except Repeating Pattern: it is 1,024 bytes, so the Adaptive
+            Proportion test runs on full 512-sample windows as SP 800-90B &sect;4.4.2 specifies and
+            the 1,024-sample startup minimum (&sect;4.3 item 4) is met.
+          </p>
 
           {/* Paste hex input */}
           {showPasteInput && (

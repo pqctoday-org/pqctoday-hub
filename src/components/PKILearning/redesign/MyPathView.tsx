@@ -28,10 +28,12 @@ import { MODULE_CATALOG, MODULE_STEP_COUNTS } from '../moduleData'
 import { usePersonaPathItems } from '../usePersonaPathItems'
 import { PersonaPathView, computeNextIncompleteModuleId } from '../PersonaPathView'
 import { ProgressDial } from './ProgressDial'
+import { NewToPqcNote } from '../common/NewToPqcNote'
 import {
   computePathProgress,
   CHECKPOINT_PASS_THRESHOLD,
   formatHours,
+  pathSkipsPqcBasics,
 } from './learnRedesign.helpers'
 
 interface MyPathViewProps {
@@ -215,6 +217,9 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
           )
         })}
       </div>
+
+      {/* A path that starts at the certificate, not at PQC 101: point a reader new to PQC at the basics. */}
+      {pathSkipsPqcBasics(personaId) && <NewToPqcNote className="px-1" />}
 
       {/* Resume + progress dial */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch">

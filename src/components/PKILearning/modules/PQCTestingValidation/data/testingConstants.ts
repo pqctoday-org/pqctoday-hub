@@ -444,6 +444,10 @@ export interface BenchmarkResult {
   throughputPct: number // % of classical baseline
 }
 
+// clientHelloBytes: the classical value is the module's modeled baseline. The hybrid value is
+// that baseline with its 32-byte X25519 share replaced by the 1,216-byte X25519MLKEM768 client
+// share (1,184-byte ML-KEM-768 encapsulation key + 32-byte X25519 share; RFC 10024 section 4.1):
+// 320 - 32 + 1,216 = 1,504 bytes, which is above the 1,460-byte Ethernet MSS on every network.
 export const BENCHMARK_DATA: Record<AlgorithmSet, Record<NetworkProfile, BenchmarkResult>> = {
   classical: {
     lan: {
@@ -480,8 +484,8 @@ export const BENCHMARK_DATA: Record<AlgorithmSet, Record<NetworkProfile, Benchma
       keyGenMs: 0.4,
       saSetupMs: 68,
       certSizeKb: 4.8,
-      clientHelloBytes: 1120,
-      fragmentation: false,
+      clientHelloBytes: 1504,
+      fragmentation: true,
       throughputPct: 93,
     },
     wan: {
@@ -489,7 +493,7 @@ export const BENCHMARK_DATA: Record<AlgorithmSet, Record<NetworkProfile, Benchma
       keyGenMs: 0.4,
       saSetupMs: 380,
       certSizeKb: 4.8,
-      clientHelloBytes: 1120,
+      clientHelloBytes: 1504,
       fragmentation: true,
       throughputPct: 87,
     },
@@ -498,7 +502,7 @@ export const BENCHMARK_DATA: Record<AlgorithmSet, Record<NetworkProfile, Benchma
       keyGenMs: 0.4,
       saSetupMs: 7200,
       certSizeKb: 4.8,
-      clientHelloBytes: 1120,
+      clientHelloBytes: 1504,
       fragmentation: true,
       throughputPct: 74,
     },
@@ -941,6 +945,8 @@ export interface TVLAStage {
   label: string
   description: string
   leaksIn: string[]
+  /** True for a stage described as encoding public output (the ciphertext or signature bytes). */
+  publicData: boolean
 }
 
 export const TVLA_STAGES: TVLAStage[] = [
@@ -949,36 +955,42 @@ export const TVLA_STAGES: TVLAStage[] = [
     label: 'Key Load',
     description: 'Loading secret key material into registers',
     leaksIn: ['mlkem-unmasked', 'mldsa-unmasked'],
+    publicData: false,
   },
   {
     id: 'ntt',
     label: 'NTT / INTT',
     description: 'Number Theoretic Transform — core lattice operation',
     leaksIn: ['mlkem-unmasked', 'mldsa-unmasked'],
+    publicData: false,
   },
   {
     id: 'poly-mul',
     label: 'Polynomial Multiplication',
     description: 'Coefficient-wise multiplication in Zq ring',
     leaksIn: ['mlkem-unmasked', 'mldsa-unmasked', 'mldsa-masked'],
+    publicData: false,
   },
   {
     id: 'mod-reduction',
     label: 'Modular Reduction',
     description: 'Reduction modulo q (3329 for ML-KEM)',
     leaksIn: ['mlkem-unmasked'],
+    publicData: false,
   },
   {
     id: 'sampling',
     label: 'Randomness Sampling',
     description: 'Generating random polynomials (CBD or rej. sampling)',
     leaksIn: [],
+    publicData: false,
   },
   {
     id: 'compress',
     label: 'Compression / Encoding',
     description: 'Encoding ciphertext or signature bytes',
     leaksIn: ['mlkem-unmasked'],
+    publicData: true,
   },
 ]
 

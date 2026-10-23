@@ -27,7 +27,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'state-management',
     title: 'Step 3: State Management',
-    description: 'Simulate signing, key exhaustion, and catastrophic state loss.',
+    description:
+      'Sign with a real HSS key, run it to exhaustion, and try to roll its state back to see what the HSM refuses.',
     icon: ShieldAlert,
   },
   {
@@ -69,7 +70,7 @@ export const StatefulSignaturesModule: FC = () => (
         case 2:
           return <StateManagementVisualizer key={`state-${configKey}`} />
         case 3:
-          return <SLHDSALiveDemo key={`slhdsa-${configKey}`} />
+          return <SLHDSALiveDemo key={`slhdsa-${configKey}`} context="stateful" />
         case 4:
           return <ThresholdSigningDemo key={`threshold-${configKey}`} />
         default:

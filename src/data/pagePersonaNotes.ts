@@ -13,6 +13,26 @@
  * persona's line (all seven when no persona is set).
  */
 import type { PersonaId } from '@/data/personaIds'
+import { PERSONAS } from '@/data/learningPersonas'
+
+/** The count, in words, for a short list (the essentials of a path). */
+const COUNT_WORDS = [
+  'no',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+]
+function countWord(n: number): string {
+  // eslint-disable-next-line security/detect-object-injection -- n is an array length
+  return COUNT_WORDS[n] ?? String(n)
+}
 
 export type PagePersonaNotes = Record<PersonaId, string>
 
@@ -28,7 +48,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       "Pick Researcher and choose the question: provenance, reproducing the tests, the standards' dates and states, the threat model, the field, or the command line — every figure carries its source.",
     'cert-engineer':
-      'Pick Certification & Validation and choose the question — test the algorithms, the entropy source or the module interface, place a product on the certificate stages, sign firmware, or review the drafts — every result states the evidence level it reached.',
+      'Choose the question — test the algorithms, the entropy source or the module interface, place a product on the certificate stages, or sign firmware — every result states the evidence level it reached.',
     ops: 'Pick IT Ops and choose the question: capacity, cutover rehearsal, cipher-suite config, supplier timelines, closeout or your standing — sized before renewal day.',
     curious:
       'You do not need a role: skip the question and the site opens by topic, or pick Curious for what breaks and when, where it touches you, a thirty-second version, and how to talk about it at work.',
@@ -60,7 +80,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       'Entries show cited resources and, where available, when profile sources were last checked; absence from this curated directory proves nothing about a person or contribution.',
     'cert-engineer':
-      'Government and Industry Vendor profiles can lead you to scheme or vendor sources; confirm certificates, status, scope, and effective versions in official registers.',
+      'Government and Industry Vendor profiles link to agency and vendor publications; the directory lists few certification-programme or laboratory profiles, so confirm certificates, status, scope, and effective versions in the official registers.',
     ops: 'Use Industry Vendor and Open Source Maintainer to locate support and release sources, then confirm the exact product, version, platform, and distribution you operate.',
     curious:
       'This is a curated, evidence-linked introduction to people appearing in post-quantum sources—not a complete census, ranking, or endorsement list.',
@@ -247,8 +267,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"Guided routing" asks where you are — "Have an inventory, but no risk priorities", "Know the priorities, need a multi-year plan" — and names the first module; in "Browse all" the Protocols track chip is yours.',
     researcher:
       '"Check our work: reproduce a known-answer test" sits above your path — "Run the ACVP vectors" and "Find the published vectors"; the "Practice quiz" is open any time, and the Capstone Quiz unlocks after your Essentials.',
-    'cert-engineer':
-      'Your path starts at the certificate: eight essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.',
+    'cert-engineer': `Your path starts at the certificate: ${countWord(PERSONAS['cert-engineer'].essentials.length)} essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.`,
     ops: '"My Path" has an "Essentials" / "Full track" toggle with the hours for each and a "Continue where you left off" card with "Resume"; in "Browse all", filter by status to see "In progress" modules.',
     curious:
       '"Pick a role in the top bar for a guided path — or" browse every module; "New here? Start with the right module" includes "Not sure — assess me", and the "Quiz" button sits beside the page title.',
@@ -352,7 +371,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   '/library': {
     executive:
       'Pick the "Plan migration" door for guidance and report picks rather than raw specifications; sort by Urgency, and each document\'s panel shows a Migration urgency value and an "Open document" link to the original.',
-    grc: 'The "Cert-relevant" quick view is the FIPS 203–205, SP 800-208 and CMVP set; open any document for its Trust score, Vetting body, Peer reviewed and last-verified date, and "Mapped to NIST CSWP 39" under Advanced keeps only documents tied to a CSWP 39 maturity requirement.',
+    grc: 'The "Certification starter set" quick view lists seven documents; open any document for its Trust score, Vetting body, Peer reviewed and last-verified date, and "Mapped to NIST CSWP 39" under Advanced keeps only documents tied to a CSWP 39 maturity requirement.',
     developer:
       'Search "ML-KEM", "FIPS 203" or "hybrid TLS", or open Advanced and filter by Algorithm family; the "Reference" door keeps standards, specs and policy, and "Builds on" in a document\'s panel lists what it depends on.',
     architect:
@@ -360,8 +379,8 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       'Sort by Publication date or Most cited; every document panel shows its type, region, last-verified date, Trust score, Peer reviewed status and "Previous revisions", with "Open document" going to the original source.',
     'cert-engineer':
-      'The "Cert-relevant" quick view is the FIPS 203–205, SP 800-208 and CMVP set; your categories lead with Compliance & Certification, NIST Standards and Algorithm Specifications.',
-    ops: '"Start here — picked for" your role sits above the doors; the "Cert-relevant" quick view is FIPS 203–205, SP 800-208 and the CMVP manual, and Lifecycle status filters to Published so you are not configuring against a draft.',
+      'The "Certification starter set" quick view shows seven documents whatever your role: FIPS 203–205, SP 800-208, SP 800-227, the CMVP manual and the FIPS 140-3 Implementation Guidance; a search lists an exact standard number or title first, and your categories lead with Compliance & Certification.',
+    ops: '"Start here — picked for" your role sits above the doors; the "Certification starter set" quick view lists seven documents (FIPS 203–205, SP 800-208 and 227, the CMVP manual, the FIPS 140-3 IG), and Lifecycle status filters to Published so you are not configuring against a draft.',
     curious:
       'Pick the "Learn" door for research, analysis and explainers; "Recently changed" at the top shows what was just added or updated, and the search box takes plain words like "hybrid TLS".',
   },
@@ -424,7 +443,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       'Your featured cards are Source Combining, Stateful Hash Signatures and more; "Size / benchmark" under "I want to…" collects the measurement tools, and the "Sandbox" chip shows which tools run in a container rather than the browser.',
     'cert-engineer':
-      'Your featured cards are Entropy Testing, SP 800-90A DRBG and Firmware Signing; the PKCS#11 HSM card is where the ACVP validation suite lives.',
+      'Your featured cards are the Validation Workbench, the Conformance Runner, Entropy Testing, SP 800-90A DRBG and Firmware Signing; the first two open the ACVP-sample suite and the OASIS conformance suite inside the PKCS#11 HSM playground.',
     ops: 'Your featured cards are the PQC VPN Simulator, HSM Capacity Calculator and Hybrid Certificates; "Runs on this device" hides tools that need the sandbox, and "Sandbox runtime" in the left rail shows whether you have container access.',
     curious:
       'Your featured cards are the Merkle Tree Workshop and PKI Workshop; a notice explains that advanced controls are folded away but everything still runs real cryptography in your browser, and the Beginner chip keeps the list gentle.',

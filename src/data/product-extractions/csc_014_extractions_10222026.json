@@ -52,5 +52,51 @@
       "backend": "local",
       "generated_at": "2026-10-22"
     }
+  },
+  {
+    "platform_name": "VanDyke SecureCRT",
+    "category": "SSH Implementation Software",
+    "product_name": "SecureCRT",
+    "product_brief": "SecureCRT is a terminal emulation client for Windows, macOS, and Linux providing secure remote access, file transfer, and data tunneling.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "diffie-hellman-group15-sha512, diffie-hellman-group17-sha512 (key-exchange algorithms); OpenSSH certificates",
+    "key_management_model": "Credentials manager for saved credentials; support for trusted OpenSSH certificate and separate private key file location (Teleport compatibility)",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Client-side terminal emulator/SSH client application",
+    "infrastructure_layer": "Network",
+    "license_type": "Commercial",
+    "license": "Unknown",
+    "latest_version": "9.7",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Windows, macOS, Linux",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "Latest Version": "New In SecureCRT ® 9.7",
+      "Crypto Primitives": "Added support for the diffie-hellman-group15-sha512 and diffie-hellman-group17-sha512 key-exchange algorithms."
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
   }
 ]

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import '@testing-library/jest-dom'
-import { CertificationContexts } from './CertificationContexts'
+import { CertificationContexts, CertificationContextsPointer } from './CertificationContexts'
 import { CHANGE_CASES } from '../data/sharedData'
 
 describe('certification context separation', () => {
@@ -46,5 +46,17 @@ describe('certification context separation', () => {
         /A passing algorithm test does not establish module validation or product certification/
       )
     ).toBeInTheDocument()
+  })
+
+  it('gives the scheme deep dives one line that links back to the Fundamentals module', () => {
+    render(
+      <MemoryRouter>
+        <CertificationContextsPointer />
+      </MemoryRouter>
+    )
+    expect(
+      screen.getByRole('link', { name: 'Cryptographic Product Certification: Fundamentals' })
+    ).toHaveAttribute('href', '/learn/crypto-product-certification')
+    expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument()
   })
 })

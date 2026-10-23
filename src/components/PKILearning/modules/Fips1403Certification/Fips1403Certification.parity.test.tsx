@@ -15,6 +15,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { Fips1403CertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import manifest from './manifest'
+import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
 import { PRACTITIONER_DISCLAIMER } from '@/components/PKILearning/modules/CryptoProductCertification/components/sectionRegistry'
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
 import { ALL_EXERCISES } from './data/allExercises'
@@ -73,6 +74,12 @@ describe('Fips1403Certification render parity', () => {
     const notes = screen.getAllByTestId('cert-practitioner-disclaimer')
     expect(notes).toHaveLength(1)
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
+    // The owner's sign-off and the absence of a laboratory or certification-body review are both
+    // stated, in the words every certification module uses (common/moduleReviewStatus.ts).
+    expect(notes[0]).toHaveTextContent(
+      "Corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off."
+    )
+    expect(notes[0]).toHaveTextContent(NOT_LAB_REVIEWED)
   })
 
   it('uses the runtime role to select certification-engineer depth', async () => {

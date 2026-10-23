@@ -315,6 +315,8 @@ export const ModuleShell = ({
   // no `paths`-tagged or `optional` steps get every step, as before.
   const activePathId = useActiveLearnPathId(manifest.id, manifest)
   const requiredStepIds = requiredWorkshopStepIds(manifest, activePathId)
+  // A module with learning paths states each path's own duration; show the one the learner is on.
+  const activePathDuration = manifest.learnPaths?.find((p) => p.id === activePathId)?.duration
   const {
     activeTab,
     handleTabChange,
@@ -515,7 +517,12 @@ export const ModuleShell = ({
             </span>
           ) : null}
           {manifest.duration ? (
-            <span className={`${chip} bg-muted text-muted-foreground`}>{manifest.duration}</span>
+            <span
+              className={`${chip} bg-muted text-muted-foreground`}
+              title={activePathDuration ? 'Time for the learning path you are on' : undefined}
+            >
+              {activePathDuration ?? manifest.duration}
+            </span>
           ) : null}
         </div>
         <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>

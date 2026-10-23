@@ -17,7 +17,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-testing-validation',
   version: '1.0.3',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
 
   standards: [
     getStandard('FIPS 186-5'),

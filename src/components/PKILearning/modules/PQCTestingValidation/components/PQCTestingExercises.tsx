@@ -68,7 +68,7 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badge: 'Interop Testing',
       badgeColor: 'bg-warning/20 text-status-warning border-warning/50',
       observe:
-        'Chrome sends an oversized hybrid ClientHello (1120 bytes vs classical 320 bytes). Legacy TLS 1.2 servers with small receive buffers reject the connection. Servers with default TLS 1.3 fallback work correctly via RFC 9794 fallback path. Root cause: 3 internal applications still on TLS 1.2 with default buffer sizes. Fix: update TLS 1.2 configurations or accelerate those apps to TLS 1.3.',
+        'Chrome sends an oversized hybrid ClientHello (it adds about 1.2 KB: a 1,216-byte key share vs 32 bytes). Legacy TLS 1.2 servers with small receive buffers reject the connection. Servers with default TLS 1.3 settings work correctly because the client can fall back to a classical key exchange the server supports. Root cause: 3 internal applications still on TLS 1.2 with default buffer sizes. Fix: update TLS 1.2 configurations or accelerate those apps to TLS 1.3.',
       config: { step: 3 },
     },
     {

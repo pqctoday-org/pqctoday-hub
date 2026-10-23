@@ -11,7 +11,11 @@ import { Search, SlidersHorizontal, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { SortControl, type SortOption } from '@/components/Library/SortControl'
+import {
+  SortControl,
+  LIBRARY_SEARCH_SORT_OPTIONS,
+  type SortOption,
+} from '@/components/Library/SortControl'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 import type { SemanticSearchMode } from '@/services/search/useSemanticSearch'
@@ -88,7 +92,11 @@ export function LibraryControlDeck({
           />
         </div>
         <div className="flex items-center gap-2">
-          <SortControl value={sortBy} onChange={onSort} />
+          <SortControl
+            value={sortBy}
+            onChange={onSort}
+            options={search.trim() ? LIBRARY_SEARCH_SORT_OPTIONS : undefined}
+          />
           <ViewToggle mode={view} onChange={onView} />
           <Button
             type="button"

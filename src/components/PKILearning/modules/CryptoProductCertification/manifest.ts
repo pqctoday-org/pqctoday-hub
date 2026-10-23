@@ -24,14 +24,16 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'crypto-product-certification',
-  contentVersion: 20,
+  contentVersion: 21,
   lm_id: 'LM-065',
   title: 'Cryptographic Product Certification: Fundamentals',
   description:
     'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).',
   whyThisMatters:
     'A certificate proves something narrow — a defined module, target or device, at a version and configuration, against one scheme’s requirements. Adding PQC changes the product, and each scheme has its own route for that change: a market deadline creates urgency, but no shortcut.',
-  duration: '60 min',
+  // Five required Learn sections (about 8,200 words of text and tables) plus three required
+  // workshop steps, one of them the 20-minute timed capstone; the optional sections are excluded.
+  duration: '90 min',
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',

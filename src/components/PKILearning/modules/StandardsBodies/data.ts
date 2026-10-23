@@ -66,7 +66,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       'International standards body developing globally adopted information security standards through voting by national member bodies. SC 27 Working Group 2 (WG 2) handles cryptography and security mechanisms, producing ISO/IEC standards referenced by regulators worldwide.',
     decisionMaking:
-      '5-stage process: Working Draft (WD) → Committee Draft (CD) → Draft International Standard (DIS) → Final DIS (FDIS) → International Standard (IS). National bodies from 170+ countries vote at each stage. Full IS typically takes 3–5 years. PQC standards are developed in parallel with NIST and cross-reference FIPS.',
+      '5-stage process: Working Draft (WD) → Committee Draft (CD) → Draft International Standard (DIS) → Final DIS (FDIS) → International Standard (IS). The national member bodies (SC 27 has 56 participating and 38 observing members) ballot the drafts. Full IS typically takes 3–5 years. PQC standards are developed in parallel with NIST and cross-reference FIPS.',
     // Corrected 2026-07-31, verified against ISO's own catalogue pages. Two
     // entries here named standards that do not exist as described:
     //   - "ISO/IEC 18033-2/AMD1 (PQC addendum)" — Amendment 1:2017 is
@@ -99,7 +99,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     decisionMaking:
       'Industry membership (800+ organizations from 68 countries) → Technical Committees (TC CYBER) → Technical Specification (TS, normative) or Technical Report (TR, informational). Chair of TC CYBER QSC WG: Matthew Campagna (AWS). ETSI TS documents contain "shall" requirements; TRs are guidance only.',
     keyPqcOutputs: [
-      'ETSI TS 103 744 (Quantum-Safe Cryptography – normative requirements)',
+      'ETSI TS 103 744 (Quantum-safe hybrid key establishment – combines ECDH with ML-KEM)',
       'ETSI TR 103 619 (PQC Migration Guide)',
       'ETSI TR 103 616 (Quantum-Safe Signatures)',
       'ETSI ISG QKD standards (QKD protocols and infrastructure)',
@@ -142,7 +142,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'Germany',
     founded: '1991',
     mission:
-      "Germany's national cybersecurity authority, issuing Technical Guidelines (TR) binding for German government and critical infrastructure. BSI TR-02102 series is updated annually and specifies approved cryptographic mechanisms including PQC.",
+      "Germany's national cybersecurity authority. It publishes Technical Guidelines (TR); the TR-02102 series is reviewed annually and recommends cryptographic mechanisms and key lengths, including PQC. BSI presents these as recommendations: binding specifications exist only for certain applications, in other BSI documents.",
     decisionMaking:
       'Government agency (under Federal Ministry of the Interior). Publishes TR (Technical Guideline) and BSI Standards annually through internal expert review. TR-02102-1 is the primary cryptographic mechanisms guideline; sub-series covers TLS (-2), IPsec (-3), and SSH (-4).',
     keyPqcOutputs: [
@@ -165,14 +165,14 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'France',
     founded: '2009',
     mission:
-      'French national cybersecurity agency, uniquely requiring hybrid (classical + PQC) cryptography for sensitive systems. ANSSI published influential PQC position papers in 2022 and 2023 distinguishing hash-based (approved standalone) from lattice-based algorithms (hybrid mandatory).',
+      'French national cybersecurity agency. It strongly recommends hybrid (classical + PQC) cryptography, and hybridisation is mandatory only inside the regulated perimeter: defence-classified and Diffusion Restreinte information, vital information systems, and products certified or qualified through ANSSI security visas. ANSSI published influential PQC position papers in 2022 and 2023 distinguishing hash-based algorithms (no systematic hybridisation recommended) from lattice-based algorithms (hybrid recommended).',
     decisionMaking:
-      'Government agency (under Prime Minister). Issues position papers and technical notes through expert review. Three-phase PQC roadmap: Phase 1 (2022–2025, classical preferred) → Phase 2 (2025–2030, hybrid preferred) → Phase 3 (2030+, PQC preferred). Unique stance: permits standalone SLH-DSA due to hash-only security assumption.',
+      'Government agency (under Prime Minister). Issues position papers and technical notes through expert review. Three-phase PQC roadmap: Phase 1 (2022–2025, classical preferred) → Phase 2 (2025–2030, hybrid preferred) → Phase 3 (2030+, PQC preferred). The one exception to systematic hybridisation is hash-based signatures (SLH-DSA, XMSS, LMS): ANSSI considers them usable without hybridisation because of their well-studied underlying problem, while noting their limited range of application.',
     keyPqcOutputs: [
       'ANSSI PQC Position Paper (2022)',
       'ANSSI PQC Follow-up Paper (2023)',
-      'Hybrid requirement for sensitive systems (ML-DSA must be paired with classical)',
-      'SLH-DSA standalone approved (hash-based, distinct security assumption)',
+      'Hybrid PQC position: strongly recommended for lattice-based schemes such as ML-DSA, mandatory inside the regulated perimeter',
+      'Hash-based signatures (SLH-DSA, XMSS, LMS): systematic hybridisation not recommended',
     ],
     libraryRefs: ['ANSSI PQC Position Paper', 'ANSSI PQC Follow-up Paper'],
     websiteUrl:
@@ -183,20 +183,20 @@ export const ORGANIZATIONS: OrgEntry[] = [
     id: 'enisa',
     name: 'European Union Agency for Cybersecurity',
     acronym: 'ENISA',
-    type: 'certification-body',
+    type: 'regulatory-agency',
     scope: 'regional',
     authority: 'governmental',
     region: 'EU',
     founded: '2004',
     mission:
-      "EU cybersecurity agency responsible for the European Cybersecurity Certification Framework (EUCC — the EU's adaptation of Common Criteria). ENISA also advises on PQC policy for eIDAS 2.0, NIS2, and DORA. Supports the ECCG, whose Sub-group on Cryptography agrees the Agreed Cryptographic Mechanisms (ACM); ENISA receives ACM update requests.",
+      'EU cybersecurity agency under the Cybersecurity Act. It supports the EU cybersecurity certification framework, including EUCC (the European Common Criteria-based scheme set up by Commission Implementing Regulation (EU) 2024/482), and publishes EUCC certificates, certification reports and supporting documents on the EU certification website. ENISA does not issue EUCC certificates: accredited certification bodies do. It supports the ECCG, whose Sub-group on Cryptography agrees the Agreed Cryptographic Mechanisms (ACM); ENISA receives ACM update requests. Together with the Commission, ENISA links the EU coordinated PQC migration roadmap (drawn up in the NIS Cooperation Group) to the ECCG work on recommendations for PQC mechanisms and their evaluation.',
     decisionMaking:
-      'EU Agency under the Cybersecurity Act (2019). EUCC certification scheme developed through ECCG (European Cybersecurity Certification Group) with industry input. Issues technical reports and threat landscapes. Works with MSs (Member States) national cybersecurity authorities.',
+      'EU Agency under the Cybersecurity Act (2019). EUCC is set out in Commission Implementing Regulation (EU) 2024/482: certification bodies issue the certificates, national cybersecurity certification authorities supervise, and the European Cybersecurity Certification Group (ECCG) endorses state-of-the-art documents, which ENISA publishes. Issues technical reports and threat landscapes. Works with MSs (Member States) national cybersecurity authorities.',
     keyPqcOutputs: [
-      'EUCC v2.0 Agreed Cryptographic Mechanisms (ACM) – lists approved PQC algorithms',
+      'ECCG Agreed Cryptographic Mechanisms (ACM) v2.0 – cryptography guideline for EUCC developers and evaluators; lists ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS and FrodoKEM and says lattice-based schemes should be combined with a classical mechanism',
       'ENISA PQC Guidelines (2021)',
-      'eIDAS 2.0 cryptographic recommendations',
-      'EUCC (EU Cybersecurity Certification Scheme for CC-based evaluations)',
+      'ENISA Post-Quantum Cryptography: Integration study (October 2022)',
+      'EUCC (European Common Criteria-based cybersecurity certification scheme; Regulation (EU) 2024/482)',
     ],
     libraryRefs: ['EUCC v2.0 ACM'],
     websiteUrl: 'https://www.enisa.europa.eu/topics/cryptography/post-quantum-cryptography',
@@ -208,17 +208,17 @@ export const ORGANIZATIONS: OrgEntry[] = [
     acronym: 'CC / CCRA',
     type: 'certification-body',
     scope: 'global',
-    authority: 'non-governmental',
+    authority: 'governmental',
     region: 'Global',
     founded: '1994',
     mission:
-      "Mutual recognition arrangement for IT security evaluations based on ISO/IEC 15408. 31 member nations accept each other's CC certificates. Products are evaluated by accredited labs; certificates issued by national Certification Bodies (e.g., BSI, ANSSI, NCSC, NIAP).",
+      'Mutual recognition arrangement for IT security evaluations based on ISO/IEC 15408. 36 countries take part: 18 authorise (issue) certificates and 18 only recognise them (CC portal members list). Recognition covers only certificates that claim a collaborative Protection Profile (cPP) or assurance up to EAL2 with ALC_FLR (CCRA Art. 2). Products are evaluated by accredited labs; certificates are issued by national Certification Bodies (e.g., BSI, ANSSI, NIAP).',
     decisionMaking:
-      'Protection Profiles (PP) define security requirements for product categories (e.g., "PKI digital signatures"). Independent labs test products against PPs. CCRA Technical Community maintains the framework. EUCC is the EU-specific adaptation managed by ENISA with a stricter, harmonized approach.',
+      'Protection Profiles (PP) define security requirements for product categories (e.g., "PKI digital signatures"). Independent labs test products against PPs. A Management Committee on which every participant sits administers the arrangement (CCRA Art. 10); international Technical Communities (iTCs) develop the collaborative Protection Profiles. EUCC is a separate EU scheme, set up by Commission Implementing Regulation (EU) 2024/482, that applies Common Criteria and the Common Evaluation Methodology under EU rules.',
     keyPqcOutputs: [
       'ISO/IEC 15408 (CC standard for evaluation methodology)',
       'PQC Protection Profiles (in development for HSMs, certificates, firewalls)',
-      'EUCC (EU Cybersecurity Certification Scheme – CC-based, ENISA-managed)',
+      'EUCC (EU Common Criteria-based scheme, Regulation (EU) 2024/482 – certification bodies issue, national authorities supervise)',
     ],
     libraryRefs: [],
     websiteUrl: 'https://www.commoncriteriaportal.org/',
@@ -281,7 +281,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     decisionMaking:
       'Issues mandates via CNSSP (Committee on National Security Systems Policy). CNSA 2.0 issued September 2022 with phased deadlines. NSA CSfC (Commercial Solutions for Classified) program certifies commercial products for classified use.',
     keyPqcOutputs: [
-      'CNSA 2.0 (September 2022) – mandates ML-KEM-1024, ML-DSA-87, LMS and XMSS (software/firmware signing)',
+      'CNSA 2.0 (September 2022) – specifies ML-KEM-1024 and ML-DSA-87, and approves LMS and XMSS for software/firmware signing',
       'NSA CNSA 2.0 FAQ',
       'NSA CSfC PQC Guidance Addendum',
     ],
@@ -290,18 +290,18 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'https://www.nsa.gov/Press-Room/News-Highlights/Article/Article/3198/nsa-releases-future-quantum-resistant-qr-algorithm-requirements-for-national-se/',
   },
   {
-    id: 'kisa',
-    name: 'Korea Internet & Security Agency',
-    acronym: 'KISA',
-    type: 'regulatory-agency',
+    id: 'kpqc',
+    name: 'Korean Post-Quantum Cryptography Research Group (KpqC)',
+    acronym: 'KpqC (NSR / NIS)',
+    type: 'standards-body',
     scope: 'regional',
     authority: 'governmental',
     region: 'Asia-Pacific',
-    founded: '2009',
+    founded: '2021',
     mission:
-      'Korean government agency (Ministry of Science & ICT) that ran the KpqC national PQC competition (2022–2025). Selected HAETAE and AIMer (signatures), SMAUG-T and NTRU+ (KEMs) as Korean national algorithms. Target standardization by 2029, migration by 2035.',
+      "Research group set up in 2021 by the National Security Research Institute (NSR) and the National Intelligence Service (NIS), with experts from industry, academia, government and research institutes. It ran the KpqC national PQC competition (first round from November 2022; final algorithms announced 16 January 2025): HAETAE and AIMer (signatures), SMAUG-T and NTRU+ (KEMs). KISA, the Korea Internet & Security Agency, sits on its advisory committees. The July 2023 master plan of NIS and the Ministry of Science and ICT sets 2035 as the target for spreading post-quantum cryptography through Korea's cryptographic systems. In April 2026 the group reported that Korean Standard (KS) proposals for the two KEMs had been submitted and the two signature algorithms were under review; no standardization date is published.",
     decisionMaking:
-      'National competition with independent academic evaluation committee. Parallel to NIST — Korean algorithms are not the same as FIPS 203/204/205. Multinational organizations in Korea may need to support both Korean and NIST-standardized algorithms.',
+      'National competition with public review of the candidates and an evaluation committee. Parallel to NIST — Korean algorithms are not the same as FIPS 203/204/205. Multinational organizations in Korea may need to support both Korean and NIST-standardized algorithms.',
     keyPqcOutputs: [
       'KpqC Competition (2022–2025)',
       'HAETAE (lattice signature) – competition winner',
@@ -340,7 +340,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'iso-iec',
     name: 'ISO/IEC JTC 1/SC 27',
     acronym: 'International standards body',
-    hint: '170+ national member bodies vote on information security standards including cryptography.',
+    hint: 'National member bodies (56 participating, 38 observing in SC 27) develop and ballot information security standards, including cryptography.',
     correctType: 'standards-body',
     correctScope: 'global',
     correctAuthority: 'non-governmental',
@@ -349,7 +349,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'etsi',
     name: 'ETSI',
     acronym: 'European Telecommunications Standards Institute',
-    hint: 'Published TS 103 744 (normative) and TR 103 619 (migration guide) for quantum-safe cryptography.',
+    hint: 'Published TS 103 744 (normative, quantum-safe hybrid key establishment) and TR 103 619 (migration guide) for quantum-safe cryptography.',
     correctType: 'standards-body',
     correctScope: 'regional',
     correctAuthority: 'non-governmental',
@@ -367,7 +367,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'bsi',
     name: 'BSI',
     acronym: 'Federal Office for Information Security (Germany)',
-    hint: 'Publishes TR-02102 series — binding Technical Guidelines for German government and critical infrastructure.',
+    hint: 'Publishes the TR-02102 series of Technical Guidelines: recommendations on cryptographic mechanisms and key lengths, including PQC.',
     correctType: 'regulatory-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',
@@ -376,7 +376,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'anssi',
     name: 'ANSSI',
     acronym: "Agence nationale de la sécurité des systèmes d'information (France)",
-    hint: 'Requires hybrid PQC (classical + PQC) for sensitive French systems. Unique position on SLH-DSA.',
+    hint: 'Strongly recommends hybrid PQC (classical + PQC); mandatory inside the French regulated perimeter. Hash-based signatures (SLH-DSA, XMSS, LMS) are the exception.',
     correctType: 'regulatory-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',
@@ -385,8 +385,8 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'enisa',
     name: 'ENISA',
     acronym: 'EU Agency for Cybersecurity',
-    hint: "Supports the EU's EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM).",
-    correctType: 'certification-body',
+    hint: 'EU agency under the Cybersecurity Act. Supports the EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM), and publishes EUCC certificates. Accredited certification bodies issue them, not ENISA. It is an EU agency that supports and promotes the framework (Cybersecurity Act Art. 8), not a regulator and not a certification body (Art. 56: conformity assessment bodies issue certificates).',
+    correctType: 'regulatory-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',
   },
@@ -421,7 +421,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'nis2',
     name: 'NIS2 Directive',
     acronym: 'Network and Information Security Directive 2',
-    hint: 'EU regulation requiring cybersecurity risk management for essential and important entities across member states.',
+    hint: 'EU Directive (adopted by the European Parliament and the Council) requiring cybersecurity risk management for essential and important entities; Member States transpose it into national law.',
     correctType: 'compliance-framework',
     correctScope: 'regional',
     correctAuthority: 'governmental',
@@ -430,10 +430,10 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'common-criteria',
     name: 'Common Criteria',
     acronym: 'CC / CCRA — based on ISO/IEC 15408',
-    hint: '31-nation mutual recognition arrangement for IT product security evaluations. Certificates recognized across member states.',
+    hint: '36-country mutual recognition arrangement for IT product security evaluations (18 issue certificates, 18 only recognise them). Recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates. Its participants are government organisations or government agencies (CCRA Art. 1), so it is governmental.',
     correctType: 'certification-body',
     correctScope: 'global',
-    correctAuthority: 'non-governmental',
+    correctAuthority: 'governmental',
   },
 ]
 
@@ -499,23 +499,23 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'ETSI TS 103 744',
         body: 'ETSI TC CYBER',
         description:
-          'ETSI TS 103 744 is a normative Technical Specification defining quantum-safe cryptography requirements for European industry. It specifies algorithm selection, parameter sets, and interoperability guidance harmonized with NIST and ISO/IEC standards.',
+          'ETSI TS 103 744 is a normative Technical Specification for quantum-safe hybrid key establishment. It specifies methods for deriving a key from several shared secrets: one from a traditional scheme such as elliptic-curve Diffie-Hellman and one from a quantum-safe key encapsulation mechanism (ML-KEM, FIPS 203). It fixes the combinations of key-derivation function, curve and ML-KEM size an implementation may use. It covers key establishment only; it is not a general list of approved algorithms or requirements.',
       },
       {
         id: 'eucc-eval',
         role: 'certification',
-        label: 'EUCC Evaluation',
-        body: 'ENISA / National CAs',
+        label: 'EUCC Certification',
+        body: 'Accredited certification bodies (supervised by national authorities)',
         description:
-          "EUCC (EU Cybersecurity Certification Scheme) is ENISA's adaptation of Common Criteria for EU markets. Products are evaluated by accredited CABs (Conformity Assessment Bodies); certificates are valid across all EU member states, eliminating need for per-country certification.",
+          "EUCC, the European Common Criteria-based cybersecurity certification scheme, is established by Commission Implementing Regulation (EU) 2024/482 under the Cybersecurity Act. Products are evaluated against Common Criteria and the Common Evaluation Methodology, and certification bodies issue EUCC certificates at assurance level 'substantial' or 'high' (Art. 4). National cybersecurity certification authorities supervise the certification bodies, evaluation labs and certificate holders; ENISA publishes the certificates, certification reports and supporting documents (Art. 42). The Regulation applies in every Member State and replaces the national schemes it covers (Art. 49).",
       },
       {
         id: 'eidas-2',
         role: 'compliance',
         label: 'eIDAS 2.0 Mandate',
-        body: 'European Commission',
+        body: 'EU Regulation (Parliament and Council); Member State supervisory bodies',
         description:
-          "eIDAS 2.0 requires EU member states to provide EUDI (European Digital Identity) Wallets. The European Commission's implementing acts reference EUCC certification for qualified trust service providers, and ENISA's ACM list specifies the approved PQC algorithms.",
+          "eIDAS 2.0 is Regulation (EU) 910/2014 as amended by Regulation (EU) 2024/1183. It requires each Member State to provide at least one EUDI (European Digital Identity) Wallet (Art. 5a). It also requires qualified electronic signature creation devices to be certified by bodies the Member States designate (Art. 30), on the basis of a security evaluation against a standard in a Commission list or another process of comparable security level that is notified to the Commission; EUCC is one possible route, not a requirement for every case. Qualified trust service providers are audited separately (Art. 20). The ECCG's Agreed Cryptographic Mechanisms (ACM v2) are guidance for developers and evaluators, not a list of algorithms that eIDAS mandates.",
       },
     ],
   },
@@ -531,7 +531,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'ISO/IEC 14888-4:2024',
         body: 'ISO/IEC JTC 1/SC 27',
         description:
-          'ISO/IEC 14888-4:2024 (Hash-based Digital Signatures) is the international standard for XMSS and LMS. As an IS (International Standard), it provides the global normative reference for hash-based PQC signature schemes recognized across 170+ ISO member countries.',
+          'ISO/IEC 14888-4:2024 (Hash-based Digital Signatures) is the international standard for XMSS and LMS. As an IS (International Standard), it provides the global normative reference for hash-based PQC signature schemes; each country decides whether to adopt it nationally.',
       },
       {
         id: 'cc-pp',
@@ -545,9 +545,9 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         id: 'eu-procurement',
         role: 'compliance',
         label: 'EU Procurement Requirement',
-        body: 'European Commission / NIS2',
+        body: 'Member States under NIS2 (national law)',
         description:
-          "NIS2 Directive requires essential entities to use certified security products. EU procurement rules increasingly reference CC/EUCC certification as a requirement for government IT purchases, especially after the EU Cybersecurity Act's European Cybersecurity Certification Framework became operational.",
+          "NIS2 (Directive (EU) 2022/2555, adopted by the European Parliament and the Council) does not itself require certified products. Article 24(1) lets Member States require essential and important entities to use ICT products certified under a European cybersecurity certification scheme, such as EUCC, to demonstrate compliance with particular risk-management requirements (Article 21), and Article 24(2) lets the Commission specify by delegated act which categories of entities must do so. Under the Cybersecurity Act, certification is voluntary unless Union or Member State law says otherwise (Article 56(2)). So a ministry's requirement for CC-certified products comes from national law or its own procurement specification, not from NIS2 alone.",
       },
     ],
   },
@@ -604,7 +604,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
     },
     'certification-body': {
       orgs: ['CCRA (Common Criteria)'],
-      note: '31-nation mutual recognition; certificates valid across member states',
+      note: '36 participating countries (18 issue certificates, 18 only recognise them); recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates',
     },
     'compliance-framework': {
       orgs: ['—'],
@@ -636,19 +636,23 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
   eu: {
     'standards-body': {
       orgs: ['ETSI (TC CYBER)', 'CEN/CENELEC'],
-      note: 'ETSI TS 103 744 provides EU interoperability baseline for quantum-safe cryptography',
+      note: 'ETSI TS 103 744 covers hybrid key establishment (ECDH combined with ML-KEM), not quantum-safe cryptography in general',
     },
     'certification-body': {
-      orgs: ['ENISA (EUCC)', 'National CAs (BSI, ANSSI, NCSC-NL)'],
-      note: "EUCC is EU-wide; national CAs accept each other's EUCC certificates",
+      orgs: [
+        'EUCC certification bodies',
+        'National authorities (e.g., BSI, ANSSI)',
+        'ENISA (publishes)',
+      ],
+      note: 'EUCC is one EU-wide scheme (Regulation (EU) 2024/482): certification bodies issue certificates, national authorities supervise, ENISA publishes them',
     },
     'compliance-framework': {
       orgs: ['NIS2 Directive', 'eIDAS 2.0', 'DORA', 'EU Cyber Resilience Act'],
-      note: 'NIS2 and eIDAS 2.0 are legally binding EU regulations',
+      note: 'NIS2 is a Directive that Member States transpose into national law; eIDAS 2.0, DORA and the Cyber Resilience Act are Regulations that apply directly in every Member State',
     },
     'regulatory-agency': {
       orgs: ['European Commission (EC)', 'ENISA (dual role)'],
-      note: 'EC legislates (NIS2, CRA); ENISA advises and manages certification schemes',
+      note: 'The European Parliament and the Council legislate (NIS2, eIDAS 2.0, DORA, CRA); the Commission proposes the acts and adopts implementing acts such as EUCC; ENISA supports the certification framework, but does not issue EUCC certificates',
     },
   },
   uk: {
@@ -671,7 +675,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
   },
   'asia-pacific': {
     'standards-body': {
-      orgs: ['KISA/KpqC (Korea)', 'AIST (Japan)', 'Chinese Academy of Sciences'],
+      orgs: ['KpqC research group (Korea)', 'AIST (Japan)', 'Chinese Academy of Sciences'],
       note: 'Korea KpqC and China OSCCA run parallel national algorithm tracks',
     },
     'certification-body': {
@@ -679,11 +683,11 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       note: 'China OSCCA manages SM algorithm certification (non-NIST compatible)',
     },
     'compliance-framework': {
-      orgs: ['Korea KpqC adoption (target 2029)', 'China SM algorithm mandate', 'MAS TRM'],
+      orgs: ['Korea K-PQC master plan (2035 target)', 'China SM algorithm mandate', 'MAS TRM'],
       note: 'China mandates OSCCA-approved SM algorithms in regulated sectors',
     },
     'regulatory-agency': {
-      orgs: ['KISA (Korea)', 'OSCCA/NGCC (China)', 'NISC (Japan)', 'MAS (Singapore)'],
+      orgs: ['NIS / MSIT (Korea)', 'OSCCA/NGCC (China)', 'NISC (Japan)', 'MAS (Singapore)'],
       note: 'National regulators; algorithms may diverge from NIST (especially China SM*)',
     },
   },
@@ -701,7 +705,7 @@ export const ORG_TYPE_LABELS: Record<OrgTypeKey, string> = {
   'standards-body': 'Standards Body',
   'certification-body': 'Certification Body',
   'compliance-framework': 'Compliance Framework',
-  'regulatory-agency': 'Regulatory Agency',
+  'regulatory-agency': 'Government Agency',
 }
 
 // ─── Scenario Challenge (Step 5) ──────────────────────────────────────────────

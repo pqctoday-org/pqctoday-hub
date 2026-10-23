@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hsm-pqc',
   version: '1.0.3',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -42,6 +42,13 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-90A-R1'),
+    // Declared 23 Oct 2026: the "What the lab tests" panel (Learn > HSM Firmware Migration), the
+    // hedged-signing and side-channel notes and the PKCS#11 v3.2 statements quote these.
+    getStandard('NIST-FIPS140-3-IG-PQC'), // IG 10.3.A self-tests, IG D.S KEM, IG C.N, IG 12.A
+    getStandard('CMVP-MGMT-MANUAL'), // submission scenarios: FS, UPDT, ALG, CVE
+    getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP'), // CAVP vs CMVP
+    getStandard('PKCS11-V32-OS-OASIS'), // OASIS Standard, 3 June 2026
+    getStandard('NIST-SP-800-140F'), // section 6.2: no approved non-invasive test metrics
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('What-is-Azure-Dedicated-HSM'), // m-hsm-pqc: wave 4c
   ],
@@ -67,7 +74,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'HSM architecture for PQC (FIPS 140-3 levels, on-prem vs cloud side-by-side). PKCS#11 v3.2 PQC mechanisms (CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM, CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_HASH_ML_DSA, plus CKK_ML_KEM and CKK_ML_DSA key types). On-prem HSM deep dive (Thales Luna v7.9.2, Entrust nShield v13.8.0, Utimaco Quantum Protect). Cloud HSM deep dive (AWS CloudHSM, Azure Dedicated HSM, Google Cloud HSM). Side-channel attack surfaces (NTT power analysis, EM emanation, fault injection, ML-DSA hedged signing).',
+      'HSM architecture for PQC (FIPS 140-3 levels, on-prem vs cloud side-by-side). PKCS#11 v3.2 PQC mechanisms (CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM, CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_HASH_ML_DSA, plus CKK_ML_KEM and CKK_ML_DSA key types). On-prem HSM deep dive (Thales Luna v7.9.2, Entrust nShield v13.8.0, Utimaco Quantum Protect). Cloud HSM deep dive (AWS CloudHSM, Azure Dedicated HSM, Google Cloud HSM). Side-channel attack surfaces (NTT power analysis, EM emanation, fault injection, ML-DSA hedged signing). What the lab tests for an HSM (CAVP algorithm certificates, the CMVP module certificate and its Security Policy, FIPS 140-3 IG 10.3.A self-tests and pairwise tests, and which CMVP submission scenario a firmware update falls under).',
     workshopSummary:
       'PKCS#11 PQC Simulator — 8 operations with classical comparison and on-prem vs cloud notes. Vendor Comparison — Interactive matrix with PQC Maturity Score (0-100). HSM Migration Planner — 4-phase firmware migration wizard. FIPS Validation Tracker — CMVP/CAVP PQC validation status per vendor',
     relatedStandards:

@@ -19,7 +19,7 @@ interface TPMKey {
   description: string
   currentAlgorithm: string
   keySize: string
-  pqcStatus: 'not-supported' | 'hybrid-available' | 'roadmap' | 'quantum-safe'
+  pqcStatus: 'spec-defined' | 'roadmap' | 'quantum-safe'
   pqcNote: string
   usedFor: string[]
   standardsRef: string
@@ -43,18 +43,13 @@ const STATUS_CONFIG: Record<
   string,
   { label: string; color: string; icon: React.FC<{ size: number; className: string }> }
 > = {
-  'not-supported': {
-    label: 'Not Supported in TPM 2.0',
-    color: 'text-status-error',
-    icon: AlertTriangle,
-  },
-  'hybrid-available': {
-    label: 'Hybrid Available',
+  'spec-defined': {
+    label: 'Defined in TPM 2.0 v185',
     color: 'text-status-warning',
     icon: Info,
   },
   roadmap: {
-    label: 'Roadmap (TCG 2027)',
+    label: 'Roadmap',
     color: 'text-status-info',
     icon: Info,
   },
@@ -75,9 +70,9 @@ const TPM_KEYS: TPMKey[] = [
       "The TPM's primary identity key, provisioned by the manufacturer. The EK's public key is enrolled in the TPM vendor's certificate authority. Used to establish trust in the TPM itself during attestation.",
     currentAlgorithm: 'RSA-2048 or ECC P-256',
     keySize: 'RSA: 256B pub / P-256: 65B pub',
-    pqcStatus: 'not-supported',
+    pqcStatus: 'spec-defined',
     pqcNote:
-      'TPM 2.0 (ISO/IEC 11889:2015) does not define ML-DSA or ML-KEM key types. A new EK with ML-KEM capability requires a hardware TPM upgrade or a future TPM specification with PQC support. TCG is developing PQC extensions targeted for 2027.',
+      "TPM 2.0 Library v185 (TCG, 12 March 2026) adds ML-KEM (TPM_ALG_MLKEM, 0x00A0, FIPS 203), and TCG's announcement of 22 March 2026 names it for Endorsement Keys. PC Client PTP 1.07 defines which ML-KEM EK certificates are required. A TPM built to an earlier library version predates ML-KEM: check the version it reports (TPM_PT_REVISION) and the parameter sets it supports (TPM_PT_ML_PARAMETER_SETS) before planning an ML-KEM EK.",
     usedFor: [
       'TPM identity establishment',
       'EK certificate for remote attestation',
@@ -94,9 +89,9 @@ const TPM_KEYS: TPMKey[] = [
       'The primary key of the Storage Hierarchy. All user-created keys are ultimately protected by the SRK. Applications create keys under the SRK (or SRK-derived parent keys). The SRK is not exportable.',
     currentAlgorithm: 'RSA-2048 (default) or ECC P-256',
     keySize: 'RSA: 256B pub / P-256: 65B pub',
-    pqcStatus: 'not-supported',
+    pqcStatus: 'spec-defined',
     pqcNote:
-      'The SRK wraps child keys in TPM NV storage. A hardware TPM cannot wrap ML-DSA keys natively because ML-DSA is not a TPM 2.0 algorithm. Hybrid workaround: store ML-DSA software key encrypted under an RSA SRK child key.',
+      'A storage parent is a restricted-decryption key. TPM 2.0 Library v185 lists ML-KEM among the algorithms such keys can use (Part 1, Table 6: the ML-KEM Labeled KEM for credential protection, salted sessions, and object duplication and import), so a TPM that implements v185 can hold an ML-KEM parent. The software that creates the SRK chooses its algorithm. ML-DSA is sign-only (Part 2, Table 233) and never wraps other keys. On a TPM built to an earlier library version, the hybrid workaround applies: store the ML-DSA software key encrypted under an RSA SRK child key.',
     usedFor: [
       'Wrapping application keys',
       'Protecting ML-DSA software signing keys (hybrid)',
@@ -113,9 +108,9 @@ const TPM_KEYS: TPMKey[] = [
       'A restricted signing key used for TPM quotes. The AIK signs PCR values to prove system state to a remote verifier. The AIK certificate is issued by a Privacy CA or by TPM vendor direct attestation.',
     currentAlgorithm: 'RSA-2048 or ECC P-256',
     keySize: 'RSA: 256B pub / P-256: 65B pub',
-    pqcStatus: 'hybrid-available',
+    pqcStatus: 'spec-defined',
     pqcNote:
-      "TPM 2.0 cannot sign with ML-DSA natively. Hybrid approach: TPM AIK signs a binding token that includes an ML-DSA software key's public key. Relying party verifies TPM RSA quote (proves hardware binding) then uses ML-DSA key for attestation signature (quantum-safe). This is the practical short-term path.",
+      "TPM 2.0 Library v185 adds ML-DSA (TPM_ALG_MLDSA, 0x00A1, FIPS 204), and TCG's announcement names it for Attestation Keys; new sequence commands sign and verify messages of any size. A TPM that implements v185 can sign with an ML-DSA attestation key. On a TPM built to an earlier library version the interim path is hybrid: the TPM AIK signs a binding token that includes an ML-DSA software key's public key, and the relying party verifies the TPM RSA quote (proves hardware binding) and then the ML-DSA signature (quantum-safe).",
     usedFor: [
       'TPM Quote (PCR attestation)',
       'Remote attestation',
@@ -162,7 +157,7 @@ const TPM_KEYS: TPMKey[] = [
 const HYBRID_APPROACH: HybridApproach = {
   name: 'Hybrid RSA TPM + ML-DSA Software Key',
   description:
-    'Because TPM 2.0 hardware does not support ML-DSA natively, the practical short-term solution is a hybrid binding: use the TPM RSA AIK to attest the binding of an ML-DSA software signing key. This provides quantum-safe signatures for forward secrecy while keeping hardware-backed proof of authenticity.',
+    'On a TPM built to a library version earlier than 185, ML-DSA is not available inside the TPM, so the practical short-term solution is a hybrid binding: use the TPM RSA AIK to attest the binding of an ML-DSA software signing key. This adds a quantum-safe signature while keeping hardware-backed proof of authenticity.',
   steps: [
     'Generate ML-DSA-65 key pair in software (using OpenSSL 3.3+ with ML-DSA provider)',
     'Use TPM AIK to sign a "key binding attestation" containing the ML-DSA-65 public key + TPM platform state',
@@ -171,10 +166,10 @@ const HYBRID_APPROACH: HybridApproach = {
     'Relying party validates: RSA quote proves hardware binding, ML-DSA signature is quantum-safe',
   ],
   tradeoffs: [
-    'Still exposes RSA AIK to harvest-now-decrypt-later — adversary collects RSA attestations today, breaks with CRQC later',
+    'The RSA AIK is the hardware proof and stays quantum-vulnerable: once a CRQC exists, a quote could be forged, leaving the software ML-DSA signature as the only quantum-safe evidence (a forgery risk, not harvest-now-decrypt-later)',
     'Extra complexity: verifiers must validate two signatures',
     'Certificate management: need PKI for ML-DSA binding certs',
-    'Full quantum safety requires TPM hardware with native ML-DSA support (TCG roadmap 2027)',
+    'Full quantum safety requires a TPM that implements library v185 or later with an ML-DSA attestation key (specification published March 2026; product availability depends on the TPM vendor)',
   ],
 }
 
@@ -194,8 +189,8 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">TPM 2.0 Key Hierarchy Explorer</h3>
         <p className="text-sm text-muted-foreground">
           Explore TPM 2.0 key hierarchies and understand the path to post-quantum attestation. TPM
-          2.0 does not natively support ML-DSA or ML-KEM — learn the hybrid approach and the TCG
-          roadmap.
+          2.0 Library v185 adds ML-DSA and ML-KEM — see how each key type changes, and learn the
+          hybrid approach for TPMs built to earlier versions.
         </p>
       </div>
 
@@ -209,13 +204,16 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
           />
           <div>
             <div className="text-sm font-bold text-status-warning mb-1">
-              TPM 2.0 Does Not Support ML-DSA or ML-KEM Natively
+              TPM 2.0 Library v185 Defines ML-DSA and ML-KEM; Installed TPMs Predate It
             </div>
             <p className="text-xs text-foreground/80">
-              The current TPM 2.0 specification (ISO/IEC 11889:2015) only defines RSA, ECC, and
-              symmetric algorithms. The Trusted Computing Group (TCG) is developing PQC extensions
-              for TPM Library Part 2 — targeted ratification in 2027. Hardware TPMs with PQC support
-              will require new silicon.
+              The Trusted Computing Group (TCG) published TPM 2.0 Library v185 on 12 March 2026. Its
+              change history states: &ldquo;Introduced support for ML-DSA, HashML-DSA, and
+              ML-KEM.&rdquo; A TPM offers them only if its vendor built it to v185 or later; a
+              TPM2_GetCapability query for TPM_PT_REVISION and TPM_PT_ML_PARAMETER_SETS shows what a
+              given part supports. The ISO/IEC 11889:2015 edition dates from before ML-KEM and
+              ML-DSA were standardized (FIPS 203 and FIPS 204). Product availability follows the
+              specification and depends on each TPM vendor.
             </p>
           </div>
         </div>
@@ -305,7 +303,7 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
                               className={`rounded p-2 border ${
                                 tpmKey.pqcStatus === 'quantum-safe'
                                   ? 'bg-status-success/5 border-status-success/20'
-                                  : tpmKey.pqcStatus === 'hybrid-available'
+                                  : tpmKey.pqcStatus === 'spec-defined'
                                     ? 'bg-status-warning/5 border-status-warning/20'
                                     : 'bg-muted/50 border-border'
                               }`}
@@ -385,35 +383,27 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
             </div>
 
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="text-xs font-bold text-foreground mb-2">TCG PQC Roadmap Summary</div>
+              <div className="text-xs font-bold text-foreground mb-2">TCG TPM PQC Timeline</div>
               <div className="space-y-2">
                 {[
                   {
-                    year: '2025',
+                    year: 'Mar 2026',
                     event:
-                      'TCG PQC Use Cases Specification published — identifies HNDL risks for TPM attestation',
+                      'TCG publishes TPM 2.0 Library v185 (dated 12 March). Part 0 change history: "Introduced support for ML-DSA, HashML-DSA, and ML-KEM." The 22 March announcement names ML-KEM (including Endorsement Keys) and ML-DSA (including Attestation Keys).',
                   },
                   {
-                    year: '2026',
+                    year: 'Mar 2026',
                     event:
-                      'TCG TPM Library Part 2 PQC draft — defines ML-DSA and ML-KEM algorithm identifiers for TPM',
-                  },
-                  {
-                    year: '2027',
-                    event:
-                      'TCG TPM Library Part 2 PQC ratification — new TPM designs can implement native ML-DSA',
-                  },
-                  {
-                    year: '2028+',
-                    event:
-                      'First hardware TPMs with native ML-DSA AIK support available in new server platforms',
+                      'PC Client Platform TPM Profile (PTP) 1.07, listed by TCG as 23 March 2026, adds larger data transport to the CRB interface and defines which ML-KEM Endorsement Key certificates are required.',
                   },
                 ].map((item) => (
                   <div
-                    key={item.year}
+                    key={item.event}
                     className="flex items-start gap-3 bg-background rounded p-2 border border-border"
                   >
-                    <span className="text-xs font-bold text-primary shrink-0 w-8">{item.year}</span>
+                    <span className="text-xs font-bold text-primary shrink-0 w-16">
+                      {item.year}
+                    </span>
                     <p className="text-[10px] text-foreground/80">{item.event}</p>
                   </div>
                 ))}

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10222026_r3.csv
+ * Source: src/data/role_board_content_10232026_r2.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1303 documents, trust-tiered',
+          '1304 documents, trust-tiered',
           'Regulatory data verified 22 Oct 2026',
         ],
         sideCard: {
@@ -166,7 +166,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1303 documents, trust-tiered',
+          '1304 documents, trust-tiered',
           'Regulatory data verified 22 Oct 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -305,7 +305,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1303 documents, trust-tiered',
+          '1304 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -447,7 +447,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1303 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
+        proofChips: ['1304 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -484,9 +484,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
         trackNote:
-          "Eight essentials against the full 22-module path plus the quiz, 965 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
+          "Eight essentials against the full 22-module path plus the quiz, 995 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
         trackChips: [
           'PQC 101',
           'Risk management',
@@ -519,7 +519,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1303 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1304 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -556,7 +556,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -629,7 +629,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -663,7 +663,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1303 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1304 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -698,7 +698,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -733,7 +733,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1303 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
+        proofChips: ['1304 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -770,7 +770,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -844,7 +844,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16 hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 16½ hours.',
 
         trackChips: [
           'PQC 101',
@@ -2508,7 +2508,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1303 documents, trust-tiered',
+          '1304 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -2780,15 +2780,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Learning path: Fundamentals, then FIPS 140-3 or CC/EUCC, the ACVP lab workflow, the workbench and product records (9 hours 40 minutes of essentials, not the full 14½ hours).',
+          'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 10 minutes of essentials, not the full 15 hours).',
         trackNote:
-          "Seven essentials against the full 13-module path plus the quiz, 875 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
+          "Six essentials against the full 13-module path plus the quiz, 905 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
         trackChips: [
           'Product certification',
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
         ],
@@ -2855,14 +2854,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
         ],
@@ -2930,14 +2928,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
         ],
@@ -3005,14 +3002,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
         ],
@@ -3076,14 +3072,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Then, the background: 8 hours 10 minutes of essentials, not the full 15 hours.',
 
         trackChips: [
           'Product certification',
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
-          'Testing & validation',
           'CC criteria and EUCC scheme rules',
           'PCI certification',
         ],

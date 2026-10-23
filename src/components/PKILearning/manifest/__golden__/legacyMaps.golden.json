@@ -131,7 +131,7 @@
       "lm_id": "LM-065",
       "title": "Cryptographic Product Certification: Fundamentals",
       "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).",
-      "duration": "60 min",
+      "duration": "90 min",
       "difficulty": "advanced",
       "frameworkPhase": "p7"
     },
@@ -3517,31 +3517,38 @@
     "pqc-testing-validation": [
       {
         "id": "passive-discovery-lab",
-        "label": "Passive Crypto Discovery Lab"
+        "label": "Passive Crypto Discovery Lab",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "active-pqc-scanner",
-        "label": "Active PQC Server Scanner"
+        "label": "Active PQC Server Scanner",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "performance-benchmark-designer",
-        "label": "Performance Benchmark Designer"
+        "label": "Performance Benchmark Designer",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "interop-test-matrix",
-        "label": "Interoperability Test Matrix"
+        "label": "Interoperability Test Matrix",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "tvla-leakage-analyzer",
-        "label": "TVLA Leakage Analyzer"
+        "label": "TVLA Leakage Analyzer",
+        "paths": ["network-practitioner", "certification-engineer"]
       },
       {
         "id": "test-strategy-builder",
-        "label": "Test Strategy Builder"
+        "label": "Test Strategy Builder",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "acvp-validator",
-        "label": "ACVP Workflow & Validation Tests"
+        "label": "ACVP Workflow & Validation Tests",
+        "paths": ["network-practitioner", "certification-engineer"]
       }
     ],
     "pci-certification": [
@@ -4250,7 +4257,7 @@
           "lm_id": "LM-065",
           "title": "Cryptographic Product Certification: Fundamentals",
           "description": "What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).",
-          "duration": "60 min",
+          "duration": "90 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
         },

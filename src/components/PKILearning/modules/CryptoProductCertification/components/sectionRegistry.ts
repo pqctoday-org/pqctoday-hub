@@ -21,9 +21,12 @@ import {
   ElectronicExchange,
 } from './sections/SharedSections'
 
-/** Learner-facing v1 label (build spec §6.9, plan r2 §2.2). Shown once, at the top. */
-export const PRACTITIONER_DISCLAIMER =
-  'Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body.'
+/**
+ * Learner-facing v1 label (build spec §6.9, plan r2 §2.2). Shown once, at the top, followed by
+ * the module's review status (common/moduleReviewStatus.ts: the owner's sign-off, and that no
+ * accredited laboratory or certification body has reviewed it).
+ */
+export const PRACTITIONER_DISCLAIMER = 'Practitioner orientation — not laboratory training.'
 
 export type SectionGroup = 'core' | 'fips' | 'cc-eu' | 'pci' | 'shared'
 

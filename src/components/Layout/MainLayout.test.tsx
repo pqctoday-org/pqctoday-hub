@@ -7,6 +7,7 @@ import { MainLayout } from './MainLayout'
 import { getRailSections } from './railNav'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { usePageActionsStore } from '../../store/usePageActionsStore'
+import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 import '@testing-library/jest-dom'
 
 // Mock the build timestamp
@@ -125,6 +126,36 @@ describe('MainLayout', () => {
       // January), so assert against the real current year, not a pinned one.
       const year = new Date().getFullYear()
       expect(screen.getByText(new RegExp(`© ${year} PQC Today`))).toBeInTheDocument()
+    })
+
+    it('desktop first run on the home page: the first-visit notice is a strip in flow above the page, not a fixed card over it', () => {
+      useDisclaimerStore.getState().resetForTesting()
+      usePersonaStore.setState({ selectedPersona: null, hasSkippedPersonalization: false })
+      renderLayout('/')
+      const notice = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+      expect(notice.className).not.toMatch(/\bfixed\b/)
+      expect(
+        screen.getByText('Timeline Page').compareDocumentPosition(notice) &
+          Node.DOCUMENT_POSITION_PRECEDING
+      ).toBeTruthy()
+      // One copy only: the fixed card is not rendered as well.
+      expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
+      expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
+    })
+
+    it('desktop on any other page, or once a role is chosen: the first-visit notice is the fixed card', () => {
+      useDisclaimerStore.getState().resetForTesting()
+      usePersonaStore.setState({ selectedPersona: null, hasSkippedPersonalization: false })
+      const { unmount } = renderLayout('/about')
+      expect(screen.getByRole('alert', { name: 'Welcome to PQC Today' }).className).toMatch(
+        /\bfixed\b/
+      )
+      unmount()
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout('/')
+      expect(screen.getByRole('alert', { name: 'Welcome to PQC Today' }).className).toMatch(
+        /\bfixed\b/
+      )
     })
 
     it('links the source code from the footer (exact commit, else the repository)', () => {

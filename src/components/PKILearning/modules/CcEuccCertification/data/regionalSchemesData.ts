@@ -230,7 +230,7 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
         text: 'ECCG Agreed Cryptographic Mechanisms — a guideline the evaluation relies on, not an annex of the regulation.',
       },
     ],
-    pqc: 'ECCG ACM v2 (May 2025) agrees ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, LMS and XMSS; lattice-based schemes "shouldn\'t be used in a standalone way" — hybrid with a classical mechanism.',
+    pqc: 'ECCG ACM v2 (document dated April 2025) agrees ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, LMS and XMSS; lattice-based schemes "shouldn\'t be used in a standalone way" — hybrid with a classical mechanism.',
     sources: [
       {
         label: 'Regulation (EU) 2024/482',

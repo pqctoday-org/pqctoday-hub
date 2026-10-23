@@ -1,0 +1,53 @@
+[
+  {
+    "platform_name": "ACA-Py",
+    "category": "Digital Identity & Verifiable Credentials",
+    "product_name": "ACA-Py (Hyperledger Aries Cloud Agent - Python)",
+    "product_brief": "An easy to use Aries agent for building SSI services using any language that supports sending/receiving HTTP requests.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "BBS+ Signatures, LD-Signatures (JSON-LD), Hyperledger AnonCreds",
+    "key_management_model": "Secure storage (for private keys, DIDs, credentials) managed per tenant in multi-tenant deployments; ACA-Py acts as a cloud/enterprise wallet",
+    "supported_blockchains": "Indy ledger (Hyperledger Indy)",
+    "architecture_type": "Server-side agent with HTTP/REST controller interface and webhooks (cloud/enterprise/IoT; not designed for mobile)",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source",
+    "license": "Apache License Version 2.0",
+    "latest_version": "0.12 (Current LTS Release)",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Servers (cloud, enterprise, IoT devices); Docker; PyPi; Kubernetes",
+    "target_industries": "Verifiable credential / decentralized identity ecosystems; enterprise",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "BBS+ Signatures, LD-Signatures (JSON-LD), Hyperledger AnonCreds",
+    "authoritative_source_url": "https://aca-py.org",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Open source (Apache License 2.0); extensible via plug-ins (Aries ACA-Py Plugins repository); transitioning to OpenWallet Foundation",
+    "deployment_&_migration_complexity": "LTS patch releases deployable without upgrade process; minor/major upgrade steps documented in CHANGELOG; Docker, PyPi, Kubernetes supported",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Controller can be built in any language supporting HTTP requests; Python knowledge not needed; developer courses available (Linux Foundation edX)",
+    "evidence": {
+      "Latest Version": "0.12 Current LTS Release",
+      "License": "Apache License Version 2.0",
+      "Crypto Primitives": "W3C Standard Verifiable Credential Data Model format using JSON-LD with LD-Signatures and BBS+ Signatures",
+      "Signature Schemes": "W3C Standard Verifiable Credential Data Model format using JSON-LD with LD-Signatures and BBS+ Signatures",
+      "Authoritative Source URL": "https://aca-py.org"
+    },
+    "withheld_no_excerpt": [
+      "FIPS Validated"
+    ],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

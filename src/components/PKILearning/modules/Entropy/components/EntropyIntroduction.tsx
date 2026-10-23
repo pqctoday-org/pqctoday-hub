@@ -366,7 +366,9 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             </li>
             <li>
               RBG constructions are a separate step: CMVP also issues Random Bit Generator
-              Validation Certificates for SP 800-90C conformance (IG D.T).
+              Validation Certificates for SP 800-90C conformance; the CMVP Entropy Validations page
+              names IG D.T as the guidance, and D.T is not yet in the published Implementation
+              Guidance (19 August 2026).
             </li>
             <li>NIST publishes no review duration. Do not plan around a fixed number of weeks.</li>
           </ul>

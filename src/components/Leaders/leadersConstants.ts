@@ -247,11 +247,11 @@ export const PERSONA_LEADER_GUIDANCE: Record<string, LeaderGuidance[]> = {
   'cert-engineer': [
     {
       category: 'Government',
-      why: 'Find scheme and agency publications, then verify the programme, module boundary, and effective version that apply.',
+      why: 'Agency profiles, such as NIST, ENISA and national authorities, link to cited publications. The directory lists few certification-programme, laboratory or scheme profiles, so verify the programme, module boundary, and effective version in the official register.',
     },
     {
       category: 'Industry Vendor',
-      why: 'Find vendor claims worth checking against official certificate and validation records.',
+      why: 'Vendor profiles link to cited material whose claims are worth checking against official certificate and validation records; a profile is not a record of any certificate.',
     },
   ],
   ops: [

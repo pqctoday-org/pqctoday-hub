@@ -1,0 +1,52 @@
+[
+  {
+    "platform_name": "EJBCA Community Edition",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "EJBCA Community Edition",
+    "product_brief": "Certificate lifecycle management and PKI platform; release 9.3 adds quantum-safe certificate issuance (ML-DSA, SLH-DSA, LMS) with HSM support.",
+    "pqc_support": "Yes — ML-DSA with HSM integration (select HSMs via REST API), SLH-DSA (FIPS 205) with 12 parameter sets, LMS certificates, hybrid CAs (EJBCA 9.3)",
+    "pqc_capability_description": "EJBCA 9.3 supports quantum-safe certificate issuance: ML-DSA with select HSMs (REST API based integration, e.g., Securosys, Fortanix), SLH-DSA per FIPS 205 (12 parameter sets, soft CryptoToken), LMS certificates, hybrid CA creation via CLI. P11NG Crypto Token is prepared for PKCS#11 quantum-safe integration. Bouncy Castle upgraded to 1.80.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-DSA, SLH-DSA, LMS, RSA (RSA-OAEP, RSA PKCS1.5), EC (elliptic curve), Triple DES (DES-EDE3-CBC), SHA1PRNG (replaced)",
+    "key_management_model": "HSM-backed (PKCS#11 via P11NG Crypto Token, and REST API based HSM integration) plus soft crypto tokens; key archival/recovery with RSA-OAEP, key import/migration from external CAs, key compromise blocklist; fails if HSM contains extractable private keys.",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "On-premises/deployable PKI server (Java-based; Helm chart, Docker, Azure SQL deployments); HSM-integrated",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "EJBCA 9.3.2",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Java 21 (minimum 21.0.5), Azure (Azure SQL with Workload Identity), Helm/Kubernetes, Docker, JBoss",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "P11NG Crypto Token is prepared for PKCS#11-based integration for quantum-safe algorithms; HSMs supporting quantum-safe algorithms use REST API integration in 9.3. No further timelines stated.",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA, SLH-DSA (FIPS 205), LMS",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Bouncy Castle 1.80 dependency; library upgrades noted (Apache CXF 4.0.6+, PrimeFaces 15.0.1+, jsch 0.2.24)",
+    "deployment_&_migration_complexity": "Soft migration of existing PKCS#11 Crypto Tokens to P11NG via an environment variable; upgrade notes and paths referenced; removal of User Data Sources and ca.doPermitExtractablePrivateKeys property; Java 21 may leave orphaned certificates in HSM for pre-9.3 keys.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "evidence": {
+      "PQC Support": "Starting with EJBCA 9.3, the quantum-safe algorithm ML-DSA can be used with HSM integration for select HSMs.",
+      "PQC Capability Description": "Support for the NIST approved quantum-safe algorithm SLH-DSA as specified in FIPS 205 has been added. The algorithm can be used with 12 different parameter sets",
+      "Latest Version": "These release notes cover new features and improvements implemented in EJBCA 9.3.0, EJBCA 9.3.1, and EJBCA 9.3.2",
+      "Crypto Primitives": "ECA-11574 Change key recovery encryption algorithm to RSA-OAEP instead of RSA PKCS1.5",
+      "Signature Schemes": "ECA-12579 Add support for LMS certificates",
+      "PQC Roadmap Details": "the P11NG Crypto Token enables use of additional functionality and is prepared for PKCS#11-based integration for quantum-safe algorithms."
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-10-22"
+    }
+  }
+]

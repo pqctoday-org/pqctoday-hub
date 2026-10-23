@@ -7,14 +7,12 @@ describe('reviewerDisplay', () => {
     expect(reviewerDisplay('claude-agent (automated remediation)')).toBe('maintainer (automated)')
   })
 
+  it('shows the maintainer handle as "PQC Today maintainer", never the handle itself', () => {
+    expect(reviewerDisplay('eramusa')).toBe('PQC Today maintainer')
+  })
+
   it('leaves every other reviewer name exactly as stored', () => {
-    for (const name of [
-      'eramusa',
-      'maintainer',
-      'Maintainer',
-      'maintenance-review',
-      'unreviewed',
-    ]) {
+    for (const name of ['maintainer', 'Maintainer', 'maintenance-review', 'unreviewed']) {
       expect(reviewerDisplay(name)).toBe(name)
     }
   })
@@ -32,7 +30,7 @@ describe('useRevisions applies the alias to what readers see', () => {
     vi.resetModules()
   })
 
-  it('renders the stored automated name as the neutral one, and keeps the others', async () => {
+  it('renders the stored automated name and the maintainer handle as neutral ones', async () => {
     const line = (display: string) =>
       JSON.stringify({
         pr_number: 1,
@@ -68,6 +66,6 @@ describe('useRevisions applies the alias to what readers see', () => {
     const { result } = renderHook(() => useRevisions())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
     const shown = result.current.revisions.map((r) => r.reviewer_display).sort()
-    expect(shown).toEqual(['eramusa', 'maintainer (automated)'])
+    expect(shown).toEqual(['PQC Today maintainer', 'maintainer (automated)'])
   })
 })

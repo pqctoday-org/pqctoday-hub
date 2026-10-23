@@ -77,7 +77,10 @@ export const LearnPathPicker = ({ manifest, className, compact = false }: LearnP
               className={option(active)}
             >
               <span className="font-semibold">{p.label}</span>
-              <span className="text-xs text-muted-foreground">· {p.duration}</span>
+              {/* nowrap: on a phone the label wraps, and "· 70 min" must not split across lines. */}
+              <span className="shrink-0 whitespace-nowrap text-xs text-muted-foreground">
+                · {p.duration}
+              </span>
             </Button>
           )
         })}

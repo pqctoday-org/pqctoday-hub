@@ -16,6 +16,8 @@ export interface UEFIKeyTypeInfo {
   currentAlgorithm: string
   typicalSize: string
   pqcAlgorithm: string
+  /** Algorithm for National Security Systems per the NSA CNSA 2.0 FAQ v2.2 (algorithm table p.7-8; LMS/XMSS only, no HSS/XMSS^MT, p.11). */
+  cnsaAlgorithm: string
   pqcSize: string
   quantumVulnerable: boolean
   owner: string
@@ -30,6 +32,14 @@ export interface TPMPCREntry {
   pqcRelevance: string
 }
 
+/**
+ * forgeryUrgency is the module's migration-priority rubric for a signature or
+ * attestation key. A signature protects no secret, so it is not a
+ * harvest-now-decrypt-later exposure: the risk is forgery once a CRQC exists,
+ * and the urgency follows how long the device and its trust anchors stay in
+ * the field (NSA CNSA 2.0 FAQ v2.2 p.13: firmware-signing algorithms are
+ * "frequently locked in for the life of a system").
+ */
 export interface BootChainStage {
   id: string
   name: string
@@ -38,7 +48,7 @@ export interface BootChainStage {
   signingKey: string
   currentAlgorithm: string
   pqcStatus: string
-  hndlRisk: 'critical' | 'high' | 'medium' | 'low' | 'none'
+  forgeryUrgency: 'critical' | 'high' | 'medium' | 'low' | 'none'
 }
 
 export interface AttestationTypeInfo {
@@ -46,7 +56,7 @@ export interface AttestationTypeInfo {
   name: string
   description: string
   currentCrypto: string
-  hndlRisk: 'critical' | 'high' | 'medium' | 'low'
+  forgeryUrgency: 'critical' | 'high' | 'medium' | 'low'
   pqcMigrationPath: string
   tpmNative: boolean
   standardsBody: string
@@ -58,6 +68,8 @@ export interface AlgorithmSizeRecord {
   publicKeyBytes: number
   privateKeyBytes: number
   signatureBytes: number
+  /** PQC rows: the NIST security category (FIPS 204 / 205). Classical rows: the comparable security
+   *  strength in bits (SP 800-57 Part 1 Rev. 5 Table 2), which is a different measure. */
   nistLevel: string
   quantumSafe: boolean
 }
@@ -74,6 +86,7 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     currentAlgorithm: 'RSA-2048 or RSA-4096',
     typicalSize: '256–512 bytes public key',
     pqcAlgorithm: 'ML-DSA-65 (FIPS 204)',
+    cnsaAlgorithm: 'ML-DSA-87; LMS or XMSS (SP 800-208) where the key signs firmware or software',
     pqcSize: '1,952 bytes public key, 3,309 bytes signature',
     quantumVulnerable: true,
     owner: 'OEM / Platform Manufacturer',
@@ -88,6 +101,7 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     currentAlgorithm: 'RSA-2048',
     typicalSize: '256 bytes public key',
     pqcAlgorithm: 'ML-DSA-65 (FIPS 204)',
+    cnsaAlgorithm: 'ML-DSA-87; LMS or XMSS (SP 800-208) where the key signs firmware or software',
     pqcSize: '1,952 bytes public key, 3,309 bytes signature',
     quantumVulnerable: true,
     owner: 'OS Vendor / OEM',
@@ -102,6 +116,9 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     currentAlgorithm: 'RSA-2048 certificates',
     typicalSize: '~1.2 KB per certificate',
     pqcAlgorithm: 'ML-DSA-65 X.509 certificates',
+    cnsaAlgorithm:
+      'ML-DSA-87 certificates; LMS or XMSS (SP 800-208) for firmware or software signatures',
+
     pqcSize: '~6 KB per certificate (5× increase)',
     quantumVulnerable: true,
     owner: 'OS Vendor / Software Publisher',
@@ -116,6 +133,8 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     currentAlgorithm: 'SHA-256 hashes',
     typicalSize: 'Variable (grows over time)',
     pqcAlgorithm: 'SHA-256 hashes (unchanged for revocation)',
+    cnsaAlgorithm: 'SHA-384 or SHA-512 (CNSA 2.0 hash algorithms)',
+
     pqcSize: 'Unchanged (hashes are quantum-safe at 256-bit)',
     quantumVulnerable: false,
     owner: 'UEFI Forum / OEM / OS Vendor',
@@ -130,6 +149,8 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     currentAlgorithm: 'RSA-2048 or RSA-4096',
     typicalSize: '256–512 bytes',
     pqcAlgorithm: 'ML-DSA-65 (when shim supports FIPS 204)',
+    cnsaAlgorithm: 'ML-DSA-87 (when shim supports FIPS 204)',
+
     pqcSize: '1,952 bytes public key',
     quantumVulnerable: true,
     owner: 'Machine Owner / Admin',
@@ -242,7 +263,7 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
     signingKey: 'OEM Code Signing Key (stored in Boot Guard ACM / PSP)',
     currentAlgorithm: 'RSA-2048 with SHA-256',
     pqcStatus: 'Roadmap 2026–2027 (Intel Boot Guard, AMI, Insyde)',
-    hndlRisk: 'critical',
+    forgeryUrgency: 'critical',
   },
   {
     id: 'uefi-db-check',
@@ -253,7 +274,7 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
     signingKey: 'Bootloader Code Signing Certificate (in db)',
     currentAlgorithm: 'RSA-2048 or RSA-4096 EFI signature list',
     pqcStatus: 'Requires PK/KEK/db migration to ML-DSA-65 and UEFI spec update',
-    hndlRisk: 'critical',
+    forgeryUrgency: 'critical',
   },
   {
     id: 'bootloader',
@@ -264,7 +285,7 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
     signingKey: 'Microsoft UEFI CA (for shim) / Distro signing key (for GRUB2)',
     currentAlgorithm: 'RSA-2048 (shim) + ECDSA P-384 (GRUB2 signing)',
     pqcStatus: 'GRUB2 PQC support planned; shim PQC requires Microsoft KEK migration',
-    hndlRisk: 'high',
+    forgeryUrgency: 'high',
   },
   {
     id: 'os-kernel',
@@ -275,7 +296,7 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
     signingKey: 'Kernel Build Signing Key (stored in distro HSM)',
     currentAlgorithm: 'RSA-4096 (Linux kernel signing)',
     pqcStatus: 'Linux kernel PQC signing experimental (6.9+), production 2027+',
-    hndlRisk: 'high',
+    forgeryUrgency: 'high',
   },
   {
     id: 'drivers',
@@ -286,7 +307,7 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
     signingKey: 'Module Signing Key (same as kernel signing key)',
     currentAlgorithm: 'RSA-2048 or RSA-4096',
     pqcStatus: 'Dependent on kernel signing migration; follows OS kernel timeline',
-    hndlRisk: 'medium',
+    forgeryUrgency: 'medium',
   },
 ]
 
@@ -299,7 +320,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     description:
       'TPM PCR banks record measurements of each boot stage. Values are deterministic for identical configurations. No signature operations during boot — measurements are SHA-256 extends into PCRs.',
     currentCrypto: 'SHA-256 hash extends (no signatures in measurement itself)',
-    hndlRisk: 'low',
+    forgeryUrgency: 'low',
     pqcMigrationPath:
       'PCR hash operations (SHA-256/SHA-384) are quantum-safe. Migration needed only for TPM Quote signatures used during attestation verification.',
     tpmNative: true,
@@ -311,10 +332,10 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     description:
       'TPM uses an Attestation Identity Key (AIK) to sign a snapshot of selected PCR values plus a nonce. The relying party verifies the AIK certificate chain and the PCR values match expected golden values.',
     currentCrypto: 'RSA-2048 or ECDSA P-256 (AIK signing key)',
-    hndlRisk: 'high',
+    forgeryUrgency: 'high',
     pqcMigrationPath:
-      'TPM 2.0 does not natively support ML-DSA AIK keys. Hybrid approach: TPM RSA quote + software ML-DSA binding. Full PQC requires next-generation TPM spec (TCG TPM Library Part 2 PQC extension, targeted 2027).',
-    tpmNative: false,
+      'TPM 2.0 Library v185 (TCG, March 2026) adds ML-DSA, and TCG names it for Attestation Keys, so a TPM that implements v185 can sign quotes with ML-DSA. A TPM built to an earlier library version needs the hybrid approach: TPM RSA quote + software ML-DSA binding. Product availability depends on the TPM vendor.',
+    tpmNative: true,
     standardsBody: 'TCG (Trusted Computing Group)',
   },
   {
@@ -323,7 +344,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     description:
       "Layered identity derived from immutable hardware secrets. Each software layer derives its identity from the previous layer's measurement. Used in IoT and constrained devices as a TPM alternative.",
     currentCrypto: 'ECDSA P-256 or Ed25519 (layer-derived keys)',
-    hndlRisk: 'high',
+    forgeryUrgency: 'high',
     pqcMigrationPath:
       'DICE + RIoT profile extended for PQC in DICE specification update (2025). ML-DSA-44 recommended for constrained devices. Key derivation uses HKDF (quantum-safe) already.',
     tpmNative: false,
@@ -335,7 +356,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     description:
       'Automated device onboarding protocol using device attestation certificates. Device proves identity to rendezvous server during first boot. OEM transfers ownership securely. Used in cloud and edge deployments.',
     currentCrypto: 'RSA-2048 or ECDSA P-384 (device attestation cert)',
-    hndlRisk: 'high',
+    forgeryUrgency: 'high',
     pqcMigrationPath:
       'FIDO Alliance FDO specification (planned PQC update) adds ML-DSA support for device attestation certificates. OEM supply chain must issue PQC device attestation certs at manufacture time.',
     tpmNative: false,
@@ -347,9 +368,9 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     description:
       'Device presents attestation evidence (TPM quote, DICE certificate chain) embedded in a TLS connection. Relying party validates via RA-TLS (RFC-track) or custom attestation extension. Common in confidential computing.',
     currentCrypto: 'TLS 1.3 (ECDH + ECDSA) + embedded attestation signature',
-    hndlRisk: 'critical',
+    forgeryUrgency: 'critical',
     pqcMigrationPath:
-      'TLS layer: migrate to ML-KEM-768 + ML-DSA-65 hybrid (existing TLS 1.3 PQC migration path). Attestation layer: replace embedded RSA/ECDSA signatures with ML-DSA-65. Both layers must migrate before HNDL window closes.',
+      'TLS layer: migrate to ML-KEM-768 + ML-DSA-65 hybrid (existing TLS 1.3 PQC migration path). Attestation layer: replace embedded RSA/ECDSA signatures with ML-DSA-65. The TLS key exchange is exposed to harvest-now-decrypt-later (a recorded session can be decrypted later), so migrate it first. The embedded attestation signatures are a forgery risk once a CRQC exists, so their urgency follows how long the device and its trust anchors stay in service.',
     tpmNative: false,
     standardsBody: 'IETF RATS WG / Confidential Computing Consortium',
   },
@@ -364,7 +385,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 256,
     privateKeyBytes: 1192,
     signatureBytes: 256,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '112-bit (classical)',
     quantumSafe: false,
   },
   {
@@ -373,7 +394,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 512,
     privateKeyBytes: 2350,
     signatureBytes: 512,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '128–192-bit (classical)',
     quantumSafe: false,
   },
   {
@@ -382,7 +403,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 65,
     privateKeyBytes: 32,
     signatureBytes: 72,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '128-bit (classical)',
     quantumSafe: false,
   },
   {
@@ -391,7 +412,7 @@ export const FIRMWARE_ALGO_SIZES: AlgorithmSizeRecord[] = [
     publicKeyBytes: 97,
     privateKeyBytes: 48,
     signatureBytes: 104,
-    nistLevel: 'Level 1 (classical)',
+    nistLevel: '192-bit (classical)',
     quantumSafe: false,
   },
   {

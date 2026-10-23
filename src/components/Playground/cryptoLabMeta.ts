@@ -13,6 +13,8 @@ import {
   Play,
   Container,
   Gauge,
+  ClipboardCheck,
+  ListChecks,
 } from 'lucide-react'
 import type React from 'react'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -186,9 +188,43 @@ export const PERSONA_FEATURED_TOOL_IDS: Record<PersonaId | 'none', readonly stri
   curious: PLAYGROUND_ROLE_JOURNEYS.curious.toolIds,
 }
 
+/**
+ * Role-specific featured pages that are not registry tools. The validation
+ * workbench and the conformance runner are sub-tabs of the PKCS#11 HSM
+ * playground (Build › Validation, Build › Conformance), so a tool id cannot
+ * name them; for a certification and validation engineer they are the core
+ * tools, so each gets a card of its own, ahead of the role's tool picks.
+ */
+export const PERSONA_FEATURED_PAGES: Partial<Record<PersonaId, readonly FeaturePlayground[]>> = {
+  'cert-engineer': [
+    {
+      to: '/playground/hsm?tab=build&dtab=acvp',
+      icon: ClipboardCheck,
+      title: 'Validation Workbench',
+      description:
+        'Selected NIST ACVP-Server reference samples, standard known-answer tests and oracle comparisons, replayed against the PKCS#11 engines.',
+      tag: 'ACVP samples · evidence only',
+      accent: 'primary',
+    },
+    {
+      to: '/playground/hsm?tab=build&dtab=conformance',
+      icon: ListChecks,
+      title: 'Conformance Runner',
+      description:
+        'The OASIS-published PKCS#11 v3.2 Profiles test cases and generated probes, each case on a freshly initialised token.',
+      tag: 'OASIS · PKCS#11 v3.2',
+      accent: 'secondary',
+    },
+  ],
+}
+
 const FEATURED_ACCENTS: readonly FeatureAccent[] = ['secondary', 'success', 'primary', 'warning']
 
-/** The four full playgrounds plus the persona's featured tools, as marquee cards. */
+/**
+ * The four full playgrounds plus the persona's featured tools, as marquee cards.
+ * A role with its own featured pages (PERSONA_FEATURED_PAGES) sees those and its
+ * tool picks first, with the full playgrounds after them.
+ */
 export function featurePlaygroundsFor(persona: PersonaId | null): FeaturePlayground[] {
   const base = FEATURE_PLAYGROUNDS.filter((f) => f.to !== '/playground/hsm-capacity')
   const ids = PERSONA_FEATURED_TOOL_IDS[persona ?? 'none']
@@ -206,7 +242,9 @@ export function featurePlaygroundsFor(persona: PersonaId | null): FeaturePlaygro
       } satisfies FeaturePlayground,
     ]
   })
-  return [...base, ...cards]
+  // eslint-disable-next-line security/detect-object-injection -- persona is the typed PersonaId union
+  const pages = persona ? (PERSONA_FEATURED_PAGES[persona] ?? []) : []
+  return pages.length > 0 ? [...pages, ...cards, ...base] : [...base, ...cards]
 }
 
 /** Route target for the featured KMIP banner (the crypto-agile KMIP playground). */

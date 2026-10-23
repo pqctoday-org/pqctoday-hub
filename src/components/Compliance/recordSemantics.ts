@@ -18,6 +18,7 @@
  *    "no PQC". For CC / EUCC / CSPN the PQC names come from the Security
  *    Target, which is a claim in the evaluated document, not validated support.
  */
+import { isConfirmedPqcAlgorithm } from './pqcCertificationTrendModel'
 import type { ComplianceMeta, ComplianceRecord, ComplianceType } from './types'
 
 // ── Status ────────────────────────────────────────────────────────────────
@@ -91,6 +92,23 @@ const TYPE_DESCRIPTION: Record<ComplianceType, string> = {
   EUCC: 'EU Common Criteria (EUCC) certificate',
   CSPN: 'CSPN (ANSSI) — French national first-level certification, separate from Common Criteria',
 }
+
+/**
+ * The certificate number a reader can look up at the scheme. Common Criteria Portal
+ * listings carry no scheme certificate number in the data, so their record id is a
+ * slug generated from the product name plus a short hash ('cc-<product>-3881cf5c').
+ * That slug is an internal key (deep links, selection), not a certificate number,
+ * and must not be presented as one. ANSSI, EUCC, CSPN, CMVP and CAVP ids are the
+ * scheme's own numbers and are returned unchanged.
+ */
+const GENERATED_CC_ID = /^cc-.+-[0-9a-f]{8}$/
+
+export function schemeCertificateId(record: { id: string; type: string }): string | null {
+  return record.type === 'Common Criteria' && GENERATED_CC_ID.test(record.id) ? null : record.id
+}
+
+/** What to show where a certificate number would be, when the listing has none. */
+export const NO_SCHEME_ID_LABEL = 'No scheme number in the listing'
 
 /** User-facing short label for a record type. Unknown types render as-is. */
 export function recordTypeLabel(type: string): string {
@@ -216,6 +234,43 @@ export function formatIsoDate(iso: string | null | undefined): string | null {
   return `${d.getUTCDate()} ${MONTH_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}`
 }
 
+// ── PQC stage summary ─────────────────────────────────────────────────────
+
+export interface PqcStageSummary {
+  /** FIPS 140-3 certificates in the records given. */
+  fipsCertificates: number
+  /** Of those, the ones whose validated scope names a PQC algorithm. */
+  fipsWithPqc: number
+  /** NIST CAVP validations that name a PQC algorithm. */
+  cavpPqcValidations: number
+}
+
+/**
+ * The counts behind the Product Records stage chart, for places too small to draw it.
+ * Same test as the chart (a named PQC algorithm, not a name-match), FIPS 140-3 track only.
+ */
+export function pqcStageSummary(
+  records: readonly { type: string; pqcCoverage?: ComplianceRecord['pqcCoverage'] }[]
+): PqcStageSummary {
+  const out: PqcStageSummary = { fipsCertificates: 0, fipsWithPqc: 0, cavpPqcValidations: 0 }
+  for (const r of records) {
+    const pqc = isConfirmedPqcAlgorithm(r.pqcCoverage ?? '')
+    if (r.type === 'FIPS 140-3') {
+      out.fipsCertificates += 1
+      if (pqc) out.fipsWithPqc += 1
+    } else if (r.type === 'ACVP' && pqc) {
+      out.cavpPqcValidations += 1
+    }
+  }
+  return out
+}
+
+/** One sentence for the summary above; null when there is nothing on the FIPS 140-3 track to count. */
+export function pqcStageSummaryLine(summary: PqcStageSummary): string | null {
+  if (summary.fipsCertificates === 0 && summary.cavpPqcValidations === 0) return null
+  return `PQC in this snapshot: ${summary.fipsWithPqc} of ${summary.fipsCertificates} FIPS 140-3 certificates · ${summary.cavpPqcValidations} CAVP validations.`
+}
+
 // ── Snapshot scope + retrieval (sidecar) ──────────────────────────────────
 
 export const DEFAULT_SCOPE_NOTICE =
@@ -229,6 +284,10 @@ export function scopeNotice(meta: ComplianceMeta | null | undefined): string {
     : DEFAULT_SCOPE_NOTICE
 }
 
+/** Shown next to the retrieval dates: the records are a published snapshot, not a live query. */
+export const SNAPSHOT_NOTICE =
+  'Snapshot, not a live feed — confirm status on the official register (links in each row) before citing it.'
+
 export interface RetrievalEntry {
   key: string
   label: string
@@ -237,11 +296,20 @@ export interface RetrievalEntry {
   date: string
 }
 
+/**
+ * The retrieval dates, as one line. They are the UTC calendar date of the
+ * retrieval time (the sidecar stores UTC), so a retrieval late in the evening in
+ * the Americas reads as the next day; the line says so.
+ */
+export function retrievalSummary(entries: readonly RetrievalEntry[], sep = ' · '): string {
+  return `${entries.map((e) => `${e.label} retrieved ${e.date}`).join(sep)} (dates in UTC)`
+}
+
 const PARTITION_ORDER = ['fips', 'cavp', 'cc', 'anssi', 'eucc']
 
 /** Per-partition snapshot retrieval dates from the sidecar, in a stable order. */
 export function snapshotRetrievalEntries(
-  meta: ComplianceMeta | null | undefined
+  meta: Pick<ComplianceMeta, 'partitions'> | null | undefined
 ): RetrievalEntry[] {
   const partitions = meta?.partitions
   if (!partitions) return []

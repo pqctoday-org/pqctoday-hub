@@ -61,8 +61,14 @@ import {
   pqcCoverageState,
   pqcEvidenceLabel,
   pqcNames,
+  pqcStageSummary,
+  pqcStageSummaryLine,
   recordTypeDescription,
   recordTypeLabel,
+  retrievalSummary,
+  schemeCertificateId,
+  SNAPSHOT_NOTICE,
+  snapshotRetrievalEntries,
   statusBadgeClass,
 } from '@/components/Compliance/recordSemantics'
 import { MobileSheet } from '../primitives/Sheet'
@@ -143,6 +149,11 @@ function sectionFromTabParam(
   if (reqfw) return 'requirements'
   if (cswp) return 'cswp39'
   return null
+}
+
+/** The part of the snapshot sidecar this screen reads — structurally a subset of Compliance's ComplianceMeta. */
+export interface MobileRecordsMeta {
+  partitions?: Record<string, { label: string; retrievedAt?: string }>
 }
 
 /**
@@ -262,10 +273,13 @@ const TIER_TONE: Record<ApplicabilityTier, string> = {
 export function MobileComplianceView({
   records,
   recordsLoaded = false,
+  meta,
 }: {
   /** The certification records ComplianceView already loaded (for `?cert=`). */
   records?: readonly MobileCertRecord[]
   recordsLoaded?: boolean
+  /** The snapshot sidecar's per-source retrieval times (compliance-data.meta.json). */
+  meta?: MobileRecordsMeta | null
 } = {}) {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
@@ -359,6 +373,12 @@ export function MobileComplianceView({
     [records, recordScope, recordQuery]
   )
   const hasRecordList = !!records && records.length > 0
+  const stageLine = useMemo(
+    () =>
+      records ? pqcStageSummaryLine(pqcStageSummary(applyRecordScope(records, recordScope))) : null,
+    [records, recordScope]
+  )
+  const retrieval = useMemo(() => snapshotRetrievalEntries(meta), [meta])
   // The glossary is the whole section when there is no record list; with one,
   // it folds away under a toggle below the list.
   const [glossaryToggled, setGlossaryToggled] = useState<boolean | null>(null)
@@ -900,6 +920,14 @@ export function MobileComplianceView({
                     ? `Showing the newest ${RECORD_PHONE_LIMIT} of ${recordMatches.length} — search to narrow.`
                     : `${recordMatches.length} record${recordMatches.length === 1 ? '' : 's'}.`}
               </p>
+              <div
+                className="flex flex-col gap-0.5 text-[10.5px] leading-relaxed text-muted-foreground"
+                data-testid="records-phone-snapshot"
+              >
+                {stageLine && <p>{stageLine}</p>}
+                <p>{SNAPSHOT_NOTICE}</p>
+                {retrieval.length > 0 && <p>{retrievalSummary(retrieval)}</p>}
+              </div>
               <ul className="flex flex-col gap-1.5">
                 {recordMatches.slice(0, RECORD_PHONE_LIMIT).map((r) => (
                   <li key={r.id}>
@@ -911,7 +939,14 @@ export function MobileComplianceView({
                     >
                       <span className="text-[12px] font-bold text-foreground">{r.productName}</span>
                       <span className="text-[10.5px] text-muted-foreground">
-                        {r.vendor} · {recordTypeLabel(r.type)} #{r.id} · {r.date}
+                        {[
+                          r.vendor,
+                          recordTypeLabel(r.type),
+                          schemeCertificateId(r) ? `#${r.id}` : null,
+                          r.date,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ')}
                       </span>
                     </Button>
                   </li>
@@ -1263,7 +1298,9 @@ function MobileRecordDetailSheet({
             >
               {record.status || 'No status'}
             </span>
-            <span className="font-mono text-[10.5px] text-muted-foreground">{record.id}</span>
+            {schemeCertificateId(record) && (
+              <span className="font-mono text-[10.5px] text-muted-foreground">{record.id}</span>
+            )}
           </div>
           {record.vendor && <p className="text-[11.5px] text-muted-foreground">{record.vendor}</p>}
 
