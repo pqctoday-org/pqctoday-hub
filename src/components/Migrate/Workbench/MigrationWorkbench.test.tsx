@@ -74,6 +74,18 @@ describe('MigrationWorkbench (integration)', () => {
     useMigrateSelectionStore.setState({ plan: [], choice: {}, tab: 'replace' })
   })
 
+  it('has a Vulnerabilities tab that opens the CVE watch for the selected products', async () => {
+    renderStandaloneAt('/migrate?tab=vulns')
+    expect(screen.getByRole('tab', { name: /Vulnerabilities/ })).toHaveAttribute(
+      'data-state',
+      'active'
+    )
+    // Nothing selected yet: the empty state points back at the Replace tab.
+    expect(
+      await screen.findByText('Pick the products you run in the Replace tab first.')
+    ).toBeInTheDocument()
+  })
+
   it('renders the asset list; posture shows an empty-state invitation until something is planned', () => {
     renderWorkbench()
     expect(screen.getByText('What you run — pick to see replacements')).toBeInTheDocument()

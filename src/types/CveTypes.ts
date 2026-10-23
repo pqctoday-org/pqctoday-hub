@@ -32,4 +32,10 @@ export interface CveSnapshot {
    * Used by the UI to show "showing 20 of X total CVEs".
    */
   totalByCpe?: Record<string, number>
+  /**
+   * ISO date (YYYY-MM-DD) a CPE was last re-queried on its own, for CPEs refreshed
+   * after `generatedAt` without a full re-scrape. Absent for CPEs not refreshed
+   * separately: their data is as old as `generatedAt`.
+   */
+  cpeRefreshedAt?: Record<string, string>
 }

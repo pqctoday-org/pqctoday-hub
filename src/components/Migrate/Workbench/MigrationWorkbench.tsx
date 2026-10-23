@@ -13,6 +13,7 @@ import {
   BarChart3,
   Map as MapIcon,
   ShieldAlert,
+  Bug,
   Undo2,
 } from 'lucide-react'
 import { PageHeader } from '../../common/PageHeader'
@@ -41,6 +42,7 @@ import {
 import { PlanTab } from './PlanTab'
 import { RoadmapsTab } from './RoadmapsTab'
 import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
+import { VulnerabilitiesTab } from './VulnerabilitiesTab'
 import { WhoHasMovedPanel } from './WhoHasMovedPanel'
 import { CatalogScopeNote } from './CatalogScopeNote'
 import { MigrationEducationScope } from '@/components/shared/MigrationEducationScope'
@@ -73,7 +75,7 @@ interface MigrationWorkbenchProps {
 const ITEM_VIEW_PARAMS = ['product', 'productIds', 'vendor', 'open'] as const
 
 const isTab = (v: string | null): v is MigrateTab =>
-  v === 'replace' || v === 'plan' || v === 'roadmaps' || v === 'vendorrisk'
+  v === 'replace' || v === 'plan' || v === 'roadmaps' || v === 'vendorrisk' || v === 'vulns'
 
 export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkbenchProps) {
   const isMobileShell = useIsMobileShell()
@@ -535,6 +537,11 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
             <span className="hidden sm:inline">Evidence gaps</span>
             <span className="sm:hidden">Evidence</span>
           </TabsTrigger>
+          <TabsTrigger value="vulns">
+            <Bug size={15} className="mr-1.5" aria-hidden />
+            <span className="hidden sm:inline">Vulnerabilities</span>
+            <span className="sm:hidden">CVEs</span>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="replace" className="mt-4">
@@ -573,6 +580,9 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
         </TabsContent>
         <TabsContent value="vendorrisk" className="mt-4">
           <VendorConcentrationRiskPanel openRef={openParam ?? undefined} />
+        </TabsContent>
+        <TabsContent value="vulns" className="mt-4">
+          <VulnerabilitiesTab />
         </TabsContent>
       </Tabs>
     </div>
