@@ -47,7 +47,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'hybrid-signatures',
     title: 'Step 6: Hybrid Signatures',
-    description: 'Concatenation, nesting, and Silithium — from no non-separability to SNS.',
+    description:
+      'Concatenation, nesting, and Silithium — from no non-separability to the SNS that Silithium targets.',
     icon: Fingerprint,
   },
   {

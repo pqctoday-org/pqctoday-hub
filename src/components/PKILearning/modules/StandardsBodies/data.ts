@@ -208,7 +208,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     acronym: 'CC / CCRA',
     type: 'certification-body',
     scope: 'global',
-    authority: 'non-governmental',
+    authority: 'governmental',
     region: 'Global',
     founded: '1994',
     mission:
@@ -385,7 +385,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'enisa',
     name: 'ENISA',
     acronym: 'EU Agency for Cybersecurity',
-    hint: 'EU agency under the Cybersecurity Act. Supports the EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM), and publishes EUCC certificates. Accredited certification bodies issue them, not ENISA.',
+    hint: 'EU agency under the Cybersecurity Act. Supports the EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM), and publishes EUCC certificates. Accredited certification bodies issue them, not ENISA. It is an EU agency that supports and promotes the framework (Cybersecurity Act Art. 8), not a regulator and not a certification body (Art. 56: conformity assessment bodies issue certificates).',
     correctType: 'regulatory-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',
@@ -430,10 +430,10 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'common-criteria',
     name: 'Common Criteria',
     acronym: 'CC / CCRA — based on ISO/IEC 15408',
-    hint: '36-country mutual recognition arrangement for IT product security evaluations (18 issue certificates, 18 only recognise them). Recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates.',
+    hint: '36-country mutual recognition arrangement for IT product security evaluations (18 issue certificates, 18 only recognise them). Recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates. Its participants are government organisations or government agencies (CCRA Art. 1), so it is governmental.',
     correctType: 'certification-body',
     correctScope: 'global',
-    correctAuthority: 'non-governmental',
+    correctAuthority: 'governmental',
   },
 ]
 
@@ -705,7 +705,7 @@ export const ORG_TYPE_LABELS: Record<OrgTypeKey, string> = {
   'standards-body': 'Standards Body',
   'certification-body': 'Certification Body',
   'compliance-framework': 'Compliance Framework',
-  'regulatory-agency': 'Regulatory Agency',
+  'regulatory-agency': 'Government Agency',
 }
 
 // ─── Scenario Challenge (Step 5) ──────────────────────────────────────────────

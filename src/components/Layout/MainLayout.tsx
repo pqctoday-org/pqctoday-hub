@@ -483,6 +483,11 @@ export const MainLayout = () => {
   const isMobileFirstRun = hasNoRoleYet && !deepLinkBypass && isHomeRoute
   // Shown only where the page renders: the picker, which replaces the page, never shows with it.
   const showMobileRolePrompt = isMobileShell && hasNoRoleYet
+  // The desktop role picker (LandingView's first-run screen) shows the first-visit notice as a
+  // compact strip in flow above the role cards. The fixed bottom card covered the lower rows of
+  // cards, including the Certification & Validation Engineer card, until it was dismissed. Same
+  // reason as the phone's inline notice (UX-17); the reader still meets it before choosing anything.
+  const isDesktopRolePicker = !isMobileShell && hasNoRoleYet && isHomeRoute
 
   // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {
@@ -1455,6 +1460,8 @@ export const MainLayout = () => {
                   </React.Suspense>
                 )}
 
+                {isDesktopRolePicker && <DisclaimerModal placement="banner" />}
+
                 {/* Offline mode info banner */}
                 <AirplaneModeBanner />
 
@@ -1583,8 +1590,9 @@ export const MainLayout = () => {
 
           {/* First-visit disclaimer — must acknowledge before using the app.
               On the phone's first-run role picker it renders inline instead
-              (above), below the role choices. */}
-          {!(isMobileShell && isMobileFirstRun) && <DisclaimerModal />}
+              (above), below the role choices; on the desktop role picker it
+              renders as a compact strip above them. */}
+          {!(isMobileShell && isMobileFirstRun) && !isDesktopRolePicker && <DisclaimerModal />}
 
           {/* Toast notifications — role="status" so screen readers announce them.
               A plain <div>'s implicit role is "generic", which prohibits aria-label

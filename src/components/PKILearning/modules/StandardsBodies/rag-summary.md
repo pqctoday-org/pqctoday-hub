@@ -19,7 +19,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 | ---------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------- | ---------------------------------------------------------- |
 | Standards Body                           | Defines algorithms, protocols, and technical requirements                             | NIST, ISO/IEC, ETSI, IETF             | FIPS 203, RFC 9629, ETSI TS 103 744                        |
 | Certification Body                       | Validates that a specific product/implementation meets a standard                     | CMVP, EUCC certification bodies, CCRA | Validation certificates                                    |
-| Regulatory Agency / Compliance Framework | Sets requirements in a regulated context, which can include use of certified products | NSA (CNSA 2.0), NIS2, FIPS 140-3      | Mandates and procurement rules, binding within their scope |
+| Government Agency / Compliance Framework | Sets requirements in a regulated context, which can include use of certified products | NSA (CNSA 2.0), NIS2, FIPS 140-3      | Mandates and procurement rules, binding within their scope |
 
 **Key distinction**: NIST wrote FIPS 203 (standards body), but the CAVP validates your ML-KEM implementation and the CMVP validates your HSM module (certification bodies), and CNSA 2.0 requires National Security Systems to use NIAP-validated products with CMVP-validated modules (regulatory mandate).
 

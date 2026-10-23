@@ -29,7 +29,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
       { id: 'standards-body', label: 'Standards Body' },
       { id: 'certification-body', label: 'Certification Body' },
       { id: 'compliance-framework', label: 'Compliance Framework' },
-      { id: 'regulatory-agency', label: 'Regulatory Agency' },
+      { id: 'regulatory-agency', label: 'Government Agency' },
     ],
     orgOptions: [
       { id: 'nist', label: 'NIST' },
@@ -59,7 +59,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     bodyTypeOptions: [
       { id: 'standards-body', label: 'Standards Body (creates technical standards)' },
       { id: 'certification-body', label: 'Certification Body (certifies products)' },
-      { id: 'regulatory-agency', label: 'Regulatory Agency (issues government mandates)' },
+      { id: 'regulatory-agency', label: 'Government Agency (issues government mandates)' },
       { id: 'compliance-framework', label: 'Compliance Framework (a set of rules)' },
     ],
     orgOptions: [
@@ -95,7 +95,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     bodyTypeOptions: [
       { id: 'standards-body', label: 'Standards Body' },
       { id: 'certification-body', label: 'Certification Body' },
-      { id: 'regulatory-agency', label: 'Regulatory Agency' },
+      { id: 'regulatory-agency', label: 'Government Agency' },
       { id: 'compliance-framework', label: 'Compliance Framework' },
     ],
     orgOptions: [
@@ -130,7 +130,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     bodyTypeOptions: [
       { id: 'standards-body', label: 'Standards Body' },
       { id: 'certification-body', label: 'Certification Body' },
-      { id: 'regulatory-agency', label: 'Regulatory Agency' },
+      { id: 'regulatory-agency', label: 'Government Agency' },
       { id: 'compliance-framework', label: 'Compliance Framework' },
     ],
     orgOptions: [
@@ -161,7 +161,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
       'Who authored CNSA 2.0, and which NIST standard defines the required ML-KEM algorithm?',
     bodyTypeOptions: [
       { id: 'standards-body', label: 'Standards Body (created the algorithm spec)' },
-      { id: 'regulatory-agency', label: 'Regulatory Agency (issued the mandate)' },
+      { id: 'regulatory-agency', label: 'Government Agency (issued the mandate)' },
       { id: 'certification-body', label: 'Certification Body (certifies compliance)' },
       { id: 'compliance-framework', label: 'Compliance Framework (a ruleset)' },
     ],

@@ -58,7 +58,7 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
     components: ['EC-Schnorr (secp256k1)', 'ML-DSA-65'],
     tagline: 'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)',
     description:
-      'Fused Fiat-Shamir: both components share a single challenge μ. Neither component verifies without the shared μ. Achieves Strong Non-Separability (SNS) with smaller signature than concatenation.',
+      'Fused Fiat-Shamir: both components share a single challenge μ. Neither component verifies without the shared μ. Targets Strong Non-Separability (SNS); the paper reports no separability issues for its construction. Smaller signature than concatenation.',
     reference: 'ePrint 2025/2059',
     referenceUrl: 'https://eprint.iacr.org/2025/2059',
     separable: false,

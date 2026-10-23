@@ -14,8 +14,18 @@ import { useOverlayEscape } from '@/hooks/useOverlayEscape'
  * `placement="inline"` renders the same banner in normal document flow
  * instead — used on the phone's first-run role picker, where a fixed banner
  * covered the role choices (UX-17); there it sits below them.
+ *
+ * `placement="banner"` is the same notice as one compact strip in flow, used
+ * above the role cards on the desktop first-run picker: the fixed card covered
+ * the lower rows of cards there, and the full inline card would push the
+ * picker below the fold. Same text, same button, shown before the reader
+ * chooses anything.
  */
-export function DisclaimerModal({ placement = 'fixed' }: { placement?: 'fixed' | 'inline' }) {
+export function DisclaimerModal({
+  placement = 'fixed',
+}: {
+  placement?: 'fixed' | 'inline' | 'banner'
+}) {
   const { hasAcknowledgedCurrentMajor, acknowledgeDisclaimer } = useDisclaimerStore()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [forceClosed, setForceClosed] = useState(false)
@@ -41,6 +51,35 @@ export function DisclaimerModal({ placement = 'fixed' }: { placement?: 'fixed' |
   useOverlayEscape(isOpen, handleDismiss)
 
   if (!isOpen) return null
+
+  if (placement === 'banner') {
+    return (
+      <div
+        className="mx-auto w-full max-w-5xl px-4 pt-2 print:hidden"
+        role="alert"
+        aria-labelledby="disclaimer-title"
+      >
+        <div className="glass-panel bg-card flex flex-col gap-3 border-primary/30 px-4 py-3 md:flex-row md:items-center md:gap-5">
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <h2 id="disclaimer-title" className="flex items-center gap-2 text-sm font-bold">
+              <Construction size={16} className="shrink-0 text-primary" aria-hidden="true" />
+              Welcome to PQC Today
+            </h2>
+            <DisclaimerText className="text-xs" />
+            <DisclaimerLinks />
+          </div>
+          <Button
+            ref={buttonRef}
+            variant="gradient"
+            className="shrink-0 md:w-40"
+            onClick={handleDismiss}
+          >
+            I Understand
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -76,36 +115,8 @@ export function DisclaimerModal({ placement = 'fixed' }: { placement?: 'fixed' |
 
         {/* Scrollable content */}
         <div className="overflow-y-auto flex-1 px-5 py-4 space-y-3">
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            PQC Today is a{' '}
-            <span className="font-medium text-foreground">
-              community-driven educational platform
-            </span>
-            . Content is sourced from publicly available resources and{' '}
-            <span className="font-medium text-foreground">may contain inaccuracies</span>. This site
-            has not received endorsement from organizations referenced in its content. Leaders are
-            included only with <span className="font-medium text-foreground">written consent</span>.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="https://github.com/pqctoday-org/pqctoday-hub/discussions/108"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-primary-legible hover:underline"
-            >
-              <MessageSquare size={12} />
-              GitHub Discussions
-              <ExternalLink size={10} />
-            </a>
-            <a
-              href="mailto:pqctoday@proton.me"
-              className="inline-flex items-center gap-1.5 text-xs text-primary-legible hover:underline"
-            >
-              <Mail size={12} />
-              pqctoday@proton.me
-            </a>
-          </div>
+          <DisclaimerText className="text-sm" />
+          <DisclaimerLinks />
         </div>
 
         {/* Footer */}
@@ -115,6 +126,44 @@ export function DisclaimerModal({ placement = 'fixed' }: { placement?: 'fixed' |
           </Button>
         </div>
       </div>
+    </div>
+  )
+}
+
+/** The notice text, one copy for every placement. */
+function DisclaimerText({ className }: { className: string }) {
+  return (
+    <p className={`${className} text-muted-foreground leading-relaxed`}>
+      PQC Today is a{' '}
+      <span className="font-medium text-foreground">community-driven educational platform</span>.
+      Content is sourced from publicly available resources and{' '}
+      <span className="font-medium text-foreground">may contain inaccuracies</span>. This site has
+      not received endorsement from organizations referenced in its content. Leaders are included
+      only with <span className="font-medium text-foreground">written consent</span>.
+    </p>
+  )
+}
+
+function DisclaimerLinks() {
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <a
+        href="https://github.com/pqctoday-org/pqctoday-hub/discussions/108"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 text-xs text-primary-legible hover:underline"
+      >
+        <MessageSquare size={12} />
+        GitHub Discussions
+        <ExternalLink size={10} />
+      </a>
+      <a
+        href="mailto:pqctoday@proton.me"
+        className="inline-flex items-center gap-1.5 text-xs text-primary-legible hover:underline"
+      >
+        <Mail size={12} />
+        pqctoday@proton.me
+      </a>
     </div>
   )
 }

@@ -429,7 +429,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.2',
     name: 'Hybrid Signature Spectrums',
     description:
-      'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to SNS',
+      'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to the SNS that Silithium targets',
     category: 'HSM / PKCS#11',
     algorithms: ['EC-Schnorr', 'secp256k1', 'ML-DSA-65', 'SHA-256'],
     icon: Fingerprint,

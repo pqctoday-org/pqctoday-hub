@@ -1321,7 +1321,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </td>
                 <td className="py-3 pr-4">
                   <span className="inline-flex items-center gap-1 text-xs text-status-success">
-                    <ShieldCheck size={13} /> SNS
+                    <ShieldCheck size={13} /> SNS (targeted)
                   </span>
                 </td>
                 <td className="py-3 text-xs text-status-error">No</td>
@@ -1379,8 +1379,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             Silithium adapts the Fiat-Shamir transform to produce a fused hybrid signature from
             EC-Schnorr (classical, secp256k1) and ML-DSA-65 (FIPS 204). Both components share a
             single challenge μ derived from both public keys, the EC commitment R, and the message.
-            Neither component can be verified independently, achieving Strong Non-Separability
-            (SNS).
+            Neither component verifies on its own with the standard challenge. The paper targets
+            Strong Non-Separability (SNS) and reports no separability issues for its construction;
+            this page demonstrates the idea and does not prove the property.
           </p>
 
           {/* Protocol steps */}

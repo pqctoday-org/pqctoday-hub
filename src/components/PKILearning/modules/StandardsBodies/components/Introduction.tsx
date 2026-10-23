@@ -550,7 +550,7 @@ const Step4AppPagesGuide: React.FC = () => (
                   type: 'Standards + Certification',
                   scope: 'US',
                 },
-                { fw: 'CNSA 2.0', body: 'NSA', type: 'Regulatory Agency', scope: 'US (NSS)' },
+                { fw: 'CNSA 2.0', body: 'NSA', type: 'Government Agency', scope: 'US (NSS)' },
                 {
                   fw: 'NIS2 Directive',
                   body: 'EU Member States / ENISA',
@@ -563,8 +563,8 @@ const Step4AppPagesGuide: React.FC = () => (
                   type: 'Regulatory',
                   scope: 'EU',
                 },
-                { fw: 'ANSSI PQC', body: 'ANSSI', type: 'Regulatory Agency', scope: 'France' },
-                { fw: 'BSI TR-02102', body: 'BSI', type: 'Regulatory Agency', scope: 'Germany' },
+                { fw: 'ANSSI PQC', body: 'ANSSI', type: 'Government Agency', scope: 'France' },
+                { fw: 'BSI TR-02102', body: 'BSI', type: 'Government Agency', scope: 'Germany' },
                 {
                   fw: 'ETSI TS 103 744',
                   body: 'ETSI TC CYBER',

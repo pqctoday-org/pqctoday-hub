@@ -114,7 +114,7 @@ const CONSTRUCTIONS: Array<{
     label: 'Silithium (Fused)',
     icon: Fingerprint,
     tagline: 'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)',
-    nonSeparability: 'SNS',
+    nonSeparability: 'SNS (targeted)',
     nsColor: 'text-status-success',
     description:
       'Fused Fiat-Shamir: both components share a single challenge μ that includes the EC commitment R. Neither component verifies without the shared μ. Targets Strong Non-Separability; the paper reports no separability issues for its construction.',
@@ -548,8 +548,8 @@ export const HybridSignatures: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Hybrid Signature Spectrums</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Compare concatenation, nesting, and Silithium — ranging from no non-separability to
-            Strong Non-Separability (SNS).
+            Compare concatenation, nesting, and Silithium — ranging from no non-separability to the
+            Strong Non-Separability (SNS) that Silithium targets.
           </p>
         </div>
       </div>
