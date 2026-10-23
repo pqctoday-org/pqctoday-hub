@@ -23054,6 +23054,21 @@
       "unified": "converted",
       "admittedAt": "2026-10-23T02:50:44.056223+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "Post-Quantum-PCI-Use-Cases-ATM-and-POS-Card-Capture-ATM-and",
+      "title": "Post Quantum PCI Use Cases: ATM and POS Card Capture; ATM and POS Setup with Backend Acquiring Systems",
+      "url": "https://fsisac.com/hubfs/Knowledge/PQC/PCIUseCases-ATM&POSCardCapture_ATM&POSSetupWithBackendAcquiringSystems.pdf",
+      "status": "downloaded",
+      "filename": "Post-Quantum-PCI-Use-Cases-ATM-and-POS-Card-Capture-ATM-and.pdf",
+      "sizeBytes": 442140,
+      "contentType": "application/pdf",
+      "sha256": "03ae3c7def83c98b3af8f167129bb336d53f4359875cddfa5a54fbc3ad3cc96d",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "current",
+      "admittedAt": "2026-10-23T04:13:47.835754+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
