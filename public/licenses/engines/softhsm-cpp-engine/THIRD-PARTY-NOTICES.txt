@@ -1,8 +1,8 @@
 Third-party notices for the softhsm-cpp-engine engine bundle
 ============================================================
 
-Built from https://github.com/pqctoday-org/pqctoday-hsm at commit 496f9e529d3d92248dc414e153b06afca8d3ff4f
-(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/496f9e529d3d92248dc414e153b06afca8d3ff4f).
+Built from https://github.com/pqctoday-org/pqctoday-hsm at commit d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0
+(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0).
 Code written by PQC Today, LLC is under the licence in that repository.
 This file lists the third-party code compiled into the bundle, its
 licence and where its full licence text is (LICENSES/ next to this file).
@@ -12,15 +12,17 @@ Components
 
 SoftHSMv3, the PQC Today fork of SoftHSM2
   Version:   SoftHSM2 2.7.0 base
-  Licence:   BSD-2-Clause
+  Licence:   AGPL-3.0-only AND BSD-2-Clause
   Copyright: Copyright (c) 2008-2013 .SE (The Internet Infrastructure Foundation)
   Copyright: Copyright (c) 2010-2018 SURFnet bv
   Copyright: Copyright (c) 2022 NLnet Labs
   Copyright: Copyright (c) 2014, 2020 Red Hat, Inc.
-  Copyright: Copyright (c) 2024-2026 PQC Today
+  Copyright: Copyright (c) 2024-2026 PQC Today, LLC
   Source:    https://github.com/softhsm/SoftHSMv2 (upstream); this repository (fork)
-  Changes:   OpenSSL 3 EVP-only backend, PKCS#11 v3.2, ML-KEM, ML-DSA, SLH-DSA, HSS/LMS, XMSS; see LICENSE and CHANGELOG.md
-  Text:      LICENSES/softhsmv3/LICENSE
+  Changes:   OpenSSL 3 EVP-only backend, PKCS#11 v3.2, ML-KEM, ML-DSA, SLH-DSA, HSS/LMS, XMSS; the SoftHSM2 files keep BSD-2-Clause, the files written by PQC Today, LLC are AGPL-3.0-only; see COPYRIGHT.md and CHANGELOG.md
+  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0. It stays available there, and on request from PQC Today, LLC (pqctoday@proton.me), for at least three years after this bundle is published.
+  Text:      LICENSES/softhsmv3/AGPL-3.0-only.txt
+  Text:      LICENSES/softhsmv3/BSD-2-Clause.txt
 
 OASIS PKCS#11 v3.2 headers
   Version:   3.2
