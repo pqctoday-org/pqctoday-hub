@@ -14,7 +14,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  * here (`?path=pci` goes to LM-071). The anchor product (the fictional Orrin N7
  * network HSM) and the shared types stay single-sourced in LM-065's data/.
  *
- * One timed ~60-minute route. Depth beyond it is `optional` reference
+ * One timed ~65-minute route. Depth beyond it is `optional` reference
  * material, excluded from duration and completion.
  */
 const manifest: ModuleManifest = {
@@ -26,7 +26,7 @@ const manifest: ModuleManifest = {
     'FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.',
   whyThisMatters:
     'The lab-tested scheme a network or payment HSM meets first: a FIPS 140-3 certificate proves one module at one version and configuration. Adding ML-KEM or ML-DSA changes the module, and the CMVP accepts that change only through one of its own submission routes.',
-  duration: '60 min',
+  duration: '65 min',
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
@@ -35,6 +35,10 @@ const manifest: ModuleManifest = {
     { id: 'fips-what-it-is', label: 'FIPS 140-3 and the CMVP' },
     { id: 'fips-requirement-areas', label: 'The eleven requirement areas' },
     { id: 'fips-levels', label: 'Security Levels 1–4' },
+    {
+      id: 'fips-attack-evidence',
+      label: 'Side-channel and fault attacks: what a certificate does and does not show',
+    },
     { id: 'fips-lifecycle', label: 'Validation lifecycle and the MIP queue' },
     { id: 'fips-acvp-bridge', label: 'Algorithm validation is not the certificate' },
     { id: 'fips-automation', label: 'Automating validation: algorithms, entropy, then the module' },

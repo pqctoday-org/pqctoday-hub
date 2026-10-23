@@ -70,6 +70,12 @@ export const content: ModuleContent = {
     getStandard('NIST-CMVP-Cert-5223'), // second source for claim:18d14b3a7815ab38
     getStandard('NIST-CMVP-FIPS-140-3-Standards-page'), // second source for claim:5be7a52c8654adee
     getStandard('ISO-IEC-19790-2025'), // second source for claim:e462fd5c6b804f37
+    // Side-channel and fault attacks section (fips-attack-evidence)
+    getStandard('CC-2022-PART3'),
+    getStandard('NIST-PQC-Seminar-FaultInjection-Lattice'),
+    getStandard('PROACT-2025-SCA-Lattice-PQC'),
+    getStandard('ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation'),
+    getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

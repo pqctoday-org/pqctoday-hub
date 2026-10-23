@@ -239,7 +239,7 @@
       "lm_id": "LM-067",
       "title": "FIPS 140-3 Certification",
       "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
-      "duration": "60 min",
+      "duration": "65 min",
       "difficulty": "advanced",
       "frameworkPhase": "p7"
     },
@@ -1413,6 +1413,10 @@
       {
         "id": "fips-levels",
         "label": "Security Levels 1–4"
+      },
+      {
+        "id": "fips-attack-evidence",
+        "label": "Side-channel and fault attacks: what a certificate does and does not show"
       },
       {
         "id": "fips-lifecycle",
@@ -4266,7 +4270,7 @@
           "lm_id": "LM-067",
           "title": "FIPS 140-3 Certification",
           "description": "FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.",
-          "duration": "60 min",
+          "duration": "65 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
         },
