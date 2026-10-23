@@ -462,7 +462,7 @@ export const HybridScope = () => (
         classical half such as X25519 is allowed in the approved mode only inside an approved
         hybrid, and the module has to enforce that: “It cannot be enforced by operator guidance
         within the Security Policy.” (An approved classical scheme, such as P-256 under IG D.F, can
-        also be used on its own.)
+        also be used on its own.) <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
       </li>
       <li>
         <strong className="text-foreground">A named hybrid is not automatic.</strong> The IG says
@@ -808,18 +808,20 @@ export const NewPlatform = () => (
     <p>
       <strong className="text-foreground">Hardware acceleration built into the processor.</strong>{' '}
       (This section is about functions in a general-purpose processor that a software or firmware
-      module can use. An accelerator inside a hardware module’s own boundary is part of that module
-      and is evaluated with it, not through the IG’s list.{' '}
-      <ModuleAnalysisNote>Module analysis.</ModuleAnalysisNote>
-      ) The IG (<SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.C" />) separates two cases. A
-      Processor Algorithm Acceleration (PAA) function is “simply a mathematical construct”; a
-      Processor Algorithm Implementation (PAI) is a complete cryptographic algorithm in hardware.
-      Where a software or firmware module can run with or without a PAA, “the accelerated algorithms
-      shall be tested in both software/firmware only execution and PAA execution”, and the same
-      holds for a PAI. The chip’s part number or version, family and microarchitecture go in the
-      submission, and the accelerator must be a “known” one: the IG’s list (19 August 2026) names
-      accelerators for AES and SHA sub-functions on Intel, AMD, Arm, IBM Power and Oracle SPARC
-      processors, plus IBM’s CPACF. It names no accelerator for ML-KEM, ML-DSA or SLH-DSA.{' '}
+      module can use. A dedicated accelerator built into a hardware module is part of that module’s
+      own design and is covered by the rules for hardware modules, not by the IG’s list below; for
+      example, algorithm logic written in HDL on an FPGA is validated as hardware (
+      <SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.A" />
+      ). <ModuleAnalysisNote>Module analysis.</ModuleAnalysisNote>) The IG (
+      <SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.C" />) separates two cases. A Processor
+      Algorithm Acceleration (PAA) function is “simply a mathematical construct”; a Processor
+      Algorithm Implementation (PAI) is a complete cryptographic algorithm in hardware. Where a
+      software or firmware module can run with or without a PAA, “the accelerated algorithms shall
+      be tested in both software/firmware only execution and PAA execution”, and the same holds for
+      a PAI. The chip’s part number or version, family and microarchitecture go in the submission,
+      and the accelerator must be a “known” one: the IG’s list (19 August 2026) names accelerators
+      for AES and SHA sub-functions on Intel, AMD, Arm, IBM Power and Oracle SPARC processors, plus
+      IBM’s CPACF. It names no accelerator for ML-KEM, ML-DSA or SLH-DSA.{' '}
       <ModuleAnalysisNote>(Module analysis from reading the list.)</ModuleAnalysisNote> New ones are
       added by asking the CMVP, with evidence the lab has verified. The testing can be done on the
       same environment, or without the accelerator on one environment and with it on another

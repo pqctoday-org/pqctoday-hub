@@ -80,7 +80,7 @@ describe('hybrid-scope section', () => {
   it('marks the passages that are the module’s own analysis', () => {
     wrap(<HybridScope />)
     const marks = screen.getAllByTestId('module-analysis')
-    expect(marks).toHaveLength(2)
+    expect(marks).toHaveLength(3)
     expect(marks[0]).toHaveTextContent('(Module analysis, summarising the table below.)')
     expect(marks[1]).toHaveTextContent('(Module analysis.)')
     for (const mark of marks) expect(mark.tagName).toBe('EM')
