@@ -1,9 +1,19 @@
 ---
 generated: 2026-10-22
 category: Technical Standards
-document_count: 1
-requirement_count: 8
+document_count: 2
+requirement_count: 11
 ---
+
+## Post-Quantum-PCI-Use-Cases-ATM-and-POS-Card-Capture-ATM-and
+- **Source**: Post Quantum PCI Use Cases: ATM and POS Card Capture; ATM and POS Setup with Backend Acquiring Systems
+- **URL**: https://fsisac.com/hubfs/Knowledge/PQC/PCIUseCases-ATM&POSCardCapture_ATM&POSSetupWithBackendAcquiringSystems.pdf
+- **Requirement count**: 3
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · software_: Ensure the bootloader of EPP or POS devices uses quantum-secure cryptography and that implemented algorithms are resistant to side-channel attacks per PCI PTS.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · certificates_: Update EPP or POS manufacturer certificates to quantum-safe algorithms or modify the Remote Key Loading protocol to use quantum-safe cryptography.
+    - _T2 Risk-Informed · keys_: Migrate Terminal Master Keys (TMK) and Terminal PIN Keys (TPK) from Triple-DES to AES to mitigate quantum vulnerabilities in PIN encryption.
 
 ## RFC-10033-Hash-Based-Signatures-State-and-Backup-Management
 - **Source**: RFC 10033: Hash-Based Signatures: State and Backup Management
