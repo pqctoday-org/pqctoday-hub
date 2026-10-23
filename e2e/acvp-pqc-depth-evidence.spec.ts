@@ -3,7 +3,7 @@ import { test, expect, type Locator, type Page } from '@playwright/test'
 // ML-KEM and ML-DSA depth rows (WS-D D1/D2-6: sections/mlkemAcvp.ts,
 // mldsaDepth.ts) rendered in the real workbench on BOTH engines (dual mode).
 // Asserts row semantics, not a row count: NIST positives and negatives with the
-// NIST evidence class, product-authored rows without it, honest skips, NIST-
+// NIST evidence class, product-authored rows without it, encapsulation rows that run through the labelled test input, NIST-
 // invalid keys rejected on both engines — and no red row at all, since every
 // engine finding this spec used to pin is closed (see the end of the test).
 //
@@ -107,8 +107,26 @@ test.describe('ACVP workbench — PQC depth rows (dual engine)', () => {
       await expect(buf).toHaveAttribute('data-status', 'pass')
       await expect(details(buf)).toHaveAttribute('title', /observed CKR_BUFFER_TOO_SMALL/)
 
-      const encSkip = row(`ML-KEM-512/768/1024 (${engine})`, 'Encapsulation AFT')
-      await expect(encSkip).toHaveAttribute('data-status', 'skip')
+      // Encapsulation AFT used to be an honest skip (PKCS#11 has no field for NIST's m).
+      // It now runs through the optional test input (sections/optionalInputAcvp.ts), so
+      // the old skip row must be gone and every encapsulation row must PASS, on each
+      // parameter set, labelled as using a test input outside the standard.
+      await expect(row(`ML-KEM-512/768/1024 (${engine})`, 'Encapsulation AFT')).toHaveCount(0)
+      for (const ps of ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024']) {
+        const encAll = row(`${ps} (${engine})`, 'NIST encapDecap AFT')
+        const encCount = await encAll.count()
+        expect(encCount, `${ps} (${engine}) encapsulation AFT rows`).toBeGreaterThan(0)
+        await expect(encAll.and(page.locator('[data-status="pass"]'))).toHaveCount(encCount)
+      }
+      const enc = row(`ML-KEM-512 (${engine})`, 'NIST encapDecap AFT tg1/tc1 ·')
+      await expect(enc).toHaveCount(1)
+      await expect(enc).toHaveAttribute('data-status', 'pass')
+      await expect(enc).toContainText('C_EncapsulateKey(CKM_ML_KEM, pParameter = NIST m)')
+      await expect(enc).toContainText('test input supplied (outside the standard)')
+      await expect(evidenceBadge(enc)).toHaveAttribute(
+        'data-evidence',
+        'nist-acvp-reference-sample'
+      )
 
       // Invalid decapsulation key (NIST VAL, modified H): rejected on BOTH
       // engines. Rust used to accept it (finding E2) until the hsm a22e6ca0
