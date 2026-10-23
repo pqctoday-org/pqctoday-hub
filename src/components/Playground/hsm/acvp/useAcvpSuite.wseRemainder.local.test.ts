@@ -117,8 +117,9 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
   it('runs every new section on both engines with identical case sets', () => {
     const cpp = rows().filter((r) => engineOf(r) === 'C++')
     const rust = rows().filter((r) => engineOf(r) === 'Rust')
-    // 30 HKDF + 56 KBKDF + 1 X9.63 skip + 17 keyVer + 24 × 3 ECDSA sigGen + 16 EdDSA sigGen
-    expect(cpp).toHaveLength(30 + 56 + 1 + 17 + 72 + 16)
+    // (30 single + 30 multi-expansion) HKDF + 56 KBKDF + 1 X9.63 skip + 17 keyVer
+    // + 24 × 3 ECDSA sigGen + 16 EdDSA sigGen
+    expect(cpp).toHaveLength(30 + 30 + 56 + 1 + 17 + 72 + 16)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
