@@ -392,7 +392,6 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                 {[
                   { name: 'IKEv2', classical: 1400, hybrid: 3784 },
                   { name: 'SSH', classical: 984, hybrid: 3296 },
-                  { name: 'WireGuard', classical: 304, hybrid: 2768 },
                   { name: 'TLS 1.3', classical: 1200, hybrid: 3500 },
                 ].map((row) => (
                   <tr key={row.name} className="border-b border-border/50">
@@ -412,14 +411,14 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
-            Sizes are this workshop&apos;s message model, not packet captures. The WireGuard hybrid
-            figure adds the four Rosenpass messages (InitHello 1,092 B, RespHello 1,132 B, InitConf
-            176 B, EmptyData 64 B, from the Rosenpass white paper) to the WireGuard handshake;
-            Rosenpass&apos;s large McEliece public keys are exchanged out of band, not in the
-            handshake. WireGuard sees the largest relative increase because its classical handshake
-            is extremely compact. IKEv2 handles fragmentation explicitly (RFC 7383) over UDP, but
-            only for encrypted messages, so it cannot help IKE_SA_INIT. SSH handles larger payloads
-            natively because it relies on TCP transport.
+            Sizes are this workshop&apos;s message model, not packet captures. WireGuard is not in
+            the table: adding post-quantum protection with Rosenpass means four extra Rosenpass
+            messages, InitHello 1,092 B, RespHello 1,132 B, InitConf 176 B and EmptyData 64 B, 2,464
+            B in total (Rosenpass white paper, Figure 2). The paper gives no comparison with
+            WireGuard&apos;s own handshake, so none is stated here. Rosenpass&apos;s large McEliece
+            public keys are exchanged out of band, not in the handshake. IKEv2 handles fragmentation
+            explicitly (RFC 7383) over UDP, but only for encrypted messages, so it cannot help
+            IKE_SA_INIT. SSH handles larger payloads natively because it relies on TCP transport.
           </p>
         </div>
       </section>

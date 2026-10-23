@@ -111,14 +111,15 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     modeLabel: 'X25519 + Rosenpass PSK',
     kexAlgorithm: 'X25519 (WireGuard) + Kyber-512 ephemeral (Rosenpass)',
     authAlgorithm: 'X25519 (static) + Classic McEliece-460896 (static, keys exchanged out of band)',
-    // 304 B WireGuard + Rosenpass InitHello 1,092 + RespHello 1,132 + InitConf 176 + EmptyData 64
-    // (Rosenpass white paper, Figure 2 "Rosenpass Message Types")
-    handshakeBytes: 2768,
+    // Rosenpass messages only: InitHello 1,092 + RespHello 1,132 + InitConf 176 + EmptyData 64
+    // = 2,464 B (Rosenpass white paper, Figure 2 "Rosenpass Message Types"). WireGuard's own
+    // handshake is not included, and the paper makes no WireGuard comparison.
+    handshakeBytes: 2464,
     roundTrips: 2,
     publicKeyBytes: 800, // Kyber-512 ephemeral public key (epki)
     ciphertextBytes: 768, // Kyber-512 ciphertext (ecti); McEliece ciphertexts are 188 B each
     notes:
-      'Rosenpass: separate handshake using round-3 Kyber-512 and Classic McEliece-460896 (not FIPS 203 ML-KEM); its output is fed to WireGuard as the PSK',
+      'Rosenpass: separate handshake using round-3 Kyber-512 and Classic McEliece-460896 (not FIPS 203 ML-KEM); its output is fed to WireGuard as the PSK. The size shown is the four Rosenpass messages only, not WireGuard’s own handshake',
   },
   {
     protocol: 'WireGuard',
