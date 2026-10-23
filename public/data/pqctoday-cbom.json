@@ -9283,9 +9283,57 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "eaf01a857644fa05",
+      "bom-ref": "343b8f1b8c62ecb4",
+      "name": "pfSense Community Edition",
+      "version": "2.9.0",
+      "purl": "pkg:github/pfsense/pfsense",
+      "cpe": "cpe:2.3:a:pfsense:pfsense:2.2.6:*:*:*:community:*:*:*",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "pfSense uses OpenSSL/LibreSSL. PQC available when updated to OpenSSL 3.5+.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pfsense/pfsense"
+        },
+        {
+          "type": "website",
+          "url": "https://www.pfsense.org"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pfsense-community-edition"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a1cab65c6c66084a",
       "name": "OPNsense",
-      "version": "24.7",
+      "version": "26.7.7",
       "purl": "pkg:github/opnsense/core",
       "cpe": "cpe:2.3:a:opnsense:opnsense:16.1.16:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -9577,8 +9625,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "fabee99e7ad27f71",
+      "bom-ref": "edcba35a42d4c90b",
       "name": "OpenVPN",
+      "version": "2.7.8",
       "purl": "pkg:github/OpenVPN/openvpn",
       "cpe": "cpe:2.3:a:openvpn:openvpn:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
