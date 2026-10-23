@@ -45,6 +45,25 @@ import { emitAcvpSuite } from './suiteCodegen'
 import { createAcvpBridge, runSuiteScript } from './suiteBridges'
 
 /**
+ * What "test groups" and "test cases" mean on this page. The family list counts groups; the
+ * results table has one row per case. Without this the two numbers look like they disagree.
+ */
+function GroupsVsCases({ className }: { className?: string }) {
+  return (
+    <p
+      className={clsx('text-[10.5px] leading-relaxed text-muted-foreground', className)}
+      data-testid="acvp-groups-explained"
+    >
+      <span className="font-medium text-foreground">Test group</span>: a block of related checks
+      that run together, usually one algorithm with one parameter set.{' '}
+      <span className="font-medium text-foreground">Test case</span>: one input and its expected
+      result. Each row in the results table is one test case, and a group holds one or more cases,
+      so a run shows more rows than groups.
+    </p>
+  )
+}
+
+/**
  * One streamed result row, memoized on the result object.
  *
  * Why memo (2026-09-25 slow-run fix): the runner streams ~1100 rows and
@@ -229,6 +248,7 @@ export const AcvpSuiteWorkbench = () => {
               {selectedCategories.size}/{CATEGORIES.length} selected
             </span>
           </div>
+          <GroupsVsCases className="mb-2" />
           <div className="space-y-1.5">
             {CATEGORIES.map((cat) => (
               <label
@@ -637,6 +657,7 @@ export const AcvpSuiteWorkbench = () => {
             </div>
           )}
         </div>
+        <GroupsVsCases className="mt-2 border-t border-border pt-2" />
       </Card>
       <Card className="p-3.5">
         <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
