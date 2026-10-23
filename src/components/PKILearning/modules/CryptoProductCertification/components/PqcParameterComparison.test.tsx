@@ -17,7 +17,7 @@ describe('PQC parameter coverage in the certification lesson', () => {
     expect(section.getByText(/there is no pure\/pre-hash signing choice/)).toBeInTheDocument()
     expect(
       section.getByText(
-        /approved RBG below 192-bit strength reduces ML-DSA-44 to category 1 \(§3\.6\.1\)/
+        /approved RBG with at least 128 but less than 192 bits of security reduces ML-DSA-44 to category 1 \(§3\.6\.1\)/
       )
     ).toBeInTheDocument()
     expect(section.getByText(/does not identify the message pre-hash/)).toBeInTheDocument()

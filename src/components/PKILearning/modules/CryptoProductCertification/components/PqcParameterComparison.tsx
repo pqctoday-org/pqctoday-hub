@@ -12,7 +12,7 @@ const rows = [
   },
   {
     name: 'ML-DSA — sign and verify',
-    sets: '44 / 65 / 87: categories 2 / 3 / 5. An approved RBG below 192-bit strength reduces ML-DSA-44 to category 1 (§3.6.1).',
+    sets: '44 / 65 / 87: categories 2 / 3 / 5. An approved RBG with at least 128 but less than 192 bits of security reduces ML-DSA-44 to category 1 (§3.6.1).',
     choices:
       'Pure ML-DSA or pre-hash HashML-DSA; deterministic or hedged signing (with fresh randomness). Record the context string and, for pre-hash, the hash function and digest length.',
     source: '204',

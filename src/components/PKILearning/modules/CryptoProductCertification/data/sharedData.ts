@@ -273,7 +273,7 @@ export const PQC_SCHEME_TABLE: SchemePqcRow[] = [
   {
     scheme: 'EUCC',
     current:
-      'The applicable ECCG Agreed Cryptographic Mechanisms v2 lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS and LMS, and recommends ML-KEM-768/1024 and ML-DSA-65/87. Its rules on combining them with classical algorithms are in the hybrid table below. This is the most specific current PQC guidance in any of the four schemes; it does not make PQC mandatory (and only SLH-DSA security levels 3 and 5 are agreed).',
+      'The applicable ECCG Agreed Cryptographic Mechanisms v2 lists ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS and LMS, and recommends ML-KEM-768/1024 and ML-DSA-65/87. Its rules on combining them with classical algorithms are in the hybrid table below. This is guidance: it does not make PQC mandatory (and only SLH-DSA security levels 3 and 5 are agreed).',
     currentSources: [SHARED_SOURCES.acm2],
     planning:
       'ACM v3 is a draft and not yet adopted (its public review closed at the end of July 2026). ENISA’s hybridisation report (30 April 2026) and the NIS Cooperation Group roadmap v1.1 are guidance, not EUCC mandates.',
@@ -1220,7 +1220,8 @@ export const EIDAS_LINKS: EidasLink[] = [
       { id: 'eucc-reg', label: 'EUCC — CIR (EU) 2024/482, amended by 2024/3144 and 2025/2462' },
       {
         id: 'sogis',
-        label: 'SOG-IS MRA national schemes (no new national certificates after 27 February 2026)',
+        label:
+          'SOG-IS MRA national schemes (no new national certificates for EUCC-covered products after 27 February 2026)',
       },
       { id: 'eidas', label: 'eIDAS 2.0 itself' },
     ],

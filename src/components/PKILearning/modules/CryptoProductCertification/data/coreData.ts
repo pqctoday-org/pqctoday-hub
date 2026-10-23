@@ -134,7 +134,7 @@ export const DISTINCT_TERMS: DistinctTerm[] = [
   {
     term: 'Modules in Process (MIP)',
     meaning:
-      'A queue position with a status (IUT, Cost Recovery, Pending Review, Pending Resubmission, Review, Comment Resolution – Lab/CMVP, Finalization). Not evidence of any outcome.',
+      'A queue position with a status (Cost Recovery, Pending Review, Pending Resubmission, Review, Comment Resolution – Lab/CMVP, Finalization); the Implementation Under Test list is separate. Not evidence of any outcome.',
   },
   {
     term: 'Historical (CMVP)',
