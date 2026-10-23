@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { getStandard } from '@/data/standardsRegistry'
 import { PathScopedContent } from '@/components/PKILearning/common/LearnPathPicker'
+import { ModuleAnalysisNote } from '@/components/PKILearning/common/ModuleAnalysisNote'
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import { ASSURANCE_COMPONENTS, CC_EU_AS_OF } from '../../data/ccEuData'
 import {
@@ -199,11 +200,11 @@ const DataTable = ({
   </div>
 )
 
-const Sources = ({ children }: { children: ReactNode }) => (
+const Sources = ({ children, readOn = AS_OF_LABEL }: { children: ReactNode; readOn?: string }) => (
   <div className="flex items-start gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
     <BookOpen size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
     <p>
-      <span className="font-medium">Sources (read {AS_OF_LABEL}):</span> {children}
+      <span className="font-medium">Sources (read {readOn}):</span> {children}
     </p>
   </div>
 )
@@ -2052,6 +2053,611 @@ export const CcRegionalReference = () => (
         </div>
       )
     })}
+  </div>
+)
+
+const LEARN = '/learn/cc-eucc-certification?tab=learn'
+
+/** A named source that has no Library page: its name, then a plain link to the document. */
+const ExternalSource = ({ name, href }: { name: string; href?: string }) => (
+  <>
+    <PlainSource>{name}</PlainSource>
+    {href ? (
+      <>
+        {' '}
+        (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Source: ${name}`}
+          className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+        >
+          Source
+        </a>
+        )
+      </>
+    ) : null}
+  </>
+)
+
+const InLink = ({ to, children }: { to: string; children: ReactNode }) => (
+  <Link
+    to={to}
+    className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+  >
+    {children}
+  </Link>
+)
+
+const NIAP_POLICY_5_URL =
+  'https://www.niap-ccevs.org/Documents_and_Guidance/ccevs/policy-ltr-5-update3.pdf'
+const NIAP_PP_LIST_URL = 'https://www.niap-ccevs.org/protectionprofiles'
+const NIAP_TD1009_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1009'
+const NIAP_TD1012_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1012'
+const NIAP_TD1013_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1013'
+const NIAP_TD1025_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1025'
+const NIAP_TD0966_URL = 'https://www.niap-ccevs.org/technical-decisions/TD0966'
+
+type ProfileRow = {
+  profile: string
+  /** Library reference id of the document. */
+  libraryId: string
+  version: string
+  date: string
+  /** The approval date as listed on NIAP's table of approved profiles (read 23 October 2026). */
+  approved: string
+  pq: string
+  classical: string
+  /** Verbatim snippets from the document itself, in the order they are listed under the table. */
+  quotes: readonly string[]
+  quoteSource?: string
+}
+
+const APP_NOTE =
+  'Note that ML-DSA and ML-KEM are not usable in any functions at the time of initial publication, they are added to this requirement in support of future protocol updates.'
+const REMOVAL_NOTE =
+  'As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future update.'
+const FE_NOTE =
+  'This PP-Module allows the use of ML-KEM key establishment schemes with the hybrid key-transport methods described in SP800-56B to provide a CNSA2-compliant key-transport method.'
+const FE_KT =
+  'CNSA 2.0 Compliant Algorithms: [ Hybrid Key-Transport Method ] that meets the following: [Section 9.3 of NIST SP 800-56B, Revision 2] using a key establishment algorithm [ML-KEM] as specified in FCS_CKM.2 (from the Base-PP ) and a key wrapping algorithm as specified in FCS_COP.1/KW'
+
+/** One row per NIAP document whose own text was read; quotes are verbatim from that document. */
+const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
+  {
+    profile: 'Application Software PP',
+    libraryId: 'NIAP-Protection-Profile-for-Application-Software-Version-2-0',
+    version: '2.0',
+    date: '2025-06-16',
+    approved: '16 Jun 2025',
+    pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
+    classical: 'CNSA 1.0 branch: RSA 3072-bit or greater, P-384 (P-521), safe-prime groups',
+    quotes: [`${APP_NOTE} ${REMOVAL_NOTE}`],
+  },
+  {
+    profile: 'cPP Dedicated Security Component',
+    libraryId: 'NIAP-cPP-Dedicated-Security-Component-Version-2-1',
+    version: '2.1',
+    date: '17 Nov 2025',
+    approved: '26 Mar 2026',
+    pq: 'LMS, HSS, XMSS, XMSS MT, ML-KEM (512, 768, 1024), ML-DSA (44, 65, 87), HashML-DSA',
+    classical:
+      'RSA 2048 or 3072, EC curves from P-256, finite-field groups, EdDSA; NIAP TD1011 lists CNSA 1.0 or 2.0',
+    quotes: [
+      'Final publication for v2.1 (post-quantum cryptography, respond to NIAP comments)',
+      'RSA Modulus of size [selection: 2048 bit, 3072 bit]',
+      'Elliptic Curve [selection: P-256, brainpoolP256r1, P-384, brainpoolP384r1, P-521, brainpoolP512r1]',
+      'Static domain parameters approved for [selection: IKE groups [selection: MODP-2048, MODP-3072, MODP-4096, MODP-6144, MODP-8192], TLS groups [selection: ffdhe2048, ffdhe3072, ffdhe4096, ffdhe6144, ffdhe8192]]',
+      'EdDSA Domain parameters approved for elliptic curves [selection: Edwards25519, Edwards448]',
+    ],
+  },
+  {
+    profile: 'cPP Network Devices',
+    libraryId: 'NIAP-cPP-Network-Devices-Version-4-0',
+    version: '4.0',
+    date: '25 Nov 2025',
+    approved: '22 Dec 2025',
+    pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
+    classical:
+      'RSA 2048 to 8192, ECDSA from P-256, finite-field groups; NIAP TD1010 lists CNSA 1.0 or 2.0',
+    quotes: [
+      'Each applicable Cryptographic SFR (FCS_) must include at least one selection conforming to Commercial National Security Algorithm (CNSA) Suite V1.0 or V2.0;',
+    ],
+    quoteSource: 'NIAP TD1010',
+  },
+  {
+    profile: 'PP General-Purpose Computing Platforms',
+    libraryId: 'NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0',
+    version: '2.0',
+    date: '2026-04-16',
+    approved: '22 Apr 2026',
+    pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
+    classical: 'RSA 3072 to 8192, P-384 or P-521, finite-field groups (3072 bits and up)',
+    quotes: ['ML-KEM-1024 is CNSA compliant.'],
+  },
+  {
+    profile: 'PP Virtualization',
+    libraryId: 'NIAP-PP-Virtualization-Version-2-0',
+    version: '2.0',
+    date: '2026-05-21',
+    approved: '21 May 2026',
+    pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
+    classical: 'RSA 3072 to 8192, P-384 or P-521, finite-field groups (3072 bits and up)',
+    quotes: [
+      'the only anticipated use of key encapsulation is the use of ML-KEM as part of key establishment for trusted communications',
+    ],
+  },
+  {
+    profile: 'cPP Full Drive Encryption, Authorization Acquisition',
+    libraryId: 'NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0',
+    version: '3.0',
+    date: '2026-03-12',
+    approved: '25 Mar 2026',
+    pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
+    classical: 'CNSA 1.0 branch: RSA 3072 to 8192, P-384 (P-521)',
+    quotes: [REMOVAL_NOTE],
+  },
+  {
+    profile: 'cPP Full Drive Encryption, Encryption Engine',
+    libraryId: 'NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0',
+    version: '3.0',
+    date: '2026-03-12',
+    approved: '25 Mar 2026',
+    pq: 'ML-KEM-1024, ML-DSA-87; LMS and XMSS for verification',
+    classical: 'CNSA 1.0 branch: RSA 3072 to 8192, P-384 (P-521)',
+    quotes: [`${APP_NOTE} ${REMOVAL_NOTE}`],
+  },
+  {
+    profile: 'cPP Hardcopy Devices',
+    libraryId: 'NIAP-cPP-Hardcopy-Devices-Version-2-0',
+    version: '2.0',
+    date: '31 Jul 2026',
+    approved: '23 Sep 2026',
+    pq: 'ML-KEM-1024, ML-DSA-87, LMS, XMSS',
+    classical: 'RSA 2048 or more, ECDSA 256 bits or more, finite-field 2048 bits or more, KCDSA',
+    quotes: [
+      'Module-Lattice-based Digital Signature Algorithm using parameter set ML-DSA-87',
+      'RSA Digital Signature Algorithm and cryptographic key sizes (modulus) [assignment: 2048 bits or',
+      'FFC schemes using cryptographic key sizes of 2048-bit or greater',
+      'EC-KCDSA-based key establishment schemes',
+    ],
+  },
+  {
+    profile: 'PP-Module VPN Client',
+    libraryId: 'NIAP-PP-Module-VPN-Client-Version-3-0',
+    version: '3.0',
+    date: '2025-09-30',
+    approved: '29 Sep 2025',
+    pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
+    classical:
+      'ECC P-384 (the module text makes it mandatory), RSA 3072-bit or greater, safe-prime groups',
+    quotes: [
+      'CC :2022 conversion, limitation of cryptographic algorithms to CNSA 1.0, incorporation of TDs',
+      'ECC key generation with support for P-384 has been made mandatory in support of IPsec',
+      'FFC schemes using "safe-prime" groups [ selection: MODP-3072, MODP-4096, MODP-6144, MODP-8192, ffdhe-3072, ffdhe-4096, ffdhe-6144, ffdhe-8192]',
+    ],
+  },
+  {
+    profile: 'PP-Module File Encryption',
+    libraryId: 'NIAP-PP-Module-File-Encryption-Version-2-0',
+    version: '2.0',
+    date: '2025-09-29',
+    approved: '29 Sep 2025',
+    pq: 'ML-KEM only, in a hybrid key-transport method',
+    classical: 'RSA KTS-OAEP, 3072 or 4096 bits',
+    quotes: [FE_KT, FE_NOTE],
+  },
+  {
+    profile: 'PP-Module File Encryption Enterprise Management',
+    libraryId: 'NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0',
+    version: '2.0',
+    date: '2025-09-29',
+    approved: '29 Sep 2025',
+    pq: 'ML-KEM only, in a hybrid key-transport method',
+    classical: 'RSA KTS-OAEP, 3072 or 4096 bits',
+    quotes: [FE_KT, FE_NOTE],
+  },
+]
+
+/** Profiles reported on NIAP's list whose text we did not read: names and dates only. */
+const NIAP_REPORTED_ONLY: readonly string[] = [
+  'PP-Module for Email Client, version 1.0: 16 Jun 2025',
+  'PP-Module for Web Browser, version 1.0: 16 Jun 2025',
+  'Functional Package for TLS, version 2.1: 3 Sep 2025',
+  'PP-Module for Endpoint Detection and Response, version 2.0: 13 Jan 2026',
+  'PP-Module for Host Agent, version 2.0: 13 Jan 2026',
+  'PP-Module for VPN Gateways, version 2.0: 21 Jan 2026',
+  'PP-Module for Authentication Servers, version 2.0: 10 Mar 2026',
+  'PP-Module for Enterprise Session Controller, version 2.0: 10 Mar 2026',
+  'PP-Module for Session Border Controller, version 2.0: 17 Mar 2026',
+  'PP-Module for Stateful Traffic Filter Firewalls, version 2.0: 2 Apr 2026',
+  'PP-Module for MACsec Ethernet Encryption, version 2.0: 17 Apr 2026',
+  'PP-Module for SDN Controller, version 1.0: 21 Apr 2026',
+  'PP-Module for Intrusion Prevention (IPS): date not captured',
+  'PP for General Purpose Operating Systems, version 4.3: listed with 27 Sep 2022',
+  'PP for Mobile Device Fundamentals, version 3.3: listed with 12 Sep 2022',
+]
+
+const MA = () => <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+
+/** Learn section `niap-pqc-route` */
+export const NiapPqcRoute = () => (
+  <div className="space-y-4" data-as-of="2026-10-23">
+    <P>
+      <strong>How it works.</strong> NIAP is the US scheme for Common Criteria and is part of the
+      NSA (<SourceCite id="NIAP-CCEVS-MANUAL" label="Scheme Publication #2" />
+      ). A lab evaluates the product. It reaches the Product Compliant List only if it was evaluated
+      against a NIAP-approved protection profile, and conformance is exact, so the profile fixes the
+      tests, with fixed Evaluation Activities in the profile or its Supporting Document. <MA />{' '}
+      Which profile fits an HSM-type product is for the vendor, the lab and NIAP to decide. <MA />{' '}
+      We did not find a NIAP profile written for HSMs: “not found”, not “does not exist”. <MA /> Our
+      Library’s HSM profiles (
+      <InLink to={`${LEARN}&path=eucc-eidas&section=pp-en419221-5`}>EN 419 221-5</InLink>,{' '}
+      <SourceCite id="BSI-CC-PP-0114-V2X-HSM" label="BSI V2X HSM" />,{' '}
+      <SourceCite
+        id="CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile"
+        label="CAR 2 CAR HSM"
+      />
+      ) are European, not NIAP. <MA />
+    </P>
+
+    <Callout tone="key" title="Two agencies, three certificates.">
+      <p>
+        NIAP, run by the NSA, issues the Common Criteria certificate. NIST is a different agency
+        with two programs: CAVP tests an algorithm and gives an algorithm certificate; CMVP
+        validates a whole module and gives a module certificate. NIAP Policy #5 ties them together:
+        “At a minimum an appropriate NIST CAVP certificate is required before a NIAP CC Certificate
+        will be awarded.” (
+        <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />)
+      </p>
+    </Callout>
+
+    <P>
+      <strong>
+        First example: the Dedicated Security Component cPP, version 2.1 (17 November 2025).
+      </strong>{' '}
+      Its revision history says “post-quantum cryptography”. It describes a component that serves
+      “the encompassing platform”. Its authors “designed the DSC cPP as a standalone PP” (a base
+      profile, evaluated once and reused across devices){' '}
+      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>, while the component “is not
+      intended to be a discrete, separate stand-alone component, but one which is directly embedded
+      into a larger system”. Whether an HSM design fits that embedded boundary is for the vendor,
+      the lab and NIAP to decide. <MA /> The profile lists post-quantum algorithms as allowed
+      choices beside the classical ones, including ML-KEM (512, 768, 1024) and ML-DSA (44, 65, 87).
+      The profile text offers them as selections and has no CNSA wording.{' '}
+      <ModuleAnalysisNote>(Module analysis, from reading the text.)</ModuleAnalysisNote> (
+      <SourceCite id="NIAP-cPP-Dedicated-Security-Component-Version-2-1" label="DSC cPP v2.1" />)
+    </P>
+    <P>
+      NIAP adds the CNSA rule by Technical Decision TD1011, published 26 March 2026. NIAP endorsed
+      CPP_DSC_V2.1 on that date, and the older CPP_DSC_V1.0E “will sunset effective 26 September
+      2026” (<ExternalSource name="NIAP news item" />
+      ). TD1011 says: “In order to be listed on the NIAP PCL, evaluations against CPP_DSC_V2.1 must
+      meet the following requirements:” and “Each applicable Cryptographic SFR (FCS_) must include
+      at least one selection conforming to Commercial National Security Algorithm (CNSA) Suite V1.0
+      or V2.0;”. Its list includes “ML-KEM-1024”, “ML-DSA-87” and “LMS or XMSS (LMS 256-192
+      preferred) for soft/firmware signature”, next to “ECDH 384”, “ECDSA 384” and “RSA with minimum
+      3072-bit modulus”; and “Evaluations certified by NIAP must only make CNSA-compliant
+      selections.” (
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" />) So post-quantum is one
+      allowed route, not the only one: CNSA 1.0 selections such as ECDSA 384 and RSA 3072 also
+      count.
+    </P>
+
+    <P>
+      <strong>Contrast: Application Software, version 2.0 (16 June 2025).</strong> It is here
+      because it shows explicit CNSA 1.0 and CNSA 2.0 branches in one US profile. Its CNSA 2.0
+      branch sits next to a CNSA 1.0 branch (RSA of 3072 bits or more, P-384 and P-521, safe-prime
+      groups). The profile says: “ML-DSA and ML-KEM are not usable in any functions at the time of
+      initial publication, they are added to this requirement in support of future protocol updates.
+      As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future
+      update.” It prepares for the move and does not force it. <MA /> (
+      <SourceCite
+        id="NIAP-Protection-Profile-for-Application-Software-Version-2-0"
+        label="NIAP Protection Profile for Application Software v2.0"
+      />
+      )
+    </P>
+
+    <DataTable
+      caption="Post-quantum choices in two NIAP profiles, by function: the Dedicated Security Component cPP v2.1 and the CNSA 2.0 branch of the Application Software profile v2.0"
+      head={[
+        'Function',
+        'DSC cPP v2.1: post-quantum choices',
+        'Application Software v2.0: CNSA 2.0 branch',
+      ]}
+      rows={[
+        [
+          'Key generation',
+          'LMS, HSS, XMSS, XMSS-MT, ML-KEM (512, 768, 1024), ML-DSA (44, 65, 87)',
+          'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
+        ],
+        ['Key establishment', 'ML-KEM (512, 768, 1024), as key encapsulation', 'ML-KEM-1024 only'],
+        ['Signature generation', 'LMS, HSS, XMSS, XMSS-MT, ML-DSA, HashML-DSA', 'ML-DSA-87 only'],
+        [
+          'Signature verification',
+          'LMS, HSS, XMSS, XMSS-MT, ML-DSA, HashML-DSA',
+          'LMS, XMSS, ML-DSA-87',
+        ],
+      ]}
+    />
+    <p className="text-xs text-muted-foreground">
+      “Only” reads the CNSA 2.0 branch of those requirements. <MA />
+    </p>
+    <H3>NIAP profiles that already list post-quantum choices</H3>
+    <P>
+      As of 23 October 2026, 11 NIAP documents we checked (8 profiles and 3 profile modules) list
+      post-quantum choices such as ML-KEM, ML-DSA, LMS and XMSS. All 11 refer to CC:2022 in their
+      own text. In all 11, classical algorithms remain in the cryptographic requirements alongside
+      the post-quantum entries, though some key-encapsulation tables list only ML-KEM-1024. <MA />{' '}
+      None of the 11 requires post-quantum cryptography, and none has removed the classical (CNSA
+      1.0) choices; three of them (Application Software 2.0 and Full Drive Encryption Authorization
+      Acquisition 3.0 and Encryption Engine 3.0) say that will happen “in a future update”. <MA />{' '}
+      The checks cover only these 11 documents; the other NIAP profiles are listed below as reported
+      and not yet read.
+    </P>
+    <DataTable
+      caption="NIAP profiles with post-quantum selections, as of 23 October 2026"
+      head={[
+        'Profile',
+        'Version',
+        'Date in document',
+        'Post-quantum algorithms listed',
+        'Classical choices in the document text',
+      ]}
+      rows={NIAP_PROFILE_ROWS.map((r) => [
+        <span key="p">
+          <strong>
+            <SourceCite id={r.libraryId} label={r.profile} />
+          </strong>
+          <span className="block text-xs text-muted-foreground">NIAP approved {r.approved}</span>
+        </span>,
+        r.version,
+        r.date,
+        r.pq,
+        r.classical,
+      ])}
+    />
+    <p className="text-xs text-muted-foreground">
+      “Date in document” is the one the document itself shows; “NIAP approved” is the approval date
+      as listed on{' '}
+      <ExternalSource name="NIAP’s table of approved profiles" href={NIAP_PP_LIST_URL} />
+      (read 23 October 2026), which lists all 11 as CC:2022. Algorithm lists are written as the
+      profile lists them. Source pages: the{' '}
+      <SourceCite
+        id="NIAP-Protection-Profile-for-Application-Software-Version-2-0"
+        label="Application Software profile"
+      />{' '}
+      and the{' '}
+      <SourceCite
+        id="NIAP-cPP-Dedicated-Security-Component-Version-2-1"
+        label="Dedicated Security Component cPP"
+      />
+      .
+    </p>
+    <P>
+      Three of the profiles (Dedicated Security Component, Network Devices and Hardcopy Devices) are
+      international collaborative profiles whose text lists classical algorithms below CNSA 1.0,
+      such as RSA 2048 and P-256 (and KCDSA in Hardcopy Devices). NIAP restricts what can be posted
+      to the Product Compliant List by endorsement Technical Decisions that all say the same: each
+      applicable cryptographic requirement must include at least one selection conforming to CNSA
+      1.0 or 2.0, and an evaluation in another scheme may select other algorithms if the product can
+      be configured not to use them. These are{' '}
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" /> for Dedicated Security
+      Component, <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" label="TD1010" /> for
+      Network Devices, <ExternalSource name="TD1012" href={NIAP_TD1012_URL} /> and{' '}
+      <ExternalSource name="TD1013" href={NIAP_TD1013_URL} /> for Full Drive Encryption 3.0
+      (Authorization Acquisition and Encryption Engine), and{' '}
+      <ExternalSource name="TD1009" href={NIAP_TD1009_URL} /> for Hardcopy Devices version 1.1 only.
+      NIAP’s page for Hardcopy Devices 2.0 lists no Technical Decision (read 23 October 2026), and
+      we found no such decision for version 2.0. <MA /> For the Functional Package for TLS 2.1 (a
+      package, not a profile), <ExternalSource name="TD1025" href={NIAP_TD1025_URL} /> (1 April
+      2026) says the same for (D)TLS servers.
+    </P>
+    <p className="text-sm font-medium text-foreground">Quotes from each document</p>
+    <ul className="list-disc space-y-1 pl-5 text-xs leading-relaxed text-foreground/90">
+      {NIAP_PROFILE_ROWS.map((r) => (
+        <li key={r.profile}>
+          <span className="font-medium">
+            {r.profile} {r.version}:
+          </span>{' '}
+          {r.quotes.map((q, i) => (
+            <span key={q}>
+              {i > 0 ? ' ' : ''}“{q}”
+            </span>
+          ))}
+          {r.quoteSource ? ` (${r.quoteSource})` : ''}
+        </li>
+      ))}
+    </ul>
+    <p className="text-sm font-medium text-foreground">
+      Notes on the table <MA />
+    </p>
+    <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-foreground/90">
+      <li>
+        “Listed” means a selectable entry in an allowed-choices table or a selection list. In the
+        tables we read, post-quantum entries are options; we did not find a function where only a
+        post-quantum entry is available. Some key-encapsulation tables list only ML-KEM-1024 (the
+        Network Devices cPP, Table 14, and Virtualization, Table 18); in others (Dedicated Security
+        Component, General-Purpose Computing Platforms, Full Drive Encryption) RSA entries sit in
+        the same table. Where a table has a single entry, the requirement itself applies only if the
+        Security Target selects ML-KEM.
+      </li>
+      <li>
+        In two profiles, Application Software 2.0 and Full Drive Encryption Encryption Engine 3.0,
+        ML-KEM and ML-DSA are present as selections that the profile says cannot yet be used in any
+        function (see the quotes above).
+      </li>
+      <li>
+        “LMS and XMSS for verification” and “only” in the table state what we did not find in the
+        other tables of the same profile, from a search of the text; for example, Virtualization has
+        no LMS or XMSS entry in its signature-generation table.
+      </li>
+      <li>
+        The two File Encryption modules define a hybrid key-transport requirement (FCS_COP.1/KT)
+        that uses ML-KEM as specified in the base profile’s FCS_CKM.2, with a key wrapping
+        algorithm; their text has no match for ML-DSA, LMS or XMSS.
+      </li>
+      <li>
+        NIAP’s approval dates differ from the dates inside the documents. The 25 March 2026
+        announcement names Hardcopy Devices version 1.1, not 2.0; the Hardcopy Devices 2.0 document
+        is dated 31 July 2026 and NIAP’s table lists it approved 23 September 2026.
+      </li>
+      <li>
+        Virtualization and General-Purpose Computing Platforms: NIAP’s announcement says each
+        “supports CNSA 2.0 updates”, yet the revision history in the document does not mention
+        post-quantum cryptography, although the requirement tables carry post-quantum selections.
+        The tables are what we used.
+      </li>
+      <li>The Hardcopy Devices text has no match for “CNSA”.</li>
+      <li>
+        The VPN Client module’s revision history, dated 2025-09-30 in the document, says “limitation
+        of cryptographic algorithms to CNSA 1.0”, while the same module text carries the CNSA 2.0
+        selections. We quote both and make no reading of the difference.
+      </li>
+      <li>
+        <ExternalSource name="TD0966" href={NIAP_TD0966_URL} /> (8 January 2026) corrects the
+        brackets of the VPN Client module’s FCS_CKM.1. Its text states ECC “NIST curves” P-384
+        outside the later selection, puts ML-KEM-1024 and ML-DSA-87 in the CNSA 2.0 branch, and puts
+        the safe-prime groups in the CNSA 1.0 branch.
+      </li>
+    </ul>
+
+    <H3>Reported, not yet verified</H3>
+    <P>
+      These names and dates are as reported from NIAP’s list of approved protection profiles. We did
+      not read the profiles’ text, so nothing here is a claim about their algorithms, and a report
+      that these modules only inherit their base profile’s choices is not verified for any of them.
+    </P>
+    <ul className="list-disc space-y-0.5 pl-5 text-sm leading-relaxed text-foreground/90">
+      {NIAP_REPORTED_ONLY.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+
+    <H3>What forces the move: a chain</H3>
+    <P>Each link below is quoted, except where marked as module analysis.</P>
+    <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-foreground/90">
+      <li>
+        <SourceCite id="CNSSP-11-IA-Product-Acquisition-Policy" label="CNSSP 11" /> (2013): products
+        for national security systems “shall comply with the requirements of the NIAP program” and,
+        “where applicable”, FIPS validation.
+      </li>
+      <li>
+        <SourceCite id="CNSSP 15" label="CNSSP 15" /> and CNSA 2.0. Read through{' '}
+        <SourceCite id="NSA CNSA 2.0 FAQ" label="NSA’s FAQ" />: “CNSSP 15 states that by January 1,
+        2027, CNSA 2.0 algorithms will be required in all new acquisitions for NSS and NIAP
+        Protection Profiles are being updated to enable QR certification before this date.”
+      </li>
+      <li>
+        <SourceCite id="NIAP-CCEVS-POLICY-33" label="NIAP Policy #33" /> (31 August 2026, effective
+        1 January 2027). It sets dated cut-offs for acceptance into evaluation and for listing on
+        the Product Compliant List: first for products that do not meet CNSA 1.0 requirements for
+        every cryptographic function, then for products that do not meet CNSA 2.0 requirements for
+        every cryptographic function. The dates are in the callout{' '}
+        <InLink to={`${LEARN}&section=cc-regional-schemes`}>
+          “The NIAP date that reaches every CCRA certificate”
+        </InLink>
+        . Two points that callout leaves out: under both lists, products “will be archived at a date
+        to be determined, regardless of time remaining on their certification”, and “Use of AES-128
+        for Bluetooth will be the exception to this policy until the Bluetooth standard is updated.”
+        NIAP’s announcements page, not the Policy letter, adds a statement of intent: “NIAP will
+        issue new or update applicable technical decisions for some Protection Profiles to allow for
+        temporary use of select algorithms which are not CNSA 1.0 compliant for certain functions
+        such as secure boot and trusted update. NIAP strongly recommends vendors adopt CNSA 2.0
+        compliant algorithms as soon as possible.” (
+        <SourceCite
+          id="NIAP-Announcements-Policy-33-Technical-Decisions-Notice"
+          label="NIAP announcements"
+        />
+        ) We found no such decision yet.
+      </li>
+      <li>
+        The profiles and Technical Decisions. The two examples and their test methods (the DSC test
+        methods are in its{' '}
+        <SourceCite id="NIAP-cPP-DSC-Supporting-Document-Version-2-1" label="Supporting Document" />
+        ); NIAP’s TD1011 for the DSC cPP, quoted above (
+        <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" label="TD1011" />
+        ), and TD1010 for the Network Devices cPP version 4.0 (24 March 2026); both require at least
+        one selection conforming to CNSA 1.0 or 2.0 for the Product Compliant List (
+        <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" label="TD1010" />
+        ); and the DSC group’s own “Post-Quantum Algorithm Support” decision of 17 June 2025 (
+        <ExternalSource name="DSC-iTC Technical Decisions page" />
+        ).
+      </li>
+      <li>
+        The product’s Security Target, which picks a branch. <MA />
+      </li>
+      <li>
+        CSfC (Commercial Solutions for Classified).{' '}
+        <SourceCite id="NSA CSfC PQC Guidance Addendum" label="NSA’s draft addendum" /> (Draft .5, 4
+        April 2025) says: “January 1 2027 - CNSA 2.0 required in all new products and services
+        unless stipulated by CSfC CP, NIAP PP or a Waiver is in place.” CP is a Capability Package.
+      </li>
+    </ol>
+
+    <P>
+      <strong>The module point.</strong> The NSA CNSA 2.0 FAQ (version 2.2) says: “If your product
+      is only verifying signatures, CAVP testing is all that is required. Code sources and signature
+      generation processes (signers) that are NSS are required to produce signatures according to
+      NIST SP 800-208, which requires hardware validated by NIST’s Cryptographic Module Validation
+      Program (CMVP), or via other NSA guidance. Waivers for this will not be granted.” A CMVP
+      module certificate is a separate ask from the NIAP certificate; CAVP tests an algorithm, CMVP
+      validates a module. <MA /> The{' '}
+      <InLink to="/learn/fips-140-3-certification">FIPS 140-3 lesson</InLink> covers that route.
+    </P>
+
+    <H3>Ask your lab</H3>
+    <ol className="list-decimal space-y-1 pl-5 text-sm leading-relaxed text-foreground/90">
+      <li>Which profile and version will you expect us to claim?</li>
+      <li>
+        Which branch will our Security Target claim per function, and what happens when the CNSA 1.0
+        branch goes?
+      </li>
+      <li>
+        Do our post-quantum algorithms have CAVP certificates for the evaluated configuration?
+      </li>
+      <li>Does the customer also need a CMVP-validated module?</li>
+      <li>
+        Is signing inside the Target of Evaluation (TOE) boundary, or done in the operational
+        environment?
+      </li>
+      <li>How do the 2027, 2028 and 2029 dates fall against our dates?</li>
+    </ol>
+    <p className="text-xs text-muted-foreground">
+      <ModuleAnalysisNote>(Questions: Module analysis.)</ModuleAnalysisNote>
+    </p>
+
+    <P>
+      One line on the EU: <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" label="EN 419 221-5" />{' '}
+      is a profile for cryptographic modules of trust service providers, at EAL4 augmented with
+      AVA_VAN.5, in a different scheme. <MA />
+    </P>
+
+    <P>
+      Related lessons:{' '}
+      <InLink to="/learn/stateful-signatures">Stateful Hash-Based Signatures</InLink> (LMS and XMSS
+      in both profiles), <InLink to="/learn/hsm-pqc">HSM and PQC</InLink>, and the{' '}
+      <InLink to="/compliance?tab=records">Compliance product records</InLink> (real certificates
+      and their claimed profiles).
+    </P>
+
+    <Sources readOn="23 October 2026">
+      <SourceCite id="NIAP-CCEVS-MANUAL" />, <SourceCite id="NIAP-CCEVS-POLICY-33" />,{' '}
+      <SourceCite id="NSA CNSA 2.0 FAQ" />, <SourceCite id="NSA CSfC PQC Guidance Addendum" />,{' '}
+      <SourceCite id="CNSSP-11-IA-Product-Acquisition-Policy" />, <SourceCite id="CNSSP 15" /> (the
+      Library’s copy is the older edition; the sentence quoted above is read through the FAQ),{' '}
+      <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" />,{' '}
+      <SourceCite id="BSI-CC-PP-0114-V2X-HSM" />
+      , <SourceCite id="CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile" />,{' '}
+      <SourceCite id="NIAP-Protection-Profile-for-Application-Software-Version-2-0" />
+      , <SourceCite id="NIAP-cPP-Dedicated-Security-Component-Version-2-1" />,{' '}
+      <SourceCite id="NIAP-cPP-DSC-Supporting-Document-Version-2-1" />,{' '}
+      <SourceCite id="NIAP-TD1011-DSC-v2-1-Endorsement" />,{' '}
+      <SourceCite id="NIAP-TD1010-Network-Devices-v4-0-Endorsement" />,{' '}
+      <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />.
+    </Sources>
   </div>
 )
 
