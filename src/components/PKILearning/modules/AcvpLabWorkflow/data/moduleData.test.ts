@@ -34,7 +34,7 @@ describe('acvp-lab-workflow sources', () => {
 
   it('pins the core draft by commit, not by a site rebuild date', () => {
     expect(SOURCES.acvpSpec.revision).toBe(
-      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)'
+      'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)'
     )
     expect(content.narratives.acvpSpecRevision).toBe(SOURCES.acvpSpec.revision)
   })
@@ -106,8 +106,8 @@ describe('acvp-lab-workflow concept checks', () => {
 })
 
 describe('acvp-lab-workflow review status', () => {
-  it('is owner-reviewed and no longer marked as a draft (owner decision, 22 Oct 2026)', () => {
-    expect(REVIEW_STATUS.state).toBe('owner-reviewed')
+  it('shows the owner-review reset after corrections and is not marked as a draft (owner decisions, 22-23 Oct 2026)', () => {
+    expect(REVIEW_STATUS.state).toBe('corrected-awaiting-owner-review')
     expect(REVIEW_STATUS.label).not.toMatch(/draft/i)
     expect(manifest.workInProgress).toBeUndefined()
     expect(manifest.description).not.toMatch(/draft/i)

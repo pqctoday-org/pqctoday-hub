@@ -438,7 +438,7 @@ const Step3GlobalRegional: React.FC = () => (
             flag: '🇪🇺',
             region: 'European Union',
             bodies: [
-              'ETSI TC CYBER — TS 103 744 (quantum-safe cryptography standard)',
+              'ETSI TC CYBER — TS 103 744 (quantum-safe hybrid key establishment)',
               'ENISA — supports the EUCC scheme and the ECCG, which agrees the ACM',
               'EC — NIS2 Directive, eIDAS 2.0, DORA (legally binding regulations)',
             ],
@@ -486,9 +486,9 @@ const Step3GlobalRegional: React.FC = () => (
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Practical guidance:</strong> For most products,
             start with <strong>NIST FIPS 203/204/205</strong> (US procurement), add{' '}
-            <strong>ETSI TS 103 744</strong> (EU interoperability), then layer national guidance
-            (BSI TR-02102 for Germany, ANSSI hybrid for France). Check CMVP for US federal sales and
-            EUCC for EU government sales.
+            <strong>ETSI TS 103 744</strong> (hybrid key establishment, if you need it), then layer
+            national guidance (BSI TR-02102 for Germany, ANSSI hybrid for France). Check CMVP for US
+            federal sales and EUCC for EU government sales.
           </p>
         </div>
       </div>
@@ -805,7 +805,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {
             when: 'You see "ETSI TS 103 744"',
             meaning:
-              'ETSI TC CYBER published it (EU SDO); normative requirements for quantum-safe cryptography harmonized with NIST.',
+              'ETSI TC CYBER published it (EU SDO); a normative specification for hybrid key establishment that combines a traditional exchange such as ECDH with ML-KEM (FIPS 203). It covers key establishment only.',
           },
           {
             when: 'You see "BSI TR-02102-1"',
@@ -820,7 +820,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {
             when: 'You see "EUCC"',
             meaning:
-              'EU adaptation of Common Criteria; certificates are issued by accredited certification bodies, supervised by national cybersecurity certification authorities; ENISA supports the scheme and publishes its supporting documents; valid across all EU member states.',
+              'The EU Common Criteria-based certification scheme, set up by Commission Implementing Regulation (EU) 2024/482; certificates are issued by accredited certification bodies, supervised by national cybersecurity certification authorities; ENISA supports the scheme and publishes the certificates and supporting documents; the Regulation applies in all EU Member States.',
           },
         ].map((item) => (
           <div key={item.when} className="bg-muted/50 rounded-lg p-3 border border-border">

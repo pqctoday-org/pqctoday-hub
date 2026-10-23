@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
+import { Link } from 'react-router'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
 import { Button } from '@/components/ui/button'
@@ -152,6 +153,12 @@ const Step1Overview: React.FC = () => (
           </div>
         ))}
       </div>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        <strong className="text-foreground">National security systems:</strong> this list does not
+        apply. NSA&apos;s CNSA 2.0 FAQ (version 2.2, October 2026) says SLH-DSA &ldquo;is not part
+        of CNSA and is not approved for any use in NSS&rdquo;. See &ldquo;What the lab tests&rdquo;
+        in the HashSLH-DSA Modes step.
+      </p>
     </section>
   </div>
 )
@@ -604,6 +611,165 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
         PKCS#11 v3.2: set{' '}
         <span className="font-mono">hedgeVariant = CKH_DETERMINISTIC_REQUIRED</span> in the{' '}
         <span className="font-mono">CK_SIGN_ADDITIONAL_CONTEXT</span> parameter.
+      </p>
+    </section>
+
+    <section className="glass-panel p-6 space-y-4">
+      <h2 className="text-xl font-bold text-foreground">What the lab tests</h2>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        A validated SLH-DSA module is checked in three separate ways, and none of them replaces
+        another: algorithm tests, the module&apos;s own self-tests, and the certificate path. A
+        fourth question, whether the algorithm may be used at all, is answered by CNSA 2.0 for
+        national security systems.
+      </p>
+      <div className="space-y-4 text-xs text-muted-foreground">
+        <div className="bg-muted/40 rounded-lg p-4 space-y-2">
+          <div className="font-semibold text-foreground text-sm">
+            1. Algorithm tests (ACVP, draft of 2 October 2026)
+          </div>
+          <ul className="space-y-1.5 list-disc list-inside leading-relaxed">
+            <li>
+              SLH-DSA has three ACVP modes: keyGen, sigGen and sigVer, all against FIPS 205. Each
+              has one test type, AFT (Algorithm Functional Test).
+            </li>
+            <li>
+              keyGen: the implementation generates a key pair from the provided seed and key values
+              (SK.seed, SK.prf and PK.seed). The server provides at least 10 tests for each
+              combination of capabilities. sigGen: it generates a valid signature from the provided
+              private key, message, context (external interface) and randomness (non-deterministic
+              signing), with at least 13 tests for each combination.
+            </li>
+            <li>
+              sigVer: the server makes its tests by modifying a valid signature: a modified message,
+              modified signature R, SIGFORS or SIGHT parts, a signature that is too long or too
+              short, plus the valid case. The workshop&apos;s NIST sigVer panel replays a few
+              published cases of this kind.
+            </li>
+            <li>
+              Not tested by ACVP, in the specification&apos;s words: &ldquo;that fresh seed values
+              are used for fresh invocations of key generation, that approved deterministic random
+              bit generators (DRBGs) are used with the correct security strengths, that sensitive
+              data is destroyed, that key validation is performed, and that floating point
+              arithmetic is not used.&rdquo;
+            </li>
+          </ul>
+        </div>
+        <div className="bg-muted/40 rounded-lg p-4 space-y-2">
+          <div className="font-semibold text-foreground text-sm">
+            What a vendor registers: the ACVP capability options
+          </div>
+          <ul className="space-y-1.5 list-disc list-inside leading-relaxed">
+            <li>
+              <span className="font-mono">parameterSets</span>: any of the 12 names, from
+              SLH-DSA-SHA2-128s to SLH-DSA-SHAKE-256f.
+            </li>
+            <li>
+              <span className="font-mono">signatureInterfaces</span>: &ldquo;internal&rdquo;,
+              &ldquo;external&rdquo;, or both.
+            </li>
+            <li>
+              <span className="font-mono">preHash</span>: &ldquo;pure&rdquo;, &ldquo;preHash&rdquo;
+              (described as &ldquo;Whether SLH-DSA or HashSLH-DSA are supported&rdquo;).{' '}
+              <span className="font-mono">hashAlgs</span> is used if preHash.
+            </li>
+            <li>
+              <span className="font-mono">deterministic</span> (sigGen only): &ldquo;A value of
+              &lsquo;true&rsquo; indicates that deterministic signature generation is supported and
+              a value of &lsquo;false&rsquo; indicates that non-deterministic signature generation
+              is supported.&rdquo; sigVer has signatureInterfaces and preHash but no deterministic
+              field.
+            </li>
+            <li>
+              <span className="font-mono">messageLength</span> (8 to 65536 bits, step 8) and{' '}
+              <span className="font-mono">contextLength</span> (0 to 2040, step 8) as ranges.
+            </li>
+          </ul>
+        </div>
+        <div className="bg-muted/40 rounded-lg p-4 space-y-2">
+          <div className="font-semibold text-foreground text-sm">
+            2. Module self-tests (FIPS 140-3 IG 10.3.A, item 16)
+          </div>
+          <ul className="space-y-1.5 list-disc list-inside leading-relaxed">
+            <li>
+              For each of signature generation, signature verification and key generation that the
+              module implements, IG 10.3.A requires a cryptographic algorithm self-test (CAST), run
+              before the algorithm&apos;s first use in the approved mode. The signature generation
+              CAST is a known-answer test: fixed values go in and the output is compared with a
+              pre-computed signature (SIG). The verification CAST checks that a known signature
+              verifies (returns true). The key generation CAST uses fixed SK.seed, SK.prf and
+              PK.seed and compares the private key; the public key need not be compared, &ldquo;as
+              the private key contains a copy of the public key&rdquo;.
+            </li>
+            <li>
+              Pure and pre-hash (Notes 27 and 28): if both are implemented and &ldquo;they both
+              share the same underlying cryptographic implementations, a CAST on either one of them
+              is sufficient to meet the CAST requirements for both&rdquo;. This holds for signature
+              generation and, separately, for verification.
+            </li>
+            <li>
+              Hash families (Note 29): a module that supports both SHA2 and SHAKE parameter sets in
+              the approved mode must run the CASTs on at least two parameter sets, one SHA2 and one
+              SHAKE. A module with only one family needs at least one. It is recommended, but not
+              required, to test at least one &ldquo;s&rdquo; and one &ldquo;f&rdquo; set if both are
+              implemented.
+            </li>
+            <li>
+              Tree height (Note 30): the CASTs need only exercise the smallest parameter set (lowest
+              height trees) the module supports.
+            </li>
+            <li>
+              Pairwise consistency test: for FIPS 205 keys it &ldquo;may be limited to confirming
+              the same key identifier (I in the case of LMS, SEED in the case of XMSS and PK.SEED
+              for SLH-DSA) is shared by the resulting public and private key following
+              generation&rdquo;.
+            </li>
+          </ul>
+        </div>
+        <div className="bg-muted/40 rounded-lg p-4 space-y-2">
+          <div className="font-semibold text-foreground text-sm">
+            3. The certificate path, and 4. CNSA 2.0 status
+          </div>
+          <ul className="space-y-1.5 list-disc list-inside leading-relaxed">
+            <li>
+              NIST&apos;s CAVP page: &ldquo;Cryptographic algorithm validation is a prerequisite of
+              cryptographic module validation.&rdquo; But &ldquo;a product or implementation does
+              not meet the FIPS 140 module validation requirements by simply implementing an
+              Approved security function and acquiring validations for each of the implemented
+              algorithms.&rdquo;
+            </li>
+            <li>
+              ACVTS testing &ldquo;is entirely black-box. The implementation is never provided to
+              NIST or the CAVP&rdquo;, and CAVP &ldquo;is not responsible for running those test
+              vectors through the implementation&rdquo;. The CASTs above are a FIPS 140-3 module
+              requirement set by CMVP guidance (IG 10.3.A), separate from the ACVP tests.
+            </li>
+            <li>
+              CNSA 2.0 (NSA FAQ, version 2.2, October 2026): &ldquo;While SLH-DSA is hash-based, it
+              is not part of CNSA and is not approved for any use in NSS.&rdquo; The CNSA 2.0
+              algorithm table lists ML-DSA-87 for digital signatures and LMS and XMSS (NIST SP
+              800-208) for signing firmware and software. See the stateful signatures module for how
+              those are validated.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        Sources: NIST ACVP draft specification for SLH-DSA (2 October 2026); CMVP Implementation
+        Guidance for FIPS PUB 140-3, IG 10.3.A (document updated 19 August 2026); NIST CAVP
+        overview; NSA CNSA 2.0 FAQ version 2.2. Guidance and test coverage change, so check the
+        current versions. How labs run these steps:{' '}
+        <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
+          FIPS 140-3 Certification
+        </Link>{' '}
+        and{' '}
+        <Link to="/learn/acvp-lab-workflow" className="text-primary hover:underline">
+          ACVP Lab Workflow
+        </Link>
+        ; the stateful hash-based schemes:{' '}
+        <Link to="/learn/stateful-signatures" className="text-primary hover:underline">
+          Stateful Hash Signatures
+        </Link>
+        .
       </p>
     </section>
 

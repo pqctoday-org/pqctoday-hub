@@ -114,7 +114,7 @@ const ATTESTATION_FLOWS: AttestationFlow[] = [
       },
     ],
     currentMigrationPath:
-      'Hybrid path: (1) TPM RSA AIK signs quote as normal, (2) software ML-DSA-65 key co-signs the same nonce, (3) verifier validates both. Full migration requires TPM hardware upgrade to TCG PQC spec (targeted 2027+).',
+      'Hybrid path for a TPM built to a library version earlier than 185: (1) TPM RSA AIK signs quote as normal, (2) software ML-DSA-65 key co-signs the same nonce, (3) verifier validates both. A TPM that implements TPM 2.0 Library v185 (March 2026) can sign the quote with an ML-DSA attestation key directly; product availability depends on the TPM vendor.',
     hndlWindowYears: 10,
   },
   {

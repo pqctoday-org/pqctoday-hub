@@ -5,7 +5,7 @@
  * adopts <ModuleShell>, proving the conversion is behaviour-preserving.
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
@@ -67,5 +67,37 @@ describe('HybridCrypto render parity', () => {
       'Compatibility with existing systems depends on the protocol'
     )
     expect(content.narratives?.nistRecommendation).not.toContain('backward compatibility')
+  })
+
+  it('explains when a hybrid KEM is an approved service in a validated module (IG D.S)', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter>
+          <HybridCryptoIntroduction onNavigateToWorkshop={() => {}} />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    const callout = screen.getByTestId('ig-ds-callout')
+    expect(
+      screen.getByRole('heading', { name: 'Hybrid in a validated module (IG D.S)' })
+    ).toBeInTheDocument()
+    // the five conditions, the non-approved half, and the Security Policy labels
+    expect(callout).toHaveTextContent('at a minimum, all of them')
+    expect(callout).toHaveTextContent('control the sequencing')
+    expect(callout).toHaveTextContent('non-approved but allowed algorithm with no security claimed')
+    expect(callout).toHaveTextContent(
+      "The hybrid's claimed security strength comes from the ML-KEM"
+    )
+    expect(callout).toHaveTextContent('KEM-Hybrid-Full')
+    // X-Wing: the IG statement and the separate CAVP listing are both stated, each with its source
+    expect(callout).toHaveTextContent('cannot yet meet the requirements of Scenario 2')
+    expect(callout).toHaveTextContent('CAVP prerequisites page')
+    expect(callout).toHaveTextContent('IG 10.3.A')
+    // IG 1.B (firmware plus hardware) must not be confused with hybrid key exchange
+    expect(callout).toHaveTextContent('IG 1.B')
+    expect(callout).toHaveTextContent('nothing to do with hybrid key exchange')
+    expect(
+      within(callout).getByRole('link', { name: 'FIPS 140-3 Certification module' })
+    ).toHaveAttribute('href', '/learn/fips-140-3-certification')
   })
 })

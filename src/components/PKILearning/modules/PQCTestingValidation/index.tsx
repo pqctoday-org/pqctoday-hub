@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { FC } from 'react'
+import { useEffect, type FC } from 'react'
 import {
   Radio,
   ScanSearch,
@@ -20,6 +20,9 @@ import { TestStrategyBuilder } from './workshop/TestStrategyBuilder'
 import { ACVPValidator } from './workshop/ACVPValidator'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { useModuleStore } from '@/store/useModuleStore'
+import { defaultPqcTestingLearnPath } from './learnPath'
 
 const PARTS: WorkshopPart[] = [
   {
@@ -73,37 +76,49 @@ const PARTS: WorkshopPart[] = [
   },
 ]
 
-export const PQCTestingValidationModule: FC = () => (
-  <ModuleShell
-    manifest={manifest}
-    description="Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program."
-    learn={(api) => <PQCTestingIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={(api) => (
-      <PQCTestingExercises
-        onNavigateToWorkshop={api.goToWorkshop}
-        onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
-      />
-    )}
-    workshopParts={PARTS}
-    renderWorkshopStep={(index, configKey) => {
-      switch (index) {
-        case 0:
-          return <PassiveDiscoveryLab key={`passive-${configKey}`} />
-        case 1:
-          return <ActivePQCScanner key={`active-${configKey}`} />
-        case 2:
-          return <PerformanceBenchmarkDesigner key={`bench-${configKey}`} />
-        case 3:
-          return <InteropTestMatrix key={`interop-${configKey}`} />
-        case 4:
-          return <TVLALeakageAnalyzer key={`tvla-${configKey}`} />
-        case 5:
-          return <TestStrategyBuilder key={`strategy-${configKey}`} />
-        case 6:
-          return <ACVPValidator key={`acvp-${configKey}`} />
-        default:
-          return null
-      }
-    }}
-  />
-)
+export const PQCTestingValidationModule: FC = () => {
+  const persona = usePersonaStore((state) => state.selectedPersona)
+  const activePath = useModuleStore((state) => state.modules[manifest.id]?.activeLearnPath)
+  const setActiveLearnPath = useModuleStore((state) => state.setActiveLearnPath)
+
+  useEffect(() => {
+    if (!persona || activePath) return
+    const path = defaultPqcTestingLearnPath(persona)
+    if (path) setActiveLearnPath(manifest.id, path)
+  }, [activePath, persona, setActiveLearnPath])
+
+  return (
+    <ModuleShell
+      manifest={manifest}
+      description="Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program."
+      learn={(api) => <PQCTestingIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
+      exercises={(api) => (
+        <PQCTestingExercises
+          onNavigateToWorkshop={api.goToWorkshop}
+          onSetWorkshopConfig={(config) => api.openWorkshopStep(config.step, { ...config })}
+        />
+      )}
+      workshopParts={PARTS}
+      renderWorkshopStep={(index, configKey) => {
+        switch (index) {
+          case 0:
+            return <PassiveDiscoveryLab key={`passive-${configKey}`} />
+          case 1:
+            return <ActivePQCScanner key={`active-${configKey}`} />
+          case 2:
+            return <PerformanceBenchmarkDesigner key={`bench-${configKey}`} />
+          case 3:
+            return <InteropTestMatrix key={`interop-${configKey}`} />
+          case 4:
+            return <TVLALeakageAnalyzer key={`tvla-${configKey}`} />
+          case 5:
+            return <TestStrategyBuilder key={`strategy-${configKey}`} />
+          case 6:
+            return <ACVPValidator key={`acvp-${configKey}`} />
+          default:
+            return null
+        }
+      }}
+    />
+  )
+}

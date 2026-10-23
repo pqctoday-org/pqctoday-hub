@@ -91,7 +91,7 @@ export const SOURCES = {
     url: 'https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html',
     libraryRefId: 'NIST-ACVP',
     revision:
-      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)',
+      'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
   },
   acvpMlKem: {
     id: 'acvpMlKem',

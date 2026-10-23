@@ -99,7 +99,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     decisionMaking:
       'Industry membership (800+ organizations from 68 countries) → Technical Committees (TC CYBER) → Technical Specification (TS, normative) or Technical Report (TR, informational). Chair of TC CYBER QSC WG: Matthew Campagna (AWS). ETSI TS documents contain "shall" requirements; TRs are guidance only.',
     keyPqcOutputs: [
-      'ETSI TS 103 744 (Quantum-Safe Cryptography – normative requirements)',
+      'ETSI TS 103 744 (Quantum-safe hybrid key establishment – combines ECDH with ML-KEM)',
       'ETSI TR 103 619 (PQC Migration Guide)',
       'ETSI TR 103 616 (Quantum-Safe Signatures)',
       'ETSI ISG QKD standards (QKD protocols and infrastructure)',
@@ -189,14 +189,14 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'EU',
     founded: '2004',
     mission:
-      "EU cybersecurity agency responsible for the European Cybersecurity Certification Framework (EUCC — the EU's adaptation of Common Criteria). ENISA also advises on PQC policy for eIDAS 2.0, NIS2, and DORA. Supports the ECCG, whose Sub-group on Cryptography agrees the Agreed Cryptographic Mechanisms (ACM); ENISA receives ACM update requests.",
+      'EU cybersecurity agency under the Cybersecurity Act. It supports the EU cybersecurity certification framework, including EUCC (the European Common Criteria-based scheme set up by Commission Implementing Regulation (EU) 2024/482), and publishes EUCC certificates, certification reports and supporting documents on the EU certification website. ENISA does not issue EUCC certificates: accredited certification bodies do. ENISA also advises on PQC policy for eIDAS 2.0, NIS2, and DORA. Supports the ECCG, whose Sub-group on Cryptography agrees the Agreed Cryptographic Mechanisms (ACM); ENISA receives ACM update requests.',
     decisionMaking:
-      'EU Agency under the Cybersecurity Act (2019). EUCC certification scheme developed through ECCG (European Cybersecurity Certification Group) with industry input. Issues technical reports and threat landscapes. Works with MSs (Member States) national cybersecurity authorities.',
+      'EU Agency under the Cybersecurity Act (2019). EUCC is set out in Commission Implementing Regulation (EU) 2024/482: certification bodies issue the certificates, national cybersecurity certification authorities supervise, and the European Cybersecurity Certification Group (ECCG) endorses state-of-the-art documents, which ENISA publishes. Issues technical reports and threat landscapes. Works with MSs (Member States) national cybersecurity authorities.',
     keyPqcOutputs: [
-      'EUCC v2.0 Agreed Cryptographic Mechanisms (ACM) – lists approved PQC algorithms',
+      'ECCG Agreed Cryptographic Mechanisms (ACM) v2.0 – cryptography guideline for EUCC developers and evaluators; lists ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS and FrodoKEM and says lattice-based schemes should be combined with a classical mechanism',
       'ENISA PQC Guidelines (2021)',
       'eIDAS 2.0 cryptographic recommendations',
-      'EUCC (EU Cybersecurity Certification Scheme for CC-based evaluations)',
+      'EUCC (European Common Criteria-based cybersecurity certification scheme; Regulation (EU) 2024/482)',
     ],
     libraryRefs: ['EUCC v2.0 ACM'],
     websiteUrl: 'https://www.enisa.europa.eu/topics/cryptography/post-quantum-cryptography',
@@ -214,11 +214,11 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       "Mutual recognition arrangement for IT security evaluations based on ISO/IEC 15408. 31 member nations accept each other's CC certificates. Products are evaluated by accredited labs; certificates issued by national Certification Bodies (e.g., BSI, ANSSI, NCSC, NIAP).",
     decisionMaking:
-      'Protection Profiles (PP) define security requirements for product categories (e.g., "PKI digital signatures"). Independent labs test products against PPs. CCRA Technical Community maintains the framework. EUCC is the EU-specific adaptation managed by ENISA with a stricter, harmonized approach.',
+      'Protection Profiles (PP) define security requirements for product categories (e.g., "PKI digital signatures"). Independent labs test products against PPs. CCRA Technical Community maintains the framework. EUCC is a separate EU scheme, set up by Commission Implementing Regulation (EU) 2024/482, that applies Common Criteria and the Common Evaluation Methodology under EU rules.',
     keyPqcOutputs: [
       'ISO/IEC 15408 (CC standard for evaluation methodology)',
       'PQC Protection Profiles (in development for HSMs, certificates, firewalls)',
-      'EUCC (EU Cybersecurity Certification Scheme – CC-based, ENISA-managed)',
+      'EUCC (EU Common Criteria-based scheme, Regulation (EU) 2024/482 – certification bodies issue, national authorities supervise)',
     ],
     libraryRefs: [],
     websiteUrl: 'https://www.commoncriteriaportal.org/',
@@ -349,7 +349,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'etsi',
     name: 'ETSI',
     acronym: 'European Telecommunications Standards Institute',
-    hint: 'Published TS 103 744 (normative) and TR 103 619 (migration guide) for quantum-safe cryptography.',
+    hint: 'Published TS 103 744 (normative, quantum-safe hybrid key establishment) and TR 103 619 (migration guide) for quantum-safe cryptography.',
     correctType: 'standards-body',
     correctScope: 'regional',
     correctAuthority: 'non-governmental',
@@ -499,15 +499,15 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'ETSI TS 103 744',
         body: 'ETSI TC CYBER',
         description:
-          'ETSI TS 103 744 is a normative Technical Specification defining quantum-safe cryptography requirements for European industry. It specifies algorithm selection, parameter sets, and interoperability guidance harmonized with NIST and ISO/IEC standards.',
+          'ETSI TS 103 744 is a normative Technical Specification for quantum-safe hybrid key establishment. It specifies methods for deriving a key from several shared secrets: one from a traditional scheme such as elliptic-curve Diffie-Hellman and one from a quantum-safe key encapsulation mechanism (ML-KEM, FIPS 203). It fixes the combinations of key-derivation function, curve and ML-KEM size an implementation may use. It covers key establishment only; it is not a general list of approved algorithms or requirements.',
       },
       {
         id: 'eucc-eval',
         role: 'certification',
-        label: 'EUCC Evaluation',
-        body: 'ENISA / National CAs',
+        label: 'EUCC Certification',
+        body: 'Accredited certification bodies (supervised by national authorities)',
         description:
-          "EUCC (EU Cybersecurity Certification Scheme) is ENISA's adaptation of Common Criteria for EU markets. Products are evaluated by accredited CABs (Conformity Assessment Bodies); certificates are valid across all EU member states, eliminating need for per-country certification.",
+          "EUCC, the European Common Criteria-based cybersecurity certification scheme, is established by Commission Implementing Regulation (EU) 2024/482 under the Cybersecurity Act. Products are evaluated against Common Criteria and the Common Evaluation Methodology, and certification bodies issue EUCC certificates at assurance level 'substantial' or 'high' (Art. 4). National cybersecurity certification authorities supervise the certification bodies, evaluation labs and certificate holders; ENISA publishes the certificates, certification reports and supporting documents (Art. 42). The Regulation applies in every Member State and replaces the national schemes it covers (Art. 49).",
       },
       {
         id: 'eidas-2',
@@ -515,7 +515,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'eIDAS 2.0 Mandate',
         body: 'European Commission',
         description:
-          "eIDAS 2.0 requires EU member states to provide EUDI (European Digital Identity) Wallets. The European Commission's implementing acts reference EUCC certification for qualified trust service providers, and ENISA's ACM list specifies the approved PQC algorithms.",
+          "eIDAS 2.0 is Regulation (EU) 910/2014 as amended by Regulation (EU) 2024/1183. It requires each Member State to provide at least one EUDI (European Digital Identity) Wallet (Art. 5a). It also requires qualified electronic signature creation devices to be certified by bodies the Member States designate (Art. 30), on the basis of a security evaluation against a standard in a Commission list or another process of comparable security level that is notified to the Commission; EUCC is one possible route, not a requirement for every case. Qualified trust service providers are audited separately (Art. 20). The ECCG's Agreed Cryptographic Mechanisms (ACM v2) are guidance for developers and evaluators, not a list of algorithms that eIDAS mandates.",
       },
     ],
   },
@@ -636,11 +636,15 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
   eu: {
     'standards-body': {
       orgs: ['ETSI (TC CYBER)', 'CEN/CENELEC'],
-      note: 'ETSI TS 103 744 provides EU interoperability baseline for quantum-safe cryptography',
+      note: 'ETSI TS 103 744 covers hybrid key establishment (ECDH combined with ML-KEM), not quantum-safe cryptography in general',
     },
     'certification-body': {
-      orgs: ['ENISA (EUCC)', 'National CAs (BSI, ANSSI, NCSC-NL)'],
-      note: "EUCC is EU-wide; national CAs accept each other's EUCC certificates",
+      orgs: [
+        'EUCC certification bodies',
+        'National authorities (e.g., BSI, ANSSI)',
+        'ENISA (publishes)',
+      ],
+      note: 'EUCC is one EU-wide scheme (Regulation (EU) 2024/482): certification bodies issue certificates, national authorities supervise, ENISA publishes them',
     },
     'compliance-framework': {
       orgs: ['NIS2 Directive', 'eIDAS 2.0', 'DORA', 'EU Cyber Resilience Act'],
@@ -648,7 +652,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
     },
     'regulatory-agency': {
       orgs: ['European Commission (EC)', 'ENISA (dual role)'],
-      note: 'EC legislates (NIS2, CRA); ENISA advises and manages certification schemes',
+      note: 'EC legislates (NIS2, CRA); ENISA advises and supports the certification framework, but does not issue EUCC certificates',
     },
   },
   uk: {

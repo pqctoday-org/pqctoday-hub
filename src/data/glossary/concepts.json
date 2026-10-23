@@ -2231,7 +2231,7 @@
     "term": "TVLA",
     "acronym": "Test Vector Leakage Assessment",
     "definition": "A statistical methodology for detecting side-channel information leakage in cryptographic hardware implementations. Uses Welch's t-test to determine whether power consumption during cryptographic operations is statistically correlated with secret key data.",
-    "technicalNote": "Classical fixed-vs-random TVLA fails for lattice-based PQC (ML-KEM/ML-DSA) because the public key and ciphertext are structurally coupled, making fixed test vectors trivially distinguishable from random ones regardless of implementation quality. Instead, target specific algorithmic stages: NTT/INTT transform, polynomial multiplication, and modular reduction. |t| > 4.5 (NIST standard threshold) indicates statistically significant leakage requiring countermeasures.",
+    "technicalNote": "TVLA has a non-specific fixed-vs-random test and specific tests on chosen intermediate values. The non-specific test flags any input-dependent difference, including leakage of public data such as ciphertexts, so for lattice-based PQC (ML-KEM/ML-DSA) a failing result does not by itself show that a secret leaks. Labs therefore add specific tests on the stages that handle secrets: NTT/INTT transform, polynomial multiplication, and modular reduction. |t| > 4.5 (the common threshold from Goodwill et al., 2011) indicates statistically significant leakage.",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "advanced",
     "category": "concept"
@@ -2239,7 +2239,7 @@
   {
     "term": "Interoperability Matrix",
     "definition": "A compatibility mapping showing which combinations of client and server PQC algorithm configurations successfully negotiate a shared secret. Used during the lab testing phase of PQC migration to identify which vendor combinations are compatible, require fallback, or are incompatible.",
-    "technicalNote": "Key findings from production interop testing: Chrome 130+ (hybrid X25519+ML-KEM-768) is compatible with Cloudflare, AWS, and OQS test servers. Pure PQC clients (no classical component) are rejected by Cloudflare per RFC 9794 policy. Legacy TLS 1.2 servers reject all PQC ClientHello extensions — connection succeeds via fallback but PQC is not used. Use test.openquantumsafe.org for reference server testing.",
+    "technicalNote": "Key findings from production interop testing: Chrome 130+ (hybrid X25519+ML-KEM-768) is compatible with Cloudflare, AWS, and OQS test servers. Pure PQC clients (no classical component) are rejected by Cloudflare's server policy. Legacy TLS 1.2 servers reject all PQC ClientHello extensions — connection succeeds via fallback but PQC is not used. Use test.openquantumsafe.org for reference server testing.",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "intermediate",
     "category": "concept"

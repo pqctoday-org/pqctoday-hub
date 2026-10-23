@@ -269,14 +269,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'pqc-testing-validation/tvla-leakage-analyzer': {
     prompt:
-      'The note under the leakage bars says classical fixed-vs-random TVLA fails for ML-KEM/ML-DSA. Why?',
+      'The note under the leakage bars says a fixed-vs-random test alone is not enough for ML-KEM/ML-DSA. Why?',
     options: [
       'Lattice operations run in constant time, so there is no power variation to measure',
       "10,000 traces are too few for Welch's t-test to reach significance",
-      'Public key and ciphertext are structurally coupled, so a fixed ciphertext always uses the same secret polynomial and the fixed set is trivially distinguishable',
+      'It flags any difference between fixed-input and random-input traces, including leakage of public data such as the ciphertext, so a failing result does not by itself show that a secret leaks',
     ],
     answer: 2,
-    why: 'Because the fixed set is distinguishable by construction regardless of implementation quality, the test would flag every implementation; the step instead targets specific algorithmic stages such as NTT/INTT, polynomial multiplication and modular reduction.',
+    why: 'The non-specific test assumes nothing about how the device leaks, so it reacts to any input-dependent difference and says nothing about whether an attacker could exploit it. A masked implementation can pass it (the masked ML-KEM run stays below |t| = 4.5), and a pass is still not proof of security. Labs therefore add specific tests on intermediate values in the stages that handle secrets: NTT/INTT, polynomial multiplication and modular reduction.',
   },
   // verification-closure
   'verification-closure/closure-handover-register': {

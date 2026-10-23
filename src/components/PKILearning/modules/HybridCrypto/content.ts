@@ -22,6 +22,7 @@ export const content: ModuleContent = {
     getStandard('RFC-9935'), // ML-KEM OIDs in X.509 — backs the pure-KEM cert format
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
+    getStandard('NIST-FIPS140-3-IG-PQC'), // CMVP IG D.S: when a hybrid KEM is an approved service (Hybrid KEM Construction callout)
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
     getStandard('draft-ietf-lamps-pq-composite-kem-23'), // Composite ML-KEM (draft -23, RFC Editor queue since 2026-10-21; supersedes -21 — editorial: OIDs and test vectors unchanged)
     getStandard('RFC-9763'), // Related Certificates

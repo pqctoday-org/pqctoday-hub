@@ -20,7 +20,7 @@ PQC testing introduces challenges absent from classical cryptography assessments
 
 2. **Hybrid scheme complexity** — Testing hybrid PQC (X25519+ML-KEM-768) requires validating that both the classical and PQC components complete successfully. Test practice: no silent downgrade — if either component fails, the shared secret is invalid. (RFC 9794 defines the hybrid terminology; it does not set this rule.)
 
-3. **Side-channel failure modes are different** — Classical TVLA (fixed-vs-random) fails for lattice-based PQC because public keys and ciphertexts are structurally coupled, making fixed test vectors trivially distinguishable. NTT/INTT, polynomial multiplication, and modular reduction are the actual leakage targets.
+3. **Side-channel failure modes are different** — A fixed-vs-random (non-specific) TVLA test alone is not enough for lattice-based PQC: it flags any input-dependent difference, including leakage of public data such as ciphertexts, so a failing result does not by itself show that a secret leaks, and a masked implementation can still pass it. Labs add specific tests on intermediate values in the operations that handle secrets: NTT/INTT, polynomial multiplication, and modular reduction.
 
 4. **OT/ICS safety constraints** — Active scanning in OT environments can trigger safety system faults. Only passive-mode tools (CryptoNext COMPASS, pqc-flow in read-only mode) are appropriate for initial OT crypto inventory.
 
@@ -115,6 +115,8 @@ RFC 9794 (IETF, June 2025, Informational) defines terminology for post-quantum/t
 3. At least one algorithm must be shared between peers
 4. Silent downgrade on failure is prohibited
 
+The mechanism sits in the protocol document, not in RFC 9794. For TLS 1.3, the hybrid key exchange construction (draft-ietf-tls-hybrid-design, published as RFC 9954, Informational, July 2026, section 3.3) concatenates the two component shared secrets (classical || post-quantum) and inserts the result into the TLS 1.3 key schedule in place of the (EC)DHE secret, so a session only gets a hybrid secret if both components completed. Section 1.4 describes a non-hybrid result with a non-hybrid-aware peer as expected only if the hybrid-aware endpoint is willing to downgrade, so a test should confirm that any fallback is a visible, intended outcome.
+
 ### Real-world interoperability status (as of 2025):
 
 | Client                | OQS Server | Cloudflare                       | Legacy TLS 1.2     |
@@ -142,7 +144,7 @@ The non-specific fixed-vs-random TVLA test divides measurements into "fixed inpu
 - **Polynomial multiplication** — coefficient-wise multiplication in the Zq ring; leaks nonce information in ML-DSA signing
 - **Modular reduction** — conditional subtraction for q=3329 (ML-KEM); leaks in unmasked implementations
 
-**TVLA threshold**: |t| > 4.5 (the common threshold from Goodwill et al., NIST NIAT workshop 2011) indicates statistically significant leakage. |t| > 3.0 is used in strict evaluations.
+**TVLA threshold**: |t| > 4.5 (the common threshold from Goodwill et al., NIST NIAT workshop 2011) indicates statistically significant leakage; a lower threshold flags more points and makes false alarms more likely. A failure is leakage detected, not a demonstrated key recovery. The workshop tool runs a non-specific test on pre-recorded sample scores, not real traces.
 
 ### Implementation comparison:
 

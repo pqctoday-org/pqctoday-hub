@@ -10,8 +10,12 @@ Hash-based signatures were the first quantum-safe construction anyone trusted, b
 
 ## The Key Takeaway
 
-Reach for SLH-DSA when you want **the longest, most conservative security argument available** and you don't sign often: root CAs that issue once a year, firmware images stamped at the factory, code-signing certificates for ten-year-life embedded devices. (Note: SLH-DSA is not part of CNSA 2.0 — NSA's picks there are LMS/XMSS for firmware signing and ML-DSA-87 for general signing.) Reach for ML-DSA when signature size or throughput actually matters — TLS handshakes, JWTs, anything high-volume.
+Reach for SLH-DSA when you want **the longest, most conservative security argument available** and you don't sign often: root CAs that issue once a year, firmware images stamped at the factory, code-signing certificates for ten-year-life embedded devices. (Note: SLH-DSA is not part of CNSA 2.0 — NSA's FAQ says it "is not approved for any use in NSS"; NSA's picks there are LMS/XMSS for firmware signing and ML-DSA-87 for general signing.) Reach for ML-DSA when signature size or throughput actually matters — TLS handshakes, JWTs, anything high-volume.
 
 ## What's Happening
 
 FIPS 205 published in August 2024 with twelve parameter sets across NIST Levels 1, 3, and 5 (e.g. `SLH-DSA-SHA2-128s`, `SLH-DSA-SHAKE-256f`). The `-s` variants are smaller signatures / slower signing; the `-f` variants are faster signing / larger signatures. OpenSSL 3.5+, BoringSSL, Bouncy Castle, and PKCS#11 v3.2 HSMs (including the softhsmv3 build this module drives) all ship SLH-DSA today. Major browsers and TLS stacks have flagged it as a deferred candidate — the size cost makes it impractical at the handshake layer, but it remains the go-to for root-of-trust artifacts where you sign once and verify for decades.
+
+## How It Is Tested
+
+A validated SLH-DSA module is checked three ways. NIST's algorithm tests (ACVP) cover key generation, signing and verification, and a vendor registers options such as the parameter sets, internal or external interface, pure or pre-hash mode and, for signing, deterministic or hedged mode. The module also runs its own self-tests before first use: signing, verifying and key generation each get one, and if pure and pre-hash modes share the same code, testing one covers both. Finally the algorithm validation is only a prerequisite for the module certificate, not a substitute for it. This module's workshop replays eight published NIST verification cases (valid signatures, and ones NIST says must be rejected) through the in-browser engine; those are reference samples, not an official validation.

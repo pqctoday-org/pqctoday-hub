@@ -937,9 +937,9 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     architect:
       'The parameter explorer shows the size-versus-speed trade-off across the twelve sets, and the LMS/XMSS/SLH-DSA comparison says when a stateless scheme is worth its signature size.',
     researcher:
-      'FIPS 205 §9.2 context strings for domain separation and the deterministic mode are explored directly; the KAT tool verifies the implementation against the published vectors.',
+      'FIPS 205 §9.2 context strings for domain separation and the deterministic mode are explored directly; the Known Answer panel replays eight published NIST ACVP sigVer cases, valid and invalid, through the in-browser engine, and its other rows are functional round trips, not known-answer tests.',
     'cert-engineer':
-      'Generate keys across all twelve FIPS 205 parameter sets, sign in Pure and HashSLH-DSA modes, and verify with the KAT tool against the published vectors: parameter set and mode are what an algorithm test has to name.',
+      'Generate keys across all twelve FIPS 205 parameter sets and sign in Pure and HashSLH-DSA modes, then run the NIST sigVer sample in the Known Answer panel: eight published ACVP cases that the engine must accept or reject exactly as NIST expects (the other rows in that panel are functional round trips, not known-answer tests). Parameter set, interface, pure or pre-hash and deterministic mode are what an algorithm test has to name; the HashSLH-DSA Modes Learn step, What the lab tests, lists them with the IG 10.3.A self-tests and the CNSA 2.0 position.',
   },
   '/learn/sbom': {
     executive:

@@ -87,7 +87,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     situation:
       'Your software company wants to sell a secure communication product to an EU government ministry. The procurement specification requires a Common Criteria certification. You need to understand which EU body manages this certification and under which scheme.',
     question:
-      'Who issues the EUCC certificate (the EU version of Common Criteria), and under which scheme?',
+      'Who issues the EUCC certificate (EUCC applies Common Criteria under EU rules), and under which scheme?',
     bodyTypeOptions: [
       { id: 'standards-body', label: 'Standards Body' },
       { id: 'certification-body', label: 'Certification Body' },
@@ -101,7 +101,10 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
       { id: 'common-criteria', label: 'CCRA (international scheme)' },
     ],
     standardOptions: [
-      { id: 'eucc', label: 'EUCC (EU Cybersecurity Certification Scheme)' },
+      {
+        id: 'eucc',
+        label: 'EUCC (European Common Criteria-based cybersecurity certification scheme)',
+      },
       { id: 'nist-fips', label: 'NIST FIPS 140-3' },
       { id: 'etsi-ts', label: 'ETSI TS 103 744 certification' },
       { id: 'iso-15408', label: 'ISO/IEC 15408 (global CC, no EU-specific recognition)' },

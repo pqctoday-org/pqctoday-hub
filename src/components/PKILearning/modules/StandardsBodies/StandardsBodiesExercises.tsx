@@ -33,7 +33,7 @@ const EXERCISES = [
     badge: 'Compliance',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     scenario:
-      'Your legal team is preparing a PQC compliance brief and lists the following mandates. For each, identify: (a) which organization authored it, (b) whether that organization is governmental or non-governmental, (c) whether compliance is mandatory or advisory, and (d) what underlying technical standards it references:\n\n• FIPS 140-3\n• CNSA 2.0\n• ETSI TS 103 744\n• NIS2 Directive\n• ANSSI PQC Position Paper',
+      'Your legal team is preparing a PQC compliance brief and lists the following documents as requirements. For each, identify: (a) which organization authored it, (b) whether that organization is governmental or non-governmental, (c) whether compliance is mandatory or advisory, and (d) what underlying technical standards it references:\n\n• FIPS 140-3\n• CNSA 2.0\n• ETSI TS 103 744\n• NIS2 Directive\n• ANSSI PQC Position Paper',
     hint: 'Use the Body Classifier (Step 1) to verify your classifications, and the Organization Explorer (Step 2) to find the decision-making process and PQC outputs for each authoring organization.',
     step: 0,
   },

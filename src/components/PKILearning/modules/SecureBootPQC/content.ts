@@ -40,6 +40,9 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('ANSI X9.62'),
     getStandard('NIST SP 800-208'),
+    // Declared 23 Oct 2026: the "What the lab tests" panel quotes these two documents.
+    getStandard('NIST-FIPS140-3-IG-PQC'),
+    getStandard('NIST-ACVP'),
     getStandard('RFC 8017'),
     getStandard('RFC 9881'),
     // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3

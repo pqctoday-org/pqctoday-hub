@@ -586,6 +586,138 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               the same effect.
             </p>
           </div>
+
+          <div
+            data-testid="ig-ds-callout"
+            className="bg-primary/5 rounded-lg p-4 border border-primary/20 space-y-3"
+          >
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={16} className="text-primary shrink-0" />
+              <h4 className="text-sm font-bold text-foreground">
+                Hybrid in a validated module (IG D.S)
+              </h4>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Everything above is about how a hybrid KEM works. Whether a FIPS 140-3 validated
+              module may offer it as an <em>approved service</em> is a separate question, answered
+              by CMVP Implementation Guidance (IG) D.S, Key Encapsulation Mechanisms (last modified
+              9 April 2026). The IG calls an approved ML-KEM combined with one or more non-ML-KEM
+              schemes &ldquo;Scenario 2&rdquo;. The non-ML-KEM part may be approved or non-approved
+              (the IG&apos;s examples are X25519 and X448).
+            </p>
+            <div className="space-y-1">
+              <p className="text-xs font-bold text-foreground">
+                The five conditions: a module must implement, at a minimum, all of them
+              </p>
+              <ol className="text-xs text-muted-foreground list-decimal pl-5 space-y-1">
+                <li>An approved ML-KEM.</li>
+                <li>One or more non-ML-KEM schemes, approved or non-approved.</li>
+                <li>
+                  An approved key combiner: the shared secrets concatenated and fed into an SP
+                  800-56C key-derivation function (HKDF counts), or combined by an SP 800-133 §6.3
+                  method (concatenation, XOR, or key extraction using HMAC). The IG describes the SP
+                  800-133 §6.3 route only for combining ML-KEM shared secrets with those of approved
+                  key-agreement schemes (IG D.F Scenario 1 or 2).
+                </li>
+                <li>
+                  The module does not offer arbitrary hybrid combinations. It enforces a pre-defined
+                  set of hybrid schemes, for example SecP256r1MLKEM768, X25519MLKEM768 and
+                  SecP384r1MLKEM1024.
+                </li>
+                <li>
+                  For each of those sets, the module controls at least how the shared secrets are
+                  sequenced, for example the concatenation order.
+                </li>
+              </ol>
+              <p className="text-xs text-muted-foreground">
+                If any one is missing, Scenario 2 cannot be claimed, and any non-approved scheme the
+                module offers must be restricted to the non-approved mode only. The IG&apos;s own
+                examples: a software library with an approved ML-KEM and X25519 but no approved key
+                combiner, or a library with the first three items that does not enforce a specific
+                set of combinations or control the sequencing.
+              </p>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">The non-approved half.</strong> A non-approved
+              component such as X25519 is classified as a &ldquo;non-approved but allowed algorithm
+              with no security claimed&rdquo; (IG 2.4.A): it is listed in the Security Policy, not
+              on the certificate. It may be used only inside the approved hybrid, and the module
+              itself must enforce that. It cannot be used for other purposes in the approved mode or
+              offered as an independent approved service, such as a separate API call in a software
+              library, and operator guidance in the Security Policy cannot stand in for that
+              enforcement. The hybrid&apos;s claimed security strength comes from the ML-KEM, and
+              the hybrid service is then treated as an approved security service.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">Which real hybrids qualify.</strong> The IG says
+              the TLS 1.3 hybrid key exchange (it cites draft-ietf-tls-ecdhe-mlkem-01) may meet
+              Scenario 2 with the SP 800-56C HKDF as the approved combiner, if one of
+              SecP256r1MLKEM768, X25519MLKEM768 or SecP384r1MLKEM1024 is used, and notes that these
+              specifications may still be in draft form. It also says the X-Wing hybrid KEM
+              &ldquo;cannot yet meet the requirements of Scenario 2&rdquo; even though it uses an SP
+              800-56C one-step KDF as its combiner: at a minimum, SP 800-133 needs an update to
+              approve X-Wing&apos;s seed generation, because seed expansion using SHAKE to generate
+              the key pairs is not currently in SP 800-133. Separately, the CAVP prerequisites page
+              (updated 22 September 2026) lists X-Wing keyGen and encapDecap tests. Both statements
+              are published; CAVP itself says that acquiring a validation for each implemented
+              algorithm does not by itself meet the FIPS 140 module requirements.
+            </p>
+            <details>
+              <summary className="cursor-pointer text-xs font-semibold text-foreground hover:text-primary">
+                What the Security Policy shows, and what the lab tests
+              </summary>
+              <div className="mt-2 space-y-3">
+                <p className="text-xs text-muted-foreground">
+                  <strong className="text-foreground">What the Security Policy shows.</strong> The
+                  module records the claim in the Security Function Implementation table as
+                  &ldquo;KEM-Hybrid&rdquo; or &ldquo;KEM-Hybrid-Full&rdquo;, with entry names such
+                  as &ldquo;KEM-Hybrid X25519MLKEM768&rdquo;. The non-approved half is listed
+                  separately with the caveat &ldquo;no security claimed&rdquo;, citing IG D.S
+                  Scenario 2 and IG 2.4.A. Per the CMVP&apos;s supplemental guidance (last updated 8
+                  April 2026), &ldquo;KEM-Hybrid&rdquo; applies to a module that meets items 1 to 5
+                  but not the extra conditions for &ldquo;KEM-Hybrid-Full&rdquo;, and it can still
+                  be an approved service, even for a software library offering the hybrid KEM to a
+                  calling application.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  <strong className="text-foreground">Self-tests.</strong> Every approved scheme in
+                  the hybrid must be self-tested individually under IG 10.3.A. For the ML-KEM part
+                  that means known-answer self-tests for each ML-KEM function the module implements
+                  (encapsulation, decapsulation and key generation), with the decapsulation tests
+                  covering both the implicit-rejection and the non-rejection path, on at least one
+                  of ML-KEM-512, ML-KEM-768 or ML-KEM-1024 as implemented in approved mode. The IG
+                  currently has no separate self-test for the approved key combiner or for the
+                  non-approved half, beyond self-testing any approved algorithms used within, such
+                  as KDFs.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  <strong className="text-foreground">Algorithm testing (CAVP).</strong> The IG lets
+                  the approved pieces be tested separately (the ML-KEM and, with a non-approved
+                  other half, the approved algorithms beneath it, such as KDFs). Its other option is
+                  end-to-end tests of the full hybrid scheme, &ldquo;if available within
+                  CAVP&rdquo;; it says it will be updated with the specific tests after they become
+                  available. No hybrid-KEM specification appears in the ACVP specification index
+                  (pages.nist.gov/ACVP) as of 23 October 2026.
+                </p>
+              </div>
+            </details>
+            <p className="text-[10px] text-muted-foreground italic">
+              Not to be confused with IG 1.B, &ldquo;Hybrid Modules&rdquo; (new 19 August 2026):
+              that is about a module whose boundary combines a software or firmware component with a
+              disjoint hardware component. It has nothing to do with hybrid key exchange.
+            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+              <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
+                FIPS 140-3 Certification module
+              </Link>
+              <Link
+                to="/library?ref=NIST-FIPS140-3-IG-PQC"
+                className="text-primary hover:underline"
+              >
+                FIPS 140-3 Implementation Guidance (Library)
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

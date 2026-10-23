@@ -4,7 +4,9 @@ UEFI Secure Boot uses a cryptographic chain of trust (Platform Key, KEK, db) to 
 
 ### Why It Matters
 
-Migrating to ML-DSA-65 is the standard path, but it introduces a massive size impact. ML-DSA signatures are roughly 13x larger than RSA-2048, threatening to exceed the typical 32–64 KB limits of UEFI NVRAM and breaking the boot chain. Hardware TPM 2.0 also lacks native PQC support.
+Migrating to ML-DSA-65 is the standard path, but it introduces a massive size impact. ML-DSA signatures are roughly 13x larger than RSA-2048, threatening to exceed the typical 32–64 KB limits of UEFI NVRAM and breaking the boot chain. TPM 2.0 Library v185 (published by the Trusted Computing Group in March 2026) adds ML-DSA and ML-KEM, but TPMs built to earlier versions lack them and shipping chips follow the specification.
+
+A firmware signature has two sides that are checked differently. The device checks the signature with code that, for ML-DSA and LMS, can be tested through NIST's algorithm validation program (CAVP); no test specification is published yet for XMSS or HSS. The signer holds the private key: NIST SP 800-208 requires LMS and XMSS key generation and signing to happen inside a hardware module validated to FIPS 140 with Level 3 or higher physical security, and the NSA's CNSA 2.0 FAQ says signers that are National Security Systems must follow SP 800-208 (which means CMVP-validated hardware) or other NSA guidance, while a product that only verifies signatures needs only the CAVP test.
 
 ### The Key Takeaway
 

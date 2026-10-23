@@ -941,6 +941,8 @@ export interface TVLAStage {
   label: string
   description: string
   leaksIn: string[]
+  /** True for a stage described as encoding public output (the ciphertext or signature bytes). */
+  publicData: boolean
 }
 
 export const TVLA_STAGES: TVLAStage[] = [
@@ -949,36 +951,42 @@ export const TVLA_STAGES: TVLAStage[] = [
     label: 'Key Load',
     description: 'Loading secret key material into registers',
     leaksIn: ['mlkem-unmasked', 'mldsa-unmasked'],
+    publicData: false,
   },
   {
     id: 'ntt',
     label: 'NTT / INTT',
     description: 'Number Theoretic Transform — core lattice operation',
     leaksIn: ['mlkem-unmasked', 'mldsa-unmasked'],
+    publicData: false,
   },
   {
     id: 'poly-mul',
     label: 'Polynomial Multiplication',
     description: 'Coefficient-wise multiplication in Zq ring',
     leaksIn: ['mlkem-unmasked', 'mldsa-unmasked', 'mldsa-masked'],
+    publicData: false,
   },
   {
     id: 'mod-reduction',
     label: 'Modular Reduction',
     description: 'Reduction modulo q (3329 for ML-KEM)',
     leaksIn: ['mlkem-unmasked'],
+    publicData: false,
   },
   {
     id: 'sampling',
     label: 'Randomness Sampling',
     description: 'Generating random polynomials (CBD or rej. sampling)',
     leaksIn: [],
+    publicData: false,
   },
   {
     id: 'compress',
     label: 'Compression / Encoding',
     description: 'Encoding ciphertext or signature bytes',
     leaksIn: ['mlkem-unmasked'],
+    publicData: true,
   },
 ]
 

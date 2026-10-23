@@ -35,6 +35,7 @@ import {
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import { SlhDsaAcvpSigVerPanel } from './SlhDsaAcvpSigVerPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { PREHASH_OPTIONS as PREHASH_OPTIONS_BASE } from '@/components/Playground/tabs/softhsm/SoftHsmUI'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
@@ -923,6 +924,8 @@ export const SLHDSALiveDemo: React.FC = () => {
         label="Stateful Signatures Known Answer Tests"
         authorityNote="FIPS 205 · FIPS 180-4"
       />
+
+      <SlhDsaAcvpSigVerPanel />
 
       {hsm.isReady && (
         <div className="space-y-4">

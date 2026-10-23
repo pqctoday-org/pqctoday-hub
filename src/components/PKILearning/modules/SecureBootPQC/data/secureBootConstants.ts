@@ -313,8 +313,8 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     currentCrypto: 'RSA-2048 or ECDSA P-256 (AIK signing key)',
     hndlRisk: 'high',
     pqcMigrationPath:
-      'TPM 2.0 does not natively support ML-DSA AIK keys. Hybrid approach: TPM RSA quote + software ML-DSA binding. Full PQC requires next-generation TPM spec (TCG TPM Library Part 2 PQC extension, targeted 2027).',
-    tpmNative: false,
+      'TPM 2.0 Library v185 (TCG, March 2026) adds ML-DSA, and TCG names it for Attestation Keys, so a TPM that implements v185 can sign quotes with ML-DSA. A TPM built to an earlier library version needs the hybrid approach: TPM RSA quote + software ML-DSA binding. Product availability depends on the TPM vendor.',
+    tpmNative: true,
     standardsBody: 'TCG (Trusted Computing Group)',
   },
   {

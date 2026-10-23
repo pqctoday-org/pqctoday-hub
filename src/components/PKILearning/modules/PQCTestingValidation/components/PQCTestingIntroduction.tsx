@@ -107,8 +107,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             <p className="font-semibold text-destructive mb-1">Implementation Leakage</p>
             <p className="text-xs">
               ML-KEM and ML-DSA reference implementations leak key material via power analysis at
-              the NTT stage. Traditional TVLA methods must be adapted — fixed-vs-random test vectors
-              fail for lattice crypto.
+              the NTT stage. A fixed-vs-random TVLA test alone is not enough for lattice crypto: it
+              also flags public-data leakage, so labs add specific tests on the secret-handling
+              stages.
             </p>
           </div>
         </div>
@@ -439,6 +440,16 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             </p>
           </div>
         </div>
+
+        <p className="mt-3">
+          The mechanism itself is in the protocol document, not in RFC 9794. For TLS 1.3 the hybrid
+          key exchange construction (draft-ietf-tls-hybrid-design, published as RFC 9954,
+          Informational, July 2026) concatenates the two component shared secrets and uses the
+          result in the key schedule in place of the (EC)DHE secret, so a session only gets a hybrid
+          secret if both components completed. It describes a non-hybrid result as the expected
+          outcome only when the hybrid-aware endpoint is willing to downgrade (§1.4), so a test
+          should confirm that any fallback is a visible, intended outcome.
+        </p>
 
         <p className="mt-3">
           Test coverage must include: hybrid client → hybrid server, hybrid client → classical-only

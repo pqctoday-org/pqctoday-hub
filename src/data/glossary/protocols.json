@@ -604,8 +604,8 @@
   },
   {
     "term": "RFC 9794",
-    "definition": "IETF standard (2025) defining design rules for hybrid cryptographic schemes combining classical and post-quantum algorithms. Core rule: both the classical and PQC components of a hybrid scheme must complete successfully — no silent fallback is permitted if either component fails.",
-    "technicalNote": "RFC 9794 supersedes earlier hybrid design patterns and formalizes the \"security-conservative\" hybrid approach. Key rules: (1) shared secret = KDF(classical_secret || pqc_secret), (2) both KEMs must run to completion, (3) at least one algorithm from the set must be shared between peers, (4) ciphertext fragmentation from oversized ClientHellos (>1,400B) must not cause silent failure. Chrome 130+ and Cloudflare implement RFC 9794-compliant X25519+ML-KEM-768.",
+    "definition": "IETF Informational RFC (June 2025) that defines terminology for post-quantum/traditional (PQ/T) hybrid schemes, so that protocols, standards and organisations use the word \"hybrid\" consistently. It is a reference terminology guide and does not set protocol rules.",
+    "technicalNote": "Defines terms such as PQ/T hybrid scheme, PQ/T hybrid KEM, PQ/T hybrid digital signature, PQ/T hybrid composite scheme, PQ/T hybrid combiner, PQ/T parallel PKI and multi-certificate authentication. Its Security Considerations section says the document itself does not have a security impact on Internet protocols and that the security considerations for each hybrid protocol belong in that protocol's own specification (for TLS 1.3 key exchange, RFC 9954). A test rule such as \"both components must complete, no silent downgrade\" is test practice, not an RFC 9794 requirement.",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "advanced",
     "category": "protocol"

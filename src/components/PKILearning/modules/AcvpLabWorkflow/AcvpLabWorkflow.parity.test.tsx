@@ -44,7 +44,7 @@ describe('AcvpLabWorkflowModule render parity', () => {
       </EmbedProvider>
     )
     const notice = screen.getByTestId('acvp-lab-status-notice')
-    expect(notice).toHaveTextContent('Reviewed by the owner')
+    expect(notice).toHaveTextContent('Corrected since the owner review, awaiting re-sign-off')
     expect(notice).not.toHaveTextContent(/draft/i)
     expect(notice).toHaveTextContent('It is not an ACVTS verdict, a CAVP/CMVP certificate')
     const executionPath = screen.getByText('Confirm the execution path.').closest('li')

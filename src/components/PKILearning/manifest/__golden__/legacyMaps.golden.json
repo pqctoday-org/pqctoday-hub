@@ -3517,31 +3517,38 @@
     "pqc-testing-validation": [
       {
         "id": "passive-discovery-lab",
-        "label": "Passive Crypto Discovery Lab"
+        "label": "Passive Crypto Discovery Lab",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "active-pqc-scanner",
-        "label": "Active PQC Server Scanner"
+        "label": "Active PQC Server Scanner",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "performance-benchmark-designer",
-        "label": "Performance Benchmark Designer"
+        "label": "Performance Benchmark Designer",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "interop-test-matrix",
-        "label": "Interoperability Test Matrix"
+        "label": "Interoperability Test Matrix",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "tvla-leakage-analyzer",
-        "label": "TVLA Leakage Analyzer"
+        "label": "TVLA Leakage Analyzer",
+        "paths": ["network-practitioner", "certification-engineer"]
       },
       {
         "id": "test-strategy-builder",
-        "label": "Test Strategy Builder"
+        "label": "Test Strategy Builder",
+        "paths": ["network-practitioner"]
       },
       {
         "id": "acvp-validator",
-        "label": "ACVP Workflow & Validation Tests"
+        "label": "ACVP Workflow & Validation Tests",
+        "paths": ["network-practitioner", "certification-engineer"]
       }
     ],
     "pci-certification": [

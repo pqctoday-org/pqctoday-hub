@@ -16,7 +16,8 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'acvp-lab-workflow',
-  lastReviewed: '2026-10-22',
+  // No lastReviewed: facts were corrected after the owner's 22 October 2026 sign-off, so
+  // the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts).
   version: '0.1.0',
   lastEdited: '2026-10-23',
 
@@ -49,9 +50,9 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    reviewStatus: 'Reviewed by the owner',
+    reviewStatus: 'Corrected since the owner review; awaiting re-sign-off',
     acvpSpecRevision:
-      'draft-ietf-acvp-spec-01 (independent draft, unchanged since December 2020; usnistgov/ACVP @ ea8b0c5)',
+      'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',
     publicSampleCommit: 'usnistgov/ACVP-Server @ 975de31',
     evidenceClassCount: '8',

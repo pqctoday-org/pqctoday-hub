@@ -13,3 +13,7 @@ Stateful signatures are so secure they are already authorized by NIST and strict
 ### What's Happening
 
 LMS and XMSS are the first PQC algorithms to see real-world deployment, already standardized under NIST SP 800-208 and mandated by NSA CNSA 2.0 for firmware and software signing in national security systems.
+
+### How It Is Tested
+
+A certificate for a module that signs with LMS or XMSS rests on four checks. NIST publishes an algorithm test for LMS (key generation, signing and verification) but no ACVP specification for XMSS, XMSS^MT or HSS, and the test does not check whether a private key can be exported or a one-time key reused. The module also runs its own self-tests before first use. SP 800-208 requires key generation and signing to stay inside a validated hardware module with Level 3 or higher physical security and no export of private keys; a module that only verifies signatures does not have to meet those hardware rules. For national security systems, NSA's CNSA 2.0 FAQ says a product that only verifies signatures needs algorithm testing (CAVP) alone, while a signer that is itself a national security system must use CMVP-validated hardware, with no waivers. NSA allows LMS and XMSS (all parameters, LMS with SHA-256/192 recommended), not HSS or XMSS^MT, and says SLH-DSA is not approved for any use in national security systems.
