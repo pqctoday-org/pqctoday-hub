@@ -23353,7 +23353,7 @@
     {
       "id": "mldsa_sigver_depth_test",
       "path": "src/data/acvp/mldsa_sigver_depth_test.json",
-      "sha256": "3ac1b54426b19ebd64630e699ba7f2216944274a7233426ebf7717be30199246",
+      "sha256": "28b71374ecbbf1e343b09e5477eade4335fae9c908b1ebe159dc2e2389dc82be",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -24531,6 +24531,214 @@
             "tcId": 89
           },
           "lineage": ["mldsa-sigver-depth-test-43"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/1/tests/12",
+          "pointer": "/testGroups/1/tests/12",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 6487,
+            "contextBytes": 208,
+            "reason": "valid signature and message - signature should verify successfully"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 21
+          },
+          "lineage": ["mldsa-sigver-depth-test-3"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/1/tests/13",
+          "pointer": "/testGroups/1/tests/13",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1915,
+            "contextBytes": 161,
+            "reason": "modified signature - z"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 23
+          },
+          "lineage": ["mldsa-sigver-depth-test-3"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/1/tests/14",
+          "pointer": "/testGroups/1/tests/14",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 8192,
+            "contextBytes": 0,
+            "reason": "modified signature - hint"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 29
+          },
+          "lineage": ["mldsa-sigver-depth-test-3"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/3/tests/12",
+          "pointer": "/testGroups/3/tests/12",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1391,
+            "contextBytes": 0,
+            "reason": "modified signature - commitment"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 50
+          },
+          "lineage": ["mldsa-sigver-depth-test-17"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/3/tests/13",
+          "pointer": "/testGroups/3/tests/13",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 749,
+            "contextBytes": 93,
+            "reason": "modified message"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 55
+          },
+          "lineage": ["mldsa-sigver-depth-test-17"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/3/tests/14",
+          "pointer": "/testGroups/3/tests/14",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 4527,
+            "contextBytes": 214,
+            "reason": "modified message"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 58
+          },
+          "lineage": ["mldsa-sigver-depth-test-17"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/5/tests/13",
+          "pointer": "/testGroups/5/tests/13",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 6336,
+            "contextBytes": 206,
+            "reason": "modified message"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 83
+          },
+          "lineage": ["mldsa-sigver-depth-test-31"]
+        },
+        {
+          "caseId": "mldsa_sigver_depth_test#/testGroups/5/tests/14",
+          "pointer": "/testGroups/5/tests/14",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1140,
+            "contextBytes": 16,
+            "reason": "modified signature - z"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 90
+          },
+          "lineage": ["mldsa-sigver-depth-test-31"]
         }
       ],
       "lineage": [
@@ -24576,7 +24784,12 @@
         },
         {
           "id": "mldsa-sigver-depth-test-3",
-          "appliesTo": ["mldsa_sigver_depth_test#/testGroups/1/tests/0"],
+          "appliesTo": [
+            "mldsa_sigver_depth_test#/testGroups/1/tests/0",
+            "mldsa_sigver_depth_test#/testGroups/1/tests/12",
+            "mldsa_sigver_depth_test#/testGroups/1/tests/13",
+            "mldsa_sigver_depth_test#/testGroups/1/tests/14"
+          ],
           "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (signatureInterface=external, preHash=preHash; dedicated SigVer case with upstream testPassed/reason)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with the upstream context: CKM_HASH_ML_DSA_<hash> for SHAKE-128; CKR_OK expected when testPassed, CKR_SIGNATURE_INVALID otherwise",
           "transformations": [
@@ -24591,6 +24804,18 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the lowest-tcId case with a 0-byte context and the lowest-tcId case with a 255-byte (maximum) context, whatever their upstream disposition, plus any empty-message case, excluding tcIds already carried by mldsa_sigver_test.json (context-length boundary cases). external/preHash groups: every case whose hashAlg has a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism, positive and negative (the upstream dispositions for HashML-DSA, which mldsa_sigver_test.json did not byte-copy); the SHA2-512/224 and SHA2-512/256 cases are listed in notExecuted as metadata only. internal-interface groups are not used (covered or listed by mldsa_sigver_test.json)."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 21 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 23 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 29 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -24856,7 +25081,12 @@
         },
         {
           "id": "mldsa-sigver-depth-test-17",
-          "appliesTo": ["mldsa_sigver_depth_test#/testGroups/3/tests/0"],
+          "appliesTo": [
+            "mldsa_sigver_depth_test#/testGroups/3/tests/0",
+            "mldsa_sigver_depth_test#/testGroups/3/tests/12",
+            "mldsa_sigver_depth_test#/testGroups/3/tests/13",
+            "mldsa_sigver_depth_test#/testGroups/3/tests/14"
+          ],
           "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (signatureInterface=external, preHash=preHash; dedicated SigVer case with upstream testPassed/reason)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with the upstream context: CKM_HASH_ML_DSA_<hash> for SHA3-256; CKR_OK expected when testPassed, CKR_SIGNATURE_INVALID otherwise",
           "transformations": [
@@ -24871,6 +25101,18 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the lowest-tcId case with a 0-byte context and the lowest-tcId case with a 255-byte (maximum) context, whatever their upstream disposition, plus any empty-message case, excluding tcIds already carried by mldsa_sigver_test.json (context-length boundary cases). external/preHash groups: every case whose hashAlg has a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism, positive and negative (the upstream dispositions for HashML-DSA, which mldsa_sigver_test.json did not byte-copy); the SHA2-512/224 and SHA2-512/256 cases are listed in notExecuted as metadata only. internal-interface groups are not used (covered or listed by mldsa_sigver_test.json)."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 50 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 55 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 58 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -25136,7 +25378,11 @@
         },
         {
           "id": "mldsa-sigver-depth-test-31",
-          "appliesTo": ["mldsa_sigver_depth_test#/testGroups/5/tests/0"],
+          "appliesTo": [
+            "mldsa_sigver_depth_test#/testGroups/5/tests/0",
+            "mldsa_sigver_depth_test#/testGroups/5/tests/13",
+            "mldsa_sigver_depth_test#/testGroups/5/tests/14"
+          ],
           "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (signatureInterface=external, preHash=preHash; dedicated SigVer case with upstream testPassed/reason)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with the upstream context: CKM_HASH_ML_DSA_<hash> for SHA3-512; CKR_OK expected when testPassed, CKR_SIGNATURE_INVALID otherwise",
           "transformations": [
@@ -25151,6 +25397,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic. external/pure groups: the lowest-tcId case with a 0-byte context and the lowest-tcId case with a 255-byte (maximum) context, whatever their upstream disposition, plus any empty-message case, excluding tcIds already carried by mldsa_sigver_test.json (context-length boundary cases). external/preHash groups: every case whose hashAlg has a PKCS#11 v3.2 CKM_HASH_ML_DSA_<hash> mechanism, positive and negative (the upstream dispositions for HashML-DSA, which mldsa_sigver_test.json did not byte-copy); the SHA2-512/224 and SHA2-512/256 cases are listed in notExecuted as metadata only. internal-interface groups are not used (covered or listed by mldsa_sigver_test.json)."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 83 (tgId 6) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 90 (tgId 6) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -25442,7 +25696,15 @@
             "mldsa_sigver_depth_test#/testGroups/5/tests/9",
             "mldsa_sigver_depth_test#/testGroups/5/tests/10",
             "mldsa_sigver_depth_test#/testGroups/5/tests/11",
-            "mldsa_sigver_depth_test#/testGroups/5/tests/12"
+            "mldsa_sigver_depth_test#/testGroups/5/tests/12",
+            "mldsa_sigver_depth_test#/testGroups/1/tests/12",
+            "mldsa_sigver_depth_test#/testGroups/1/tests/13",
+            "mldsa_sigver_depth_test#/testGroups/1/tests/14",
+            "mldsa_sigver_depth_test#/testGroups/3/tests/12",
+            "mldsa_sigver_depth_test#/testGroups/3/tests/13",
+            "mldsa_sigver_depth_test#/testGroups/3/tests/14",
+            "mldsa_sigver_depth_test#/testGroups/5/tests/13",
+            "mldsa_sigver_depth_test#/testGroups/5/tests/14"
           ],
           "fields": ["pk", "signature"],
           "note": "WS-F ACVP-format prototype fixture: the full pinned upstream NIST ACVP-Server file (usnistgov/ACVP-Server@975de31e, see PROVENANCE.json beside it); this curated vector file is a subset of it."
@@ -25454,7 +25716,7 @@
     {
       "id": "mldsa_sigver_test",
       "path": "src/data/acvp/mldsa_sigver_test.json",
-      "sha256": "3a6a7c37b05b196e8a6f5b041992fea946c2a9cc101d785aff70d3684633a84e",
+      "sha256": "2fd0a32037ea1082913dbd80d83dc070bc2da6fabfdd31523ecad40975f07d57",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -25515,6 +25777,18 @@
         },
         {
           "pointer": "/localMutations",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/6/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/7/tests",
+          "kind": "array"
+        },
+        {
+          "pointer": "/testGroups/8/tests",
           "kind": "array"
         }
       ],
@@ -26071,6 +26345,206 @@
           },
           "evidenceClass": "product-mechanism-probe",
           "lineage": ["mldsa-sigver-test-mutations"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/6/tests/0",
+          "pointer": "/testGroups/6/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 6487,
+            "contextBytes": 208
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 21
+          },
+          "lineage": ["mldsa-sigver-test-1-tg2"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/6/tests/1",
+          "pointer": "/testGroups/6/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1915,
+            "contextBytes": 161
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 23
+          },
+          "lineage": ["mldsa-sigver-test-1-tg2"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/6/tests/2",
+          "pointer": "/testGroups/6/tests/2",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-44",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 8192,
+            "contextBytes": 0
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 29
+          },
+          "lineage": ["mldsa-sigver-test-1-tg2"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/7/tests/0",
+          "pointer": "/testGroups/7/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1391,
+            "contextBytes": 0
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 50
+          },
+          "lineage": ["mldsa-sigver-test-1-tg4"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/7/tests/1",
+          "pointer": "/testGroups/7/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 749,
+            "contextBytes": 93
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 55
+          },
+          "lineage": ["mldsa-sigver-test-1-tg4"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/7/tests/2",
+          "pointer": "/testGroups/7/tests/2",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-65",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 4527,
+            "contextBytes": 214
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 58
+          },
+          "lineage": ["mldsa-sigver-test-1-tg4"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/8/tests/0",
+          "pointer": "/testGroups/8/tests/0",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 6336,
+            "contextBytes": 206
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 83
+          },
+          "lineage": ["mldsa-sigver-test-1-tg6"]
+        },
+        {
+          "caseId": "mldsa_sigver_test#/testGroups/8/tests/1",
+          "pointer": "/testGroups/8/tests/1",
+          "algorithm": {
+            "name": "ML-DSA",
+            "revision": "FIPS204"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "ML-DSA-87",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "externalMu": false,
+            "messageBytes": 1140,
+            "contextBytes": 16
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 90
+          },
+          "lineage": ["mldsa-sigver-test-1-tg6"]
         }
       ],
       "lineage": [
@@ -26512,6 +26986,85 @@
               "detail": "PQC Today-authored mutation (localMutations[].authoredBy); never reported as a NIST vector."
             }
           ]
+        },
+        {
+          "id": "mldsa-sigver-test-1-tg2",
+          "appliesTo": [
+            "mldsa_sigver_test#/testGroups/6/tests/0",
+            "mldsa_sigver_test#/testGroups/6/tests/1",
+            "mldsa_sigver_test#/testGroups/6/tests/2"
+          ],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 21 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 23 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 29 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-1-tg4",
+          "appliesTo": [
+            "mldsa_sigver_test#/testGroups/7/tests/0",
+            "mldsa_sigver_test#/testGroups/7/tests/1",
+            "mldsa_sigver_test#/testGroups/7/tests/2"
+          ],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 50 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 55 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 58 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            }
+          ]
+        },
+        {
+          "id": "mldsa-sigver-test-1-tg6",
+          "appliesTo": [
+            "mldsa_sigver_test#/testGroups/8/tests/0",
+            "mldsa_sigver_test#/testGroups/8/tests/1"
+          ],
+          "upstreamOperation": "ML-DSA sigVer FIPS204 AFT (dedicated SigVer cases with upstream testPassed/reason)",
+          "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify (CKM_ML_DSA; vendor CKM_ML_DSA_EXTERNAL_MU for externalMu groups)",
+          "transformations": [
+            {
+              "type": "field-drop",
+              "detail": "upstream fields not carried: deferred, sk"
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 83 (tgId 6) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 90 (tgId 6) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            }
+          ]
         }
       ],
       "copies": [
@@ -26539,7 +27092,15 @@
             "mldsa_sigver_test#/testGroups/4/tests/0",
             "mldsa_sigver_test#/testGroups/4/tests/1",
             "mldsa_sigver_test#/testGroups/5/tests/0",
-            "mldsa_sigver_test#/testGroups/5/tests/1"
+            "mldsa_sigver_test#/testGroups/5/tests/1",
+            "mldsa_sigver_test#/testGroups/6/tests/0",
+            "mldsa_sigver_test#/testGroups/6/tests/1",
+            "mldsa_sigver_test#/testGroups/6/tests/2",
+            "mldsa_sigver_test#/testGroups/7/tests/0",
+            "mldsa_sigver_test#/testGroups/7/tests/1",
+            "mldsa_sigver_test#/testGroups/7/tests/2",
+            "mldsa_sigver_test#/testGroups/8/tests/0",
+            "mldsa_sigver_test#/testGroups/8/tests/1"
           ],
           "fields": ["pk", "signature"],
           "note": "WS-F ACVP-format prototype fixture: the full pinned upstream NIST ACVP-Server file (usnistgov/ACVP-Server@975de31e, see PROVENANCE.json beside it); this curated vector file is a subset of it."
@@ -39833,7 +40394,7 @@
     {
       "id": "slhdsa_prehash_siggen_sha2_test",
       "path": "src/data/acvp/slhdsa_prehash_siggen_sha2_test.json",
-      "sha256": "cc6f9c356869de8dab94448fe8ce650669ac52946ce2044a8cc4cfff65729c23",
+      "sha256": "c1e970ae811eca3cc5bb04065bf26e17041b67f7b495ca0a213ddf0cf264d18b",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -41393,6 +41954,306 @@
             "tcId": 212
           },
           "lineage": ["slhdsa-prehash-siggen-sha2-test-tg24"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10",
+          "pointer": "/testGroups/0/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 4405,
+            "contextBytes": 69,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 8
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg2"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11",
+          "pointer": "/testGroups/0/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 4777,
+            "contextBytes": 110,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 16
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg2"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10",
+          "pointer": "/testGroups/1/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-192f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 1,
+            "contextBytes": 247,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 27
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg4"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11",
+          "pointer": "/testGroups/1/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-192f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2862,
+            "contextBytes": 0,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 4,
+            "tcId": 35
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg4"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10",
+          "pointer": "/testGroups/2/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-256f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 8192,
+            "contextBytes": 255,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 48
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg6"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11",
+          "pointer": "/testGroups/2/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-256f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 3157,
+            "contextBytes": 152,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 6,
+            "tcId": 53
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg6"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10",
+          "pointer": "/testGroups/3/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2220,
+            "contextBytes": 229,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 20,
+            "tcId": 165
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg20"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11",
+          "pointer": "/testGroups/3/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2365,
+            "contextBytes": 0,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 20,
+            "tcId": 173
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg20"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10",
+          "pointer": "/testGroups/4/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-192s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 4297,
+            "contextBytes": 159,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 22,
+            "tcId": 184
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg22"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11",
+          "pointer": "/testGroups/4/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-192s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 1,
+            "contextBytes": 255,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 22,
+            "tcId": 191
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg22"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10",
+          "pointer": "/testGroups/5/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-256s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 5698,
+            "contextBytes": 126,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 24,
+            "tcId": 210
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg24"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11",
+          "pointer": "/testGroups/5/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-256s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 1114,
+            "contextBytes": 0,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 24,
+            "tcId": 213
+          },
+          "lineage": ["slhdsa-prehash-siggen-sha2-test-tg24"]
         }
       ],
       "lineage": [
@@ -41408,7 +42269,9 @@
             "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/6",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/7",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/8",
-            "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/9"
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/9",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -41424,6 +42287,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 8 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 16 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -41439,7 +42310,9 @@
             "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/6",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/7",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/8",
-            "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/9"
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/9",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -41455,6 +42328,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 27 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 35 (tgId 4) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -41470,7 +42351,9 @@
             "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/6",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/7",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/8",
-            "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/9"
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/9",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -41486,6 +42369,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 48 (tgId 6) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 53 (tgId 6) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -41501,7 +42392,9 @@
             "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/6",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/7",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/8",
-            "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/9"
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/9",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -41517,6 +42410,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 165 (tgId 20) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 173 (tgId 20) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -41532,7 +42433,9 @@
             "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/6",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/7",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/8",
-            "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/9"
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/9",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -41548,6 +42451,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 184 (tgId 22) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 191 (tgId 22) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -41563,7 +42474,9 @@
             "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/6",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/7",
             "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/8",
-            "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/9"
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/9",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10",
+            "slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -41579,6 +42492,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 210 (tgId 24) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 213 (tgId 24) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         }
@@ -41590,7 +42511,7 @@
     {
       "id": "slhdsa_prehash_siggen_shake_test",
       "path": "src/data/acvp/slhdsa_prehash_siggen_shake_test.json",
-      "sha256": "78d037d84db69dcbc41485b56bb09d8a6b94483143654f8ac051eccab7ca37d4",
+      "sha256": "920afd4e88aae3137f73d21296b155f0f8f17351d8e2b071d1bae99d9d6b6520",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -43150,6 +44071,306 @@
             "tcId": 270
           },
           "lineage": ["slhdsa-prehash-siggen-shake-test-tg30"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10",
+          "pointer": "/testGroups/0/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 8187,
+            "contextBytes": 60,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 8,
+            "tcId": 65
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg8"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11",
+          "pointer": "/testGroups/0/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 33,
+            "contextBytes": 0,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 8,
+            "tcId": 71
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg8"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10",
+          "pointer": "/testGroups/1/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-192f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 519,
+            "contextBytes": 249,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 10,
+            "tcId": 85
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg10"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11",
+          "pointer": "/testGroups/1/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-192f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 5361,
+            "contextBytes": 49,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 10,
+            "tcId": 90
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg10"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10",
+          "pointer": "/testGroups/2/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-256f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 237,
+            "contextBytes": 37,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 12,
+            "tcId": 110
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg12"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11",
+          "pointer": "/testGroups/2/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-256f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 4197,
+            "contextBytes": 202,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 12,
+            "tcId": 114
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg12"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10",
+          "pointer": "/testGroups/3/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 7855,
+            "contextBytes": 202,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 221
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg26"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11",
+          "pointer": "/testGroups/3/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 1765,
+            "contextBytes": 12,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 224
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg26"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10",
+          "pointer": "/testGroups/4/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-192s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2955,
+            "contextBytes": 189,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 28,
+            "tcId": 242
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg28"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11",
+          "pointer": "/testGroups/4/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-192s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 495,
+            "contextBytes": 221,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 28,
+            "tcId": 247
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg28"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10",
+          "pointer": "/testGroups/5/tests/10",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-256s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 5187,
+            "contextBytes": 83,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 30,
+            "tcId": 259
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg30"]
+        },
+        {
+          "caseId": "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11",
+          "pointer": "/testGroups/5/tests/11",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigGen-deterministic",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-256s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2079,
+            "contextBytes": 0,
+            "deterministic": true
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 30,
+            "tcId": 264
+          },
+          "lineage": ["slhdsa-prehash-siggen-shake-test-tg30"]
         }
       ],
       "lineage": [
@@ -43165,7 +44386,9 @@
             "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/6",
             "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/7",
             "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/8",
-            "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/9"
+            "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/9",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -43181,6 +44404,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 65 (tgId 8) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 71 (tgId 8) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -43196,7 +44427,9 @@
             "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/6",
             "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/7",
             "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/8",
-            "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/9"
+            "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/9",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -43212,6 +44445,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 85 (tgId 10) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 90 (tgId 10) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -43227,7 +44468,9 @@
             "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/6",
             "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/7",
             "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/8",
-            "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/9"
+            "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/9",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -43243,6 +44486,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 110 (tgId 12) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 114 (tgId 12) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -43258,7 +44509,9 @@
             "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/6",
             "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/7",
             "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/8",
-            "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/9"
+            "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/9",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -43274,6 +44527,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 221 (tgId 26) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 224 (tgId 26) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -43289,7 +44550,9 @@
             "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/6",
             "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/7",
             "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/8",
-            "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/9"
+            "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/9",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -43305,6 +44568,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 242 (tgId 28) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 247 (tgId 28) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -43320,7 +44591,9 @@
             "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/6",
             "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/7",
             "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/8",
-            "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/9"
+            "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/9",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10",
+            "slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11"
           ],
           "upstreamOperation": "SLH-DSA sigGen FIPS205 AFT (signatureInterface=external, preHash=preHash, deterministic=true)",
           "localOperation": "deterministic HashSLH-DSA SigGen via PKCS#11: C_CreateObject(CKK_SLH_DSA, CKA_VALUE = upstream sk), C_SignInit(CKM_HASH_SLH_DSA_<hash>, CKH_DETERMINISTIC_REQUIRED + upstream context), C_Sign; output byte-compared to the upstream signature. The same tuple also drives C_VerifyInit/C_Verify of the upstream signature, a CKH_HEDGE_REQUIRED sign+verify round-trip, and the message-based C_MessageSignInit/C_SignMessage + C_MessageVerifyInit/C_VerifyMessage pair.",
@@ -43336,6 +44609,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and exhaustive over the dimension this file exists to close: every one of the 12 external/preHash deterministic=true groups (one per parameter set) contributes exactly the 10 cases whose hashAlg has a PKCS#11 v3.2 6.69.7 CKM_HASH_SLH_DSA_<hash> mechanism, i.e. all 10 x 12 = 120 (mechanism, parameter set) pairs the HashSLH-DSA capability cells enumerate. No case is chosen by shortest message or any other tie-break because none is discarded. The two upstream hashAlg values with no PKCS#11 mechanism (SHA2-512/224, SHA2-512/256) are listed in notExecuted, as are the internal-interface groups, the external/pure groups (already carried by slhdsa_ctx_test.json and slhdsa_siggen_ctx0_test.json) and the deterministic=false preHash groups (the upstream additionalRandomness cannot be injected through CK_SIGN_ADDITIONAL_CONTEXT, so their signatures are not reproducible; hedged signing is exercised as a round-trip over this file's key material instead). One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 259 (tgId 30) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 264 (tgId 30) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         }
@@ -43347,7 +44628,7 @@
     {
       "id": "slhdsa_prehash_sigver_sha2_test",
       "path": "src/data/acvp/slhdsa_prehash_sigver_sha2_test.json",
-      "sha256": "3fab53661bf18e5566e45e9184c553c59240580f4ce230bf77b9f2c5646da998",
+      "sha256": "ea7ce28d39bbe48b27da4a6ccc20c2331eadb1845583b24ef5cf60279f422f86",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -43687,6 +44968,56 @@
             "tcId": 280
           },
           "lineage": ["slhdsa-prehash-sigver-sha2-test-tg20"]
+        },
+        {
+          "caseId": "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/12",
+          "pointer": "/testGroups/0/tests/12",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 7255,
+            "contextBytes": 53,
+            "reason": "modified signature - R"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 20,
+            "tcId": 270
+          },
+          "lineage": ["slhdsa-prehash-sigver-sha2-test-tg20"]
+        },
+        {
+          "caseId": "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/13",
+          "pointer": "/testGroups/0/tests/13",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2695,
+            "contextBytes": 139,
+            "reason": "invalid signature - too large"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 20,
+            "tcId": 278
+          },
+          "lineage": ["slhdsa-prehash-sigver-sha2-test-tg20"]
         }
       ],
       "lineage": [
@@ -43704,7 +45035,9 @@
             "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/8",
             "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/9",
             "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/10",
-            "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/11"
+            "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/11",
+            "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/12",
+            "slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/13"
           ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "HashSLH-DSA SigVer via PKCS#11 C_VerifyInit/C_Verify with CKM_HASH_SLH_DSA_<hash> and CK_SIGN_ADDITIONAL_CONTEXT (upstream context): positive cases must return CKR_OK, modified-message/modified-signature negatives CKR_SIGNATURE_INVALID, too-small/too-large signatures CKR_SIGNATURE_LEN_RANGE (PKCS#11 v3.2 5.1.6).",
@@ -43720,6 +45053,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and size-budgeted. The two cheapest parameter sets (SLH-DSA-SHA2-128s and SLH-DSA-SHAKE-128s, 7856-byte signatures) contribute their WHOLE external/preHash sigVer group minus the cases whose hashAlg has no PKCS#11 mechanism - 12 cases each, keeping the upstream testPassed and reason verbatim. Between them they carry all six upstream negative reasons (modified message; modified signature - R / SIGHT / SIGFORS; invalid signature - too small / too large) in both hash families. The other ten parameter sets' preHash sigVer groups are listed in notExecuted with why=subset-size-budget (their signatures run 16 KB to 50 KB each; their positive-polarity verify coverage comes from verifying the upstream signatures carried by slhdsa_prehash_siggen_<family>_test.json). Cases whose hashAlg has no CKM_HASH_SLH_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) and the internal-interface and external/pure groups are listed in notExecuted as metadata only. One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 270 (tgId 20) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 278 (tgId 20) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         }
@@ -43731,7 +45072,7 @@
     {
       "id": "slhdsa_prehash_sigver_shake_test",
       "path": "src/data/acvp/slhdsa_prehash_sigver_shake_test.json",
-      "sha256": "8c3964a62fff431671c1d0040e985ac7bf7730e437716d3675dd1113a93b7717",
+      "sha256": "48d868b5e0954a4c311f0379e977016d40ddd5a5b69304593c9094fcf6d0675a",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -44071,6 +45412,56 @@
             "tcId": 363
           },
           "lineage": ["slhdsa-prehash-sigver-shake-test-tg26"]
+        },
+        {
+          "caseId": "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/12",
+          "pointer": "/testGroups/0/tests/12",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 4398,
+            "contextBytes": 137,
+            "reason": "valid signature and message - signature should verify successfully"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 351
+          },
+          "lineage": ["slhdsa-prehash-sigver-shake-test-tg26"]
+        },
+        {
+          "caseId": "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/13",
+          "pointer": "/testGroups/0/tests/13",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 1084,
+            "contextBytes": 25,
+            "reason": "valid signature and message - signature should verify successfully"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 364
+          },
+          "lineage": ["slhdsa-prehash-sigver-shake-test-tg26"]
         }
       ],
       "lineage": [
@@ -44088,7 +45479,9 @@
             "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/8",
             "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/9",
             "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/10",
-            "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/11"
+            "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/11",
+            "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/12",
+            "slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/13"
           ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "HashSLH-DSA SigVer via PKCS#11 C_VerifyInit/C_Verify with CKM_HASH_SLH_DSA_<hash> and CK_SIGN_ADDITIONAL_CONTEXT (upstream context): positive cases must return CKR_OK, modified-message/modified-signature negatives CKR_SIGNATURE_INVALID, too-small/too-large signatures CKR_SIGNATURE_LEN_RANGE (PKCS#11 v3.2 5.1.6).",
@@ -44104,6 +45497,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic and size-budgeted. The two cheapest parameter sets (SLH-DSA-SHA2-128s and SLH-DSA-SHAKE-128s, 7856-byte signatures) contribute their WHOLE external/preHash sigVer group minus the cases whose hashAlg has no PKCS#11 mechanism - 12 cases each, keeping the upstream testPassed and reason verbatim. Between them they carry all six upstream negative reasons (modified message; modified signature - R / SIGHT / SIGFORS; invalid signature - too small / too large) in both hash families. The other ten parameter sets' preHash sigVer groups are listed in notExecuted with why=subset-size-budget (their signatures run 16 KB to 50 KB each; their positive-polarity verify coverage comes from verifying the upstream signatures carried by slhdsa_prehash_siggen_<family>_test.json). Cases whose hashAlg has no CKM_HASH_SLH_DSA_<hash> mechanism (SHA2-512/224, SHA2-512/256) and the internal-interface and external/pure groups are listed in notExecuted as metadata only. One file per SLH-DSA hash family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 351 (tgId 26) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 364 (tgId 26) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         }
@@ -47719,7 +49120,7 @@
     {
       "id": "slhdsa_sigver_sha2_test",
       "path": "src/data/acvp/slhdsa_sigver_sha2_test.json",
-      "sha256": "a4a34587e6457d64e90862b0c46963865d00e80ea169450c15b82329aad73f1e",
+      "sha256": "2093c913a177b4ce178537021ce5a98223d07f40d3bab3f55fcca349832e2057",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -47983,6 +49384,156 @@
             "tcId": 320
           },
           "lineage": ["slhdsa-sigver-sha2-test-8"]
+        },
+        {
+          "caseId": "slhdsa_sigver_sha2_test#/testGroups/1/tests/1",
+          "pointer": "/testGroups/1/tests/1",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 6658,
+            "contextBytes": 94,
+            "reason": "modified message"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 16
+          },
+          "lineage": ["slhdsa-sigver-sha2-test-2"]
+        },
+        {
+          "caseId": "slhdsa_sigver_sha2_test#/testGroups/1/tests/2",
+          "pointer": "/testGroups/1/tests/2",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 5383,
+            "contextBytes": 244,
+            "reason": "modified signature - SIGHT"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 23
+          },
+          "lineage": ["slhdsa-sigver-sha2-test-2"]
+        },
+        {
+          "caseId": "slhdsa_sigver_sha2_test#/testGroups/3/tests/1",
+          "pointer": "/testGroups/3/tests/1",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 7255,
+            "contextBytes": 53,
+            "reason": "modified signature - R"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 20,
+            "tcId": 270
+          },
+          "lineage": ["slhdsa-sigver-sha2-test-5"]
+        },
+        {
+          "caseId": "slhdsa_sigver_sha2_test#/testGroups/3/tests/2",
+          "pointer": "/testGroups/3/tests/2",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-128s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2695,
+            "contextBytes": 139,
+            "reason": "invalid signature - too large"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 20,
+            "tcId": 278
+          },
+          "lineage": ["slhdsa-sigver-sha2-test-5"]
+        },
+        {
+          "caseId": "slhdsa_sigver_sha2_test#/testGroups/5/tests/1",
+          "pointer": "/testGroups/5/tests/1",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-192s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 8192,
+            "contextBytes": 7,
+            "reason": "invalid signature - too small"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 22,
+            "tcId": 300
+          },
+          "lineage": ["slhdsa-sigver-sha2-test-7"]
+        },
+        {
+          "caseId": "slhdsa_sigver_sha2_test#/testGroups/5/tests/2",
+          "pointer": "/testGroups/5/tests/2",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHA2-192s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 1356,
+            "contextBytes": 5,
+            "reason": "valid signature and message - signature should verify successfully"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 22,
+            "tcId": 302
+          },
+          "lineage": ["slhdsa-sigver-sha2-test-7"]
         }
       ],
       "lineage": [
@@ -48008,7 +49559,11 @@
         },
         {
           "id": "slhdsa-sigver-sha2-test-2",
-          "appliesTo": ["slhdsa_sigver_sha2_test#/testGroups/1/tests/0"],
+          "appliesTo": [
+            "slhdsa_sigver_sha2_test#/testGroups/1/tests/0",
+            "slhdsa_sigver_sha2_test#/testGroups/1/tests/1",
+            "slhdsa_sigver_sha2_test#/testGroups/1/tests/2"
+          ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with CK_SIGN_ADDITIONAL_CONTEXT (upstream context), CKM_HASH_SLH_DSA_SHA256",
           "transformations": [
@@ -48023,6 +49578,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 16 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 23 (tgId 2) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -48068,7 +49631,11 @@
         },
         {
           "id": "slhdsa-sigver-sha2-test-5",
-          "appliesTo": ["slhdsa_sigver_sha2_test#/testGroups/3/tests/0"],
+          "appliesTo": [
+            "slhdsa_sigver_sha2_test#/testGroups/3/tests/0",
+            "slhdsa_sigver_sha2_test#/testGroups/3/tests/1",
+            "slhdsa_sigver_sha2_test#/testGroups/3/tests/2"
+          ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with CK_SIGN_ADDITIONAL_CONTEXT (upstream context), CKM_HASH_SLH_DSA_SHAKE256",
           "transformations": [
@@ -48083,6 +49650,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 270 (tgId 20) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 278 (tgId 20) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -48108,7 +49683,11 @@
         },
         {
           "id": "slhdsa-sigver-sha2-test-7",
-          "appliesTo": ["slhdsa_sigver_sha2_test#/testGroups/5/tests/0"],
+          "appliesTo": [
+            "slhdsa_sigver_sha2_test#/testGroups/5/tests/0",
+            "slhdsa_sigver_sha2_test#/testGroups/5/tests/1",
+            "slhdsa_sigver_sha2_test#/testGroups/5/tests/2"
+          ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with CK_SIGN_ADDITIONAL_CONTEXT (upstream context), CKM_HASH_SLH_DSA_SHA256",
           "transformations": [
@@ -48123,6 +49702,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 300 (tgId 22) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 302 (tgId 22) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -49305,7 +50892,7 @@
     {
       "id": "slhdsa_sigver_shake_test",
       "path": "src/data/acvp/slhdsa_sigver_shake_test.json",
-      "sha256": "2279e59c86edce922f8e676cd5da320c70a358ee9f11aa11faeb1cba04280c9f",
+      "sha256": "d8b6c907047c072c0366add97041e3f349f5af7ed977505cc065a95dc3498043",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -49569,6 +51156,156 @@
             "tcId": 400
           },
           "lineage": ["slhdsa-sigver-shake-test-8"]
+        },
+        {
+          "caseId": "slhdsa_sigver_shake_test#/testGroups/1/tests/1",
+          "pointer": "/testGroups/1/tests/1",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128f",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 2764,
+            "contextBytes": 254,
+            "reason": "invalid signature - too large"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 8,
+            "tcId": 100
+          },
+          "lineage": ["slhdsa-sigver-shake-test-2"]
+        },
+        {
+          "caseId": "slhdsa_sigver_shake_test#/testGroups/1/tests/2",
+          "pointer": "/testGroups/1/tests/2",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128f",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 7093,
+            "contextBytes": 183,
+            "reason": "valid signature and message - signature should verify successfully"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 8,
+            "tcId": 111
+          },
+          "lineage": ["slhdsa-sigver-shake-test-2"]
+        },
+        {
+          "caseId": "slhdsa_sigver_shake_test#/testGroups/3/tests/1",
+          "pointer": "/testGroups/3/tests/1",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 4398,
+            "contextBytes": 137,
+            "reason": "valid signature and message - signature should verify successfully"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 351
+          },
+          "lineage": ["slhdsa-sigver-shake-test-5"]
+        },
+        {
+          "caseId": "slhdsa_sigver_shake_test#/testGroups/3/tests/2",
+          "pointer": "/testGroups/3/tests/2",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-128s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 1084,
+            "contextBytes": 25,
+            "reason": "valid signature and message - signature should verify successfully"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 26,
+            "tcId": 364
+          },
+          "lineage": ["slhdsa-sigver-shake-test-5"]
+        },
+        {
+          "caseId": "slhdsa_sigver_shake_test#/testGroups/5/tests/1",
+          "pointer": "/testGroups/5/tests/1",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-192s",
+            "hashAlg": "SHA2-512/256",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 482,
+            "contextBytes": 120,
+            "reason": "modified signature - SIGHT"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 28,
+            "tcId": 383
+          },
+          "lineage": ["slhdsa-sigver-shake-test-7"]
+        },
+        {
+          "caseId": "slhdsa_sigver_shake_test#/testGroups/5/tests/2",
+          "pointer": "/testGroups/5/tests/2",
+          "algorithm": {
+            "name": "SLH-DSA",
+            "revision": "FIPS205"
+          },
+          "operation": "sigVer",
+          "parameters": {
+            "parameterSet": "SLH-DSA-SHAKE-192s",
+            "hashAlg": "SHA2-512/224",
+            "preHash": "preHash",
+            "signatureInterface": "external",
+            "messageBytes": 6083,
+            "contextBytes": 163,
+            "reason": "modified signature - R"
+          },
+          "testType": "AFT",
+          "expectation": "negative",
+          "upstream": {
+            "tgId": 28,
+            "tcId": 387
+          },
+          "lineage": ["slhdsa-sigver-shake-test-7"]
         }
       ],
       "lineage": [
@@ -49594,7 +51331,11 @@
         },
         {
           "id": "slhdsa-sigver-shake-test-2",
-          "appliesTo": ["slhdsa_sigver_shake_test#/testGroups/1/tests/0"],
+          "appliesTo": [
+            "slhdsa_sigver_shake_test#/testGroups/1/tests/0",
+            "slhdsa_sigver_shake_test#/testGroups/1/tests/1",
+            "slhdsa_sigver_shake_test#/testGroups/1/tests/2"
+          ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with CK_SIGN_ADDITIONAL_CONTEXT (upstream context), CKM_HASH_SLH_DSA_SHA3512",
           "transformations": [
@@ -49609,6 +51350,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 100 (tgId 8) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 111 (tgId 8) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -49654,7 +51403,11 @@
         },
         {
           "id": "slhdsa-sigver-shake-test-5",
-          "appliesTo": ["slhdsa_sigver_shake_test#/testGroups/3/tests/0"],
+          "appliesTo": [
+            "slhdsa_sigver_shake_test#/testGroups/3/tests/0",
+            "slhdsa_sigver_shake_test#/testGroups/3/tests/1",
+            "slhdsa_sigver_shake_test#/testGroups/3/tests/2"
+          ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with CK_SIGN_ADDITIONAL_CONTEXT (upstream context), CKM_HASH_SLH_DSA_SHA512",
           "transformations": [
@@ -49669,6 +51422,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 351 (tgId 26) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 364 (tgId 26) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },
@@ -49694,7 +51455,11 @@
         },
         {
           "id": "slhdsa-sigver-shake-test-7",
-          "appliesTo": ["slhdsa_sigver_shake_test#/testGroups/5/tests/0"],
+          "appliesTo": [
+            "slhdsa_sigver_shake_test#/testGroups/5/tests/0",
+            "slhdsa_sigver_shake_test#/testGroups/5/tests/1",
+            "slhdsa_sigver_shake_test#/testGroups/5/tests/2"
+          ],
           "upstreamOperation": "SLH-DSA sigVer FIPS205 AFT (signatureInterface=external, preHash=preHash)",
           "localOperation": "SigVer via PKCS#11 C_VerifyInit/C_Verify with CK_SIGN_ADDITIONAL_CONTEXT (upstream context), CKM_HASH_SLH_DSA_SHA3256",
           "transformations": [
@@ -49709,6 +51474,14 @@
             {
               "type": "subset",
               "detail": "Subset policy (file _provenance.subset_policy): Deterministic, size-budgeted (SLH-DSA signatures are 7.8-49.8 KB). Executed parameter sets per family: 128s, 128f, 192s, 256s (every family x security level; the 128 level in both variants). For each executed set: external/pure group -> one upstream negative case for the reason assigned by rotation over [modified message, modified signature - R, modified signature - SIGFORS, modified signature - SIGHT, invalid signature - too small, invalid signature - too large] (set j of the 8, SHA2 then SHAKE, takes reason j mod 6, so all six reasons are covered), the shortest message for that reason, ties by lowest tcId; plus, for 128s only, the pure positive case with the shortest message. external/preHash group (128s, 128f and 192s only; 256s preHash is subset-size-budget) -> the positive case with the shortest message among hashAlg values that have a PKCS#11 v3.2 CKM_HASH_SLH_DSA_<hash> mechanism (if every positive uses a hash without a mechanism, the shortest-message case with a mechanism, whatever its disposition). Not byte-copied, listed in notExecuted as metadata: the 192f and 256f groups and the 256s preHash group (subset-size-budget: their pure positives are covered as sigGen-derived tuples in slhdsa_ctx_test.json, deterministic byte-match and product-authored negatives run for all 12 sets), preHash cases whose hashAlg has no mechanism (SHA2-512/224, SHA2-512/256), and the internal-interface groups. One file per family."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 383 (tgId 28) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
+            },
+            {
+              "type": "subset",
+              "detail": "upstream tcId 387 (tgId 28) byte-copied 2026-10-22 by scripts/acvp/copy_upstream_cases.py from the same pinned upstream file."
             }
           ]
         },

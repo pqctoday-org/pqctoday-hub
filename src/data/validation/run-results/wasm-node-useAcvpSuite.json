@@ -9,8 +9,8 @@
     "platform": "darwin",
     "arch": "arm64"
   },
-  "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
-  "recordedAt": "2026-10-22",
+  "hubCommit": "9db829b068063dbd0712c5950686f6f3676bf4f5",
+  "recordedAt": "2026-10-23",
   "results": [
     {
       "engine": "cpp",
@@ -7940,6 +7940,118 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/6/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/6/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/6/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/6/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/6/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/6/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/7/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/7/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/7/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/7/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/7/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/7/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/8/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/8/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/8/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05d.sigver#mldsa_sigver_test#/testGroups/8/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.05e.ctx-probes#local:acvp.05e.ctx-probes/ctx1",
       "status": "pass"
     },
@@ -8640,6 +8752,48 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/1/tests/12",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/1/tests/12",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/1/tests/13",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/1/tests/13",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/1/tests/14",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/1/tests/14",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/1/tests/2",
       "status": "pass"
     },
@@ -8830,6 +8984,48 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/3/tests/11",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/3/tests/12",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/3/tests/12",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/3/tests/13",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/3/tests/13",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/3/tests/14",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/3/tests/14",
       "status": "pass"
     },
     {
@@ -9040,6 +9236,34 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/5/tests/12",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/5/tests/13",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/5/tests/13",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/5/tests/14",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.05f.sigver#mldsa_sigver_depth_test#/testGroups/5/tests/14",
       "status": "pass"
     },
     {
@@ -12490,6 +12714,34 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/1/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/1/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/1/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/1/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/2/tests/0",
       "status": "pass"
     },
@@ -12532,6 +12784,34 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/3/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/3/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/3/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/3/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/4/tests/0",
       "status": "pass"
     },
@@ -12554,6 +12834,34 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/5/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/5/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/5/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/5/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_sha2_test#/testGroups/5/tests/2",
       "status": "pass"
     },
     {
@@ -12602,6 +12910,34 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/1/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/1/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/1/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/1/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/2/tests/0",
       "status": "pass"
     },
@@ -12644,6 +12980,34 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/3/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/3/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/3/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/3/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/4/tests/0",
       "status": "pass"
     },
@@ -12666,6 +13030,34 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/5/tests/0",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/5/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/5/tests/1",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/5/tests/2",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09c.sigver#slhdsa_sigver_shake_test#/testGroups/5/tests/2",
       "status": "pass"
     },
     {
@@ -14002,6 +14394,90 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/0/tests/2@msg-siggen-det",
       "status": "pass"
     },
@@ -14836,6 +15312,90 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/1@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/1/tests/11@sigver",
       "status": "pass"
     },
     {
@@ -15682,6 +16242,90 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/2/tests/2@msg-siggen-det",
       "status": "pass"
     },
@@ -16516,6 +17160,90 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/1@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/3/tests/11@sigver",
       "status": "pass"
     },
     {
@@ -17362,6 +18090,90 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/4/tests/2@msg-siggen-det",
       "status": "pass"
     },
@@ -18196,6 +19008,90 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/1@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_sha2_test#/testGroups/5/tests/11@sigver",
       "status": "pass"
     },
     {
@@ -19042,6 +19938,90 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/0/tests/2@msg-siggen-det",
       "status": "pass"
     },
@@ -19876,6 +20856,90 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/1@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/1/tests/11@sigver",
       "status": "pass"
     },
     {
@@ -20722,6 +21786,90 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/2/tests/2@msg-siggen-det",
       "status": "pass"
     },
@@ -21556,6 +22704,90 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/1@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/3/tests/11@sigver",
       "status": "pass"
     },
     {
@@ -22402,6 +23634,90 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/4/tests/2@msg-siggen-det",
       "status": "pass"
     },
@@ -23242,6 +24558,90 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/10@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11@siggen-det",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11@siggen-hedged",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/11@sigver",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-siggen#slhdsa_prehash_siggen_shake_test#/testGroups/5/tests/2@msg-siggen-det",
       "status": "pass"
     },
@@ -24026,6 +25426,34 @@
       "engine": "cpp",
       "artifactKind": "wasm",
       "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/12@single",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/12@single",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/13@single",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/13@single",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
       "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_sha2_test#/testGroups/0/tests/2@message",
       "status": "pass"
     },
@@ -24356,6 +25784,34 @@
       "artifactKind": "wasm",
       "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
       "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/11@single",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/12@single",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/12@single",
+      "status": "pass"
+    },
+    {
+      "engine": "cpp",
+      "artifactKind": "wasm",
+      "artifactSha256": "9ce56d71c324a4893b7fd0080a63ff8ec379b9bf654ee6216915587ff13ad83b",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/13@single",
+      "status": "pass"
+    },
+    {
+      "engine": "rust",
+      "artifactKind": "wasm",
+      "artifactSha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
+      "registryCase": "acvp.09e.prehash-sigver#slhdsa_prehash_sigver_shake_test#/testGroups/0/tests/13@single",
       "status": "pass"
     },
     {

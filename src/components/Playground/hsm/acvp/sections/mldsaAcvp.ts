@@ -23,6 +23,7 @@
 // Upstream groups that PKCS#11 cannot express are reported as 'skip' rows
 // with the exact reason, so they stay in the denominator instead of silently
 // vanishing (see each vector file's `notExecuted` list).
+import { sha512_224, sha512_256 } from '@noble/hashes/sha2.js'
 import sigVerVectors from '@/data/acvp/mldsa_sigver_test.json'
 import sigGenDetVectors from '@/data/acvp/mldsa_siggen_det_test.json'
 import keyGenVectors from '@/data/acvp/mldsa_keygen_test.json'
@@ -64,6 +65,10 @@ import {
   CKM_HASH_ML_DSA_SHA3_512,
   CKM_HASH_ML_DSA_SHAKE128,
   CKM_HASH_ML_DSA_SHAKE256,
+  CKM_HASH_ML_DSA,
+  CKM_HASH_SLH_DSA,
+  CKM_SHA512_224,
+  CKM_SHA512_256,
   CKH_HEDGE_PREFERRED,
   CKH_DETERMINISTIC_REQUIRED,
   CKM_ML_DSA_EXTERNAL_MU,
@@ -256,14 +261,6 @@ interface KeyGenGroup {
   parameterSet: string
   tests: { tcId: number; seed: string; pk: string }[]
 }
-interface NotExecuted {
-  tgId: number
-  tcId?: number
-  parameterSet: string
-  hashAlg?: string
-  cases?: number
-  why: string
-}
 
 const SV_PROV = sigVerVectors._provenance as Provenance
 const SG_PROV = sigGenDetVectors._provenance as Provenance
@@ -290,11 +287,12 @@ export const hexOf = (b: Uint8Array) =>
 // tell CKR_SIGNATURE_INVALID from any other failure; a negative case must
 // assert the exact code, so these call C_* directly.
 
-/** CK_MECHANISM (+ optional CK_SIGN_ADDITIONAL_CONTEXT) in WASM memory. */
+/** CK_MECHANISM (+ optional CK_SIGN_ADDITIONAL_CONTEXT, or CK_HASH_SIGN_ADDITIONAL_CONTEXT
+ * when `hash` is set — the generic CKM_HASH_ML_DSA / CKM_HASH_SLH_DSA) in WASM memory. */
 export function allocMech(
   M: SoftHSMModule,
   mechType: number,
-  param: { hedge: number; context: Uint8Array } | null
+  param: { hedge: number; context: Uint8Array; hash?: number } | null
 ): { mech: number; allocs: number[] } {
   const allocs: number[] = []
   const mech = M._malloc(12)
@@ -305,7 +303,8 @@ export function allocMech(
     M.setValue(mech + 8, 0, 'i32')
     return { mech, allocs }
   }
-  const p = M._malloc(12)
+  const len = param.hash !== undefined ? 16 : 12
+  const p = M._malloc(len)
   allocs.push(p)
   M.setValue(p, param.hedge, 'i32')
   if (param.context.length > 0) {
@@ -317,9 +316,30 @@ export function allocMech(
     M.setValue(p + 4, 0, 'i32')
     M.setValue(p + 8, 0, 'i32')
   }
+  if (param.hash !== undefined) M.setValue(p + 12, param.hash, 'i32')
   M.setValue(mech + 4, p, 'i32')
-  M.setValue(mech + 8, 12, 'i32')
+  M.setValue(mech + 8, len, 'i32')
   return { mech, allocs }
+}
+
+/** SHA2-512/224 and SHA2-512/256 have no hash-specific CKM_HASH_ML_DSA_<hash> or
+ * CKM_HASH_SLH_DSA_<hash> in PKCS#11 v3.2. They run through the generic mechanism,
+ * with the hash named in CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash and PH(M) as the data
+ * (single-part only). null for every other hashAlg. Built at call time (TLA). */
+export function genericPreHash(
+  family: 'ML-DSA' | 'SLH-DSA',
+  hashAlg: string,
+  message: Uint8Array
+): { mech: number; hash: number; data: Uint8Array; label: string } | null {
+  if (hashAlg !== 'SHA2-512/224' && hashAlg !== 'SHA2-512/256') return null
+  const t224 = hashAlg === 'SHA2-512/224'
+  const name = family === 'ML-DSA' ? 'CKM_HASH_ML_DSA' : 'CKM_HASH_SLH_DSA'
+  return {
+    mech: family === 'ML-DSA' ? CKM_HASH_ML_DSA : CKM_HASH_SLH_DSA,
+    hash: t224 ? CKM_SHA512_224 : CKM_SHA512_256,
+    data: t224 ? sha512_224(message) : sha512_256(message),
+    label: `${name} (generic, hash = ${t224 ? 'CKM_SHA512_224' : 'CKM_SHA512_256'}, PH(M) supplied)`,
+  }
 }
 
 /** C_VerifyInit + C_Verify (single-part — PKCS#11 v3.2 Table 282). */
@@ -330,12 +350,16 @@ export function verifyRv(
   mechType: number,
   data: Uint8Array,
   sig: Uint8Array,
-  context: Uint8Array | null
+  context: Uint8Array | null,
+  /** CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash, for the generic pre-hash mechanisms only. */
+  hash?: number
 ): { initRv: number; rv: number } {
   const { mech, allocs } = allocMech(
     M,
     mechType,
-    context ? { hedge: CKH_HEDGE_PREFERRED, context } : null
+    context || hash !== undefined
+      ? { hedge: CKH_HEDGE_PREFERRED, context: context ?? new Uint8Array(0), hash }
+      : null
   )
   const dp = M._malloc(Math.max(1, data.length))
   M.HEAPU8.set(data, dp)
@@ -550,7 +574,11 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
         tcId: t.tcId,
         source: srcOf(SV_PROV),
       }
-      const mech = mechFor(g, t.hashAlg)
+      const gp =
+        g.preHash === 'preHash' && !g.externalMu
+          ? genericPreHash('ML-DSA', t.hashAlg, hexToBytes(data))
+          : null
+      const mech = gp ? gp.mech : mechFor(g, t.hashAlg)
       const skipWhy = unsupportedReason(
         mechs,
         mech,
@@ -579,9 +607,10 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           hSession,
           pub,
           mech!,
-          hexToBytes(data),
+          gp ? gp.data : hexToBytes(data),
           hexToBytes(t.signature),
-          g.externalMu ? null : hexToBytes(t.context ?? '')
+          g.externalMu ? null : hexToBytes(t.context ?? ''),
+          gp?.hash
         )
         const want = expectValid ? CKR_OK : CKR_SIGNATURE_INVALID
         const ok = r.initRv === CKR_OK && r.rv === want
@@ -598,7 +627,7 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
           testCase,
           referenceUrl,
           status: ok ? 'pass' : 'fail',
-          details: `${observed} (expected ${rvText(want)})${verdict} · msg ${nBytes(data)}B · ${srcTag(SV_PROV)}`,
+          details: `${observed} (expected ${rvText(want)})${verdict} · msg ${nBytes(data)}B${gp ? ` · ${gp.label}` : ''} · ${srcTag(SV_PROV)}`,
           caseMeta: { ...meta, observed },
         })
         addLog(`[${eName}] [id:${id}] ${ps} ${testCase}: ${ok ? 'PASS' : 'FAIL'} (${observed})`)
@@ -879,41 +908,6 @@ export async function runMldsaAcvpSection(ctx: MldsaAcvpSectionCtx): Promise<voi
         destroy(M, hSession, pair.privHandle)
       }
     }
-  }
-
-  // ── 4. Honest skips: upstream groups PKCS#11 cannot express ─────────────
-  const svNotRun = sigVerVectors.notExecuted as NotExecuted[]
-  const ids = (rows: NotExecuted[]) =>
-    rows.map((r) => (r.tcId ? `tg${r.tgId}/tc${r.tcId}` : `tg${r.tgId}`)).join(', ')
-
-  const noHashMech = svNotRun.filter((r) => r.why === 'no-pkcs11-hash-ml-dsa-mechanism')
-  if (noHashMech.length > 0) {
-    const hashes = [...new Set(noHashMech.map((r) => r.hashAlg))].sort()
-    // Runtime confirmation, not an assumption: none of this engine's advertised
-    // mechanisms is a HashML-DSA-with-hashing mechanism for these hashes (the
-    // Table 284 set is the only one that exists), so there is nothing to call.
-    const advertisedHashMechs = Object.values(acvpHashToMech()).filter((m) => mechs.has(m)).length
-    await pushResult({
-      id: `mldsa-skip-hash-sha512t-${eName}`,
-      algorithm: `ML-DSA-44/65/87 (${eName})`,
-      testCase: `HashML-DSA SigVer · ${hashes.join(', ')} · NIST sigVer ${noHashMech.length} cases`,
-      referenceUrl,
-      status: 'skip',
-      details:
-        `Skipped — PKCS#11 v3.2 Table 284 defines no CKM_HASH_ML_DSA_<hash> mechanism for ${hashes.join(' or ')}; ` +
-        `C_GetMechanismList on this engine advertises ${advertisedHashMechs} of the 10 that do exist and none for these hashes. ` +
-        `The generic CKM_HASH_ML_DSA takes these hashes (CKM_SHA512_224 / CKM_SHA512_256) and runs in the hedged pre-hash groups (optional-input rows); these deterministic sigVer cases are not byte-copied yet. Not run: ${ids(noHashMech)} · ${srcTag(SV_PROV)}`,
-      caseMeta: {
-        origin: 'not-executed',
-        upstreamOperation: 'sigVer',
-        localOperation: 'none',
-        parameterSet: 'ML-DSA-44/65/87',
-        mode: 'preHash',
-        hashAlg: hashes.join(','),
-        expected: 'not-run',
-        source: srcOf(SV_PROV),
-      },
-    })
   }
 
   // The hedged (rnd) and internal-interface groups run in

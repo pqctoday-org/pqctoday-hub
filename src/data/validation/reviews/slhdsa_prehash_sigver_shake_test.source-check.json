@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:slhdsa_prehash_sigver_shake_test",
-  "subjectSha256": "9a4a160c55822094fef5672f6ad1b84021cb92daeb10304023128574b82d9097",
-  "fileSha256": "8c3964a62fff431671c1d0040e985ac7bf7730e437716d3675dd1113a93b7717",
+  "subjectSha256": "1830c6b367e6c4794cac6499396b8bb0ee23281f1242a68f22bcd436b9662fe6",
+  "fileSha256": "48d868b5e0954a4c311f0379e977016d40ddd5a5b69304593c9094fcf6d0675a",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id slhdsa_prehash_sigver_shake_test --strict",
@@ -17,8 +17,8 @@
     ]
   },
   "compared": {
-    "cases": 12,
-    "values": 101
+    "cases": 14,
+    "values": 117
   },
-  "checkedAt": "2026-10-22"
+  "checkedAt": "2026-10-23"
 }
