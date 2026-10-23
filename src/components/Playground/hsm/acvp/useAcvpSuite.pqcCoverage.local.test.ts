@@ -157,7 +157,7 @@ describe('P5 PQC coverage sections — both engines, real vectors', () => {
           expect(classesOf(r!.id)).toEqual(['nist-acvp-reference-sample'])
           n++
         }
-    expect(n).toBe(2 * 43)
+    expect(n).toBe(2 * 51) // 43 + 8 SHA2-512/t cases (generic CKM_HASH_ML_DSA), per engine
     // Each pure group reaches both context-length extremes.
     for (const g of v.testGroups.filter((x: { preHash: string }) => x.preHash === 'pure'))
       expect(g.tests.map((t: { context?: string }) => (t.context ?? '').length / 2).sort()).toEqual(
