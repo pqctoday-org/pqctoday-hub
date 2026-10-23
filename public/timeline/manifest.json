@@ -2,7 +2,7 @@
   "generated": "2026-10-22",
   "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_10222026_r5.csv",
+  "csv": "timeline_10222026_r8.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -3408,7 +3408,7 @@
     },
     {
       "refId": "singapore-mas-quantum-resilience-supervisory-expectations-an",
-      "label": "Quantum-Resilience Supervisory Expectations Announced",
+      "label": "Quantum-Resilience Supervisory Expectations Announced for Later in 2026",
       "url": "https://www.mas.gov.sg/news/speeches/2026/md-remarks-for-mas-ar-2025-2026",
       "status": "downloaded",
       "file": "timeline/Quantum-Resilience-Supervisory-Expectations-Announced.html",
@@ -3478,5 +3478,5 @@
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-10-22T20:41:21.357489+00:00"
+  "rebuiltAt": "2026-10-23T00:51:33.974599+00:00"
 }
