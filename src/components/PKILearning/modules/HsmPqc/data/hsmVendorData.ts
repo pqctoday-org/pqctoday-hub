@@ -309,7 +309,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP → 256-byte ciphertext (direct encryption)',
     vendorNotes: {
       onPrem:
-        'Thales: native firmware support (see the vendor card). Entrust nShield: ML-KEM reached the PKCS#11 API in Security World v13.9.3 (firmware v13.8.3 or later, PostQuantum feature enabled); in v13.9.0 it was nCore-only. Utimaco: via Q-safe extension',
+        'Thales Luna: CKM_ML_KEM through the vendor-defined CA_EncapsulateKey and CA_DecapsulateKey (the standard C_EncapsulateKey is not yet implemented; Luna ML-KEM programming guide, updated 2025-12-16). Entrust nShield: ML-KEM reached the PKCS#11 API in Security World v13.9.3 (firmware v13.8.3 or later, PostQuantum feature enabled); in v13.9.0 it was nCore-only. Utimaco: via Q-safe extension',
       cloud: 'No cloud HSM supports native PKCS#11 KEM encapsulation yet',
     },
   },
