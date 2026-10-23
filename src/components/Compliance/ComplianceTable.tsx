@@ -38,8 +38,12 @@ import {
   pqcEvidenceLabel,
   pqcNames,
   recordTypeDescription,
+  NO_SCHEME_ID_LABEL,
   recordTypeLabel,
+  retrievalSummary,
+  schemeCertificateId,
   scopeNotice,
+  SNAPSHOT_NOTICE,
   snapshotRetrievalEntries,
   statusBadgeClass,
   type RecordScope,
@@ -140,9 +144,15 @@ export const ComplianceRow = ({
 
       {/* Certification # Column — with the record type and its verbatim status */}
       <td className="px-4 py-3 text-xs w-32">
-        <div className="font-mono truncate" title={record.id}>
-          {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
-        </div>
+        {schemeCertificateId(record) ? (
+          <div className="font-mono truncate" title={record.id}>
+            {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
+          </div>
+        ) : (
+          <div className="truncate italic text-muted-foreground" title={NO_SCHEME_ID_LABEL}>
+            {NO_SCHEME_ID_LABEL}
+          </div>
+        )}
         <div className="mt-0.5 flex flex-wrap items-center gap-1">
           <span
             className="text-[10px] text-muted-foreground truncate"
@@ -846,25 +856,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           />
         </div>
         <div className="flex items-center gap-2">
-          {(retrieval.length > 0 || lastUpdated) && (
-            <div className="hidden md:flex flex-col items-end text-xs text-muted-foreground">
-              {retrieval.length > 0 && (
-                <span
-                  className="flex items-center gap-1"
-                  title="When each source list was retrieved for this snapshot."
-                >
-                  <Calendar size={12} />
-                  {retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(' · ')}
-                </span>
-              )}
-              {newestRecordDate && (
-                <span title="Date of the most recent certificate in the snapshot — not when the snapshot was retrieved.">
-                  {retrieval.length === 0 && <Calendar size={12} className="mr-1 inline" />}
-                  Newest record date: {newestRecordDate}
-                </span>
-              )}
-            </div>
-          )}
           <Button
             variant="outline"
             size="sm"
@@ -884,17 +875,39 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               className="gap-2"
               title={
                 retrieval.length > 0
-                  ? `Reload the published snapshot (${retrieval.map((e) => `${e.label} retrieved ${e.date}`).join(', ')}). Certificate data is not fetched live from the certification bodies.`
+                  ? `Reload the published snapshot (${retrievalSummary(retrieval, ', ')}). Certificate data is not fetched live from the certification bodies.`
                   : newestRecordDate
                     ? `Reload the published snapshot (newest record dated ${newestRecordDate}). Certificate data is not fetched live from the certification bodies.`
                     : 'Reload the published snapshot. Certificate data is not fetched live from the certification bodies.'
               }
             >
               <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
-              Reload Snapshot
+              Reload this snapshot
             </Button>
           )}
         </div>
+      </div>
+      {/* Below the toolbar, full width: five source dates in one line would otherwise squeeze
+          the search box. */}
+      <div className="space-y-0.5 text-[11px] leading-relaxed text-muted-foreground">
+        <p className="flex items-start gap-1.5" data-testid="records-snapshot-notice">
+          <Info size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+          <span>{SNAPSHOT_NOTICE}</span>
+        </p>
+        {(retrieval.length > 0 || newestRecordDate) && (
+          <p
+            className="flex items-start gap-1.5"
+            data-testid="records-retrieval"
+            title="When each source list was retrieved for this snapshot, and the date of the most recent certificate in it (not the retrieval date)."
+          >
+            <Calendar size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <span>
+              {retrieval.length > 0 && retrievalSummary(retrieval)}
+              {retrieval.length > 0 && newestRecordDate && ' · '}
+              {newestRecordDate && `Newest record date: ${newestRecordDate}`}
+            </span>
+          </p>
+        )}
       </div>
 
       {/* Mobile Drawer & Filters */}
@@ -1710,7 +1723,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                           Cert ID
                         </span>
                         <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
-                          {record.id}
+                          {schemeCertificateId(record) ?? NO_SCHEME_ID_LABEL}
                         </span>
                       </div>
                       <div className="flex flex-col gap-0.5 items-end">

@@ -5,9 +5,13 @@ import {
   isCurrentStatus,
   pqcCoverageState,
   pqcCoverageSummary,
+  pqcStageSummary,
+  pqcStageSummaryLine,
   pqcUnknownReason,
   recordTypeLabel,
   scopeNotice,
+  retrievalSummary,
+  schemeCertificateId,
   snapshotRetrievalEntries,
   statusTone,
 } from './recordSemantics'
@@ -122,6 +126,16 @@ describe('sidecar helpers', () => {
     expect(entries[0].date).toBe('25 Sep 2026')
   })
 
+  it('labels the retrieval dates as UTC (a late-evening Central retrieval reads as the next day)', () => {
+    const late: ComplianceMeta = {
+      schemaVersion: 1,
+      publicationId: 'x',
+      partitions: { fips: { label: 'NIST CMVP', retrievedAt: '2026-10-23T02:05:53+00:00' } },
+    }
+    const line = retrievalSummary(snapshotRetrievalEntries(late))
+    expect(line).toBe('NIST CMVP retrieved 23 Oct 2026 (dates in UTC)')
+  })
+
   it('returns no retrieval entries without a sidecar', () => {
     expect(snapshotRetrievalEntries(null)).toEqual([])
   })
@@ -153,5 +167,51 @@ describe('sidecar helpers', () => {
     expect(csv).not.toMatch(/\nold,/)
     expect(csv).toMatch(/NIST CAVP/)
     expect(csv).not.toMatch(/,ACVP,/)
+  })
+})
+
+describe('schemeCertificateId', () => {
+  it('hides the generated slug of a Common Criteria Portal listing', () => {
+    expect(
+      schemeCertificateId(rec({ type: 'Common Criteria', id: 'cc-hsm-firmware-2-0-3881cf5c' }))
+    ).toBeNull()
+  })
+
+  it('keeps a real scheme certificate number', () => {
+    expect(schemeCertificateId(rec({ type: 'Common Criteria', id: 'anssi-cc-2024-39' }))).toBe(
+      'anssi-cc-2024-39'
+    )
+    expect(schemeCertificateId(rec({ type: 'FIPS 140-3', id: '4875' }))).toBe('4875')
+  })
+
+  it('does not treat a slug-shaped id of another record type as generated', () => {
+    expect(schemeCertificateId(rec({ type: 'EUCC', id: 'cc-abc-0123abcd' }))).toBe(
+      'cc-abc-0123abcd'
+    )
+  })
+})
+
+describe('pqcStageSummary', () => {
+  const records = [
+    rec({ id: 'a', type: 'FIPS 140-3', pqcCoverage: 'ML-KEM, ML-DSA' }),
+    rec({ id: 'b', type: 'FIPS 140-3', pqcCoverage: 'No PQC Mechanisms Detected' }),
+    rec({ id: 'c', type: 'FIPS 140-3', pqcCoverage: 'Potentially PQC (Name Match)' }),
+    rec({ id: 'd', type: 'ACVP', pqcCoverage: 'ML-DSA' }),
+    rec({ id: 'e', type: 'Common Criteria', pqcCoverage: 'ML-KEM' }),
+  ]
+
+  it('counts confirmed PQC on the FIPS 140-3 track only (no name matches, no CC)', () => {
+    expect(pqcStageSummary(records)).toEqual({
+      fipsCertificates: 3,
+      fipsWithPqc: 1,
+      cavpPqcValidations: 1,
+    })
+  })
+
+  it('words the counts as one sentence, and says nothing when there is nothing to count', () => {
+    expect(pqcStageSummaryLine(pqcStageSummary(records))).toBe(
+      'PQC in this snapshot: 1 of 3 FIPS 140-3 certificates · 1 CAVP validations.'
+    )
+    expect(pqcStageSummaryLine(pqcStageSummary([]))).toBeNull()
   })
 })

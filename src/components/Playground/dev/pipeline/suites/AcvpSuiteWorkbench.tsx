@@ -11,7 +11,7 @@
 // bridge. Execution is the untouched hsm/acvp/useAcvpSuite.ts runner —
 // e2e/acvp-validator.spec.ts's testids and its `e2e:trigger_acvp` window
 // event are preserved.
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   Play,
   CheckCircle,
@@ -38,11 +38,161 @@ import {
 import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
 import { CaseEvidenceBadge, coverageMatrixUrl } from '@/components/shared/CaseEvidenceBadge'
 import { evidenceForRowId, loadAcvpRowEvidence } from '@/data/validation/acvpRowEvidence'
-import { EVIDENCE_CLASSES, EVIDENCE_CLASS_SHORT } from '@/data/validation/evidenceClasses'
+import {
+  EVIDENCE_CLASSES,
+  EVIDENCE_CLASS_SHORT,
+  type EvidenceClassId,
+} from '@/data/validation/evidenceClasses'
 import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitAcvpSuite } from './suiteCodegen'
+import {
+  NO_FILTER,
+  applyResultFilter,
+  classesByRow,
+  countByClass,
+  isFiltered,
+  type ClassFilter,
+  type ResultFilter,
+  type StatusFilter,
+} from './acvpResultFilter'
 import { createAcvpBridge, runSuiteScript } from './suiteBridges'
+
+/**
+ * What "test groups" and "test cases" mean on this page. The family list counts groups; the
+ * results table has one row per case. Without this the two numbers look like they disagree.
+ */
+function GroupsVsCases({ className }: { className?: string }) {
+  return (
+    <p
+      className={clsx('text-[10.5px] leading-relaxed text-muted-foreground', className)}
+      data-testid="acvp-groups-explained"
+    >
+      <span className="font-medium text-foreground">Test group</span>: a block of related checks
+      that run together, usually one algorithm with one parameter set.{' '}
+      <span className="font-medium text-foreground">Test case</span>: one input and its expected
+      result. Each row in the results table is one test case, and a group holds one or more cases,
+      so a run shows more rows than groups.
+    </p>
+  )
+}
+
+const STATUS_CHIPS: { id: StatusFilter; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'pass', label: 'Pass' },
+  { id: 'fail', label: 'Fail' },
+  { id: 'skip', label: 'Skipped' },
+]
+
+/** Chip label for an evidence class ('none' = rows without an evidence badge). */
+const classLabel = (c: EvidenceClassId | 'none') =>
+  c === 'none' ? 'No badge' : EVIDENCE_CLASS_SHORT[c] // eslint-disable-line security/detect-object-injection -- closed union
+
+function FilterChip({
+  pressed,
+  onClick,
+  testId,
+  children,
+}: {
+  pressed: boolean
+  onClick: () => void
+  testId: string
+  children: ReactNode
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      data-testid={testId}
+      aria-pressed={pressed}
+      onClick={onClick}
+      className={clsx(
+        'h-6 shrink-0 rounded-full border px-2.5 text-[10.5px] font-semibold',
+        pressed
+          ? 'border-primary bg-primary text-primary-foreground'
+          : 'border-border bg-card text-foreground'
+      )}
+    >
+      {children}
+    </Button>
+  )
+}
+
+/** Status and evidence-class chips over the result table; counts come from the finished run. */
+function AcvpResultFilters({
+  filter,
+  onChange,
+  total,
+  statusCounts,
+  classCounts,
+  shown,
+}: {
+  filter: ResultFilter
+  onChange: (next: ResultFilter) => void
+  total: number
+  statusCounts: Record<Exclude<StatusFilter, 'all'>, number>
+  /** null while the run is still streaming: the class chips wait for the finished run. */
+  classCounts: Map<EvidenceClassId | 'none', number> | null
+  shown: number
+}) {
+  const classIds = classCounts
+    ? [...classCounts.keys()].sort((a, b) =>
+        a === 'none' ? 1 : b === 'none' ? -1 : classLabel(a).localeCompare(classLabel(b))
+      )
+    : []
+  const countOf = (id: StatusFilter) => (id === 'all' ? total : statusCounts[id]) // eslint-disable-line security/detect-object-injection -- closed union
+  const toggleClass = (c: ClassFilter) =>
+    onChange({ ...filter, evidenceClass: filter.evidenceClass === c ? null : c })
+  return (
+    <div className="space-y-1.5" data-testid="acvp-result-filters">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="text-[10px] font-semibold uppercase text-muted-foreground">Status</span>
+        {STATUS_CHIPS.filter((c) => c.id === 'all' || countOf(c.id) > 0).map((c) => (
+          <FilterChip
+            key={c.id}
+            testId={`acvp-filter-status-${c.id}`}
+            pressed={filter.status === c.id}
+            onClick={() => onChange({ ...filter, status: c.id })}
+          >
+            {c.label} {countOf(c.id)}
+          </FilterChip>
+        ))}
+      </div>
+      {classIds.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] font-semibold uppercase text-muted-foreground">
+            Evidence
+          </span>
+          {classIds.map((c) => (
+            <FilterChip
+              key={c}
+              testId={`acvp-filter-class-${c}`}
+              pressed={filter.evidenceClass === c}
+              onClick={() => toggleClass(c)}
+            >
+              {classLabel(c)} {classCounts?.get(c)}
+            </FilterChip>
+          ))}
+        </div>
+      )}
+      {isFiltered(filter) && (
+        <p className="text-[10.5px] text-muted-foreground" aria-live="polite">
+          Showing {shown} of {total} rows.{' '}
+          <Button
+            type="button"
+            variant="link"
+            className="h-auto p-0 text-[10.5px]"
+            data-testid="acvp-filter-clear"
+            onClick={() => onChange(NO_FILTER)}
+          >
+            Show all rows
+          </Button>
+        </p>
+      )}
+    </div>
+  )
+}
 
 /**
  * One streamed result row, memoized on the result object.
@@ -72,15 +222,18 @@ const AcvpResultRow = memo(({ res }: { res: TestResult; evidenceReady: boolean }
     data-status={res.status}
     className="hover:bg-muted/30 transition-colors"
   >
-    <td className="p-2 text-[10.5px] text-muted-foreground whitespace-nowrap">
+    {/* Cell order is a contract (e2e reads Details as the 5th cell). The table is fixed-layout
+        (see the <colgroup> below), so a long label wraps inside its cell and Details truncates
+        with its full text in the hover title; nothing widens the table past its panel. */}
+    <td className="px-1.5 py-2 text-[10.5px] text-muted-foreground break-words">
       {CATEGORIES.find((c) => c.id === res.category)?.label ?? res.category}
     </td>
-    <td className="p-2 font-medium text-foreground">{res.algorithm}</td>
-    <td className="p-2 text-muted-foreground">
+    <td className="px-1.5 py-2 font-medium text-foreground break-words">{res.algorithm}</td>
+    <td className="px-1.5 py-2 text-muted-foreground break-words">
       {res.testCase}
       <CaseEvidenceBadge records={evidenceForRowId(res.id)} className="mt-1" />
     </td>
-    <td className="p-2">
+    <td className="px-1.5 py-2">
       <span
         className={clsx(
           'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
@@ -101,10 +254,10 @@ const AcvpResultRow = memo(({ res }: { res: TestResult; evidenceReady: boolean }
         {res.status}
       </span>
     </td>
-    <td className="p-2 text-muted-foreground truncate max-w-[200px]" title={res.details}>
+    <td className="px-1.5 py-2 text-muted-foreground truncate" title={res.details}>
       {res.details}
     </td>
-    <td className="p-2">
+    <td className="px-1.5 py-2">
       <a
         href={res.referenceUrl}
         target="_blank"
@@ -160,6 +313,29 @@ export const AcvpSuiteWorkbench = () => {
   const [codeOutput, setCodeOutput] = useState<CodeRunOutput | null>(null)
   const [mobileAdvancedOpen, setMobileAdvancedOpen] = useState(false)
   const [mobileTraceOpen, setMobileTraceOpen] = useState(false)
+  const [filter, setFilter] = useState<ResultFilter>(NO_FILTER)
+  // A new run starts from the whole table: derived-state reset, no effect.
+  const [wasLoading, setWasLoading] = useState(loading)
+  if (loading !== wasLoading) {
+    setWasLoading(loading)
+    if (loading) setFilter(NO_FILTER)
+  }
+  // Row → evidence classes, once per finished run. Not while rows stream in: that would walk
+  // every row on each ~150 ms commit, the O(rows × commits) cost the batching avoids.
+  const rowClasses = useMemo(
+    () =>
+      loading
+        ? null
+        : classesByRow(results, (id) => evidenceForRowId(id).map((r) => r.evidenceClass)),
+    // evidenceReady: the evidence file loads on demand, so the classes are empty until it has.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [results, loading, evidenceReady]
+  )
+  const classCounts = useMemo(() => (rowClasses ? countByClass(rowClasses) : null), [rowClasses])
+  const visibleResults = useMemo(
+    () => applyResultFilter(results, filter, rowClasses),
+    [results, filter, rowClasses]
+  )
 
   const code = useMemo(
     () => emitAcvpSuite(selectedCategories, engineMode),
@@ -229,6 +405,7 @@ export const AcvpSuiteWorkbench = () => {
               {selectedCategories.size}/{CATEGORIES.length} selected
             </span>
           </div>
+          <GroupsVsCases className="mb-2" />
           <div className="space-y-1.5">
             {CATEGORIES.map((cat) => (
               <label
@@ -574,28 +751,54 @@ export const AcvpSuiteWorkbench = () => {
         </div>
       )}
 
+      {results.length > 0 && (
+        <AcvpResultFilters
+          filter={filter}
+          onChange={setFilter}
+          total={totalChecks}
+          statusCounts={{ pass: passed, fail: failed, skip: skipped }}
+          classCounts={classCounts}
+          shown={visibleResults.length}
+        />
+      )}
+
       <div className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full table-fixed text-left text-xs">
+            <colgroup>
+              <col className="w-[13%]" />
+              <col className="w-[17%]" />
+              <col className="w-[30%]" />
+              <col className="w-[12%]" />
+              <col className="w-[22%]" />
+              <col className="w-[6%]" />
+            </colgroup>
             <thead className="bg-muted/30 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md">
               <tr>
-                <th className="p-2 font-bold">Category</th>
-                <th className="p-2 font-bold">Algorithm</th>
-                <th className="p-2 font-bold">Test Case</th>
-                <th className="p-2 font-bold">Status</th>
-                <th className="p-2 font-bold">Details</th>
-                <th className="p-2 font-bold">Ref</th>
+                <th className="px-1.5 py-2 font-bold">Category</th>
+                <th className="px-1.5 py-2 font-bold">Algorithm</th>
+                <th className="px-1.5 py-2 font-bold">Test Case</th>
+                <th className="px-1.5 py-2 font-bold">Status</th>
+                <th className="px-1.5 py-2 font-bold">Details</th>
+                <th className="px-1.5 py-2 font-bold">Ref</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
               {results.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-muted-foreground/80 italic">
-                    No results yet. Pick categories on the left and press Run.
+                    No results yet. Press Run for the ticked categories, or tick others on the left
+                    first.
+                  </td>
+                </tr>
+              ) : visibleResults.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-muted-foreground/80 italic">
+                    No rows match this filter.
                   </td>
                 </tr>
               ) : (
-                results.map((res) => (
+                visibleResults.map((res) => (
                   <AcvpResultRow key={res.id} res={res} evidenceReady={evidenceReady} />
                 ))
               )}
@@ -636,6 +839,7 @@ export const AcvpSuiteWorkbench = () => {
             </div>
           )}
         </div>
+        <GroupsVsCases className="mt-2 border-t border-border pt-2" />
       </Card>
       <Card className="p-3.5">
         <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">

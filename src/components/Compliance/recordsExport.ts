@@ -37,7 +37,9 @@ export function complianceExportPreamble(
   ]
   const retrieval = snapshotRetrievalEntries(meta)
   if (retrieval.length > 0) {
-    lines.push(`Snapshot retrieved: ${retrieval.map((e) => `${e.label} ${e.date}`).join('; ')}`)
+    lines.push(
+      `Snapshot retrieved: ${retrieval.map((e) => `${e.label} ${e.date}`).join('; ')} (dates in UTC)`
+    )
   }
   if (newestRecordDate) {
     lines.push(`Newest record date: ${formatIsoDate(newestRecordDate.toISOString())}`)
