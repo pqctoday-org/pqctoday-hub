@@ -8,8 +8,8 @@ Because PQC certificates typically run several times larger than today's certifi
 
 ### The Key Takeaway
 
-Operations teams are on the front line of the quantum transition. They must immediately inventory all cryptographic assets, lab-test PQC protocols (like OpenSSH 9.x hybrid key exchanges), and update deployment playbooks before executing automated, phased rollovers.
+Operations teams are on the front line of the quantum transition. They must immediately inventory all cryptographic assets, lab-test PQC protocols (like the hybrid mlkem768x25519-sha256 key exchange, added in OpenSSH 9.9 and the default from OpenSSH 10.0), and update deployment playbooks before executing automated, phased rollovers.
 
 ### What's Happening
 
-Operations teams are establishing PQC lab environments to test hybrid protocol deployments—including OpenSSH 9.x hybrid key exchanges—and recalibrating monitoring baselines to account for the larger certificate sizes and different latency profiles of quantum-safe algorithms.
+Operations teams are establishing PQC lab environments to test hybrid protocol deployments—including the hybrid ML-KEM key exchange in OpenSSH 9.9 and later—and recalibrating monitoring baselines to account for the larger certificate sizes and different latency profiles of quantum-safe algorithms.

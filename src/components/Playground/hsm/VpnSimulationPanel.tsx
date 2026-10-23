@@ -602,13 +602,17 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const [mtu, setMtu] = useState<number>(1500)
   const [allowFragmentation, setAllowFragmentation] = useState<boolean>(true)
   const [ssState, setSsState] = useState<StrongSwanState>('UNINITIALIZED')
-  // Live elapsed-time counter shown while the strongSwan WASM is still booting,
-  // so a slow first-load compile (budgeted up to ~2 min) reads as "working N s"
-  // rather than an indistinguishable hang.
+  // Failure message from the engine when it enters ERROR (worker crash, failed
+  // download, or the LOADING time limit), shown next to the Retry button.
+  const [ssErrorMsg, setSsErrorMsg] = useState<string | null>(null)
+  // Live elapsed-time counter shown while the strongSwan WASM is loading, so a
+  // slow first-load compile (budgeted up to ~2 min) reads as "working N s"
+  // rather than an indistinguishable hang. UNINITIALIZED is the idle state
+  // (no workers exist until Generate Certs / Start Daemon), so no timer there.
   const [loadElapsedSec, setLoadElapsedSec] = useState(0)
   const loadStartRef = useRef<number | null>(null)
   useEffect(() => {
-    const isBooting = ssState === 'UNINITIALIZED' || ssState === 'LOADING'
+    const isBooting = ssState === 'LOADING'
     if (!isBooting) {
       loadStartRef.current = null
       setLoadElapsedSec(0)
@@ -1060,7 +1064,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         setCharonFailed(true)
       }
     }
-    const handleState = (state: StrongSwanState) => setSsState(state)
+    const handleState = (state: StrongSwanState) => {
+      setSsState(state)
+      setSsErrorMsg(state === 'ERROR' ? strongSwanEngine.lastError : null)
+    }
 
     // Map mech codes to friendly names for the PKCS#11 panel. Crypto-only ops.
     const PKCS11_MECH_NAMES: Record<number, string> = {
@@ -2598,6 +2605,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     setKemSecrets({})
     // Reset slot init guard so the next Generate Certs / Start Daemon gets fresh slots.
     vpnRpcInitRef.current = false
+    // The workers that held the provisioned ML-DSA keys are about to be
+    // terminated, so Start Daemon must not try to reuse them.
+    dualWorkerReadyRef.current = false
     strongSwanEngine.destroy()
 
     // Close the PKCS#11 sessions THIS panel opened. Previously Reset dropped
@@ -3159,7 +3169,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     } catch (err: unknown) {
       const msg = translateCryptoError(err instanceof Error ? err.message : String(err))
       strongSwanEngine.dispatchLog({ level: 'error', text: `[CERT-WORKER] ${msg}` })
-      setSabError(msg)
+      // A strongSwan load failure already shows in the status badge with a
+      // Retry button; it is not a browser-support problem.
+      if (strongSwanEngine.getState() !== 'ERROR') setSabError(msg)
     } finally {
       setCertGenLoading(false)
     }
@@ -3176,6 +3188,28 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     kemOverrideProposal,
     serverPsk,
   ])
+
+  // Retry after the engine reports ERROR: full reset (terminates the workers,
+  // closes this panel's sessions), then re-run the step that loads strongSwan.
+  // Dual ML-DSA loads it in Generate Certs; PSK mode loads it in Start Daemon,
+  // which is clicked once the reset has re-rendered the idle controls. Dual
+  // RSA needs fresh certificates first, so it stops at the idle state.
+  const startDaemonBtnRef = useRef<HTMLButtonElement>(null)
+  const [retryStartPending, setRetryStartPending] = useState(false)
+  const handleRetry = useCallback(() => {
+    setSabError(null)
+    handleReset()
+    if (authMode === 'dual') {
+      if (clientAlg === 'ML-DSA' && serverAlg === 'ML-DSA') void generateCertsViaWorker()
+    } else {
+      setRetryStartPending(true)
+    }
+  }, [handleReset, authMode, clientAlg, serverAlg, generateCertsViaWorker])
+  useEffect(() => {
+    if (!retryStartPending || ssState !== 'UNINITIALIZED' || currentStep !== 0) return
+    setRetryStartPending(false)
+    startDaemonBtnRef.current?.click()
+  }, [retryStartPending, ssState, currentStep])
 
   // Benchmark keygen + self-sign across RSA-3072 and ML-DSA-{44,65,87}.
   // Reuses the initiator session if already initialized; otherwise initializes it first.
@@ -3451,7 +3485,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             )}
             {authMode === 'dual'
               ? 'IKE_AUTH: charon uses AUTH_CLASS_PUBKEY + ML-DSA cert; C_SignInit/C_Sign run in-process via statically-linked softhsmv3.'
-              : 'IKE_AUTH cert auth: PSK mode only; switch to "PSK + Certificate" to run real ML-DSA signing.'}
+              : 'IKE_AUTH uses the pre-shared key in this mode; choose PSK + Certificate to sign with ML-DSA on the soft token.'}
           </div>
           <div className="md:col-span-2 mt-1 pt-1 border-t border-border text-[11px]">
             <strong className="text-foreground">Roadmap:</strong> remaining work is the ESP data
@@ -3462,27 +3496,50 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
       </div>
 
-      <div className="mb-3 flex items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
         {sabError ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error">
             <span className="h-1.5 w-1.5 rounded-full bg-status-error" />
             SharedArrayBuffer unavailable — try Chrome or Firefox
           </span>
         ) : ssState === 'UNINITIALIZED' ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            <Loader2 size={10} className="animate-spin" />
-            Loading strongSwan WASM… ({loadElapsedSec}s)
+          <span
+            data-testid="vpn-engine-status"
+            className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
+            Ready: click Generate Certs or Start Daemon
           </span>
         ) : ssState === 'LOADING' ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+          <span
+            data-testid="vpn-engine-status"
+            className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+          >
             <Loader2 size={10} className="animate-spin" />
             Compiling strongSwan WASM ({loadElapsedSec}s) — can take up to ~2 minutes on first load…
           </span>
         ) : ssState === 'ERROR' ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error">
-            <span className="h-1.5 w-1.5 rounded-full bg-status-error" />
-            strongSwan WASM failed to start — reload to retry
-          </span>
+          <>
+            <span
+              data-testid="vpn-engine-status"
+              className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error"
+              title={ssErrorMsg ?? undefined}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-status-error" />
+              strongSwan WASM failed to start
+            </span>
+            <Button
+              variant="ghost"
+              onClick={handleRetry}
+              className="px-2.5 py-0.5 rounded-full border border-status-error/30 text-xs font-medium text-status-error hover:bg-status-error/10"
+              data-testid="vpn-engine-retry"
+            >
+              Retry
+            </Button>
+            {ssErrorMsg && (
+              <span className="text-xs text-muted-foreground break-words">{ssErrorMsg}</span>
+            )}
+          </>
         ) : ssState === 'RUNNING' ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success/10 px-2.5 py-0.5 text-xs font-medium text-status-success">
             <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
@@ -4483,6 +4540,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       : undefined
                 }
                 data-testid="vpn-start-daemon"
+                ref={startDaemonBtnRef}
               >
                 Start Daemon
               </Button>

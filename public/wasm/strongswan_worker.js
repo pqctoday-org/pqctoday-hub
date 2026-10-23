@@ -841,7 +841,16 @@ self.onmessage = (e) => {
         }
 
         fetch('/wasm/strongswan.wasm')
-          .then((r) => r.arrayBuffer())
+          .then((r) => {
+            // A 404/5xx (or an HTML fallback page) would otherwise reach
+            // WebAssembly.instantiate as garbage bytes with an opaque error.
+            if (!r.ok) {
+              throw new Error(
+                `fetching /wasm/strongswan.wasm returned HTTP ${r.status}${r.statusText ? ` ${r.statusText}` : ''}`
+              )
+            }
+            return r.arrayBuffer()
+          })
           .then((buf) => WebAssembly.instantiate(buf, imports))
           .then(({ instance, module: wasmMod }) => {
             for (const v of Object.values(instance.exports)) {

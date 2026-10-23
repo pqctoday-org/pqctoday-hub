@@ -51,11 +51,15 @@ export function detectBrowser(userAgent?: string): BrowserSupport {
   // below can be honest about there being no "switch browsers" fix here.
   const isIOS = /\b(iPhone|iPad|iPod)\b/.test(ua) || /\bCriOS\/|\bEdgiOS\/|\bFxiOS\//.test(ua)
 
+  // Headless Chromium (Playwright, Puppeteer, CI) reports "HeadlessChrome/<ver>"
+  // with no word boundary before "Chrome/", so match that token explicitly.
+  const hasChromeToken = /(?:\b|Headless)Chrome\//.test(ua)
   const isChromiumLike =
-    /\bChrome\//.test(ua) || /\bEdg\//.test(ua) || /\bOPR\//.test(ua) || /\bBrave\//.test(ua)
+    hasChromeToken || /\bEdg\//.test(ua) || /\bOPR\//.test(ua) || /\bBrave\//.test(ua)
   const isFirefox = /\bFirefox\//.test(ua)
-  // Safari UA contains "Safari" but also "Version/XX.Y" and *not* "Chrome".
-  const isSafari = /\bSafari\//.test(ua) && !/\bChrome\//.test(ua)
+  // Safari UA contains "Safari" but also "Version/XX.Y" and *not* "Chrome"
+  // (every Chromium UA, headless included, also carries "Safari/537.36").
+  const isSafari = /\bSafari\//.test(ua) && !hasChromeToken
 
   if (isIOS) {
     return {

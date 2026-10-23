@@ -2640,7 +2640,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'experimental',
         stageNote:
           'Vendor/community technique (Rosenpass whitepaper, formally verified with ProVerif) — not an IETF or WireGuard-project standard',
-        note: "Rosenpass runs a separate ML-KEM-768 + Classic McEliece handshake and injects the combined shared secret into WireGuard's existing pre-shared-key (PSK) slot — an out-of-band combiner, not a change to the WireGuard wire protocol. Several VPN vendors ship equivalent WireGuard + ML-KEM hybrid combiners.",
+        note: "Rosenpass runs a separate handshake using Classic McEliece-460896 (static keys) and round-3 Kyber-512 (ephemeral keys), not FIPS 203 ML-KEM, and injects the combined shared secret into WireGuard's existing pre-shared-key (PSK) slot — an out-of-band combiner, not a change to the WireGuard wire protocol. Several VPN vendors ship equivalent WireGuard + ML-KEM hybrid combiners.",
         deploymentPosture: 'production',
         deploymentNote:
           'Mullvad ships this by default on all desktop platforms since Jan 2025; NordVPN, Surfshark, Windscribe, and IVPN ship comparable WireGuard + ML-KEM hybrid combiners.',

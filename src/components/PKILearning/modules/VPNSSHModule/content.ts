@@ -34,6 +34,10 @@ export const content: ModuleContent = {
     // the revisioned WG documents below, and one site still named Fluhrer's individual
     // submission, whose own capture reads "Expired Internet-Draft (individual) Expired &
     // archived".
+    // Both IKEv2 drafts are in the RFC Editor queue (October 2026): ikev2-pqc-auth is at
+    // revision -12 and ikev2-mlkem at -09. The library ID below still carries the
+    // older pqc-auth revision until the library row is refreshed; it links to the
+    // Datatracker page, which always shows the latest revision.
     getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-08'),
     getStandard('draft-ietf-ipsecme-ikev2-mlkem-09'),
     // RFC 9329 (obsoletes RFC 8229): the reliable-transport route the limits section names
@@ -58,7 +62,7 @@ export const content: ModuleContent = {
   narratives: {
     ikeClassicalSize: "1,400 bytes (this workshop's sample handshake)",
     ikeHybridSize: "3,784 bytes (this workshop's sample handshake)",
-    wireGuardIncrease: '22x',
+    wireGuardIncrease: "about 9x with Rosenpass (this workshop's sample handshake)",
     sshClassicalSize: "984 bytes (this workshop's sample handshake)",
     sshHybridSize: "3,296 bytes (this workshop's sample handshake)",
   },

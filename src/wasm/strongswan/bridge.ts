@@ -8,6 +8,13 @@ export interface StrongSwanLog {
 
 export type StrongSwanState = 'UNINITIALIZED' | 'LOADING' | 'READY' | 'RUNNING' | 'ERROR'
 
+/**
+ * Longest the engine may sit in LOADING (download + compile of strongswan.wasm
+ * in two workers, then key generation) before it gives up and reports ERROR.
+ * The first-load compile is budgeted at ~2 minutes, so this leaves headroom.
+ */
+export const STRONGSWAN_LOAD_TIMEOUT_MS = 150_000
+
 export interface Pkcs11RpcCallback {
   (sab: SharedArrayBuffer, role: 'initiator' | 'responder'): void
 }
@@ -63,6 +70,9 @@ export class StrongSwanEngine {
   private _fragmentation = true
   private _childSa = false
   private _keysReadyResolve: (() => void) | null = null
+  private _keysReadyReject: ((err: Error) => void) | null = null
+  private _loadTimer: ReturnType<typeof setTimeout> | null = null
+  private _lastError: string | null = null
   private _keySpec: { algType: number; slot0Size: number; slot1Size: number } = {
     algType: 1,
     slot0Size: 3072,
@@ -132,7 +142,48 @@ export class StrongSwanEngine {
     })
   }
 
+  /** Last failure message (set when the engine enters ERROR). */
+  public get lastError(): string | null {
+    return this._lastError
+  }
+
+  public getState(): StrongSwanState {
+    return this.state
+  }
+
+  private _clearLoadTimer() {
+    if (this._loadTimer != null) {
+      clearTimeout(this._loadTimer)
+      this._loadTimer = null
+    }
+  }
+
+  /** What the engine is still waiting on, for the LOADING time-limit diagnostic. */
+  private _loadingStage(): string {
+    if (this._readyCount < 2) {
+      return `downloading and compiling /wasm/strongswan.wasm (${this._readyCount} of 2 workers ready)`
+    }
+    return `generating the IKE keys in the workers (${this._keysReadyCount} of 2 done)`
+  }
+
+  /**
+   * Move to ERROR with a visible message: logs it, and rejects a pending
+   * spawn-only init() promise so the caller's await does not hang forever.
+   */
+  private _fail(message: string) {
+    this._clearLoadTimer()
+    this._lastError = message
+    this.setState('ERROR')
+    this.dispatchLog({ level: 'error', text: message })
+    const reject = this._keysReadyReject
+    this._keysReadyResolve = null
+    this._keysReadyReject = null
+    if (reject) reject(new Error(message))
+  }
+
   private setState(s: StrongSwanState) {
+    if (s !== 'LOADING') this._clearLoadTimer()
+    if (s !== 'ERROR') this._lastError = null
     this.state = s
     this.stateListeners.forEach((fn) => fn(s))
   }
@@ -331,13 +382,13 @@ export class StrongSwanEngine {
               if (this._keysReadyResolve) {
                 this._keysReadyResolve()
                 this._keysReadyResolve = null
+                this._keysReadyReject = null
               }
             }
           }
           break
         case 'ERROR':
-          this.setState('ERROR')
-          this.dispatchLog({ level: 'error', text: payload })
+          this._fail(typeof payload === 'string' ? payload : `${role} worker error: ${payload}`)
           break
         case 'PANEL_PKCS11_RESULT': {
           const { reqId, rv, data } = e.data.payload as {
@@ -409,6 +460,22 @@ export class StrongSwanEngine {
       }
     }
 
+    // A script that fails to load or throws at top level, or a message that
+    // cannot be deserialized, never reaches onmessage — surface it as ERROR
+    // instead of leaving the panel stuck in LOADING.
+    worker.onerror = (ev: ErrorEvent) => {
+      if (spawnEpoch !== this._epoch) return
+      ev.preventDefault()
+      const where = ev.filename ? ` (${ev.filename}:${ev.lineno})` : ''
+      this._fail(
+        `[BRIDGE] ${role} worker failed: ${ev.message || 'script error while loading strongswan_worker.js'}${where}`
+      )
+    }
+    worker.onmessageerror = () => {
+      if (spawnEpoch !== this._epoch) return
+      this._fail(`[BRIDGE] ${role} worker sent a message that could not be deserialized`)
+    }
+
     worker.postMessage({
       type: 'INIT',
       payload: {
@@ -478,10 +545,21 @@ export class StrongSwanEngine {
 
     const readyPromise =
       this._phase === 'spawn-only'
-        ? new Promise<void>((resolve) => {
+        ? new Promise<void>((resolve, reject) => {
             this._keysReadyResolve = resolve
+            this._keysReadyReject = reject
           })
         : Promise.resolve()
+
+    const loadEpoch = this._epoch
+    this._clearLoadTimer()
+    this._loadTimer = setTimeout(() => {
+      this._loadTimer = null
+      if (loadEpoch !== this._epoch || this.state !== 'LOADING') return
+      this._fail(
+        `[BRIDGE] strongSwan did not finish loading within ${Math.round(STRONGSWAN_LOAD_TIMEOUT_MS / 1000)} s; still ${this._loadingStage()}.`
+      )
+    }, STRONGSWAN_LOAD_TIMEOUT_MS)
 
     const initKeyId = options?.keyIds?.initKeyId
     const respKeyId = options?.keyIds?.respKeyId
@@ -557,6 +635,11 @@ export class StrongSwanEngine {
   }
 
   public destroy() {
+    this._clearLoadTimer()
+    // Bump the epoch so late messages/errors from the terminated workers are ignored.
+    this._epoch++
+    this._keysReadyResolve = null
+    this._keysReadyReject = null
     if (this.initWorker) {
       this.initWorker.terminate()
       this.initWorker = null

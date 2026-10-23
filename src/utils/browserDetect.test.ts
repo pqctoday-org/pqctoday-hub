@@ -7,6 +7,15 @@ const UA = {
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
   edgeDesktop:
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
+  headlessChromium:
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/140.0.0.0 Safari/537.36',
+  headlessChromiumLinux:
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/140.0.7339.16 Safari/537.36',
+  brave:
+    // Brave deliberately sends the stock Chrome UA (no Brave token).
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+  opera:
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 OPR/123.0.0.0',
   firefoxDesktop: 'Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0',
   safariDesktop:
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
@@ -23,6 +32,14 @@ describe('detectBrowser', () => {
   it('supports Chromium-family desktop browsers', () => {
     expect(detectBrowser(UA.chromeDesktop)).toMatchObject({ supported: true, name: 'Chromium' })
     expect(detectBrowser(UA.edgeDesktop)).toMatchObject({ supported: true, name: 'Chromium' })
+    expect(detectBrowser(UA.brave)).toMatchObject({ supported: true, name: 'Chromium' })
+    expect(detectBrowser(UA.opera)).toMatchObject({ supported: true, name: 'Chromium' })
+  })
+
+  it('treats headless Chromium ("HeadlessChrome/") as Chromium, not Safari', () => {
+    for (const ua of [UA.headlessChromium, UA.headlessChromiumLinux]) {
+      expect(detectBrowser(ua)).toMatchObject({ supported: true, name: 'Chromium' })
+    }
   })
 
   it('flags desktop Firefox and Safari as unsupported with a browser-switch suggestion', () => {

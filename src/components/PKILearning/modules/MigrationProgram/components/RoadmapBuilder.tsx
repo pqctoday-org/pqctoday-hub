@@ -496,7 +496,7 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
       )}
       {seededFrom === 'assessment' && (
         <PreFilledBanner
-          summary={`${assessmentMilestones.length} milestone${assessmentMilestones.length !== 1 ? 's' : ''} from your reported algorithms, split into Track A (key-exchange) and Track B (signatures) and anchored on NIST deprecation dates.`}
+          summary={`${assessmentMilestones.length} milestone${assessmentMilestones.length !== 1 ? 's' : ''} from your reported algorithms, split into Track A (key-exchange) and Track B (signatures) and anchored on the deprecation dates in NIST IR 8547 initial public draft (Nov 2024).`}
           onClear={() => {
             setCurrentMilestones(DEFAULT_MILESTONES)
             setSeededFrom(null)
