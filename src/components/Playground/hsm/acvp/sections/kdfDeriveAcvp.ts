@@ -305,6 +305,7 @@ interface HkdfCase {
 interface HkdfGroup {
   tgId: number
   testType: 'AFT' | 'VAL'
+  multiExpansion?: false
   kdfConfiguration: { hmacAlg: string; saltMethod: string }
   tests: HkdfCase[]
 }
@@ -369,7 +370,7 @@ export async function runHkdfAcvpSection(ctx: ClassicalSectionCtx): Promise<void
   const P = f._provenance
   const why = unsupportedReason(mechs, WSE_MECH.CKM_HKDF_DERIVE, 'CKM_HKDF_DERIVE')
   for (const g of f.testGroups) {
-    if ('multiExpansion' in g) {
+    if (g.multiExpansion === true) {
       await runHkdfMultiGroup(ctx, g, P, why)
       continue
     }
