@@ -124,8 +124,12 @@ describe('P5 WS-E remainder sections — both engines, real vectors', () => {
 
   it('HKDF: every AFT byte-matches NIST dkm and every VAL-invalid dkm is not reproduced, on both engines', () => {
     const v = readVectors('hkdf_acvp_test.json')
+    // Multi-expansion groups have their own suite (useAcvpSuite.hkdfMulti.local.test.ts).
+    const single = v.testGroups.filter(
+      (g: { multiExpansion?: boolean }) => g.multiExpansion !== true
+    )
     for (const engine of ENGINES)
-      for (const g of v.testGroups)
+      for (const g of single)
         for (const t of g.tests) {
           const r = row(
             `hkdf-nist-${macSlug(g.kdfConfiguration.hmacAlg)}-tg${g.tgId}-tc${t.tcId}-${engine}`
