@@ -103,6 +103,12 @@ const SOURCES: { id: string; re: RegExp; loader: string }[] = [
     re: /^migrate_certification_xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
     loader: 'certificationXrefData',
   },
+  // hsmCapabilityXrefData.ts — glob './migrate_hsm_capability_xref_*.csv'
+  {
+    id: 'hsmCapabilityXref',
+    re: /^migrate_hsm_capability_xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    loader: 'hsmCapabilityXrefData',
+  },
   // quizDataLoader.ts — glob './pqcquiz_*.csv'
   { id: 'quiz', re: /^pqcquiz_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/, loader: 'quizDataLoader' },
 ]
