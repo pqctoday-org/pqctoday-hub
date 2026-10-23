@@ -68,7 +68,7 @@
       "lm_id": "LM-068",
       "title": "Common Criteria, EUCC & eIDAS Certification",
       "description": "Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.",
-      "duration": "60 min",
+      "duration": "64 min",
       "difficulty": "advanced",
       "frameworkPhase": "p7"
     },
@@ -964,6 +964,10 @@
         "id": "cc-regional-reference",
         "label": "Regional schemes: per-scheme reference",
         "optional": true
+      },
+      {
+        "id": "niap-pqc-route",
+        "label": "NIAP and post-quantum cryptography: what its profiles require"
       },
       {
         "id": "eucc-scheme",
@@ -4287,7 +4291,7 @@
           "lm_id": "LM-068",
           "title": "Common Criteria, EUCC & eIDAS Certification",
           "description": "Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.",
-          "duration": "60 min",
+          "duration": "64 min",
           "difficulty": "advanced",
           "frameworkPhase": "p7"
         },

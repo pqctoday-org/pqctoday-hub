@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { getStandard } from '@/data/standardsRegistry'
 import { PathScopedContent } from '@/components/PKILearning/common/LearnPathPicker'
+import { ModuleAnalysisNote } from '@/components/PKILearning/common/ModuleAnalysisNote'
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import { ASSURANCE_COMPONENTS, CC_EU_AS_OF } from '../../data/ccEuData'
 import {
@@ -199,11 +200,11 @@ const DataTable = ({
   </div>
 )
 
-const Sources = ({ children }: { children: ReactNode }) => (
+const Sources = ({ children, readOn = AS_OF_LABEL }: { children: ReactNode; readOn?: string }) => (
   <div className="flex items-start gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
     <BookOpen size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
     <p>
-      <span className="font-medium">Sources (read {AS_OF_LABEL}):</span> {children}
+      <span className="font-medium">Sources (read {readOn}):</span> {children}
     </p>
   </div>
 )
@@ -2052,6 +2053,241 @@ export const CcRegionalReference = () => (
         </div>
       )
     })}
+  </div>
+)
+
+const LEARN = '/learn/cc-eucc-certification?tab=learn'
+
+/** A named source that has no Library page: its name, then a plain link to the document. */
+const ExternalSource = ({ name, href }: { name: string; href?: string }) => (
+  <>
+    <PlainSource>{name}</PlainSource>
+    {href ? (
+      <>
+        {' '}
+        (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Source: ${name}`}
+          className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+        >
+          Source
+        </a>
+        )
+      </>
+    ) : null}
+  </>
+)
+
+const InLink = ({ to, children }: { to: string; children: ReactNode }) => (
+  <Link
+    to={to}
+    className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+  >
+    {children}
+  </Link>
+)
+
+const NIAP_DSC_CPP_URL =
+  'https://www.niap-ccevs.org/static_html/protection-profile/538/cPP_DSC_V2.1.html'
+const NIAP_DSC_SD_URL = 'https://dsc-itc.github.io/v2/2.1/SD_DSC_V2.1.html'
+const NIAP_APP_PP_URL =
+  'https://www.niap-ccevs.org/static_html/protection-profile/516/PP_APP_V2.0.htm'
+const NIAP_POLICY_5_URL =
+  'https://www.niap-ccevs.org/Documents_and_Guidance/ccevs/policy-ltr-5-update3.pdf'
+
+/** Learn section `niap-pqc-route` */
+export const NiapPqcRoute = () => (
+  <div className="space-y-4" data-as-of="2026-10-23">
+    <P>
+      <strong>How it works.</strong> NIAP is the US scheme for Common Criteria and is part of the
+      NSA (<SourceCite id="NIAP-CCEVS-MANUAL" label="Scheme Publication #2" />
+      ). A lab evaluates the product. It reaches the Product Compliant List only if it was evaluated
+      against a NIAP-approved protection profile, and conformance is exact, so the profile fixes the
+      tests. Which profile fits an HSM-type product is for the vendor, the lab and NIAP to decide.{' '}
+      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote> We did not find a NIAP profile
+      written for HSMs: “not found”, not “does not exist”. Our Library’s HSM profiles (
+      <InLink to={`${LEARN}&path=eucc-eidas&section=pp-en419221-5`}>EN 419 221-5</InLink>,
+      <SourceCite id="BSI-CC-PP-0114-V2X-HSM" label="BSI V2X HSM" />,{' '}
+      <SourceCite
+        id="CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile"
+        label="CAR 2 CAR HSM"
+      />
+      ) are European, not NIAP.
+    </P>
+
+    <Callout tone="key" title="Two agencies, three certificates.">
+      <p>
+        NIAP, run by the NSA, issues the Common Criteria certificate. NIST is a different agency
+        with two programs: CAVP tests an algorithm and gives an algorithm certificate; CMVP
+        validates a whole module and gives a module certificate.{' '}
+        <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote> NIAP Policy #5 ties them
+        together: “At a minimum an appropriate NIST CAVP certificate is required before a NIAP CC
+        Certificate will be awarded.” (
+        <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />)
+      </p>
+    </Callout>
+
+    <P>
+      <strong>
+        First example: the Dedicated Security Component cPP, version 2.1 (17 November 2025).
+      </strong>{' '}
+      Its revision history says “post-quantum cryptography”. It describes a component that serves
+      “the encompassing platform”. Its authors “designed the DSC cPP as a standalone PP”, yet it
+      says the component “is not intended to be a discrete, separate stand-alone component, but one
+      which is directly embedded into a larger system”. Whether a rack-mounted HSM fits is for the
+      lab and NIAP to decide. The profile lists post-quantum algorithms as allowed choices beside
+      the classical ones, with every FIPS 203 and 204 parameter set. It requires none of them, and
+      the text we read does not mention CNSA 2.0.{' '}
+      <ModuleAnalysisNote>(Module analysis, from reading the text.)</ModuleAnalysisNote> (
+      <ExternalSource name="DSC cPP v2.1" href={NIAP_DSC_CPP_URL} />)
+    </P>
+
+    <P>
+      <strong>Contrast: Application Software, version 2.0 (16 June 2025).</strong> Its CNSA 2.0
+      branch sits next to a CNSA 1.0 branch (RSA of 3072 bits or more, P-384 and P-521, safe-prime
+      groups). The profile says: “ML-DSA and ML-KEM are not usable in any functions at the time of
+      initial publication, they are added to this requirement in support of future protocol updates.
+      As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future
+      update.” It prepares for the move and does not force it. (
+      <ExternalSource
+        name="NIAP Protection Profile for Application Software v2.0"
+        href={NIAP_APP_PP_URL}
+      />
+      )
+    </P>
+
+    <DataTable
+      caption="Post-quantum choices in two NIAP profiles, by function: the Dedicated Security Component cPP v2.1 and the CNSA 2.0 branch of the Application Software profile v2.0"
+      head={[
+        'Function',
+        'DSC cPP v2.1: post-quantum choices',
+        'Application Software v2.0: CNSA 2.0 branch',
+      ]}
+      rows={[
+        [
+          'Key generation',
+          'LMS, HSS, XMSS, XMSS-MT, ML-KEM (512, 768, 1024), ML-DSA (44, 65, 87)',
+          'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
+        ],
+        ['Key establishment', 'ML-KEM (512, 768, 1024), as key encapsulation', 'ML-KEM-1024 only'],
+        ['Signature generation', 'LMS, HSS, XMSS, XMSS-MT, ML-DSA, HashML-DSA', 'ML-DSA-87 only'],
+        [
+          'Signature verification',
+          'LMS, HSS, XMSS, XMSS-MT, ML-DSA, HashML-DSA',
+          'LMS, XMSS, ML-DSA-87',
+        ],
+      ]}
+    />
+    <p className="text-xs text-muted-foreground">
+      <ModuleAnalysisNote>
+        (Module analysis: the table is our reading of each profile’s cryptographic requirements.)
+      </ModuleAnalysisNote>
+    </p>
+
+    <H3>What forces the move: a chain</H3>
+    <P>Each link below is one we can quote.</P>
+    <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-foreground/90">
+      <li>
+        <SourceCite id="CNSSP-11-IA-Product-Acquisition-Policy" label="CNSSP 11" /> (2013): products
+        for national security systems “shall comply with the requirements of the NIAP program” and,
+        “where applicable”, FIPS validation.
+      </li>
+      <li>
+        <SourceCite id="CNSSP 15" label="CNSSP 15" /> and CNSA 2.0. Read through{' '}
+        <SourceCite id="NSA CNSA 2.0 FAQ" label="NSA’s FAQ" />: “CNSSP 15 states that by January 1,
+        2027, CNSA 2.0 algorithms will be required in all new acquisitions for NSS and NIAP
+        Protection Profiles are being updated to enable QR certification before this date.”
+      </li>
+      <li>
+        <SourceCite id="NIAP-CCEVS-POLICY-33" label="NIAP Policy #33" /> (31 August 2026, effective
+        1 January 2027). It sets dated cut-offs for acceptance into evaluation and for listing on
+        the Product Compliant List, first for products that do not meet CNSA 1.0 and then for
+        products that do not meet CNSA 2.0 for every cryptographic function. The dates are in the
+        callout{' '}
+        <InLink to={`${LEARN}&section=cc-regional-schemes`}>
+          “The NIAP date that reaches every CCRA certificate”
+        </InLink>
+        . Two points that callout leaves out: archiving is set for “a date to be determined”, and
+        AES-128 for Bluetooth is excepted.
+      </li>
+      <li>
+        The profiles and their test methods (the two examples; the DSC test methods are in its{' '}
+        <ExternalSource name="Supporting Document" href={NIAP_DSC_SD_URL} />
+        ), and Technical Decisions: the DSC group issued “Post-Quantum Algorithm Support” on 17 June
+        2025 (
+        <ExternalSource name="DSC-iTC Technical Decisions page" />
+        ).
+      </li>
+      <li>
+        The product’s Security Target, which picks a branch.{' '}
+        <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+      </li>
+      <li>
+        CSfC. <SourceCite id="NSA CSfC PQC Guidance Addendum" label="NSA’s draft addendum" /> (Draft
+        .5, 4 April 2025) says CNSA 2.0 is required “unless stipulated by CSfC CP, NIAP PP or a
+        Waiver is in place”.
+      </li>
+    </ol>
+
+    <P>
+      <strong>The module point.</strong> The FAQ says a signer for LMS or XMSS needs hardware
+      “validated by NIST’s Cryptographic Module Validation Program (CMVP)”, with no waivers; a
+      product that only verifies signatures needs only CAVP testing. So a CMVP module certificate is
+      a separate ask from the NIAP certificate. The{' '}
+      <InLink to="/learn/fips-140-3-certification">FIPS 140-3 lesson</InLink> covers that route.
+    </P>
+
+    <H3>Ask your lab</H3>
+    <ol className="list-decimal space-y-1 pl-5 text-sm leading-relaxed text-foreground/90">
+      <li>Which profile and version will you expect us to claim?</li>
+      <li>
+        Which branch will our Security Target claim per function, and what happens when the CNSA 1.0
+        branch goes?
+      </li>
+      <li>
+        Do our post-quantum algorithms have CAVP certificates for the evaluated configuration?
+      </li>
+      <li>Does the customer also need a CMVP-validated module?</li>
+      <li>Is signing inside or outside the evaluated boundary?</li>
+      <li>How do the 2027, 2028 and 2029 dates fall against our dates?</li>
+    </ol>
+    <p className="text-xs text-muted-foreground">
+      <ModuleAnalysisNote>(Questions: Module analysis.)</ModuleAnalysisNote>
+    </p>
+
+    <P>
+      One line on the EU: <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" label="EN 419 221-5" />{' '}
+      is a profile for cryptographic modules of trust service providers, at EAL4 augmented with
+      AVA_VAN.5, in a different scheme.
+    </P>
+
+    <P>
+      Related lessons:{' '}
+      <InLink to="/learn/stateful-signatures">Stateful Hash-Based Signatures</InLink> (LMS and XMSS
+      in both profiles), <InLink to="/learn/hsm-pqc">HSM and PQC</InLink>, and the{' '}
+      <InLink to="/compliance?tab=records">Compliance product records</InLink> (real certificates
+      and their claimed profiles).
+    </P>
+
+    <Sources readOn="23 October 2026">
+      <SourceCite id="NIAP-CCEVS-MANUAL" />, <SourceCite id="NIAP-CCEVS-POLICY-33" />,{' '}
+      <SourceCite id="NSA CNSA 2.0 FAQ" />, <SourceCite id="NSA CSfC PQC Guidance Addendum" />,{' '}
+      <SourceCite id="CNSSP-11-IA-Product-Acquisition-Policy" />, <SourceCite id="CNSSP 15" /> (the
+      Library’s copy is the older edition; the sentence quoted above is read through the FAQ),{' '}
+      <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" />,{' '}
+      <SourceCite id="BSI-CC-PP-0114-V2X-HSM" />
+      , <SourceCite id="CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile" />,{' '}
+      <ExternalSource
+        name="NIAP Protection Profile for Application Software v2.0"
+        href={NIAP_APP_PP_URL}
+      />
+      , <ExternalSource name="Dedicated Security Component cPP v2.1" href={NIAP_DSC_CPP_URL} />,{' '}
+      <ExternalSource name="DSC Supporting Document v2.1" href={NIAP_DSC_SD_URL} />,{' '}
+      <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />.
+    </Sources>
   </div>
 )
 
