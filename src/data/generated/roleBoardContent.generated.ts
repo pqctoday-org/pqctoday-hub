@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10222026_r2.csv
+ * Source: src/data/role_board_content_10222026_r3.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2735,10 +2735,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
 
         headline: 'Run the vectors before the lab does.',
         sub: 'Reference vectors and known-answer tests run in this browser against a PKCS#11 engine you pick — C++, Rust, or both in parity — with the evidence class stated on every result. Evidence for that test on that build, not a certificate.',
-        ctaPrimary: 'Open the validation workbench',
-        ctaPrimaryHref: '/playground/hsm?tab=build&dtab=acvp',
-        ctaSecondary: 'Run the known-answer tests',
-        ctaSecondaryHref: '/algorithms?tab=validation&section=kat',
+        ctaPrimary: 'Start with certification fundamentals',
+        ctaPrimaryHref: '/learn/crypto-product-certification',
+        ctaSecondary: 'Open the validation workbench',
+        ctaSecondaryHref: '/playground/hsm?tab=build&dtab=acvp',
         proofChips: [
           'Evidence class on every result, never merged',
           'Not an ACVTS verdict or a CAVP certificate',
@@ -2780,7 +2780,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 9 hours 40 minutes of essentials, not the full 14½ hours.',
+          'Learning path: Fundamentals, then FIPS 140-3 or CC/EUCC, the ACVP lab workflow, the workbench and product records (9 hours 40 minutes of essentials, not the full 14½ hours).',
         trackNote:
           "Seven essentials against the full 13-module path plus the quiz, 875 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
         trackChips: [
