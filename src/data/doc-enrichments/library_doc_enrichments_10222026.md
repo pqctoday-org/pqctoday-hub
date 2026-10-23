@@ -1,108 +1,49 @@
 ---
 generated: 2026-10-22
 collection: library
-documents_processed: 3
+documents_processed: 1
 enrichment_method: automated extraction, human-reviewed
 ---
 
-## RFC-9955-Hybrid-Signature-Spectrums
+## Post-Quantum-PCI-Use-Cases-ATM-and-POS-Card-Capture-ATM-and
 
-- **Reference ID**: RFC-9955-Hybrid-Signature-Spectrums
-- **Title**: RFC 9955: Hybrid Signature Spectrums
+- **Reference ID**: Post-Quantum-PCI-Use-Cases-ATM-and-POS-Card-Capture-ATM-and
+- **Title**: Post Quantum PCI Use Cases: ATM and POS Card Capture; ATM and POS Setup with Backend Acquiring Systems
 - **Authors**: See document
-- **Publication Date**: Not specified
+- **Publication Date**: 2025
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: This document classifies design goals and security considerations for hybrid digital signature schemes, including proof composability, non-separability, and compatibility.
-- **PQC Algorithms Covered**: HQC; Rainbow
-- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); Harvest Now Decrypt Later; quantum attacks against RSA-2048
+- **Main Topic**: A technological review of quantum vulnerabilities and mitigation strategies for ATM and POS card capture and setup with backend acquiring systems.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest Now, Decrypt Later
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: United Kingdom; Bodies: UK National Cyber Security Centre
-- **Leaders Contributions Mentioned**: N. Bindel (Author); B. Hale (Author); D. Connolly (Author); F. Driscoll (Author)
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: FS-ISAC, PCI Security Standards Council, EMVCo
+- **Leaders Contributions Mentioned**: Andrew Mulvenna; Erwin Carrow, U.S. Bank; Dr. Kenneth Giuliani, CIBC; Oscar Covers, Dutch Banking Association; Dr. Carrie Gates, FS-ISAC; Mike Silverman, FS-ISAC
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI
-- **Standardization Bodies**: IETF; NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; RSA-2048
-- **Key Takeaways**: Hybrid signature schemes must ensure that the removal of one component signature does not compromise the security of the remaining component; Design goals include proof composability, non-separability of component signatures, and backwards/forwards compatibility; Stripping attacks, where an adversary removes a component signature to force reliance on a weaker algorithm, are a primary security concern; The term 'hybrid signature scheme' is used broadly to include combinations of multiple post-quantum algorithms, not just post-quantum and traditional pairs.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid digital signature schemes; Composite schemes; Stripping attack mitigation; Backwards and forwards compatibility
-- **Pure PQC KEM Support**: Not Applicable
+- **Protocols Covered**: TLS, EMV
+- **Infrastructure Layers**: HSM, Key Management
+- **Standardization Bodies**: PCI Security Standards Council, EMVCo, ISO
+- **Compliance Frameworks Referenced**: PCI PIN Transaction Security (PTS) Point-of-Interaction (POI) Modular Security Requirements, PCI PIN security standards
+- **Classical Algorithms Referenced**: Triple-DES, AES, RSA
+- **Key Takeaways**: Migrate Terminal Master Keys (TMK) and Terminal PIN Keys (TPK) from Triple-DES to AES using ISO PIN block 4; Replace RSA certificates in EMV and Remote Key Loading with quantum-safe algorithms; Ensure Remote Key Loading bootloaders use quantum-secure cryptography resistant to side-channel attacks; Consider moving to near real-time online PIN verification to mitigate offline certificate vulnerabilities
+- **Security Levels & Parameters**: 64-bit block size; 128-bit block size; 1984-bit RSA; 1024-bit RSA; 2048-bit RSA
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Support**: No
 - **Hybrid PQC KEM Evidence**: None detected
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "This document describes classification of design goals and security considerations for hybrid digital signature schemes"
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Researcher; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: hybrid-crypto; pqc-risk-management; migration-program
-- **Implementation Attack Surface**: timing variations; implementation bugs; stripping attacks
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Backwards and forwards compatibility; algorithm turnover complexity; long-lived digital signatures
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Hybrid
-- **PQC Round**: Not Applicable
-- **Source Document**: RFC-9955-Hybrid-Signature-Spectrums.html (133,783 bytes, 10,245 extracted chars)
-- **Extraction Timestamp**: 2026-10-22T06:46:15
-- **Evidence SHA-256**: e4de665c3fa938b72e5a8cd6dccafa2e35a56467467523c4544cb3a1ffa92b34
-- **Generation Model**: automated extraction, human-reviewed
-- **Evidence SHA256**: e4de665c3fa938b7
-- **Window Chars**: 10245
-
----
-
-## RFC-10033-Hash-Based-Signatures-State-and-Backup-Management
-
-- **Reference ID**: RFC-10033-Hash-Based-Signatures-State-and-Backup-Management
-- **Title**: RFC 10033: Hash-Based Signatures: State and Backup Management
-- **Authors**: See document
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Unverified — needs review
-- **Main Topic**: This document provides guidance and catalogs security considerations for the operational and technical aspects of deploying systems that rely on Stateful Hash-Based Signature Schemes, specifically focusing on state management and backup.
-- **PQC Algorithms Covered**: LMS; HSS; XMSS
-- **Quantum Threats Addressed**: CRQC
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, NIST, BSI
-- **Leaders Contributions Mentioned**: T. Wiggers (Author); K. Bashiri (Author); S. Kölbl (Author); J. Goodman (Author); S. Kousidis (Author)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: HSM, Key Management
-- **Standardization Bodies**: IETF, NIST, ETSI
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Stateful HBS private keys must track which OTS keys have been used to prevent forgeries via double-signing; Redundant key material and state management require careful handling to avoid accidental OTS key reuse; Hierarchical structures using HSMs can separate root and subordinate signing to manage state securely; Time-based state management requires robust clock synchronization to prevent denial-of-service via signature space exhaustion.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "Stateful Hash-Based Signature Schemes (Stateful HBS) such as Leighton-Micali Signature (LMS)... provide signatures that are resistant against attacks"
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
+- **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect, Operations
-- **Implementation Prerequisites**: HSM root; HSM subordinate devices; atomic state updates; continuous time recording
-- **Relevant PQC Today Features**: stateful-signatures; hsm-pqc; pqc-risk-management
-- **Implementation Attack Surface**: None detected
+- **Target Audience**: Security Architect, Compliance Officer
+- **Implementation Prerequisites**: ISO PIN block 4 support in EPP and POS devices; Acquiring system support for AES; Quantum-safe certificates from manufacturers; Side-channel resistant PQC implementations in firmware
+- **Relevant PQC Today Features**: migration-program; pqc-risk-management; hsm-pqc; compliance-strategy
+- **Implementation Attack Surface**: side-channel attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
@@ -112,73 +53,14 @@ enrichment_method: automated extraction, human-reviewed
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: Hash-based
-- **PQC Round**: Standardised
-- **Source Document**: RFC-10033-Hash-Based-Signatures-State-and-Backup-Management.html (122,657 bytes, 8,027 extracted chars)
-- **Extraction Timestamp**: 2026-10-22T06:46:15
-- **Evidence SHA-256**: 47bfefc195dc3e011bec3d0f43b4221d32f552b307822edd8a5d48431ce637ab
-- **Generation Model**: automated extraction, human-reviewed
-- **Evidence SHA256**: 47bfefc195dc3e01
-- **Window Chars**: 8027
-
----
-
-## PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2
-
-- **Reference ID**: PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2
-- **Title**: PCI SSC blog: The Quantum Leap — Preparing for Post-Quantum Cryptography, featuring Utimaco
-- **Authors**: PCISSC
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Unverified — needs review
-- **Main Topic**: An interview with Utimaco Inc. detailing their preparation for post-quantum cryptography migration, focusing on HSM capabilities, hybrid schemes, and industry challenges.
-- **PQC Algorithms Covered**: ML-DSA; ML-KEM
-- **Quantum Threats Addressed**: Cryptographically relevant quantum computers (CRQC)
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
-- **Leaders Contributions Mentioned**: Jillian Benedick (Utimaco Inc. Cryptographer); Alicia Malone (Director, Communications/Public Relations for PCI SSC)
-- **PQC Products Mentioned**: Atalla Payment HSM
-- **Protocols Covered**: PQ-TLS
-- **Infrastructure Layers**: HSM; Key Management
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; ECC; ECDH
-- **Key Takeaways**: Hybrid schemes combining classical and PQC algorithms are recommended for the interim period to mitigate risks from potential lattice-based breaks; Organizations must inventory where asymmetric keys are generated, stored, used, and transported to plan migration order; Supporting standards for key management and interoperability are currently lacking and must be addressed before full implementation; Implementation errors in new PQC libraries are a significant risk due to the complex mathematics involved.
-- **Security Levels & Parameters**: RSA2048
-- **Hybrid & Transition Approaches**: Hybrid KEM scheme; Hybrid signing scheme; Crypto-agile
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "In a hybrid KEM scheme, the shared secrets are generated separately then combined using an approved KDF"
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Yes
-- **Hybrid PQC Signature Evidence**: "For a hybrid signing scheme, both the classical and post quantum signatures must be verified separately."
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Larger keys, signatures, and certificates than classical counterparts; increased computational overhead; slower computational speeds; more memory requirements
-- **Target Audience**: Security Architect; CISO; Compliance Officer
-- **Implementation Prerequisites**: Understanding of system key generation, storage, usage, and transport; Vendor timelines; Supporting standards for key management
-- **Relevant PQC Today Features**: hsm-pqc; hybrid-crypto; migration-program; pqc-risk-management
-- **Implementation Attack Surface**: Implementation errors; buffer overflow issues
-- **Cryptographic Discovery & Inventory**: Inventory of asymmetric keys (generation, storage, usage, transport)
-- **Testing & Validation Methods**: Testing various algorithms and implementations
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Vendor timelines; Interoperability problems due to lagging standards
-- **Deployment & Migration Complexity**: Migration order determination; Risk analysis; Interoperability issues with hybrid schemes
-- **Financial & Business Impact**: Cost of preparing vs not preparing; Impact on customers and employees
-- **Organizational Readiness**: Getting to know your systems; Analyzing risks; Determining migration order
-- **Math Family**: Lattice; Hybrid
+- **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2.html (92,479 bytes, 10,348 extracted chars)
-- **Extraction Timestamp**: 2026-10-22T06:46:16
-- **Evidence SHA-256**: 2747000677c677799351e9c32d9d1d5b4287670a8a937826f694fcf04a7cfabe
+- **Source Document**: Post-Quantum-PCI-Use-Cases-ATM-and-POS-Card-Capture-ATM-and.pdf (442,140 bytes, 19,691 extracted chars)
+- **Extraction Timestamp**: 2026-10-22T23:27:03
+- **Evidence SHA-256**: 03ae3c7def83c98b3af8f167129bb336d53f4359875cddfa5a54fbc3ad3cc96d
 - **Generation Model**: automated extraction, human-reviewed
-- **Evidence SHA256**: 2747000677c67779
-- **Window Chars**: 10348
+- **Evidence SHA256**: 03ae3c7def83c98b
+- **Window Chars**: 19691
 
 ---
 
@@ -40804,6 +40686,65 @@ enrichment_method: automated extraction, human-reviewed
 
 ---
 
+## PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2
+
+- **Reference ID**: PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2
+- **Title**: PCI SSC blog: The Quantum Leap — Preparing for Post-Quantum Cryptography, featuring Utimaco
+- **Authors**: PCISSC
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: An interview with Utimaco Inc. detailing their preparation for post-quantum cryptography migration, focusing on HSM capabilities, hybrid schemes, and industry challenges.
+- **PQC Algorithms Covered**: ML-DSA; ML-KEM
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computers (CRQC)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
+- **Leaders Contributions Mentioned**: Jillian Benedick (Utimaco Inc. Cryptographer); Alicia Malone (Director, Communications/Public Relations for PCI SSC)
+- **PQC Products Mentioned**: Atalla Payment HSM
+- **Protocols Covered**: PQ-TLS
+- **Infrastructure Layers**: HSM; Key Management
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC; ECDH
+- **Key Takeaways**: Hybrid schemes combining classical and PQC algorithms are recommended for the interim period to mitigate risks from potential lattice-based breaks; Organizations must inventory where asymmetric keys are generated, stored, used, and transported to plan migration order; Supporting standards for key management and interoperability are currently lacking and must be addressed before full implementation; Implementation errors in new PQC libraries are a significant risk due to the complex mathematics involved.
+- **Security Levels & Parameters**: RSA2048
+- **Hybrid & Transition Approaches**: Hybrid KEM scheme; Hybrid signing scheme; Crypto-agile
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "In a hybrid KEM scheme, the shared secrets are generated separately then combined using an approved KDF"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "For a hybrid signing scheme, both the classical and post quantum signatures must be verified separately."
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Larger keys, signatures, and certificates than classical counterparts; increased computational overhead; slower computational speeds; more memory requirements
+- **Target Audience**: Security Architect; CISO; Compliance Officer
+- **Implementation Prerequisites**: Understanding of system key generation, storage, usage, and transport; Vendor timelines; Supporting standards for key management
+- **Relevant PQC Today Features**: hsm-pqc; hybrid-crypto; migration-program; pqc-risk-management
+- **Implementation Attack Surface**: Implementation errors; buffer overflow issues
+- **Cryptographic Discovery & Inventory**: Inventory of asymmetric keys (generation, storage, usage, transport)
+- **Testing & Validation Methods**: Testing various algorithms and implementations
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Vendor timelines; Interoperability problems due to lagging standards
+- **Deployment & Migration Complexity**: Migration order determination; Risk analysis; Interoperability issues with hybrid schemes
+- **Financial & Business Impact**: Cost of preparing vs not preparing; Impact on customers and employees
+- **Organizational Readiness**: Getting to know your systems; Analyzing risks; Determining migration order
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2.html (92,479 bytes, 10,348 extracted chars)
+- **Extraction Timestamp**: 2026-10-22T06:46:16
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 2747000677c67779
+- **Window Chars**: 10348
+
+---
+
 ## PI-PROFINET-Security-Whitepaper-V105-2019
 
 - **Reference ID**: PI-PROFINET-Security-Whitepaper-V105-2019
@@ -50304,6 +50245,65 @@ enrichment_method: automated extraction, human-reviewed
 
 ---
 
+## RFC-10033-Hash-Based-Signatures-State-and-Backup-Management
+
+- **Reference ID**: RFC-10033-Hash-Based-Signatures-State-and-Backup-Management
+- **Title**: RFC 10033: Hash-Based Signatures: State and Backup Management
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document provides guidance and catalogs security considerations for the operational and technical aspects of deploying systems that rely on Stateful Hash-Based Signature Schemes, specifically focusing on state management and backup.
+- **PQC Algorithms Covered**: LMS; HSS; XMSS
+- **Quantum Threats Addressed**: CRQC
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, NIST, BSI
+- **Leaders Contributions Mentioned**: T. Wiggers (Author); K. Bashiri (Author); S. Kölbl (Author); J. Goodman (Author); S. Kousidis (Author)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM, Key Management
+- **Standardization Bodies**: IETF, NIST, ETSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Stateful HBS private keys must track which OTS keys have been used to prevent forgeries via double-signing; Redundant key material and state management require careful handling to avoid accidental OTS key reuse; Hierarchical structures using HSMs can separate root and subordinate signing to manage state securely; Time-based state management requires robust clock synchronization to prevent denial-of-service via signature space exhaustion.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Stateful Hash-Based Signature Schemes (Stateful HBS) such as Leighton-Micali Signature (LMS)... provide signatures that are resistant against attacks"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Operations
+- **Implementation Prerequisites**: HSM root; HSM subordinate devices; atomic state updates; continuous time recording
+- **Relevant PQC Today Features**: stateful-signatures; hsm-pqc; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Hash-based
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: RFC-10033-Hash-Based-Signatures-State-and-Backup-Management.html (122,657 bytes, 8,027 extracted chars)
+- **Extraction Timestamp**: 2026-10-22T06:46:15
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: 47bfefc195dc3e01
+- **Window Chars**: 8027
+
+---
+
 ## RFC-1950
 
 - **Reference ID**: RFC-1950
@@ -54576,6 +54576,65 @@ enrichment_method: automated extraction, human-reviewed
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## RFC-9955-Hybrid-Signature-Spectrums
+
+- **Reference ID**: RFC-9955-Hybrid-Signature-Spectrums
+- **Title**: RFC 9955: Hybrid Signature Spectrums
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: This document classifies design goals and security considerations for hybrid digital signature schemes, including proof composability, non-separability, and compatibility.
+- **PQC Algorithms Covered**: HQC; Rainbow
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); Harvest Now Decrypt Later; quantum attacks against RSA-2048
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United Kingdom; Bodies: UK National Cyber Security Centre
+- **Leaders Contributions Mentioned**: N. Bindel (Author); B. Hale (Author); D. Connolly (Author); F. Driscoll (Author)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; RSA-2048
+- **Key Takeaways**: Hybrid signature schemes must ensure that the removal of one component signature does not compromise the security of the remaining component; Design goals include proof composability, non-separability of component signatures, and backwards/forwards compatibility; Stripping attacks, where an adversary removes a component signature to force reliance on a weaker algorithm, are a primary security concern; The term 'hybrid signature scheme' is used broadly to include combinations of multiple post-quantum algorithms, not just post-quantum and traditional pairs.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid digital signature schemes; Composite schemes; Stripping attack mitigation; Backwards and forwards compatibility
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "This document describes classification of design goals and security considerations for hybrid digital signature schemes"
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Researcher; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; pqc-risk-management; migration-program
+- **Implementation Attack Surface**: timing variations; implementation bugs; stripping attacks
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Backwards and forwards compatibility; algorithm turnover complexity; long-lived digital signatures
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Hybrid
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: RFC-9955-Hybrid-Signature-Spectrums.html (133,783 bytes, 10,245 extracted chars)
+- **Extraction Timestamp**: 2026-10-22T06:46:15
+- **Generation Model**: automated extraction, human-reviewed
+- **Evidence SHA256**: e4de665c3fa938b7
+- **Window Chars**: 10245
 
 ---
 
