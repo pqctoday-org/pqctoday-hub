@@ -858,7 +858,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '1-2 hours per HSM',
     notes:
-      'ML-KEM, ML-DSA, and SLH-DSA are native in firmware v13.8.0 via standard PKCS#11 — no additional packages required for core PQC. LMS/XMSS available via optional PQSDK C API. ML-KEM, ML-DSA and SLH-DSA are on CAVP certificate A7285. An nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026); that is a queue position, not an outcome. nShield as a Service receives automatic updates.',
+      'ML-KEM, ML-DSA and SLH-DSA are native in firmware v13.8.0 with the PostQuantum feature enabled. Through PKCS#11 only ML-DSA is exposed (standard CKM_ML_DSA mechanisms); ML-KEM and SLH-DSA are currently only available through the native nCore API (Security World v13.9.0 release notes). The Entrust pages checked do not describe LMS or XMSS support. Entrust states the post-quantum implementation is CAVP-validated. CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
   },
   {
     vendorId: 'utimaco',
