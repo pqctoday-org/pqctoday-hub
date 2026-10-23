@@ -464,7 +464,7 @@ export async function runHkdfMultiGroup(
     const negative = t.testPassed === false
     const ikm = hexToBytes(p.z + (p.t ?? ''))
     const n = p.iterationParameters.length
-    const id = `hkdf-multi-nist-${hashAlg.toLowerCase().replace('/', '-')}-tg${g.tgId}-tc${t.tcId}-${eName}`
+    const id = `hkdf-nist-${hashAlg.toLowerCase().replace('/', '-')}-tg${g.tgId}-tc${t.tcId}-${eName}`
     const algorithm = `HKDF-${hashAlg} (${eName})`
     const testCase = `Derive ×${n} · NIST KDA-HKDF multi-expansion ${g.testType} tg${g.tgId}/tc${t.tcId} · ${hashAlg} · salt ${g.kdfMultiExpansionConfiguration.saltMethod} · IKM Z‖T ${ikm.length}B · expect ${negative ? 'at least one output ≠ the (modified) NIST dkms' : 'every expansion byte-matches'}`
     const meta: AcvpCaseMeta = {
