@@ -1501,7 +1501,7 @@
     {
       "id": "aesctr_acvp_test",
       "path": "src/data/acvp/aesctr_acvp_test.json",
-      "sha256": "a7bda9b3fa4a33b99992afcdee9f2893207d34c8f01125024f548dd8badf3ad5",
+      "sha256": "5434a10d49a46e37defd4802e588113dc4677dc2d54b40d634bc36745423ab0c",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -1681,6 +1681,1084 @@
             "tcId": 150
           },
           "lineage": ["aesctr-acvp-test-3"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/0",
+          "pointer": "/testGroups/3/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 112,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 9
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/1",
+          "pointer": "/testGroups/3/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 128,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 11
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/2",
+          "pointer": "/testGroups/3/tests/2",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 256,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 12
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/3",
+          "pointer": "/testGroups/3/tests/3",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 384,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 13
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/4",
+          "pointer": "/testGroups/3/tests/4",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 512,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 14
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/5",
+          "pointer": "/testGroups/3/tests/5",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 640,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 15
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/6",
+          "pointer": "/testGroups/3/tests/6",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 768,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 16
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/7",
+          "pointer": "/testGroups/3/tests/7",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 896,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 17
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/8",
+          "pointer": "/testGroups/3/tests/8",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1024,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 18
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/9",
+          "pointer": "/testGroups/3/tests/9",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1152,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 19
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/10",
+          "pointer": "/testGroups/3/tests/10",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1280,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 20
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/11",
+          "pointer": "/testGroups/3/tests/11",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1408,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 21
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/12",
+          "pointer": "/testGroups/3/tests/12",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1536,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 22
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/13",
+          "pointer": "/testGroups/3/tests/13",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1664,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 23
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/14",
+          "pointer": "/testGroups/3/tests/14",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1792,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 24
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/3/tests/15",
+          "pointer": "/testGroups/3/tests/15",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 128,
+            "payloadLen": 1920,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 1,
+            "tcId": 25
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/0",
+          "pointer": "/testGroups/4/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 64,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 29
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/1",
+          "pointer": "/testGroups/4/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 128,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 36
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/2",
+          "pointer": "/testGroups/4/tests/2",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 256,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 37
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/3",
+          "pointer": "/testGroups/4/tests/3",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 384,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 38
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/4",
+          "pointer": "/testGroups/4/tests/4",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 512,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 39
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/5",
+          "pointer": "/testGroups/4/tests/5",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 640,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 40
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/6",
+          "pointer": "/testGroups/4/tests/6",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 768,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 41
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/7",
+          "pointer": "/testGroups/4/tests/7",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 896,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 42
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/8",
+          "pointer": "/testGroups/4/tests/8",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1024,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 43
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/9",
+          "pointer": "/testGroups/4/tests/9",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1152,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 44
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/10",
+          "pointer": "/testGroups/4/tests/10",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1280,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 45
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/11",
+          "pointer": "/testGroups/4/tests/11",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1408,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 46
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/12",
+          "pointer": "/testGroups/4/tests/12",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1536,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 47
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/13",
+          "pointer": "/testGroups/4/tests/13",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1664,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 48
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/14",
+          "pointer": "/testGroups/4/tests/14",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1792,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 49
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/4/tests/15",
+          "pointer": "/testGroups/4/tests/15",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 192,
+            "payloadLen": 1920,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 2,
+            "tcId": 50
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/0",
+          "pointer": "/testGroups/5/tests/0",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 8,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 53
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/1",
+          "pointer": "/testGroups/5/tests/1",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 104,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 58
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/2",
+          "pointer": "/testGroups/5/tests/2",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 128,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 61
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/3",
+          "pointer": "/testGroups/5/tests/3",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 256,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 62
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/4",
+          "pointer": "/testGroups/5/tests/4",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 384,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 63
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/5",
+          "pointer": "/testGroups/5/tests/5",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 512,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 64
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/6",
+          "pointer": "/testGroups/5/tests/6",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 640,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 65
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/7",
+          "pointer": "/testGroups/5/tests/7",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 768,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 66
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/8",
+          "pointer": "/testGroups/5/tests/8",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 896,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 67
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/9",
+          "pointer": "/testGroups/5/tests/9",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1024,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 68
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/10",
+          "pointer": "/testGroups/5/tests/10",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1152,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 69
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/11",
+          "pointer": "/testGroups/5/tests/11",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1280,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 70
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/12",
+          "pointer": "/testGroups/5/tests/12",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1408,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 71
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/13",
+          "pointer": "/testGroups/5/tests/13",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1536,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 72
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/14",
+          "pointer": "/testGroups/5/tests/14",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1664,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 73
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/15",
+          "pointer": "/testGroups/5/tests/15",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1792,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 74
+          },
+          "lineage": ["aesctr-acvp-test-1"]
+        },
+        {
+          "caseId": "aesctr_acvp_test#/testGroups/5/tests/16",
+          "pointer": "/testGroups/5/tests/16",
+          "algorithm": {
+            "name": "ACVP-AES-CTR",
+            "revision": "1.0"
+          },
+          "operation": "encrypt",
+          "parameters": {
+            "keyLen": 256,
+            "payloadLen": 1920,
+            "counterBits": 32,
+            "direction": "encrypt"
+          },
+          "testType": "AFT",
+          "expectation": "positive",
+          "upstream": {
+            "tgId": 3,
+            "tcId": 75
+          },
+          "lineage": ["aesctr-acvp-test-1"]
         }
       ],
       "lineage": [
@@ -1699,7 +2777,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups (AES-128/192/256): the shortest and the longest byte-aligned payload per group. Encrypt groups (ivGenMode internal, deferred=true): every byte-aligned case, with the IV and ciphertext the NIST reference generated; NIST's sample IV is supplied as the counter block, so the module's own IV generation is not tested. PKCS#11 processes whole bytes, so the bit-length payloads are not carried; the encrypt groups' bit-length cases are listed in notExecuted."
             },
             {
               "type": "operation-change",
@@ -1722,7 +2800,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups (AES-128/192/256): the shortest and the longest byte-aligned payload per group. Encrypt groups (ivGenMode internal, deferred=true): every byte-aligned case, with the IV and ciphertext the NIST reference generated; NIST's sample IV is supplied as the counter block, so the module's own IV generation is not tested. PKCS#11 processes whole bytes, so the bit-length payloads are not carried; the encrypt groups' bit-length cases are listed in notExecuted."
             },
             {
               "type": "operation-change",
@@ -1745,7 +2823,7 @@
             },
             {
               "type": "subset",
-              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups only (AES-128/192/256): the shortest and the longest byte-aligned payload per group (PKCS#11 processes whole bytes; the sample also has bit-length payloads, not carried). Encrypt groups are listed in notExecuted: their IV is generated by the implementation under test (ivGenMode internal, deferred=true), so the upstream ciphertext is not an expected value for a caller-supplied IV."
+              "detail": "Subset policy (file _provenance.subset_policy): Deterministic. Decrypt groups (AES-128/192/256): the shortest and the longest byte-aligned payload per group. Encrypt groups (ivGenMode internal, deferred=true): every byte-aligned case, with the IV and ciphertext the NIST reference generated; NIST's sample IV is supplied as the counter block, so the module's own IV generation is not tested. PKCS#11 processes whole bytes, so the bit-length payloads are not carried; the encrypt groups' bit-length cases are listed in notExecuted."
             },
             {
               "type": "operation-change",
@@ -1756,7 +2834,7 @@
       ],
       "copies": [],
       "publishabilityGaps": [],
-      "notes": "3 upstream group(s)/case(s) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): deferred-iut-generated-iv."
+      "notes": "3 upstream group(s) (26 case(s)) are listed in the file's notExecuted block as metadata only (no expected values carried, not registered as cases): bit-oriented-payload-not-expressible-in-pkcs11. The byte-aligned cases of the ivGenMode=internal encrypt groups are carried with NIST's sample IV and ciphertext; the workbench supplies that IV as the counter block, so the module's own IV generation is not tested."
     },
     {
       "id": "aesctr_test",
