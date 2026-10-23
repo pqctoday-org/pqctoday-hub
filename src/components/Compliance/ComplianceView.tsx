@@ -784,7 +784,13 @@ export const ComplianceView = ({
   // win over isMobileShell regardless of viewport width, same as Threats/
   // Library.
   if (isMobileShell && !simEmbed) {
-    return <MobileComplianceView records={data} recordsLoaded={!loading && data.length > 0} />
+    return (
+      <MobileComplianceView
+        records={data}
+        recordsLoaded={!loading && data.length > 0}
+        meta={meta}
+      />
+    )
   }
 
   return (

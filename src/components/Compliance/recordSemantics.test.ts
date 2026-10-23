@@ -5,6 +5,8 @@ import {
   isCurrentStatus,
   pqcCoverageState,
   pqcCoverageSummary,
+  pqcStageSummary,
+  pqcStageSummaryLine,
   pqcUnknownReason,
   recordTypeLabel,
   scopeNotice,
@@ -186,5 +188,30 @@ describe('schemeCertificateId', () => {
     expect(schemeCertificateId(rec({ type: 'EUCC', id: 'cc-abc-0123abcd' }))).toBe(
       'cc-abc-0123abcd'
     )
+  })
+})
+
+describe('pqcStageSummary', () => {
+  const records = [
+    rec({ id: 'a', type: 'FIPS 140-3', pqcCoverage: 'ML-KEM, ML-DSA' }),
+    rec({ id: 'b', type: 'FIPS 140-3', pqcCoverage: 'No PQC Mechanisms Detected' }),
+    rec({ id: 'c', type: 'FIPS 140-3', pqcCoverage: 'Potentially PQC (Name Match)' }),
+    rec({ id: 'd', type: 'ACVP', pqcCoverage: 'ML-DSA' }),
+    rec({ id: 'e', type: 'Common Criteria', pqcCoverage: 'ML-KEM' }),
+  ]
+
+  it('counts confirmed PQC on the FIPS 140-3 track only (no name matches, no CC)', () => {
+    expect(pqcStageSummary(records)).toEqual({
+      fipsCertificates: 3,
+      fipsWithPqc: 1,
+      cavpPqcValidations: 1,
+    })
+  })
+
+  it('words the counts as one sentence, and says nothing when there is nothing to count', () => {
+    expect(pqcStageSummaryLine(pqcStageSummary(records))).toBe(
+      'PQC in this snapshot: 1 of 3 FIPS 140-3 certificates · 1 CAVP validations.'
+    )
+    expect(pqcStageSummaryLine(pqcStageSummary([]))).toBeNull()
   })
 })
