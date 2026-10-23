@@ -26,6 +26,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'fips-140-3-certification',
+  lastReviewed: '2026-10-22',
   version: '0.1.0',
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as

@@ -25,11 +25,12 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-product-certification',
+  lastReviewed: '2026-10-22',
   version: '0.1.0',
   // No lastReviewed: nobody has reviewed this module's claims via
   // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
   // "practitioner orientation", not reviewed by a lab or certification body.
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──

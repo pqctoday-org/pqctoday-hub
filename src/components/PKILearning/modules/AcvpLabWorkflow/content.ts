@@ -16,8 +16,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'acvp-lab-workflow',
+  lastReviewed: '2026-10-22',
   version: '0.1.0',
-  lastEdited: '2026-10-22',
+  lastEdited: '2026-10-23',
 
   standards: [
     getStandard('NIST-ACVP'),
