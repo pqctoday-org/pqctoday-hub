@@ -23069,6 +23069,36 @@
       "unified": "current",
       "admittedAt": "2026-10-23T04:13:47.835754+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "NIAP-cPP-Dedicated-Security-Component-Version-2-1",
+      "title": "NIAP collaborative Protection Profile for Dedicated Security Component, Version 2.1",
+      "url": "https://www.niap-ccevs.org/static_html/protection-profile/538/cPP_DSC_V2.1.html",
+      "status": "downloaded",
+      "filename": "NIAP-cPP-Dedicated-Security-Component-Version-2-1.html",
+      "sizeBytes": 1129709,
+      "contentType": "text/html",
+      "sha256": "6e78140ce9b9c688b5b8c1a0c8e97905c6656dfc9e44b81ef91376fd28de66b8",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T19:59:01.658526+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "NIAP-cPP-DSC-Supporting-Document-Version-2-1",
+      "title": "Supporting Document: Evaluation Activities for collaborative Protection Profile for Dedicated Security Component, Version 2.1",
+      "url": "https://dsc-itc.github.io/v2/2.1/SD_DSC_V2.1.html",
+      "status": "downloaded",
+      "filename": "NIAP-cPP-DSC-Supporting-Document-Version-2-1.html",
+      "sizeBytes": 334402,
+      "contentType": "text/html",
+      "sha256": "323cc79e81bb1dc5de9d71c847795fe6a2f1b1e7253ae8f92c34bf888a72e9f1",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-23T20:00:44.969109+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
