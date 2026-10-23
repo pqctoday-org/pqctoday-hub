@@ -953,11 +953,13 @@ export const KEY_SIZE_COMPARISONS: KeySizeComparison[] = [
     quantumSafe: true,
   },
   {
-    algorithm: 'LMS (H=20)',
+    algorithm: 'LMS (H=20, W=4)',
     type: 'pqc',
     publicKeyBytes: 56,
     privateKeyBytes: 64,
-    signatureOrCiphertextBytes: 4588,
+    // RFC 8554 section 5.4.2: 12 + n(p+1) + m*h bytes. LMS_SHA256_M32_H20 with LMOTS_SHA256_N32_W4
+    // (p = 67): 12 + 32*68 + 32*20 = 2,828. With W8 (p = 34) it is 1,772. The earlier 4,588 matched no parameter set.
+    signatureOrCiphertextBytes: 2828,
     nistLevel: 'NIST Level 1',
     quantumSafe: true,
   },
