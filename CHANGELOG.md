@@ -29,6 +29,33 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.171.0] - 2026-10-23
+
+The certification engineer journey now follows what the standards and vendors actually say: wrong statements in the Learn modules, quizzes and answers are corrected against their sources, the Product Records and validation workbench pages are easier to read, and HSM post-quantum statements are re-checked against each vendor's newest release notes.
+
+### Added
+
+- **"What the lab tests" panels and real NIST test cases in the certification modules** [view:/learn] [persona:cert-engineer] [persona:developer] [persona:researcher]: Stateful Signatures, SLH-DSA, Secure Boot and HSM PQC show which checks a validation lab runs, and a hybrid panel explains what the validated-module guidance allows. The SLH-DSA, LMS, ML-KEM and ML-DSA known-answer panels replay published NIST cases through the in-browser engines, and the remaining round trips are labelled as round trips.
+- **A new Library paper on card and PIN handling** [view:/library] [persona:cert-engineer] [persona:grc] [persona:architect]: the post-quantum PCI use cases for ATMs and point-of-sale devices, with three matching maturity requirements for terminal keys, device certificates and boot code.
+
+### Changed
+
+- **Product Records open on the search and the table** [view:/compliance] [persona:cert-engineer] [persona:grc] [persona:ops]: the page says plainly that the table is a snapshot, labels retrieval dates in UTC, shows a one-line PQC summary on phones, and no longer shows an internal identifier as a Common Criteria certificate number.
+- **The validation workbench opens with one algorithm family ticked** [view:/algorithms] [view:/playground] [persona:cert-engineer] [persona:developer]: it explains what "test groups" and "test cases" mean, fits its results table to the panel, and lets you filter result rows by status and by evidence class.
+- **The certification engineer path is shorter and its page matches it** [view:/learn] [view:/] [persona:cert-engineer]: PQC Network Testing leaves the six essentials (it stays on the full path with a short certification route), Product Certification shows its measured 90-minute duration, the module header shows the duration of the path you are on, and the Standards Bodies module is optional orientation at the start.
+- **Hardware card on the role page** [view:/] [persona:cert-engineer]: the card now opens the PQC Hardware Acceleration module, and the "Testing & validation" line states the real order of the path.
+- **The welcome notice is a slim strip** [view:/] [persona:curious] [persona:cert-engineer]: on the desktop home page the first-visit notice sits above the role cards instead of covering them; the text, links and button are unchanged.
+- **Library cards show both dates, and search finds exact standards first** [view:/library] [persona:cert-engineer] [persona:researcher]: a card shows the record's update date beside the first-publication date, and a search for a standard's exact number or title lists that document first.
+- **Migrate shows FIPS 140-2 certificates as historical** [view:/migrate] [persona:architect] [persona:ops] [persona:cert-engineer]: a product whose certificate names only FIPS 140-2 is no longer shown with a current FIPS badge, because the CMVP moved those certificates to its historical list on 21–22 September 2026.
+- **Silithium is described as its paper does** [view:/learn/standards-bodies] [persona:researcher] [persona:cert-engineer]: it targets Strong Non-Separability, and the table and Playground card say so.
+
+### Fixed
+
+- **Wrong statements in the certification modules corrected against their sources** [view:/learn] [persona:cert-engineer] [persona:grc] [persona:researcher]: for example the ACVP lab names the protocol-draft revision it checked, Secure Boot reflects TPM 2.0 Library v185 adding ML-KEM, ML-DSA and HashML-DSA, a fixed-versus-random TVLA test is explained correctly, EUCC certificates are issued by accredited certification bodies rather than by ENISA, the Common Criteria Recognition Arrangement is typed as governmental, and the ACM v2 date reads April 2025.
+- **Quiz and answer corrections** [view:/learn] [persona:cert-engineer] [persona:grc] [persona:researcher]: the Stateful Signatures question on SHA-256/192 no longer says national security systems are excluded (NSA prefers LMS with SHA-256/192), the ANSSI questions state that hash-based signatures are the algorithms it does not recommend hybridising systematically, and 18 quiz questions and 14 answers in all now match the corrected modules, and the quiz questions carry their sources.
+- **HSM PQC statements follow each vendor's release notes** [view:/learn/hsm-pqc] [persona:ops] [persona:architect] [persona:cert-engineer]: nShield exposes ML-DSA through PKCS #11 from Security World v13.9.0, ML-KEM from v13.9.3 and SLH-DSA from v13.9.5; the LMS signature size is 2,828 bytes (H=20, W=4); AWS CloudHSM shows both its FIPS-mode statement and the NIST security policy side by side; unsourced side-channel and cloud-isolation statements were replaced.
+- **One vendor's website address corrected in Sources** [view:/compliance] [persona:grc] [persona:researcher]: the Kryotech Software entry now points at its current website in both source lists.
+
 ## [4.170.0] - 2026-10-23
 
 The certification engineer journey has been reviewed source by source and its five certification modules were reviewed end to end: its Learn modules, Library entries, Timeline milestones, maturity requirements and citations now match the current standards and documents. The browser HSM gains a PKCS#11 v3.3 working-draft track and more ACVP test coverage, certificate records are refreshed, and the Sources panel links each source to its trusted-source record.
