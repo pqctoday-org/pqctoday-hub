@@ -17,6 +17,7 @@ import { X, ExternalLink, Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { findLibraryItemByRef, type LibraryItem } from '@/data/libraryData'
+import { ruleBasedConfidenceLabel } from '../ruleBasedConfidence'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
@@ -347,6 +348,7 @@ function DrawerPanel({
               <KeyFact label="Catalog security-level tags" value={item.securityLevels} />
               <KeyFact label="Region" value={item.regionScope} />
               <KeyFact label="Migration urgency" value={item.migrationUrgency} />
+              <KeyFact label="Confidence" value={ruleBasedConfidenceLabel(item)} />
               <KeyFact
                 label="Referenced by Library records"
                 value={item.citationCount != null ? String(item.citationCount) : undefined}
