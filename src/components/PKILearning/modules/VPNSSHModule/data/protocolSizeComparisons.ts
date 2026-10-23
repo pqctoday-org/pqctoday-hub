@@ -99,11 +99,14 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     modeLabel: 'X25519 (Noise IK)',
     kexAlgorithm: 'X25519',
     authAlgorithm: 'X25519 (static keys)',
-    handshakeBytes: 304,
+    // Handshake Initiation 148 B + Handshake Response 92 B (WireGuard paper, sections 5.4.2 and
+    // 5.4.3: field widths, the hat marks a 16-byte AEAD tag). 272 B with the first empty keepalive
+    // (32 B); a 64 B Cookie Reply is added only under load.
+    handshakeBytes: 240,
     roundTrips: 1,
     publicKeyBytes: 32,
     ciphertextBytes: 0,
-    notes: 'Noise IK pattern: 1-RTT handshake',
+    notes: 'Noise IK pattern: 1-RTT handshake (initiation 148 B + response 92 B)',
   },
   {
     protocol: 'WireGuard',
