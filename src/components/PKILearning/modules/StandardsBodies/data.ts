@@ -189,7 +189,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'EU',
     founded: '2004',
     mission:
-      "EU cybersecurity agency responsible for the European Cybersecurity Certification Framework (EUCC — the EU's adaptation of Common Criteria). ENISA also advises on PQC policy for eIDAS 2.0, NIS2, and DORA. Manages the Agreed Cryptographic Mechanisms (ACM) list.",
+      "EU cybersecurity agency responsible for the European Cybersecurity Certification Framework (EUCC — the EU's adaptation of Common Criteria). ENISA also advises on PQC policy for eIDAS 2.0, NIS2, and DORA. Supports the ECCG, whose Sub-group on Cryptography agrees the Agreed Cryptographic Mechanisms (ACM); ENISA receives ACM update requests.",
     decisionMaking:
       'EU Agency under the Cybersecurity Act (2019). EUCC certification scheme developed through ECCG (European Cybersecurity Certification Group) with industry input. Issues technical reports and threat landscapes. Works with MSs (Member States) national cybersecurity authorities.',
     keyPqcOutputs: [
@@ -385,7 +385,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'enisa',
     name: 'ENISA',
     acronym: 'EU Agency for Cybersecurity',
-    hint: 'Manages the EUCC certification scheme and the Agreed Cryptographic Mechanisms (ACM) list for the EU.',
+    hint: "Supports the EU's EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM).",
     correctType: 'certification-body',
     correctScope: 'regional',
     correctAuthority: 'governmental',

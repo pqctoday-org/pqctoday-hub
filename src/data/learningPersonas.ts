@@ -1171,12 +1171,11 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'fips-140-3-certification',
       'acvp-lab-workflow',
       'entropy-randomness',
-      'hsm-pqc',
       'pqc-testing-validation',
       'cc-eucc-certification',
       'pci-certification',
     ],
-    essentialsMinutes: 640,
+    essentialsMinutes: 580,
     quizDescription:
       'Test your knowledge on product certification, FIPS 140-3, ACVP lab workflow, entropy sources, HSMs, PQC testing and validation, Common Criteria/EUCC, stateful and hash-based signatures, hybrid cryptography, secure boot, PCI certification, and standards bodies.',
     quizCategories: [
