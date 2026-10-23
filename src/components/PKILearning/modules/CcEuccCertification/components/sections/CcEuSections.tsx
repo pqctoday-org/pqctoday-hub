@@ -2097,6 +2097,10 @@ const NIAP_APP_PP_URL =
   'https://www.niap-ccevs.org/static_html/protection-profile/516/PP_APP_V2.0.htm'
 const NIAP_POLICY_5_URL =
   'https://www.niap-ccevs.org/Documents_and_Guidance/ccevs/policy-ltr-5-update3.pdf'
+const NIAP_TD1011_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1011'
+const NIAP_TD1010_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1010'
+
+const MA = () => <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
 
 /** Learn section `niap-pqc-route` */
 export const NiapPqcRoute = () => (
@@ -2106,26 +2110,26 @@ export const NiapPqcRoute = () => (
       NSA (<SourceCite id="NIAP-CCEVS-MANUAL" label="Scheme Publication #2" />
       ). A lab evaluates the product. It reaches the Product Compliant List only if it was evaluated
       against a NIAP-approved protection profile, and conformance is exact, so the profile fixes the
-      tests. Which profile fits an HSM-type product is for the vendor, the lab and NIAP to decide.{' '}
-      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote> We did not find a NIAP profile
-      written for HSMs: “not found”, not “does not exist”. Our Library’s HSM profiles (
-      <InLink to={`${LEARN}&path=eucc-eidas&section=pp-en419221-5`}>EN 419 221-5</InLink>,
+      tests, with fixed Evaluation Activities in the profile or its Supporting Document. <MA />{' '}
+      Which profile fits an HSM-type product is for the vendor, the lab and NIAP to decide. <MA />{' '}
+      We did not find a NIAP profile written for HSMs: “not found”, not “does not exist”. <MA /> Our
+      Library’s HSM profiles (
+      <InLink to={`${LEARN}&path=eucc-eidas&section=pp-en419221-5`}>EN 419 221-5</InLink>,{' '}
       <SourceCite id="BSI-CC-PP-0114-V2X-HSM" label="BSI V2X HSM" />,{' '}
       <SourceCite
         id="CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile"
         label="CAR 2 CAR HSM"
       />
-      ) are European, not NIAP.
+      ) are European, not NIAP. <MA />
     </P>
 
     <Callout tone="key" title="Two agencies, three certificates.">
       <p>
         NIAP, run by the NSA, issues the Common Criteria certificate. NIST is a different agency
         with two programs: CAVP tests an algorithm and gives an algorithm certificate; CMVP
-        validates a whole module and gives a module certificate.{' '}
-        <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote> NIAP Policy #5 ties them
-        together: “At a minimum an appropriate NIST CAVP certificate is required before a NIAP CC
-        Certificate will be awarded.” (
+        validates a whole module and gives a module certificate. NIAP Policy #5 ties them together:
+        “At a minimum an appropriate NIST CAVP certificate is required before a NIAP CC Certificate
+        will be awarded.” (
         <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />)
       </p>
     </Callout>
@@ -2135,23 +2139,40 @@ export const NiapPqcRoute = () => (
         First example: the Dedicated Security Component cPP, version 2.1 (17 November 2025).
       </strong>{' '}
       Its revision history says “post-quantum cryptography”. It describes a component that serves
-      “the encompassing platform”. Its authors “designed the DSC cPP as a standalone PP”, yet it
-      says the component “is not intended to be a discrete, separate stand-alone component, but one
-      which is directly embedded into a larger system”. Whether a rack-mounted HSM fits is for the
-      lab and NIAP to decide. The profile lists post-quantum algorithms as allowed choices beside
-      the classical ones, with every FIPS 203 and 204 parameter set. It requires none of them, and
-      the text we read does not mention CNSA 2.0.{' '}
+      “the encompassing platform”. Its authors “designed the DSC cPP as a standalone PP” (a base
+      profile, evaluated once and reused across devices){' '}
+      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>, while the component “is not
+      intended to be a discrete, separate stand-alone component, but one which is directly embedded
+      into a larger system”. Whether an HSM design fits that embedded boundary is for the vendor,
+      the lab and NIAP to decide. <MA /> The profile lists post-quantum algorithms as allowed
+      choices beside the classical ones, including ML-KEM (512, 768, 1024) and ML-DSA (44, 65, 87).
+      The profile text offers them as selections and has no CNSA wording.{' '}
       <ModuleAnalysisNote>(Module analysis, from reading the text.)</ModuleAnalysisNote> (
       <ExternalSource name="DSC cPP v2.1" href={NIAP_DSC_CPP_URL} />)
     </P>
+    <P>
+      NIAP adds the CNSA rule by Technical Decision TD1011, published 26 March 2026. NIAP endorsed
+      CPP_DSC_V2.1 on that date, and the older CPP_DSC_V1.0E “will sunset effective 26 September
+      2026” (<ExternalSource name="NIAP news item" />
+      ). TD1011 says: “In order to be listed on the NIAP PCL, evaluations against CPP_DSC_V2.1 must
+      meet the following requirements:” and “Each applicable Cryptographic SFR (FCS_) must include
+      at least one selection conforming to Commercial National Security Algorithm (CNSA) Suite V1.0
+      or V2.0;”. Its list includes “ML-KEM-1024”, “ML-DSA-87” and “LMS or XMSS (LMS 256-192
+      preferred) for soft/firmware signature”, next to “ECDH 384”, “ECDSA 384” and “RSA with minimum
+      3072-bit modulus”; and “Evaluations certified by NIAP must only make CNSA-compliant
+      selections.” (
+      <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />) So post-quantum is one allowed route,
+      not the only one: CNSA 1.0 selections such as ECDSA 384 and RSA 3072 also count.
+    </P>
 
     <P>
-      <strong>Contrast: Application Software, version 2.0 (16 June 2025).</strong> Its CNSA 2.0
+      <strong>Contrast: Application Software, version 2.0 (16 June 2025).</strong> It is here
+      because it shows explicit CNSA 1.0 and CNSA 2.0 branches in one US profile. Its CNSA 2.0
       branch sits next to a CNSA 1.0 branch (RSA of 3072 bits or more, P-384 and P-521, safe-prime
       groups). The profile says: “ML-DSA and ML-KEM are not usable in any functions at the time of
       initial publication, they are added to this requirement in support of future protocol updates.
       As support is expanded for CNSA 2.0, CNSA 1.0 will be removed as an selection in a future
-      update.” It prepares for the move and does not force it. (
+      update.” It prepares for the move and does not force it. <MA /> (
       <ExternalSource
         name="NIAP Protection Profile for Application Software v2.0"
         href={NIAP_APP_PP_URL}
@@ -2182,13 +2203,12 @@ export const NiapPqcRoute = () => (
       ]}
     />
     <p className="text-xs text-muted-foreground">
-      <ModuleAnalysisNote>
-        (Module analysis: the table is our reading of each profile’s cryptographic requirements.)
-      </ModuleAnalysisNote>
+      “Only” reads the CNSA 2.0 branch of those requirements. <MA />
     </p>
+    {/* NIAP-PROFILES-TABLE: the second table, "NIAP profiles with post-quantum selections as of 23 October 2026", goes here, after the function table and its note. */}
 
     <H3>What forces the move: a chain</H3>
-    <P>Each link below is one we can quote.</P>
+    <P>Each link below is quoted, except where marked as module analysis.</P>
     <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-foreground/90">
       <li>
         <SourceCite id="CNSSP-11-IA-Product-Acquisition-Policy" label="CNSSP 11" /> (2013): products
@@ -2204,39 +2224,53 @@ export const NiapPqcRoute = () => (
       <li>
         <SourceCite id="NIAP-CCEVS-POLICY-33" label="NIAP Policy #33" /> (31 August 2026, effective
         1 January 2027). It sets dated cut-offs for acceptance into evaluation and for listing on
-        the Product Compliant List, first for products that do not meet CNSA 1.0 and then for
-        products that do not meet CNSA 2.0 for every cryptographic function. The dates are in the
-        callout{' '}
+        the Product Compliant List: first for products that do not meet CNSA 1.0 requirements for
+        every cryptographic function, then for products that do not meet CNSA 2.0 requirements for
+        every cryptographic function. The dates are in the callout{' '}
         <InLink to={`${LEARN}&section=cc-regional-schemes`}>
           “The NIAP date that reaches every CCRA certificate”
         </InLink>
-        . Two points that callout leaves out: archiving is set for “a date to be determined”, and
-        AES-128 for Bluetooth is excepted.
+        . Two points that callout leaves out: under both lists, products “will be archived at a date
+        to be determined, regardless of time remaining on their certification”, and “Use of AES-128
+        for Bluetooth will be the exception to this policy until the Bluetooth standard is updated.”
+        NIAP’s announcements page, not the Policy letter, adds a statement of intent: “NIAP will
+        issue new or update applicable technical decisions for some Protection Profiles to allow for
+        temporary use of select algorithms which are not CNSA 1.0 compliant for certain functions
+        such as secure boot and trusted update. NIAP strongly recommends vendors adopt CNSA 2.0
+        compliant algorithms as soon as possible.” (
+        <ExternalSource name="NIAP announcements" />) We found no such decision yet.
       </li>
       <li>
-        The profiles and their test methods (the two examples; the DSC test methods are in its{' '}
-        <ExternalSource name="Supporting Document" href={NIAP_DSC_SD_URL} />
-        ), and Technical Decisions: the DSC group issued “Post-Quantum Algorithm Support” on 17 June
-        2025 (
+        The profiles and Technical Decisions. The two examples and their test methods (the DSC test
+        methods are in its <ExternalSource name="Supporting Document" href={NIAP_DSC_SD_URL} />
+        ); NIAP’s TD1011 for the DSC cPP, quoted above (
+        <ExternalSource name="TD1011" href={NIAP_TD1011_URL} />
+        ), and TD1010 for the Network Devices cPP version 4.0 (24 March 2026); both require at least
+        one selection conforming to CNSA 1.0 or 2.0 for the Product Compliant List (
+        <ExternalSource name="TD1010" href={NIAP_TD1010_URL} />
+        ); and the DSC group’s own “Post-Quantum Algorithm Support” decision of 17 June 2025 (
         <ExternalSource name="DSC-iTC Technical Decisions page" />
         ).
       </li>
       <li>
-        The product’s Security Target, which picks a branch.{' '}
-        <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+        The product’s Security Target, which picks a branch. <MA />
       </li>
       <li>
-        CSfC. <SourceCite id="NSA CSfC PQC Guidance Addendum" label="NSA’s draft addendum" /> (Draft
-        .5, 4 April 2025) says CNSA 2.0 is required “unless stipulated by CSfC CP, NIAP PP or a
-        Waiver is in place”.
+        CSfC (Commercial Solutions for Classified).{' '}
+        <SourceCite id="NSA CSfC PQC Guidance Addendum" label="NSA’s draft addendum" /> (Draft .5, 4
+        April 2025) says: “January 1 2027 - CNSA 2.0 required in all new products and services
+        unless stipulated by CSfC CP, NIAP PP or a Waiver is in place.” CP is a Capability Package.
       </li>
     </ol>
 
     <P>
-      <strong>The module point.</strong> The FAQ says a signer for LMS or XMSS needs hardware
-      “validated by NIST’s Cryptographic Module Validation Program (CMVP)”, with no waivers; a
-      product that only verifies signatures needs only CAVP testing. So a CMVP module certificate is
-      a separate ask from the NIAP certificate. The{' '}
+      <strong>The module point.</strong> The NSA CNSA 2.0 FAQ (version 2.2) says: “If your product
+      is only verifying signatures, CAVP testing is all that is required. Code sources and signature
+      generation processes (signers) that are NSS are required to produce signatures according to
+      NIST SP 800-208, which requires hardware validated by NIST’s Cryptographic Module Validation
+      Program (CMVP), or via other NSA guidance. Waivers for this will not be granted.” A CMVP
+      module certificate is a separate ask from the NIAP certificate; CAVP tests an algorithm, CMVP
+      validates a module. <MA /> The{' '}
       <InLink to="/learn/fips-140-3-certification">FIPS 140-3 lesson</InLink> covers that route.
     </P>
 
@@ -2251,7 +2285,10 @@ export const NiapPqcRoute = () => (
         Do our post-quantum algorithms have CAVP certificates for the evaluated configuration?
       </li>
       <li>Does the customer also need a CMVP-validated module?</li>
-      <li>Is signing inside or outside the evaluated boundary?</li>
+      <li>
+        Is signing inside the Target of Evaluation (TOE) boundary, or done in the operational
+        environment?
+      </li>
       <li>How do the 2027, 2028 and 2029 dates fall against our dates?</li>
     </ol>
     <p className="text-xs text-muted-foreground">
@@ -2261,7 +2298,7 @@ export const NiapPqcRoute = () => (
     <P>
       One line on the EU: <SourceCite id="ANSSI-CC-PP-2016-05-EN-419221-5" label="EN 419 221-5" />{' '}
       is a profile for cryptographic modules of trust service providers, at EAL4 augmented with
-      AVA_VAN.5, in a different scheme.
+      AVA_VAN.5, in a different scheme. <MA />
     </P>
 
     <P>
@@ -2286,6 +2323,8 @@ export const NiapPqcRoute = () => (
       />
       , <ExternalSource name="Dedicated Security Component cPP v2.1" href={NIAP_DSC_CPP_URL} />,{' '}
       <ExternalSource name="DSC Supporting Document v2.1" href={NIAP_DSC_SD_URL} />,{' '}
+      <ExternalSource name="Technical Decision TD1011" href={NIAP_TD1011_URL} />,{' '}
+      <ExternalSource name="Technical Decision TD1010" href={NIAP_TD1010_URL} />,{' '}
       <ExternalSource name="NIAP Policy Letter #5" href={NIAP_POLICY_5_URL} />.
     </Sources>
   </div>

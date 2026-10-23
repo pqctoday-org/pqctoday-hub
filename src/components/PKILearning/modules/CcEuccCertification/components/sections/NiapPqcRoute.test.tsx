@@ -56,10 +56,33 @@ describe('niap-pqc-route section', () => {
   it('marks every passage that is the module’s own reading', () => {
     wrap()
     const marks = screen.getAllByTestId('module-analysis').map((m) => m.textContent)
-    expect(marks.filter((m) => m === '(Module analysis.)')).toHaveLength(3)
+    expect(marks.filter((m) => m === '(Module analysis.)')).toHaveLength(11)
     expect(marks).toContain('(Module analysis, from reading the text.)')
     expect(marks).toContain('(Questions: Module analysis.)')
-    expect(marks.some((m) => /our reading of each profile/.test(m ?? ''))).toBe(true)
+    expect(marks).toHaveLength(13)
+    // The plain facts in the two-agencies box carry no marker.
+    const box = screen.getByText(/CAVP tests an algorithm and gives an algorithm certificate/)
+    expect(within(box).queryByTestId('module-analysis')).not.toBeInTheDocument()
+    // The table note carries one, because "only" is the module’s reading.
+    expect(screen.getByText(/“Only” reads the CNSA 2.0 branch/)).toHaveTextContent(
+      'Module analysis'
+    )
+  })
+
+  it('says post-quantum is one allowed route and quotes the Technical Decisions', () => {
+    wrap()
+    const text = document.body.textContent ?? ''
+    expect(text).toContain('So post-quantum is one allowed route, not the only one')
+    expect(text).toContain(
+      'Each applicable Cryptographic SFR (FCS_) must include at least one selection conforming to Commercial National Security Algorithm (CNSA) Suite V1.0 or V2.0;'
+    )
+    expect(text).toContain(
+      'Evaluations certified by NIAP must only make CNSA-compliant selections.'
+    )
+    expect(text).toContain('TD1010')
+    expect(text).toContain('We found no such decision yet.')
+    expect(text).toContain('Each link below is quoted, except where marked as module analysis.')
+    expect(text).not.toMatch(/It requires none of them/)
   })
 
   it('shows the profile comparison table with its caption and four function rows', () => {
@@ -104,7 +127,7 @@ describe('niap-pqc-route section', () => {
       expect(hrefs(), id).toContain(getStandard(id).deepLink)
     }
     const external = links().filter((a) => (a.getAttribute('href') ?? '').startsWith('http'))
-    expect(external.length).toBeGreaterThanOrEqual(5)
+    expect(external.length).toBeGreaterThanOrEqual(8)
     for (const a of external) {
       expect(a).toHaveAttribute('target', '_blank')
       expect(a).toHaveAttribute('rel', 'noopener noreferrer')
