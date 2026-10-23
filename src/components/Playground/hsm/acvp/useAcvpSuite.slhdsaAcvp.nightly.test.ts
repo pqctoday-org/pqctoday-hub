@@ -322,19 +322,21 @@ describe('SLH-DSA reference samples — both engines, real vectors', () => {
     }
   })
 
-  it('reports unexpressible upstream groups as skip — never pass, never tiered', () => {
-    const skips = section().filter((r) => r.status === 'skip')
-    expect(skips.map(caseKey).sort()).toEqual([
-      'slhdsa-skip-hash-sha512t',
-      'slhdsa-skip-hash-sha512t',
-    ])
-    for (const r of skips) {
-      expect(classesOf(r.id)).toEqual([])
-      expect(r.details).toMatch(/^Skipped — /)
-    }
-    expect(skips.find((r) => r.id.startsWith('slhdsa-skip-hash'))!.details).toMatch(
-      /advertises 10 of the 10/
+  it('runs every upstream group it carries — no skips', () => {
+    expect(section().filter((r) => r.status === 'skip')).toEqual([])
+  })
+
+  it('runs the SHA2-512/224 and SHA2-512/256 cases through the generic CKM_HASH_SLH_DSA', () => {
+    const t = section().filter(
+      (r) => r.caseMeta?.mode === 'preHash' && String(r.caseMeta?.hashAlg).startsWith('SHA2-512/')
     )
+    expect(t).toHaveLength(24) // 12 NIST sigVer cases × 2 engines
+    for (const r of t) {
+      expect(r.status, r.details).toBe('pass')
+      expect(r.details).toMatch(
+        /CKM_HASH_SLH_DSA \(generic, hash = CKM_SHA512_2(24|56), PH\(M\) supplied\)/
+      )
+    }
   })
 
   it('agrees across engines case by case except on the recorded findings', () => {

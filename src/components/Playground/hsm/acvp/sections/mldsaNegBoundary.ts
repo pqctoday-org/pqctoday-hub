@@ -54,6 +54,7 @@ import {
   type AcvpCaseMeta,
   type MldsaAcvpSectionCtx,
   type Provenance,
+  genericPreHash,
 } from './mldsaAcvp'
 import { createObjectRv, sha256Tag, signRv } from './pkcs11Raw'
 
@@ -192,7 +193,8 @@ export async function runMldsaNegBoundarySection(ctx: MldsaAcvpSectionCtx): Prom
         source: srcOf(SV),
       }
       const algorithm = `${ps} (${eName})`
-      const mech = pre ? hashMech[t.hashAlg] : CKM_ML_DSA
+      const gp = pre ? genericPreHash('ML-DSA', t.hashAlg, hexToBytes(t.message)) : null
+      const mech = gp ? gp.mech : pre ? hashMech[t.hashAlg] : CKM_ML_DSA
       const why = unsupportedReason(mechs, mech, pre ? mode : 'CKM_ML_DSA')
       if (why) {
         await pushResult({
@@ -214,9 +216,10 @@ export async function runMldsaNegBoundarySection(ctx: MldsaAcvpSectionCtx): Prom
           hSession,
           pub,
           mech!,
-          hexToBytes(t.message),
+          gp ? gp.data : hexToBytes(t.message),
           hexToBytes(t.signature),
-          hexToBytes(t.context ?? '')
+          hexToBytes(t.context ?? ''),
+          gp?.hash
         )
         const ok = r.initRv === CKR_OK && r.rv === want
         const observed =
@@ -234,7 +237,7 @@ export async function runMldsaNegBoundarySection(ctx: MldsaAcvpSectionCtx): Prom
           testCase,
           referenceUrl,
           status: ok ? 'pass' : 'fail',
-          details: `${observed} (expected ${rvName(want)})${verdict} · ${srcTag(SV)}`,
+          details: `${observed} (expected ${rvName(want)})${verdict}${gp ? ` · ${gp.label}` : ''} · ${srcTag(SV)}`,
           caseMeta: { ...meta, observed },
         })
         addLog(`[${eName}] [id:${id}] ${ps} ${testCase}: ${ok ? 'PASS' : 'FAIL'} (${observed})`)

@@ -3,15 +3,6 @@
   "schema": "pqctoday.open-gaps/v1",
   "gaps": [
     {
-      "id": "mldsa-hash-sha512t-no-mechanism",
-      "title": "HashML-DSA / HashSLH-DSA with SHA2-512/224 or SHA2-512/256: deterministic NIST groups not yet byte-copied",
-      "detail": "PKCS #11 v3.2 defines no CKM_HASH_ML_DSA_<hash> / CKM_HASH_SLH_DSA_<hash> for these two hashes, but the generic CKM_HASH_ML_DSA / CKM_HASH_SLH_DSA take them as CK_HASH_SIGN_ADDITIONAL_CONTEXT.hash = CKM_SHA512_224 / CKM_SHA512_256 (PQC Today HSM, both engines, from the optional-input release). The workbench runs that route for every hedged pre-hash group (mldsa_siggen_optional_input_test.json, slhdsa_siggen_optional_input_test.json). Still open: the SHA2-512/t cases of the deterministic pre-hash groups, which mldsa_sigver_test.json, mldsa_sigver_depth_test.json and the SLH-DSA pre-hash files list in notExecuted as no-pkcs11-hash-*-mechanism without their expected values.",
-      "planItem": "D2-6",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "C++ + Rust (wasm)"
-    },
-    {
       "id": "kmac256-quarantined",
       "title": "KMAC256 vector case is correct but not executed",
       "detail": "kmac_test.json tg0/tc0 (KMAC256, NIST KMAC_samples.pdf Sample #4). UPDATE 2026-09-27: the committed MAC was wrong (63 bytes, diverged after ...3F4F2487); the file is now rebuilt from the pinned PDF by scripts/acvp/build_kmac_samples.py and matches NIST (independently recomputed with pycryptodome), with an automated source-check record. It is still NOT executed: the hub's KMAC wrapper (hsm_kmac / hsm_kmacVerify) has no customization-string parameter, so no row issues CKM_KMAC_256 with Sample #4's S, and the manifest registers the case as not-executed. CKM_KMAC_256 therefore still has no registered passing test. Remedy: add a customization-string parameter to the KMAC wrapper and a §35 row.",
@@ -158,7 +149,7 @@
     {
       "id": "wse-remaining-classical-acvp",
       "title": "Classical families still without NIST ACVP-Server cases after WS-E and gap-closure P5",
-      "detail": "Closed by gap-closure P5 (2026-09-25): HKDF (hkdf_acvp_test, KDA-HKDF-Sp800-56Cr2), SP 800-108 KBKDF (kbkdf_acvp_test, KDF 1.0 counter / feedback / double pipeline), ECDSA/EdDSA KeyVer (ecdsa_/eddsa_keyver_acvp_test, the key is used: sign with d, verify with the point), ECDSA SigGen verify-back (functional round-trip + independent oracle; NIST r, s are not reproducible because C_Sign draws its own nonce), EdDSA SigGen byte-match, the alternate-version SHA-2 MCT and full 100-iteration MCTs for SHA-2/SHA-3 and AES-CBC (sha_mct_full_test, aescbc_mct_full_test). Still open: ANSI X9.63 KDF on a caller-supplied Z — not expressible through PKCS #11 (declaredUnreachable x963-kdf-caller-z, gap x963-kdf-caller-z-no-mechanism); SHA LDT (1 GiB expanded message); HKDF multi-expansion groups; KBKDF with CMAC-TDES, HMAC-SHA2-512/224, /256 or bit-oriented output lengths; ECDSA/EdDSA KeyGen and deterministic ECDSA SigGen (no PKCS #11 input for the random / RFC 6979 nonce). The older HKDF/PBKDF2/X9.63/KBKDF workbench rows keep their published-standard / oracle / round-trip labels.",
+      "detail": "Closed by gap-closure P5 (2026-09-25): HKDF (hkdf_acvp_test, KDA-HKDF-Sp800-56Cr2), SP 800-108 KBKDF (kbkdf_acvp_test, KDF 1.0 counter / feedback / double pipeline), ECDSA/EdDSA KeyVer (ecdsa_/eddsa_keyver_acvp_test, the key is used: sign with d, verify with the point), ECDSA SigGen verify-back (functional round-trip + independent oracle; NIST r, s are not reproducible because C_Sign draws its own nonce), EdDSA SigGen byte-match, the alternate-version SHA-2 MCT and full 100-iteration MCTs for SHA-2/SHA-3 and AES-CBC (sha_mct_full_test, aescbc_mct_full_test). Still open: ANSI X9.63 KDF on a caller-supplied Z — not expressible through PKCS #11 (declaredUnreachable x963-kdf-caller-z, gap x963-kdf-caller-z-no-mechanism); SHA LDT (1 GiB expanded message; accepted limitation, see acvp-sha-large-data-tests); HKDF multi-expansion groups; KBKDF with CMAC-TDES, HMAC-SHA2-512/224, /256 or bit-oriented output lengths; ECDSA/EdDSA KeyGen and deterministic ECDSA SigGen (no PKCS #11 input for the random / RFC 6979 nonce). The older HKDF/PBKDF2/X9.63/KBKDF workbench rows keep their published-standard / oracle / round-trip labels.",
       "planItem": "E",
       "owner": "unassigned",
       "status": "open",
@@ -244,6 +235,42 @@
       "owner": "unassigned",
       "status": "open",
       "scope": "pqctoday-hsm gate configuration (test fidelity; nothing shipped affected)"
+    },
+    {
+      "id": "acvp-no-pkcs11-mechanism",
+      "title": "Some NIST test groups have no PKCS #11 v3.2 mechanism to run them",
+      "detail": "PKCS #11 v3.2 defines no mechanism for RSA signatures that use SHAKE-128, SHAKE-256 or a SHAKE mask (24 NIST verification groups), for ECDSA with SHA2-512/256, SHAKE-128 or SHAKE-256 (12 groups), or for AES key wrap with the inverse cipher (4 groups). No PKCS #11 token can run them, so they are listed as not run, with the reason.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "C++ + Rust (specification limit)"
+    },
+    {
+      "id": "acvp-curves-not-supported",
+      "title": "ECDSA key checks on curves the engines do not support",
+      "detail": "NIST's ECDSA key-verification sample includes eight binary and Koblitz curves (B-233, B-283, B-409, B-571, K-233, K-283, K-409, K-571) that neither engine implements, and one P-224 group, a curve outside the engines' declared curve set. These 9 groups are not run.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "C++ + Rust"
+    },
+    {
+      "id": "acvp-not-in-engine-yet",
+      "title": "Not in the engines yet: KMAC-XOF, and AES-CMAC, HKDF and Ed448 in the KMIP server",
+      "detail": "The KMAC mechanism has no XOF (variable-length output) mode yet, so NIST's 4 KMAC-XOF groups are not run. The in-browser KMIP server exposes no AES-CMAC or HKDF primitive and has no Ed448 implementation, so it holds those NIST files without running them.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "C++ + Rust; KMIP server"
+    },
+    {
+      "id": "acvp-sha-large-data-tests",
+      "title": "SHA Large Data Tests are not run in the browser",
+      "detail": "NIST's SHA Large Data Tests (40 cases across the SHA-2 and SHA-3 functions) each hash a 1 GiB message. That is too large to build and hash in the browser workbench, so these cases are listed as not run, with the reason.",
+      "planItem": "E",
+      "owner": "unassigned",
+      "status": "accepted-limitation",
+      "scope": "Browser workbench (C++ + Rust)"
     }
   ]
 }

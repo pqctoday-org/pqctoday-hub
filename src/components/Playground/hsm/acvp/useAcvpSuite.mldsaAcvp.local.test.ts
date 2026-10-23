@@ -128,9 +128,9 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
     const cpp = section().filter((r) => engineOf(r) === 'C++')
     const rust = section().filter((r) => engineOf(r) === 'Rust')
     // 15 pure (1 positive + 4 NIST negative reasons × 3) + 6 External-µ
-    // + 6 product-authored + 9 deterministic SigGen + 3 KeyGen + 1 skip
-    // (SHA2-512/t sigVer). Hedged and internal groups: optionalInput test.
-    expect(cpp).toHaveLength(40)
+    // + 8 HashML-DSA SHA2-512/t sigVer (generic CKM_HASH_ML_DSA) + 6 product-authored
+    // + 9 deterministic SigGen + 3 KeyGen. Hedged and internal groups: optionalInput test.
+    expect(cpp).toHaveLength(47)
     expect(rust.map(caseKey)).toEqual(cpp.map(caseKey))
   })
 
@@ -204,20 +204,22 @@ describe('ML-DSA reference samples — both engines, real vectors', () => {
     expect(mu.map(engineOf).sort()).toEqual(['C++', 'C++', 'C++', 'Rust', 'Rust', 'Rust'])
   })
 
-  it('reports unsupported upstream groups as skip — never pass, never tiered', () => {
-    const skips = section().filter((r) => r.status === 'skip')
-    expect(skips.map(caseKey).sort()).toEqual([
-      'mldsa-skip-hash-sha512t',
-      'mldsa-skip-hash-sha512t',
-    ])
-    for (const r of skips) {
-      expect(classesOf(r.id)).toEqual([])
-      expect(r.caseMeta?.expected).toBe('not-run')
-      expect(r.details).toMatch(/^Skipped — /)
+  it('runs every upstream group it carries — no skips', () => {
+    expect(section().filter((r) => r.status === 'skip')).toEqual([])
+  })
+
+  it('runs the SHA2-512/224 and SHA2-512/256 sigVer cases through the generic CKM_HASH_ML_DSA', () => {
+    const t = section().filter(
+      (r) => r.caseMeta?.mode === 'preHash' && String(r.caseMeta?.hashAlg).startsWith('SHA2-512/')
+    )
+    expect(t).toHaveLength(16) // 8 NIST cases × 2 engines
+    for (const r of t) {
+      expect(r.status, r.details).toBe('pass')
+      expect(r.details).toMatch(
+        /CKM_HASH_ML_DSA \(generic, hash = CKM_SHA512_2(24|56), PH\(M\) supplied\)/
+      )
+      expect(classesOf(r.id)).toEqual(['nist-acvp-reference-sample'])
     }
-    const sha = skips.find((r) => r.id.startsWith('mldsa-skip-hash-sha512t'))!
-    expect(sha.details).toMatch(/SHA2-512\/224 or SHA2-512\/256/)
-    expect(sha.details).toMatch(/advertises 10 of the 10/)
   })
 
   it('agrees across engines case by case (a disagreement is a finding, not noise)', () => {
