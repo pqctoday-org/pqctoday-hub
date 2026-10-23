@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10232026.csv
+ * Source: src/data/role_board_content_10232026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2780,7 +2780,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Learning path: Fundamentals, then FIPS 140-3 or CC/EUCC, the ACVP lab workflow, the workbench and product records (8 hours 10 minutes of essentials, not the full 15 hours).',
+          'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 10 minutes of essentials, not the full 15 hours).',
         trackNote:
           "Six essentials against the full 13-module path plus the quiz, 905 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
         trackChips: [
@@ -3062,9 +3062,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/timeline',
           },
           {
-            title: 'Why the question is being asked',
-            body: 'The threat landscape: the CRQC capability watch and the expert survey behind it, with the source behind each figure.',
-            href: '/threats',
+            title: 'See where the cycles go',
+            body: "The PQC Hardware Acceleration module explains where ML-DSA and SLH-DSA spend their time and which parts are worth accelerating, with PQC Today's own measurements on three devices.",
+            href: '/learn/pqc-hw-acceleration',
           },
         ] as [
           { title: string; body: string; href?: string },
