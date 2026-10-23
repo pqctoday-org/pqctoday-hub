@@ -179,3 +179,28 @@ describe('EMV learn paths', () => {
     }
   })
 })
+
+// 2026-10-23: on a phone the "Optional reference" badge sat in the title's row and squeezed
+// the title to "Regional sche…". The title now wraps and the badge sits under it below `sm`.
+describe('LearnSection header layout', () => {
+  it('lets the title wrap and keeps the optional badge with it', () => {
+    render(
+      <MemoryRouter initialEntries={['/learn/cc-eucc-certification']}>
+        <LearnSection
+          sectionId="cc-regional-reference"
+          title="Regional schemes: per-scheme reference"
+          icon={null}
+        >
+          <p>body</p>
+        </LearnSection>
+      </MemoryRouter>
+    )
+    const title = screen.getByRole('heading', { name: /Regional schemes: per-scheme reference/ })
+    expect(title).toHaveClass('whitespace-normal')
+    const badge = screen.getByText('Optional reference')
+    expect(badge).toBeInTheDocument()
+    // title and badge share a wrapper that stacks them on a phone and puts them in a row from `sm`
+    expect(title.parentElement).toContainElement(badge)
+    expect(title.parentElement).toHaveClass('flex-col', 'sm:flex-row')
+  })
+})

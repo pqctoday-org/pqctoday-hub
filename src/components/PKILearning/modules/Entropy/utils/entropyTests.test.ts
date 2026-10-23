@@ -21,6 +21,7 @@ import {
   runHealthTests,
   runVisualizationChecks,
 } from './entropyTests'
+import { BAD_SAMPLE_PATTERN_1024 } from './entropyConstants'
 
 /** Uniform random bytes — stands in for a healthy source. */
 function goodSource(n = 4096): Uint8Array {
@@ -222,5 +223,19 @@ describe('result groups (P0.4)', () => {
     })
     expect(health(pattern)).toEqual({ 'Repetition Count': true, 'Adaptive Proportion': false })
     expect(health(counter)).toEqual({ 'Repetition Count': true, 'Adaptive Proportion': true })
+  })
+
+  it('the 1,024-byte Repeating Pattern sample fails the real §4.4.2 test on full windows', () => {
+    const data = BAD_SAMPLE_PATTERN_1024
+    expect(data.length).toBe(1024) // meets the §4.3 item 4 startup minimum
+    expect(Array.from(data.slice(0, 8))).toEqual([0xde, 0xad, 0xbe, 0xef, 0xde, 0xad, 0xbe, 0xef])
+    const apt = adaptiveProportionTest(data)
+    expect(apt.passed).toBe(false)
+    expect(apt.threshold).toBe(13) // Table 2: H = 8, W = 512
+    expect(apt.value).toBe(128) // 0xDE recurs 128 times in each 512-sample window
+    expect(apt.detail).not.toContain('partial window')
+    expect(apt.detail).toContain('2 windows')
+    expect(repetitionCountTest(data).passed).toBe(true) // no byte repeats back-to-back
+    expect(apt.sampleLimit).not.toContain('fewer than the 1024')
   })
 })

@@ -13,7 +13,7 @@ const EXERCISES = [
     badge: 'Certification',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     scenario:
-      "Your HSM vendor sells products to US federal agencies, EU government entities, and a Korean telecom. For each market: (1) US: Which certification program must your FIPS 203/204/205 implementation pass? Which body administers it, and which body wrote the underlying standard? (2) EU: If the customer requires CC-based certification, which EU scheme applies? Which body issues EUCC certificates, and which body maintains the Agreed Cryptographic Mechanisms (ACM) list? (3) Korea: Which national PQC competition produced Korea's approved algorithms? Which government agency ran the competition, and which algorithms were selected?",
+      "Your HSM vendor sells products to US federal agencies, EU government entities, and a Korean telecom. For each market: (1) US: Which certification program must your FIPS 203/204/205 implementation pass? Which body administers it, and which body wrote the underlying standard? (2) EU: If the customer requires CC-based certification, which EU scheme applies? Which body issues EUCC certificates, and which body maintains the Agreed Cryptographic Mechanisms (ACM) list? (3) Korea: Which national PQC competition produced Korea's approved algorithms? Which government institutions set up the research group that ran the competition, and which algorithms were selected?",
     hint: 'Use the Organization Explorer (Step 2) to research each body, and the Coverage Grid (Step 4) to map which certification bodies operate in each region.',
     step: 1,
   },
@@ -24,8 +24,8 @@ const EXERCISES = [
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     scenario:
       'Your engineering team is adding PQC to a TLS 1.3 implementation. They ask: "Should we follow the NIST standard or the IETF standard?" Help them understand the relationship: (1) Which organization published the ML-KEM algorithm (FIPS 203)? What type of body is it? (2) Which IETF working group handles PQC integration into TLS? What RFC did they produce? (3) Are these in conflict, or complementary? How do NIST algorithm standards feed into IETF protocol standards?',
-    hint: 'Use the Standards→Cert→Compliance Chain (Step 3, Scenario 4) and the Organization Explorer (Step 2) to compare NIST vs IETF decision-making processes.',
-    step: 2,
+    hint: 'Use the Scenario Challenge (Step 5, Scenario 4: the TLS 1.3 question) and the Organization Explorer (Step 2) to compare NIST vs IETF decision-making processes.',
+    step: 4,
   },
   {
     id: 'compliance-authorship',

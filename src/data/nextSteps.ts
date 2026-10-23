@@ -1007,6 +1007,51 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       why: 'The Library lists the documents that are new or were revised, newest first, each with its source and date.',
     },
   },
+  // Certification engineer journey review (23 Oct 2026): the default exits sent this role to
+  // PQC 101 and the Vendor Scorecard, away from its own path. Each exit follows the path in
+  // learningPersonas.ts (certificate first, then the tests that lead to it).
+  'cert-engineer': {
+    '/learn': {
+      to: '/learn/crypto-product-certification',
+      label: 'Start with certification fundamentals',
+      why: 'Your path starts at the certificate: what one covers, before the tests that lead to it.',
+    },
+    '/learn/standards-bodies': {
+      to: '/learn/crypto-product-certification',
+      label: 'Next on your path: certification fundamentals',
+      why: 'This module is optional orientation on who writes standards, who certifies and who mandates; the first essential module covers what a certificate covers.',
+    },
+    '/learn/crypto-product-certification': {
+      to: '/learn/fips-140-3-certification',
+      label: 'Next on your path: FIPS 140-3 Certification',
+      why: 'The next module on your path takes a cryptographic module from boundary to certificate.',
+    },
+    '/learn/fips-140-3-certification': {
+      to: '/learn/acvp-lab-workflow',
+      label: 'Next on your path: ACVP Lab Workflow',
+      why: 'The next module on your path follows algorithm validation testing from vector set to evidence.',
+    },
+    '/learn/acvp-lab-workflow': {
+      to: '/learn/entropy-randomness',
+      label: 'Next on your path: Entropy & Randomness',
+      why: 'The next module on your path covers entropy sources, which key generation depends on.',
+    },
+    '/learn/entropy-randomness': {
+      to: '/learn/hsm-pqc',
+      label: 'Next on your path: HSM & PQC Operations',
+      why: 'The next module on your path covers the module interface and what adding PQC touches.',
+    },
+    '/playground/entropy-test': {
+      to: '/learn/hsm-pqc',
+      label: 'Next on your path: HSM & PQC Operations',
+      why: 'Entropy & Randomness, the module this tool practises, is followed on your path by HSM & PQC Operations.',
+    },
+    '/playground/drbg-demo': {
+      to: '/learn/hsm-pqc',
+      label: 'Next on your path: HSM & PQC Operations',
+      why: 'Entropy & Randomness, the module this tool practises, is followed on your path by HSM & PQC Operations.',
+    },
+  },
 }
 
 /**

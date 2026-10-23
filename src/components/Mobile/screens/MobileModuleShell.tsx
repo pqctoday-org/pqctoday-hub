@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { CheckCircle2, Circle, Network, ArrowRight, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,7 @@ import { MobilePersonaBlock } from '../MobilePersonaBlock'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MobileProgress } from '../primitives/Progress'
 import { mobileChip } from '../mobileTokens'
+import { DESKTOP_ONLY_WORKSHOP_LABEL, useDesktopOnlyWorkshopEntries } from '../desktopOnlyWorkshop'
 import { cn } from '@/lib/utils'
 
 export interface MobileModuleShellProps {
@@ -83,6 +84,12 @@ export interface MobileModuleShellProps {
  * - no twin exists (most modules) → the click scrolls to and briefly
  *   highlights the honest banner below, instead of doing nothing.
  *
+ * 2026-10-23 (owner decision D6, workshops are desktop-only on phones): where neither
+ * destination exists (no ready workshop, no twin) every workshop entry point — the
+ * "Open this step" button below, and the Learn content's own "Start Workshop" buttons and
+ * `?tab=workshop` links (see ../desktopOnlyWorkshop.ts) — reads "Workshop: on a computer"
+ * instead of being a button that does nothing. The reading content is untouched.
+ *
  * The section checklist reuses toggleLearnSection — the same manual-toggle
  * semantics the desktop sidebar's LearnSectionChecklist uses, not
  * markLearnSectionRead's scroll-dwell auto-marking. A per-section chevron
@@ -104,6 +111,11 @@ export function MobileModuleShell({
   pathPicker,
 }: MobileModuleShellProps) {
   const showWorkshop = Boolean(workshopContent) && activeTab === 'workshop'
+  // A phone can open this module's workshop when it mounts here (workshopContent) or has a
+  // phone-capable twin tool. Otherwise every workshop entry point says "on a computer".
+  const workshopOnPhone = Boolean(workshopContent) || Boolean(practiceTool)
+  const learnRef = useRef<HTMLDivElement>(null)
+  useDesktopOnlyWorkshopEntries(learnRef, !workshopOnPhone, manifest.id)
   const modules = useModuleStore((s) => s.modules)
   const toggleLearnSection = useModuleStore((s) => s.toggleLearnSection)
 
@@ -159,17 +171,22 @@ export function MobileModuleShell({
             <p className="mt-1 text-[12.5px] leading-[1.55] text-foreground/90">
               {manifest.startHere.text}
             </p>
-            {onStartHere && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onStartHere}
-                className="mt-2 h-7 border-primary/30 bg-primary/10 px-2.5 text-[11.5px] font-bold text-primary"
-              >
-                Open this step
-              </Button>
-            )}
+            {onStartHere &&
+              (workshopOnPhone ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={onStartHere}
+                  className="mt-2 h-7 border-primary/30 bg-primary/10 px-2.5 text-[11.5px] font-bold text-primary"
+                >
+                  Open this step
+                </Button>
+              ) : (
+                <p className="mt-2 text-[11.5px] font-semibold text-muted-foreground">
+                  {DESKTOP_ONLY_WORKSHOP_LABEL}
+                </p>
+              ))}
           </div>
         )}
         {/* Round 9, wave 2 — "For your role" (src/data/personaBlocks.ts), phone twin. */}
@@ -263,7 +280,10 @@ export function MobileModuleShell({
       )}
 
       {!showWorkshop && (
-        <div className="text-[13px] leading-relaxed text-foreground [&_h2]:mt-4 [&_h2]:text-[15px] [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:text-[13.5px] [&_h3]:font-bold">
+        <div
+          ref={learnRef}
+          className="text-[13px] leading-relaxed text-foreground [&_h2]:mt-4 [&_h2]:text-[15px] [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:text-[13.5px] [&_h3]:font-bold"
+        >
           {learnContent}
         </div>
       )}

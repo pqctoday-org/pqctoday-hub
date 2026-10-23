@@ -763,11 +763,11 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'With M32 selected, you switch the Winternitz parameter from W1 to W8. According to the W explanation panel, what changes and what stays the same?',
     options: [
       'Security drops from 128-bit to 96-bit, but signing gets faster',
-      'The signature gets smaller (34 chains instead of 265) at about 8 times more hash work per signature; the security level is identical',
+      'The signature gets smaller (34 chains instead of 265) at about 33 times the chain hashing; W has little effect on security',
       'Nothing but the parameter-set name changes; signature size is fixed by the tree height',
     ],
     answer: 1,
-    why: 'The Winternitz parameter is a pure time-versus-bandwidth trade-off inside the one-time signature: a larger W lets each hash chain encode more bits, so fewer chains are needed and the signature shrinks, but each chain must be iterated up to W-1 times, which multiplies the signing work. Security depends on the hash output length, not on W.',
+    why: 'The Winternitz parameter is a time-versus-bandwidth trade-off inside the one-time signature: a larger W lets each hash chain encode more bits, so fewer chains are needed and the signature shrinks, but each chain runs up to 2^W - 1 hash steps. RFC 8554 section 4.1 puts public-key generation at p x (2^W - 1) + 1 hashes (signing and verifying take about half that on average): 34 x 255 + 1 = 8,671 at W8 against 265 x 1 + 1 = 266 at W1, about 33 times as many. The security level is set mainly by the hash output length; W has little effect on it.',
   },
   'stateful-signatures/slh-dsa-live': {
     prompt:

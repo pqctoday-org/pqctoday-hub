@@ -50,6 +50,7 @@ import {
   groupMatchesStatus,
   type CoverageGroup,
 } from '@/data/validation/coverageExport'
+import { gapSummary, plainGapView, plainRuleText } from './gapPlainText'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 const dataUrl = (file: string) =>
@@ -121,13 +122,6 @@ const gapStatusMeta = (status: GapStatus) => {
           'A documented limitation narrows a claim; it does not become a supported capability.',
       }
   }
-}
-
-const gapSummary = (detail: string) => {
-  const firstSentence = detail.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? detail
-  if (firstSentence.length <= 300) return firstSentence
-  const shortened = firstSentence.slice(0, 297)
-  return `${shortened.slice(0, shortened.lastIndexOf(' '))}…`
 }
 
 const gapEvidenceParagraphs = (detail: string) =>
@@ -458,7 +452,7 @@ export function CoverageMatrixView({
           </div>
           <div>
             <dt className="font-medium text-foreground">Sampled</dt>
-            <dd className="text-muted-foreground">{matrix.rules.sampled}</dd>
+            <dd className="text-muted-foreground">{plainRuleText(matrix.rules.sampled)}</dd>
           </div>
           <div>
             <dt className="font-medium text-foreground">Status</dt>
@@ -749,6 +743,10 @@ function OpenGapCard({
 }) {
   const statusMeta = gapStatusMeta(gap.status)
   const evidenceId = `gap-evidence-${gap.id.replace(/[^A-Za-z0-9_-]/g, '_')}`
+  // Plain wording for entries whose own text carries internal labels; the
+  // original stays under "Show technical evidence" and the tracking reference
+  // in Evidence detail.
+  const plain = plainGapView(gap)
 
   return (
     <li className="p-4" data-gap-status={gap.status}>
@@ -764,13 +762,13 @@ function OpenGapCard({
               >
                 {statusMeta.label}
               </span>
-              <span className="text-[11px] text-muted-foreground">{gap.scope}</span>
+              <span className="text-[11px] text-muted-foreground">{plain.scope}</span>
             </div>
             <h5
               id={`gap-title-${gap.id}`}
               className="text-sm font-semibold leading-snug text-foreground"
             >
-              {gap.title}
+              {plain.title}
             </h5>
           </div>
           <div className="flex shrink-0 flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
@@ -795,7 +793,9 @@ function OpenGapCard({
             <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
               What this means
             </p>
-            <p className="mt-1 text-xs leading-relaxed text-foreground">{gapSummary(gap.detail)}</p>
+            <p className="mt-1 text-xs leading-relaxed text-foreground">
+              {plain.summary ?? gapSummary(gap.detail)}
+            </p>
             <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
               Why it matters
             </p>
@@ -807,7 +807,7 @@ function OpenGapCard({
               <dt className="font-medium text-foreground">Claim boundary</dt>
               <dd className="text-muted-foreground">{statusMeta.takeaway}</dd>
               <dt className="font-medium text-foreground">Applies to</dt>
-              <dd className="break-words text-muted-foreground">{gap.scope}</dd>
+              <dd className="break-words text-muted-foreground">{plain.scope}</dd>
               <dt className="font-medium text-foreground">Disposition</dt>
               <dd className="text-muted-foreground">{statusMeta.label}</dd>
               <dt className="font-medium text-foreground">Evidence class</dt>

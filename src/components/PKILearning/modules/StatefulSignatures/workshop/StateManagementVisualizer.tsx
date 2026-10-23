@@ -14,12 +14,14 @@ import {
   Check,
 } from 'lucide-react'
 import { formatSignatureCount, formatBytes } from '../data/statefulSigsConstants'
+import { lmsPublicKeyBytes } from '../data/signatureSizes'
 import { CKM_HSS_KEY_PAIR_GEN, CKM_HSS, CKK_HSS } from '@/wasm/softhsm/constants'
 import { hsm_extractKeyValue } from '@/wasm/softhsm'
 import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Button } from '@/components/ui/button'
 import { StateReviewGuide } from './StateReviewGuide'
+import type { RollbackProbe } from './stateRollbackProbe'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
@@ -113,8 +115,13 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
   const [opError, setOpError] = useState<string | null>(null)
   const [showStateLossExplainer, setShowStateLossExplainer] = useState(false)
   const [showAlgoInfo, setShowAlgoInfo] = useState(false)
-  const [simulatedStateLoss, setSimulatedStateLoss] = useState(false)
-  const [reusedIndex, setReusedIndex] = useState<number | null>(null)
+  // What the HSM answered when "Simulate State Loss" asked it to take the key back to an
+  // earlier signature: the counter at that moment, the signature asked for, and each reply.
+  const [rollback, setRollback] = useState<{
+    fromIndex: number
+    toIndex: number
+    probe: RollbackProbe
+  } | null>(null)
   const [inspectedEntry, setInspectedEntry] = useState<SignatureLogEntry | null>(null)
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
 
@@ -131,6 +138,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
   const cfg2 = computeLMSConfig(lmsHash, lmsM, level2Height, lmsW)
   const cfg3 = computeLMSConfig(lmsHash, lmsM, level3Height, lmsW)
   const cfg = cfg1 // alias for single-level compatibility
+  // RFC 8554 §4.1: LM-OTS public-key generation takes p·(2^W − 1) + 1 hashes; signing and
+  // verifying take about half that on average. Same ratio for both, so one figure serves.
+  const pByW = lmsM === 32 ? P_N32 : P_N24
+  const otsHashes = (w: LMSW) => pByW[w] * (Math.pow(2, w) - 1) + 1
 
   // Build per-level arrays for HSS keygen
   const levelCfgs = [cfg1, ...(hssLevels >= 2 ? [cfg2] : []), ...(hssLevels >= 3 ? [cfg3] : [])]
@@ -152,8 +163,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
     return 600000
   })()
   // HSS sig size: 4 (Nspk) + (L-1) × (lmsSig_i + lmsPubKey_i) + lmsSig_{L-1}
-  // lmsPubKey ≈ 4+4+n+n = 8+2n
-  const lmsPubKeySize = 8 + 2 * cfg1.n
+  // lmsPubKey = u32str(type) || u32str(otstype) || I || T[1] = 4+4+16+n (RFC 8554 §5.3)
+  const lmsPubKeySize = lmsPublicKeyBytes(cfg1.n)
   const sigSize =
     4 +
     levelCfgs.slice(0, -1).reduce((s, c) => s + c.sigSize + lmsPubKeySize, 0) +
@@ -170,6 +181,12 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       : `HSS-L${hssLevels}[H${heightLabels.join('/H')}] ${cfg1.pkcs11Name.split('/')[1].trim()}`
   const security = cfg1.security
   const keygenNote = cfg1.keygenNote
+
+  // The rollback attempt counts as refused only if every call was refused and the engine's own counter did not move.
+  const rollbackRefused =
+    rollback !== null &&
+    rollback.probe.attempts.every((a) => a.refused) &&
+    !rollback.probe.counterMoved
 
   const progressPercent = Math.min(100, (counter / maxSigs) * 100)
   const remainingSigs = maxSigs - counter
@@ -378,23 +395,38 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
     [counter, isExhausted, maxSigs, remainingSigs, activeKeyHandle, generateBackendKey, signBackend]
   )
 
-  const handleSimulateStateLoss = useCallback(() => {
-    if (counter === 0) return
-    const lostToIndex = Math.max(0, counter - Math.ceil(counter / 3))
-    setCounter(lostToIndex)
-    setSimulatedStateLoss(true)
-    setReusedIndex(lostToIndex)
-    setIsExhausted(false)
-    setActiveKeyHandle(null)
-  }, [counter])
+  // State loss is a real attempt on the live key, not a counter edit: the HSM is asked to
+  // take the key back to an earlier signature (write the counter, read the state out, copy
+  // the key) and the replies are shown. The counter is then read from the engine, so it can
+  // never disagree with the signature log.
+  const handleSimulateStateLoss = useCallback(async () => {
+    if (counter === 0 || !activeKeyHandle || !hsm?.moduleRef?.current) return
+    setOpError(null)
+    try {
+      const { hsm_getKeysRemaining } = await import('@/wasm/softhsm/stateful')
+      const { probeStateRollback } = await import('./stateRollbackProbe')
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+      const toIndex = Math.max(0, counter - Math.ceil(counter / 3))
+      const probe = probeStateRollback(M, hSession, activeKeyHandle, maxSigs - toIndex, () =>
+        hsm_getKeysRemaining(M, hSession, activeKeyHandle)
+      )
+      setRollback({ fromIndex: counter, toIndex, probe })
+      if (probe.remainingAfter !== null) {
+        setCounter(maxSigs - probe.remainingAfter)
+        setIsExhausted(probe.remainingAfter === 0)
+      }
+    } catch (e: unknown) {
+      setOpError(e instanceof Error ? e.message : String(e))
+    }
+  }, [counter, activeKeyHandle, hsm, maxSigs])
 
   const handleReset = useCallback(() => {
     setCounter(0)
     setSignatureLog([])
     setIsExhausted(false)
     setOpError(null)
-    setSimulatedStateLoss(false)
-    setReusedIndex(null)
+    setRollback(null)
     setActiveKeyHandle(null)
     setKeygenPhase('idle')
   }, [])
@@ -462,7 +494,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
         <h3 className="text-lg font-bold text-foreground mb-2">State Management Simulator</h3>
         <p className="text-sm text-muted-foreground">
           Select an SP 800-208 parameter set, then sign messages to watch the one-time key counter
-          advance. See what happens at exhaustion or when state is lost.
+          advance. See what happens at exhaustion, and how the HSM answers an attempt to roll the
+          state back.
         </p>
       </div>
 
@@ -687,13 +720,12 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             independent hash chains; W determines how many bits each chain encodes.
           </p>
           <p>
-            A chain of length <span className="font-mono">w</span> can encode{' '}
-            <span className="font-mono">log₂(W)</span> bits of the message hash by computing{' '}
-            <span className="font-mono">W−1</span> hash iterations. The{' '}
-            <span className="font-bold">signer</span> applies up to W−1 iterations to produce the
+            Each chain encodes <span className="font-mono">W</span> bits of the message hash and is{' '}
+            <span className="font-mono">2^W − 1</span> hash steps long (RFC 8554 §4.1). The{' '}
+            <span className="font-bold">signer</span> applies up to 2^W − 1 steps to produce the
             signature; the <span className="font-bold">verifier</span> completes the remaining
             steps. Larger W → fewer chains needed → smaller signature bytes → but each chain
-            requires more hash iterations → slower to sign.
+            requires more hash steps → slower to sign and verify.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-1 pt-1 font-mono">
             {([1, 2, 4, 8] as const).map((w) => {
@@ -722,9 +754,12 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             })}
           </div>
           <p className="text-[9px]">
-            SP 800-208 recommends W=4 or W=8 for most deployments. W=8 gives the smallest signatures
-            but requires ~8× more hash work per sign operation than W=1. The security level is
-            identical regardless of W — only size and speed change.
+            SP 800-208 approves W = 1, 2, 4 and 8. Larger W gives smaller signatures at a higher
+            hash cost: RFC 8554 §4.1 puts one-time public-key generation at p × (2^W − 1) + 1
+            hashes, with signing and verifying about half that on average. For M{lmsM} that is{' '}
+            {otsHashes(1).toLocaleString()} hashes at W=1 and {otsHashes(8).toLocaleString()} at
+            W=8, about {Math.round(otsHashes(8) / otsHashes(1))}× as many. W has little effect on
+            security (RFC 8554 §4.1) — only size and speed change.
           </p>
         </div>
 
@@ -790,8 +825,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     : lmsW === 2
                       ? 'W2: 133 chains (N32), ≤3 hash steps per chain. Halves the chain count vs W1 at only 3× more work per chain. Useful middle ground when moderate size savings are needed without the full cost of W4.'
                       : lmsW === 4
-                        ? 'W4: 67 chains (N32), ≤15 hash steps per chain. SP 800-208 recommended default — cuts LMOTS chain values to ~2.1 KB (N32) with a manageable sign cost. Balances bandwidth and performance for most real-world deployments.'
-                        : 'W8: 34 chains (N32), ≤255 hash steps per chain. Smallest LMOTS output (~1.1 KB per RFC 8554) at ~8× more sign work than W1. Best for bandwidth-constrained channels (IoT, firmware update protocols) where signing throughput is not critical.',
+                        ? 'W4: 67 chains (N32), ≤15 hash steps per chain. Cuts the LM-OTS signature to 2,180 B (N32) at a middle-of-the-range hash cost — between W1 (largest, cheapest) and W8 (smallest, costliest).'
+                        : 'W8: 34 chains (N32), ≤255 hash steps per chain. Smallest LM-OTS output (1,124 B per RFC 8554) at about 33× the chain hashing of W1 (34 × 255 + 1 against 265 × 1 + 1 hashes, RFC 8554 §4.1). Best for bandwidth-constrained channels (IoT, firmware update protocols) where signing throughput is not critical.',
               },
               {
                 label: 'Selected Parameter Set',
@@ -915,21 +950,74 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             </div>
           )}
 
-          {/* State loss warning */}
-          {simulatedStateLoss && reusedIndex !== null && (
-            <div className="bg-destructive/10 rounded-lg p-4 border border-destructive/30">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle size={18} className="text-destructive" />
-                <span className="text-sm font-bold text-destructive">
-                  STATE LOSS DETECTED &mdash; KEY COMPROMISE
+          {/* State loss attempt: what the HSM answered */}
+          {rollback && (
+            <div
+              className={`rounded-lg p-4 border space-y-3 ${
+                rollbackRefused
+                  ? 'bg-status-info/10 border-status-info/30'
+                  : 'bg-destructive/10 border-destructive/30'
+              }`}
+              role="status"
+              data-testid="rollback-result"
+            >
+              <div className="flex items-center gap-2">
+                {rollbackRefused ? (
+                  <ShieldAlert size={18} className="text-status-info shrink-0" />
+                ) : (
+                  <AlertTriangle size={18} className="text-destructive shrink-0" />
+                )}
+                <span
+                  className={`text-sm font-bold ${
+                    rollbackRefused ? 'text-status-info' : 'text-destructive'
+                  }`}
+                >
+                  {rollbackRefused
+                    ? `ROLLBACK REFUSED — the HSM kept the counter at ${rollback.fromIndex}`
+                    : 'THE ENGINE LET PART OF THE ROLLBACK THROUGH'}
                 </span>
               </div>
               <p className="text-xs text-foreground/80">
-                State was rolled back to index {reusedIndex}. OTS keys from index {reusedIndex} to{' '}
-                {signatureLog.length > 0 ? signatureLog[0].index : counter} will be reused if
-                signing continues. <strong>This constitutes a complete break</strong> &mdash; an
-                attacker observing two signatures from the same OTS key can forge arbitrary
-                signatures. The key MUST be revoked immediately.
+                You tried to take the key's counter back from {rollback.fromIndex} to{' '}
+                {rollback.toIndex}, the way a restored snapshot or a cloned key would.{' '}
+                {rollbackRefused ? (
+                  <>
+                    The HSM refused every way in, so <strong>no leaf was reused</strong>: signing
+                    continues at leaf {rollback.fromIndex}, and the counter and the log agree.
+                  </>
+                ) : (
+                  <>
+                    The replies are below; the counter now reads {counter} because it is read from
+                    the engine.
+                  </>
+                )}
+              </p>
+              <ul className="space-y-2" aria-label="Rollback attempts and the HSM's replies">
+                {rollback.probe.attempts.map((a) => (
+                  <li key={a.id} className="text-[10px] leading-relaxed">
+                    <span className="block text-foreground">{a.action}</span>
+                    <span className="block font-mono text-muted-foreground break-words">
+                      {a.call} &rarr;{' '}
+                      <span
+                        className={`font-bold ${a.refused ? 'text-status-info' : 'text-destructive'}`}
+                      >
+                        {a.returned}
+                      </span>
+                    </span>
+                    <span className="block text-muted-foreground">{a.meaning}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                This is how this software emulator answers; it does not show that any certified
+                module does the same. SP 800-208 &sect;8.1 asks it of a module that generates keys
+                and signs: no export of private keying material, and the leaf index stored in
+                non-volatile memory before a signature leaves. A signer that keeps its state in an
+                ordinary file or VM image has no such protection: restoring a snapshot taken when
+                the counter read {rollback.toIndex} would make leaves {rollback.toIndex} to{' '}
+                {Math.max(rollback.toIndex, rollback.fromIndex - 1)} available again, and SP 800-208
+                &sect;1.2 says that two signatures on different messages from one one-time key make
+                it computationally feasible to forge signatures on arbitrary messages.
               </p>
             </div>
           )}
@@ -999,6 +1087,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               Reset
             </Button>
           </div>
+          <p className="text-[10px] text-muted-foreground">
+            Simulate State Loss asks the HSM to take this key back to an earlier signature, as a
+            backup restore or a cloned key would, and shows how it answers.
+          </p>
         </div>
 
         {/* Right: Log and explainer */}
@@ -1013,8 +1105,6 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 </p>
               ) : (
                 signatureLog.map((entry) => {
-                  const isReused =
-                    simulatedStateLoss && reusedIndex !== null && entry.index >= reusedIndex
                   const isInspecting =
                     inspectedEntry?.index === entry.index &&
                     inspectedEntry?.timestamp === entry.timestamp
@@ -1024,11 +1114,9 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                         role="button"
                         tabIndex={0}
                         className={`flex items-center gap-2 text-[10px] font-mono px-2 py-1.5 rounded cursor-pointer transition-colors ${
-                          isReused
-                            ? 'bg-destructive/5 border border-destructive/20 text-status-error hover:bg-destructive/10'
-                            : isInspecting
-                              ? 'bg-primary/10 border border-primary/30 text-foreground'
-                              : 'bg-background/50 text-muted-foreground hover:bg-muted/60'
+                          isInspecting
+                            ? 'bg-primary/10 border border-primary/30 text-foreground'
+                            : 'bg-background/50 text-muted-foreground hover:bg-muted/60'
                         }`}
                         onClick={() => setInspectedEntry(isInspecting ? null : entry)}
                         onKeyDown={(e) => {
@@ -1036,15 +1124,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                             setInspectedEntry(isInspecting ? null : entry)
                         }}
                       >
-                        <CheckCircle
-                          size={10}
-                          className={
-                            isReused ? 'text-destructive shrink-0' : 'text-success shrink-0'
-                          }
-                        />
-                        <span
-                          className={`font-bold w-12 shrink-0 ${isReused ? 'text-destructive' : 'text-primary'}`}
-                        >
+                        <CheckCircle size={10} className="text-success shrink-0" />
+                        <span className="font-bold w-12 shrink-0 text-primary">
                           #{String(entry.index).padStart(4, '0')}
                         </span>
                         <span className="truncate flex-1">{entry.message}</span>
@@ -1065,7 +1146,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                       </div>
                       {isInspecting &&
                         (() => {
-                          const lmsPubKeySize = 8 + 2 * entry.n
+                          const lmsPubKeySize = lmsPublicKeyBytes(entry.n)
                           // Rotating palettes so every section gets a distinct color even at L>2
                           const sigPalette = [
                             {
@@ -1252,6 +1333,11 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                   <strong>monotonic counter</strong> tracking the next unused OTS leaf. If this
                   counter is lost (via VM snapshot restore, backup restoration, or crash without
                   flush), the signer may unknowingly reuse a one-time key.
+                </p>
+                <p className="text-muted-foreground">
+                  The HSM engine in this simulator does not let you cause any of the scenarios
+                  below: Simulate State Loss shows it refusing to rewind the key. They describe a
+                  signer that keeps its state where it can be restored or copied.
                 </p>
                 <div className="space-y-2">
                   <div className="bg-destructive/5 rounded p-2 border border-destructive/20">

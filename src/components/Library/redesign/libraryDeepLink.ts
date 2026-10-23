@@ -105,10 +105,13 @@ export function libraryWideningFor(
       : (PERSONA_LIBRARY_CATEGORIES[input.selectedPersona] ?? [])
   const categoryAfter = drop.includes('cat') ? 'All' : input.activeCategory
   const searchAfter = drop.includes('q') ? '' : input.filterText
+  // The Certification starter set is exempt from role narrowing (see the pipeline).
+  const starterSetAfter = input.certRelevantOnly && !drop.includes('qv')
   const prefsOff =
     preferred.length > 0 &&
     categoryAfter === 'All' &&
     !searchAfter &&
+    !starterSetAfter &&
     !item.categories?.some((c) => preferred.includes(c))
 
   return drop.length > 0 || prefsOff ? { drop, prefsOff } : null

@@ -157,7 +157,7 @@ const TPM_KEYS: TPMKey[] = [
 const HYBRID_APPROACH: HybridApproach = {
   name: 'Hybrid RSA TPM + ML-DSA Software Key',
   description:
-    'On a TPM built to a library version earlier than 185, ML-DSA is not available inside the TPM, so the practical short-term solution is a hybrid binding: use the TPM RSA AIK to attest the binding of an ML-DSA software signing key. This provides quantum-safe signatures for forward secrecy while keeping hardware-backed proof of authenticity.',
+    'On a TPM built to a library version earlier than 185, ML-DSA is not available inside the TPM, so the practical short-term solution is a hybrid binding: use the TPM RSA AIK to attest the binding of an ML-DSA software signing key. This adds a quantum-safe signature while keeping hardware-backed proof of authenticity.',
   steps: [
     'Generate ML-DSA-65 key pair in software (using OpenSSL 3.3+ with ML-DSA provider)',
     'Use TPM AIK to sign a "key binding attestation" containing the ML-DSA-65 public key + TPM platform state',
@@ -166,7 +166,7 @@ const HYBRID_APPROACH: HybridApproach = {
     'Relying party validates: RSA quote proves hardware binding, ML-DSA signature is quantum-safe',
   ],
   tradeoffs: [
-    'Still exposes RSA AIK to harvest-now-decrypt-later — adversary collects RSA attestations today, breaks with CRQC later',
+    'The RSA AIK is the hardware proof and stays quantum-vulnerable: once a CRQC exists, a quote could be forged, leaving the software ML-DSA signature as the only quantum-safe evidence (a forgery risk, not harvest-now-decrypt-later)',
     'Extra complexity: verifiers must validate two signatures',
     'Certificate management: need PKI for ML-DSA binding certs',
     'Full quantum safety requires a TPM that implements library v185 or later with an ML-DSA attestation key (specification published March 2026; product availability depends on the TPM vendor)',

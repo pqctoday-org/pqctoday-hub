@@ -28,9 +28,10 @@ export const content: ModuleContent = {
   moduleId: 'pci-certification',
   lastReviewed: '2026-10-22',
   version: '0.1.0',
-  // No lastReviewed: nobody has reviewed this module's claims via
-  // record_module_review.py yet (moduleReviewHonesty.test.ts). v1 ships as
-  // "practitioner orientation", not reviewed by a lab or certification body.
+  // lastReviewed is the owner's sign-off of 22 October 2026 (moduleReviewHonesty.test.ts), not a
+  // lab or certification-body review: v1 ships as "practitioner orientation". Remove it when a
+  // fact is corrected, until the owner renews the sign-off; the on-page notice follows it
+  // (common/moduleReviewStatus.ts).
   lastEdited: '2026-10-23',
 
   standards: [

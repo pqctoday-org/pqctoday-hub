@@ -78,11 +78,11 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       id: 'attestation-design',
       title: '5. Attestation Design',
       description:
-        'Use the Attestation Flow Designer to explore all 5 attestation types (Measured Boot, TPM Quote, DICE, FIDO Device Onboard, Remote Attestation via TLS). For each type: identify vulnerable crypto operations, review the HNDL window, and understand the PQC migration path.',
+        'Use the Attestation Flow Designer to explore all 5 attestation types (Measured Boot, TPM Quote, DICE, FIDO Device Onboard, Remote Attestation via TLS). For each type: identify vulnerable crypto operations, review the migration urgency, and understand the PQC migration path.',
       badge: 'Attestation',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Measured Boot itself is quantum-safe (SHA-256 PCR extends). TPM Quote (RSA AIK) has a 10-year HNDL window — the most urgent attestation migration. Remote TLS attestation has a 15-year HNDL window because both the TLS key exchange AND the embedded attestation signatures are quantum-vulnerable.',
+        'Measured Boot itself is quantum-safe (SHA-256 PCR extends). A TPM Quote signed with an RSA AIK is a forgery risk once a CRQC exists, not a harvest-now-decrypt-later one: the signature protects no secret, so urgency follows how long the TPM and its AIK certificate chain stay in service (the designer estimates about 10 years). Remote TLS attestation carries both risks: the TLS key exchange can be recorded now and decrypted later, while the embedded attestation signatures can only be forged later (estimated about 15 years in service).',
       config: { step: 4 },
     },
     {

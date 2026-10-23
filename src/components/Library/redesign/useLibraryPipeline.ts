@@ -26,7 +26,7 @@ import { matchesAlgorithmFamilyFilter } from '@/components/common/AlgorithmFamil
 import type { TrustTier } from '@/data/trustScore'
 import type { SortOption } from '@/components/Library/SortControl'
 import type { PersonaId } from '@/data/learningPersonas'
-import { matchesAllWords } from '@/utils/searchMatch'
+import { matchesAllWords, tokenizeQuery } from '@/utils/searchMatch'
 
 const URGENCY_ORDER: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
 
@@ -139,6 +139,85 @@ export function publishedMs(item: Pick<LibraryItem, 'initialPublicationDate'>): 
  *  expected (callers already lowercase before calling this). */
 export function normalizeSearchText(text: string): string {
   return text.replace(/[\s\-#]/g, '')
+}
+
+/** The record fields the search box looks in (see matchesLibraryFilters). */
+function libraryLexicalFields(item: LibraryItem): (string | null | undefined)[] {
+  return [
+    item.documentTitle,
+    item.referenceId,
+    item.shortDescription,
+    item.authorsOrOrganization,
+    item.documentType,
+    item.documentStatus,
+    item.algorithmFamily,
+    item.securityLevels,
+    item.protocolOrToolImpact,
+    item.toolchainSupport,
+    item.regionScope,
+    item.dependencies,
+    ...(item.categories ?? []),
+    ...(item.applicableIndustries ?? []),
+    ...(item.supersededByRefs ?? []),
+    ...(item.replacesRefs ?? []),
+  ]
+}
+
+/** Tier numbers for {@link libraryMatchRank}; lower is a better match. */
+export const MATCH_RANK = {
+  exact: 0,
+  prefix: 1,
+  inHeadlineOrId: 2,
+  inTitle: 3,
+  descriptionPhrase: 4,
+  otherFields: 5,
+  semanticOnly: 6,
+} as const
+
+/** The title up to its first separator ("FIPS 140-3 — Security Requirements…"
+ *  → "FIPS 140-3", "SP 800-90B: Recommendation…" → "SP 800-90B"): what a reader
+ *  means when they type a standard's number or short name. */
+function titleHeadline(title: string): string {
+  return title.split(/\s[—–-]\s|:\s/)[0] ?? title
+}
+
+/**
+ * How closely a document matches a search query (lower is better; 0 when the
+ * query has no meaningful word, so a sort on it changes nothing).
+ *
+ *   exact       — the query is the whole reference id, the whole title, or the
+ *                 title's headline ("FIPS 140-3" → the FIPS 140-3 standard)
+ *   prefix      — the title or reference id starts with the query
+ *   inHeadlineOrId — the query appears inside the title's headline or the reference id
+ *   inTitle     — the query appears later in the title (e.g. a certificate whose
+ *                 holder line ends "(FIPS 140-3, Level 3)")
+ *   descriptionPhrase — the query appears as a phrase in the short description
+ *   otherFields — every word matches somewhere in the record's other metadata
+ *   semanticOnly — only the semantic-search supplement found it
+ *
+ * All comparisons ignore case and the separators in "PKCS #11" / "PKCS-11" /
+ * "PKCS11" (see {@link normalizeSearchText}). Callers use the rank as the primary
+ * key of the "Best match" ordering and keep their date sort as the tie-breaker.
+ */
+export function libraryMatchRank(item: LibraryItem, query: string): number {
+  if (tokenizeQuery(query).length === 0) return 0
+  const nq = normalizeSearchText(query.trim().toLowerCase())
+  if (!nq) return 0
+  const nTitle = normalizeSearchText(item.documentTitle.toLowerCase())
+  const nRef = normalizeSearchText(item.referenceId.toLowerCase())
+  const nHeadline = normalizeSearchText(titleHeadline(item.documentTitle).toLowerCase())
+  if (nq === nRef || nq === nTitle || nq === nHeadline) return MATCH_RANK.exact
+  if (nTitle.startsWith(nq) || nRef.startsWith(nq)) return MATCH_RANK.prefix
+  if (nHeadline.includes(nq) || nRef.includes(nq)) return MATCH_RANK.inHeadlineOrId
+  if (nTitle.includes(nq)) return MATCH_RANK.inTitle
+  if (
+    item.shortDescription &&
+    normalizeSearchText(item.shortDescription.toLowerCase()).includes(nq)
+  )
+    return MATCH_RANK.descriptionPhrase
+  return matchesAllWords(libraryLexicalFields(item), query)
+    ? MATCH_RANK.otherFields
+    : MATCH_RANK.semanticOnly
 }
 
 export interface LibraryPipelineInput {
@@ -269,28 +348,7 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
   // algorithm, protocol, security level, region, or an older dependency id —
   // not only by title.
   // A contiguous phrase that matched before still matches (see searchMatch.ts).
-  const lexicalMatch = matchesAllWords(
-    [
-      item.documentTitle,
-      item.referenceId,
-      item.shortDescription,
-      item.authorsOrOrganization,
-      item.documentType,
-      item.documentStatus,
-      item.algorithmFamily,
-      item.securityLevels,
-      item.protocolOrToolImpact,
-      item.toolchainSupport,
-      item.regionScope,
-      item.dependencies,
-      ...(item.categories ?? []),
-      ...(item.applicableIndustries ?? []),
-      ...(item.supersededByRefs ?? []),
-      ...(item.replacesRefs ?? []),
-    ],
-    filterText
-  )
-  if (lexicalMatch) return true
+  if (matchesAllWords(libraryLexicalFields(item), filterText)) return true
   // Separator-insensitive fallback: "PKCS #11" (title), "PKCS-11" (reference_id),
   // and "PKCS#11" (prose) never contain the literal substring "pkcs11", so a
   // one-word query for a standard's number silently missed every one of those
@@ -377,7 +435,11 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     return PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
   }, [selectedPersona, prefsOff])
 
-  const personaPreferredActive = personaPreferredCategories.length > 0 && activeCategory === 'All'
+  // The Certification starter set is a fixed, hand-picked list: narrowing it to the
+  // role's categories would silently hide most of it (FIPS 203-205 and SP 800-208
+  // are not in the cert role's categories), so the quick view is exempt.
+  const personaPreferredActive =
+    personaPreferredCategories.length > 0 && activeCategory === 'All' && !certRelevantOnly
 
   const matchesAllButNarrow = (item: LibraryItem): boolean => matchesLibraryFilters(item, input)
 
@@ -434,6 +496,10 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
   const sortedItems = useMemo(() => {
     const items = [...filteredItems]
     switch (sortBy) {
+      case 'relevance':
+        // Publication date is the tie-breaker; the match ranking is applied last.
+        items.sort((a, b) => publishedMs(b) - publishedMs(a))
+        break
       case 'newest':
         items.sort((a, b) => newestFirstMs(b) - newestFirstMs(a))
         break
@@ -468,7 +534,13 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     // second pass would re-order the whole list underneath their choice — the
     // list still ordered by date within each group, but visibly interleaved, so
     // the sort control reads as broken. An explicit choice wins outright.
-    if (preferredCategories.length > 0 && !sortExplicit) {
+    if (sortBy === 'relevance') {
+      // Best match first. The sort is stable, so documents of equal match quality
+      // keep the publication-date order set above (and the role float is skipped:
+      // a search is about the words typed, not the reader's role).
+      const rank = new Map(items.map((i) => [i, libraryMatchRank(i, filterText)]))
+      items.sort((a, b) => (rank.get(a) ?? 0) - (rank.get(b) ?? 0))
+    } else if (preferredCategories.length > 0 && !sortExplicit) {
       items.sort((a, b) => {
         const aMatch = a.categories?.some((c) => preferredCategories.includes(c)) ? 0 : 1
         const bMatch = b.categories?.some((c) => preferredCategories.includes(c)) ? 0 : 1
@@ -476,7 +548,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
       })
     }
     return items
-  }, [filteredItems, sortBy, sortExplicit, preferredCategories])
+  }, [filteredItems, sortBy, sortExplicit, preferredCategories, filterText])
 
   return {
     activityItems,

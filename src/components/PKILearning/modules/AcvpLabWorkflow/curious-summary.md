@@ -1,6 +1,6 @@
 ### What This Is About
 
-Before a cryptographic product can be sold to many governments and regulated buyers, its algorithms are tested by an automated NIST system and the whole product is examined by an accredited laboratory. This draft module explains, step by step, how that algorithm testing works and what each kind of test result does — and does not — prove.
+Before a cryptographic product can be sold to many governments and regulated buyers, its algorithms are tested by an automated NIST system and the whole product is examined by an accredited laboratory. This module explains, step by step, how that algorithm testing works and what each kind of test result does — and does not — prove.
 
 ### Why It Matters
 
@@ -12,4 +12,4 @@ Every test result is evidence only for the exact test, settings, software build 
 
 ### What's Happening
 
-This module has been reviewed and signed off by the PQC Today owner. It explains how laboratory testing works; it is not laboratory training material.
+The PQC Today owner reviewed and signed off this module on 22 October 2026; corrections made since then are waiting for the owner to sign off again. No accredited laboratory or certification body has reviewed it. It explains how laboratory testing works; it is not laboratory training material.

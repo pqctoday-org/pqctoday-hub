@@ -55,7 +55,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     id: 'france-bank',
     situation:
       "Your multinational bank's French subsidiary must deploy PQC for customer authentication. A colleague says you need ANSSI approval for your cryptographic choices. You need to understand what ANSSI requires and what type of organization it is.",
-    question: 'What type of body is ANSSI, and what is its primary requirement for PQC?',
+    question: 'What type of body is ANSSI, and what is its primary position on PQC?',
     bodyTypeOptions: [
       { id: 'standards-body', label: 'Standards Body (creates technical standards)' },
       { id: 'certification-body', label: 'Certification Body (certifies products)' },
@@ -69,7 +69,11 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
       { id: 'bsi', label: 'BSI (Germany)' },
     ],
     standardOptions: [
-      { id: 'hybrid-pqc', label: 'Hybrid PQC (classical + PQC required for sensitive systems)' },
+      {
+        id: 'hybrid-pqc',
+        label:
+          "Hybrid PQC (classical + PQC combined; mandatory inside ANSSI's regulated perimeter)",
+      },
       { id: 'fips-203', label: 'FIPS 203 standalone (ML-KEM only)' },
       { id: 'etsi-ts', label: 'ETSI TS 103 744 (mandatory)' },
       { id: 'iso-27001', label: 'ISO 27001 (information security management)' },
@@ -78,9 +82,9 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     correctOrg: 'anssi',
     correctStandard: 'hybrid-pqc',
     briefFeedback:
-      'ANSSI is a governmental regulatory agency. Its key PQC requirement is hybrid cryptography — for sensitive systems, classical and PQC algorithms must be used together (not PQC standalone).',
+      'ANSSI is a governmental regulatory agency. Its key PQC position is hybrid cryptography: it strongly recommends using classical and PQC algorithms together (not PQC standalone), and makes that mandatory inside the French regulated perimeter.',
     detailedExplanation:
-      "ANSSI (Agence nationale de la sécurité des systèmes d'information) is France's national cybersecurity authority — a governmental regulatory agency whose guidance is binding for regulated French entities. Unlike ISO or IETF, ANSSI has government authority. ANSSI's distinctive PQC position (2022/2023 papers) requires hybrid cryptography for sensitive systems: you must combine a classical algorithm (e.g., ECDH) with a PQC algorithm (e.g., ML-KEM-768) in parallel, not replace classical cryptography outright. This is more conservative than NIST's approach. The rationale: if a PQC algorithm is broken, the classical component still provides protection. ANSSI does permit standalone SLH-DSA (hash-based signatures) because its security relies solely on hash function assumptions, which differ from lattice assumptions underlying ML-DSA.",
+      "ANSSI (Agence nationale de la sécurité des systèmes d'information) is France's national cybersecurity authority — a governmental regulatory agency. Unlike ISO or IETF, ANSSI has government authority, but its PQC publications are recommendations: ANSSI states that its PQC recommendations, including hybridisation, are not regulatory obligations today. Hybridisation is mandatory inside the regulated perimeter (defence-classified and Diffusion Restreinte information, vital information systems, and products certified or qualified through ANSSI security visas). ANSSI's distinctive PQC position (2022/2023 papers) is to combine a classical algorithm (e.g., ECDH) with a PQC algorithm (e.g., ML-KEM-768) in parallel, not replace classical cryptography outright. This is more conservative than NIST's approach. The rationale: if a PQC algorithm is broken, the classical component still provides protection. ANSSI does permit standalone SLH-DSA (hash-based signatures) because its security relies solely on hash function assumptions, which differ from lattice assumptions underlying ML-DSA.",
   },
   {
     id: 'eu-cc',
@@ -115,7 +119,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     briefFeedback:
       'An accredited certification body issues the EUCC certificate (Implementing Regulation (EU) 2024/482, Art. 4: "Certification bodies shall issue EUCC certificates"). ENISA supports the scheme but does not issue certificates.',
     detailedExplanation:
-      "The EUCC (EU Cybersecurity Certification Scheme on Common Criteria) was adopted by Commission Implementing Regulation (EU) 2024/482 under the EU Cybersecurity Act (2019). It applies Common Criteria (ISO/IEC 15408) and its evaluation methodology across all 27 EU member states, so one certificate is recognised EU-wide. Certificates are issued by accredited certification bodies, at assurance level 'substantial' or 'high'; national cybersecurity certification authorities (for example BSI in Germany or ANSSI in France) supervise them, and some act as certification bodies themselves. ENISA supports the European Commission and the European Cybersecurity Certification Group (ECCG) in running the scheme; the ECCG publishes the Agreed Cryptographic Mechanisms (ACM) that products must use. For your product, an accredited lab (ITSEF) evaluates it, often against a protection profile, and a certification body issues the EUCC certificate.",
+      "EUCC, the European Common Criteria-based cybersecurity certification scheme, was adopted by Commission Implementing Regulation (EU) 2024/482 under the EU Cybersecurity Act (2019). It applies Common Criteria (ISO/IEC 15408) and its evaluation methodology, and a European cybersecurity certificate is recognised in all Member States (Cybersecurity Act, Art. 56(10)). Certificates are issued by accredited certification bodies, at assurance level 'substantial' or 'high'; national cybersecurity certification authorities (for example BSI in Germany or ANSSI in France) supervise them, and some act as certification bodies themselves. ENISA supports the European Commission and the European Cybersecurity Certification Group (ECCG) in running the scheme; the ECCG's Sub-group on Cryptography agrees the Agreed Cryptographic Mechanisms (ACM), a cryptography guideline for developers and evaluators rather than a legal list of algorithms that products must use. For your product, an accredited lab (ITSEF) evaluates it, often against a protection profile, and a certification body issues the EUCC certificate.",
   },
   {
     id: 'tls-ietf',

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { BadgeCheck, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
 import {
   EVIDENCE_CLASS_LABEL,
   NON_CERTIFICATION_NOTICE,
@@ -73,8 +74,11 @@ export function ToolEvidenceNotice({
           <ToolEvidenceBadges toolId={toolId} />
           <p className="leading-relaxed text-muted-foreground">{profile.summary}</p>
           {resultBoundary && profile.certificationBoundary && (
-            <p className="font-medium leading-relaxed text-foreground">
-              {NON_CERTIFICATION_NOTICE}
+            <p
+              className="font-medium leading-relaxed text-foreground"
+              data-testid={profile.validationDisclaimer ? 'validation-disclaimer' : undefined}
+            >
+              {profile.validationDisclaimer ? VALIDATION_DISCLAIMER : NON_CERTIFICATION_NOTICE}
             </p>
           )}
         </div>

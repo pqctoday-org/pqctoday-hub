@@ -98,9 +98,10 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30">
             <p className="font-semibold text-status-info mb-1">Interop Fragility</p>
             <p className="text-xs">
-              Larger hybrid ClientHello messages (1120 bytes vs 320 bytes classical) trigger silent
-              rejection by faulty server implementations. Pure PQC clients fail on servers that
-              accept only hybrid key exchange.
+              A hybrid ClientHello adds about 1.2 KB (the X25519MLKEM768 key share is 1,216 bytes
+              against 32 bytes for X25519 alone; RFC 10024 §4.1). Faulty server implementations
+              silently reject the larger message. Pure PQC clients fail on servers that accept only
+              hybrid key exchange.
             </p>
           </div>
           <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
@@ -253,9 +254,10 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
                 Test Hybrid Configuration First
               </p>
               <p className="text-xs text-muted-foreground">
-                X25519+ML-KEM-768 adds ~400 bytes to ClientHello but minimal compute overhead on
-                modern hardware. Most organizations see &lt;7% TLS latency increase on LAN. Test WAN
-                separately — fragmentation risk increases with distance.
+                X25519+ML-KEM-768 adds about 1.2 KB to ClientHello (1,216-byte key share vs 32
+                bytes) but minimal compute overhead on modern hardware. Most organizations see
+                &lt;7% TLS latency increase on LAN. Test WAN separately — fragmentation risk
+                increases with distance.
               </p>
             </div>
           </div>
@@ -524,6 +526,69 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           metrics yet: SP 800-140F §6.2 says &ldquo;No additional requirements at this time&rdquo;.
         </p>
 
+        <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30 mt-3">
+          <p className="font-semibold text-status-info text-sm mb-2">
+            ISO/IEC 17825 and FIPS 140-3: what is and is not required
+          </p>
+          <ul className="list-disc list-inside space-y-1.5 text-xs pl-1">
+            <li>
+              <strong>What the standard is.</strong>{' '}
+              <a
+                href="https://www.iso.org/standard/82422.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                ISO/IEC 17825
+              </a>{' '}
+              sets non-invasive attack mitigation test metrics for checking conformance with ISO/IEC
+              19790 at Security Levels 3 and 4. ISO lists the 2016 edition as{' '}
+              <a
+                href="https://www.iso.org/standard/60612.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                withdrawn on 19 January 2024
+              </a>
+              ; ISO/IEC 17825:2024 is the current edition.
+            </li>
+            <li>
+              <strong>What CMVP has defined.</strong> NIST{' '}
+              <a
+                href="https://doi.org/10.6028/NIST.SP.800-140F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                SP 800-140F
+              </a>{' '}
+              (March 2020) replaces ISO/IEC 19790 Annex F, and its §6.2 &ldquo;Approved non-invasive
+              attack mitigation test metrics&rdquo; reads &ldquo;No additional requirements at this
+              time&rdquo;. ISO/IEC 17825 is named only in the August 2021 draft of SP 800-140F Rev.
+              1 (with ISO/IEC 20085-1 and -2), which NIST still lists as a draft.
+            </li>
+            <li>
+              <strong>Where side channels land in a validation today.</strong> CMVP Implementation
+              Guidance 12.A says: &ldquo;Until requirements of SP 800-140F are defined, non-invasive
+              mechanisms fall under ISO/IEC 19790:2012 Section 7.12 Mitigation of other
+              attacks.&rdquo; If a module was purposely designed, built and publicly documented to
+              mitigate specific attacks, that section applies and its assertions (AS12.01 to
+              AS12.04, as applicable) must be addressed.
+            </li>
+            <li>
+              <strong>Not found.</strong> No CMVP statement says that ISO/IEC 17825 testing is
+              required or accepted for a certificate, and SP 800-140F defines no approved metric, so
+              a TVLA result is not an approved CMVP test metric.
+            </li>
+          </ul>
+          <p className="text-[10px] text-muted-foreground mt-2">
+            Sources: ISO catalogue pages above; NIST SP 800-140F (March 2020) abstract and §6.2; SP
+            800-140F Rev. 1 draft (August 2021) §6.2; FIPS 140-3 Implementation Guidance (last
+            update 19 August 2026) IG 12.A, Additional Comments and Resolution.
+          </p>
+        </div>
+
         <ReadingCompleteButton />
       </CollapsibleSection>
 
@@ -622,7 +687,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
                 {
                   dim: 'TLS handshake bytes on the wire',
                   base: '~0.3–1 KB ClientHello',
-                  pqc: '~1.2 KB hybrid (1,184-byte ML-KEM-768 key share, FIPS 203) — can force a second TCP round-trip',
+                  pqc: 'adds about 1.2 KB with hybrid (1,216-byte X25519MLKEM768 key share = 1,184-byte ML-KEM-768 encapsulation key, FIPS 203, + 32-byte X25519 share) — can force a second TCP round-trip',
                 },
                 {
                   dim: 'Certificate / chain size',

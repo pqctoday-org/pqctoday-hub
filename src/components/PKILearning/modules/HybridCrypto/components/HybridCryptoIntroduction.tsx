@@ -650,17 +650,17 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </p>
             <p className="text-xs text-muted-foreground">
               <strong className="text-foreground">Which real hybrids qualify.</strong> The IG says
-              the TLS 1.3 hybrid key exchange (it cites draft-ietf-tls-ecdhe-mlkem-01) may meet
-              Scenario 2 with the SP 800-56C HKDF as the approved combiner, if one of
-              SecP256r1MLKEM768, X25519MLKEM768 or SecP384r1MLKEM1024 is used, and notes that these
-              specifications may still be in draft form. It also says the X-Wing hybrid KEM
-              &ldquo;cannot yet meet the requirements of Scenario 2&rdquo; even though it uses an SP
-              800-56C one-step KDF as its combiner: at a minimum, SP 800-133 needs an update to
-              approve X-Wing&apos;s seed generation, because seed expansion using SHAKE to generate
-              the key pairs is not currently in SP 800-133. Separately, the CAVP prerequisites page
-              (updated 22 September 2026) lists X-Wing keyGen and encapDecap tests. Both statements
-              are published; CAVP itself says that acquiring a validation for each implemented
-              algorithm does not by itself meet the FIPS 140 module requirements.
+              the TLS 1.3 hybrid key exchange (RFC 10024) may meet Scenario 2 with the SP 800-56C
+              HKDF as the approved combiner, if one of SecP256r1MLKEM768, X25519MLKEM768 or
+              SecP384r1MLKEM1024 is used, and notes that these specifications may still be in draft
+              form. It also says the X-Wing hybrid KEM &ldquo;cannot yet meet the requirements of
+              Scenario 2&rdquo; even though it uses an SP 800-56C one-step KDF as its combiner: at a
+              minimum, SP 800-133 needs an update to approve X-Wing&apos;s seed generation, because
+              seed expansion using SHAKE to generate the key pairs is not currently in SP 800-133.
+              Separately, the CAVP prerequisites page (updated 22 September 2026) lists X-Wing
+              keyGen and encapDecap tests. Both statements are published; CAVP itself says that
+              acquiring a validation for each implemented algorithm does not by itself meet the FIPS
+              140 module requirements.
             </p>
             <details>
               <summary className="cursor-pointer text-xs font-semibold text-foreground hover:text-primary">

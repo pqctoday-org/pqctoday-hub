@@ -66,6 +66,18 @@ describe('MobileHeader', () => {
     expect(screen.getByRole('button', { name: /currently Executive/ })).toBeInTheDocument()
   })
 
+  // 2026-10-23: at 390 px the pill's text left the page title 25-45 px ("PQ…"). Below 430 px
+  // the pill shows its icon only; the role still reads from the aria-label, and the label
+  // text stays in the DOM for wider phones. (jsdom has no layout, so this pins the classes.)
+  it('keeps the role label for wider phones and drops it visually on narrow ones', () => {
+    renderHeader('/learn/cc-eucc-certification', 'cert-engineer')
+    const pill = screen.getByRole('button', { name: /currently/ })
+    expect(pill).toHaveClass('max-[429px]:w-8', 'max-[429px]:px-0')
+    const label = pill.querySelector('span')
+    expect(label).toHaveClass('max-[429px]:sr-only')
+    expect(label?.textContent).toBeTruthy()
+  })
+
   it('always renders Search and More', () => {
     useVersionStore.getState().markAllSeen()
     renderHeader('/assess')

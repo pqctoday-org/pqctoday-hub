@@ -19,6 +19,13 @@ export interface ToolEvidenceProfile {
   summary: string
   /** Results can resemble laboratory or certification evidence. */
   certificationBoundary?: boolean
+  /**
+   * Show the one required validation disclaimer (src/data/validationDisclaimer.ts)
+   * at the result boundary instead of the generic non-certification notice. For
+   * tools that replay public reference samples, so the page carries a single
+   * wording beside those results.
+   */
+  validationDisclaimer?: boolean
 }
 
 export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
@@ -52,6 +59,7 @@ export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
     secondary: 'deterministic-demo',
     summary: 'Real signing and verification over a supplied educational firmware image.',
     certificationBoundary: true,
+    validationDisclaimer: true,
   },
   'slh-dsa': {
     primary: 'real-crypto',
@@ -128,6 +136,7 @@ export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
     summary:
       'Real statistical checks over a small educational sample, not a complete SP 800-90B assessment.',
     certificationBoundary: true,
+    validationDisclaimer: true,
   },
   'drbg-demo': {
     primary: 'real-crypto',
@@ -135,6 +144,7 @@ export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
     summary:
       'Real DRBG state transitions over controlled inputs; a passing run is not an implementation validation.',
     certificationBoundary: true,
+    validationDisclaimer: true,
   },
   'source-combining': {
     primary: 'deterministic-demo',

@@ -49,6 +49,21 @@ export const PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS: Record<string, Incidental
       coverage: 'teaches',
       reason: 'Comparison with another hash-based signature family.',
     },
+    'slh-dsa:ML-DSA': {
+      coverage: 'teaches',
+      reason:
+        'Comparison and CNSA 2.0 text: the lab-test panel and size table name ML-DSA as the approved stateless alternative; the tool itself signs and verifies SLH-DSA only.',
+    },
+    'slh-dsa:XMSS': {
+      coverage: 'teaches',
+      reason:
+        'Comparison and lab-test text: the size table and ACVP notes name XMSS beside LMS; the tool itself runs SLH-DSA, not XMSS.',
+    },
+    'lms-hss:SLH-DSA': {
+      coverage: 'teaches',
+      reason:
+        'CNSA 2.0 and comparison text: the lab-test notes say SLH-DSA is not approved for NSS; the tool itself signs and verifies LMS and HSS only.',
+    },
     'tls-simulator:SLH-DSA': {
       coverage: 'teaches',
       reason: 'Certificate/signature context only; not a selectable TLS identity.',

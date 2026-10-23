@@ -61,11 +61,11 @@ export const SLHDSAModule: FC = () => (
     renderWorkshopStep={(index, configKey) => {
       switch (index) {
         case 0:
-          return <SLHDSALiveDemo key={`slhdsa-keygen-${configKey}`} />
+          return <SLHDSALiveDemo key={`slhdsa-keygen-${configKey}`} context="slh-dsa" />
         case 1:
-          return <SLHDSALiveDemo key={`slhdsa-sign-${configKey}`} />
+          return <SLHDSALiveDemo key={`slhdsa-sign-${configKey}`} context="slh-dsa" />
         case 2:
-          return <SLHDSALiveDemo key={`slhdsa-ctx-${configKey}`} />
+          return <SLHDSALiveDemo key={`slhdsa-ctx-${configKey}`} context="slh-dsa" />
         case 3:
           return <SLHDSAComparison key={`slhdsa-cmp-${configKey}`} />
         default:

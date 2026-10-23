@@ -1,6 +1,6 @@
 ### What This Is About
 
-UEFI Secure Boot uses a cryptographic chain of trust (Platform Key, KEK, db) to protect the OS kernel. Currently, every link relies on quantum-vulnerable algorithms like RSA-2048 or ECDSA.
+UEFI Secure Boot uses a cryptographic chain of trust (Platform Key, KEK, db) to protect the OS kernel. Currently, every link relies on quantum-vulnerable algorithms like RSA-2048 or ECDSA. The risk to a signature is forgery once a quantum computer exists, not recorded data being read later, so how soon matters depends on how long a device and its trust anchors stay in the field.
 
 ### Why It Matters
 

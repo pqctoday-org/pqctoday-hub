@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { EmbedProvider } from '@/embed/EmbedProvider'
 import { Button } from '@/components/ui/button'
-import { ModuleShell } from './ModuleShell'
+import { ModuleShell, type ModuleSlotApi } from './ModuleShell'
 import type { ModuleManifest } from '../manifest/types'
 import { useModuleStore } from '@/store/useModuleStore'
 
@@ -117,6 +117,7 @@ describe('ModuleShell — mobile UX layer wiring', () => {
       mockUseIsMobileShell.mockReturnValue(true)
       const scrollIntoView = vi.fn()
       Element.prototype.scrollIntoView = scrollIntoView
+      let slotApi: ModuleSlotApi | undefined
       renderShell(
         <ModuleShell
           // Round 9 wave 3 (2026-09-19): hsm-pqc and slh-dsa joined
@@ -128,10 +129,18 @@ describe('ModuleShell — mobile UX layer wiring', () => {
             id: 'mls-group-messaging',
             workshopSteps: [{ id: 'a', label: 'A' }],
           }}
-          learn={(api) => <Button onClick={() => api.goToWorkshop()}>Start Workshop</Button>}
+          learn={(api) => {
+            slotApi = api
+            return <Button onClick={() => api.goToWorkshop()}>Start Workshop</Button>
+          }}
         />
       )
-      fireEvent.click(screen.getByRole('button', { name: 'Start Workshop' }))
+      // 2026-10-23 (owner decision D6): the button itself is now relabelled "on a computer"
+      // (see MobileModuleShell.test.tsx), so the scroll fallback is reached through the
+      // slot API, which other callers (exercise links) still use.
+      expect(screen.queryByRole('button', { name: 'Start Workshop' })).not.toBeInTheDocument()
+      expect(screen.getAllByText('Workshop: on a computer').length).toBeGreaterThanOrEqual(1)
+      act(() => slotApi?.goToWorkshop())
       expect(mockNavigate).not.toHaveBeenCalled()
       expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' })
     })

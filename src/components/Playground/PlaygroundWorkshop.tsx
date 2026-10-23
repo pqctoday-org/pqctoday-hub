@@ -97,6 +97,9 @@ const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 const GRID_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
 // The grid includes the Docker sandbox scenarios; only the rest run in the tab.
 const BROWSER_TOOL_COUNT = GRID_TOOL_COUNT - SANDBOX_TOOL_COUNT
+// One tool count on the page: GRID_TOOL_COUNT. The header splits it into browser and Docker, the
+// overview line and the search box use it as is, and the directory lists these tools plus the
+// full playgrounds (the pages that are not single tools), counted apart below.
 
 /**
  * One line explaining the three numbers a role sees on the overview: every
@@ -126,6 +129,9 @@ const ALL_PLAYGROUND_ROUTES = Array.from(
     ].map(([to, route]) => [to, route])
   ).values()
 )
+
+// The directory holds every tool once plus the full playgrounds that are not tools themselves.
+const FULL_PLAYGROUND_COUNT = ALL_PLAYGROUND_ROUTES.length - GRID_TOOL_COUNT
 
 type DifficultyValue = 'All' | ToolDifficulty
 const DIFFICULTY_CHIPS: { value: DifficultyValue; label: string }[] = [
@@ -1184,7 +1190,8 @@ export const PlaygroundWorkshop = () => {
         <div className="min-w-0">
           <p className="text-[15px] font-bold leading-tight text-foreground">Crypto Lab</p>
           <p className="text-[10.5px] text-muted-foreground">
-            {BROWSER_TOOL_COUNT} in-browser tools · {SANDBOX_TOOL_COUNT} Docker scenarios
+            {GRID_TOOL_COUNT} tools: {BROWSER_TOOL_COUNT} in-browser, {SANDBOX_TOOL_COUNT} Docker
+            scenarios
           </p>
         </div>
       </div>
@@ -1789,7 +1796,7 @@ export const PlaygroundWorkshop = () => {
 
       <details className="mt-6 rounded-xl border border-border bg-muted/20 p-4">
         <summary className="cursor-pointer text-sm font-semibold text-foreground">
-          Browse all {ALL_PLAYGROUND_ROUTES.length} Crypto Lab pages
+          Browse all {GRID_TOOL_COUNT} tools and {FULL_PLAYGROUND_COUNT} full playgrounds
         </summary>
         <nav
           aria-label="All Crypto Lab pages"

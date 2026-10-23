@@ -81,14 +81,14 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   'firmware-signing': [
     {
       prompt:
-        'The signing configuration says "pure mode, no caller pre-hash". What does that mean for the firmware image?',
+        'The signing configuration says "pure mode, no caller pre-hash". In a CMS SignedData that uses signed attributes, what does RFC 9882 say the ML-DSA signer is given?',
       options: [
-        'The whole image is passed to the signer, not a digest of it',
-        'The image is hashed twice',
-        'Only the manifest is signed',
+        'The DER encoding of the signed attributes, which include a message-digest attribute holding the hash of the content',
+        'A HashML-DSA digest of the firmware image, computed by the caller',
+        'The whole firmware image, because CMS never uses signed attributes with ML-DSA',
       ],
       answer: 0,
-      why: 'Pure ML-DSA signs the message itself (RFC 9882 §3.1 and RFC 9814); a pre-hashed variant would sign a digest, which changes what a verifier must reproduce.',
+      why: 'RFC 9882 section 3.2: with signed attributes, pure ML-DSA signs the complete DER encoding of the signedAttrs value, which must include a content-type and a message-digest attribute. That is why section 3.1 sees no benefit in HashML-DSA for CMS: the data to be signed is already small. Without signed attributes the signer is given the content itself, which is what this demo does with its short manifest text.',
     },
   ],
   'kdf-derivation': [
@@ -238,7 +238,7 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
         'Neither — health tests only look at the bit balance',
       ],
       answer: 0,
-      why: 'No byte of 0xDEADBEEF repeats consecutively, so Repetition Count (built for a stuck source, SP 800-90B §4.4.1) stays quiet. Adaptive Proportion counts how often a value recurs within a window (§4.4.2) and signals it — here on a partial 64-sample window, so it demonstrates the idea rather than the test as specified.',
+      why: 'No byte of 0xDEADBEEF repeats consecutively, so Repetition Count (built for a stuck source, SP 800-90B §4.4.1) stays quiet. Adaptive Proportion counts how often a value recurs within a window (§4.4.2) and signals it: the 1,024-byte sample fills two full 512-sample windows, and 0xDE recurs 128 times in each against the cutoff of 13 in SP 800-90B Table 2 (H = 8).',
     },
   ],
   'qrng-demo': [

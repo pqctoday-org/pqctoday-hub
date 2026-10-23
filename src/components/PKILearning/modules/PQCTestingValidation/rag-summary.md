@@ -56,12 +56,14 @@ Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN
 | TLS handshake (WAN)  | 68ms      | 82ms (+21%)  | 95ms (+40%)        |
 | IKEv2 SA setup (WAN) | 240ms     | 380ms (+58%) | 12,626ms (+5,161%) |
 | Certificate size     | 1.2KB     | 4.8KB        | 17.2KB             |
-| ClientHello size     | 320B      | 1,120B       | 1,536B             |
+| ClientHello size     | 320B      | ~1,504B      | 1,536B             |
 | Throughput (WAN)     | 100%      | 87%          | 79%                |
 
 The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN gateways. Pure-PQC TLS is more manageable (1.4× overhead on WAN).
 
-**TCP fragmentation threshold**: ClientHello >~1,400 bytes triggers TCP fragmentation, adding exactly 1 RTT per connection. Pure PQC (1,536B) always fragments on standard Ethernet MTU.
+**ClientHello size**: a hybrid ClientHello adds about 1.2 KB (the X25519MLKEM768 client key share is 1,216 bytes against 32 bytes for X25519 alone: a 1,184-byte ML-KEM-768 encapsulation key plus 32 bytes of X25519, RFC 10024 §4.1; the 1,120-byte figure is the server share). The ClientHello row above is the module's modeled baseline plus that increase, not a capture.
+
+**TCP fragmentation threshold**: ClientHello >~1,400 bytes triggers TCP fragmentation, adding exactly 1 RTT per connection. Hybrid (~1,504B) and pure PQC (1,536B) both exceed the standard Ethernet MSS.
 
 **Tools**: VIAVI TeraVM (commercial, VPN benchmarking), PQC-LEO (open source, all NIST algorithms, x86+ARM), Keysight CyPerf (freemium, TLS, Community Edition free).
 
@@ -155,6 +157,8 @@ The non-specific fixed-vs-random TVLA test divides measurements into "fixed inpu
 | Modular reduction    | 7.8 (LEAKS)       | 1.9 (safe)                | 3.1 (safe)        | 1.3 (safe)      |
 
 First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication still leaks under masking (higher-order attack required).
+
+**ISO/IEC 17825 and FIPS 140-3**: ISO/IEC 17825 sets non-invasive attack mitigation test metrics for conformance with ISO/IEC 19790 at Security Levels 3 and 4. ISO lists the 2016 edition as withdrawn on 19 January 2024; ISO/IEC 17825:2024 is the current edition. NIST SP 800-140F (March 2020) §6.2 "Approved non-invasive attack mitigation test metrics" reads "No additional requirements at this time"; ISO/IEC 17825 (with ISO/IEC 20085-1 and -2) is named only in the August 2021 draft of SP 800-140F Rev. 1, still a draft. CMVP IG 12.A: "Until requirements of SP 800-140F are defined, non-invasive mechanisms fall under ISO/IEC 19790:2012 Section 7.12 Mitigation of other attacks." No CMVP statement was found saying ISO/IEC 17825 testing is required or accepted for a certificate; SP 800-140F defines no approved metric, so a TVLA result is not an approved CMVP test metric.
 
 **Tools**: Keysight Inspector Crypto 3 (commercial, Dilithium TVLA generator (ML-DSA, FIPS 204), Known Key Analysis; CMVP has no approved non-invasive test metrics yet, SP 800-140F), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
 

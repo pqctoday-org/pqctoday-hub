@@ -4,6 +4,7 @@
  * pattern every other ModuleShell-based module uses.
  */
 import { describe, it, expect } from 'vitest'
+import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -46,6 +47,8 @@ describe('AcvpLabWorkflowModule render parity', () => {
     const notice = screen.getByTestId('acvp-lab-status-notice')
     expect(notice).toHaveTextContent('Corrected since the owner review, awaiting re-sign-off')
     expect(notice).not.toHaveTextContent(/draft/i)
+    // the same lab-review sentence the other four certification modules show
+    expect(notice).toHaveTextContent(NOT_LAB_REVIEWED)
     expect(notice).toHaveTextContent('It is not an ACVTS verdict, a CAVP/CMVP certificate')
     const executionPath = screen.getByText('Confirm the execution path.').closest('li')
     expect(executionPath).toHaveTextContent(

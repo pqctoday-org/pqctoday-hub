@@ -19,6 +19,13 @@ const CoverageMatrixView = lazy(() =>
 
 type ValidationSection = AlgorithmSectionId | 'coverage'
 
+/** The jump strip at the top of the tab: section id and the words a reader looks for. */
+const JUMP_ITEMS: ReadonlyArray<{ id: ValidationSection; label: string }> = [
+  { id: 'attacks', label: 'Implementation attacks' },
+  { id: 'kat', label: 'Known-answer checks' },
+  { id: 'coverage', label: 'Coverage & open gaps' },
+]
+
 const isSection = (v: string | null | undefined): v is ValidationSection =>
   v === 'attacks' || v === 'kat' || v === 'coverage'
 
@@ -138,6 +145,25 @@ export function AlgorithmValidationView({
     })
   }
 
+  // The three sections are tall: the coverage matrix and open-gaps register sit
+  // far below the other two, so a strip at the top links straight to each.
+  // Opening writes ?section like the section's own header does.
+  const jumpTo = (id: ValidationSection) => {
+    if (!open.has(id)) toggle(id)
+    else {
+      setSelfWrittenSection(id)
+      onUpdateParams?.({ section: id })
+    }
+    requestAnimationFrame(() => {
+      const section = document.querySelector<HTMLElement>(deepLinkSelector(`validation-${id}`))
+      const reduceMotion =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      section?.scrollIntoView?.({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' })
+      section?.querySelector<HTMLElement>('button')?.focus({ preventScroll: true })
+    })
+  }
+
   const sections: Array<{
     id: ValidationSection
     icon: React.ReactNode
@@ -192,6 +218,28 @@ export function AlgorithmValidationView({
 
   return (
     <div className="min-w-0 max-w-full space-y-3">
+      <nav
+        aria-label="Jump to a section of this tab"
+        data-testid="validation-jump-strip"
+        className="flex flex-wrap items-center gap-x-2 gap-y-1 px-1 text-xs text-muted-foreground"
+      >
+        <span>Jump to</span>
+        {JUMP_ITEMS.map(({ id, label }, index) => (
+          <span key={id} className="flex items-center gap-2">
+            {index > 0 && <span aria-hidden="true">&middot;</span>}
+            <a
+              href={`#validation-${id}`}
+              onClick={(event) => {
+                event.preventDefault()
+                jumpTo(id)
+              }}
+              className="font-medium text-primary underline-offset-2 hover:underline focus-visible:underline max-md:inline-flex max-md:min-h-[44px] max-md:items-center"
+            >
+              {label}
+            </a>
+          </span>
+        ))}
+      </nav>
       {sections.map(({ id, icon, label, caption, content }) => {
         const isOpen = open.has(id)
         return (

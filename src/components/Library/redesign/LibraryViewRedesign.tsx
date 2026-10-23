@@ -218,8 +218,15 @@ export function LibraryViewRedesign({
   const prefsOff = params.get('prefs') === 'off'
   const view = (params.get('view') as ViewMode | null) ?? 'cards'
   const sortExplicit = params.get('sort') !== null
+  // A search is ranked by match quality ("Best match") unless the reader chose a
+  // sort; 'relevance' has nothing to rank without a query, so it reads as the
+  // default order then.
+  const hasQuery = filterText.trim() !== ''
+  const requestedSort = params.get('sort') as SortOption | null
   const sortBy: SortOption =
-    (params.get('sort') as SortOption | null) ?? libraryDefaultSortForPersona(selectedPersona)
+    requestedSort === 'relevance' && !hasQuery
+      ? libraryDefaultSortForPersona(selectedPersona)
+      : (requestedSort ?? (hasQuery ? 'relevance' : libraryDefaultSortForPersona(selectedPersona)))
   const detailRef = params.get('ref')
 
   const setParam = useCallback(

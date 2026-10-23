@@ -106,15 +106,30 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           </div>
           <p className="text-xs text-foreground/80">
             Every RSA-2048 and ECDSA key in the UEFI Secure Boot hierarchy can be broken by a
-            Cryptographically Relevant Quantum Computer (CRQC) via Shor&apos;s algorithm. An
-            attacker who harvests signed firmware images today can forge signatures once a CRQC is
-            available — enabling undetectable firmware rootkits.
+            Cryptographically Relevant Quantum Computer (CRQC) via Shor&apos;s algorithm. This is a
+            forgery risk (&ldquo;trust now, forge later&rdquo;), not a harvest-now-decrypt-later
+            one: a signature protects no secret, so nothing recorded today is exposed later. Once a
+            CRQC exists, anyone who holds a public key (the verifying keys are stored on every
+            device) could derive its private key and sign firmware that existing devices accept —
+            enabling undetectable firmware rootkits. How urgent that is depends on how long the
+            device and its trust anchors stay in the field. NSA&apos;s CNSA 2.0 FAQ (v2.2, p.13)
+            notes that in many firmware-signing cases the validation algorithm is not easily
+            updated, so firmware-signing algorithms are &ldquo;frequently locked in for the life of
+            a system&rdquo;. Harvest-now-decrypt-later applies to confidentiality, such as the TLS
+            key exchange that carries remote attestation, not to signatures.
           </p>
         </div>
 
         {/* Key type table */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-3">UEFI Key Hierarchy Summary</div>
+          <p className="text-xs text-muted-foreground mb-3">
+            ML-DSA-65 is this module&apos;s general-purpose target (NIST Security Level 3). For
+            National Security Systems (NSS), the NSA&apos;s CNSA 2.0 FAQ (Ver. 2.2, p. 7&ndash;8)
+            specifies ML-DSA-87 for all classification levels and allows LMS and XMSS (NIST SP
+            800-208) for signing firmware and software; HSS and XMSS<sup>MT</sup> are not allowed
+            and SLH-DSA is not approved for NSS (p. 11). The last column shows the NSS choice.
+          </p>
           <div
             className="overflow-x-auto"
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
@@ -130,6 +145,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                   <th className="text-left py-2 px-2 text-muted-foreground font-medium">Current</th>
                   <th className="text-left py-2 px-2 text-muted-foreground font-medium">
                     PQC Target
+                  </th>
+                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
+                    CNSA 2.0 / NSS
                   </th>
                   <th className="text-left py-2 px-2 text-muted-foreground font-medium">
                     Priority
@@ -151,6 +169,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                       </span>
                     </td>
                     <td className="py-2 px-2 text-primary text-[10px]">{kt.pqcAlgorithm}</td>
+                    <td className="py-2 px-2 text-muted-foreground text-[10px]">
+                      {kt.cnsaAlgorithm}
+                    </td>
                     <td className="py-2 px-2">
                       <span
                         className={`text-[10px] px-1.5 py-0.5 rounded capitalize font-bold ${
@@ -190,9 +211,9 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                      stage.hndlRisk === 'critical' || stage.hndlRisk === 'high'
+                      stage.forgeryUrgency === 'critical' || stage.forgeryUrgency === 'high'
                         ? 'bg-status-error/20 text-status-error'
-                        : stage.hndlRisk === 'medium'
+                        : stage.forgeryUrgency === 'medium'
                           ? 'bg-status-warning/20 text-status-warning'
                           : 'bg-status-success/20 text-status-success'
                     }`}
@@ -322,10 +343,11 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           <p className="text-[10px] text-muted-foreground mt-2">
             SLH-DSA-SHA2-128s has the smallest public key (32 B) but the largest signature (7,856
             B). For firmware signing where signature size is the bottleneck, ML-DSA-65 is a common
-            choice. SLH-DSA may suit long-lived root keys where signing is rare. Note: CNSA 2.0
-            prefers stateful hash-based signatures (LMS or XMSS, NIST SP 800-208) to start
-            firmware/software signing now; validated ML-DSA-87 is also approved for
-            firmware/software signing.
+            choice. Outside National Security Systems, SLH-DSA may suit long-lived root keys where
+            signing is rare; for NSS it is not an option, because the CNSA 2.0 FAQ (p. 11) says
+            SLH-DSA is not part of CNSA and is not approved for any use in NSS. CNSA 2.0 prefers
+            stateful hash-based signatures (LMS or XMSS, NIST SP 800-208) to start firmware/software
+            signing now; validated ML-DSA-87 is also approved for firmware/software signing.
           </p>
         </div>
 

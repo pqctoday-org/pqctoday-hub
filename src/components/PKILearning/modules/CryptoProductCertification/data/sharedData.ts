@@ -13,6 +13,7 @@
  * own published dates, from plan r2 §5.8, each cited to its library row.
  */
 import { EDUCATION_NOTICE_TEXT } from '@/data/educationNotice'
+import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
 import type { StepExercise } from '@/data/stepExercises'
 import { getStandard, type StandardRef } from '@/data/standardsRegistry'
 import {
@@ -1800,7 +1801,7 @@ export function capstoneMarkdown(s: CapstoneState, generatedAt: string): string 
   const lines: string[] = [
     `# Capstone — One product, four markets (${ANCHOR_DISPLAY_NAME})`,
     '',
-    `> Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body. Product and versions are fictional. Generated ${generatedAt}; module facts as of ${AS_OF_ISO}.`,
+    `> Practitioner orientation — not laboratory training. ${NOT_LAB_REVIEWED} Product and versions are fictional. Generated ${generatedAt}; module facts as of ${AS_OF_ISO}.`,
     '',
     `**Chosen scheme:** ${PATH_LABEL[s.path]}`,
     '',
@@ -1916,8 +1917,7 @@ export function capstoneJson(s: CapstoneState, generatedAt: string): string {
       schema: 'pqctoday.crypto-product-certification.capstone/v1',
       generatedAt,
       factsAsOf: AS_OF_ISO,
-      disclaimer:
-        'Practitioner orientation — not laboratory training. Not yet reviewed by an accredited lab or certification body. Fictional product.',
+      disclaimer: `Practitioner orientation — not laboratory training. ${NOT_LAB_REVIEWED} Fictional product.`,
       notice: EDUCATION_NOTICE_TEXT,
       product: { name: ANCHOR_SCENARIO.name, fictional: true, releases: ANCHOR_RELEASES },
       chosenPath: s.path,

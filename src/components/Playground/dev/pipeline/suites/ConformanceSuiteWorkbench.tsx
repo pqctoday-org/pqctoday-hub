@@ -37,6 +37,7 @@ import {
 import { V33_DRAFT_ERROR_PATHS } from '@/wasm/pkcs11ConformanceRunner/errorPathCatalog'
 import { COMPOSITE_KEM_SETS, COMPOSITE_SIG_SETS } from '@/wasm/softhsm/compositeParams'
 import { VALIDATION_DISCLAIMER_TEXT } from '@/data/validationDisclaimer'
+import { ValidationDisclaimer } from '@/components/shared/ValidationDisclaimer'
 import { mechanismProbes } from '@/wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
 import { SuiteShell, type SuiteView, type CodeRunOutput } from './SuiteShell'
 import { emitConformanceSuite } from './suiteCodegen'
@@ -282,6 +283,12 @@ export const ConformanceSuiteWorkbench = () => {
           advertised mechanisms). All run in this browser, against the raw WASM ABI.
         </p>
       </div>
+
+      <ValidationDisclaimer />
+      <p className="text-xs text-muted-foreground" data-testid="pkcs11-conformance-meaning">
+        Conformant here means this build matched these OASIS cases and PQC Today probes; it is not a
+        module validation.
+      </p>
 
       {ran && !loading && rows.length > 0 && (
         <div

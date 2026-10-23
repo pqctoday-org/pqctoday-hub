@@ -16,7 +16,8 @@ interface AttestationFlow {
   id: AttestationType
   steps: FlowStep[]
   currentMigrationPath: string
-  hndlWindowYears: number
+  /** Module estimate of how long the device and its attestation trust anchors stay in service (0 = no signature involved). */
+  fieldLifeYears: number
 }
 
 const RISK_COLOR: Record<string, string> = {
@@ -77,7 +78,7 @@ const ATTESTATION_FLOWS: AttestationFlow[] = [
     ],
     currentMigrationPath:
       'Measured Boot itself requires no PQC migration — PCR extend operations use SHA-256 which is quantum-safe. Migration is needed for TPM Quote signatures used to attest the PCR values to remote verifiers.',
-    hndlWindowYears: 0,
+    fieldLifeYears: 0,
   },
   {
     id: 'tpm-quote',
@@ -115,7 +116,7 @@ const ATTESTATION_FLOWS: AttestationFlow[] = [
     ],
     currentMigrationPath:
       'Hybrid path for a TPM built to a library version earlier than 185: (1) TPM RSA AIK signs quote as normal, (2) software ML-DSA-65 key co-signs the same nonce, (3) verifier validates both. A TPM that implements TPM 2.0 Library v185 (March 2026) can sign the quote with an ML-DSA attestation key directly; product availability depends on the TPM vendor.',
-    hndlWindowYears: 10,
+    fieldLifeYears: 10,
   },
   {
     id: 'dice',
@@ -147,7 +148,7 @@ const ATTESTATION_FLOWS: AttestationFlow[] = [
     ],
     currentMigrationPath:
       'DICE specification update adds ML-DSA-44 for constrained devices. Key derivation (HKDF) is already quantum-safe. New device provisioning uses ML-DSA-44 DevID. Existing devices: hardware reset required (CDI is immutable). Deploy ML-DSA certificates in new device manufacturing runs.',
-    hndlWindowYears: 8,
+    fieldLifeYears: 8,
   },
   {
     id: 'fido-onboard',
@@ -185,7 +186,7 @@ const ATTESTATION_FLOWS: AttestationFlow[] = [
     ],
     currentMigrationPath:
       'FIDO Alliance FDO specification (planned PQC update) adds ML-DSA-65 support. OEM must issue PQC device attestation certs at manufacture. Update rendezvous server and owner onboarding server to support ML-DSA certificate verification. Voucher signing chain migrates to ML-DSA-65.',
-    hndlWindowYears: 12,
+    fieldLifeYears: 12,
   },
   {
     id: 'remote-tls',
@@ -222,8 +223,8 @@ const ATTESTATION_FLOWS: AttestationFlow[] = [
       },
     ],
     currentMigrationPath:
-      'Two-layer migration: (1) TLS layer — migrate to ML-KEM-768 key exchange + ML-DSA-65 certificates (follow TLS 1.3 PQC hybrid migration). (2) Attestation layer — replace embedded ECDSA/RSA signatures with ML-DSA-65 (depends on TPM/DICE PQC timeline). Both layers must migrate to eliminate HNDL risk.',
-    hndlWindowYears: 15,
+      'Two-layer migration: (1) TLS layer — migrate to ML-KEM-768 key exchange + ML-DSA-65 certificates (follow TLS 1.3 PQC hybrid migration). (2) Attestation layer — replace embedded ECDSA/RSA signatures with ML-DSA-65 (depends on TPM/DICE PQC timeline). Both layers must migrate: the TLS key exchange is exposed to harvest-now-decrypt-later, while the attestation signatures are a forgery risk once a CRQC exists.',
+    fieldLifeYears: 15,
   },
 ]
 
@@ -266,17 +267,18 @@ export const AttestationFlowDesigner: React.FC = () => {
           {/* Type Overview */}
           <div className="glass-panel p-5">
             <div className="flex items-start gap-3">
-              <div className={`p-2 rounded-lg shrink-0 ${RISK_BG[selectedAttType.hndlRisk]}`}>
-                {selectedAttType.hndlRisk === 'low' || selectedAttType.hndlRisk === 'medium' ? (
+              <div className={`p-2 rounded-lg shrink-0 ${RISK_BG[selectedAttType.forgeryUrgency]}`}>
+                {selectedAttType.forgeryUrgency === 'low' ||
+                selectedAttType.forgeryUrgency === 'medium' ? (
                   <CheckCircle
                     size={18}
-                    className={RISK_COLOR[selectedAttType.hndlRisk]}
+                    className={RISK_COLOR[selectedAttType.forgeryUrgency]}
                     aria-hidden="true"
                   />
                 ) : (
                   <AlertTriangle
                     size={18}
-                    className={RISK_COLOR[selectedAttType.hndlRisk]}
+                    className={RISK_COLOR[selectedAttType.forgeryUrgency]}
                     aria-hidden="true"
                   />
                 )}
@@ -285,9 +287,9 @@ export const AttestationFlowDesigner: React.FC = () => {
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h4 className="text-sm font-bold text-foreground">{selectedAttType.name}</h4>
                   <span
-                    className={`text-[10px] px-2 py-0.5 rounded border font-bold capitalize ${RISK_COLOR[selectedAttType.hndlRisk]} border-current/30`}
+                    className={`text-[10px] px-2 py-0.5 rounded border font-bold capitalize ${RISK_COLOR[selectedAttType.forgeryUrgency]} border-current/30`}
                   >
-                    {selectedAttType.hndlRisk} HNDL risk
+                    {selectedAttType.forgeryUrgency} migration urgency
                   </span>
                   <span className="text-[10px] text-muted-foreground">
                     {selectedAttType.tpmNative ? 'TPM-native' : 'Software / external'}
@@ -388,7 +390,7 @@ export const AttestationFlowDesigner: React.FC = () => {
               {selectedAttType.pqcMigrationPath}
             </p>
 
-            {selectedFlow.hndlWindowYears > 0 && (
+            {selectedFlow.fieldLifeYears > 0 && (
               <div className="bg-status-warning/5 rounded-lg p-4 border border-status-warning/20">
                 <div className="flex items-start gap-2">
                   <Info
@@ -398,14 +400,23 @@ export const AttestationFlowDesigner: React.FC = () => {
                   />
                   <div>
                     <div className="text-xs font-bold text-status-warning mb-1">
-                      HNDL (Harvest Now, Decrypt Later) Window: ~{selectedFlow.hndlWindowYears}{' '}
-                      years
+                      Forgery exposure: about {selectedFlow.fieldLifeYears} years in service (module
+                      estimate)
                     </div>
                     <p className="text-[10px] text-foreground/80">
-                      An adversary collecting attestation tokens today can break the RSA/ECDSA
-                      signatures when a CRQC becomes available. For systems with long-lived secrets
-                      or high-value attestation, migration urgency is proportional to this window.
+                      A signature protects no secret, so this is a forgery risk, not harvest now,
+                      decrypt later. Once a CRQC exists, whoever holds the public key could derive
+                      the private key and produce attestation evidence the verifier accepts. The
+                      longer the device and its trust anchors stay in the field, the more likely a
+                      CRQC arrives while they still do, so migration urgency follows device
+                      lifetime.
                     </p>
+                    {selectedType === 'remote-tls' && (
+                      <p className="text-[10px] text-foreground/80 mt-1">
+                        The TLS key exchange in this flow is different: a recorded session can be
+                        decrypted later, so that leg is a true harvest-now-decrypt-later exposure.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -415,7 +426,7 @@ export const AttestationFlowDesigner: React.FC = () => {
           {/* Comparison of all types */}
           <div className="glass-panel p-6">
             <h4 className="text-sm font-bold text-foreground mb-4">
-              All Attestation Types — HNDL Risk Summary
+              All Attestation Types — Migration Urgency Summary
             </h4>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
@@ -426,7 +437,7 @@ export const AttestationFlowDesigner: React.FC = () => {
                       Current Crypto
                     </th>
                     <th className="text-left py-2 px-2 text-muted-foreground font-medium">
-                      HNDL Risk
+                      Migration Urgency
                     </th>
                     <th className="text-left py-2 px-2 text-muted-foreground font-medium">
                       TPM Native
@@ -442,8 +453,10 @@ export const AttestationFlowDesigner: React.FC = () => {
                     >
                       <td className="py-2 px-2 font-medium text-foreground">{t.name}</td>
                       <td className="py-2 px-2 text-muted-foreground">{t.currentCrypto}</td>
-                      <td className={`py-2 px-2 font-bold capitalize ${RISK_COLOR[t.hndlRisk]}`}>
-                        {t.hndlRisk}
+                      <td
+                        className={`py-2 px-2 font-bold capitalize ${RISK_COLOR[t.forgeryUrgency]}`}
+                      >
+                        {t.forgeryUrgency}
                       </td>
                       <td className="py-2 px-2">
                         {t.tpmNative ? (

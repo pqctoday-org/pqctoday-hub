@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import { WORKSHOP_TOOLS } from './workshopRegistry'
 import { BROWSER_TOOL_EVIDENCE, NON_CERTIFICATION_NOTICE } from './toolEvidence'
+import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
 
 describe('browser Playground evidence contract', () => {
   it('classifies every browser tool and no unknown tool', () => {
@@ -15,5 +16,14 @@ describe('browser Playground evidence contract', () => {
       expect(profile.summary.endsWith('.')).toBe(true)
     }
     expect(NON_CERTIFICATION_NOTICE).toMatch(/not an ACVP\/CAVP result/i)
+  })
+
+  it('shows the one validation disclaimer on the tools that replay public reference samples', () => {
+    for (const id of ['entropy-test', 'drbg-demo', 'firmware-signing']) {
+      const profile = BROWSER_TOOL_EVIDENCE[id as keyof typeof BROWSER_TOOL_EVIDENCE]
+      expect(profile.certificationBoundary, id).toBe(true)
+      expect(profile.validationDisclaimer, id).toBe(true)
+    }
+    expect(VALIDATION_DISCLAIMER).toMatch(/not an ACVTS verdict/)
   })
 })

@@ -12,6 +12,8 @@ const ROLE_START: Partial<Record<PersonaId, string>> = {
     'Start with Protocols and Products, then follow links outward to standards and migration guidance.',
   researcher:
     'Use the graph to discover linked records, then open the cited hub pages and sources before drawing conclusions.',
+  'cert-engineer':
+    'Start from the FIPS 140-3 compliance record or the CMVP trusted source to see the standards and products linked to them. A link records a reference in the dataset, not a validation, so confirm certificate status in the official CMVP register.',
   ops: 'Start with Products and Protocols to find operational records, then follow their standards and compliance links.',
   curious:
     'Try the guided tour first. It introduces the most-connected records in each visible category.',

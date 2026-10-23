@@ -36,14 +36,47 @@ import {
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import { SlhDsaAcvpSigVerPanel } from './SlhDsaAcvpSigVerPanel'
+import { LmsAcvpSigVerPanel } from './LmsAcvpSigVerPanel'
+import { COMPARED_LMS, COMPARED_SIZES, bytesLabel } from '../data/signatureSizes'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { PREHASH_OPTIONS as PREHASH_OPTIONS_BASE } from '@/components/Playground/tabs/softhsm/SoftHsmUI'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
-const STATEFUL_KAT_SPECS: KatTestSpec[] = [
+// Known-answer checks: the expected value is fixed in advance by a standard (RFC 8554
+// Appendix F for LMS/HSS, the NIST ACVP SHA-256 sample), not produced by this engine.
+const SHA256_BASELINE_SPEC: KatTestSpec = {
+  id: 'stateful-hash-base',
+  useCase: 'Hash function baseline (SHA-256)',
+  standard: 'FIPS 180-4 ACVP',
+  referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+  kind: { type: 'sha256-hash' },
+}
+
+const LMS_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'stateful-lms-rfc8554-tc1',
+    useCase: 'LMS/HSS signature verification, RFC 8554 Test Case 1',
+    standard: 'IETF RFC 8554 Appendix F',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8554#appendix-F',
+    libraryRefId: 'RFC 8554',
+    kind: { type: 'lms-sigver', testCase: 1 },
+  },
+  {
+    id: 'stateful-lms-rfc8554-tc2',
+    useCase: 'LMS/HSS signature verification, RFC 8554 Test Case 2',
+    standard: 'IETF RFC 8554 Appendix F',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8554#appendix-F',
+    libraryRefId: 'RFC 8554',
+    kind: { type: 'lms-sigver', testCase: 2 },
+  },
+]
+
+// Functional round trips: the engine signs and then verifies its own output, so the
+// "expected" value is the engine's own, and a pass shows the pieces work together.
+const FUNCTIONAL_SPECS: KatTestSpec[] = [
   {
     id: 'stateful-slhdsa-128s',
-    useCase: 'SLH-DSA-SHA2-128s signing',
+    useCase: 'SLH-DSA-SHA2-128s sign and verify (functional round trip, not a known-answer test)',
     standard: 'FIPS 205',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
     kind: { type: 'slhdsa-functional', variant: 'SHA2-128s' },
@@ -51,20 +84,22 @@ const STATEFUL_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'stateful-slhdsa-256s',
-    useCase: 'SLH-DSA-SHA2-256s signing (Level 5)',
+    useCase:
+      'SLH-DSA-SHA2-256s sign and verify (Level 5; functional round trip, not a known-answer test)',
     standard: 'FIPS 205',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
     kind: { type: 'slhdsa-functional', variant: 'SHA2-256s' },
     message: 'Code signing digest for XMSS-equivalent stateful hash-based scheme',
   },
-  {
-    id: 'stateful-hash-base',
-    useCase: 'Hash function baseline (SHA-256)',
-    standard: 'FIPS 180-4 ACVP',
-    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
-    kind: { type: 'sha256-hash' },
-  },
 ]
+
+/**
+ * Where this demo is shown. The same component serves the Stateful Hash Signatures
+ * module (workshop step 4), the SLH-DSA module (workshop steps 1-3) and the
+ * standalone Playground tool, so the wording that points at other steps, and the
+ * checks that only make sense for one scheme, depend on it.
+ */
+export type SLHDSALiveDemoContext = 'stateful' | 'slh-dsa' | 'standalone'
 
 // ── SLH-DSA parameter set data (FIPS 205 / PKCS#11 v3.2) ──────────────────
 
@@ -229,20 +264,44 @@ const LIVE_OPERATIONS = [
 
 // ── Comparison data: LMS vs SLH-DSA vs ML-DSA ──────────────────────────────
 
+// Sizes are printed for named parameter sets, not for a security level: SP 800-208 assigns
+// no NIST category to LMS or XMSS. Sizes come from ../data/signatureSizes.ts (RFC 8554 and
+// FIPS 204/205 layouts); the CNSA 2.0 row is the NSA CNSA 2.0 FAQ version 2.2 (October 2026).
 const COMPARISON_ROWS = [
-  { label: 'Standard', lms: 'SP 800-208', slhdsa: 'FIPS 205', mldsa: 'FIPS 204' },
+  { label: 'Standard', lms: 'SP 800-208 / RFC 8554', slhdsa: 'FIPS 205', mldsa: 'FIPS 204' },
   { label: 'Basis', lms: 'Hash function', slhdsa: 'Hash function', mldsa: 'Lattice' },
+  {
+    label: 'Parameter set shown in the size rows',
+    lms: COMPARED_LMS.name,
+    slhdsa: 'SLH-DSA-SHA2-192s (category 3)',
+    mldsa: 'ML-DSA-65 (category 3) and ML-DSA-87 (category 5)',
+  },
   { label: 'Statefulness', lms: 'Stateful', slhdsa: 'Stateless', mldsa: 'Stateless' },
   {
     label: 'Signing capacity / analysis scope',
-    lms: 'Bounded (2^h)',
+    lms: `Bounded (2^h = ${(2 ** COMPARED_LMS.h).toLocaleString('en-US')} for h = ${COMPARED_LMS.h})`,
     slhdsa: 'At most 2^64 messages/key in the FIPS 205 §11 security analysis; no leaf counter',
     mldsa: 'No leaf-exhaustion counter (not an unlimited-use claim)',
   },
-  { label: 'Pub key (L3)', lms: '60 B', slhdsa: '48 B', mldsa: '1,952 B' },
-  { label: 'Signature (L3)', lms: '2,644 B', slhdsa: '16,224 B', mldsa: '3,309 B' },
+  {
+    label: 'Public key',
+    lms: bytesLabel(COMPARED_SIZES.lms.publicKey),
+    slhdsa: bytesLabel(COMPARED_SIZES.slhdsa192s.publicKey),
+    mldsa: `${bytesLabel(COMPARED_SIZES.mldsa65.publicKey)} (-65); ${bytesLabel(COMPARED_SIZES.mldsa87.publicKey)} (-87)`,
+  },
+  {
+    label: 'Signature',
+    lms: bytesLabel(COMPARED_SIZES.lms.signature),
+    slhdsa: bytesLabel(COMPARED_SIZES.slhdsa192s.signature),
+    mldsa: `${bytesLabel(COMPARED_SIZES.mldsa65.signature)} (-65); ${bytesLabel(COMPARED_SIZES.mldsa87.signature)} (-87)`,
+  },
   { label: 'Signing speed', lms: 'Fast', slhdsa: 'Slow', mldsa: 'Fast' },
-  { label: 'CNSA 2.0', lms: 'Required', slhdsa: 'Not listed', mldsa: 'Required' },
+  {
+    label: 'CNSA 2.0',
+    lms: 'Single-tree LMS approved for firmware and software signing; LMS SHA-256/192 recommended; HSS not allowed',
+    slhdsa: 'Not approved for any use in NSS',
+    mldsa: 'ML-DSA-87 only (the CNSA 2.0 table lists no other ML-DSA set)',
+  },
   {
     label: 'Best use',
     lms: 'Firmware, code signing (CNSA 2.0)',
@@ -258,7 +317,21 @@ const toHex = (bytes: Uint8Array): string =>
 
 const formatBytes = (n: number): string => (n >= 1024 ? `${(n / 1024).toFixed(1)} KB` : `${n} B`)
 
-export const SLHDSALiveDemo: React.FC = () => {
+interface SLHDSALiveDemoProps {
+  /** Which page hosts the demo; picks the intro sentence and the checks shown. Default: standalone. */
+  context?: SLHDSALiveDemoContext
+}
+
+const INTRO_BY_CONTEXT: Record<SLHDSALiveDemoContext, string> = {
+  stateful:
+    'Compare SLH-DSA (stateless) with the stateful LMS/XMSS schemes from Steps 1–3 of this module.',
+  'slh-dsa':
+    'SLH-DSA is stateless: unlike LMS and XMSS (see the Stateful Hash Signatures module) there is no leaf counter to protect. Step 4 of this module compares the three schemes side by side.',
+  standalone:
+    'SLH-DSA is stateless: unlike LMS and XMSS (see the Stateful Hash Signatures module) there is no leaf counter to protect.',
+}
+
+export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'standalone' }) => {
   const hsm = useHSM('rust')
   const isLive = hsm.isReady && !!hsm.moduleRef.current
 
@@ -509,8 +582,7 @@ export const SLHDSALiveDemo: React.FC = () => {
         <p className="text-sm text-muted-foreground">
           Generate SLH-DSA key pairs, sign messages, and verify signatures using a real PKCS#11 v3.2
           HSM emulator in-browser. SLH-DSA (standardized as FIPS 205, August 2024) is the NIST name
-          for SPHINCS+. Compare SLH-DSA (stateless) with the stateful LMS/XMSS schemes from Steps
-          1–3.
+          for SPHINCS+. {INTRO_BY_CONTEXT[context]}
         </p>
       </div>
 
@@ -872,7 +944,7 @@ export const SLHDSALiveDemo: React.FC = () => {
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-2 pr-4 text-muted-foreground font-medium">Property</th>
-                <th className="text-center py-2 px-3 text-muted-foreground font-medium">LMS/HSS</th>
+                <th className="text-center py-2 px-3 text-muted-foreground font-medium">LMS</th>
                 <th className="text-center py-2 px-3 text-primary font-medium">SLH-DSA</th>
                 <th className="text-center py-2 px-3 text-muted-foreground font-medium">ML-DSA</th>
               </tr>
@@ -893,6 +965,16 @@ export const SLHDSALiveDemo: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed">
+          The size rows compare named parameter sets of a similar size class, not equal security: SP
+          800-208 assigns no NIST security category to LMS. LMS sizes follow the RFC 8554 layouts
+          (public key 4 + 4 + 16 + m bytes; signature 12 + n(p + 1) + m·h bytes) with the SP 800-208
+          SHA-256/192 parameters n = m = {COMPARED_LMS.n}, p = {COMPARED_LMS.p}, h ={' '}
+          {COMPARED_LMS.h}. An HSS key with one level, which is what the PKCS#11 engine signs with,
+          adds 4 bytes to the public key and to each signature. SLH-DSA sizes are FIPS 205 Table 2
+          and ML-DSA sizes are FIPS 204 Table 2. CNSA 2.0 row: NSA CNSA 2.0 FAQ, version 2.2
+          (October 2026).
+        </p>
       </div>
 
       {/* Educational note */}
@@ -919,13 +1001,46 @@ export const SLHDSALiveDemo: React.FC = () => {
         </p>
       </div>
 
-      <KatValidationPanel
-        specs={STATEFUL_KAT_SPECS}
-        label="Stateful Signatures Known Answer Tests"
-        authorityNote="FIPS 205 · FIPS 180-4"
-      />
+      {/* Algorithm checks: known-answer checks first, then the functional round trips,
+          each panel saying which kind of evidence it gives. */}
+      <section aria-labelledby="algorithm-checks-heading" className="space-y-4">
+        <div>
+          <h3 id="algorithm-checks-heading" className="text-sm font-bold text-foreground">
+            {context === 'stateful'
+              ? 'Algorithm checks: LMS and SLH-DSA'
+              : 'Algorithm checks: SLH-DSA'}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            A known-answer check compares the engine&apos;s output with a value fixed in advance by
+            a standard or by NIST. A functional round trip signs and verifies with the same engine,
+            so it shows the pieces work together and nothing more.
+          </p>
+        </div>
 
-      <SlhDsaAcvpSigVerPanel />
+        <KatValidationPanel
+          specs={
+            context === 'stateful'
+              ? [...LMS_KAT_SPECS, SHA256_BASELINE_SPEC]
+              : [SHA256_BASELINE_SPEC]
+          }
+          label={
+            context === 'stateful'
+              ? 'Known-answer checks: LMS (RFC 8554) and SHA-256'
+              : 'Known-answer check: SHA-256'
+          }
+          authorityNote={context === 'stateful' ? 'RFC 8554 Appendix F · FIPS 180-4' : 'FIPS 180-4'}
+        />
+
+        {context === 'stateful' && <LmsAcvpSigVerPanel />}
+
+        <SlhDsaAcvpSigVerPanel />
+
+        <KatValidationPanel
+          specs={FUNCTIONAL_SPECS}
+          label="Functional round trips (not known-answer tests)"
+          authorityNote="FIPS 205 · each row signs and verifies with this engine, so a pass shows no external correctness claim"
+        />
+      </section>
 
       {hsm.isReady && (
         <div className="space-y-4">
