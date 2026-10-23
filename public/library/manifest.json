@@ -22994,6 +22994,51 @@
       "replacedAt": "2026-10-23T00:54:55.668349+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "capture was the nist.gov publication landing page, not SP 800-90A Rev. 1"
+    },
+    {
+      "refId": "GSMA-PQ-06-Implementation-and-Prototype-Verification-PQC-Hyb",
+      "title": "GSMA PQ.06 — Implementation and Prototype Verification: PQC Hybrid Key Exchange for Base Station / Security Gateway",
+      "url": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.06-Implementation-and-Prototype-Verification-PQC-Hybrid-Key-Exchange-for-Base-Station_Security-Gateway.pdf",
+      "status": "downloaded",
+      "filename": "GSMA-PQ-06-Implementation-and-Prototype-Verification-PQC-Hyb.pdf",
+      "sizeBytes": 1127981,
+      "contentType": "application/pdf",
+      "sha256": "e3d3f10e67ec2a55b18f23686a7b9c66a62dec3960c60a5e707e1bf9e561cdc1",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "current",
+      "admittedAt": "2026-10-23T02:23:02.150601+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "GSMA-PQ-07-Post-Quantum-Cryptography-for-Non-Terrestrial-Net",
+      "title": "GSMA PQ.07 — Post Quantum Cryptography for Non-Terrestrial Networks",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2026/02/PQ.07-Post-Quantum-Cryptography-for-Non-Terrestrial-Networks.pdf",
+      "status": "downloaded",
+      "filename": "GSMA-PQ-07-Post-Quantum-Cryptography-for-Non-Terrestrial-Net.pdf",
+      "sizeBytes": 652204,
+      "contentType": "application/pdf",
+      "sha256": "427531edc559365c031f90bd13052943007ad666ba90f81bde83603627245bda",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "current",
+      "admittedAt": "2026-10-23T02:23:18.136280+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "NIAP-Protection-Profile-for-Application-Software-Version-2-0",
+      "title": "NIAP Protection Profile for Application Software, Version 2.0",
+      "url": "https://www.niap-ccevs.org/static_html/protection-profile/516/PP_APP_V2.0.htm",
+      "status": "downloaded",
+      "filename": "NIAP-Protection-Profile-for-Application-Software-Version-2-0.html",
+      "sizeBytes": 1066835,
+      "contentType": "text/html",
+      "sha256": "5814c00eaeb9df7520f2eb73b782af31bab836b875b2ae011b9c1a1a78ff3eab",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "current",
+      "admittedAt": "2026-10-23T02:23:31.737736+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
