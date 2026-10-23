@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:hkdf_acvp_test",
-  "subjectSha256": "0708b97d12274af447529c7370c1079b0f4b896e581d6d72882b879e054ca6ac",
-  "fileSha256": "31c8114895b4e2bb18d604fa1f98050fae4ee462c47060d81a1a06ba0ed55577",
+  "subjectSha256": "d4a9815878b6cb391a0e1e75bc31746276e209639d6173f871997c4355e561c7",
+  "fileSha256": "45644cccf62889e8c8d2b397e1f830d674d8fe16c5474ad2d2f972b8f3a4f726",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id hkdf_acvp_test --strict",
@@ -17,8 +17,8 @@
     ]
   },
   "compared": {
-    "cases": 30,
-    "values": 821
+    "cases": 60,
+    "values": 1650
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-10-23"
 }

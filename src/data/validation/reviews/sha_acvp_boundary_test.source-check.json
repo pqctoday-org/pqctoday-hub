@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:sha_acvp_boundary_test",
-  "subjectSha256": "2aca0012977de64290f36e9f9851ae76b0cc2685fec8c3cec9a7bba687c779c3",
-  "fileSha256": "87209e8b945ebc2985ae2c2d3accb148b38d0049cb3f1bdb5d1c14b3df84dd28",
+  "subjectSha256": "2b1a36f377d451e5b81c6326890b46de3e4ddecb4ba85ca22b037ea22d00be32",
+  "fileSha256": "97a17e8bfc15fd3545dd4e105e08f100ce541e2a415b4f75373ffed033c4ed4f",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id sha_acvp_boundary_test --strict",
@@ -56,5 +56,5 @@
     "cases": 47,
     "values": 236
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-10-23"
 }
