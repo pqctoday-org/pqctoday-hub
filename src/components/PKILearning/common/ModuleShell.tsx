@@ -44,6 +44,7 @@ import {
   isWorkshopStepOptional,
   requiredWorkshopStepIds,
 } from '../manifest/learnPathScope'
+import { moduleDurationLabel } from '../manifest/learnPathDuration'
 import { LearnModuleContext, useActiveLearnPathId } from './useLearnPath'
 import { LearnPathPicker, OptionalReferenceBadge } from './LearnPathPicker'
 import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
@@ -521,7 +522,7 @@ export const ModuleShell = ({
               className={`${chip} bg-muted text-muted-foreground`}
               title={activePathDuration ? 'Time for the learning path you are on' : undefined}
             >
-              {activePathDuration ?? manifest.duration}
+              {activePathDuration ?? moduleDurationLabel(manifest)}
             </span>
           ) : null}
         </div>
