@@ -23354,6 +23354,24 @@
       "unified": "converted",
       "admittedAt": "2026-10-24T02:47:23.013907+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "Report-on-Quantum-Safe-Ecosystem-in-India-Roadmap-to-Quantum",
+      "file": "library/Report-on-Quantum-Safe-Ecosystem-in-India-Roadmap-to-Quantum.pdf",
+      "filename": "Report-on-Quantum-Safe-Ecosystem-in-India-Roadmap-to-Quantum.pdf",
+      "url": "https://www.dst.gov.in/static/uploads/2026/07/dba5f97fa8f4c8db5ef668306548a470.pdf",
+      "status": "downloaded",
+      "sizeBytes": 2899651,
+      "contentType": "application/pdf",
+      "sha256": "b9d2d53b2c03cfc47f9f4ce5ae0ceaebe1f46f50fccca8fc1cdbc70defd4d9ff",
+      "addedAt": "2026-10-24T17:19:01.321181+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "stampedAt": "2026-10-24T17:19:03.473019+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-10-24T17:19:01.321181+00:00"
     }
   ],
   "archivedEntries": [
