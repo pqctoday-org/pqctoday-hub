@@ -1297,6 +1297,18 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     answer: 1,
     why: 'Route eligibility comes from the Management Manual, not the calendar: new approved algorithms, services and self-tests are security-relevant changes (UPDT under 30 % per category, else FS). TRNS needs a published CMVP transition, ALG allows no code change, and CVE may not add cryptography.',
   },
+  'fips-140-3-certification/fips-algorithm-records': {
+    prompt:
+      "An algorithm validation lists 'Deterministic: Yes, No' for ML-DSA signing. Where do you look to see how the module's Security Policy lists that option?",
+    options: [
+      'Nowhere. The algorithm validation already covers the module.',
+      'In the Security Policy, in both its Approved Algorithms table and its function table, because the two can differ.',
+      "The vendor's datasheet alone.",
+      'The algorithm validation page alone.',
+    ],
+    answer: 1,
+    why: 'An algorithm validation records what was tested for one implementation. The Security Policy has its own tables, and they can differ. For certificate #5497 the Approved Algorithms table prints "Deterministic - No, Yes" while the function table shows "Deterministic:No" on every ML-DSA signature generation row. For certificate #5450 the function table shows no setting at all.',
+  },
 
   // ── crypto-product-certification: CC/EU author (2026-09-24; cc-claim-decoder, eidas-trace) ──
   'cc-eucc-certification/cc-claim-decoder': {

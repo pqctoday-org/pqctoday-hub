@@ -3,8 +3,12 @@
 import type { FC } from 'react'
 import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 import { FipsLevelPlanner } from './FipsLevelPlanner'
+import { FipsAlgorithmRecords } from './FipsAlgorithmRecords'
 
 export const STEP_COMPONENTS: ReadonlyMap<string, FC<CertWorkshopStepProps>> = new Map<
   string,
   FC<CertWorkshopStepProps>
->([['fips-level-planner', FipsLevelPlanner]])
+>([
+  ['fips-level-planner', FipsLevelPlanner],
+  ['fips-algorithm-records', FipsAlgorithmRecords],
+])

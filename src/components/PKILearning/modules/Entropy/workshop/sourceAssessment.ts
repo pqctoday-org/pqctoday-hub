@@ -447,7 +447,7 @@ export function assessConstruction(
     verdict: 'consistent-with-assumptions',
     reasons: [
       ...notes,
-      'Nothing in the stated assumptions contradicts the design. Each assumption still needs evidence: an Entropy Validation Certificate for each source, algorithm validation for the DRBG, and — for the SP 800-90C construction — a Random Bit Generator Validation Certificate (the CMVP Entropy Validations page names IG D.T for these; it is not yet in the published IG). This workshop provides none of them.',
+      'Nothing in the stated assumptions contradicts the design. Each assumption still needs evidence: an Entropy Validation Certificate for each source, algorithm validation for the DRBG, and — for the SP 800-90C construction — a Random Bit Generator Validation Certificate (the CMVP Entropy Validations page names IG D.T for these; it is not in the 19 August 2026 edition of the IG). This workshop provides none of them.',
     ],
   }
 }

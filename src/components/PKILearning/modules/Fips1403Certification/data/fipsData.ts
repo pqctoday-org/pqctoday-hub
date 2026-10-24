@@ -817,7 +817,672 @@ export const exercises: ExerciseItem[] = [
     stepId: 'fips-level-planner',
     config: { scenario: 'root-key-hsm' },
   },
+  {
+    id: 'fips-same-name-different-mode',
+    title: 'ML-DSA signing is not one thing',
+    description: 'Open the algorithm-records step and compare items 1 and 2.',
+    observe:
+      "An algorithm name hides options. The same ML-DSA-65 signing appears on the algorithm validation in two modes, and the Policy's two tables for the same module do not list them the same way.",
+    stepId: 'fips-algorithm-records',
+    config: { item: 'ml-dsa-65-deterministic' },
+  },
+  {
+    id: 'fips-vendor-affirmed-entry',
+    title: 'A Security Policy entry with no algorithm validation of its own',
+    description: 'Open item 3 and follow HSS back to A5631.',
+    observe:
+      'Read the table heading and the reference text. They tell you what kind of evidence stands behind an entry.',
+    stepId: 'fips-algorithm-records',
+    config: { item: 'hss-siggen' },
+  },
+  {
+    id: 'fips-policy-silent-not-negative',
+    title: 'Silence in a Security Policy is not a statement',
+    description:
+      'Open item 5 and look for the internal interface and External Mu in the Security Policy.',
+    observe:
+      'A validation can list an option that the Policy never mentions. Silence does not show whether an operator can use the option: ask the vendor or the laboratory.',
+    stepId: 'fips-algorithm-records',
+    config: { item: 'luna-ml-dsa-internal-mu' },
+  },
+  {
+    id: 'fips-number-beside-the-entry',
+    title: 'Read the validation number beside the entry',
+    description: "Open item 6 and compare SHAKE-256 on A7880 with the Policy's tables.",
+    observe:
+      'A validation can list more than the certificate and the Policy cite. Read the number beside each entry, not only the algorithm name.',
+    stepId: 'fips-algorithm-records',
+    config: { item: 'luna-shake-256-a7880' },
+  },
 ]
+
+// ── Workshop A7: Read the algorithm records ─────────────────────────────────
+
+/**
+ * Two real modules' records, read side by side: CMVP certificate #5497 (QASM Cryptographic
+ * Module) and #5450 (Luna T7). Both vendors are named only as the source of the records; nothing
+ * here rates or compares the modules.
+ *
+ * Every `text` in a RecordQuote is unchanged text from the record named beside it (table cells
+ * are joined across line breaks and nothing else is changed). Each quote carries the NIST URL of
+ * its record, and Security Policy quotes also carry the PDF page. The Policy PDFs are linked, never
+ * hosted. The wording is "listed" throughout: the step never says a function is approved or
+ * offered, and uses each document's own table names.
+ *
+ * Records read 23 October 2026 (#5497, re-checked against the same files on 24 October) and
+ * 24 October 2026 (#5450). The facts depend on the contents of records that NIST can update, so
+ * each module has its own as-of date and its own freshness claims below.
+ */
+export type RecordModuleId = '5497' | '5450'
+export type RecordMarkId = 'validation' | 'approved-table' | 'function-table'
+type ValidationId = 'A5631' | 'A7879' | 'A7880'
+
+/** The day each module's records were read. */
+export const ALGORITHM_RECORDS_AS_OF: Readonly<Record<RecordModuleId, string>> = {
+  '5497': '2026-10-23',
+  '5450': '2026-10-24',
+}
+export const ALGORITHM_RECORDS_AS_OF_LABEL: Readonly<Record<RecordModuleId, string>> = {
+  '5497': '23 October 2026',
+  '5450': '24 October 2026',
+}
+
+const CAVP_DETAILS_URL =
+  'https://csrc.nist.gov/projects/Cryptographic-Algorithm-Validation-Program/details?validation='
+/** NIST's own pages for the three algorithm validations the items use. */
+export const CAVP_VALIDATION_URLS: Readonly<Record<ValidationId, string>> = {
+  A5631: `${CAVP_DETAILS_URL}38241`,
+  A7879: `${CAVP_DETAILS_URL}40489`,
+  A7880: `${CAVP_DETAILS_URL}40490`,
+}
+export const FIPS_204_URL = 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf'
+
+/** A link of the form `...140sp5497.pdf#page=13` opens that page in most browsers. */
+export const securityPolicyPageUrl = (cert: RecordModuleId, page: number): string =>
+  `${cmvpSecurityPolicyUrl(cert)}#page=${page}`
+
+/**
+ * The credit line shown beside quotes from the Luna T7 Security Policy (the document carries a
+ * copyright and use notice on page 2). The Policy is quoted briefly and linked, never hosted.
+ */
+export const LUNA_POLICY_CREDIT =
+  '© 2026 SafeNet Assured Technologies, LLC. All rights reserved. Quoted from the NIST-listed Security Policy for certificate #5450.'
+
+export const RECORD_MARK_LABELS: Readonly<Record<RecordMarkId, string>> = {
+  validation: 'Listed on the algorithm validation',
+  'approved-table': "Listed in the Policy's Approved Algorithms table",
+  'function-table': "Listed in the Policy's function table (Security Function Implementations)",
+}
+
+export interface RecordQuote {
+  /** Unchanged from the record. */
+  text: string
+  /** Link text: where the quote sits, e.g. "Security Policy #5497, Table 4, page 13". */
+  source: string
+  /** NIST's copy of the record. Security Policy links end in #page=N. */
+  url: string
+  /** Which kind of record the quote comes from. */
+  record: 'validation' | 'policy' | 'certificate' | 'standard'
+  /** Security Policy PDF page (Security Policy quotes only). */
+  page?: number
+}
+
+export interface RecordMark {
+  /** The correct mark: is the claim listed in this record or table? */
+  listed: boolean
+  /** Where to look, in words. */
+  where: string
+  /** A statement about an absence or a reading (our wording, not a quote). */
+  note?: string
+  quotes: readonly RecordQuote[]
+  /** Shown after Check when the learner's mark differs. */
+  hint: string
+}
+
+export interface AlgorithmRecordCompareItem {
+  kind: 'compare'
+  id: string
+  module: RecordModuleId
+  title: string
+  prompt: string
+  /** The claim on one line, for the reading note. */
+  claim: string
+  /** Shown under the prompt when a mark depends on a validation number. */
+  approvedNote?: string
+  validation: RecordMark
+  approvedTable: RecordMark
+  /** The third mark. Present on the two deterministic-setting items only. */
+  functionTable?: RecordMark
+  /** Also in the Policy's function table, for context. Not a mark. */
+  alsoQuotes?: readonly RecordQuote[]
+  /** What the learner sees as the result once the marks are checked. */
+  label: string
+  explanation: string
+  feedbackRight: string
+}
+
+export interface AlgorithmRecordChoice {
+  id: string
+  text: string
+  ok: boolean
+  why: string
+}
+
+export interface AlgorithmRecordChoiceItem {
+  kind: 'choose'
+  id: string
+  module: RecordModuleId
+  title: string
+  prompt: string
+  choices: readonly AlgorithmRecordChoice[]
+  quotes: readonly RecordQuote[]
+  explanation: string
+  feedbackRight: string
+}
+
+export type AlgorithmRecordItem = AlgorithmRecordCompareItem | AlgorithmRecordChoiceItem
+
+export interface RecordLink {
+  label: string
+  url: string
+}
+
+export interface RecordModule {
+  cert: RecordModuleId
+  /** Group heading. */
+  heading: string
+  /** Who the records come from, named as the source only. */
+  source: string
+  records: readonly RecordLink[]
+  /** Where the tables are in the Security Policy, one line each. */
+  tables: readonly string[]
+  /** The dates and pins of the records read, one line each. */
+  recordDates: readonly string[]
+  /** Short setup text shown above the module's items. */
+  setup: readonly string[]
+  /** SHA-256 of the Security Policy PDF that was read. */
+  policySha256: string
+}
+
+export const ALGORITHM_RECORD_MODULES: Readonly<Record<RecordModuleId, RecordModule>> = {
+  '5497': {
+    cert: '5497',
+    heading: 'Certificate #5497: QASM Cryptographic Module',
+    source: 'Source of the records: Crypto4A Technologies Inc. and NIST.',
+    records: [
+      { label: 'Certificate page #5497', url: cmvpCertificateUrl('5497') },
+      {
+        label: 'Security Policy for #5497 (non-proprietary, 222 pages)',
+        url: cmvpSecurityPolicyUrl('5497'),
+      },
+      { label: 'Algorithm validation A5631', url: CAVP_VALIDATION_URLS.A5631 },
+    ],
+    tables: [
+      'Approved Algorithms: Table 4 (pages 9 to 16).',
+      'Vendor-Affirmed Algorithms: Table 5 (pages 16 to 17).',
+      'Security Function Implementations, the function table: Table 7 (pages 17 to 33).',
+    ],
+    recordDates: [
+      'Certificate #5497: validation history 8/19/2026 Initial, 8/21/2026 Update.',
+      'Security Policy: "version 1.1 of the QASM Cryptographic Module". PDF file date 13 Aug 2026. The document has no revision table.',
+      'Algorithm validation A5631: version 1.1, type HARDWARE, "First Validated: 8/14/2024".',
+    ],
+    setup: [
+      'On A5631, click Expanded to open every row with its parameter sets and options, or click the plus icon beside one row. Some operations have several rows, so open each row that could match.',
+      'In this Security Policy the function table is Table 7. It lists each function with its properties, such as the interface and the deterministic setting.',
+    ],
+    policySha256: 'c216bfd60c5d2616eb623eca4f8a7d94837a214d9e0171a5f3ce003d910c694f',
+  },
+  '5450': {
+    cert: '5450',
+    heading: 'Certificate #5450: Luna T7',
+    source: 'Source of the records: Thales Trusted Cyber Technologies and NIST.',
+    records: [
+      { label: 'Certificate page #5450', url: cmvpCertificateUrl('5450') },
+      {
+        label: 'Security Policy for #5450 (non-proprietary, 89 pages)',
+        url: cmvpSecurityPolicyUrl('5450'),
+      },
+      {
+        label: 'Algorithm validation A7879 (Luna T7 Firmware Cryptographic Library, 7.15.1)',
+        url: CAVP_VALIDATION_URLS.A7879,
+      },
+      {
+        label: 'Algorithm validation A7880 (Luna T7 Hybrid (HW/FW) Cryptographic Library, 7.15.1)',
+        url: CAVP_VALIDATION_URLS.A7880,
+      },
+    ],
+    tables: [
+      'Approved Algorithms: Table 4 for the firmware library, A7879 (pages 12 to 14), and Table 5 for the hybrid library, A7880 (pages 14 to 17).',
+      'Vendor-Affirmed Algorithms: Table 6 (page 17).',
+      'Security Function Implementations, the function table: Table 7 (pages 18 to 23).',
+    ],
+    recordDates: [
+      'Certificate #5450: validation history 7/29/2026 Initial. The page shows no Update entry.',
+      'Security Policy: page 3 gives "Release Date May 1, 2026" and a last revision G dated "April 14, 2026". PDF file date 27 Jul 2026.',
+      'Algorithm validations A7879 and A7880: "First Validated: 1/16/2026".',
+    ],
+    setup: [
+      'This module has two libraries, each with its own algorithm validation: the firmware library (A7879) and the hybrid library, which combines hardware accelerators and firmware (A7880). Its Security Policy splits the Approved Algorithms table by library.',
+      'Each Security Policy lays out its tables in its own way. Read the table headings in the document you are reading before you rely on a position or a page number from another one.',
+      'On A7879 and A7880, click Aggregated: each capability then appears once with its parameter sets and options. Expanded shows one row per operating environment.',
+      'A validation row lists the values of each field separately, for example "Signature Interfaces: external, internal" and "External Mu: Yes, No". A row alone does not show which combinations were tested.',
+    ],
+    policySha256: 'f0eb4ff7a8e2879e310cbc2ca252671055dcf69d49b1a5fdebd9264bbd671e81',
+  },
+}
+
+const validationQuote = (id: ValidationId, source: string, text: string): RecordQuote => ({
+  record: 'validation',
+  text,
+  source: `${id}, ${source}`,
+  // eslint-disable-next-line security/detect-object-injection -- id is the ValidationId union
+  url: CAVP_VALIDATION_URLS[id],
+})
+
+const policyQuote = (
+  cert: RecordModuleId,
+  where: string,
+  page: number,
+  text: string
+): RecordQuote => ({
+  record: 'policy',
+  text,
+  source: `Security Policy #${cert}, ${where}, page ${page}`,
+  url: securityPolicyPageUrl(cert, page),
+  page,
+})
+
+const certificateQuote = (cert: RecordModuleId, text: string): RecordQuote => ({
+  record: 'certificate',
+  text,
+  source: `Certificate #${cert}`,
+  url: cmvpCertificateUrl(cert),
+})
+
+/** The items, in the order the learner meets them: module 1, module 2, then the single choice. */
+export const ALGORITHM_RECORD_ITEMS: readonly AlgorithmRecordItem[] = [
+  {
+    kind: 'compare',
+    id: 'ml-dsa-65-external-pure',
+    module: '5497',
+    title: 'ML-DSA-65 signing, external interface, pure message',
+    prompt: 'ML-DSA-65, signature generation, external interface, pure message, Deterministic: No.',
+    claim: 'ML-DSA-65 signature generation, external interface, pure message, Deterministic: No',
+    validation: {
+      listed: true,
+      where: 'A5631, the ML-DSA SigGen row whose panel starts with the external interface.',
+      quotes: [
+        validationQuote('A5631', 'row ML-DSA SigGen', 'Signature Interfaces: external'),
+        validationQuote('A5631', 'row ML-DSA SigGen', 'Pre Hash: pure'),
+        validationQuote('A5631', 'row ML-DSA SigGen', 'Deterministic: Yes, No'),
+        validationQuote(
+          'A5631',
+          'row ML-DSA SigGen',
+          'Parameter Sets: ML-DSA-44, ML-DSA-65, ML-DSA-87'
+        ),
+      ],
+      hint: 'Expand the ML-DSA SigGen rows on A5631. The one that reads "Signature Interfaces: external" and "Pre Hash: pure" lists ML-DSA-65 and the option "Deterministic: Yes, No".',
+    },
+    approvedTable: {
+      listed: true,
+      where: 'Table 4: Approved Algorithms, the ML-DSA SigGen row.',
+      quotes: [
+        policyQuote(
+          '5497',
+          'Table 4',
+          13,
+          'ML-DSA SigGen A5631 Signature Interfaces - external, internal Deterministic - No, Yes'
+        ),
+        policyQuote('5497', 'Table 4', 13, 'Parameter Sets - ML-DSA-44, ML-DSA-65, ML-DSA-87'),
+        policyQuote('5497', 'Table 4', 13, 'Pre Hash - preHash, pure'),
+      ],
+      hint: 'Find the ML-DSA SigGen row in Table 4 on page 13. It prints the interfaces, the deterministic option, the parameter sets and the pre-hash settings.',
+    },
+    alsoQuotes: [
+      policyQuote(
+        '5497',
+        'Table 7',
+        23,
+        'Digital Signature generation with ML-DSA (External Interface, Pure, Hedged)'
+      ),
+    ],
+    label: 'Listed on the validation and in the Approved Algorithms table',
+    explanation:
+      'A5631 has several ML-DSA SigGen rows, one for each interface and pre-hash combination. The row with "external" and "pure" lists ML-DSA-65. Table 4 prints the same interface, parameter set and pre-hash values, and the option "Deterministic - No, Yes". QASM\'s function table (Table 7, page 23) names this mode "Digital Signature generation with ML-DSA (External Interface, Pure, Hedged)"; "hedged" is QASM\'s word for non-deterministic. "ML-DSA-65 signing" is not one thing: this row names the exact mode. Compare it with item 2.',
+    feedbackRight:
+      'Correct. Both records list the exact mode: external interface, pure message, Deterministic: No.',
+  },
+  {
+    kind: 'compare',
+    id: 'ml-dsa-65-deterministic',
+    module: '5497',
+    title: 'ML-DSA-65 signing, Deterministic: Yes',
+    prompt: 'ML-DSA-65, signature generation, Deterministic: Yes.',
+    claim: 'ML-DSA-65 signature generation, Deterministic: Yes',
+    validation: {
+      listed: true,
+      where: 'A5631, the ML-DSA SigGen rows.',
+      quotes: [
+        validationQuote('A5631', 'row ML-DSA SigGen', 'Deterministic: Yes, No'),
+        validationQuote(
+          'A5631',
+          'row ML-DSA SigGen',
+          'Parameter Sets: ML-DSA-44, ML-DSA-65, ML-DSA-87'
+        ),
+      ],
+      hint: 'Open the ML-DSA SigGen rows on A5631. Each one reads "Deterministic: Yes, No".',
+    },
+    approvedTable: {
+      listed: true,
+      where: 'Table 4: Approved Algorithms, the ML-DSA SigGen row.',
+      quotes: [
+        policyQuote(
+          '5497',
+          'Table 4',
+          13,
+          'ML-DSA SigGen A5631 Signature Interfaces - external, internal Deterministic - No, Yes External Mu - No, Yes'
+        ),
+      ],
+      hint: 'Table 4 on page 13 prints "Deterministic - No, Yes" in the ML-DSA SigGen row.',
+    },
+    functionTable: {
+      listed: false,
+      where:
+        'Table 7: Security Function Implementations, the four ML-DSA signature generation rows.',
+      note: 'The text "Deterministic:Yes" does not appear anywhere in the Security Policy (a text search of all 222 pages).',
+      quotes: [
+        policyQuote(
+          '5497',
+          'Table 7',
+          23,
+          'Signature Interface:external Pre Hash:pure Deterministic:No'
+        ),
+        policyQuote('5497', 'Table 7', 23, 'in non-deterministic (hedged) mode.'),
+        policyQuote(
+          '5497',
+          'Table 7',
+          24,
+          'Signature Interface:internal Deterministic:No External Mu:Yes'
+        ),
+      ],
+      hint: 'Table 7 is the function table. Its four ML-DSA signature generation rows, on pages 23 and 24, all read "Deterministic:No".',
+    },
+    label:
+      'Listed on the validation and in the Approved Algorithms table. Not listed in the function table.',
+    explanation:
+      'A5631 shows "Deterministic: Yes, No" on its ML-DSA SigGen rows, so the deterministic option was part of the algorithm testing. The Policy has two tables that speak about options, and they differ. Its Approved Algorithms table (Table 4, page 13) prints "Deterministic - No, Yes". Its function table (Table 7, pages 23 to 24) has four ML-DSA signature generation rows, and each reads "Deterministic:No", with descriptions that say "non-deterministic (hedged) mode". The Policy does not say which table governs what an operator can use, so read the option, not only the algorithm name, in every table, and ask the vendor or the laboratory which one applies. FIPS 204 Section 3.4 shows why the option matters: the hedged variant is the default signing procedure, and the standard also permits a fully deterministic variant.',
+    feedbackRight:
+      'Correct. The validation and the Approved Algorithms table list the deterministic option. The function table does not.',
+  },
+  {
+    kind: 'compare',
+    id: 'hss-siggen',
+    module: '5497',
+    title: 'HSS signature generation',
+    prompt: 'HSS, signature generation.',
+    claim: 'HSS signature generation',
+    validation: {
+      listed: false,
+      where: 'The capability rows of A5631.',
+      note: 'A5631 has 88 capability rows. The LMS rows are LMS KeyGen, LMS SigGen and LMS SigVer. None is named HSS.',
+      quotes: [],
+      hint: 'Look through the A5631 row names. There are LMS KeyGen, LMS SigGen and LMS SigVer. There is no HSS row.',
+    },
+    approvedTable: {
+      listed: false,
+      where: 'Table 4: Approved Algorithms (pages 9 to 16).',
+      note: 'Table 4 has no HSS row. The Policy lists HSS under a different heading, Vendor-Affirmed Algorithms (Table 5, pages 16 to 17).',
+      quotes: [
+        policyQuote('5497', 'Table 4', 16, 'Table 4: Approved Algorithms'),
+        policyQuote('5497', 'Table 5', 17, 'Table 5: Vendor-Affirmed Algorithms'),
+        policyQuote(
+          '5497',
+          'Table 5',
+          16,
+          'The LMS operations used by the HSS implementation were CAVP tested in accordance with IG C.O with Cert A5631'
+        ),
+      ],
+      hint: 'Table 4 has no HSS row. Look at the heading of the next table: "Vendor-Affirmed Algorithms".',
+    },
+    alsoQuotes: [
+      policyQuote('5497', 'Table 7', 30, 'Digital Signature generation with HSS'),
+      policyQuote('5497', 'Table 7', 30, 'HSS SigGen: ()'),
+    ],
+    label:
+      'Neither mark applies. The Policy lists HSS in a separate table, Vendor-Affirmed Algorithms (Table 5).',
+    explanation:
+      'A5631 has LMS rows and no HSS row, and the Policy\'s Approved Algorithms table (Table 4) has no HSS row either. The Policy lists HSS under another heading, Vendor-Affirmed Algorithms (Table 5, pages 16 to 17), and says the LMS operations used by the HSS implementation were tested "in accordance with IG C.O with Cert A5631". Its function table shows "HSS SigGen: ()", an empty certificate field (Table 7, page 30). So the entry points back to A5631\'s LMS rows and has no validation of its own. Read the table heading and the reference text: they tell you what kind of evidence stands behind an entry. The Learn tab defines "vendor-affirmed" in the section "Algorithm validation is not the certificate".',
+    feedbackRight:
+      "Correct. HSS is on neither list. The Policy puts it under Vendor-Affirmed Algorithms and points back to A5631's LMS tests.",
+  },
+  {
+    kind: 'compare',
+    id: 'luna-ml-dsa-deterministic',
+    module: '5450',
+    title: 'ML-DSA signing, Deterministic setting',
+    prompt:
+      'ML-DSA, signature generation, the Deterministic setting, as listed for A7879 and A7880.',
+    claim: 'ML-DSA signature generation, Deterministic setting, A7879 and A7880',
+    validation: {
+      listed: true,
+      where: 'A7879 and A7880, the ML-DSA SigGen rows.',
+      quotes: [
+        validationQuote('A7880', 'row ML-DSA SigGen', 'Deterministic: Yes, No'),
+        validationQuote(
+          'A7880',
+          'row ML-DSA SigGen',
+          'Parameter Sets: ML-DSA-44, ML-DSA-65, ML-DSA-87'
+        ),
+        validationQuote('A7879', 'row ML-DSA SigGen', 'Deterministic: Yes, No'),
+      ],
+      hint: 'Open an ML-DSA SigGen row on A7879 or A7880. Each one reads "Deterministic: Yes, No".',
+    },
+    approvedTable: {
+      listed: true,
+      where: 'Table 4 (A7879) and Table 5 (A7880): Approved Algorithms, the ML-DSA SigGen rows.',
+      quotes: [
+        policyQuote('5450', 'Table 4', 13, 'ML-DSA SigGen A7879 Deterministic - No, Yes'),
+        policyQuote('5450', 'Table 5', 16, 'ML-DSA SigGen A7880 Deterministic - No, Yes'),
+      ],
+      hint: 'Table 4 (A7879, page 13) and Table 5 (A7880, page 16) print "Deterministic - No, Yes" in the ML-DSA SigGen row.',
+    },
+    functionTable: {
+      listed: false,
+      where: 'Table 7: Security Function Implementations, the ML-DSA signing functions.',
+      note: 'The ML-DSA signing rows show no properties, so the function table shows no Deterministic setting.',
+      quotes: [
+        policyQuote(
+          '5450',
+          'Table 7',
+          21,
+          'ML-DSA PureSigGen DigSig-SigGen Generate a signature of data using private key ML-DSA SigGen: (A7879, A7880)'
+        ),
+      ],
+      hint: 'The function table (Table 7, page 21) shows no properties for the ML-DSA signing rows, so it cannot show the setting.',
+    },
+    label:
+      'Listed on the validations and in the Approved Algorithms tables. The function table shows no setting.',
+    explanation:
+      'Both validations show "Deterministic: Yes, No" on every ML-DSA SigGen row, and the Policy prints "Deterministic - No, Yes" for ML-DSA SigGen in Table 4 (for A7879) and in Table 5 (for A7880). The function table (Table 7, page 21) names ML-DSA PureSigGen and ML-DSA PreHashSigGen and cites "ML-DSA SigGen: (A7879, A7880)", but it shows no properties for them, so it shows no setting. Compare item 2: there the function table printed one value; here it prints none. The document lists both values in its Approved Algorithms tables but does not say how an operator selects one; that is a question for the vendor.',
+    feedbackRight:
+      'Correct. Both validations and both Approved Algorithms tables show the setting. The function table shows none.',
+  },
+  {
+    kind: 'compare',
+    id: 'luna-ml-dsa-internal-mu',
+    module: '5450',
+    title: 'ML-DSA signing, internal interface, External Mu',
+    prompt:
+      'ML-DSA, signature generation through the internal interface, with the External Mu option.',
+    claim: 'ML-DSA signature generation, internal interface, External Mu, A7879 and A7880',
+    validation: {
+      listed: true,
+      where: 'A7879 and A7880, the ML-DSA SigGen rows.',
+      quotes: [
+        validationQuote('A7880', 'row ML-DSA SigGen', 'Signature Interfaces: external, internal'),
+        validationQuote('A7880', 'row ML-DSA SigGen', 'External Mu: Yes, No'),
+        validationQuote('A7879', 'row ML-DSA SigGen', 'Signature Interfaces: external, internal'),
+        validationQuote('A7879', 'row ML-DSA SigGen', 'External Mu: Yes, No'),
+      ],
+      hint: 'Open an ML-DSA SigGen row. It reads "Signature Interfaces: external, internal" and "External Mu: Yes, No".',
+    },
+    approvedTable: {
+      listed: false,
+      where: 'Table 4 (A7879) and Table 5 (A7880): Approved Algorithms, the ML-DSA SigGen rows.',
+      note: 'A text search of all 89 pages finds no "internal interface", no "external interface" and no "mu".',
+      quotes: [
+        policyQuote('5450', 'Table 4', 13, 'ML-DSA SigGen A7879 Deterministic - No, Yes'),
+        policyQuote('5450', 'Table 5', 16, 'ML-DSA SigGen A7880 Deterministic - No, Yes'),
+      ],
+      hint: 'Read the ML-DSA SigGen row in Table 4 or Table 5. It prints one option only, "Deterministic - No, Yes". Neither the interface nor mu appears anywhere in the document.',
+    },
+    label: 'Listed on the validations only. The Policy does not mention it.',
+    explanation:
+      'The ML-DSA SigGen rows on A7879 and A7880 list "Signature Interfaces: external, internal" and "External Mu: Yes, No". The Policy\'s ML-DSA SigGen row prints only "Deterministic - No, Yes", and a text search of all 89 pages finds no mention of an interface or of mu. The Policy is silent rather than negative, so the records do not show whether an operator can use this option. Ask the vendor or the laboratory before you rely on it.',
+    feedbackRight:
+      'Correct. The validations list the internal interface and External Mu. The Policy does not mention either.',
+  },
+  {
+    kind: 'compare',
+    id: 'luna-shake-256-a7880',
+    module: '5450',
+    title: 'SHAKE-256 with validation A7880',
+    prompt: 'SHAKE-256, as a capability of validation A7880 (the hybrid library).',
+    claim: 'SHAKE-256 with validation A7880',
+    approvedNote:
+      'For this item, look for the number A7880 beside the entry. The Policy splits its Approved Algorithms table by library.',
+    validation: {
+      listed: true,
+      where: 'A7880, the SHAKE-256 (FIPS 202) rows.',
+      quotes: [
+        validationQuote('A7880', 'row SHAKE-256 (FIPS 202)', 'Message Length: 0-65528 Increment 8'),
+        validationQuote('A7880', 'row SHAKE-256 (FIPS 202)', 'Output Length: 16-16384 Increment 8'),
+      ],
+      hint: 'Click Aggregated on A7880 and look for SHAKE-256 (FIPS 202).',
+    },
+    approvedTable: {
+      listed: false,
+      where: 'Table 5: Approved Algorithms - Hybrid, the table for A7880.',
+      note: 'Table 5 has no SHAKE row. Every SHAKE entry in the Policy, in Table 4 and in Table 7, cites A7879 only.',
+      quotes: [
+        policyQuote('5450', 'Table 4', 14, 'SHAKE-256 A7879 - FIPS 202'),
+        policyQuote('5450', 'Table 5', 17, 'Table 5: Approved Algorithms - Hybrid'),
+        policyQuote('5450', 'Table 7', 21, 'SHAKE-128: (A7879) SHAKE-256: (A7879)'),
+        certificateQuote('5450', 'SHAKE-128 A7879 SHAKE-256 A7879'),
+      ],
+      hint: 'Table 4 lists SHAKE-256 with A7879. Look for the same row in Table 5, the table for A7880. It is not there.',
+    },
+    label: 'Listed on the validation only. The Policy cites SHAKE-256 with A7879, not with A7880.',
+    explanation:
+      "A7880 has SHAKE-128 and SHAKE-256 rows. Table 5, the Policy's Approved Algorithms table for the hybrid library, has no SHAKE row. SHAKE appears in Table 4 (the firmware library) and in Table 7, and every one of those entries cites A7879 only; the certificate page also lists SHAKE with A7879 only. A validation can list more than the certificate and the Policy cite, so read the validation number beside each entry, not only the algorithm name.",
+    feedbackRight: 'Correct. A7880 lists SHAKE-256. The Policy cites SHAKE-256 with A7879 only.',
+  },
+  {
+    kind: 'choose',
+    id: 'what-a-validation-shows',
+    module: '5497',
+    title: 'What an algorithm validation can and cannot show',
+    prompt: 'Back to certificate #5497. Which statement can you make from A5631 alone?',
+    choices: [
+      {
+        id: 'level',
+        text: 'The QASM module is validated at overall Security Level 3.',
+        ok: false,
+        why: 'Needs the module records. A5631 shows no level. The level, "Overall Level 3", is on certificate #5497 and in Table 1 of the Security Policy (page 5).',
+      },
+      {
+        id: 'header',
+        text: 'Algorithm tests for an implementation called QASM Cryptographic Module, version 1.1, hardware, were first validated on 8/14/2024.',
+        ok: true,
+        why: 'Correct. These are the header fields of A5631.',
+      },
+      {
+        id: 'status',
+        text: 'The QASM module is Active until its sunset date of 8/18/2031.',
+        ok: false,
+        why: 'Needs the module records. Status and sunset date are fields of certificate #5497.',
+      },
+      {
+        id: 'any-mode',
+        text: 'A QASM unit gives validated results in any mode.',
+        ok: false,
+        why: 'Neither record supports it. Section 2.2 of the Security Policy (page 9) says a unit that reports a different version, or an operational mode of STANDARD instead of FIPS, is not operating in the validated configuration. The certificate caveat points to Section 11.1 of the Security Policy.',
+      },
+    ],
+    quotes: [
+      validationQuote('A5631', 'page header', 'Implementation Name QASM Cryptographic Module'),
+      validationQuote('A5631', 'page header', 'Version 1.1'),
+      validationQuote('A5631', 'page header', 'Type HARDWARE'),
+      validationQuote('A5631', 'page header', 'First Validated: 8/14/2024'),
+      certificateQuote('5497', 'Status Active Sunset Date 8/18/2031 Overall Level 3'),
+      policyQuote(
+        '5497',
+        'Section 2.2',
+        9,
+        'If any version value differs, or if the Operational Mode is reported as STANDARD instead of FIPS, the module is not operating in the validated configuration'
+      ),
+    ],
+    explanation:
+      "A CAVP validation records algorithm testing for one implementation. It does not record a security level, a status, a module boundary or the conditions of use. The module certificate does. Certificate #5497 cites four algorithm validations (A5631, A6119, A6409 and A6410), so the module record is built on several algorithm records. The Security Policy also cites an entropy certificate, E96 (Table 8, page 34), which is a third kind of record. A5631 was first validated on 8/14/2024; the module's validation history starts on 8/19/2026. That order is normal: algorithm testing comes first, and it is only one input to the module's validation.",
+    feedbackRight:
+      'Correct. These are the fields A5631 shows. Level, status and conditions of use are on the module records.',
+  },
+]
+
+/** The FIPS 204 sentences behind the "hedged" and "deterministic" wording (Section 3.4, printed page 11). */
+export const FIPS_204_SIGNING_QUOTES: readonly RecordQuote[] = [
+  {
+    record: 'standard',
+    text: 'By default, this standard specifies the signing algorithm to use both types of randomness.',
+    source: 'FIPS 204, Section 3.4, printed page 11',
+    url: FIPS_204_URL,
+  },
+  {
+    record: 'standard',
+    text: 'This is referred to as the “hedged” variant of the signing procedure.',
+    source: 'FIPS 204, Section 3.4, printed page 11',
+    url: FIPS_204_URL,
+  },
+  {
+    record: 'standard',
+    text: 'This document also permits a fully deterministic variant of the signing procedure',
+    source: 'FIPS 204, Section 3.4, printed page 11',
+    url: FIPS_204_URL,
+  },
+]
+
+/** Feedback after Check, by how many of an item's marks differ from the records. */
+export const RECORDS_GENERIC_FEEDBACK = {
+  oneWrong:
+    'One of your marks does not match the records. Re-open the row named in the item and match the operation, the parameter set and the option, not only the algorithm name.',
+  someWrong:
+    'Some of your marks do not match the records. Re-open the row named in the item and match the operation, the parameter set and the option in each table, not only the algorithm name.',
+  allWrong:
+    'Every mark differs from the records. Start with the algorithm validation: open every row for this operation and read the options. Then find the matching row in each Policy table.',
+} as const
+
+export const RECORDS_SCORE_BANDS: readonly { min: number; text: string }[] = [
+  {
+    min: 7,
+    text: 'You read each row against the records. Use the reading note below for your own claims.',
+  },
+  {
+    min: 5,
+    text: 'You are close. Check the rows you missed against the table named in each hint. Most slips come from reading one table as if it spoke for the others.',
+  },
+  {
+    min: 3,
+    text: 'Slow down on the options. For each row, write the operation, the parameter set and the option, then find all three in the validation and in each Policy table.',
+  },
+  {
+    min: 0,
+    text: 'Start with item 1. Find the row on A5631 first, then the matching row in Table 4 of the Security Policy. The explanation under each item shows where to look.',
+  },
+]
+
+export const RECORDS_SCORE_ENDING =
+  'This score is about reading records. It says nothing about whether any module meets your requirements.'
 
 // ── Step question (appended verbatim to src/data/stepExercises.ts) ─────────
 
@@ -833,6 +1498,18 @@ export const stepExercises: Record<string, StepExercise> = {
     ],
     answer: 1,
     why: 'Route eligibility comes from the Management Manual, not the calendar: new approved algorithms, services and self-tests are security-relevant changes (UPDT under 30 % per category, else FS). TRNS needs a published CMVP transition, ALG allows no code change, and CVE may not add cryptography.',
+  },
+  'fips-140-3-certification/fips-algorithm-records': {
+    prompt:
+      "An algorithm validation lists 'Deterministic: Yes, No' for ML-DSA signing. Where do you look to see how the module's Security Policy lists that option?",
+    options: [
+      'Nowhere. The algorithm validation already covers the module.',
+      'In the Security Policy, in both its Approved Algorithms table and its function table, because the two can differ.',
+      "The vendor's datasheet alone.",
+      'The algorithm validation page alone.',
+    ],
+    answer: 1,
+    why: 'An algorithm validation records what was tested for one implementation. The Security Policy has its own tables, and they can differ. For certificate #5497 the Approved Algorithms table prints "Deterministic - No, Yes" while the function table shows "Deterministic:No" on every ML-DSA signature generation row. For certificate #5450 the function table shows no setting at all.',
   },
 }
 
@@ -908,5 +1585,47 @@ export const FIPS_FRESHNESS_CLAIMS: FreshnessClaim[] = [
     source: SECTIONS_SOURCE,
     asOf: FIPS_AS_OF,
     recheck: 'https://www.nccoe.nist.gov/automation-nist-cryptographic-module-validation-program',
+  },
+  // Workshop step "Read the algorithm records": two modules, each read on its own day. The items
+  // depend on the contents of records that NIST can update, so each record has its own claim.
+  {
+    id: 'cert-module-records-5497-certificate',
+    claim:
+      'Certificate #5497 (QASM Cryptographic Module) as read for the step "Read the algorithm records": Active, overall Level 3, sunset 8/18/2031, validation history 8/19/2026 Initial and 8/21/2026 Update, four cited algorithm validations (A5631, A6119, A6409, A6410); Security Policy (PDF file date 13 Aug 2026) Table 4 page 13, Table 5 pages 16 to 17, Table 7 pages 23 to 24 and 30',
+    source: DATA_SOURCE,
+    asOf: ALGORITHM_RECORDS_AS_OF['5497'],
+    recheck: cmvpCertificateUrl('5497'),
+  },
+  {
+    id: 'cert-module-records-5497-a5631',
+    claim:
+      'Algorithm validation A5631 as read for the step "Read the algorithm records": first validated 8/14/2024; ML-DSA SigGen rows list "Deterministic: Yes, No"; LMS rows and no HSS row; 88 capability rows',
+    source: DATA_SOURCE,
+    asOf: ALGORITHM_RECORDS_AS_OF['5497'],
+    recheck: CAVP_VALIDATION_URLS.A5631,
+  },
+  {
+    id: 'cert-module-records-5450-certificate',
+    claim:
+      'Certificate #5450 (Luna T7) as read for the step "Read the algorithm records": Active, overall Level 3, sunset 7/28/2031, validation history 7/29/2026 Initial only, four cited algorithm validations (A6645, A6646, A7879, A7880) against two in the Security Policy; Security Policy (PDF file date 27 Jul 2026) Tables 4 and 5 pages 13, 14, 16 and 17, Table 7 page 21',
+    source: DATA_SOURCE,
+    asOf: ALGORITHM_RECORDS_AS_OF['5450'],
+    recheck: cmvpCertificateUrl('5450'),
+  },
+  {
+    id: 'cert-module-records-5450-a7879',
+    claim:
+      'Algorithm validation A7879 as read for the step "Read the algorithm records": first validated 1/16/2026; ML-DSA SigGen rows list interfaces external and internal, "External Mu: Yes, No" and "Deterministic: Yes, No"; SHAKE rows',
+    source: DATA_SOURCE,
+    asOf: ALGORITHM_RECORDS_AS_OF['5450'],
+    recheck: CAVP_VALIDATION_URLS.A7879,
+  },
+  {
+    id: 'cert-module-records-5450-a7880',
+    claim:
+      'Algorithm validation A7880 as read for the step "Read the algorithm records": first validated 1/16/2026; ML-DSA SigGen rows as on A7879; SHAKE-128 and SHAKE-256 rows (the Security Policy cites SHAKE with A7879 only)',
+    source: DATA_SOURCE,
+    asOf: ALGORITHM_RECORDS_AS_OF['5450'],
+    recheck: CAVP_VALIDATION_URLS.A7880,
   },
 ]

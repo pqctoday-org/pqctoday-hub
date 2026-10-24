@@ -17,6 +17,8 @@ import {
   FOUR_QUESTIONS,
   SCOPE_CHECKLIST,
   SHORTCUTS,
+  TABLE_TERM_KEY,
+  type TermKeySource,
 } from '../../data/coreData'
 import {
   ANCHOR_COMPONENT_DETAILS,
@@ -132,6 +134,44 @@ const H3 = ({ children }: { children: ReactNode }) => (
   <h3 className="pt-2 text-base font-semibold text-foreground">{children}</h3>
 )
 
+// ── Term key above the scheme table ────────────────────────────────────────
+
+/** One source under a term-key entry: a library link, or a plain-text citation. */
+const TermKeySourceItem = ({ source }: { source: TermKeySource }) =>
+  source.kind === 'library' ? (
+    <SourceLink source={source.ref} label={source.label} />
+  ) : (
+    <PlainSource>{source.text}</PlainSource>
+  )
+
+/** "Words used in this table": plain definitions, in the order the table first uses the terms. */
+const TableTermKey = () => (
+  <>
+    <H3>Words used in this table</H3>
+    <dl className="grid gap-2 sm:grid-cols-2" data-testid="cert-table-term-key">
+      {TABLE_TERM_KEY.map((t) => (
+        <div key={t.term} className="rounded-lg border border-border bg-muted/30 p-3">
+          <dt className="text-xs font-semibold text-foreground">
+            {t.term}
+            {t.expansion ? ` (${t.expansion})` : ''}
+          </dt>
+          <dd className="mt-1 text-xs text-muted-foreground">
+            {t.meaning}
+            <span className="mt-1 block text-[11px]">
+              {t.sources.map((source, i) => (
+                <span key={i}>
+                  {i > 0 ? ' ' : ''}
+                  <TermKeySourceItem source={source} />
+                </span>
+              ))}
+            </span>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </>
+)
+
 // ── four-questions ──────────────────────────────────────────────────────────
 
 /** Learn section `four-questions` */
@@ -163,6 +203,8 @@ export const FourQuestions = () => (
       {inSentence(ANCHOR_SCENARIO.change)}. Every scheme sees a different object inside this one
       product.
     </p>
+
+    <TableTermKey />
 
     <H3>One question per scheme</H3>
     <div className="overflow-x-auto rounded-lg border border-border">

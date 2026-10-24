@@ -25,9 +25,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-product-certification',
-  lastReviewed: '2026-10-23',
-  // lastReviewed is the owner's sign-off of 23 October 2026 (moduleReviewHonesty.test.ts), which
-  // renewed the 22 October one after the corrections; the on-page notice follows it
+  lastReviewed: '2026-10-24',
+  // lastReviewed is the owner's sign-off of 24 October 2026 (moduleReviewHonesty.test.ts), which
+  // renewed the 23 October one after the orientation list and the term key; the on-page notice follows it
   // (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until the owner renews it.
   version: '0.1.0',
   lastEdited: '2026-10-24',
@@ -57,7 +57,7 @@ export const content: ModuleContent = {
     // ── Common Criteria / CCRA (Path B) ──
     getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
     getStandard('CCDB-014-Assurance-Continuity-v3-1'),
-    getStandard('COMMON-CRITERIA'),
+    getStandard('COMMON-CRITERIA'), // also the term key above the scheme table (Security Target, Protection Profile)
     getStandard('CC-2022-PART2'),
     getStandard('CC-2022-PART3'),
 
@@ -81,6 +81,7 @@ export const content: ModuleContent = {
     getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
     getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
     getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
+    getStandard('PCI-SSC-P2PE-Program-Page'), // term key above the scheme table (P2PE)
     getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
     getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
     getStandard('ETSI-EN-319-411'), // second source for claim:6c7319b5f7fff220

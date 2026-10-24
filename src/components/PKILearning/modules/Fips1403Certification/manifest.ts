@@ -14,19 +14,20 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  * here (`?path=pci` goes to LM-071). The anchor product (the fictional Orrin N7
  * network HSM) and the shared types stay single-sourced in LM-065's data/.
  *
- * One timed ~65-minute route. Depth beyond it is `optional` reference
+ * One timed ~80-minute route (the second workshop step, `fips-algorithm-records`, added
+ * 15 minutes to the earlier 65). Depth beyond it is `optional` reference
  * material, excluded from duration and completion.
  */
 const manifest: ModuleManifest = {
   id: 'fips-140-3-certification',
-  contentVersion: 24,
+  contentVersion: 25,
   lm_id: 'LM-067',
   title: 'FIPS 140-3 Certification',
   description:
     'FIPS 140-3 and the CMVP in depth: what a certificate proves, the eleven requirement areas and four security levels, the validation queue, why algorithm validation is not the certificate, and what adding PQC means for a validated module.',
   whyThisMatters:
     'The lab-tested scheme a network or payment HSM meets first: a FIPS 140-3 certificate proves one module at one version and configuration. Adding ML-KEM or ML-DSA changes the module, and the CMVP accepts that change only through one of its own submission routes.',
-  duration: '65 min',
+  duration: '80 min',
   difficulty: 'advanced',
   frameworkPhase: 'p7',
   track: 'Hardware Infrastructure',
@@ -45,7 +46,10 @@ const manifest: ModuleManifest = {
     { id: 'fips-landscape', label: 'Today’s landscape and the 2026 horizon' },
     { id: 'fips-route-table', label: 'CMVP submission routes (Manual v2.7)', optional: true },
   ],
-  workshopSteps: [{ id: 'fips-level-planner', label: 'Level and boundary planner' }],
+  workshopSteps: [
+    { id: 'fips-level-planner', label: 'Level and boundary planner' },
+    { id: 'fips-algorithm-records', label: 'Read the algorithm records' },
+  ],
   startHere: {
     step: 'fips-level-planner',
     text: 'Open Level and boundary planner and choose the FIPS 140-3 security level and module boundary for the anchor HSM.',

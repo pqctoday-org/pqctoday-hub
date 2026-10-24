@@ -1108,6 +1108,11 @@ export const FipsAcvpBridge = () => (
       key generation and establishment methods in <Cite std={SP_800_140D}>SP 800-140D</Cite>, and
       authentication mechanisms in <Cite std={SP_800_140E}>SP 800-140E</Cite>.
     </p>
+    <p>
+      Vendor-affirmed means the vendor states that an algorithm meets the standard without an
+      algorithm test certificate; NIST's <Cite std={IG}>FIPS 140-3 Implementation Guidance</Cite>{' '}
+      allows it only where a specific IG section permits it, for example IG C.O for HSS signatures.
+    </p>
 
     <SubHeading>Check the operation and parameter set</SubHeading>
     <p>

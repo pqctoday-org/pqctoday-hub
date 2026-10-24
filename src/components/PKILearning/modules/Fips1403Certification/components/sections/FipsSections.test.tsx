@@ -116,6 +116,36 @@ describe('FIPS sections render', () => {
   })
 })
 
+describe('FIPS acvp-bridge: the vendor-affirmed sentence', () => {
+  const SENTENCE =
+    "Vendor-affirmed means the vendor states that an algorithm meets the standard without an algorithm test certificate; NIST's FIPS 140-3 Implementation Guidance allows it only where a specific IG section permits it, for example IG C.O for HSS signatures."
+
+  it('defines vendor-affirmed in one sentence, with the exact wording', () => {
+    wrap(<FipsAcvpBridge />)
+    const para = screen.getByText(/^Vendor-affirmed means/, { selector: 'p' })
+    expect(para.textContent).toBe(SENTENCE)
+  })
+
+  it('sits where the section first sets algorithm validation apart from the certificate, after the A5631 example and before the operation check', () => {
+    wrap(<FipsAcvpBridge />)
+    const para = screen.getByText(/^Vendor-affirmed means/, { selector: 'p' })
+    const example = screen.getByText(/each approved function carries its CAVP reference/)
+    const nextHeading = screen.getByText('Check the operation and parameter set')
+    expect(example.compareDocumentPosition(para) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(
+      para.compareDocumentPosition(nextHeading) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy()
+  })
+
+  it('cites the IG through the library row NIST-FIPS140-3-IG-PQC', () => {
+    wrap(<FipsAcvpBridge />)
+    const para = screen.getByText(/^Vendor-affirmed means/, { selector: 'p' })
+    const link = within(para).getByRole('link', { name: 'FIPS 140-3 Implementation Guidance' })
+    expect(link).toHaveAttribute('href', getStandard('NIST-FIPS140-3-IG-PQC').deepLink)
+    expect(content.standards.map((s) => s.id)).toContain('NIST-FIPS140-3-IG-PQC')
+  })
+})
+
 describe('FIPS attack-evidence section', () => {
   const CITED_LIBRARY_IDS = [
     'FIPS-140-3-STANDARD',
