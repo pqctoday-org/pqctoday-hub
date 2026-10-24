@@ -133,7 +133,7 @@ describe('libraryMatchRank', () => {
   })
 
   it('ranks a title that merely mentions the query below titles that lead with it', () => {
-    const cert = libraryMatchRank(byId('NIST-CMVP-Cert-5450'), 'FIPS 140-3')
+    const cert = libraryMatchRank(byId('NIST-SP-800-140'), 'FIPS 140-3')
     const manual = libraryMatchRank(byId('CMVP-MGMT-MANUAL'), 'FIPS 140-3')
     const guidance = libraryMatchRank(byId('NIST-FIPS140-3-IG-PQC'), 'FIPS 140-3')
     expect(manual).toBe(MATCH_RANK.prefix)
