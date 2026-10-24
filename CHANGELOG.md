@@ -29,6 +29,26 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.177.0] - 2026-10-24
+
+The Firmware PQC Migration lesson gains a box on NIST SP 800-193 and the FIPS 140-3 firmware integrity test, the Library adds NIST SP 800-193 and names the CMVP Management Manual's version, and ten older entries in the revision history now link to the changes they shipped in.
+
+### Added
+
+- **A box on two integrity checks beside the firmware signature** [view:/learn/secure-boot-pqc] [persona:cert-engineer] [persona:developer] [persona:architect]: it explains what NIST SP 800-193 asks of platform firmware (protection, detection and recovery, anchored in Roots of Trust), what the FIPS 140-3 firmware integrity test requires of a validated module, and how the two differ. It also says plainly what the published sources do not settle about post-quantum signatures as the integrity technique.
+- **NIST SP 800-193 in the Library** [view:/library] [persona:cert-engineer] [persona:developer] [persona:researcher]: the Platform Firmware Resiliency Guidelines are added with a saved copy, cited by the Firmware PQC Migration lesson together with the SP 800-140 series, and available to search and the assistant's answers.
+
+### Changed
+
+- **The side-channel section of PQC Network Testing & Validation points to Common Criteria** [view:/learn/pqc-testing-validation] [persona:cert-engineer] [persona:researcher]: one sentence links to how Common Criteria and EUCC evaluations treat side-channel attacks on post-quantum code (AVA_VAN.5).
+- **The Common Criteria lesson names the profile version and describes a paper in its abstract's own words** [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:researcher]: the Sources line says v0.15, and the Dilithium fault-injection result is worded as the paper's abstract states it.
+- **The CMVP Management Manual entry in the Library names its version** [view:/library] [persona:cert-engineer] [persona:grc]: the title is now the document's own name, and the description says Version 2.7.
+
+### Fixed
+
+- **Stale notes on the TPM 2.0 entries in the Library** [view:/library] [persona:cert-engineer] [persona:developer]: Parts 0, 1 and 2 no longer say they track a December 2025 release candidate. Their saved files are the published Version 185 of 12 March 2026, and the two older stub entries now say what they are.
+- **Older revision history entries link to their changes** [view:/revisions] [persona:cert-engineer] [persona:grc]: ten entries from 17 and 18 October, which showed "pending" and no change number, now carry their real pull request and merge, and the two entries from 4.176.0 are completed the same way.
+
 ## [4.176.0] - 2026-10-24
 
 The FIPS 140-3 lesson gains a workshop step on reading algorithm records, the Entropy, Cryptographic Product Certification and Common Criteria lessons gain new teaching content, the Library adds India's May 2026 quantum-safe roadmap, and search can now quote passages from the documents added in the last two releases.
