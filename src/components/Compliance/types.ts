@@ -44,6 +44,16 @@ export interface CmvpApprovedAlgorithm {
   cavpRefs: string[]
 }
 
+/** Where a module's entropy certificate numbers were read: its own Security Policy. */
+export interface EntropyCertificatesSource {
+  policyUrl: string
+  policySha256?: string
+  /** The table caption, e.g. 'Table 8: Entropy Certificates'. */
+  table: string
+  /** The PDF page the table is on. */
+  page: number
+}
+
 /** One row of a NIST entropy certificate's entropy table, as the page words it. */
 export interface EsvEntropyClaim {
   bitsOfEntropyPerOutput?: string
@@ -122,6 +132,15 @@ export interface ComplianceRecord {
   cavpProductUrl?: string
   cavpDetailsFetchedAt?: string
   cavpCapabilities?: CavpCapability[]
+
+  // ── FIPS 140-3: entropy certificates named in the module's Security Policy ──
+  /**
+   * ESV certificate numbers (e.g. ['E252', 'E63']) from the "Entropy Certificates" table of the
+   * module's NIST-hosted Security Policy. Present only when that table is clear: a module whose
+   * policy has no such table has none, which is not a statement that it uses no entropy source.
+   */
+  entropyCertificates?: string[]
+  entropyCertificatesSource?: EntropyCertificatesSource
 
   // ── NIST entropy source validation certificate (ESV, SP 800-90B) ──
   // Only what the NIST certificate page states. The page does not say whether the

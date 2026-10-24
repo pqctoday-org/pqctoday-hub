@@ -9,6 +9,7 @@ import { render, screen, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { MemoryRouter } from 'react-router'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
+import { buildEntropyIndex } from './recordSemantics'
 import type { ComplianceRecord } from './types'
 
 vi.mock('../ui/AskAssistantButton', () => ({
@@ -149,5 +150,130 @@ describe('ComplianceDetailPopover — entropy source validation', () => {
   it('keeps a row layout it did not recognise, verbatim', () => {
     open({ ...record, esvEntropyClaims: [{ statedAs: 'Min-entropy bound: 0.5 per bit' }] })
     expect(screen.getByText('Min-entropy bound: 0.5 per bit')).toBeInTheDocument()
+  })
+})
+
+const luna: ComplianceRecord = {
+  id: '5450',
+  source: 'NIST',
+  date: '2026-05-01',
+  link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5450',
+  type: 'FIPS 140-3',
+  status: 'Active',
+  pqcCoverage: 'LMS',
+  productName: 'Luna T7',
+  productCategory: 'HSM',
+  vendor: 'Thales Trusted Cyber Technologies',
+  certificationLevel: 'FIPS 140-3 L3',
+  entropyCertificates: ['E252', 'E63', 'E999'],
+  entropyCertificatesSource: {
+    policyUrl:
+      'https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5450.pdf',
+    table: 'Table 8: Entropy Certificates',
+    page: 24,
+  },
+}
+const e252: ComplianceRecord = {
+  ...record,
+  id: 'E252',
+  productName: 'Thales Luna T7 Entropy Source',
+  vendor: 'Thales',
+}
+const e63: ComplianceRecord = {
+  ...record,
+  id: 'E63',
+  productName: 'IDQ Quantis IID QRNG',
+  vendor: 'ID Quantique SA',
+}
+const index = buildEntropyIndex([luna, e252, e63])
+
+describe('ComplianceDetailPopover — module and entropy certificate links', () => {
+  it('lists the entropy certificates a module names, each linking to its ESV record', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceDetailPopover isOpen onClose={() => {}} record={luna} entropy={index} />
+      </MemoryRouter>
+    )
+    const box = screen.getByTestId('fips-entropy-certificates')
+    expect(within(box).getByRole('link', { name: 'E252' })).toHaveAttribute(
+      'href',
+      '/compliance?tab=records&rtab=esv&cert=E252'
+    )
+    expect(within(box).getByText(/Thales Luna T7 Entropy Source · Thales/)).toBeInTheDocument()
+    expect(within(box).getByRole('link', { name: 'E63' })).toBeInTheDocument()
+  })
+
+  it('does not link a number that is not in the ESV list, and says so', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceDetailPopover isOpen onClose={() => {}} record={luna} entropy={index} />
+      </MemoryRouter>
+    )
+    const box = screen.getByTestId('fips-entropy-certificates')
+    expect(within(box).queryByRole('link', { name: 'E999' })).not.toBeInTheDocument()
+    expect(within(box).getByText('E999')).toBeInTheDocument()
+    expect(within(box).getByText(/not in this snapshot.s ESV list/)).toBeInTheDocument()
+  })
+
+  it('names where the numbers were read: the own Security Policy of the module, its table and page', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceDetailPopover isOpen onClose={() => {}} record={luna} entropy={index} />
+      </MemoryRouter>
+    )
+    const box = screen.getByTestId('fips-entropy-certificates')
+    expect(within(box).getByText(/Table 8: Entropy Certificates, PDF page 24/)).toBeInTheDocument()
+    expect(within(box).getByRole('link', { name: /Security Policy \(PDF\)/ })).toHaveAttribute(
+      'href',
+      luna.entropyCertificatesSource!.policyUrl
+    )
+  })
+
+  it('shows nothing for a module whose policy named no certificate', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceDetailPopover
+          isOpen
+          onClose={() => {}}
+          record={{ ...luna, entropyCertificates: undefined, entropyCertificatesSource: undefined }}
+          entropy={index}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.queryByTestId('fips-entropy-certificates')).not.toBeInTheDocument()
+  })
+
+  it('lists the modules that rely on an entropy certificate, each linking to its record', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceDetailPopover isOpen onClose={() => {}} record={e252} entropy={index} />
+      </MemoryRouter>
+    )
+    const box = screen.getByTestId('esv-used-by')
+    expect(within(box).getByRole('link', { name: '#5450' })).toHaveAttribute(
+      'href',
+      '/compliance?tab=records&rtab=fips&cert=5450'
+    )
+    expect(within(box).getByText('Luna T7')).toBeInTheDocument()
+    expect(within(box).getByText(/FIPS 140-3 L3 · Active/)).toBeInTheDocument()
+    expect(within(box).getByText(/never matched by vendor name/)).toBeInTheDocument()
+  })
+
+  it('says coverage is partial when no module names the certificate yet', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceDetailPopover isOpen onClose={() => {}} record={record} entropy={index} />
+      </MemoryRouter>
+    )
+    const box = screen.getByTestId('esv-used-by')
+    expect(within(box).queryByRole('link')).not.toBeInTheDocument()
+    expect(within(box).getByText(/does not mean no module uses it/)).toBeInTheDocument()
+  })
+
+  it('renders plain links without a router (a table rendered on its own)', () => {
+    render(<ComplianceDetailPopover isOpen onClose={() => {}} record={luna} entropy={index} />)
+    expect(
+      within(screen.getByTestId('fips-entropy-certificates')).getByRole('link', { name: 'E252' })
+    ).toHaveAttribute('href', '/compliance?tab=records&rtab=esv&cert=E252')
   })
 })

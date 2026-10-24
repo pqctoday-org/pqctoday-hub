@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { Link, useInRouterContext } from 'react-router'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
@@ -18,6 +19,7 @@ import type { ComplianceRecord, ComplianceStatus, EsvEntropyClaim } from './type
 import clsx from 'clsx'
 import {
   cavpValidationUrl,
+  EMPTY_ENTROPY_INDEX,
   formatIsoDate,
   isPqcApplicable,
   isSecurityTargetType,
@@ -25,11 +27,13 @@ import {
   pqcUnknownReason,
   pqcEvidenceLabel,
   pqcNames,
+  recordPath,
   recordTypeDescription,
   recordTypeLabel,
   schemeCertificateId,
   statusBadgeClass,
   statusTone,
+  type EntropyIndex,
 } from './recordSemantics'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
@@ -44,6 +48,8 @@ interface ComplianceDetailPopoverProps {
   isOpen: boolean
   onClose: () => void
   record: ComplianceRecord | null
+  /** Which modules name which entropy certificate (links between FIPS 140-3 and ESV records). */
+  entropy?: EntropyIndex
 }
 
 /** Status verbatim from the source; unknown strings render as-is, styled as not current. */
@@ -89,8 +95,78 @@ const ExtLink = ({ href, children }: { href: string; children: ReactNode }) => (
   </a>
 )
 
+/** A link to another record: in-app when there is a router (the page), a plain link otherwise. */
+const RecordLink = ({ to, children }: { to: string; children: ReactNode }) => {
+  const inRouter = useInRouterContext()
+  const cls = 'inline-flex items-center gap-1 text-primary hover:underline'
+  return inRouter ? (
+    <Link to={to} className={cls}>
+      {children}
+    </Link>
+  ) : (
+    <a href={to} className={cls}>
+      {children}
+    </a>
+  )
+}
+
+/**
+ * FIPS 140-3: the entropy certificates the module's Security Policy names. A number links to
+ * its ESV record only when that record is in the snapshot.
+ */
+const FipsEntropyCertificates = ({
+  record,
+  entropy,
+}: {
+  record: ComplianceRecord
+  entropy: EntropyIndex
+}) => {
+  const ids = record.entropyCertificates ?? []
+  if (ids.length === 0) return null
+  const src = record.entropyCertificatesSource
+  return (
+    <div className="space-y-1" data-testid="fips-entropy-certificates">
+      <FieldLabel>Entropy certificates (Security Policy)</FieldLabel>
+      <ul className="space-y-0.5 text-xs">
+        {ids.map((id) => {
+          const esv = entropy.esv.get(id)
+          return (
+            <li key={id} className="flex flex-wrap items-baseline gap-x-2">
+              {esv ? (
+                <RecordLink to={recordPath(esv)}>
+                  <span className="font-mono">{id}</span>
+                </RecordLink>
+              ) : (
+                <span
+                  className="font-mono text-foreground"
+                  title="Not in this snapshot's list of NIST entropy source validations"
+                >
+                  {id}
+                </span>
+              )}
+              {esv ? (
+                <span className="text-muted-foreground">
+                  {esv.productName} · {esv.vendor}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">not in this snapshot&apos;s ESV list</span>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+      {src && (
+        <p className="text-xs text-muted-foreground">
+          Named in the module&apos;s own Security Policy ({src.table}, PDF page {src.page}):{' '}
+          <ExtLink href={src.policyUrl}>Security Policy (PDF)</ExtLink>
+        </p>
+      )}
+    </div>
+  )
+}
+
 /** FIPS 140-3: what the NIST CMVP certificate page states. */
-const FipsDetails = ({ record }: { record: ComplianceRecord }) => {
+const FipsDetails = ({ record, entropy }: { record: ComplianceRecord; entropy: EntropyIndex }) => {
   const observed = formatIsoDate(record.cmvpDetailsFetchedAt)
   const sunset = formatIsoDate(record.sunsetDate ?? undefined)
   const algos = record.cmvpApprovedAlgorithms ?? []
@@ -126,6 +202,7 @@ const FipsDetails = ({ record }: { record: ComplianceRecord }) => {
           </Field>
         )}
       </div>
+      <FipsEntropyCertificates record={record} entropy={entropy} />
       {algos.length > 0 && (
         <div className="space-y-1">
           <FieldLabel>Approved Algorithms (certificate page)</FieldLabel>
@@ -210,8 +287,9 @@ const claimFacts = (c: EsvEntropyClaim): string[] =>
  * NIST entropy source validation: what the certificate page states. The page does not say
  * whether the source is hardware or software — only whether its noise source is physical.
  */
-const EsvDetails = ({ record }: { record: ComplianceRecord }) => {
+const EsvDetails = ({ record, entropy }: { record: ComplianceRecord; entropy: EntropyIndex }) => {
   const claims = record.esvEntropyClaims ?? []
+  const modules = entropy.usedBy.get(record.id) ?? []
   const history = record.esvValidationHistory ?? []
   const first = formatIsoDate(record.esvFirstValidated)
   const observed = formatIsoDate(record.esvDetailsFetchedAt ?? record.esvListObservedAt)
@@ -297,6 +375,33 @@ const EsvDetails = ({ record }: { record: ComplianceRecord }) => {
           </ul>
         </div>
       )}
+      <div className="space-y-1" data-testid="esv-used-by">
+        <FieldLabel>Relied on by FIPS 140-3 modules</FieldLabel>
+        {modules.length > 0 ? (
+          <ul className="space-y-0.5 text-xs">
+            {modules.map((m) => (
+              <li key={m.id} className="flex flex-wrap items-baseline gap-x-2">
+                <RecordLink to={recordPath(m)}>
+                  <span className="font-mono">#{m.id}</span>
+                </RecordLink>
+                <span className="text-foreground">{m.productName}</span>
+                <span className="text-muted-foreground">
+                  {[m.vendor, m.certificationLevel, m.status].filter(Boolean).join(' · ')}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            No module in this snapshot names this certificate yet. Security Policies are read only
+            for modules whose certificate lists a PQC algorithm, so this does not mean no module
+            uses it.
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground">
+          Read from each module&apos;s own Security Policy table, never matched by vendor name.
+        </p>
+      </div>
       {record.link && <ExtLink href={record.link}>NIST entropy certificate {record.id}</ExtLink>}
     </div>
   )
@@ -361,6 +466,7 @@ export const ComplianceDetailPopover = ({
   isOpen,
   onClose,
   record,
+  entropy = EMPTY_ENTROPY_INDEX,
 }: ComplianceDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -600,9 +706,9 @@ export const ComplianceDetailPopover = ({
                 )}
               </div>
 
-              {record.type === 'FIPS 140-3' && <FipsDetails record={record} />}
+              {record.type === 'FIPS 140-3' && <FipsDetails record={record} entropy={entropy} />}
               {record.type === 'ACVP' && <CavpDetails record={record} />}
-              {record.type === 'ESV' && <EsvDetails record={record} />}
+              {record.type === 'ESV' && <EsvDetails record={record} entropy={entropy} />}
 
               {/* Documents Section */}
               {(record.certificationReportUrls ||

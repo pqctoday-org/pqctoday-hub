@@ -167,6 +167,10 @@ export const COMPLIANCE_CSV_COLUMNS: CsvColumnConfig<ComplianceRecord>[] = [
         .join('; '),
   },
   { header: 'CAVP First Validated', accessor: (i) => i.cavpFirstValidated },
+  {
+    header: 'Entropy Certificates (Security Policy)',
+    accessor: (i) => i.entropyCertificates?.join(' '),
+  },
   { header: 'Entropy Standard', accessor: (i) => i.esvStandard },
   { header: 'Entropy Noise Source', accessor: (i) => i.esvNoiseSourceClassification },
   { header: 'Entropy Reuse Status', accessor: (i) => i.esvReuseStatus },

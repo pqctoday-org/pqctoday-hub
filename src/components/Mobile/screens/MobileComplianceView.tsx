@@ -55,6 +55,7 @@ import { buildDrawerDetail, pillarForBodyType } from '@/components/Compliance/re
 import { pillClasses, TONES } from '@/components/Compliance/redesign/tones'
 import {
   applyRecordScope,
+  buildEntropyIndex,
   cavpValidationUrl,
   formatIsoDate,
   isPqcApplicable,
@@ -235,6 +236,9 @@ export interface MobileCertRecord {
     }>
   }>
   esvValidationHistory?: ReadonlyArray<{ date: string; lab: string }>
+  // FIPS 140-3: entropy certificates named in the module's Security Policy
+  entropyCertificates?: readonly string[]
+  entropyCertificatesSource?: { policyUrl: string; table: string; page: number }
 }
 
 /** Records listed on the phone before asking the reader to refine the search. */
@@ -1234,7 +1238,12 @@ export function MobileComplianceView({
         onClose={closeFramework}
         onViewRequirements={jumpToRequirements}
       />
-      <MobileRecordDetailSheet record={certRecord} onClose={closeRecord} />
+      <MobileRecordDetailSheet
+        record={certRecord}
+        onClose={closeRecord}
+        records={records}
+        onOpenRecord={openRecord}
+      />
     </div>
   )
 }
@@ -1329,10 +1338,17 @@ function RecordPqcFact({ record }: { record: MobileCertRecord }) {
 function MobileRecordDetailSheet({
   record,
   onClose,
+  records,
+  onOpenRecord,
 }: {
   record: MobileCertRecord | null
   onClose: () => void
+  /** The whole snapshot: which modules name which entropy certificate. */
+  records?: readonly MobileCertRecord[]
+  onOpenRecord?: (id: string) => void
 }) {
+  const entropy = useMemo(() => buildEntropyIndex(records ?? []), [records])
+  const modulesUsing = record?.type === 'ESV' ? (entropy.usedBy.get(record.id) ?? []) : []
   const observed = formatIsoDate(record?.cmvpDetailsFetchedAt)
   const sunset = formatIsoDate(record?.sunsetDate ?? undefined)
   const archived = formatIsoDate(record?.ccArchivedDate ?? undefined)
@@ -1539,6 +1555,100 @@ function MobileRecordDetailSheet({
                   <RecordLink href={cavpProductUrl}>NIST CAVP product page</RecordLink>
                 </p>
               )}
+            </section>
+          )}
+
+          {record.type === 'FIPS 140-3' && (record.entropyCertificates ?? []).length > 0 && (
+            <section
+              aria-label="Entropy certificates"
+              className="flex flex-col gap-1.5 border-t border-border pt-2.5"
+              data-testid="fips-phone-entropy-certificates"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                Entropy certificates (Security Policy)
+              </p>
+              <ul className="flex flex-col gap-1 text-[11px]">
+                {(record.entropyCertificates ?? []).map((id) => {
+                  const esv = entropy.esv.get(id)
+                  return (
+                    <li key={id} className="flex flex-wrap items-baseline gap-x-2">
+                      {esv && onOpenRecord ? (
+                        <Button
+                          type="button"
+                          variant="link"
+                          onClick={() => onOpenRecord(id)}
+                          className="h-auto p-0 font-mono text-[11px]"
+                        >
+                          {id}
+                        </Button>
+                      ) : (
+                        <span className="font-mono text-foreground">{id}</span>
+                      )}
+                      <span className="text-muted-foreground">
+                        {esv
+                          ? `${esv.productName} · ${esv.vendor}`
+                          : "not in this snapshot's ESV list"}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+              {record.entropyCertificatesSource && (
+                <p className="text-[10.5px] text-muted-foreground">
+                  Named in the module&apos;s own Security Policy (
+                  {record.entropyCertificatesSource.table}, PDF page{' '}
+                  {record.entropyCertificatesSource.page}):{' '}
+                  <RecordLink href={record.entropyCertificatesSource.policyUrl}>
+                    Security Policy (PDF)
+                  </RecordLink>
+                </p>
+              )}
+            </section>
+          )}
+
+          {record.type === 'ESV' && (
+            <section
+              aria-label="Relied on by FIPS 140-3 modules"
+              className="flex flex-col gap-1.5 border-t border-border pt-2.5"
+              data-testid="esv-phone-used-by"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                Relied on by FIPS 140-3 modules
+              </p>
+              {modulesUsing.length > 0 ? (
+                <ul className="flex flex-col gap-1 text-[11px]">
+                  {modulesUsing.map((m) => (
+                    <li key={m.id} className="flex flex-wrap items-baseline gap-x-2">
+                      {onOpenRecord ? (
+                        <Button
+                          type="button"
+                          variant="link"
+                          onClick={() => onOpenRecord(m.id)}
+                          className="h-auto p-0 font-mono text-[11px]"
+                        >
+                          #{m.id}
+                        </Button>
+                      ) : (
+                        <span className="font-mono">#{m.id}</span>
+                      )}
+                      <span className="text-foreground">{m.productName}</span>
+                      <span className="text-muted-foreground">
+                        {[m.vendor, m.certificationLevel, m.status].filter(Boolean).join(' · ')}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[10.5px] text-muted-foreground">
+                  No module in this snapshot names this certificate yet. Security Policies are read
+                  only for modules whose certificate lists a PQC algorithm, so this does not mean no
+                  module uses it.
+                </p>
+              )}
+              <p className="text-[10.5px] text-muted-foreground">
+                Read from each module&apos;s own Security Policy table, never matched by vendor
+                name.
+              </p>
             </section>
           )}
 

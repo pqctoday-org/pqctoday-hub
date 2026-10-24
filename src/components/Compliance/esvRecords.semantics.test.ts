@@ -6,10 +6,12 @@
 import { describe, expect, it } from 'vitest'
 import { recordFilterExclusions, matchesCertType, matchesRecordText } from './recordFilters'
 import {
+  buildEntropyIndex,
   isCurrentRecord,
   isPqcApplicable,
   pqcCoverageSummary,
   RECORD_TYPE_TABS,
+  recordPath,
   recordTypeDescription,
   recordTypeLabel,
   schemeCertificateId,
@@ -156,5 +158,56 @@ describe('snapshot scope and export', () => {
     expect(line).toContain('Non-Physical')
     expect(line).toContain('Open for Reuse')
     expect(csv).toMatch(/Entropy \(ESV\) rows are NIST entropy source validations/)
+  })
+})
+
+describe('links between FIPS 140-3 modules and the entropy certificates their Security Policy names', () => {
+  const luna: ComplianceRecord = {
+    ...fips,
+    id: '5450',
+    productName: 'Luna T7',
+    entropyCertificates: ['E252', 'E63'],
+  }
+  const other: ComplianceRecord = { ...fips, id: '5300', entropyCertificates: ['E63', 'E999'] }
+  const acvp: ComplianceRecord = { ...fips, id: 'A1', type: 'ACVP', entropyCertificates: ['E63'] }
+  const e252: ComplianceRecord = { ...esv, id: 'E252' }
+  const e63: ComplianceRecord = { ...esv, id: 'E63' }
+  const index = buildEntropyIndex([luna, other, acvp, e252, e63, fips])
+
+  it('knows which ESV records exist and which modules name each certificate', () => {
+    expect([...index.esv.keys()].sort()).toEqual(['E252', 'E63'])
+    expect(index.usedBy.get('E252')?.map((m) => m.id)).toEqual(['5450'])
+    // certificate order, not input order
+    expect(index.usedBy.get('E63')?.map((m) => m.id)).toEqual(['5300', '5450'])
+  })
+
+  it('never attaches ESV to an algorithm (CAVP) record, which has no module', () => {
+    expect(index.usedBy.get('E63')?.some((m) => m.type === 'ACVP')).toBe(false)
+  })
+
+  it('keeps a number that is not in the ESV list, so the page can say so', () => {
+    expect(index.usedBy.get('E999')?.map((m) => m.id)).toEqual(['5300'])
+    expect(index.esv.has('E999')).toBe(false)
+  })
+
+  it('infers nothing for a module with no table in its policy', () => {
+    expect(
+      [...index.usedBy.values()].flat().some((m) => m.id === fips.id && m !== luna && m !== other)
+    ).toBe(false)
+  })
+
+  it('opens a record on its own tab', () => {
+    expect(recordPath({ id: 'E252', type: 'ESV' })).toBe(
+      '/compliance?tab=records&rtab=esv&cert=E252'
+    )
+    expect(recordPath({ id: '5450', type: 'FIPS 140-3' })).toBe(
+      '/compliance?tab=records&rtab=fips&cert=5450'
+    )
+  })
+
+  it('exports the certificates a module names', () => {
+    const csv = buildComplianceCsv([luna], { scope: 'current' })
+    expect(csv).toMatch(/Entropy Certificates \(Security Policy\)/)
+    expect(csv.split('\n').find((l) => l.startsWith('5450,'))).toContain('E252 E63')
   })
 })

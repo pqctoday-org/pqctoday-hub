@@ -3,12 +3,21 @@
 // The Entropy (ESV) tab of the Product Records: its own columns (certificate, entropy
 // source, vendor, status, validation date, NIST page), search by number and vendor,
 // numeric certificate order, and no PQC or classical-algorithm columns.
-import { describe, expect, it, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { ComplianceTable, ComplianceRow } from './ComplianceTable'
 import { EsvCard, EsvRow } from './EsvRecords'
 import type { ComplianceRecord } from './types'
+
+// jsdom has no Element.scrollTo; the table calls it when a (debounced) search is applied.
+const realScrollTo = HTMLElement.prototype.scrollTo
+beforeAll(() => {
+  HTMLElement.prototype.scrollTo = vi.fn() as unknown as typeof HTMLElement.prototype.scrollTo
+})
+afterAll(() => {
+  HTMLElement.prototype.scrollTo = realScrollTo
+})
 
 const base: ComplianceRecord = {
   id: 'E321',
@@ -179,6 +188,33 @@ describe('ComplianceTable — Entropy (ESV) tab', () => {
     expect(screen.queryByTestId('esv-table')).not.toBeInTheDocument()
     expect(screen.getByText('PQC')).toBeInTheDocument()
     expect(screen.queryByTestId('esv-tab-note')).not.toBeInTheDocument()
+  })
+})
+
+describe('Entropy (ESV) rows name the modules that rely on them', () => {
+  const luna: ComplianceRecord = {
+    ...fips,
+    id: '5450',
+    productName: 'Luna T7',
+    entropyCertificates: ['E321'],
+  }
+  const luna2: ComplianceRecord = { ...fips, id: '5300', entropyCertificates: ['E321'] }
+
+  it('shows how many FIPS 140-3 modules name the certificate', async () => {
+    render(<ComplianceTable data={[...data, luna, luna2]} certType="esv" />)
+    const row = (await screen.findAllByTestId('esv-row')).find((r) =>
+      within(r).queryByText('E321')
+    )!
+    expect(within(row).getByText('Relied on by 2 FIPS 140-3 modules')).toBeInTheDocument()
+    const other = (await screen.findAllByTestId('esv-row')).find((r) =>
+      within(r).queryByText('E2')
+    )!
+    expect(within(other).queryByText(/Relied on by/)).not.toBeInTheDocument()
+  })
+
+  it('says "1 FIPS 140-3 module" for a single module', async () => {
+    render(<ComplianceTable data={[...data, luna]} certType="esv" />)
+    expect(await screen.findByText('Relied on by 1 FIPS 140-3 module')).toBeInTheDocument()
   })
 })
 

@@ -40,6 +40,7 @@ import {
   pqcEvidenceLabel,
   pqcNames,
   recordTypeDescription,
+  buildEntropyIndex,
   NO_SCHEME_ID_LABEL,
   RECORD_TYPE_TABS,
   recordTypeLabel,
@@ -497,6 +498,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
 
   // The Entropy (ESV) tab: its own columns and cards; PQC and Migrate-category facets do not apply.
   const isEsvTab = certType.toLowerCase() === 'esv'
+  // Which modules name which entropy certificate (from their Security Policies): linked both ways.
+  const entropyIndex = useMemo(() => buildEntropyIndex(data), [data])
 
   const totalActiveFilters =
     (isEsvTab ? 0 : pqcFilters.length + migrateCatFilters.length) +
@@ -1026,7 +1029,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               nothing about post-quantum algorithms. The PQC and Migrate-category filters therefore
               do not apply on this tab. Every value comes from the NIST certificate page; NIST does
               not say whether a source is hardware or software, only whether its noise source is
-              physical.
+              physical. Where a FIPS 140-3 module&apos;s Security Policy names its entropy
+              certificates (read so far for modules that list a PQC algorithm), the module and the
+              certificate link to each other.
             </span>
           </p>
         )}
@@ -1152,6 +1157,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               sortDirection={sortDirection}
               onSort={(column: EsvSortColumn) => handleSort(column)}
               onOpenDetails={handleOpenDetails}
+              usedBy={entropyIndex.usedBy}
             />
           ) : (
             <table className="max-md:hidden w-full text-sm text-left table-fixed">
@@ -1831,6 +1837,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         isOpen={!!openRecord}
         onClose={handleCloseDetails}
         record={openRecord ?? null}
+        entropy={entropyIndex}
       />
     </div>
   )

@@ -27,6 +27,13 @@ interface Rec {
   esvValidationHistory?: Array<{ date: string; lab: string }>
   esvEntropyClaims?: Array<Record<string, unknown>>
   additionalDocuments?: Array<{ name: string; url: string }>
+  entropyCertificates?: string[]
+  entropyCertificatesSource?: {
+    policyUrl: string
+    policySha256?: string
+    table: string
+    page: number
+  }
   [k: string]: unknown
 }
 
@@ -162,5 +169,53 @@ describe('entropy source validation records in the shipped snapshot', () => {
     expect(byId.get('E266')?.productName).toBe('Jentropy Engine')
     expect(byId.get('E232')?.productName).toMatch(/^Fortanix DRNG RDSEED/)
     expect(byId.get('E233')?.productName).toMatch(/^Fortanix DRNG RDSEED/)
+  })
+})
+
+describe('entropy certificates named by FIPS 140-3 modules in the shipped snapshot', () => {
+  const linked = records.filter((r) => r.entropyCertificates !== undefined)
+  const esvIds = new Set(esv.map((r) => r.id))
+
+  it('exist, and only on FIPS 140-3 module records (never on algorithm or other records)', () => {
+    expect(linked.length).toBeGreaterThan(0)
+    for (const r of linked) expect(r.type).toBe('FIPS 140-3')
+    expect(records.filter((r) => r.type === 'ACVP' && r.entropyCertificates !== undefined)).toEqual(
+      []
+    )
+  })
+
+  it('are E-numbers of ESV records in the snapshot, without repeats', () => {
+    for (const r of linked) {
+      expect(r.entropyCertificates!.length).toBeGreaterThan(0)
+      expect(new Set(r.entropyCertificates).size).toBe(r.entropyCertificates!.length)
+      for (const id of r.entropyCertificates!) {
+        expect(id).toMatch(/^E\d+$/)
+        expect(esvIds.has(id)).toBe(true)
+      }
+    }
+  })
+
+  it('say where they were read: the own NIST-hosted Security Policy of the module, table and PDF page', () => {
+    for (const r of linked) {
+      const src = r.entropyCertificatesSource
+      expect(src).toBeDefined()
+      expect(src!.policyUrl).toBe(
+        `https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp${r.id}.pdf`
+      )
+      expect(src!.table).toMatch(/^Table \d+: Entropy Certificates$/)
+      expect(Number.isInteger(src!.page) && src!.page > 0).toBe(true)
+      expect(src!.policySha256).toMatch(/^[0-9a-f]{64}$/)
+    }
+  })
+
+  it('carry the two fields together or not at all', () => {
+    for (const r of records) {
+      expect(r.entropyCertificates === undefined).toBe(r.entropyCertificatesSource === undefined)
+    }
+  })
+
+  it('link the Fortanix modules to the certificates the Library used to carry by hand', () => {
+    const fortanix = records.find((r) => r.type === 'FIPS 140-3' && r.id === '5555')
+    expect(fortanix?.entropyCertificates).toEqual(['E232', 'E233'])
   })
 })

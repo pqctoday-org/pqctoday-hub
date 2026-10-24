@@ -242,6 +242,47 @@ export function pqcCoverageSummary(
   return `${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`
 }
 
+// ── Entropy certificates <-> FIPS 140-3 modules ───────────────────────────
+
+/**
+ * Which FIPS 140-3 modules name which entropy certificate in their Security Policy, and which
+ * ESV certificates exist in the snapshot. A certificate number is linked only when its ESV
+ * record is in the snapshot; a module with no clear table in its policy is simply absent
+ * (nothing is inferred from vendor names).
+ */
+export interface EntropyIndex<T = ComplianceRecord> {
+  /** The ESV records in the snapshot, by certificate number. */
+  esv: ReadonlyMap<string, T>
+  /** ESV id -> the FIPS 140-3 records whose Security Policy names it, in certificate order. */
+  usedBy: ReadonlyMap<string, readonly T[]>
+}
+
+export const EMPTY_ENTROPY_INDEX: EntropyIndex = { esv: new Map(), usedBy: new Map() }
+
+export function buildEntropyIndex<
+  T extends { id: string; type: string; entropyCertificates?: readonly string[] },
+>(records: readonly T[]): EntropyIndex<T> {
+  const esv = new Map<string, T>()
+  const usedBy = new Map<string, T[]>()
+  for (const r of records) {
+    if (r.type === 'ESV') esv.set(r.id, r)
+    if (r.type !== 'FIPS 140-3' || !Array.isArray(r.entropyCertificates)) continue
+    for (const e of new Set(r.entropyCertificates)) {
+      const list = usedBy.get(e) ?? []
+      list.push(r)
+      usedBy.set(e, list)
+    }
+  }
+  for (const list of usedBy.values()) list.sort((a, b) => Number(a.id) - Number(b.id))
+  return { esv, usedBy }
+}
+
+/** Opens one record on its own Product Records tab (the link between a module and its entropy certificate). */
+export function recordPath(record: Pick<ComplianceRecord, 'id' | 'type'>): string {
+  const tab = record.type === 'ESV' ? 'esv' : record.type === 'FIPS 140-3' ? 'fips' : 'all'
+  return `/compliance?tab=records&rtab=${tab}&cert=${encodeURIComponent(record.id)}`
+}
+
 // ── Links ─────────────────────────────────────────────────────────────────
 
 export function cavpValidationUrl(ref: string): string {

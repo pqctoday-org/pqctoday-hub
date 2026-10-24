@@ -67,6 +67,35 @@ const records: MobileCertRecord[] = [
   },
 ]
 
+const luna: MobileCertRecord = {
+  id: '5450',
+  source: 'NIST',
+  date: '2026-05-01',
+  link: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5450',
+  type: 'FIPS 140-3',
+  status: 'Active',
+  pqcCoverage: 'LMS',
+  productName: 'Luna T7',
+  productCategory: 'HSM',
+  vendor: 'Thales Trusted Cyber Technologies',
+  certificationLevel: 'FIPS 140-3 L3',
+  entropyCertificates: ['E321', 'E999'],
+  entropyCertificatesSource: {
+    policyUrl:
+      'https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5450.pdf',
+    table: 'Table 8: Entropy Certificates',
+    page: 24,
+  },
+}
+const withLinks: MobileCertRecord[] = [...records, luna]
+
+const viewWithLinks = (url: string) =>
+  render(
+    <MemoryRouter initialEntries={[url]}>
+      <MobileComplianceView records={withLinks} recordsLoaded />
+    </MemoryRouter>
+  )
+
 const view = (url: string) =>
   render(
     <MemoryRouter initialEntries={[url]}>
@@ -156,5 +185,45 @@ describe('MobileComplianceView — Entropy (ESV) records', () => {
     expect(
       within(sheet).getByRole('link', { name: 'View the NIST entropy certificate page' })
     ).toHaveAttribute('href', records[0].link)
+  })
+
+  it('lists the entropy certificates a module names, and opens one', () => {
+    viewWithLinks('/compliance?tab=records&cert=5450')
+    const box = screen.getByTestId('fips-phone-entropy-certificates')
+    expect(within(box).getByText(/Table 8: Entropy Certificates, PDF page 24/)).toBeInTheDocument()
+    expect(within(box).getByRole('link', { name: /Security Policy \(PDF\)/ })).toHaveAttribute(
+      'href',
+      luna.entropyCertificatesSource!.policyUrl
+    )
+    // a number in the ESV list is a button; one that is not is plain text, and says so
+    expect(within(box).getByText('E999')).toBeInTheDocument()
+    expect(within(box).getByText(/not in this snapshot.s ESV list/)).toBeInTheDocument()
+    expect(within(box).queryByRole('button', { name: 'E999' })).not.toBeInTheDocument()
+    fireEvent.click(within(box).getByRole('button', { name: 'E321' }))
+    // the sheet now shows the entropy certificate, with the module that relies on it
+    const used = screen.getByTestId('esv-phone-used-by')
+    expect(within(used).getByText('Luna T7')).toBeInTheDocument()
+    expect(within(used).getByText(/never matched by vendor name/)).toBeInTheDocument()
+    expect(screen.getByTestId('esv-phone-details')).toBeInTheDocument()
+  })
+
+  it('opens the module from the entropy certificate', () => {
+    viewWithLinks('/compliance?tab=records&cert=E321')
+    fireEvent.click(
+      within(screen.getByTestId('esv-phone-used-by')).getByRole('button', { name: '#5450' })
+    )
+    expect(screen.getByTestId('fips-phone-entropy-certificates')).toBeInTheDocument()
+  })
+
+  it('says coverage is partial when no module names the certificate', () => {
+    view('/compliance?tab=records&cert=E2')
+    expect(
+      within(screen.getByTestId('esv-phone-used-by')).getByText(/does not mean no module uses it/)
+    ).toBeInTheDocument()
+  })
+
+  it('shows no entropy section for a module whose policy named none', () => {
+    viewWithLinks('/compliance?tab=records&cert=5300')
+    expect(screen.queryByTestId('fips-phone-entropy-certificates')).not.toBeInTheDocument()
   })
 })

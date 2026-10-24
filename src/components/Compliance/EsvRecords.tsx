@@ -43,9 +43,12 @@ const NistLink = ({ record }: { record: ComplianceRecord }) => (
 export const EsvRow = ({
   record,
   onOpenDetails,
+  usedByCount = 0,
 }: {
   record: ComplianceRecord
   onOpenDetails: (record: ComplianceRecord) => void
+  /** FIPS 140-3 modules whose Security Policy names this certificate. */
+  usedByCount?: number
 }) => {
   const facts = sourceFacts(record)
   const first = firstValidatedNote(record)
@@ -66,6 +69,11 @@ export const EsvRow = ({
           {record.productName}
         </div>
         {facts && <div className="text-xs font-normal text-muted-foreground">{facts}</div>}
+        {usedByCount > 0 && (
+          <div className="text-xs font-normal text-muted-foreground">
+            Relied on by {usedByCount} FIPS 140-3 module{usedByCount === 1 ? '' : 's'}
+          </div>
+        )}
       </td>
       <td className="px-4 py-3 w-56">
         <div className="line-clamp-2" title={record.vendor}>
@@ -151,6 +159,7 @@ export const EsvTable = ({
   sortDirection,
   onSort,
   onOpenDetails,
+  usedBy,
 }: {
   rows: readonly ComplianceRecord[]
   virtualRows: ReadonlyArray<{ index: number }>
@@ -160,6 +169,8 @@ export const EsvTable = ({
   sortDirection: 'asc' | 'desc'
   onSort: (column: EsvSortColumn) => void
   onOpenDetails: (record: ComplianceRecord) => void
+  /** ESV id -> FIPS 140-3 modules naming it (EntropyIndex.usedBy). */
+  usedBy?: ReadonlyMap<string, readonly ComplianceRecord[]>
 }) => (
   <table className="max-md:hidden w-full text-sm text-left table-fixed" data-testid="esv-table">
     <caption className="sr-only">
@@ -219,7 +230,14 @@ export const EsvTable = ({
       )}
       {virtualRows.map((v) => {
         const record = rows[v.index]
-        return <EsvRow key={record.id} record={record} onOpenDetails={onOpenDetails} />
+        return (
+          <EsvRow
+            key={record.id}
+            record={record}
+            onOpenDetails={onOpenDetails}
+            usedByCount={usedBy?.get(record.id)?.length ?? 0}
+          />
+        )
       })}
       {paddingBottom > 0 && (
         <tr>
