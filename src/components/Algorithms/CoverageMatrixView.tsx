@@ -51,7 +51,7 @@ import {
   groupMatchesStatus,
   type CoverageGroup,
 } from '@/data/validation/coverageExport'
-import { gapSummary, plainGapView, plainRuleText } from './gapPlainText'
+import { foldRecordedFailGaps, gapSummary, plainGapView, plainRuleText } from './gapPlainText'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 const dataUrl = (file: string) =>
@@ -212,6 +212,11 @@ export function CoverageMatrixView({
   }
 
   const groups = useMemo(() => (matrix ? groupByMechanismOperation(matrix) : []), [matrix])
+  // The register as listed: generated per-case "Recorded FAIL" entries are folded into one plain entry per test family.
+  const registerGaps = useMemo(
+    () => (matrix ? foldRecordedFailGaps(matrix.openGaps) : []),
+    [matrix]
+  )
 
   // ?engine: re-read on same-route navigation.
   useEffect(() => {
@@ -278,8 +283,8 @@ export function CoverageMatrixView({
   }
 
   const baseGaps = showAllGaps
-    ? matrix.openGaps
-    : matrix.openGaps.filter((g) => g.origin === 'curated' || !g.id.startsWith('untested:'))
+    ? registerGaps
+    : registerGaps.filter((g) => g.origin === 'curated' || !g.id.startsWith('untested:'))
   const gaps = baseGaps.filter((gap) => {
     if (gapStatus !== 'all' && gap.status !== gapStatus) return false
     const q = gapQuery.trim().toLowerCase()
@@ -288,7 +293,7 @@ export function CoverageMatrixView({
     if (gapView === 'evidence') fields.push(gap.owner, gap.planItem ?? '')
     return fields.some((value) => value.toLowerCase().includes(q))
   })
-  const hiddenGaps = matrix.openGaps.length - baseGaps.length
+  const hiddenGaps = registerGaps.length - baseGaps.length
 
   const toggleGapDetails = (id: string) => {
     setExpandedGapDetails((previous) => {
@@ -690,7 +695,7 @@ export function CoverageMatrixView({
 
           {hiddenGaps > 0 && (
             <p className="mt-2 text-[11px] text-muted-foreground" data-testid="gap-hidden-note">
-              {matrix.openGaps.length} gaps in total. {hiddenGaps} generated entries &mdash; one per
+              {registerGaps.length} gaps in total. {hiddenGaps} generated entries &mdash; one per
               mechanism with no registered test &mdash; are folded away and not included in the
               counts above; show them at the end of the list.
             </p>

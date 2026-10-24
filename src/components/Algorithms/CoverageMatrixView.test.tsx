@@ -7,8 +7,10 @@ import {
   buildCoverageMatrix,
   compactMatrix,
   expandMatrix,
+  type OpenGap,
   type RunResult,
 } from '@/data/validation/coverageModel'
+import coverageMatrix from '@/data/validation/coverage-matrix.generated.json'
 import { FIXTURE_ARTIFACT, fixtureInputs } from '@/data/validation/coverageFixture'
 import { VALIDATION_DISCLAIMER } from '@/data/validationDisclaimer'
 import { groupByMechanismOperation } from '@/data/validation/coverageExport'
@@ -193,6 +195,38 @@ describe('CoverageMatrixView', () => {
     expect(
       within(gaps).getByText('Technical evidence and investigation history')
     ).toBeInTheDocument()
+  })
+
+  it('lists the 20 recorded NIST sample failures as two plain entries and keeps the test paths under the technical evidence', async () => {
+    const user = userEvent.setup()
+    const failures = (coverageMatrix.openGaps as unknown as OpenGap[]).filter((g) =>
+      g.id.startsWith('recorded-fail:')
+    )
+    expect(failures).toHaveLength(20)
+    const withFailures = { ...file, openGaps: [...file.openGaps, ...failures] }
+    const without = expandMatrix(structuredClone(file)).openGaps.filter(
+      (g) => g.origin === 'curated' || !g.id.startsWith('untested:')
+    )
+    render(<CoverageMatrixView loader={() => Promise.resolve(structuredClone(withFailures))} />)
+    const gaps = await screen.findByRole('region', { name: 'Open gaps register' })
+    expect(within(gaps).getByTestId('gap-total')).toHaveTextContent(`(${without.length + 2})`)
+
+    expect(
+      within(gaps).getByRole('heading', {
+        name: 'PBKDF2: one NIST sample case fails on both engines',
+      })
+    ).toBeInTheDocument()
+    const oaep = within(gaps).getByRole('article', {
+      name: 'RSA-OAEP decryption: 18 NIST sample cases fail on the Rust engine',
+    })
+    expect(within(gaps).getAllByText(/^Recorded FAIL/)).toHaveLength(
+      without.filter((g) => g.id.startsWith('recorded-fail:')).length
+    )
+    expect(gaps).not.toHaveTextContent(/rsa_oaep_test|pbkdf2_acvp_test|row rsaoaep|row pbkdf2/)
+
+    await user.click(within(oaep).getByRole('button', { name: 'Show technical evidence' }))
+    expect(oaep).toHaveTextContent('acvp.36 (rsa_oaep_test#/testGroups/0/tests/0), row rsaoaep-')
+    expect(oaep).toHaveTextContent('acvp.36 (rsa_oaep_test#/testGroups/1/tests/9), row rsaoaep-')
   })
 
   it('defaults certification engineers to the structured evidence view', async () => {
