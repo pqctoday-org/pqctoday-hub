@@ -28,7 +28,7 @@ const SUB_HEADS = [
   'How the two differ',
 ]
 const CMVP_PAGE =
-  'https://csrc.nist.gov/projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800140c'
+  'https://csrc.nist.gov/projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140c'
 
 // Every sentence of the approved text, in order. Straight quotes: the page uses curly ones and
 // `flat` maps both to the same characters.
@@ -206,7 +206,7 @@ describe('SecureBootPQC: two integrity checks beside the signature', () => {
     // The CMVP page is a direct external link (twice: on the phrase and in the Sources line),
     // not a Library row.
     const cmvp = Array.from(box.querySelectorAll('a')).filter((a) =>
-      (a.getAttribute('href') ?? '').includes('sp800140c')
+      (a.getAttribute('href') ?? '').includes('/sp800-140c')
     )
     expect(cmvp.length).toBe(2)
     for (const a of cmvp) {

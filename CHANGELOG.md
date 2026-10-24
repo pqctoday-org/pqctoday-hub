@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.177.1] - 2026-10-24
+
+A broken link in the new Firmware PQC Migration box now opens the right NIST page.
+
+### Fixed
+
+- **The link to the CMVP list of approved security functions opens the right page** [view:/learn/secure-boot-pqc] [persona:cert-engineer] [persona:developer] [persona:architect]: in the box on SP 800-193 and the FIPS 140-3 integrity test, the sentence on the security functions that include ML-DSA, SLH-DSA, LMS, HSS, XMSS and XMSSMT, and the Sources line, pointed to an address that NIST answers with "Page Not Found". Both now open the CMVP page for SP 800-140C.
+
 ## [4.177.0] - 2026-10-24
 
 The Firmware PQC Migration lesson gains a box on NIST SP 800-193 and the FIPS 140-3 firmware integrity test, the Library adds NIST SP 800-193 and names the CMVP Management Manual's version, and ten older entries in the revision history now link to the changes they shipped in.
