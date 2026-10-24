@@ -57,8 +57,7 @@ export const content: ModuleContent = {
     // ── Common Criteria / CCRA (Path B) ──
     getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
     getStandard('CCDB-014-Assurance-Continuity-v3-1'),
-    getStandard('COMMON-CRITERIA'),
-    getStandard('CC-2022-PART1'), // term key above the scheme table (Security Target, Protection Profile)
+    getStandard('COMMON-CRITERIA'), // also the term key above the scheme table (Security Target, Protection Profile)
     getStandard('CC-2022-PART2'),
     getStandard('CC-2022-PART3'),
 

@@ -23,7 +23,7 @@ export const CORE_SOURCES = {
   cmvpMip: getStandard('NIST-CMVP-MIP-List'),
   acvp: getStandard('NIST-ACVP'),
   sp800140b: getStandard('NIST-SP-800-140B'),
-  ccPart1: getStandard('CC-2022-PART1'),
+  ccPart1: getStandard('COMMON-CRITERIA'),
   ccPart3: getStandard('CC-2022-PART3'),
   cc: getStandard('COMMON-CRITERIA'),
   ccTransition: getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
