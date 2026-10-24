@@ -69,6 +69,12 @@ export const content: ModuleContent = {
     // 2026-10-01: Boot Verify Latency step (moved from the IoT/OT module) names
     // LMS sizes from RFC 8554.
     getStandard('RFC 8554'),
+    // Declared 24 Oct 2026: the "Two integrity checks beside the signature" box names these
+    // documents (FIPS 186-5, FIPS 140-3 and the Implementation Guidance are declared above).
+    getStandard('NIST-SP-800-193'),
+    getStandard('NIST-SP-800-140'),
+    getStandard('NIST-SP-800-140B'),
+    getStandard('NIST-SP-800-140C'),
   ],
 
   algorithms: [
