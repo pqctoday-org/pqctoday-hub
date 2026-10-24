@@ -237,7 +237,7 @@ describe('the text of the panels', () => {
       '(TCHES 2025, issue 4)',
       '(DATE 2026)',
       '(TCHES 2023, issue 4)',
-      'up to 65.2% of the signing time was vulnerable to an unprofiled attack (TCHES 2018, issue 3)',
+      'up to 65.2% of the execution time of Dilithium was vulnerable to an unprofiled attack that injects a random fault anywhere during signing (TCHES 2018, issue 3)',
       '(AsiaCCS 2019)',
       'as few as 1024 and 512 faulty signatures for Dilithium2',
       '(TCHES 2024, issue 3)',
