@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10232026_r2.csv
+ * Source: src/data/role_board_content_10232026_r3.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2782,7 +2782,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle:
           'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 26 minutes of essentials, not the full 15¼ hours).',
         trackNote:
-          "Six essentials against the full 13-module path plus the quiz, 921 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
+          'Six essentials against the full 13-module path plus the quiz, 921 minutes in all. The path also inserts hands-on actions like Run Validation Tests, Check Certificate Records and Browse Migration Workbench, with checkpoint quizzes between the lessons.',
         trackChips: [
           'Product certification',
           'FIPS 140-3',
@@ -3057,9 +3057,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/patents',
           },
           {
-            title: 'When firmware signing has to change',
-            body: "The timeline carries dated milestones for software and firmware signing — the NSA's CNSA 2.0 among them — each linked to its source.",
-            href: '/timeline',
+            title: 'See where the cycles go',
+            body: 'A lesson on where PQC spends its time, which building blocks are worth accelerating, and what Arm, FPGA, GPU and ASIC approaches can and cannot do.',
+            href: '/learn/pqc-hw-acceleration',
           },
           {
             title: 'Why the question is being asked',
