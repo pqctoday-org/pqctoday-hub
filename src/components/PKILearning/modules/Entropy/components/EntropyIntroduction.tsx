@@ -367,11 +367,50 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             <li>
               RBG constructions are a separate step: CMVP also issues Random Bit Generator
               Validation Certificates for SP 800-90C conformance; the CMVP Entropy Validations page
-              names IG D.T as the guidance, and D.T is not yet in the published Implementation
-              Guidance (19 August 2026).
+              names IG D.T as the guidance, and D.T is not in the 19 August 2026 edition of the
+              Implementation Guidance.
             </li>
             <li>NIST publishes no review duration. Do not plan around a fixed number of weeks.</li>
           </ul>
+        </div>
+
+        <div
+          data-testid="ig-says-what"
+          className="bg-primary/5 rounded-lg p-4 border border-primary/20 mt-4"
+        >
+          <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <FileText size={16} className="text-primary" /> Which IG says what
+          </h3>
+          <p className="text-xs text-foreground/80 mb-3">
+            Start with these four sections of the FIPS 140-3 Implementation Guidance (IG), edition
+            of 19 August 2026.
+          </p>
+          <ul className="text-xs text-foreground/80 space-y-2 mb-3">
+            <li>
+              <strong>
+                Does my module need an entropy estimate? Which certificate caveat applies?
+              </strong>{' '}
+              IG 9.3.A, Entropy Caveats (last changed July 2024). It also says which module designs
+              need an ESV certificate.
+            </li>
+            <li>
+              <strong>How does a lab test a source? What must the certificate show?</strong> IG D.J,
+              Entropy Estimation and Compliance with SP 800-90B (last changed November 2021).
+            </li>
+            <li>
+              <strong>How does the CMVP read a particular SP 800-90B requirement?</strong> IG D.K,
+              Interpretation of SP 800-90B Requirements (last changed April 2026).
+            </li>
+            <li>
+              <strong>How is entropy counted when several sources seed one DRBG?</strong> IG D.O,
+              Combining Entropy from Multiple Sources (last changed May 2021).
+            </li>
+          </ul>
+          <p className="text-xs text-foreground/80">
+            A lab submits a source through the ESV Server to receive an Entropy Validation
+            Certificate. Validated sources are listed in the CMVP Entropy Source Validation search.
+            The older ENT entries are legacy. Where D.J applies, new submissions need ESV.
+          </p>
         </div>
       </section>
 
@@ -448,7 +487,10 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             <li>
               <span className="font-medium text-foreground/70">XOR combination:</span> XOR of two
               independent inputs is at least as unpredictable as the stronger one. If the inputs are
-              correlated, or an attacker can influence one of them, that guarantee is gone.
+              correlated, or an attacker can influence one of them, that guarantee is gone. For a
+              CMVP certificate, IG D.O says entropy sources can be combined only by concatenating
+              their output strings, and IG D.K treats XOR of copies of a noise source as a
+              digitization step that needs extra justification.
             </li>
             <li>
               <span className="font-medium text-foreground/70">Conditioning:</span> HMAC or hash

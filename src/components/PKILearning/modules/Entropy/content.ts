@@ -69,6 +69,10 @@ export const content: ModuleContent = {
     // walkthrough teach (the ESV Server and its protocol, and the ESV program page).
     getStandard('NIST-CMVP-ESV'),
     getStandard('NIST-CMVP-ESV-Program'),
+    // 2026-10-24: the "Which IG says what" box (Learn > CMVP ESV Process) names IG 9.3.A,
+    // D.J, D.K and D.O with their last-changed dates, and the Combining Sources bullet
+    // quotes D.O and D.K; the edition is the 19 August 2026 FIPS 140-3 IG.
+    getStandard('NIST-FIPS140-3-IG-PQC'),
     getStandard('NIST-SP-800-90B-Entropy-Assessment-tool-usnistgov-GitHub'),
   ],
 
@@ -84,6 +88,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Random Byte Generation: compare Web Crypto API and OpenSSL WASM with deliberately weak generators — random-looking is not unpredictable. Entropy Testing: visualizations, SP 800-90B health tests, estimators and known-answer tests shown as separate groups with no combined pass count. ESV Validation Walkthrough: the NIST Entropy Source Validation process and the separate Entropy and RBG Validation Certificates. DRBG State Machine: an SP 800-90A HMAC_DRBG-SHA-256 checked against NIST known-answer vectors. Combining Sources: raw-boundary health tests and an assumption-driven verdict that can end in "not enough evidence" or "construction is unsafe". Entropy Evidence Lab: NIST\'s SP 800-90B estimator tool in WebAssembly on real CPU-jitter recordings (KV260, i.MX 95, Mac), a DRBG-output contrast set and synthetic failures — estimator output for one dataset, never a validation. The TRNG-vs-QRNG comparison is a Playground simulation: its "QRNG" sample comes from crypto.getRandomValues(), and no QRNG hardware is involved.',
     relatedStandards:
-      'NIST SP 800-90A Rev. 1 (DRBG Mechanisms; current final version). SP 800-90A Rev. 2 is only a pre-draft call for comments (2025-09-04, comments closed 2025-11-04) with no draft text. NIST SP 800-90B (Entropy Sources). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 draft (Security Strength Requirements). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) random-input and RBG security-strength requirements. CMVP Entropy Validation Certificates (SP 800-90B) and Random Bit Generator Validation Certificates (SP 800-90C; the CMVP Entropy Validations page names IG D.T, which is not yet in the published IG)',
+      'NIST SP 800-90A Rev. 1 (DRBG Mechanisms; current final version). SP 800-90A Rev. 2 is only a pre-draft call for comments (2025-09-04, comments closed 2025-11-04) with no draft text. NIST SP 800-90B (Entropy Sources). NIST SP 800-90C (RBG Constructions). NIST SP 800-131A Rev. 3 draft (Security Strength Requirements). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) random-input and RBG security-strength requirements. CMVP Entropy Validation Certificates (SP 800-90B) and Random Bit Generator Validation Certificates (SP 800-90C; the CMVP Entropy Validations page names IG D.T, which is not in the 19 August 2026 edition of the IG)',
   },
 }

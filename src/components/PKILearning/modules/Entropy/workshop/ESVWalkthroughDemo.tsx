@@ -389,8 +389,8 @@ export const ESVWalkthroughDemo: React.FC = () => {
         </p>
         <p className="text-xs text-muted-foreground mb-4">
           The same server accepts SP 800-90C random bit generator submissions (the CMVP Entropy
-          Validations page names IG D.T for them; D.T is not yet in the published Implementation
-          Guidance of 19 August 2026), which lead to a separate{' '}
+          Validations page names IG D.T for them; D.T is not in the 19 August 2026 edition of the
+          Implementation Guidance), which lead to a separate{' '}
           <strong>Random Bit Generator Validation Certificate</strong>. Neither certificate is a
           FIPS 140-3 module certificate. NIST states no fixed review time.
         </p>
