@@ -2112,20 +2112,22 @@ const Avavan5Panel = () => (
           also lists inspections that detect attempts to reach side-channels, and protection against
           emanation attacks. The profile’s refinement of AVA_VAN.5 says that the protection which
           FPT_PHP.1 and FPT_PHP.3 must give against physical attacks is equivalent to the assessment
-          in ISO/IEC 19790 at Security Level 3. It says the High attack potential is aimed at
-          logical attacks, especially remote ones. ENISA’s interpretation adds that physical attacks
-          by other persons are not applicable, that no additional vulnerability analysis for
-          physical attacks is needed, and that all kinds of administrator access must be taken into
-          account, including logical access through interfaces that only administrators can reach.
-          The security-box document describes power-consumption analysis as done through an external
-          interface of the TOE, emanation analysis as done with an antenna outside the security-box
-          boundary, and timing analysis as usually possible through the external interfaces. For an
-          HSM under that profile, logical attacks reachable through interfaces, including timing and
-          error behaviour seen from outside, therefore remain relevant. <MA /> A profile that names
-          power, emanation or fault attacks as threats puts them in scope: the Security IC Platform
-          profile, for example, names inherent and forced information leakage as threats. The texts
-          do not say how these rules combine for new cryptographic code in an HSM; see the note
-          after the two panels.
+          in ISO/IEC 19790 at Security Level 3. Its rationale for AVA_VAN.5 (section 7.2.4) adds
+          that, while the environment is meant to protect against physical attacks, a high level of
+          protection against logical attacks, especially remote ones, is also necessary, and that
+          this is why the vulnerability analysis is augmented to High attack potential. ENISA’s
+          interpretation adds that physical attacks by other persons are not applicable, that no
+          additional vulnerability analysis for physical attacks is needed, and that all kinds of
+          administrator access must be taken into account, including logical access through
+          interfaces that only administrators can reach. The security-box document describes
+          power-consumption analysis as done through an external interface of the TOE, emanation
+          analysis as done with an antenna outside the security-box boundary, and timing analysis as
+          usually possible through the external interfaces. For an HSM under that profile, logical
+          attacks reachable through interfaces, including timing and error behaviour seen from
+          outside, therefore remain relevant. <MA /> A profile that names power, emanation or fault
+          attacks as threats puts them in scope: the Security IC Platform profile, for example,
+          names inherent and forced information leakage as threats. The texts do not say how these
+          rules combine for new cryptographic code in an HSM; see the note after the two panels.
         </P>
 
         <P>
