@@ -29,6 +29,28 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.176.0] - 2026-10-24
+
+The FIPS 140-3 lesson gains a workshop step on reading algorithm records, the Entropy, Cryptographic Product Certification and Common Criteria lessons gain new teaching content, the Library adds India's May 2026 quantum-safe roadmap, and search can now quote passages from the documents added in the last two releases.
+
+### Added
+
+- **A FIPS 140-3 workshop step: read the algorithm records** [view:/learn/fips-140-3-certification] [persona:cert-engineer] [persona:grc]: you compare the algorithm validation records of two real modules with their Security Policies and mark each item Listed or Not listed, using the Policy's own table names. One item shows that a signature scheme can sit in the vendor-affirmed table without being in the Approved Algorithms table. The lesson is now about 80 minutes, and the certification engineer and GRC learning-path totals follow. A new sentence also links each certificate to the NIST Implementation Guidance that explains it.
+- **A box in the Entropy lesson that says which Implementation Guidance section answers which entropy question** [view:/learn/entropy-randomness] [persona:cert-engineer] [persona:researcher]: it names IG 9.3.A, D.J, D.K and D.O with the date each last changed, and the combining-sources point now says what the CMVP requires for XOR and concatenation.
+- **Who the Cryptographic Product Certification lesson is for, and a key to its first table** [view:/learn/crypto-product-certification] [persona:cert-engineer]: certification engineers see a short orientation list at the start, and the first table has a ten-entry key to its abbreviations.
+- **A worked Security Target example and an AVA_VAN.5 box in the Common Criteria lesson** [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:researcher]: two collapsed panels show how a Security Target for an invented product could word ML-KEM-768 key generation, ML-DSA-65 signing and a hybrid key derivation, and which attacks on lattice-based code a laboratory could examine under AVA_VAN.5, with the published papers behind each. A note below them lists what the example does not settle.
+- **India's May 2026 quantum-safe roadmap in the Library** [view:/library] [persona:grc] [persona:executive] [persona:researcher]: the Department of Science and Technology report "Roadmap to Quantum Resiliency" is added, and the February 2026 Task Force report entry is marked as moved because its address no longer works.
+
+### Changed
+
+- **The certification lessons carry a fresh owner sign-off** [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc]: the FIPS 140-3, Cryptographic Product Certification and Common Criteria lessons show a review date of 24 October 2026.
+- **Search can quote the newest Library documents** [view:/library] [persona:cert-engineer] [persona:researcher]: passages from the ACVP specifications for ML-KEM, SLH-DSA and the SHA family, NIST's SP 800-90B entropy assessment tool and India's roadmap are now available to search and to the assistant's answers.
+
+### Fixed
+
+- **IG D.T is described as not being in the current edition** [view:/learn/entropy-randomness] [view:/learn/quiz] [persona:cert-engineer] [persona:researcher]: the Entropy lesson, its workshop and a quiz explanation now say that the 19 August 2026 edition of the FIPS 140-3 Implementation Guidance ends at D.S, instead of saying D.T is "not yet" published.
+- **Known-answer panels no longer end the evidence line with two full stops** [view:/learn] [persona:cert-engineer] [persona:researcher]: in every lesson that shows a sample-check panel, the evidence line under it now reads cleanly.
+
 ## [4.175.0] - 2026-10-24
 
 Entropy source validation certificates get their own tab in the Compliance records, the Migrate Vulnerabilities tab now finds far more vulnerabilities for products that NIST lists without a version, and a round of fixes from a certification engineer's review corrects statements, wording and phone layouts across the certification lessons and the Library.
