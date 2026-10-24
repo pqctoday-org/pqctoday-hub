@@ -289,7 +289,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
         <p className="text-xs text-muted-foreground italic">
           Click <strong>{actionLabel}</strong> to run {specs.length} use-case scenario
           {specs.length !== 1 ? 's' : ''}. Evidence in this set:{' '}
-          {evidenceClasses.map((c) => KAT_EVIDENCE_META[c].label).join('; ')}.
+          {evidenceClasses.map((c) => KAT_EVIDENCE_META[c].label.replace(/\.$/, '')).join('; ')}.
         </p>
       )}
 
