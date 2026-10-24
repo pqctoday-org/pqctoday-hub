@@ -241,7 +241,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Products and Product Records',
-        body: 'Products maps the inventory you keep on Migrate to reviewed evidence. It distinguishes NIST CAVP/ACVP algorithm validation, FIPS 140 module validation, and algorithms named in evaluated-product documentation; those evidence classes are not interchangeable. Product Records is a searchable snapshot of NIST CMVP module validations, NIST CAVP algorithm validations, Common Criteria and EUCC certificates, and ANSSI CSPN certificates. Search by product, vendor or type, filter by source and status, and use the source and freshness fields before relying on a record. A link with ?cert= opens one specific record.',
+        body: 'Products maps the inventory you keep on Migrate to reviewed evidence. It distinguishes NIST CAVP/ACVP algorithm validation, FIPS 140 module validation, and algorithms named in evaluated-product documentation; those evidence classes are not interchangeable. Product Records is a searchable snapshot of NIST CMVP module validations, NIST CAVP algorithm validations, NIST entropy source validations (the Entropy (ESV) tab), Common Criteria and EUCC certificates, and ANSSI CSPN certificates. Search by product, vendor or type, filter by source and status, and use the source and freshness fields before relying on a record. A link with ?cert= opens one specific record.',
       },
       {
         heading: 'Landscape',

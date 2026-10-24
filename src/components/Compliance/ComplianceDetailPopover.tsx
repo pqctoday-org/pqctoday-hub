@@ -14,11 +14,12 @@ import {
   ShieldAlert,
   X,
 } from 'lucide-react'
-import type { ComplianceRecord, ComplianceStatus } from './types'
+import type { ComplianceRecord, ComplianceStatus, EsvEntropyClaim } from './types'
 import clsx from 'clsx'
 import {
   cavpValidationUrl,
   formatIsoDate,
+  isPqcApplicable,
   isSecurityTargetType,
   pqcCoverageState,
   pqcUnknownReason,
@@ -196,7 +197,114 @@ const CavpDetails = ({ record }: { record: ComplianceRecord }) => {
   )
 }
 
+const claimFacts = (c: EsvEntropyClaim): string[] =>
+  [
+    c.bitsOfEntropyPerOutput && `Bits of entropy per output: ${c.bitsOfEntropyPerOutput}`,
+    c.outputSizeBits && `Output size: ${c.outputSizeBits} bits`,
+    c.entropyPerSample && `Entropy per sample: ${c.entropyPerSample}`,
+    c.sampleSize && `Sample size: ${c.sampleSize}`,
+    c.statedAs,
+  ].filter((x): x is string => !!x)
+
+/**
+ * NIST entropy source validation: what the certificate page states. The page does not say
+ * whether the source is hardware or software — only whether its noise source is physical.
+ */
+const EsvDetails = ({ record }: { record: ComplianceRecord }) => {
+  const claims = record.esvEntropyClaims ?? []
+  const history = record.esvValidationHistory ?? []
+  const first = formatIsoDate(record.esvFirstValidated)
+  const observed = formatIsoDate(record.esvDetailsFetchedAt ?? record.esvListObservedAt)
+  return (
+    <div className="space-y-3 pt-2 border-t border-border" data-testid="esv-details">
+      <FieldLabel>NIST entropy source validation</FieldLabel>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {record.esvStandard && <Field label="Standard">{record.esvStandard}</Field>}
+        {record.esvVersion && <Field label="Version">{record.esvVersion}</Field>}
+        {record.esvNoiseSourceClassification && (
+          <Field label="Noise source">
+            {record.esvNoiseSourceClassification}
+            <span className="block text-xs text-muted-foreground">NIST&apos;s classification</span>
+          </Field>
+        )}
+        {record.esvReuseStatus && <Field label="Reuse status">{record.esvReuseStatus}</Field>}
+        {first && <Field label="First validated">{first}</Field>}
+        {observed && (
+          <Field label="Page read">
+            {observed}
+            {!record.esvDetailsFetchedAt && (
+              <span className="block text-xs text-muted-foreground">
+                list entry only — the certificate page could not be read
+              </span>
+            )}
+          </Field>
+        )}
+      </div>
+      {record.esvDescription && record.esvDescription !== record.productName && (
+        <Field label="Description">{record.esvDescription}</Field>
+      )}
+      {claims.length > 0 && (
+        <div className="space-y-2">
+          <FieldLabel>Entropy claims (certificate page)</FieldLabel>
+          {claims.map((c, i) => {
+            const envs = c.operatingEnvironments ?? []
+            const comps = c.conditioningComponents ?? []
+            return (
+              <div key={i} className="rounded border border-border p-2 space-y-1.5 text-xs">
+                <p className="text-foreground">{claimFacts(c).join(' · ') || '—'}</p>
+                {comps.length > 0 && (
+                  <p className="flex flex-wrap items-baseline gap-x-2 text-muted-foreground">
+                    <span>Vetted conditioning component:</span>
+                    {comps.map((k, n) =>
+                      k.url ? (
+                        <ExtLink key={`${k.cavp}-${n}`} href={k.url}>
+                          <span className="font-mono">{k.cavp}</span>
+                          {k.algorithm ? ` (${k.algorithm})` : ''}
+                        </ExtLink>
+                      ) : (
+                        <span key={n}>{k.text ?? k.cavp}</span>
+                      )
+                    )}
+                  </p>
+                )}
+                {envs.length > 0 && (
+                  <details>
+                    <summary className="cursor-pointer text-muted-foreground">
+                      {envs.length} operating environment{envs.length === 1 ? '' : 's'}
+                    </summary>
+                    <ul className="mt-1 list-disc pl-4">
+                      {envs.map((e) => (
+                        <li key={e}>{e}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+      {history.length > 0 && (
+        <div className="space-y-1">
+          <FieldLabel>Validation history</FieldLabel>
+          <ul className="text-xs space-y-0.5">
+            {history.map((h, i) => (
+              <li key={`${h.date}-${i}`}>
+                <span className="font-mono">{h.date}</span>
+                <span className="text-muted-foreground"> — {h.lab}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {record.link && <ExtLink href={record.link}>NIST entropy certificate {record.id}</ExtLink>}
+    </div>
+  )
+}
+
 const PqcSection = ({ record }: { record: ComplianceRecord }) => {
+  // An entropy certificate says nothing about PQC: no "unknown", no "none" — nothing to show.
+  if (!isPqcApplicable(record.type)) return null
   const state = pqcCoverageState(record.pqcCoverage)
   const fromSt = isSecurityTargetType(record.type)
   if (state === 'none') return null
@@ -323,7 +431,11 @@ export const ComplianceDetailPopover = ({
                   </div>
                   <div className="flex items-center gap-1">
                     <AskAssistantButton
-                      question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${recordTypeLabel(record.type)}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
+                      question={
+                        record.type === 'ESV'
+                          ? `What does NIST entropy certificate ${record.id} (${record.productName}${record.vendor ? ` by ${record.vendor}` : ''}) validate, and how do FIPS 140-3 modules rely on an entropy source like it?`
+                          : `What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${recordTypeLabel(record.type)}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`
+                      }
                     />
                     <EndorseButton
                       endorseUrl={buildRecordEndorsementUrl(record)}
@@ -440,7 +552,7 @@ export const ComplianceDetailPopover = ({
                 {/* Date */}
                 <div className="space-y-1">
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Certification Date
+                    {record.type === 'ESV' ? 'Latest validation' : 'Certification Date'}
                   </h4>
                   <div className="flex items-center gap-1.5 text-foreground text-sm">
                     <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
@@ -490,6 +602,7 @@ export const ComplianceDetailPopover = ({
 
               {record.type === 'FIPS 140-3' && <FipsDetails record={record} />}
               {record.type === 'ACVP' && <CavpDetails record={record} />}
+              {record.type === 'ESV' && <EsvDetails record={record} />}
 
               {/* Documents Section */}
               {(record.certificationReportUrls ||
@@ -559,7 +672,9 @@ export const ComplianceDetailPopover = ({
                         ? 'View the NIST CMVP certificate page'
                         : record.type === 'ACVP'
                           ? 'View the NIST CAVP validation page'
-                          : 'View Official Record Source'}
+                          : record.type === 'ESV'
+                            ? 'View the NIST entropy certificate page'
+                            : 'View Official Record Source'}
                   </a>
                 </div>
               )}

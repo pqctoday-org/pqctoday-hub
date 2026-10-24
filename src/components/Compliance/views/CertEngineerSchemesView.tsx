@@ -73,6 +73,11 @@ const TEST_LINKS = [
     label: 'Common Criteria records',
     desc: 'Certified products and the algorithms named in their Security Targets',
   },
+  {
+    to: '/compliance?tab=records&rtab=esv',
+    label: 'Entropy (ESV) records',
+    desc: 'SP 800-90B entropy source validations: the noise sources a module may rely on',
+  },
 ] as const
 
 const READINESS_ITEMS = [

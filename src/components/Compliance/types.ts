@@ -6,13 +6,17 @@ export type ComplianceSource =
  * absent: the dataset keeps FIPS 140-3 (NIST CMVP) records only. 'ACVP' is the
  * internal value for NIST CAVP algorithm validations — show it to users through
  * `recordTypeLabel()` (recordSemantics.ts), never raw. 'CSPN' is ANSSI's French
- * national first-level scheme, a separate scheme from Common Criteria.
+ * national first-level scheme, a separate scheme from Common Criteria. 'ESV' is a
+ * NIST CMVP entropy source validation certificate (SP 800-90B): it says nothing
+ * about PQC algorithms, so PQC coverage does not apply to it (`isPqcApplicable()`).
  */
-export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'EUCC' | 'CSPN'
+export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'EUCC' | 'CSPN' | 'ESV'
 
 /**
  * Statuses the sources publish verbatim. FIPS 140-3 (CMVP): Active / Historical
  * / Revoked. CAVP: Validated (no lifecycle — NIST shows "First Validated").
+ * ESV: Validated (NIST publishes no lifecycle status for entropy certificates;
+ * one NIST stops listing leaves the snapshot).
  * CC Portal / ANSSI / EUCC: Active / Archived / Expired / Withdrawn.
  * 'Pending' and 'In Process' are legacy values kept only so an older cached
  * copy still renders; no current source writes them (the in-browser scrape that
@@ -38,6 +42,19 @@ export interface CmvpApprovedAlgorithm {
   name: string
   /** CAVP validation references on the certificate page, e.g. 'A1234'. */
   cavpRefs: string[]
+}
+
+/** One row of a NIST entropy certificate's entropy table, as the page words it. */
+export interface EsvEntropyClaim {
+  bitsOfEntropyPerOutput?: string
+  outputSizeBits?: string
+  entropyPerSample?: string
+  sampleSize?: string
+  /** The row's text verbatim, kept only when its layout was not recognised. */
+  statedAs?: string
+  operatingEnvironments?: string[]
+  /** Vetted conditioning components: the CAVP validation they cite. */
+  conditioningComponents?: Array<{ cavp?: string; url?: string; algorithm?: string; text?: string }>
 }
 
 /** One capability row of a NIST CAVP validation details page. */
@@ -106,6 +123,25 @@ export interface ComplianceRecord {
   cavpDetailsFetchedAt?: string
   cavpCapabilities?: CavpCapability[]
 
+  // ── NIST entropy source validation certificate (ESV, SP 800-90B) ──
+  // Only what the NIST certificate page states. The page does not say whether the
+  // source is hardware or software: `esvNoiseSourceClassification` (Physical /
+  // Non-Physical) is NIST's own classification of the noise source, nothing more.
+  esvStandard?: string
+  esvVersion?: string
+  esvDescription?: string
+  esvNoiseSourceClassification?: string
+  esvReuseStatus?: string
+  /** Entropy claims, one per table row on the certificate page. */
+  esvEntropyClaims?: EsvEntropyClaim[]
+  esvFirstValidated?: string
+  /** Every validation on the certificate page, oldest first. */
+  esvValidationHistory?: Array<{ date: string; lab: string }>
+  /** When the certificate page was read — ISO datetime. */
+  esvDetailsFetchedAt?: string
+  /** Set instead of `esvDetailsFetchedAt` when only the NIST list could be read. */
+  esvListObservedAt?: string
+
   // ── Common Criteria (CC Portal lists) ──
   ccArchivedDate?: string | null
   ccListObservedAt?: string
@@ -138,6 +174,7 @@ export interface ComplianceMeta {
   scope?: {
     fips?: string
     cavp?: string
+    esv?: string
     cc?: string
     excluded?: string[]
   }
