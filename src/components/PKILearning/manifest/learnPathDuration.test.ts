@@ -3,7 +3,13 @@ import { describe, it, expect } from 'vitest'
 import { moduleDurationLabel } from './learnPathDuration'
 import { MANIFESTS } from './registry'
 
-const path = (duration: string) => ({ id: duration, label: duration, entrySection: 'a', duration })
+const path = (duration: string) => ({
+  id: duration,
+  label: duration,
+  entrySection: 'a',
+  duration,
+  sections: [],
+})
 
 describe('moduleDurationLabel', () => {
   it('keeps the module number when no path is longer than it', () => {
@@ -23,9 +29,9 @@ describe('moduleDurationLabel', () => {
 
   it('leaves modules without paths, or without a timed number, alone', () => {
     expect(moduleDurationLabel({ duration: '30 min' })).toBe('30 min')
-    expect(
-      moduleDurationLabel({ duration: undefined, learnPaths: [path('5 min'), path('9 min')] })
-    ).toBe(undefined)
+    expect(moduleDurationLabel({ duration: '', learnPaths: [path('5 min'), path('9 min')] })).toBe(
+      ''
+    )
   })
 
   it('never shows a header shorter than one of the module’s own paths', () => {
