@@ -22,6 +22,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import clsx from 'clsx'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
+import { EsvCard, EsvTable, type EsvSortColumn } from './EsvRecords'
 import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
@@ -32,13 +33,16 @@ import { buildComplianceCsv } from './recordsExport'
 import {
   applyRecordScope,
   formatIsoDate,
+  isPqcApplicable,
   isSecurityTargetType,
   pqcCoverageState,
   pqcUnknownReason,
   pqcEvidenceLabel,
   pqcNames,
   recordTypeDescription,
+  buildEntropyIndex,
   NO_SCHEME_ID_LABEL,
+  RECORD_TYPE_TABS,
   recordTypeLabel,
   retrievalSummary,
   schemeCertificateId,
@@ -102,6 +106,15 @@ interface ComplianceTableProps {
 
 export type SortDirection = 'asc' | 'desc'
 export type SortColumn = keyof ComplianceRecord
+
+/** Framework whose mandate deadline a record-type tab shows (tabs without one show none). */
+const TAB_FRAMEWORK_ID: Record<string, string> = {
+  fips: 'FIPS-140-3',
+  acvp: 'ACVP',
+  cc: 'COMMON-CRITERIA',
+}
+/** Tabs for a record type that has no framework: their tooltip describes the type. */
+const TAB_RECORD_TYPE: Record<string, string> = { cspn: 'CSPN', esv: 'ESV' }
 
 const PQC_ALGOS = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS', 'XMSS', 'HSS', 'FN-DSA', 'Falcon']
 
@@ -203,7 +216,14 @@ export const ComplianceRow = ({
             Scoped to the empty-STRING case only -- the boolean `false` value
             this field can also carry (services.ts) has different, unverified
             semantics and isn't touched here. */}
-        {pqcState === 'not-read' ? (
+        {!isPqcApplicable(record.type) ? (
+          <span
+            className="text-xs text-muted-foreground"
+            title="Entropy source validations certify a noise source; PQC coverage does not apply."
+          >
+            N/A
+          </span>
+        ) : pqcState === 'not-read' ? (
           <span
             className="text-xs text-muted-foreground italic"
             title={
@@ -476,12 +496,16 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     return () => mq.removeEventListener('change', handler)
   }, [])
 
+  // The Entropy (ESV) tab: its own columns and cards; PQC and Migrate-category facets do not apply.
+  const isEsvTab = certType.toLowerCase() === 'esv'
+  // Which modules name which entropy certificate (from their Security Policies): linked both ways.
+  const entropyIndex = useMemo(() => buildEntropyIndex(data), [data])
+
   const totalActiveFilters =
-    pqcFilters.length +
+    (isEsvTab ? 0 : pqcFilters.length + migrateCatFilters.length) +
     categoryFilters.length +
     sourceFilters.length +
-    vendorFilters.length +
-    migrateCatFilters.length
+    vendorFilters.length
 
   const handleClearAll = () => {
     setPqcFilters([])
@@ -660,7 +684,11 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           : dateB.getTime() - dateA.getTime()
       }
 
-      const compareResult = String(aVal).localeCompare(String(bVal))
+      const compareResult = String(aVal).localeCompare(
+        String(bVal),
+        undefined,
+        sortColumn === 'id' ? { numeric: true } : undefined
+      )
       return sortDirection === 'asc' ? compareResult : -compareResult
     })
 
@@ -760,25 +788,27 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
 
   const MobileFilterContent = (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold">PQC Support</h3>
-        <div className="flex flex-wrap gap-2">
-          {PQC_ALGOS.map((algo) => (
-            <Button
-              variant="ghost"
-              key={algo}
-              onClick={() => handleTogglePqcFilter(algo)}
-              className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
-                pqcFilters.includes(algo)
-                  ? 'bg-primary/10 border-primary/30 text-primary'
-                  : 'bg-muted border-border text-muted-foreground'
-              }`}
-            >
-              {algo}
-            </Button>
-          ))}
+      {!isEsvTab && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold">PQC Support</h3>
+          <div className="flex flex-wrap gap-2">
+            {PQC_ALGOS.map((algo) => (
+              <Button
+                variant="ghost"
+                key={algo}
+                onClick={() => handleTogglePqcFilter(algo)}
+                className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
+                  pqcFilters.includes(algo)
+                    ? 'bg-primary/10 border-primary/30 text-primary'
+                    : 'bg-muted border-border text-muted-foreground'
+                }`}
+              >
+                {algo}
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="space-y-2">
         <h3 className="text-sm font-semibold">Source</h3>
@@ -820,25 +850,27 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold">Migrate Category (CSC)</h3>
-        <div className="flex flex-wrap gap-2">
-          {uniqueMigrateCategories.map((mc) => (
-            <Button
-              variant="ghost"
-              key={mc.categoryId}
-              onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
-              className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
-                migrateCatFilters.includes(mc.categoryId)
-                  ? 'bg-secondary/10 border-secondary/30 text-secondary'
-                  : 'bg-muted border-border text-muted-foreground'
-              }`}
-            >
-              <span className="font-mono opacity-60 mr-1">{mc.categoryId}</span> {mc.categoryName}
-            </Button>
-          ))}
+      {!isEsvTab && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold">Migrate Category (CSC)</h3>
+          <div className="flex flex-wrap gap-2">
+            {uniqueMigrateCategories.map((mc) => (
+              <Button
+                variant="ghost"
+                key={mc.categoryId}
+                onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
+                className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
+                  migrateCatFilters.includes(mc.categoryId)
+                    ? 'bg-secondary/10 border-secondary/30 text-secondary'
+                    : 'bg-muted border-border text-muted-foreground'
+                }`}
+              >
+                <span className="font-mono opacity-60 mr-1">{mc.categoryId}</span> {mc.categoryName}
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 
@@ -849,7 +881,11 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         <div className="relative w-full md:w-96">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search products, vendors, types..."
+            placeholder={
+              isEsvTab
+                ? 'Search entropy sources, vendors or certificate # (E321)...'
+                : 'Search products, vendors, types...'
+            }
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="pl-8"
@@ -922,15 +958,10 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       {/* Cert Type Toggle + Active Filters (Desktop) */}
       <div className="flex flex-col gap-2 mb-2">
         <div className="flex flex-wrap gap-2 p-1 bg-muted/50 rounded-lg">
-          {[
-            { id: 'all', label: 'All Records', frameworkId: null },
-            { id: 'fips', label: 'FIPS 140-3', frameworkId: 'FIPS-140-3' },
-            { id: 'acvp', label: recordTypeLabel('ACVP'), frameworkId: 'ACVP' },
-            { id: 'cc', label: 'Common Criteria', frameworkId: 'COMMON-CRITERIA' },
-            { id: 'cspn', label: recordTypeLabel('CSPN'), frameworkId: null },
-          ].map((tab) => {
-            const framework = tab.frameworkId
-              ? complianceFrameworks.find((f) => f.id === tab.frameworkId)
+          {RECORD_TYPE_TABS.map((tab) => {
+            const frameworkId = TAB_FRAMEWORK_ID[tab.id]
+            const framework = frameworkId
+              ? complianceFrameworks.find((f) => f.id === frameworkId)
               : undefined
             const deadline = framework?.deadline
             const showDeadline = deadline && !/^ongoing$/i.test(deadline)
@@ -942,8 +973,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 title={
                   framework
                     ? `${framework.label} mandate deadline: ${deadline}`
-                    : tab.id === 'cspn'
-                      ? recordTypeDescription('CSPN')
+                    : tab.id in TAB_RECORD_TYPE
+                      ? recordTypeDescription(TAB_RECORD_TYPE[tab.id])
                       : undefined
                 }
                 className={`flex flex-col items-start px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
@@ -986,26 +1017,46 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           </p>
         </div>
 
+        {isEsvTab && (
+          <p
+            className="flex items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground"
+            data-testid="esv-tab-note"
+          >
+            <Info size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <span>
+              <span className="font-semibold text-foreground">Entropy source validations</span>{' '}
+              (NIST CMVP, SP 800-90B) certify a noise source, not a module or an algorithm, and say
+              nothing about post-quantum algorithms. The PQC and Migrate-category filters therefore
+              do not apply on this tab. Every value comes from the NIST certificate page; NIST does
+              not say whether a source is hardware or software, only whether its noise source is
+              physical. Where a FIPS 140-3 module&apos;s Security Policy names its entropy
+              certificates (read so far for modules that list a PQC algorithm), the module and the
+              certificate link to each other.
+            </span>
+          </p>
+        )}
+
         {totalActiveFilters > 0 && (
           <div className="hidden md:flex flex-wrap gap-2 items-center mt-1">
             <span className="text-xs font-semibold text-muted-foreground mr-1">
               Active Filters:
             </span>
-            {pqcFilters.map((f) => (
-              <span
-                key={`pqc-${f}`}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium border border-primary/20"
-              >
-                {f}{' '}
-                <Button
-                  variant="ghost"
-                  onClick={() => handleTogglePqcFilter(f)}
-                  className="hover:text-primary/70"
+            {!isEsvTab &&
+              pqcFilters.map((f) => (
+                <span
+                  key={`pqc-${f}`}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium border border-primary/20"
                 >
-                  <X size={12} />
-                </Button>
-              </span>
-            ))}
+                  {f}{' '}
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleTogglePqcFilter(f)}
+                    className="hover:text-primary/70"
+                  >
+                    <X size={12} />
+                  </Button>
+                </span>
+              ))}
             {categoryFilters.map((f) => (
               <span
                 key={`cat-${f}`}
@@ -1051,21 +1102,22 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 </Button>
               </span>
             ))}
-            {migrateCatFilters.map((f) => (
-              <span
-                key={`mc-${f}`}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary/10 text-secondary text-xs font-medium border border-secondary/20"
-              >
-                <LockKeyhole size={10} /> {f}{' '}
-                <Button
-                  variant="ghost"
-                  onClick={() => handleToggleMigrateCatFilter(f)}
-                  className="hover:text-secondary/70"
+            {!isEsvTab &&
+              migrateCatFilters.map((f) => (
+                <span
+                  key={`mc-${f}`}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary/10 text-secondary text-xs font-medium border border-secondary/20"
                 >
-                  <X size={12} />
-                </Button>
-              </span>
-            ))}
+                  <LockKeyhole size={10} /> {f}{' '}
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleToggleMigrateCatFilter(f)}
+                    className="hover:text-secondary/70"
+                  >
+                    <X size={12} />
+                  </Button>
+                </span>
+              ))}
             <Button
               variant="ghost"
               size="sm"
@@ -1095,195 +1147,81 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           </div>
         )}
         <div ref={tableContainerRef} className="overflow-auto max-h-[72vh]">
-          <table className="max-md:hidden w-full text-sm text-left table-fixed">
-            <caption className="sr-only">
-              Compliance certifications table with PQC coverage and classical algorithm details
-            </caption>
-            <thead className="text-xs uppercase bg-muted/50 text-muted-foreground sticky top-0 z-10">
-              <tr>
-                {/* Source Column with Filter */}
-                <th scope="col" className="px-4 py-3 w-24 relative">
-                  <div className="flex items-center justify-between gap-1">
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-1 text-xs font-medium"
-                      onClick={() => handleSort('source')}
-                    >
-                      <span>Source</span>
-                      <ArrowUpDown
-                        size={12}
-                        className={clsx(sortColumn === 'source' ? 'text-primary' : 'opacity-30')}
-                      />
-                    </Button>
-                    <div className="relative">
+          {isEsvTab ? (
+            <EsvTable
+              rows={filteredAndSortedData}
+              virtualRows={virtualRows}
+              paddingTop={virtualPaddingTop}
+              paddingBottom={virtualPaddingBottom}
+              sortColumn={sortColumn}
+              sortDirection={sortDirection}
+              onSort={(column: EsvSortColumn) => handleSort(column)}
+              onOpenDetails={handleOpenDetails}
+              usedBy={entropyIndex.usedBy}
+            />
+          ) : (
+            <table className="max-md:hidden w-full text-sm text-left table-fixed">
+              <caption className="sr-only">
+                Compliance certifications table with PQC coverage and classical algorithm details
+              </caption>
+              <thead className="text-xs uppercase bg-muted/50 text-muted-foreground sticky top-0 z-10">
+                <tr>
+                  {/* Source Column with Filter */}
+                  <th scope="col" className="px-4 py-3 w-24 relative">
+                    <div className="flex items-center justify-between gap-1">
                       <Button
                         variant="ghost"
-                        type="button"
-                        aria-expanded={showSourceMenu}
-                        aria-label="Filter by source"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setShowSourceMenu(!showSourceMenu)
-                        }}
-                        className={clsx(
-                          'p-0.5 rounded hover:bg-muted',
-                          sourceFilters.length > 0 && 'text-primary'
-                        )}
+                        className="flex items-center gap-1 text-xs font-medium"
+                        onClick={() => handleSort('source')}
                       >
-                        <Filter size={12} />
-                        {sourceFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
-                            {sourceFilters.length}
-                          </span>
-                        )}
+                        <span>Source</span>
+                        <ArrowUpDown
+                          size={12}
+                          className={clsx(sortColumn === 'source' ? 'text-primary' : 'opacity-30')}
+                        />
                       </Button>
-                      {showSourceMenu && (
-                        <>
-                          <div
-                            className="fixed inset-0 embed-backdrop z-40"
-                            onClick={() => setShowSourceMenu(false)}
-                            aria-hidden="true"
-                          />
-                          <div className="absolute left-0 top-full mt-1 w-48 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                              Select Source
-                            </div>
-                            {uniqueSources.map((src) => (
-                              <Button
-                                variant="ghost"
-                                type="button"
-                                key={src}
-                                onClick={() => handleToggleSourceFilter(src)}
-                                className={clsx(
-                                  'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
-                                  sourceFilters.includes(src)
-                                    ? 'text-primary'
-                                    : 'text-muted-foreground'
-                                )}
-                              >
-                                <div
-                                  className={clsx(
-                                    'w-3 h-3 rounded-[3px] border flex items-center justify-center',
-                                    sourceFilters.includes(src)
-                                      ? 'border-primary bg-primary'
-                                      : 'border-border'
-                                  )}
-                                >
-                                  {sourceFilters.includes(src) && (
-                                    <Check size={10} className="text-primary-foreground" />
-                                  )}
-                                </div>
-                                <span className="truncate">{src}</span>
-                              </Button>
-                            ))}
-                            {sourceFilters.length > 0 && (
-                              <Button
-                                variant="link"
-                                size="sm"
-                                onClick={() => setSourceFilters([])}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
-                              >
-                                Clear
-                              </Button>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </th>
-
-                {/* Certification # Column */}
-                <th
-                  scope="col"
-                  className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
-                  onClick={() => handleSort('id')}
-                >
-                  <div className="flex items-center gap-1">
-                    <span>Certification #</span>
-                    <ArrowUpDown
-                      size={12}
-                      className={clsx(sortColumn === 'id' ? 'text-primary' : 'opacity-30')}
-                    />
-                  </div>
-                </th>
-
-                {/* Date Column */}
-                <th
-                  scope="col"
-                  className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
-                  onClick={() => handleSort('date')}
-                >
-                  <div className="flex items-center gap-1">
-                    <span>Date</span>
-                    <ArrowUpDown
-                      size={12}
-                      className={clsx(sortColumn === 'date' ? 'text-primary' : 'opacity-30')}
-                    />
-                  </div>
-                </th>
-
-                {/* Product Name Column with Category Filter */}
-                <th scope="col" className="px-4 py-3 w-80 relative">
-                  <div className="flex items-center justify-between gap-1">
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-1 text-xs font-medium"
-                      onClick={() => handleSort('productName')}
-                    >
-                      <span>Product Name</span>
-                      <ArrowUpDown
-                        size={12}
-                        className={clsx(
-                          sortColumn === 'productName' ? 'text-primary' : 'opacity-30'
-                        )}
-                      />
-                    </Button>
-                    <div className="flex items-center gap-0.5">
-                      {/* Product category filter */}
                       <div className="relative">
                         <Button
                           variant="ghost"
                           type="button"
-                          aria-expanded={showCategoryMenu}
-                          aria-label="Filter by product category"
+                          aria-expanded={showSourceMenu}
+                          aria-label="Filter by source"
                           onClick={(e) => {
                             e.stopPropagation()
-                            setShowCategoryMenu(!showCategoryMenu)
-                            setShowMigrateCatMenu(false)
+                            setShowSourceMenu(!showSourceMenu)
                           }}
                           className={clsx(
                             'p-0.5 rounded hover:bg-muted',
-                            categoryFilters.length > 0 && 'text-primary'
+                            sourceFilters.length > 0 && 'text-primary'
                           )}
                         >
                           <Filter size={12} />
-                          {categoryFilters.length > 0 && (
+                          {sourceFilters.length > 0 && (
                             <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
-                              {categoryFilters.length}
+                              {sourceFilters.length}
                             </span>
                           )}
                         </Button>
-                        {showCategoryMenu && (
+                        {showSourceMenu && (
                           <>
                             <div
                               className="fixed inset-0 embed-backdrop z-40"
-                              onClick={() => setShowCategoryMenu(false)}
+                              onClick={() => setShowSourceMenu(false)}
                               aria-hidden="true"
                             />
-                            <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                            <div className="absolute left-0 top-full mt-1 w-48 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
                               <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                                Product Categories
+                                Select Source
                               </div>
-                              {uniqueCategories.map((cat) => (
+                              {uniqueSources.map((src) => (
                                 <Button
                                   variant="ghost"
                                   type="button"
-                                  key={cat}
-                                  onClick={() => handleToggleCategoryFilter(cat)}
+                                  key={src}
+                                  onClick={() => handleToggleSourceFilter(src)}
                                   className={clsx(
                                     'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
-                                    categoryFilters.includes(cat)
+                                    sourceFilters.includes(src)
                                       ? 'text-primary'
                                       : 'text-muted-foreground'
                                   )}
@@ -1291,23 +1229,23 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                   <div
                                     className={clsx(
                                       'w-3 h-3 rounded-[3px] border flex items-center justify-center',
-                                      categoryFilters.includes(cat)
+                                      sourceFilters.includes(src)
                                         ? 'border-primary bg-primary'
                                         : 'border-border'
                                     )}
                                   >
-                                    {categoryFilters.includes(cat) && (
+                                    {sourceFilters.includes(src) && (
                                       <Check size={10} className="text-primary-foreground" />
                                     )}
                                   </div>
-                                  <span className="truncate">{cat}</span>
+                                  <span className="truncate">{src}</span>
                                 </Button>
                               ))}
-                              {categoryFilters.length > 0 && (
+                              {sourceFilters.length > 0 && (
                                 <Button
                                   variant="link"
                                   size="sm"
-                                  onClick={() => setCategoryFilters([])}
+                                  onClick={() => setSourceFilters([])}
                                   className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
                                 >
                                   Clear
@@ -1317,79 +1255,316 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                           </>
                         )}
                       </div>
+                    </div>
+                  </th>
 
-                      {/* Migrate category filter */}
+                  {/* Certification # Column */}
+                  <th
+                    scope="col"
+                    className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort('id')}
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>Certification #</span>
+                      <ArrowUpDown
+                        size={12}
+                        className={clsx(sortColumn === 'id' ? 'text-primary' : 'opacity-30')}
+                      />
+                    </div>
+                  </th>
+
+                  {/* Date Column */}
+                  <th
+                    scope="col"
+                    className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort('date')}
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>Date</span>
+                      <ArrowUpDown
+                        size={12}
+                        className={clsx(sortColumn === 'date' ? 'text-primary' : 'opacity-30')}
+                      />
+                    </div>
+                  </th>
+
+                  {/* Product Name Column with Category Filter */}
+                  <th scope="col" className="px-4 py-3 w-80 relative">
+                    <div className="flex items-center justify-between gap-1">
+                      <Button
+                        variant="ghost"
+                        className="flex items-center gap-1 text-xs font-medium"
+                        onClick={() => handleSort('productName')}
+                      >
+                        <span>Product Name</span>
+                        <ArrowUpDown
+                          size={12}
+                          className={clsx(
+                            sortColumn === 'productName' ? 'text-primary' : 'opacity-30'
+                          )}
+                        />
+                      </Button>
+                      <div className="flex items-center gap-0.5">
+                        {/* Product category filter */}
+                        <div className="relative">
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            aria-expanded={showCategoryMenu}
+                            aria-label="Filter by product category"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setShowCategoryMenu(!showCategoryMenu)
+                              setShowMigrateCatMenu(false)
+                            }}
+                            className={clsx(
+                              'p-0.5 rounded hover:bg-muted',
+                              categoryFilters.length > 0 && 'text-primary'
+                            )}
+                          >
+                            <Filter size={12} />
+                            {categoryFilters.length > 0 && (
+                              <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
+                                {categoryFilters.length}
+                              </span>
+                            )}
+                          </Button>
+                          {showCategoryMenu && (
+                            <>
+                              <div
+                                className="fixed inset-0 embed-backdrop z-40"
+                                onClick={() => setShowCategoryMenu(false)}
+                                aria-hidden="true"
+                              />
+                              <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                                  Product Categories
+                                </div>
+                                {uniqueCategories.map((cat) => (
+                                  <Button
+                                    variant="ghost"
+                                    type="button"
+                                    key={cat}
+                                    onClick={() => handleToggleCategoryFilter(cat)}
+                                    className={clsx(
+                                      'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                      categoryFilters.includes(cat)
+                                        ? 'text-primary'
+                                        : 'text-muted-foreground'
+                                    )}
+                                  >
+                                    <div
+                                      className={clsx(
+                                        'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                        categoryFilters.includes(cat)
+                                          ? 'border-primary bg-primary'
+                                          : 'border-border'
+                                      )}
+                                    >
+                                      {categoryFilters.includes(cat) && (
+                                        <Check size={10} className="text-primary-foreground" />
+                                      )}
+                                    </div>
+                                    <span className="truncate">{cat}</span>
+                                  </Button>
+                                ))}
+                                {categoryFilters.length > 0 && (
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    onClick={() => setCategoryFilters([])}
+                                    className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                  >
+                                    Clear
+                                  </Button>
+                                )}
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        {/* Migrate category filter */}
+                        <div className="relative">
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            aria-expanded={showMigrateCatMenu}
+                            aria-label="Filter by migrate category"
+                            title="Filter by Migrate Category (CSC)"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setShowMigrateCatMenu(!showMigrateCatMenu)
+                              setShowCategoryMenu(false)
+                            }}
+                            className={clsx(
+                              'p-0.5 rounded hover:bg-muted',
+                              migrateCatFilters.length > 0 && 'text-secondary'
+                            )}
+                          >
+                            <LockKeyhole size={12} />
+                            {migrateCatFilters.length > 0 && (
+                              <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full text-[8px] flex items-center justify-center text-secondary-foreground font-bold">
+                                {migrateCatFilters.length}
+                              </span>
+                            )}
+                          </Button>
+                          {showMigrateCatMenu && (
+                            <>
+                              <div
+                                className="fixed inset-0 embed-backdrop z-40"
+                                onClick={() => setShowMigrateCatMenu(false)}
+                                aria-hidden="true"
+                              />
+                              <div className="absolute left-0 top-full mt-1 w-72 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                                  Migrate Category (CSC)
+                                </div>
+                                {uniqueMigrateCategories.map((mc) => (
+                                  <Button
+                                    variant="ghost"
+                                    type="button"
+                                    key={mc.categoryId}
+                                    onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
+                                    className={clsx(
+                                      'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                      migrateCatFilters.includes(mc.categoryId)
+                                        ? 'text-secondary'
+                                        : 'text-muted-foreground'
+                                    )}
+                                  >
+                                    <div
+                                      className={clsx(
+                                        'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
+                                        migrateCatFilters.includes(mc.categoryId)
+                                          ? 'border-secondary bg-secondary'
+                                          : 'border-border'
+                                      )}
+                                    >
+                                      {migrateCatFilters.includes(mc.categoryId) && (
+                                        <Check size={10} className="text-secondary-foreground" />
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-[10px] text-muted-foreground shrink-0">
+                                      {mc.categoryId}
+                                    </span>
+                                    <span className="truncate">{mc.categoryName}</span>
+                                  </Button>
+                                ))}
+                                {migrateCatFilters.length > 0 && (
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    onClick={() => setMigrateCatFilters([])}
+                                    className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                  >
+                                    Clear
+                                  </Button>
+                                )}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </th>
+
+                  {/* Vendor Column with Filter */}
+                  <th scope="col" className="px-4 py-3 w-48 relative">
+                    <div className="flex items-center justify-between gap-1">
+                      <Button
+                        variant="ghost"
+                        className="flex items-center gap-1 text-xs font-medium"
+                        onClick={() => handleSort('vendor')}
+                      >
+                        <span>Vendor</span>
+                        <ArrowUpDown
+                          size={12}
+                          className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')}
+                        />
+                      </Button>
                       <div className="relative">
                         <Button
                           variant="ghost"
                           type="button"
-                          aria-expanded={showMigrateCatMenu}
-                          aria-label="Filter by migrate category"
-                          title="Filter by Migrate Category (CSC)"
+                          aria-expanded={showVendorMenu}
+                          aria-label="Filter by vendor"
                           onClick={(e) => {
                             e.stopPropagation()
-                            setShowMigrateCatMenu(!showMigrateCatMenu)
-                            setShowCategoryMenu(false)
+                            setShowVendorMenu(!showVendorMenu)
                           }}
                           className={clsx(
                             'p-0.5 rounded hover:bg-muted',
-                            migrateCatFilters.length > 0 && 'text-secondary'
+                            vendorFilters.length > 0 && 'text-primary'
                           )}
                         >
-                          <LockKeyhole size={12} />
-                          {migrateCatFilters.length > 0 && (
-                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full text-[8px] flex items-center justify-center text-secondary-foreground font-bold">
-                              {migrateCatFilters.length}
+                          <Filter size={12} />
+                          {vendorFilters.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
+                              {vendorFilters.length}
                             </span>
                           )}
                         </Button>
-                        {showMigrateCatMenu && (
+                        {showVendorMenu && (
                           <>
                             <div
                               className="fixed inset-0 embed-backdrop z-40"
-                              onClick={() => setShowMigrateCatMenu(false)}
+                              onClick={() => setShowVendorMenu(false)}
                               aria-hidden="true"
                             />
-                            <div className="absolute left-0 top-full mt-1 w-72 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                            <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
                               <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                                Migrate Category (CSC)
+                                Select Vendor
                               </div>
-                              {uniqueMigrateCategories.map((mc) => (
-                                <Button
-                                  variant="ghost"
-                                  type="button"
-                                  key={mc.categoryId}
-                                  onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
-                                  className={clsx(
-                                    'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
-                                    migrateCatFilters.includes(mc.categoryId)
-                                      ? 'text-secondary'
-                                      : 'text-muted-foreground'
-                                  )}
-                                >
-                                  <div
+                              <Input
+                                placeholder="Search vendors..."
+                                value={vendorSearch}
+                                onChange={(e) => setVendorSearch(e.target.value)}
+                                className="h-8 text-xs mb-1"
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                              <div className="flex-1 overflow-y-auto space-y-1">
+                                {filteredVendors.map((v) => (
+                                  <Button
+                                    variant="ghost"
+                                    type="button"
+                                    key={v}
+                                    onClick={() => handleToggleVendorFilter(v)}
                                     className={clsx(
-                                      'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                                      migrateCatFilters.includes(mc.categoryId)
-                                        ? 'border-secondary bg-secondary'
-                                        : 'border-border'
+                                      'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                      vendorFilters.includes(v)
+                                        ? 'text-primary'
+                                        : 'text-muted-foreground'
                                     )}
                                   >
-                                    {migrateCatFilters.includes(mc.categoryId) && (
-                                      <Check size={10} className="text-secondary-foreground" />
-                                    )}
+                                    <div
+                                      className={clsx(
+                                        'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                        vendorFilters.includes(v)
+                                          ? 'border-primary bg-primary'
+                                          : 'border-border'
+                                      )}
+                                    >
+                                      {vendorFilters.includes(v) && (
+                                        <Check size={10} className="text-primary-foreground" />
+                                      )}
+                                    </div>
+                                    <span className="truncate">{v}</span>
+                                  </Button>
+                                ))}
+                                {filteredVendors.length === 0 && (
+                                  <div className="px-2 py-4 text-center text-xs text-muted-foreground">
+                                    No vendors found.
                                   </div>
-                                  <span className="font-mono text-[10px] text-muted-foreground shrink-0">
-                                    {mc.categoryId}
-                                  </span>
-                                  <span className="truncate">{mc.categoryName}</span>
-                                </Button>
-                              ))}
-                              {migrateCatFilters.length > 0 && (
+                                )}
+                              </div>
+                              {vendorFilters.length > 0 && (
                                 <Button
                                   variant="link"
                                   size="sm"
-                                  onClick={() => setMigrateCatFilters([])}
+                                  onClick={() => {
+                                    setVendorFilters([])
+                                    setVendorSearch('')
+                                  }}
                                   className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
                                 >
                                   Clear
@@ -1400,73 +1575,54 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                         )}
                       </div>
                     </div>
-                  </div>
-                </th>
+                  </th>
 
-                {/* Vendor Column with Filter */}
-                <th scope="col" className="px-4 py-3 w-48 relative">
-                  <div className="flex items-center justify-between gap-1">
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-1 text-xs font-medium"
-                      onClick={() => handleSort('vendor')}
-                    >
-                      <span>Vendor</span>
-                      <ArrowUpDown
-                        size={12}
-                        className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')}
-                      />
-                    </Button>
-                    <div className="relative">
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        aria-expanded={showVendorMenu}
-                        aria-label="Filter by vendor"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setShowVendorMenu(!showVendorMenu)
-                        }}
-                        className={clsx(
-                          'p-0.5 rounded hover:bg-muted',
-                          vendorFilters.length > 0 && 'text-primary'
-                        )}
-                      >
-                        <Filter size={12} />
-                        {vendorFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
-                            {vendorFilters.length}
-                          </span>
-                        )}
-                      </Button>
-                      {showVendorMenu && (
-                        <>
-                          <div
-                            className="fixed inset-0 embed-backdrop z-40"
-                            onClick={() => setShowVendorMenu(false)}
-                            aria-hidden="true"
-                          />
-                          <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                              Select Vendor
-                            </div>
-                            <Input
-                              placeholder="Search vendors..."
-                              value={vendorSearch}
-                              onChange={(e) => setVendorSearch(e.target.value)}
-                              className="h-8 text-xs mb-1"
-                              onClick={(e) => e.stopPropagation()}
+                  {/* PQC Column with Filter */}
+                  <th scope="col" className="px-4 py-3 w-20 relative">
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span>PQC</span>
+                      <div className="relative">
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          aria-expanded={showFilterMenu}
+                          aria-label="Filter by PQC status"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowFilterMenu(!showFilterMenu)
+                          }}
+                          className={clsx(
+                            'p-0.5 rounded hover:bg-muted',
+                            pqcFilters.length > 0 && 'text-primary'
+                          )}
+                        >
+                          <Filter size={12} />
+                          {pqcFilters.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
+                              {pqcFilters.length}
+                            </span>
+                          )}
+                        </Button>
+                        {showFilterMenu && (
+                          <>
+                            <div
+                              className="fixed inset-0 embed-backdrop z-40"
+                              onClick={() => setShowFilterMenu(false)}
+                              aria-hidden="true"
                             />
-                            <div className="flex-1 overflow-y-auto space-y-1">
-                              {filteredVendors.map((v) => (
+                            <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                              <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                                PQC Algorithms
+                              </div>
+                              {PQC_ALGOS.map((algo) => (
                                 <Button
                                   variant="ghost"
                                   type="button"
-                                  key={v}
-                                  onClick={() => handleToggleVendorFilter(v)}
+                                  key={algo}
+                                  onClick={() => handleTogglePqcFilter(algo)}
                                   className={clsx(
                                     'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
-                                    vendorFilters.includes(v)
+                                    pqcFilters.includes(algo)
                                       ? 'text-primary'
                                       : 'text-muted-foreground'
                                   )}
@@ -1474,168 +1630,78 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                   <div
                                     className={clsx(
                                       'w-3 h-3 rounded-[3px] border flex items-center justify-center',
-                                      vendorFilters.includes(v)
+                                      pqcFilters.includes(algo)
                                         ? 'border-primary bg-primary'
                                         : 'border-border'
                                     )}
                                   >
-                                    {vendorFilters.includes(v) && (
+                                    {pqcFilters.includes(algo) && (
                                       <Check size={10} className="text-primary-foreground" />
                                     )}
                                   </div>
-                                  <span className="truncate">{v}</span>
+                                  <span className="truncate">{algo}</span>
                                 </Button>
                               ))}
-                              {filteredVendors.length === 0 && (
-                                <div className="px-2 py-4 text-center text-xs text-muted-foreground">
-                                  No vendors found.
-                                </div>
+                              {pqcFilters.length > 0 && (
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  onClick={() => setPqcFilters([])}
+                                  className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                >
+                                  Clear
+                                </Button>
                               )}
                             </div>
-                            {vendorFilters.length > 0 && (
-                              <Button
-                                variant="link"
-                                size="sm"
-                                onClick={() => {
-                                  setVendorFilters([])
-                                  setVendorSearch('')
-                                }}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
-                              >
-                                Clear
-                              </Button>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </th>
-
-                {/* PQC Column with Filter */}
-                <th scope="col" className="px-4 py-3 w-20 relative">
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span>PQC</span>
-                    <div className="relative">
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        aria-expanded={showFilterMenu}
-                        aria-label="Filter by PQC status"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setShowFilterMenu(!showFilterMenu)
-                        }}
-                        className={clsx(
-                          'p-0.5 rounded hover:bg-muted',
-                          pqcFilters.length > 0 && 'text-primary'
+                          </>
                         )}
-                      >
-                        <Filter size={12} />
-                        {pqcFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
-                            {pqcFilters.length}
-                          </span>
-                        )}
-                      </Button>
-                      {showFilterMenu && (
-                        <>
-                          <div
-                            className="fixed inset-0 embed-backdrop z-40"
-                            onClick={() => setShowFilterMenu(false)}
-                            aria-hidden="true"
-                          />
-                          <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                              PQC Algorithms
-                            </div>
-                            {PQC_ALGOS.map((algo) => (
-                              <Button
-                                variant="ghost"
-                                type="button"
-                                key={algo}
-                                onClick={() => handleTogglePqcFilter(algo)}
-                                className={clsx(
-                                  'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
-                                  pqcFilters.includes(algo)
-                                    ? 'text-primary'
-                                    : 'text-muted-foreground'
-                                )}
-                              >
-                                <div
-                                  className={clsx(
-                                    'w-3 h-3 rounded-[3px] border flex items-center justify-center',
-                                    pqcFilters.includes(algo)
-                                      ? 'border-primary bg-primary'
-                                      : 'border-border'
-                                  )}
-                                >
-                                  {pqcFilters.includes(algo) && (
-                                    <Check size={10} className="text-primary-foreground" />
-                                  )}
-                                </div>
-                                <span className="truncate">{algo}</span>
-                              </Button>
-                            ))}
-                            {pqcFilters.length > 0 && (
-                              <Button
-                                variant="link"
-                                size="sm"
-                                onClick={() => setPqcFilters([])}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
-                              >
-                                Clear
-                              </Button>
-                            )}
-                          </div>
-                        </>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                </th>
+                  </th>
 
-                {/* Classical Algorithms Column */}
-                <th scope="col" className="px-4 py-3 w-20">
-                  <span>Classic</span>
-                </th>
+                  {/* Classical Algorithms Column */}
+                  <th scope="col" className="px-4 py-3 w-20">
+                    <span>Classic</span>
+                  </th>
 
-                {/* Details Column */}
-                <th scope="col" className="px-4 py-3 w-10">
-                  <span className="sr-only">Details</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {virtualPaddingTop > 0 && (
-                <tr>
-                  <td style={{ height: `${virtualPaddingTop}px` }} colSpan={8} />
+                  {/* Details Column */}
+                  <th scope="col" className="px-4 py-3 w-10">
+                    <span className="sr-only">Details</span>
+                  </th>
                 </tr>
-              )}
-              {virtualRows.map((virtualRow) => {
-                const record = filteredAndSortedData[virtualRow.index]
-                return (
-                  <ComplianceRow
-                    key={record.id}
-                    record={record}
-                    index={virtualRow.index}
-                    onOpenDetails={handleOpenDetails}
-                  />
-                )
-              })}
-              {virtualPaddingBottom > 0 && (
-                <tr>
-                  <td style={{ height: `${virtualPaddingBottom}px` }} colSpan={8} />
-                </tr>
-              )}
-              {filteredAndSortedData.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
-                    No compliance records found matching your filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {virtualPaddingTop > 0 && (
+                  <tr>
+                    <td style={{ height: `${virtualPaddingTop}px` }} colSpan={8} />
+                  </tr>
+                )}
+                {virtualRows.map((virtualRow) => {
+                  const record = filteredAndSortedData[virtualRow.index]
+                  return (
+                    <ComplianceRow
+                      key={record.id}
+                      record={record}
+                      index={virtualRow.index}
+                      onOpenDetails={handleOpenDetails}
+                    />
+                  )
+                })}
+                {virtualPaddingBottom > 0 && (
+                  <tr>
+                    <td style={{ height: `${virtualPaddingBottom}px` }} colSpan={8} />
+                  </tr>
+                )}
+                {filteredAndSortedData.length === 0 && (
+                  <tr>
+                    <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                      No compliance records found matching your filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
 
           {/* Mobile View — virtualized against same tableContainerRef scroll container.
               Gated on `isMobile` so the measureElement refs don't attach while
@@ -1672,69 +1738,75 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     }}
                     className="border-b border-border/50 p-4 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
                   >
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
-                          <Database size={10} className="shrink-0" />
-                          {record.source}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {recordTypeLabel(record.type)}
-                        </span>
-                        <span
-                          className={clsx(
-                            'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border',
-                            statusBadgeClass(record.status)
-                          )}
-                        >
-                          {record.status || 'No status'}
-                        </span>
-                      </div>
-                      {pqcCoverageState(record.pqcCoverage) === 'named' &&
-                        (isSecurityTargetType(record.type) ? (
-                          <span
-                            className="flex items-center gap-1 text-[10px] text-muted-foreground shrink-0 mt-0.5"
-                            title={`${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`}
-                          >
-                            <FileText size={14} aria-hidden="true" />
-                            PQC in ST
-                          </span>
-                        ) : (
-                          <ShieldCheck
-                            size={16}
-                            className="text-tertiary shrink-0 mt-0.5"
-                            aria-label={`${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`}
-                          />
-                        ))}
-                    </div>
+                    {isEsvTab ? (
+                      <EsvCard record={record} onOpen={handleOpenDetails} />
+                    ) : (
+                      <>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
+                              <Database size={10} className="shrink-0" />
+                              {record.source}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {recordTypeLabel(record.type)}
+                            </span>
+                            <span
+                              className={clsx(
+                                'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border',
+                                statusBadgeClass(record.status)
+                              )}
+                            >
+                              {record.status || 'No status'}
+                            </span>
+                          </div>
+                          {pqcCoverageState(record.pqcCoverage) === 'named' &&
+                            (isSecurityTargetType(record.type) ? (
+                              <span
+                                className="flex items-center gap-1 text-[10px] text-muted-foreground shrink-0 mt-0.5"
+                                title={`${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`}
+                              >
+                                <FileText size={14} aria-hidden="true" />
+                                PQC in ST
+                              </span>
+                            ) : (
+                              <ShieldCheck
+                                size={16}
+                                className="text-tertiary shrink-0 mt-0.5"
+                                aria-label={`${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`}
+                              />
+                            ))}
+                        </div>
 
-                    <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
-                      {record.productName}
-                    </p>
-                    <div className="text-xs text-muted-foreground flex items-center gap-1 truncate mb-3">
-                      <span className="font-medium truncate max-w-[50%]">{record.vendor}</span>
-                      <span className="opacity-50">&bull;</span>
-                      <span className="truncate">{record.productCategory}</span>
-                    </div>
+                        <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
+                          {record.productName}
+                        </p>
+                        <div className="text-xs text-muted-foreground flex items-center gap-1 truncate mb-3">
+                          <span className="font-medium truncate max-w-[50%]">{record.vendor}</span>
+                          <span className="opacity-50">&bull;</span>
+                          <span className="truncate">{record.productCategory}</span>
+                        </div>
 
-                    <div className="flex items-center justify-between mt-2 pt-3 border-t border-border/50">
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] text-muted-foreground uppercase opacity-70">
-                          Cert ID
-                        </span>
-                        <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
-                          {schemeCertificateId(record) ?? NO_SCHEME_ID_LABEL}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-0.5 items-end">
-                        <span className="text-[10px] text-muted-foreground uppercase opacity-70">
-                          Date
-                        </span>
-                        <span className="text-xs font-mono text-muted-foreground/80">
-                          {record.date}
-                        </span>
-                      </div>
-                    </div>
+                        <div className="flex items-center justify-between mt-2 pt-3 border-t border-border/50">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                              Cert ID
+                            </span>
+                            <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
+                              {schemeCertificateId(record) ?? NO_SCHEME_ID_LABEL}
+                            </span>
+                          </div>
+                          <div className="flex flex-col gap-0.5 items-end">
+                            <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                              Date
+                            </span>
+                            <span className="text-xs font-mono text-muted-foreground/80">
+                              {record.date}
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )
               })}
@@ -1765,6 +1837,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         isOpen={!!openRecord}
         onClose={handleCloseDetails}
         record={openRecord ?? null}
+        entropy={entropyIndex}
       />
     </div>
   )

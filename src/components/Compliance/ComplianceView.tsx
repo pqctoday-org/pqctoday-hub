@@ -1043,7 +1043,7 @@ export const ComplianceView = ({
             <SectionHeader
               icon={<GlobeLock size={20} className="text-primary" />}
               title="Product Certification Records"
-              description="Certification records snapshot from NIST CMVP (FIPS 140-3), NIST CAVP and Common Criteria sources (CC Portal, ANSSI, ENISA EUCC) — searchable FIPS 140-3 module validations, NIST CAVP algorithm validations, Common Criteria / EUCC certificates and ANSSI CSPN certificates."
+              description="Certification records snapshot from NIST CMVP (FIPS 140-3 and entropy source validations), NIST CAVP and Common Criteria sources (CC Portal, ANSSI, ENISA EUCC) — searchable FIPS 140-3 module validations, NIST CAVP algorithm validations, NIST entropy source validations, Common Criteria / EUCC certificates and ANSSI CSPN certificates."
             />
             <ComplianceTable
               data={data}

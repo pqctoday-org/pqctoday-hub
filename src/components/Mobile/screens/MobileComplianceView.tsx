@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   ArrowRight,
@@ -55,14 +55,18 @@ import { buildDrawerDetail, pillarForBodyType } from '@/components/Compliance/re
 import { pillClasses, TONES } from '@/components/Compliance/redesign/tones'
 import {
   applyRecordScope,
+  buildEntropyIndex,
   cavpValidationUrl,
   formatIsoDate,
+  isPqcApplicable,
   isSecurityTargetType,
+  matchesCertType,
   pqcCoverageState,
   pqcEvidenceLabel,
   pqcNames,
   pqcStageSummary,
   pqcStageSummaryLine,
+  RECORD_TYPE_TABS,
   recordTypeDescription,
   recordTypeLabel,
   retrievalSummary,
@@ -208,6 +212,33 @@ export interface MobileCertRecord {
     parameterSets: readonly string[]
     functions: readonly string[]
   }>
+  // NIST entropy source validation certificate page (ESV)
+  esvStandard?: string
+  esvVersion?: string
+  esvDescription?: string
+  esvNoiseSourceClassification?: string
+  esvReuseStatus?: string
+  esvFirstValidated?: string
+  esvDetailsFetchedAt?: string
+  esvListObservedAt?: string
+  esvEntropyClaims?: ReadonlyArray<{
+    bitsOfEntropyPerOutput?: string
+    outputSizeBits?: string
+    entropyPerSample?: string
+    sampleSize?: string
+    statedAs?: string
+    operatingEnvironments?: readonly string[]
+    conditioningComponents?: ReadonlyArray<{
+      cavp?: string
+      url?: string
+      algorithm?: string
+      text?: string
+    }>
+  }>
+  esvValidationHistory?: ReadonlyArray<{ date: string; lab: string }>
+  // FIPS 140-3: entropy certificates named in the module's Security Policy
+  entropyCertificates?: readonly string[]
+  entropyCertificatesSource?: { policyUrl: string; table: string; page: number }
 }
 
 /** Records listed on the phone before asking the reader to refine the search. */
@@ -363,16 +394,27 @@ export function MobileComplianceView({
   // link shared from either opens the same list on the other.
   const recordQuery = searchParams.get('q') ?? ''
   const recordScope = searchParams.get('rstatus') === 'all' ? 'all' : 'current'
+  // `?rtab=` — the record-type tab desktop reads (all / fips / acvp / cc / cspn / esv).
+  const recordTab = searchParams.get('rtab') ?? 'all'
   const recordMatches = useMemo(
     () =>
       records
         ? applyRecordScope(records, recordScope)
-            .filter((r) => matchesRecordSearch(r, recordQuery))
+            .filter((r) => matchesCertType(r, recordTab) && matchesRecordSearch(r, recordQuery))
             .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
         : [],
-    [records, recordScope, recordQuery]
+    [records, recordScope, recordQuery, recordTab]
   )
   const hasRecordList = !!records && records.length > 0
+  // The record-type chips scroll sideways on a phone: bring the selected one (the last, Entropy
+  // (ESV), is off-screen at 390px) into view when the tab changes or a link lands on it.
+  const typeChipsRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (section !== 'records' || !hasRecordList) return
+    typeChipsRef.current
+      ?.querySelector<HTMLElement>('[aria-pressed="true"]')
+      ?.scrollIntoView?.({ block: 'nearest', inline: 'center' })
+  }, [section, hasRecordList, recordTab])
   const stageLine = useMemo(
     () =>
       records ? pqcStageSummaryLine(pqcStageSummary(applyRecordScope(records, recordScope))) : null,
@@ -892,6 +934,42 @@ export function MobileComplianceView({
                   className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
               </div>
+              <div
+                className="-mx-0.5 flex gap-1.5 overflow-x-auto px-0.5 pb-0.5"
+                role="group"
+                aria-label="Record type"
+                data-testid="records-phone-type-tabs"
+                ref={typeChipsRef}
+              >
+                {RECORD_TYPE_TABS.map((tab) => (
+                  <Button
+                    key={tab.id}
+                    type="button"
+                    variant="ghost"
+                    onClick={() =>
+                      setSectionParams('records', { rtab: tab.id === 'all' ? null : tab.id })
+                    }
+                    aria-pressed={recordTab.toLowerCase() === tab.id}
+                    className={cn(
+                      'h-7 shrink-0 rounded-full border px-3 text-[11px] font-semibold',
+                      recordTab.toLowerCase() === tab.id
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-card text-foreground'
+                    )}
+                  >
+                    {tab.label}
+                  </Button>
+                ))}
+              </div>
+              {recordTab.toLowerCase() === 'esv' && (
+                <p
+                  className="text-[10.5px] text-muted-foreground"
+                  data-testid="records-phone-esv-note"
+                >
+                  Entropy source validations (NIST CMVP, SP 800-90B) certify a noise source and say
+                  nothing about post-quantum algorithms.
+                </p>
+              )}
               <div className="flex gap-1.5">
                 {(['current', 'all'] as const).map((scope) => (
                   <Button
@@ -1160,7 +1238,12 @@ export function MobileComplianceView({
         onClose={closeFramework}
         onViewRequirements={jumpToRequirements}
       />
-      <MobileRecordDetailSheet record={certRecord} onClose={closeRecord} />
+      <MobileRecordDetailSheet
+        record={certRecord}
+        onClose={closeRecord}
+        records={records}
+        onOpenRecord={openRecord}
+      />
     </div>
   )
 }
@@ -1193,6 +1276,8 @@ function RecordLink({ href, children }: { href: string; children: ReactNode }) {
 
 /** Same PQC wording as desktop's ComplianceDetailPopover PqcSection. */
 function RecordPqcFact({ record }: { record: MobileCertRecord }) {
+  // An entropy certificate says nothing about PQC: nothing to show, not "unknown".
+  if (!isPqcApplicable(record.type)) return null
   const state = pqcCoverageState(record.pqcCoverage)
   if (state === 'none') return null
   if (state === 'not-read') {
@@ -1253,10 +1338,17 @@ function RecordPqcFact({ record }: { record: MobileCertRecord }) {
 function MobileRecordDetailSheet({
   record,
   onClose,
+  records,
+  onOpenRecord,
 }: {
   record: MobileCertRecord | null
   onClose: () => void
+  /** The whole snapshot: which modules name which entropy certificate. */
+  records?: readonly MobileCertRecord[]
+  onOpenRecord?: (id: string) => void
 }) {
+  const entropy = useMemo(() => buildEntropyIndex(records ?? []), [records])
+  const modulesUsing = record?.type === 'ESV' ? (entropy.usedBy.get(record.id) ?? []) : []
   const observed = formatIsoDate(record?.cmvpDetailsFetchedAt)
   const sunset = formatIsoDate(record?.sunsetDate ?? undefined)
   const archived = formatIsoDate(record?.ccArchivedDate ?? undefined)
@@ -1313,7 +1405,9 @@ function MobileRecordDetailSheet({
             {record.certificationLevel && (
               <RecordFact label="Certification level">{record.certificationLevel}</RecordFact>
             )}
-            <RecordFact label="Certification date">{record.date}</RecordFact>
+            <RecordFact label={record.type === 'ESV' ? 'Latest validation' : 'Certification date'}>
+              {record.date}
+            </RecordFact>
             {archived && <RecordFact label="Archived">{archived}</RecordFact>}
             <RecordFact label="Source">{record.source}</RecordFact>
             <RecordPqcFact record={record} />
@@ -1464,6 +1558,197 @@ function MobileRecordDetailSheet({
             </section>
           )}
 
+          {record.type === 'FIPS 140-3' && (record.entropyCertificates ?? []).length > 0 && (
+            <section
+              aria-label="Entropy certificates"
+              className="flex flex-col gap-1.5 border-t border-border pt-2.5"
+              data-testid="fips-phone-entropy-certificates"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                Entropy certificates (Security Policy)
+              </p>
+              <ul className="flex flex-col gap-1 text-[11px]">
+                {(record.entropyCertificates ?? []).map((id) => {
+                  const esv = entropy.esv.get(id)
+                  return (
+                    <li key={id} className="flex flex-wrap items-baseline gap-x-2">
+                      {esv && onOpenRecord ? (
+                        <Button
+                          type="button"
+                          variant="link"
+                          onClick={() => onOpenRecord(id)}
+                          className="h-auto p-0 font-mono text-[11px]"
+                        >
+                          {id}
+                        </Button>
+                      ) : (
+                        <span className="font-mono text-foreground">{id}</span>
+                      )}
+                      <span className="text-muted-foreground">
+                        {esv
+                          ? `${esv.productName} · ${esv.vendor}`
+                          : "not in this snapshot's ESV list"}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+              {record.entropyCertificatesSource && (
+                <p className="text-[10.5px] text-muted-foreground">
+                  Named in the module&apos;s own Security Policy (
+                  {record.entropyCertificatesSource.table}, PDF page{' '}
+                  {record.entropyCertificatesSource.page}):{' '}
+                  <RecordLink href={record.entropyCertificatesSource.policyUrl}>
+                    Security Policy (PDF)
+                  </RecordLink>
+                </p>
+              )}
+            </section>
+          )}
+
+          {record.type === 'ESV' && (
+            <section
+              aria-label="Relied on by FIPS 140-3 modules"
+              className="flex flex-col gap-1.5 border-t border-border pt-2.5"
+              data-testid="esv-phone-used-by"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                Relied on by FIPS 140-3 modules
+              </p>
+              {modulesUsing.length > 0 ? (
+                <ul className="flex flex-col gap-1 text-[11px]">
+                  {modulesUsing.map((m) => (
+                    <li key={m.id} className="flex flex-wrap items-baseline gap-x-2">
+                      {onOpenRecord ? (
+                        <Button
+                          type="button"
+                          variant="link"
+                          onClick={() => onOpenRecord(m.id)}
+                          className="h-auto p-0 font-mono text-[11px]"
+                        >
+                          #{m.id}
+                        </Button>
+                      ) : (
+                        <span className="font-mono">#{m.id}</span>
+                      )}
+                      <span className="text-foreground">{m.productName}</span>
+                      <span className="text-muted-foreground">
+                        {[m.vendor, m.certificationLevel, m.status].filter(Boolean).join(' · ')}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[10.5px] text-muted-foreground">
+                  No module in this snapshot names this certificate yet. Security Policies are read
+                  only for modules whose certificate lists a PQC algorithm, so this does not mean no
+                  module uses it.
+                </p>
+              )}
+              <p className="text-[10.5px] text-muted-foreground">
+                Read from each module&apos;s own Security Policy table, never matched by vendor
+                name.
+              </p>
+            </section>
+          )}
+
+          {record.type === 'ESV' && (
+            <section
+              aria-label="NIST entropy source validation"
+              className="flex flex-col gap-2.5 border-t border-border pt-2.5"
+              data-testid="esv-phone-details"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-primary">
+                NIST entropy source validation
+              </p>
+              <dl className="flex flex-col gap-2.5">
+                {record.esvStandard && (
+                  <RecordFact label="Standard">{record.esvStandard}</RecordFact>
+                )}
+                {record.esvVersion && <RecordFact label="Version">{record.esvVersion}</RecordFact>}
+                {record.esvNoiseSourceClassification && (
+                  <RecordFact label="Noise source">
+                    {record.esvNoiseSourceClassification}
+                    <span className="block text-[10.5px] text-muted-foreground">
+                      NIST&apos;s classification
+                    </span>
+                  </RecordFact>
+                )}
+                {record.esvReuseStatus && (
+                  <RecordFact label="Reuse status">{record.esvReuseStatus}</RecordFact>
+                )}
+                {record.esvDescription && record.esvDescription !== record.productName && (
+                  <RecordFact label="Description">{record.esvDescription}</RecordFact>
+                )}
+                {record.esvFirstValidated && (
+                  <RecordFact label="First validated">
+                    {formatIsoDate(record.esvFirstValidated)}
+                  </RecordFact>
+                )}
+              </dl>
+              {(record.esvEntropyClaims ?? []).length > 0 && (
+                <ul aria-label="Entropy claims" className="flex flex-col gap-1.5">
+                  {(record.esvEntropyClaims ?? []).map((c, i) => {
+                    const facts = [
+                      c.bitsOfEntropyPerOutput &&
+                        `Bits of entropy per output: ${c.bitsOfEntropyPerOutput}`,
+                      c.outputSizeBits && `Output size: ${c.outputSizeBits} bits`,
+                      c.entropyPerSample && `Entropy per sample: ${c.entropyPerSample}`,
+                      c.sampleSize && `Sample size: ${c.sampleSize}`,
+                      c.statedAs,
+                    ].filter(Boolean)
+                    const envs = c.operatingEnvironments ?? []
+                    return (
+                      <li
+                        key={i}
+                        className="rounded-lg border border-border bg-card p-2.5 text-[11px]"
+                      >
+                        <p className="text-foreground">{facts.join(' · ') || '—'}</p>
+                        {(c.conditioningComponents ?? []).length > 0 && (
+                          <p className="mt-0.5 flex flex-wrap items-baseline gap-x-2 text-muted-foreground">
+                            <span>Conditioning component:</span>
+                            {(c.conditioningComponents ?? []).map((k, n) =>
+                              k.url ? (
+                                <RecordLink key={`${k.cavp}-${n}`} href={k.url}>
+                                  <span className="font-mono">{k.cavp}</span>
+                                  {k.algorithm ? ` (${k.algorithm})` : ''}
+                                </RecordLink>
+                              ) : (
+                                <span key={n}>{k.text ?? k.cavp}</span>
+                              )
+                            )}
+                          </p>
+                        )}
+                        {envs.length > 0 && (
+                          <details className="mt-0.5">
+                            <summary className="cursor-pointer text-muted-foreground">
+                              {envs.length} operating environment{envs.length === 1 ? '' : 's'}
+                            </summary>
+                            <ul className="mt-1 list-disc pl-4">
+                              {envs.map((e) => (
+                                <li key={e}>{e}</li>
+                              ))}
+                            </ul>
+                          </details>
+                        )}
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+              {(record.esvValidationHistory ?? []).length > 0 && (
+                <ul aria-label="Validation history" className="flex flex-col gap-0.5 text-[11px]">
+                  {(record.esvValidationHistory ?? []).map((h, i) => (
+                    <li key={`${h.date}-${i}`}>
+                      <span className="font-mono">{h.date}</span>
+                      <span className="text-muted-foreground"> — {h.lab}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
           {docs.length > 0 && (
             <section
               aria-label="Documentation"
@@ -1497,7 +1782,9 @@ function MobileRecordDetailSheet({
                     ? 'View the NIST CMVP certificate page'
                     : record.type === 'ACVP'
                       ? 'View the NIST CAVP validation page'
-                      : `View on ${safeHostname(record.link)}`}
+                      : record.type === 'ESV'
+                        ? 'View the NIST entropy certificate page'
+                        : `View on ${safeHostname(record.link)}`}
               </RecordLink>
             </p>
           )}

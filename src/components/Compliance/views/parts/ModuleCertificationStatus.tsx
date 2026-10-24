@@ -6,6 +6,7 @@ import type { ComplianceRecord } from '../../types'
 import {
   isCurrentRecord,
   isNistValidationType,
+  isPqcApplicable,
   isSecurityTargetType,
   pqcCoverageState,
   pqcNames,
@@ -138,6 +139,8 @@ function computeCounts(records: readonly ComplianceRecord[]): CertCounts {
   }
   for (const r of records) {
     if (!isCurrentRecord(r)) continue
+    // An entropy source validation says nothing about PQC: it is neither "unknown" nor "none".
+    if (!isPqcApplicable(r.type)) continue
     c.total++
     const nist = isNistValidationType(r.type)
     if (nist) c.nistTotal++
