@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10232026_r3.csv
+ * Source: src/data/role_board_content_10232026_r4.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2992,9 +2992,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business/tools/vendor-scorecard',
           },
           {
-            title: 'See a finished report',
-            body: "A complete worked example report, opened without running an assessment first — the format a customer's own assessment on this site produces.",
-            href: '/report?example=1',
+            title: 'See the dates that bind certification',
+            body: 'The Timeline lists government milestones and mandates — the transition dates and national programmes a certified product has to be ready for — with the source for each.',
+            href: '/timeline',
           },
         ] as [
           { title: string; body: string; href?: string },
