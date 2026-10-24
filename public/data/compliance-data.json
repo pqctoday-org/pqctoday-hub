@@ -69293,7 +69293,14 @@
         "type": "Initial",
         "lab": "Acumen Security"
       }
-    ]
+    ],
+    "entropyCertificates": ["E97"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5300.pdf",
+      "policySha256": "661b4e9831093ebc7676221fe7a1f3c42c2de0cea902b3bd29b9ecc5707186d0",
+      "table": "Table 8: Entropy Certificates",
+      "page": 28
+    }
   },
   {
     "id": "5299",
@@ -72193,7 +72200,14 @@
         "type": "Initial",
         "lab": "EWA - Canada"
       }
-    ]
+    ],
+    "entropyCertificates": ["E11"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5282.pdf",
+      "policySha256": "d1053d01d123f688f67b0bb17309cccb09f6f7677071c5bf680c7e245f23336f",
+      "table": "Table 8: Entropy Certificates",
+      "page": 20
+    }
   },
   {
     "id": "5281",
@@ -91079,7 +91093,14 @@
         "type": "Initial",
         "lab": "atsec information security corporation"
       }
-    ]
+    ],
+    "entropyCertificates": ["E161"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5198.pdf",
+      "policySha256": "8191a5adee083127912133af1272192065e48d9f1f0bec2ba1c0c1209ba015ef",
+      "table": "Table 7: Entropy Certificates",
+      "page": 15
+    }
   },
   {
     "id": "5197",
@@ -115568,7 +115589,14 @@
         "type": "Initial",
         "lab": "UL Verification Services, Inc."
       }
-    ]
+    ],
+    "entropyCertificates": ["E41"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5109.pdf",
+      "policySha256": "d4d6f4c21ee610f8d39a464a6929f4956812156de4da31d4e6c165868e0f5856",
+      "table": "Table 16: Entropy Certificates",
+      "page": 19
+    }
   },
   {
     "id": "5108",
@@ -116996,7 +117024,14 @@
         "type": "Initial",
         "lab": "UL Verification Services, Inc."
       }
-    ]
+    ],
+    "entropyCertificates": ["E41"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5103.pdf",
+      "policySha256": "dc9961c5ac96ca9968c5406642258389dc83b38a9064b7ece68caeb8adf86503",
+      "table": "Table 10: Entropy Certificates",
+      "page": 18
+    }
   },
   {
     "id": "5102",
@@ -117885,7 +117920,14 @@
         "type": "Initial",
         "lab": "atsec information security corporation"
       }
-    ]
+    ],
+    "entropyCertificates": ["E161"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5098.pdf",
+      "policySha256": "f5b2ae4f4794d2009b135068ab05d9a993b3a29910be2bcd0cd8166b138969d4",
+      "table": "Table 7: Entropy Certificates",
+      "page": 15
+    }
   },
   {
     "id": "5097",
@@ -193666,7 +193708,14 @@
         "type": "Initial",
         "lab": "atsec information security corporation"
       }
-    ]
+    ],
+    "entropyCertificates": ["E94"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5340.pdf",
+      "policySha256": "5beb56111b14d1d5833b1e5443cb15a5eb9e7ca00b621c234159de0e70808892",
+      "table": "Table 7: Entropy Certificates",
+      "page": 13
+    }
   },
   {
     "id": "5339",
@@ -213944,7 +213993,14 @@
         "type": "Initial",
         "lab": "IT SECURITY CENTER"
       }
-    ]
+    ],
+    "entropyCertificates": ["E275"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5416.pdf",
+      "policySha256": "cfa9aa676b1b031e2e880d49f9bc30f870fe6570d7dad9b7c1e84321c6b0b618",
+      "table": "Table 7: Entropy Certificates",
+      "page": 10
+    }
   },
   {
     "id": "5415",
@@ -217705,7 +217761,14 @@
         "type": "Initial",
         "lab": "Lightship Security, Inc."
       }
-    ]
+    ],
+    "entropyCertificates": ["E252", "E63"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5450.pdf",
+      "policySha256": "f0eb4ff7a8e2879e310cbc2ca252671055dcf69d49b1a5fdebd9264bbd671e81",
+      "table": "Table 8: Entropy Certificates",
+      "page": 24
+    }
   },
   {
     "id": "5449",
@@ -245210,7 +245273,14 @@
         "type": "Initial",
         "lab": "atsec information security corporation"
       }
-    ]
+    ],
+    "entropyCertificates": ["E267"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5503.pdf",
+      "policySha256": "cbe743ef05f4ca67e4eeecde2a1a824fb4e5436e521f1531d8bdd4da0f876f71",
+      "table": "Table 9: Entropy Certificates",
+      "page": 25
+    }
   },
   {
     "id": "5502",
@@ -246092,7 +246162,14 @@
         "type": "Update",
         "lab": "atsec information security corporation"
       }
-    ]
+    ],
+    "entropyCertificates": ["E96"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5497.pdf",
+      "policySha256": "c216bfd60c5d2616eb623eca4f8a7d94837a214d9e0171a5f3ce003d910c694f",
+      "table": "Table 8: Entropy Certificates",
+      "page": 34
+    }
   },
   {
     "id": "5496",
@@ -258849,7 +258926,14 @@
     ],
     "certificationLevel": "FIPS 140-3 L1",
     "pqcCoverage": "ML-KEM, ML-DSA, SLH-DSA",
-    "classicalAlgorithms": "AES-CBC, AES-CBC-CS1, AES-CBC-CS2, AES-CBC-CS3, AES-CCM, AES-CFB1, AES-CFB128, AES-CFB8, AES-CMAC, AES-CTR, AES-ECB, AES-GCM, AES-GMAC, AES-KW, AES-KWP, AES-OFB, AES-XTS Testing Revision 2.0, Counter DRBG, Deterministic ECDSA SigGen (FIPS186-5), ECDSA KeyGen (FIPS186-5), ECDSA KeyVer (FIPS186-4), ECDSA KeyVer (FIPS186-5), ECDSA SigGen (FIPS186-5), ECDSA SigVer (FIPS186-4), ECDSA SigVer (FIPS186-5), EDDSA KeyGen, EDDSA KeyVer, EDDSA SigGen, EDDSA SigVer, Hash DRBG, HMAC DRBG, HMAC-SHA2-256, HMAC-SHA2-384, HMAC-SHA2-512, HMAC-SHA2-512/256, HMAC-SHA3-256, HMAC-SHA3-384, HMAC-SHA3-512, KAS-ECC-SSC Sp800-56Ar3, KAS-FFC-SSC Sp800-56Ar3, KAS-IFC-SSC, KDA HKDF SP800-56Cr2, KDA OneStep SP800-56Cr2, KDA TwoStep SP800-56Cr2, KDF ANS 9.42, KDF ANS 9.63, KDF KMAC Sp800-108r1, KDF SP800-108, KDF SSH, KMAC-128, KMAC-256, KTS-IFC, PBKDF, RSA KeyGen (FIPS186-5), RSA SigGen (FIPS186-5), RSA SigVer (FIPS186-4), RSA SigVer (FIPS186-5), Safe Primes Key Generation, Safe Primes Key Verification, SHA2-256, SHA2-384, SHA2-512, SHA2-512/256, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, TLS v1.2 KDF RFC7627, TLS v1.3 KDF"
+    "classicalAlgorithms": "AES-CBC, AES-CBC-CS1, AES-CBC-CS2, AES-CBC-CS3, AES-CCM, AES-CFB1, AES-CFB128, AES-CFB8, AES-CMAC, AES-CTR, AES-ECB, AES-GCM, AES-GMAC, AES-KW, AES-KWP, AES-OFB, AES-XTS Testing Revision 2.0, Counter DRBG, Deterministic ECDSA SigGen (FIPS186-5), ECDSA KeyGen (FIPS186-5), ECDSA KeyVer (FIPS186-4), ECDSA KeyVer (FIPS186-5), ECDSA SigGen (FIPS186-5), ECDSA SigVer (FIPS186-4), ECDSA SigVer (FIPS186-5), EDDSA KeyGen, EDDSA KeyVer, EDDSA SigGen, EDDSA SigVer, Hash DRBG, HMAC DRBG, HMAC-SHA2-256, HMAC-SHA2-384, HMAC-SHA2-512, HMAC-SHA2-512/256, HMAC-SHA3-256, HMAC-SHA3-384, HMAC-SHA3-512, KAS-ECC-SSC Sp800-56Ar3, KAS-FFC-SSC Sp800-56Ar3, KAS-IFC-SSC, KDA HKDF SP800-56Cr2, KDA OneStep SP800-56Cr2, KDA TwoStep SP800-56Cr2, KDF ANS 9.42, KDF ANS 9.63, KDF KMAC Sp800-108r1, KDF SP800-108, KDF SSH, KMAC-128, KMAC-256, KTS-IFC, PBKDF, RSA KeyGen (FIPS186-5), RSA SigGen (FIPS186-5), RSA SigVer (FIPS186-4), RSA SigVer (FIPS186-5), Safe Primes Key Generation, Safe Primes Key Verification, SHA2-256, SHA2-384, SHA2-512, SHA2-512/256, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, TLS v1.2 KDF RFC7627, TLS v1.3 KDF",
+    "entropyCertificates": ["E191"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5523.pdf",
+      "policySha256": "589625e9b79a18635a86db99b15642f8838e38b10a57b9e90c659433450161ab",
+      "table": "Table 11: Entropy Certificates",
+      "page": 62
+    }
   },
   {
     "id": "5524",
@@ -275336,7 +275420,14 @@
     ],
     "certificationLevel": "FIPS 140-3 L3",
     "pqcCoverage": "LMS",
-    "classicalAlgorithms": "AES-CBC, AES-CCM, AES-CFB128, AES-CMAC, AES-CTR, AES-ECB, AES-FF1, AES-GCM, AES-KW, AES-KWP, AES-OFB, Conditioning Component AES-CBC-MAC SP800-90B, Counter DRBG, ECDSA KeyGen (FIPS186-5), ECDSA KeyVer (FIPS186-5), ECDSA SigGen (FIPS186-5), ECDSA SigVer (FIPS186-5), EDDSA KeyGen, EDDSA SigGen, EDDSA SigVer, HMAC-SHA-1, HMAC-SHA2-224, HMAC-SHA2-256, HMAC-SHA2-384, HMAC-SHA2-512, KAS-ECC-SSC Sp800-56Ar3, KAS-FFC-SSC Sp800-56Ar3, KDF SP800-108, KTS-IFC, PBKDF, RSA Decryption Primitive Sp800-56Br2, RSA KeyGen (FIPS186-5), RSA SigGen (FIPS186-5), RSA Signature Primitive, RSA SigVer (FIPS186-2), RSA SigVer (FIPS186-5), Safe Primes Key Generation, Safe Primes Key Verification, SHA-1, SHA2-224, SHA2-256, SHA2-384, SHA2-512, SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, TLS v1.2 KDF RFC7627, TLS v1.3 KDF"
+    "classicalAlgorithms": "AES-CBC, AES-CCM, AES-CFB128, AES-CMAC, AES-CTR, AES-ECB, AES-FF1, AES-GCM, AES-KW, AES-KWP, AES-OFB, Conditioning Component AES-CBC-MAC SP800-90B, Counter DRBG, ECDSA KeyGen (FIPS186-5), ECDSA KeyVer (FIPS186-5), ECDSA SigGen (FIPS186-5), ECDSA SigVer (FIPS186-5), EDDSA KeyGen, EDDSA SigGen, EDDSA SigVer, HMAC-SHA-1, HMAC-SHA2-224, HMAC-SHA2-256, HMAC-SHA2-384, HMAC-SHA2-512, KAS-ECC-SSC Sp800-56Ar3, KAS-FFC-SSC Sp800-56Ar3, KDF SP800-108, KTS-IFC, PBKDF, RSA Decryption Primitive Sp800-56Br2, RSA KeyGen (FIPS186-5), RSA SigGen (FIPS186-5), RSA Signature Primitive, RSA SigVer (FIPS186-2), RSA SigVer (FIPS186-5), Safe Primes Key Generation, Safe Primes Key Verification, SHA-1, SHA2-224, SHA2-256, SHA2-384, SHA2-512, SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, TLS v1.2 KDF RFC7627, TLS v1.3 KDF",
+    "entropyCertificates": ["E232", "E233"],
+    "entropyCertificatesSource": {
+      "policyUrl": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp5555.pdf",
+      "policySha256": "685364e0a5c51e735feca902e4cf9844693c330a735d0c372d6852143ff7bfc9",
+      "table": "Table 8: Entropy Certificates",
+      "page": 24
+    }
   },
   {
     "id": "5556",
