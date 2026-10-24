@@ -745,9 +745,9 @@ export const FipsAttackEvidence = () => (
       physical requirements.” But the publication that would say how a lab measures it,{' '}
       <Cite std={SP_800_140F}>SP 800-140F</Cite>, has an empty requirements list: “No additional
       requirements at this time.” (March 2020). So the{' '}
-      <Cite std={MGMT_MANUAL}>Management Manual</Cite> treats the area as not applicable by default:
-      “Section 6.8, Non-invasive security is N/A by default as there are currently no requirements
-      in SP 800-140F.”
+      <Cite std={MGMT_MANUAL}>Management Manual, section 7.5</Cite> treats the area as not
+      applicable by default: “Section 6.8, Non-invasive security is N/A by default as there are
+      currently no requirements in SP 800-140F.”
     </p>
     <p>
       That leaves a gap you can read straight off the Security Policy. With no approved metric,
@@ -762,22 +762,24 @@ export const FipsAttackEvidence = () => (
       built and publicly documented” (public documents count, not only the Security Policy) “to
       mitigate one or more specific attacks”, the lab must address that area “regardless if the
       vendor of the module wishes to address the claim or not”, and “shall verify the implemented
-      mitigation mechanisms and/or mitigations claimed by the vendor”. A module that documents
-      nothing can mark the area N/A (<Cite std={MGMT_MANUAL}>Management Manual, section 6.12</Cite>
-      ). So a module with no documented countermeasure gets no leakage evidence at all, and for one
-      that has a documented countermeasure, how far the lab’s verification goes is not set by any
+      mitigation mechanisms and/or mitigations claimed by the vendor”. A module that has not been
+      purposely designed, built and publicly documented to mitigate a specific attack can mark the
+      area N/A (<Cite std={MGMT_MANUAL}>Management Manual, section 7.5</Cite>). So a module with no
+      publicly documented countermeasure gets no leakage evidence at all, and for one that has a
+      publicly documented countermeasure, how far the lab’s verification goes is not set by any
       published CMVP test metric. <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
     </p>
 
     <p>
       <strong className="text-foreground">Why it matters for ML-KEM and ML-DSA.</strong> Published
-      research shows attacks on lattice implementations that have no countermeasures. A{' '}
-      <Cite std={PQC_SEMINAR_FAULT}>NIST PQC seminar on fault injection</Cite> concludes that
-      “Variety of FIA are possible on unprotected Kyber and Dilithium”, and a{' '}
+      research shows attacks on lattice implementations that have no countermeasures, and on some
+      that do. A <Cite std={PQC_SEMINAR_FAULT}>NIST PQC seminar on fault injection</Cite> concludes
+      that “Variety of FIA are possible on unprotected Kyber and Dilithium”. A{' '}
       <Cite std={PROACT_SCA}>2025 lecture</Cite> covers side-channel and fault attacks on software
-      implementations of ML-KEM and ML-DSA. These are research findings, not certification
-      requirements. They explain why the question is worth asking a vendor.{' '}
-      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+      implementations of ML-KEM and ML-DSA and reports that “Implementations protected by both
+      masking and shuffling, or higher-order masking, may also be vulnerable”. These are research
+      findings, not certification requirements. They explain why the question is worth asking a
+      vendor. <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
     </p>
 
     <p>

@@ -2231,7 +2231,7 @@ const NIAP_PROFILE_ROWS: readonly ProfileRow[] = [
     approved: '29 Sep 2025',
     pq: 'LMS, XMSS, ML-KEM-1024, ML-DSA-87',
     classical:
-      'ECC P-384 (the module text makes it mandatory), RSA 3072-bit or greater, safe-prime groups',
+      'ECC P-384 (the module text makes it mandatory), RSA 3072-bit or greater, safe-prime groups; in the Mobile Device Fundamentals configuration Curve25519 (RFC 7748) stays selectable, listed as a “Non-CNSA Algorithm”',
     quotes: [
       'CC :2022 conversion, limitation of cryptographic algorithms to CNSA 1.0, incorporation of TDs',
       'ECC key generation with support for P-384 has been made mandatory in support of IPsec',
@@ -2394,8 +2394,9 @@ export const NiapPqcRoute = () => (
       None of the 11 requires post-quantum cryptography, and none has removed the classical (CNSA
       1.0) choices; three of them (Application Software 2.0 and Full Drive Encryption Authorization
       Acquisition 3.0 and Encryption Engine 3.0) say that will happen “in a future update”. <MA />{' '}
-      The checks cover only these 11 documents; the other NIAP profiles are listed below as reported
-      and not yet read.
+      The checks cover only these 11 documents. NIAP’s table of approved protection profiles lists
+      58 on 23 October 2026: the 15 documents below are listed as reported and not yet read, and the
+      other 32 (26 of them still on Common Criteria 3.1) are neither read nor listed here.
     </P>
     <DataTable
       caption="NIAP profiles with post-quantum selections, as of 23 October 2026"
@@ -2514,7 +2515,8 @@ export const NiapPqcRoute = () => (
       <li>
         The VPN Client module’s revision history, dated 2025-09-30 in the document, says “limitation
         of cryptographic algorithms to CNSA 1.0”, while the same module text carries the CNSA 2.0
-        selections. We quote both and make no reading of the difference.
+        selections and, in the Mobile Device Fundamentals configuration, still lists Curve25519 as a
+        “Non-CNSA Algorithm”. We quote both and make no reading of the difference.
       </li>
       <li>
         <ExternalSource name="TD0966" href={NIAP_TD0966_URL} /> (8 January 2026) corrects the

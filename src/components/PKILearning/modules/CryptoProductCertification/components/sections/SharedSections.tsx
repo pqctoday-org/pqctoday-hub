@@ -370,7 +370,14 @@ const HYBRID_SCOPE_ROWS: readonly { part: ReactNode; paper: ReactNode; tested: R
   },
   {
     part: 'Key combiner',
-    paper: <>SP 800-56C key derivation (“KDA HKDF” counts) or an SP 800-133 §6.3 method</>,
+    paper: (
+      <>
+        SP 800-56C key derivation (“KDA HKDF” counts), or an SP 800-133 §6.3 method. The SP 800-133
+        method “cannot combine shared secrets that are NOT already keys (e.g., cannot operate on the
+        Z value computed via SP 800-56A or SP 800-56B methods) nor can it incorporate non-approved
+        schemes”, so a non-approved classical half such as X25519 needs the SP 800-56C route.
+      </>
+    ),
     tested: (
       <>
         Algorithm test vectors for the KDF (“KDA HKDF” for HKDF); for SP 800-133, HMAC testing if
@@ -396,7 +403,11 @@ const HYBRID_SCOPE_ROWS: readonly { part: ReactNode; paper: ReactNode; tested: R
     part: 'Self-tests',
     paper: 'Each approved scheme is self-tested on its own',
     tested: (
-      <>“There is currently no separate self-test requirement for the approved key combiner”</>
+      <>
+        “There is currently no separate self-test requirement for the approved key combiner”, but
+        approved algorithms used for the key combiner (for example an SP 800-56C KDF or HMAC) “must
+        still meet applicable self-test requirements per IG 10.3.A”
+      </>
     ),
   },
 ]
