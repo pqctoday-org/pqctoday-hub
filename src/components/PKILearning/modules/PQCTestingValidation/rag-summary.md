@@ -225,6 +225,7 @@ Focus: Enterprise-wide enforcement, continuous compliance scanning, policy autom
 
 ## Cross-References
 
+- **cc-eucc-certification** — Covers how a Common Criteria or EUCC evaluation looks at side-channel attacks on post-quantum code under AVA_VAN.5; the side-channel section here links to it
 - **hybrid-crypto** — Covers hybrid cert formats and composite certificates (distinct from testing methodology)
 - **network-security-pqc** — Covers NGFW cipher policy configuration (distinct from traffic scanning)
 - **vpn-ssh-pqc** — Covers IPSec migration planning (distinct from performance benchmarking methodology)
