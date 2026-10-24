@@ -12,9 +12,9 @@ const manifest: ModuleManifest = {
     'A passing test is only evidence for the exact operation, parameters, build and source it was run against. Laboratories, vendors and buyers who blur a public reference sample, an ACVTS-issued vector set and a validation certificate make claims no evidence supports.',
   duration: '90 min',
   difficulty: 'advanced',
-  frameworkPhase: 'p6',
-  track: 'Protocols',
-  trackOrder: 10,
+  frameworkPhase: 'p7',
+  track: 'Hardware Infrastructure',
+  trackOrder: 11,
   learnSections: [
     { id: 'algorithm-vs-module', label: 'Algorithm vs Module Validation' },
     { id: 'capability-registration', label: 'Capability Registration & Vector Sets' },
