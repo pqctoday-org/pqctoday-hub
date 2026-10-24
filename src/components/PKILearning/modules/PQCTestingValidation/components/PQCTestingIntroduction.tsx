@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
+import { Link } from 'react-router'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import {
   Radio,
@@ -582,6 +583,17 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
               a TVLA result is not an approved CMVP test metric.
             </li>
           </ul>
+          <p className="text-sm mt-2">
+            For how a Common Criteria or EUCC evaluation looks at side-channel attacks on
+            post-quantum code (AVA_VAN.5), see{' '}
+            <Link
+              to="/learn/cc-eucc-certification?tab=learn&section=eucc-pqc-today"
+              className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+            >
+              Common Criteria, EUCC &amp; eIDAS Certification
+            </Link>
+            .
+          </p>
           <p className="text-[10px] text-muted-foreground mt-2">
             Sources: ISO catalogue pages above; NIST SP 800-140F (March 2020) abstract and §6.2; SP
             800-140F Rev. 1 draft (August 2021) §6.2; FIPS 140-3 Implementation Guidance (last
