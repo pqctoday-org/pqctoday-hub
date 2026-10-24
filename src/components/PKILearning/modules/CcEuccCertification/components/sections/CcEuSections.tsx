@@ -217,6 +217,88 @@ const Section = ({ children }: { children: ReactNode }) => (
 
 const anchorName = `${ANCHOR_SCENARIO.name} (${ANCHOR_SCENARIO.fictionalLabel})`
 
+const LEARN = '/learn/cc-eucc-certification?tab=learn'
+
+/** A named source that has no Library page: its name, then a plain link to the document. */
+const ExternalSource = ({ name, href }: { name: string; href?: string }) => (
+  <>
+    <PlainSource>{name}</PlainSource>
+    {href ? (
+      <>
+        {' '}
+        (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Source: ${name}`}
+          className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+        >
+          Source
+        </a>
+        )
+      </>
+    ) : null}
+  </>
+)
+
+const InLink = ({ to, children }: { to: string; children: ReactNode }) => (
+  <Link
+    to={to}
+    className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+  >
+    {children}
+  </Link>
+)
+
+/** An official page with no library row yet, opened in a new tab. */
+const ExtLink = ({ href, children }: { href: string; children: ReactNode }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+  >
+    {children}
+  </a>
+)
+
+/** The module's own reading of its sources: marks the sentence it follows. */
+const MA = () => <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+
+const CC_PORTAL_URL = 'https://www.commoncriteriaportal.org/cc/index.cfm'
+
+const H4 = ({ children }: { children: ReactNode }) => (
+  <h4 className="pt-1 text-sm font-semibold text-foreground">{children}</h4>
+)
+
+/**
+ * A panel that stays closed until the reader opens it. The visible summary sits outside it, in the
+ * caller. A native <details>: it opens with Enter or Space, announces its state to screen readers
+ * and needs no script. The same form as the optional history note in `cc-continuity`.
+ */
+const Disclosure = ({
+  label,
+  testId,
+  children,
+}: {
+  label: string
+  testId: string
+  children: ReactNode
+}) => (
+  <details className="rounded-lg border border-border p-3 sm:p-4" data-testid={testId}>
+    <summary className="cursor-pointer font-semibold">{label}</summary>
+    <div className="mt-3 space-y-3">{children}</div>
+  </details>
+)
+
+/** Invented requirement text in the worked example. Completed assignments are set in bold. */
+const Excerpt = ({ children }: { children: ReactNode }) => (
+  <blockquote className="break-words border-l-2 border-primary/40 pl-3 text-sm text-foreground/90">
+    <p>{children}</p>
+  </blockquote>
+)
+
 // ── Path B — Common Criteria ────────────────────────────────────────────────
 
 /** Learn section `cc-model` */
@@ -365,6 +447,12 @@ export const CcModel = () => (
         version with no post-quantum algorithm at all — TrustWay Proteccio’s ST lists none <AsOf />.
       </p>
     </Callout>
+    <P>
+      For a worked example of how three post-quantum requirements could be written in a Security
+      Target, see the section{' '}
+      <InLink to={`${LEARN}&section=eucc-pqc-today`}>“PQC under EUCC today (ACM v2)”</InLink> on the
+      EUCC path.
+    </P>
 
     <H3>Conformance to a Protection Profile</H3>
     <P>
@@ -1610,6 +1698,668 @@ export const PpSecurityIc = () => (
   </Section>
 )
 
+// ── Worked example and AVA_VAN.5 panels (section `eucc-pqc-today`) ──────────
+
+const NIAP_DSC = (
+  <SourceCite
+    id="NIAP-cPP-Dedicated-Security-Component-Version-2-1"
+    label="cPP for Dedicated Security Component v2.1"
+  />
+)
+
+/** Collapsed panel: three invented Security Target requirements for the anchor HSM. */
+const SecurityTargetExample = () => (
+  <div className="space-y-3" data-testid="cceu-st-example">
+    <H3>A worked example: PQC in a Security Target</H3>
+    <P>
+      This invented excerpt shows how a Security Target for the fictional Orrin N7 could word three
+      post-quantum requirements: ML-KEM-768 key generation, ML-DSA-65 signing and a hybrid key
+      derivation. It follows CC:2022 Part 2 with the mandatory errata applied and ends with the
+      dependencies each requirement pulls in. No scheme or laboratory has reviewed it.
+    </P>
+    <Disclosure label="Show the full worked example" testId="cceu-st-example-panel">
+      <P>
+        Earlier sections say that adding ML-KEM or ML-DSA means new FCS_CKM and FCS_COP iterations
+        in the Security Target. This example shows what three of them look like. The product is the
+        fictional Orrin N7 at firmware 5.0.0. The excerpt is invented. It is not taken from a real
+        Security Target, and no scheme or laboratory has reviewed it.
+      </P>
+      <P>
+        The wording follows CC:2022 Part 2 with the mandatory errata applied (version 1.2, 15
+        October 2025). Completed assignments are in bold. Each iteration has its own label in
+        brackets, because CC:2022 Part 1 says different iterations must be uniquely identified. Some
+        profiles write the label after a slash instead, for example FMT_MSA.1/GenKeys in EN 419
+        221-5.
+      </P>
+
+      <H4>1. Key generation: FCS_CKM.1(ML-KEM-768)</H4>
+      <Excerpt>
+        <strong>FCS_CKM.1.1(ML-KEM-768)</strong> The TSF shall generate cryptographic keys in
+        accordance with a specified cryptographic key generation algorithm{' '}
+        <strong>ML-KEM.KeyGen with the parameter set ML-KEM-768</strong> and specified cryptographic
+        key sizes <strong>encapsulation key 1184 bytes and decapsulation key 2400 bytes</strong>{' '}
+        that meet the following:{' '}
+        <strong>FIPS 203, Section 7.1 (Algorithm 19, ML-KEM.KeyGen)</strong>.
+      </Excerpt>
+      <P>How to read it:</P>
+      <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/90">
+        <li>
+          Name the parameter set. FIPS 203 defines three, and their key sizes differ: for ML-KEM-768
+          the encapsulation key is 1184 bytes and the decapsulation key is 2400 bytes. A claim that
+          says only “ML-KEM” does not tell the laboratory which parameter set to test. <MA />
+        </li>
+        <li>
+          FCS_CKM.1 has three assignments and no selection. An ST author must complete every
+          assignment.
+        </li>
+        <li>
+          One iteration is enough for one method, even with several key sizes. A later ML-KEM-1024
+          could be handled in two ways: the author can list both parameter sets and their key sizes
+          in the assignments of this iteration, or write a second iteration. CC:2022 Part 1 leaves
+          the choice to the author, who weighs whether one rationale covers the whole list or each
+          value needs its own rationale and trace.
+        </li>
+        <li>
+          Key generation uses random bytes. FIPS 203 requires an approved random bit generator with
+          at least 192 bits of security strength for ML-KEM-768. In CC terms that is the dependency
+          of FCS_CKM.1 on FCS_RBG.1 or FCS_RNG.1, which the errata keep.
+        </li>
+      </ul>
+
+      <H4>2. Signing: FCS_COP.1(ML-DSA-65 sign)</H4>
+      <Excerpt>
+        <strong>FCS_COP.1.1(ML-DSA-65 sign)</strong> The TSF shall perform{' '}
+        <strong>digital signature generation</strong> in accordance with a specified cryptographic
+        algorithm <strong>ML-DSA.Sign, hedged variant, parameter set ML-DSA-65</strong> and
+        cryptographic key sizes <strong>private key 4032 bytes</strong> that meet the following:{' '}
+        <strong>FIPS 204, Section 5.2 (Algorithm 2, ML-DSA.Sign)</strong>.
+      </Excerpt>
+      <P>How to read it:</P>
+      <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/90">
+        <li>For ML-DSA-65 the private key is 4032 bytes.</li>
+        <li>
+          Put “hedged” in the algorithm assignment. FIPS 204 signs with fresh randomness by default
+          and also allows a deterministic variant. The two variants differ in one step. A product
+          that offers both can name both variants in the assignments of one iteration or write one
+          iteration per variant. CC:2022 Part 1 requires every iteration to differ from the others
+          in its completed assignments, selections or refinements, and leaves the choice between a
+          list of values and separate iterations to the author. <MA />
+        </li>
+        <li>
+          FIPS 204 says the deterministic variant should not be used where side-channel attacks are
+          a concern and cannot be otherwise mitigated. So offering the deterministic variant adds a
+          question for the vulnerability analysis. <MA />
+        </li>
+        <li>
+          The hedged variant uses a fresh 32-byte random value, which FIPS 204 says should ideally
+          be generated by an approved random bit generator. The errata say that random bits
+          generated inside an operation should be covered by FCS_RBG.1 or FCS_RNG.1, through a
+          dependency added to the operation or, where it applies, through the operation’s dependency
+          on key generation, which itself depends on one of them. Here the second route applies,
+          through the ML-DSA-65 key generation iteration that this excerpt leaves out. <MA />
+        </li>
+        <li>
+          This iteration covers signature generation only. Checking a signature, for example on a
+          firmware update, is a different operation. CC:2022 Part 2 would let one iteration list
+          both operations; this example gives checking its own iteration because it uses a different
+          key (the public key) and a different algorithm entry (ML-DSA.Verify). <MA /> EN 419 221-5
+          requires that, if the TOE supports updates, the iterations cover the operations that check
+          update signatures.
+        </li>
+        <li>
+          The classical half keeps its existing ECDSA or RSA iteration. ACM v2 says lattice
+          mechanisms should be combined with a classical one, and that a hybrid signature can be a
+          concatenation of signatures that must all verify. The excerpt does not show how the hybrid
+          signature itself is claimed; see the note after the two panels.
+        </li>
+      </ul>
+
+      <H4>3. Hybrid key derivation: FCS_CKM.5(Hybrid)</H4>
+      <Excerpt>
+        <strong>FCS_CKM.5.1(Hybrid)</strong> The TSF shall derive cryptographic keys{' '}
+        <strong>256-bit AES session keys</strong> from{' '}
+        <strong>
+          the concatenation of the ML-KEM-768 shared secret and the ECDH P-256 shared secret in the
+          fixed order of the combination; a salt; and a FixedInfo string that holds the name of the
+          combination, the ML-KEM-768 encapsulation key and ciphertext, and both ECDH public values
+        </strong>{' '}
+        in accordance with a specified key derivation algorithm{' '}
+        <strong>
+          two-step key derivation, with HMAC-SHA-256 for randomness extraction and HMAC-SHA-256 for
+          key expansion (the HKDF construction of RFC 5869)
+        </strong>{' '}
+        and specified cryptographic key sizes <strong>256 bits</strong> that meet the following:{' '}
+        <strong>
+          NIST SP 800-56C Rev. 2, Sections 2 and 5; NIST SP 800-227, Section 4.6.2; RFC 5869
+        </strong>
+        .
+      </Excerpt>
+      <P>How to read it:</P>
+      <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/90">
+        <li>
+          CC:2022 has a component for this step. FCS_CKM.5 is the key derivation component. It
+          requires that the methods, standards and parameters for key derivation are specified. A CC
+          3.1 profile such as EN 419 221-5 has no such component. Its cryptographic support section
+          lists FCS_CKM.1, FCS_CKM.4, FCS_COP.1 and FCS_RNG.1.
+        </li>
+        <li>
+          FCS_CKM.5 has five assignments: key type, input parameters, key derivation algorithm, key
+          sizes and standards. The errata add the missing application notes for all five. The input
+          parameters are where the design shows: which secrets go in, in what order, and what
+          context is bound to the result. <MA />
+        </li>
+        <li>
+          NIST SP 800-56C Rev. 2 allows a hybrid shared secret, which is the concatenation of a
+          standard shared secret and a second secret. SP 800-227 approves applying SP 800-56C
+          key-derivation methods to the shared secret of an approved KEM, and approves a key
+          combiner built on them when at least one of the shared secrets comes from SP 800-56A, SP
+          800-56B or an approved KEM. With the two-step method, extraction is done on all the shared
+          secrets together. HKDF, defined in RFC 5869, is a version of that two-step method that
+          uses HMAC for both steps.
+        </li>
+        <li>
+          FIPS 203 itself says that further key derivation from the ML-KEM shared secret shall be
+          done in an approved manner, as specified in SP 800-108 and SP 800-56C. Inside SP 800-56C,
+          the functions of SP 800-108 are used in the key-expansion step of the two-step method.
+          That is why the example lists SP 800-56C and not SP 800-108. <MA />
+        </li>
+        <li>
+          SP 800-227 says that a combiner that uses only the two shared secrets does not preserve
+          IND-CCA security when only one of the two schemes is IND-CCA. It encourages combiners that
+          preserve IND-CCA security, and its example also takes the ciphertexts, the encapsulation
+          keys and a domain separator. SP 800-227 says that the FixedInfo input of SP 800-56C can
+          carry such inputs, which is why the excerpt lists them.
+        </li>
+        <li>
+          The FIPS 140-3 route asks for two related design choices: a fixed set of combinations and
+          module control of the order in which the secrets are joined. There the step is called the
+          key combiner.
+        </li>
+        <li>
+          FCS_CKM.5 depends on FCS_CKM.6, key destruction. CC:2022 reads that dependency in two
+          directions, destruction of the key-derivation key and destruction of the derived keys, and
+          asks the author to consider intermediate values from key establishment. In this example
+          the destruction list could name the two shared secrets, the extracted key-derivation key,
+          the session keys, and the ML-KEM key-generation seed if the product stores it; the sources
+          do not prescribe the exact list. <MA /> SP 800-56C Rev. 2 says the extracted
+          key-derivation key shall be destroyed after use. FIPS 203 says the key-generation seed is
+          as sensitive as the decapsulation key. NIAP’s {NIAP_DSC} says that key material includes
+          seeds and other secret values used to derive keys, and that all such keys and keying
+          material are subject to destruction in the first assignment of its key destruction
+          requirement.
+        </li>
+      </ul>
+
+      <P>
+        <strong>Dependencies.</strong> The table gives the dependency lists of CC:2022 Part 2 as
+        corrected by the errata, and how the example meets them.
+      </P>
+      <DataTable
+        caption="Dependencies of the three iterations after errata version 1.2, and how the example meets them"
+        head={['Iteration', 'Dependencies after errata v1.2', 'How the example meets them']}
+        rows={[
+          [
+            'FCS_CKM.1(ML-KEM-768)',
+            'One of FCS_CKM.2, FCS_CKM.5 or FCS_COP.1. One of FCS_RBG.1 or FCS_RNG.1. FCS_CKM.6.',
+            'FCS_CKM.2(ML-KEM-768), not shown. FCS_RBG.1 with at least 192 bits of strength, not shown. FCS_CKM.6, not shown.',
+          ],
+          [
+            'FCS_COP.1(ML-DSA-65 sign)',
+            'One of FDP_ITC.1, FDP_ITC.2, FCS_CKM.1 or FCS_CKM.5. FCS_CKM.6.',
+            'FCS_CKM.1(ML-DSA-65), not shown, which also carries the FCS_RBG.1 dependency. FCS_CKM.6, not shown.',
+          ],
+          [
+            'FCS_CKM.5(Hybrid)',
+            'One of FCS_CKM.2 or FCS_COP.1. FCS_CKM.6.',
+            'FCS_CKM.2(ML-KEM-768) and FCS_CKM.2(ECDH P-256), not shown. FCS_CKM.6, not shown.',
+          ],
+        ]}
+      />
+
+      <P>
+        <strong>Where encapsulation is written.</strong> NIAP’s published profiles do not all write
+        ML-KEM the same way. In the {NIAP_DSC}, the{' '}
+        <SourceCite
+          id="NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0"
+          label="PP for General Purpose Computing Platforms v2.0"
+        />{' '}
+        and the{' '}
+        <SourceCite id="NIAP-PP-Virtualization-Version-2-0" label="PP for Virtualization v2.0" />,
+        ML-KEM encapsulation and decapsulation are listed in an FCS_COP.1 iteration,
+        FCS_COP.1/KeyEncap, which FCS_CKM.2 selects as its method (“key encapsulation as specified
+        in FCS_COP.1/KeyEncap”). In the{' '}
+        <SourceCite
+          id="NIAP-PP-Module-VPN-Client-Version-3-0"
+          label="PP-Module for VPN Client v3.0"
+        />
+        , ML-KEM-1024 is named directly in FCS_CKM.2 among the key establishment methods. The table
+        above shows FCS_CKM.2(ML-KEM-768) and does not decide how another scheme would split the
+        algorithm between FCS_CKM.2 and FCS_COP.1. <MA />
+      </P>
+
+      <P>
+        <strong>What this excerpt leaves out:</strong> FCS_CKM.1 for ML-DSA-65 and for ECDH P-256,
+        FCS_CKM.2 for ML-KEM-768 and for ECDH P-256, FCS_RBG.1 and FCS_CKM.6, and everything else a
+        Security Target holds: the threats, the objectives, the other requirements and the TOE
+        summary specification. <MA /> FCS_CKM.2 is the component for key distribution methods.
+        FCS_CKM.6 is the component for key destruction. FCS_RBG.1 is the component for random bit
+        generation. FCS_RNG.1 is the alternative that the corrected dependency list allows.
+      </P>
+
+      <P>
+        How NIAP profiles bring in new algorithms is covered in the lesson “
+        <InLink to={`${LEARN}&section=niap-pqc-route`}>
+          NIAP and post-quantum cryptography: what its profiles require
+        </InLink>
+        ”.
+      </P>
+
+      <Sources readOn="24 October 2026">
+        <SourceCite id="COMMON-CRITERIA" label="CC:2022 Part 1" /> and{' '}
+        <SourceCite id="CC-2022-PART2" label="Part 2" /> and the{' '}
+        <ExternalSource name="CC:2022/CEM:2022 errata v1.2" href={CC_PORTAL_URL} />;{' '}
+        <SourceCite id="FIPS 203" />; <SourceCite id="FIPS 204" />;{' '}
+        <SourceCite id="NIST-SP-800-56C-R2" label="NIST SP 800-56C Rev. 2" />;{' '}
+        <SourceCite id="NIST SP 800-227" />; <SourceCite id="RFC 5869" />;{' '}
+        <SourceCite
+          id="ANSSI-CC-PP-2016-05-EN-419221-5"
+          label="EN 419 221-5 protection profile v0.15"
+        />
+        ; <SourceCite id="EUCC v2.0 ACM" label="ECCG Agreed Cryptographic Mechanisms v2" />;{' '}
+        <SourceCite id="NIST-FIPS140-3-IG-PQC" label="FIPS 140-3 Implementation Guidance D.S" />;
+        NIAP {NIAP_DSC},{' '}
+        <SourceCite
+          id="NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0"
+          label="PP for General Purpose Computing Platforms v2.0"
+        />
+        , <SourceCite id="NIAP-PP-Virtualization-Version-2-0" label="PP for Virtualization v2.0" />{' '}
+        and{' '}
+        <SourceCite
+          id="NIAP-PP-Module-VPN-Client-Version-3-0"
+          label="PP-Module for VPN Client v3.0"
+        />
+        .
+      </Sources>
+    </Disclosure>
+  </div>
+)
+
+const DOC_SECURITY_BOXES_URL =
+  'https://certification.enisa.europa.eu/publications/application-attack-potential-hardware-devices-security-boxes_en'
+const DOC_SMARTCARDS_URL =
+  'https://certification.enisa.europa.eu/publications/application-attack-potential-smartcards_en'
+
+/** Collapsed panel inside a key callout: what AVA_VAN.5 asks of lattice-based code. */
+const Avavan5Panel = () => (
+  <Callout tone="key" title="AVA_VAN.5 for a lattice-based implementation">
+    <div className="space-y-3" data-testid="cceu-avavan5">
+      <P>
+        This box names three kinds of attack on lattice-based code that a laboratory could look at
+        under AVA_VAN.5, each with the published papers behind it. It also shows which
+        attack-potential table applies under EUCC and why the scope depends on the profile a product
+        claims. It is orientation only: a laboratory chooses its own test plan, tools and ratings.
+      </P>
+      <Disclosure label="Show the full AVA_VAN.5 text" testId="cceu-avavan5-panel">
+        <P>
+          <em>
+            Orientation only. A laboratory chooses its own test plan, tools and ratings. This box is
+            not a test method.
+          </em>
+        </P>
+
+        <P>
+          <strong>What AVA_VAN.5 asks.</strong> The evaluator tests as an attacker with High attack
+          potential. The evaluator also searches public sources for known weaknesses in the TOE and
+          in its third-party components. The CEM names research papers and conference proceedings
+          among the publicly available sources an evaluator examines, and says the search should
+          focus on sources that refer to the technologies used in the product. For a lattice-based
+          implementation, the published side-channel and fault papers on lattice-based key
+          encapsulation and signatures can therefore belong to that public record. <MA /> Lattice
+          code from a third party goes on the third-party list. <MA />
+        </P>
+
+        <P>
+          <strong>How High is counted.</strong> The CEM scores an attack on five factors: elapsed
+          time, expertise, knowledge of the TOE, window of opportunity and equipment. The CEM
+          example table is read by the attack potential an attack needed: 20 to 24 points is High
+          and 25 or more is beyond High, and the CEM’s own worked case says an attack scenario of 21
+          points that breaks the TOE fails AVA_VAN.5. The CEM says its values may need to be
+          adjusted for the technology type, and that the evaluator should seek guidance from the
+          evaluation authority. For AVA_VAN.5 it also points to guidance for special technical areas
+          that is relevant for the national scheme.
+        </P>
+
+        <P>
+          <strong>Which document rates it, by domain.</strong> Under EUCC, Annex I lists one
+          attack-potential document for each of two technical domains at AVA_VAN level 4 or 5. Both
+          replace the CEM table for their domain.
+        </P>
+        <DataTable
+          caption="The three attack-potential tables: the CEM example table and the two EUCC domain documents"
+          head={['Where', 'Document and version', 'Top row, as the table words it', 'Origin']}
+          rows={[
+            [
+              'CEM:2022, Annex B (example table)',
+              'Table B.3',
+              'Column “attack potential required to exploit scenario”: 20 to 24 points is High; 25 or more is Beyond High',
+              'The CEM itself',
+            ],
+            [
+              'Hardware devices with security boxes',
+              <>
+                <ExtLink href={DOC_SECURITY_BOXES_URL}>
+                  Application of Attack Potential to hardware devices with security boxes
+                </ExtLink>
+                , version 2, February 2025, endorsed by the ECCG on 11 March 2025
+              </>,
+              'Column “TOE resistant to attackers with attack potential of”: 35 and above is High',
+              'JIL Embedded Devices Subgroup of SOG-IS',
+            ],
+            [
+              'Smart cards and similar devices',
+              <>
+                <ExtLink href={DOC_SMARTCARDS_URL}>
+                  Application of Attack Potential to Smartcards and Similar Devices
+                </ExtLink>
+                , version 2, February 2025, endorsed by the ECCG on 11 March 2025
+              </>,
+              'Column “TOE resistant to attackers with attack potential of”: 31 and above is High',
+              'ISCI and the JIL Hardware Attacks Subgroup of SOG-IS',
+            ],
+          ]}
+        />
+
+        <P>
+          The CEM table says what attack potential an attack needed. The two domain tables say which
+          attacker the TOE resists. In the CEM, AVA_VAN.5 stands for a TOE resistant to attackers
+          with High attack potential, whose residual vulnerabilities can only be exploited by
+          attackers with beyond-High potential. The three top rows therefore describe different
+          things and are not three starting points of one scale. <MA />
+        </P>
+
+        <P>
+          Annex I lists the EN 419 221-5 HSM interpretation under the security-box domain, and the
+          security-box document has an annex with rating advice for hardware security modules. An
+          HSM that claims EN 419 221-5, such as the Orrin N7, would therefore normally be assessed
+          in that domain; the certification body confirms the domain for a given product. <MA /> The
+          same attack path can get different points under the CEM, the security-box document and the
+          smart-card document, because the factor values differ: for a difficult window of
+          opportunity the CEM table gives 10 points, and the security-box document gives 4 for
+          identification and 5 for exploitation. A total is read on the table of the domain that
+          applies and is not carried to another table. <MA /> The security-box document scores the
+          effort to find an attack (identification) and the effort to repeat it (exploitation)
+          separately, then adds them.
+        </P>
+
+        <P>
+          Neither document names a post-quantum algorithm. The security-box document says rating
+          advice for software attacks and random number generator attacks will be added in further
+          revisions. The smart-card document already has a section on attacks on random number
+          generators, and it lists changing the characteristics of the random numbers generated
+          among the effects of perturbation. The documents give no separate table for post-quantum
+          attacks, so the general factor tables of the domain are what is available. <MA /> The
+          smart-card document adds that where cryptography is involved the certification body should
+          be consulted. The attack types the documents already name are the ones behind the targets
+          below: perturbation, power consumption, emanation and timing (security boxes);
+          perturbation, key retrieval by fault analysis and side-channel attacks (smart cards).
+        </P>
+
+        <P>
+          <strong>Scope check before planning tests.</strong> Before rating an attack path, the
+          evaluator determines whether it is applicable and reachable under the TOE boundary, the
+          interfaces, the assumptions and the operational environment. <MA /> EN 419 221-5 assumes a
+          protected environment that limits physical access to authorised administrators. Its OE.Env
+          also lists inspections that detect attempts to reach side-channels, and protection against
+          emanation attacks. The profile’s refinement of AVA_VAN.5 says that the protection which
+          FPT_PHP.1 and FPT_PHP.3 must give against physical attacks is equivalent to the assessment
+          in ISO/IEC 19790 at Security Level 3. It says the High attack potential is aimed at
+          logical attacks, especially remote ones. ENISA’s interpretation adds that physical attacks
+          by other persons are not applicable, that no additional vulnerability analysis for
+          physical attacks is needed, and that all kinds of administrator access must be taken into
+          account, including logical access through interfaces that only administrators can reach.
+          The security-box document describes power-consumption analysis as done through an external
+          interface of the TOE, emanation analysis as done with an antenna outside the security-box
+          boundary, and timing analysis as usually possible through the external interfaces. For an
+          HSM under that profile, logical attacks reachable through interfaces, including timing and
+          error behaviour seen from outside, therefore remain relevant. <MA /> A profile that names
+          power, emanation or fault attacks as threats puts them in scope: the Security IC Platform
+          profile, for example, names inherent and forced information leakage as threats. The texts
+          do not say how these rules combine for new cryptographic code in an HSM; see the note
+          after the two panels.
+        </P>
+
+        <P>
+          <strong>Three typical test targets.</strong> Most of the published attacks below were
+          shown on Kyber or Dilithium implementations. ML-KEM and ML-DSA are derived from those
+          designs, and the standards list the differences in an appendix. NIST notes that exposure
+          to side-channel attacks varies by application, so universal guidelines are unlikely to
+          help.
+        </P>
+        <ol className="list-decimal space-y-3 pl-5 text-sm text-foreground/90">
+          <li>
+            <strong>The NTT and decapsulation in ML-KEM, masked or not.</strong>
+            <ul className="mt-1 list-disc space-y-1 pl-5">
+              <li>
+                Primas, Pessl and Mangard showed a single-trace attack on a lattice-based encryption
+                scheme that uses leakage from the number-theoretic transform and can also attack
+                masked implementations; they note that the attack can be adapted to other
+                lattice-based constructions (CHES 2017).
+              </li>
+              <li>
+                Hamburg and co-authors attacked CCA2-secure Kyber with chosen ciphertexts, also
+                against masked implementations, in a noisy leakage setting (TCHES 2021, issue 4).
+              </li>
+              <li>
+                Bos and co-authors built the first completely masked Kyber, with first-order masked
+                decapsulation costing 3.1 million cycles on an Arm Cortex-M4F (TCHES 2021, issue 4).
+              </li>
+              <li>
+                Hermelink, Pessl and Pöppelmann combined a modified ciphertext with a fault that
+                restores it during decapsulation, and say shuffling and Boolean masking do not stop
+                the attack (INDOCRYPT 2021).
+              </li>
+              <li>
+                Bernstein and co-authors found that a division on secret data takes input-dependent
+                time (KyberSlash), and recovered Kyber secret keys within minutes to a few hours on
+                a Raspberry Pi 2 and an Arm Cortex-M4 (TCHES 2025, issue 2).
+              </li>
+              <li>
+                NIST SP 800-227 says KEM modules should have countermeasures against side-channel
+                attacks, including constant-time code and protection of memory from leakage.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>The rejection loop in ML-DSA signing.</strong>
+            <ul className="mt-1 list-disc space-y-1 pl-5">
+              <li>
+                ML-DSA signing repeats a loop until the checks pass, and FIPS 204 says each pass
+                either produces a valid signature or an invalid one whose release would leak
+                information about the private key.
+              </li>
+              <li>
+                Zhou and co-authors showed that leakage from rejected signing attempts gives the
+                challenge and response of those attempts, from which an integer-programming step
+                recovered Dilithium-2, -3 and -5 private keys in seconds or minutes; they measured
+                the leakage as power consumption on an Arm Cortex-M4 (TCHES 2025, issue 4).
+              </li>
+              <li>
+                Zhao and co-authors used power traces from both rejected and final attempts, and
+                report that the attack also works in the hedged mode (DATE 2026). Both attacks use
+                power measurements. <MA />
+              </li>
+              <li>
+                FIPS 204 notes that deterministic signing leaks information about the message, not
+                the private key, through timing, and advises hedged signing if the message must stay
+                hidden.
+              </li>
+              <li>
+                Azouaoui and co-authors classify the steps of Dilithium signing by the protection
+                they need, and report that the randomized variant can be much cheaper to protect
+                than the deterministic one (TCHES 2023, issue 4).
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>Fault injection on ML-DSA signing, and on verification.</strong>
+            <ul className="mt-1 list-disc space-y-1 pl-5">
+              <li>
+                Signature verification takes only a public key, a message and a signature. Fault
+                analysis that retrieves a key works from the difference between correct and faulty
+                cryptographic outputs. So the fault target for key recovery is signing, not
+                verification. <MA />
+              </li>
+              <li>
+                Bruinderink and Pessl showed that single random faults in deterministic Dilithium
+                can cause nonce reuse and key recovery; with clock glitching on an Arm Cortex-M4, up
+                to 65.2% of the signing time was vulnerable to an unprofiled attack (TCHES 2018,
+                issue 3). FIPS 204 cites this paper among the reasons for the hedged default.
+              </li>
+              <li>
+                Ravi and co-authors injected electromagnetic faults into the deterministic Dilithium
+                code of the pqm4 library and recovered an important portion of the secret key
+                (AsiaCCS 2019).
+              </li>
+              <li>
+                Krahmer and co-authors showed key-recovery faults against hedged (randomized)
+                Dilithium too: as few as 1024 and 512 faulty signatures for Dilithium2 in their two
+                attacks, one of which faults the public matrix A (TCHES 2024, issue 3).
+              </li>
+              <li>
+                Azevedo-Oliveira and co-authors build a key-recovery attack on Dilithium for the
+                case where the rejection step is weakened, and note that physically preventing one
+                of the rejection tests gives two fault attacks (PKC 2025).
+              </li>
+              <li>
+                FIPS 204 says the missing randomness makes fault attacks on the deterministic
+                variant harder to mitigate. So hedging makes fault attacks easier to mitigate, but
+                published work shows it does not stop them. <MA />
+              </li>
+              <li>
+                A fault in verification does not recover a key, but it can change an accept or
+                reject result: the smart-card document lists changing “the results of validation
+                such as authentication” among the goals of faults. Calle Viera, Berzati and
+                Heydemann examined the verification of the Dilithium reference implementation under
+                randomizing, zeroizing and skipping faults, and describe how to forge signatures
+                without the secret key by using faults in verification together with properties of
+                the public parameters (CARDIS 2023). EN 419 221-5 has the evaluator test that only
+                validly signed updates can be installed, so for a product with signed updates the
+                check itself is a target. <MA />
+              </li>
+            </ul>
+          </li>
+        </ol>
+
+        <P>This list is not complete. A laboratory may test other targets.</P>
+
+        <Sources readOn="24 October 2026">
+          <SourceCite id="CC-2022-PART3" label="CC:2022 Part 3" /> and{' '}
+          <SourceCite id="CC-2022-CEM" label="CEM:2022" /> with the{' '}
+          <ExternalSource name="errata v1.2" href={CC_PORTAL_URL} />;{' '}
+          <SourceCite id="CIR-EU-2025-2462-EUCC-Amendment" label="CIR 2025/2462 Annex I" />; the two
+          EUCC state-of-the-art documents on attack potential (
+          <ExtLink href={DOC_SECURITY_BOXES_URL}>security boxes</ExtLink>,{' '}
+          <ExtLink href={DOC_SMARTCARDS_URL}>smart cards</ExtLink>); the{' '}
+          <SourceCite
+            id="ANSSI-CC-PP-2016-05-EN-419221-5"
+            label="EN 419 221-5 protection profile"
+          />{' '}
+          and{' '}
+          <SourceCite
+            id="ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation"
+            label="ENISA’s FPT_PHP interpretation"
+          />
+          ;{' '}
+          <SourceCite id="BSI-CC-PP-0084-V2-2026" label="Security IC Platform protection profile" />
+          ; <SourceCite id="FIPS 203" />; <SourceCite id="FIPS 204" />;{' '}
+          <SourceCite id="NIST SP 800-227" />; and the papers named in the bullets.
+        </Sources>
+      </Disclosure>
+    </div>
+  </Callout>
+)
+
+/** Visible after both panels: the lessons that carry the testing and signing detail. */
+const ExampleLessonPointer = () => (
+  <P>
+    To see how leakage is measured and why a plain fixed-versus-random test is not enough for
+    lattice-based code, read{' '}
+    <InLink to="/learn/pqc-testing-validation">PQC Network Testing &amp; Validation</InLink>. For
+    hedged and deterministic signing, read{' '}
+    <InLink to="/learn/hsm-pqc">HSM &amp; PQC Operations</InLink>.
+  </P>
+)
+
+/** Visible, not collapsed: what the two panels leave open. */
+const ExampleLimitsNote = () => (
+  <div data-testid="cceu-example-limits">
+    <Callout tone="warn" title="What this example does not settle">
+      <p>
+        These points depend on the practice of a certification scheme or a laboratory, and the
+        public texts read for this lesson do not decide them.
+      </p>
+      <ol className="list-decimal space-y-2 pl-5 pt-1">
+        <li>
+          <strong>Where ML-KEM encapsulation is written.</strong> Three NIAP profiles list ML-KEM
+          encapsulation and decapsulation in an FCS_COP.1 iteration that FCS_CKM.2 selects, while
+          the NIAP VPN Client module names ML-KEM-1024 directly in FCS_CKM.2. CC:2022 Part 2 lists
+          key agreement among the typical FCS_COP.1 operations. The choice changes what else the
+          Security Target must hold, because the corrected dependency lists differ: FCS_COP.1
+          depends on FCS_CKM.6, and FCS_CKM.2 does not. No text read says which of the two a given
+          scheme expects for ML-KEM, so the example shows FCS_CKM.2 and does not decide. <MA />
+        </li>
+        <li>
+          <strong>How a hybrid signature is claimed.</strong> ACM v2 describes a hybrid signature as
+          signatures from different schemes that must all verify. CC:2022 Part 2, the errata, the
+          CEM and the NIAP profiles read contain no rule for writing that as requirements (for
+          example two FCS_COP.1 iterations, or one iteration with a refinement), or for what
+          certification bodies accept.
+        </li>
+        <li>
+          <strong>
+            Whether HMAC and SHA-256 inside the key derivation need their own iterations.
+          </strong>{' '}
+          CC:2022 Part 2 does not say. NIAP’s cPP for Dedicated Security Component v2.1 refers to
+          its hash and keyed-hash iterations for its one-step derivation methods, and names the MAC
+          and PRF inside FCS_CKM.5 for its two-step method.
+        </li>
+        <li>
+          <strong>Claiming EN 419 221-5 from a CC:2022 Security Target.</strong> CC:2022 Part 1 says
+          a Security Target that claims strict conformance may add SFRs to those of the profile. The
+          transition policy lets a CC:2022 Security Target claim a CC 3.1 profile until 31 December
+          2027 and says changed components should be replaced by their CC:2022 counterparts. No text
+          read says how a certification body handles FCS_CKM.5 and FCS_CKM.6 beside the profile’s
+          own FCS_CKM.1, FCS_CKM.4 and FCS_COP.1, or whether they must trace to the profile’s
+          objectives and its policy P.Algorithms. The profile text used here is version 0.15, the
+          version that EUCC Annex II lists; the paid CEN edition was not checked.
+        </li>
+        <li>
+          <strong>Whether physical attacks on the new code are in scope under that profile.</strong>{' '}
+          ENISA’s interpretation says physical attacks by other persons are not applicable, that no
+          additional vulnerability analysis for physical attacks is needed, and that logical access
+          through interfaces, including administrator-only interfaces, must be taken into account.
+          The security-box document describes power and emanation analysis as done from outside the
+          security box. The texts do not say whether power, electromagnetic and fault attacks on the
+          new cryptographic code are tested under AVA_VAN.5, under the Level 3 physical testing, or
+          not at all.
+        </li>
+        <li>
+          <strong>
+            How a fault on the random input of hedged signing is rated, and how published attacks
+            carry over.
+          </strong>{' '}
+          The security-box document says rating advice for random number generator attacks will be
+          added. The smart-card document has a section on such attacks and says the certification
+          body should be consulted where cryptography is involved. The CEM lists research papers and
+          conference proceedings as sources. No text read says how an attack published on the
+          earlier Kyber or Dilithium design is treated for ML-KEM or ML-DSA, or how a fault on the
+          randomness input is rated today.
+        </li>
+      </ol>
+    </Callout>
+  </div>
+)
+
 /** Learn section `eucc-pqc-today` */
 export const EuccPqcToday = () => (
   <Section>
@@ -1697,6 +2447,8 @@ export const EuccPqcToday = () => (
       continuity rules. Following an ACM recommendation alone does not establish conformity.
     </P>
 
+    <SecurityTargetExample />
+
     <H3>What changes in the evaluation when PQC enters</H3>
     <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/90">
       <li>
@@ -1718,6 +2470,10 @@ export const EuccPqcToday = () => (
         LMS/XMSS — the state handling ACM v2 treats as critical data.
       </li>
     </ul>
+
+    <Avavan5Panel />
+    <ExampleLessonPointer />
+    <ExampleLimitsNote />
 
     <Callout tone="planning" title="Planning implication — not yet applicable">
       <ul className="list-disc space-y-1 pl-5">
@@ -1758,18 +2514,6 @@ export const EuccPqcToday = () => (
 )
 
 // ── Regional schemes built on Common Criteria ──────────────────────────────
-
-/** An official page with no library row yet, opened in a new tab. */
-const ExtLink = ({ href, children }: { href: string; children: ReactNode }) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
-  >
-    {children}
-  </a>
-)
 
 const Ref = ({ source }: { source: SourceRef }) =>
   source.libraryId ? (
@@ -2056,40 +2800,6 @@ export const CcRegionalReference = () => (
   </div>
 )
 
-const LEARN = '/learn/cc-eucc-certification?tab=learn'
-
-/** A named source that has no Library page: its name, then a plain link to the document. */
-const ExternalSource = ({ name, href }: { name: string; href?: string }) => (
-  <>
-    <PlainSource>{name}</PlainSource>
-    {href ? (
-      <>
-        {' '}
-        (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Source: ${name}`}
-          className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
-        >
-          Source
-        </a>
-        )
-      </>
-    ) : null}
-  </>
-)
-
-const InLink = ({ to, children }: { to: string; children: ReactNode }) => (
-  <Link
-    to={to}
-    className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
-  >
-    {children}
-  </Link>
-)
-
 const NIAP_POLICY_5_URL =
   'https://www.niap-ccevs.org/Documents_and_Guidance/ccevs/policy-ltr-5-update3.pdf'
 const NIAP_PP_LIST_URL = 'https://www.niap-ccevs.org/protectionprofiles'
@@ -2278,8 +2988,6 @@ const NIAP_REPORTED_ONLY: readonly string[] = [
   'PP for General Purpose Operating Systems, version 4.3: listed with 27 Sep 2022',
   'PP for Mobile Device Fundamentals, version 3.3: listed with 12 Sep 2022',
 ]
-
-const MA = () => <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
 
 /** Learn section `niap-pqc-route` */
 export const NiapPqcRoute = () => (
