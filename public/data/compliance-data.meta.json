@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
-  "publicationId": "85145a1148d30f81144bd008d9ba9a3ea643f98f7e50e08f87822bed3a1401e6",
-  "generatedAt": "2026-10-23T02:05:22+00:00",
+  "publicationId": "ba3a41d87b9e1962346bfe580511633d579fcd06cd2dcbbfb0056bd1aa3b2046",
+  "generatedAt": "2026-10-24T03:09:18+00:00",
   "scope": {
     "fips": "FIPS 140-3 only (NIST CMVP)",
     "cavp": "NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA, LMS",
     "cc": "Common Criteria Portal certified + archived lists, ANSSI (CC and CSPN), ENISA EUCC",
-    "excluded": ["FIPS 140-2", "national programmes other than those listed"]
+    "excluded": ["FIPS 140-2", "national programmes other than those listed"],
+    "esv": "NIST CMVP Entropy Source Validation certificates (SP 800-90B)"
   },
   "partitions": {
     "fips": {
@@ -38,6 +39,12 @@
       "sourceUrl": "https://certification.enisa.europa.eu/certificates_en",
       "retrievedAt": "2026-10-23T02:23:12+00:00",
       "count": 112
+    },
+    "esv": {
+      "label": "NIST CMVP \u2014 Entropy Source Validations",
+      "sourceUrl": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/search",
+      "retrievedAt": "2026-10-24T02:47:02+00:00",
+      "count": 361
     }
   },
   "exclusions": {
@@ -67,6 +74,13 @@
     "eucc": {
       "*": "ENISA certificate page",
       "pqcCoverage": "ENISA-hosted documents (kept as-is, D-SRC-3); empty for newly listed certificates"
+    },
+    "esv": {
+      "vendor/productName/date/lab/esvValidationHistory/esvFirstValidated": "NIST ESV certificate page (Validation History); vendor and implementation name also on the ESV list",
+      "esvStandard/esvVersion/esvDescription/esvNoiseSourceClassification/esvReuseStatus": "NIST ESV certificate page \u2014 Details",
+      "esvEntropyClaims (with each row's operating environments and conditioning components)": "NIST ESV certificate page \u2014 entropy table (operating environments, vetted conditioning component CAVP certificates)",
+      "additionalDocuments": "link to the NIST-hosted Public Use Document (document link only)",
+      "status": "Validated \u2014 NIST publishes no lifecycle status for entropy certificates"
     }
   }
 }
