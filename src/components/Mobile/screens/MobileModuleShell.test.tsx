@@ -31,10 +31,15 @@ describe('MobileModuleShell', () => {
     expect(screen.getByText('REAL CONTENT')).toBeInTheDocument()
   })
 
-  it('omits the whyThisMatters callout, lm_id chip and section checklist when the manifest has none', () => {
+  it('omits the whyThisMatters callout and section checklist when the manifest has none', () => {
     render(<MobileModuleShell manifest={minimal} learnContent={<div />} />)
     expect(screen.queryByText('Why this matters')).not.toBeInTheDocument()
     expect(screen.queryByText(/sections read/)).not.toBeInTheDocument()
+  })
+
+  it('does not print the internal module code above the title', () => {
+    render(<MobileModuleShell manifest={{ ...minimal, lm_id: 'LM-999' }} learnContent={<div />} />)
+    expect(screen.queryByText('LM-999')).not.toBeInTheDocument()
   })
 
   it('title/description slot overrides win over the manifest defaults, matching desktop precedence', () => {

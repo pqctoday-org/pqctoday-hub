@@ -819,7 +819,7 @@ export const SIDE_CHANNEL_VECTORS: SideChannelVector[] = [
     affectedAlgorithms: ['ML-DSA'],
     attackType: 'Active Fault Attack',
     description:
-      'Inducing faults during ML-DSA signing (e.g., voltage glitching, laser fault injection) can cause the signer to produce a faulty signature that leaks the secret key. This is why ML-DSA uses hedged signing.',
+      'Inducing faults during ML-DSA signing (e.g., voltage glitching, laser fault injection) can cause the signer to produce a faulty signature that leaks the secret key. FIPS 204 §3.4 makes the hedged variant the default, and says the deterministic variant makes the risk of side-channel attacks, particularly fault attacks, more difficult to mitigate.',
     countermeasure:
       'ML-DSA hedged signing mode (FIPS 204 §3.4): the rnd parameter is random, not zero. FIPS 204 says "The use of fresh randomness during signing helps mitigate side-channel attacks" and that the deterministic variant makes fault attacks "more difficult to mitigate". FIPS 140-3 Level 3 requires tamper-resistant enclosures.',
     hsmRelevance: 'high',

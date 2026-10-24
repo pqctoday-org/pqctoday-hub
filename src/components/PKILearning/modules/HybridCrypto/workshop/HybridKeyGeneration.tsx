@@ -504,7 +504,9 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
         own output), so it shows the engine is self-consistent but has no published expected value.
         Rows tagged &ldquo;NIST ACVP sample&rdquo; or &ldquo;Standard KAT&rdquo; compare the engine
         with an answer someone else published. Neither a round trip nor a sample run establishes a
-        validation.
+        validation. No published test vector for a hybrid key exchange (X25519MLKEM768 or X-Wing) is
+        run here: NIST&rsquo;s ACVP does not yet cover hybrids, and the ML-KEM checks use
+        NIST&rsquo;s published samples.
       </p>
       <KatValidationPanel
         specs={HYBRID_KAT_SPECS}
