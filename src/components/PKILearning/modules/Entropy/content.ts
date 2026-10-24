@@ -69,6 +69,7 @@ export const content: ModuleContent = {
     // walkthrough teach (the ESV Server and its protocol, and the ESV program page).
     getStandard('NIST-CMVP-ESV'),
     getStandard('NIST-CMVP-ESV-Program'),
+    getStandard('NIST-SP-800-90B-Entropy-Assessment-tool-usnistgov-GitHub'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-1024')],

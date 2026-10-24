@@ -26,7 +26,7 @@ export interface GeneratedDataFilenames {
 }
 
 export const DATA_FILENAMES: GeneratedDataFilenames = {
-  library: 'library_10232026_r27.csv',
+  library: 'library_10232026_r28.csv',
   timeline: 'timeline_10222026_r8.csv',
   migrate: 'pqc_product_catalog_10232026_r3.csv',
   threats: 'quantum_threats_hsm_industries_10162026_r5.csv',
