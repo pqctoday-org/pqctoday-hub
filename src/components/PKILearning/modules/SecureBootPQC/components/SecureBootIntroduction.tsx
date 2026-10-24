@@ -92,7 +92,7 @@ const FIPS_186_5 = getStandard('FIPS 186-5')
 
 /** The CMVP's own list of approved security functions (the web page behind SP 800-140C). */
 const CMVP_SECURITY_FUNCTIONS_URL =
-  'https://csrc.nist.gov/projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800140c'
+  'https://csrc.nist.gov/projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140c'
 
 /** A link to a Library row, in the style of the "Related:" links in this lesson. */
 const LibCite: React.FC<{
