@@ -146,7 +146,6 @@ export function MobileModuleShell({
           {track && <span className={mobileChip}>{track}</span>}
           {manifest.difficulty && <span className={mobileChip}>{manifest.difficulty}</span>}
           {manifest.duration && <span className={mobileChip}>{manifest.duration}</span>}
-          {manifest.lm_id && <span className={cn(mobileChip, 'font-mono')}>{manifest.lm_id}</span>}
         </div>
         <h1 className="text-[19px] font-extrabold leading-tight text-foreground">
           {title ?? manifest.title}

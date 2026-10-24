@@ -31,7 +31,7 @@ export const content: ModuleContent = {
   // renewed the 22 October one after the corrections; the on-page notice follows it
   // (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until the owner renews it.
   version: '0.1.0',
-  lastEdited: '2026-10-23',
+  lastEdited: '2026-10-24',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
@@ -68,7 +68,6 @@ export const content: ModuleContent = {
     // Req 1-3 and P2PE v3.1 4A-1.1 accept FIPS Level 3+ or PCI-approved HSMs
     getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
     getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
-    getStandard('NIST-CMVP-Cert-5223'), // second source for claim:18d14b3a7815ab38
     getStandard('NIST-CMVP-FIPS-140-3-Standards-page'), // second source for claim:5be7a52c8654adee
     getStandard('ISO-IEC-19790-2025'), // second source for claim:e462fd5c6b804f37
     // Side-channel and fault attacks section (fips-attack-evidence)

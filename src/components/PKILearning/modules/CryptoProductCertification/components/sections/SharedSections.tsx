@@ -351,8 +351,9 @@ const HYBRID_SCOPE_ROWS: readonly { part: ReactNode; paper: ReactNode; tested: R
     paper: (
       <>
         A CAVP certificate for “ML-KEM EncapDecap” for each implemented parameter set (512, 768,
-        1024), with “Decapsulation Key Check” and “Encapsulation Key Check” under Functions; “ML-KEM
-        KeyGen” if the module generates key pairs
+        1024), with “Decapsulation Key Check” and “Encapsulation Key Check” under Functions, unless
+        the lab shows “assurance that these checks have been performed […] through other means”;
+        “ML-KEM KeyGen” if the module generates key pairs
       </>
     ),
     tested: 'Algorithm test vectors',
@@ -370,7 +371,14 @@ const HYBRID_SCOPE_ROWS: readonly { part: ReactNode; paper: ReactNode; tested: R
   },
   {
     part: 'Key combiner',
-    paper: <>SP 800-56C key derivation (“KDA HKDF” counts) or an SP 800-133 §6.3 method</>,
+    paper: (
+      <>
+        SP 800-56C key derivation (“KDA HKDF” counts), or an SP 800-133 §6.3 method. The SP 800-133
+        method “cannot combine shared secrets that are NOT already keys (e.g., cannot operate on the
+        Z value computed via SP 800-56A or SP 800-56B methods) nor can it incorporate non-approved
+        schemes”, so a non-approved classical half such as X25519 needs the SP 800-56C route.
+      </>
+    ),
     tested: (
       <>
         Algorithm test vectors for the KDF (“KDA HKDF” for HKDF); for SP 800-133, HMAC testing if
@@ -396,7 +404,11 @@ const HYBRID_SCOPE_ROWS: readonly { part: ReactNode; paper: ReactNode; tested: R
     part: 'Self-tests',
     paper: 'Each approved scheme is self-tested on its own',
     tested: (
-      <>“There is currently no separate self-test requirement for the approved key combiner”</>
+      <>
+        “There is currently no separate self-test requirement for the approved key combiner”, but
+        approved algorithms used for the key combiner (for example an SP 800-56C KDF or HMAC) “must
+        still meet applicable self-test requirements per IG 10.3.A”
+      </>
     ),
   },
 ]
@@ -725,10 +737,10 @@ const PLATFORM_ROUTE_ROWS: readonly {
     result: (
       <>
         The vendor “bears all responsibility”. “The CMVP makes no statement as to the correct
-        operation of the module or the security strengths of the generated keys” there, and the
-        Security Policy must say so. Not available when Physical Security is validated at Level 2 or
-        higher; it applies to software modules, and to firmware or hybrid modules at Physical
-        Security Level 1.
+        operation of the module or the security strengths of the generated keys” in an environment
+        not listed on the certificate, and the Security Policy must say so. Not available when
+        Physical Security is validated at Level 2 or higher; it applies to software modules, and to
+        firmware or hybrid modules at Physical Security Level 1.
       </>
     ),
   },
@@ -810,7 +822,8 @@ export const NewPlatform = () => (
       (This section is about functions in a general-purpose processor that a software or firmware
       module can use. A dedicated accelerator built into a hardware module is part of that module’s
       own design and is covered by the rules for hardware modules, not by the IG’s list below; for
-      example, algorithm logic written in HDL on an FPGA is validated as hardware (
+      example, algorithm logic written in HDL on an FPGA with no underlying “OS” is validated in the
+      FPGA as hardware, not as firmware (
       <SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.A" />
       ). <ModuleAnalysisNote>Module analysis.</ModuleAnalysisNote>) The IG (
       <SourceLink source={SHARED_SOURCES.ig} label="IG 2.3.C" />) separates two cases. A Processor
@@ -820,8 +833,9 @@ export const NewPlatform = () => (
       be tested in both software/firmware only execution and PAA execution”, and the same holds for
       a PAI. The chip’s part number or version, family and microarchitecture go in the submission,
       and the accelerator must be a “known” one: the IG’s list (19 August 2026) names accelerators
-      for AES and SHA sub-functions on Intel, AMD, Arm, IBM Power and Oracle SPARC processors, plus
-      IBM’s CPACF. It names no accelerator for ML-KEM, ML-DSA or SLH-DSA.{' '}
+      for AES and SHA sub-functions on Intel, AMD, Arm and IBM Power processors, for AES, DES and
+      SHA sub-functions on Oracle SPARC, and IBM’s CPACF, a full implementation of AES (ECB, CBC),
+      TDES, SHA-1 and SHA-2. It names no accelerator for ML-KEM, ML-DSA or SLH-DSA.{' '}
       <ModuleAnalysisNote>(Module analysis from reading the list.)</ModuleAnalysisNote> New ones are
       added by asking the CMVP, with evidence the lab has verified. The testing can be done on the
       same environment, or without the accelerator on one environment and with it on another
@@ -837,8 +851,9 @@ export const NewPlatform = () => (
       not meet the stated assumptions, the change is “Always major regardless of the assurance level
       – requires re-evaluation”. A move between near-identical operating system releases is rated
       Minor; a change from Intel to Arm hardware is rated Major because of “Changes in boot chain,
-      memory model, crypto acceleration”. And a migration that shifts timing or power behaviour is
-      “Always major at AVA_VAN.4 and 5”, because of side-channel attacks.
+      memory model, crypto acceleration”. And a migration that causes “measurable changes to timing
+      or resource behaviour” is “Always major at AVA_VAN.4 and 5, due to side-channel attacks”; at
+      lower assurance levels it “may be minor if no impact is shown”.
     </p>
 
     <p>

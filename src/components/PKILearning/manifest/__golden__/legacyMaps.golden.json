@@ -25,7 +25,7 @@
       "description": "How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached.",
       "duration": "90 min",
       "difficulty": "advanced",
-      "frameworkPhase": "p6"
+      "frameworkPhase": "p7"
     },
     "aerospace-pqc": {
       "id": "aerospace-pqc",
@@ -4199,15 +4199,6 @@
           "duration": "35 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"
-        },
-        {
-          "id": "acvp-lab-workflow",
-          "lm_id": "LM-066",
-          "title": "ACVP Lab Workflow: From Vector Set to Evidence",
-          "description": "How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached.",
-          "duration": "90 min",
-          "difficulty": "advanced",
-          "frameworkPhase": "p6"
         }
       ]
     },
@@ -4312,6 +4303,15 @@
           "duration": "60 min",
           "difficulty": "advanced",
           "frameworkPhase": "p6"
+        },
+        {
+          "id": "acvp-lab-workflow",
+          "lm_id": "LM-066",
+          "title": "ACVP Lab Workflow: From Vector Set to Evidence",
+          "description": "How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached.",
+          "duration": "90 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p7"
         }
       ]
     },

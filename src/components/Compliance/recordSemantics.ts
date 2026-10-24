@@ -14,6 +14,10 @@
  *    is shown to users as "NIST CAVP", never "ACVP certificate".
  *  - 'CSPN' is ANSSI's French national first-level scheme — separate from
  *    Common Criteria, never counted as CC.
+ *  - 'ESV' is a NIST entropy source validation certificate (SP 800-90B). Its
+ *    status is 'Validated' (NIST publishes no lifecycle status for it). PQC
+ *    coverage does not apply to it: it is shown as "not applicable", never as
+ *    "unknown" or "none" (`isPqcApplicable()`).
  *  - pqcCoverage '' means the source page could not be read (unknown), not
  *    "no PQC". For CC / EUCC / CSPN the PQC names come from the Security
  *    Target, which is a claim in the evaluated document, not validated support.
@@ -83,6 +87,7 @@ const TYPE_LABEL: Record<ComplianceType, string> = {
   'Common Criteria': 'Common Criteria',
   EUCC: 'EUCC',
   CSPN: 'CSPN (ANSSI)',
+  ESV: 'Entropy (ESV)',
 }
 
 const TYPE_DESCRIPTION: Record<ComplianceType, string> = {
@@ -91,6 +96,34 @@ const TYPE_DESCRIPTION: Record<ComplianceType, string> = {
   'Common Criteria': 'Common Criteria product certificate',
   EUCC: 'EU Common Criteria (EUCC) certificate',
   CSPN: 'CSPN (ANSSI) — French national first-level certification, separate from Common Criteria',
+  ESV: 'NIST entropy source validation (SP 800-90B) — validates a noise source, not a module or an algorithm',
+}
+
+/**
+ * The Product Records type tabs, in display order. `id` is the `?rtab=` value, so a
+ * link such as /compliance?tab=records&rtab=esv opens one tab; an unknown id
+ * shows every record. Desktop and the phone layout read the same list.
+ */
+export const RECORD_TYPE_TABS: ReadonlyArray<{ id: string; label: string }> = [
+  { id: 'all', label: 'All Records' },
+  { id: 'fips', label: 'FIPS 140-3' },
+  { id: 'acvp', label: TYPE_LABEL.ACVP },
+  { id: 'cc', label: 'Common Criteria' },
+  { id: 'cspn', label: TYPE_LABEL.CSPN },
+  { id: 'esv', label: TYPE_LABEL.ESV },
+]
+
+/** True when a record of `type` belongs on the Product Records tab `certType` (a `?rtab=` value). */
+export function matchesCertType(record: { type: string }, certType: string): boolean {
+  if (!certType) return true
+  const ct = certType.toLowerCase()
+  if (ct === 'all') return true
+  if (ct === 'fips' || ct === 'fips 140-3') return record.type === 'FIPS 140-3'
+  if (ct === 'acvp') return record.type === 'ACVP'
+  if (ct === 'cc') return record.type === 'Common Criteria'
+  if (ct === 'cspn') return record.type === 'CSPN'
+  if (ct === 'esv') return record.type === 'ESV'
+  return true
 }
 
 /**
@@ -118,6 +151,15 @@ export function recordTypeLabel(type: string): string {
 /** User-facing long label for a record type (tooltips, detail view). */
 export function recordTypeDescription(type: string): string {
   return type in TYPE_DESCRIPTION ? TYPE_DESCRIPTION[type as ComplianceType] : type
+}
+
+/**
+ * Whether a PQC coverage statement makes sense for this type at all. An entropy
+ * source validation certifies a noise source, so "PQC: unknown" or "none" would
+ * misdescribe it: it is not applicable, and every PQC count leaves it out.
+ */
+export function isPqcApplicable(type: string): boolean {
+  return type !== 'ESV'
 }
 
 /** Types whose PQC names come from a Security Target, not a validation. */
@@ -186,6 +228,7 @@ export function pqcEvidenceLabel(type: string): string {
 export function pqcCoverageSummary(
   record: Pick<ComplianceRecord, 'type' | 'pqcCoverage' | 'cmvpDetailsFetchedAt'>
 ) {
+  if (!isPqcApplicable(record.type)) return 'Not applicable (entropy source validation)'
   const state = pqcCoverageState(record.pqcCoverage)
   if (state === 'not-read') {
     return pqcUnknownReason(record) === 'source-lists-none'
@@ -197,6 +240,47 @@ export function pqcCoverageSummary(
   if (state === 'heuristic') return 'Unconfirmed (name match only)'
   if (state === 'flag') return 'PQC indicated (no algorithm names)'
   return `${pqcEvidenceLabel(record.type)}: ${pqcNames(record.pqcCoverage).join(', ')}`
+}
+
+// ── Entropy certificates <-> FIPS 140-3 modules ───────────────────────────
+
+/**
+ * Which FIPS 140-3 modules name which entropy certificate in their Security Policy, and which
+ * ESV certificates exist in the snapshot. A certificate number is linked only when its ESV
+ * record is in the snapshot; a module with no clear table in its policy is simply absent
+ * (nothing is inferred from vendor names).
+ */
+export interface EntropyIndex<T = ComplianceRecord> {
+  /** The ESV records in the snapshot, by certificate number. */
+  esv: ReadonlyMap<string, T>
+  /** ESV id -> the FIPS 140-3 records whose Security Policy names it, in certificate order. */
+  usedBy: ReadonlyMap<string, readonly T[]>
+}
+
+export const EMPTY_ENTROPY_INDEX: EntropyIndex = { esv: new Map(), usedBy: new Map() }
+
+export function buildEntropyIndex<
+  T extends { id: string; type: string; entropyCertificates?: readonly string[] },
+>(records: readonly T[]): EntropyIndex<T> {
+  const esv = new Map<string, T>()
+  const usedBy = new Map<string, T[]>()
+  for (const r of records) {
+    if (r.type === 'ESV') esv.set(r.id, r)
+    if (r.type !== 'FIPS 140-3' || !Array.isArray(r.entropyCertificates)) continue
+    for (const e of new Set(r.entropyCertificates)) {
+      const list = usedBy.get(e) ?? []
+      list.push(r)
+      usedBy.set(e, list)
+    }
+  }
+  for (const list of usedBy.values()) list.sort((a, b) => Number(a.id) - Number(b.id))
+  return { esv, usedBy }
+}
+
+/** Opens one record on its own Product Records tab (the link between a module and its entropy certificate). */
+export function recordPath(record: Pick<ComplianceRecord, 'id' | 'type'>): string {
+  const tab = record.type === 'ESV' ? 'esv' : record.type === 'FIPS 140-3' ? 'fips' : 'all'
+  return `/compliance?tab=records&rtab=${tab}&cert=${encodeURIComponent(record.id)}`
 }
 
 // ── Links ─────────────────────────────────────────────────────────────────
@@ -232,6 +316,27 @@ export function formatIsoDate(iso: string | null | undefined): string | null {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
   return `${d.getUTCDate()} ${MONTH_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}`
+}
+
+/**
+ * The newest per-record `date` (ISO YYYY-MM-DD) actually present in the data —
+ * the date of the most recent certificate, NOT when the snapshot was
+ * retrieved. Label it "Newest record date", never "as of": the snapshot's
+ * retrieval dates come from the sidecar (compliance-data.meta.json, see
+ * `snapshotRetrievalEntries` below). Lives here, pure, so the desktop loader
+ * (services.ts re-exports it) and the phone view compute the same date.
+ */
+export const computeRecordsSnapshotDate = (
+  records: readonly Pick<ComplianceRecord, 'date'>[]
+): Date | null => {
+  let latest: number | null = null
+  for (const record of records) {
+    if (!record.date) continue
+    const t = new Date(record.date).getTime()
+    if (Number.isNaN(t)) continue
+    if (latest === null || t > latest) latest = t
+  }
+  return latest === null ? null : new Date(latest)
 }
 
 // ── PQC stage summary ─────────────────────────────────────────────────────
@@ -274,7 +379,7 @@ export function pqcStageSummaryLine(summary: PqcStageSummary): string | null {
 // ── Snapshot scope + retrieval (sidecar) ──────────────────────────────────
 
 export const DEFAULT_SCOPE_NOTICE =
-  'FIPS 140-3 modules only (NIST CMVP; FIPS 140-2 is not included) · NIST CAVP validations for selected PQC families (ML-KEM, ML-DSA, SLH-DSA, LMS) · Common Criteria Portal, ANSSI (CC and CSPN) and ENISA EUCC. Not every national certification programme is covered.'
+  'FIPS 140-3 modules only (NIST CMVP; FIPS 140-2 is not included) · NIST CAVP validations for selected PQC families (ML-KEM, ML-DSA, SLH-DSA, LMS) · NIST CMVP entropy source validations (SP 800-90B) · Common Criteria Portal, ANSSI (CC and CSPN) and ENISA EUCC. Not every national certification programme is covered.'
 
 /** Scope notice for the records view and exports; appends the sidecar's exclusion list when present. */
 export function scopeNotice(meta: ComplianceMeta | null | undefined): string {
@@ -305,7 +410,7 @@ export function retrievalSummary(entries: readonly RetrievalEntry[], sep = ' · 
   return `${entries.map((e) => `${e.label} retrieved ${e.date}`).join(sep)} (dates in UTC)`
 }
 
-const PARTITION_ORDER = ['fips', 'cavp', 'cc', 'anssi', 'eucc']
+const PARTITION_ORDER = ['fips', 'cavp', 'esv', 'cc', 'anssi', 'eucc']
 
 /** Per-partition snapshot retrieval dates from the sidecar, in a stable order. */
 export function snapshotRetrievalEntries(

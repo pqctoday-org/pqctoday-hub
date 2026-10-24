@@ -329,9 +329,9 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     architect:
       '"For You" has a "Crypto-Agility Maturity" panel, a "Jurisdiction map" and "Standards to read"; the "Landscape" tab lays out Standardization Bodies, Certification Schemes and Compliance Frameworks as one pipeline.',
     researcher:
-      '"For You" sorts frameworks by data confidence with a "Source library" and "Cited timeline events"; "Sources & Practices" names the model that extracted each passage; "Product Records" are snapshots of NIST CMVP, CAVP and Common Criteria records with source and freshness metadata.',
+      '"For You" sorts frameworks by data confidence with a "Source library" and "Cited timeline events"; "Sources & Practices" names the model that extracted each passage; "Product Records" are snapshots of NIST CMVP, CAVP, entropy source validation (ESV) and Common Criteria records with source and freshness metadata.',
     'cert-engineer':
-      '"Product Records" lists NIST CMVP, CAVP and Common Criteria records — keep the stages apart: CAVP is the prerequisite, a module certificate is the certification; "For You" lists the schemes that expect PQC and the tests to run first.',
+      '"Product Records" lists NIST CMVP, CAVP, entropy source validation (ESV) and Common Criteria records — keep the stages apart: CAVP is the prerequisite, a module certificate is the certification, and an ESV certificate validates a noise source; "For You" lists the schemes that expect PQC and the tests to run first.',
     ops: '"For You" has a "Rotation clock" bucketing frameworks by how soon they bind, "Toolchain quick jumps" and "Framework deadlines"; "Products" shows whether each certificate is PQC validated, mixed or classical only.',
     curious:
       '"For You" opens with "Does this affect me?"; the "Landscape" tab shows who defines algorithms (Standardization Bodies), who validates products (Certification Schemes) and who mandates adoption (Compliance Frameworks).',

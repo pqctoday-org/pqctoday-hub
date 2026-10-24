@@ -687,7 +687,12 @@ const ATTACK_EVIDENCE_ROWS: readonly { risk: string; fips: ReactNode; cc: ReactN
   },
   {
     risk: 'Fault injection',
-    fips: <>Same: “Mitigation of other attacks”</>,
+    fips: (
+      <>
+        A publicly documented countermeasure is addressed under “Mitigation of other attacks”, which
+        covers “both invasive (physical) or non-invasive mechanisms”
+      </>
+    ),
     cc: <>Same</>,
   },
   {
@@ -695,7 +700,10 @@ const ATTACK_EVIDENCE_ROWS: readonly { risk: string; fips: ReactNode; cc: ReactN
     fips: (
       <>
         Entropy source assessed separately (ESV, IG 9.3.A;{' '}
-        <Cite std={MGMT_MANUAL}>Management Manual, section 7.1.7</Cite>); see the{' '}
+        <Cite std={MGMT_MANUAL}>
+          Management Manual, section 4.8, and section 7.1.7 when the environment changes
+        </Cite>
+        ); see the{' '}
         <Link
           to="/learn/entropy-randomness?tab=learn&section=esv"
           className="text-primary underline"
@@ -733,7 +741,10 @@ export const FipsAttackEvidence = () => (
   <Body>
     <p>
       A FIPS 140-3 certificate tells you the module met the requirements the CMVP can test.
-      Resistance to side-channel and fault attacks is, today, mostly not among them.
+      Resistance to side-channel and fault attacks is, today, mostly not among them. The nearest
+      tested feature is physical security: at Level 3 and above the lab tests environmental failure
+      protection or testing, with “EFP temperature or voltage response parameters” (IG 7.A and
+      9.7.B).
     </p>
 
     <p>
@@ -744,10 +755,11 @@ export const FipsAttackEvidence = () => (
       FIPS 140-2: “Major changes in FIPS 140-3 are limited to the introduction of non-invasive
       physical requirements.” But the publication that would say how a lab measures it,{' '}
       <Cite std={SP_800_140F}>SP 800-140F</Cite>, has an empty requirements list: “No additional
-      requirements at this time.” (March 2020). So the{' '}
-      <Cite std={MGMT_MANUAL}>Management Manual</Cite> treats the area as not applicable by default:
-      “Section 6.8, Non-invasive security is N/A by default as there are currently no requirements
-      in SP 800-140F.”
+      requirements at this time” (March 2020). A draft revision of August 2021 would name ISO/IEC
+      17825 and ISO/IEC 20085-1 and -2 as approved metrics; it has not been finalised. So the{' '}
+      <Cite std={MGMT_MANUAL}>Management Manual, section 7.5</Cite> treats the area as not
+      applicable by default: “Section 6.8, Non-invasive security is N/A by default as there are
+      currently no requirements in SP 800-140F.”
     </p>
     <p>
       That leaves a gap you can read straight off the Security Policy. With no approved metric,
@@ -762,22 +774,24 @@ export const FipsAttackEvidence = () => (
       built and publicly documented” (public documents count, not only the Security Policy) “to
       mitigate one or more specific attacks”, the lab must address that area “regardless if the
       vendor of the module wishes to address the claim or not”, and “shall verify the implemented
-      mitigation mechanisms and/or mitigations claimed by the vendor”. A module that documents
-      nothing can mark the area N/A (<Cite std={MGMT_MANUAL}>Management Manual, section 6.12</Cite>
-      ). So a module with no documented countermeasure gets no leakage evidence at all, and for one
-      that has a documented countermeasure, how far the lab’s verification goes is not set by any
+      mitigation mechanisms and/or mitigations claimed by the vendor”. A module that has not been
+      purposely designed, built and publicly documented to mitigate a specific attack can mark the
+      area N/A (<Cite std={MGMT_MANUAL}>Management Manual, section 7.5</Cite>). So a module with no
+      publicly documented countermeasure gets no leakage evidence at all, and for one that has a
+      publicly documented countermeasure, how far the lab’s verification goes is not set by any
       published CMVP test metric. <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
     </p>
 
     <p>
       <strong className="text-foreground">Why it matters for ML-KEM and ML-DSA.</strong> Published
-      research shows attacks on lattice implementations that have no countermeasures. A{' '}
-      <Cite std={PQC_SEMINAR_FAULT}>NIST PQC seminar on fault injection</Cite> concludes that
-      “Variety of FIA are possible on unprotected Kyber and Dilithium”, and a{' '}
+      research shows attacks on lattice implementations that have no countermeasures, and on some
+      that do. A <Cite std={PQC_SEMINAR_FAULT}>NIST PQC seminar on fault injection</Cite> concludes
+      that “Variety of FIA are possible on unprotected Kyber and Dilithium”. A{' '}
       <Cite std={PROACT_SCA}>2025 lecture</Cite> covers side-channel and fault attacks on software
-      implementations of ML-KEM and ML-DSA. These are research findings, not certification
-      requirements. They explain why the question is worth asking a vendor.{' '}
-      <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
+      implementations of ML-KEM and ML-DSA and reports that “Implementations protected by both
+      masking and shuffling, or higher-order masking, may also be vulnerable”. These are research
+      findings, not certification requirements. They explain why the question is worth asking a
+      vendor. <ModuleAnalysisNote>(Module analysis.)</ModuleAnalysisNote>
     </p>
 
     <p>
@@ -843,7 +857,7 @@ export const FipsAttackEvidence = () => (
       change, ENISA’s assurance-continuity guidance (
       <Cite std={CC_CONTINUITY_SCENARIOS}>change scenarios</Cite>) rates a migration that causes
       “measurable changes to timing or resource behaviour” as “Always major at AVA_VAN.4 and 5, due
-      to side-channel attacks.”
+      to side-channel attacks”; at lower assurance levels it “may be minor if no impact is shown”.
     </p>
 
     <SubHeading>Related in the Hub</SubHeading>

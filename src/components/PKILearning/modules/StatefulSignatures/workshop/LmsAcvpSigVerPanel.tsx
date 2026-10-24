@@ -59,8 +59,8 @@ export const LmsAcvpSigVerPanel: React.FC = () => {
               LMS signature verification: NIST ACVP reference sample
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              SP 800-208 · RFC 8554 · public NIST ACVP-Server sigVer cases · expected result from
-              NIST <KatEvidenceChip evidence="nist-acvp-reference-sample" />
+              SP 800-208 · RFC 8554 · public NIST ACVP-Server sigVer cases · evidence level:{' '}
+              <KatEvidenceChip evidence="nist-acvp-reference-sample" />
             </p>
           </div>
         </div>

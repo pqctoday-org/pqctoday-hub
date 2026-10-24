@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 // The 7 acronyms that gate comprehension of the Compliance Records tab
-// (FIPS 140-3 / NIST CAVP / CC / CSPN / EUCC / CNSA 2.0 / HNDL). Pure-moved out of
+// (FIPS 140-3 / NIST CAVP / ESV / CC / CSPN / EUCC / CNSA 2.0 / HNDL). Pure-moved out of
 // RecordsGlossaryStrip.tsx (2026-08-24 audit R3.3) — MobileComplianceView.tsx
 // carried a verbatim second copy of this same regulatory content, which
 // would have silently drifted from the desktop definitions on the next
@@ -28,6 +28,11 @@ export const RECORDS_GLOSSARY: GlossaryTerm[] = [
     term: 'NIST CAVP',
     short: 'algorithm validation',
     def: 'Cryptographic Algorithm Validation Program — validates individual algorithm implementations (tested through the ACVP protocol). A prerequisite for a FIPS 140-3 module certificate, not a module certificate itself.',
+  },
+  {
+    term: 'ESV',
+    short: 'entropy source validation',
+    def: 'NIST CMVP entropy source validation (SP 800-90B) — validates a noise source, not a module or an algorithm. A FIPS 140-3 module that relies on one names its certificate in its Security Policy. It says nothing about post-quantum algorithms.',
   },
   {
     term: 'CC',

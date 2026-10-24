@@ -1026,6 +1026,11 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       label: 'Next on your path: FIPS 140-3 Certification',
       why: 'The next module on your path takes a cryptographic module from boundary to certificate.',
     },
+    '/learn/pqc-testing-validation': {
+      to: '/learn/fips-140-3-certification',
+      label: 'Next on your path: FIPS 140-3 Certification',
+      why: 'The tests in this module produce evidence a certificate rests on; the next module on your path takes a cryptographic module from boundary to certificate.',
+    },
     '/learn/fips-140-3-certification': {
       to: '/learn/acvp-lab-workflow',
       label: 'Next on your path: ACVP Lab Workflow',

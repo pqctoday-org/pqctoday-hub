@@ -27,6 +27,7 @@ import {
   PCI_STACK,
   PCI_V5_CHANGES,
   type OpenQuestion,
+  type PciClock,
   type PciRefKey,
   type PlainSourceKey,
 } from '../../data/pciData'
@@ -66,6 +67,14 @@ export const PciPlainCite = ({ sourceKey }: { sourceKey: PlainSourceKey }) => {
     </a>
   )
 }
+
+/** The source cell of a scheme-clock row (library-backed or plain-text citation). */
+const PciClockSource = ({ source }: { source: PciClock['source'] }) =>
+  'ref' in source ? (
+    <PciCite refKey={source.ref} label="source" />
+  ) : (
+    <PciPlainCite sourceKey={source.plain} />
+  )
 
 const AsOf = () => (
   <span className="ml-1 inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
@@ -208,8 +217,22 @@ export const PciPtsApproval = () => (
       These are <strong>scheme clocks</strong> — what PCI’s device programme is doing. They are not
       market PQC deadlines, which this module never types into prose. <AsOf />
     </p>
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[520px] border-collapse text-left text-xs">
+    {/* Below 640 px the dates read as stacked blocks (date, description, source) so nothing is cut
+        off or scrolls sideways; from 640 px up it is the table. Only one of the two is displayed
+        at a time, so assistive technology never reads the rows twice. */}
+    <ul className="space-y-3 text-xs sm:hidden" data-testid="pci-clocks-stacked">
+      {PCI_SCHEME_CLOCKS.map((c) => (
+        <li key={c.when} className="border-b border-border/50 pb-3">
+          <p className="font-bold text-foreground">{c.when}</p>
+          <p className="mt-1">{c.event}</p>
+          <p className="mt-1">
+            <PciClockSource source={c.source} />
+          </p>
+        </li>
+      ))}
+    </ul>
+    <div className="hidden overflow-x-auto sm:block" data-testid="pci-clocks-table">
+      <table className="w-full border-collapse text-left text-xs">
         <thead>
           <tr className="border-b border-border text-muted-foreground">
             <th className="py-2 pr-3 font-semibold">When</th>
@@ -223,11 +246,7 @@ export const PciPtsApproval = () => (
               <td className="whitespace-nowrap py-2 pr-3 font-medium text-foreground">{c.when}</td>
               <td className="py-2 pr-3">{c.event}</td>
               <td className="py-2">
-                {'ref' in c.source ? (
-                  <PciCite refKey={c.source.ref} label="source" />
-                ) : (
-                  <PciPlainCite sourceKey={c.source.plain} />
-                )}
+                <PciClockSource source={c.source} />
               </td>
             </tr>
           ))}

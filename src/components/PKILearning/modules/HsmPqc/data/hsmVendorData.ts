@@ -292,20 +292,21 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   hSession,
   &mechanism,         // CKM_ML_KEM
   hPublicKey,         // ML-KEM public key (encapsulation key)
-  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=AES
+  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=CKK_GENERIC_SECRET, CKA_VALUE_LEN=32
   ulAttributeCount,
   ciphertext,         // Output: KEM ciphertext (1,088 bytes)
   &ciphertextLen,
-  &hSharedSecretKey   // Output: handle to new AES key derived from shared secret
+  &hSharedSecretKey   // Output: handle to new secret key object holding the shared secret
 )`,
-    description: 'Use ML-KEM encapsulation to derive a shared AES session key.',
+    description:
+      'Use ML-KEM encapsulation to derive a 32-byte shared secret, kept as a secret key object inside the HSM.',
     detail:
-      'PKCS#11 v3.2 adds C_EncapsulateKey specifically for KEM operations. Unlike C_WrapKey (which wraps an existing key), C_EncapsulateKey derives a NEW key object from the KEM shared secret and simultaneously outputs the KEM ciphertext. The 1,088-byte ciphertext is sent to the private key holder; the derived AES key stays inside the HSM.',
+      'PKCS#11 v3.2 adds C_EncapsulateKey specifically for KEM operations. Unlike C_WrapKey (which wraps an existing key), C_EncapsulateKey derives a NEW key object from the KEM shared secret and simultaneously outputs the KEM ciphertext. The 1,088-byte ciphertext is sent to the private key holder; the derived 32-byte secret stays inside the HSM as a generic secret key, which an application then uses as AES-256 key material (for example through a key-derivation step).',
     output: `CKR_OK
-  Derived Key Handle: 0x00000044 (AES-256)
+  Derived Key Handle: 0x00000044 (CKK_GENERIC_SECRET)
   Mechanism:          CKM_ML_KEM
   KEM Ciphertext:     1,088 bytes
-  Shared Secret:      32 bytes (derived → AES key, stays in HSM)`,
+  Shared Secret:      32 bytes (derived key object, stays in HSM)`,
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP → 256-byte ciphertext (direct encryption)',
     vendorNotes: {
       onPrem:
@@ -321,18 +322,19 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   hSession,
   &mechanism,         // CKM_ML_KEM
   hPrivateKey,        // ML-KEM private key (decapsulation key)
-  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=AES
+  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=CKK_GENERIC_SECRET, CKA_VALUE_LEN=32
   ulAttributeCount,
   ciphertext,         // Input: KEM ciphertext from step 3
   ciphertextLen,
-  &hRecoveredKey      // Handle to recovered AES key
+  &hRecoveredKey      // Handle to the recovered shared-secret key
 )`,
-    description: 'Decapsulate to recover the AES-256 session key.',
+    description:
+      'Decapsulate to recover the same 32-byte shared secret (usable as AES-256 key material).',
     detail:
       'PKCS#11 v3.2 C_DecapsulateKey takes the KEM ciphertext, runs ML-KEM decapsulation inside the HSM boundary using the non-extractable private key, and materialises the recovered shared secret as a new key object. The decapsulation happens entirely within the HSM — the shared secret is never exposed.',
     output: `CKR_OK
   Recovered Key Handle: 0x00000044
-  Key Type:            CKK_AES
+  Key Type:            CKK_GENERIC_SECRET (use as AES-256 key material)
   Key Size:            256 bits
   CKA_SENSITIVE:       TRUE`,
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP decrypt → recovers plaintext DEK directly',
@@ -347,15 +349,18 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     id: 'sign',
     step: 5,
     name: 'Sign with ML-DSA',
-    command: `C_Sign(
+    command: `// Message-based signing, as the live HSM runs it (PKCS#11 v3.0+)
+C_MessageSignInit(hSession, &mechanism, hSignKey)   // mechanism = CKM_ML_DSA
+C_SignMessage(
   hSession,
+  &params,        // CK_SIGN_ADDITIONAL_CONTEXT (hedge variant, context string)
+  paramsLen,
   data,           // Message to sign
   dataLen,        // Message length
   signature,      // Output buffer (must be >= 3,309 bytes)
   &signatureLen   // ML-DSA-65: 3,309 bytes
 )
-// After C_SignInit(hSession, &mechanism, hSignKey)
-// mechanism = CKM_ML_DSA`,
+C_MessageSignFinal(hSession)`,
     description: 'Create a digital signature using ML-DSA-65.',
     detail:
       'ML-DSA-65 produces 3,309-byte signatures (vs 64 bytes for ECDSA P-256). The signing key must have been generated with CKM_ML_DSA_KEY_PAIR_GEN. Signing is performed inside the HSM; only the signature is returned. ML-DSA is a stateless scheme, unlike LMS/XMSS which require the HSM to track per-signature state.',
@@ -376,15 +381,18 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     id: 'verify',
     step: 6,
     name: 'Verify ML-DSA Signature',
-    command: `C_Verify(
+    command: `// Message-based verification, as the live HSM runs it (PKCS#11 v3.0+)
+C_MessageVerifyInit(hSession, &mechanism, hVerifyKey)   // mechanism = CKM_ML_DSA
+C_VerifyMessage(
   hSession,
+  &params,        // CK_SIGN_ADDITIONAL_CONTEXT, same as step 5
+  paramsLen,
   data,           // Original message
   dataLen,
   signature,      // Signature from step 5
   signatureLen    // 3,309 bytes
 )
-// After C_VerifyInit(hSession, &mechanism, hVerifyKey)
-// mechanism = CKM_ML_DSA`,
+C_MessageVerifyFinal(hSession)`,
     description: 'Verify the ML-DSA-65 signature against the original data.',
     detail:
       'Verification can be performed with the public key outside the HSM, but using the HSM ensures the operation uses validated, certified code. Verification is faster than signing for ML-DSA. The operation returns CKR_OK for valid signatures or CKR_SIGNATURE_INVALID.',

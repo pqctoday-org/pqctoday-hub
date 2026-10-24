@@ -106,3 +106,21 @@ export function formatLibDate(raw: string): string {
   if (Number.isNaN(d.getTime())) return value
   return d.toLocaleDateString(undefined, opts)
 }
+
+/** The document's own dates for display: "First published Sep 21, 2020 · updated
+ *  Aug 19, 2026". Built from the row's `initial_publication_date` and
+ *  `last_update_date`, each at the precision it was recorded (`formatLibDate`, so
+ *  a month-only "2020-09" reads "Sep 2020", never an invented day). A missing
+ *  date drops its part; an update date that reads the same as the first
+ *  publication is dropped too, since nothing was updated after it. Returns ''
+ *  when there is no date to show. */
+export function documentDatesText(initialPublicationDate: string, lastUpdateDate: string): string {
+  const published = formatLibDate(initialPublicationDate)
+  const updated = formatLibDate(lastUpdateDate)
+  const parts: string[] = []
+  if (published) parts.push(`First published ${published}`)
+  if (updated && updated !== published) {
+    parts.push(published ? `updated ${updated}` : `Updated ${updated}`)
+  }
+  return parts.join(' · ')
+}

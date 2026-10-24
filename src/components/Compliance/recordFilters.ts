@@ -3,7 +3,12 @@ import type { ComplianceRecord, ComplianceSource } from './types'
 import type { TrustTier } from '@/data/trustScore'
 import { matchesTrustTierFilter } from '../common/TrustTierFilter'
 import { getMigrateCategory } from './migrateCategories'
-import { isCurrentRecord, recordTypeLabel, type RecordScope } from './recordSemantics'
+import {
+  isCurrentRecord,
+  matchesCertType,
+  recordTypeLabel,
+  type RecordScope,
+} from './recordSemantics'
 
 /**
  * The Product Records filters, one predicate per URL param.
@@ -45,16 +50,9 @@ const SOURCE_TO_FRAMEWORK_ID: Record<ComplianceSource, string | null> = {
   Other: null,
 }
 
-export function matchesCertType(record: ComplianceRecord, certType: string): boolean {
-  if (!certType) return true
-  const ct = certType.toLowerCase()
-  if (ct === 'all') return true
-  if (ct === 'fips' || ct === 'fips 140-3') return record.type === 'FIPS 140-3'
-  if (ct === 'acvp') return record.type === 'ACVP'
-  if (ct === 'cc') return record.type === 'Common Criteria'
-  if (ct === 'cspn') return record.type === 'CSPN'
-  return true
-}
+// The matcher lives in recordSemantics.ts (the phone layout cannot import this file);
+// re-exported so existing imports keep working.
+export { matchesCertType }
 
 export function matchesRecordText(record: ComplianceRecord, text: string): boolean {
   const s = text.toLowerCase()
@@ -84,7 +82,11 @@ export function recordFilterExclusions(
   if (f.scope !== 'all' && !isCurrentRecord(record)) out.push('rstatus')
   if (!matchesCertType(record, f.certType)) out.push('rtab')
   if (!matchesRecordText(record, f.text)) out.push('q')
+  // The entropy tab has no PQC or Migrate-category facets: they say nothing about a noise
+  // source, and applying them would silently empty the tab.
+  const entropyTab = f.certType.toLowerCase() === 'esv'
   if (
+    !entropyTab &&
     f.pqc.length > 0 &&
     !(
       typeof record.pqcCoverage === 'string' &&
@@ -96,6 +98,7 @@ export function recordFilterExclusions(
   if (f.source.length > 0 && !f.source.includes(record.source)) out.push('src')
   if (f.vendor.length > 0 && !f.vendor.some((v) => record.vendor.includes(v))) out.push('vendor')
   if (
+    !entropyTab &&
     f.migrateCat.length > 0 &&
     !f.migrateCat.includes(getMigrateCategory(record.productCategory)?.categoryId ?? '')
   )

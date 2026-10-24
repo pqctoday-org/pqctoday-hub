@@ -151,7 +151,7 @@ const PICKS: Pick[] = [
     id: 'kv260-idle-sequential',
     source: 'kv260/idle/kv260-idle-sequential-jent-raw-noise.data',
     label: 'KV260 (4× Cortex-A53) — idle, sequential',
-    conditionLabel: 'idle (appliance services running)',
+    conditionLabel: 'idle (normal background services running)',
     caveats: [
       'No hardware RNG is reachable from Linux on this image (no hw_random class, CONFIG_HW_RANDOM not set).',
     ],
@@ -160,14 +160,14 @@ const PICKS: Pick[] = [
     id: 'kv260-idle-restart',
     source: 'kv260/idle/kv260-idle-restart-matrix.data',
     label: 'KV260 (4× Cortex-A53) — idle, 1000 × 1000 restart matrix',
-    conditionLabel: 'idle (appliance services running)',
+    conditionLabel: 'idle (normal background services running)',
     caveats: [RESTART_SEMANTICS],
   },
   {
     id: 'imx95-idle-sequential',
     source: 'frdm-imx95/idle/frdm-imx95-idle-sequential-jent-raw-noise.data',
     label: 'i.MX 95 (6× Cortex-A55) — idle, sequential',
-    conditionLabel: 'idle (appliance services running)',
+    conditionLabel: 'idle (normal background services running)',
     caveats: [
       'The i.MX 95 hardware TRNG (ELE) does not expose raw pre-conditioning samples to Linux; only its /dev/hwrng output is readable.',
       'PMIC temperature zones (pf09, pf53_*) are banded comparators: a reading of 105 °C means "below 105 °C". The a55-thermal sensor is used instead.',
@@ -177,7 +177,7 @@ const PICKS: Pick[] = [
     id: 'imx95-idle-restart',
     source: 'frdm-imx95/idle/frdm-imx95-idle-restart-matrix.data',
     label: 'i.MX 95 (6× Cortex-A55) — idle, 1000 × 1000 restart matrix',
-    conditionLabel: 'idle (appliance services running)',
+    conditionLabel: 'idle (normal background services running)',
     caveats: [RESTART_SEMANTICS],
   },
   {

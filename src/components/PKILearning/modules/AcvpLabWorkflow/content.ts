@@ -20,7 +20,7 @@ export const content: ModuleContent = {
   // No lastReviewed: facts were corrected after the owner's 22 October 2026 sign-off, so
   // the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-23',
+  lastEdited: '2026-10-24',
 
   standards: [
     getStandard('NIST-ACVP'),
@@ -37,6 +37,9 @@ export const content: ModuleContent = {
     getStandard('usnistgov-ACVP-Automated-Cryptographic-Validation-Protocol-S'),
     getStandard('usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets'),
     getStandard('ACVP-ML-DSA-JSON-Specification'), // second source for claim:de77165cc631ad51
+    getStandard('ACVP-ML-KEM-JSON-Specification'),
+    getStandard('ACVP-SLH-DSA-JSON-Specification'),
+    getStandard('ACVP-Secure-Hash-Algorithm-SHA-JSON-Specification'),
     getStandard('FIPS 186-5'),
   ],
 

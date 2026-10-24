@@ -12,7 +12,7 @@ export const content: ModuleContent = {
   // Keep the review date tied to the latest recorded content review; this audit's
   // implementation work is tracked separately by lastEdited.
   lastReviewed: '2026-08-18',
-  lastEdited: '2026-10-23',
+  lastEdited: '2026-10-24',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (the prose calls it a draft, which is right — Rev 3 is Initial Public Draft). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -69,6 +69,7 @@ export const content: ModuleContent = {
     // walkthrough teach (the ESV Server and its protocol, and the ESV program page).
     getStandard('NIST-CMVP-ESV'),
     getStandard('NIST-CMVP-ESV-Program'),
+    getStandard('NIST-SP-800-90B-Entropy-Assessment-tool-usnistgov-GitHub'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-1024')],

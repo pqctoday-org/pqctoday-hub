@@ -30,7 +30,7 @@ export const content: ModuleContent = {
   // renewed the 22 October one after the corrections; the on-page notice follows it
   // (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until the owner renews it.
   version: '0.1.0',
-  lastEdited: '2026-10-23',
+  lastEdited: '2026-10-24',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──

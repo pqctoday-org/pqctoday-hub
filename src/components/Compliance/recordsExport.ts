@@ -34,6 +34,7 @@ export function complianceExportPreamble(
       ? 'Records: current and historical / archived / revoked'
       : 'Records: current only (status Active or Validated)',
     'PQC names on Common Criteria / EUCC / CSPN rows are named in the Security Target, not validated PQC support.',
+    'Entropy (ESV) rows are NIST entropy source validations: PQC coverage does not apply to them.',
   ]
   const retrieval = snapshotRetrievalEntries(meta)
   if (retrieval.length > 0) {

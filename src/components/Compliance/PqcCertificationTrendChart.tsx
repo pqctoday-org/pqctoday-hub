@@ -7,6 +7,7 @@ import type { CertificationXref, SoftwareItem } from '@/types/MigrateTypes'
 import {
   buildListingStageTrend,
   buildProductStageTimeline,
+  FIPS_STAGE_LABEL,
   FIPS_STAGES,
   type FipsStage,
   type InProcessData,
@@ -27,24 +28,6 @@ interface PqcCertificationTrendChartProps {
 }
 
 type View = 'products' | 'listings'
-
-/** The FIPS 140-3 track, in order (user decision, 2026-09-26). CAVP is the
- *  prerequisite, not a certificate; "in progress" only when NIST lists the
- *  module (Modules In Process / Implementation Under Test). */
-const STAGE_LABEL: Record<View, Record<FipsStage, string>> = {
-  products: {
-    none: 'No PQC validation yet',
-    cavp: 'Prerequisite met (CAVP)',
-    in_progress: 'In progress (NIST IUT / MIP)',
-    certified: 'Certified',
-  },
-  listings: {
-    none: 'FIPS 140-3 certificate, no PQC',
-    cavp: 'PQC CAVP validation',
-    in_progress: 'IUT / MIP listing',
-    certified: 'FIPS 140-3 certificate with PQC',
-  },
-}
 
 const STAGE_COLOR: Record<FipsStage, string> = {
   // A visible grey on both themes — var(--color-muted) vanished on the light background.
@@ -176,7 +159,7 @@ export function PqcCertificationTrendChart({
     view === 'products' ? (productTimeline?.points ?? []) : listingTrend.points
   const latest = points[points.length - 1]
   const tickInterval = Math.max(0, Math.ceil(points.length / 9) - 1)
-  const labels = STAGE_LABEL[view]
+  const labels = FIPS_STAGE_LABEL[view]
   // Products view: "no PQC validation yet" is ~89% of the 575 products that
   // ship PQC (measured 2026-09-26), so drawing it — as counts or as shares —
   // flattens the three stages that show progress into slivers. It stays in the

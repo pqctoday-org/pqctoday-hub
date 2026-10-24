@@ -143,3 +143,14 @@ describe('curious next steps (curious journey review, 16 Oct 2026)', () => {
     expect(nextStepFor('/explore', null)).toEqual(nextStepFor('/explore'))
   })
 })
+
+describe('certification engineer next step after Testing & Validation', () => {
+  it('leads to FIPS 140-3 Certification instead of the network infrastructure planner', () => {
+    expect(nextStepFor('/learn/pqc-testing-validation', 'cert-engineer')?.to).toBe(
+      '/learn/fips-140-3-certification'
+    )
+    expect(nextStepFor('/learn/pqc-testing-validation', 'executive')).toEqual(
+      nextStepFor('/learn/pqc-testing-validation')
+    )
+  })
+})

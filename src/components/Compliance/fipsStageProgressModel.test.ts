@@ -4,6 +4,8 @@ import {
   buildListingStageTrend,
   buildProductStageTimeline,
   currentStage,
+  fipsTrackLine,
+  FIPS_STAGE_LABEL,
   type InProcessMatch,
   type StagePoint,
 } from './fipsStageProgressModel'
@@ -139,6 +141,68 @@ describe('buildProductStageTimeline', () => {
     const { points, undated } = buildProductStageTimeline([p], certs, [], REF, '2025-01')
     expect(undated).toBe(1)
     expect(at(points, '2026-09').certified).toBe(0)
+  })
+})
+
+describe('fipsTrackLine', () => {
+  it("prints the Products view's latest-month counts under the chart's own stage labels", () => {
+    const timeline = buildProductStageTimeline(
+      [
+        product({ productId: 'a', pqcCertified: 'cavp' }),
+        product({ productId: 'b', pqcCertified: 'cavp' }),
+        product({ productId: 'c', pqcCertified: 'in_progress' }),
+        product({ productId: 'd', pqcCertified: 'yes' }),
+        product({ productId: 'e', pqcCertified: 'none' }),
+      ],
+      new Map([
+        ['a', [cert({ productId: 'a', certDate: '2025-02-01' })]],
+        ['b', [cert({ productId: 'b', certDate: '2026-09-02' })]],
+        ['c', [cert({ productId: 'c', certDate: '2025-02-01' })]],
+        [
+          'd',
+          [
+            cert({ productId: 'd', certDate: '2025-02-01' }),
+            cert({ productId: 'd', certType: 'FIPS 140-3', certId: '1', certDate: '2025-06-01' }),
+          ],
+        ],
+      ]),
+      [{ product_id: 'c', list: 'IUT', module: 'M', date: '2025-08-01' }],
+      REF,
+      '2025-01'
+    )
+    // Sep 2026: a and b at CAVP (b's validation is in the month), c in progress, d certified,
+    // e (no validation) is the 'none' the line leaves out.
+    expect(timeline.points[timeline.points.length - 1]).toMatchObject({
+      none: 1,
+      cavp: 2,
+      in_progress: 1,
+      certified: 1,
+    })
+    expect(fipsTrackLine(timeline)).toBe(
+      'FIPS 140-3 track: prerequisite met (CAVP) 2 · in progress (NIST IUT / MIP) 1 · certified 1.'
+    )
+  })
+
+  it('uses the shared Products labels, and omits the none stage', () => {
+    const line = fipsTrackLine({
+      points: [{ month: '2026-09', none: 500, cavp: 61, in_progress: 5, certified: 20 }],
+      undated: 0,
+      universe: 586,
+    })
+    expect(line).toBe(
+      'FIPS 140-3 track: prerequisite met (CAVP) 61 · in progress (NIST IUT / MIP) 5 · certified 20.'
+    )
+    const lower = (label: string) => `${label.charAt(0).toLowerCase()}${label.slice(1)} `
+    expect(line).toContain(lower(FIPS_STAGE_LABEL.products.cavp))
+    expect(line).toContain(lower(FIPS_STAGE_LABEL.products.in_progress))
+    expect(line).toContain(lower(FIPS_STAGE_LABEL.products.certified))
+    expect(line).not.toContain(FIPS_STAGE_LABEL.products.none.toLowerCase())
+    expect(line).not.toContain('500')
+  })
+
+  it('is null when there is no timeline or it has no month', () => {
+    expect(fipsTrackLine(null)).toBeNull()
+    expect(fipsTrackLine({ points: [], undated: 0, universe: 0 })).toBeNull()
   })
 })
 

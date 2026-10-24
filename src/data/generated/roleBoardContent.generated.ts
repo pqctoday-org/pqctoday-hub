@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10232026_r2.csv
+ * Source: src/data/role_board_content_10232026_r5.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1319 documents, trust-tiered',
+          '1316 documents, trust-tiered',
           'Regulatory data verified 22 Oct 2026',
         ],
         sideCard: {
@@ -166,7 +166,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1319 documents, trust-tiered',
+          '1316 documents, trust-tiered',
           'Regulatory data verified 22 Oct 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -305,7 +305,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1319 documents, trust-tiered',
+          '1316 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -447,7 +447,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1319 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
+        proofChips: ['1316 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -519,7 +519,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1319 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1316 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -663,7 +663,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1319 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1316 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -733,7 +733,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1319 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
+        proofChips: ['1316 documents, trust-tiered', 'Regulatory data verified 22 Oct 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -2508,7 +2508,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1319 documents, trust-tiered',
+          '1316 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -2782,7 +2782,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle:
           'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 26 minutes of essentials, not the full 15¼ hours).',
         trackNote:
-          "Six essentials against the full 13-module path plus the quiz, 921 minutes in all. The path inserts checkpoints like Run Validation Tests, Check Certificate Records and Browse Migration Workbench where they're relevant.",
+          'Six essentials against the full 13-module path plus the quiz, 921 minutes in all. The path also inserts hands-on actions like Run Validation Tests, Check Certificate Records and Browse Migration Workbench, with checkpoint quizzes between the lessons.',
         trackChips: [
           'Product certification',
           'FIPS 140-3',
@@ -2908,9 +2908,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'What gets looked at besides the algorithms',
         gridCards: [
           {
-            title: 'Implementation attacks, per family',
-            body: 'Side-channel and fault-injection considerations for each algorithm family, in one reference.',
-            href: '/algorithms?tab=validation&section=attacks',
+            title: 'See the dates that bind certification',
+            body: 'The Timeline lists government milestones and mandates — the transition dates and national programmes a certified product has to be ready for — with the source for each.',
+            href: '/timeline',
           },
           {
             title: 'If you also own a migration',
@@ -3057,9 +3057,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/patents',
           },
           {
-            title: 'When firmware signing has to change',
-            body: "The timeline carries dated milestones for software and firmware signing — the NSA's CNSA 2.0 among them — each linked to its source.",
-            href: '/timeline',
+            title: 'See where the cycles go',
+            body: 'A lesson on where PQC spends its time, which building blocks are worth accelerating, and what Arm, FPGA, GPU and ASIC approaches can and cannot do.',
+            href: '/learn/pqc-hw-acceleration',
           },
           {
             title: 'Why the question is being asked',

@@ -38,6 +38,7 @@ import {
   lifecycleLabel,
   lifecyclePillClass,
   formatLibDate,
+  documentDatesText,
   trustInfo,
   publisherStatusText,
 } from './libraryPills'
@@ -181,6 +182,7 @@ function DrawerPanel({
   const trust = trustInfo(item.referenceId)
   const sourceAction = resolveLibrarySourceAction(item)
   const documentStatusText = publisherStatusText(item.documentStatus, item.lifecycleLabel)
+  const documentDates = documentDatesText(item.initialPublicationDate, item.lastUpdateDate)
   const relatedLeaders = relatedLeadersFor(item)
 
   return (
@@ -259,34 +261,34 @@ function DrawerPanel({
                 <span className="truncate">
                   {item.authorsOrOrganization || 'Publisher not yet catalogued'}
                 </span>
-                {/* The document's own publication date is the primary signal here;
-                  lastUpdateDate (catalog activity) is the fallback, matching the card. */}
-                {(item.initialPublicationDate || item.lastUpdateDate) && (
-                  <span
-                    className="font-mono text-[11px]"
-                    title={
-                      item.initialPublicationDate
-                        ? `Published ${formatLibDate(item.initialPublicationDate)}`
-                        : `Catalog record updated ${formatLibDate(item.lastUpdateDate)}`
-                    }
-                  >
-                    ·{' '}
-                    {item.initialPublicationDate
-                      ? formatLibDate(item.initialPublicationDate)
-                      : formatLibDate(item.lastUpdateDate)}
-                  </span>
-                )}
-                {/* Sparse by design (most rows have never been re-checked) — shown
-                  only when present, so it never implies false precision. */}
-                {item.lastVerified && (
-                  <span
-                    className="font-mono text-[11px] text-muted-foreground/70"
-                    title={`Last verified against the source document ${formatLibDate(item.lastVerified)}`}
-                  >
-                    · verified {formatLibDate(item.lastVerified)}
-                  </span>
-                )}
               </div>
+              {/* The document's own dates (first published, last updated) come from
+                  the row's initial_publication_date and last_update_date, each at the
+                  precision recorded. The catalog check date is a different thing — when
+                  this record was last looked at, not a date of the document — so it is
+                  labelled as such. Sparse by design (most rows have never been
+                  re-checked), shown only when present. */}
+              {(documentDates || item.lastVerified) && (
+                <p
+                  data-testid="drawer-document-dates"
+                  className="mt-1 font-mono text-[11px] text-muted-foreground"
+                >
+                  {documentDates && (
+                    <span title="The document's first publication date and its latest update date, as recorded in the catalog">
+                      {documentDates}
+                    </span>
+                  )}
+                  {documentDates && item.lastVerified && ' · '}
+                  {item.lastVerified && (
+                    <span
+                      className="text-muted-foreground/70"
+                      title={`Date this catalog record was last checked against the source document: ${formatLibDate(item.lastVerified)}`}
+                    >
+                      catalog checked {formatLibDate(item.lastVerified)}
+                    </span>
+                  )}
+                </p>
+              )}
               {/* The publisher's own status words ("Internet-Draft (RFC Editor
                   Queue)", "Proposed Standard", …) on their own line, so maturity
                   is never read off the trust score further down. Skipped when it

@@ -83,6 +83,7 @@ const READERS: Record<string, 'pqc-progress' | 'any-certificate' | 'display'> = 
   'src/components/Migrate/Workbench/ReplaceTab.tsx': 'any-certificate',
   'src/components/Migrate/cbomExport.ts': 'display',
   'src/components/Mobile/screens/MobileMigrateView.tsx': 'display',
+  'src/components/Mobile/screens/useFipsTrackLine.ts': 'display',
   'src/components/PKILearning/common/ModuleMigrateTab.tsx': 'display',
   'src/components/Report/EngineeringPlanExport.tsx': 'pqc-progress',
   'src/components/common/FipsStatusBadge.tsx': 'pqc-progress',
