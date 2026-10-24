@@ -30,7 +30,7 @@
       "provenance": "device-raw-noise",
       "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
       "device": "kv260",
-      "deviceDescription": "AMD/Xilinx Kria KV260 (K26 SOM, CACP appliance image)",
+      "deviceDescription": "AMD/Xilinx Kria KV260 (K26 system-on-module)",
       "environmentKind": "physical device (native Linux)",
       "environmentSummary": {
         "os": "AMD Embedded Development Framework Linux 26.06 (scarthgap), ID=amd-edf; /etc/version 20180309123456 (reproducible-build placeholder)",
@@ -41,8 +41,8 @@
       },
       "environmentRecordSha256": "263af5540edf3535c692a954d836c562b7a81d55441fc1a3b19dfe364d6dc95a",
       "condition": "idle",
-      "conditionLabel": "idle (appliance services running)",
-      "conditionDetail": "No load added by the collector. CACP appliance services running as normal.",
+      "conditionLabel": "idle (normal background services running)",
+      "conditionDetail": "No load added by the collector. The board's normal background services were running.",
       "caveats": [
         "No hardware RNG is reachable from Linux on this image (no hw_random class, CONFIG_HW_RANDOM not set)."
       ],
@@ -98,7 +98,7 @@
       "provenance": "device-raw-noise",
       "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
       "device": "kv260",
-      "deviceDescription": "AMD/Xilinx Kria KV260 (K26 SOM, CACP appliance image)",
+      "deviceDescription": "AMD/Xilinx Kria KV260 (K26 system-on-module)",
       "environmentKind": "physical device (native Linux)",
       "environmentSummary": {
         "os": "AMD Embedded Development Framework Linux 26.06 (scarthgap), ID=amd-edf; /etc/version 20180309123456 (reproducible-build placeholder)",
@@ -109,8 +109,8 @@
       },
       "environmentRecordSha256": "263af5540edf3535c692a954d836c562b7a81d55441fc1a3b19dfe364d6dc95a",
       "condition": "idle",
-      "conditionLabel": "idle (appliance services running)",
-      "conditionDetail": "No load added by the collector. CACP appliance services running as normal.",
+      "conditionLabel": "idle (normal background services running)",
+      "conditionDetail": "No load added by the collector. The board's normal background services were running.",
       "caveats": [
         "Each 'restart' is a fresh jitterentropy collector allocation inside ONE process (upstream's raw_entropy_restart procedure), not a reboot or power cycle."
       ],
@@ -166,7 +166,7 @@
       "provenance": "device-raw-noise",
       "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned",
       "device": "frdm-imx95",
-      "deviceDescription": "NXP FRDM-IMX95 board (CACP appliance image, microSD)",
+      "deviceDescription": "NXP FRDM-IMX95 board (booted from microSD)",
       "environmentKind": "physical device (native Linux)",
       "environmentSummary": {
         "os": "NXP i.MX Distro with Wayland 6.18-wrynose (ID=fsl-imx-wayland), BusyBox 1.37.0 userland; /etc/version 20180309123456 (reproducible-build placeholder, no build id on board)",
@@ -177,8 +177,8 @@
       },
       "environmentRecordSha256": "55f0bbc9149163c7bd71c5a67a42e392742efef802e4524da2b45a5961d33ffa",
       "condition": "idle",
-      "conditionLabel": "idle (appliance services running)",
-      "conditionDetail": "No load added by the collector. CACP appliance services (health collector, NPU behaviour monitor, KMIP/gRPC/REST daemons, etc.) were running as normal.",
+      "conditionLabel": "idle (normal background services running)",
+      "conditionDetail": "No load added by the collector. The board's normal background services (health collector, NPU behaviour monitor, KMIP/gRPC/REST daemons) were running.",
       "caveats": [
         "The i.MX 95 hardware TRNG (ELE) does not expose raw pre-conditioning samples to Linux; only its /dev/hwrng output is readable.",
         "PMIC temperature zones (pf09, pf53_*) are banded comparators: a reading of 105 °C means \"below 105 °C\". The a55-thermal sensor is used instead."
@@ -235,7 +235,7 @@
       "provenance": "device-raw-noise",
       "evidenceLabel": "RAW noise-source samples (jitterentropy time deltas), unconditioned; restart matrix",
       "device": "frdm-imx95",
-      "deviceDescription": "NXP FRDM-IMX95 board (CACP appliance image, microSD)",
+      "deviceDescription": "NXP FRDM-IMX95 board (booted from microSD)",
       "environmentKind": "physical device (native Linux)",
       "environmentSummary": {
         "os": "NXP i.MX Distro with Wayland 6.18-wrynose (ID=fsl-imx-wayland), BusyBox 1.37.0 userland; /etc/version 20180309123456 (reproducible-build placeholder, no build id on board)",
@@ -246,8 +246,8 @@
       },
       "environmentRecordSha256": "55f0bbc9149163c7bd71c5a67a42e392742efef802e4524da2b45a5961d33ffa",
       "condition": "idle",
-      "conditionLabel": "idle (appliance services running)",
-      "conditionDetail": "No load added by the collector. CACP appliance services (health collector, NPU behaviour monitor, KMIP/gRPC/REST daemons, etc.) were running as normal.",
+      "conditionLabel": "idle (normal background services running)",
+      "conditionDetail": "No load added by the collector. The board's normal background services (health collector, NPU behaviour monitor, KMIP/gRPC/REST daemons) were running.",
       "caveats": [
         "Each 'restart' is a fresh jitterentropy collector allocation inside ONE process (upstream's raw_entropy_restart procedure), not a reboot or power cycle."
       ],
@@ -440,7 +440,7 @@
       "provenance": "conditioned-output-contrast",
       "evidenceLabel": "conditioned/DRBG output — NOT raw noise",
       "device": "frdm-imx95",
-      "deviceDescription": "NXP FRDM-IMX95 board (CACP appliance image, microSD)",
+      "deviceDescription": "NXP FRDM-IMX95 board (booted from microSD)",
       "environmentKind": "physical device (native Linux)",
       "environmentSummary": {
         "os": "NXP i.MX Distro with Wayland 6.18-wrynose (ID=fsl-imx-wayland), BusyBox 1.37.0 userland; /etc/version 20180309123456 (reproducible-build placeholder, no build id on board)",
