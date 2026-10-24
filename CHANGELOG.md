@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.177.2] - 2026-10-24
+
+One sentence in the Common Criteria lesson now credits the right part of the protection profile.
+
+### Fixed
+
+- **The AVA_VAN.5 box says where the profile asks for a high level of protection against logical attacks** [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:researcher]: in the box on AVA_VAN.5 for a lattice-based implementation, a sentence about logical attacks read as if the profile's refinement of AVA_VAN.5 said it. It comes from the profile's rationale for AVA_VAN.5, which adds that, while the environment is meant to protect against physical attacks, a high level of protection against logical attacks, especially remote ones, is also necessary. The sentence now says that.
+
 ## [4.177.1] - 2026-10-24
 
 A broken link in the new Firmware PQC Migration box now opens the right NIST page.
