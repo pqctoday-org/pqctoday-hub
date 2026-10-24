@@ -399,6 +399,7 @@
       "name": "Bouncy Castle C# .NET",
       "version": "2.7.0",
       "purl": "pkg:nuget/BouncyCastle.Cryptography",
+      "cpe": "cpe:2.3:a:bouncycastle:bc-csharp:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -1124,6 +1125,7 @@
       "name": "liboqs-rust (oqs crate)",
       "version": "0.11.0",
       "purl": "pkg:cargo/oqs",
+      "cpe": "cpe:2.3:a:openquantumsafe:liboqs:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -4229,6 +4231,7 @@
       "bom-ref": "32ea616f57057169",
       "name": "Nimbus JOSE+JWT",
       "version": "10.5",
+      "cpe": "cpe:2.3:a:connect2id:nimbus_jose\\+jwt:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -5700,7 +5703,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-2 L3)"
+          "value": "Yes (FIPS 140-3 L3, CMVP #4703; no PQC algorithm on the certificate)"
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -6641,6 +6644,7 @@
       "bom-ref": "d8562902c5f194ab",
       "name": "NSS (Mozilla)",
       "version": "3.130",
+      "cpe": "cpe:2.3:a:mozilla:nss:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -27911,6 +27915,7 @@
       "bom-ref": "8287091d6fa4bf97",
       "name": "OpenPGP.js",
       "version": "v6.3.2",
+      "cpe": "cpe:2.3:a:openpgpjs:openpgpjs:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -28974,6 +28979,7 @@
       "bom-ref": "54f3fe9af2625f99",
       "name": "libgcrypt",
       "version": "1.12.2",
+      "cpe": "cpe:2.3:a:gnupg:libgcrypt:-:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "GnuPG Project"
       },
@@ -30231,6 +30237,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "29cbfb974dcaa71b",
       "name": "BoringCrypto",
+      "cpe": "cpe:2.3:a:google:boringssl:-:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Google, Inc."
       },
@@ -31446,6 +31453,7 @@
       "type": "cryptographic-asset",
       "bom-ref": "a0e0e947d2f22281",
       "name": "wolfCrypt Post Quantum",
+      "cpe": "cpe:2.3:a:wolfssl:wolfssl:-:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "wolfSSL Inc."
       },
@@ -32161,6 +32169,7 @@
       "bom-ref": "86362eaf31a12efa",
       "name": "cryptography (pyca/cryptography)",
       "version": "49.0.0",
+      "cpe": "cpe:2.3:a:cryptography.io:cryptography:-:*:*:*:*:*:*:*",
       "manufacturer": {
         "name": "Python Cryptographic Authority (PyCA)"
       },
@@ -35457,6 +35466,7 @@
       "bom-ref": "f1253bc1eb400ff9",
       "name": "OpenSSL 3.6",
       "version": "3.6.3",
+      "cpe": "cpe:2.3:a:openssl:openssl:3.6.0:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
