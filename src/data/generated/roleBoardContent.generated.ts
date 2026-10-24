@@ -484,9 +484,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16¾ hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
         trackNote:
-          "Eight essentials against the full 22-module path plus the quiz, 1011 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
+          "Eight essentials against the full 22-module path plus the quiz, 1026 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
         trackChips: [
           'PQC 101',
           'Risk management',
@@ -556,7 +556,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16¾ hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
 
         trackChips: [
           'PQC 101',
@@ -629,7 +629,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16¾ hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
 
         trackChips: [
           'PQC 101',
@@ -698,7 +698,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16¾ hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
 
         trackChips: [
           'PQC 101',
@@ -770,7 +770,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16¾ hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
 
         trackChips: [
           'PQC 101',
@@ -844,7 +844,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 16¾ hours.',
+          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
 
         trackChips: [
           'PQC 101',
@@ -2780,9 +2780,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 26 minutes of essentials, not the full 15¼ hours).',
+          'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 41 minutes of essentials, not the full 15½ hours).',
         trackNote:
-          'Six essentials against the full 13-module path plus the quiz, 921 minutes in all. The path also inserts hands-on actions like Run Validation Tests, Check Certificate Records and Browse Migration Workbench, with checkpoint quizzes between the lessons.',
+          'Six essentials against the full 13-module path plus the quiz, 936 minutes in all. The path also inserts hands-on actions like Run Validation Tests, Check Certificate Records and Browse Migration Workbench, with checkpoint quizzes between the lessons.',
         trackChips: [
           'Product certification',
           'FIPS 140-3',
@@ -2854,7 +2854,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 8 hours 26 minutes of essentials, not the full 15¼ hours.',
+          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
 
         trackChips: [
           'Product certification',
@@ -2928,7 +2928,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 8 hours 26 minutes of essentials, not the full 15¼ hours.',
+          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
 
         trackChips: [
           'Product certification',
@@ -3002,7 +3002,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 8 hours 26 minutes of essentials, not the full 15¼ hours.',
+          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
 
         trackChips: [
           'Product certification',
@@ -3072,7 +3072,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 8 hours 26 minutes of essentials, not the full 15¼ hours.',
+          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
 
         trackChips: [
           'Product certification',

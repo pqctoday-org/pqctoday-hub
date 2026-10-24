@@ -2,7 +2,7 @@
 // OWNER: Scaffold
 import type { FC } from 'react'
 import { Link } from 'react-router'
-import { Layers } from 'lucide-react'
+import { Layers, ScrollText } from 'lucide-react'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import { CertIntroduction } from '@/components/PKILearning/modules/CryptoProductCertification/components/CertIntroduction'
 import { CertExercises } from '@/components/PKILearning/modules/CryptoProductCertification/components/CertExercises'
@@ -22,6 +22,13 @@ const PARTS: WorkshopPart[] = [
     description:
       'Plan the FIPS 140-3 security level and module boundary for the appliance and cloud-partition variants of the anchor HSM.',
     icon: Layers,
+  },
+  {
+    id: 'fips-algorithm-records',
+    title: 'Read the algorithm records',
+    description:
+      'Read the records of two real modules for the same operation: the algorithm validation and the Security Policy tables, and what each one lists.',
+    icon: ScrollText,
   },
 ]
 
