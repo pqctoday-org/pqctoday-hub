@@ -20,7 +20,7 @@ export const content: ModuleContent = {
   // No lastReviewed: facts were corrected after the owner's 22 October 2026 sign-off, so
   // the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-23',
+  lastEdited: '2026-10-24',
 
   standards: [
     getStandard('NIST-ACVP'),

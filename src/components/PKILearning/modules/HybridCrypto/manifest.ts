@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hybrid-crypto',
-  contentVersion: 23,
+  contentVersion: 24,
   lm_id: 'LM-006',
   title: 'Hybrid Cryptography',
   description:
