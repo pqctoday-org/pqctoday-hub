@@ -145,7 +145,7 @@ describe('FIPS attack-evidence section', () => {
     expect(
       screen.getByText(/The standard has an area for it; the program has no test metrics for it\./)
     ).toBeInTheDocument()
-    expect(screen.getByText(/No additional requirements at this time\./)).toBeInTheDocument()
+    expect(screen.getByText(/No additional requirements at this time/)).toBeInTheDocument()
     expect(
       screen.getByText(/Non-invasive security is N\/A by default as there are currently no/)
     ).toBeInTheDocument()

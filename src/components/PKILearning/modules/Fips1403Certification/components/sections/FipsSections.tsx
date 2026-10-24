@@ -687,7 +687,12 @@ const ATTACK_EVIDENCE_ROWS: readonly { risk: string; fips: ReactNode; cc: ReactN
   },
   {
     risk: 'Fault injection',
-    fips: <>Same: “Mitigation of other attacks”</>,
+    fips: (
+      <>
+        A publicly documented countermeasure is addressed under “Mitigation of other attacks”, which
+        covers “both invasive (physical) or non-invasive mechanisms”
+      </>
+    ),
     cc: <>Same</>,
   },
   {
@@ -695,7 +700,10 @@ const ATTACK_EVIDENCE_ROWS: readonly { risk: string; fips: ReactNode; cc: ReactN
     fips: (
       <>
         Entropy source assessed separately (ESV, IG 9.3.A;{' '}
-        <Cite std={MGMT_MANUAL}>Management Manual, section 7.1.7</Cite>); see the{' '}
+        <Cite std={MGMT_MANUAL}>
+          Management Manual, section 4.8, and section 7.1.7 when the environment changes
+        </Cite>
+        ); see the{' '}
         <Link
           to="/learn/entropy-randomness?tab=learn&section=esv"
           className="text-primary underline"
@@ -733,7 +741,10 @@ export const FipsAttackEvidence = () => (
   <Body>
     <p>
       A FIPS 140-3 certificate tells you the module met the requirements the CMVP can test.
-      Resistance to side-channel and fault attacks is, today, mostly not among them.
+      Resistance to side-channel and fault attacks is, today, mostly not among them. The nearest
+      tested feature is physical security: at Level 3 and above the lab tests environmental failure
+      protection or testing, with “EFP temperature or voltage response parameters” (IG 7.A and
+      9.7.B).
     </p>
 
     <p>
@@ -744,7 +755,8 @@ export const FipsAttackEvidence = () => (
       FIPS 140-2: “Major changes in FIPS 140-3 are limited to the introduction of non-invasive
       physical requirements.” But the publication that would say how a lab measures it,{' '}
       <Cite std={SP_800_140F}>SP 800-140F</Cite>, has an empty requirements list: “No additional
-      requirements at this time.” (March 2020). So the{' '}
+      requirements at this time” (March 2020). A draft revision of August 2021 would name ISO/IEC
+      17825 and ISO/IEC 20085-1 and -2 as approved metrics; it has not been finalised. So the{' '}
       <Cite std={MGMT_MANUAL}>Management Manual, section 7.5</Cite> treats the area as not
       applicable by default: “Section 6.8, Non-invasive security is N/A by default as there are
       currently no requirements in SP 800-140F.”
@@ -845,7 +857,7 @@ export const FipsAttackEvidence = () => (
       change, ENISA’s assurance-continuity guidance (
       <Cite std={CC_CONTINUITY_SCENARIOS}>change scenarios</Cite>) rates a migration that causes
       “measurable changes to timing or resource behaviour” as “Always major at AVA_VAN.4 and 5, due
-      to side-channel attacks.”
+      to side-channel attacks”; at lower assurance levels it “may be minor if no impact is shown”.
     </p>
 
     <SubHeading>Related in the Hub</SubHeading>
