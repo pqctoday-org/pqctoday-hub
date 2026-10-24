@@ -6,6 +6,7 @@ import {
   fetchStaticComplianceData,
   publicationSignature,
 } from './complianceDataLoader'
+import { computeRecordsSnapshotDate } from './recordSemantics'
 import localforage from 'localforage'
 
 // Configure localforage
@@ -99,23 +100,8 @@ export const fetchComplianceData = async (): Promise<ComplianceRecord[]> => {
   }
 }
 
-/**
- * The newest per-record `date` (ISO YYYY-MM-DD) actually present in the data —
- * the date of the most recent certificate, NOT when the snapshot was
- * retrieved. Label it "Newest record date", never "as of": the snapshot's
- * retrieval dates come from the sidecar (compliance-data.meta.json, see
- * `snapshotRetrievalEntries` in recordSemantics.ts).
- */
-export const computeRecordsSnapshotDate = (records: ComplianceRecord[]): Date | null => {
-  let latest: number | null = null
-  for (const record of records) {
-    if (!record.date) continue
-    const t = new Date(record.date).getTime()
-    if (Number.isNaN(t)) continue
-    if (latest === null || t > latest) latest = t
-  }
-  return latest === null ? null : new Date(latest)
-}
+// Pure, so the phone view shares it; re-exported to keep this module's API.
+export { computeRecordsSnapshotDate }
 
 export const useComplianceRefresh = () => {
   const [data, setData] = useState<ComplianceRecord[]>([])

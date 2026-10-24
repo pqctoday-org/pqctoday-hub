@@ -331,6 +331,12 @@ export default defineConfig([
                 // sheet formats a record with the same functions as the
                 // desktop ComplianceDetailPopover (2026-10-03 deep links).
                 '!@/components/Compliance/recordSemantics',
+                // fipsStageProgressModel.ts — the pure FIPS 140-3 track model, no JSX
+                // (type-only imports): the stage labels and the product timeline the
+                // desktop PqcCertificationTrendChart draws. The phone Records tab prints
+                // that chart's latest-month counts from this one model, so they cannot
+                // drift from desktop's. (The chart itself stays blocked.)
+                '!@/components/Compliance/fipsStageProgressModel',
                 '!@/components/Compliance/obligations',
                 '@/components/Compliance/obligations/*',
                 '!@/components/Compliance/obligations/obligationsModel',

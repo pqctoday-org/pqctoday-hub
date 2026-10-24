@@ -30,6 +30,26 @@ export type FipsStage = 'none' | 'cavp' | 'in_progress' | 'certified'
 export const FIPS_STAGES: readonly FipsStage[] = ['none', 'cavp', 'in_progress', 'certified']
 const RANK: Record<FipsStage, number> = { none: 0, cavp: 1, in_progress: 2, certified: 3 }
 
+/** The FIPS 140-3 track, in order (user decision, 2026-09-26). CAVP is the
+ *  prerequisite, not a certificate; "in progress" only when NIST lists the
+ *  module (Modules In Process / Implementation Under Test). Shared by the
+ *  desktop chart's legend and the phone's one-line summary so the two can
+ *  never name a stage differently. */
+export const FIPS_STAGE_LABEL: Record<'products' | 'listings', Record<FipsStage, string>> = {
+  products: {
+    none: 'No PQC validation yet',
+    cavp: 'Prerequisite met (CAVP)',
+    in_progress: 'In progress (NIST IUT / MIP)',
+    certified: 'Certified',
+  },
+  listings: {
+    none: 'FIPS 140-3 certificate, no PQC',
+    cavp: 'PQC CAVP validation',
+    in_progress: 'IUT / MIP listing',
+    certified: 'FIPS 140-3 certificate with PQC',
+  },
+}
+
 export interface StagePoint {
   month: string // 'YYYY-MM'
   none: number
@@ -168,6 +188,26 @@ export function buildProductStageTimeline(
     }
   }
   return { points, undated, universe: universe.length }
+}
+
+/**
+ * One line for the phone: the Products view's latest month — the counts the
+ * desktop chart prints beside its legend — as "FIPS 140-3 track: prerequisite
+ * met (CAVP) 61 · in progress (NIST IUT / MIP) 5 · certified 20." The stage
+ * names are the chart's own (`FIPS_STAGE_LABEL.products`); 'none' is left out
+ * (it is the ~89% not yet on the track). Null when the timeline has no month.
+ */
+export function fipsTrackLine(timeline: ProductStageTimeline | null): string | null {
+  const latest = timeline?.points[timeline.points.length - 1]
+  if (!latest) return null
+  const label = FIPS_STAGE_LABEL.products
+  const part = (name: string, count: number) =>
+    `${name.charAt(0).toLowerCase()}${name.slice(1)} ${count.toLocaleString()}`
+  return `FIPS 140-3 track: ${[
+    part(label.cavp, latest.cavp),
+    part(label.in_progress, latest.in_progress),
+    part(label.certified, latest.certified),
+  ].join(' · ')}.`
 }
 
 export interface ListingStageTrend {

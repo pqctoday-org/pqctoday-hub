@@ -318,6 +318,27 @@ export function formatIsoDate(iso: string | null | undefined): string | null {
   return `${d.getUTCDate()} ${MONTH_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}`
 }
 
+/**
+ * The newest per-record `date` (ISO YYYY-MM-DD) actually present in the data —
+ * the date of the most recent certificate, NOT when the snapshot was
+ * retrieved. Label it "Newest record date", never "as of": the snapshot's
+ * retrieval dates come from the sidecar (compliance-data.meta.json, see
+ * `snapshotRetrievalEntries` below). Lives here, pure, so the desktop loader
+ * (services.ts re-exports it) and the phone view compute the same date.
+ */
+export const computeRecordsSnapshotDate = (
+  records: readonly Pick<ComplianceRecord, 'date'>[]
+): Date | null => {
+  let latest: number | null = null
+  for (const record of records) {
+    if (!record.date) continue
+    const t = new Date(record.date).getTime()
+    if (Number.isNaN(t)) continue
+    if (latest === null || t > latest) latest = t
+  }
+  return latest === null ? null : new Date(latest)
+}
+
 // ── PQC stage summary ─────────────────────────────────────────────────────
 
 export interface PqcStageSummary {

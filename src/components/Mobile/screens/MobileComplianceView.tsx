@@ -57,6 +57,7 @@ import {
   applyRecordScope,
   buildEntropyIndex,
   cavpValidationUrl,
+  computeRecordsSnapshotDate,
   formatIsoDate,
   isPqcApplicable,
   isSecurityTargetType,
@@ -76,6 +77,7 @@ import {
   statusBadgeClass,
 } from '@/components/Compliance/recordSemantics'
 import { MobileSheet } from '../primitives/Sheet'
+import { useFipsTrackLine } from './useFipsTrackLine'
 
 /** Never let a malformed URL crash the sheet — falls back to the raw string. */
 function safeHostname(url: string): string {
@@ -420,6 +422,13 @@ export function MobileComplianceView({
       records ? pqcStageSummaryLine(pqcStageSummary(applyRecordScope(records, recordScope))) : null,
     [records, recordScope]
   )
+  // One line under the PQC summary: the desktop chart's Products view at its latest month.
+  // Loads only once the Records list is showing, and is absent until (or unless) it has.
+  const recordsAsOf = useMemo(
+    () => (records ? computeRecordsSnapshotDate(records) : null),
+    [records]
+  )
+  const fipsTrack = useFipsTrackLine(section === 'records' && hasRecordList, recordsAsOf)
   const retrieval = useMemo(() => snapshotRetrievalEntries(meta), [meta])
   // The glossary is the whole section when there is no record list; with one,
   // it folds away under a toggle below the list.
@@ -1003,6 +1012,7 @@ export function MobileComplianceView({
                 data-testid="records-phone-snapshot"
               >
                 {stageLine && <p>{stageLine}</p>}
+                {fipsTrack && <p data-testid="records-phone-fips-track">{fipsTrack}</p>}
                 <p>{SNAPSHOT_NOTICE}</p>
                 {retrieval.length > 0 && <p>{retrievalSummary(retrieval)}</p>}
               </div>
