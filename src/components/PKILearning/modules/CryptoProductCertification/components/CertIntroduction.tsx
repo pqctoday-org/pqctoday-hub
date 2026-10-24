@@ -7,6 +7,7 @@
  * owner's section component via sectionRegistry.ts (build spec §4). Authors
  * never edit this file.
  */
+import { Link } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
   AlertTriangle,
@@ -56,6 +57,9 @@ export const CertIntroduction = ({
 }: CertIntroductionProps) => {
   const persona = usePersonaStore((state) => state.selectedPersona)
   const engineer = persona === 'cert-engineer'
+  // The reader-role orientation is for the Fundamentals module only. This box is shared by the
+  // four certification modules, and the other three keep the sentence they have always shown.
+  const engineerOrientation = engineer && manifest.id === 'crypto-product-certification'
 
   return (
     <div className="w-full space-y-6">
@@ -81,11 +85,46 @@ export const CertIntroduction = ({
         <p className="font-semibold">
           {engineer ? 'Certification engineer route' : 'General security practitioner route'}
         </p>
-        <p className="mt-1 text-foreground/80">
-          {engineer
-            ? 'Use the exact document revisions, requirement components, evidence boundaries and review questions. Workshop exports are structured as inputs to a laboratory or certification-body discussion.'
-            : 'Focus on what each certificate can support, where its boundary stops, and which claims need confirmation. Exact component and submission details remain available as cited reference material.'}
-        </p>
+        {engineerOrientation ? (
+          <ul className="mt-1 space-y-1 text-foreground/80" data-testid="cert-route-orientation">
+            <li>
+              <strong className="font-semibold text-foreground">Lab tester:</strong> see who tests
+              and who decides in each scheme, and where a lab’s report fits.
+            </li>
+            <li>
+              <strong className="font-semibold text-foreground">Vendor engineer:</strong> learn what
+              each certificate covers, so a claim about your product matches its record.
+            </li>
+            <li>
+              <strong className="font-semibold text-foreground">Scheme reviewer:</strong> check
+              which document, version and scope to read before you apply a scheme’s rules.
+            </li>
+            <li>
+              <strong className="font-semibold text-foreground">Next on this path:</strong>{' '}
+              <Link
+                className="text-primary underline-offset-2 hover:underline"
+                to="/learn/fips-140-3-certification"
+              >
+                FIPS 140-3 Certification
+              </Link>
+              , then{' '}
+              <Link
+                className="text-primary underline-offset-2 hover:underline"
+                to="/learn/acvp-lab-workflow"
+              >
+                ACVP Lab Workflow
+              </Link>
+              , which follows a vector set through to evidence. No test vectors are run in this
+              module.
+            </li>
+          </ul>
+        ) : (
+          <p className="mt-1 text-foreground/80">
+            {engineer
+              ? 'Use the exact document revisions, requirement components, evidence boundaries and review questions. Workshop exports are structured as inputs to a laboratory or certification-body discussion.'
+              : 'Focus on what each certificate can support, where its boundary stops, and which claims need confirmation. Exact component and submission details remain available as cited reference material.'}
+          </p>
+        )}
       </div>
 
       {['crypto-product-certification', 'cc-eucc-certification'].includes(manifest.id) && (

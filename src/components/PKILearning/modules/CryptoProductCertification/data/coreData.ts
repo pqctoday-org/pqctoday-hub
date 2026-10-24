@@ -23,6 +23,7 @@ export const CORE_SOURCES = {
   cmvpMip: getStandard('NIST-CMVP-MIP-List'),
   acvp: getStandard('NIST-ACVP'),
   sp800140b: getStandard('NIST-SP-800-140B'),
+  ccPart1: getStandard('CC-2022-PART1'),
   ccPart3: getStandard('CC-2022-PART3'),
   cc: getStandard('COMMON-CRITERIA'),
   ccTransition: getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
@@ -35,6 +36,7 @@ export const CORE_SOURCES = {
   pinV31: getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
   p2peV31: getStandard('PCI-P2PE-Security-Requirements-v3-1'),
   kmo: getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
+  p2peProgram: getStandard('PCI-SSC-P2PE-Program-Page'),
 } satisfies Record<string, StandardRef>
 
 // ── Common Core 1: four schemes, four questions ─────────────────────────────
@@ -106,6 +108,138 @@ export const FOUR_QUESTIONS: SchemeQuestion[] = [
     record:
       'The approved-device listing and the device Security Policy; for entities, the assessment report',
     source: CORE_SOURCES.ptsListing,
+  },
+]
+
+/**
+ * A source under one term-key entry: a library row (cited through getStandard, so a bad id fails
+ * at import) or a plain-text citation for a document with no library row (build spec §6.2).
+ */
+export type TermKeySource =
+  { kind: 'library'; ref: StandardRef; label?: string } | { kind: 'text'; text: string }
+
+export interface TableTerm {
+  /** The short form, as the table uses it. */
+  term: string
+  /** What the short form stands for, shown in brackets after it. */
+  expansion?: string
+  meaning: string
+  sources: TermKeySource[]
+}
+
+/**
+ * "Words used in this table": plain definitions for the terms the "One question per scheme" table
+ * uses before the module defines them, in the order they first appear when the table is read row
+ * by row. Wording from the owner-approved 24 October 2026 draft. The PCI entries rest only on
+ * PCI SSC's public overview pages and glossary: the licensed requirement documents were not read,
+ * so no entry cites them.
+ */
+export const TABLE_TERM_KEY: TableTerm[] = [
+  {
+    term: 'CSTL',
+    expansion: 'Cryptographic and Security Testing Laboratory',
+    meaning:
+      'An independent lab, accredited under NIST’s lab accreditation program (NVLAP), that tests cryptographic modules. The CMVP reviews its reports and issues the validation certificates.',
+    sources: [
+      { kind: 'library', ref: CORE_SOURCES.cmvpManual },
+      {
+        kind: 'text',
+        text: 'NIST CSRC, Cryptographic Module Validation Program page; NIST CSRC, Testing Laboratories page',
+      },
+    ],
+  },
+  {
+    term: 'CCRA',
+    expansion: 'Common Criteria Recognition Arrangement',
+    meaning:
+      'An agreement among governments to recognize each other’s Common Criteria certificates. Its aim is that a certified product can be bought or used without being evaluated again. Article 2 of the arrangement sets which certificates it covers.',
+    sources: [
+      {
+        kind: 'text',
+        text: 'Arrangement on the Recognition of Common Criteria Certificates in the field of Information Technology Security, 2 July 2014 (ratified 8 September 2014), Preamble and Articles 1 and 2; Common Criteria Portal',
+      },
+    ],
+  },
+  {
+    term: 'Security Target',
+    expansion: 'ST',
+    meaning:
+      'The document that states the security requirements for the specific product, or part of a product, being evaluated. The evaluation checks the product’s own security controls against it.',
+    sources: [
+      { kind: 'library', ref: CORE_SOURCES.ccPart1 },
+      { kind: 'library', ref: CORE_SOURCES.eucc, label: 'Regulation (EU) 2024/482 (EUCC)' },
+    ],
+  },
+  {
+    term: 'Protection Profile',
+    expansion: 'PP',
+    meaning: 'A statement of security needs for a type of product, not for one specific product.',
+    sources: [{ kind: 'library', ref: CORE_SOURCES.ccPart1 }],
+  },
+  {
+    term: 'ITSEF',
+    expansion: 'IT Security Evaluation Facility',
+    meaning:
+      'An evaluation lab that is accredited, licensed or approved to carry out evaluations within a certification scheme, independently of the product’s developer.',
+    sources: [
+      {
+        kind: 'text',
+        text: 'Arrangement on the Recognition of Common Criteria Certificates, 2 July 2014, Annex A (glossary)',
+      },
+      { kind: 'library', ref: CORE_SOURCES.eucc, label: 'Regulation (EU) 2024/482 (EUCC)' },
+    ],
+  },
+  {
+    term: 'PTS HSM',
+    expansion: 'PIN Transaction Security Hardware Security Module',
+    meaning:
+      'The PCI standard of security requirements for HSMs used in payments. PCI-recognized labs evaluate HSMs against it, and PCI SSC lists the approved devices.',
+    sources: [{ kind: 'text', text: 'PCI SSC, PTS Hardware Security Module (HSM) standards page' }],
+  },
+  {
+    term: 'P2PE',
+    expansion: 'Point-to-Point Encryption',
+    meaning:
+      'Encryption that protects payment account data from the point where a merchant accepts the card to a secure point of decryption. PCI publishes security requirements and test procedures for P2PE solutions, components and applications.',
+    sources: [
+      { kind: 'library', ref: CORE_SOURCES.p2peProgram },
+      { kind: 'text', text: 'PCI SSC glossary' },
+    ],
+  },
+  {
+    term: 'KMO',
+    expansion: 'Key Management and Operations',
+    meaning:
+      'A PCI standard, published as version 1.0 on 14 September 2026. It sets requirements for managing cryptographic keys that protect payment account data, from generation to destruction.',
+    sources: [
+      {
+        kind: 'library',
+        ref: CORE_SOURCES.kmo,
+        label: 'PCI Perspectives blog, 14 September 2026',
+      },
+      { kind: 'text', text: 'PCI SSC, Key Management and Operations (KMO) standards page' },
+    ],
+  },
+  {
+    term: 'QPA',
+    expansion: 'Qualified PIN Assessor',
+    meaning:
+      'An assessor qualified and trained by PCI SSC to assess environments where PINs are processed against the PCI PIN Security Requirements.',
+    sources: [
+      {
+        kind: 'text',
+        text: 'PCI SSC, PIN Security standards page; PCI SSC, Qualified PIN Assessors page; PCI SSC glossary',
+      },
+    ],
+  },
+  {
+    term: 'AVA_VAN',
+    meaning:
+      'The Common Criteria family called vulnerability analysis. The evaluator assesses whether flaws could let an attacker break the product’s security requirements. It has five levels, AVA_VAN.1 to AVA_VAN.5, and each asks for more rigor than the one before.',
+    sources: [
+      { kind: 'library', ref: CORE_SOURCES.ccPart3 },
+      { kind: 'library', ref: CORE_SOURCES.eucc, label: 'Regulation (EU) 2024/482 (EUCC)' },
+    ],
   },
 ]
 

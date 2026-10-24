@@ -58,6 +58,7 @@ export const content: ModuleContent = {
     getStandard('CCMC-2023-04-001-CC2022-Transition-Policy'),
     getStandard('CCDB-014-Assurance-Continuity-v3-1'),
     getStandard('COMMON-CRITERIA'),
+    getStandard('CC-2022-PART1'), // term key above the scheme table (Security Target, Protection Profile)
     getStandard('CC-2022-PART2'),
     getStandard('CC-2022-PART3'),
 
@@ -81,6 +82,7 @@ export const content: ModuleContent = {
     getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
     getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
     getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
+    getStandard('PCI-SSC-P2PE-Program-Page'), // term key above the scheme table (P2PE)
     getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
     getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
     getStandard('ETSI-EN-319-411'), // second source for claim:6c7319b5f7fff220
