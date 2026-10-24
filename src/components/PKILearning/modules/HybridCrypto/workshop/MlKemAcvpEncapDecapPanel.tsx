@@ -71,7 +71,7 @@ export const MlKemAcvpEncapDecapPanel: React.FC = () => {
               {PARAMETER_SET} encapsulation and decapsulation: NIST ACVP reference sample
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              FIPS 203 · public NIST ACVP-Server encapDecap cases · expected result from NIST{' '}
+              FIPS 203 · public NIST ACVP-Server encapDecap cases · evidence level:{' '}
               <KatEvidenceChip evidence="nist-acvp-reference-sample" />
             </p>
           </div>

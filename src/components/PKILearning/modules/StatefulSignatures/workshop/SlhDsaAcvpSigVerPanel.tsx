@@ -62,7 +62,7 @@ export const SlhDsaAcvpSigVerPanel: React.FC = () => {
               SLH-DSA signature verification: NIST ACVP reference sample
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              FIPS 205 · public NIST ACVP-Server sigVer cases · expected result from NIST{' '}
+              FIPS 205 · public NIST ACVP-Server sigVer cases · evidence level:{' '}
               <KatEvidenceChip evidence="nist-acvp-reference-sample" />
             </p>
           </div>
