@@ -2212,8 +2212,9 @@ const Avavan5Panel = () => (
               <li>
                 Bruinderink and Pessl showed that single random faults in deterministic Dilithium
                 can cause nonce reuse and key recovery; with clock glitching on an Arm Cortex-M4, up
-                to 65.2% of the signing time was vulnerable to an unprofiled attack (TCHES 2018,
-                issue 3). FIPS 204 cites this paper among the reasons for the hedged default.
+                to 65.2% of the execution time of Dilithium was vulnerable to an unprofiled attack
+                that injects a random fault anywhere during signing (TCHES 2018, issue 3). FIPS 204
+                cites this paper among the reasons for the hedged default.
               </li>
               <li>
                 Ravi and co-authors injected electromagnetic faults into the deterministic Dilithium
@@ -2262,7 +2263,7 @@ const Avavan5Panel = () => (
           <ExtLink href={DOC_SMARTCARDS_URL}>smart cards</ExtLink>); the{' '}
           <SourceCite
             id="ANSSI-CC-PP-2016-05-EN-419221-5"
-            label="EN 419 221-5 protection profile"
+            label="EN 419 221-5 protection profile v0.15"
           />{' '}
           and{' '}
           <SourceCite

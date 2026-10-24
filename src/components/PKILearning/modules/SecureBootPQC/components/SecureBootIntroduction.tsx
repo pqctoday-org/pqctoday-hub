@@ -14,8 +14,10 @@ import {
   Cpu,
   Route,
   Monitor,
+  ExternalLink,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { getStandard } from '@/data/standardsRegistry'
 import { UEFI_KEY_TYPES, BOOT_CHAIN_STAGES, FIRMWARE_ALGO_SIZES } from '../data/secureBootConstants'
 import { FIRMWARE_VENDORS, VENDOR_STATUS_LABELS } from '../data/secureBootProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -76,6 +78,34 @@ const LabQuote: React.FC<{ source: string; children: React.ReactNode }> = ({
     &ldquo;{children}&rdquo;{' '}
     <cite className="text-[10px] not-italic text-muted-foreground">({source})</cite>
   </blockquote>
+)
+
+// Library rows cited by the "Two integrity checks" box. getStandard() throws at import on an
+// unknown id, so a renamed or removed row fails the build instead of leaving a dead link.
+const SP_800_193 = getStandard('NIST-SP-800-193')
+const FIPS_140_3 = getStandard('FIPS-140-3-STANDARD')
+const CMVP_IG = getStandard('NIST-FIPS140-3-IG-PQC')
+const SP_800_140 = getStandard('NIST-SP-800-140')
+const SP_800_140B = getStandard('NIST-SP-800-140B')
+const SP_800_140C = getStandard('NIST-SP-800-140C')
+const FIPS_186_5 = getStandard('FIPS 186-5')
+
+/** The CMVP's own list of approved security functions (the web page behind SP 800-140C). */
+const CMVP_SECURITY_FUNCTIONS_URL =
+  'https://csrc.nist.gov/projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800140c'
+
+/** A link to a Library row, in the style of the "Related:" links in this lesson. */
+const LibCite: React.FC<{
+  std: { title: string; deepLink: string }
+  children: React.ReactNode
+}> = ({ std, children }) => (
+  <Link
+    to={std.deepLink}
+    className="text-primary hover:underline"
+    title={`Open ${std.title} in the library`}
+  >
+    {children}
+  </Link>
 )
 
 export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
@@ -684,6 +714,108 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               FIPS 140-3 Certification
             </Link>
             .
+          </p>
+        </div>
+
+        {/* Two integrity checks beside the signature: a sibling of "What the lab tests", not a fifth part of it, because no lab tests SP 800-193. */}
+        <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+          <h3 className="text-sm font-bold text-foreground">
+            Two integrity checks beside the signature: SP 800-193 and the FIPS 140-3 integrity test
+          </h3>
+
+          <h4 className="text-xs font-bold text-foreground">
+            NIST SP 800-193: a guideline for platform designers
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            NIST SP 800-193, Platform Firmware Resiliency Guidelines (May 2018), is aimed at
+            developers and engineers who implement firmware-level security.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            It has three principles. Protection keeps platform firmware code and critical data in a
+            state of integrity, for example by ensuring the authenticity and integrity of firmware
+            updates. Detection finds when they have been corrupted or changed from an authorized
+            state. Recovery restores them to a state of integrity.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            The mechanisms are founded in Roots of Trust, defined by function: Update, Detection and
+            Recovery. The guideline applies to any device in the platform that contains firmware.
+            Its example list for x86 platforms includes the embedded controller, TPM, baseboard
+            management controller, SPI flash and host boot firmware.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            In an authenticated update, the Root of Trust for Update holds the signature
+            verification algorithm and the key store. Both change only through an authenticated
+            update or a secure local update. Update images must be signed with a FIPS 186-4
+            algorithm at a security strength of at least 112 bits. For detection, the guideline
+            lists integrity verification with a digital signature algorithm or a cryptographic hash
+            before code outside the Root of Trust for Detection runs. The text names FIPS 186-4,
+            which FIPS 186-5 has since superseded, and does not mention post-quantum schemes.
+          </p>
+
+          <h4 className="text-xs font-bold text-foreground">
+            The FIPS 140-3 software/firmware integrity test
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            FIPS 140-3 takes its technical requirements and test methods from ISO/IEC 19790:2012 and
+            ISO/IEC 24759:2017. The CMVP records changes in the SP 800-140 series and answers lab
+            and vendor questions in the Implementation Guidance (IG).
+          </p>
+          <p className="text-xs text-muted-foreground">
+            The integrity test is a pre-operational self-test (ISO/IEC 19790:2012, 7.10.2.2). The
+            module verifies all software and firmware inside its cryptographic boundary with
+            &ldquo;an approved integrity technique or EDC&rdquo;; if verification fails, the test
+            fails. Code in non-reconfigurable memory, as the IG defines it, is exempt. The IG notes
+            that a bootloader will have a pre-operational test for firmware integrity/authenticity.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            For the software and firmware of a hybrid module, the IG names the technique by security
+            level: level 1, &ldquo;an approved integrity technique&rdquo;; level 2, &ldquo;an
+            approved digital signature or keyed message authentication code&rdquo;; levels 3 and 4,
+            &ldquo;an approved digital signature&rdquo;. For a hardware module, an EDC is sufficient
+            for its software and firmware. The algorithm behind the technique first has to pass its
+            own algorithm self-test. The Security Policy states which techniques the module uses.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            For PQC signatures,{' '}
+            <a
+              href={CMVP_SECURITY_FUNCTIONS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="the CMVP list of security functions (opens in a new tab)"
+              className="text-primary hover:underline"
+            >
+              the CMVP list of security functions
+            </a>{' '}
+            includes ML-DSA, SLH-DSA, LMS, HSS, XMSS and XMSSMT. The IG&apos;s worked example for
+            the integrity technique&apos;s self-test uses RSA; it gives no PQC example.
+          </p>
+
+          <h4 className="text-xs font-bold text-foreground">How the two differ</h4>
+          <p className="text-xs text-muted-foreground">
+            SP 800-193 is a design guideline for platforms and names no validation program. The
+            integrity test is a requirement on a cryptographic module, tested by an accredited
+            laboratory and validated by the CMVP.
+          </p>
+
+          <p className="text-xs text-muted-foreground">
+            Sources: <LibCite std={SP_800_193}>NIST SP 800-193</LibCite> (May 2018);{' '}
+            <LibCite std={FIPS_140_3}>FIPS 140-3</LibCite> (sections 3.2 to 3.4);{' '}
+            <LibCite std={CMVP_IG}>CMVP Implementation Guidance for FIPS 140-3</LibCite> (IG 1.B,
+            5.A, 10.2.A, 10.3.E); <LibCite std={SP_800_140}>NIST SP 800-140</LibCite>;{' '}
+            <LibCite std={SP_800_140B}>NIST SP 800-140B</LibCite> Rev. 1 (section 5.1);{' '}
+            <LibCite std={SP_800_140C}>NIST SP 800-140C</LibCite> Rev. 2 (section 6.2) and{' '}
+            <a
+              href={CMVP_SECURITY_FUNCTIONS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-0.5 text-primary hover:underline"
+            >
+              the CMVP web page that lists the approved security functions
+              <ExternalLink size={10} aria-hidden="true" className="shrink-0" />
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>{' '}
+            (as of 24 October 2026); <LibCite std={FIPS_186_5}>FIPS 186-5</LibCite>. Check the
+            current versions: the guidance and the CMVP list change.
           </p>
         </div>
       </CollapsibleSection>

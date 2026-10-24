@@ -23372,6 +23372,21 @@
       "admittedBy": "evidence admission (existing copy)",
       "identity": "MATCH",
       "admittedAt": "2026-10-24T17:19:01.321181+00:00"
+    },
+    {
+      "refId": "NIST-SP-800-193",
+      "title": "NIST SP 800-193 — Platform Firmware Resiliency Guidelines",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-193.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-193.pdf",
+      "sizeBytes": 516802,
+      "contentType": "application/pdf",
+      "sha256": "a07a759fe0e58f91c92d466afc9c582d1e1ff3a7cd4a04600ec7f7ff61d5bb06",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-24T19:35:11.454502+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
