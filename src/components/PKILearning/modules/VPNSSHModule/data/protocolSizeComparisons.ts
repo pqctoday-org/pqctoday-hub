@@ -99,23 +99,30 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     modeLabel: 'X25519 (Noise IK)',
     kexAlgorithm: 'X25519',
     authAlgorithm: 'X25519 (static keys)',
-    handshakeBytes: 304,
+    // Handshake Initiation 148 B + Handshake Response 92 B (WireGuard paper, sections 5.4.2 and
+    // 5.4.3: field widths, the hat marks a 16-byte AEAD tag). 272 B with the first empty keepalive
+    // (32 B); a 64 B Cookie Reply is added only under load.
+    handshakeBytes: 240,
     roundTrips: 1,
     publicKeyBytes: 32,
     ciphertextBytes: 0,
-    notes: 'Noise IK pattern: 1-RTT handshake',
+    notes: 'Noise IK pattern: 1-RTT handshake (initiation 148 B + response 92 B)',
   },
   {
     protocol: 'WireGuard',
     mode: 'hybrid',
-    modeLabel: 'X25519 + ML-KEM-768 (Rosenpass)',
-    kexAlgorithm: 'X25519 + ML-KEM-768',
-    authAlgorithm: 'X25519 (static) + Classic McEliece',
-    handshakeBytes: 6800,
+    modeLabel: 'X25519 + Rosenpass PSK',
+    kexAlgorithm: 'X25519 (WireGuard) + Kyber-512 ephemeral (Rosenpass)',
+    authAlgorithm: 'X25519 (static) + Classic McEliece-460896 (static, keys exchanged out of band)',
+    // Rosenpass messages only: InitHello 1,092 + RespHello 1,132 + InitConf 176 + EmptyData 64
+    // = 2,464 B (Rosenpass white paper, Figure 2 "Rosenpass Message Types"). WireGuard's own
+    // handshake is not included, and the paper makes no WireGuard comparison.
+    handshakeBytes: 2464,
     roundTrips: 2,
-    publicKeyBytes: 1216,
-    ciphertextBytes: 1088,
-    notes: 'Rosenpass project: external PQC key negotiation',
+    publicKeyBytes: 800, // Kyber-512 ephemeral public key (epki)
+    ciphertextBytes: 768, // Kyber-512 ciphertext (ecti); McEliece ciphertexts are 188 B each
+    notes:
+      'Rosenpass: separate handshake using round-3 Kyber-512 and Classic McEliece-460896 (not FIPS 203 ML-KEM); its output is fed to WireGuard as the PSK. The size shown is the four Rosenpass messages only, not WireGuard’s own handshake',
   },
   {
     protocol: 'WireGuard',
@@ -201,7 +208,7 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
   },
   {
     feature: 'PQC KEX Status',
-    ikev2: 'draft-ietf-ipsecme-ikev2-mlkem',
+    ikev2: 'draft-ietf-ipsecme-ikev2-mlkem (RFC Editor queue)',
     ssh: 'mlkem768x25519 in OpenSSH 9.9',
     wireguard: 'Rosenpass project (external)',
     tls13: 'RFC 10024 (X25519MLKEM768)',
@@ -222,9 +229,9 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
   },
   {
     feature: 'PQC Auth Status',
-    ikev2: 'draft-ietf-ipsecme-ikev2-pqc-auth (ML-DSA, SLH-DSA)',
+    ikev2: 'draft-ietf-ipsecme-ikev2-pqc-auth (ML-DSA, SLH-DSA; RFC Editor queue)',
     ssh: 'No PQC host key standard yet',
-    wireguard: 'Rosenpass uses Classic McEliece for auth',
+    wireguard: 'Rosenpass authenticates with static Classic McEliece keys',
     tls13: 'draft-ietf-tls-mldsa (ML-DSA certs)',
   },
   {

@@ -450,7 +450,7 @@
       "name": "Bouncy Castle Java",
       "version": "1.86",
       "purl": "pkg:maven/org.bouncycastle/bcprov-jdk18on",
-      "cpe": "cpe:2.3:a:bouncycastle:legion-of-the-bouncy-castle-java-crytography-api:1.36:*:*:*:*:*:*:*",
+      "cpe": "cpe:2.3:a:bouncycastle:bc-java:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -2204,7 +2204,7 @@
       "name": "BoringSSL",
       "version": "0.20260813.0",
       "purl": "pkg:github/google/boringssl",
-      "cpe": "cpe:2.3:a:google:chrome:0.2.149.29:*:*:*:*:*:*:*",
+      "cpe": "cpe:2.3:a:google:boringssl:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -6590,7 +6590,7 @@
       "name": "Mbed TLS",
       "version": "4.2.0",
       "purl": "pkg:github/Mbed-TLS/mbedtls",
-      "cpe": "cpe:2.3:a:mbed:mbedtls:1.3.10:*:*:*:*:*:*:*",
+      "cpe": "cpe:2.3:a:arm:mbed_tls:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -24488,7 +24488,7 @@
       "name": "CIRCL",
       "version": "1.6.x",
       "purl": "pkg:github/cloudflare/circl",
-      "cpe": "cpe:2.3:a:secretcircle:secret_circle_-_talk_freely:2.2.00.26:*:*:*:*:android:*:*",
+      "cpe": "cpe:2.3:a:cloudflare:circl:1.3.3:*:*:*:*:go:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -32014,12 +32014,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "parameterSetIdentifier": "ML-KEM, Classic-McEliece",
+          "primitive": "kem"
         }
       },
-      "description": "Rosenpass is a Rust post-quantum-secure VPN key-exchange daemon. It performs an ML-KEM-based handshake and rotates the WireGuard pre-shared key roughly every 2 minutes, giving WireGuard tunnels post-quantum forward secrecy. In the sandbox it replaces the prior fake-PQC WireGuard script (which used SHA-256 of an ML-KEM public key as the PSK). Architectural note: Rosenpass uses its own internal liboqs PQC backend, NOT the pqctoday-hsm PKCS#11 backend — the only sandbox scenario with this exception, disclosed in the scenario JSON.",
+      "description": "Rosenpass is a Rust post-quantum-secure VPN key-exchange daemon. It performs a handshake that combines Classic McEliece 460896 (static keys) and Kyber-512 (ephemeral keys), the NIST competition Round 3 versions rather than FIPS 203 ML-KEM, and rotates the WireGuard pre-shared key roughly every 2 minutes, giving WireGuard tunnels post-quantum forward secrecy. In the sandbox it replaces the prior fake-PQC WireGuard script (which used SHA-256 of an ML-KEM public key as the PSK). Architectural note: Rosenpass uses its own internal liboqs PQC backend, NOT the pqctoday-hsm PKCS#11 backend — the only sandbox scenario with this exception, disclosed in the scenario JSON.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -32057,7 +32056,7 @@
         },
         {
           "name": "pqctoday:cswp39_tags",
-          "value": "vpn;wireguard;mlkem;forward-secrecy"
+          "value": "vpn;wireguard;forward-secrecy"
         }
       ]
     },

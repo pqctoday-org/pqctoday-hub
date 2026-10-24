@@ -339,7 +339,7 @@
   },
   {
     "term": "Rosenpass",
-    "definition": "A post-quantum key exchange protocol designed as a companion to WireGuard VPN. Performs a separate ML-KEM key exchange and feeds the resulting key into WireGuard.",
+    "definition": "A post-quantum key exchange protocol designed as a companion to WireGuard VPN. Performs a separate key exchange using Classic McEliece and the pre-standard round-3 Kyber-512 (not FIPS 203 ML-KEM) and feeds the resulting key into WireGuard.",
     "technicalNote": "Rosenpass runs alongside WireGuard rather than modifying it, adding PQC protection without changing the WireGuard protocol itself.",
     "relatedModule": "/learn/vpn-ssh-pqc",
     "complexity": "advanced",

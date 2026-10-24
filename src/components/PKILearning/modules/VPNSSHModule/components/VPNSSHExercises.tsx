@@ -86,7 +86,7 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
       badge: 'Compare',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'WireGuard has the largest relative size increase (22x) due to its ultra-compact classical handshake. IKEv2 and SSH handle PQC sizes well through TCP or fragmentation support. TLS 1.3 maintains 1-RTT even with hybrid KEX.',
+        "WireGuard has the largest relative size increase (about 11x with Rosenpass: WireGuard's 240 B handshake plus Rosenpass's 2,464 B, in this workshop's model) due to its ultra-compact classical handshake. IKEv2 and SSH handle PQC sizes well through TCP or fragmentation support. TLS 1.3 maintains 1-RTT even with hybrid KEX.",
       config: { step: 2 },
     },
   ]

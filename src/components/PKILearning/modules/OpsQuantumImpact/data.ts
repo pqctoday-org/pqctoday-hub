@@ -15,9 +15,9 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       id: 'cert-rotation',
       title: 'Certificate Rotation at Scale',
       description:
-        'PQC certificates are roughly 4-7x larger than typical ECDSA certificates (SLH-DSA-based certificates can run considerably larger still). Automated certificate management (ACME, cert-manager) needs testing with new sizes.',
+        'PQC certificates are several times larger than typical ECDSA certificates: in the example below, an ML-DSA-65 certificate is about 5.5 KB against about 1.4 KB for ECDSA, roughly 4x. Chains, extensions and SLH-DSA change the ratio. Automated certificate management (ACME, cert-manager) needs testing with new sizes.',
       severity: 'critical',
-      timeframe: '2025-2028',
+      timeframe: 'Planning window 2025-2028 (editorial estimate, not a regulatory date)',
       exampleScenario:
         'Your Kubernetes cluster uses cert-manager to auto-rotate 500 TLS certificates. ML-DSA-65 certificates run about 5.5KB each vs. roughly 1.4KB for a typical ECDSA certificate. The cert-manager CRD size limits are exceeded, and certificate renewal starts failing silently across the cluster.',
     },
@@ -27,7 +27,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'IPsec IKEv2 and SSH key exchange protocols must transition to PQC across entire device fleets.',
       severity: 'critical',
-      timeframe: '2025-2030',
+      timeframe: 'Planning window 2025-2030 (editorial estimate, not a regulatory date)',
       exampleScenario:
         'Your organization has 2,000 remote workers using IPsec VPN with ECDH key exchange. The security team mandates ML-KEM migration, but 30% of your VPN concentrators don\u2019t support the new protocol version. You face a fleet-wide hardware refresh.',
     },
@@ -37,9 +37,9 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'PQC operations have different performance profiles. Existing monitoring baselines, alerts, and SLAs need recalibration.',
       severity: 'high',
-      timeframe: '2025-2028',
+      timeframe: 'Planning window 2025-2028 (editorial estimate, not a regulatory date)',
       exampleScenario:
-        'Your TLS handshake latency alert fires at >10ms. ML-KEM key exchange adds 3-5ms. After PQC migration, you get 10,000 false-positive alerts per day until thresholds are updated. Meanwhile, real performance issues are lost in the noise.',
+        'Your TLS handshake alerts were tuned for classical handshakes. Hybrid ML-KEM key exchange makes handshake messages larger (about 1.1 to 1.2 KB more in each direction for X25519MLKEM768), and for IKEv2 VPNs adds an extra IKE_INTERMEDIATE round trip. After PQC migration, size- and latency-based alerts fire false positives until thresholds are re-baselined from your own measurements. Meanwhile, real performance issues are lost in the noise.',
     },
     {
       id: 'deployment-pipelines',
@@ -47,7 +47,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'Build, sign, and deploy pipelines need PQC-aware signing verification and certificate validation.',
       severity: 'high',
-      timeframe: '2026-2030',
+      timeframe: 'Planning window 2026-2030 (editorial estimate, not a regulatory date)',
       exampleScenario:
         'Your deployment pipeline verifies container image signatures with ECDSA before rolling out. When the signing team switches to ML-DSA, your verification step fails and blocks all deployments until the pipeline is updated.',
     },
@@ -57,7 +57,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'Ansible/Terraform/Chef crypto configurations (cipher suites, key types, algorithm settings) must be updated fleet-wide.',
       severity: 'medium',
-      timeframe: '2025-2028',
+      timeframe: 'Planning window 2025-2028 (editorial estimate, not a regulatory date)',
       exampleScenario:
         'Your Ansible playbooks hardcode `tls_cipher_suites: ECDHE-ECDSA-AES256-GCM-SHA384` across 300 servers. PQC migration requires updating every configuration template and testing for backward compatibility during the phased rollout.',
     },
@@ -67,7 +67,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'Key compromise procedures, certificate revocation workflows, and crypto-failure runbooks need PQC-specific updates.',
       severity: 'medium',
-      timeframe: '2026-2030',
+      timeframe: 'Planning window 2026-2030 (editorial estimate, not a regulatory date)',
       exampleScenario:
         'A PQC key compromise is detected. Your incident response runbook covers RSA/ECC revocation but has no procedure for ML-DSA key compromise. The team loses hours figuring out the PQC-specific revocation and re-keying process.',
     },
@@ -260,7 +260,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description: 'Set up a lab environment to test PQC TLS, VPN, and SSH configurations.',
       checklist: [
         'Deploy PQC-enabled TLS termination in lab (nginx/HAProxy with ML-KEM)',
-        'Test SSH connection with PQC key exchange (OpenSSH 9.x)',
+        'Test SSH connection with hybrid ML-KEM key exchange (mlkem768x25519-sha256, OpenSSH 9.9 or later)',
         'Validate VPN tunnel with hybrid IKEv2 key exchange',
         'Measure PQC handshake latency and compare to current baselines',
       ],
@@ -303,7 +303,8 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
     {
       id: 'qw-ssh-check',
       label: 'Check your OpenSSH version',
-      description: 'OpenSSH 9.x supports hybrid PQC key exchange. Run `ssh -V` on your servers.',
+      description:
+        'OpenSSH 8.5 added sntrup761x25519-sha512 (default from 9.0); OpenSSH 9.9 added mlkem768x25519-sha256, which is the default from 10.0. Run `ssh -V` on your servers.',
     },
     {
       id: 'qw-vpn-vendor',

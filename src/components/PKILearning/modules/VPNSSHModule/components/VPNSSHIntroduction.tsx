@@ -334,15 +334,16 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                 <InlineTooltip term="Rosenpass">
                   <strong>Rosenpass</strong>
                 </InlineTooltip>{' '}
-                runs a separate PQC key exchange (ML-KEM + Classic McEliece) and feeds the resulting
-                PSK into WireGuard&apos;s pre-shared key slot.
+                runs a separate post-quantum key exchange (Classic McEliece for the static keys, the
+                round-3 Kyber for the ephemeral keys &mdash; not FIPS 203 ML-KEM) and feeds the
+                resulting PSK into WireGuard&apos;s pre-shared key slot.
               </p>
             </div>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="space-y-2 text-center">
               <div className="p-2 rounded bg-primary/10 text-primary text-xs font-bold">
-                Rosenpass Daemon (ML-KEM-768 + Classic McEliece)
+                Rosenpass Daemon (Classic McEliece-460896 + Kyber-512)
               </div>
               <div className="text-muted-foreground">&darr; PSK</div>
               <div className="p-2 rounded bg-secondary/10 text-secondary text-xs font-bold">
@@ -356,8 +357,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           </div>
           <p className="text-xs text-muted-foreground">
             The Rosenpass approach preserves WireGuard&apos;s simplicity while adding quantum
-            resistance. The PSK is rotated periodically, and WireGuard&apos;s security holds even if
-            Rosenpass is compromised (defense in depth).
+            resistance. The PSK is rotated periodically. WireGuard&apos;s classical security holds
+            even if Rosenpass is compromised; the post-quantum protection does not.
           </p>
         </div>
       </section>
@@ -391,7 +392,6 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                 {[
                   { name: 'IKEv2', classical: 1400, hybrid: 3784 },
                   { name: 'SSH', classical: 984, hybrid: 3296 },
-                  { name: 'WireGuard', classical: 304, hybrid: 6800 },
                   { name: 'TLS 1.3', classical: 1200, hybrid: 3500 },
                 ].map((row) => (
                   <tr key={row.name} className="border-b border-border/50">
@@ -411,10 +411,14 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
-            WireGuard sees the largest relative increase (22x) because its classical handshake is
-            extremely compact. IKEv2 handles fragmentation explicitly (RFC 7383) over UDP, but only
-            for encrypted messages, so it cannot help IKE_SA_INIT. SSH handles larger payloads
-            natively because it relies on TCP transport.
+            Sizes are this workshop&apos;s message model, not packet captures. WireGuard is not in
+            the table: adding post-quantum protection with Rosenpass means four extra Rosenpass
+            messages, InitHello 1,092 B, RespHello 1,132 B, InitConf 176 B and EmptyData 64 B, 2,464
+            B in total (Rosenpass white paper, Figure 2). The paper gives no comparison with
+            WireGuard&apos;s own handshake, so none is stated here. Rosenpass&apos;s large McEliece
+            public keys are exchanged out of band, not in the handshake. IKEv2 handles fragmentation
+            explicitly (RFC 7383) over UDP, but only for encrypted messages, so it cannot help
+            IKE_SA_INIT. SSH handles larger payloads natively because it relies on TCP transport.
           </p>
         </div>
       </section>

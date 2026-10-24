@@ -4,7 +4,7 @@ VPN and SSH protocols are upgrading their key exchanges to Post-Quantum Cryptogr
 
 ### Why It Matters
 
-PQC keys are vastly larger than classical ones. Integrating ML-KEM-768 adds over 1KB per exchange. In highly optimized, lightweight protocols like WireGuard, adding PQC (such as via Rosenpass) results in a staggering 22x increase in handshake size, introducing severe risks of UDP IP fragmentation.
+PQC keys are vastly larger than classical ones. Integrating ML-KEM-768 adds over 1KB per exchange. In highly optimized, lightweight protocols like WireGuard, adding post-quantum protection via Rosenpass (which uses Classic McEliece and the round-3 Kyber, not FIPS 203 ML-KEM) adds four extra Rosenpass messages of 2,464 bytes in total (per the Rosenpass white paper), which raises the risk of UDP IP fragmentation.
 
 ### The Key Takeaway
 
@@ -12,4 +12,4 @@ This complex migration strictly targets the "Control Plane" (Key Exchange and Au
 
 ### What's Happening
 
-OpenSSH already ships with hybrid PQC key exchange (mlkem768x25519-sha256) enabled by default, and the IETF is standardizing ML-KEM integration into IKEv2 for enterprise VPNs. WireGuard users can add quantum protection through the Rosenpass companion tool.
+OpenSSH already ships with hybrid PQC key exchange (mlkem768x25519-sha256) enabled by default, and the IETF drafts for ML-KEM and ML-DSA in IKEv2 are in the RFC Editor queue (October 2026). WireGuard users can add quantum protection through the Rosenpass companion tool.

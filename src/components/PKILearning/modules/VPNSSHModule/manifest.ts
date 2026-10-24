@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'vpn-ssh-pqc',
-  contentVersion: 10,
+  contentVersion: 11,
   lm_id: 'LM-009',
   title: 'VPN/IPsec & SSH',
   description:
-    'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration, WireGuard Rosenpass, and protocol size comparison.',
+    'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration and protocol size comparison. Also covers the Rosenpass add-on for WireGuard.',
   whyThisMatters:
-    "IKEv2 and SSH key exchange are two of the most widely deployed protocols on earth — hybrid ML-KEM support already exists in production tools like WireGuard's Rosenpass, making this one of the more immediately actionable PQC migrations.",
+    'IKEv2 and SSH key exchange are two of the most widely deployed protocols on earth — hybrid ML-KEM key exchange is already enabled by default in OpenSSH 9.9 and later, making this one of the more immediately actionable PQC migrations.',
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

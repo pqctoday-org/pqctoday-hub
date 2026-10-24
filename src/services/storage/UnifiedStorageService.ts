@@ -507,7 +507,7 @@ export class UnifiedStorageService {
         plan: Array.isArray(m.plan) ? m.plan : [],
         choice,
         nameToProductId,
-        tab: ['replace', 'plan', 'roadmaps', 'vendorrisk'].includes(m.tab as string)
+        tab: ['replace', 'plan', 'roadmaps', 'vendorrisk', 'vulns'].includes(m.tab as string)
           ? m.tab
           : 'replace',
       })

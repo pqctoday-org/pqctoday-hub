@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'ops-quantum-impact',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-050',
   title: 'Ops Quantum Impact',
   description:
     'Operational PQC challenges: certificate scaling, fleet upgrades, VPN/SSH key exchange, monitoring recalibration, and migration playbooks.',
   whyThisMatters:
-    'Certificate scaling and fleet upgrades are operational problems, not cryptographic ones — the algorithm choice is a one-time decision, but the rollout across thousands of endpoints is where PQC migrations actually succeed or fail.',
+    'Certificate scaling and fleet upgrades are operational problems, not cryptographic ones — choose the algorithms per migration wave, and plan to revisit them: parameter sets, provider support and cryptanalysis change. The rollout across thousands of endpoints is where PQC migrations actually succeed or fail.',
   duration: '20 min',
   difficulty: 'beginner',
   frameworkPhase: 'foundations',

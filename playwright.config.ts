@@ -67,6 +67,12 @@ const SMOKE_SPECS = [
   // ACVP-format prompt import of the public ML-DSA sigVer sample. ~8 s together.
   'acvp-mldsa-evidence.spec.ts',
   'acvp-io-prototype.spec.ts',
+  // VPN Simulator idle state in plain headless Chromium (owner decision
+  // 2026-10-16): the badge must not show a loading timer before anything is
+  // clicked, and Start Daemon must be enabled for a "HeadlessChrome/" UA.
+  // Never starts the daemon or loads the strongSwan WASM, so it is a few
+  // seconds. The nightly vpn-*.spec.ts specs cover the real handshakes.
+  'vpn-sim-ready.spec.ts',
 ]
 // Deliberately EXCLUDED from smoke (verified slow / load-sensitive — they hit the
 // 45s timeout on a saturated machine, so they'd make the gate flaky): onboarding,
@@ -93,6 +99,9 @@ const SMOKE_SPECS = [
 const MOBILE_SMOKE_EXCLUDE = new Set([
   'timeline-freshness-badge.spec.ts',
   'compliance-foryou-executive.spec.ts',
+  // Chromium-only by design: it pins a desktop headless-Chromium UA and the
+  // live VPN controls are disabled on iOS/WebKit (the spec skips there).
+  'vpn-sim-ready.spec.ts',
 ])
 // sim-mobile-full-play WS-7: the phone Simulation play-through spec. Added
 // directly to MOBILE_SMOKE_SPECS (not SMOKE_SPECS) so it runs ONLY under
