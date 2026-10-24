@@ -29,6 +29,43 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.175.0] - 2026-10-24
+
+Entropy source validation certificates get their own tab in the Compliance records, the Migrate Vulnerabilities tab now finds far more vulnerabilities for products that NIST lists without a version, and a round of fixes from a certification engineer's review corrects statements, wording and phone layouts across the certification lessons and the Library.
+
+### Added
+
+- **An Entropy (ESV) tab on the Compliance records** [view:/compliance] [persona:cert-engineer] [persona:grc] [persona:ops]: 361 NIST entropy source validation certificates, each with its noise-source type, entropy claims, validation history and lab, and a link to NIST's page. FIPS 140-3 modules whose Security Policy names entropy certificates now link to them, and each certificate lists the modules that rely on it. Open it from the record-type strip; on a phone it is one of the record-type chips.
+- **The FIPS 140-3 track counts on the phone Compliance page** [view:/compliance] [persona:cert-engineer]: one line under the PQC summary gives the same stage counts the desktop chart shows (prerequisite met, in progress, certified).
+- **Four documents in the Library** [view:/library] [persona:cert-engineer] [persona:researcher]: the ACVP specifications for ML-KEM, SLH-DSA and the SHA family, and NIST's SP 800-90B entropy assessment tool, cited from the ACVP Lab Workflow and Entropy lessons.
+- **A document's own dates in the Library detail drawer** [view:/library] [persona:cert-engineer] [persona:grc]: the drawer shows when a document was first published and last updated, with the date we last checked the catalog entry labelled separately, so the FIPS 140-3 Implementation Guidance and Management Manual no longer look newer or older than they are.
+
+### Changed
+
+- **The ACVP Lab Workflow lesson sits with the other certification lessons** [view:/learn/acvp-lab-workflow] [view:/learn] [persona:cert-engineer]: it is now filed under Hardware Infrastructure, Phase 7, next to FIPS 140-3, Common Criteria and Cryptographic Product Certification, instead of Protocols, Phase 6, so its Related modules list leads with the certification lessons.
+- **Certification engineers get a more focused quiz** [view:/learn/quiz] [persona:cert-engineer]: the Module & Scheme checkpoint no longer draws eight questions about network scanning and infrastructure tools, the Data & Asset Sensitivity subject drops off the role's list, and the Testing & Validation lesson now points on to FIPS 140-3 Certification. Other roles keep all of these questions.
+- **Lesson headers that offer several paths show the range** [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc]: with no path chosen, Common Criteria, EUCC & eIDAS says "35–76 min, depending on your path" instead of a total shorter than its longest path. The certification engineer card on Home says 95 min, matching the first lesson.
+- **The FIPS 140-3 record's deadline says whose deadline it is** [view:/compliance] [persona:cert-engineer] [persona:grc]: the cell now reads that the NIST IR 8547 initial public draft would deprecate 112-bit classical public-key parameter sets after 2030, and the record's notes add that the same draft would disallow the listed quantum-vulnerable public-key schemes after 2035. FIPS 140-3 itself sets no 2030 deadline.
+- **The validation gaps register is written in plain words** [view:/algorithms] [persona:cert-engineer] [persona:developer]: twenty generated failure lines became two clear entries (one PBKDF2 sample fails on both engines; eighteen RSA-OAEP samples fail on the Rust engine), more entries lost internal wording, and the technical ids stay under Show technical evidence.
+
+### Fixed
+
+- **Fifteen statements corrected in the certification lessons** [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc]: statements in the FIPS 140-3, Cryptographic Product Certification and Common Criteria lessons were checked against the NIST, NIAP and IETF documents they cite and corrected where they went further than the source (the Management Manual section, the hybrid key combiner, the NIAP profile count and a VPN client's curve, among others).
+- **The fault-injection card quotes FIPS 204** [view:/learn/hsm-pqc] [persona:cert-engineer] [persona:developer]: it no longer gives a reason for hedged signing that the standard does not give, and says what section 3.4 actually says about the deterministic variant. The HSM simulator code panels also match the calls the live HSM runs.
+- **The hybrid known-answer panel says what it does not test** [view:/learn/hybrid-crypto] [persona:cert-engineer] [persona:researcher]: no published test vector for a hybrid key exchange is run, because NIST's ACVP does not cover hybrids yet.
+- **The Vulnerabilities tab says plainly when there is no data** [view:/migrate] [persona:developer] [persona:architect] [persona:ops]: a selected product with no vulnerability data shows "No vulnerability data yet" and is listed last, instead of looking like a product with no vulnerabilities.
+- **The PCI dates table fits a phone** [view:/learn/pci-certification] [persona:cert-engineer] [persona:grc]: below 640 px each date becomes a stacked block, so the right-hand column is no longer cut off. Phone lesson headers no longer print an internal module code.
+- **Plain words in the Entropy lesson's device datasets** [view:/learn/entropy-randomness] [persona:cert-engineer] [persona:researcher]: the boards are described by what they are and what ran on them, without internal image or service names.
+- **TPM 2.0 v185 and NIAP Policy Letter 26 described accurately in the Library** [view:/library] [persona:cert-engineer] [persona:developer]: the four TPM v185 parts no longer state a release candidate, a buffer-size change or algorithm numbers their documents do not contain, and Policy Letter 26 is described as the 2019 letter on products barred from national security systems, not the latest letter.
+- **Panels with a NIST sample no longer say NIST twice** [view:/learn/slh-dsa] [view:/learn/stateful-signatures] [view:/learn/hybrid-crypto] [persona:cert-engineer] [persona:researcher]: the subtitle of the ML-KEM, SLH-DSA and LMS sample panels reads cleanly.
+
+### Data
+
+- **Vulnerability counts cover every version for 52 products** [view:/migrate] [persona:developer] [persona:architect] [persona:ops]: NIST files most vulnerabilities against version ranges, so products listed without a version showed far too few (OpenSSL showed 73 where 316 are on record, AWS-LC showed none where 3 are). The refreshed data covers every version, and no product lost an entry it had. Fourteen more widely used cryptographic libraries now have a vulnerability lookup.
+- **Certificate entries moved out of the Library** [view:/library] [view:/compliance] [persona:cert-engineer]: seven certificate entries (five entropy certificates and two CMVP certificates) are retired from the Library because the certificate records live in the Compliance records.
+- **The AWS CloudHSM card matches the lesson** [view:/migrate] [persona:cert-engineer] [persona:ops]: it now says that ML-DSA runs inside the HSM through AWS-specific mechanisms, that the NIST certificate (#4703, FIPS 140-3 Level 3) lists no post-quantum algorithm as approved, and no longer shows FIPS 140-2 as the current level.
+- **13 FIPS 140-3 modules show the entropy certificates their Security Policy names** [view:/compliance] [persona:cert-engineer] [persona:grc]: the links run both ways between the module and the certificate.
+
 ## [4.174.0] - 2026-10-23
 
 Rosenpass and WireGuard are now described correctly across the Learn modules, the Library, the product catalogue and the glossary, the VPN simulator says clearly when it is not ready, and the Migrate page gains a Vulnerabilities tab with refreshed data for cryptographic libraries.
