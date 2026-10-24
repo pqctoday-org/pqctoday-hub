@@ -58,11 +58,11 @@ describe('ModuleShell — mobile UX layer wiring', () => {
     expect(screen.getByRole('tab', { name: 'Learn' })).toBeInTheDocument()
   })
 
-  it('flag on: renders MobileModuleShell instead — real header chips, no tab bar, same real Learn content', () => {
+  it('flag on: renders MobileModuleShell instead — real header chips (no internal module code), no tab bar, same real Learn content', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderShell(<ModuleShell manifest={base} learn={<div>LEARN BODY</div>} />)
     expect(screen.getByRole('heading', { name: 'Test Module' })).toBeInTheDocument()
-    expect(screen.getByText('LM-999')).toBeInTheDocument()
+    expect(screen.queryByText('LM-999')).not.toBeInTheDocument()
     expect(screen.getByText('intermediate')).toBeInTheDocument()
     expect(screen.getByText('Because it matters a lot.')).toBeInTheDocument()
     expect(screen.getByText('LEARN BODY')).toBeInTheDocument()
