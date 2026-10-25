@@ -146,7 +146,7 @@ The non-specific fixed-vs-random TVLA test divides measurements into "fixed inpu
 - **Polynomial multiplication** — coefficient-wise multiplication in the Zq ring; leaks nonce information in ML-DSA signing
 - **Modular reduction** — conditional subtraction for q=3329 (ML-KEM); leaks in unmasked implementations
 
-**TVLA threshold**: |t| > 4.5 (the common threshold from Goodwill et al., NIST NIAT workshop 2011) indicates statistically significant leakage; a lower threshold flags more points and makes false alarms more likely. A failure is leakage detected, not a demonstrated key recovery. The workshop tool runs a non-specific test on pre-recorded sample scores, not real traces.
+**TVLA threshold**: |t| > 4.5 (the common threshold from Goodwill et al., NIST NIAT workshop 2011) indicates statistically significant leakage; a lower threshold flags more points and makes false alarms more likely. A failure is leakage detected, not a demonstrated key recovery. The workshop tool shows illustrative scores typed into the page, not a test run on real traces.
 
 ### Implementation comparison:
 
