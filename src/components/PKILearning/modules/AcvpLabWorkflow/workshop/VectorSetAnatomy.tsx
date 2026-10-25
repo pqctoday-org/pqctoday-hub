@@ -12,7 +12,7 @@ import { PUBLIC_FIXTURES, PUBLIC_FIXTURE_IDS, type PublicFixtureId } from '../da
 const PREDICTIONS: { id: Prediction; label: string }[] = [
   { id: 'executes', label: 'Every test executes' },
   { id: 'partly', label: 'Some tests execute' },
-  { id: 'unsupported', label: 'Unsupported — no PKCS#11 path' },
+  { id: 'unsupported', label: 'Unsupported through standard PKCS#11' },
 ]
 
 /** Group properties worth showing (everything except ids and the tests array). */
@@ -203,6 +203,13 @@ export const VectorSetAnatomy: React.FC = () => {
                         {r}
                       </p>
                     ))}
+                    {o.unsupported > 0 ? (
+                      <p className="text-foreground/80" data-testid={`tg-${g.tgId}-step3`}>
+                        This is the standard PKCS#11 v3.2 path only. Step 3 answers these tests
+                        through the engines&rsquo; labelled test-only inputs or values computed
+                        outside the engine.
+                      </p>
+                    ) : null}
                     {o.unsupported === 0 ? (
                       <p className="text-foreground/80">
                         Every input this group supplies has a PKCS#11 v3.2 route, so every case is
