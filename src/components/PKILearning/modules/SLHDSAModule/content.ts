@@ -19,6 +19,10 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-208'),
     getStandard('RFC 8391'),
     getStandard('RFC 8554'),
+    // The "What the lab tests" panel quotes these three; declared so a reader can open them.
+    getStandard('ACVP-SLH-DSA-JSON-Specification'),
+    getStandard('NIST-FIPS140-3-IG-PQC'),
+    getStandard('NSA CNSA 2.0 FAQ'),
   ],
   algorithms: [getAlgorithm('SLH-DSA-SHA2-128s'), getAlgorithm('SLH-DSA-SHAKE-256f')],
   deadlines: [],
