@@ -18,9 +18,18 @@ afterEach(() => {
   usePersonaStore.getState().setPersona(null)
 })
 
-function renderQuiz(initialPath: string) {
+// A checkpoint quiz is opened from the path with its categories in the navigation state; the final
+// quiz (a plain visit or the capstone button) has no such state.
+function renderQuiz(initialPath: string, checkpointCategories?: string[]) {
+  const entry = checkpointCategories
+    ? {
+        pathname: initialPath.split('?')[0],
+        search: initialPath.split('?')[1] ? `?${initialPath.split('?')[1]}` : '',
+        state: { checkpointCategories, checkpointLabel: 'Checkpoint' },
+      }
+    : initialPath
   return render(
-    <MemoryRouter initialEntries={[initialPath]}>
+    <MemoryRouter initialEntries={[entry]}>
       <Routes>
         <Route path="/learn/quiz" element={<QuizModule />} />
         <Route path="/prior" element={<div>Prior page</div>} />
@@ -43,7 +52,7 @@ describe('QuizModule — mobile UX layer wiring', () => {
     const realQuestionTexts = new Set(
       QUIZ_QUESTIONS.filter((q) => q.category === category.id).map((q) => q.question)
     )
-    renderQuiz(`/learn/quiz?category=${category.id}`)
+    renderQuiz(`/learn/quiz?category=${category.id}`, [category.id])
 
     // handleStart shuffles the category's real questions (real desktop
     // behavior, reused as-is) — so this asserts on the real progress count
@@ -70,7 +79,7 @@ describe('QuizModule — mobile UX layer wiring', () => {
     ).sort((a, b) => a[1].length - b[1].length)[0]
     const byQuestionText = new Map(categoryQuestions.map((q) => [q.question, q]))
 
-    renderQuiz(`/learn/quiz?category=${category.id}`)
+    renderQuiz(`/learn/quiz?category=${category.id}`, [category.id])
 
     for (let i = 0; i < categoryQuestions.length; i++) {
       const shown = screen.getByRole('heading', { level: 3 }).textContent ?? ''
@@ -97,7 +106,16 @@ describe('QuizModule — mobile UX layer wiring', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     const category = QUIZ_CATEGORIES[0]
     render(
-      <MemoryRouter initialEntries={['/prior', `/learn/quiz?category=${category.id}`]}>
+      <MemoryRouter
+        initialEntries={[
+          '/prior',
+          {
+            pathname: '/learn/quiz',
+            search: `?category=${category.id}`,
+            state: { checkpointCategories: [category.id] },
+          },
+        ]}
+      >
         <Routes>
           <Route path="/learn/quiz" element={<QuizModule />} />
           <Route path="/prior" element={<div>Prior page</div>} />
@@ -113,7 +131,7 @@ describe('QuizModule on a phone: the page names itself in every view', () => {
   // The phone header title is plain text, so the quiz supplies the page's one level-one heading.
   it('has exactly one h1 while a quiz is running', () => {
     mockUseIsMobileShell.mockReturnValue(true)
-    renderQuiz(`/learn/quiz?category=${QUIZ_CATEGORIES[0].id}`)
+    renderQuiz(`/learn/quiz?category=${QUIZ_CATEGORIES[0].id}`, [QUIZ_CATEGORIES[0].id])
     expect(screen.getByText(/Question 1 of/)).toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('PQC Quiz')
@@ -124,5 +142,58 @@ describe('QuizModule on a phone: the page names itself in every view', () => {
     renderQuiz('/learn/quiz')
     expect(screen.getByText('Nothing to quiz here yet')).toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
+})
+
+describe('QuizModule on a phone: the final quiz offers a length choice (owner decision D7)', () => {
+  const allCategories = QUIZ_CATEGORIES.map((c) => c.id)
+  const allQuestions = QUIZ_QUESTIONS.filter((q) => allCategories.includes(q.category)).length
+  const finalQuizPath = `/learn/quiz?category=${allCategories.join(',')}`
+
+  it('the data has more than 20 questions in the final quiz, so the choice applies', () => {
+    expect(allQuestions).toBeGreaterThan(20)
+  })
+
+  it('shows Quick pick and the full run before any question, and no question yet', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz(finalQuizPath)
+    expect(screen.getByRole('button', { name: 'Quick pick (20 questions)' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: `Full quiz (${allQuestions} questions)` })
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/Question 1 of/)).not.toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
+
+  it('Quick pick runs 20 questions', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz(finalQuizPath)
+    fireEvent.click(screen.getByRole('button', { name: 'Quick pick (20 questions)' }))
+    expect(screen.getByText('Question 1 of 20')).toBeInTheDocument()
+  })
+
+  it('the full run runs every question in the quiz', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz(finalQuizPath)
+    fireEvent.click(screen.getByRole('button', { name: `Full quiz (${allQuestions} questions)` }))
+    expect(screen.getByText(`Question 1 of ${allQuestions}`)).toBeInTheDocument()
+  })
+
+  it('a checkpoint quiz over the same categories still starts at once with every question', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz(finalQuizPath, allCategories)
+    expect(screen.queryByRole('button', { name: /Quick pick/ })).not.toBeInTheDocument()
+    expect(screen.getByText(`Question 1 of ${allQuestions}`)).toBeInTheDocument()
+  })
+
+  it('a quiz of 20 questions or fewer starts at once, with nothing to choose', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    const small = QUIZ_CATEGORIES.find(
+      (c) => QUIZ_QUESTIONS.filter((q) => q.category === c.id).length <= 20
+    )
+    if (!small) return // every category is larger than 20 in the current data
+    renderQuiz(`/learn/quiz?category=${small.id}`)
+    expect(screen.queryByRole('button', { name: /Quick pick/ })).not.toBeInTheDocument()
+    expect(screen.getByText(/Question 1 of/)).toBeInTheDocument()
   })
 })

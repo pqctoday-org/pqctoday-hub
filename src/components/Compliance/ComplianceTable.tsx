@@ -140,6 +140,8 @@ export const ComplianceRow = ({
   // CC / EUCC / CSPN: PQC names come from the Security Target — a claim in the
   // evaluated document, not validated PQC support. Rendered neutrally.
   const pqcFromSt = isSecurityTargetType(record.type)
+  // The number a reader can look up at the scheme; for EUCC the ENISA number, never the generated id.
+  const certNumber = schemeCertificateId(record)
 
   return (
     <tr
@@ -157,9 +159,9 @@ export const ComplianceRow = ({
 
       {/* Certification # Column — with the record type and its verbatim status */}
       <td className="px-4 py-3 text-xs w-32">
-        {schemeCertificateId(record) ? (
-          <div className="font-mono truncate" title={record.id}>
-            {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
+        {certNumber ? (
+          <div className="font-mono truncate" title={certNumber}>
+            {certNumber.length > 20 ? certNumber.substring(0, 20) + '...' : certNumber}
           </div>
         ) : (
           <div className="truncate italic text-muted-foreground" title={NO_SCHEME_ID_LABEL}>

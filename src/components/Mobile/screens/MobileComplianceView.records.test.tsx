@@ -95,6 +95,20 @@ const cc: MobileCertRecord = {
   ],
 }
 
+const eucc: MobileCertRecord = {
+  id: 'enisa-eucc-3089-2026-000002-i-00',
+  euccCertificateId: 'EUCC-3089-2026-002',
+  source: 'ENISA',
+  date: '2026-09-10',
+  link: 'https://certification.enisa.europa.eu/certificates/eucc-3089-2026-000002-i-00_en',
+  type: 'EUCC',
+  status: 'Active',
+  productName: 'Nokia Lightspan Access Node MF-2',
+  productCategory: 'Network device',
+  vendor: 'Nokia Solutions and Networks Oy',
+  pqcCoverage: '',
+}
+
 function renderAt(url: string, records: MobileCertRecord[] = [fips, cavp, cc]) {
   return render(
     <MemoryRouter initialEntries={[url]}>
@@ -175,6 +189,20 @@ describe('MobileComplianceView — searchable Records list', () => {
     fireEvent.click(list.getByRole('button', { name: 'Include historical' }))
     expect(urlParams().get('rstatus')).toBe('all')
     expect(list.getByText('Gamma Smart Card')).toBeInTheDocument()
+  })
+
+  it('an EUCC record shows its EUCC certificate number in the list, not its generated id', () => {
+    renderAt('/compliance?tab=records', [eucc])
+    const list = within(screen.getByRole('region', { name: 'Certification records' }))
+    expect(list.getByText(/#EUCC-3089-2026-002/)).toBeInTheDocument()
+    expect(list.queryByText(/enisa-eucc-3089-2026/)).not.toBeInTheDocument()
+  })
+
+  it('an EUCC record sheet shows its EUCC certificate number, not its generated id', () => {
+    renderAt('/compliance?cert=enisa-eucc-3089-2026-000002-i-00', [eucc])
+    const sheet = within(screen.getByTestId('compliance-record-detail-sheet'))
+    expect(sheet.getByText('EUCC-3089-2026-002')).toBeInTheDocument()
+    expect(sheet.queryByText('enisa-eucc-3089-2026-000002-i-00')).not.toBeInTheDocument()
   })
 
   it('search writes ?q= (with tab=records) and filters by vendor or certificate #', () => {

@@ -9,6 +9,9 @@ import {
   nextStepFor,
 } from './nextSteps'
 import { PERSONA_IDS } from './personaIds'
+import { PERSONAS } from './learningPersonas'
+import { PERSONA_FEATURED_PAGES } from '@/components/Playground/cryptoLabMeta'
+import { resolveHsmLocation } from '@/components/Playground/HsmPlayground'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
@@ -144,11 +147,100 @@ describe('curious next steps (curious journey review, 16 Oct 2026)', () => {
   })
 })
 
-describe('certification engineer next step after Testing & Validation', () => {
-  it('leads to FIPS 140-3 Certification instead of the network infrastructure planner', () => {
-    expect(nextStepFor('/learn/pqc-testing-validation', 'cert-engineer')?.to).toBe(
-      '/learn/fips-140-3-certification'
+describe('certification engineer next steps follow the role path', () => {
+  const overrides = PERSONA_NEXT_STEPS['cert-engineer'] ?? {}
+  const pathLessons = PERSONAS['cert-engineer'].recommendedPath.filter((id) => id !== 'quiz')
+  const lessonRoute = (id: string) => `/learn/${id}`
+
+  /**
+   * Intentional destinations that are not "the next lesson in the path order". Each entry pins
+   * the exact target, so changing one without updating this list turns the test red.
+   */
+  const NON_PATH_DESTINATIONS: Record<string, string> = {
+    // Home footer: the board's own secondary button.
+    '/': '/playground/hsm?tab=build&dtab=acvp',
+    // The path opens with optional orientation; the first essential lesson is the real start.
+    '/learn': '/learn/crypto-product-certification',
+    // Tools that practise Entropy & Randomness hand on to the lesson after it.
+    '/playground/entropy-test': '/learn/hsm-pqc',
+    '/playground/drbg-demo': '/learn/hsm-pqc',
+  }
+
+  /**
+   * Path lessons with no override of their own yet: they show the shared exit for now.
+   * Fixed in a later release; remove an entry when its override lands (an override that
+   * lands early does not fail this test, it only makes the entry unnecessary).
+   */
+  const NO_OVERRIDE_YET = [
+    'hsm-pqc',
+    'cc-eucc-certification',
+    'stateful-signatures',
+    'slh-dsa',
+    'hybrid-crypto',
+    'secure-boot-pqc',
+    'pci-certification',
+  ]
+
+  it('every override names an existing route, and a Build tab that exists', () => {
+    for (const [route, step] of Object.entries(overrides)) {
+      expect(known.has(route), `source ${route}`).toBe(true)
+      const [path, query = ''] = step.to.split('?')
+      expect(known.has(path), `target ${step.to}`).toBe(true)
+      if (path === '/playground/hsm') {
+        const q = new URLSearchParams(query)
+        const loc = resolveHsmLocation({ tab: q.get('tab'), dtab: q.get('dtab') })
+        expect(loc.tab, step.to).toBe(q.get('tab'))
+        expect(loc.dtab, step.to).toBe(q.get('dtab'))
+      }
+    }
+  })
+
+  it('every override is the next lesson in the role path order, or a pinned non-path destination', () => {
+    for (const [route, step] of Object.entries(overrides)) {
+      const lesson = pathLessons.findIndex((id) => lessonRoute(id) === route)
+      if (lesson === -1) {
+        expect(NON_PATH_DESTINATIONS[route], `${route} is not a path lesson`).toBe(step.to)
+      } else {
+        const next = pathLessons[lesson + 1]
+        expect(next, `${route} is the last path lesson`).toBeDefined()
+        expect(step.to, route).toBe(lessonRoute(next))
+      }
+    }
+    for (const route of Object.keys(NON_PATH_DESTINATIONS)) {
+      expect(overrides[route], `${route} is on the allowlist but has no override`).toBeDefined()
+    }
+  })
+
+  it('every path lesson has an override, except those listed as not yet done', () => {
+    const missing = pathLessons.filter((id) => !overrides[lessonRoute(id)])
+    expect(missing.filter((id) => !NO_OVERRIDE_YET.includes(id))).toEqual([])
+  })
+
+  it('the path order used here is the persona path (guards the test itself)', () => {
+    expect(pathLessons.indexOf('pqc-testing-validation')).toBeGreaterThan(
+      pathLessons.indexOf('hsm-pqc')
     )
+    expect(pathLessons[pathLessons.indexOf('pqc-testing-validation') + 1]).toBe(
+      'cc-eucc-certification'
+    )
+  })
+
+  it('the Home footer opens the validation workbench with the workbench card text', () => {
+    const card = PERSONA_FEATURED_PAGES['cert-engineer']?.find(
+      (c) => c.to === '/playground/hsm?tab=build&dtab=acvp'
+    )
+    expect(card).toBeDefined()
+    const step = nextStepFor('/', 'cert-engineer')
+    expect(step?.to).toBe(card?.to)
+    expect(step?.label).toBe('Open the validation workbench')
+    expect(step?.why).toBe(card?.description)
+    expect(nextStepFor('/', 'executive')).toBe(NEXT_STEPS['/'])
+  })
+
+  it('Testing & Validation leads to Common Criteria, EUCC & eIDAS, not back to FIPS 140-3', () => {
+    const step = nextStepFor('/learn/pqc-testing-validation', 'cert-engineer')
+    expect(step?.to).toBe('/learn/cc-eucc-certification')
+    expect(step?.label).toBe('Next on your path: Common Criteria, EUCC & eIDAS Certification')
     expect(nextStepFor('/learn/pqc-testing-validation', 'executive')).toEqual(
       nextStepFor('/learn/pqc-testing-validation')
     )

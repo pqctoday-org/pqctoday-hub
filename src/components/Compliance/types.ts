@@ -110,6 +110,8 @@ export interface ComplianceRecord {
   cemVersion?: string // CEM version (e.g., "ISO/IEC 18045:2022")
   avaVanLevel?: string // AVA_VAN level
   packageInfo?: string // Full package/augmentation details
+  /** EUCC: the certificate number the ENISA page shows (e.g. 'EUCC-3089-2026-002'); `id` is only a generated key. */
+  euccCertificateId?: string
 
   // ── FIPS 140-3 (NIST CMVP certificate page) ──
   cmvpStandard?: string

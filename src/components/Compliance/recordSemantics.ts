@@ -131,12 +131,19 @@ export function matchesCertType(record: { type: string }, certType: string): boo
  * listings carry no scheme certificate number in the data, so their record id is a
  * slug generated from the product name plus a short hash ('cc-<product>-3881cf5c').
  * That slug is an internal key (deep links, selection), not a certificate number,
- * and must not be presented as one. ANSSI, EUCC, CSPN, CMVP and CAVP ids are the
- * scheme's own numbers and are returned unchanged.
+ * and must not be presented as one. An EUCC record's id is likewise a generated key
+ * ('enisa-eucc-3089-2026-000002-i-00'); its certificate number is the separate
+ * `euccCertificateId` ('EUCC-3089-2026-002'), which is what the ENISA page shows.
+ * ANSSI, CSPN, CMVP and CAVP ids are the scheme's own numbers and are returned unchanged.
  */
 const GENERATED_CC_ID = /^cc-.+-[0-9a-f]{8}$/
 
-export function schemeCertificateId(record: { id: string; type: string }): string | null {
+export function schemeCertificateId(record: {
+  id: string
+  type: string
+  euccCertificateId?: string
+}): string | null {
+  if (record.type === 'EUCC') return record.euccCertificateId?.trim() || null
   return record.type === 'Common Criteria' && GENERATED_CC_ID.test(record.id) ? null : record.id
 }
 

@@ -752,17 +752,25 @@ export const AcvpSuiteWorkbench = () => {
       )}
 
       {results.length > 0 && (
-        <AcvpResultFilters
-          filter={filter}
-          onChange={setFilter}
-          total={totalChecks}
-          statusCounts={{ pass: passed, fail: failed, skip: skipped }}
-          classCounts={classCounts}
-          shown={visibleResults.length}
-        />
+        // Stays in view while the canvas scrolls past the header, so the filters are never lost.
+        <div className="sticky top-0 z-10 -mx-4 bg-background px-4 py-1.5">
+          <AcvpResultFilters
+            filter={filter}
+            onChange={setFilter}
+            total={totalChecks}
+            statusCounts={{ pass: passed, fail: failed, skip: skipped }}
+            classCounts={classCounts}
+            shown={visibleResults.length}
+          />
+        </div>
       )}
 
-      <div className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
+      {/* min-h floor: on a 900 px-high window the header, notice and chips leave about 134 px
+          here, one row at a time; the canvas scrolls instead of squeezing the table. */}
+      <div
+        className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 min-h-[28rem] overflow-y-auto custom-scrollbar"
+        data-testid="acvp-results-scroller"
+      >
         <div className="overflow-x-auto">
           <table className="w-full table-fixed text-left text-xs">
             <colgroup>

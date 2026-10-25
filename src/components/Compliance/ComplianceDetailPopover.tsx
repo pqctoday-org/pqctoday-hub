@@ -532,7 +532,9 @@ export const ComplianceDetailPopover = ({
                   <div className="flex items-center gap-2">
                     <StatusBadge status={record.status} />
                     {schemeCertificateId(record) && (
-                      <span className="text-xs text-muted-foreground font-mono">{record.id}</span>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        {schemeCertificateId(record)}
+                      </span>
                     )}
                   </div>
                   <div className="flex items-center gap-1">

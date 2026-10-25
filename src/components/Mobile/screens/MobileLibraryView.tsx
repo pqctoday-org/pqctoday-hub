@@ -17,7 +17,11 @@ import {
 } from '@/data/libraryPurposeDoors'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { useLibraryPipeline } from '@/components/Library/redesign/useLibraryPipeline'
-import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/libraryPills'
+import {
+  lifecycleLabel,
+  formatLibDate,
+  documentDatesText,
+} from '@/components/Library/redesign/libraryPills'
 import {
   RESEARCH_TOPIC_PARAM,
   researchTopicCounts,
@@ -490,8 +494,8 @@ export function MobileLibraryView() {
                 {selected.authorsOrOrganization || 'Publisher not yet catalogued'}
                 {' · '}
                 {lifecycleLabel(selected.lifecycleLabel)}
-                {selected.initialPublicationDate &&
-                  ` · ${formatLibDate(selected.initialPublicationDate)}`}
+                {documentDatesText(selected.initialPublicationDate, selected.lastUpdateDate) &&
+                  ` · ${documentDatesText(selected.initialPublicationDate, selected.lastUpdateDate)}`}
               </p>
             </div>
             <div className="space-y-1.5">
