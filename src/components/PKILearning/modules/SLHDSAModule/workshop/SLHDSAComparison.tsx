@@ -65,8 +65,8 @@ const ROWS = [
   },
   {
     label: 'CNSA 2.0',
-    lms: 'Single-tree LMS approved for firmware and software signing; LMS SHA-256/192 recommended; HSS not allowed',
-    xmss: 'Single-tree XMSS approved for firmware and software signing; XMSS^MT not allowed',
+    lms: 'Single-tree LMS approved for firmware and software signing; LMS SHA-256/192 recommended; multi-tree HSS not allowed',
+    xmss: 'Single-tree XMSS approved for firmware and software signing; multi-tree XMSS^MT not allowed',
     slhdsa: 'Not approved for any use in NSS',
   },
   {

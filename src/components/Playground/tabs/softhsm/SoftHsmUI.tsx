@@ -30,8 +30,10 @@ export const DSA_SIZES: Record<44 | 65 | 87, { pub: number; sig: number }> = {
 }
 
 // Pre-hash options shared by ML-DSA and SLH-DSA (PKCS#11 v3.2 CKM_HASH_*_DSA_* variants).
-// fips205Slh: true = approved for HashSLH-DSA per FIPS 205 §11; false = not approved for SLH-DSA
-// (FIPS 205 §11 approves only SHA-256, SHA-512, SHAKE-128, SHAKE-256 for HashSLH-DSA)
+// fips205Slh: true = FIPS 205 §10.2.2 (Algorithm 23) lists an OID for the function (SHA-256,
+// SHA-512, SHAKE128, SHAKE256); false = no OID listed. §10.2.2 still allows other approved hash
+// functions or XOFs with at least 8n bits of strength (§10.2); SHA-256 and SHAKE128 are only
+// appropriate for category 1 parameter sets.
 export const PREHASH_OPTIONS = [
   { id: 'sha224', label: 'SHA-224', fips205Slh: false },
   { id: 'sha256', label: 'SHA-256', fips205Slh: true },

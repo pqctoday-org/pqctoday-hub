@@ -127,7 +127,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHA2-128s',
     ckp: CKP_SLH_DSA_SHA2_128S,
     nistLevel: 1,
-    hash: 'SHA-256',
+    hash: 'SHA-256, all functions',
     pubBytes: 32,
     sigBytes: 7856,
     category: 's',
@@ -137,7 +137,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHAKE-128s',
     ckp: CKP_SLH_DSA_SHAKE_128S,
     nistLevel: 1,
-    hash: 'SHAKE-128',
+    hash: 'SHAKE256, all functions',
     pubBytes: 32,
     sigBytes: 7856,
     category: 's',
@@ -147,7 +147,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHA2-128f',
     ckp: CKP_SLH_DSA_SHA2_128F,
     nistLevel: 1,
-    hash: 'SHA-256',
+    hash: 'SHA-256, all functions',
     pubBytes: 32,
     sigBytes: 17088,
     category: 'f',
@@ -157,7 +157,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHAKE-128f',
     ckp: CKP_SLH_DSA_SHAKE_128F,
     nistLevel: 1,
-    hash: 'SHAKE-128',
+    hash: 'SHAKE256, all functions',
     pubBytes: 32,
     sigBytes: 17088,
     category: 'f',
@@ -167,7 +167,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHA2-192s',
     ckp: CKP_SLH_DSA_SHA2_192S,
     nistLevel: 3,
-    hash: 'SHA-256',
+    hash: 'SHA-256 (F, PRF); SHA-512 (H, T_l, H_msg, PRF_msg)',
     pubBytes: 48,
     sigBytes: 16224,
     category: 's',
@@ -177,7 +177,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHAKE-192s',
     ckp: CKP_SLH_DSA_SHAKE_192S,
     nistLevel: 3,
-    hash: 'SHAKE-256',
+    hash: 'SHAKE256, all functions',
     pubBytes: 48,
     sigBytes: 16224,
     category: 's',
@@ -187,7 +187,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHA2-192f',
     ckp: CKP_SLH_DSA_SHA2_192F,
     nistLevel: 3,
-    hash: 'SHA-256',
+    hash: 'SHA-256 (F, PRF); SHA-512 (H, T_l, H_msg, PRF_msg)',
     pubBytes: 48,
     sigBytes: 35664,
     category: 'f',
@@ -197,7 +197,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHAKE-192f',
     ckp: CKP_SLH_DSA_SHAKE_192F,
     nistLevel: 3,
-    hash: 'SHAKE-256',
+    hash: 'SHAKE256, all functions',
     pubBytes: 48,
     sigBytes: 35664,
     category: 'f',
@@ -207,7 +207,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHA2-256s',
     ckp: CKP_SLH_DSA_SHA2_256S,
     nistLevel: 5,
-    hash: 'SHA-256',
+    hash: 'SHA-256 (F, PRF); SHA-512 (H, T_l, H_msg, PRF_msg)',
     pubBytes: 64,
     sigBytes: 29792,
     category: 's',
@@ -217,7 +217,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHAKE-256s',
     ckp: CKP_SLH_DSA_SHAKE_256S,
     nistLevel: 5,
-    hash: 'SHAKE-256',
+    hash: 'SHAKE256, all functions',
     pubBytes: 64,
     sigBytes: 29792,
     category: 's',
@@ -227,7 +227,7 @@ const paramSets = (): ParamSet[] => [
     label: 'SHA2-256f',
     ckp: CKP_SLH_DSA_SHA2_256F,
     nistLevel: 5,
-    hash: 'SHA-256',
+    hash: 'SHA-256 (F, PRF); SHA-512 (H, T_l, H_msg, PRF_msg)',
     pubBytes: 64,
     sigBytes: 49856,
     category: 'f',
@@ -237,17 +237,17 @@ const paramSets = (): ParamSet[] => [
     label: 'SHAKE-256f',
     ckp: CKP_SLH_DSA_SHAKE_256F,
     nistLevel: 5,
-    hash: 'SHAKE-256',
+    hash: 'SHAKE256, all functions',
     pubBytes: 64,
     sigBytes: 49856,
     category: 'f',
   },
 ]
 
-// All PKCS#11 v3.2 pre-hash variants; non-FIPS 205 §11 entries are labeled for awareness
+// All PKCS#11 v3.2 pre-hash variants; those with no OID in FIPS 205 §10.2.2 are labeled for awareness
 const PREHASH_OPTIONS = PREHASH_OPTIONS_BASE.map((o) => ({
   id: o.id,
-  label: o.fips205Slh ? o.label : `${o.label} (Non-FIPS 205)`,
+  label: o.fips205Slh ? o.label : `${o.label} (OID not listed in FIPS 205)`,
 }))
 
 const dropdownItems = () => paramSets().map((p) => ({ id: p.id, label: p.label }))
@@ -298,7 +298,7 @@ const COMPARISON_ROWS = [
   { label: 'Signing speed', lms: 'Fast', slhdsa: 'Slow', mldsa: 'Fast' },
   {
     label: 'CNSA 2.0',
-    lms: 'Single-tree LMS approved for firmware and software signing; LMS SHA-256/192 recommended; HSS not allowed',
+    lms: 'Single-tree LMS approved for firmware and software signing; LMS SHA-256/192 recommended; multi-tree HSS and XMSSMT not allowed (CNSA 2.0 FAQ)',
     slhdsa: 'Not approved for any use in NSS',
     mldsa: 'ML-DSA-87 only (the CNSA 2.0 table lists no other ML-DSA set)',
   },
@@ -617,12 +617,11 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
                   />
                   {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
                     <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
-                      ⚠ Not approved for HashSLH-DSA by FIPS 205 §11. FIPS 205 permits only SHA-256,
-                      SHA-512, SHAKE-128, and SHAKE-256 — the four hash functions that match the
-                      internal hash families of the 12 parameter sets (SHA2-* variants use SHA-256
-                      or SHA-512; SHAKE-* variants use SHAKE-128 or SHAKE-256). SHA-3 and other
-                      variants are available in PKCS#11 v3.2 but are outside the FIPS 205
-                      HashSLH-DSA specification entirely.
+                      ⚠ FIPS 205 section 10.2.2 lists OIDs for SHA-256, SHA-512, SHAKE128 and
+                      SHAKE256 and allows other approved hash functions or XOFs. Section 10.2 says
+                      the digest needs at least 8n bits of classical security strength against both
+                      collision and second-preimage attacks (n = 16, 24 or 32, by parameter set).
+                      SHA-256 and SHAKE128 are only appropriate for category 1 parameter sets.
                     </p>
                   )}
                 </>
@@ -983,13 +982,11 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
         <p className="text-xs text-muted-foreground">
-          <strong>Why is SLH-DSA stateless?</strong> Unlike LMS/XMSS, SLH-DSA does not consume a
-          leaf index on each signing operation. Instead, it derives a fresh, ephemeral WOTS+ key for
-          every signature using a per-signature randomizer drawn from the private key seed — making
-          each signature self-contained. There is no counter to persist, no monotonic register to
-          protect, and no risk of catastrophic key reuse from a crashed or cloned HSM. In practice
-          this means the private key can be safely backed up, distributed across HSM replicas, or
-          stored in software — operational constraints that are impossible with LMS or XMSS.
+          <strong>Why is SLH-DSA stateless?</strong> SLH-DSA keeps no counter. A key pair is a very
+          large set of few-time FORS keys; each signature hashes the message with a randomizer,
+          uses part of the digest to select one of them, and authenticates it through the
+          hypertree. A FORS key can be selected again, and its security degrades gradually; the
+          parameter sets are designed for up to 2^64 signatures per key.
         </p>
         <p className="text-xs text-muted-foreground">
           <strong>The cost of statefulness elimination:</strong> SLH-DSA (FIPS 205, formerly
