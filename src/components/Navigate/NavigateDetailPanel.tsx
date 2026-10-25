@@ -48,6 +48,14 @@ interface NavigateDetailPanelProps {
 // everything one tap away.
 const CONNECTIONS_PER_GROUP_CAP = 6
 
+// A trusted-source node's "references" edges to products come from each product's own catalogue
+// entry naming the source (its trusted_source_id), not from the source validating the product.
+// Those products get their own group so the heading says that and the note under it says a link
+// is not a validation (the same sentence the Navigate guide uses).
+const PRODUCTS_CITING_SOURCE_KEY = 'outgoing:products-citing-source'
+const PRODUCTS_CITING_SOURCE_HEADING = 'Products whose catalogue entry cites this source'
+const LINK_IS_NOT_VALIDATION = 'A link records a reference in the dataset, not a validation.'
+
 export function NavigateDetailPanel({
   node,
   connections,
@@ -58,7 +66,13 @@ export function NavigateDetailPanel({
 }: NavigateDetailPanelProps) {
   const grouped = new Map<string, Connection[]>()
   for (const c of connections) {
-    const key = `${c.direction}:${c.edge.rel}`
+    const key =
+      node.type === 'certbody' &&
+      c.direction === 'outgoing' &&
+      c.edge.rel === 'references' &&
+      c.node.type === 'product'
+        ? PRODUCTS_CITING_SOURCE_KEY
+        : `${c.direction}:${c.edge.rel}`
     grouped.set(key, [...(grouped.get(key) ?? []), c])
   }
 
@@ -227,8 +241,14 @@ export function NavigateDetailPanel({
           return (
             <div key={key}>
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {rel} ({direction === 'outgoing' ? 'to' : 'from'}) · {items.length}
+                {key === PRODUCTS_CITING_SOURCE_KEY
+                  ? PRODUCTS_CITING_SOURCE_HEADING
+                  : `${rel} (${direction === 'outgoing' ? 'to' : 'from'})`}{' '}
+                · {items.length}
               </h3>
+              {key === PRODUCTS_CITING_SOURCE_KEY && (
+                <p className="mt-0.5 text-xs text-muted-foreground">{LINK_IS_NOT_VALIDATION}</p>
+              )}
               <ul className="mt-1 space-y-1">
                 {visibleItems.map((c) => (
                   <li key={`${c.edge.from}-${c.edge.to}-${c.edge.rel}`}>

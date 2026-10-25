@@ -32,7 +32,7 @@ export const content: ModuleContent = {
   // the owner renews it. v1 ships as "practitioner orientation", not reviewed by a lab or
   // certification body.
   version: '0.1.0',
-  lastEdited: '2026-10-24',
+  lastEdited: '2026-10-25',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──

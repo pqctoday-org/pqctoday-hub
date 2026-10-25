@@ -129,7 +129,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
               aria-selected={active}
               onClick={() => setTier(t)}
               className={cn(
-                'h-9 rounded-md px-3 text-[11.5px] font-bold',
+                'h-9 gap-1 rounded-md px-3 text-[11.5px] font-bold',
                 active ? 'bg-card text-primary-legible' : 'text-muted-foreground'
               )}
             >

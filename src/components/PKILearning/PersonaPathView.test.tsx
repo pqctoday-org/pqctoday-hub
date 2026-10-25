@@ -77,6 +77,32 @@ describe('PersonaPathView — phase partitioning (P0-4)', () => {
   })
 })
 
+describe('PersonaPathView — checkpoint quiz wording', () => {
+  beforeEach(() => {
+    useLearnStore.getState().reset()
+    useModuleStore.setState({ modules: {} })
+    localStorage.clear()
+  })
+
+  it('counts the quiz topics of each phase, not its modules (certification: 4 topics for 5 modules)', () => {
+    render(
+      <MemoryRouter>
+        <PersonaPathView
+          personaId="cert-engineer"
+          onSelectModule={noop}
+          isModuleRelevant={falseFn}
+          isModuleAboveLevel={falseFn}
+          onTakeCheckpointQuiz={noop}
+        />
+      </MemoryRouter>
+    )
+    const first = PERSONAS['cert-engineer'].pathItems.find((p) => p.type === 'checkpoint')
+    expect(first?.type === 'checkpoint' && first.categories.length).toBe(4)
+    expect(screen.getByText('Short quiz on the 4 topics of this phase.')).toBeInTheDocument()
+    expect(screen.queryByText(/Short quiz over the/)).not.toBeInTheDocument()
+  })
+})
+
 describe('PersonaPathView — curious "Show me everything" escape (P0-3)', () => {
   beforeEach(() => {
     useLearnStore.getState().reset()

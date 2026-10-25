@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
+import { render as rtlRender, screen, fireEvent, waitFor, within } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { MemoryRouter } from 'react-router'
 
 const HSM_STUB = {
   isReady: true,
@@ -22,6 +24,9 @@ vi.mock('@/utils/katRunner', async (importOriginal) => {
 
 import { MobileKATValidationView } from './MobileKATValidationView'
 import { ATTACK_CATEGORY_LABELS, ATTACK_PROFILES } from '@/data/implementationAttackProfiles'
+
+// The screen links to another page, so it renders inside a router (rerender keeps the wrapper).
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: MemoryRouter })
 
 const result = (id: string, status: string) => ({
   id,
@@ -187,5 +192,15 @@ describe('MobileKATValidationView', () => {
     expect(screen.queryByText('side-channel')).not.toBeInTheDocument()
     expect(screen.queryByText('fault-injection')).not.toBeInTheDocument()
     expect(screen.getAllByText(ATTACK_CATEGORY_LABELS['side-channel']).length).toBeGreaterThan(0)
+  })
+
+  it('ends with the laptop note, which now links to the coverage matrix and open gaps', () => {
+    render(<MobileKATValidationView />)
+    const note = screen.getByText(/Classical-crypto KATs/)
+    expect(note).toHaveTextContent(
+      'diagnostics/HSM key-inspector panel are on a laptop. The coverage matrix and the register of open gaps open in their full table layout, which scrolls sideways on a phone: Open coverage and open gaps.'
+    )
+    const link = within(note).getByRole('link', { name: 'Open coverage and open gaps' })
+    expect(link).toHaveAttribute('href', '/algorithms?tab=validation&section=coverage')
   })
 })

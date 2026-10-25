@@ -857,8 +857,9 @@ export const AcvpSuiteWorkbench = () => {
           <>
             <p className="mb-1.5 text-[10.5px] text-muted-foreground">
               Each row&apos;s class, case, parameters, source and limits come from the reviewed
-              vector manifest and test registry. Rows with no badge (skips, errors) are evidence of
-              nothing.
+              vector manifest and test registry. Rows with no badge are skips, errors, or checks
+              that exercise no mechanism on this engine (for example a rejected key import); they
+              are not evidence for a vector.
             </p>
             <dl className="flex flex-col gap-1 text-[11px]" data-testid="acvp-evidence-legend">
               {Object.values(EVIDENCE_CLASSES).map((c) => (

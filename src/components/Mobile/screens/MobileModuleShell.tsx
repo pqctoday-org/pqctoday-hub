@@ -49,6 +49,12 @@ export interface MobileModuleShellProps {
   onTabChange?: (tab: string) => void
   /** Wave C: opens the manifest's "Start here" workshop step (via ModuleShell's goToWorkshop). */
   onStartHere?: () => void
+  /** The header duration as the desktop header shows it: the active learning path's own
+   *  minutes, else the module's label. Falls back to the manifest's duration when absent. */
+  durationLabel?: string
+  /** False when the "Start here" step is not on the learner's active path (the desktop header
+   *  hides it then too). Defaults to showing it. */
+  showStartHere?: boolean
   /** WS-0 (2026-09-24): ModuleShell's LearnPathPicker, for manifests that
    *  declare learnPaths. Passed in as a node — this directory may not import
    *  desktop view components (eslint no-restricted-imports). */
@@ -110,6 +116,8 @@ export function MobileModuleShell({
   activeTab,
   onTabChange,
   onStartHere,
+  durationLabel,
+  showStartHere = true,
   pathPicker,
 }: MobileModuleShellProps) {
   const showWorkshop = Boolean(workshopContent) && activeTab === 'workshop'
@@ -145,7 +153,9 @@ export function MobileModuleShell({
         <div className="mb-2 flex flex-wrap items-center gap-1.5">
           {track && <span className={mobileChip}>{track}</span>}
           {manifest.difficulty && <span className={mobileChip}>{manifest.difficulty}</span>}
-          {manifest.duration && <span className={mobileChip}>{manifest.duration}</span>}
+          {manifest.duration && (
+            <span className={mobileChip}>{durationLabel ?? manifest.duration}</span>
+          )}
         </div>
         <h1 className="text-[19px] font-extrabold leading-tight text-foreground">
           {title ?? manifest.title}
@@ -169,7 +179,7 @@ export function MobileModuleShell({
             button goes through ModuleShell's goToWorkshop, which on a phone opens
             the real workshop when the module is on MOBILE_WORKSHOP_READY and the
             honest "not built for mobile yet" banner otherwise. */}
-        {manifest.startHere && (
+        {manifest.startHere && showStartHere && (
           <div className="mt-2 rounded-xl border border-border bg-muted/30 p-3">
             <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary">
               Start here

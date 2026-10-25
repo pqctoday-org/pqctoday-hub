@@ -39,6 +39,7 @@ import { WorkshopStepHeader } from './WorkshopStepHeader'
 import { GlossaryAutoWrap } from './GlossaryAutoWrap'
 import { useModuleProgress } from './useModuleProgress'
 import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
+import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   isInLearnPath,
   isWorkshopStepOptional,
@@ -172,6 +173,10 @@ export interface ModuleShellProps {
   /** One sentence shown above the Tools & Products list, for a lesson whose listed
    *  products are things that were tested rather than tools the lesson teaches with. */
   toolsIntro?: ReactNode
+  /** Narrows the Tools & Products list for a learn path: called with each product and the
+   *  learner's active path id (undefined when no path is active); return false to hide it.
+   *  Omit it and every product that names the module is listed. */
+  toolFilter?: (item: SoftwareItem, activePathId: string | undefined) => boolean
   /** custom modules (Quiz) render their own body — no tabs */
   children?: ReactNode
 }
@@ -306,6 +311,7 @@ export const ModuleShell = ({
   renderWorkshopStep,
   onReset,
   toolsIntro,
+  toolFilter,
   children,
 }: ModuleShellProps) => {
   const isMobileShell = useIsMobileShell()
@@ -322,6 +328,8 @@ export const ModuleShell = ({
   const requiredStepIds = requiredWorkshopStepIds(manifest, activePathId)
   // A module with learning paths states each path's own duration; show the one the learner is on.
   const activePathDuration = manifest.learnPaths?.find((p) => p.id === activePathId)?.duration
+  // The one header duration, shared with the phone header: the path's own, else the module's.
+  const durationLabel = activePathDuration ?? moduleDurationLabel(manifest)
   const {
     activeTab,
     handleTabChange,
@@ -526,7 +534,7 @@ export const ModuleShell = ({
               className={`${chip} bg-muted text-muted-foreground`}
               title={activePathDuration ? 'Time for the learning path you are on' : undefined}
             >
-              {activePathDuration ?? moduleDurationLabel(manifest)}
+              {durationLabel}
             </span>
           ) : null}
         </div>
@@ -660,6 +668,8 @@ export const ModuleShell = ({
           activeTab={activeTab}
           onTabChange={handleTabChange}
           onStartHere={startHereIndex >= 0 ? () => slotApi.goToWorkshop(startHereIndex) : undefined}
+          durationLabel={durationLabel}
+          showStartHere={startHereIndex >= 0}
           pathPicker={pathPicker}
         />
       </LearnModuleContext.Provider>
@@ -704,7 +714,10 @@ export const ModuleShell = ({
                   {toolsIntro}
                 </p>
               ) : null}
-              <ModuleMigrateTab moduleId={manifest.id} />
+              <ModuleMigrateTab
+                moduleId={manifest.id}
+                itemFilter={toolFilter ? (item) => toolFilter(item, activePathId) : undefined}
+              />
             </TabsContent>
           )}
         </Tabs>

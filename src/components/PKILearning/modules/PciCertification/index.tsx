@@ -9,6 +9,8 @@ import { SECTION_COMPONENTS } from './components/sectionRegistry'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import { ALL_EXERCISES } from './data/allExercises'
 import manifest from './manifest'
+import fundamentalsManifest from '@/components/PKILearning/modules/CryptoProductCertification/manifest'
+import fips140Manifest from '@/components/PKILearning/modules/Fips1403Certification/manifest'
 
 /**
  * One part per manifest workshop step, SAME ORDER (workshopStepsDrift.test.ts).
@@ -29,7 +31,7 @@ const stepIndex = (stepId: string): number =>
 export const PciCertificationModule: FC = () => (
   <ModuleShell
     manifest={manifest}
-    description="PCI PTS HSM and the payment operating stack in depth: what a device approval proves, how to read it, and what adding post-quantum cryptography changes for a payment HSM. Start with LM-065 for the fundamentals every scheme shares; FIPS 140-3 is covered in LM-067."
+    description={`PCI PTS HSM and the payment operating stack in depth: what a device approval proves, how to read it, and what adding post-quantum cryptography changes for a payment HSM. Start with ${fundamentalsManifest.title} for what every scheme shares; FIPS 140-3 is covered in ${fips140Manifest.title}.`}
     learn={(api) => (
       <CertIntroduction
         manifest={manifest}

@@ -235,7 +235,8 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     name: 'CKM_ML_DSA',
     type: 'pqc',
     mechanismCode: '0x0000001d',
-    description: 'Pure ML-DSA sign/verify via C_Sign/C_Verify',
+    description:
+      'Pure ML-DSA sign/verify via C_MessageSignInit/C_SignMessage (or single-part C_Sign)',
     keySize: 'ML-DSA-44/65/87',
     pkcs11Version: 'v3.2',
   },
@@ -353,7 +354,8 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     name: 'CKM_SLH_DSA',
     type: 'pqc',
     mechanismCode: '0x0000002e',
-    description: 'Pure SLH-DSA sign/verify via C_MessageSignInit/C_SignMessage (FIPS 205)',
+    description:
+      'Pure SLH-DSA sign/verify via C_MessageSignInit/C_SignMessage (or single-part C_Sign) (FIPS 205)',
     keySize: 'SLH-DSA-128s/128f/192s/192f/256s/256f (SHA2 + SHAKE variants)',
     pkcs11Version: 'v3.2',
   },

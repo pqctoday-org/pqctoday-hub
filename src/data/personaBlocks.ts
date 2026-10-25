@@ -95,7 +95,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     developer:
       'Choose Concatenation, Nesting or Silithium (Fused), then Generate Key Pairs, Sign and Verify on your message: the PKCS#11 trace shows the ML-DSA-65 calls through softhsmv3 and the description says whether a component signature can be stripped and verified alone.',
     architect:
-      "The three modes differ in non-separability: concatenation offers none, nesting weak, Silithium strong; the Why hybrid signatures? panel and each mode's IETF reference are the basis for choosing one for a migration-period certificate.",
+      "The three modes differ in non-separability: concatenation offers none, nesting weak, Silithium targets strong; the Why hybrid signatures? panel and each mode's IETF reference are the basis for choosing one for a migration-period certificate.",
     researcher:
       'Sign the same message under all three constructions and compare signature layouts: the trace and the descriptions let you reproduce each composition and its separability property.',
     'cert-engineer':
@@ -967,7 +967,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The vendor readiness comparison across AMI, Insyde, EDK2 and Dell and the live TPM 2.0 V1.85 key generation in the sandbox are the current state of firmware PQC; the TPM playground runs the commands.',
     ops: 'Walk the four-step ML-DSA-65 firmware signing migration from inventory onward: it is the rollout across the fleet, and the vendor comparison says which firmware can take it.',
     'cert-engineer':
-      'The UEFI PK, KEK and db hierarchy and the Measured Boot, TPM Quote and DICE attestation flows show where a PQC signature verifier sits in firmware; the vendor readiness comparison shows who ships one today.',
+      "Start with 'What the lab tests' on the Learn tab: it separates the verifier on the device (algorithm tests) from the signer that holds the private key (module rules), and the SP 800-193 box after it covers the integrity checks around the signature. The UEFI PK, KEK and db hierarchy and the Measured Boot, TPM Quote and DICE attestation flows show where a PQC signature verifier sits in firmware; the vendor readiness comparison shows who ships one today.",
   },
   '/learn/skills-team-structure': {
     executive:
@@ -1001,7 +1001,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The parameter explorer, the XMSS-versus-LMS comparison at equal security levels, and the Haystack coalition construction are the material to reproduce; the LMS tool runs cross-engine verification.',
     ops: 'The exhaustion run and the state-loss step show the operational failure mode and its control: state must be tracked correctly, forever, and the HSM refuses to let a backup restore it.',
     'cert-engineer':
-      "Simulate signing, key exhaustion and a state rollback the HSM refuses, then compare XMSS with LMS at equal security: state management is what a module signing under SP 800-208 has to get right. Step 4 replays NIST's published LMS verification samples.",
+      "Start with 'What the lab tests' on the Learn tab: a FIPS 140-3 certificate for a module that signs with LMS or XMSS rests on four kinds of check, and the algorithm tests are only the first. Simulate signing, key exhaustion and a state rollback the HSM refuses, then compare XMSS with LMS at equal security: state management is what a module signing under SP 800-208 has to get right. Step 4 replays NIST's published LMS verification samples.",
   },
   '/learn/tls-basics': {
     developer:

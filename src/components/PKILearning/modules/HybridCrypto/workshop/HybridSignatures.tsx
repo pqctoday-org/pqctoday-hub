@@ -93,8 +93,8 @@ const CONSTRUCTIONS: Array<{
     nonSeparability: 'None / WNS',
     nsColor: 'text-status-warning',
     description:
-      'Two independent signatures concatenated. Either component can be stripped and verified alone. Provides defence in depth but no separability resistance.',
-    reference: 'IETF draft §1.3.3',
+      'Bare concatenation, shown here with no label or prefix (RFC 9955 Table 2, case 1): either component can be stripped and verified alone. RFC 9955 (section 1.3.4) notes that concatenation with a label in the message gives weak non-separability; Composite ML-DSA (draft-ietf-lamps-pq-composite-sigs section 9.2.3) works that way.',
+    reference: 'RFC 9955 §2',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
   },
   {
@@ -106,7 +106,7 @@ const CONSTRUCTIONS: Array<{
     nsColor: 'text-status-warning',
     description:
       'The outer ML-DSA signature covers msg ‖ ecSig, binding the EC component. Swapping the EC signature invalidates the outer layer, but the EC component still verifies alone on the original message.',
-    reference: 'IETF draft §1.3.3',
+    reference: 'RFC 9955 §1.3.3',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
   },
   {
@@ -627,8 +627,9 @@ export const HybridSignatures: React.FC = () => {
             security. This is the non-separability problem this tool demonstrates.
           </p>
           <p className="text-xs">
-            Standards: IETF draft-ietf-lamps-pq-composite-sigs (Concatenation), RFC 9955, Hybrid
-            Signature Spectrums (Nesting/Silithium).
+            Standards: IETF draft-ietf-lamps-pq-composite-sigs (a labelled concatenation, not the
+            bare form shown here); RFC 9955, Hybrid Signature Spectrums (the concatenation, nesting
+            and fused categories); ePrint 2025/2059 (Silithium).
           </p>
         </div>
       </details>
@@ -700,7 +701,11 @@ export const HybridSignatures: React.FC = () => {
             <span
               className={`text-xs font-semibold ${current.sigResult.separable ? 'text-status-warning' : 'text-status-success'}`}
             >
-              {current.sigResult.separable ? 'Separable' : 'Non-Separable'}
+              {current.sigResult.separable
+                ? 'Separable'
+                : activeConstruction === 'silithium'
+                  ? 'Blocked in this simplified model'
+                  : 'Non-Separable'}
             </span>
           </div>
         )}

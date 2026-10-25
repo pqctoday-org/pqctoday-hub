@@ -205,7 +205,7 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
               role="tab"
               aria-selected={active}
               onClick={() => setTier(t)}
-              className={`h-auto px-3 py-1.5 rounded-md text-xs font-semibold ${
+              className={`h-auto gap-1 px-3 py-1.5 rounded-md text-xs font-semibold ${
                 active
                   ? 'bg-primary/15 text-primary-legible hover:bg-primary/15'
                   : 'text-muted-foreground hover:text-foreground'

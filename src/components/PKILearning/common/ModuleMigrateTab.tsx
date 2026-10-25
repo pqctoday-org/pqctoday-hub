@@ -12,6 +12,8 @@ import { FipsStatusBadge } from '@/components/common/FipsStatusBadge'
 
 interface ModuleMigrateTabProps {
   moduleId: string
+  /** Keeps only the products this returns true for (e.g. the products on the learner's path). */
+  itemFilter?: (item: SoftwareItem) => boolean
 }
 
 function renderPqcBadge(support: string) {
@@ -68,8 +70,9 @@ function groupByLayer(items: SoftwareItem[]): LayerGroup[] {
   return groups
 }
 
-export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
-  const items = getMigrateItemsForModule(moduleId)
+export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps) {
+  const all = getMigrateItemsForModule(moduleId)
+  const items = itemFilter ? all.filter(itemFilter) : all
 
   if (items.length === 0) {
     return (

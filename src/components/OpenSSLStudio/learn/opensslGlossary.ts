@@ -208,7 +208,7 @@ const TERMS: GlossaryTerm[] = [
     id: 'stateful-signature',
     label: 'Stateful hash-based signature',
     cat: 'pqc',
-    def: 'LMS/HSS\'s security depends on NEVER reusing a one-time key — a property software key generation can\'t safely guarantee across backups/restores. An OpenSSL maintainer confirmed keygen is intentionally out of core scope for exactly this reason (github.com/openssl/openssl/discussions/29619) — "should be hardware, not software."',
+    def: 'LMS/HSS\'s security depends on NEVER reusing a one-time key — a property software key generation can\'t safely guarantee across backups/restores. An OpenSSL maintainer confirmed keygen is intentionally out of core scope for exactly this reason (github.com/openssl/openssl/discussions/29619) — "this should be done in hardware not software."',
   },
   {
     id: 'aead',

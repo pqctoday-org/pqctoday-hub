@@ -115,7 +115,7 @@ export const OPENSSL_QUIZZES: Record<string, QuizQuestion[]> = {
         'LMS is patent-encumbered and OpenSSL avoids it for licensing reasons',
       ],
       answer: 1,
-      why: 'This is the actual rationale from github.com/openssl/openssl/discussions/29619 — "should be hardware, not software" — cited directly rather than paraphrased from memory.',
+      why: 'This is the actual rationale from github.com/openssl/openssl/discussions/29619 — "this should be done in hardware not software" — cited directly rather than paraphrased from memory.',
     },
   ],
   'symmetric-myth': [

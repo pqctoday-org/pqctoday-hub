@@ -267,7 +267,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"Guided routing" asks where you are — "Have an inventory, but no risk priorities", "Know the priorities, need a multi-year plan" — and names the first module; in "Browse all" the Protocols track chip is yours.',
     researcher:
       '"Check our work: reproduce a known-answer test" sits above your path — "Run the ACVP vectors" and "Find the published vectors"; the "Practice quiz" is open any time, and the Capstone Quiz unlocks after your Essentials.',
-    'cert-engineer': `Your path starts at the certificate: ${countWord(PERSONAS['cert-engineer'].essentials.length)} essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.`,
+    'cert-engineer': `Your essentials start at the certificate (the Full track opens with an optional orientation on who writes and certifies): ${countWord(PERSONAS['cert-engineer'].essentials.length)} essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.`,
     ops: '"My Path" has an "Essentials" / "Full track" toggle with the hours for each and a "Continue where you left off" card with "Resume"; in "Browse all", filter by status to see "In progress" modules.',
     curious:
       '"Pick a role in the top bar for a guided path — or" browse every module; "New here? Start with the right module" includes "Not sure — assess me", and the "Quiz" button sits beside the page title.',
@@ -379,7 +379,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       'Sort by Publication date or Most cited; every document panel shows its type, region, last-verified date, Trust score, Peer reviewed status and "Previous revisions", with "Open document" going to the original source.',
     'cert-engineer':
-      'The "Certification starter set" quick view shows seven documents whatever your role: FIPS 203–205, SP 800-208, SP 800-227, the CMVP manual and the FIPS 140-3 Implementation Guidance; a search lists an exact standard number or title first, and your categories lead with Compliance & Certification.',
+      'The "Certification starter set" quick view shows seven documents whatever your role: FIPS 203–205, SP 800-208, SP 800-227, the CMVP manual and the FIPS 140-3 Implementation Guidance; a search lists an exact standard number or title first, and the list narrows to your five focus categories, tinted in the category list.',
     ops: '"Start here — picked for" your role sits above the doors; the "Certification starter set" quick view lists seven documents (FIPS 203–205, SP 800-208 and 227, the CMVP manual, the FIPS 140-3 IG), and Lifecycle status filters to Published so you are not configuring against a draft.',
     curious:
       'Pick the "Learn" door for research, analysis and explainers; "Recently changed" at the top shows what was just added or updated, and the search box takes plain words like "hybrid TLS".',

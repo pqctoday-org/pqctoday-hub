@@ -1020,7 +1020,7 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
     '/learn': {
       to: '/learn/crypto-product-certification',
       label: 'Start with certification fundamentals',
-      why: 'Your path starts at the certificate: what one covers, before the tests that lead to it.',
+      why: 'Your essentials start at the certificate: what one covers, before the tests that lead to it.',
     },
     '/learn/standards-bodies': {
       to: '/learn/crypto-product-certification',
@@ -1052,6 +1052,16 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       label: 'Next on your path: HSM & PQC Operations',
       why: 'The next module on your path covers the module interface and what adding PQC touches.',
     },
+    '/learn/hsm-pqc': {
+      to: '/learn/pqc-testing-validation',
+      label: 'Next on your path: PQC Network Testing & Validation',
+      why: 'The next module on your path covers the tests that produce the evidence a certificate rests on.',
+    },
+    '/learn/cc-eucc-certification': {
+      to: '/learn/stateful-signatures',
+      label: 'Next on your path: Stateful Hash Signatures',
+      why: 'The next module on your path covers the hash-based signature schemes LMS and XMSS, which keep state.',
+    },
     '/playground/entropy-test': {
       to: '/learn/hsm-pqc',
       label: 'Next on your path: HSM & PQC Operations',
@@ -1061,6 +1071,22 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       to: '/learn/hsm-pqc',
       label: 'Next on your path: HSM & PQC Operations',
       why: 'Entropy & Randomness, the module this tool practises, is followed on your path by HSM & PQC Operations.',
+    },
+    // Tools that practise the later path lessons hand on to the lesson after them.
+    '/playground/slh-dsa': {
+      to: '/learn/hybrid-crypto',
+      label: 'Next on your path: Hybrid Cryptography',
+      why: 'SLH-DSA: Stateless Hash Signatures, the module this tool practises, is followed on your path by Hybrid Cryptography.',
+    },
+    '/playground/hybrid-certs': {
+      to: '/learn/secure-boot-pqc',
+      label: 'Next on your path: Secure Boot & Firmware PQC',
+      why: 'Hybrid Cryptography, the module this tool practises, is followed on your path by Secure Boot & Firmware PQC.',
+    },
+    '/playground/firmware-signing': {
+      to: '/learn/pci-certification',
+      label: 'Next on your path: PCI Certification',
+      why: 'Secure Boot & Firmware PQC, the module this tool practises, is followed on your path by PCI Certification.',
     },
   },
 }

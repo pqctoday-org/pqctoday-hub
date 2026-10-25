@@ -9,6 +9,7 @@ import {
   detectPurpose,
   resolvePurpose,
   findLibraryItemByRef,
+  findLibrarySuccessor,
   REFERENCE_ID_ALIASES,
   LIBRARY_PURPOSES,
   type LibraryItem,
@@ -132,18 +133,22 @@ describe('libraryData', () => {
       const cut = (v: string) => v.split('-').slice(0, n).join('-')
       return cut(later) < cut(earlier)
     }
-    // Rows whose update date still precedes the publication date and have no date
-    // the document itself supports. A row leaves this list when its dates are
-    // corrected, and no row may join it.
-    const KNOWN_OUT_OF_ORDER = ['ANSSI PQC Position Paper']
-
-    it('describes the OpenPGP draft entry as an Internet-Draft, not as the released RFC 9581', () => {
-      const item = libraryData.find((i) => i.referenceId === 'RFC 9581')!
+    it('lists the OpenPGP draft under its own identifier as an Internet-Draft, not as RFC 9581', () => {
       // RFC 9581 is "CBOR Tags for Time, Duration, and Period" (August 2024); the entry is
       // draft-ietf-openpgp-persistent-symmetric-keys, which has no RFC number.
-      expect(item.documentStatus).toBe('Internet-Draft')
+      expect(libraryData.some((i) => i.referenceId === 'RFC 9581')).toBe(false)
+      const item = libraryData.find(
+        (i) => i.referenceId === 'draft-ietf-openpgp-persistent-symmetric-keys'
+      )!
+      expect(item.documentStatus).toContain('Internet-Draft')
+      expect(item.downloadUrl).toContain('draft-ietf-openpgp-persistent-symmetric-keys-04')
       expect(item.initialPublicationDate).toBe('2024-07-08')
-      expect(item.lastUpdateDate).toBe('2026-02-10')
+      expect(item.lastUpdateDate).toBe('2026-09-15')
+      // the retired id stays visible as a prior entry that points at the new one
+      const retired = item.priorRevisions?.find((r) => r.referenceId === 'RFC 9581')
+      expect(retired?.supersededBy).toBe('draft-ietf-openpgp-persistent-symmetric-keys')
+      expect(retired?.deprecatedReason).toContain('not an RFC')
+      expect(findLibrarySuccessor('RFC 9581')?.referenceId).toBe(item.referenceId)
     })
 
     it('every publication and last-update date parses as a real date', () => {
@@ -154,7 +159,7 @@ describe('libraryData', () => {
       }
     })
 
-    it('no document is last updated before it was first published (beyond the known exceptions)', () => {
+    it('no document is last updated before it was first published', () => {
       const outOfOrder = libraryData
         .filter(
           (i) =>
@@ -164,7 +169,7 @@ describe('libraryData', () => {
         )
         .map((i) => i.referenceId)
         .sort()
-      expect(outOfOrder).toEqual([...KNOWN_OUT_OF_ORDER].sort())
+      expect(outOfOrder).toEqual([])
     })
   })
 

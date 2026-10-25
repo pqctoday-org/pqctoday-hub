@@ -100,4 +100,26 @@ describe('HybridCrypto render parity', () => {
       within(callout).getByRole('link', { name: 'FIPS 140-3 Certification module' })
     ).toHaveAttribute('href', '/learn/fips-140-3-certification')
   })
+
+  it('says the IG is silent on composite signatures, in a note after the IG D.S callout', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter>
+          <HybridCryptoIntroduction onNavigateToWorkshop={() => {}} />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    const callout = screen.getByTestId('ig-ds-callout')
+    const note = screen.getByTestId('ig-signatures-note')
+    // sits after the callout, not inside it
+    expect(callout).not.toContainElement(note)
+    expect(callout.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(note).toHaveTextContent('IG D.S covers key encapsulation only.')
+    expect(note).toHaveTextContent(
+      'The IG (last updated 19 August 2026) has no section on composite'
+    )
+    expect(note).toHaveTextContent('its only use of the word hybrid is for hybrid modules (IG 1.B)')
+    expect(note).toHaveTextContent('needs the self-tests of IG 10.3.A')
+    expect(note).toHaveTextContent('is not answered in the published guidance; ask the lab.')
+  })
 })

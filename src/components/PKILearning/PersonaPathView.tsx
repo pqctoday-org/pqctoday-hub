@@ -170,8 +170,8 @@ export const PersonaPathView = ({
                       Checkpoint quiz — {phase.title}
                     </div>
                     <div className="text-[11px] text-muted-foreground">
-                      Short quiz over the {totalCount} module{totalCount === 1 ? '' : 's'} in this
-                      phase.
+                      Short quiz on the {phase.categories.length} topic
+                      {phase.categories.length === 1 ? '' : 's'} of this phase.
                     </div>
                   </div>
                 </div>

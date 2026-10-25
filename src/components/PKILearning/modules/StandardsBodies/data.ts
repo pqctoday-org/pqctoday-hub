@@ -25,6 +25,20 @@ export interface OrgEntry {
   glossaryTerm?: string
 }
 
+// ─── SC 27 membership ─────────────────────────────────────────────────────────
+
+/**
+ * ISO/IEC JTC 1/SC 27 membership as shown on the ISO committee page, participation view
+ * (https://www.iso.org/committee/45306.html?view=participation): "Participating Members [56]" and
+ * "Observing Members [38]". The count moves, so it is always printed with the date it was read.
+ */
+export const SC27_MEMBERS = {
+  participating: 56,
+  observing: 38,
+  readOn: '25 October 2026',
+  source: 'ISO committee page, participation view',
+} as const
+
 // ─── Organization Data ────────────────────────────────────────────────────────
 
 export const ORGANIZATIONS: OrgEntry[] = [
@@ -65,8 +79,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     founded: '1987',
     mission:
       'International standards body developing globally adopted information security standards through voting by national member bodies. SC 27 Working Group 2 (WG 2) handles cryptography and security mechanisms, producing ISO/IEC standards referenced by regulators worldwide.',
-    decisionMaking:
-      '5-stage process: Working Draft (WD) → Committee Draft (CD) → Draft International Standard (DIS) → Final DIS (FDIS) → International Standard (IS). The national member bodies (SC 27 has 56 participating and 38 observing members) ballot the drafts. Full IS typically takes 3–5 years. PQC standards are developed in parallel with NIST and cross-reference FIPS.',
+    decisionMaking: `5-stage process: Working Draft (WD) → Committee Draft (CD) → Draft International Standard (DIS) → Final DIS (FDIS) → International Standard (IS). The national member bodies (SC 27 has ${SC27_MEMBERS.participating} participating and ${SC27_MEMBERS.observing} observing members: ${SC27_MEMBERS.source}, read ${SC27_MEMBERS.readOn}) ballot the drafts. Full IS typically takes 3–5 years. PQC standards are developed in parallel with NIST and cross-reference FIPS.`,
     // Corrected 2026-07-31, verified against ISO's own catalogue pages. Two
     // entries here named standards that do not exist as described:
     //   - "ISO/IEC 18033-2/AMD1 (PQC addendum)" — Amendment 1:2017 is
@@ -340,7 +353,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'iso-iec',
     name: 'ISO/IEC JTC 1/SC 27',
     acronym: 'International standards body',
-    hint: 'National member bodies (56 participating, 38 observing in SC 27) develop and ballot information security standards, including cryptography.',
+    hint: `National member bodies (${SC27_MEMBERS.participating} participating, ${SC27_MEMBERS.observing} observing in SC 27; ${SC27_MEMBERS.source}, read ${SC27_MEMBERS.readOn}) develop and ballot information security standards, including cryptography.`,
     correctType: 'standards-body',
     correctScope: 'global',
     correctAuthority: 'non-governmental',

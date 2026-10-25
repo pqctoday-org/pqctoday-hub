@@ -39,3 +39,25 @@ describe('PERSONA_BLOCKS (round 9, wave 2)', () => {
     expect(claimedPersonasFor('/nope')).toEqual([])
   })
 })
+
+describe('PERSONA_BLOCKS - certification engineer lab-test pointers', () => {
+  it('Secure Boot opens with the pointer to "What the lab tests" and the SP 800-193 box', () => {
+    const text = PERSONA_BLOCKS['/learn/secure-boot-pqc']!['cert-engineer']!
+    expect(
+      text.startsWith(
+        "Start with 'What the lab tests' on the Learn tab: it separates the verifier on the device (algorithm tests) from the signer that holds the private key (module rules), and the SP 800-193 box after it covers the integrity checks around the signature. "
+      )
+    ).toBe(true)
+    // the earlier text follows the new first sentence
+    expect(text).toContain('The UEFI PK, KEK and db hierarchy')
+  })
+  it('Stateful Hash Signatures opens with the pointer to the four kinds of check', () => {
+    const text = PERSONA_BLOCKS['/learn/stateful-signatures']!['cert-engineer']!
+    expect(
+      text.startsWith(
+        "Start with 'What the lab tests' on the Learn tab: a FIPS 140-3 certificate for a module that signs with LMS or XMSS rests on four kinds of check, and the algorithm tests are only the first. "
+      )
+    ).toBe(true)
+    expect(text).toContain("Step 4 replays NIST's published LMS verification samples.")
+  })
+})

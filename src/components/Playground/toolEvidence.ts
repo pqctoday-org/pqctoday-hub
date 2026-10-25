@@ -64,6 +64,8 @@ export const BROWSER_TOOL_EVIDENCE: Record<string, ToolEvidenceProfile> = {
   'slh-dsa': {
     primary: 'real-crypto',
     summary: 'Real SLH-DSA key generation, signing, and verification in the browser.',
+    certificationBoundary: true,
+    validationDisclaimer: true,
   },
   'lms-hss': {
     primary: 'real-crypto',

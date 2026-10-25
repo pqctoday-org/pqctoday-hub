@@ -31,7 +31,7 @@ export const content: ModuleContent = {
   // renewed the 23 October one after the new workshop step; the on-page notice follows it
   // (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until the owner renews it.
   version: '0.1.0',
-  lastEdited: '2026-10-24',
+  lastEdited: '2026-10-25',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──

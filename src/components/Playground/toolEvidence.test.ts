@@ -19,7 +19,7 @@ describe('browser Playground evidence contract', () => {
   })
 
   it('shows the one validation disclaimer on the tools that replay public reference samples', () => {
-    for (const id of ['entropy-test', 'drbg-demo', 'firmware-signing']) {
+    for (const id of ['entropy-test', 'drbg-demo', 'firmware-signing', 'slh-dsa']) {
       const profile = BROWSER_TOOL_EVIDENCE[id as keyof typeof BROWSER_TOOL_EVIDENCE]
       expect(profile.certificationBoundary, id).toBe(true)
       expect(profile.validationDisclaimer, id).toBe(true)

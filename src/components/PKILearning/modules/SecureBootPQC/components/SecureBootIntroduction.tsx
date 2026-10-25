@@ -28,6 +28,7 @@ import {
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
+import { LabTestsSummary } from './LabTestsSummary'
 
 interface SecureBootIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -419,6 +420,8 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             and HBS means hash-based signature. Every quotation below is verbatim from the document
             named after it, with footnote and reference-number markers left out.
           </p>
+
+          <LabTestsSummary />
 
           <div className="bg-background rounded-lg p-3 border border-border space-y-2">
             <h4 className="text-xs font-bold text-foreground">
@@ -957,10 +960,20 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             UEFI Forum PQC Specification Work
           </div>
           <p className="text-xs text-muted-foreground">
-            The UEFI Forum is developing a formal PQC extension to the UEFI Specification covering:
-            new EFI Signature List types for ML-DSA certificates, NVRAM allocation guidelines for
-            larger PQC keys, and Secure Boot variable format updates. Organizations should monitor
-            UEFI Forum publications and engage their firmware vendors for preview access.
+            The UEFI Forum published a white paper,{' '}
+            <a
+              href="https://uefi.org/sites/default/files/resources/UEFI_PQC_Update_Whitepaper_Final.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Post-Quantum Cryptography: UEFI Specification Updates
+            </a>{' '}
+            (29 April 2026), that &ldquo;consolidates proposed specification changes for additional
+            feedback and to validate implementation feasibility.&rdquo; It states: &ldquo;These
+            proposals are not yet approved and may change or be rejected.&rdquo; Organizations
+            should monitor UEFI Forum publications and engage their firmware vendors for preview
+            access.
           </p>
         </div>
       </CollapsibleSection>

@@ -87,7 +87,7 @@ PQC overhead hits hardest with short-lived, bursty connections: login storms, AP
 
 ### TLS Session Resumption Mitigation
 
-TLS session resumption (PSK reuse) allows returning clients to skip the expensive PQC key exchange, eliminating **80–90%** of PQC performance impact for returning users. Combined with hardware acceleration (AVX2/AVX-512, FPGA accelerators) and hybrid mode, organizations can reduce production impact to manageable levels.
+TLS session resumption (PSK reuse) allows returning clients to skip the expensive PQC key exchange. VIAVI's white paper says this eliminates **80–90%** of the PQC performance impact for returning users. Combined with hardware acceleration (AVX2/AVX-512, FPGA accelerators) and hybrid mode, organizations can reduce production impact to manageable levels.
 
 ### Production-Scale KPIs (VIAVI TeraVM on Dell R6625)
 

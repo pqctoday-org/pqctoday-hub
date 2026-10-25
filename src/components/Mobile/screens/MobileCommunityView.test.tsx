@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect } from 'vitest'
+import { afterEach, describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { useEffect } from 'react'
 import { MemoryRouter, useLocation } from 'react-router'
@@ -7,6 +7,8 @@ import { MobileCommunityView } from './MobileCommunityView'
 import { leadersData } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { LEADERS_REGION_COUNTRIES } from '@/components/Leaders/leaderDeepLink'
+import { PAGE_PERSONA_NOTES } from '@/data/pagePersonaNotes'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 // Real data throughout — leadersData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural, not hardcoded counts.
@@ -29,6 +31,26 @@ function renderView(initialEntry = '/leaders') {
     </MemoryRouter>
   )
 }
+
+describe('MobileCommunityView — role note', () => {
+  afterEach(() => usePersonaStore.setState({ selectedPersona: null }))
+
+  it('shows the same certification-role note as desktop, above the category chips', () => {
+    usePersonaStore.setState({ selectedPersona: 'cert-engineer' })
+    renderView()
+    const note = screen.getByTestId('persona-page-note')
+    expect(note).toHaveTextContent('What this means for you')
+    expect(note).toHaveTextContent(PAGE_PERSONA_NOTES['/leaders']['cert-engineer'])
+    expect(note).toHaveTextContent('the directory lists few certification-programme')
+    const firstChip = screen.getByRole('button', { name: 'All' })
+    expect(note.compareDocumentPosition(firstChip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('shows no note when no role is chosen', () => {
+    renderView()
+    expect(screen.queryByTestId('persona-page-note')).not.toBeInTheDocument()
+  })
+})
 
 describe('MobileCommunityView', () => {
   it('defaults to the curated set, matching the real count, and never shows an invented denominator', () => {

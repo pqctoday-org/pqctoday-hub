@@ -120,24 +120,27 @@ const V33_ROWS: V33Row[] = [
   },
 ]
 
+// The empty-state test below sets this to false: no rows and nothing run yet.
+let mockHasResults = true
+
 vi.mock('../../../hsm/conformance/usePkcs11Conformance', async (importActual) => {
   const actual =
     await importActual<typeof import('../../../hsm/conformance/usePkcs11Conformance')>()
   return {
     ...actual,
     usePkcs11Conformance: () => ({
-      rows: ROWS,
+      rows: mockHasResults ? ROWS : [],
       loading: false,
-      ran: true,
+      ran: mockHasResults,
       selection: actual.FULL_SELECTION(),
       toggleCase: vi.fn(),
       setTierB: vi.fn(),
       setCoverage: vi.fn(),
       setErrorPaths: vi.fn(),
       setV33Draft: vi.fn(),
-      v33Rows: V33_ROWS,
-      v33RowsRef: { current: V33_ROWS },
-      v33Summary: summarizeV33(V33_ROWS),
+      v33Rows: mockHasResults ? V33_ROWS : [],
+      v33RowsRef: { current: mockHasResults ? V33_ROWS : [] },
+      v33Summary: summarizeV33(mockHasResults ? V33_ROWS : []),
       run: vi.fn(),
       pass: 3,
       fail: 2,
@@ -151,7 +154,22 @@ vi.mock('../../../hsm/conformance/usePkcs11Conformance', async (importActual) =>
 const data = generatedJson as unknown as NativeConformanceFile
 
 describe('ConformanceSuiteWorkbench', () => {
-  beforeEach(() => usePersonaStore.setState({ selectedPersona: 'developer' }))
+  beforeEach(() => {
+    mockHasResults = true
+    usePersonaStore.setState({ selectedPersona: 'developer' })
+  })
+
+  // The case list sits beside the results on a wide screen and above them on a phone, so the
+  // empty state must not say which side it is on ("on the left" was wrong at 390 px).
+  it('empty state tells the reader to pick cases in the list, with no left/right direction', async () => {
+    mockHasResults = false
+    render(<ConformanceSuiteWorkbench />)
+    await screen.findByTestId('native-conformance-evidence')
+    expect(
+      screen.getByText('No rows yet. Pick cases in the list and press Run.')
+    ).toBeInTheDocument()
+    expect(document.body).not.toHaveTextContent(/on the left/i)
+  })
 
   it('shows each native suite from the generated file with commit, date, staleness and the not-in-browser statement', async () => {
     render(<ConformanceSuiteWorkbench />)

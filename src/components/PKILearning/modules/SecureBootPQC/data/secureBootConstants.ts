@@ -113,12 +113,12 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     description:
       'Contains allowed signatures, certificate hashes, and image hashes. UEFI firmware checks bootloaders and drivers against db before executing. Larger with PQC certificates due to ML-DSA certificate size (a minimal self-signed ML-DSA-65 certificate is about 5.5 KB vs about 0.8 KB for RSA-2048, measured with OpenSSL 3.6.3).',
     currentAlgorithm: 'RSA-2048 certificates',
-    typicalSize: '~1.2 KB per certificate',
+    typicalSize: '0.8 KB per minimal certificate (809 bytes, measured)',
     pqcAlgorithm: 'ML-DSA-65 X.509 certificates',
     cnsaAlgorithm:
       'ML-DSA-87 certificates; LMS or XMSS (SP 800-208) for firmware or software signatures',
 
-    pqcSize: '~6 KB per certificate (5× increase)',
+    pqcSize: '5.5 KB per minimal certificate (5,538 bytes, measured)',
     quantumVulnerable: true,
     owner: 'OS Vendor / Software Publisher',
     migrationPriority: 'high',

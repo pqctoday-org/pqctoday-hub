@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import { RoleHomeView } from './RoleHomeView'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 
 const ROLE_ORDER: PersonaId[] = [
   'executive',
@@ -14,6 +15,7 @@ const ROLE_ORDER: PersonaId[] = [
   'architect',
   'ops',
   'researcher',
+  'cert-engineer',
   'curious',
 ]
 
@@ -27,7 +29,7 @@ const FIRST_WIN_COPY: Record<PersonaId, string> = {
   architect: 'First win — flip a policy, watch it rekey · 15 min',
   ops: 'First win — size your HSM fleet · 10 min',
   researcher: 'No funnel — open the evidence workspace',
-  'cert-engineer': 'First win — run the ACVP vectors yourself · 5 min',
+  'cert-engineer': 'First win — learn what a certificate actually covers · 95 min',
   curious: 'First win — see what breaks · 6 min',
 }
 
@@ -69,13 +71,27 @@ describe('RoleHomeView', () => {
       // gets the essentials-track summary. Numbers are pulled from the same
       // PERSONAS import the component itself reads, so this can't silently
       // drift from the real config.
+      // The certification engineer's first win is the whole first lesson, which is already
+      // inside the essentials total, so that card says "in all" and not "then".
       const expectedTrackLine =
         id === 'researcher'
           ? `full corpus · ${persona.estimatedMinutes} min available`
-          : `then ${persona.essentials.length} modules · ${persona.essentialsMinutes} min`
+          : id === 'cert-engineer'
+            ? `${persona.essentials.length} modules in all · ${persona.essentialsMinutes} min, this lesson first`
+            : `then ${persona.essentials.length} modules · ${persona.essentialsMinutes} min`
       expect(card).toHaveTextContent(expectedTrackLine)
     }
   )
+
+  it("the certification engineer's typed first-win minutes equal the first essential lesson's manifest duration", () => {
+    const persona = PERSONAS['cert-engineer']
+    const firstEssential = persona.essentials[0]
+    const manifestMinutes = Number(/(\d+)\s*min/.exec(MANIFEST_BY_ID[firstEssential].duration)?.[1])
+    const typedMinutes = Number(/(\d+) min$/.exec(FIRST_WIN_COPY['cert-engineer'])?.[1])
+    expect(typedMinutes).toBe(manifestMinutes)
+    render(<RoleHomeView onSelectPersona={vi.fn()} onSkip={vi.fn()} />)
+    expect(getCard('cert-engineer')).toHaveTextContent(`· ${manifestMinutes} min`)
+  })
 
   it.each(ROLE_ORDER)('calls onSelectPersona with %s when its card is clicked', async (id) => {
     const user = userEvent.setup()

@@ -311,7 +311,7 @@ export const PARAMS_BY_LEVEL: Record<SecurityLevel, SLHDSAParameterSet[]> = {
   5: SLH_DSA_PARAMETER_SETS.filter((p) => p.securityLevel === 5),
 }
 
-/** PKCS#11 v3.2 HashSLH-DSA mechanisms (FIPS 205 §11) */
+/** PKCS#11 v3.2 HashSLH-DSA mechanisms (FIPS 205 §10.2.2) */
 export const HASH_SLH_DSA_MECHANISMS = [
   { id: 'CKM_HASH_SLH_DSA_SHA256', label: 'HashSLH-DSA-SHA256', hashAlg: 'SHA-256' },
   { id: 'CKM_HASH_SLH_DSA_SHA384', label: 'HashSLH-DSA-SHA384', hashAlg: 'SHA-384' },

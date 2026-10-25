@@ -47,7 +47,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       id: 'ml-dsa-signing',
       title: '2. ML-DSA Signing in HSM — Sign and verify with ML-DSA-65',
       description:
-        'Continue through the PKCS#11 Simulator to the signing operations (Steps 5-6). Observe the C_Sign and C_Verify calls using CKM_ML_DSA. Note the hedged signing output and the 3,309-byte signature size. Expand the on-prem vs cloud notes to see vendor support status.',
+        'Continue through the PKCS#11 Simulator to the signing operations (Steps 5-6). Observe the message-based signing calls (C_MessageSignInit / C_SignMessage and C_MessageVerifyInit / C_VerifyMessage) using CKM_ML_DSA. Note the hedged signing output and the 3,309-byte signature size. Expand the on-prem vs cloud notes to see vendor support status.',
       badge: 'Signing',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:

@@ -10,6 +10,7 @@ import { trustedSources } from './trustedSourcesData'
 import { loadPQCAlgorithmsData, type AlgorithmDetail } from './pqcAlgorithmsData'
 import { loadIndustryLandscape } from './industryLandscapeData'
 import { complianceFrameworks } from './complianceData'
+import { bodyTypeLabel } from '@/components/Compliance/redesign/pillarModel'
 import type { LibraryItem } from './libraryData'
 import { loadGlossary } from './glossary'
 import { algoProductXrefs } from './algoProductXrefData'
@@ -215,7 +216,8 @@ function buildNodes(
       id,
       label: fw.label,
       type: 'compliance',
-      sub: fw.bodyType,
+      // The Compliance page's own label for the body type, so both pages name it the same way.
+      sub: bodyTypeLabel(fw.bodyType),
       description: fw.description || fw.label,
       degree: 0,
       href: `/compliance?framework=${encodeURIComponent(fw.id)}`,
