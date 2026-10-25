@@ -1011,6 +1011,12 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
   // PQC 101 and the Vendor Scorecard, away from its own path. Each exit follows the path in
   // learningPersonas.ts (certificate first, then the tests that lead to it).
   'cert-engineer': {
+    // The board's own secondary button, so the footer does not send the role to the assessment.
+    '/': {
+      to: '/playground/hsm?tab=build&dtab=acvp',
+      label: 'Open the validation workbench',
+      why: 'Selected NIST ACVP-Server reference samples, standard known-answer tests and oracle comparisons, replayed against the PKCS#11 engines.',
+    },
     '/learn': {
       to: '/learn/crypto-product-certification',
       label: 'Start with certification fundamentals',
@@ -1027,9 +1033,9 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       why: 'The next module on your path takes a cryptographic module from boundary to certificate.',
     },
     '/learn/pqc-testing-validation': {
-      to: '/learn/fips-140-3-certification',
-      label: 'Next on your path: FIPS 140-3 Certification',
-      why: 'The tests in this module produce evidence a certificate rests on; the next module on your path takes a cryptographic module from boundary to certificate.',
+      to: '/learn/cc-eucc-certification',
+      label: 'Next on your path: Common Criteria, EUCC & eIDAS Certification',
+      why: 'The tests in this module produce evidence a certificate rests on; the next module takes a product to a scheme certificate under Common Criteria and EUCC.',
     },
     '/learn/fips-140-3-certification': {
       to: '/learn/acvp-lab-workflow',
