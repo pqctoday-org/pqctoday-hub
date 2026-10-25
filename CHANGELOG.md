@@ -72,6 +72,7 @@ More statements in the certification lessons and the Library are checked against
 - **The Hybrid lesson says what NIST's guidance does not cover** [view:/learn/hybrid-crypto] [persona:cert-engineer] [persona:architect]: the Implementation Guidance (updated 19 August 2026) has no section on composite or hybrid signatures; ask the lab.
 - **The OpenSSL Studio lessons explain the FIPS provider** [view:/playground/openssl-studio] [persona:cert-engineer] [persona:developer]: only a FIPS provider built from a certified OpenSSL version is validated, and this in-browser build is not.
 - **The Entropy Testing workshop points to the entropy source certificates** [view:/playground/entropy-test] [persona:cert-engineer] [persona:researcher]: NIST entropy source validation certificates are listed under Compliance, Entropy (ESV).
+- **Step 2 of the ACVP lab workshop says how to choose for each test group** [view:/learn/acvp-lab-workflow] [persona:cert-engineer] [persona:developer]: a box above the test groups explains that a standard PKCS#11 call can carry a key, a ciphertext, a message or a signature, but not a value the module normally chooses for itself (such as the random input of ML-KEM encapsulation), and has no call for the key checks.
 - **The Library lists NIST's ACVP specification for LMS** [view:/library] [persona:cert-engineer] [persona:researcher]: the draft of 2 October 2026 is the algorithm test specification for the LMS signature scheme.
 
 ## [4.179.0] - 2026-10-24
