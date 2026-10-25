@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /** `?section=attacks` / `?attack=` on the phone Validation screen. */
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render as rtlRender, screen, fireEvent } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 
 vi.mock('@/hooks/useHSM', () => ({
@@ -15,6 +17,9 @@ vi.mock('@/hooks/useHSM', () => ({
 }))
 
 import { MobileKATValidationView } from './MobileKATValidationView'
+
+// The screen links to another page, so it renders inside a router (rerender keeps the wrapper).
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: MemoryRouter })
 
 const attacksButton = () => screen.getByRole('button', { name: /Implementation Attacks/ })
 

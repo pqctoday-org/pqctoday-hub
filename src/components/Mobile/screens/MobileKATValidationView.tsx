@@ -9,6 +9,7 @@ import {
   MinusCircle,
   XCircle,
 } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useHSM } from '@/hooks/useHSM'
@@ -729,7 +730,12 @@ export function MobileKATValidationView({
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
         Classical-crypto KATs (AES, HMAC, classical signatures, key derivation) and the PKCS#11
-        diagnostics/HSM key-inspector panel are on a laptop.
+        diagnostics/HSM key-inspector panel are on a laptop. The coverage matrix and the register of
+        open gaps open in their full table layout, which scrolls sideways on a phone:{' '}
+        <Link to="/algorithms?tab=validation&section=coverage" className="text-primary underline">
+          Open coverage and open gaps
+        </Link>
+        .
       </p>
     </div>
   )
