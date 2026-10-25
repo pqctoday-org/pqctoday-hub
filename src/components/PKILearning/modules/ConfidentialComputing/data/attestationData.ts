@@ -480,7 +480,7 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     migrationPriority: 3,
     pqcSolution:
       'AES-XTS-256 memory encryption in next-gen CPUs. Alternatively, software-layer encryption with AES-256-GCM inside the enclave for sensitive data.',
-    vendorTimeline: 'Intel (Granite Rapids+): 2027, AMD (Zen 6+): 2028',
+    vendorTimeline: 'Intel: TBD, AMD: TBD',
     hndlExposure: false,
     migrationEffort: 5,
   },
