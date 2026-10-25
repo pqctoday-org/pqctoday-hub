@@ -2,7 +2,14 @@
 
 import type { PQCMigrationStatus } from './secureBootConstants'
 
-export type VendorTier = 'enterprise' | 'smb' | 'open-source'
+export type VendorTier = 'enterprise' | 'open-source'
+
+/** A public page the row's text comes from. `date` is the document's own date (YYYY-MM-DD or YYYY-MM); leave it out for a page that carries none. */
+export interface VendorSource {
+  label: string
+  url: string
+  date?: string
+}
 
 export interface FirmwareVendorStatus {
   id: string
@@ -10,14 +17,26 @@ export interface FirmwareVendorStatus {
   product: string
   tier: VendorTier
   category: string
-  currentAlgorithm: string
   pqcStatus: PQCMigrationStatus
-  roadmapYear: string
+  /** Date of the newest dated source below (YYYY-MM-DD or YYYY-MM). */
+  statementDate: string
   products: string[]
   pqcAlgorithm: string
-  migrationGuidance: string
+  /** Only what the sources below state. */
   notes: string
-  certifications: string[]
+  sources: VendorSource[]
+}
+
+/** The day every source in FIRMWARE_VENDORS was last opened and read. */
+export const VENDOR_MATRIX_CHECKED_ON = '24 October 2026'
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+/** '2025-11-12' -> '12 Nov 2025'; '2024-07' -> 'Jul 2024'. */
+export function formatVendorDate(date: string): string {
+  const [year, month, day] = date.split('-')
+  const monthName = MONTHS[Number(month) - 1]
+  return day ? `${Number(day)} ${monthName} ${year}` : `${monthName} ${year}`
 }
 
 export const VENDOR_STATUS_LABELS: Record<
@@ -28,21 +47,13 @@ export const VENDOR_STATUS_LABELS: Record<
     label: 'Available',
     className: 'bg-status-success/10 text-status-success border-status-success/30',
   },
-  merged: {
-    label: 'Merged / GA',
-    className: 'bg-status-success/10 text-status-success border-status-success/30',
-  },
-  roadmap: {
-    label: 'Roadmap',
-    className: 'bg-status-warning/10 text-status-warning border-status-warning/30',
-  },
-  evaluation: {
-    label: 'Evaluation',
+  announced: {
+    label: 'Announced',
     className: 'bg-status-info/10 text-status-info border-status-info/30',
   },
-  'not-started': {
-    label: 'Not Started',
-    className: 'bg-muted text-muted-foreground border-border',
+  'in-progress': {
+    label: 'In progress',
+    className: 'bg-status-warning/10 text-status-warning border-status-warning/30',
   },
 }
 
@@ -50,54 +61,43 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
   {
     id: 'ami',
     vendor: 'AMI',
-    product: 'APTIO V UEFI Firmware',
+    product: 'Aptio V UEFI Firmware',
     tier: 'enterprise',
     category: 'UEFI Firmware',
-    currentAlgorithm: 'RSA-2048 (firmware signing), RSA-4096 (PK)',
-    pqcStatus: 'roadmap',
-    roadmapYear: '2026',
-    products: ['APTIO V (Intel)', 'APTIO V (AMD)', 'APTIO OpenEdition'],
-    pqcAlgorithm:
-      'ML-DSA-65 (UEFI Secure Boot), ML-DSA-87 (PK); CNSA 2.0 prefers LMS/XMSS (SP 800-208) for firmware signing and also approves validated ML-DSA-87',
-    migrationGuidance:
-      'AMI has announced ML-DSA-65 support in APTIO V for Xeon Scalable 5th/6th Gen and EPYC Genoa/Turin platforms. Customers must upgrade firmware to APTIO V 5.35+ and re-enroll PK/KEK/db with ML-DSA certificates. AMI provides a BIOS Signing Upgrade Kit with migration utilities.',
+    pqcStatus: 'announced',
+    statementDate: '2025-11-12',
+    products: ['Aptio V (x86 and Arm)'],
+    pqcAlgorithm: 'Not stated in the announcement',
     notes:
-      'APTIO V is the most widely deployed UEFI firmware in enterprise servers. ML-DSA support targets H1 2026. Hybrid (RSA + ML-DSA) dual-signature mode available for transition.',
-    certifications: ['FIPS 140-3 (vendor target)', 'CNSA 2.0 alignment (vendor claim)'],
+      'On 12 November 2025 AMI announced "the successful implementation of Post-Quantum Cryptography (PQC) support" in Aptio V UEFI Firmware. The announcement names no algorithm, version, platform or availability date. AMI describes Aptio V as modular BIOS/UEFI firmware with "compatibility across x86 and Arm".',
+    sources: [
+      {
+        label: 'AMI news release',
+        url: 'https://www.ami.com/resources/industry-first-post-quantum-cryptography-in-aptio-v-uefi-firmware/',
+        date: '2025-11-12',
+      },
+      { label: 'AMI Aptio V product page', url: 'https://www.ami.com/products/aptio-v/' },
+    ],
   },
   {
     id: 'insyde',
     vendor: 'Insyde Software',
-    product: 'InsydeH2O UEFI Firmware',
+    product: 'InsydeH2O UEFI BIOS',
     tier: 'enterprise',
     category: 'UEFI Firmware',
-    currentAlgorithm: 'RSA-2048 (standard), RSA-4096 (secure configurations)',
-    pqcStatus: 'evaluation',
-    roadmapYear: '2027',
-    products: ['InsydeH2O (x86)', 'InsydeH2O for ARM', 'Kernel Abstraction Layer'],
-    pqcAlgorithm: 'ML-DSA-65 (planned, UEFI specification compliance track)',
-    migrationGuidance:
-      'Insyde is tracking UEFI Forum PQC specification work. ML-DSA support will be added to InsydeH2O once UEFI Forum finalizes the Secure Boot key management specification for PQC. OEM customers should contact Insyde for roadmap access and early evaluation builds.',
+    pqcStatus: 'available',
+    statementDate: '2026-06-03',
+    products: ['InsydeH2O UEFI BIOS'],
+    pqcAlgorithm: 'ML-DSA (no parameter set named)',
     notes:
-      'InsydeH2O powers many commercial laptops (HP, Lenovo consumer, Acer) and embedded systems. Insyde participates in UEFI Forum Technical Advisory Board PQC subcommittee. Timeline depends on UEFI Forum spec finalization (estimated 2026).',
-    certifications: ['FIPS 140-2 (selected configurations)'],
-  },
-  {
-    id: 'phoenix',
-    vendor: 'Phoenix Technologies',
-    product: 'SecureCore Technology UEFI',
-    tier: 'smb',
-    category: 'UEFI Firmware',
-    currentAlgorithm: 'RSA-2048',
-    pqcStatus: 'not-started',
-    roadmapYear: 'TBD',
-    products: ['SecureCore Tiano', 'SecureCore (ARM)', 'BIOS Guard'],
-    pqcAlgorithm: 'Evaluating NIST PQC finalists; no committed algorithm',
-    migrationGuidance:
-      'Phoenix has not announced a PQC migration timeline. Organizations using Phoenix SecureCore in production should engage their ODM/OEM vendor for firmware upgrade paths and consider whether platform replacement is more cost-effective than waiting for Phoenix PQC support.',
-    notes:
-      'Phoenix SecureCore is common in commercial/SMB laptops. Lack of committed timeline is a concern for CNSA 2.0-bound organizations. Monitor UEFI Forum announcements for Phoenix participation in PQC working groups.',
-    certifications: [],
+      'On 3 June 2026 Insyde announced that InsydeH2O "integrates ML-DSA support for Secure Flash, Capsule Update, and firmware authentication". The release says Insyde\'s PQC capabilities "are available now to Insyde customers and partners".',
+    sources: [
+      {
+        label: 'Insyde press release',
+        url: 'https://www.insyde.com/news/press-releases/insyde-software-integrates-post-quantum-cryptography-and-builds-eu-cra-compliance-foundation-across-full-firmware-stack/',
+        date: '2026-06-03',
+      },
+    ],
   },
   {
     id: 'tianocore',
@@ -105,67 +105,72 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     product: 'EDK2 (EFI Development Kit II)',
     tier: 'open-source',
     category: 'Open-Source UEFI',
-    currentAlgorithm: 'RSA-2048 (default), RSA-4096 (configurable)',
-    pqcStatus: 'merged',
-    roadmapYear: '2026 (in progress)',
-    products: ['EDK2 open-source', 'OVMF (QEMU/KVM)', 'CorebootPayload'],
-    pqcAlgorithm: 'ML-DSA-65 (CryptoPkg, in-progress effort)',
-    migrationGuidance:
-      'PQC for EDK2 is an in-progress community effort (e.g. CryptoPkg/OpenSSL-provider work, TianoCore Bugzilla 4087) — not confirmed merged to EDK2 main as of mid-2026. When available, key enrollment is via the efi-updatevar tool with an ML-DSA cert in EFI_SIGNATURE_LIST format.',
+    pqcStatus: 'in-progress',
+    statementDate: '2026-10-23',
+    products: ['EDK2 CryptoPkg', 'EDK2 SecurityPkg (AuthVariableLib)'],
+    pqcAlgorithm: 'ML-DSA-87',
     notes:
-      'EDK2 is the reference UEFI implementation and foundation for most vendor BIOS products. PQC ML-DSA support landed through the EDK2 Crypto community call and is available in stable-202502 branch. OVMF (QEMU) PQC testing available immediately for lab validation.',
-    certifications: ['NIST CAVP (via OpenSSL 3.x provider)', 'Open Source (no FIPS)'],
+      'EDK2 CryptoPkg handles ML-DSA-87 in its X.509 code; the source comment reads "Currently, only EVP_PKEY_ML_DSA_87 is supported." Accepting ML-DSA certificates in authenticated variables (the Secure Boot step) is an open pull request, edk2 PR #13365, opened on 23 October 2026 and not merged when checked.',
+    sources: [
+      {
+        label: 'edk2 pull request 13365 (open)',
+        url: 'https://github.com/tianocore/edk2/pull/13365',
+        date: '2026-10-23',
+      },
+      {
+        label: 'edk2 CryptX509.c (master)',
+        url: 'https://github.com/tianocore/edk2/blob/master/CryptoPkg/Library/BaseCryptLib/Pk/CryptX509.c',
+      },
+    ],
   },
   {
     id: 'dell',
     vendor: 'Dell Technologies',
-    product: 'Dell UEFI (PowerEdge / Precision)',
+    product: 'Dell iDRAC firmware signing (PowerEdge 17G)',
     tier: 'enterprise',
-    category: 'OEM UEFI',
-    currentAlgorithm: 'RSA-2048 (standard), RSA-4096 (CNSA-compliant configs)',
-    pqcStatus: 'roadmap',
-    roadmapYear: '2026',
-    products: ['PowerEdge R650/R750/R760', 'Precision 7xxx', 'OptiPlex (enterprise)'],
-    pqcAlgorithm: 'LMS/XMSS (SP 800-208) firmware signing for CNSA 2.0; ML-DSA PK migration',
-    migrationGuidance:
-      "Dell's CNSA 2.0 roadmap targets PowerEdge server platforms for LMS/XMSS (SP 800-208) firmware signing in 2026. Use Dell iDRAC 9 firmware update API with PQC signing certificates. Dell Server Update Utility (SUU) will validate ML-DSA signatures from Dell Cybersecurity firmware package.",
+    category: 'OEM firmware',
+    pqcStatus: 'available',
+    statementDate: '2026-10-08',
+    products: [
+      'PowerEdge 17G servers (iDRAC 1.30.40.51)',
+      'BOSS-N1, PERC12 and the CX9 custom card',
+      'Dell Pro, Dell Pro Max, Dell Pro Precision and Dell Pro Rugged PCs (latest generation)',
+    ],
+    pqcAlgorithm: 'LMS (dual classical plus LMS signing)',
     notes:
-      "Dell iDRAC 9 (firmware signing) targets CNSA 2.0 compliance ahead of US Federal procurement requirements. iDRAC 10 (Spire chipset, PowerEdge Gen17) has PQC-native attestation. Dell's Product Security Office published a PQC posture statement in November 2024.",
-    certifications: ['FIPS 140-2 Level 1 (iDRAC)', 'CNSA 2.0 (target 2026)', 'CC EAL2'],
+      'Dell\'s iDRAC 1.30.40.51 release (29 August 2026) lists support for the "PQC Firmware Update Signing and Verification Framework (dual classical plus LMS post-quantum signing)" on PowerEdge 17G servers, and PQC dual firmware signing on BOSS-N1, PERC12 and the CX9 custom card. A Dell blog of 8 October 2026 says its current commercial PCs use "Leighton-Micali Signature (LMS) verification, a NIST SP 800-208 scheme" for the embedded controller and for code signing of EC and BIOS updates.',
+    sources: [
+      {
+        label: 'Dell iDRAC 1.30.40.51 release notes',
+        url: 'https://www.dell.com/support/home/en-us/drivers/driversdetails?driverid=HYG95',
+        date: '2026-08-29',
+      },
+      {
+        label: 'Dell blog: Post-Quantum Ready... or Not',
+        url: 'https://www.dell.com/en-us/blog/post-quantum-ready-or-not-why-your-next-pc-refresh-is-a-cryptography-decision',
+        date: '2026-10-08',
+      },
+    ],
   },
   {
     id: 'hpe',
     vendor: 'HPE',
     product: 'HPE iLO 7 (ProLiant Gen12)',
     tier: 'enterprise',
-    category: 'OEM UEFI / BMC',
-    currentAlgorithm: 'RSA-2048 (firmware signing), ECDSA P-384 (iLO TLS)',
+    category: 'OEM firmware',
     pqcStatus: 'available',
-    roadmapYear: '2025 (ProLiant Gen12 / iLO 7)',
-    products: ['ProLiant DL360 Gen12', 'ProLiant DL380 Gen12', 'ProLiant Compute Gen12'],
-    pqcAlgorithm: 'LMS (SP 800-208) firmware signing on ProLiant Gen12 / iLO 7',
-    migrationGuidance:
-      'Deploy ProLiant Gen12 servers with iLO 7 to get LMS-based (SP 800-208, stateful hash-based) firmware signing anchored in the Silicon Root of Trust. Use HPE Smart Update Manager for signed firmware packages.',
+    statementDate: '2025-08-18',
+    products: ['ProLiant Gen12 servers (iLO 7)'],
+    pqcAlgorithm: 'LMS',
     notes:
-      'HPE is the first major OEM to ship quantum-resistant firmware signing for production servers: LMS-based (SP 800-208) signing on ProLiant Gen12 with iLO 7, in line with CNSA 2.0 for software/firmware signing. HPE Silicon Root of Trust supports the PQC-signed firmware chain.',
-    certifications: ['FIPS 140-3 Level 1 (iLO)', 'CNSA 2.0 (ProLiant Gen12 / iLO 7)', 'CC EAL2'],
-  },
-  {
-    id: 'lenovo',
-    vendor: 'Lenovo',
-    product: 'Lenovo BIOS (ThinkSystem / ThinkStation)',
-    tier: 'enterprise',
-    category: 'OEM UEFI',
-    currentAlgorithm: 'RSA-2048 (BIOS signing), RSA-4096 (ThinkShield key hierarchy)',
-    pqcStatus: 'roadmap',
-    roadmapYear: '2026 Q3',
-    products: ['ThinkSystem SR650 V3', 'ThinkSystem SR850 V3', 'ThinkStation P Series'],
-    pqcAlgorithm: 'LMS/XMSS (SP 800-208) — ThinkShield PQC Firmware Signing for CNSA 2.0',
-    migrationGuidance:
-      'Lenovo ThinkShield PQC migration roadmap targets Q3 2026 for ThinkSystem servers. Lenovo will provide a ThinkShield Migration Toolkit including ML-DSA certificate enrollment scripts, BIOS update packages with PQC signatures, and XClarity integrator for automated deployment.',
-    notes:
-      "Lenovo's ThinkShield security architecture extends to firmware signing. ThinkSystem V3 servers ship with hardware root of trust that will be PQC-extended in firmware update. ThinkPad consumer laptops are on a separate, later timeline (2027+).",
-    certifications: ['FIPS 140-3 (XClarity)', 'CNSA 2.0 (target Q3 2026)'],
+      'HPE\'s iLO QuickSpecs (version 39, 18 August 2025) lists, under "What\'s New in HPE iLO 7", a "CNSA 2.0-aligned NIST-approved LMS algorithm ensuring PQC-ready firmware updates (iLO, BIOS and CPLD)". On the iLO 7 secure enclave\'s FIPS 140-3 Level 3 target, the same page says "The certification is not obtained yet but we are intending to."',
+    sources: [
+      {
+        label: 'HPE iLO QuickSpecs (c04154343, version 39)',
+        url: 'https://www.hpe.com/psnow/downloadDoc/HPE%20Integrated%20Lights-Out%20(iLO)%20QuickSpecs-c04154343.pdf?contentDisposition=attachment&form=false&hf=regular&id=c04154343.pdf&isFutureVersion=true&isLinearized=false&preview=false&ver=39',
+        date: '2025-08-18',
+      },
+    ],
   },
   {
     id: 'intel',
@@ -173,15 +178,18 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     product: 'Intel Boot Guard (TXT / ACM)',
     tier: 'enterprise',
     category: 'Hardware Root of Trust',
-    currentAlgorithm: 'RSA-2048 (Boot Guard ACM signing), RSA-3072 (Key Manifest)',
-    pqcStatus: 'roadmap',
-    roadmapYear: '2026 (Granite Rapids+)',
-    products: ['Xeon Scalable 5th Gen (Emerald Rapids)', 'Xeon Scalable 6th Gen (Granite Rapids)'],
-    pqcAlgorithm: 'ML-DSA-65 in Boot Guard ACM (Granite Rapids+)',
-    migrationGuidance:
-      'Intel Boot Guard PQC support requires new silicon. Existing Emerald Rapids systems cannot be field-upgraded to ML-DSA Boot Guard — this is a hardware feature baked into the ACM in flash. Plan platform refresh to Granite Rapids (Xeon 6) for PQC Boot Guard. Intel Platform Trust Technology (PTT) firmware TPM is on a parallel PQC roadmap.',
+    pqcStatus: 'announced',
+    statementDate: '2024-07',
+    products: ['Boot Guard authenticated code module (ACM)'],
+    pqcAlgorithm: 'LMS (optionally combined with RSASSA or ECDSA)',
     notes:
-      'Boot Guard locks the initial BIOS measurement against a Key Manifest fused into the processor at manufacture. PQC migration requires new CPU silicon AND new firmware ACM. This is the longest lead-time item in a server PQC migration. Intel confirmed Granite Rapids (2026) will include PQC Boot Guard via Intel Platform Innovation Framework.',
-    certifications: ['FIPS 140-3 (ACM, target 2026)', 'Intel PTT FIPS 140-2 Level 2'],
+      'Intel\'s white paper "Hardening Intel Trusted eXecution Technology and Intel Boot Guard" (revision 0.21, July 2024, section 7) says "ACM is supporting Leighton-Micali Signatures (LMS) for all manifests", and that the Boot Guard Key Manifest "may use LMS combined with currently supported legacy schemes RSASSA or ECDSA". The paper is dated July 2024 and names no product generation or ship date.',
+    sources: [
+      {
+        label: 'Intel white paper 824411 (revision 0.21)',
+        url: 'https://cdrdv2-public.intel.com/824411/Hardening%20Intel%C2%AE%20Trusted%20eXecution%20Technology%20and%20Intel%C2%AE%20Boot%20Guard.pdf',
+        date: '2024-07',
+      },
+    ],
   },
 ]

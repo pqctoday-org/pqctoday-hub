@@ -2,29 +2,30 @@
 import React, { useState, useMemo } from 'react'
 import { Building2, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { FIRMWARE_VENDORS, VENDOR_STATUS_LABELS } from '../data/secureBootProviderData'
+import {
+  FIRMWARE_VENDORS,
+  VENDOR_MATRIX_CHECKED_ON,
+  VENDOR_STATUS_LABELS,
+  formatVendorDate,
+} from '../data/secureBootProviderData'
 import type { VendorTier, FirmwareVendorStatus } from '../data/secureBootProviderData'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
 const TIER_LABELS: Record<VendorTier, string> = {
   enterprise: 'Enterprise',
-  smb: 'SMB',
   'open-source': 'Open Source',
 }
 
 const TIER_FILTER_ITEMS = [
   { id: 'enterprise', label: 'Enterprise' },
-  { id: 'smb', label: 'SMB' },
   { id: 'open-source', label: 'Open Source' },
 ]
 
 const STATUS_FILTER_ITEMS = [
   { id: 'available', label: 'Available' },
-  { id: 'merged', label: 'Merged / GA' },
-  { id: 'roadmap', label: 'Roadmap' },
-  { id: 'evaluation', label: 'Evaluation' },
-  { id: 'not-started', label: 'Not Started' },
+  { id: 'announced', label: 'Announced' },
+  { id: 'in-progress', label: 'In progress' },
 ]
 
 export const FirmwareVendorMatrix: React.FC = () => {
@@ -42,12 +43,10 @@ export const FirmwareVendorMatrix: React.FC = () => {
 
   const stats = useMemo(() => {
     const total = FIRMWARE_VENDORS.length
-    const available = FIRMWARE_VENDORS.filter(
-      (v) => v.pqcStatus === 'available' || v.pqcStatus === 'merged'
-    ).length
-    const roadmap = FIRMWARE_VENDORS.filter((v) => v.pqcStatus === 'roadmap').length
-    const notStarted = FIRMWARE_VENDORS.filter((v) => v.pqcStatus === 'not-started').length
-    return { total, available, roadmap, notStarted }
+    const available = FIRMWARE_VENDORS.filter((v) => v.pqcStatus === 'available').length
+    const announced = FIRMWARE_VENDORS.filter((v) => v.pqcStatus === 'announced').length
+    const inProgress = FIRMWARE_VENDORS.filter((v) => v.pqcStatus === 'in-progress').length
+    return { total, available, announced, inProgress }
   }, [])
 
   return (
@@ -56,7 +55,7 @@ export const FirmwareVendorMatrix: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">Firmware Vendor PQC Matrix</h3>
         <p className="text-sm text-muted-foreground">
           BIOS and firmware vendor PQC readiness. Filter by vendor tier or migration status to find
-          products matching your infrastructure. Click any vendor for detailed migration guidance.
+          products matching your infrastructure. Click any vendor to see what its sources state.
         </p>
       </div>
       <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="codesign" className="mb-2" />
@@ -69,15 +68,15 @@ export const FirmwareVendorMatrix: React.FC = () => {
         </div>
         <div className="bg-status-success/5 rounded-lg p-3 border border-status-success/20 text-center">
           <div className="text-xl font-bold text-status-success">{stats.available}</div>
-          <div className="text-[10px] text-muted-foreground">Available / GA</div>
+          <div className="text-[10px] text-muted-foreground">Available</div>
+        </div>
+        <div className="bg-status-info/5 rounded-lg p-3 border border-status-info/20 text-center">
+          <div className="text-xl font-bold text-status-info">{stats.announced}</div>
+          <div className="text-[10px] text-muted-foreground">Announced</div>
         </div>
         <div className="bg-status-warning/5 rounded-lg p-3 border border-status-warning/20 text-center">
-          <div className="text-xl font-bold text-status-warning">{stats.roadmap}</div>
-          <div className="text-[10px] text-muted-foreground">On Roadmap</div>
-        </div>
-        <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-          <div className="text-xl font-bold text-muted-foreground">{stats.notStarted}</div>
-          <div className="text-[10px] text-muted-foreground">Not Started</div>
+          <div className="text-xl font-bold text-status-warning">{stats.inProgress}</div>
+          <div className="text-[10px] text-muted-foreground">In Progress</div>
         </div>
       </div>
 
@@ -159,8 +158,8 @@ export const FirmwareVendorMatrix: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 text-[10px] text-muted-foreground">
                       <span>Category: {vendor.category}</span>
-                      <span>Current: {vendor.currentAlgorithm}</span>
-                      <span>Roadmap: {vendor.roadmapYear}</span>
+                      <span>PQC: {vendor.pqcAlgorithm}</span>
+                      <span>Source dated: {formatVendorDate(vendor.statementDate)}</span>
                     </div>
                   </div>
 
@@ -190,58 +189,43 @@ export const FirmwareVendorMatrix: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Algorithm transition */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="bg-status-error/5 rounded-lg p-3 border border-status-error/20">
-                        <div className="text-[10px] font-bold text-status-error mb-1">
-                          Current Algorithm
-                        </div>
-                        <p className="text-xs text-foreground/80">{vendor.currentAlgorithm}</p>
+                    {/* PQC algorithm named in the sources */}
+                    <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
+                      <div className="text-[10px] font-bold text-primary mb-1">
+                        PQC algorithm named in the sources
                       </div>
-                      <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
-                        <div className="text-[10px] font-bold text-primary mb-1">PQC Target</div>
-                        <p className="text-xs text-foreground/80">{vendor.pqcAlgorithm}</p>
-                      </div>
+                      <p className="text-xs text-foreground/80">{vendor.pqcAlgorithm}</p>
                     </div>
 
-                    {/* Migration Guidance */}
+                    {/* What the sources state */}
                     <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                      <div className="text-xs font-bold text-foreground mb-2">Migration Path</div>
-                      <p className="text-xs text-foreground/80 leading-relaxed">
-                        {vendor.migrationGuidance}
-                      </p>
-                    </div>
-
-                    {/* Notes */}
-                    <div className="text-xs text-muted-foreground leading-relaxed">
-                      {vendor.notes}
-                    </div>
-
-                    {/* Certifications */}
-                    {vendor.certifications.length > 0 && (
-                      <div>
-                        <div className="text-[10px] font-bold text-muted-foreground uppercase mb-1">
-                          Certifications
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {vendor.certifications.map((cert) => (
-                            <span
-                              key={cert}
-                              className="text-[10px] px-2 py-0.5 rounded bg-status-success/10 border border-status-success/20 text-status-success"
-                            >
-                              {cert}
-                            </span>
-                          ))}
-                        </div>
+                      <div className="text-xs font-bold text-foreground mb-2">
+                        What the sources state
                       </div>
-                    )}
+                      <p className="text-xs text-foreground/80 leading-relaxed">{vendor.notes}</p>
+                    </div>
 
-                    {/* External link placeholder */}
-                    <div className="flex">
-                      <span className="inline-flex items-center gap-1 text-xs text-primary">
-                        <ExternalLink size={12} aria-hidden="true" />
-                        Vendor PQC Roadmap (contact vendor)
-                      </span>
+                    {/* Sources */}
+                    <div>
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                        Sources
+                      </div>
+                      <ul className="space-y-1">
+                        {vendor.sources.map((source) => (
+                          <li key={source.url}>
+                            <a
+                              href={source.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                            >
+                              <ExternalLink size={12} aria-hidden="true" />
+                              {source.label}
+                              {source.date ? ` (${formatVendorDate(source.date)})` : ''}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 )}
@@ -250,6 +234,10 @@ export const FirmwareVendorMatrix: React.FC = () => {
           })
         )}
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        Checked on {VENDOR_MATRIX_CHECKED_ON}. Each row shows only what its linked sources state.
+      </p>
     </div>
   )
 }

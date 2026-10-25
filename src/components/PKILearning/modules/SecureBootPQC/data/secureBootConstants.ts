@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export type UEFIKeyType = 'PK' | 'KEK' | 'db' | 'dbx' | 'MOK'
-export type FirmwareVendor =
-  'AMI' | 'Insyde' | 'Phoenix' | 'Tianocore' | 'Dell' | 'HPE' | 'Lenovo' | 'Intel'
+export type FirmwareVendor = 'AMI' | 'Insyde' | 'Tianocore' | 'Dell' | 'HPE' | 'Intel'
 export type TPMVersion = '1.2' | '2.0'
 export type AttestationType = 'measured-boot' | 'tpm-quote' | 'dice' | 'fido-onboard' | 'remote-tls'
 export type SecureBootState = 'disabled' | 'setup' | 'enabled' | 'deployed'
-export type PQCMigrationStatus = 'available' | 'roadmap' | 'evaluation' | 'not-started' | 'merged'
+export type PQCMigrationStatus = 'available' | 'announced' | 'in-progress'
 
 export interface UEFIKeyTypeInfo {
   id: UEFIKeyType
@@ -262,7 +261,8 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
       'The UEFI firmware itself (AMI APTIO, Insyde H2O, etc.) is the first code to run after power-on. It must be signed by the OEM private key and verified by Intel Boot Guard or AMD Platform Security Processor before UEFI Secure Boot validation begins.',
     signingKey: 'OEM Code Signing Key (stored in Boot Guard ACM / PSP)',
     currentAlgorithm: 'RSA-2048 with SHA-256',
-    pqcStatus: 'Roadmap 2026–2027 (Intel Boot Guard, AMI, Insyde)',
+    pqcStatus:
+      'Vendor statements differ: see the Firmware Vendor Matrix (Intel Boot Guard, AMI, Insyde)',
     forgeryUrgency: 'critical',
   },
   {

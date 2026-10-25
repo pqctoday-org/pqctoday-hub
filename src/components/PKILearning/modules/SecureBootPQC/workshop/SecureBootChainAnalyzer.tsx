@@ -292,9 +292,10 @@ export const SecureBootChainAnalyzer: React.FC = () => {
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            UEFI NVRAM stores Secure Boot variables (db, dbx, KEK, PK). Many platforms allocate only
-            32–64 KB for NVRAM. A full PQC migration may require BIOS NVRAM reallocation — verify
-            your platform&apos;s NVRAM capacity before deployment.
+            UEFI NVRAM stores Secure Boot variables (db, dbx, KEK, PK). Secure Boot variable storage
+            is platform-specific; firmware reports it through QueryVariableInfo() (UEFI 2.11 section
+            8.2.4). A full PQC migration may require BIOS NVRAM reallocation — verify your
+            platform&apos;s NVRAM capacity before deployment.
           </p>
         </div>
       )}
