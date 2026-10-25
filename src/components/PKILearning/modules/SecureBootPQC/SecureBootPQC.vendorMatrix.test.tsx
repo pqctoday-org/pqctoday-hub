@@ -241,7 +241,7 @@ describe('Firmware Signing Migrator notes', () => {
   it('puts the owner-approved lab-recipe note above Step A, linked to the UEFI 2.11 Library record', () => {
     const text = pageTextAtStep(3)
     const NOTE =
-      'Lab recipe only. UEFI 2.11 never mentions ML-DSA or SLH-DSA; its required signature algorithms are SHA-256 and RSA (section 2.6.5), and new signature list types for ML-DSA are still being developed by the UEFI Forum. A certificate with a PQC key can be written to db, but nothing here shows a firmware verifier will accept it. Ask your firmware vendor before enrolling.'
+      "Lab recipe only. UEFI 2.11 never mentions ML-DSA or SLH-DSA; its required signature algorithms are SHA-256 and RSA (section 2.6.5), and the UEFI Forum's April 2026 white paper describes post-quantum changes as proposed, not yet approved. A certificate with a PQC key can be written to db, but nothing here shows a firmware verifier will accept it. Ask your firmware vendor before enrolling."
     expect(text).toContain(NOTE)
     const stepA = text.indexOf('Step A — Import PQC public key')
     expect(text.indexOf(NOTE)).toBeGreaterThan(-1)

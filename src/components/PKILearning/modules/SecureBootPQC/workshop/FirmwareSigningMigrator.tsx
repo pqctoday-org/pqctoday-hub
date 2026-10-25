@@ -2002,9 +2002,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             <div className="bg-status-warning/10 rounded-lg p-2 border border-status-warning/30 text-muted-foreground">
               Lab recipe only. <LibRef id="UEFI-SPEC-2.10-SecureBoot" label="UEFI 2.11" /> never
               mentions ML-DSA or SLH-DSA; its required signature algorithms are SHA-256 and RSA
-              (section 2.6.5), and new signature list types for ML-DSA are still being developed by
-              the UEFI Forum. A certificate with a PQC key can be written to db, but nothing here
-              shows a firmware verifier will accept it. Ask your firmware vendor before enrolling.
+              (section 2.6.5), and the UEFI Forum’s April 2026 white paper describes post-quantum
+              changes as proposed, not yet approved. A certificate with a PQC key can be written to
+              db, but nothing here shows a firmware verifier will accept it. Ask your firmware
+              vendor before enrolling.
             </div>
 
             {/* Step A: cert chain import */}
