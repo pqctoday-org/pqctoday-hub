@@ -29,6 +29,41 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.179.0] - 2026-10-24
+
+Statements that were wrong or unsourced in the certification lessons, tools and Library are corrected, and the phone and navigation pages the certification role uses work better.
+
+### Fixed
+
+- **SLH-DSA pages name the right hash functions and describe statelessness the way FIPS 205 does** [view:/playground/slh-dsa] [view:/learn/slh-dsa] [view:/learn/stateful-signatures] [persona:cert-engineer] [persona:developer] [persona:researcher]: the parameter card lists SHAKE256 for every SHAKE set and SHA-512 where a SHA2 set uses it, the pre-hash warning says other approved hash functions are allowed when they give enough strength, and the "why stateless" text no longer describes a mechanism FIPS 205 does not use. The lesson's quiz and its search summary, which repeated the old wording, are corrected too.
+- **The NSA CNSA 2.0 position on SLH-DSA is stated the same way everywhere** [view:/library] [view:/compliance] [view:/learn/hsm-pqc] [view:/learn/stateful-signatures] [persona:cert-engineer] [persona:grc] [persona:architect]: NSA's FAQ says SLH-DSA is not part of CNSA 2.0 and not approved for any use in National Security Systems, and that only the multi-tree HSS and XMSS^MT forms of the stateful signatures are barred. The Library entry, the compliance record, the cross-links between standards, the lesson summaries and the tools now say so, and an entry that tied CNSA 2.0 to FIPS 205 was removed.
+- **The Entropy Testing runs check uses the right formula** [view:/playground/entropy-test] [persona:cert-engineer] [persona:researcher] [persona:developer]: the Z-score divided by a standard deviation that was too large, so the check was too lenient. It now matches the worked example in NIST SP 800-22.
+- **The Secure Boot lesson no longer says ML-DSA verification is faster than RSA** [view:/learn/secure-boot-pqc] [persona:cert-engineer] [persona:developer] [persona:architect]: the per-operation timings that said so had no source and contradicted each other, so they were removed.
+- **The firmware vendor table keeps only what a public source says** [view:/learn/secure-boot-pqc] [persona:cert-engineer] [persona:architect] [persona:ops]: the Phoenix and Lenovo rows are gone because nothing public supports them, Insyde now reflects its June 2026 announcement of ML-DSA support, TianoCore shows "In progress" (the ML-DSA certificate change is an open pull request), and AMI, Dell, HPE and Intel shrink to what their own pages say, each with its source and date.
+- **The Firmware Signing Migrator no longer states two different variable-store sizes, and says where CNSA 2.0 stands on SLH-DSA** [view:/playground/firmware-signing] [persona:cert-engineer] [persona:developer]: the size now points to what the firmware itself reports, and the SLH-DSA choice carries the NSA wording.
+- **The Testing & Validation lesson's TVLA tool says its numbers are illustrative** [view:/learn/pqc-testing-validation] [persona:cert-engineer] [persona:researcher]: the banner claimed pre-recorded power traces, but the scores are typed in to show how leakage bars read.
+- **The ACVP lab counts match what the answers really used** [view:/learn/acvp-lab-workflow] [view:/playground/hsm] [persona:cert-engineer] [persona:developer]: of the 127 ML-DSA answers once called "standard calls", 45 use the vendor-defined external-mu mechanism and are now counted and labelled that way (82 standard PKCS#11 v3.2 calls). Step 2 now says plainly why the standard path cannot answer encapsulation and key-check tests, and the evidence explainer says which fields a browser-made file leaves empty.
+- **The Library no longer prints dates that contradict themselves** [view:/library] [persona:cert-engineer] [persona:researcher]: most of the documents whose "updated" date was earlier than their first publication now carry the right date, and the page leaves out an update date that is not later than the first publication.
+- **The TPM errata entry in the Library says what the document contains** [view:/library] [persona:cert-engineer] [persona:developer]: it described corrections to post-quantum commands that the document does not contain.
+- **Official NIST and EU documents in the Library no longer look untrusted** [view:/library] [persona:cert-engineer] [persona:researcher] [persona:grc]: about 270 Library entries lacked the link to their source in the trust data, so official NIST and EU documents among them scored "needs review".
+- **HQC sizes in the algorithms table match the 2025 specification** [view:/algorithms] [persona:cert-engineer] [persona:researcher]: the sizes were those of the 2023 version, and a quiz answer quoting one of them is corrected.
+- **The I4P Trident HSM tile claims only what the vendor page supports** [view:/migrate] [persona:cert-engineer] [persona:architect]: it said "full NIST PQC algorithm support" next to a "Partial" badge.
+
+### Changed
+
+- **The home page and lesson footers send the certification role to the right next step** [view:/] [view:/learn/pqc-testing-validation] [persona:cert-engineer]: the home footer opens the validation workbench, and the Testing & Validation lesson points to the next lesson on the path instead of back to FIPS 140-3.
+- **The validation workbench shows more of its results at once** [view:/playground/hsm] [persona:cert-engineer] [persona:developer]: at a laptop size the results table was a strip about one row tall; it now shows several rows.
+- **On a phone, the Library sheet shows both dates, and the algorithms coverage table can no longer push the page wider than the screen** [view:/algorithms] [view:/library] [persona:cert-engineer] [persona:researcher]: the Library detail sheet showed only the first publication date, and hidden table text could widen the coverage page.
+- **EUCC records show the real certificate number** [view:/compliance] [persona:cert-engineer] [persona:grc]: the listing showed a generated code as the certificate number although the real number was in the data.
+- **On a phone the final quiz asks how long you want it to be** [view:/learn/quiz] [persona:cert-engineer] [persona:curious]: you can choose a Quick pick of 20 questions or the full run, as on a computer; checkpoint quizzes are unchanged.
+- **The OpenSSL Studio hint and one preset name no longer suggest more than they do** [view:/playground/openssl-studio] [persona:cert-engineer] [persona:developer]: the hint now says the build is not evidence and points to the Validation tab for NIST sample vectors, and the "Verify FIPS-validated cert fingerprint" preset is called "SHA-256 fingerprint of the self-signed certificate".
+
+### Added
+
+- **The Firmware Signing Migrator says that nothing shows a firmware will accept a post-quantum certificate** [view:/playground/firmware-signing] [persona:cert-engineer] [persona:developer] [persona:architect]: a note above the Secure Boot enrolment recipe says UEFI 2.11 never mentions ML-DSA or SLH-DSA, that the UEFI Forum's April 2026 white paper describes post-quantum changes as proposed and not yet approved, and that a vendor should be asked before enrolling.
+- **The PCI lesson says which PCI programmes it covers and which it leaves out** [view:/learn/pci-certification] [persona:cert-engineer] [persona:grc]: it covers PTS HSM, PIN Security, P2PE and key management operations, and does not cover PTS POI, card production and provisioning, 3-D Secure, or MPoC and CPoC.
+- **The sources of the lab-testing panels in the Stateful Signatures and SLH-DSA lessons open in the Library** [view:/learn/stateful-signatures] [view:/learn/slh-dsa] [persona:cert-engineer] [persona:researcher]: the Implementation Guidance, the NSA FAQ and the ACVP specification are now linked from the lessons.
+
 ## [4.178.0] - 2026-10-24
 
 Step 3 of the ACVP Lab Workflow lesson now answers every test of both NIST sample vector sets.
