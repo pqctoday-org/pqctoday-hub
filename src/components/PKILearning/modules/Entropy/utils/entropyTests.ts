@@ -140,6 +140,26 @@ export function frequencyTest(data: Uint8Array): TestResult {
 }
 
 /**
+ * Runs statistic of SP 800-22 Rev. 1a §2.3.4. `runs` is V_n(obs) (step 3) and
+ * `expectedRuns` is 2nπ(1−π). `zScore` is |V_n(obs) − 2nπ(1−π)| / (2·√n·π(1−π)),
+ * the normal-scale form of the step 4 quantity, so the P-value is erfc(zScore/√2).
+ */
+export function runsStatistic(bits: ArrayLike<number>) {
+  const n = bits.length
+  let runs = 1
+  let ones = 0
+  for (let i = 0; i < n; i++) {
+    if (i > 0 && bits[i] !== bits[i - 1]) runs++
+    ones += bits[i]
+  }
+  const pi = ones / n
+  const expectedRuns = 2 * n * pi * (1 - pi)
+  const stddev = 2 * Math.sqrt(n) * pi * (1 - pi)
+  const zScore = stddev > 0 ? Math.abs(runs - expectedRuns) / stddev : Infinity
+  return { n, pi, runs, expectedRuns, stddev, zScore }
+}
+
+/**
  * Runs check (group 1, SP 800-22-style).
  * Counts runs of consecutive identical bits. Too few runs suggests the bits are
  * clumped; too many suggests alternation.
@@ -165,17 +185,7 @@ export function runsTest(data: Uint8Array): TestResult {
     }
   }
 
-  let runs = 1
-  for (let i = 1; i < n; i++) {
-    if (bits[i] !== bits[i - 1]) runs++
-  }
-
-  const ones = bits.reduce((s, b) => s + b, 0)
-  const pi = ones / n
-  // Expected runs for random data
-  const expectedRuns = 1 + 2 * n * pi * (1 - pi)
-  const stddev = Math.sqrt(2 * n * pi * (1 - pi))
-  const zScore = stddev > 0 ? Math.abs(runs - expectedRuns) / stddev : Infinity
+  const { runs, expectedRuns, zScore } = runsStatistic(bits)
   const threshold = 2.576 // 99% confidence
   return {
     name: 'Runs Test',
