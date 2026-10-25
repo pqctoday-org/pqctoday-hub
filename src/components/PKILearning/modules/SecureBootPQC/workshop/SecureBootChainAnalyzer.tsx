@@ -39,7 +39,7 @@ const KEY_ANALYSIS_RESULTS: KeyAnalysisResult[] = [
     finding:
       'db certificates use RSA-2048. Forged db signatures could allow unauthorized bootloaders. Note: a minimal self-signed ML-DSA-65 certificate is about 5.5 KB vs about 0.8 KB for RSA-2048 (measured with OpenSSL 3.6.3; real certificates are larger) — db storage impact is significant.',
     pqcAction:
-      'Re-issue all db signing certificates with ML-DSA-65. Update UEFI variable storage allocation to accommodate larger PQC certificates. Typical db grows from 8 KB to 40+ KB.',
+      'Re-issue all db signing certificates with ML-DSA-65. Update UEFI variable storage allocation to accommodate larger PQC certificates.',
     effort: 'Medium — certificate re-issuance; db storage may need expansion',
   },
   {
@@ -273,28 +273,25 @@ export const SecureBootChainAnalyzer: React.FC = () => {
             <Info size={16} className="text-primary" />
             <h4 className="text-sm font-bold text-foreground">db Storage Size Impact</h4>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-              <div className="text-lg font-bold text-status-error">~1.2 KB</div>
-              <div className="text-[10px] text-muted-foreground">RSA-2048 cert in db</div>
+              <div className="text-lg font-bold text-status-error">0.8 KB</div>
+              <div className="text-[10px] text-muted-foreground">
+                Minimal RSA-2048 cert in db (809 bytes)
+              </div>
             </div>
             <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
-              <div className="text-lg font-bold text-primary">~6 KB</div>
-              <div className="text-[10px] text-muted-foreground">ML-DSA-65 cert in db</div>
-            </div>
-            <div className="bg-status-warning/5 rounded-lg p-3 border border-status-warning/20 text-center">
-              <div className="text-lg font-bold text-status-warning">5×</div>
-              <div className="text-[10px] text-muted-foreground">Size increase per cert</div>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-              <div className="text-lg font-bold text-foreground">40+ KB</div>
-              <div className="text-[10px] text-muted-foreground">Typical PQC db (8 certs)</div>
+              <div className="text-lg font-bold text-primary">5.5 KB</div>
+              <div className="text-[10px] text-muted-foreground">
+                Minimal ML-DSA-65 cert in db (5,538 bytes)
+              </div>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            UEFI NVRAM stores Secure Boot variables (db, dbx, KEK, PK). Secure Boot variable storage
-            is platform-specific; firmware reports it through QueryVariableInfo() (UEFI 2.11 section
-            8.2.4). A full PQC migration may require BIOS NVRAM reallocation — verify your
+            Minimal self-signed certificates, measured with OpenSSL 3.6.3; real certificates are
+            larger. UEFI NVRAM stores Secure Boot variables (db, dbx, KEK, PK). Secure Boot variable
+            storage is platform-specific; firmware reports it through QueryVariableInfo() (UEFI 2.11
+            section 8.2.4). A full PQC migration may require BIOS NVRAM reallocation — verify your
             platform&apos;s NVRAM capacity before deployment.
           </p>
         </div>

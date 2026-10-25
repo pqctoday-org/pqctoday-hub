@@ -38,7 +38,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'Hierarchy',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Clicking "Analyze PQC Requirements" reveals that PK and KEK are critical-priority migrations. The db size impact panel shows that ML-DSA-65 certificates are 5× larger than RSA-2048, growing a typical db from ~8 KB to 40+ KB. dbx hash entries require no migration.',
+        'Clicking "Analyze PQC Requirements" reveals that PK and KEK are critical-priority migrations. The db size impact panel shows the measured size of a minimal ML-DSA-65 certificate (5.5 KB) next to a minimal RSA-2048 certificate (0.8 KB). dbx hash entries require no migration.',
       config: { step: 0 },
     },
     {

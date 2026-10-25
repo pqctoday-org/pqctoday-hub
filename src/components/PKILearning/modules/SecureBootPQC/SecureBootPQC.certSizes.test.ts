@@ -9,6 +9,7 @@ import introduction from './components/SecureBootIntroduction.tsx?raw'
 import migrator from './workshop/FirmwareSigningMigrator.tsx?raw'
 import analyzer from './workshop/SecureBootChainAnalyzer.tsx?raw'
 import constants from './data/secureBootConstants.ts?raw'
+import exercises from './components/SecureBootExercises.tsx?raw'
 
 const flat = (s: string) => s.replace(/\s+/g, ' ')
 
@@ -32,5 +33,37 @@ describe('Secure Boot lesson: ML-DSA-65 and RSA-2048 certificate sizes', () => {
     expect(t).toContain('0.8 KB')
     expect(t).toContain('OpenSSL 3.6.3')
     expect(t).not.toMatch(/~6 KB vs ~1\.2 KB|about 6 KB against about 1\.2 KB/)
+  })
+
+  it.each([
+    ['Chain Analyzer', analyzer],
+    ['db constant', constants],
+    ['Exercises', exercises],
+  ])('%s has none of the unsourced db figures', (_name, source) => {
+    const t = flat(source)
+    for (const gone of [
+      '~1.2 KB',
+      '~6 KB',
+      '~8 KB',
+      '40+ KB',
+      '8 KB to 40',
+      '8 certs',
+      'cert (5× increase)',
+    ]) {
+      expect(t, gone).not.toContain(gone)
+    }
+    expect(t).not.toMatch(/5× (larger|increase)|Size increase per cert/)
+  })
+
+  it('the db size panel shows the two measured sizes, and the db constant carries them too', () => {
+    const t = flat(analyzer)
+    expect(t).toContain('0.8 KB')
+    expect(t).toContain('Minimal RSA-2048 cert in db (809 bytes)')
+    expect(t).toContain('5.5 KB')
+    expect(t).toContain('Minimal ML-DSA-65 cert in db (5,538 bytes)')
+    expect(t).toContain('measured with OpenSSL 3.6.3; real certificates are larger')
+    const c = flat(constants)
+    expect(c).toContain("typicalSize: '0.8 KB per minimal certificate (809 bytes, measured)'")
+    expect(c).toContain("pqcSize: '5.5 KB per minimal certificate (5,538 bytes, measured)'")
   })
 })
