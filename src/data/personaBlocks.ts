@@ -95,7 +95,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     developer:
       'Choose Concatenation, Nesting or Silithium (Fused), then Generate Key Pairs, Sign and Verify on your message: the PKCS#11 trace shows the ML-DSA-65 calls through softhsmv3 and the description says whether a component signature can be stripped and verified alone.',
     architect:
-      "The three modes differ in non-separability: concatenation offers none, nesting weak, Silithium strong; the Why hybrid signatures? panel and each mode's IETF reference are the basis for choosing one for a migration-period certificate.",
+      "The three modes differ in non-separability: concatenation offers none, nesting weak, Silithium targets strong; the Why hybrid signatures? panel and each mode's IETF reference are the basis for choosing one for a migration-period certificate.",
     researcher:
       'Sign the same message under all three constructions and compare signature layouts: the trace and the descriptions let you reproduce each composition and its separability property.',
     'cert-engineer':

@@ -31,7 +31,7 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
     tagline: 'sig₁ ‖ sig₂',
     description:
       'Two independent signatures concatenated. Either component verifies alone. Easiest to implement and most backwards-compatible, but provides no protection against separability attacks.',
-    reference: 'IETF draft §1.3.3',
+    reference: 'RFC 9955 §2',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
     separable: true,
     backwardsCompatible: true,
@@ -45,7 +45,7 @@ export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
     tagline: 'sign_ML(msg ‖ sig_EC)',
     description:
       'ML-DSA outer covers msg ‖ ecSig. Swapping the EC signature invalidates the outer layer. EC component still verifies alone — Weak Non-Separability (WNS).',
-    reference: 'IETF draft §1.3.3',
+    reference: 'RFC 9955 §1.3.3',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
     separable: true,
     backwardsCompatible: true,
