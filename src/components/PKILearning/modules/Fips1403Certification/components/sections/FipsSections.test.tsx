@@ -26,6 +26,8 @@ import { content } from '../../content'
 import manifest from '../../manifest'
 import { getStandard } from '@/data/standardsRegistry'
 import { unresolvedInAppLinks } from '@/test/inAppLinks'
+import { resetComplianceMetaCache } from '@/components/Compliance/complianceDataLoader'
+import { FIPS_FRESHNESS_CLAIMS } from '../../data/fipsData'
 import {
   CMVP_ROUTES,
   ROUTE_OPTIONS,
@@ -37,6 +39,7 @@ const wrap = (node: ReactNode) => render(<MemoryRouter>{node}</MemoryRouter>)
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  resetComplianceMetaCache()
 })
 
 describe('FIPS sections render', () => {
@@ -288,6 +291,57 @@ describe('FIPS landscape — Hub data contract', () => {
       3
     )
     expect(screen.queryByText('FIPS 140-3 L1')).not.toBeInTheDocument()
+  })
+
+  describe('count of Active certificates', () => {
+    const record = (id: string, type: string, status: string) => ({ id, type, status })
+    const stubData = (meta: unknown) =>
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => ({
+          ok: true,
+          json: async () =>
+            String(url).includes('meta')
+              ? meta
+              : [
+                  record('1', 'FIPS 140-3', 'Active'),
+                  record('2', 'FIPS 140-3', 'Active'),
+                  record('3', 'FIPS 140-3', 'Historical'),
+                  record('4', 'Common Criteria', 'Active'),
+                ],
+        }))
+      )
+
+    it('reads the count from the Hub data and the date from the retrieval time', async () => {
+      stubData({
+        schemaVersion: 1,
+        partitions: { fips: { label: 'NIST CMVP', retrievedAt: '2026-10-23T02:05:53+00:00' } },
+      })
+      wrap(<FipsLandscape />)
+      expect(
+        await screen.findByText(
+          /NIST’s Active FIPS 140-3 list held 2 certificates on 23 October 2026\./
+        )
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/712/)).not.toBeInTheDocument()
+    })
+
+    it('leaves the sentence out when the retrieval date is not stated', async () => {
+      stubData(null)
+      wrap(<FipsLandscape />)
+      await waitFor(() =>
+        expect(screen.getAllByText('not in Hub data — see certificate').length).toBeGreaterThan(0)
+      )
+      expect(screen.queryByText(/list held/)).not.toBeInTheDocument()
+    })
+
+    it('no longer pins the old figure of about 712 in the freshness claim', () => {
+      const claim = FIPS_FRESHNESS_CLAIMS.find(
+        (c) => c.id === 'cert-module-pqc-level3-certificates'
+      )
+      expect(claim?.claim).toContain('#5282, #5450, #5497, #5503')
+      expect(claim?.claim).not.toMatch(/712|in total/)
+    })
   })
 
   it('degrades to a link-out note when the data cannot be loaded', async () => {

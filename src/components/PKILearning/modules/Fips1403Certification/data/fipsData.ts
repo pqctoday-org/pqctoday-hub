@@ -1550,7 +1550,7 @@ export const FIPS_FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cert-module-pqc-level3-certificates',
     claim:
-      'Four Active FIPS 140-3 Level 3 certificates approve ML-KEM and ML-DSA (#5282, #5450, #5497, #5503); #5300 approves LMS only, #5502 no PQC; about 712 Active FIPS 140-3 certificates in total',
+      'Four Active FIPS 140-3 Level 3 certificates approve ML-KEM and ML-DSA (#5282, #5450, #5497, #5503); #5300 approves LMS only, #5502 no PQC',
     source: DATA_SOURCE,
     asOf: FIPS_AS_OF,
     recheck: CMVP_SEARCH_URL,
