@@ -230,12 +230,13 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         </div>
 
         <p>
-          The <strong>db size impact</strong> is a key operational concern: ML-DSA-65 X.509
-          certificates are approximately <strong>6 KB</strong> vs{' '}
-          <strong>1.2 KB for RSA-2048</strong>. Secure Boot variable storage is platform-specific;
-          firmware reports it through QueryVariableInfo() (UEFI 2.11 section 8.2.4). A full PQC db
-          migration may require platform NVRAM reallocation — verify UEFI NVRAM capacity before
-          planning.
+          The <strong>db size impact</strong> is a key operational concern: a minimal self-signed
+          ML-DSA-65 X.509 certificate is about <strong>5.5 KB</strong> (5,538 bytes) against about{' '}
+          <strong>0.8 KB</strong> (809 bytes) for RSA-2048, measured with OpenSSL 3.6.3.
+          Certificates with more fields are larger. Secure Boot variable storage is
+          platform-specific; firmware reports it through QueryVariableInfo() (UEFI 2.11 section
+          8.2.4). A full PQC db migration may require platform NVRAM reallocation — verify UEFI
+          NVRAM capacity before planning.
         </p>
 
         {/* Boot chain visual */}

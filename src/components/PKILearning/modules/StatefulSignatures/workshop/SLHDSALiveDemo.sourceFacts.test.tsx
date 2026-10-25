@@ -197,6 +197,25 @@ describe('SLH-DSA live demo: the explainer follows FIPS 205 Section 3 and Sectio
     expect(text).toContain('up to 2^64 signatures per key')
     expect(text).not.toMatch(/ephemeral|fresh .*WOTS|drawn from the private key seed/)
   })
+
+  it('says what copies of the key can and cannot do, and that FIPS 205 is silent on backup', () => {
+    renderDemo()
+    const text = screen
+      .getByText('Why is SLH-DSA stateless?', { selector: 'strong' })
+      .closest('p')!
+      .textContent!.replace(/\s+/g, ' ')
+    // NIST SP 800-208 section 9.1: "the state of the private key must be updated each time a
+    // signature is generated" (the LMS/XMSS danger a copy would create); FIPS 205 section 11:
+    // up to 2^64 messages per key pair.
+    expect(text).toContain(
+      'a copy of the private key cannot cause the one-time key reuse that NIST SP 800-208 section 9.1 warns about for LMS and XMSS'
+    )
+    expect(text).toContain(
+      'Signatures made by all copies of a key still count towards the same limit of 2^64 signatures per key (FIPS 205 section 11)'
+    )
+    expect(text).toContain('FIPS 205 gives no rules for backing up or replicating keys')
+    expect(text).not.toMatch(/safely backed up|distributed across HSM replicas/)
+  })
 })
 
 describe('SLH-DSA live demo: the CNSA 2.0 cell names only the multi-tree schemes as barred', () => {

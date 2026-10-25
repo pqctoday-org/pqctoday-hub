@@ -50,6 +50,15 @@ describe('Stateful signatures: Architecture Comparison tab', () => {
     expect(text).toContain('HSS and XMSS^MT not allowed')
   })
 
+  it('does not say SLH-DSA has "no equivalent failure"; FIPS 205 section 8 says a FORS key degrades gradually', () => {
+    openTab()
+    const text = document.body.textContent!.replace(/\s+/g, ' ')
+    expect(text).toContain(
+      'No counter to roll back. A FORS key can be selected again, and its security degrades gradually as signatures accumulate (FIPS 205 section 8).'
+    )
+    expect(text).not.toContain('No equivalent failure')
+  })
+
   it('no longer carries the unsourced Backup/Recovery row', () => {
     openTab()
     expect(screen.queryByText('Backup/Recovery')).not.toBeInTheDocument()

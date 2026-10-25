@@ -1279,7 +1279,7 @@ export function StatefulSignaturesDemo() {
                           [
                             'Catastrophic failure mode',
                             'State rollback → OTS key reuse → full key compromise',
-                            'No equivalent failure — individual randomness per signature',
+                            'No counter to roll back. A FORS key can be selected again, and its security degrades gradually as signatures accumulate (FIPS 205 section 8).',
                           ],
                           [
                             'Key generation',

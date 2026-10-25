@@ -1736,7 +1736,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               OTA firmware update packages carry the signature in their manifest.
               {pqcAlgo === 'SLH-DSA-SHA2-128S'
                 ? ' SLH-DSA-SHA2-128S has very large signatures (7,856 B) — suitable for low-frequency root key signing, not per-image signing.'
-                : ' What db holds is the certificate: an ML-DSA-65 certificate is about 6 KB against about 1.2 KB for RSA-2048.'}
+                : ' What db holds is the certificate: a minimal self-signed ML-DSA-65 certificate is about 5.5 KB against about 0.8 KB for RSA-2048 (measured with OpenSSL 3.6.3; real certificates are larger).'}
             </p>
           </div>
         </div>

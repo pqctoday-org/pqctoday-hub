@@ -26,7 +26,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pci-certification',
-  lastReviewed: '2026-10-22',
+  lastReviewed: '2026-10-25',
   version: '0.1.0',
   // lastReviewed is the owner's sign-off of 22 October 2026 (moduleReviewHonesty.test.ts), not a
   // lab or certification-body review: v1 ships as "practitioner orientation". Remove it when a

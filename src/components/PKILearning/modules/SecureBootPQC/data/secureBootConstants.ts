@@ -111,7 +111,7 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     name: 'db',
     fullName: 'Authorized Signature Database',
     description:
-      'Contains allowed signatures, certificate hashes, and image hashes. UEFI firmware checks bootloaders and drivers against db before executing. Larger with PQC certificates due to ML-DSA certificate size (~6 KB vs ~1.2 KB RSA).',
+      'Contains allowed signatures, certificate hashes, and image hashes. UEFI firmware checks bootloaders and drivers against db before executing. Larger with PQC certificates due to ML-DSA certificate size (a minimal self-signed ML-DSA-65 certificate is about 5.5 KB vs about 0.8 KB for RSA-2048, measured with OpenSSL 3.6.3).',
     currentAlgorithm: 'RSA-2048 certificates',
     typicalSize: '~1.2 KB per certificate',
     pqcAlgorithm: 'ML-DSA-65 X.509 certificates',

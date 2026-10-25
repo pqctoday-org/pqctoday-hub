@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'stateful-signatures',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-10-25',
   lastEdited: '2026-10-25',
 
   standards: [
