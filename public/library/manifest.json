@@ -10436,7 +10436,12 @@
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:04:32.359366+00:00"
+      "stampedAt": "2026-09-17T13:04:32.359366+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10252026/library/TCG-PC-Client-Platform-TPM-Profile-v1.07.html",
+      "supersededAt": "2026-10-25T18:30:44.634766+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "The saved copy was TCG's resource listing page; the specification PDF (Version 1.07, March 23, 2026) is now the evidence — replaced by TCG-PC-Client-Platform-TPM-Profile-v1.07.pdf"
     },
     {
       "refId": "TCG-EK-Credential-Profile-v2.7",
@@ -10454,7 +10459,12 @@
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:04:32.378661+00:00"
+      "stampedAt": "2026-09-17T13:04:32.378661+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10252026/library/TCG-EK-Credential-Profile-v2.7.html",
+      "supersededAt": "2026-10-25T18:30:38.344454+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "The saved copy was TCG's resource listing page; the specification PDF (Version 2.7, March 16, 2026) is now the evidence — replaced by TCG-EK-Credential-Profile-v2.7.pdf"
     },
     {
       "refId": "TCG-TPM-2.0-Library-v1.85-Errata",
@@ -23399,6 +23409,42 @@
       "unified": "converted",
       "admittedAt": "2026-10-24T19:35:11.454502+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "TCG-EK-Credential-Profile-v2.7",
+      "filename": "TCG-EK-Credential-Profile-v2.7.pdf",
+      "sizeBytes": 853057,
+      "contentType": "application/pdf",
+      "url": "https://trustedcomputinggroup.org/wp-content/uploads/TCG-EK-Credential-Profile-for-TPM-Family-2.0-Level-0-Version-2.7_Pub.pdf",
+      "sha256": "b021106be50d5f391064ef702ca5f98249b614a90f2672931f45b79b2f441c2f",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-25T18:30:40.436519+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/TCG-EK-Credential-Profile-v2.7.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-25T18:30:38.344454+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "The saved copy was TCG's resource listing page; the specification PDF (Version 2.7, March 16, 2026) is now the evidence"
+    },
+    {
+      "refId": "TCG-PC-Client-Platform-TPM-Profile-v1.07",
+      "filename": "TCG-PC-Client-Platform-TPM-Profile-v1.07.pdf",
+      "sizeBytes": 2078810,
+      "contentType": "application/pdf",
+      "url": "https://trustedcomputinggroup.org/wp-content/uploads/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_Pub.pdf",
+      "sha256": "e6a031c5811b28bf7993d4b93de845f12da5f3e61c86131187b09ae186836cb5",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-25T18:30:50.858212+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/TCG-PC-Client-Platform-TPM-Profile-v1.07.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-25T18:30:44.634766+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "The saved copy was TCG's resource listing page; the specification PDF (Version 1.07, March 23, 2026) is now the evidence"
     }
   ],
   "archivedEntries": [
@@ -33224,7 +33270,12 @@
       "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-17T13:04:32.359366+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "ok": false,
+      "superseded_file": "_superseded-10252026/library/TCG-PC-Client-Platform-TPM-Profile-v1.07.html",
+      "supersededAt": "2026-10-25T18:30:44.634766+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "The saved copy was TCG's resource listing page; the specification PDF (Version 1.07, March 23, 2026) is now the evidence — replaced by TCG-PC-Client-Platform-TPM-Profile-v1.07.pdf"
     },
     {
       "refId": "TCG-EK-Credential-Profile-v2.7",
@@ -33239,7 +33290,12 @@
       "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-17T13:04:32.378661+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "ok": false,
+      "superseded_file": "_superseded-10252026/library/TCG-EK-Credential-Profile-v2.7.html",
+      "supersededAt": "2026-10-25T18:30:38.344454+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "The saved copy was TCG's resource listing page; the specification PDF (Version 2.7, March 16, 2026) is now the evidence — replaced by TCG-EK-Credential-Profile-v2.7.pdf"
     },
     {
       "refId": "TCG-TPM-2.0-Library-v1.85-Errata",
