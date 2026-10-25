@@ -256,9 +256,8 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
               </p>
               <p className="text-xs text-muted-foreground">
                 X25519+ML-KEM-768 adds about 1.2 KB to ClientHello (1,216-byte key share vs 32
-                bytes) but minimal compute overhead on modern hardware. Most organizations see
-                &lt;7% TLS latency increase on LAN. Test WAN separately — fragmentation risk
-                increases with distance.
+                bytes) but minimal compute overhead on modern hardware. Test WAN separately —
+                fragmentation risk increases with distance.
               </p>
             </div>
           </div>
@@ -378,8 +377,8 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             <p className="text-xs">
               TLS session resumption allows returning clients to reuse previously negotiated
               parameters via Pre-Shared Keys (PSK), skipping the expensive PQC key exchange
-              entirely. This eliminates <strong>80-90%</strong> of PQC performance impact for
-              returning users.
+              entirely. VIAVI&apos;s white paper says this eliminates <strong>80-90%</strong> of the
+              PQC performance impact for returning users.
             </p>
             <p className="text-xs mt-2">
               Combined with hardware acceleration (AVX2/AVX-512 or FPGA accelerators for lattice
@@ -403,7 +402,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             <strong>lower throughput</strong>,{' '}
             <strong>client response times an order of magnitude higher</strong>, and{' '}
             <strong>VPN tunnel setup rates cut to a fraction</strong>. The paper sits behind a
-            registration wall, so the exact figures are not reproduced here. Those results represent
+            registration wall, so its other figures are not reproduced here. Those results represent
             the floor — enterprise middlebox chains multiply them further.
           </p>
         </div>
