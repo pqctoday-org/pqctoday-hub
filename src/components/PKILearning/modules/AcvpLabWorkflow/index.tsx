@@ -44,6 +44,7 @@ export const AcvpLabWorkflowModule: FC = () => (
       <AcvpLabExercises onOpenWorkshopStep={(step) => api.openWorkshopStep(step)} />
     )}
     workshopParts={PARTS}
+    toolsIntro="These products hold NIST CAVP algorithm validation certificates for algorithms such as ML-KEM and ML-DSA. They are products that were tested, not tools for running ACVP tests."
     renderWorkshopStep={(index, configKey) => {
       const body = (() => {
         switch (index) {

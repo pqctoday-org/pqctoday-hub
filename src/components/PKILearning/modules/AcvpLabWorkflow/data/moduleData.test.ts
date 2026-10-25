@@ -106,10 +106,10 @@ describe('acvp-lab-workflow concept checks', () => {
 })
 
 describe('acvp-lab-workflow review status', () => {
-  it('shows the owner sign-off renewed on 24 October 2026 and is not marked as a draft (owner decisions, 22-24 Oct 2026)', () => {
+  it('shows the owner sign-off renewed on 25 October 2026 and is not marked as a draft (owner decisions, 22-25 Oct 2026)', () => {
     expect(REVIEW_STATUS.state).toBe('owner-signed-off')
     expect(REVIEW_STATUS.label).toBe(
-      'Reviewed and signed off by the PQC Today owner on 24 October 2026'
+      'Reviewed and signed off by the PQC Today owner on 25 October 2026'
     )
     expect(REVIEW_STATUS.label).not.toMatch(/draft/i)
     expect(manifest.workInProgress).toBeUndefined()

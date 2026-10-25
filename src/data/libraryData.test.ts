@@ -135,27 +135,16 @@ describe('libraryData', () => {
     // Rows whose update date still precedes the publication date and have no date
     // the document itself supports. A row leaves this list when its dates are
     // corrected, and no row may join it.
-    const KNOWN_OUT_OF_ORDER = [
-      '3GPP-PQC-Study-2025',
-      'ANSSI PQC Position Paper',
-      'APRA-CPS-234',
-      'CA/Browser Forum Ballot SC-PQC',
-      'CAB-Forum-SC-081v3',
-      'CMMC-SPRS-Guidance',
-      'Deloitte-TechTrends-2025-Quantum',
-      'EO-14028',
-      'EO-14144',
-      'EUCC v2.0 ACM',
-      'FrodoKEM-SCA-Countermeasures-2024',
-      'IETF RFC 5649',
-      'ISO/IEC 14888-4:2024',
-      'InfoSec-Global-Hype-Cycles',
-      'Microsoft-QSP-Roadmap-2025',
-      'RFC 9581',
-      'Spherity-PQC-Identity-Corridors-2026',
-      'UK-DSIT-CNI-PQC-Perspectives-2025',
-      'draft-ietf-mls-combiner-02',
-    ]
+    const KNOWN_OUT_OF_ORDER = ['ANSSI PQC Position Paper']
+
+    it('describes the OpenPGP draft entry as an Internet-Draft, not as the released RFC 9581', () => {
+      const item = libraryData.find((i) => i.referenceId === 'RFC 9581')!
+      // RFC 9581 is "CBOR Tags for Time, Duration, and Period" (August 2024); the entry is
+      // draft-ietf-openpgp-persistent-symmetric-keys, which has no RFC number.
+      expect(item.documentStatus).toBe('Internet-Draft')
+      expect(item.initialPublicationDate).toBe('2024-07-08')
+      expect(item.lastUpdateDate).toBe('2026-02-10')
+    })
 
     it('every publication and last-update date parses as a real date', () => {
       for (const item of libraryData) {

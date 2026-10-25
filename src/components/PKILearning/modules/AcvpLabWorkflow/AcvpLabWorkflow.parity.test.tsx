@@ -5,7 +5,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
@@ -36,6 +36,24 @@ describe('AcvpLabWorkflowModule render parity', () => {
     }
   })
 
+  it('says on the Tools & Products tab that the listed products were tested, not ACVP test tools', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter>
+          <AcvpLabWorkflowModule />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    const tab = screen.getByRole('tab', { name: 'Tools & Products' })
+    fireEvent.mouseDown(tab)
+    fireEvent.click(tab)
+    expect(screen.getByTestId('tools-intro')).toHaveTextContent(
+      'These products hold NIST CAVP algorithm validation certificates for algorithms such as ML-KEM and ML-DSA. They are products that were tested, not tools for running ACVP tests.'
+    )
+    // the shell writes the open tab to the URL; leave a clean address for the next test
+    window.history.replaceState(null, '', '/')
+  })
+
   it('shows the review status and the required validation disclaimer on the Learn tab', () => {
     render(
       <EmbedProvider>
@@ -46,7 +64,7 @@ describe('AcvpLabWorkflowModule render parity', () => {
     )
     const notice = screen.getByTestId('acvp-lab-status-notice')
     expect(notice).toHaveTextContent(
-      'Reviewed and signed off by the PQC Today owner on 24 October 2026'
+      'Reviewed and signed off by the PQC Today owner on 25 October 2026'
     )
     expect(notice).not.toHaveTextContent('awaiting re-sign-off')
     expect(notice).not.toHaveTextContent(/draft/i)

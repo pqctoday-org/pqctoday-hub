@@ -106,6 +106,23 @@ describe('ModuleShell', () => {
     expect(screen.queryByRole('heading', { name: 'Test Module' })).not.toBeInTheDocument()
   })
 
+  it('shows the tools intro above the Tools & Products list, and nothing when it is not given', () => {
+    const openTools = () => {
+      const tab = screen.getByRole('tab', { name: 'Tools & Products' })
+      fireEvent.mouseDown(tab)
+      fireEvent.click(tab)
+    }
+    const { unmount } = renderShell(
+      <ModuleShell manifest={base} learn={<div>L</div>} toolsIntro="These products were tested." />
+    )
+    openTools()
+    expect(screen.getByTestId('tools-intro')).toHaveTextContent('These products were tested.')
+    unmount()
+    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
+    openTools()
+    expect(screen.queryByTestId('tools-intro')).not.toBeInTheDocument()
+  })
+
   it('respects a reduced (divergent) tab set', () => {
     const reduced: ModuleManifest = {
       ...base,

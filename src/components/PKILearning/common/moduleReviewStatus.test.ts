@@ -96,10 +96,10 @@ describe('the five certification modules show one review status', () => {
     })
   }
 
-  it('ACVP, signed off again on 24 October 2026, shows the signed-off state with the shared words', () => {
-    expect(MODULE_LAST_REVIEWED['acvp-lab-workflow']).toBe('2026-10-24')
+  it('ACVP, signed off again on 25 October 2026, shows the signed-off state with the shared words', () => {
+    expect(MODULE_LAST_REVIEWED['acvp-lab-workflow']).toBe('2026-10-25')
     expect(REVIEW_STATUS.label).toBe(
-      'Reviewed and signed off by the PQC Today owner on 24 October 2026'
+      'Reviewed and signed off by the PQC Today owner on 25 October 2026'
     )
     expect(REVIEW_STATUS.label).not.toBe(AWAITING_RESIGNOFF_LABEL)
     expect(REVIEW_STATUS.detail).toContain(NOT_LAB_REVIEWED)
