@@ -64,8 +64,8 @@ describe('conceptXwalkData', () => {
     expect(rfc8446?.confidenceScore).toBe(85)
   })
 
-  it('NSA CNSA 2.0 → FIPS 203/204/205 subset_of edges exist (executive derived via Five Eyes)', () => {
-    const targets = ['FIPS 203', 'FIPS 204', 'FIPS 205']
+  it('NSA CNSA 2.0 → FIPS 203/204 subset_of edges exist (executive derived via Five Eyes)', () => {
+    const targets = ['FIPS 203', 'FIPS 204']
     for (const target of targets) {
       const edge = conceptXwalkData.find(
         (e) => e.fromConcept === 'NSA CNSA 2.0' && e.toConcept === target
@@ -73,6 +73,21 @@ describe('conceptXwalkData', () => {
       expect(edge, `NSA CNSA 2.0 → ${target} missing`).toBeDefined()
       expect(edge?.relationshipType).toBe('subset_of')
     }
+  })
+
+  it('NSA CNSA 2.0 has no subset_of edge to FIPS 205 (the NSA FAQ v2.2 says SLH-DSA is not part of CNSA)', () => {
+    const edge = conceptXwalkData.find(
+      (e) => e.fromConcept === 'NSA CNSA 2.0' && e.toConcept === 'FIPS 205'
+    )
+    expect(edge).toBeUndefined()
+  })
+
+  it('the NSA CNSA 2.0 → NIST CSWP 39 edge does not list SLH-DSA among the mandated algorithms', () => {
+    const edge = conceptXwalkData.find(
+      (e) => e.fromConcept === 'NSA CNSA 2.0' && e.toConcept === 'NIST CSWP 39'
+    )
+    expect(edge).toBeDefined()
+    expect(edge?.evidence).not.toContain('SLH-DSA')
   })
 
   it('Five Eyes national authority edges exist for AU, UK, CA', () => {
