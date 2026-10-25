@@ -164,22 +164,11 @@ describe('certification engineer next steps follow the role path', () => {
     // Tools that practise Entropy & Randomness hand on to the lesson after it.
     '/playground/entropy-test': '/learn/hsm-pqc',
     '/playground/drbg-demo': '/learn/hsm-pqc',
+    // Tools the later lessons lead to hand on to the lesson after the one they practise.
+    '/playground/slh-dsa': '/learn/hybrid-crypto',
+    '/playground/hybrid-certs': '/learn/secure-boot-pqc',
+    '/playground/firmware-signing': '/learn/pci-certification',
   }
-
-  /**
-   * Path lessons with no override of their own yet: they show the shared exit for now.
-   * Fixed in a later release; remove an entry when its override lands (an override that
-   * lands early does not fail this test, it only makes the entry unnecessary).
-   */
-  const NO_OVERRIDE_YET = [
-    'hsm-pqc',
-    'cc-eucc-certification',
-    'stateful-signatures',
-    'slh-dsa',
-    'hybrid-crypto',
-    'secure-boot-pqc',
-    'pci-certification',
-  ]
 
   it('every override names an existing route, and a Build tab that exists', () => {
     for (const [route, step] of Object.entries(overrides)) {
@@ -211,9 +200,52 @@ describe('certification engineer next steps follow the role path', () => {
     }
   })
 
-  it('every path lesson has an override, except those listed as not yet done', () => {
-    const missing = pathLessons.filter((id) => !overrides[lessonRoute(id)])
-    expect(missing.filter((id) => !NO_OVERRIDE_YET.includes(id))).toEqual([])
+  /**
+   * The lesson after `id` on the role path, or undefined for the last lesson. The quiz that closes
+   * the path is not a lesson, so the last lesson has no successor to point at.
+   */
+  const successorOf = (id: string): string | undefined => pathLessons[pathLessons.indexOf(id) + 1]
+
+  it('every lesson on the path leads to the next lesson on the path, straight away or through its own tool', () => {
+    for (const id of pathLessons) {
+      const next = successorOf(id)
+      if (next === undefined) continue
+      const card = nextStepFor(lessonRoute(id), 'cert-engineer')
+      expect(card, `${id} has no next-step card`).toBeDefined()
+      if (card?.to === lessonRoute(next)) continue
+      // Otherwise the card is the lesson's own practice tool, and that tool's card must go on to the
+      // next lesson on the path, so the role is never sent off its path.
+      expect(card?.to.startsWith('/playground/'), `${id} -> ${card?.to}`).toBe(true)
+      const tool = nextStepFor((card?.to ?? '').split('?')[0], 'cert-engineer')
+      expect(tool?.to, `${id} -> ${card?.to} -> ${tool?.to}`).toBe(lessonRoute(next))
+    }
+  })
+
+  it('the lesson that closes the path is the only one without a successor, and the quiz follows it', () => {
+    const withoutNext = pathLessons.filter((id) => successorOf(id) === undefined)
+    expect(withoutNext).toEqual(['pci-certification'])
+    const full = PERSONAS['cert-engineer'].recommendedPath
+    expect(full[full.indexOf('pci-certification') + 1]).toBe('quiz')
+  })
+
+  it('every override that hands on to a path lesson reads "Next on your path: ..."', () => {
+    for (const [route, step] of Object.entries(overrides)) {
+      // Home and the Learn index have their own wording (pinned above).
+      if (route === '/' || route === '/learn') continue
+      if (!pathLessons.includes(step.to.replace('/learn/', ''))) continue
+      expect(step.label, route).toMatch(/^Next on your path: /)
+    }
+  })
+
+  it('names the missing exits: HSM, Common Criteria and the SLH-DSA tool', () => {
+    expect(nextStepFor('/learn/hsm-pqc', 'cert-engineer')?.to).toBe('/learn/pqc-testing-validation')
+    expect(nextStepFor('/learn/cc-eucc-certification', 'cert-engineer')?.to).toBe(
+      '/learn/stateful-signatures'
+    )
+    expect(nextStepFor('/playground/slh-dsa', 'cert-engineer')?.to).toBe('/learn/hybrid-crypto')
+    // Other roles keep the shared exits.
+    expect(nextStepFor('/learn/hsm-pqc', 'executive')).toEqual(nextStepFor('/learn/hsm-pqc'))
+    expect(nextStepFor('/playground/slh-dsa', null)?.to).toBe('/learn/soc-implementation-pqc')
   })
 
   it('the path order used here is the persona path (guards the test itself)', () => {
