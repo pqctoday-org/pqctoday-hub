@@ -23445,6 +23445,24 @@
       "replacedAt": "2026-10-25T18:30:44.634766+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "The saved copy was TCG's resource listing page; the specification PDF (Version 1.07, March 23, 2026) is now the evidence"
+    },
+    {
+      "refId": "draft-ietf-openpgp-persistent-symmetric-keys",
+      "filename": "draft-ietf-openpgp-persistent-symmetric-keys.txt",
+      "sizeBytes": 24798,
+      "contentType": "text/plain",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-openpgp-persistent-symmetric-keys-04.txt",
+      "sha256": "5684e757f5a1778d8b519acad56a39b0f370b264ce779c3984f28e84857a9d24",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-25T18:30:51.517810+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/draft-ietf-openpgp-persistent-symmetric-keys.txt",
+      "status": "downloaded",
+      "replacedAt": "2026-10-25T18:30:51.367845+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "New entry for the Internet-Draft previously listed as RFC 9581; the saved copy is version 04 of 15 September 2026"
     }
   ],
   "archivedEntries": [
