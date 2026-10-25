@@ -379,7 +379,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
     researcher:
       'Sort by Publication date or Most cited; every document panel shows its type, region, last-verified date, Trust score, Peer reviewed status and "Previous revisions", with "Open document" going to the original source.',
     'cert-engineer':
-      'The "Certification starter set" quick view shows seven documents whatever your role: FIPS 203–205, SP 800-208, SP 800-227, the CMVP manual and the FIPS 140-3 Implementation Guidance; a search lists an exact standard number or title first, and your categories lead with Compliance & Certification.',
+      'The "Certification starter set" quick view shows seven documents whatever your role: FIPS 203–205, SP 800-208, SP 800-227, the CMVP manual and the FIPS 140-3 Implementation Guidance; a search lists an exact standard number or title first, and the list narrows to your five focus categories, tinted in the category list.',
     ops: '"Start here — picked for" your role sits above the doors; the "Certification starter set" quick view lists seven documents (FIPS 203–205, SP 800-208 and 227, the CMVP manual, the FIPS 140-3 IG), and Lifecycle status filters to Published so you are not configuring against a draft.',
     curious:
       'Pick the "Learn" door for research, analysis and explainers; "Recently changed" at the top shows what was just added or updated, and the search box takes plain words like "hybrid TLS".',
