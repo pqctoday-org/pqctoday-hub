@@ -21,6 +21,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import { SC27_MEMBERS } from '../data'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -287,7 +288,7 @@ const Step2GovVsNonGov: React.FC = () => (
               {[
                 {
                   body: 'ISO/IEC JTC 1/SC 27',
-                  role: 'International standards (56 participating national bodies)',
+                  role: `International standards (${SC27_MEMBERS.participating} participating national bodies, ${SC27_MEMBERS.source}, read ${SC27_MEMBERS.readOn})`,
                 },
                 { body: 'IETF', role: 'Internet protocols (open membership, rough consensus)' },
                 { body: 'ETSI', role: 'European telecom standards (800+ member orgs)' },
@@ -389,7 +390,7 @@ const Step3GlobalRegional: React.FC = () => (
               name: 'ISO/IEC JTC 1/SC 27',
               role: 'Information security standards',
               pqc: 'ISO/IEC 14888-4 (hash-based sigs), ISO/IEC 18033-2 Amd 2 (ML-KEM)',
-              members: '56 participating and 38 observing national bodies',
+              members: `${SC27_MEMBERS.participating} participating and ${SC27_MEMBERS.observing} observing national bodies (${SC27_MEMBERS.source}, read ${SC27_MEMBERS.readOn})`,
             },
             {
               name: 'IETF',

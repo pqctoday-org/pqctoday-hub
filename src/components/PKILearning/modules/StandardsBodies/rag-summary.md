@@ -31,7 +31,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **NIST** — US federal agency. Led 6-year PQC competition (2016–2024). Published FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA) in August 2024. Governmental, regional (US), globally influential.
 
-**ISO/IEC JTC 1/SC 27** — International standards body. National member bodies (56 participating and 38 observing in SC 27) ballot cryptographic standards. 5-stage process (WD → IS). Published ISO/IEC 14888-4:2024 (XMSS/LMS). Non-governmental, global.
+**ISO/IEC JTC 1/SC 27** — International standards body. National member bodies (56 participating and 38 observing in SC 27: ISO committee page, participation view, read 25 October 2026) ballot cryptographic standards. 5-stage process (WD → IS). Published ISO/IEC 14888-4:2024 (XMSS/LMS). Non-governmental, global.
 
 **ETSI** — European SDO. TC CYBER produces normative Technical Specifications (TS, contains "shall") and Technical Reports (TR, guidance). Key PQC outputs: ETSI TS 103 744 (quantum-safe hybrid key establishment: it combines a traditional exchange such as ECDH with ML-KEM, and covers key establishment only), TR 103 619 (migration guide). Non-governmental, regional (EU).
 
@@ -122,6 +122,6 @@ NIST FIPS 203 → CAVP algorithm validation (via ACVP) → CMVP module certifica
 3. **ANSSI's position**: recommends hybrid PQC (classical + PQC) and makes it mandatory in the French regulated perimeter; hash-based signatures (SLH-DSA, XMSS, LMS) are the exception to systematic hybridisation.
 4. **CCRA vs EUCC**: the CCRA is the global arrangement (36 countries; recognition limited to collaborative Protection Profiles or up to EAL2 + ALC_FLR); EUCC is a separate EU scheme set up by Commission Implementing Regulation (EU) 2024/482 that applies Common Criteria under EU rules. Certification bodies issue EUCC certificates, national cybersecurity certification authorities supervise, and ENISA publishes.
 5. **IETF vs NIST**: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).
-6. **ISO/IEC vs ETSI**: ISO/IEC SC 27 is global (56 participating and 38 observing national bodies, 5-stage IS process); ETSI is European (800+ members, TC-based TS/TR process).
+6. **ISO/IEC vs ETSI**: ISO/IEC SC 27 is global (56 participating and 38 observing national bodies on the ISO committee page, read 25 October 2026; 5-stage IS process); ETSI is European (800+ members, TC-based TS/TR process).
 7. **BSI vs ANSSI**: Both are governmental regulatory agencies for their respective countries; BSI = Germany, ANSSI = France.
 8. **KpqC (NSR/NIS research group) vs NIST**: Parallel national competition; Korean algorithms (HAETAE, AIMer, SMAUG-T, NTRU+) are NOT the same as FIPS 203/204/205.
