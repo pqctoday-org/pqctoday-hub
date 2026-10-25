@@ -390,7 +390,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     blurb:
       "This Studio's LMS/HSS panel generates and signs via a separate WASM engine, not openssl itself — because upstream OpenSSL genuinely does not support LMS/HSS key generation or signing. Don't take that on faith: break the rule yourself and read the real error.",
     setup:
-      'OpenSSL 3.6 added LMS support (SP 800-208 / RFC 8554) as VERIFICATION ONLY. An OpenSSL maintainer confirmed on GitHub that stateful hash-based signature key generation is intentionally out of scope for OpenSSL core — "should be hardware, not software" (github.com/openssl/openssl/discussions/29619) — because a leaked or reused LMS one-time key breaks the entire scheme\'s security, and software has no way to guarantee a private key is never reused across a restore-from-backup.',
+      'OpenSSL 3.6 added LMS support (SP 800-208 / RFC 8554) as VERIFICATION ONLY. An OpenSSL maintainer confirmed on GitHub that stateful hash-based signature key generation is intentionally out of scope for OpenSSL core — "this should be done in hardware not software" (github.com/openssl/openssl/discussions/29619) — because a leaked or reused LMS one-time key breaks the entire scheme\'s security, and software has no way to guarantee a private key is never reused across a restore-from-backup.',
     steps: [
       {
         op: 'genpkey -algorithm LMS -out learn-l5-lms.key',
