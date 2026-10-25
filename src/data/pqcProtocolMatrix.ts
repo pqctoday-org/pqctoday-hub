@@ -2290,13 +2290,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/RFC_9580.html',
       },
       {
-        id: 'RFC-9581',
-        title: 'RFC 9581 — Persistent Symmetric Keys in OpenPGP',
-        url: 'https://datatracker.ietf.org/doc/html/rfc9581',
-        date: '2024-07',
-        localFile: '/library/RFC_9581.html',
-      },
-      {
         id: 'RFC-9980',
         title: 'RFC 9980 — Post-Quantum Cryptography in OpenPGP',
         url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
@@ -2309,6 +2302,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'draft-ietf-openpgp-nist-bp-comp-05 — NIST + Brainpool composites (In WG Last Call)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-nist-bp-comp/',
         date: '2026-09-24',
+      },
+      {
+        id: 'draft-ietf-openpgp-persistent-symmetric-keys-04',
+        title:
+          'draft-ietf-openpgp-persistent-symmetric-keys-04 — Persistent Symmetric Keys in OpenPGP (Internet-Draft, not an RFC)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-persistent-symmetric-keys/',
+        date: '2026-09-15',
       },
     ],
     dimensions: {

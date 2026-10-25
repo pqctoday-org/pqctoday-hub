@@ -10,8 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'stateful-signatures',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-24',
+  lastReviewed: '2026-10-25',
+  lastEdited: '2026-10-25',
 
   standards: [
     getStandard('FIPS 205'), // SLH-DSA (Step 4 live demo)
@@ -38,6 +38,9 @@ export const content: ModuleContent = {
     // DECLARED 2026-08-23: this module names RFC 3161 as the timestamping protocol behind a mechanism it describes. RFC 5816
     // updates but does not obsolete it, so the protocol spec is the citation and cited nothing for it.
     getStandard('RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp'),
+    // The "What the lab tests" panel quotes these two; declared so a reader can open them.
+    getStandard('NIST-FIPS140-3-IG-PQC'),
+    getStandard('NSA CNSA 2.0 FAQ'),
   ],
 
   algorithms: [

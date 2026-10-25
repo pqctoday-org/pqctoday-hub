@@ -19,7 +19,12 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { getStandard } from '@/data/standardsRegistry'
 import { UEFI_KEY_TYPES, BOOT_CHAIN_STAGES, FIRMWARE_ALGO_SIZES } from '../data/secureBootConstants'
-import { FIRMWARE_VENDORS, VENDOR_STATUS_LABELS } from '../data/secureBootProviderData'
+import {
+  FIRMWARE_VENDORS,
+  VENDOR_MATRIX_CHECKED_ON,
+  VENDOR_STATUS_LABELS,
+  formatVendorDate,
+} from '../data/secureBootProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -225,11 +230,13 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         </div>
 
         <p>
-          The <strong>db size impact</strong> is a key operational concern: ML-DSA-65 X.509
-          certificates are approximately <strong>6 KB</strong> vs{' '}
-          <strong>1.2 KB for RSA-2048</strong>. UEFI NVRAM typically allocates 32–64 KB for Secure
-          Boot variables. A full PQC db migration may require platform NVRAM reallocation — verify
-          UEFI NVRAM capacity before planning.
+          The <strong>db size impact</strong> is a key operational concern: a minimal self-signed
+          ML-DSA-65 X.509 certificate is about <strong>5.5 KB</strong> (5,538 bytes) against about{' '}
+          <strong>0.8 KB</strong> (809 bytes) for RSA-2048, measured with OpenSSL 3.6.3.
+          Certificates with more fields are larger. Secure Boot variable storage is
+          platform-specific; firmware reports it through QueryVariableInfo() (UEFI 2.11 section
+          8.2.4). A full PQC db migration may require platform NVRAM reallocation — verify UEFI
+          NVRAM capacity before planning.
         </p>
 
         {/* Boot chain visual */}
@@ -289,8 +296,6 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               <li>&bull; Public key: 256 bytes</li>
               <li>&bull; Signature: 256 bytes</li>
               <li>&bull; Quantum-safe: No (Shor&apos;s algorithm)</li>
-              <li>&bull; Signing speed: ~1ms</li>
-              <li>&bull; Verification: ~0.3ms</li>
             </ul>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -299,8 +304,6 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               <li>&bull; Public key: 1,952 bytes (7.6&times; larger)</li>
               <li>&bull; Signature: 3,309 bytes (12.9&times; larger)</li>
               <li>&bull; Quantum-safe: Yes (NIST Level 3)</li>
-              <li>&bull; Signing speed: ~1.5ms (comparable; indicative)</li>
-              <li>&bull; Verification: ~0.6ms (faster than RSA verify; indicative)</li>
             </ul>
           </div>
         </div>
@@ -934,14 +937,20 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
                   >
                     {status.label}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">{vendor.roadmapYear}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    Source dated {formatVendorDate(vendor.statementDate)}
+                  </span>
                 </div>
                 <p className="text-xs text-foreground/80 mb-2">{vendor.notes}</p>
-                <div className="text-[10px] text-primary/80">Target: {vendor.pqcAlgorithm}</div>
+                <div className="text-[10px] text-primary/80">PQC: {vendor.pqcAlgorithm}</div>
               </div>
             )
           })}
         </div>
+        <p className="text-xs text-muted-foreground">
+          Checked on {VENDOR_MATRIX_CHECKED_ON}. Each card shows only what its linked sources state;
+          the sources are listed in the Firmware Vendor Matrix.
+        </p>
 
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-2">

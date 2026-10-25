@@ -693,7 +693,7 @@ export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
     recommendedScheme: 'LMS',
     recommendedParams: 'LMS H20/W4 or HSS (2-level, H10/W4)',
     rationale:
-      'Firmware updates are infrequent. LMS simplicity suits resource-constrained devices. HSS extends capacity via hierarchy.',
+      'Firmware updates are infrequent. LMS simplicity suits resource-constrained devices. HSS extends capacity via hierarchy, but NSA does not allow HSS in National Security Systems (CNSA 2.0 FAQ v2.2, p. 11).',
     maxSignaturesNeeded: '~10,000 over device lifetime',
     stateStorageRequirement: 'Secure non-volatile storage (TPM, secure element)',
   },
@@ -704,7 +704,7 @@ export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
     recommendedScheme: 'XMSS',
     recommendedParams: 'XMSS-SHA2_20_256 or XMSS^MT-SHA2_20/2_256',
     rationale:
-      'Higher signing volume than firmware. XMSS multi-tree variant provides larger key space. Better state recovery mechanisms.',
+      'Higher signing volume than firmware. The XMSS^MT multi-tree variant gives a larger key space, but NSA does not allow it in National Security Systems (CNSA 2.0 FAQ v2.2, p. 11).',
     maxSignaturesNeeded: '~100,000 over key lifetime',
     stateStorageRequirement: 'HSM or secure key management system with atomic state updates',
   },
@@ -726,7 +726,7 @@ export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
     recommendedScheme: 'XMSS^MT',
     recommendedParams: 'XMSS^MT-SHA2_40/4_256',
     rationale:
-      'Multi-tree structure provides massive signing capacity. Long-term security from hash-based assumptions. Suitable for PKI-integrated workflows.',
+      'Multi-tree structure raises the signing capacity, and security rests on hash-function assumptions. NSA does not allow XMSS^MT in National Security Systems (CNSA 2.0 FAQ v2.2, p. 11).',
     maxSignaturesNeeded: '~1,000,000+ over organizational lifetime (indicative)',
     stateStorageRequirement: 'Enterprise HSM with transactional state management',
   },

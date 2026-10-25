@@ -1150,15 +1150,16 @@ export function StatefulSignaturesDemo() {
                   </div>
                 </div>
 
-                {/* Multi-tree production variants comparison */}
+                {/* Multi-tree variants comparison */}
                 <div className="p-4 border border-border rounded-lg bg-muted/20">
                   <h3 className="text-sm font-bold text-foreground mb-3">
-                    Multi-Tree Production Variants: HSS vs XMSS^MT
+                    Multi-Tree Variants: HSS vs XMSS^MT
                   </h3>
                   <p className="text-xs text-muted-foreground mb-3">
-                    Single-tree LMS and XMSS are primarily for learning. Production deployments use
-                    their multi-tree variants to dramatically increase the number of available
-                    signatures without proportionally increasing key generation time.
+                    Multi-tree variants (HSS, XMSS^MT) raise the number of signatures per key
+                    without long key generation. NSA CNSA 2.0 approves only the single-tree LMS and
+                    XMSS for National Security Systems; HSS and XMSS^MT are not allowed (FAQ v2.2,
+                    p. 11).
                   </p>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs border-collapse">
@@ -1180,11 +1181,6 @@ export function StatefulSignaturesDemo() {
                             'Structure',
                             'L independently generated LMS trees; each tree uses its own random seed',
                             'All sub-trees derived from a single master seed via a PRF',
-                          ],
-                          [
-                            'Backup/Recovery',
-                            'Each level can be regenerated independently from its seed; partial compromise is isolated',
-                            'Compromising the master seed compromises the entire hierarchy',
                           ],
                           [
                             'PKCS#11 v3.2',
@@ -1283,7 +1279,7 @@ export function StatefulSignaturesDemo() {
                           [
                             'Catastrophic failure mode',
                             'State rollback → OTS key reuse → full key compromise',
-                            'No equivalent failure — individual randomness per signature',
+                            'No counter to roll back. A FORS key can be selected again, and its security degrades gradually as signatures accumulate (FIPS 205 section 8).',
                           ],
                           [
                             'Key generation',

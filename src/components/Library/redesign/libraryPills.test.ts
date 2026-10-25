@@ -43,6 +43,18 @@ describe('documentDatesText — the document’s own dates', () => {
     expect(documentDatesText('', '2026-08-19')).toBe('Updated Aug 19, 2026')
   })
 
+  it('omits the update when it is earlier than the first publication', () => {
+    expect(documentDatesText('2025-10', '2025-04-01')).toBe('First published Oct 2025')
+    expect(documentDatesText('2026-04-09', '2026-04-01')).toBe('First published Apr 9, 2026')
+  })
+
+  it('compares at the coarser precision, so a later day in the same month still counts as an update', () => {
+    expect(documentDatesText('2025-10', '2025-10-15')).toBe('First published Oct 2025')
+    expect(documentDatesText('2025-09', '2025-10-15')).toBe(
+      'First published Sep 2025 · updated Oct 15, 2025'
+    )
+  })
+
   it('returns blank when neither date is recorded', () => {
     expect(documentDatesText('', '')).toBe('')
     expect(documentDatesText('  ', ' ')).toBe('')

@@ -5,7 +5,7 @@
       "schemaId": "ML-KEM/encapDecap/FIPS203",
       "vsId": 42,
       "irCanonicalSha256": "4f399a4264a71fe9ddc6e6ee02cbf28c05388a6438307158067f297fe5937715",
-      "planCanonicalSha256": "7e482ef08b1619f9941a931fb40769345eeeb5d466e35878e34d8e8e6efbbd4c",
+      "planCanonicalSha256": "3cc32dc7f5a3a5396a4937b04fdf9cda39911c4e224a73eaa50df32b02c29df2",
       "responseCanonicalSha256": "6110c774fbbafc21aa559fb7099b2a8dcd619cb9a95aa20236f21426eca805ed",
       "responseFile": "ML-KEM-encapDecap-FIPS203.response.json",
       "counts": {

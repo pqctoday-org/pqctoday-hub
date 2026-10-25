@@ -144,6 +144,11 @@ const anchorName = `${ANCHOR_SCENARIO.name} (${ANCHOR_SCENARIO.fictionalLabel})`
 export const PciPtsApproval = () => (
   <Prose>
     <p>
+      This lesson covers four PCI programmes: PTS HSM, PIN Security, P2PE and key management
+      operations. It does not cover PTS POI, card production and provisioning, 3-D Secure, or MPoC
+      and CPoC.
+    </p>
+    <p>
       PCI has two very different kinds of evidence, and most mistakes about payment HSMs come from
       mixing them up. <strong>Device approval</strong> says a product model was designed and
       evaluated to PCI’s device requirements. <strong>Entity assessment</strong> says an

@@ -28,3 +28,37 @@ describe('STEP_EXERCISES (round 9, wave 2)', () => {
     }
   })
 })
+
+describe('STEP_EXERCISES: SLH-DSA answers follow FIPS 205', () => {
+  const correct = (key: string) => {
+    const ex = STEP_EXERCISES[key]
+    return {
+      ex,
+      text: ex.options[ex.answer],
+      all: `${ex.prompt} ${ex.options.join(' ')} ${ex.why}`,
+    }
+  }
+
+  it('the stateless answer names the few-time FORS keys, not a fresh one-time key per signature', () => {
+    // FIPS 205 Section 3: "a very large set of FORS key pairs ... pseudorandomly select a FORS key";
+    // Section 8: the security of a FORS key "degrades gradually as the number of signatures increases"
+    const { text, all } = correct('stateful-signatures/slh-dsa-live')
+    expect(text).toContain('FORS')
+    expect(text).toContain('keeps no counter')
+    expect(text).toContain('loses security only gradually')
+    expect(all).not.toMatch(/ephemeral|drawn from the private key seed|backed up/)
+    expect(all).toContain('2^64')
+  })
+
+  it('the pre-hash answer says other approved functions are allowed, with at least 8n bits', () => {
+    // FIPS 205 Section 10.2.2: "hash_slh_sign may be used with other hash functions or XOFs";
+    // Section 10.2: "at least 8n bits of classical security strength against both collision
+    // and second preimage attacks"
+    const { ex, text, all } = correct('slh-dsa/context-deterministic')
+    expect(ex.prompt).toContain('(OID not listed in FIPS 205)')
+    expect(text).toContain('allows other approved hash functions or XOFs')
+    expect(text).toContain('8n bits')
+    expect(all).not.toMatch(/Non-FIPS 205|four functions|internal hash families|SHAKE-128/)
+    expect(ex.why).toContain('category 1')
+  })
+})

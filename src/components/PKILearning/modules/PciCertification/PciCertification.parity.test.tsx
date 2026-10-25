@@ -69,7 +69,7 @@ describe('PciCertification render parity', () => {
     // The owner's sign-off and the absence of a laboratory or certification-body review are both
     // stated, in the words every certification module uses (common/moduleReviewStatus.ts).
     expect(notes[0]).toHaveTextContent(
-      'Reviewed and signed off by the PQC Today owner on 22 October 2026.'
+      'Reviewed and signed off by the PQC Today owner on 25 October 2026.'
     )
     expect(notes[0]).toHaveTextContent(NOT_LAB_REVIEWED)
   })

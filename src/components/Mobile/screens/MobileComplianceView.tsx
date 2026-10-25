@@ -191,6 +191,8 @@ export interface MobileCertRecord {
     values: ReadonlyArray<{ value: string; source: string; url?: string }>
   }>
   ccArchivedDate?: string | null
+  /** EUCC: the certificate number the ENISA page shows; `id` is only a generated key. */
+  euccCertificateId?: string
   // FIPS 140-3 (NIST CMVP certificate page)
   cmvpStandard?: string
   cmvpStatus?: string
@@ -1030,7 +1032,7 @@ export function MobileComplianceView({
                         {[
                           r.vendor,
                           recordTypeLabel(r.type),
-                          schemeCertificateId(r) ? `#${r.id}` : null,
+                          schemeCertificateId(r) ? `#${schemeCertificateId(r)}` : null,
                           r.date,
                         ]
                           .filter(Boolean)
@@ -1401,7 +1403,9 @@ function MobileRecordDetailSheet({
               {record.status || 'No status'}
             </span>
             {schemeCertificateId(record) && (
-              <span className="font-mono text-[10.5px] text-muted-foreground">{record.id}</span>
+              <span className="font-mono text-[10.5px] text-muted-foreground">
+                {schemeCertificateId(record)}
+              </span>
             )}
           </div>
           {record.vendor && <p className="text-[11.5px] text-muted-foreground">{record.vendor}</p>}

@@ -37,7 +37,7 @@ const KEY_ANALYSIS_RESULTS: KeyAnalysisResult[] = [
     keyId: 'db',
     risk: 'high',
     finding:
-      'db certificates use RSA-2048. Forged db signatures could allow unauthorized bootloaders. Note: ML-DSA-65 certificates are ~6 KB vs ~1.2 KB RSA (indicative) — db storage impact is significant.',
+      'db certificates use RSA-2048. Forged db signatures could allow unauthorized bootloaders. Note: a minimal self-signed ML-DSA-65 certificate is about 5.5 KB vs about 0.8 KB for RSA-2048 (measured with OpenSSL 3.6.3; real certificates are larger) — db storage impact is significant.',
     pqcAction:
       'Re-issue all db signing certificates with ML-DSA-65. Update UEFI variable storage allocation to accommodate larger PQC certificates. Typical db grows from 8 KB to 40+ KB.',
     effort: 'Medium — certificate re-issuance; db storage may need expansion',
@@ -292,9 +292,10 @@ export const SecureBootChainAnalyzer: React.FC = () => {
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            UEFI NVRAM stores Secure Boot variables (db, dbx, KEK, PK). Many platforms allocate only
-            32–64 KB for NVRAM. A full PQC migration may require BIOS NVRAM reallocation — verify
-            your platform&apos;s NVRAM capacity before deployment.
+            UEFI NVRAM stores Secure Boot variables (db, dbx, KEK, PK). Secure Boot variable storage
+            is platform-specific; firmware reports it through QueryVariableInfo() (UEFI 2.11 section
+            8.2.4). A full PQC migration may require BIOS NVRAM reallocation — verify your
+            platform&apos;s NVRAM capacity before deployment.
           </p>
         </div>
       )}

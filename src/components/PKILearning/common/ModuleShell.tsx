@@ -169,6 +169,9 @@ export interface ModuleShellProps {
    *  cleared — e.g. an assessed risk register or selected jurisdictions. Does
    *  NOT fire if the user cancels the confirm. Omit it and nothing extra clears. */
   onReset?: () => void
+  /** One sentence shown above the Tools & Products list, for a lesson whose listed
+   *  products are things that were tested rather than tools the lesson teaches with. */
+  toolsIntro?: ReactNode
   /** custom modules (Quiz) render their own body — no tabs */
   children?: ReactNode
 }
@@ -302,6 +305,7 @@ export const ModuleShell = ({
   workshopParts,
   renderWorkshopStep,
   onReset,
+  toolsIntro,
   children,
 }: ModuleShellProps) => {
   const isMobileShell = useIsMobileShell()
@@ -695,6 +699,11 @@ export const ModuleShell = ({
           )}
           {present.has('tools') && (
             <TabsContent value="tools">
+              {toolsIntro ? (
+                <p className="mb-3 text-sm text-muted-foreground" data-testid="tools-intro">
+                  {toolsIntro}
+                </p>
+              ) : null}
               <ModuleMigrateTab moduleId={manifest.id} />
             </TabsContent>
           )}

@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export type UEFIKeyType = 'PK' | 'KEK' | 'db' | 'dbx' | 'MOK'
-export type FirmwareVendor =
-  'AMI' | 'Insyde' | 'Phoenix' | 'Tianocore' | 'Dell' | 'HPE' | 'Lenovo' | 'Intel'
+export type FirmwareVendor = 'AMI' | 'Insyde' | 'Tianocore' | 'Dell' | 'HPE' | 'Intel'
 export type TPMVersion = '1.2' | '2.0'
 export type AttestationType = 'measured-boot' | 'tpm-quote' | 'dice' | 'fido-onboard' | 'remote-tls'
 export type SecureBootState = 'disabled' | 'setup' | 'enabled' | 'deployed'
-export type PQCMigrationStatus = 'available' | 'roadmap' | 'evaluation' | 'not-started' | 'merged'
+export type PQCMigrationStatus = 'available' | 'announced' | 'in-progress'
 
 export interface UEFIKeyTypeInfo {
   id: UEFIKeyType
@@ -112,7 +111,7 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     name: 'db',
     fullName: 'Authorized Signature Database',
     description:
-      'Contains allowed signatures, certificate hashes, and image hashes. UEFI firmware checks bootloaders and drivers against db before executing. Larger with PQC certificates due to ML-DSA certificate size (~6 KB vs ~1.2 KB RSA).',
+      'Contains allowed signatures, certificate hashes, and image hashes. UEFI firmware checks bootloaders and drivers against db before executing. Larger with PQC certificates due to ML-DSA certificate size (a minimal self-signed ML-DSA-65 certificate is about 5.5 KB vs about 0.8 KB for RSA-2048, measured with OpenSSL 3.6.3).',
     currentAlgorithm: 'RSA-2048 certificates',
     typicalSize: '~1.2 KB per certificate',
     pqcAlgorithm: 'ML-DSA-65 X.509 certificates',
@@ -262,7 +261,8 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
       'The UEFI firmware itself (AMI APTIO, Insyde H2O, etc.) is the first code to run after power-on. It must be signed by the OEM private key and verified by Intel Boot Guard or AMD Platform Security Processor before UEFI Secure Boot validation begins.',
     signingKey: 'OEM Code Signing Key (stored in Boot Guard ACM / PSP)',
     currentAlgorithm: 'RSA-2048 with SHA-256',
-    pqcStatus: 'Roadmap 2026–2027 (Intel Boot Guard, AMI, Insyde)',
+    pqcStatus:
+      'Vendor statements differ: see the Firmware Vendor Matrix (Intel Boot Guard, AMI, Insyde)',
     forgeryUrgency: 'critical',
   },
   {

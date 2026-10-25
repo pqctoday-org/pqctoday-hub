@@ -67,6 +67,13 @@ describe('VectorSetAnatomy', () => {
     fireEvent.click(within(tg1).getByRole('button', { name: /Unsupported/ }))
     expect(tg1).toHaveTextContent('0 executable · 25 unsupported')
     expect(tg1).toHaveTextContent('C_EncapsulateKey')
+    expect(tg1).toHaveTextContent('the standard PKCS#11 path cannot answer this test')
+    expect(screen.getByTestId('tg-1-step3')).toHaveTextContent(
+      'This is the standard PKCS#11 v3.2 path only. Step 3 answers these tests through the engines’ labelled test-only inputs'
+    )
+    expect(
+      within(tg1).getByRole('button', { name: 'Unsupported through standard PKCS#11' })
+    ).toBeVisible()
   })
 })
 
@@ -98,6 +105,7 @@ describe('ResponseArtifactLab helpers', () => {
     expect(() => summarizeEvidence({ vsId: 42 })).toThrow(/evidenceClass/)
     // A version 2 file has neither the input-kind breakdown nor, here, a comparison.
     expect(s.byInputKind).toBeNull()
+    expect(s.answerKinds).toBeNull()
     expect(s.golden).toBeNull()
   })
 
@@ -113,6 +121,24 @@ describe('ResponseArtifactLab helpers', () => {
         error: 0,
         byInputKind: { standard: 30, 'test-input-m': 75, 'key-import-result': 60 },
       },
+      cases: [
+        { tgId: 1, tcId: 1, disposition: 'answered', mechanismKind: 'pkcs11-v3.2' },
+        {
+          tgId: 2,
+          tcId: 1,
+          disposition: 'answered',
+          mechanismKind: 'pkcs11-v3.2',
+          inputKind: 'test-input-m',
+        },
+        {
+          tgId: 3,
+          tcId: 1,
+          disposition: 'answered',
+          mechanismKind: 'pkcs11-v3.2',
+          inputKind: 'key-import-result',
+        },
+        { tgId: 4, tcId: 1, disposition: 'answered', mechanismKind: 'vendor-defined' },
+      ],
       goldenComparison: {
         matched: 165,
         mismatched: 0,
@@ -123,6 +149,15 @@ describe('ResponseArtifactLab helpers', () => {
     })
     expect(s.evidenceVersion).toBe('pqctoday.acvp-evidence/3')
     expect(s.byInputKind?.['test-input-m']).toBe(75)
+    // The displayed split comes from the cases: the vendor-defined answer is not a standard call.
+    expect(s.answerKinds).toEqual({
+      standardV32: 1,
+      vendorDefined: 1,
+      v33Draft: 0,
+      testInputM: 1,
+      computed: 0,
+      keyImportResult: 1,
+    })
     expect(s.golden).toEqual({
       matched: 165,
       mismatched: 0,

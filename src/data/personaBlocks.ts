@@ -287,7 +287,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       "Lesson L5, An honest LMS, is a claim you can check yourself; the Explore tab's Algorithm Explorer and the glossary's commands and flags are the reference for reproducing each lesson at a terminal.",
     ops: "Use the Workbench's Quick Start, Key Generation, CSR and Certificate forms with Command Preview open: the commands are what your scripts will run, and lesson L10 demystifies the config files they read.",
     'cert-engineer':
-      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build actually supports; the build is educational and not FIPS-validated, so use it to reproduce a vector, not as evidence.",
+      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build actually supports; the build is educational and not FIPS-validated, so use it to see what this build supports, not as evidence; for NIST known-answer samples use the Validation tab.",
   },
   '/playground/api-security-jwt': {
     developer:

@@ -35,6 +35,20 @@ describe('ComplianceTable certificate number', () => {
     expect(screen.getAllByText('No scheme number in the listing').length).toBeGreaterThan(0)
   })
 
+  it('shows the EUCC certificate number, not the generated record id', () => {
+    const eucc: ComplianceRecord = {
+      ...base,
+      id: 'enisa-eucc-3089-2026-000002-i-00',
+      euccCertificateId: 'EUCC-3089-2026-002',
+      type: 'EUCC',
+      source: 'ENISA',
+      productName: 'Nokia Lightspan Access Node MF-2',
+    }
+    render(<ComplianceTable data={[eucc]} onRefresh={vi.fn()} />)
+    expect(screen.getAllByText('EUCC-3089-2026-002').length).toBeGreaterThan(0)
+    expect(screen.queryByText(/enisa-eucc-3089-2026/)).not.toBeInTheDocument()
+  })
+
   it('still shows a real certificate number', () => {
     render(<ComplianceTable data={[base]} onRefresh={vi.fn()} />)
     expect(screen.getAllByText('5560').length).toBeGreaterThan(0)

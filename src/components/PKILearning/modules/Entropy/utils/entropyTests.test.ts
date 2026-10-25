@@ -19,6 +19,8 @@ import {
   repetitionCountTest,
   runAllTests,
   runHealthTests,
+  runsStatistic,
+  runsTest,
   runVisualizationChecks,
 } from './entropyTests'
 import { BAD_SAMPLE_PATTERN_1024 } from './entropyConstants'
@@ -237,5 +239,119 @@ describe('result groups (P0.4)', () => {
     expect(apt.detail).toContain('2 windows')
     expect(repetitionCountTest(data).passed).toBe(true) // no byte repeats back-to-back
     expect(apt.sampleLimit).not.toContain('fewer than the 1024')
+  })
+})
+
+// ── Runs check — NIST SP 800-22 Rev. 1a §2.3 ────────────────────────────────
+
+/** erfc(x) from the Taylor series of erf — independent of the code under test. */
+function erfc(x: number): number {
+  const a = Math.abs(x)
+  if (a > 6) return x > 0 ? 0 : 2
+  let term = a
+  let sum = a
+  for (let k = 1; k < 200; k++) {
+    term *= (-a * a) / k
+    sum += term / (2 * k + 1)
+  }
+  const erf = (2 / Math.sqrt(Math.PI)) * sum
+  return x >= 0 ? 1 - erf : 1 + erf
+}
+
+/** The §2.3.4 step 4 P-value for the tool's Z: erfc(Z / sqrt 2). */
+const nistPValue = (z: number) => erfc(z / Math.SQRT2)
+
+const bitsOf = (text: string) => Array.from(text, (c) => Number(c))
+const bitString = (data: Uint8Array) =>
+  Array.from(data, (b) => b.toString(2).padStart(8, '0')).join('')
+const fromHex = (hex: string) =>
+  Uint8Array.from(hex.match(/../g)!.map((pair) => parseInt(pair, 16)))
+
+/** Seeded generator (mulberry32) so the simulation can never flake on an unlucky draw. */
+function seededBytes(seed: number) {
+  let a = seed >>> 0
+  return (length: number) => {
+    const out = new Uint8Array(length)
+    for (let i = 0; i < length; i += 4) {
+      a = (a + 0x6d2b79f5) >>> 0
+      let t = a
+      t = Math.imul(t ^ (t >>> 15), t | 1)
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+      const word = (t ^ (t >>> 14)) >>> 0
+      for (let j = 0; j < 4 && i + j < length; j++) out[i + j] = (word >>> (8 * j)) & 0xff
+    }
+    return out
+  }
+}
+
+describe('runsTest — NIST SP 800-22 Rev. 1a §2.3', () => {
+  // §2.3.4: "ε = 1001101011, then n=10 and π = 6/10 = 3/5"; step 3:
+  // "V10(obs)=(1+0+1+0+1+1+1+1+0)+1=7" (printed p. 2-6, PDF p. 28); step 4:
+  // "For the example, P-value = erfc( ... ) = 0.147232" and §2.3.6 concludes the
+  // sequence is random because the P-value is >= 0.01 (printed p. 2-7, PDF p. 29).
+  it('reproduces the §2.3.4 worked example: n = 10, pi = 3/5, V_obs = 7, P-value = 0.147232', () => {
+    const s = runsStatistic(bitsOf('1001101011'))
+    expect(s.n).toBe(10)
+    expect(s.pi).toBeCloseTo(3 / 5, 12)
+    expect(s.runs).toBe(7)
+    expect(s.expectedRuns).toBeCloseTo(2 * 10 * (3 / 5) * (2 / 5), 12) // 4.8
+    expect(nistPValue(s.zScore)).toBeCloseTo(0.147232, 6)
+    expect(nistPValue(s.zScore)).toBeGreaterThanOrEqual(0.01) // §2.3.5: random
+    expect(s.zScore).toBeLessThanOrEqual(2.576) // the tool's cutoff agrees
+  })
+
+  // P-values below come from the §2.3.4 formula evaluated outside this code base.
+  it.each([
+    ['0x55 x 16 (alternating)', '55555555555555555555555555555555', 128, 128, 1.1224297e-29],
+    ['0x0f x 16 (slow oscillation)', '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f', 128, 32, 1.5417258e-8],
+    ['random-looking, P = 0.7257', 'f56e67fb50f27264c331011c47c50aae', 128, 62, 0.7256806886581656],
+  ])('matches the §2.3.4 formula on %s', (_label, hex, n, runs, p) => {
+    const data = fromHex(hex)
+    const s = runsStatistic(bitsOf(bitString(data)))
+    expect(s.n).toBe(n)
+    expect(s.runs).toBe(runs)
+    const result = runsTest(data)
+    expect(result.value).toBeCloseTo(s.zScore, 12)
+    expect(nistPValue(result.value)).toBeCloseTo(p, 8)
+    expect(result.passed).toBe(p >= 0.01)
+  })
+
+  it('fails a 128-bit sequence with P = 0.0085 and passes one with P = 0.0132', () => {
+    // The first has V_obs = 49 and pi = 61/128; the second V_obs = 78 and pi = 65/128.
+    const failing = runsTest(fromHex('b61c0c746f6600397083ef184e6f3879'))
+    const passing = runsTest(fromHex('d2536da62574a3874db75c62d7cd504a'))
+    expect(nistPValue(failing.value)).toBeCloseTo(0.008474, 5)
+    expect(failing.passed).toBe(false)
+    expect(nistPValue(passing.value)).toBeCloseTo(0.013203, 5)
+    expect(passing.passed).toBe(true)
+  })
+
+  it('reports Z on the normal scale: the 2.576 cutoff is the SP 800-22 1% P-value', () => {
+    const { threshold } = runsTest(goodSource(128))
+    expect(threshold).toBe(2.576)
+    expect(nistPValue(threshold)).toBeCloseTo(0.01, 4)
+  })
+
+  it('fails about 1% of fair random 1,024-bit sequences, and agrees with P < 0.01 on each', () => {
+    const next = seededBytes(0x5eed1)
+    const trials = 20000
+    let failed = 0
+    let disagreements = 0
+    for (let i = 0; i < trials; i++) {
+      const r = runsTest(next(128))
+      if (!r.passed) failed++
+      if (r.passed !== nistPValue(r.value) >= 0.01) disagreements++
+    }
+    // This seed gives 211 failures (1.06%). A Z that is 1/sqrt 2 of the true value gives about 0.03%.
+    expect(failed / trials).toBeGreaterThan(0.005)
+    expect(failed / trials).toBeLessThan(0.015)
+    expect(disagreements).toBe(0)
+  })
+
+  it('still fails the Repeating Pattern sample', () => {
+    const r = runsTest(BAD_SAMPLE_PATTERN_1024)
+    expect(r.passed).toBe(false)
+    // n = 8192, pi = 0.75, V_obs = 4097: Z = |4097 - 3072| / (2 * sqrt(8192) * 0.1875)
+    expect(r.value).toBeCloseTo(30.1994, 3)
   })
 })

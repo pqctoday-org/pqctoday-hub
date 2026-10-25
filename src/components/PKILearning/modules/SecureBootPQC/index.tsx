@@ -38,8 +38,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'vendor-matrix',
     title: 'Step 4: Vendor Matrix',
-    description:
-      'Compare BIOS/firmware vendor PQC readiness: AMI, Insyde, EDK2, Dell, HPE, Lenovo, Intel.',
+    description: 'Compare BIOS/firmware vendor PQC readiness: AMI, Insyde, EDK2, Dell, HPE, Intel.',
     icon: BarChart3,
   },
   {

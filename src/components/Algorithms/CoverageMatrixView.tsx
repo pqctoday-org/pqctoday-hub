@@ -384,7 +384,7 @@ export function CoverageMatrixView({
                 (denominator) · {t.unsupportedCells} unsupported cells shown separately
               </p>
               <div
-                className="mt-2 w-full min-w-0 max-w-full overflow-x-auto"
+                className="relative mt-2 w-full min-w-0 max-w-full overflow-x-auto"
                 role="region"
                 aria-label={`${ENGINE_LABEL[e]} coverage totals; scroll horizontally for all columns`}
                 tabIndex={0}
@@ -559,7 +559,7 @@ export function CoverageMatrixView({
 
       {/* Matrix */}
       <div
-        className="glass-panel w-full min-w-0 max-w-full overflow-x-auto"
+        className="glass-panel relative w-full min-w-0 max-w-full overflow-x-auto"
         role="region"
         aria-label="Capability coverage matrix; scroll horizontally for all columns"
         tabIndex={0}

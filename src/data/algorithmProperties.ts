@@ -9,7 +9,7 @@
  * AUTO-GENERATED — do not edit by hand.
  *
  * Data sourced from:
- *   - src/data/pqc_complete_algorithm_reference_10222026_r1.csv (latest reference snapshot)
+ *   - src/data/pqc_complete_algorithm_reference_10242026.csv (latest reference snapshot)
  *   - HAND_CURATED blocks in scripts/generate-algorithm-properties.ts
  *     (algorithm selection, fips_standard normalization, per-algorithm overrides)
  *
@@ -269,30 +269,30 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
   'HQC-128': {
     name: 'HQC-128',
     family: 'KEM',
-    publicKeyBytes: 2249,
-    privateKeyBytes: 2305,
+    publicKeyBytes: 2241,
+    privateKeyBytes: 2321,
     signatureOrCiphertextBytes: 4433,
-    sharedSecretBytes: 64,
+    sharedSecretBytes: 32,
     securityLevel: 1,
     fipsStandard: null,
   },
   'HQC-192': {
     name: 'HQC-192',
     family: 'KEM',
-    publicKeyBytes: 4522,
-    privateKeyBytes: 4586,
+    publicKeyBytes: 4514,
+    privateKeyBytes: 4602,
     signatureOrCiphertextBytes: 8978,
-    sharedSecretBytes: 64,
+    sharedSecretBytes: 32,
     securityLevel: 3,
     fipsStandard: null,
   },
   'HQC-256': {
     name: 'HQC-256',
     family: 'KEM',
-    publicKeyBytes: 7245,
-    privateKeyBytes: 7317,
+    publicKeyBytes: 7237,
+    privateKeyBytes: 7333,
     signatureOrCiphertextBytes: 14421,
-    sharedSecretBytes: 64,
+    sharedSecretBytes: 32,
     securityLevel: 5,
     fipsStandard: null,
   },

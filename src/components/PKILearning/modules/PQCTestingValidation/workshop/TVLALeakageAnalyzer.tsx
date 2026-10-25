@@ -75,10 +75,12 @@ export const TVLALeakageAnalyzer: React.FC = () => {
       <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
         <Cpu size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">Simulating:</span> Keysight Inspector
-          Crypto 3 / ChipWhisperer TVLA analysis. Pre-recorded power traces (10,000 measurements)
-          evaluated using Welch&apos;s t-test. |t| &gt; threshold indicates statistically
-          significant leakage.
+          <span className="font-semibold text-foreground">
+            Illustrative scores, not measurements:
+          </span>{' '}
+          the t values are typed into this page to show how leakage bars read against the 4.5
+          threshold. No power traces are recorded or analysed here. Real TVLA uses a tool such as
+          Keysight Inspector or ChipWhisperer on traces from your own device.
         </p>
       </div>
 
@@ -148,7 +150,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
       {/* Stage leakage bars */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-foreground">
-          Power Trace t-test Results — {target.algorithm} ({target.implementation})
+          Illustrative t-test scores — {target.algorithm} ({target.implementation})
         </h3>
 
         {TVLA_STAGES.map((stage) => {

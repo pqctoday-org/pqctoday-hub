@@ -107,6 +107,24 @@ export function formatLibDate(raw: string): string {
   return d.toLocaleDateString(undefined, opts)
 }
 
+/** True when `date` is not later than `reference`, compared as dates at the coarser of the
+ *  two recorded precisions (year, month or day). Unparseable input is never "not later", so
+ *  a date this check cannot read is still shown. */
+function isNotLater(date: string, reference: string): boolean {
+  const parse = (raw: string): number[] | null => {
+    const m = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(raw?.trim() ?? '')
+    return m ? [m[1], m[2], m[3]].filter(Boolean).map(Number) : null
+  }
+  const a = parse(date)
+  const b = parse(reference)
+  if (!a || !b) return false
+  const n = Math.min(a.length, b.length)
+  for (let i = 0; i < n; i++) {
+    if (a[i] !== b[i]) return a[i] < b[i]
+  }
+  return true
+}
+
 /** The document's own dates for display: "First published Sep 21, 2020 · updated
  *  Aug 19, 2026". Built from the row's `initial_publication_date` and
  *  `last_update_date`, each at the precision it was recorded (`formatLibDate`, so
@@ -119,7 +137,7 @@ export function documentDatesText(initialPublicationDate: string, lastUpdateDate
   const updated = formatLibDate(lastUpdateDate)
   const parts: string[] = []
   if (published) parts.push(`First published ${published}`)
-  if (updated && updated !== published) {
+  if (updated && updated !== published && !isNotLater(lastUpdateDate, initialPublicationDate)) {
     parts.push(published ? `updated ${updated}` : `Updated ${updated}`)
   }
   return parts.join(' · ')

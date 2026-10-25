@@ -185,9 +185,32 @@ describe('schemeCertificateId', () => {
   })
 
   it('does not treat a slug-shaped id of another record type as generated', () => {
-    expect(schemeCertificateId(rec({ type: 'EUCC', id: 'cc-abc-0123abcd' }))).toBe(
+    expect(schemeCertificateId(rec({ type: 'CSPN', id: 'cc-abc-0123abcd' }))).toBe(
       'cc-abc-0123abcd'
     )
+  })
+
+  it('returns the EUCC certificate number, never the generated record id', () => {
+    expect(
+      schemeCertificateId(
+        rec({
+          type: 'EUCC',
+          id: 'enisa-eucc-3089-2026-000002-i-00',
+          euccCertificateId: 'EUCC-3089-2026-002',
+        })
+      )
+    ).toBe('EUCC-3089-2026-002')
+  })
+
+  it('shows no number for an EUCC record that carries none, rather than its generated id', () => {
+    expect(
+      schemeCertificateId(rec({ type: 'EUCC', id: 'enisa-eucc-3089-2026-000002-i-00' }))
+    ).toBeNull()
+    expect(
+      schemeCertificateId(
+        rec({ type: 'EUCC', id: 'enisa-eucc-3089-2026-000002-i-00', euccCertificateId: ' ' })
+      )
+    ).toBeNull()
   })
 })
 

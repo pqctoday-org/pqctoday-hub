@@ -775,10 +775,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     options: [
       'It signs with a much shorter tree, so leaf reuse is harmless',
       'It keeps the counter inside the HSM where it cannot be lost',
-      'It never consumes a leaf index — it derives a fresh, ephemeral one-time key per signature from a randomizer drawn from the private key seed',
+      'It keeps no counter — a randomized hash of the message selects one of a very large set of few-time FORS keys, and a FORS key that is selected again loses security only gradually',
     ],
     answer: 2,
-    why: 'Stateless hash-based signing replaces the monotonic leaf counter with a per-signature randomizer derived from the private seed, so every signature is self-contained and there is no register to persist or protect. That is why the same private key can be backed up, replicated across HSMs, or even held in software — things that are forbidden for LMS and XMSS.',
+    why: 'FIPS 205 section 3: an SLH-DSA key pair is conceptually a very large set of FORS key pairs. A signature computes a randomized hash of the message, uses part of the digest to pseudorandomly select a FORS key, and authenticates that key with a hypertree signature, so there is no leaf counter to persist. Unlike a WOTS+ key, which can be forged after a second use, the security of a FORS key degrades gradually as the number of signatures increases (section 8), and the parameter sets are designed for at most 2^64 signatures per key (section 11).',
   },
   // slh-dsa
   'slh-dsa/keygen': {
@@ -805,14 +805,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   },
   'slh-dsa/context-deterministic': {
     prompt:
-      "In the Pre-hash mode dropdown you pick a variant marked '(Non-FIPS 205)' such as SHA-3 and a warning appears. Which pre-hash functions does the warning say FIPS 205 §11 actually permits for HashSLH-DSA?",
+      "In the Pre-hash mode dropdown you pick a variant marked '(OID not listed in FIPS 205)', such as SHA3-256, and a warning appears. What does the warning say FIPS 205 section 10.2.2 allows for the pre-hash function?",
     options: [
       'Any hash available in PKCS#11 v3.2, since the standard leaves the choice open',
       'Only SHA-256 — the other options exist purely for interoperability testing',
-      'SHA-256, SHA-512, SHAKE-128 and SHAKE-256 — the four functions matching the internal hash families of the 12 parameter sets',
+      'It lists OIDs for SHA-256, SHA-512, SHAKE128 and SHAKE256 and allows other approved hash functions or XOFs, which need at least 8n bits of classical security strength against collision and second-preimage attacks',
     ],
     answer: 2,
-    why: 'The standard restricts pre-hashing to the same hash families the parameter sets already use internally: SHA2 sets pre-hash with SHA-256 or SHA-512, SHAKE sets with SHAKE-128 or SHAKE-256. Other functions can be requested through the PKCS#11 interface but fall outside the HashSLH-DSA specification, which is why the demo flags them.',
+    why: 'FIPS 205 section 10.2.2 shows the DER-encoded OIDs for SHA-256, SHA-512, SHAKE128 and SHAKE256 and says hash_slh_sign may be used with other hash functions or XOFs. Section 10.2 says the digest must come from an approved function with at least 8n bits of classical security strength against both collision and second-preimage attacks, where n is 16, 24 or 32 by parameter set, and SHA-256 and SHAKE128 are only appropriate for category 1 parameter sets. The tag only means the standard lists no OID for that function.',
   },
   // email-signing
   'email-signing/live-hsm': {

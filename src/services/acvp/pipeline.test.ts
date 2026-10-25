@@ -32,6 +32,13 @@ const prepare = async (text: string): Promise<PreparedPrompt> => {
 }
 
 describe('dispatch plan (F-3)', () => {
+  it('the ML-KEM unsupported reasons say only that the standard PKCS#11 path cannot answer the test', () => {
+    for (const r of [UNSUPPORTED_REASONS.mlKemEncapsulation, UNSUPPORTED_REASONS.mlKemKeyCheck]) {
+      expect(r).toMatch(/so the standard PKCS#11 path cannot answer this test\.$/)
+      expect(r).not.toMatch(/this prototype|bounded prototype|randomness-injection/)
+    }
+  })
+
   it('ML-KEM: only decapsulation executes; encapsulation + key checks are unsupported by group', async () => {
     const p = await prepare(prompt('ML-KEM-encapDecap-FIPS203'))
     const byFn = (fn: string) =>

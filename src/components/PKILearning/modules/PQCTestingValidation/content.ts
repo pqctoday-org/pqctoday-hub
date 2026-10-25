@@ -16,8 +16,8 @@ export const content: ModuleContent = {
   // was addressing this module by a name the catalogue does not know.
   moduleId: 'pqc-testing-validation',
   version: '1.0.3',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-24',
+  lastReviewed: '2026-10-25',
+  lastEdited: '2026-10-25',
 
   standards: [
     getStandard('FIPS 186-5'),

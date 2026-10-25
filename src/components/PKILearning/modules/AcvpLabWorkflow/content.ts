@@ -17,10 +17,11 @@ import { longDate } from '@/components/PKILearning/common/moduleReviewStatus'
 
 export const content: ModuleContent = {
   moduleId: 'acvp-lab-workflow',
-  lastReviewed: '2026-10-24',
-  // lastReviewed is the owner's sign-off of 24 October 2026 (moduleReviewHonesty.test.ts), which
-  // renewed the 22 October one after the 23 October corrections to the ACVP revision-history
-  // statements and the Step 3 change (every test of both samples answered).
+  lastReviewed: '2026-10-25',
+  // lastReviewed is the owner's sign-off of 25 October 2026 (moduleReviewHonesty.test.ts), which
+  // renewed the 24 October one after the 23 October corrections to the ACVP revision-history
+  // statements, the Step 3 change (every test of both samples answered) and the answer-count
+  // and wording changes of release 4.179.0.
   version: '0.1.0',
   lastEdited: '2026-10-25',
 
@@ -56,7 +57,7 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    reviewStatus: `Reviewed and signed off by the PQC Today owner on ${longDate('2026-10-24')}`,
+    reviewStatus: `Reviewed and signed off by the PQC Today owner on ${longDate('2026-10-25')}`,
     acvpSpecRevision:
       'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',

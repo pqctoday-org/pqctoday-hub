@@ -8,7 +8,7 @@ import { NOT_LAB_REVIEWED, longDate } from '@/components/PKILearning/common/modu
  * Owner decisions: 22 October 2026 the owner reviewed the module (the earlier rule that a
  * validation-lab practitioner must review it first was replaced by owner review); the sign-off
  * was reset after the 23 October corrections to the statements about the ACVP specification's
- * revision history; 24 October 2026 the owner renewed it (the review date is `lastReviewed` in
+ * revision history; 24 and 25 October 2026 the owner renewed it (the review date is `lastReviewed` in
  * content.ts, recorded by record_module_review). The module is not presented as a lab training
  * resource, and the notice keeps the required validation disclaimers on every tab that teaches or
  * exercises. The sign-off and lab-review sentences are the ones the other four certification
