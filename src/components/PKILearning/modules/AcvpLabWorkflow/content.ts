@@ -22,7 +22,7 @@ export const content: ModuleContent = {
   // renewed the 22 October one after the 23 October corrections to the ACVP revision-history
   // statements and the Step 3 change (every test of both samples answered).
   version: '0.1.0',
-  lastEdited: '2026-10-24',
+  lastEdited: '2026-10-25',
 
   standards: [
     getStandard('NIST-ACVP'),
