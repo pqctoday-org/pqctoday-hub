@@ -80,7 +80,7 @@ const PRESET_GROUPS: { group: string; presets: Preset[] }[] = [
         runnable: false,
       },
       {
-        label: 'Verify FIPS-validated cert fingerprint',
+        label: 'SHA-256 fingerprint of the self-signed certificate',
         cmd: 'openssl x509 -in self-signed.crt -fingerprint -sha256 -noout',
         category: 'x509',
       },
