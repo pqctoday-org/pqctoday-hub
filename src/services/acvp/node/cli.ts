@@ -4,6 +4,7 @@
  *
  *   npx tsx scripts/acvp-respond.ts --prompt p.json --engine cpp|rust --out dir
  *        [--expected expectedResults.json] [--no-evidence] [--emit-bundle dir]
+ *        [--profile bounded|extended]
  *
  * Uses the SAME parser / dispatch / engine adapter / serializer as the browser
  * panel (../run.ts, ../engine.ts); only engine loading (./loadEngines.ts) and
@@ -19,6 +20,7 @@ import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { canonicalJson, sha256Hex } from '../ir'
 import { createPkcs11Engine } from '../engine'
+import type { PlanProfile } from '../dispatch'
 import { executePrepared, preparePrompt } from '../run'
 import { loadEngineNode, type EngineId } from './loadEngines'
 
@@ -29,10 +31,12 @@ export interface CliArgs {
   expected?: string
   evidence: boolean
   emitBundle?: string
+  /** `bounded` (default, plan version 1) or `extended` (plan version 2: test-input and computed answers). */
+  profile?: PlanProfile
 }
 
 export const USAGE =
-  'usage: acvp-respond --prompt <prompt.json> --engine cpp|rust --out <dir> [--expected <expectedResults.json>] [--no-evidence] [--emit-bundle <dir>]'
+  'usage: acvp-respond --prompt <prompt.json> --engine cpp|rust --out <dir> [--expected <expectedResults.json>] [--no-evidence] [--emit-bundle <dir>] [--profile bounded|extended]'
 
 export const parseCliArgs = (argv: string[]): CliArgs => {
   const get = (flag: string): string | undefined => {
@@ -48,6 +52,9 @@ export const parseCliArgs = (argv: string[]): CliArgs => {
   if (!prompt || !engine || !out) throw new Error(USAGE)
   if (engine !== 'cpp' && engine !== 'rust')
     throw new Error(`--engine must be cpp or rust\n${USAGE}`)
+  const profile = get('--profile') ?? 'bounded'
+  if (profile !== 'bounded' && profile !== 'extended')
+    throw new Error(`--profile must be bounded or extended\n${USAGE}`)
   return {
     prompt,
     engine,
@@ -55,6 +62,7 @@ export const parseCliArgs = (argv: string[]): CliArgs => {
     expected: get('--expected'),
     evidence: !argv.includes('--no-evidence'),
     emitBundle: get('--emit-bundle'),
+    profile,
   }
 }
 
@@ -81,7 +89,7 @@ const appVersion = (repoRoot: string): string | null => {
 
 export const runCli = async (args: CliArgs, repoRoot: string): Promise<CliResult> => {
   const promptText = readFileSync(args.prompt, 'utf8')
-  const prepared = await preparePrompt(promptText)
+  const prepared = await preparePrompt(promptText, args.profile ?? 'bounded')
   if (!prepared.ok) {
     const lines = prepared.diagnostics.map((d) => `  ${d.path}: [${d.keyword}] ${d.reason}`)
     return { exitCode: 2, summary: `[acvp-respond] prompt rejected:\n${lines.join('\n')}` }

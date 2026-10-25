@@ -13,7 +13,9 @@
  *     omitted. Nothing is fabricated to fill a gap.
  * R3  Group and test order follow the prompt.
  * R4  Each answered test carries tcId plus exactly its operation's field:
- *     ML-KEM decapsulation → k (upper-case hex); ML-DSA sigVer → testPassed.
+ *     ML-KEM decapsulation → k (upper-case hex); ML-DSA sigVer → testPassed;
+ *     extended profile: ML-KEM encapsulation → c and k; ML-KEM key checks →
+ *     testPassed.
  * R5  Serialization: JSON.stringify(response, null, 2) + "\n", keys in the
  *     order above. Semantic comparison uses canonicalJson (ir.ts).
  */
@@ -44,7 +46,7 @@ export const buildResponse = (ir: AcvpPromptIR, results: CaseResult[]): BuiltRes
       const r = byKey.get(`${g.tgId}/${t.tcId}`)
       if (!r || r.disposition !== 'answered' || r.responseField === undefined) continue
       if (r.value === undefined) throw new Error(`answered result ${g.tgId}/${t.tcId} has no value`)
-      tests.push({ tcId: t.tcId, [r.responseField]: r.value })
+      tests.push({ tcId: t.tcId, ...(r.extra ?? {}), [r.responseField]: r.value })
       answeredCount++
     }
     if (tests.length > 0) testGroups.push({ tgId: g.tgId, tests })

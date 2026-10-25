@@ -22,7 +22,7 @@ const PARTS: WorkshopPart[] = [
     id: 'vector-set-anatomy',
     title: 'Step 2: Vector Set Anatomy',
     description:
-      'Open a public NIST ACVP-Server sample vector set and predict, group by group, what a PKCS#11 interface can answer.',
+      'Open a public NIST ACVP-Server sample vector set and predict, group by group, what standard PKCS#11 calls can answer. Step 3 then shows what the engines’ test-only inputs add.',
     icon: ListChecks,
   },
   {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // WS-F (F-5): the ACVP-format import/response-export prototype, in a real
-// browser against the real C++ and Rust WASM engines. Nightly full suite only
-// (NOT in SMOKE_SPECS — it loads both engines and is WASM-heavy).
+// browser against the real C++ and Rust WASM engines (part of SMOKE_SPECS; it loads
+// both engines).
 //
 // Network check: from the moment the prompt file is chosen until both
 // downloads complete, no request may carry vector data (URL or body), and no
@@ -16,20 +16,21 @@ const FIXTURE = path.join(
   process.cwd(),
   'src/services/acvp/__fixtures__/nist-acvp-server/ML-DSA-sigVer-FIPS204/prompt.json'
 )
-const GOLDEN = path.join(
+const EXPECTED = path.join(
   process.cwd(),
-  'src/services/acvp/__fixtures__/goldens/ML-DSA-sigVer-FIPS204.response.json'
+  'src/services/acvp/__fixtures__/nist-acvp-server/ML-DSA-sigVer-FIPS204/expectedResults.json'
 )
 
-const canonical = (v: unknown): string =>
-  v === null || typeof v !== 'object'
-    ? JSON.stringify(v)
-    : Array.isArray(v)
-      ? `[${v.map(canonical).join(',')}]`
-      : `{${Object.keys(v as object)
-          .sort()
-          .map((k) => `${JSON.stringify(k)}:${canonical((v as Record<string, unknown>)[k])}`)
-          .join(',')}}`
+type VectorSet = { testGroups: Array<{ tgId: number; tests: Array<Record<string, unknown>> }> }
+/** The vector-set object of a bare or `[{acvVersion}, {…}]`-framed ACVP document. */
+const vectorSet = (doc: unknown): VectorSet => (Array.isArray(doc) ? doc[1] : doc) as VectorSet
+/** "tgId/tcId" → testPassed, for every test of an ACVP document. */
+const verdicts = (doc: unknown): Map<string, unknown> => {
+  const out = new Map<string, unknown>()
+  for (const g of vectorSet(doc).testGroups)
+    for (const t of g.tests) out.set(`${g.tgId}/${String(t.tcId)}`, t.testPassed)
+  return out
+}
 
 test.describe('ACVP-format prototype (local import → run → download)', () => {
   test.setTimeout(180000)
@@ -47,7 +48,7 @@ test.describe('ACVP-format prototype (local import → run → download)', () =>
     })
   })
 
-  test('both engines answer the NIST ML-DSA sigVer sample; no request carries vector data', async ({
+  test('both engines answer every test of the NIST ML-DSA sigVer sample; no request carries vector data', async ({
     page,
   }) => {
     const promptText = readFileSync(FIXTURE, 'utf8')
@@ -80,9 +81,11 @@ test.describe('ACVP-format prototype (local import → run → download)', () =>
     page.on('request', onRequest)
 
     await page.getByLabel('ACVP prompt file').setInputFiles(FIXTURE)
-    await expect(page.getByTestId('acvp-io-loaded')).toContainText('127 executable here')
+    await expect(page.getByTestId('acvp-io-loaded')).toContainText('180 executable here')
 
-    const golden = canonical(JSON.parse(readFileSync(GOLDEN, 'utf8')))
+    // The extended plan answers every test, and every answer is NIST's own.
+    const expected = verdicts(JSON.parse(readFileSync(EXPECTED, 'utf8')))
+    expect(expected.size).toBe(180)
     for (const [engine, label] of [
       ['C++ engine', 'softhsmv3 C++ engine'],
       ['Rust engine', 'softhsmv3 Rust engine'],
@@ -90,7 +93,7 @@ test.describe('ACVP-format prototype (local import → run → download)', () =>
       await page.getByRole('button', { name: engine, exact: true }).click()
       await page.getByRole('button', { name: /Run locally/ }).click()
       await expect(page.getByTestId('acvp-io-summary')).toContainText(
-        `180 test cases on the ${label}: 127 answered · 53 unsupported · 0 error`,
+        `180 test cases on the ${label}: 180 answered · 0 unsupported · 0 error`,
         { timeout: 120000 }
       )
       const [download] = await Promise.all([
@@ -99,7 +102,7 @@ test.describe('ACVP-format prototype (local import → run → download)', () =>
       ])
       expect(download.suggestedFilename()).toBe('response.json')
       const saved = readFileSync(await download.path(), 'utf8')
-      expect(canonical(JSON.parse(saved))).toBe(golden)
+      expect(verdicts(JSON.parse(saved))).toEqual(expected)
     }
 
     page.off('request', onRequest)

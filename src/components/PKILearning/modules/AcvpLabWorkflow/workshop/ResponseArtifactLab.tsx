@@ -178,7 +178,9 @@ export const ResponseArtifactLab: React.FC = () => {
               Playground’s validation workbench
             </Link>
             . Import the file you saved, choose an engine, run it, then download both response.json
-            and evidence.json.
+            and evidence.json. Answers that needed a test-only input, a value computed outside the
+            engine, or what an engine does when a key is imported are counted and labelled
+            separately.
           </p>
           <p className="mt-2 text-xs text-muted-foreground" role="note">
             Preflight: this step needs browser WASM and a successfully loaded C++ or Rust engine.
@@ -249,6 +251,79 @@ export const ResponseArtifactLab: React.FC = () => {
           response by SHA-256 only, names the engine, and lists every unsupported case with its
           reason. Load yours to see the fields a reviewer reads first.
         </p>
+        <details
+          className="rounded-md border border-border bg-muted/20 p-3 text-xs text-foreground/80"
+          data-testid="ral-evidence-explainer"
+        >
+          <summary className="cursor-pointer font-semibold text-foreground">
+            What is in evidence.json, and why it exists
+          </summary>
+          <p className="mt-2">
+            response.json is the answer sheet: only the answers, in the format ACVP defines. The
+            evidence file is the receipt that lets a reviewer ask four questions: what was run, on
+            which engine build, how was each answer obtained, and what was left out. It holds no
+            vector data: no keys, messages, signatures or secrets, only fingerprints (SHA-256) and
+            return codes, so it can be shared.
+          </p>
+          <dl className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-[max-content_1fr] sm:gap-x-3">
+            <dt className="font-mono text-foreground">evidenceVersion, label, disclaimers</dt>
+            <dd>
+              The edition of the file layout (2: standard calls only; 3: also labels how each answer
+              was obtained), and what the file is not: it is not a validation, not a verdict from
+              the NIST server, and nothing is sent to NIST.
+            </dd>
+            <dt className="font-mono text-foreground">evidenceClass</dt>
+            <dd>
+              Whether the prompt is byte-identical to a published NIST sample
+              (nist-acvp-reference-sample) or any other file (unverified-imported-vector-set).
+            </dd>
+            <dt className="font-mono text-foreground">generator</dt>
+            <dd>Which code made the file (browser or command line) and the Hub version.</dd>
+            <dt className="font-mono text-foreground">prompt</dt>
+            <dd>
+              The SHA-256 of the prompt file, where the sample comes from (NIST repository and exact
+              commit), the algorithm, mode and revision, and the pinned specification and schema
+              files the prompt was checked against.
+            </dd>
+            <dt className="font-mono text-foreground">response</dt>
+            <dd>
+              The SHA-256 of response.json. It ties the two files together, so neither can be
+              swapped without the mismatch showing.
+            </dd>
+            <dt className="font-mono text-foreground">engine, startedAt, finishedAt</dt>
+            <dd>
+              Which engine ran, its build commit and date, and the SHA-256 of the exact WebAssembly
+              file loaded, with the time the run took.
+            </dd>
+            <dt className="font-mono text-foreground">summary</dt>
+            <dd>
+              How many tests were answered, unsupported and in error. A version 3 file also counts
+              the answers by how they were obtained: through standard calls, with NIST&rsquo;s
+              random value as a test-only input, with a value computed outside the engine, or from
+              the result of importing a key.
+            </dd>
+            <dt className="font-mono text-foreground">cases</dt>
+            <dd>
+              One entry per test: its outcome, the mechanism used and whether that mechanism is
+              standard, vendor-defined or relying on a PKCS#11 v3.3 working-draft allowance, how the
+              value was obtained, and the engine&rsquo;s return code (for a rejected key, the exact
+              code that made it invalid).
+            </dd>
+            <dt className="font-mono text-foreground">vendorDefinedMechanisms</dt>
+            <dd>Every non-standard mechanism the run used, with its code and source.</dd>
+            <dt className="font-mono text-foreground">unsupported</dt>
+            <dd>
+              What was left out of response.json and why. Nothing is guessed or defaulted to fill a
+              gap.
+            </dd>
+            <dt className="font-mono text-foreground">goldenComparison</dt>
+            <dd>
+              For a public sample only: how many answers match NIST&rsquo;s published expected
+              results, and how many differ or are missing. For a prompt issued to a laboratory the
+              expected answers are not supplied: the ACVTS server holds them.
+            </dd>
+          </dl>
+        </details>
         <FilePick label="Load evidence.json" onText={inspect} />
         <div aria-live="polite">
           {evidenceError ? (
@@ -271,6 +346,28 @@ export const ResponseArtifactLab: React.FC = () => {
               <dd className="text-foreground">
                 {evidence.answered} / {evidence.unsupported} / {evidence.error}
               </dd>
+              {evidence.byInputKind ? (
+                <>
+                  <dt className="text-muted-foreground">how the answers were obtained</dt>
+                  <dd className="text-foreground">
+                    {evidence.byInputKind.standard} standard calls ·{' '}
+                    {evidence.byInputKind['test-input-m']} with a test-only input ·{' '}
+                    {(evidence.byInputKind['computed-mu'] ?? 0) +
+                      (evidence.byInputKind['computed-ph'] ?? 0)}{' '}
+                    computed outside the engine · {evidence.byInputKind['key-import-result']} from a
+                    key import result
+                  </dd>
+                </>
+              ) : null}
+              {evidence.golden ? (
+                <>
+                  <dt className="text-muted-foreground">compared with NIST</dt>
+                  <dd className="text-foreground">
+                    {evidence.golden.matched} matched · {evidence.golden.mismatched} mismatched ·{' '}
+                    {evidence.golden.unanswered} unanswered (of {evidence.golden.expectedTotal})
+                  </dd>
+                </>
+              ) : null}
               {evidence.artifactSha256Note ? (
                 <>
                   <dt className="text-muted-foreground">engine artifact hash</dt>

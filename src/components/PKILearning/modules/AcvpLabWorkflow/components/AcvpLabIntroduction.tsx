@@ -21,7 +21,6 @@ import { CodeBlock } from '@/components/ui/code-block'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { EVIDENCE_CLASSES, EVIDENCE_CLASS_IDS } from '@/data/validation/evidenceClasses'
 import validationCounts from '@/data/validation/validation-counts.generated.json'
-import { UNSUPPORTED_REASONS } from '@/services/acvp/dispatch'
 import { Cite } from './Cite'
 import { ReviewStatusNotice } from './ReviewStatusNotice'
 import { CLAIM_LADDER, HUB_REACHABLE_MAX_RUNG } from '../data/evidenceLevels'
@@ -635,9 +634,11 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 parameter <Cite s="fips203" at="Alg. 17" />
               </Td>
               <Td>
-                Playground suite: executed on both engines, c and k byte-compared, each result
-                labelled “test input supplied (outside the standard)”. ACVP-format prototype
-                (standard calls only): unsupported — {UNSUPPORTED_REASONS.mlKemEncapsulation}
+                Executed on both engines in the Playground suite and in Step 3: c and k are
+                byte-compared with NIST’s, and each result is labelled “test input supplied (outside
+                the standard)”. Step 3 first checks that the engine really uses the supplied{' '}
+                <code>m</code> (the same <code>m</code> twice gives the same output, a different{' '}
+                <code>m</code> a different ciphertext); if not, nothing is answered
               </Td>
             </tr>
             <tr>
@@ -647,8 +648,11 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 <Cite s="fips203" at="§7.2, §7.3" />
               </Td>
               <Td>
-                Unsupported (reading an object-creation return code as a verdict would be an
-                inference)
+                Executed in Step 3 from what these engines do when the key is imported (PKCS#11
+                itself does not require a key check at import; these engines run one): accepted
+                means valid, refused with exactly CKR_ATTRIBUTE_VALUE_INVALID means invalid, and any
+                other result is an error, never a guess. evidence.json keeps the return code for
+                every key
               </Td>
             </tr>
             <tr>
@@ -661,7 +665,8 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 Executed. SHA2-512/224 and SHA2-512/256 have no CKM_HASH_ML_DSA_&lt;hash&gt;
                 mechanism <Cite s="pkcs11" at="§6.67" />; the generic CKM_HASH_ML_DSA takes them as
                 its <code>hash</code> (CKM_SHA512_224 / CKM_SHA512_256) with the caller computing
-                PH(M)
+                PH(M). Step 3 runs these through that route too, labelled “computed outside the
+                engine”
               </Td>
             </tr>
             <tr>
@@ -672,7 +677,10 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
                 SHAKE256(tr ‖ M′, 64) <Cite s="fips204" at="Alg. 7, line 6" />. The harness computes
                 μ from the public key and M′ and uses the external-μ mechanism below — no extension
               </Td>
-              <Td>Playground suite: executed on both engines (sigGen byte-match and sigVer)</Td>
+              <Td>
+                Playground suite: executed on both engines (sigGen byte-match and sigVer). Step 3
+                runs the sigVer groups the same way, labelled “computed outside the engine”
+              </Td>
             </tr>
             <tr>
               <Td>ML-DSA internal interface with external μ</Td>

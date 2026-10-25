@@ -48,6 +48,30 @@ export interface EvidenceSummary {
   unsupported: number
   error: number
   artifactSha256Note: string | null
+  /** Layout edition of the file (2 = standard calls only, 3 = also labels how each answer was obtained). */
+  evidenceVersion: string | null
+  /** Version-3 files only: answers by how they were obtained. */
+  byInputKind: Record<string, number> | null
+  /** Present when the run was compared with NIST's expected results. */
+  golden: {
+    matched: number
+    mismatched: number
+    unanswered: number
+    unexpected: number
+    expectedTotal: number
+  } | null
+}
+
+const goldenOf = (g: unknown): EvidenceSummary['golden'] => {
+  if (!g || typeof g !== 'object') return null
+  const o = g as JsonObject
+  return {
+    matched: Number(o.matched ?? 0),
+    mismatched: Number(o.mismatched ?? 0),
+    unanswered: Number(o.unanswered ?? 0),
+    unexpected: Number(o.unexpected ?? 0),
+    expectedTotal: Number(o.expectedTotal ?? 0),
+  }
 }
 
 /** Pure: pull the fields a reviewer reads first out of an evidence.json. */
@@ -71,5 +95,11 @@ export const summarizeEvidence = (doc: unknown): EvidenceSummary => {
     error: Number(summary.error ?? 0),
     artifactSha256Note:
       typeof engine.artifactSha256Note === 'string' ? engine.artifactSha256Note : null,
+    evidenceVersion: typeof e.evidenceVersion === 'string' ? e.evidenceVersion : null,
+    byInputKind:
+      summary.byInputKind && typeof summary.byInputKind === 'object'
+        ? (summary.byInputKind as Record<string, number>)
+        : null,
+    golden: goldenOf(e.goldenComparison),
   }
 }

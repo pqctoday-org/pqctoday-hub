@@ -116,7 +116,7 @@ export const AcvpFormatPrototypePanel = ({
   const onFile = async (file: File) => {
     clear()
     setFileName(file.name)
-    setPrepared(await preparePrompt(await readFileText(file)))
+    setPrepared(await preparePrompt(await readFileText(file), 'extended'))
   }
 
   const run = async () => {
@@ -139,7 +139,14 @@ export const AcvpFormatPrototypePanel = ({
   }
 
   const summary = output?.evidence.summary as
-    { testCases: number; answered: number; unsupported: number; error: number } | undefined
+    | {
+        testCases: number
+        answered: number
+        unsupported: number
+        error: number
+        byInputKind?: Record<string, number>
+      }
+    | undefined
   const unsupportedRows = (output?.evidence.unsupported ?? []) as Array<{
     tgId: number
     scope: string
@@ -169,10 +176,17 @@ export const AcvpFormatPrototypePanel = ({
       <p className="text-xs text-muted-foreground">
         Supports exactly two pinned vector-set types:{' '}
         {PINNED_SCHEMAS.map((s) => `${s.algorithm} / ${s.mode} / ${s.revision}`).join(' and ')}.
-        Executed: ML-KEM decapsulation groups; ML-DSA external-interface (pure and pre-hash) groups;
-        and ML-DSA internal-interface external-μ groups through the vendor-defined (not PKCS#11
-        v3.2) mechanism CKM_ML_DSA_EXTERNAL_MU. Every other group or test is listed as unsupported
-        and left out of the response, never guessed or defaulted.
+        Executed: every group of both. Most answers use standard PKCS#11 calls. Four kinds do not,
+        and each is labelled in evidence.json and below: ML-KEM encapsulation receives NIST&rsquo;s
+        random value m through a test-only engine extension (outside testing, FIPS 203 has the
+        module sample m itself); ML-DSA internal-interface cases that supply a raw message use a
+        value (μ) the browser computes from the prompt&rsquo;s public key and message, with the
+        vendor-defined (not PKCS#11 v3.2) mechanism CKM_ML_DSA_EXTERNAL_MU; SHA2-512/224 and
+        SHA2-512/256 pre-hash cases use a hash the browser computes and the generic CKM_HASH_ML_DSA
+        mechanism, with that hash named in its parameter (an allowance of the PKCS#11 v3.3 working
+        draft); ML-KEM key checks are read from what these engines do when the key is imported.
+        Anything the engine cannot do exactly is listed as unsupported and left out of the response,
+        never guessed or defaulted.
       </p>
       <p className="text-xs text-muted-foreground" data-testid="acvp-io-revisions">
         The upstream ACVP drafts also define newer test revisions for some modes: ML-KEM encapDecap
@@ -299,6 +313,16 @@ export const AcvpFormatPrototypePanel = ({
                 {summary.error} error
               </span>
             </p>
+            {summary.byInputKind && summary.answered > 0 && (
+              <p className="text-muted-foreground" data-testid="acvp-io-kinds">
+                How the {summary.answered} answers were obtained: {summary.byInputKind.standard}{' '}
+                through standard PKCS#11 calls · {summary.byInputKind['test-input-m']} with
+                NIST&rsquo;s m as a test-only input ·{' '}
+                {summary.byInputKind['computed-mu'] + summary.byInputKind['computed-ph']} with a
+                value computed outside the engine · {summary.byInputKind['key-import-result']} from
+                the result of importing a key.
+              </p>
+            )}
             <p className="text-muted-foreground">
               {output.evidence.evidenceClass === 'nist-acvp-reference-sample'
                 ? 'This prompt is byte-identical to a pinned public NIST ACVP-Server sample; answered values can be compared with its published expectedResults.json.'
@@ -321,13 +345,11 @@ export const AcvpFormatPrototypePanel = ({
                   ))}
                 </ul>
                 {unsupportedRows.some(
-                  (u) => u.reason === UNSUPPORTED_REASONS.mlKemEncapsulation
+                  (u) => u.reason === UNSUPPORTED_REASONS.engineIgnoredSuppliedM
                 ) && (
                   <p className="mt-1 text-muted-foreground" data-testid="acvp-io-encap-note">
-                    The Validation Workbench in the PKCS#11 HSM playground runs the same ML-KEM
-                    encapsulation cases by passing the NIST m to C_EncapsulateKey as a non-standard
-                    parameter. That is test-harness evidence, not an ACVP response, and none of it
-                    is in response.json.
+                    This engine did not use the supplied m, so no encapsulation answer was given
+                    rather than one that could never match NIST&rsquo;s value.
                   </p>
                 )}
               </details>
