@@ -28,6 +28,7 @@ import {
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
+import { LabTestsSummary } from './LabTestsSummary'
 
 interface SecureBootIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -419,6 +420,8 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             and HBS means hash-based signature. Every quotation below is verbatim from the document
             named after it, with footnote and reference-number markers left out.
           </p>
+
+          <LabTestsSummary />
 
           <div className="bg-background rounded-lg p-3 border border-border space-y-2">
             <h4 className="text-xs font-bold text-foreground">
