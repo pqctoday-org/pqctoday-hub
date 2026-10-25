@@ -13,18 +13,12 @@ import path from 'node:path'
 import { AcvpFormatPrototypePanel } from './AcvpFormatPrototypePanel'
 import { createExpectedResultsFakeEngine } from '@/services/acvp/testing/expectedResultsFakeEngine'
 import { DISCLAIMER_IMPORT } from '@/services/acvp/evidence'
-import { canonicalJson } from '@/services/acvp/ir'
+import { compareToExpected } from '@/services/acvp/compare'
 import { readFixture } from '@/services/acvp/node/fixtures'
 
 const repo = process.cwd()
 const promptText = readFixture(repo, 'ML-DSA-sigVer-FIPS204', 'prompt.json')
 const expectedText = readFixture(repo, 'ML-DSA-sigVer-FIPS204', 'expectedResults.json')
-const goldenResponse = JSON.parse(
-  readFileSync(
-    path.join(repo, 'src/services/acvp/__fixtures__/goldens/ML-DSA-sigVer-FIPS204.response.json'),
-    'utf8'
-  )
-)
 
 const network = {
   fetch: vi.fn(),
@@ -90,14 +84,14 @@ describe('AcvpFormatPrototypePanel', () => {
     const user = await upload(promptText)
     await screen.findByTestId('acvp-io-loaded')
     expect(screen.getByTestId('acvp-io-loaded')).toHaveTextContent(
-      'ML-DSA / sigVer / FIPS204, vsId 42, 12 groups, 180 test cases (127 executable here)'
+      'ML-DSA / sigVer / FIPS204, vsId 42, 12 groups, 180 test cases (180 executable here)'
     )
 
     await user.click(screen.getByRole('button', { name: 'C++ engine' }))
     await user.click(screen.getByRole('button', { name: /Run locally/ }))
     await waitFor(() =>
       expect(screen.getByTestId('acvp-io-summary')).toHaveTextContent(
-        '180 test cases on the softhsmv3 C++ engine: 127 answered · 53 unsupported · 0 error'
+        '180 test cases on the softhsmv3 C++ engine: 180 answered · 0 unsupported · 0 error'
       )
     )
     expect(loadEngine).toHaveBeenCalledWith('cpp')
@@ -106,10 +100,29 @@ describe('AcvpFormatPrototypePanel', () => {
     await user.click(screen.getByRole('button', { name: /Download evidence\.json/ }))
     expect(savedNames).toEqual(['response.json', 'evidence.json'])
     const response = JSON.parse(await saved[0].text())
-    expect(canonicalJson(response)).toBe(canonicalJson(goldenResponse))
+    // The extended profile answers the whole sample; every answer is NIST's expected one.
+    expect(compareToExpected(response, JSON.parse(expectedText))).toMatchObject({
+      matched: 180,
+      mismatched: [],
+      unanswered: 0,
+      unexpected: [],
+    })
+    expect(Object.keys(response.testGroups[0].tests[0]).sort()).toEqual(['tcId', 'testPassed'])
     const evidence = JSON.parse(await saved[1].text())
     expect(evidence.generator.codePath).toBe('browser')
     expect(evidence.evidenceClass).toBe('nist-acvp-reference-sample')
+    // Extended profile: version 3 evidence, with how each answer was obtained.
+    expect(evidence.evidenceVersion).toBe('pqctoday.acvp-evidence/3')
+    expect(evidence.summary.byInputKind).toEqual({
+      standard: 127,
+      'test-input-m': 0,
+      'computed-mu': 45,
+      'computed-ph': 8,
+      'key-import-result': 0,
+    })
+    expect(screen.getByTestId('acvp-io-kinds')).toHaveTextContent(
+      'How the 180 answers were obtained: 127 through standard PKCS#11 calls'
+    )
 
     expect(network.fetch).not.toHaveBeenCalled()
     expect(network.xhrOpen).not.toHaveBeenCalled()

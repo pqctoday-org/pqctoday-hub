@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.178.0] - 2026-10-24
+
+Step 3 of the ACVP Lab Workflow lesson now answers every test of both NIST sample vector sets.
+
+### Changed
+
+- **Step 3 of the ACVP lab answers all 345 tests of the two NIST samples** [view:/learn/acvp-lab-workflow] [view:/playground/hsm] [persona:cert-engineer] [persona:developer] [persona:researcher]: the ML-KEM sample goes from 30 answered and 135 unsupported to all 165 answered, and the ML-DSA sample from 127 answered and 53 unsupported to all 180, on both the C++ and the Rust engine. Every answer matches NIST's published expected results. The ML-KEM encapsulation tests use NIST's random value through the engines' test-only input, the ML-KEM key checks are read from what the engines do when a key is imported, and two kinds of ML-DSA case use a value the browser computes. The page counts the answers by how they were obtained, and evidence.json labels each one. Step 2 still shows what standard PKCS#11 calls alone can answer. The same panel in the Playground's developer tab answers the same way.
+
+### Added
+
+- **The lesson explains what is in evidence.json and why it exists** [view:/learn/acvp-lab-workflow] [persona:cert-engineer] [persona:researcher]: a collapsed panel in Step 3 describes each part of the file, and the evidence reader now shows how the answers were obtained and the comparison with NIST's expected results.
+
 ## [4.177.2] - 2026-10-24
 
 One sentence in the Common Criteria lesson now credits the right part of the protection profile.

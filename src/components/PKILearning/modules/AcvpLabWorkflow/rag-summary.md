@@ -22,8 +22,8 @@ Advanced module on how cryptographic algorithm validation testing actually runs 
 ## Workshop / Interactive Activities
 
 1. **Evidence Classifier** — classify ten test-log observations into the eight evidence classes or "not test evidence"; see the claim-ladder rung, permitted claim and the overclaim trap
-2. **Vector Set Anatomy** — parse a public NIST ACVP-Server sample (ML-KEM encapDecap or ML-DSA sigVer) with the Hub's ACVP-format prototype parser and predict per test group whether PKCS#11 can answer it
-3. **Response Artifact Lab** — save the public prompt, run it through the real ACVP-format prototype panel on the C++ or Rust engine, download response.json + evidence.json, compare with NIST expectedResults.json, and audit evidence.json
+2. **Vector Set Anatomy** — parse a public NIST ACVP-Server sample (ML-KEM encapDecap or ML-DSA sigVer) with the Hub's ACVP-format prototype parser and predict per test group whether standard PKCS#11 calls can answer it (Step 3 then shows what the engines' test-only inputs add)
+3. **Response Artifact Lab** — save the public prompt, run it through the real ACVP-format prototype panel on the C++ or Rust engine (every test of both samples is answered; the answers are counted by how they were obtained: standard PKCS#11 calls, NIST's random value m as a test-only input, a value computed outside the engine, or the result of importing a key), download response.json + evidence.json, compare with NIST expectedResults.json, and audit evidence.json (a collapsed explanation covers every part of the file and why it exists)
 
 ## Related Standards
 

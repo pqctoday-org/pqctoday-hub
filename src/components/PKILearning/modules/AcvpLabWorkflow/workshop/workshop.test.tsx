@@ -96,6 +96,40 @@ describe('ResponseArtifactLab helpers', () => {
     expect(s.knownFixture).toContain('@ 975de31')
     expect(s.answered).toBe(30)
     expect(() => summarizeEvidence({ vsId: 42 })).toThrow(/evidenceClass/)
+    // A version 2 file has neither the input-kind breakdown nor, here, a comparison.
+    expect(s.byInputKind).toBeNull()
+    expect(s.golden).toBeNull()
+  })
+
+  it('summarizeEvidence also reads the version 3 breakdown and the NIST comparison', () => {
+    const s = summarizeEvidence({
+      evidenceVersion: 'pqctoday.acvp-evidence/3',
+      evidenceClass: 'nist-acvp-reference-sample',
+      prompt: {},
+      engine: { label: 'softhsmv3 C++ engine' },
+      summary: {
+        answered: 165,
+        unsupported: 0,
+        error: 0,
+        byInputKind: { standard: 30, 'test-input-m': 75, 'key-import-result': 60 },
+      },
+      goldenComparison: {
+        matched: 165,
+        mismatched: 0,
+        unanswered: 0,
+        unexpected: 0,
+        expectedTotal: 165,
+      },
+    })
+    expect(s.evidenceVersion).toBe('pqctoday.acvp-evidence/3')
+    expect(s.byInputKind?.['test-input-m']).toBe(75)
+    expect(s.golden).toEqual({
+      matched: 165,
+      mismatched: 0,
+      unanswered: 0,
+      unexpected: 0,
+      expectedTotal: 165,
+    })
   })
 })
 

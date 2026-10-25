@@ -33,10 +33,49 @@
  *     CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE → false; any other
  *     return value → error (no response entry). A mechanism the engine does not
  *     list in C_GetMechanismList → unsupported (test), not called.
+ *
+ * ── Plan profiles ──────────────────────────────────────────────────────────
+ * `planVectorSet(ir, 'bounded')` (the default, plan version 1) applies D1–D7
+ * exactly as above. The cross-platform runner (tools/acvp-native, acvp-xplat)
+ * mirrors that plan and rejects any other plan version, so it stays on it.
+ * `planVectorSet(ir, 'extended')` (plan version 2, used by the Step 3 panel,
+ * the Developer tab and `acvp-respond --profile extended`) keeps D1, D4, D6
+ * and replaces D2, D3, D5 (SHA2-512/t) and D6b:
+ * X1  encapsulation (AFT): operation "ml-kem.encapsulate" {parameterSet, ek, m}.
+ *     m is passed as the CKM_ML_KEM mechanism parameter — a TEST-ONLY pqctoday-hsm
+ *     extension outside PKCS#11 (ACVP explicit-randomness model; a production
+ *     module must refuse a caller-chosen m). → response fields c and k;
+ *     inputKind "test-input-m". The engine adapter first proves that the engine
+ *     honours m (same m twice → identical output) and otherwise answers
+ *     nothing (unsupported).
+ * X2  key checks: operation "ml-kem.key-check" {parameterSet, keyKind, key}. The
+ *     key is imported with C_CreateObject: CKR_OK → testPassed true; exactly
+ *     CKR_ATTRIBUTE_VALUE_INVALID → false; any other return value → error.
+ *     inputKind "key-import-result".
+ * X3  ML-DSA "internal" with externalMu false: mu = SHAKE256(SHAKE256(pk,64) ‖ M′,
+ *     64) is computed here (testInputs.mlDsaMu) and the case becomes
+ *     "ml-dsa.verify-external-mu" (vendor mechanism, as D6). inputKind "computed-mu".
+ * X4  preHash with SHA2-512/224 or SHA2-512/256: operation "ml-dsa.verify" via the
+ *     generic CKM_HASH_ML_DSA, with SHA-512/224 or SHA-512/256 as the hash (an allowance of
+ *     the PKCS#11 v3.3 working draft; v3.2 has no hash-specific mechanism for them), named in
+ *     CK_HASH_SIGN_ADDITIONAL_CONTEXT and PH(M) computed here (data = PH(M)).
+ *     inputKind "computed-ph".
  */
+import { bytesToUpperHex, hexToBytes } from './ir'
 import type { AcvpPromptIR, JsonObject, SupportedSchemaId } from './ir'
+import { isSha512t, mlDsaMu, preHashSha512t } from './testInputs'
 
 export const PLAN_VERSION = 'pqctoday.acvp-plan/1'
+/** Plan version of the `extended` profile (see "Plan profiles" above). */
+export const PLAN_VERSION_EXTENDED = 'pqctoday.acvp-plan/2'
+
+export type PlanProfile = 'bounded' | 'extended'
+
+/**
+ * How an answered case obtained its value, when it is not the plain standard
+ * path. Absent (undefined) = standard PKCS#11 call over the prompt's own inputs.
+ */
+export type InputKind = 'test-input-m' | 'computed-mu' | 'computed-ph' | 'key-import-result'
 
 export type MlKemParameterSet = 'ML-KEM-512' | 'ML-KEM-768' | 'ML-KEM-1024'
 export type MlDsaParameterSet = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
@@ -44,6 +83,8 @@ export type MlDsaParameterSet = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
 export type Pkcs11MechanismName =
   | 'CKM_ML_KEM'
   | 'CKM_ML_DSA'
+  /** Generic HashML-DSA with a SHA-512/t hash (PKCS#11 v3.3 working-draft allowance): the hash is named in the mechanism parameter, data = PH(M). */
+  | 'CKM_HASH_ML_DSA'
   | 'CKM_HASH_ML_DSA_SHA224'
   | 'CKM_HASH_ML_DSA_SHA256'
   | 'CKM_HASH_ML_DSA_SHA384'
@@ -94,6 +135,29 @@ export interface MlDsaVerifyOp {
   context: string
   /** The ACVP hashAlg for HashML-DSA, or null for pure ML-DSA. */
   hashAlg: string | null
+  /**
+   * Extended profile only: the hash named in CK_HASH_SIGN_ADDITIONAL_CONTEXT when the
+   * generic CKM_HASH_ML_DSA carries a SHA-512/t hash; `message` is then PH(M), not M.
+   */
+  hashMechanism?: 'CKM_SHA512_224' | 'CKM_SHA512_256'
+}
+
+/** Extended profile: ML-KEM encapsulation with the server-chosen m (test-only mechanism parameter). */
+export interface MlKemEncapsulateOp {
+  operation: 'ml-kem.encapsulate'
+  mechanism: 'CKM_ML_KEM'
+  parameterSet: MlKemParameterSet
+  ek: string
+  m: string
+}
+
+/** Extended profile: FIPS 203 §7.2/§7.3 key check, read from the C_CreateObject result. */
+export interface MlKemKeyCheckOp {
+  operation: 'ml-kem.key-check'
+  mechanism: 'CKM_ML_KEM'
+  parameterSet: MlKemParameterSet
+  keyKind: 'ek' | 'dk'
+  key: string
 }
 
 export interface MlDsaVerifyExternalMuOp {
@@ -118,16 +182,30 @@ export const VENDOR_DEFINED_MECHANISMS: Readonly<
   },
 }
 
-export type PlanOperation = MlKemDecapsulateOp | MlDsaVerifyOp | MlDsaVerifyExternalMuOp
+export type PlanOperation =
+  | MlKemDecapsulateOp
+  | MlDsaVerifyOp
+  | MlDsaVerifyExternalMuOp
+  | MlKemEncapsulateOp
+  | MlKemKeyCheckOp
 
+/** The primary response field; an encapsulation answer also carries `c` (see EngineOutcome.extra). */
 export type ResponseField = 'k' | 'testPassed'
 
 export type PlanItem =
-  | { tgId: number; tcId: number; kind: 'execute'; op: PlanOperation; responseField: ResponseField }
+  | {
+      tgId: number
+      tcId: number
+      kind: 'execute'
+      op: PlanOperation
+      responseField: ResponseField
+      /** Extended profile only; absent = the standard path. */
+      inputKind?: InputKind
+    }
   | { tgId: number; tcId: number; kind: 'unsupported'; scope: 'group' | 'test'; reason: string }
 
 export interface ExecutionPlan {
-  planVersion: typeof PLAN_VERSION
+  planVersion: typeof PLAN_VERSION | typeof PLAN_VERSION_EXTENDED
   schemaId: SupportedSchemaId
   vsId: number
   items: PlanItem[]
@@ -142,12 +220,22 @@ export const UNSUPPORTED_REASONS = {
     'signatureInterface "internal" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu.',
   mlDsaHashAlg: (h: string) =>
     `hashAlg "${h}" has no PKCS#11 v3.2 CKM_HASH_ML_DSA_* mechanism (only SHA2-224/256/384/512, SHA3-224/256/384/512, SHAKE-128/256 do).`,
+  /** Extended profile, raised by the engine adapter when its probe shows the supplied m is not honoured. */
+  engineIgnoredSuppliedM:
+    "The engine did not honour the supplied m (the same m gave two different ciphertexts), so no encapsulation answer is given: a value produced without NIST's m could never match.",
 } as const
 
 const str = (o: JsonObject, k: string): string => o[k] as string
 
-/** Pure: IR → plan (rules D1–D6b). */
-export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
+/**
+ * Pure: IR → plan. `bounded` (default) is rules D1–D6b; `extended` replaces
+ * D2, D3, D5 (SHA2-512/t) and D6b by X1–X4 (see the header).
+ */
+export const planVectorSet = (
+  ir: AcvpPromptIR,
+  profile: PlanProfile = 'bounded'
+): ExecutionPlan => {
+  const extended = profile === 'extended'
   const items: PlanItem[] = []
   for (const g of ir.testGroups) {
     const p = g.properties
@@ -158,6 +246,7 @@ export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
     }
     if (ir.schemaId === 'ML-KEM/encapDecap/FIPS203') {
       const fn = str(p, 'function')
+      const parameterSet = str(p, 'parameterSet') as MlKemParameterSet
       if (fn === 'decapsulation') {
         for (const t of g.tests) {
           items.push({
@@ -168,21 +257,15 @@ export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
             op: {
               operation: 'ml-kem.decapsulate',
               mechanism: 'CKM_ML_KEM',
-              parameterSet: str(p, 'parameterSet') as MlKemParameterSet,
+              parameterSet,
               dk: str(t.fields, 'dk'),
               c: str(t.fields, 'c'),
             },
           })
         }
       } else if (fn === 'encapsulation') {
-        groupUnsupported(UNSUPPORTED_REASONS.mlKemEncapsulation)
-      } else {
-        groupUnsupported(UNSUPPORTED_REASONS.mlKemKeyCheck)
-      }
-    } else {
-      if (str(p, 'signatureInterface') !== 'external') {
-        if (p.externalMu !== true) {
-          groupUnsupported(UNSUPPORTED_REASONS.mlDsaInternal)
+        if (!extended) {
+          groupUnsupported(UNSUPPORTED_REASONS.mlKemEncapsulation)
           continue
         }
         for (const t of g.tests) {
@@ -190,14 +273,65 @@ export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
             tgId: g.tgId,
             tcId: t.tcId,
             kind: 'execute',
+            responseField: 'k',
+            inputKind: 'test-input-m',
+            op: {
+              operation: 'ml-kem.encapsulate',
+              mechanism: 'CKM_ML_KEM',
+              parameterSet,
+              ek: str(t.fields, 'ek'),
+              m: str(t.fields, 'm'),
+            },
+          })
+        }
+      } else {
+        if (!extended) {
+          groupUnsupported(UNSUPPORTED_REASONS.mlKemKeyCheck)
+          continue
+        }
+        const keyKind = fn === 'encapsulationKeyCheck' ? 'ek' : 'dk'
+        for (const t of g.tests) {
+          items.push({
+            tgId: g.tgId,
+            tcId: t.tcId,
+            kind: 'execute',
             responseField: 'testPassed',
+            inputKind: 'key-import-result',
+            op: {
+              operation: 'ml-kem.key-check',
+              mechanism: 'CKM_ML_KEM',
+              parameterSet,
+              keyKind,
+              key: str(t.fields, keyKind),
+            },
+          })
+        }
+      }
+    } else {
+      if (str(p, 'signatureInterface') !== 'external') {
+        if (p.externalMu !== true && !extended) {
+          groupUnsupported(UNSUPPORTED_REASONS.mlDsaInternal)
+          continue
+        }
+        const computeMu = p.externalMu !== true
+        for (const t of g.tests) {
+          items.push({
+            tgId: g.tgId,
+            tcId: t.tcId,
+            kind: 'execute',
+            responseField: 'testPassed',
+            ...(computeMu ? { inputKind: 'computed-mu' as const } : {}),
             op: {
               operation: 'ml-dsa.verify-external-mu',
               mechanism: 'CKM_ML_DSA_EXTERNAL_MU',
               vendorDefined: true,
               parameterSet: str(p, 'parameterSet') as MlDsaParameterSet,
               pk: str(t.fields, 'pk'),
-              mu: str(t.fields, 'mu'),
+              mu: computeMu
+                ? bytesToUpperHex(
+                    mlDsaMu(hexToBytes(str(t.fields, 'pk')), hexToBytes(str(t.fields, 'message')))
+                  )
+                : str(t.fields, 'mu'),
               signature: str(t.fields, 'signature'),
             },
           })
@@ -207,6 +341,29 @@ export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
       const preHash = str(p, 'preHash') === 'preHash'
       for (const t of g.tests) {
         const hashAlg = preHash ? str(t.fields, 'hashAlg') : null
+        if (extended && hashAlg !== null && isSha512t(hashAlg)) {
+          items.push({
+            tgId: g.tgId,
+            tcId: t.tcId,
+            kind: 'execute',
+            responseField: 'testPassed',
+            inputKind: 'computed-ph',
+            op: {
+              operation: 'ml-dsa.verify',
+              mechanism: 'CKM_HASH_ML_DSA',
+              parameterSet: str(p, 'parameterSet') as MlDsaParameterSet,
+              pk: str(t.fields, 'pk'),
+              message: bytesToUpperHex(
+                preHashSha512t(hashAlg, hexToBytes(str(t.fields, 'message')))
+              ),
+              signature: str(t.fields, 'signature'),
+              context: str(t.fields, 'context'),
+              hashAlg,
+              hashMechanism: hashAlg === 'SHA2-512/224' ? 'CKM_SHA512_224' : 'CKM_SHA512_256',
+            },
+          })
+          continue
+        }
         const mechanism: Pkcs11MechanismName | undefined = hashAlg
           ? HASH_ALG_TO_MECHANISM[hashAlg]
           : 'CKM_ML_DSA'
@@ -239,7 +396,12 @@ export const planVectorSet = (ir: AcvpPromptIR): ExecutionPlan => {
       }
     }
   }
-  return { planVersion: PLAN_VERSION, schemaId: ir.schemaId, vsId: ir.vsId, items }
+  return {
+    planVersion: extended ? PLAN_VERSION_EXTENDED : PLAN_VERSION,
+    schemaId: ir.schemaId,
+    vsId: ir.vsId,
+    items,
+  }
 }
 
 // ── Engine interface (injected) ─────────────────────────────────────────────
@@ -262,7 +424,13 @@ export interface EngineIdentity {
 }
 
 export type EngineOutcome =
-  | { status: 'ok'; value: string | boolean; detail?: string }
+  | {
+      status: 'ok'
+      value: string | boolean
+      detail?: string
+      /** A second response field of the same test (encapsulation: `c` next to `k`). */
+      extra?: Record<string, string>
+    }
   | { status: 'unsupported'; reason: string }
   | { status: 'error'; reason: string }
 
@@ -286,6 +454,10 @@ export interface CaseResult {
   detail?: string
   /** The PKCS#11 mechanism the case was dispatched to (executed items only). */
   mechanism?: Pkcs11MechanismName
+  /** Second response field of the same test (encapsulation: `c`). */
+  extra?: Record<string, string>
+  /** How the value was obtained, when not the plain standard path (extended profile). */
+  inputKind?: InputKind
 }
 
 /** Run every executable plan item on the engine; carry plan-level unsupported through. */
@@ -320,6 +492,8 @@ export const executePlan = (
           mechanism: item.op.mechanism,
           value: outcome.value,
           ...(outcome.detail ? { detail: outcome.detail } : {}),
+          ...(outcome.extra ? { extra: outcome.extra } : {}),
+          ...(item.inputKind ? { inputKind: item.inputKind } : {}),
         })
       } else if (outcome.status === 'unsupported') {
         results.push({

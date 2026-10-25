@@ -12,7 +12,9 @@ import { validateAgainstSchema } from '../schemaValidator'
 import {
   CURRENT_EVIDENCE_VERSION,
   EVIDENCE_SCHEMAS,
+  EXTENDED_EVIDENCE_VERSION,
   currentEvidenceSchema,
+  evidenceSchemaForPlan,
   validateEvidenceDocument,
 } from './evidenceSchemas'
 import { EVIDENCE_VERSION } from '../evidence'
@@ -36,6 +38,9 @@ describe('evidence schema versions', () => {
     )
     expect(sha('src/services/acvp/schemas/evidence.v2.schema.json')).toBe(
       '238d90d7b8ff75c80a683427fa131a7a1dc9231ba2b2fdedfc9892734bdaea83'
+    )
+    expect(sha('src/services/acvp/schemas/evidence.v3.schema.json')).toBe(
+      '8c92e593f323b6bf726e6996ad86d14dda76358bdbe32b98cf527007702b39d8'
     )
   })
 
@@ -76,5 +81,38 @@ describe('evidence schema versions', () => {
     >
     doc.evidenceVersion = 'pqctoday.acvp-evidence/2'
     expect(validateEvidenceDocument(doc).map((d) => d.path)).toContain('$.vendorDefinedMechanisms')
+  })
+  it('version 3 belongs to the extended plan; version 2 stays the bounded profile’s evidence', () => {
+    expect(EXTENDED_EVIDENCE_VERSION).toBe('pqctoday.acvp-evidence/3')
+    expect(CURRENT_EVIDENCE_VERSION).toBe('pqctoday.acvp-evidence/2')
+    expect(evidenceSchemaForPlan('pqctoday.acvp-plan/1')).toBe(
+      EVIDENCE_SCHEMAS[CURRENT_EVIDENCE_VERSION]
+    )
+    expect(evidenceSchemaForPlan('pqctoday.acvp-plan/2')).toBe(
+      EVIDENCE_SCHEMAS[EXTENDED_EVIDENCE_VERSION]
+    )
+  })
+
+  it('a version 3 document needs summary.byInputKind and rejects an unknown inputKind', () => {
+    const base = JSON.parse(readFileSync(path.join(repo, FROZEN_V1), 'utf8')) as Record<
+      string,
+      unknown
+    >
+    // A minimal v3 document derived from a frozen v2-shaped one is built in pipeline.extended.test.ts;
+    // here only the two rules that distinguish v3 are checked on the schema itself.
+    const v3 = EVIDENCE_SCHEMAS[EXTENDED_EVIDENCE_VERSION] as {
+      properties: {
+        summary: { required: string[] }
+        cases: { items: { properties: { inputKind: { enum: string[] } } } }
+      }
+    }
+    expect(v3.properties.summary.required).toContain('byInputKind')
+    expect(v3.properties.cases.items.properties.inputKind.enum).toEqual([
+      'test-input-m',
+      'computed-mu',
+      'computed-ph',
+      'key-import-result',
+    ])
+    expect(base.evidenceVersion).toBe('pqctoday.acvp-evidence/1')
   })
 })

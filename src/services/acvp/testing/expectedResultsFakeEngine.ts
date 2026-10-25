@@ -31,8 +31,8 @@ export interface FakeEngine extends AcvpEngine {
 
 /**
  * The fake maps each op back to its tgId/tcId through the op's own input
- * (ciphertext or signature), so it can only answer items the plan actually
- * dispatched. `overrides` (keyed "tgId/tcId") force an engine outcome.
+ * (ciphertext, signature, ek + m, or the key of a key check), so it can only
+ * answer items the plan actually dispatched. `overrides` (keyed "tgId/tcId") force an engine outcome.
  */
 export const createExpectedResultsFakeEngine = (
   expectedResultsText: string,
@@ -53,6 +53,9 @@ export const createExpectedResultsFakeEngine = (
     for (const t of g.tests as JsonObject[]) {
       const sig = (t.c ?? t.signature) as string | undefined
       if (sig) byInput.set(sig, `${g.tgId}/${t.tcId}`)
+      else if (t.ek && t.m)
+        byInput.set(`enc:${t.ek as string}:${t.m as string}`, `${g.tgId}/${t.tcId}`)
+      else if (t.ek || t.dk) byInput.set(`key:${(t.ek ?? t.dk) as string}`, `${g.tgId}/${t.tcId}`)
     }
   }
   const calls: PlanOperation[] = []
@@ -61,15 +64,25 @@ export const createExpectedResultsFakeEngine = (
     calls,
     execute(op) {
       calls.push(op)
-      const key = byInput.get(op.operation === 'ml-kem.decapsulate' ? op.c : op.signature)
+      const lookup =
+        op.operation === 'ml-kem.decapsulate'
+          ? op.c
+          : op.operation === 'ml-kem.encapsulate'
+            ? `enc:${op.ek}:${op.m}`
+            : op.operation === 'ml-kem.key-check'
+              ? `key:${op.key}`
+              : op.signature
+      const key = byInput.get(lookup)
       if (!key) return { status: 'error', reason: 'fake: unknown input' }
       const forced = overrides[key]
       if (forced) return forced
       const a = answers.get(key)
       if (!a) return { status: 'error', reason: 'fake: no expected result' }
-      return op.operation === 'ml-kem.decapsulate'
-        ? { status: 'ok', value: a.k as string }
-        : { status: 'ok', value: a.testPassed as boolean }
+      if (op.operation === 'ml-kem.decapsulate') return { status: 'ok', value: a.k as string }
+      if (op.operation === 'ml-kem.encapsulate') {
+        return { status: 'ok', value: a.k as string, extra: { c: a.c as string } }
+      }
+      return { status: 'ok', value: a.testPassed as boolean }
     },
     close() {},
   }

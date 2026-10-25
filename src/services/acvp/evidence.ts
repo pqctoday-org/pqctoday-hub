@@ -9,9 +9,16 @@
  * SHA-256 only, so the sidecar can be shared without re-distributing
  * possibly-controlled lab data.
  */
-import { currentEvidenceSchema } from './schemas/evidenceSchemas'
+import { evidenceSchemaForPlan, EXTENDED_EVIDENCE_VERSION } from './schemas/evidenceSchemas'
 import type { AcvpPromptIR, JsonObject } from './ir'
-import { VENDOR_DEFINED_MECHANISMS, type CaseResult, type EngineIdentity } from './dispatch'
+import {
+  PLAN_VERSION,
+  PLAN_VERSION_EXTENDED,
+  VENDOR_DEFINED_MECHANISMS,
+  type CaseResult,
+  type EngineIdentity,
+  type InputKind,
+} from './dispatch'
 import type { GoldenComparison } from './compare'
 import type { PinnedVectorSetSchema } from './schemas/registry'
 import { validateAgainstSchema } from './schemaValidator'
@@ -43,6 +50,13 @@ export const DISCLAIMER_GENERAL = VALIDATION_DISCLAIMER
 /** Plan §2.2, second required disclaimer (prompt import) — verbatim. */
 export const DISCLAIMER_IMPORT =
   'Import and response generation do not submit results to NIST and do not establish validation. The laboratory or authorized submitter remains responsible for the ACVTS session and submission.'
+
+/**
+ * DRAFT wording (extended profile only; awaiting the owner's approval of all
+ * new learner-facing text). Third disclaimer of an evidence v3 document.
+ */
+export const DISCLAIMER_TEST_INPUT =
+  'Some answers in this run were produced with a test-only input (the random value m of ML-KEM encapsulation, which outside testing FIPS 203 has the module sample itself), with a value computed outside the engine, or from what the engine does when a key is imported. They are teaching evidence that the engine reproduces NIST\u2019s published values; they are not a validation and not an ACVTS response.'
 
 export const PROTOTYPE_LABEL = 'ACVP-format compatible prototype'
 
@@ -76,9 +90,20 @@ export interface EvidenceInput {
   startedAt: string
   finishedAt: string
   goldenComparison?: GoldenComparison | null
+  /** The plan the results come from; absent = the bounded plan (version 1). */
+  planVersion?: string
 }
 
+const INPUT_KINDS: readonly InputKind[] = [
+  'test-input-m',
+  'computed-mu',
+  'computed-ph',
+  'key-import-result',
+]
+
 export const buildEvidence = (inp: EvidenceInput): JsonObject => {
+  const planVersion = inp.planVersion ?? PLAN_VERSION
+  const extended = planVersion === PLAN_VERSION_EXTENDED
   const count = (d: CaseResult['disposition']) =>
     inp.results.filter((r) => r.disposition === d).length
 
@@ -118,9 +143,11 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
 
   const fixture = identifyKnownFixture(inp.promptSha256)
   const evidence: JsonObject = {
-    evidenceVersion: EVIDENCE_VERSION,
+    evidenceVersion: extended ? EXTENDED_EVIDENCE_VERSION : EVIDENCE_VERSION,
     label: PROTOTYPE_LABEL,
-    disclaimers: [DISCLAIMER_GENERAL, DISCLAIMER_IMPORT],
+    disclaimers: extended
+      ? [DISCLAIMER_GENERAL, DISCLAIMER_IMPORT, DISCLAIMER_TEST_INPUT]
+      : [DISCLAIMER_GENERAL, DISCLAIMER_IMPORT],
     evidenceClass: fixture ? 'nist-acvp-reference-sample' : 'unverified-imported-vector-set',
     generator: {
       name: 'PQC Today Hub — ACVP-format import/response export',
@@ -156,6 +183,21 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
       answered: count('answered'),
       unsupported: count('unsupported'),
       error: count('error'),
+      ...(extended
+        ? {
+            byInputKind: {
+              standard: inp.results.filter((r) => r.disposition === 'answered' && !r.inputKind)
+                .length,
+              ...Object.fromEntries(
+                INPUT_KINDS.map((k) => [
+                  k,
+                  inp.results.filter((r) => r.disposition === 'answered' && r.inputKind === k)
+                    .length,
+                ])
+              ),
+            },
+          }
+        : {}),
     },
     cases: inp.results.map((r) => {
       const c: JsonObject = { tgId: r.tgId, tcId: r.tcId, disposition: r.disposition }
@@ -163,8 +205,14 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
       if (r.detail !== undefined) c.detail = r.detail
       if (r.mechanism !== undefined) {
         c.mechanism = r.mechanism
-        c.mechanismKind = VENDOR_DEFINED_MECHANISMS[r.mechanism] ? 'vendor-defined' : 'pkcs11-v3.2'
+        c.mechanismKind = VENDOR_DEFINED_MECHANISMS[r.mechanism]
+          ? 'vendor-defined'
+          : r.mechanism === 'CKM_HASH_ML_DSA'
+            ? // The extended plan uses the generic mechanism only for SHA-512/t, a v3.3 working-draft allowance.
+              'pkcs11-v3.3-draft'
+            : 'pkcs11-v3.2'
       }
+      if (extended && r.inputKind !== undefined) c.inputKind = r.inputKind
       return c
     }),
     vendorDefinedMechanisms: vendorRows,
@@ -180,7 +228,7 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
       : null,
   }
 
-  const diagnostics = validateAgainstSchema(currentEvidenceSchema(), evidence)
+  const diagnostics = validateAgainstSchema(evidenceSchemaForPlan(planVersion), evidence)
   if (diagnostics.length > 0) {
     throw new Error(
       `internal: evidence violates its schema: ${diagnostics.map((d) => `${d.path} ${d.reason}`).join('; ')}`

@@ -13,6 +13,7 @@ import {
   type AcvpEngine,
   type CaseResult,
   type ExecutionPlan,
+  type PlanProfile,
 } from './dispatch'
 import { buildResponse, type BuiltResponse } from './response'
 import { buildEvidence } from './evidence'
@@ -30,15 +31,22 @@ export interface PreparedPrompt {
 export type PrepareResult =
   ({ ok: true } & PreparedPrompt) | { ok: false; diagnostics: SchemaDiagnostic[] }
 
-/** Parse + validate + plan. Engine-free, so the UI can show diagnostics before loading WASM. */
-export const preparePrompt = async (promptText: string): Promise<PrepareResult> => {
+/**
+ * Parse + validate + plan. Engine-free, so the UI can show diagnostics before loading WASM.
+ * `profile` defaults to `bounded` (plan version 1), which the cross-platform runner mirrors;
+ * the Step 3 panel and `acvp-respond --profile extended` pass `extended`.
+ */
+export const preparePrompt = async (
+  promptText: string,
+  profile: PlanProfile = 'bounded'
+): Promise<PrepareResult> => {
   const parsed = parsePromptText(promptText)
   if (!parsed.ok) return parsed
   return {
     ok: true,
     ir: parsed.ir,
     schema: parsed.schema,
-    plan: planVectorSet(parsed.ir),
+    plan: planVectorSet(parsed.ir, profile),
     promptSha256: await sha256Hex(promptText),
   }
 }
@@ -87,6 +95,7 @@ export const executePrepared = async (
     startedAt,
     finishedAt,
     goldenComparison: golden,
+    planVersion: prepared.plan.planVersion,
   })
   return {
     results,
