@@ -85,15 +85,20 @@ export interface XMSSParameterSet {
   variant: 'single-tree' | 'multi-tree'
 }
 
-export interface UseCaseRecommendation {
+/**
+ * One row of the "Which scheme for which use" section: a use case, one example parameter set, and
+ * the sourced text beside it. The number of signatures is never typed here: it is computed from the
+ * parameter set (schemeForUseCapacity), so it cannot drift from the set it describes.
+ */
+export interface SchemeForUseRow {
   id: string
   useCase: string
-  description: string
-  recommendedScheme: 'LMS' | 'XMSS' | 'HSS' | 'XMSS^MT'
-  recommendedParams: string
-  rationale: string
-  maxSignaturesNeeded: string
-  stateStorageRequirement: string
+  /** The example set, by id in LMS_PARAMETER_SETS or XMSS_PARAMETER_SETS */
+  paramSet: { family: 'lms' | 'xmss'; id: string }
+  /** Where the signing state lives (SP 800-208 section 8.1; CNSA 2.0 FAQ v2.2, p. 12) */
+  state: string
+  /** What the NSA CNSA 2.0 FAQ v2.2 says about the scheme (pp. 7, 8, 11) */
+  cnsa: string
 }
 
 export interface TreeNode {
@@ -685,64 +690,96 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
   },
 ]
 
-export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
+const SIGNING_HSM_STATE = 'Signing HSM, backups must prevent state re-use (CNSA 2.0 FAQ p. 12).'
+const MULTI_TREE_CNSA =
+  'XMSS^MT not allowed, LMS and XMSS approved for firmware and software only, ML-DSA-87 approved for every use.'
+
+export const SCHEME_FOR_USE_ROWS: SchemeForUseRow[] = [
   {
     id: 'firmware-signing',
-    useCase: 'Firmware Signing',
-    description: 'Signing firmware images for embedded devices, IoT, and automotive ECUs.',
-    recommendedScheme: 'LMS',
-    recommendedParams: 'LMS H20/W4 or HSS (2-level, H10/W4)',
-    rationale:
-      'Firmware updates are infrequent. LMS simplicity suits resource-constrained devices. HSS extends capacity via hierarchy, but NSA does not allow HSS in National Security Systems (CNSA 2.0 FAQ v2.2, p. 11).',
-    maxSignaturesNeeded: '~10,000 over device lifetime',
-    stateStorageRequirement: 'Secure non-volatile storage (TPM, secure element)',
+    useCase: 'Firmware signing',
+    paramSet: { family: 'lms', id: 'lms-sha256-m24-h20-w4' },
+    state: 'Signing HSM, the device holds none.',
+    cnsa: 'LMS allowed for firmware and software, SHA-256/192 recommended, HSS not allowed.',
   },
   {
     id: 'code-signing',
-    useCase: 'Code Signing',
-    description: 'Signing software releases, packages, and build artifacts.',
-    recommendedScheme: 'XMSS',
-    recommendedParams: 'XMSS-SHA2_20_256 or XMSS^MT-SHA2_20/2_256',
-    rationale:
-      'Higher signing volume than firmware. The XMSS^MT multi-tree variant gives a larger key space, but NSA does not allow it in National Security Systems (CNSA 2.0 FAQ v2.2, p. 11).',
-    maxSignaturesNeeded: '~100,000 over key lifetime',
-    stateStorageRequirement: 'HSM or secure key management system with atomic state updates',
+    useCase: 'Code signing',
+    paramSet: { family: 'xmss', id: 'xmss-sha2-20' },
+    state: 'Signing HSM.',
+    cnsa: 'XMSS allowed for software, XMSS^MT not allowed.',
   },
   {
     id: 'secure-boot',
-    useCase: 'Secure Boot',
-    description: 'Verifying boot chain integrity from ROM to OS kernel.',
-    recommendedScheme: 'LMS',
-    recommendedParams: 'LMS H10/W8 (small signatures)',
-    rationale:
-      'Verification speed is critical. Large W parameter (W=8) trades signing speed for compact signatures. Very few signatures needed.',
-    maxSignaturesNeeded: '~100 (rarely re-signed)',
-    stateStorageRequirement: 'OTP fuses or write-protected flash',
+    useCase: 'Secure boot',
+    paramSet: { family: 'lms', id: 'lms-sha256-m24-h10-w4' },
+    state: "The vendor's signing HSM, the device holds only the public key.",
+    cnsa: 'LMS allowed; note that a larger Winternitz w makes signatures smaller but slows key generation, signing and verification (RFC 8554).',
   },
   {
     id: 'document-signing',
-    useCase: 'Document Signing',
-    description: 'Long-lived digital signatures on legal, financial, or regulatory documents.',
-    recommendedScheme: 'XMSS^MT',
-    recommendedParams: 'XMSS^MT-SHA2_40/4_256',
-    rationale:
-      'Multi-tree structure raises the signing capacity, and security rests on hash-function assumptions. NSA does not allow XMSS^MT in National Security Systems (CNSA 2.0 FAQ v2.2, p. 11).',
-    maxSignaturesNeeded: '~1,000,000+ over organizational lifetime (indicative)',
-    stateStorageRequirement: 'Enterprise HSM with transactional state management',
+    useCase: 'Document signing',
+    paramSet: { family: 'xmss', id: 'xmssmt-sha2-40-4' },
+    state: SIGNING_HSM_STATE,
+    cnsa: MULTI_TREE_CNSA,
   },
   {
     id: 'timestamping',
-    useCase: 'Timestamping Authority',
-    description: 'RFC 3161 timestamping services for non-repudiation.',
-    recommendedScheme: 'XMSS^MT',
-    recommendedParams: 'XMSS^MT-SHA2_60/6_256',
-    rationale:
-      'Highest signing volume requirement. 60-level tree provides effectively unlimited signatures. State management is paramount.',
-    maxSignaturesNeeded: '~10,000,000+ per year',
-    stateStorageRequirement:
-      'Clustered HSMs with replicated, atomic state updates and audit logging',
+    useCase: 'Timestamping',
+    paramSet: { family: 'xmss', id: 'xmssmt-sha2-60-6' },
+    state: SIGNING_HSM_STATE,
+    cnsa: MULTI_TREE_CNSA,
   },
 ]
+
+/** The parameter set a "Which scheme for which use" row shows. Throws on an unknown id. */
+export function schemeForUseParamSet(row: SchemeForUseRow): LMSParameterSet | XMSSParameterSet {
+  const sets: (LMSParameterSet | XMSSParameterSet)[] =
+    row.paramSet.family === 'lms' ? LMS_PARAMETER_SETS : XMSS_PARAMETER_SETS
+  const set = sets.find((s) => s.id === row.paramSet.id)
+  if (!set) throw new Error(`Unknown ${row.paramSet.family} parameter set: ${row.paramSet.id}`)
+  return set
+}
+
+/** Total tree height of the row's set: for a multi-tree set, the sum over all layers. */
+export function schemeForUseTotalHeight(row: SchemeForUseRow): number {
+  return schemeForUseParamSet(row).treeHeight
+}
+
+/** Layers of a multi-tree XMSS^MT set, read from its standard name (XMSS^MT-SHA2_40/4_256 has 4). */
+export function xmssMtLayers(name: string): number | undefined {
+  const match = /_(\d+)\/(\d+)_/.exec(name)
+  return match ? Number(match[2]) : undefined
+}
+
+/**
+ * Signatures the row's set can ever make: 2 to the power of its total tree height. Computed with
+ * BigInt because 2^60 is past what a JavaScript number can print exactly.
+ */
+export function schemeForUseCapacity(row: SchemeForUseRow): bigint {
+  return BigInt(1) << BigInt(schemeForUseTotalHeight(row))
+}
+
+/** A whole number with thousands separators, exact for any size. */
+export function formatExactCount(count: bigint): string {
+  return count.toLocaleString('en-US')
+}
+
+/** How the "Parameter set" column names the row's set. */
+export function schemeForUseParamLabel(row: SchemeForUseRow): string {
+  const set = schemeForUseParamSet(row)
+  const height = schemeForUseTotalHeight(row)
+  if (row.paramSet.family === 'lms') {
+    const levels = (set as LMSParameterSet).levelHeights.length
+    return levels === 1
+      ? `LMS, one tree, height ${height}`
+      : `HSS, total height ${height} in ${levels} layers`
+  }
+  const layers = xmssMtLayers(set.name)
+  return layers === undefined
+    ? `${set.name}, one tree, height ${height}`
+    : `${set.name}, total height ${height} in ${layers} layers`
+}
 
 export const WORKSHOP_DISPLAY_PARAMS = {
   lms: [
