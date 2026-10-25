@@ -76,8 +76,8 @@ describe('reviewed Library entries: dates and titles', () => {
     expect(paper.documentTitle).toBe(
       "Avis scientifique et technique de l'ANSSI sur la migration vers la cryptographie post-quantique"
     )
-    expect(paper.initialPublicationDate).toBe('2022-04-14')
-    expect(paper.lastUpdateDate).toBe('2022-04-14')
+    expect(paper.initialPublicationDate).toBe('2022-04-11')
+    expect(paper.lastUpdateDate).toBe('2022-04-11')
     expect(paper.downloadUrl).toContain('anssi-avis-migration-vers-la-cryptographie-post-quantique')
     const followUp = byId('ANSSI PQC Follow-up Paper')
     expect(followUp.initialPublicationDate).toBe('2023-12-21')
