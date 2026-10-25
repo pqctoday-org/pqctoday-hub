@@ -624,6 +624,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 </Button>
               ))}
             </div>
+            <p className="text-[10px] text-muted-foreground">
+              NSA CNSA 2.0 approves only single-tree LMS and XMSS for National Security Systems; the
+              multi-tree HSS is not allowed (FAQ v2.2, p. 11). L2 and L3 are shown for education.
+            </p>
             {hssLevels >= 2 && (
               <div className="flex items-center gap-2 pl-1">
                 <span className="text-[10px] text-muted-foreground w-14 shrink-0">Level 2 H</span>

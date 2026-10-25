@@ -148,7 +148,8 @@ describe('SLHDSALiveDemo: the size and CNSA comparison table', () => {
     const cnsa = rowOf('CNSA 2.0')
     expect(cnsa[1]).toMatch(/Single-tree LMS approved for firmware and software signing/)
     expect(cnsa[1]).toMatch(/SHA-256\/192 recommended/)
-    expect(cnsa[1]).toMatch(/HSS not allowed/)
+    // NSA CNSA 2.0 FAQ v2.2, p. 11: "The multi-tree algorithms HSS and XMSSMT are not allowed."
+    expect(cnsa[1]).toMatch(/multi-tree HSS and XMSSMT not allowed/)
     expect(cnsa[2]).toBe('Not approved for any use in NSS')
     expect(cnsa[3]).toMatch(/^ML-DSA-87 only/)
     expect(cnsa.join(' ')).not.toMatch(/Required/)
