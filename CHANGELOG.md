@@ -36,7 +36,7 @@ Library entries now name the organisation that published them, and seven certifi
 ### Fixed
 
 - **Almost 200 Library entries now link to their real publisher** [view:/library] [persona:cert-engineer] [persona:researcher] [persona:grc]: entries with no linked publisher scored "No linked trusted source", which lowered the trust score of documents from NIST, the IETF, ISO, arXiv and many others. Each entry now points to the organisation that published it, and 39 publishers that were missing from the list of trusted sources were added.
-- **Eleven Library entries no longer link to the wrong publisher** [view:/library] [persona:cert-engineer] [persona:researcher]: documents from Czech, Canadian, Indian, US and international bodies had been linked to the European Commission, and a few others to a neighbouring organisation. They now link to the publisher they name.
+- **Seventeen Library entries no longer link to the wrong publisher** [view:/library] [persona:cert-engineer] [persona:researcher]: eleven documents from Czech, Canadian, Indian, US and international bodies had been linked to the European Commission, and six others to a neighbouring organisation. They now link to the publisher that issued them.
 - **The 4.180.0 note on Testing & Validation counts the products right** [view:/learn/pqc-testing-validation] [persona:cert-engineer]: other routes list fifteen products, not sixteen.
 
 ### Changed
