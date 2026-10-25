@@ -709,6 +709,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     notes: [
       "req -subj in Lessons 2 and 8 overrode the subject entirely, so this curriculum never depended on openssl.cnf's [req_distinguished_name] defaults — but a real deployment without -subj absolutely does.",
       'configutl is one of the two brand-new subcommands in OpenSSL 3.6 alongside kdf (Lesson 7) — both postdate most existing OpenSSL tutorials.',
+      "In OpenSSL, the part that can be FIPS validated is the FIPS provider, a separate loadable module. Only a FIPS provider built from an OpenSSL version that has a valid FIPS certificate counts, and the certificate links to a Security Policy that you must follow. The openssl fipsinstall command runs the module's self-tests and writes the module configuration file. This in-browser build loads only the default and legacy providers, so it is not the validated module.",
     ],
     whyItMatters:
       'Every req/x509 call in this whole curriculum silently trusted a config file for defaults you never saw. configutl is how you stop trusting blindly and actually inspect what a config resolves to — useful the moment a CSR comes out with an unexpected extension or default.',

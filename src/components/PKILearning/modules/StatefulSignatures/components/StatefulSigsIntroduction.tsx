@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { SchemeForUseSection } from './SchemeForUseSection'
 
 interface StatefulSigsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -821,6 +822,9 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
         </p>
       </div>
     </section>
+
+    {/* Which scheme for which use */}
+    <SchemeForUseSection />
 
     {/* Related Resources */}
     <section className="glass-panel p-6 border-secondary/20">

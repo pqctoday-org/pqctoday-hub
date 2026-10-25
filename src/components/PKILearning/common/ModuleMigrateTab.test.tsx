@@ -164,4 +164,31 @@ describe('ModuleMigrateTab', () => {
     expect(screen.getAllByText('Open Source').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('Commercial')).toBeInTheDocument()
   })
+
+  it('keeps only the products the item filter accepts, and the catalog link follows', () => {
+    render(
+      <MemoryRouter>
+        <ModuleMigrateTab
+          moduleId="tls-basics"
+          itemFilter={(item) => item.softwareName === 'FIPSProduct'}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getByText('FIPSProduct')).toBeInTheDocument()
+    expect(screen.queryByText('TestProduct')).not.toBeInTheDocument()
+    expect(screen.queryByText('PartialFIPS')).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Migrate Catalog' })).toHaveAttribute(
+      'href',
+      '/migrate?productIds=testproduct'
+    )
+  })
+
+  it('shows the empty state when the item filter accepts nothing', () => {
+    render(
+      <MemoryRouter>
+        <ModuleMigrateTab moduleId="tls-basics" itemFilter={() => false} />
+      </MemoryRouter>
+    )
+    expect(screen.getByText('No tools or products yet')).toBeInTheDocument()
+  })
 })

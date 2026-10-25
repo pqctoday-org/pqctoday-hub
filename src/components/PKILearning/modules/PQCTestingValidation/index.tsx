@@ -23,6 +23,7 @@ import manifest from './manifest'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { defaultPqcTestingLearnPath } from './learnPath'
+import { toolOnPath } from './data/learnPathTags'
 
 // Titles carry no "Step N:" prefix: the stepper numbers the steps on the learner's path, and the
 // certification-engineer path shows only two of the seven (chip "1" over a title saying "Step 5").
@@ -101,6 +102,7 @@ export const PQCTestingValidationModule: FC = () => {
         />
       )}
       workshopParts={PARTS}
+      toolFilter={toolOnPath}
       renderWorkshopStep={(index, configKey) => {
         switch (index) {
           case 0:

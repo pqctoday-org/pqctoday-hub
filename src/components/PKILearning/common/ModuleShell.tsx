@@ -39,6 +39,7 @@ import { WorkshopStepHeader } from './WorkshopStepHeader'
 import { GlossaryAutoWrap } from './GlossaryAutoWrap'
 import { useModuleProgress } from './useModuleProgress'
 import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
+import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   isInLearnPath,
   isWorkshopStepOptional,
@@ -172,6 +173,10 @@ export interface ModuleShellProps {
   /** One sentence shown above the Tools & Products list, for a lesson whose listed
    *  products are things that were tested rather than tools the lesson teaches with. */
   toolsIntro?: ReactNode
+  /** Narrows the Tools & Products list for a learn path: called with each product and the
+   *  learner's active path id (undefined when no path is active); return false to hide it.
+   *  Omit it and every product that names the module is listed. */
+  toolFilter?: (item: SoftwareItem, activePathId: string | undefined) => boolean
   /** custom modules (Quiz) render their own body — no tabs */
   children?: ReactNode
 }
@@ -306,6 +311,7 @@ export const ModuleShell = ({
   renderWorkshopStep,
   onReset,
   toolsIntro,
+  toolFilter,
   children,
 }: ModuleShellProps) => {
   const isMobileShell = useIsMobileShell()
@@ -704,7 +710,10 @@ export const ModuleShell = ({
                   {toolsIntro}
                 </p>
               ) : null}
-              <ModuleMigrateTab moduleId={manifest.id} />
+              <ModuleMigrateTab
+                moduleId={manifest.id}
+                itemFilter={toolFilter ? (item) => toolFilter(item, activePathId) : undefined}
+              />
             </TabsContent>
           )}
         </Tabs>
