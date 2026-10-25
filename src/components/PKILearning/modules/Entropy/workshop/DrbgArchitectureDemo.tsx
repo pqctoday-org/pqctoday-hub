@@ -208,8 +208,9 @@ export const DrbgArchitectureDemo: React.FC = () => {
         <p className="text-xs text-muted-foreground leading-relaxed">
           A DRBG is not an entropy source: its output is only as unpredictable as the entropy input
           it was seeded with. Here the entropy input comes from the browser&rsquo;s{' '}
-          <code>crypto.getRandomValues()</code> as a stand-in. SP 800-90C expects seed material for
-          a DRBG to come from entropy sources validated against SP 800-90B.
+          <code>crypto.getRandomValues()</code> as a stand-in. In SP 800-90C (section 2.2, Table 1)
+          an RBG2 or RBG3 seeds its DRBG from entropy sources validated under SP 800-90B; an RBG1 is
+          seeded once by another RBG (an RBG2(P), an RBG3 or a root RBGC).
         </p>
       </div>
 
