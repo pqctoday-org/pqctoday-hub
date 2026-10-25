@@ -185,6 +185,9 @@ export const buildEvidence = (inp: EvidenceInput): JsonObject => {
       error: count('error'),
       ...(extended
         ? {
+            // `standard` = no special input. It still includes the answers that used the
+            // vendor-defined external-μ mechanism with the prompt's own μ; readers that need
+            // the mechanism split use countAnswerKinds (answerKinds.ts) on the cases.
             byInputKind: {
               standard: inp.results.filter((r) => r.disposition === 'answered' && !r.inputKind)
                 .length,

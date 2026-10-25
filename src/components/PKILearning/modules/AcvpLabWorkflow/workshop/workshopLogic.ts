@@ -4,6 +4,7 @@
  * component files so React fast refresh stays component-only).
  */
 import type { PlanItem } from '@/services/acvp/dispatch'
+import { countAnswerKinds, type AnswerKindCounts } from '@/services/acvp/answerKinds'
 import type { JsonObject } from '@/services/acvp/ir'
 
 export type Prediction = 'executes' | 'partly' | 'unsupported'
@@ -48,10 +49,12 @@ export interface EvidenceSummary {
   unsupported: number
   error: number
   artifactSha256Note: string | null
-  /** Layout edition of the file (2 = standard calls only, 3 = also labels how each answer was obtained). */
+  /** Layout edition of the file (2 = no special inputs, 3 = also labels how each answer was obtained). */
   evidenceVersion: string | null
-  /** Version-3 files only: answers by how they were obtained. */
+  /** Version-3 files only: answers by input kind, as the file's summary counts them (`standard` = no special input). */
   byInputKind: Record<string, number> | null
+  /** Version-3 files only: answers by mechanism kind and input kind, counted from the cases. */
+  answerKinds: AnswerKindCounts | null
   /** Present when the run was compared with NIST's expected results. */
   golden: {
     matched: number
@@ -99,6 +102,10 @@ export const summarizeEvidence = (doc: unknown): EvidenceSummary => {
     byInputKind:
       summary.byInputKind && typeof summary.byInputKind === 'object'
         ? (summary.byInputKind as Record<string, number>)
+        : null,
+    answerKinds:
+      summary.byInputKind && typeof summary.byInputKind === 'object' && Array.isArray(e.cases)
+        ? countAnswerKinds(e.cases)
         : null,
     golden: goldenOf(e.goldenComparison),
   }

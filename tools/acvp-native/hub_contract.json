@@ -36,7 +36,7 @@
     {
       "name": "CKM_ML_DSA_EXTERNAL_MU",
       "value": "0x0000403c",
-      "source": "pqctoday-hsm src/lib/vendor_mechanisms.h + rust/src/constants.rs (CKM_VENDOR_DEFINED range; not a PKCS#11 v3.2 mechanism)"
+      "source": "pqctoday-hsm src/lib/vendor_mechanisms.h + rust/src/constants.rs (not in the PKCS#11 v3.2 mechanism list; carried in the PKCS#11 v3.3 draft)"
     }
   ],
   "knownFixtures": [

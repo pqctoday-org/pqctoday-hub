@@ -268,9 +268,9 @@ export const ResponseArtifactLab: React.FC = () => {
           <dl className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-[max-content_1fr] sm:gap-x-3">
             <dt className="font-mono text-foreground">evidenceVersion, label, disclaimers</dt>
             <dd>
-              The edition of the file layout (2: standard calls only; 3: also labels how each answer
-              was obtained), and what the file is not: it is not a validation, not a verdict from
-              the NIST server, and nothing is sent to NIST.
+              The edition of the file layout (2: every answer made from the prompt&rsquo;s own
+              inputs; 3: also labels how each answer was obtained), and what the file is not: it is
+              not a validation, not a verdict from the NIST server, and nothing is sent to NIST.
             </dd>
             <dt className="font-mono text-foreground">evidenceClass</dt>
             <dd>
@@ -293,14 +293,15 @@ export const ResponseArtifactLab: React.FC = () => {
             <dt className="font-mono text-foreground">engine, startedAt, finishedAt</dt>
             <dd>
               Which engine ran, its build commit and date, and the SHA-256 of the exact WebAssembly
-              file loaded, with the time the run took.
+              file loaded, with the time the run took. A file made in the browser leaves the build
+              commit, build date and WebAssembly hash empty (the command-line tool fills them).
             </dd>
             <dt className="font-mono text-foreground">summary</dt>
             <dd>
               How many tests were answered, unsupported and in error. A version 3 file also counts
-              the answers by how they were obtained: through standard calls, with NIST&rsquo;s
-              random value as a test-only input, with a value computed outside the engine, or from
-              the result of importing a key.
+              the answers by how they were obtained: from the prompt&rsquo;s own inputs alone, with
+              NIST&rsquo;s random value as a test-only input, with a value computed outside the
+              engine, or from the result of importing a key.
             </dd>
             <dt className="font-mono text-foreground">cases</dt>
             <dd>
@@ -320,7 +321,8 @@ export const ResponseArtifactLab: React.FC = () => {
             <dd>
               For a public sample only: how many answers match NIST&rsquo;s published expected
               results, and how many differ or are missing. For a prompt issued to a laboratory the
-              expected answers are not supplied: the ACVTS server holds them.
+              expected answers are not supplied: the ACVTS server holds them. A file made in the
+              browser carries no NIST comparison; step C shows the match count instead.
             </dd>
           </dl>
         </details>
@@ -346,16 +348,19 @@ export const ResponseArtifactLab: React.FC = () => {
               <dd className="text-foreground">
                 {evidence.answered} / {evidence.unsupported} / {evidence.error}
               </dd>
-              {evidence.byInputKind ? (
+              {evidence.answerKinds ? (
                 <>
                   <dt className="text-muted-foreground">how the answers were obtained</dt>
-                  <dd className="text-foreground">
-                    {evidence.byInputKind.standard} standard calls ·{' '}
-                    {evidence.byInputKind['test-input-m']} with a test-only input ·{' '}
-                    {(evidence.byInputKind['computed-mu'] ?? 0) +
-                      (evidence.byInputKind['computed-ph'] ?? 0)}{' '}
-                    computed outside the engine · {evidence.byInputKind['key-import-result']} from a
-                    key import result
+                  <dd className="text-foreground" data-testid="ral-evidence-kinds">
+                    {evidence.answerKinds.standardV32} standard PKCS#11 v3.2 calls ·{' '}
+                    {evidence.answerKinds.vendorDefined} through the vendor-defined external-μ
+                    mechanism (answered from the μ NIST supplies) ·{' '}
+                    {evidence.answerKinds.v33Draft > 0
+                      ? `${evidence.answerKinds.v33Draft} through a PKCS#11 v3.3 draft mechanism · `
+                      : ''}
+                    {evidence.answerKinds.testInputM} with a test-only input ·{' '}
+                    {evidence.answerKinds.computed} computed outside the engine ·{' '}
+                    {evidence.answerKinds.keyImportResult} from a key import result
                   </dd>
                 </>
               ) : null}

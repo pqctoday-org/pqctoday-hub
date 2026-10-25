@@ -178,7 +178,7 @@ export const VENDOR_DEFINED_MECHANISMS: Readonly<
   CKM_ML_DSA_EXTERNAL_MU: {
     value: '0x0000403c',
     source:
-      'pqctoday-hsm src/lib/vendor_mechanisms.h + rust/src/constants.rs (CKM_VENDOR_DEFINED range; not a PKCS#11 v3.2 mechanism)',
+      'pqctoday-hsm src/lib/vendor_mechanisms.h + rust/src/constants.rs (not in the PKCS#11 v3.2 mechanism list; carried in the PKCS#11 v3.3 draft)',
   },
 }
 
@@ -213,9 +213,9 @@ export interface ExecutionPlan {
 
 export const UNSUPPORTED_REASONS = {
   mlKemEncapsulation:
-    'ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, and this prototype uses no randomness-injection seam.',
+    'ML-KEM encapsulation AFT needs the server-chosen m (FIPS 203 ML-KEM.Encaps_internal); PKCS#11 v3.2 C_EncapsulateKey draws m from the token RNG and has no input for it, so the standard PKCS#11 path cannot answer this test.',
   mlKemKeyCheck:
-    'FIPS 203 §7.2/§7.3 key checks are not a PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour. Outside the bounded prototype (one ML-KEM operation: decapsulation).',
+    'FIPS 203 §7.2/§7.3 key checks are not a standard PKCS#11 operation; reading a C_CreateObject return code as testPassed would be an inference about engine behaviour, so the standard PKCS#11 path cannot answer this test.',
   mlDsaInternal:
     'signatureInterface "internal" with externalMu false is ML-DSA.Verify_internal on a raw message M′ (FIPS 204 Alg. 8); no PKCS#11 mechanism (standard or pqctoday-hsm vendor) takes M′ — CKM_ML_DSA / CKM_HASH_ML_DSA_* implement the external interface and the vendor CKM_ML_DSA_EXTERNAL_MU takes mu.',
   mlDsaHashAlg: (h: string) =>

@@ -25,6 +25,7 @@ import {
 } from '@/services/acvp/run'
 import { UNSUPPORTED_REASONS, type AcvpEngine, type EngineIdentity } from '@/services/acvp/dispatch'
 import { DISCLAIMER_GENERAL, DISCLAIMER_IMPORT, PROTOTYPE_LABEL } from '@/services/acvp/evidence'
+import { countAnswerKinds } from '@/services/acvp/answerKinds'
 import { PINNED_SCHEMAS } from '@/services/acvp/schemas/registry'
 import type { JsonObject } from '@/services/acvp/ir'
 
@@ -147,6 +148,7 @@ export const AcvpFormatPrototypePanel = ({
         byInputKind?: Record<string, number>
       }
     | undefined
+  const kinds = countAnswerKinds(output?.evidence.cases)
   const unsupportedRows = (output?.evidence.unsupported ?? []) as Array<{
     tgId: number
     scope: string
@@ -176,17 +178,18 @@ export const AcvpFormatPrototypePanel = ({
       <p className="text-xs text-muted-foreground">
         Supports exactly two pinned vector-set types:{' '}
         {PINNED_SCHEMAS.map((s) => `${s.algorithm} / ${s.mode} / ${s.revision}`).join(' and ')}.
-        Executed: every group of both. Most answers use standard PKCS#11 calls. Four kinds do not,
-        and each is labelled in evidence.json and below: ML-KEM encapsulation receives NIST&rsquo;s
-        random value m through a test-only engine extension (outside testing, FIPS 203 has the
-        module sample m itself); ML-DSA internal-interface cases that supply a raw message use a
-        value (μ) the browser computes from the prompt&rsquo;s public key and message, with the
-        vendor-defined (not PKCS#11 v3.2) mechanism CKM_ML_DSA_EXTERNAL_MU; SHA2-512/224 and
-        SHA2-512/256 pre-hash cases use a hash the browser computes and the generic CKM_HASH_ML_DSA
-        mechanism, with that hash named in its parameter (an allowance of the PKCS#11 v3.3 working
-        draft); ML-KEM key checks are read from what these engines do when the key is imported.
-        Anything the engine cannot do exactly is listed as unsupported and left out of the response,
-        never guessed or defaulted.
+        Executed: every group of both. Some answers use standard PKCS#11 v3.2 calls. Five kinds do
+        not, and each is labelled in evidence.json and below: ML-KEM encapsulation receives
+        NIST&rsquo;s random value m through a test-only engine extension (outside testing, FIPS 203
+        has the module sample m itself); ML-DSA internal-interface cases that supply NIST&rsquo;s μ
+        use the vendor-defined (not PKCS#11 v3.2) mechanism CKM_ML_DSA_EXTERNAL_MU with that μ;
+        those that supply a raw message use a value (μ) the browser computes from the prompt&rsquo;s
+        public key and message, with the same mechanism; SHA2-512/224 and SHA2-512/256 pre-hash
+        cases use a hash the browser computes and the generic CKM_HASH_ML_DSA mechanism, with that
+        hash named in its parameter (an allowance of the PKCS#11 v3.3 working draft); ML-KEM key
+        checks are read from what these engines do when the key is imported. Anything the engine
+        cannot do exactly is listed as unsupported and left out of the response, never guessed or
+        defaulted.
       </p>
       <p className="text-xs text-muted-foreground" data-testid="acvp-io-revisions">
         The upstream ACVP drafts also define newer test revisions for some modes: ML-KEM encapDecap
@@ -315,12 +318,15 @@ export const AcvpFormatPrototypePanel = ({
             </p>
             {summary.byInputKind && summary.answered > 0 && (
               <p className="text-muted-foreground" data-testid="acvp-io-kinds">
-                How the {summary.answered} answers were obtained: {summary.byInputKind.standard}{' '}
-                through standard PKCS#11 calls · {summary.byInputKind['test-input-m']} with
-                NIST&rsquo;s m as a test-only input ·{' '}
-                {summary.byInputKind['computed-mu'] + summary.byInputKind['computed-ph']} with a
-                value computed outside the engine · {summary.byInputKind['key-import-result']} from
-                the result of importing a key.
+                How the {summary.answered} answers were obtained: {kinds.standardV32} through
+                standard PKCS#11 v3.2 calls · {kinds.vendorDefined} through the vendor-defined
+                external-μ mechanism (answered from the μ NIST supplies) ·{' '}
+                {kinds.v33Draft > 0
+                  ? `${kinds.v33Draft} through a PKCS#11 v3.3 draft mechanism · `
+                  : ''}
+                {kinds.testInputM} with NIST&rsquo;s m as a test-only input · {kinds.computed} with
+                a value computed outside the engine · {kinds.keyImportResult} from the result of
+                importing a key.
               </p>
             )}
             <p className="text-muted-foreground">

@@ -121,7 +121,7 @@ describe('AcvpFormatPrototypePanel', () => {
       'key-import-result': 0,
     })
     expect(screen.getByTestId('acvp-io-kinds')).toHaveTextContent(
-      'How the 180 answers were obtained: 127 through standard PKCS#11 calls'
+      'How the 180 answers were obtained: 82 through standard PKCS#11 v3.2 calls · 45 through the vendor-defined external-μ mechanism'
     )
 
     expect(network.fetch).not.toHaveBeenCalled()
