@@ -391,7 +391,7 @@ export const ConformanceSuiteWorkbench = () => {
         <p className="p-8 text-center text-xs text-muted-foreground/60 italic border border-dashed rounded-lg">
           {loading
             ? 'Running conformance checks…'
-            : 'No rows yet. Pick cases on the left and press Run.'}
+            : 'No rows yet. Pick cases in the list and press Run.'}
         </p>
       )}
 
