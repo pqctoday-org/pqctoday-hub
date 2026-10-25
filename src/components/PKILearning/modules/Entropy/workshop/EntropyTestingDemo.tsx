@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useCallback } from 'react'
+import { Link } from 'react-router'
 import {
   BarChart3,
   Play,
@@ -502,6 +503,10 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
             <a href="/migrate?domain=hsm" className="text-primary underline">
               Migrate catalog → Hardware Security Modules
             </a>
+            . NIST entropy source validation certificates are listed under{' '}
+            <Link to="/compliance?tab=records&rtab=esv" className="text-primary underline">
+              Compliance, Entropy (ESV)
+            </Link>
             . No standalone entropy-source products are currently cataloged; contributions welcome
             via the{' '}
             <a
