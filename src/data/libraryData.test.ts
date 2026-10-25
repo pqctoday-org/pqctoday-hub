@@ -132,11 +132,6 @@ describe('libraryData', () => {
       const cut = (v: string) => v.split('-').slice(0, n).join('-')
       return cut(later) < cut(earlier)
     }
-    // Rows whose update date still precedes the publication date and have no date
-    // the document itself supports. A row leaves this list when its dates are
-    // corrected, and no row may join it.
-    const KNOWN_OUT_OF_ORDER = ['ANSSI PQC Position Paper']
-
     it('describes the OpenPGP draft entry as an Internet-Draft, not as the released RFC 9581', () => {
       const item = libraryData.find((i) => i.referenceId === 'RFC 9581')!
       // RFC 9581 is "CBOR Tags for Time, Duration, and Period" (August 2024); the entry is
@@ -154,7 +149,7 @@ describe('libraryData', () => {
       }
     })
 
-    it('no document is last updated before it was first published (beyond the known exceptions)', () => {
+    it('no document is last updated before it was first published', () => {
       const outOfOrder = libraryData
         .filter(
           (i) =>
@@ -164,7 +159,7 @@ describe('libraryData', () => {
         )
         .map((i) => i.referenceId)
         .sort()
-      expect(outOfOrder).toEqual([...KNOWN_OUT_OF_ORDER].sort())
+      expect(outOfOrder).toEqual([])
     })
   })
 
