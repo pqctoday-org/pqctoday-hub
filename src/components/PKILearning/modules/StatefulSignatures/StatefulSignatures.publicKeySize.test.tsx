@@ -5,7 +5,7 @@
  * sets and 48 bytes for the SHA-256/192 sets. The Learn text, the exercise and the
  * rag-summary must not give 56 bytes for every parameter set.
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -22,6 +22,8 @@ describe('StatefulSignatures: LMS public-key size', () => {
   const sha256_192 = lmsPublicKeyBytes(24)
 
   it('the Learn text gives both sizes, from the RFC 8554 layout', () => {
+    // jsdom has no scrollIntoView; the stepper calls it when a step is opened
+    Element.prototype.scrollIntoView = vi.fn()
     render(
       <EmbedProvider>
         <MemoryRouter>
