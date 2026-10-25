@@ -21,6 +21,7 @@ import {
   Compass,
   Info,
 } from 'lucide-react'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { getStandard } from '@/data/standardsRegistry'
 import { PathScopedContent } from '@/components/PKILearning/common/LearnPathPicker'
 import { ModuleAnalysisNote } from '@/components/PKILearning/common/ModuleAnalysisNote'
@@ -164,6 +165,7 @@ const Quote = ({ children, cite }: { children: ReactNode; cite: ReactNode }) => 
   </blockquote>
 )
 
+/** Every table in this lesson: a table from 640 px up, stacked rows below it (see ResponsiveTable). */
 const DataTable = ({
   caption,
   head,
@@ -173,31 +175,14 @@ const DataTable = ({
   head: string[]
   rows: ReactNode[][]
 }) => (
-  <div className="overflow-x-auto">
-    <table className="w-full text-sm">
-      <caption className="sr-only">{caption}</caption>
-      <thead>
-        <tr className="border-b border-border">
-          {head.map((h) => (
-            <th key={h} scope="col" className="p-2 text-left font-medium text-muted-foreground">
-              {h}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, i) => (
-          <tr key={i} className="border-b border-border/50 align-top">
-            {row.map((cell, j) => (
-              <td key={j} className="p-2 text-foreground/90">
-                {cell}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+  <ResponsiveTable
+    caption={caption}
+    head={head}
+    rows={rows}
+    size="sm"
+    className="text-foreground/90"
+    testId="cc-table"
+  />
 )
 
 const Sources = ({ children, readOn = AS_OF_LABEL }: { children: ReactNode; readOn?: string }) => (

@@ -3,6 +3,7 @@ import React, { useState, useCallback, useRef } from 'react'
 import { Loader2, CheckCircle, XCircle, Info, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import {
   WorkshopOperationLog,
@@ -941,32 +942,32 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
             Stateful vs Stateless Signature Comparison
           </h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-2 pr-4 text-muted-foreground font-medium">Property</th>
-                <th className="text-center py-2 px-3 text-muted-foreground font-medium">LMS</th>
-                <th className="text-center py-2 px-3 text-primary font-medium">SLH-DSA</th>
-                <th className="text-center py-2 px-3 text-muted-foreground font-medium">ML-DSA</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON_ROWS.map((row) => (
-                <tr key={row.label} className="border-b border-border/50">
-                  <td className="py-2 pr-4 text-foreground font-medium">{row.label}</td>
-                  <td className="py-2 px-3 text-center font-mono text-muted-foreground">
-                    {row.lms}
-                  </td>
-                  <td className="py-2 px-3 text-center font-mono text-primary">{row.slhdsa}</td>
-                  <td className="py-2 px-3 text-center font-mono text-muted-foreground">
-                    {row.mldsa}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ResponsiveTable
+          caption="Stateful vs Stateless Signature Comparison"
+          head={[
+            'Property',
+            'LMS',
+            <span key="slhdsa" className="text-primary">
+              SLH-DSA
+            </span>,
+            'ML-DSA',
+          ]}
+          rows={COMPARISON_ROWS.map((row) => [
+            row.label,
+            <span key="lms" className="font-mono text-muted-foreground">
+              {row.lms}
+            </span>,
+            <span key="slhdsa" className="font-mono text-primary">
+              {row.slhdsa}
+            </span>,
+            <span key="mldsa" className="font-mono text-muted-foreground">
+              {row.mldsa}
+            </span>,
+          ])}
+          strongFirstColumn
+          centerValues
+          testId="slh-dsa-comparison"
+        />
         <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed">
           The size rows compare named parameter sets of a similar size class, not equal security: SP
           800-208 assigns no NIST security category to LMS. LMS sizes follow the RFC 8554 layouts
