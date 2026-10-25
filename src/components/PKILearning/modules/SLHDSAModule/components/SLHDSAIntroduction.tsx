@@ -757,10 +757,23 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
         </div>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        Sources: NIST ACVP draft specification for SLH-DSA (2 October 2026); CMVP Implementation
-        Guidance for FIPS PUB 140-3, IG 10.3.A (document updated 19 August 2026); NIST CAVP
-        overview; NSA CNSA 2.0 FAQ version 2.2. Guidance and test coverage change, so check the
-        current versions. How labs run these steps:{' '}
+        Sources:{' '}
+        <Link
+          to="/library?ref=ACVP-SLH-DSA-JSON-Specification"
+          className="text-primary hover:underline"
+        >
+          NIST ACVP draft specification for SLH-DSA
+        </Link>{' '}
+        (2 October 2026);{' '}
+        <Link to="/library?ref=NIST-FIPS140-3-IG-PQC" className="text-primary hover:underline">
+          CMVP Implementation Guidance for FIPS PUB 140-3
+        </Link>
+        , IG 10.3.A (document updated 19 August 2026); NIST CAVP overview;{' '}
+        <Link to="/library?ref=NSA%20CNSA%202.0%20FAQ" className="text-primary hover:underline">
+          NSA CNSA 2.0 FAQ
+        </Link>{' '}
+        version 2.2. Guidance and test coverage change, so check the current versions. How labs run
+        these steps:{' '}
         <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
           FIPS 140-3 Certification
         </Link>{' '}

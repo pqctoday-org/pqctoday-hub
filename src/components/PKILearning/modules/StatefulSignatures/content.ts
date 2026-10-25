@@ -38,6 +38,9 @@ export const content: ModuleContent = {
     // DECLARED 2026-08-23: this module names RFC 3161 as the timestamping protocol behind a mechanism it describes. RFC 5816
     // updates but does not obsolete it, so the protocol spec is the citation and cited nothing for it.
     getStandard('RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp'),
+    // The "What the lab tests" panel quotes these two; declared so a reader can open them.
+    getStandard('NIST-FIPS140-3-IG-PQC'),
+    getStandard('NSA CNSA 2.0 FAQ'),
   ],
 
   algorithms: [

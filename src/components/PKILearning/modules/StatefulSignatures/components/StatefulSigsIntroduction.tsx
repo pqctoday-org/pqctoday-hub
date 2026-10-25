@@ -797,10 +797,16 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          Sources: NIST ACVP draft specification for LMS and CAVP prerequisites page (October 2026);
-          CMVP Implementation Guidance for FIPS PUB 140-3 (IG 10.3.A, C.N; document updated 19
-          August 2026); NIST SP 800-208 (October 2020) §8.1; NSA CNSA 2.0 FAQ version 2.2. Check the
-          current versions: guidance and test coverage change. How labs run these steps end to end:{' '}
+          Sources: NIST ACVP draft specification for LMS and CAVP prerequisites page (October 2026);{' '}
+          <Link to="/library?ref=NIST-FIPS140-3-IG-PQC" className="text-primary hover:underline">
+            CMVP Implementation Guidance for FIPS PUB 140-3
+          </Link>{' '}
+          (IG 10.3.A, C.N; document updated 19 August 2026); NIST SP 800-208 (October 2020) §8.1;{' '}
+          <Link to="/library?ref=NSA%20CNSA%202.0%20FAQ" className="text-primary hover:underline">
+            NSA CNSA 2.0 FAQ
+          </Link>{' '}
+          version 2.2. Check the current versions: guidance and test coverage change. How labs run
+          these steps end to end:{' '}
           <Link to="/learn/fips-140-3-certification" className="text-primary hover:underline">
             FIPS 140-3 Certification
           </Link>{' '}

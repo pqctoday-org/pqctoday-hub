@@ -72,6 +72,113 @@ describe('libraryData', () => {
     expect(faq?.shortDescription).not.toContain('2033')
   })
 
+  it('does not present SLH-DSA as a CNSA 2.0 requirement (NSA CNSA 2.0 FAQ v2.2: not part of CNSA)', () => {
+    const cnsa = libraryData.find((item) => item.referenceId === 'NSA CNSA 2.0')
+    expect(cnsa).toBeDefined()
+    expect(cnsa?.shortDescription).toContain('SLH-DSA is not part of CNSA 2.0')
+    expect(cnsa?.shortDescription).toContain('LMS and XMSS')
+    expect(cnsa?.shortDescription).not.toContain('ML-DSA-87, SLH-DSA')
+    expect(cnsa?.dependencies.split(';')).not.toContain('FIPS 205')
+    expect(cnsa?.dependencies.split(';')).toEqual(['FIPS 203', 'FIPS 204', 'NIST SP 800-208'])
+  })
+
+  it('describes the TPM 2.0 Library errata by what the document contains, with no post-quantum claim', () => {
+    const errata = libraryData.find(
+      (item) => item.referenceId === 'TCG-TPM-2.0-Library-v1.85-Errata'
+    )
+    expect(errata).toBeDefined()
+    expect(errata?.shortDescription).toContain('Non-normative errata')
+    expect(errata?.shortDescription).toContain('four commands')
+    expect(errata?.shortDescription).not.toMatch(/ML-DSA|ML-KEM|Labeled KEM/i)
+    expect(errata?.algorithmFamily).toBe('')
+    expect(errata?.securityLevels).toBe('N/A')
+    expect(errata?.lastUpdateDate).toBe('2026-08-11')
+  })
+
+  it('lists the lab-testing sources of the stateful-signature and SLH-DSA lessons in the Library', () => {
+    const ids: Record<string, string[]> = {
+      'NIST-FIPS140-3-IG-PQC': ['stateful-signatures', 'slh-dsa'],
+      'NSA CNSA 2.0 FAQ': ['stateful-signatures', 'slh-dsa'],
+      'ACVP-SLH-DSA-JSON-Specification': ['slh-dsa'],
+    }
+    for (const [ref, modules] of Object.entries(ids)) {
+      const item = libraryData.find((i) => i.referenceId === ref)
+      expect(item, ref).toBeDefined()
+      for (const m of modules) expect(item?.moduleIds, `${ref} -> ${m}`).toContain(m)
+    }
+  })
+
+  describe('document dates', () => {
+    // A date is YYYY, YYYY-MM or YYYY-MM-DD and a real calendar date.
+    const isRealDate = (v: string): boolean => {
+      const parts = v.split('-')
+      const twoDigits = (p: string | undefined) => p === undefined || /^\d{2}$/.test(p)
+      if (
+        parts.length > 3 ||
+        !/^\d{4}$/.test(parts[0]) ||
+        !twoDigits(parts[1]) ||
+        !twoDigits(parts[2])
+      ) {
+        return false
+      }
+      const [y, mo, d] = [Number(parts[0]), Number(parts[1] ?? 1), Number(parts[2] ?? 1)]
+      const t = new Date(Date.UTC(y, mo - 1, d))
+      return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d
+    }
+    // Compared at the coarser of the two precisions, so a month-only date is not
+    // "earlier" than a day in the same month.
+    const precedes = (later: string, earlier: string): boolean => {
+      const n = Math.min(later.split('-').length, earlier.split('-').length)
+      const cut = (v: string) => v.split('-').slice(0, n).join('-')
+      return cut(later) < cut(earlier)
+    }
+    // Rows whose update date still precedes the publication date and have no date
+    // the document itself supports. A row leaves this list when its dates are
+    // corrected, and no row may join it.
+    const KNOWN_OUT_OF_ORDER = [
+      '3GPP-PQC-Study-2025',
+      'ANSSI PQC Position Paper',
+      'APRA-CPS-234',
+      'CA/Browser Forum Ballot SC-PQC',
+      'CAB-Forum-SC-081v3',
+      'CMMC-SPRS-Guidance',
+      'Deloitte-TechTrends-2025-Quantum',
+      'EO-14028',
+      'EO-14144',
+      'EUCC v2.0 ACM',
+      'FrodoKEM-SCA-Countermeasures-2024',
+      'IETF RFC 5649',
+      'ISO/IEC 14888-4:2024',
+      'InfoSec-Global-Hype-Cycles',
+      'Microsoft-QSP-Roadmap-2025',
+      'RFC 9581',
+      'Spherity-PQC-Identity-Corridors-2026',
+      'UK-DSIT-CNI-PQC-Perspectives-2025',
+      'draft-ietf-mls-combiner-02',
+    ]
+
+    it('every publication and last-update date parses as a real date', () => {
+      for (const item of libraryData) {
+        for (const v of [item.initialPublicationDate, item.lastUpdateDate]) {
+          if (v) expect(isRealDate(v), `${item.referenceId}: ${v}`).toBe(true)
+        }
+      }
+    })
+
+    it('no document is last updated before it was first published (beyond the known exceptions)', () => {
+      const outOfOrder = libraryData
+        .filter(
+          (i) =>
+            i.initialPublicationDate &&
+            i.lastUpdateDate &&
+            precedes(i.lastUpdateDate, i.initialPublicationDate)
+        )
+        .map((i) => i.referenceId)
+        .sort()
+      expect(outOfOrder).toEqual([...KNOWN_OUT_OF_ORDER].sort())
+    })
+  })
+
   it('describes RFC 9811 as HTTP transport for CMP, not as an HSM or PQC profile', () => {
     const rfc = libraryData.find((item) => item.referenceId === 'RFC 9811')
     expect(rfc).toBeDefined()
