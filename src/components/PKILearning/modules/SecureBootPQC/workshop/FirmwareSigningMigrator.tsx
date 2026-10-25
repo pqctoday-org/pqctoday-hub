@@ -1330,7 +1330,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 <span className="font-mono font-semibold text-foreground">SLH-DSA-SHA2-128S</span> —
                 NIST Level 1 · smallest pubkey (32 B) but very large signature (7,856 B) · suited
                 for root-of-trust and infrequent signing only (e.g. UEFI PK/KEK), not per-image
-                signing
+                signing. Not part of CNSA and not approved for any use in NSS (NSA CNSA 2.0 FAQ
+                v2.2, p. 11)
               </li>
             </ul>
           </div>
@@ -1474,7 +1475,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               {pqcAlgo === 'SLH-DSA-SHA2-128S'
                 ? ` SLH-DSA-SHA2-128S has the smallest PQC public key (${SLHDSA_PUBKEY_BYTES} B) but the largest signature (${SLHDSA_SIG_BYTES.toLocaleString()} B).`
                 : ` ML-DSA-65 public key is ${(MLDSA_PUBKEY_BYTES['ML-DSA-65'] / CLASSICAL_PUBKEY_BYTES['RSA-2048']).toFixed(1)}× larger than RSA-2048 (${MLDSA_PUBKEY_BYTES['ML-DSA-65'].toLocaleString()} B vs ${CLASSICAL_PUBKEY_BYTES['RSA-2048']} B).`}{' '}
-              UEFI db partition is typically 64–128 KB — plan capacity accordingly.
+              Secure Boot variable storage is platform-specific; firmware reports it through
+              QueryVariableInfo() (UEFI 2.11 section 8.2.4), so check your platform before planning.
             </p>
           </div>
         </div>
@@ -1729,12 +1731,12 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
             <p className="font-semibold text-foreground mb-1">Signature size impacts</p>
             <p className="text-muted-foreground">
-              UEFI Authenticated Variable storage (NVRAM) has tight limits — each db entry stores a
-              full .p7s envelope. OTA firmware update packages carry the signature in their
-              manifest.
+              Secure Boot variable storage is platform-specific; firmware reports it through
+              QueryVariableInfo() (UEFI 2.11 section 8.2.4), so check your platform before planning.
+              OTA firmware update packages carry the signature in their manifest.
               {pqcAlgo === 'SLH-DSA-SHA2-128S'
                 ? ' SLH-DSA-SHA2-128S has very large signatures (7,856 B) — suitable for low-frequency root key signing, not per-image signing.'
-                : ` ML-DSA signatures are large but acceptable for UEFI db (NVRAM partition is typically 64–128 KB).`}
+                : ' What db holds is the certificate: an ML-DSA-65 certificate is about 6 KB against about 1.2 KB for RSA-2048.'}
             </p>
           </div>
         </div>
@@ -1996,6 +1998,14 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           {/* UEFI Secure Boot db enrollment */}
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-xs space-y-2">
             <p className="font-semibold text-foreground">UEFI Secure Boot db enrollment</p>
+
+            <div className="bg-status-warning/10 rounded-lg p-2 border border-status-warning/30 text-muted-foreground">
+              Lab recipe only. <LibRef id="UEFI-SPEC-2.10-SecureBoot" label="UEFI 2.11" /> never
+              mentions ML-DSA or SLH-DSA; its required signature algorithms are SHA-256 and RSA
+              (section 2.6.5), and new signature list types for ML-DSA are still being developed by
+              the UEFI Forum. A certificate with a PQC key can be written to db, but nothing here
+              shows a firmware verifier will accept it. Ask your firmware vendor before enrolling.
+            </div>
 
             {/* Step A: cert chain import */}
             <div className="space-y-1">

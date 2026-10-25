@@ -67,11 +67,11 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       id: 'vendor-selection',
       title: '4. Vendor Selection',
       description:
-        'Use the Firmware Vendor Matrix to compare 8 BIOS/firmware vendors (AMI, Insyde, Phoenix, Tianocore/EDK2, Dell, HPE, Lenovo, Intel). Filter by tier and PQC status to identify vendors with committed roadmaps. Review migration guidance for your platform vendor.',
+        'Use the Firmware Vendor Matrix to compare the 6 BIOS/firmware vendors it lists (AMI, Insyde, Tianocore/EDK2, Dell, HPE, Intel). Filter by tier and PQC status, then open the source links for your platform vendor.',
       badge: 'Vendors',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'Firmware-vendor PQC support is early and moves fast: as of mid-2026 HPE ProLiant Gen12 / iLO7 is among the first with quantum-safe firmware signing (hash-based LMS in the silicon root of trust), open-source UEFI (EDK2/Tianocore) work is in progress, several OEMs have 2026-2027 roadmaps, and Intel Boot Guard PQC is tied to newer silicon (CNSA 2.0 requires firmware signing by 2030). Use the Firmware Vendor Matrix for current per-vendor status.',
+        "Firmware-vendor PQC support is early and moves fast. As of the matrix check on 24 October 2026, Insyde, Dell and HPE state in their own documents that PQC firmware signing is available (ML-DSA for Insyde, LMS for Dell and HPE), AMI has announced a working PQC implementation without naming an algorithm, Intel's Boot Guard white paper documents LMS, and open-source EDK2 work is in progress. Use the Firmware Vendor Matrix and its source links for the detail.",
       config: { step: 3 },
     },
     {
