@@ -1020,7 +1020,7 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
     '/learn': {
       to: '/learn/crypto-product-certification',
       label: 'Start with certification fundamentals',
-      why: 'Your path starts at the certificate: what one covers, before the tests that lead to it.',
+      why: 'Your essentials start at the certificate: what one covers, before the tests that lead to it.',
     },
     '/learn/standards-bodies': {
       to: '/learn/crypto-product-certification',
