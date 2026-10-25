@@ -13,7 +13,7 @@
 // The Developer tab button itself is never gated (only its ACVP/Conformance
 // sub-tabs are), so reaching the ACVP assertion now requires opening
 // Developer first.
-import { describe, it, expect, vi } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -27,6 +27,7 @@ import type { PersonaId } from '@/data/learningPersonas'
 import { HsmPlayground, resolveHsmLocation } from './HsmPlayground'
 
 let mockPersona: PersonaId | null = 'developer'
+let mockPhase: 'idle' | 'initialized' | 'session_open' = 'idle'
 
 vi.mock('@/store/usePersonaStore', () => ({
   usePersonaStore: (selector: (s: { selectedPersona: PersonaId | null }) => unknown) =>
@@ -41,7 +42,7 @@ vi.mock('./hsm/HsmContext', () => ({
   useHsmContext: () => ({
     engineMode: 'rust',
     setEngineMode: vi.fn(),
-    phase: 'idle',
+    phase: mockPhase,
     isReady: false,
     autoInit: vi.fn().mockResolvedValue(true),
     moduleRef: { current: null },
@@ -101,6 +102,10 @@ function renderHsmPlayground() {
  * a slow import first, not for whatever the failing assertion claims.
  */
 describe('HsmPlayground persona gating', () => {
+  afterEach(() => {
+    mockPhase = 'idle'
+  })
+
   it('shows the Validation (formerly ACVP) suite (under Build) and engine selector for a non-gated persona', () => {
     mockPersona = 'developer'
     renderHsmPlayground()
@@ -109,6 +114,24 @@ describe('HsmPlayground persona gating', () => {
     expect(screen.getByRole('tab', { name: /^validation$/i })).toBeInTheDocument()
     // PKCS#11 v3.3 working-draft test bench (owner decision D5: under Build).
     expect(screen.getByRole('tab', { name: /^v3\.3 draft$/i })).toBeInTheDocument()
+  })
+
+  it('says why the engine selector is greyed out once a session is open, and says nothing before', () => {
+    mockPersona = 'developer'
+    mockPhase = 'idle'
+    const { unmount } = renderHsmPlayground()
+    expect(screen.getByRole('radio', { name: /rust/i })).toBeEnabled()
+    expect(screen.queryByText(/Engine is fixed while a session is open/)).not.toBeInTheDocument()
+    unmount()
+
+    mockPhase = 'session_open'
+    renderHsmPlayground()
+    const hint = 'Engine is fixed while a session is open. Choose it first on the default tab.'
+    const radio = screen.getByRole('radio', { name: /rust/i })
+    expect(radio).toBeDisabled()
+    expect(screen.getByText(hint)).toBeVisible()
+    expect(radio).toHaveAccessibleDescription(hint)
+    expect(radio.closest('label')).toHaveAttribute('title', hint)
   })
 
   it('hides the Validation (formerly ACVP) sub-tab and engine selector for curious, but still opens Build > Standard', () => {

@@ -97,6 +97,11 @@ export interface HsmLocation {
 }
 
 const DEFAULT_TAB: HsmTab = 'learn'
+
+/** Shown beside the engine selector while it is locked (a session is open). */
+const ENGINE_LOCKED_HINT =
+  'Engine is fixed while a session is open. Choose it first on the default tab.'
+
 const DEFAULT_RAIL: RailId = 'kem'
 const DEFAULT_INSPECT: InspectView = 'mechanisms'
 const DEFAULT_DEV_SUB_TAB: TestSuite = 'standard'
@@ -867,6 +872,7 @@ export const HsmPlayground = () => {
                 {(['cpp', 'rust', 'dual'] as const).map((mode) => (
                   <label
                     key={mode}
+                    title={phase === 'idle' ? undefined : ENGINE_LOCKED_HINT}
                     className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[44px] md:min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
                   >
                     <input
@@ -878,6 +884,7 @@ export const HsmPlayground = () => {
                         if (phase === 'idle') setEngineMode(mode)
                       }}
                       disabled={phase !== 'idle'}
+                      aria-describedby={phase === 'idle' ? undefined : 'engine-locked-hint'}
                       className="accent-primary w-3 h-3"
                     />
                     <span
@@ -900,6 +907,11 @@ export const HsmPlayground = () => {
             ) : (
               <span className="text-xs text-muted-foreground">
                 Engine: <span className="font-mono text-foreground">Rust</span>
+              </span>
+            )}
+            {!workbenchHidden && phase !== 'idle' && (
+              <span id="engine-locked-hint" className="text-xs text-muted-foreground">
+                {ENGINE_LOCKED_HINT}
               </span>
             )}
           </>
