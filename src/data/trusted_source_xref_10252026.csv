@@ -3095,6 +3095,7 @@ library,NIAP-TD1010-Network-Devices-v4-0-Endorsement,niap,direct
 library,NIAP-TD1011-DSC-v2-1-Endorsement,niap,direct
 library,NIAP-Announcements-Policy-33-Technical-Decisions-Notice,niap,direct
 library,ACVP-ML-KEM-JSON-Specification,nist-csrc,direct
+library,ACVP-LMS-JSON-Specification,nist-csrc,direct
 library,ACVP-SLH-DSA-JSON-Specification,nist-csrc,direct
 library,ACVP-Secure-Hash-Algorithm-SHA-JSON-Specification,nist-csrc,direct
 library,NIST-SP-800-90B-Entropy-Assessment-tool-usnistgov-GitHub,nist-csrc,direct

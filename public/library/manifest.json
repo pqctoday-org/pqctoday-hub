@@ -23463,6 +23463,24 @@
       "replacedAt": "2026-10-25T18:30:51.367845+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "New entry for the Internet-Draft previously listed as RFC 9581; the saved copy is version 04 of 15 September 2026"
+    },
+    {
+      "refId": "ACVP-LMS-JSON-Specification",
+      "filename": "ACVP-LMS-JSON-Specification.html",
+      "sizeBytes": 130819,
+      "contentType": "text/html",
+      "url": "https://pages.nist.gov/ACVP/draft-celi-acvp-lms.html",
+      "sha256": "8db029f72e76f63df5c5f61c88ed23af51ef1bf12b36aedd7d685e8c00211bad",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-25T18:30:52.598566+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/ACVP-LMS-JSON-Specification.html",
+      "status": "downloaded",
+      "replacedAt": "2026-10-25T18:30:52.395841+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "New entry for the ACVP LMS test specification, draft-celi-acvp-lms-01 of 2 October 2026"
     }
   ],
   "archivedEntries": [
