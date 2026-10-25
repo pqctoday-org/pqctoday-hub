@@ -63,6 +63,14 @@ describe('VectorSetAnatomy', () => {
     const header = await screen.findByTestId('vector-set-header', {}, { timeout: 10000 })
     expect(header).toHaveTextContent('vsId 42')
     expect(header).toHaveTextContent('Matches the pinned public sample')
+    const how = screen.getByTestId('how-to-choose')
+    expect(how).toHaveTextContent('How to choose for each group.')
+    expect(how).toHaveTextContent(
+      'the test supplies m, the random input NIST fixes so the answer is repeatable'
+    )
+    expect(how).toHaveTextContent(
+      'Choose ‘Some tests execute’ only when a group mixes both kinds of case.'
+    )
     const tg1 = screen.getByTestId('tg-1')
     fireEvent.click(within(tg1).getByRole('button', { name: /Unsupported/ }))
     expect(tg1).toHaveTextContent('0 executable · 25 unsupported')

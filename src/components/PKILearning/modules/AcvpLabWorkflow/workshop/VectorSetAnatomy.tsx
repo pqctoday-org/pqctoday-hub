@@ -131,6 +131,23 @@ export const VectorSetAnatomy: React.FC = () => {
             {predicted} of {ok.ir.testGroups.length} groups predicted · {right} correct
           </p>
 
+          <div
+            className="glass-panel space-y-1 p-4 text-xs text-foreground/80"
+            data-testid="how-to-choose"
+          >
+            <p>
+              <strong className="text-foreground">How to choose for each group.</strong> Read the
+              function and the test case fields. A standard PKCS#11 v3.2 call can carry inputs such
+              as a key, a ciphertext, a message or a signature. It cannot carry a value the module
+              normally chooses for itself, and it has no call for the key checks. For ML-KEM
+              encapsulation the test supplies <code>m</code>, the random input NIST fixes so the
+              answer is repeatable, but the standard encapsulate call takes it from the module’s own
+              random generator and has no input for it. So that group is ‘Unsupported through
+              standard PKCS#11’. Choose ‘Some tests execute’ only when a group mixes both kinds of
+              case.
+            </p>
+          </div>
+
           {ok.ir.testGroups.map((g) => {
             const o = outcomes.get(g.tgId)
             const p = predictions[g.tgId]
