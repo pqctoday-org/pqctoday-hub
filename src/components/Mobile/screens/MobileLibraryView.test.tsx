@@ -7,6 +7,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { libraryData } from '@/data/libraryData'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
+import { documentDatesText } from '@/components/Library/redesign/libraryPills'
 
 // Real data throughout — libraryData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived at test time), not
@@ -161,6 +162,24 @@ describe('MobileLibraryView', () => {
     expect(screen.getAllByText(titleText).length).toBeGreaterThan(0)
     fireEvent.click(within(sheet).getByRole('button', { name: 'Close' }))
     expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
+  })
+
+  it('the detail sheet shows the first-publication and the update date, like the desktop drawer', () => {
+    for (const ref of ['NIST-FIPS140-3-IG-PQC', 'CMVP-MGMT-MANUAL']) {
+      const row = libraryData.find((d) => d.referenceId === ref)
+      expect(row, ref).toBeDefined()
+      const expected = documentDatesText(row!.initialPublicationDate, row!.lastUpdateDate)
+      // Both rows carry an update date later than the first publication.
+      expect(expected, ref).toMatch(/^First published .+ · updated /)
+      const { unmount } = render(
+        <MemoryRouter initialEntries={[`/library?ref=${encodeURIComponent(ref)}`]}>
+          <MobileLibraryView />
+        </MemoryRouter>
+      )
+      const sheet = screen.getByTestId('library-detail-sheet')
+      expect(sheet).toHaveTextContent(expected)
+      unmount()
+    }
   })
 
   // A shared desktop link can carry ?lifecycle= (the six labels, or an old name such as

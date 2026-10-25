@@ -15,12 +15,15 @@ import { logQuizSession } from '@/utils/analytics'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileQuizWizard } from '@/components/Mobile/screens/MobileQuizWizard'
 import { MobileQuizResults } from '@/components/Mobile/screens/MobileQuizResults'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'quiz'
 const SECONDS_PER_QUESTION = 45
 const QUICK_POOL_THRESHOLD_MIN = 15
 const DEFAULT_TIME_MIN = 15
 const MIN_PER_CATEGORY = 2
+/** The Quick pick size: the desktop's default 15-minute run (15 x 60 / 45 s). */
+const QUICK_PICK_QUESTIONS = 20
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
@@ -136,6 +139,7 @@ export const QuizModule: React.FC = () => {
   const [lastMode, setLastMode] = useState<QuizMode>('timed')
   const [lastTimeMin, setLastTimeMin] = useState(DEFAULT_TIME_MIN)
   const [lastCategories, setLastCategories] = useState<QuizCategory[]>([])
+  const [lastLimit, setLastLimit] = useState<number | undefined>(undefined)
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(() => {
     if (experienceLevel === 'curious') return ['beginner']
     if (experienceLevel === 'basics') return ['beginner', 'intermediate']
@@ -197,9 +201,10 @@ export const QuizModule: React.FC = () => {
   )
 
   const handleStart = useCallback(
-    (mode: QuizMode, categories: QuizCategory[], timeMinutes?: number) => {
+    (mode: QuizMode, categories: QuizCategory[], timeMinutes?: number, limit?: number) => {
       setLastMode(mode)
       setLastCategories(categories)
+      setLastLimit(limit)
       const time = timeMinutes ?? DEFAULT_TIME_MIN
       setLastTimeMin(time)
 
@@ -212,9 +217,11 @@ export const QuizModule: React.FC = () => {
           : filteredQuestions
         selected = sampleQuestions(pool, Math.min(questionCount, pool.length))
       } else {
-        // Category mode: filter by selected categories, use all questions
+        // Category mode: filter by selected categories, use all questions (or a Quick pick sample)
         const filtered = filteredQuestions.filter((q) => categories.includes(q.category))
-        selected = shuffleArray(filtered)
+        selected = limit
+          ? sampleQuestions(filtered, Math.min(limit, filtered.length))
+          : shuffleArray(filtered)
       }
 
       setQuizQuestions(selected)
@@ -254,8 +261,8 @@ export const QuizModule: React.FC = () => {
   )
 
   const handleRetake = useCallback(() => {
-    handleStart(lastMode, lastCategories, lastTimeMin)
-  }, [handleStart, lastMode, lastCategories, lastTimeMin])
+    handleStart(lastMode, lastCategories, lastTimeMin, lastLimit)
+  }, [handleStart, lastMode, lastCategories, lastTimeMin, lastLimit])
 
   const handleChangeTopics = useCallback(() => {
     setView('intro')
@@ -276,12 +283,27 @@ export const QuizModule: React.FC = () => {
   // capstone buttons — always passes ?category=), so that case renders a
   // stated placeholder below rather than a mobile topic picker nobody can
   // reach without deep-linking manually.
+  //
+  // The final quiz (a plain visit, or the capstone button: no checkpoint state) is
+  // different: it can hold well over a hundred questions, so a phone reader first
+  // picks Quick pick (20 questions) or the full run, as the desktop offers. Checkpoint
+  // quizzes still start at once.
   const mobileAutoStarted = useRef(false)
+  const isCheckpointVisit = !!checkpointState?.checkpointCategories?.length
+  const mobilePoolSize = useMemo(
+    () =>
+      initialCategories
+        ? filteredQuestions.filter((q) => initialCategories.includes(q.category)).length
+        : 0,
+    [filteredQuestions, initialCategories]
+  )
+  const offerLengthChoice = !isCheckpointVisit && mobilePoolSize > QUICK_PICK_QUESTIONS
   useEffect(() => {
     if (
       isMobileShell &&
       view === 'intro' &&
       !mobileAutoStarted.current &&
+      !offerLengthChoice &&
       initialCategories &&
       initialCategories.length > 0
     ) {
@@ -289,7 +311,7 @@ export const QuizModule: React.FC = () => {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: the mobile checkpoint quiz has no intro/Start button to click, so this is the one-time auto-start in place of that user action, guarded by the ref above
       handleStart('category', initialCategories)
     }
-  }, [isMobileShell, view, initialCategories, handleStart])
+  }, [isMobileShell, view, initialCategories, offerLengthChoice, handleStart])
 
   if (isMobileShell) {
     const title = checkpointState?.checkpointLabel ?? persona?.label ?? 'Quiz'
@@ -310,6 +332,29 @@ export const QuizModule: React.FC = () => {
           onRetake={handleRetake}
           onExit={() => navigate(-1)}
         />
+      )
+    } else if (view === 'intro' && offerLengthChoice && initialCategories) {
+      body = (
+        <div className="flex flex-col gap-3" data-testid="quiz-length-choice">
+          <Button
+            variant="gradient"
+            onClick={() => {
+              mobileAutoStarted.current = true
+              handleStart('category', initialCategories, undefined, QUICK_PICK_QUESTIONS)
+            }}
+          >
+            Quick pick ({QUICK_PICK_QUESTIONS} questions)
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              mobileAutoStarted.current = true
+              handleStart('category', initialCategories)
+            }}
+          >
+            Full quiz ({mobilePoolSize} questions)
+          </Button>
+        </div>
       )
     } else {
       body = (
