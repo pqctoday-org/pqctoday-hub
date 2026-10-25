@@ -268,7 +268,10 @@ const Step2LmsXmss: React.FC = () => (
               <li>&bull; Tree heights: H = 5, 10, 15, 20, 25</li>
               <li>&bull; Winternitz parameter: W = 1, 2, 4, 8</li>
               <li>&bull; Max signatures = 2^H (32 to 33M)</li>
-              <li>&bull; Small public key: 56 bytes</li>
+              <li>
+                &bull; Small public key: 24 bytes plus the hash output length &ndash; 48 bytes for
+                the SHA-256/192 sets, 56 bytes for the SHA-256 sets (RFC 8554, SP 800-208)
+              </li>
               <li>&bull; Signature size: 1.3 &ndash; 9.3 KB depending on H, W (RFC 8554)</li>
             </ul>
           </div>

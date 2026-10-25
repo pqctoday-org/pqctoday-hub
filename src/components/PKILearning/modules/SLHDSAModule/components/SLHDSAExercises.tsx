@@ -66,7 +66,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
       title: '4. Pure vs HashSLH-DSA',
       description:
         'Sign with Pure SLH-DSA, then switch to HashSLH-DSA (SHA-256 pre-hash). Observe that the PKCS#11 mechanism changes from CKM_SLH_DSA to CKM_HASH_SLH_DSA_SHA256.',
-      badge: 'FIPS 205 §11',
+      badge: 'FIPS 205 §10.2',
       badgeColor: 'bg-muted/40 text-foreground border-border',
       observe:
         "HashSLH-DSA pre-hashes M before signing: M' = 0x01 || len(ctx) || ctx || OID_DER || H(M). The 0x01 prefix marks the pre-hash variant (Pure SLH-DSA uses 0x00); both variants still support an optional context string (up to 255 bytes).",

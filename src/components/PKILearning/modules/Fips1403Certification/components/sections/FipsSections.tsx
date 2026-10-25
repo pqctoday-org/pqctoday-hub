@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { getStandard, type StandardRef } from '@/data/standardsRegistry'
 import { readCmvpDetails, type CmvpDetails } from '@/components/Compliance/cmvpDetails'
+import { fetchComplianceMeta } from '@/components/Compliance/complianceDataLoader'
 import type { ComplianceRecord } from '@/components/Compliance/types'
 import { ModuleAnalysisNote } from '@/components/PKILearning/common/ModuleAnalysisNote'
 import {
@@ -1209,7 +1210,27 @@ export const FipsAcvpBridge = () => (
 type HubState =
   | { kind: 'loading' }
   | { kind: 'unavailable' }
-  | { kind: 'ready'; details: ReadonlyMap<string, CmvpDetails | null> }
+  | {
+      kind: 'ready'
+      details: ReadonlyMap<string, CmvpDetails | null>
+      /** Active FIPS 140-3 records in the Hub's copy of the CMVP list. */
+      activeCount: number
+      /** UTC retrieval time of that copy (compliance-data.meta.json, fips partition), if stated. */
+      retrievedAt: string | null
+    }
+
+/** "23 October 2026": the UTC calendar day of a retrieval time (null when it is not a date). */
+function utcDayLabel(iso: string | null): string | null {
+  if (!iso) return null
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return null
+  return d.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
 
 /**
  * Level, status, sunset and embodiment for the verified certificates come
@@ -1223,18 +1244,24 @@ function useHubCmvpDetails(certs: readonly string[]): HubState {
     let cancelled = false
     const load = async () => {
       try {
-        const res = await fetch('/data/compliance-data.json')
+        const [res, meta] = await Promise.all([
+          fetch('/data/compliance-data.json'),
+          fetchComplianceMeta(),
+        ])
         if (!res.ok) throw new Error(String(res.status))
         const data: unknown = await res.json()
         if (!Array.isArray(data)) throw new Error('not an array')
         const wanted = new Set(certs)
         const details = new Map<string, CmvpDetails | null>()
+        let activeCount = 0
         for (const raw of data as Partial<ComplianceRecord>[]) {
-          if (raw.type !== 'FIPS 140-3' || typeof raw.id !== 'string' || !wanted.has(raw.id))
-            continue
-          details.set(raw.id, readCmvpDetails(raw))
+          if (raw.type !== 'FIPS 140-3' || typeof raw.id !== 'string') continue
+          const read = readCmvpDetails(raw)
+          if ((read?.cmvpStatus ?? raw.status) === 'Active') activeCount += 1
+          if (wanted.has(raw.id)) details.set(raw.id, read)
         }
-        if (!cancelled) setState({ kind: 'ready', details })
+        const retrievedAt = meta?.partitions?.fips?.retrievedAt ?? null
+        if (!cancelled) setState({ kind: 'ready', details, activeCount, retrievedAt })
       } catch {
         if (!cancelled) setState({ kind: 'unavailable' })
       }
@@ -1256,8 +1283,7 @@ const HubField = ({ value }: { value: string | null | undefined }) =>
     <span className="text-muted-foreground">not in Hub data — see certificate</span>
   )
 
-const VerifiedCertTable = () => {
-  const hub = useHubCmvpDetails(VERIFIED_IDS)
+const VerifiedCertTable = ({ hub }: { hub: HubState }) => {
   const detailsFor = (cert: string): CmvpDetails | null =>
     hub.kind === 'ready' ? (hub.details.get(cert) ?? null) : null
   return (
@@ -1500,6 +1526,27 @@ export const FipsAutomation = () => (
   </Body>
 )
 
+/**
+ * The Active count and its date are read from the Hub's copy of NIST's CMVP list
+ * (record count and the sidecar's retrieval time), so the sentence cannot go stale
+ * in the text; without either, the sentence is left out and the table stands alone.
+ */
+const ValidatedToday = () => {
+  const hub = useHubCmvpDetails(VERIFIED_IDS)
+  const day = hub.kind === 'ready' ? utcDayLabel(hub.retrievedAt) : null
+  return (
+    <>
+      <p>
+        {hub.kind === 'ready' && day
+          ? `NIST’s Active FIPS 140-3 list held ${hub.activeCount} certificates on ${day}. `
+          : ''}
+        Four Level 3 HSM certificates approve both ML-KEM and ML-DSA:
+      </p>
+      <VerifiedCertTable hub={hub} />
+    </>
+  )
+}
+
 export const FipsLandscape = () => (
   <Body>
     <p>
@@ -1564,11 +1611,7 @@ export const FipsLandscape = () => (
     </Callout>
 
     <SubHeading>2 · Validated today</SubHeading>
-    <p>
-      NIST’s Active FIPS 140-3 list held about 712 certificates on {FIPS_AS_OF_LABEL}. Four Level 3
-      HSM certificates approve both ML-KEM and ML-DSA:
-    </p>
-    <VerifiedCertTable />
+    <ValidatedToday />
     <ul className="list-disc space-y-1 pl-5">
       <li>
         Read <strong>Approved Algorithms</strong> on the certificate, not a database tag. Aggregated

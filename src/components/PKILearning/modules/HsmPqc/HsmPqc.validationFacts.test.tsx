@@ -14,6 +14,8 @@ import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { HsmPqcIntroduction } from './components/HsmPqcIntroduction'
 import { HsmPqcExercises } from './components/HsmPqcExercises'
+import { PKCS11_MECHANISMS } from './data/hsmConstants'
+import { HSM_PKCS11_OPERATIONS } from './data/hsmVendorData'
 import ragSummary from './rag-summary.md?raw'
 import curiousSummary from './curious-summary.md?raw'
 
@@ -155,5 +157,43 @@ describe('HsmPqc: what the lab tests and the vendor statements', () => {
     expect(c).toContain('none for hsm keys')
     expect(c).toContain('an update only if each category of security change stays under 30%')
     expect(c).toContain('security world v13.9.3')
+  })
+})
+
+describe('HsmPqc: ML-DSA signing text names the calls the simulator shows (Steps 5 and 6)', () => {
+  const step = (id: string) => HSM_PKCS11_OPERATIONS.find((o) => o.id === id)?.command ?? ''
+
+  it('the simulator code panels for signing and verifying are message-based', () => {
+    expect(step('sign')).toContain('C_MessageSignInit')
+    expect(step('sign')).toContain('C_SignMessage')
+    expect(step('verify')).toContain('C_MessageVerifyInit')
+    expect(step('verify')).toContain('C_VerifyMessage')
+  })
+
+  it('Exercise 2 points at those calls, not at single-part C_Sign / C_Verify', () => {
+    render(
+      <EmbedProvider>
+        <MemoryRouter>
+          <HsmPqcExercises onNavigateToWorkshop={() => {}} />
+        </MemoryRouter>
+      </EmbedProvider>
+    )
+    const t = document.body.textContent ?? ''
+    expect(t).toContain(
+      'Observe the message-based signing calls (C_MessageSignInit / C_SignMessage and C_MessageVerifyInit / C_VerifyMessage) using CKM_ML_DSA.'
+    )
+    expect(t).not.toContain('Observe the C_Sign and C_Verify calls')
+  })
+
+  it('the ML-DSA and SLH-DSA mechanism rows name the message-based calls and still allow single-part C_Sign', () => {
+    for (const id of ['ckm-ml-dsa', 'ckm-slh-dsa']) {
+      const description = PKCS11_MECHANISMS.find((m) => m.id === id)?.description ?? ''
+      expect(description, id).toContain('C_MessageSignInit/C_SignMessage')
+      expect(description, id).toContain('(or single-part C_Sign)')
+      expect(description, id).not.toContain('C_Sign/C_Verify')
+    }
+    // single-part C_Sign remains the call for LMS/HSS
+    const hss = PKCS11_MECHANISMS.find((m) => m.id === 'ckm-hss')?.description ?? ''
+    expect(hss).toContain('C_Sign/C_Verify')
   })
 })

@@ -14,7 +14,7 @@ import {
   Check,
 } from 'lucide-react'
 import { formatSignatureCount, formatBytes } from '../data/statefulSigsConstants'
-import { lmsPublicKeyBytes } from '../data/signatureSizes'
+import { hssSignatureBytes, lmsPublicKeyBytes, lmsSignatureBytes } from '../data/signatureSizes'
 import { CKM_HSS_KEY_PAIR_GEN, CKM_HSS, CKK_HSS } from '@/wasm/softhsm/constants'
 import { hsm_extractKeyValue } from '@/wasm/softhsm'
 import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
@@ -40,8 +40,9 @@ const P_N24: Record<LMSW, number> = { 1: 200, 2: 101, 4: 51, 8: 26 }
 function computeLMSConfig(hash: LMSHash, m: LMSm, h: LMSHeight, w: LMSW) {
   const n = m
   const p = (m === 32 ? P_N32 : P_N24)[w]
-  // HSS sig = Nspk(4) + q(4) + LMOTS_typecode(4) + C(n) + y[](p*n) + LMS_typecode(4) + path[](h*n)
-  const sigSize = 16 + n * (1 + p + h)
+  // One level's LMS signature, RFC 8554 Section 5.4: q(4) + LMOTS_typecode(4) + C(n) + y[](p*n) +
+  // LMS_typecode(4) + path[](h*n). The HSS signature's 4-byte level count is added once, below.
+  const sigSize = lmsSignatureBytes(n, p, n, h)
   const maxSigs = Math.pow(2, h)
   // IANA CKP_LMS_* base: SHA-256/M32=0x05, SHA-256/M24=0x0a, SHAKE/M32=0x0f, SHAKE/M24=0x14
   const lmsBase = hash === 'SHA-256' ? (m === 32 ? 0x05 : 0x0a) : m === 32 ? 0x0f : 0x14
@@ -167,11 +168,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
   })()
   // HSS sig size: 4 (Nspk) + (L-1) × (lmsSig_i + lmsPubKey_i) + lmsSig_{L-1}
   // lmsPubKey = u32str(type) || u32str(otstype) || I || T[1] = 4+4+16+n (RFC 8554 §5.3)
-  const lmsPubKeySize = lmsPublicKeyBytes(cfg1.n)
-  const sigSize =
-    4 +
-    levelCfgs.slice(0, -1).reduce((s, c) => s + c.sigSize + lmsPubKeySize, 0) +
-    levelCfgs[levelCfgs.length - 1].sigSize
+  const sigSize = hssSignatureBytes(
+    levelCfgs.map((c) => c.sigSize),
+    cfg1.n
+  )
 
   const heightLabels = [
     lmsHeight,
