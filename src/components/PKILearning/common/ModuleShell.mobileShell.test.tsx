@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 import { ModuleShell, type ModuleSlotApi } from './ModuleShell'
 import type { ModuleManifest } from '../manifest/types'
 import { useModuleStore } from '@/store/useModuleStore'
+import entropyManifest from '../modules/Entropy/manifest'
+import testingManifest from '../modules/PQCTestingValidation/manifest'
+import ccManifest from '../modules/CcEuccCertification/manifest'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -144,5 +147,82 @@ describe('ModuleShell — mobile UX layer wiring', () => {
       expect(mockNavigate).not.toHaveBeenCalled()
       expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' })
     })
+  })
+})
+
+// Phone header on a learning path (certification re-review 6-6, 8-11, 9-6): the header minutes and
+// the "Start here" box follow the path the learner is on, as the desktop header already does.
+describe('ModuleShell — phone header follows the active learning path', () => {
+  const chosePath = (moduleId: string, pathId: string) =>
+    useModuleStore.getState().setActiveLearnPath(moduleId, pathId)
+  const pathMinutes = (m: ModuleManifest, pathId: string) =>
+    m.learnPaths?.find((p) => p.id === pathId)?.duration
+
+  it('Entropy on the certification path shows that path minutes and hides the step it skips', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    chosePath('entropy-randomness', 'certification-engineer')
+    renderShell(<ModuleShell manifest={entropyManifest} learn={<div>L</div>} />)
+    expect(pathMinutes(entropyManifest, 'certification-engineer')).toBe('95 min')
+    expect(screen.getByText('95 min')).toBeInTheDocument()
+    expect(screen.queryByText(entropyManifest.duration as string)).not.toBeInTheDocument()
+    expect(screen.queryByText('Start here')).not.toBeInTheDocument()
+    expect(screen.queryByText(entropyManifest.startHere?.text as string)).not.toBeInTheDocument()
+  })
+
+  it('Entropy on the general path keeps the Start here box, with that path minutes', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    chosePath('entropy-randomness', 'general-practitioner')
+    renderShell(<ModuleShell manifest={entropyManifest} learn={<div>L</div>} />)
+    expect(screen.getByText('45 min')).toBeInTheDocument()
+    expect(screen.getByText('Start here')).toBeInTheDocument()
+    expect(screen.getByText(entropyManifest.startHere?.text as string)).toBeInTheDocument()
+  })
+
+  it('Entropy with no path chosen keeps the module total and the Start here box', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderShell(<ModuleShell manifest={entropyManifest} learn={<div>L</div>} />)
+    expect(screen.getByText(entropyManifest.duration as string)).toBeInTheDocument()
+    expect(screen.getByText('Start here')).toBeInTheDocument()
+  })
+
+  it('Testing & Validation on the certification route shows 40 min, not the 120 min total', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    chosePath('pqc-testing-validation', 'certification-engineer')
+    renderShell(<ModuleShell manifest={testingManifest} learn={<div>L</div>} />)
+    expect(pathMinutes(testingManifest, 'certification-engineer')).toBe('40 min')
+    expect(screen.getByText('40 min')).toBeInTheDocument()
+    expect(screen.queryByText('120 min')).not.toBeInTheDocument()
+    // The Start here step belongs to the network practitioner route only.
+    expect(screen.queryByText('Start here')).not.toBeInTheDocument()
+  })
+
+  it('Common Criteria shows the range with no path, and the path minutes with one', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    const { unmount } = renderShell(<ModuleShell manifest={ccManifest} learn={<div>L</div>} />)
+    expect(screen.getByText('35–76 min, depending on your path')).toBeInTheDocument()
+    expect(screen.queryByText('66 min')).not.toBeInTheDocument()
+    unmount()
+    chosePath('cc-eucc-certification', 'cc')
+    renderShell(<ModuleShell manifest={ccManifest} learn={<div>L</div>} />)
+    expect(screen.getByText(pathMinutes(ccManifest, 'cc') as string)).toBeInTheDocument()
+    expect(screen.queryByText('66 min')).not.toBeInTheDocument()
+  })
+
+  it('Common Criteria hides the Start here box on the eIDAS route, whose step is not on it', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    chosePath('cc-eucc-certification', 'eucc-eidas')
+    renderShell(<ModuleShell manifest={ccManifest} learn={<div>L</div>} />)
+    expect(screen.queryByText('Start here')).not.toBeInTheDocument()
+  })
+
+  it('the phone and the desktop header show the same minutes for the same path', () => {
+    chosePath('pqc-testing-validation', 'certification-engineer')
+    mockUseIsMobileShell.mockReturnValue(false)
+    const view = renderShell(<ModuleShell manifest={testingManifest} learn={<div>L</div>} />)
+    expect(screen.getByText('40 min')).toBeInTheDocument()
+    view.unmount()
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderShell(<ModuleShell manifest={testingManifest} learn={<div>L</div>} />)
+    expect(screen.getByText('40 min')).toBeInTheDocument()
   })
 })
