@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect } from './fixtures/blockAnalytics'
 
 // 18-7: with a finished ML-DSA + ML-KEM run (395 rows) the results table used to be squeezed
