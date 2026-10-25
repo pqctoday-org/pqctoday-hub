@@ -14,6 +14,7 @@ import { FIXTURE_NAMES, readFixture, type FixtureName } from './node/fixtures'
 import { validateEvidenceDocument } from './schemas/evidenceSchemas'
 import { bytesToUpperHex, hexToBytes, type JsonObject } from './ir'
 import { isSha512t, mlDsaMu, preHashSha512t } from './testInputs'
+import { countAnswerKinds } from './answerKinds'
 import goldens from './__fixtures__/goldens/goldens.json'
 
 const repo = process.cwd()
@@ -174,6 +175,56 @@ describe('extended run through the fake engine', () => {
       `${enc.tgId}/${enc.tcId}`
     )
     expect(out.golden!.matched).toBe(164)
+  })
+})
+
+describe('answers counted by mechanism kind (not by input kind)', () => {
+  const run = async (name: FixtureName) => {
+    const p = await prepare(name, 'extended')
+    return executePrepared(p, {
+      engine: createExpectedResultsFakeEngine(expected(name), prompt(name)),
+      codePath: 'cli',
+      appVersion: null,
+    })
+  }
+
+  it('ML-DSA: 82 PKCS#11 v3.2 calls, 45 external-μ answers from NIST’s μ, 45 computed μ, 8 computed PH(M)', async () => {
+    const out = await run('ML-DSA-sigVer-FIPS204')
+    const cases = out.evidence.cases as JsonObject[]
+    const tally: Record<string, number> = {}
+    for (const c of cases) {
+      const k = `${String(c.mechanismKind)}|${String(c.inputKind ?? '-')}`
+      tally[k] = (tally[k] ?? 0) + 1
+    }
+    expect(tally).toEqual({
+      'pkcs11-v3.2|-': 82,
+      'vendor-defined|-': 45,
+      'vendor-defined|computed-mu': 45,
+      'pkcs11-v3.3-draft|computed-ph': 8,
+    })
+    expect(countAnswerKinds(cases)).toEqual({
+      standardV32: 82,
+      vendorDefined: 45,
+      v33Draft: 0,
+      testInputM: 0,
+      computed: 53,
+      keyImportResult: 0,
+    })
+    // The file's own summary keeps its meaning: `standard` = no special input (82 + the 45 NIST-μ answers).
+    expect((out.evidence.summary as JsonObject).byInputKind).toMatchObject({ standard: 127 })
+    expect((out.evidence.vendorDefinedMechanisms as JsonObject[])[0].answered).toBe(90)
+  })
+
+  it('ML-KEM: 30 PKCS#11 v3.2 calls, 75 with NIST’s m, 60 key-import results', async () => {
+    const out = await run('ML-KEM-encapDecap-FIPS203')
+    expect(countAnswerKinds(out.evidence.cases)).toEqual({
+      standardV32: 30,
+      vendorDefined: 0,
+      v33Draft: 0,
+      testInputM: 75,
+      computed: 0,
+      keyImportResult: 60,
+    })
   })
 })
 
