@@ -60,6 +60,13 @@ export const content: ModuleContent = {
     // 2026-09-24 (ACVP remediation WS-I): the FIPS 140-3 & ACVP section now cites the
     // ACVP JSON specification by section; the Library row already lists this module.
     getStandard('NIST-ACVP'),
+    // 2026-10-25: documents the Learn text already cites and the References tab did not list:
+    // SP 800-140F and FIPS 140-3 IG 12.A (side-channel and FIPS 140-3 sections), RFC 9954
+    // (interoperability section) and RFC 10024 (performance section).
+    getStandard('NIST-SP-800-140F'),
+    getStandard('NIST-FIPS140-3-IG-PQC'),
+    getStandard('RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3'),
+    getStandard('RFC-10024'),
   ],
 
   algorithms: [
