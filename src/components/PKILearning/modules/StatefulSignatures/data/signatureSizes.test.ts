@@ -14,11 +14,13 @@ import {
   COMPARED_XMSS,
   COMPARED_SIZES,
   bytesLabel,
+  hssSignatureBytes,
   lmsPublicKeyBytes,
   lmsSignatureBytes,
   xmssPublicKeyBytes,
   xmssSignatureBytes,
 } from './signatureSizes'
+import { LMS_PARAMETER_SETS } from './statefulSigsConstants'
 
 // SP 800-208 Table 3: LMOTS_SHA256_N24_W1..W8 have p = 200, 101, 51, 26
 const P_N24: Record<string, number> = {
@@ -90,5 +92,60 @@ describe('the compared parameter sets', () => {
     expect(COMPARED_SIZES.mldsa65).toEqual({ publicKey: 1952, signature: 3309 })
     expect(COMPARED_SIZES.mldsa87).toEqual({ publicKey: 2592, signature: 4627 })
     expect(bytesLabel(16224)).toBe('16,224 B')
+  })
+})
+
+describe('HSS signature size from the RFC 8554 Section 6.2 layout', () => {
+  // SP 800-208 Tables 3 and 4: LM-OTS chain count p by Winternitz parameter W, for n = 32 and n = 24
+  const P_BY_N = new Map<number, Map<number, number>>([
+    [
+      32,
+      new Map([
+        [1, 265],
+        [2, 133],
+        [4, 67],
+        [8, 34],
+      ]),
+    ],
+    [
+      24,
+      new Map([
+        [1, 200],
+        [2, 101],
+        [4, 51],
+        [8, 26],
+      ]),
+    ],
+  ])
+
+  it('counts the 4-byte level count once: one level is 4 bytes more than the LMS signature', () => {
+    const lms = lmsSignatureBytes(32, 34, 32, 5)
+    expect(hssSignatureBytes([lms], 32)).toBe(lms + 4)
+    // two levels: 4 + sig + the next level's public key + sig
+    expect(hssSignatureBytes([lms, lms], 32)).toBe(4 + lms + lmsPublicKeyBytes(32) + lms)
+  })
+
+  it('matches the RFC 8554 Appendix F signature lengths (two levels)', () => {
+    const h5w8 = lmsSignatureBytes(32, 34, 32, 5)
+    const h10w4 = lmsSignatureBytes(32, 67, 32, 10)
+    expect(hssSignatureBytes([h5w8, h5w8], 32)).toBe(
+      RFC8554_TEST_CASES[1]().signature_hex.length / 2
+    )
+    expect(hssSignatureBytes([h10w4, h5w8], 32)).toBe(
+      RFC8554_TEST_CASES[2]().signature_hex.length / 2
+    )
+  })
+
+  it('matches the signature length the engine returns for every one- and two-level set', () => {
+    let checked = 0
+    for (const s of LMS_PARAMETER_SETS) {
+      const n = s.securityLevel.startsWith('n = 24') ? 24 : 32
+      const p = P_BY_N.get(n)!.get(s.winternitzParam)!
+      const levels = s.levelHeights.map((h) => lmsSignatureBytes(n, p, n, h))
+      expect(hssSignatureBytes(levels, n), s.name).toBe(s.signatureSize)
+      checked += 1
+    }
+    expect(checked).toBeGreaterThan(20)
+    expect(LMS_PARAMETER_SETS.some((s) => s.levelHeights.length === 2)).toBe(true)
   })
 })

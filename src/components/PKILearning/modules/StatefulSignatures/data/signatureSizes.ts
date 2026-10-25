@@ -34,6 +34,17 @@ export const lmsPublicKeyBytes = (m: number): number => 4 + 4 + 16 + m
 export const lmsSignatureBytes = (n: number, p: number, m: number, h: number): number =>
   12 + n * (p + 1) + m * h
 
+/**
+ * HSS signature bytes (RFC 8554 Section 6.2): u32str(Nspk) || signed_public_key[0..Nspk-1] || sig[Nspk],
+ * where each signed_public_key is an LMS signature followed by the next level's LMS public key.
+ * `levelSignatureBytes` is the LMS signature size of each level, top level first (lmsSignatureBytes);
+ * m is the hash output length of the LMS public keys.
+ */
+export const hssSignatureBytes = (levelSignatureBytes: readonly number[], m: number): number =>
+  4 +
+  levelSignatureBytes.slice(0, -1).reduce((sum, sig) => sum + sig + lmsPublicKeyBytes(m), 0) +
+  levelSignatureBytes[levelSignatureBytes.length - 1]
+
 /** XMSS public key bytes for hash output length n (RFC 8391 Section 4.1.7). */
 export const xmssPublicKeyBytes = (n: number): number => 4 + 2 * n
 
