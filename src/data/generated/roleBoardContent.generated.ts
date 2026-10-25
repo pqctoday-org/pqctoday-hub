@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10232026_r5.csv
+ * Source: src/data/role_board_content_10252026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2976,7 +2976,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'A CAVP number on a datasheet is not a module certificate.',
           footnote:
-            'Stage definitions as the certification records and the product catalogue apply them. Certificate data is a published snapshot, not a live feed; the records table shows when each source list was retrieved.',
+            'Stage definitions as the certification records and the product catalogue apply them. Certificate data is a published snapshot, not a live feed; the records table shows when each source list was retrieved. Entropy source certificates validate a noise source and are kept apart from these stages.',
         },
         gridTitle: 'Where the stage shows up',
         gridSub: 'The same stages, seen from the other side of the table',
