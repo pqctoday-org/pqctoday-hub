@@ -18,6 +18,7 @@ import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { EVIDENCE_CLASSES, EVIDENCE_CLASS_IDS } from '@/data/validation/evidenceClasses'
 import validationCounts from '@/data/validation/validation-counts.generated.json'
@@ -51,27 +52,6 @@ const Callout: React.FC<{ title: string; children: React.ReactNode }> = ({ title
     <h3 className="mb-1 font-bold text-primary">{title}</h3>
     <div className="space-y-2 text-xs text-muted-foreground">{children}</div>
   </div>
-)
-
-const TableShell: React.FC<{ caption: string; children: React.ReactNode }> = ({
-  caption,
-  children,
-}) => (
-  <div className="overflow-x-auto">
-    <table className="w-full border-collapse text-xs">
-      <caption className="sr-only">{caption}</caption>
-      {children}
-    </table>
-  </div>
-)
-
-const Th: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <th scope="col" className="border-b border-border py-2 pr-3 text-left font-semibold">
-    {children}
-  </th>
-)
-const Td: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <td className="border-b border-border/50 py-2 pr-3 align-top">{children}</td>
 )
 
 // Abbreviated from the registration example in the ACVP ML-DSA sub-specification
@@ -212,64 +192,59 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           140-3, using independent NVLAP-accredited Cryptographic and Security Testing (CST)
           laboratories <Cite s="fips1403" />.
         </p>
-        <TableShell caption="Algorithm validation compared with module validation">
-          <thead>
-            <tr>
-              <Th>Question</Th>
-              <Th>Algorithm validation (CAVP)</Th>
-              <Th>Module validation (CMVP)</Th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <Td>What is tested?</Td>
-              <Td>
+        <ResponsiveTable
+          caption="Algorithm validation compared with module validation"
+          head={['Question', 'Algorithm validation (CAVP)', 'Module validation (CMVP)']}
+          rows={[
+            [
+              <>What is tested?</>,
+              <>
                 An algorithm implementation, by comparing its outputs with known or expected answers{' '}
                 <Cite s="cmvpMM" at="§1.4" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 A defined module against FIPS 140-3’s eleven requirement areas — module
                 specification, interfaces, roles/services/authentication, software/firmware,
                 operating environment, physical, non-invasive, SSP management, self-tests,
                 life-cycle assurance, mitigation of other attacks — at one of four security levels{' '}
                 <Cite s="fips1403" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>Which algorithms?</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>Which algorithms?</>,
+              <>
                 Approved algorithms; NIST points to SP 800-140C and SP 800-140D for the lists{' '}
                 <Cite s="cavp" /> <Cite s="sp800140c" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 The approved algorithms the module claims; the lab confirms each complies with all
                 requirements of its standard, including those CAVP tests do not reach{' '}
                 <Cite s="cmvpMM" at="§2.6.2" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>How is it run?</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>How is it run?</>,
+              <>
                 Black-box, through the Automated Cryptographic Validation Testing System (ACVTS):
                 the implementation is never sent to NIST <Cite s="cavp" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 A CST laboratory tests the module, reviews documentation and source, and submits a
                 report to the CMVP validation authorities <Cite s="cmvpMM" at="§2.6.2" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>What is published?</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>What is published?</>,
+              <>
                 An algorithm validation certificate on the CAVP validation list <Cite s="cavp" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 A module certificate; its entry links to the CAVP certificates of the algorithms the
                 module uses <Cite s="cmvpMM" at="§4.9.3.5" />
-              </Td>
-            </tr>
-          </tbody>
-        </TableShell>
+              </>,
+            ],
+          ]}
+        />
         <Callout title="Algorithm testing does not cover every algorithm requirement">
           <p>
             The CMVP Management Manual requires the laboratory to confirm compliance with the
@@ -422,83 +397,78 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           tests of the same type can cover different assurances <Cite s="acvpMlDsa" />. The
           vocabulary is defined per algorithm, in each ACVP sub-specification:
         </p>
-        <TableShell caption="ACVP test types by algorithm">
-          <thead>
-            <tr>
-              <Th>Algorithm / mode</Th>
-              <Th>Test type</Th>
-              <Th>What the implementation must do</Th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <Td>SHA-1 / SHA-2</Td>
-              <Td>AFT</Td>
-              <Td>
+        <ResponsiveTable
+          caption="ACVP test types by algorithm"
+          head={['Algorithm / mode', 'Test type', 'What the implementation must do']}
+          rows={[
+            [
+              <>SHA-1 / SHA-2</>,
+              <>AFT</>,
+              <>
                 Hash single, multiple and partial blocks of random data — checks chunking and
                 padding <Cite s="acvpSha" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>SHA-1 / SHA-2</Td>
-              <Td>MCT</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>SHA-1 / SHA-2</>,
+              <>MCT</>,
+              <>
                 Monte Carlo Test: from one seed, run 100 × 1,000 chained hashes where each digest
                 feeds the next message; aimed at state, allocation and error-handling faults{' '}
                 <Cite s="acvpSha" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>SHA-1 / SHA-2</Td>
-              <Td>LDT</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>SHA-1 / SHA-2</>,
+              <>LDT</>,
+              <>
                 Large Data Test: hash a multi-gigabyte message described, not transmitted, by the
                 prompt <Cite s="acvpSha" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-KEM / keyGen</Td>
-              <Td>AFT</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-KEM / keyGen</>,
+              <>AFT</>,
+              <>
                 Generate a key pair from a provided seed (ML-KEM.KeyGen_internal){' '}
                 <Cite s="acvpMlKem" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-KEM / encapDecap</Td>
-              <Td>AFT</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-KEM / encapDecap</>,
+              <>AFT</>,
+              <>
                 Encapsulate with a server-chosen <code>m</code> (ML-KEM.Encaps_internal) and return{' '}
                 <code>c</code> and <code>k</code> <Cite s="acvpMlKem" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-KEM / encapDecap</Td>
-              <Td>VAL</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-KEM / encapDecap</>,
+              <>VAL</>,
+              <>
                 Decapsulate valid or modified ciphertexts (ML-KEM.Decaps_internal), or decide
                 whether an encapsulation key (FIPS 203 §7.2) or decapsulation key (§7.3) is valid{' '}
                 <Cite s="acvpMlKem" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA / keyGen, sigGen, sigVer</Td>
-              <Td>AFT</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-DSA / keyGen, sigGen, sigVer</>,
+              <>AFT</>,
+              <>
                 Key pair from a seed; signatures compared with the server’s known signature;
                 validity decisions on modified signatures <Cite s="acvpMlDsa" />
-              </Td>
-            </tr>
-            <tr>
-              <Td>SLH-DSA / keyGen, sigGen, sigVer</Td>
-              <Td>AFT</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>SLH-DSA / keyGen, sigGen, sigVer</>,
+              <>AFT</>,
+              <>
                 Key pair from SK.seed, SK.prf and PK.seed; signatures from provided keys and
                 randomness; validity decisions on modified signatures <Cite s="acvpSlhDsa" />
-              </Td>
-            </tr>
-          </tbody>
-        </TableShell>
+              </>,
+            ],
+          ]}
+        />
         <Callout title="Minimums are part of the test design">
           <p>
             The sub-specifications fix minimum test counts per combination of capabilities — for
@@ -531,45 +501,40 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           values shall be generated by the module <Cite s="fips203" at="§6" />{' '}
           <Cite s="fips204" at="§6" /> <Cite s="fips205" at="§9" />.
         </p>
-        <TableShell caption="Where randomness enters each PQC algorithm">
-          <thead>
-            <tr>
-              <Th>Operation</Th>
-              <Th>Randomness</Th>
-              <Th>Consequence for testing</Th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <Td>ML-KEM.Encaps</Td>
-              <Td>
+        <ResponsiveTable
+          caption="Where randomness enters each PQC algorithm"
+          head={['Operation', 'Randomness', 'Consequence for testing']}
+          rows={[
+            [
+              <>ML-KEM.Encaps</>,
+              <>
                 32-byte <code>m</code> drawn inside the module; Encaps_internal(ek, m) takes it as
                 input <Cite s="fips203" at="Alg. 17, 20" />
-              </Td>
-              <Td>Byte-exact testing needs the internal interface with the server’s m.</Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA.Sign</Td>
-              <Td>
+              </>,
+              <>Byte-exact testing needs the internal interface with the server’s m.</>,
+            ],
+            [
+              <>ML-DSA.Sign</>,
+              <>
                 Default <em>hedged</em>: <code>rnd</code> from an RBG. Optional{' '}
                 <em>deterministic</em>: <code>rnd</code> = 32 zero bytes; that is the only
                 difference <Cite s="fips204" at="§3.4, Alg. 2, Alg. 7" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 Deterministic signatures can be compared byte for byte; hedged ones only if the test
                 can inject <code>rnd</code>.
-              </Td>
-            </tr>
-            <tr>
-              <Td>SLH-DSA sign</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>SLH-DSA sign</>,
+              <>
                 Default hedged: <code>opt_rand</code> = <code>addrnd</code>. Deterministic:{' '}
                 <code>opt_rand</code> = PK.seed <Cite s="fips205" at="§9.2, Alg. 19" />
-              </Td>
-              <Td>Same split as ML-DSA.</Td>
-            </tr>
-          </tbody>
-        </TableShell>
+              </>,
+              <>Same split as ML-DSA.</>,
+            ],
+          ]}
+        />
         <p>
           FIPS 204 treats the variants differently for security, not only for testing: hedged
           signing helps mitigate side-channel attacks, the deterministic variant “should not be used
@@ -608,151 +573,146 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           standard PKCS#11 has no field for an input, this HSM accepts it as an optional test input
           outside the standard, and every result that used one says so.
         </p>
-        <TableShell caption="How each ACVP test group reaches the HSM: standard PKCS#11, or an optional test input outside it">
-          <thead>
-            <tr>
-              <Th>ACVP test group</Th>
-              <Th>Interface path</Th>
-              <Th>Hub disposition</Th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <Td>ML-KEM decapsulation (VAL)</Td>
-              <Td>
+        <ResponsiveTable
+          caption="How each ACVP test group reaches the HSM: standard PKCS#11, or an optional test input outside it"
+          head={['ACVP test group', 'Interface path', 'Hub disposition']}
+          rows={[
+            [
+              <>ML-KEM decapsulation (VAL)</>,
+              <>
                 Import dk, then C_DecapsulateKey with CKM_ML_KEM (ML-KEM.Decaps){' '}
                 <Cite s="pkcs11" at="§6.68" />
-              </Td>
-              <Td>Executed; k is the derived key’s CKA_VALUE</Td>
-            </tr>
-            <tr>
-              <Td>ML-KEM encapsulation (AFT)</Td>
-              <Td>
+              </>,
+              <>Executed; k is the derived key’s CKA_VALUE</>,
+            ],
+            [
+              <>ML-KEM encapsulation (AFT)</>,
+              <>
                 Standard PKCS#11 has no field for <code>m</code>: C_EncapsulateKey takes a
                 public-key handle and a template <Cite s="pkcs11" at="§5.18.8" />. This HSM accepts{' '}
                 <code>m</code> (32 bytes) as an optional test input, the CKM_ML_KEM mechanism
                 parameter <Cite s="fips203" at="Alg. 17" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 Executed on both engines in the Playground suite and in Step 3: c and k are
                 byte-compared with NIST’s, and each result is labelled “test input supplied (outside
                 the standard)”. Step 3 first checks that the engine really uses the supplied{' '}
                 <code>m</code> (the same <code>m</code> twice gives the same output, a different{' '}
                 <code>m</code> a different ciphertext); if not, nothing is answered
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-KEM key checks (VAL)</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-KEM key checks (VAL)</>,
+              <>
                 None: FIPS 203 §7.2/§7.3 checks are not a PKCS#11 operation{' '}
                 <Cite s="fips203" at="§7.2, §7.3" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 Executed in Step 3 from what these engines do when the key is imported (PKCS#11
                 itself does not require a key check at import; these engines run one): accepted
                 means valid, refused with exactly CKR_ATTRIBUTE_VALUE_INVALID means invalid, and any
                 other result is an error, never a guess. evidence.json keeps the return code for
                 every key
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA sigVer, external, pure / preHash</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-DSA sigVer, external, pure / preHash</>,
+              <>
                 CKM_ML_DSA (ML-DSA.Verify) or CKM_HASH_ML_DSA_&lt;hash&gt;, context in
                 CK_SIGN_ADDITIONAL_CONTEXT <Cite s="pkcs11" at="§6.67.5–6.67.7" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 Executed. SHA2-512/224 and SHA2-512/256 have no CKM_HASH_ML_DSA_&lt;hash&gt;
                 mechanism <Cite s="pkcs11" at="§6.67" />; the generic CKM_HASH_ML_DSA takes them as
                 its <code>hash</code> (CKM_SHA512_224 / CKM_SHA512_256) with the caller computing
                 PH(M). Step 3 runs these through that route too, labelled “computed outside the
                 engine”
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA internal interface on M′ (externalMu false)</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-DSA internal interface on M′ (externalMu false)</>,
+              <>
                 CKM_ML_DSA implements FIPS 204 Algorithms 2 and 3 on the message M{' '}
                 <Cite s="pkcs11" at="§6.67.5" />, but the internal interface only ever signs μ =
                 SHAKE256(tr ‖ M′, 64) <Cite s="fips204" at="Alg. 7, line 6" />. The harness computes
                 μ from the public key and M′ and uses the external-μ mechanism below — no extension
-              </Td>
-              <Td>
+              </>,
+              <>
                 Playground suite: executed on both engines (sigGen byte-match and sigVer). Step 3
                 runs the sigVer groups the same way, labelled “computed outside the engine”
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA internal interface with external μ</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-DSA internal interface with external μ</>,
+              <>
                 No PKCS#11 v3.2 mechanism. The Hub’s engines use a non-standard mechanism code,
                 0x403c, for it; FIPS 204 allows μ to be computed in a different module{' '}
                 <Cite s="fips204" at="Alg. 7, line 6" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 Executed (Playground suite and ACVP-format prototype) where an engine advertises
                 0x403c, labelled vendor-defined in evidence.json
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA sigGen, deterministic</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-DSA sigGen, deterministic</>,
+              <>
                 Import sk, sign with hedgeVariant CKH_DETERMINISTIC_REQUIRED{' '}
                 <Cite s="pkcs11" at="§6.67.5" />
-              </Td>
-              <Td>Byte-comparable with NIST’s deterministic sigGen sample (Playground suite)</Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA sigGen, hedged</Td>
-              <Td>
+              </>,
+              <>Byte-comparable with NIST’s deterministic sigGen sample (Playground suite)</>,
+            ],
+            [
+              <>ML-DSA sigGen, hedged</>,
+              <>
                 Standard PKCS#11 has no field for <code>rnd</code>: CKH_HEDGE_REQUIRED demands
                 hedging but offers no input for it <Cite s="pkcs11" at="§6.67.5" />. This HSM
                 accepts <code>rnd</code> as an optional test input in an extended signing structure:
                 the standard CK_SIGN_ADDITIONAL_CONTEXT fields, then <code>pRandom</code>,{' '}
                 <code>ulRandomLen</code> and <code>messageEncoding</code>
-              </Td>
-              <Td>
+              </>,
+              <>
                 Playground suite: byte-comparable with NIST’s hedged sigGen, labelled “test input
                 supplied (outside the standard)”
-              </Td>
-            </tr>
-            <tr>
-              <Td>SLH-DSA sigGen hedged, and sign / verify on the internal interface</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>SLH-DSA sigGen hedged, and sign / verify on the internal interface</>,
+              <>
                 Standard PKCS#11 has no field for <code>addrnd</code> and no internal-interface
                 mechanism <Cite s="pkcs11" at="§6.69" />. This HSM accepts <code>addrnd</code> and{' '}
                 <code>messageEncoding = internal</code> (slh_sign_internal / slh_verify_internal) in
                 the same extended structure <Cite s="fips205" at="§9.2–9.3, Alg. 19–20" />
-              </Td>
-              <Td>
+              </>,
+              <>
                 Playground suite: executed on both engines, labelled “test input supplied (outside
                 the standard)”
-              </Td>
-            </tr>
-            <tr>
-              <Td>ECDSA sigGen (AFT, NIST’s k)</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ECDSA sigGen (AFT, NIST’s k)</>,
+              <>
                 Standard CKM_ECDSA takes no parameter and draws k itself{' '}
                 <Cite s="pkcs11" at="§6.3" />. This HSM accepts k as the optional CKM_ECDSA
                 parameter
-              </Td>
-              <Td>
+              </>,
+              <>
                 Playground suite: r ‖ s byte-compared with NIST’s, labelled “test input supplied
                 (outside the standard)”
-              </Td>
-            </tr>
-            <tr>
-              <Td>ML-DSA keyGen (AFT)</Td>
-              <Td>
+              </>,
+            ],
+            [
+              <>ML-DSA keyGen (AFT)</>,
+              <>
                 CKM_ML_DSA_KEY_PAIR_GEN with the seed ξ supplied as CKA_SEED. The specification
                 lists CKA_SEED among the attributes the mechanism <em>contributes</em>, so accepting
                 a caller’s seed is engine behaviour, not a PKCS#11 requirement{' '}
                 <Cite s="pkcs11" at="§6.67.4" />
-              </Td>
-              <Td>Byte-comparable public key (Playground suite), engine-specific path</Td>
-            </tr>
-          </tbody>
-        </TableShell>
+              </>,
+              <>Byte-comparable public key (Playground suite), engine-specific path</>,
+            ],
+          ]}
+        />
         <Callout title="Optional test inputs: outside the standard, for testing only">
           <p>
             Standard PKCS#11 has no field for the random value an operation draws (ML-KEM{' '}
@@ -883,30 +843,19 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           a passing result of that class may make <Cite s="hubPolicy" />. The classes are the Hub’s
           policy, not a NIST taxonomy:
         </p>
-        <TableShell caption="The eight evidence classes and their permitted claims">
-          <thead>
-            <tr>
-              <Th>Evidence class</Th>
-              <Th>Meaning</Th>
-              <Th>Permitted claim</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {EVIDENCE_CLASS_IDS.map((id) => (
-              <tr key={id}>
-                <Td>
-                  <span className="font-semibold text-foreground">
-                    {EVIDENCE_CLASSES[id].label}
-                  </span>
-                  <br />
-                  <code className="text-[10px] text-muted-foreground">{id}</code>
-                </Td>
-                <Td>{EVIDENCE_CLASSES[id].meaning}</Td>
-                <Td>“{EVIDENCE_CLASSES[id].permittedClaim}”</Td>
-              </tr>
-            ))}
-          </tbody>
-        </TableShell>
+        <ResponsiveTable
+          caption="The eight evidence classes and their permitted claims"
+          head={['Evidence class', 'Meaning', 'Permitted claim']}
+          rows={EVIDENCE_CLASS_IDS.map((id) => [
+            <>
+              <span className="font-semibold text-foreground">{EVIDENCE_CLASSES[id].label}</span>
+              <br />
+              <code className="text-[10px] text-muted-foreground">{id}</code>
+            </>,
+            EVIDENCE_CLASSES[id].meaning,
+            <>“{EVIDENCE_CLASSES[id].permittedClaim}”</>,
+          ])}
+        />
         <div>
           <h3 className="mb-2 font-semibold text-foreground">The claim ladder</h3>
           <p className="mb-2">
@@ -960,22 +909,14 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             active vector files, of which {counts.nistReferenceSampleFileCount} carry public NIST
             ACVP-Server reference samples ({counts.nistReferenceSampleCaseCount} active cases).
           </p>
-          <TableShell caption="Active validation cases by evidence class">
-            <thead>
-              <tr>
-                <Th>Evidence class</Th>
-                <Th>Active cases</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {EVIDENCE_CLASS_IDS.map((id) => (
-                <tr key={id}>
-                  <Td>{EVIDENCE_CLASSES[id].label}</Td>
-                  <Td>{counts.activeCasesByClass[id] ?? 0}</Td>
-                </tr>
-              ))}
-            </tbody>
-          </TableShell>
+          <ResponsiveTable
+            caption="Active validation cases by evidence class"
+            head={['Evidence class', 'Active cases']}
+            rows={EVIDENCE_CLASS_IDS.map((id) => [
+              EVIDENCE_CLASSES[id].label,
+              counts.activeCasesByClass[id] ?? 0,
+            ])}
+          />
         </div>
       </Section>
 

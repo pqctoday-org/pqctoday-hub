@@ -15,6 +15,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { CalendarClock, ExternalLink, HelpCircle, Lightbulb, ShieldAlert } from 'lucide-react'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { getStandard, type StandardRef } from '@/data/standardsRegistry'
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import {
@@ -291,26 +292,13 @@ export const PciV5Changes = () => (
       public — the announcement — mapped onto {anchorName}.
     </p>
 
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[600px] border-collapse text-left text-xs">
-        <thead>
-          <tr className="border-b border-border text-muted-foreground">
-            <th className="py-2 pr-3 font-semibold">Area</th>
-            <th className="py-2 pr-3 font-semibold">What the announcement says</th>
-            <th className="py-2 font-semibold">What it means for {ANCHOR_SCENARIO.name}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {PCI_V5_CHANGES.map((c) => (
-            <tr key={c.area} className="border-b border-border/50 align-top">
-              <td className="py-2 pr-3 font-medium text-foreground">{c.area}</td>
-              <td className="py-2 pr-3">{c.blogSays}</td>
-              <td className="py-2">{c.forTheAnchor}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ResponsiveTable
+      caption="What the PCI announcement says, area by area, and what it means for the anchor product"
+      head={['Area', 'What the announcement says', <>What it means for {ANCHOR_SCENARIO.name}</>]}
+      rows={PCI_V5_CHANGES.map((c) => [c.area, c.blogSays, c.forTheAnchor])}
+      strongFirstColumn
+      testId="pci-v5-changes"
+    />
 
     <h3 className="text-base font-bold text-foreground">Three things to take away</h3>
     <ol className="ml-5 list-decimal space-y-2">
@@ -372,33 +360,24 @@ export const PciPqcTruth = () => (
       PCI DSS. Each is read below, with what it does <em>not</em> say.
     </p>
 
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px] border-collapse text-left text-xs">
-        <thead>
-          <tr className="border-b border-border text-muted-foreground">
-            <th className="py-2 pr-3 font-semibold">Source</th>
-            <th className="py-2 pr-3 font-semibold">What it says</th>
-            <th className="py-2 font-semibold">What it does not say</th>
-          </tr>
-        </thead>
-        <tbody>
-          {PCI_PQC_FINDINGS.map((f) => (
-            <tr key={f.source} className="border-b border-border/50 align-top">
-              <td className="py-2 pr-3 font-medium text-foreground">
-                {f.source}
-                {f.status === 'open' ? (
-                  <span className="ml-1 rounded bg-status-warning/15 px-1 text-[10px] font-semibold text-status-warning">
-                    open question
-                  </span>
-                ) : null}
-              </td>
-              <td className="py-2 pr-3">{f.says}</td>
-              <td className="py-2">{f.doesNotSay}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ResponsiveTable
+      caption="What each public PCI source says and does not say about post-quantum cryptography"
+      head={['Source', 'What it says', 'What it does not say']}
+      rows={PCI_PQC_FINDINGS.map((f) => [
+        <>
+          {f.source}
+          {f.status === 'open' ? (
+            <span className="ml-1 rounded bg-status-warning/15 px-1 text-[10px] font-semibold text-status-warning">
+              open question
+            </span>
+          ) : null}
+        </>,
+        f.says,
+        f.doesNotSay,
+      ])}
+      strongFirstColumn
+      testId="pci-pqc-findings"
+    />
     <p className="text-xs text-muted-foreground">
       Sources: <PciCite refKey="listingFields" label="listing field definitions" />{' '}
       <PciCite refKey="v5Blog" label="v5.0 blog" /> <PciCite refKey="hsmV4" label="PTS HSM v4.0" />{' '}
@@ -512,32 +491,27 @@ export const PciOperatingStack = () => (
       each one a different organisation holds the evidence.
     </p>
 
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] border-collapse text-left text-xs">
-        <thead>
-          <tr className="border-b border-border text-muted-foreground">
-            <th className="py-2 pr-3 font-semibold">Layer</th>
-            <th className="py-2 pr-3 font-semibold">What is assessed</th>
-            <th className="py-2 pr-3 font-semibold">By whom</th>
-            <th className="py-2 pr-3 font-semibold">Evidence</th>
-            <th className="py-2 pr-3 font-semibold">Listing</th>
-            <th className="py-2 font-semibold">{ANCHOR_SCENARIO.name}’s role</th>
-          </tr>
-        </thead>
-        <tbody>
-          {PCI_STACK.map((l) => (
-            <tr key={l.id} className="border-b border-border/50 align-top">
-              <td className="py-2 pr-3 font-medium text-foreground">{l.name}</td>
-              <td className="py-2 pr-3">{l.whatIsAssessed}</td>
-              <td className="py-2 pr-3">{l.whoAssesses}</td>
-              <td className="py-2 pr-3">{l.artifact}</td>
-              <td className="py-2 pr-3">{l.listing}</td>
-              <td className="py-2">{l.anchorRole}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ResponsiveTable
+      caption="The layers of the operating stack: what is assessed in each, by whom, and what evidence it leaves"
+      head={[
+        'Layer',
+        'What is assessed',
+        'By whom',
+        'Evidence',
+        'Listing',
+        <>{ANCHOR_SCENARIO.name}’s role</>,
+      ]}
+      rows={PCI_STACK.map((l) => [
+        l.name,
+        l.whatIsAssessed,
+        l.whoAssesses,
+        l.artifact,
+        l.listing,
+        l.anchorRole,
+      ])}
+      strongFirstColumn
+      testId="pci-operating-stack"
+    />
     <p className="text-xs text-muted-foreground">
       Sources: <PciPlainCite sourceKey="pinProgramPage" />{' '}
       <PciCite refKey="p2peProgram" label="P2PE program page" />{' '}
@@ -627,66 +601,62 @@ export const PciPinSecurity = () => (
     </p>
 
     <h3 className="text-base font-bold text-foreground">What matters for an HSM vendor</h3>
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[560px] border-collapse text-left text-xs">
-        <thead>
-          <tr className="border-b border-border text-muted-foreground">
-            <th className="py-2 pr-3 font-semibold">Requirement</th>
-            <th className="py-2 font-semibold">What it asks</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="border-b border-border/50 align-top">
-            <td className="py-2 pr-3 font-medium text-foreground">1-3</td>
-            <td className="py-2">
-              HSMs are FIPS 140-2/140-3 Level 3-or-higher certified, or PCI approved. Restricted PCI
-              approvals are valid only in controlled (or more robust) environments, as noted in the
-              listing’s Additional Information column.
-            </td>
-          </tr>
-          <tr className="border-b border-border/50 align-top">
-            <td className="py-2 pr-3 font-medium text-foreground">1-4</td>
-            <td className="py-2">
-              The approval listing matches the deployed devices: vendor, model, hardware version,
-              firmware version, PTS HSM or FIPS 140 approval number, and (for PCI-approved HSMs) any
-              resident applications included in the PTS assessment.
-            </td>
-          </tr>
-          <tr className="border-b border-border/50 align-top">
-            <td className="py-2 pr-3 font-medium text-foreground">18-3</td>
-            <td className="py-2">
-              Encrypted symmetric keys are managed as <strong>key blocks</strong> with usage
-              cryptographically bound. Phases: 1 — internal connections and key storage, effective 1
-              June 2019; 2 — external connections to associations and networks, 1 January 2023; 3 —
-              merchant hosts, POS devices and ATMs, 1 January 2025. Accepted methods include a MAC
-              (e.g. TR-31), a digital signature (e.g. TR-34), or AES key wrap (ANSI X9.102).
-            </td>
-          </tr>
-          <tr className="border-b border-border/50 align-top">
-            <td className="py-2 pr-3 font-medium text-foreground">Annex A</td>
-            <td className="py-2">
-              Symmetric key distribution using asymmetric techniques: A1 remote key distribution
-              operations, A2 certification and registration authority operations. This is the
-              quantum-exposed part of PIN.
-            </td>
-          </tr>
-          <tr className="border-b border-border/50 align-top">
-            <td className="py-2 pr-3 font-medium text-foreground">Annex B</td>
-            <td className="py-2">
-              Key-injection facilities (KIFs). An entity can validate only the Annex B requirements
-              if a KIF is all it offers.
-            </td>
-          </tr>
-          <tr className="align-top">
-            <td className="py-2 pr-3 font-medium text-foreground">Annex C</td>
-            <td className="py-2">
-              Minimum and equivalent key sizes and strengths for approved algorithms — rewritten in
-              v3.1 to align with NIST nomenclature. <PciPlainCite sourceKey="pin31Blog" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ResponsiveTable
+      caption="The PCI PIN Security requirements that matter for an HSM vendor"
+      head={['Requirement', 'What it asks']}
+      rows={[
+        [
+          '1-3',
+          <>
+            HSMs are FIPS 140-2/140-3 Level 3-or-higher certified, or PCI approved. Restricted PCI
+            approvals are valid only in controlled (or more robust) environments, as noted in the
+            listing’s Additional Information column.
+          </>,
+        ],
+        [
+          '1-4',
+          <>
+            The approval listing matches the deployed devices: vendor, model, hardware version,
+            firmware version, PTS HSM or FIPS 140 approval number, and (for PCI-approved HSMs) any
+            resident applications included in the PTS assessment.
+          </>,
+        ],
+        [
+          '18-3',
+          <>
+            Encrypted symmetric keys are managed as <strong>key blocks</strong> with usage
+            cryptographically bound. Phases: 1 — internal connections and key storage, effective 1
+            June 2019; 2 — external connections to associations and networks, 1 January 2023; 3 —
+            merchant hosts, POS devices and ATMs, 1 January 2025. Accepted methods include a MAC
+            (e.g. TR-31), a digital signature (e.g. TR-34), or AES key wrap (ANSI X9.102).
+          </>,
+        ],
+        [
+          'Annex A',
+          <>
+            Symmetric key distribution using asymmetric techniques: A1 remote key distribution
+            operations, A2 certification and registration authority operations. This is the
+            quantum-exposed part of PIN.
+          </>,
+        ],
+        [
+          'Annex B',
+          <>
+            Key-injection facilities (KIFs). An entity can validate only the Annex B requirements if
+            a KIF is all it offers.
+          </>,
+        ],
+        [
+          'Annex C',
+          <>
+            Minimum and equivalent key sizes and strengths for approved algorithms — rewritten in
+            v3.1 to align with NIST nomenclature. <PciPlainCite sourceKey="pin31Blog" />
+          </>,
+        ],
+      ]}
+      strongFirstColumn
+      testId="pci-pin-requirements"
+    />
     <p>
       The key-block dates are worth one warning. A June 2019 PCI blog gave estimated dates of 1 June
       2021 and 1 June 2023 for phases 2 and 3. Those were revised (announced July 2020, incorporated

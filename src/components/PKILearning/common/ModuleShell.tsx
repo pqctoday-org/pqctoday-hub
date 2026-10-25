@@ -328,6 +328,8 @@ export const ModuleShell = ({
   const requiredStepIds = requiredWorkshopStepIds(manifest, activePathId)
   // A module with learning paths states each path's own duration; show the one the learner is on.
   const activePathDuration = manifest.learnPaths?.find((p) => p.id === activePathId)?.duration
+  // The one header duration, shared with the phone header: the path's own, else the module's.
+  const durationLabel = activePathDuration ?? moduleDurationLabel(manifest)
   const {
     activeTab,
     handleTabChange,
@@ -532,7 +534,7 @@ export const ModuleShell = ({
               className={`${chip} bg-muted text-muted-foreground`}
               title={activePathDuration ? 'Time for the learning path you are on' : undefined}
             >
-              {activePathDuration ?? moduleDurationLabel(manifest)}
+              {durationLabel}
             </span>
           ) : null}
         </div>
@@ -666,6 +668,8 @@ export const ModuleShell = ({
           activeTab={activeTab}
           onTabChange={handleTabChange}
           onStartHere={startHereIndex >= 0 ? () => slotApi.goToWorkshop(startHereIndex) : undefined}
+          durationLabel={durationLabel}
+          showStartHere={startHereIndex >= 0}
           pathPicker={pathPicker}
         />
       </LearnModuleContext.Provider>

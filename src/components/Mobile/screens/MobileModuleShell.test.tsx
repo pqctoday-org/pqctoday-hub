@@ -24,6 +24,37 @@ const minimal: ModuleManifest = {
 }
 
 describe('MobileModuleShell', () => {
+  it('shows the duration label it is given, else the manifest duration', () => {
+    const { rerender } = render(
+      <MobileModuleShell manifest={minimal} learnContent={<div />} durationLabel="3 min" />
+    )
+    expect(screen.getByText('3 min')).toBeInTheDocument()
+    expect(screen.queryByText('5 min')).not.toBeInTheDocument()
+    rerender(<MobileModuleShell manifest={minimal} learnContent={<div />} />)
+    expect(screen.getByText('5 min')).toBeInTheDocument()
+  })
+
+  it('hides the Start here box when told the step is not on the learner path', () => {
+    const manifest: ModuleManifest = {
+      ...minimal,
+      workshopSteps: [{ id: 'a', label: 'A' }],
+      startHere: { step: 'a', text: 'Decode the claim.' },
+    }
+    const { rerender } = render(
+      <MemoryRouter>
+        <MobileModuleShell manifest={manifest} learnContent={<div />} />
+      </MemoryRouter>
+    )
+    expect(screen.getByText('Decode the claim.')).toBeInTheDocument()
+    rerender(
+      <MemoryRouter>
+        <MobileModuleShell manifest={manifest} learnContent={<div />} showStartHere={false} />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText('Decode the claim.')).not.toBeInTheDocument()
+    expect(screen.queryByText('Start here')).not.toBeInTheDocument()
+  })
+
   it('renders the real title/description and the passed-through Learn content', () => {
     render(<MobileModuleShell manifest={minimal} learnContent={<div>REAL CONTENT</div>} />)
     expect(screen.getByRole('heading', { name: 'Minimal Module' })).toBeInTheDocument()

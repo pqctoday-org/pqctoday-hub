@@ -125,8 +125,9 @@ describe('niap-pqc-route section', () => {
     expect(table).toHaveTextContent('cPP Hardcopy Devices')
     expect(table).toHaveTextContent('31 Jul 2026')
     expect(table).toHaveTextContent('2025-09-30')
-    // The table scrolls inside its own wrapper, not the page.
-    expect(table.parentElement).toHaveClass('overflow-x-auto')
+    // The table is only displayed from 640 px up; below that the same rows are stacked blocks,
+    // so nothing scrolls sideways on a phone.
+    expect(table.parentElement).toHaveClass('hidden', 'sm:block')
     // One verbatim quote per document sits below the table.
     expect(screen.getByText(/Quotes from each document/)).toBeInTheDocument()
     expect(
@@ -149,7 +150,7 @@ describe('niap-pqc-route section', () => {
       )
     }
     expect(text).toContain('(a package, not a profile)')
-    expect(screen.getAllByText(/NIAP approved /)).toHaveLength(11)
+    expect(within(table).getAllByText(/NIAP approved /)).toHaveLength(11)
     expect(text).toContain('which lists all 11 as CC:2022')
     // Quotes restored or added for terms that had none.
     expect(text).toContain(
