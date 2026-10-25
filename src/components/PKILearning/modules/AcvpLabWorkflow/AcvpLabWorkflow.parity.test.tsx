@@ -45,7 +45,10 @@ describe('AcvpLabWorkflowModule render parity', () => {
       </EmbedProvider>
     )
     const notice = screen.getByTestId('acvp-lab-status-notice')
-    expect(notice).toHaveTextContent('Corrected since the owner review, awaiting re-sign-off')
+    expect(notice).toHaveTextContent(
+      'Reviewed and signed off by the PQC Today owner on 24 October 2026'
+    )
+    expect(notice).not.toHaveTextContent('awaiting re-sign-off')
     expect(notice).not.toHaveTextContent(/draft/i)
     // the same lab-review sentence the other four certification modules show
     expect(notice).toHaveTextContent(NOT_LAB_REVIEWED)
