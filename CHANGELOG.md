@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.180.1] - 2026-10-25
+
+Library entries now name the organisation that published them, and seven certification lessons carry a second review after the 4.180.0 changes.
+
+### Fixed
+
+- **Almost 200 Library entries now link to their real publisher** [view:/library] [persona:cert-engineer] [persona:researcher] [persona:grc]: entries with no linked publisher scored "No linked trusted source", which lowered the trust score of documents from NIST, the IETF, ISO, arXiv and many others. Each entry now points to the organisation that published it, and 39 publishers that were missing from the list of trusted sources were added.
+- **Seventeen Library entries no longer link to the wrong publisher** [view:/library] [persona:cert-engineer] [persona:researcher]: eleven documents from Czech, Canadian, Indian, US and international bodies had been linked to the European Commission, and six others to a neighbouring organisation. They now link to the publisher that issued them.
+- **The 4.180.0 note on Testing & Validation counts the products right** [view:/learn/pqc-testing-validation] [persona:cert-engineer]: other routes list fifteen products, not sixteen.
+
+### Changed
+
+- **Seven certification lessons were reviewed again after the 4.180.0 changes** [view:/learn/acvp-lab-workflow] [view:/learn/pci-certification] [view:/learn/entropy-randomness] [view:/learn/slh-dsa] [view:/learn/stateful-signatures] [view:/learn/secure-boot-pqc] [view:/learn/pqc-testing-validation] [persona:cert-engineer]: the owner went through every change to the ACVP lab workflow, PCI, entropy, SLH-DSA, stateful signatures, secure boot and testing lessons and confirmed their review of 25 October 2026 for the text as it now reads.
+
 ## [4.180.0] - 2026-10-25
 
 More statements in the certification lessons and the Library are checked against their sources, the certification role gets clearer pages on phones and a better path from lesson to lesson, and the Stateful Hash Signatures lesson gains a "Which scheme for which use" section.
@@ -58,7 +72,7 @@ More statements in the certification lessons and the Library are checked against
 - **Tables in the ACVP, Common Criteria, PCI and SLH-DSA lessons read well on a phone** [view:/learn/acvp-lab-workflow] [view:/learn/cc-eucc-certification] [view:/learn/pci-certification] [view:/learn/slh-dsa] [persona:cert-engineer] [persona:researcher]: below 640 pixels each row becomes a block with its column headings, so no column is hidden and no table scrolls sideways inside a narrow box.
 - **Lessons on the certification path end with a card for the next lesson on that path** [view:/learn/hsm-pqc] [view:/learn/cc-eucc-certification] [view:/playground/slh-dsa] [persona:cert-engineer]: five lessons and tools sent the role to a planner or an unrelated lesson, and a test now keeps the cards in step with the path.
 - **The learning path pages read more clearly** [view:/learn] [persona:cert-engineer]: the role card counts the first lesson in its six, the Essentials / Full buttons show a space before the time, checkpoints say how many quiz topics they cover, the Full track note says the essentials start at the certificate, and lesson descriptions name other lessons by title.
-- **The Testing & Validation lesson on the certification route shows only what belongs to it** [view:/learn/pqc-testing-validation] [persona:cert-engineer]: one exercise (the IoT firmware leakage assessment) and the side-channel tool; other routes keep all six exercises and all sixteen products.
+- **The Testing & Validation lesson on the certification route shows only what belongs to it** [view:/learn/pqc-testing-validation] [persona:cert-engineer]: one exercise (the IoT firmware leakage assessment) and the side-channel tool; other routes keep all six exercises and all fifteen products.
 - **The SLH-DSA tool, the validation workbench and the conformance runner explain themselves** [view:/playground/slh-dsa] [view:/playground/hsm] [persona:cert-engineer] [persona:developer]: the SLH-DSA tool carries the standard validation disclaimer under its NIST sample panels, the greyed engine selector says why, the results legend says what an unbadged row means, and the conformance runner's empty state no longer points to a list that is not on a phone.
 - **The phone Community page shows the role note the computer shows** [view:/leaders] [persona:cert-engineer]
 - **The phone Validation page links to the coverage matrix and the register of open gaps** [view:/algorithms] [persona:cert-engineer] [persona:researcher]: the coverage page is exactly screen-width on a phone and a browser test keeps it so.
