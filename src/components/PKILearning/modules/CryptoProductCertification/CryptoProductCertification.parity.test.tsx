@@ -14,6 +14,9 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { CryptoProductCertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import manifest from './manifest'
+import fips140Manifest from '../Fips1403Certification/manifest'
+import ccEuccManifest from '../CcEuccCertification/manifest'
+import pciManifest from '../PciCertification/manifest'
 import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
 import { PRACTITIONER_DISCLAIMER } from './components/sectionRegistry'
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
@@ -44,6 +47,13 @@ const renderModule = (search = '') =>
 
 describe('CryptoProductCertification render parity', () => {
   afterEach(() => useModuleStore.getState().setActiveLearnPath(manifest.id, ''))
+
+  it('names the deep-dive lessons by their titles, not by internal lesson codes', () => {
+    for (const deepDive of [fips140Manifest, ccEuccManifest, pciManifest]) {
+      expect(manifest.description).toContain(deepDive.title)
+    }
+    expect(manifest.description).not.toMatch(/LM-\d/)
+  })
 
   it('renders the gradient header, the in-page description, and all six tabs', () => {
     renderModule()

@@ -28,7 +28,7 @@ const manifest: ModuleManifest = {
   lm_id: 'LM-065',
   title: 'Cryptographic Product Certification: Fundamentals',
   description:
-    'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: LM-067 (FIPS 140-3), LM-068 (Common Criteria, EUCC & eIDAS) and LM-071 (PCI).',
+    'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: FIPS 140-3 Certification; Common Criteria, EUCC & eIDAS Certification; and PCI Certification.',
   whyThisMatters:
     'A certificate proves something narrow — a defined module, target or device, at a version and configuration, against one scheme’s requirements. Adding PQC changes the product, and each scheme has its own route for that change: a market deadline creates urgency, but no shortcut.',
   // Seven required Learn sections (about 9,700 words of text and tables) plus three required
