@@ -1158,8 +1158,8 @@ export function StatefulSignaturesDemo() {
                   <p className="text-xs text-muted-foreground mb-3">
                     Multi-tree variants (HSS, XMSS^MT) raise the number of signatures per key
                     without long key generation. NSA CNSA 2.0 approves only the single-tree LMS and
-                    XMSS for National Security Systems; HSS and XMSS^MT are not allowed (FAQ v2.2, p.
-                    11).
+                    XMSS for National Security Systems; HSS and XMSS^MT are not allowed (FAQ v2.2,
+                    p. 11).
                   </p>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs border-collapse">

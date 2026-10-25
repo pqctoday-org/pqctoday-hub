@@ -983,10 +983,10 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
       <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
         <p className="text-xs text-muted-foreground">
           <strong>Why is SLH-DSA stateless?</strong> SLH-DSA keeps no counter. A key pair is a very
-          large set of few-time FORS keys; each signature hashes the message with a randomizer,
-          uses part of the digest to select one of them, and authenticates it through the
-          hypertree. A FORS key can be selected again, and its security degrades gradually; the
-          parameter sets are designed for up to 2^64 signatures per key.
+          large set of few-time FORS keys; each signature hashes the message with a randomizer, uses
+          part of the digest to select one of them, and authenticates it through the hypertree. A
+          FORS key can be selected again, and its security degrades gradually; the parameter sets
+          are designed for up to 2^64 signatures per key.
         </p>
         <p className="text-xs text-muted-foreground">
           <strong>The cost of statefulness elimination:</strong> SLH-DSA (FIPS 205, formerly
