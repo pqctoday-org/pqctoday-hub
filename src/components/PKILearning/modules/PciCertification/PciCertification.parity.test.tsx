@@ -14,6 +14,8 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { PciCertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import manifest from './manifest'
+import fundamentalsManifest from '../CryptoProductCertification/manifest'
+import fips140Manifest from '../Fips1403Certification/manifest'
 import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
 import { PRACTITIONER_DISCLAIMER } from '@/components/PKILearning/modules/CryptoProductCertification/components/sectionRegistry'
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
@@ -59,6 +61,15 @@ describe('PciCertification render parity', () => {
     ]) {
       expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
+  })
+
+  it('points to the other lessons by their titles, not by internal lesson codes', () => {
+    renderModule()
+    const description = screen.getByText(/PCI PTS HSM and the payment operating stack in depth/)
+    expect(description).toHaveTextContent(
+      `Start with ${fundamentalsManifest.title} for what every scheme shares; FIPS 140-3 is covered in ${fips140Manifest.title}.`
+    )
+    expect(description).not.toHaveTextContent(/LM-\d/)
   })
 
   it('shows the practitioner-orientation disclaimer exactly once, at the top of the Learn tab', () => {

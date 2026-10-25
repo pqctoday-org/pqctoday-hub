@@ -35,8 +35,10 @@ const PERSONA_ICONS: Record<LearningPersona['icon'], LucideIcon> = {
 
 /** Which track-line template a persona's card uses. Every persona shows an
  *  "essentials" summary except researcher, who gets the full-corpus framing
- *  (no funnel) instead — see `trackLine` below. */
-type TrackKind = 'essentials' | 'fullCorpus'
+ *  (no funnel) instead — see `trackLine` below. `essentialsFirstLesson` is the
+ *  essentials summary for a card whose first win is the whole first lesson, so
+ *  the total already contains it and must not read as "then" more. */
+type TrackKind = 'essentials' | 'essentialsFirstLesson' | 'fullCorpus'
 
 interface RoleCopy {
   /** Why-now hook — editorial copy from the approved design, not derived data. */
@@ -85,7 +87,7 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
     urgency:
       'A certificate covers one module, one boundary, one algorithm list. Know exactly what yours will prove.',
     firstWin: 'First win — learn what a certificate actually covers · 95 min',
-    track: 'essentials',
+    track: 'essentialsFirstLesson',
   },
   researcher: {
     urgency: 'FIPS 203/204/205 are out and ACVP vectors are live. Trace it end to end.',
@@ -115,9 +117,11 @@ const ROLE_ORDER: PersonaId[] = [
 /** Live "then X modules / Y min" (or, for researcher, "full corpus" framing) —
  *  always computed from the persona object passed in, never a literal number. */
 function trackLine(persona: LearningPersona, track: TrackKind): string {
-  return track === 'fullCorpus'
-    ? `full corpus · ${persona.estimatedMinutes} min available`
-    : `then ${persona.essentials.length} modules · ${persona.essentialsMinutes} min`
+  if (track === 'fullCorpus') return `full corpus · ${persona.estimatedMinutes} min available`
+  if (track === 'essentialsFirstLesson') {
+    return `${persona.essentials.length} modules in all · ${persona.essentialsMinutes} min, this lesson first`
+  }
+  return `then ${persona.essentials.length} modules · ${persona.essentialsMinutes} min`
 }
 
 interface RoleCardProps {

@@ -8,6 +8,7 @@ import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
+import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 import {
   filterLeadersByParams,
   leaderForwardedMessage,
@@ -170,6 +171,9 @@ export function MobileCommunityView() {
           onDismiss={() => setDismissedNotFound(notFound)}
         />
       )}
+
+      {/* Same role note as desktop /leaders (it carries the certification role's directory-gap disclosure). */}
+      <MobilePersonaPageNote route="/leaders" className="mb-3" />
 
       <div className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
         <Button

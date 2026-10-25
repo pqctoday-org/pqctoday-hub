@@ -2,6 +2,8 @@
 import { describe, it, expect } from 'vitest'
 import { buildForceClusterGraph, humanizeSub, type ForceClusterNodeType } from './forceClusterGraph'
 import { leadersData } from './leadersData'
+import { complianceFrameworks } from './complianceData'
+import { bodyTypeLabel } from '@/components/Compliance/redesign/pillarModel'
 
 describe('buildForceClusterGraph', () => {
   it('derives a real, non-trivial graph from live hub data', async () => {
@@ -80,9 +82,29 @@ describe('buildForceClusterGraph', () => {
     const complianceSubs = new Set(
       graph.nodes.filter((n) => n.type === 'compliance').map((n) => n.sub)
     )
-    expect(complianceSubs.has('Certification body')).toBe(true)
+    expect(complianceSubs.has('Certification scheme')).toBe(true)
     expect(complianceSubs.has('Technical standard')).toBe(true)
     expect(complianceSubs.has('Compliance framework')).toBe(true)
+  })
+
+  it('names a compliance node by the Compliance page label for its body type', async () => {
+    const graph = await buildForceClusterGraph()
+    const subByHref = new Map(
+      graph.nodes.filter((n) => n.type === 'compliance').map((n) => [n.href, n.sub])
+    )
+    const hrefOf = (id: string) => `/compliance?framework=${encodeURIComponent(id)}`
+    let checked = 0
+    for (const fw of complianceFrameworks) {
+      if (!subByHref.has(hrefOf(fw.id))) continue
+      expect(subByHref.get(hrefOf(fw.id)), fw.id).toBe(bodyTypeLabel(fw.bodyType))
+      checked += 1
+    }
+    expect(checked).toBeGreaterThan(0)
+    // FIPS 140-3 is a validation scheme: the Compliance page says "Certification scheme".
+    const fips = complianceFrameworks.find((f) => f.id === 'FIPS-140-3')
+    expect(fips?.bodyType).toBe('certification_body')
+    expect(subByHref.get(hrefOf('FIPS-140-3'))).toBe('Certification scheme')
+    expect([...subByHref.values()]).not.toContain('Certification body')
   })
 
   it('humanizeSub spaces underscores, capitalises the first letter and keeps good labels', () => {

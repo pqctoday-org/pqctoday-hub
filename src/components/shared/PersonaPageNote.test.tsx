@@ -54,6 +54,16 @@ describe('PAGE_PERSONA_NOTES — shape (Wave C, 2026-09-19)', () => {
   })
 })
 
+describe('PAGE_PERSONA_NOTES — certification engineer on /learn', () => {
+  it('says the essentials start at the certificate and that the Full track opens with an optional orientation', () => {
+    const note = PAGE_PERSONA_NOTES['/learn']['cert-engineer']
+    expect(note).toContain(
+      'Your essentials start at the certificate (the Full track opens with an optional orientation on who writes and certifies): '
+    )
+    expect(note).not.toContain('Your path starts at the certificate')
+  })
+})
+
 describe('PersonaPageNote', () => {
   beforeEach(() => {
     usePersonaStore.setState({ selectedPersona: null })

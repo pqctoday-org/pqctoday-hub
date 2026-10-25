@@ -71,6 +71,16 @@ describe('MyPathView — Essentials tier (A1)', () => {
     )
   })
 
+  it('keeps the Essentials / Full track labels apart from their times', () => {
+    renderMyPath('cert-engineer')
+    for (const name of [/^Essentials/, /^Full track/]) {
+      const tab = screen.getByRole('tab', { name })
+      // The button is a flex row, so the space in the text collapses: the gap has to come from the class.
+      expect(tab.className).toMatch(/(^|\s)gap-1(\s|$)/)
+      expect(tab).toHaveTextContent(/^(Essentials|Full track) \d+h/)
+    }
+  })
+
   it('a path that already opens with PQC 101 shows no such note', () => {
     renderMyPath('developer')
     expect(screen.queryByTestId('new-to-pqc-note')).toBeNull()
