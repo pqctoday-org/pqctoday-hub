@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.181.0] - 2026-10-25
+
+The PQC Hardware Acceleration lesson now compares seven platforms on the same measurements, and two Library links, the PCI Quick Reference Guide entry and the Entropy board are corrected.
+
+### Added
+
+- **The PQC Hardware Acceleration lesson now has one set of results for seven platforms** [view:/learn/pqc-hw-acceleration] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: a new results view in the workshop compares an AMD AI X1 Pro, two NXP i.MX 95 boards, an AMD Kria KV260 (CPU cores only), a Ventuno Q, an Apple M4 Pro and an Apple M5 Max on the same signing, key-agreement and key-encapsulation operations, including the hybrid mechanisms of PKCS#11 v3.3, with the speed of one worker and of the whole board side by side. The lesson also gains sections on Arm platforms and core types, on what the AMD64 instruction sets did and did not help on the AI X1 Pro, and on measuring hybrid mechanisms as whole HSM operations, and it has a new infographic.
+
+### Fixed
+
+- **Two ISO links in the Library now open the right standard** [view:/library] [persona:cert-engineer] [persona:researcher]: ISO/IEC 27005:2022 opened the page for a different standard (ISO/IEC 15408-2:2022), and ISO/IEC 7816-4:2020 opened the 2013 edition.
+- **The PCI Quick Reference Guide entry no longer contradicts itself** [view:/library] [persona:cert-engineer] [persona:grc]: its description named PCI DSS v4.0 while the guide it links to is the 2014 version 3.0. The entry now says so and is marked superseded.
+
+### Changed
+
+- **The Entropy board for certification engineers now links to the entropy source certificates** [view:/] [persona:cert-engineer]: a new card, "See the entropy source certificates", opens the entropy tab of the certification records. The standards-community card it replaced now sits on the Hardware board, in place of the card for the hardware-acceleration lesson.
+
 ## [4.180.1] - 2026-10-25
 
 Library entries now name the organisation that published them, and seven certification lessons carry a second review after the 4.180.0 changes.
