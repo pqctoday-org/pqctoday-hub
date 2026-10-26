@@ -5,11 +5,12 @@ import { MemoryRouter } from 'react-router'
 import { PlaygroundWorkshop } from './PlaygroundWorkshop'
 import { WORKSHOP_TOOLS } from './workshopRegistry'
 import { isEnvironmentTool } from './cryptoLabTaxonomy'
-import { FEATURE_PLAYGROUNDS } from './cryptoLabMeta'
+import { FEATURE_PLAYGROUNDS, featurePlaygroundsFor } from './cryptoLabMeta'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSandboxStore } from '@/store/useSandboxStore'
 import { playgroundToolsForRole, toolsForRole } from '@/data/roleTools'
+import { playgroundJourneyFor } from '@/data/playgroundRoleJourneys'
 
 // Tools shown in the grid exclude the marquee "environment" cards.
 const GRID_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
@@ -362,5 +363,41 @@ describe('WS8c — the modal explains why a tool cannot run', () => {
     fireEvent.click(within(card).getByRole('button', { name: 'Preview' }))
     const dialog = screen.getByRole('dialog')
     expect(within(dialog).queryByText(/will not run on this device/i)).toBeNull()
+  })
+})
+
+describe('Crypto Lab Overview — role picks are not shown twice', () => {
+  /** Hrefs of every link on the page outside the all-pages directory. */
+  const hrefsOutsideDirectory = () => {
+    const directory = screen.getByRole('navigation', { name: 'All Crypto Lab pages' })
+    return screen
+      .getAllByRole('link')
+      .filter((link) => !directory.contains(link))
+      .map((link) => link.getAttribute('href'))
+  }
+
+  it.each(['cert-engineer', 'developer', 'researcher', 'ops'] as const)(
+    '%s: every pick in the marquee appears once, not again under Recommended',
+    (role) => {
+      usePersonaStore.setState({ selectedPersona: role })
+      renderWorkbench()
+      const picks = playgroundJourneyFor(role).toolIds.map((id) => `/playground/${id}`)
+      expect(picks.length).toBeGreaterThan(0)
+      // The marquee carries a card for each of them.
+      const marquee = featurePlaygroundsFor(role).map((item) => item.to)
+      for (const to of picks) expect(marquee, to).toContain(to)
+      const hrefs = hrefsOutsideDirectory()
+      for (const to of picks) {
+        expect(hrefs.filter((h) => h === to).length, to).toBe(1)
+      }
+    }
+  )
+
+  it('still counts the role picks in the overview line and offers the other role tools', () => {
+    usePersonaStore.setState({ selectedPersona: 'cert-engineer' })
+    renderWorkbench()
+    const picks = playgroundJourneyFor('cert-engineer').toolIds.length
+    expect(screen.getByText(new RegExp(`· ${picks} to start$`))).toBeInTheDocument()
+    expect(screen.getByText(/^Show the other \d+ tools tagged for /)).toBeInTheDocument()
   })
 })

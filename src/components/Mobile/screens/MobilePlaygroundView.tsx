@@ -7,6 +7,7 @@ import { buttonVariants } from '@/components/ui/button-variants'
 import { cn } from '@/lib/utils'
 import {
   WORKSHOP_TOOLS,
+  SANDBOX_TOOL_COUNT,
   CATEGORIES,
   type WorkshopTool,
   type WorkshopCategory,
@@ -40,8 +41,8 @@ import { MobileSheet } from '../primitives/Sheet'
 //   though it technically stacks.
 export const DROPPED_TOOL_IDS = new Set(['vpn-sim', 'mls-group-messaging', 'openssl-studio'])
 
-// The real 34 hand-authored tools, minus the 24 Docker-backed sandbox
-// scenarios workshopRegistry.tsx appends (cut from mobile entirely per user
+// The hand-authored tools, minus the Docker-backed sandbox scenarios
+// workshopRegistry.tsx appends (cut from mobile entirely per user
 // decision, 2026-08-24 — no sandbox-runtime UI here) and minus the 3 dropped
 // above. Mirrors WorkshopToolsTab.tsx's own `MOBILE_TOOLS` derivation (not
 // exported there, so re-derived here from the same real WORKSHOP_TOOLS).
@@ -289,10 +290,10 @@ export function MobilePlaygroundView() {
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The Overview landing, command palette, "My tools" pane, and the 24 Docker-backed sandbox
-        scenarios are on a laptop. A VPN handshake diagram, a group-messaging key-tree visual, and
-        OpenSSL Studio&apos;s full terminal + file-manager workspace need a wider screen — open
-        those on a laptop too.
+        The Overview landing, command palette, "My tools" pane, and the {SANDBOX_TOOL_COUNT}{' '}
+        Docker-backed sandbox scenarios are on a laptop. A VPN handshake diagram, a group-messaging
+        key-tree visual, and OpenSSL Studio&apos;s full terminal + file-manager workspace need a
+        wider screen — open those on a laptop too.
       </p>
 
       <MobileSheet

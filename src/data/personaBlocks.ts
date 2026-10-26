@@ -287,7 +287,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       "Lesson L5, An honest LMS, is a claim you can check yourself; the Explore tab's Algorithm Explorer and the glossary's commands and flags are the reference for reproducing each lesson at a terminal.",
     ops: "Use the Workbench's Quick Start, Key Generation, CSR and Certificate forms with Command Preview open: the commands are what your scripts will run, and lesson L10 demystifies the config files they read.",
     'cert-engineer':
-      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build actually supports; the build is educational and not FIPS-validated, so use it to see what this build supports, not as evidence; for NIST known-answer samples use the Validation tab.",
+      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build supports; it is educational and not FIPS-validated, so do not use it as evidence. For NIST known-answer samples use the Validation tab on the Algorithms page.",
   },
   '/playground/api-security-jwt': {
     developer:
@@ -939,7 +939,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     researcher:
       'FIPS 205 §9.2 context strings for domain separation and the deterministic mode are explored directly; the Algorithm checks area replays eight published NIST ACVP sigVer cases, valid and invalid, through the in-browser engine, and keeps the sign-and-verify rows apart as functional round trips, not known-answer tests.',
     'cert-engineer':
-      'Generate keys across all twelve FIPS 205 parameter sets and sign in Pure and HashSLH-DSA modes, then run the NIST sigVer sample under Algorithm checks: eight published ACVP cases that the engine must accept or reject exactly as NIST expects (the sign-and-verify rows there are functional round trips, not known-answer tests). Parameter set, interface, pure or pre-hash and deterministic mode are what an algorithm test has to name; the HashSLH-DSA Modes Learn step, What the lab tests, lists them with the IG 10.3.A self-tests and the CNSA 2.0 position.',
+      'Generate keys across all twelve FIPS 205 parameter sets and sign in Pure and HashSLH-DSA modes, then run the NIST sigVer sample under Algorithm checks (in Workshop Step 1, use Go to Algorithm checks): eight published ACVP cases that the engine must accept or reject exactly as NIST expects (the sign-and-verify rows there are functional round trips, not known-answer tests). Parameter set, interface, pure or pre-hash and deterministic mode are what an algorithm test has to name; the HashSLH-DSA Modes Learn step, What the lab tests, lists them with the IG 10.3.A self-tests and the CNSA 2.0 position.',
   },
   '/learn/sbom': {
     executive:
@@ -967,7 +967,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The vendor readiness comparison across AMI, Insyde, EDK2 and Dell and the live TPM 2.0 V1.85 key generation in the sandbox are the current state of firmware PQC; the TPM playground runs the commands.',
     ops: 'Walk the four-step ML-DSA-65 firmware signing migration from inventory onward: it is the rollout across the fleet, and the vendor comparison says which firmware can take it.',
     'cert-engineer':
-      "Start with 'What the lab tests' on the Learn tab: it separates the verifier on the device (algorithm tests) from the signer that holds the private key (module rules), and the SP 800-193 box after it covers the integrity checks around the signature. The UEFI PK, KEK and db hierarchy and the Measured Boot, TPM Quote and DICE attestation flows show where a PQC signature verifier sits in firmware; the vendor readiness comparison shows who ships one today.",
+      "Start with 'What the lab tests', inside 'ML-DSA-65 for Firmware Signature Migration' on the Learn tab: it separates the verifier on the device (algorithm tests) from the signer that holds the private key (module rules), and the SP 800-193 box after it covers the integrity checks around the signature. The UEFI PK, KEK and db hierarchy and the Measured Boot, TPM Quote and DICE attestation flows show where a PQC signature verifier sits in firmware; the vendor readiness comparison shows who ships one today.",
   },
   '/learn/skills-team-structure': {
     executive:

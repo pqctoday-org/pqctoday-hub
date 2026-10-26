@@ -25,6 +25,12 @@ import type { RollbackProbe } from './stateRollbackProbe'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
+/** "leaf 2" for a one-leaf range, "leaves 2 to 4" otherwise: the leaves a restored counter would reuse. */
+function reusedLeavesText(toIndex: number, fromIndex: number): string {
+  const last = Math.max(toIndex, fromIndex - 1)
+  return last === toIndex ? `leaf ${toIndex}` : `leaves ${toIndex} to ${last}`
+}
+
 type LMSHash = 'SHA-256' | 'SHAKE-256'
 type LMSm = 32 | 24
 type LMSHeight = 5 | 10 | 15 | 20 | 25
@@ -1021,10 +1027,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 and signs: no export of private keying material, and the leaf index stored in
                 non-volatile memory before a signature leaves. A signer that keeps its state in an
                 ordinary file or VM image has no such protection: restoring a snapshot taken when
-                the counter read {rollback.toIndex} would make leaves {rollback.toIndex} to{' '}
-                {Math.max(rollback.toIndex, rollback.fromIndex - 1)} available again, and SP 800-208
-                &sect;1.2 says that two signatures on different messages from one one-time key make
-                it computationally feasible to forge signatures on arbitrary messages.
+                the counter read {rollback.toIndex} would make{' '}
+                {reusedLeavesText(rollback.toIndex, rollback.fromIndex)} available again, and SP
+                800-208 &sect;1.2 says that two signatures on different messages from one one-time
+                key make it computationally feasible to forge signatures on arbitrary messages.
               </p>
             </div>
           )}

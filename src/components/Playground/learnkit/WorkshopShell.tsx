@@ -126,14 +126,14 @@ export function WorkshopShell<TId extends string>({
       onValueChange={(v) => onValueChange(v as TId)}
       className="flex flex-col flex-1 min-h-0"
     >
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 shrink-0 gap-2">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between mb-3 shrink-0 gap-2">
         {/* Wave A (2026-09-18): h1, not h3. This shell IS the page header for
             the HSM and KMIP workbenches — nothing above it renders a heading,
             so both routes failed axe `page-has-heading-one`. Visual size
             unchanged. */}
         <Heading className="flex w-full min-w-0 max-w-full flex-wrap items-center gap-2 text-xl font-bold sm:w-auto sm:flex-nowrap md:text-2xl">
           <Icon className="text-secondary shrink-0" aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate">{title}</span>
+          <span className="min-w-0">{title}</span>
           {badge}
         </Heading>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}

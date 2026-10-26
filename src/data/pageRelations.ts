@@ -58,6 +58,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   ],
   '/playground/hsm': [
     P('/learn/hsm-pqc', 'HSM & PQC Operations', 'The module behind this lab'),
+    P('/learn/acvp-lab-workflow', 'ACVP Lab Workflow', 'The lesson behind the Validation tab'),
     P(
       '/playground/hsm-capacity',
       'HSM Capacity Calculator',

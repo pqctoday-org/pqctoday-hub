@@ -505,8 +505,9 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
         Rows tagged &ldquo;NIST ACVP sample&rdquo; or &ldquo;Standard KAT&rdquo; compare the engine
         with an answer someone else published. Neither a round trip nor a sample run establishes a
         validation. No published test vector for a hybrid key exchange (X25519MLKEM768 or X-Wing) is
-        run here: NIST&rsquo;s ACVP does not yet cover hybrids, and the ML-KEM checks use
-        NIST&rsquo;s published samples.
+        run here: the CAVP prerequisites page (updated 22 September 2026) lists X-Wing keyGen and
+        encapDecap tests but no test for X25519MLKEM768, and the ML-KEM checks use NIST&rsquo;s
+        published samples.
       </p>
       <KatValidationPanel
         specs={HYBRID_KAT_SPECS}

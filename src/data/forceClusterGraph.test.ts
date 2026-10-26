@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { buildForceClusterGraph, humanizeSub, type ForceClusterNodeType } from './forceClusterGraph'
+import {
+  buildForceClusterGraph,
+  humanizeSub,
+  isSymmetricRel,
+  relHeading,
+  type ForceClusterNodeType,
+} from './forceClusterGraph'
 import { leadersData } from './leadersData'
 import { complianceFrameworks } from './complianceData'
 import { bodyTypeLabel } from '@/components/Compliance/redesign/pillarModel'
@@ -115,5 +121,46 @@ describe('buildForceClusterGraph', () => {
     expect(humanizeSub('IoT')).toBe('IoT')
     expect(humanizeSub('Cross-sector')).toBe('Cross-sector')
     expect(humanizeSub('PENDING — needs human classification')).toBe('Unclassified')
+  })
+})
+
+describe('connection headings and the direction of industry links', () => {
+  it('a framework applies to its industries; no industry is the source of a "governs" edge', async () => {
+    const graph = await buildForceClusterGraph()
+    const type = new Map(graph.nodes.map((n) => [n.id, n.type]))
+    const applies = graph.edges.filter((e) => e.rel === 'applies_to')
+    expect(applies.length).toBeGreaterThan(0)
+    for (const e of applies) {
+      expect(type.get(e.from)).toBe('compliance')
+      expect(type.get(e.to)).toBe('industry')
+    }
+    for (const e of graph.edges.filter((edge) => edge.rel === 'governs')) {
+      expect(type.get(e.from)).toBe('certbody')
+      expect(type.get(e.to)).toBe('compliance')
+    }
+  })
+
+  it('every relation in the graph has a plain heading in both directions', async () => {
+    const graph = await buildForceClusterGraph()
+    const rels = new Set(graph.edges.map((e) => e.rel))
+    for (const rel of rels) {
+      for (const direction of ['outgoing', 'incoming'] as const) {
+        const heading = relHeading(rel, direction)
+        expect(heading, `${rel} ${direction}`).toMatch(/^[A-Z][A-Za-z ]+$/)
+        expect(heading, `${rel} ${direction}`).not.toBe(rel)
+      }
+    }
+  })
+
+  it('reads a one-way relation differently from each end, and a symmetric one the same', () => {
+    expect(relHeading('cites', 'outgoing')).toBe('Cites')
+    expect(relHeading('cites', 'incoming')).toBe('Cited by')
+    expect(relHeading('governs', 'incoming')).toBe('Governed by')
+    expect(relHeading('applies_to', 'outgoing')).toBe('Applies to these industries')
+    expect(isSymmetricRel('related')).toBe(true)
+    expect(isSymmetricRel('intersects_with')).toBe(true)
+    expect(isSymmetricRel('cites')).toBe(false)
+    // A relation the table does not know is still shown as words.
+    expect(relHeading('some_new-relation', 'outgoing')).toBe('Some new relation')
   })
 })

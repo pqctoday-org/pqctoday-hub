@@ -1131,7 +1131,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       {
         type: 'checkpoint',
         id: 'cert-algorithms-entropy',
-        label: 'Algorithms & Entropy',
+        label: 'Certificates, FIPS 140-3, ACVP & Entropy',
         categories: [
           'crypto-product-certification',
           'fips-140-3-certification',

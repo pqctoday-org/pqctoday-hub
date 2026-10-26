@@ -39,6 +39,40 @@ export const SC27_MEMBERS = {
   source: 'ISO committee page, participation view',
 } as const
 
+/**
+ * ETSI membership as stated on its About page (https://www.etsi.org/about): "Uniting over 950
+ * members across more than 60 countries". The count moves, so it is always printed with the date
+ * it was read.
+ */
+export const ETSI_MEMBERS = {
+  summary: 'over 950 members across more than 60 countries',
+  readOn: '26 October 2026',
+  source: 'etsi.org/about',
+} as const
+
+/**
+ * ITU membership as stated on its About page (https://www.itu.int/en/about/Pages/default.aspx):
+ * "made up of a membership of 194 Member States and more than 1000 companies, universities and
+ * international and regional organizations".
+ */
+export const ITU_MEMBERS = {
+  summary:
+    '194 Member States and more than 1000 companies, universities and international and regional organizations',
+  readOn: '26 October 2026',
+  source: 'itu.int/en/about',
+} as const
+
+/**
+ * 3GPP states no member count. Its Membership page (https://www.3gpp.org/about-us/membership):
+ * "There is no direct membership to 3GPP, which is a Partnership project. The delegates come to
+ * 3GPP via their organization's membership of one of the seven 3GPP Organizational Partners."
+ */
+export const THREEGPP_MEMBERSHIP = {
+  summary: 'Through one of the seven Organizational Partners; no direct membership',
+  readOn: '26 October 2026',
+  source: '3gpp.org/about-us/membership',
+} as const
+
 // ─── Organization Data ────────────────────────────────────────────────────────
 
 export const ORGANIZATIONS: OrgEntry[] = [
@@ -109,8 +143,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     founded: '1988',
     mission:
       'European SDO producing technical standards for telecommunications and ICT, with a strong PQC track record via TC CYBER (Technical Committee on Cybersecurity) and ISG QKD (Industry Specification Group on Quantum Key Distribution).',
-    decisionMaking:
-      'Industry membership (800+ organizations from 68 countries) → Technical Committees (TC CYBER) → Technical Specification (TS, normative) or Technical Report (TR, informational). Chair of TC CYBER QSC WG: Matthew Campagna (AWS). ETSI TS documents contain "shall" requirements; TRs are guidance only.',
+    decisionMaking: `Industry membership (${ETSI_MEMBERS.summary}: ${ETSI_MEMBERS.source}, read ${ETSI_MEMBERS.readOn}) → Technical Committees (TC CYBER) → Technical Specification (TS, normative) or Technical Report (TR, informational). Chair of TC CYBER QSC WG: Matthew Campagna (AWS). ETSI TS documents contain "shall" requirements; TRs are guidance only.`,
     keyPqcOutputs: [
       'ETSI TS 103 744 (Quantum-safe hybrid key establishment – combines ECDH with ML-KEM)',
       'ETSI TR 103 619 (PQC Migration Guide)',

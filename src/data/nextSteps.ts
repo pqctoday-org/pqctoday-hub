@@ -1088,6 +1088,18 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       label: 'Next on your path: PCI Certification',
       why: 'Secure Boot & Firmware PQC, the module this tool practises, is followed on your path by PCI Certification.',
     },
+    // The validation workbench is the lab behind the ACVP lesson, so the page points at that lesson.
+    '/playground/hsm': {
+      to: '/learn/acvp-lab-workflow',
+      label: 'Next on your path: ACVP Lab Workflow',
+      why: 'The lesson behind the validation workbench: how an ACVP vector set becomes evidence.',
+    },
+    // PCI Certification closes the path; the quiz that follows it checks the whole path.
+    '/learn/pci-certification': {
+      to: '/learn/quiz',
+      label: 'Next on your path: the final quiz',
+      why: 'PCI Certification is the last lesson on your path; the quiz checks the whole path.',
+    },
   },
 }
 

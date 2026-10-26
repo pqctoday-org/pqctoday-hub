@@ -69,6 +69,26 @@ describe('MobileMyPathView — new-to-PQC pointer', () => {
   })
 })
 
+describe('MobileMyPathView — long module titles', () => {
+  const LONG = MODULE_CATALOG['crypto-product-certification'].title
+
+  it('wraps a long module title to two lines in the Essentials list instead of cutting it with an ellipsis', () => {
+    renderPath('cert-engineer')
+    const title = screen.getByText(LONG)
+    // The button keeps its text on one line unless the title asks for normal wrapping.
+    expect(title).toHaveClass('line-clamp-2', 'whitespace-normal')
+    expect(title).not.toHaveClass('truncate')
+  })
+
+  it('wraps a long module title to two lines in the Full track list too', () => {
+    renderPath('cert-engineer')
+    fireEvent.click(screen.getByRole('tab', { name: /Full track/ }))
+    const title = screen.getAllByText(LONG)[0]
+    expect(title).toHaveClass('line-clamp-2', 'whitespace-normal')
+    expect(title).not.toHaveClass('truncate')
+  })
+})
+
 describe('MobileMyPathView — Essentials tier (matches desktop exactly)', () => {
   it('shows the real essentials module count/minutes and each real module title', () => {
     renderPath('executive')

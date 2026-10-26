@@ -87,6 +87,29 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
   })
 
+  it('flag on, role chosen, home page: the disclaimer follows the board in flow, not fixed over it', async () => {
+    useDisclaimerStore.getState().resetForTesting()
+    mockUseIsMobileShell.mockReturnValue(true)
+    usePersonaStore.getState().setPersona('executive')
+    renderLayout('/')
+    const board = await screen.findByText('Home Page')
+    const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+    expect(banner.className).not.toMatch(/\bfixed\b/)
+    expect(board.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
+  })
+
+  it('flag on, role chosen, another page: the disclaimer is still the fixed card', async () => {
+    useDisclaimerStore.getState().resetForTesting()
+    mockUseIsMobileShell.mockReturnValue(true)
+    usePersonaStore.getState().setPersona('executive')
+    renderLayout('/timeline')
+    await screen.findByText('Timeline Page')
+    expect(screen.getByRole('alert', { name: 'Welcome to PQC Today' }).className).toMatch(
+      /\bfixed\b/
+    )
+  })
+
   it('flag on, no persona chosen and not skipped: shows the first-run role picker WITH the header and bottom nav still visible', async () => {
     // Real gap found by the user directly ("i dont see the top bar and
     // bottom bar"): an earlier version rendered the picker as a fixed

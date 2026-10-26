@@ -28,6 +28,7 @@ import {
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { LabTestsSummary } from './LabTestsSummary'
 
 interface SecureBootIntroductionProps {
@@ -164,70 +165,50 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             National Security Systems (NSS), the NSA&apos;s CNSA 2.0 FAQ (Ver. 2.2, p. 7&ndash;8)
             specifies ML-DSA-87 for all classification levels and allows LMS and XMSS (NIST SP
             800-208) for signing firmware and software; HSS and XMSS<sup>MT</sup> are not allowed
-            and SLH-DSA is not approved for NSS (p. 11). The last column shows the NSS choice.
+            and SLH-DSA is not approved for NSS (p. 11). The CNSA 2.0 / NSS column shows the NSS
+            choice.
           </p>
-          <div
-            className="overflow-x-auto"
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
-            tabIndex={0}
-            role="region"
-            aria-label="UEFI key hierarchy summary"
-          >
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">Key</th>
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">Owner</th>
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">Current</th>
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
-                    PQC Target
-                  </th>
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
-                    CNSA 2.0 / NSS
-                  </th>
-                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
-                    Priority
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {UEFI_KEY_TYPES.map((kt) => (
-                  <tr key={kt.id} className="border-b border-border/50">
-                    <td className="py-2 px-2 font-mono font-bold text-foreground">{kt.name}</td>
-                    <td className="py-2 px-2 text-muted-foreground text-[10px]">{kt.owner}</td>
-                    <td className="py-2 px-2 text-[10px]">
-                      <span
-                        className={
-                          kt.quantumVulnerable ? 'text-status-error' : 'text-muted-foreground'
-                        }
-                      >
-                        {kt.currentAlgorithm}
-                      </span>
-                    </td>
-                    <td className="py-2 px-2 text-primary text-[10px]">{kt.pqcAlgorithm}</td>
-                    <td className="py-2 px-2 text-muted-foreground text-[10px]">
-                      {kt.cnsaAlgorithm}
-                    </td>
-                    <td className="py-2 px-2">
-                      <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded capitalize font-bold ${
-                          kt.migrationPriority === 'critical'
-                            ? 'text-status-error'
-                            : kt.migrationPriority === 'high'
-                              ? 'text-status-warning'
-                              : kt.migrationPriority === 'medium'
-                                ? 'text-status-info'
-                                : 'text-status-success'
-                        }`}
-                      >
-                        {kt.migrationPriority}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ResponsiveTable
+            caption="UEFI key hierarchy summary"
+            testId="uefi-key-table"
+            head={['Key', 'Owner', 'Current', 'PQC Target', 'CNSA 2.0 / NSS', 'Priority']}
+            rows={UEFI_KEY_TYPES.map((kt) => [
+              <span key="name" className="font-mono font-bold text-foreground">
+                {kt.name}
+              </span>,
+              <span key="owner" className="text-[10px] text-muted-foreground">
+                {kt.owner}
+              </span>,
+              <span
+                key="current"
+                className={`text-[10px] ${
+                  kt.quantumVulnerable ? 'text-status-error' : 'text-muted-foreground'
+                }`}
+              >
+                {kt.currentAlgorithm}
+              </span>,
+              <span key="pqc" className="text-[10px] text-primary">
+                {kt.pqcAlgorithm}
+              </span>,
+              <span key="cnsa" className="text-[10px] text-muted-foreground">
+                {kt.cnsaAlgorithm}
+              </span>,
+              <span
+                key="priority"
+                className={`text-[10px] px-1.5 py-0.5 rounded capitalize font-bold ${
+                  kt.migrationPriority === 'critical'
+                    ? 'text-status-error'
+                    : kt.migrationPriority === 'high'
+                      ? 'text-status-warning'
+                      : kt.migrationPriority === 'medium'
+                        ? 'text-status-info'
+                        : 'text-status-success'
+                }`}
+              >
+                {kt.migrationPriority}
+              </span>,
+            ])}
+          />
         </div>
 
         <p>

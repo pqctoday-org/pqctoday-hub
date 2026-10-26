@@ -6,7 +6,7 @@
  * from functional round trips, and the comparison table prints named parameter
  * sets with sizes from the RFC 8554 layouts and the CNSA 2.0 FAQ position.
  */
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, it, expect, vi } from 'vitest'
 import '@testing-library/jest-dom'
@@ -102,6 +102,27 @@ describe('SLHDSALiveDemo: which page it is on', () => {
     unmount()
     renderDemo()
     expect(document.body.textContent).not.toContain('Step 4 of this module')
+  })
+})
+
+describe('SLHDSALiveDemo: Go to Algorithm checks', () => {
+  it('in the SLH-DSA module a link at the top scrolls to the Algorithm checks heading and focuses it', () => {
+    const scrollIntoView = vi.fn()
+    Element.prototype.scrollIntoView = scrollIntoView
+    renderDemo('slh-dsa')
+    const heading = screen.getByRole('heading', { name: 'Algorithm checks: SLH-DSA' })
+    // the section the link leads to is the one the heading labels
+    expect(heading.id).toBe('algorithm-checks-heading')
+    fireEvent.click(screen.getByRole('button', { name: 'Go to Algorithm checks' }))
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+    expect(scrollIntoView.mock.contexts[0]).toBe(heading)
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' })
+    expect(heading).toHaveFocus()
+  })
+
+  it.each(['stateful', 'standalone'] as const)('is not added to the %s page', (context) => {
+    renderDemo(context)
+    expect(screen.queryByRole('button', { name: 'Go to Algorithm checks' })).not.toBeInTheDocument()
   })
 })
 

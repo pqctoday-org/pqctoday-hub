@@ -308,6 +308,13 @@
     "total": 9
   },
   {
+    "vendor": "KIOXIA Corporation",
+    "fips": 7,
+    "acvp": 2,
+    "cc": 0,
+    "total": 9
+  },
+  {
     "vendor": "Canon Inc.",
     "fips": 1,
     "acvp": 0,
@@ -360,13 +367,6 @@
     "vendor": "Ruckus Wireless LLC",
     "fips": 8,
     "acvp": 0,
-    "cc": 0,
-    "total": 8
-  },
-  {
-    "vendor": "KIOXIA Corporation",
-    "fips": 7,
-    "acvp": 1,
     "cc": 0,
     "total": 8
   },
@@ -819,6 +819,13 @@
     "total": 3
   },
   {
+    "vendor": "Versa Networks, Inc.",
+    "fips": 1,
+    "acvp": 2,
+    "cc": 0,
+    "total": 3
+  },
+  {
     "vendor": "DataLocker, Inc.",
     "fips": 3,
     "acvp": 0,
@@ -1058,6 +1065,13 @@
   },
   {
     "vendor": "Centre for Development of Telematics",
+    "fips": 0,
+    "acvp": 2,
+    "cc": 0,
+    "total": 2
+  },
+  {
+    "vendor": "Citrix Systems, Inc.",
     "fips": 0,
     "acvp": 2,
     "cc": 0,
@@ -1400,6 +1414,13 @@
     "total": 2
   },
   {
+    "vendor": "Ergotron, Inc.",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 0,
+    "total": 2
+  },
+  {
     "vendor": "Riverbed Technology, LLC",
     "fips": 2,
     "acvp": 0,
@@ -1515,6 +1536,13 @@
     "vendor": "ST Engineering Urban Solutions Ltd. and i-Engine Pte Ltd.",
     "fips": 2,
     "acvp": 0,
+    "cc": 0,
+    "total": 2
+  },
+  {
+    "vendor": "Microchip Technology Inc",
+    "fips": 1,
+    "acvp": 1,
     "cc": 0,
     "total": 2
   },
@@ -1884,13 +1912,6 @@
   },
   {
     "vendor": "CIPHERPLUS PTE. LTD.",
-    "fips": 0,
-    "acvp": 1,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Citrix Systems, Inc.",
     "fips": 0,
     "acvp": 1,
     "cc": 0,
@@ -2506,13 +2527,6 @@
     "total": 1
   },
   {
-    "vendor": "Versa Networks, Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "HCL America Inc.",
     "fips": 1,
     "acvp": 0,
@@ -2717,13 +2731,6 @@
   },
   {
     "vendor": "SolarWinds Worldwide, LLC",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Ergotron, Inc.",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -3060,13 +3067,6 @@
   },
   {
     "vendor": "Nasuni Corporation",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Microchip Technology Inc",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -4434,6 +4434,13 @@
     "vendor": "Seagate Technology LLC.",
     "fips": 1,
     "acvp": 0,
+    "cc": 0,
+    "total": 1
+  },
+  {
+    "vendor": "Chipsea Technologies (Shenzhen) Corp.",
+    "fips": 0,
+    "acvp": 1,
     "cc": 0,
     "total": 1
   }

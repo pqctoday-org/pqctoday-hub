@@ -488,6 +488,10 @@ export const MainLayout = () => {
   // cards, including the Certification & Validation Engineer card, until it was dismissed. Same
   // reason as the phone's inline notice (UX-17); the reader still meets it before choosing anything.
   const isDesktopRolePicker = !isMobileShell && hasNoRoleYet && isHomeRoute
+  // The home page keeps the notice in flow after a role is chosen as well: the fixed card floated
+  // over the lower half of the role board (phone) or its next-step cards (desktop) until dismissed.
+  // The phone's first-run picker and the curious-mobile takeover render it in their own branches.
+  const showHomeFlowDisclaimer = isHomeRoute && !isCuriousMobileTakeover && !isDesktopRolePicker
 
   // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {
@@ -1460,7 +1464,9 @@ export const MainLayout = () => {
                   </React.Suspense>
                 )}
 
-                {isDesktopRolePicker && <DisclaimerModal placement="banner" />}
+                {(isDesktopRolePicker || (showHomeFlowDisclaimer && !isMobileShell)) && (
+                  <DisclaimerModal placement="banner" />
+                )}
 
                 {/* Offline mode info banner */}
                 <AirplaneModeBanner />
@@ -1527,6 +1533,9 @@ export const MainLayout = () => {
                     </div>
                   </motion.div>
                 </React.Suspense>
+
+                {/* Phone home board after a role is chosen: the notice follows the board in flow. */}
+                {showHomeFlowDisclaimer && isMobileShell && <DisclaimerModal placement="inline" />}
               </main>
 
               {/* Footer */}
@@ -1592,7 +1601,9 @@ export const MainLayout = () => {
               On the phone's first-run role picker it renders inline instead
               (above), below the role choices; on the desktop role picker it
               renders as a compact strip above them. */}
-          {!(isMobileShell && isMobileFirstRun) && !isDesktopRolePicker && <DisclaimerModal />}
+          {!(isMobileShell && isMobileFirstRun) &&
+            !isDesktopRolePicker &&
+            !showHomeFlowDisclaimer && <DisclaimerModal />}
 
           {/* Toast notifications — role="status" so screen readers announce them.
               A plain <div>'s implicit role is "generic", which prohibits aria-label

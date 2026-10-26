@@ -370,6 +370,13 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
 
   // Track pre-hash used during signing for verify consistency
   const signPreHashRef = useRef<string>('')
+  const checksHeadingRef = useRef<HTMLHeadingElement>(null)
+  const goToAlgorithmChecks = () => {
+    const heading = checksHeadingRef.current
+    if (!heading) return
+    heading.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    heading.focus({ preventScroll: true })
+  }
   const [signedPreHash, setSignedPreHash] = useState<string>('')
 
   const selectedParam = paramSets().find((p) => p.id === paramSetId) ?? paramSets()[0]
@@ -587,6 +594,16 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
           HSM emulator in-browser. SLH-DSA (standardized as FIPS 205, August 2024) is the NIST name
           for SPHINCS+. {INTRO_BY_CONTEXT[context]}
         </p>
+        {context === 'slh-dsa' && (
+          <Button
+            variant="link"
+            onClick={goToAlgorithmChecks}
+            className="mt-1 h-auto p-0 text-xs"
+            data-testid="go-to-algorithm-checks"
+          >
+            Go to Algorithm checks
+          </Button>
+        )}
       </div>
 
       {isLive ? (
@@ -625,6 +642,17 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
                       SHA-256 and SHAKE128 are only appropriate for category 1 parameter sets.
                     </p>
                   )}
+                  {(preHash === 'sha256' || preHash === 'shake128') &&
+                    selectedParam.nistLevel !== 1 && (
+                      <p
+                        data-testid="prehash-category-warning"
+                        className="text-[10px] text-status-warning mt-1 leading-relaxed"
+                      >
+                        ⚠ FIPS 205 section 10.2.2: SHA-256 and SHAKE128 are only appropriate for use
+                        with SLH-DSA parameter sets that are claimed to be in security category 1.{' '}
+                        {selectedParam.label} is a category {selectedParam.nistLevel} parameter set.
+                      </p>
+                    )}
                 </>
               ) : (
                 <div className="flex items-center gap-2 mt-2">
@@ -1011,7 +1039,12 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
           each panel saying which kind of evidence it gives. */}
       <section aria-labelledby="algorithm-checks-heading" className="space-y-4">
         <div>
-          <h3 id="algorithm-checks-heading" className="text-sm font-bold text-foreground">
+          <h3
+            id="algorithm-checks-heading"
+            ref={checksHeadingRef}
+            tabIndex={-1}
+            className="scroll-mt-20 text-sm font-bold text-foreground focus:outline-none"
+          >
             {context === 'stateful'
               ? 'Algorithm checks: LMS and SLH-DSA'
               : 'Algorithm checks: SLH-DSA'}

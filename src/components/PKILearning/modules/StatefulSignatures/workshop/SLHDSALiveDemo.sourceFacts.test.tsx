@@ -180,6 +180,62 @@ describe('SLH-DSA live demo: the pre-hash note follows FIPS 205 Section 10.2 and
   })
 })
 
+describe('SLH-DSA live demo: SHA-256 and SHAKE128 pre-hash are category 1 only (FIPS 205 Section 10.2.2)', () => {
+  const openPreHash = () => {
+    renderDemo()
+    fireEvent.click(screen.getByRole('button', { name: 'Show HashSLH-DSA variants' }))
+  }
+  // §10.2.2: "SHA-256 and SHAKE128 are only appropriate for use with SLH-DSA parameter sets that
+  // are claimed to be in security category 1 (see Section 11)."
+  const WARNING = /SHA-256 and SHAKE128 are only appropriate for use with SLH-DSA parameter sets/
+
+  it.each([
+    ['SHA2-192s', 'SHA-256', 3],
+    ['SHAKE-192f', 'SHAKE-128', 3],
+    ['SHA2-256s', 'SHA-256', 5],
+    ['SHAKE-256f', 'SHAKE-128', 5],
+  ] as const)('warns for %s with %s pre-hash (category %i)', (paramSet, hash, category) => {
+    openPreHash()
+    choose(0, paramSet)
+    expect(screen.queryByTestId('prehash-category-warning')).not.toBeInTheDocument()
+    choose(1, hash)
+    const warning = screen.getByTestId('prehash-category-warning')
+    const text = warning.textContent!.replace(/\s+/g, ' ')
+    expect(text).toMatch(WARNING)
+    expect(text).toContain('claimed to be in security category 1')
+    expect(text).toContain('FIPS 205 section 10.2.2')
+    expect(text).toContain(`${paramSet} is a category ${category} parameter set`)
+  })
+
+  it.each([
+    ['SHA2-128s', 'SHA-256'],
+    ['SHAKE-128f', 'SHAKE-128'],
+  ])('does not warn for the category 1 set %s with %s', (paramSet, hash) => {
+    openPreHash()
+    choose(0, paramSet)
+    choose(1, hash)
+    expect(screen.queryByTestId('prehash-category-warning')).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ['SHA2-192s', 'SHA-512'],
+    ['SHAKE-256s', 'SHAKE-256'],
+  ])('does not warn for %s with %s, which the rule does not name', (paramSet, hash) => {
+    openPreHash()
+    choose(0, paramSet)
+    choose(1, hash)
+    expect(screen.queryByTestId('prehash-category-warning')).not.toBeInTheDocument()
+  })
+
+  it('leaves the existing note for hashes without an OID in place and adds nothing to it', () => {
+    openPreHash()
+    choose(0, 'SHA2-192s')
+    choose(1, `SHA3-256 ${'(OID not listed in FIPS 205)'}`)
+    expect(screen.getByText(/section 10\.2\.2 lists OIDs/)).toBeInTheDocument()
+    expect(screen.queryByTestId('prehash-category-warning')).not.toBeInTheDocument()
+  })
+})
+
 describe('SLH-DSA live demo: the explainer follows FIPS 205 Section 3 and Section 8', () => {
   it('describes the few-time FORS keys, not a fresh WOTS+ key per signature', () => {
     renderDemo()

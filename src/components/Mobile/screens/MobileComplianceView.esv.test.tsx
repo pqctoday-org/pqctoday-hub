@@ -115,6 +115,7 @@ describe('MobileComplianceView — Entropy (ESV) records', () => {
       'FIPS 140-3',
       'NIST CAVP',
       'Common Criteria',
+      'EUCC (ENISA)',
       'CSPN (ANSSI)',
       'Entropy (ESV)',
     ])

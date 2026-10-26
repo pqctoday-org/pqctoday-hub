@@ -2,6 +2,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   describeExclusions,
+  matchesCertType,
+  matchesRecordText,
   recordFilterExclusions,
   restoreRecordParams,
   widenRecordParams,
@@ -80,5 +82,49 @@ describe('widen / restore', () => {
     expect(describeExclusions(['q', 'pqc', 'tier'])).toBe(
       'the search, the PQC filter and the trust-tier filter'
     )
+  })
+})
+
+describe('EUCC certificates in the record search and tabs', () => {
+  const nokia: ComplianceRecord = {
+    id: 'enisa-eucc-3089-2026-000002-i-00',
+    euccCertificateId: 'EUCC-3089-2026-002',
+    source: 'ENISA',
+    date: '2026-09-10',
+    link: 'https://certification.enisa.europa.eu/certificates/eucc-3089-2026-000002-i-00_en',
+    type: 'EUCC',
+    status: 'Active',
+    pqcCoverage: '',
+    productName: 'Nokia Lightspan Access Node MF-2',
+    productCategory: 'Network device',
+    vendor: 'Nokia Solutions and Networks Oy',
+  }
+  const commonCriteria: ComplianceRecord = {
+    ...record,
+    id: 'cc-gamma-smart-card-3881cf5c',
+    source: 'Common Criteria',
+    type: 'Common Criteria',
+    status: 'Active',
+    productName: 'Gamma Smart Card',
+    vendor: 'Gamma',
+  }
+
+  it('finds an EUCC record by the certificate number the table shows, whole or in part', () => {
+    expect(matchesRecordText(nokia, 'EUCC-3089-2026-002')).toBe(true)
+    expect(matchesRecordText(nokia, 'eucc-3089-2026-002')).toBe(true)
+    expect(matchesRecordText(nokia, '3089-2026-002')).toBe(true)
+    // The Common Criteria row has no such number and is not matched by it.
+    expect(matchesRecordText(commonCriteria, 'EUCC-3089-2026-002')).toBe(false)
+    expect(matchesRecordText(commonCriteria, 'gamma')).toBe(true)
+  })
+
+  it('the EUCC tab holds EUCC records only; Common Criteria holds none of them', () => {
+    expect(matchesCertType(nokia, 'eucc')).toBe(true)
+    expect(matchesCertType(nokia, 'EUCC')).toBe(true)
+    expect(matchesCertType(commonCriteria, 'eucc')).toBe(false)
+    expect(matchesCertType(nokia, 'cc')).toBe(false)
+    expect(matchesCertType(nokia, 'all')).toBe(true)
+    expect(recordFilterExclusions(commonCriteria, { ...none, certType: 'eucc' })).toEqual(['rtab'])
+    expect(recordFilterExclusions(nokia, { ...none, certType: 'eucc' })).toEqual([])
   })
 })

@@ -143,7 +143,7 @@ describe('MainLayout', () => {
       expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
     })
 
-    it('desktop on any other page, or once a role is chosen: the first-visit notice is the fixed card', () => {
+    it('desktop on any page other than the home page: the first-visit notice is the fixed card', () => {
       useDisclaimerStore.getState().resetForTesting()
       usePersonaStore.setState({ selectedPersona: null, hasSkippedPersonalization: false })
       const { unmount } = renderLayout('/about')
@@ -152,10 +152,23 @@ describe('MainLayout', () => {
       )
       unmount()
       usePersonaStore.getState().setPersona('executive')
-      renderLayout('/')
+      renderLayout('/about')
       expect(screen.getByRole('alert', { name: 'Welcome to PQC Today' }).className).toMatch(
         /\bfixed\b/
       )
+    })
+
+    it('desktop home page once a role is chosen: the first-visit notice stays a strip in flow above the board, not a fixed card over it', () => {
+      useDisclaimerStore.getState().resetForTesting()
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout('/')
+      const notice = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+      expect(notice.className).not.toMatch(/\bfixed\b/)
+      expect(
+        screen.getByText('Timeline Page').compareDocumentPosition(notice) &
+          Node.DOCUMENT_POSITION_PRECEDING
+      ).toBeTruthy()
+      expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
     })
 
     it('links the source code from the footer (exact commit, else the repository)', () => {

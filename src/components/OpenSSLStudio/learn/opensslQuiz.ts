@@ -101,7 +101,7 @@ export const OPENSSL_QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'genpkey -algorithm LMS was refused with a real OpenSSL error. Why does this Learn tab count that as the lesson SUCCEEDING?',
       options: [
         'Because any error is treated as a pass, regardless of cause',
-        'Because the step declared expect:"refusal" — the honest rejection IS the lesson, proving OpenSSL genuinely doesn\'t support LMS keygen rather than just being told so',
+        'Because the step declared expect:"refusal" — the honest rejection IS the lesson, showing that this openssl build cannot generate an LMS key rather than just telling you so',
         "Because the WASM engine crashed and the test harness couldn't tell the difference",
       ],
       answer: 1,

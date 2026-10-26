@@ -42,3 +42,12 @@ describe('certification engineer boards - entropy source certificates', () => {
     expect(entropy.some((c) => c.href === '/leaders')).toBe(false)
   })
 })
+
+describe('certification engineer boards - closure gate link', () => {
+  it('Stages board names the migration programme in its second button and keeps the link', () => {
+    const b = board('stages')
+    expect(b.ctaSecondary).toBe("See the migration programme's closure gate")
+    expect(b.ctaSecondary).not.toMatch(/evidence closure gate/i)
+    expect(b.ctaSecondaryHref).toBe('/simulation?phase=verify-close')
+  })
+})

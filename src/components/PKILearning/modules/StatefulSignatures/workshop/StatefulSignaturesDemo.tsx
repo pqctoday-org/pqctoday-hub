@@ -1143,8 +1143,10 @@ export function StatefulSignaturesDemo() {
                       </li>
                       <li>
                         <strong>Performance:</strong> Key generation is more computationally
-                        expensive (roughly 2x slower than LMS) because every single hash in the tree
-                        requires calculating and XORing a uniquely derived bitmask.
+                        expensive because every hash call is randomised: each step of a WOTS+ chain
+                        runs PRF twice, for a key and for a bitmask, XORs the bitmask into the
+                        intermediate value and then applies F (RFC 8391 section 3.1.2), where an
+                        LM-OTS chain step makes one call to H (RFC 8554 section 4.3).
                       </li>
                     </ul>
                   </div>
@@ -1268,7 +1270,7 @@ export function StatefulSignaturesDemo() {
                           ],
                           [
                             'Signature size',
-                            '1–8 KB (LMS W8) · 2,500 B (XMSS-SHA2_10_256, RFC 8391)',
+                            '1.3–1.9 KB (LMS_SHA256_M32, W8, H5–H25; RFC 8554 Table 1 and section 5.4) · 2,500 B (XMSS-SHA2_10_256, RFC 8391)',
                             '8–50 KB depending on parameter set',
                           ],
                           [

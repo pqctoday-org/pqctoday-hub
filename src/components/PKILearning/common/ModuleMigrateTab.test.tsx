@@ -36,6 +36,12 @@ const mockProduct = (overrides: Partial<SoftwareItem> = {}): SoftwareItem => ({
 vi.mock('@/data/migrateData', () => ({
   getMigrateItemsForModule: vi.fn((moduleId: string) => {
     if (moduleId === 'empty-module') return []
+    if (moduleId === 'mixed-support') {
+      return [
+        mockProduct({ softwareName: 'PqcTool', pqcSupport: 'Yes (ML-DSA)' }),
+        mockProduct({ softwareName: 'CertifiedOnly', pqcSupport: 'No' }),
+      ]
+    }
     if (moduleId === 'multi-layer') {
       return [
         mockProduct({
@@ -190,5 +196,33 @@ describe('ModuleMigrateTab', () => {
       </MemoryRouter>
     )
     expect(screen.getByText('No tools or products yet')).toBeInTheDocument()
+  })
+
+  it('does not call a module PQC-ready when it lists a product with no PQC support', () => {
+    render(
+      <MemoryRouter>
+        <ModuleMigrateTab moduleId="mixed-support" />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(/PQC-ready tools and products/)).not.toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /Tools and products relevant to this module; each badge shows its PQC support/
+      )
+    ).toBeInTheDocument()
+  })
+
+  it('keeps the PQC-ready header when every listed product supports PQC', () => {
+    render(
+      <MemoryRouter>
+        <ModuleMigrateTab
+          moduleId="tls-basics"
+          itemFilter={(item) => item.softwareName === 'FIPSProduct'}
+        />
+      </MemoryRouter>
+    )
+    expect(
+      screen.getByText(/PQC-ready tools and products relevant to this module/)
+    ).toBeInTheDocument()
   })
 })

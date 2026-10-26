@@ -175,6 +175,19 @@ describe('LmsConfig', () => {
     })
   })
 
+  it('says the WebAssembly engine does all three actions and this openssl build has no LMS', () => {
+    render(
+      <MemoryRouter>
+        <LmsConfig {...defaultProps} />
+      </MemoryRouter>
+    )
+    const note = screen.getByText(/A bundled WebAssembly engine generates, signs and verifies LMS/)
+    expect(note).toHaveTextContent(
+      'A bundled WebAssembly engine generates, signs and verifies LMS keys here, not the openssl command line. OpenSSL 3.6 can verify LMS only when built with enable-lms; this build is not.'
+    )
+    expect(screen.queryByText(/CLI supports verification only/)).not.toBeInTheDocument()
+  })
+
   it('loads sample data', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
