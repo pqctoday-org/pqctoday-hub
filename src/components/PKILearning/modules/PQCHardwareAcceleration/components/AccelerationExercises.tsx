@@ -103,6 +103,17 @@ const SCENARIOS: Scenario[] = [
       'At 58.7 µs per job the accelerator is slower than the A53 for every batch size — the fixed cost can never be earned back. Only when the per-job cost drops below the CPU’s does a break-even batch size appear.',
     config: { step: 4 },
   },
+  {
+    id: 'hybrid-is-a-measurement',
+    title: '8. Read a Hybrid Result Correctly',
+    description:
+      'In “Our measurements”, choose Hybrid, then compare ML-DSA-65 + ECDSA P-256 with its pure ML-DSA and ECDSA controls on Ventuno Q and AI X1 Pro.',
+    badge: 'Measured',
+    badgeColor: 'bg-success/20 text-success border-success/50',
+    observe:
+      'The hybrid rows are direct PKCS#11 v3.3 HSM operations: component secrets are combined inside the HSM. Do not add separate classical and PQC TPS values, and use one-worker versus whole-platform views to see the measured scaling.',
+    config: { step: 2 },
+  },
 ]
 
 export const AccelerationExercises: React.FC<AccelerationExercisesProps> = ({

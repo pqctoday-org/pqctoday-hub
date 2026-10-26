@@ -57,18 +57,18 @@ export const MODELS: AccelModel[] = [
     id: 'simd',
     label: 'SIMD vector units',
     tagline: 'One instruction, many numbers: Arm NEON/SVE, Intel/AMD AVX2 and AVX-512.',
-    examples: 'Arm NEON (128-bit), SVE/SME; x86 AVX2 (256-bit), AVX-512 (512-bit)',
+    examples: 'Arm NEON (128-bit), SVE/SME; x86 AVX2 (256-bit), AVX-512 (512-bit) and AVX-512 IFMA',
     layman: {
       analogy:
         'The same cook now uses a wide blade that chops four or eight onions in one stroke. Nothing about the recipe changes — the cook simply does the same motion on a whole row at once.',
       whatsDifferent:
-        'Lattice schemes are a perfect match: an ML-DSA polynomial is 256 small numbers that all get the same treatment, so a 128-bit NEON register handles 4 at once and a 512-bit AVX-512 register handles 16. It lives inside the CPU, so there is no transfer cost at all.',
+        'Lattice schemes are a perfect match: an ML-DSA polynomial is 256 small numbers that all get the same treatment, so a 128-bit NEON register handles 4 at once and a 512-bit AVX-512 register handles 16. AVX-512 IFMA is a related x86 feature that speeds selected large-integer multiply-accumulate work. All of this stays inside the CPU, so there is no transfer cost at all.',
       catch:
-        'It only helps when the work really is "the same step on many values". Hash-heavy SLH-DSA is one long chain of dependent hashes per tree path, so it needs a different trick (hashing several independent paths side by side).',
+        'It only helps when the program actually dispatches to a matching vector implementation. Hash-heavy SLH-DSA is one long chain of dependent hashes per tree path, so it needs a different trick (hashing several independent paths side by side). CPU flags alone do not prove that ML-DSA, ML-KEM, ECDSA or X25519 is using AVX-512.',
     },
     fit: { mldsa: 'strong', slhdsa: 'partial', singleOp: 'strong', batch: 'partial' },
     ourEvidence:
-      'Our engine routes native ML-DSA/ML-KEM through AWS-LC’s hand-written AArch64 NEON code; the browser (WASM) build keeps portable code.',
+      'Our engine routes native ML-DSA/ML-KEM through AWS-LC’s hand-written AArch64 NEON code. On the AI X1 Pro, AVX-512F/IFMA is exposed and AWS-LC RSA-PSS-2048 signing measured 2.08× faster at one worker (1.99× whole-platform) than its masked control. The tested additional AVX2 ML-KEM candidate did not improve saturated whole-platform throughput; do not infer an AVX-512 PQC path from CPU flags.',
     colorClass: 'text-primary',
     borderClass: 'border-primary/40',
     bgClass: 'bg-primary/10',

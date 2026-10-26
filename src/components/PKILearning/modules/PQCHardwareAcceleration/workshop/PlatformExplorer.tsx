@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Workshop step 3 — our own measurements across three generations of Arm
- * cores (Apple M4 Pro, Cortex-A55, Cortex-A53). Data: data/measurements.ts,
- * 2026-09-24 four-target bench (M5 Max column deliberately excluded — it was
- * measured under unrelated load). Bars are log-scaled because the rows span
- * five orders of magnitude; every bar carries its platform name and value, so
- * identity never rests on colour alone. A table view is always one click away.
+ * Workshop step 3 — current common CPU/PKCS#11 results plus the historical Arm
+ * and KV260 acceleration experiments. The two data sets remain deliberately
+ * separate: Scenario 39 has no FPGA, GPU or NPU offload; measurements.ts has
+ * focused, algorithm-specific Arm/FPGA experiments.
  */
 import React, { useMemo, useState } from 'react'
 import { FlaskConical, Table2, BarChart3, Cpu, RefreshCw, ToggleRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CommonPlatformResults } from './CommonPlatformResults'
 import {
   PLATFORMS,
   PLATFORM_ORDER,
@@ -58,6 +57,21 @@ export const PlatformExplorer: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <CommonPlatformResults />
+
+      <div className="border-t border-border pt-6">
+        <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+          <FlaskConical size={18} className="text-primary" /> Step 3B — Historical Arm and KV260
+          acceleration experiments
+        </h3>
+        <p className="text-xs text-muted-foreground mt-1">
+          Step 3A above is the current seven-platform matrix: use it for common classical, pure PQC
+          and hybrid comparisons. These 2026-09 experiments isolate software and KV260 FPGA changes
+          on a different signature-focused workload. They teach causality and must not be read as
+          that common CPU ranking.
+        </p>
+      </div>
+
       {/* Platforms */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {PLATFORM_ORDER.map((p) => {

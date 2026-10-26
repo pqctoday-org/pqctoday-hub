@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 // Certification engineer role boards: the Stages board says entropy source
-// certificates are kept apart from the module stages.
+// certificates are kept apart from the module stages, the Entropy board links to
+// those certificates, and the Community card sits on the Hardware board.
 import { describe, it, expect } from 'vitest'
 import { PERSONA_JOURNEY_BOARD_VARIANTS } from '@/data/generated/roleBoardContent.generated'
 
@@ -22,5 +23,22 @@ describe('certification engineer boards - entropy source certificates', () => {
         ' Entropy source certificates validate a noise source and are kept apart from these stages.'
       )
     ).toBe(true)
+  })
+
+  it('Entropy board links to the entropy source certificates, word for word', () => {
+    const card = board('entropy').gridCards?.[0]
+    expect(card?.title).toBe('See the entropy source certificates')
+    expect(card?.body).toBe(
+      "The certification records list NIST's entropy source validations. An entropy source certificate validates a noise source, not a module or an algorithm."
+    )
+    expect(card?.href).toBe('/compliance?tab=records&rtab=esv')
+  })
+
+  it('the standards-community card sits on the Hardware board, not the Entropy board', () => {
+    const hardware = board('hardware').gridCards ?? []
+    const entropy = board('entropy').gridCards ?? []
+    expect(hardware[1]?.title).toBe('Meet the standards community')
+    expect(hardware[1]?.href).toBe('/leaders')
+    expect(entropy.some((c) => c.href === '/leaders')).toBe(false)
   })
 })

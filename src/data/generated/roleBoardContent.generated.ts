@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10252026.csv
+ * Source: src/data/role_board_content_10252026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2834,9 +2834,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Where entropy sits on the way to a certificate',
         gridCards: [
           {
-            title: 'Meet the standards community',
-            body: 'Browse people working on standards, validation, implementations and migration, with source-backed profiles and consent-based listings.',
-            href: '/leaders',
+            title: 'See the entropy source certificates',
+            body: "The certification records list NIST's entropy source validations. An entropy source certificate validates a noise source, not a module or an algorithm.",
+            href: '/compliance?tab=records&rtab=esv',
           },
           {
             title: 'Not sure this is the board you need?',
@@ -3057,9 +3057,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/patents',
           },
           {
-            title: 'See where the cycles go',
-            body: 'A lesson on where PQC spends its time, which building blocks are worth accelerating, and what Arm, FPGA, GPU and ASIC approaches can and cannot do.',
-            href: '/learn/pqc-hw-acceleration',
+            title: 'Meet the standards community',
+            body: 'Browse people working on standards, validation, implementations and migration, with source-backed profiles and consent-based listings.',
+            href: '/leaders',
           },
           {
             title: 'Why the question is being asked',

@@ -48,6 +48,7 @@ import {
 } from '../data/cited'
 import { ARM_WORK, ARM_WORK_NOTE, type WorkStatus } from '../data/armWork'
 import { PRIMITIVES, ALGORITHM_USES, AGILITY_STRATEGIES, CAPACITY_LIMIT } from '../data/agility'
+import { SCENARIO39_OPERATIONS, X1_ISA_RESULTS } from '../data/scenario39'
 
 interface AccelerationIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -133,6 +134,8 @@ const STATUS_STYLE: Record<WorkStatus, { label: string; cls: string }> = {
 }
 
 const bench = (algo: string) => SIGN_BENCH_0927.find((r) => r.algorithm === algo)!
+const scenario39 = (id: (typeof SCENARIO39_OPERATIONS)[number]['id']) =>
+  SCENARIO39_OPERATIONS.find((operation) => operation.id === id)!
 
 export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> = ({
   onNavigateToWorkshop,
@@ -140,6 +143,9 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
   useSectionAnchors()
   const mldsa65 = bench('ML-DSA-65')
   const shake128s = bench('SLH-DSA-SHAKE-128s')
+  const commonMldsa = scenario39('mlDsa65Sign')
+  const commonHybridKem = scenario39('hybridKemEncap')
+  const commonHybridSignature = scenario39('hybridSignatureSign')
 
   return (
     <div className="space-y-8 w-full">
@@ -303,17 +309,19 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
       <section data-section-id="arm-generations" className="glass-panel p-6 scroll-mt-20">
         <SectionHeader
           icon={Cpu}
-          title="Arm Across Three Generations — Our Boards"
+          title="Arm Across Our Platforms — Including Ventuno Q"
           tone="secondary"
         />
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            We run the same Rust PKCS#11 engine on three Arm platforms: an{' '}
+            We run the same Rust PKCS#11 engine on several Arm platforms: an{' '}
             <strong>Apple M4 Pro</strong> laptop (Armv9.2-A, with SHA-3, SHA-512 and SME2), an{' '}
             <strong>NXP i.MX 95</strong> appliance (6× Cortex-A55, Armv8.2-A) and an{' '}
-            <strong>AMD Kria KV260</strong> appliance (4× Cortex-A53, Armv8.0-A, plus FPGA fabric).
-            The A55 and A53 both have AES and SHA-256 instructions and{' '}
-            <strong>neither has SHA-3 or SHA-512</strong>.
+            <strong>AMD Kria KV260</strong> appliance (4× Cortex-A53, Armv8.0-A, plus FPGA fabric),
+            plus the <strong>Ventuno Q</strong> (Qualcomm QCS8275: 4× Cortex-A78C and 4×
+            Cortex-A55). The A55 and A53 both have AES and SHA-256 instructions and{' '}
+            <strong>neither has SHA-3 or SHA-512</strong>. The Ventuno mixes faster A78C cores with
+            A55 cores, so its whole-board result is not eight identical per-core results.
           </p>
           <Ours>
             <ul className="list-disc pl-4 space-y-1">
@@ -337,6 +345,27 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
               </li>
             </ul>
           </Ours>
+          <Ours label="Current common CPU benchmark — Ventuno Q and AI X1 Pro">
+            <ul className="list-disc pl-4 space-y-1">
+              <li>
+                <strong>Ventuno Q (4× A78C + 4× A55):</strong> ML-DSA-65 signing measured{' '}
+                {commonMldsa.oneWorker.ventunoQ.toLocaleString()}/s with one active worker and{' '}
+                {commonMldsa.wholePlatform.ventunoQ.toLocaleString()}/s with eight workers. This is
+                its CPU PKCS#11 container path; its GPU/NPU was not used.
+              </li>
+              <li>
+                <strong>AI X1 Pro:</strong> the AMD64 VM measured ML-DSA-65 at{' '}
+                {commonMldsa.oneWorker.x1Pro.toLocaleString()}/s with one worker and{' '}
+                {commonMldsa.wholePlatform.x1Pro.toLocaleString()}/s across 12 exposed workers. Its
+                separate AVX-512/IFMA investigation is reported in the next section.
+              </li>
+              <li>
+                The same direct benchmark includes hybrid KEM: Ventuno Q{' '}
+                {commonHybridKem.wholePlatform.ventunoQ.toLocaleString()}/s and X1 Pro{' '}
+                {commonHybridKem.wholePlatform.x1Pro.toLocaleString()}/s whole-platform.
+              </li>
+            </ul>
+          </Ours>
           <div className="rounded-lg border border-border bg-card/40 p-3 space-y-2">
             <div className="flex items-center gap-2 text-sm font-bold text-foreground">
               <Laptop size={16} /> Two Apple generations: M4 Pro and M5 Max
@@ -353,19 +382,80 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
             </Cited>
           </div>
           <p className="text-xs text-muted-foreground">
-            Workshop step 3 lets you compare every algorithm across the three platforms.
+            Workshop step 3 lets you compare the current classical, pure-PQC and hybrid mechanisms
+            across all seven platforms, then inspect the older focused Arm/FPGA experiments.
+          </p>
+        </div>
+      </section>
+
+      <section data-section-id="amd64-instructions" className="glass-panel p-6 scroll-mt-20">
+        <SectionHeader
+          icon={Server}
+          title="AMD64 on AI X1 Pro: Flags Are Not Results"
+          tone="secondary"
+        />
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            The AI X1 Pro benchmark environment exposes 12 AMD64 virtual CPUs on a Ryzen AI 9 HX 370
+            host. They advertise AVX2, AVX-512F, IFMA, VAES, AES-NI and SHA-NI. That only tells us
+            what the CPU can execute; each mechanism still needs a compatible implementation,
+            runtime dispatch and a measurement.
+          </p>
+          <Ours label="AI X1 Pro AMD64 instruction-set investigation">
+            <p className="mb-2">
+              We tested the actual release build and candidates rather than inferring a gain from
+              the instruction flags.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border text-left text-muted-foreground">
+                    <th className="py-1.5 pr-2">Capability</th>
+                    <th className="py-1.5 pr-2">What the test showed</th>
+                    <th className="py-1.5">Meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {X1_ISA_RESULTS.map((result) => (
+                    <tr key={result.feature} className="border-b border-border/50 align-top">
+                      <td className="py-1.5 pr-2 font-medium text-foreground">{result.feature}</td>
+                      <td className="py-1.5 pr-2 text-muted-foreground">{result.result}</td>
+                      <td className="py-1.5 font-medium capitalize">
+                        {result.status.replace('-', ' ')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Ours>
+          <Ours label="Direct X1 PKCS#11 results">
+            <p>
+              With the deployed native release profile, the X1 measured ML-DSA-65 signing at{' '}
+              {commonMldsa.oneWorker.x1Pro.toLocaleString()}/s with one worker and{' '}
+              {commonMldsa.wholePlatform.x1Pro.toLocaleString()}/s across 12 workers. The direct
+              hybrid measurements were {commonHybridSignature.wholePlatform.x1Pro.toLocaleString()}
+              /s for ML-DSA + ECDSA signing and{' '}
+              {commonHybridKem.wholePlatform.x1Pro.toLocaleString()}/s for ML-KEM + X25519
+              encapsulation, whole-platform.
+            </p>
+          </Ours>
+          <p className="text-xs text-muted-foreground">
+            The current comparison is CPU-only. Radeon 890M and XDNA/NPU results are deliberately
+            not implied by these CPU numbers and need their own workload and evidence.
           </p>
         </div>
       </section>
 
       {/* 4b — What we built */}
       <section data-section-id="our-arm-work" className="glass-panel p-6 scroll-mt-20">
-        <SectionHeader icon={Wrench} title="What We Built on Arm — AES, ML-DSA, SLH-DSA, AWS-LC" />
+        <SectionHeader icon={Wrench} title="What We Built, Deployed and Tested" />
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Every acceleration below is real work in our engine or appliance images, with the
-            measured before → after. The coloured tag says which acceleration model it is — and
-            notice how many of the biggest wins are plain software engineering, not new hardware.
+            The Arm rows below are measured before → after changes in our engine or appliance
+            images. The deployment cards then show the same current PKCS#11 workload on Ventuno Q
+            and AI X1 Pro. The coloured tag says which acceleration model is involved — and many of
+            the largest wins are software dispatch and implementation work, not a new chip.
           </p>
           {(['AES', 'ML-DSA', 'SLH-DSA', 'AWS-LC (RSA)'] as const).map((area) => (
             <div key={area} className="space-y-1.5">
@@ -412,6 +502,93 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
             </div>
           ))}
           <p className="text-xs text-muted-foreground">{ARM_WORK_NOTE}</p>
+          <Ours label="Current deployments — Ventuno Q and AI X1 Pro">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <div className="rounded border border-border bg-card/40 p-3 space-y-1.5">
+                <div className="font-bold text-foreground">Ventuno Q ARM64 CPU container</div>
+                <p className="text-muted-foreground">
+                  Our CPU PKCS#11 container runs across 4 Cortex-A78C and 4 Cortex-A55 cores.
+                  ML-DSA-65 signs at {commonMldsa.oneWorker.ventunoQ.toLocaleString()}/s with one
+                  active worker and {commonMldsa.wholePlatform.ventunoQ.toLocaleString()}/s with
+                  eight workers. Hybrid signature measures{' '}
+                  {commonHybridSignature.wholePlatform.ventunoQ.toLocaleString()}/s and hybrid KEM{' '}
+                  {commonHybridKem.wholePlatform.ventunoQ.toLocaleString()}/s whole-platform.
+                </p>
+                <p className="text-[10px] text-muted-foreground">
+                  This is CPU acceleration through the Arm cores and software implementation; no GPU
+                  or NPU acceleration is claimed or measured.
+                </p>
+              </div>
+              <div className="rounded border border-border bg-card/40 p-3 space-y-1.5">
+                <div className="font-bold text-foreground">AI X1 Pro AMD64 release build</div>
+                <p className="text-muted-foreground">
+                  Our native release profile disables AWS-LC size mode and runs across 12 exposed
+                  workers. ML-DSA-65 signs at {commonMldsa.wholePlatform.x1Pro.toLocaleString()}/s;
+                  hybrid signature at {commonHybridSignature.wholePlatform.x1Pro.toLocaleString()}/s
+                  ; and hybrid KEM at {commonHybridKem.wholePlatform.x1Pro.toLocaleString()}/s.
+                </p>
+                <p className="text-[10px] text-muted-foreground">
+                  Its instruction-set evidence is separate: AES-NI/SHA-NI dispatch is verified, RSA
+                  uses a measured AVX-512 IFMA path, and the tested VAES variants were rejected
+                  because they were slower.
+                </p>
+              </div>
+            </div>
+          </Ours>
+        </div>
+      </section>
+
+      <section data-section-id="hybrid-mechanisms" className="glass-panel p-6 scroll-mt-20">
+        <SectionHeader icon={Shuffle} title="Hybrid Mechanisms: Measure the Whole HSM Operation" />
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            A hybrid signature pairs <strong>ML-DSA-65 with ECDSA P-256</strong>. A hybrid KEM pairs{' '}
+            <strong>ML-KEM-768 with X25519</strong>. In the PKCS#11 v3.3 mechanisms we measured, the
+            component secrets are combined inside the HSM. The hybrid result is therefore a direct
+            operation measurement, not a total made by adding two independent benchmark rows.
+          </p>
+          <Ours label="Current common CPU benchmark — direct hybrid results">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border text-left text-muted-foreground">
+                    <th className="py-1.5 pr-2">Operation</th>
+                    <th className="py-1.5 pr-2 text-right">Ventuno Q · 8 workers</th>
+                    <th className="py-1.5 pr-2 text-right">AI X1 Pro · 12 workers</th>
+                    <th className="py-1.5 pr-2 text-right">M4 Pro · 14 workers</th>
+                    <th className="py-1.5 text-right">M5 Max · 18 workers</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(['hybridSignatureSign', 'hybridKemEncap'] as const).map((id) => {
+                    const operation = scenario39(id)
+                    return (
+                      <tr key={id} className="border-b border-border/50">
+                        <td className="py-1.5 pr-2 font-medium">{operation.label}</td>
+                        <td className="py-1.5 pr-2 text-right font-mono">
+                          {operation.wholePlatform.ventunoQ.toLocaleString()}
+                        </td>
+                        <td className="py-1.5 pr-2 text-right font-mono">
+                          {operation.wholePlatform.x1Pro.toLocaleString()}
+                        </td>
+                        <td className="py-1.5 pr-2 text-right font-mono">
+                          {operation.wholePlatform.m4Pro.toLocaleString()}
+                        </td>
+                        <td className="py-1.5 text-right font-mono">
+                          {operation.wholePlatform.m5Max.toLocaleString()}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Ours>
+          <p className="text-xs text-muted-foreground">
+            The Workshop lets you compare these direct hybrid rows with their ML-DSA/ML-KEM and
+            ECDSA/X25519 controls at one worker and whole-platform scale. That exposes whether the
+            classical component, the PQC component, or worker contention is dominating.
+          </p>
         </div>
       </section>
 
