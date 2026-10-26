@@ -388,9 +388,9 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     tone: 'warn',
     title: 'An honest LMS — a claim you can check yourself',
     blurb:
-      "This Studio's LMS/HSS panel generates and signs via a separate WASM engine, not openssl itself — because upstream OpenSSL genuinely does not support LMS/HSS key generation or signing. Don't take that on faith: break the rule yourself and read the real error.",
+      "This Studio's LMS/HSS panel generates, signs and verifies via a separate WASM engine, not openssl itself — because upstream OpenSSL does not support LMS/HSS key generation or signing, and this openssl build has no LMS at all. Don't take that on faith: try it yourself and read the real error.",
     setup:
-      'OpenSSL 3.6 added LMS support (SP 800-208 / RFC 8554) as VERIFICATION ONLY. An OpenSSL maintainer confirmed on GitHub that stateful hash-based signature key generation is intentionally out of scope for OpenSSL core — "this should be done in hardware not software" (github.com/openssl/openssl/discussions/29619) — because a leaked or reused LMS one-time key breaks the entire scheme\'s security, and software has no way to guarantee a private key is never reused across a restore-from-backup.',
+      'OpenSSL 3.6 added LMS support (SP 800-208 / RFC 8554) as VERIFICATION ONLY, and it is switched off unless the build asks for it: the OpenSSL 3.6 documentation says "LMS support is disabled by default at compile-time. To enable it, specify the enable-lms build configuration option." This Studio\'s openssl build was not configured with enable-lms. For generation and signing, an OpenSSL maintainer confirmed on GitHub that stateful hash-based signature key generation is intentionally out of scope for OpenSSL core — "this should be done in hardware not software" (github.com/openssl/openssl/discussions/29619) — because a leaked or reused LMS one-time key breaks the entire scheme\'s security, and software has no way to guarantee a private key is never reused across a restore-from-backup.',
     steps: [
       {
         op: 'genpkey -algorithm LMS -out learn-l5-lms.key',
@@ -412,13 +412,13 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
       },
     ],
     notes: [
-      'The real error is "Error initializing LMS context" plus an EVP fetch failure naming Algorithm LMS as unsupported — that text comes straight from this build\'s OpenSSL 3.6.3, re-verified 2026-08-02, not paraphrased.',
+      'The real error is "Error initializing LMS context" plus an EVP fetch failure naming Algorithm LMS as unsupported — that text comes straight from this build\'s OpenSSL 3.6.3, not paraphrased. It is the error any OpenSSL build prints when LMS was not compiled in, so what it shows is a missing option in this build, not a policy decision.',
       'The HSS refusal reads differently: it comes from this build\'s PKCS#11 provider, which reports that no token is present to generate the key, not from the "unsupported algorithm" fetch failure shown for LMS. Either way, core OpenSSL generates no LMS or HSS key.',
-      'Verification IS supported by the CLI (pkeyutl -verify against an LMS public key works) — only generation and signing are out of scope for OpenSSL core.',
-      "The Studio's LMS panel (Workbench → lms) is upfront about this: it generates and signs via a bundled WebAssembly engine, and only routes -verify through the real openssl CLI you just tested here.",
+      'A build configured with enable-lms can verify LMS signatures: the OpenSSL 3.6 documentation says the providers "only support LMS signature verification". This build cannot, because it was not configured with enable-lms. Generation and signing stay out of scope for OpenSSL core either way, for the reason the maintainer gives above.',
+      "The Studio's LMS panel (Workbench → lms) generates, signs and verifies with a bundled WebAssembly engine; none of its three actions runs through the openssl CLI. The Command Preview it shows for LMS is for reference only.",
     ],
     whyItMatters:
-      "A tool that quietly faked LMS keygen through openssl would teach a falsehood as fact. Instead: the refusal you just triggered IS the proof — OpenSSL's own maintainers drew this boundary deliberately, and a good PQC tool should show you the boundary rather than paper over it.",
+      'A tool that quietly faked LMS keygen through openssl would teach a falsehood as fact. Instead: the refusal you just triggered shows what this openssl build lacks, and the panel says plainly that its LMS engine is a separate WebAssembly one. A good PQC tool should show you where the openssl command line ends rather than paper over it, and tell a missing build option (LMS is off unless enable-lms is set) from a decision the maintainers made (no generation or signing).',
     tryRef: ['lms'],
   },
 
@@ -709,7 +709,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     notes: [
       "req -subj in Lessons 2 and 8 overrode the subject entirely, so this curriculum never depended on openssl.cnf's [req_distinguished_name] defaults — but a real deployment without -subj absolutely does.",
       'configutl is one of the two brand-new subcommands in OpenSSL 3.6 alongside kdf (Lesson 7) — both postdate most existing OpenSSL tutorials.',
-      "In OpenSSL, the part that can be FIPS validated is the FIPS provider, a separate loadable module. Only a FIPS provider built from an OpenSSL version that has a valid FIPS certificate counts, and the certificate links to a Security Policy that you must follow. The openssl fipsinstall command runs the module's self-tests and writes the module configuration file. This in-browser build loads only the default and legacy providers, so it is not the validated module.",
+      "In OpenSSL, the part that can be FIPS validated is the FIPS provider, a separate loadable module. Only a FIPS provider built from an OpenSSL version that has a valid FIPS certificate counts, and the certificate links to a Security Policy that you must follow. The openssl fipsinstall command runs the module's self-tests and writes the module configuration file. This in-browser build loads the default, legacy and PKCS#11 providers and no FIPS provider, so it is not the validated module.",
     ],
     whyItMatters:
       'Every req/x509 call in this whole curriculum silently trusted a config file for defaults you never saw. configutl is how you stop trusting blindly and actually inspect what a config resolves to — useful the moment a CSR comes out with an unexpected extension or default.',

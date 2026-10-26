@@ -95,6 +95,44 @@ export interface ForceClusterEdge {
   rel: string
 }
 
+/**
+ * How a connection group is headed in the detail panel, in plain words, from the point of view
+ * of the node that is open. `outgoing` = the open node is the edge's `from`. A relation that
+ * reads the same both ways (related, intersects, equivalent) has one heading for both.
+ */
+const REL_HEADING: Record<string, { outgoing: string; incoming: string }> = {
+  cites: { outgoing: 'Cites', incoming: 'Cited by' },
+  enforces: { outgoing: 'Enforced by', incoming: 'Enforces' },
+  governs: { outgoing: 'Governs', incoming: 'Governed by' },
+  applies_to: { outgoing: 'Applies to these industries', incoming: 'Frameworks that apply' },
+  publishes: { outgoing: 'Publishes', incoming: 'Published by' },
+  references: { outgoing: 'References', incoming: 'Referenced by' },
+  specifies: { outgoing: 'Specified in', incoming: 'Specifies' },
+  implementedby: { outgoing: 'Implemented by', incoming: 'Implements' },
+  sells: { outgoing: 'Sells', incoming: 'Sold by' },
+  'migrating-to': { outgoing: 'Migrates to', incoming: 'Migrated from' },
+  subset_of: { outgoing: 'Subset of', incoming: 'Superset of' },
+  superset_of: { outgoing: 'Superset of', incoming: 'Subset of' },
+  related: { outgoing: 'Related to', incoming: 'Related to' },
+  intersects_with: { outgoing: 'Intersects with', incoming: 'Intersects with' },
+  equivalent: { outgoing: 'Equivalent to', incoming: 'Equivalent to' },
+}
+
+/** The detail-panel heading for a group of connections; an unknown relation is shown as plain words. */
+export function relHeading(rel: string, direction: 'outgoing' | 'incoming'): string {
+  // eslint-disable-next-line security/detect-object-injection -- rel is an edge label from this file, not user input
+  const known = REL_HEADING[rel]
+  if (known) return known[direction]
+  const words = rel.replace(/[_-]+/g, ' ').trim()
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
+/** Relations that read the same from either end: their two directions share one group. */
+export function isSymmetricRel(rel: string): boolean {
+  const known = REL_HEADING[rel]
+  return !!known && known.outgoing === known.incoming
+}
+
 export interface ForceClusterGraph {
   nodes: ForceClusterNode[]
   edges: ForceClusterEdge[]
@@ -459,11 +497,13 @@ function buildEdges(
     for (const ref of fw.libraryRefs) add(compId, libraryNodeIdFor(ref, nodes), 'cites')
     add(compId, certbodyNodeIdFor(fw.trustedSourceId, nodes), 'enforces')
 
-    // industries -> compliance, via naicsCodes when present, else resolved from industries[]
+    // compliance -> industries it applies to, via naicsCodes when present, else resolved from
+    // industries[]. Drawn from the framework to the industry: an industry does not govern a
+    // framework, a framework applies to the industries it names.
     const sectorIds = fw.naicsCodes?.length
       ? fw.naicsCodes.map((code) => `ind-${slug(code)}`).filter((id) => nodes.has(id))
       : fw.industries.flatMap((label) => industryNodeIdsFor(label, nodes))
-    for (const sectorId of sectorIds) add(sectorId, compId, 'governs')
+    for (const sectorId of sectorIds) add(compId, sectorId, 'applies_to')
   }
 
   // industries -> standards, via library's applicableIndustries

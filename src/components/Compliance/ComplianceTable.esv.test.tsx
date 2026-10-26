@@ -77,7 +77,9 @@ describe('ComplianceTable — Entropy (ESV) tab', () => {
       .getAllByRole('button')
       .map((b) => b.textContent ?? '')
       .filter((t) =>
-        /^(All Records|FIPS 140-3|NIST CAVP|Common Criteria|CSPN \(ANSSI\)|Entropy \(ESV\))/.test(t)
+        /^(All Records|FIPS 140-3|NIST CAVP|Common Criteria|EUCC \(ENISA\)|CSPN \(ANSSI\)|Entropy \(ESV\))/.test(
+          t
+        )
       )
     expect(labels.at(-1)).toMatch(/^Entropy \(ESV\)/)
   })

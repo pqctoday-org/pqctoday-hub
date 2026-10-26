@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
 import { Button } from '@/components/ui/button'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 
 interface SLHDSAIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -391,45 +392,43 @@ const Step3Parameters: React.FC = () => (
         with identical parameters). Every set uses{' '}
         <strong className="text-foreground">lg_w = 4</strong> (Winternitz parameter w = 16).
       </p>
-      <div
-        className="overflow-x-auto"
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
-        tabIndex={0}
-        role="region"
-        aria-label="FIPS 205 parameter sets"
-      >
-        <table className="w-full text-xs border-collapse">
-          <thead>
-            <tr className="text-muted-foreground border-b border-border">
-              {['Param set', 'n', 'h', 'd', 'h/d', 'a', 'k', 'Sig (B)', 'NIST', 'Note'].map(
-                (col) => (
-                  <th key={col} className="text-left px-2 py-2 font-medium whitespace-nowrap">
-                    {col}
-                  </th>
-                )
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {PARAM_TABLE.map((row, i) => (
-              <tr key={row.id} className={i % 2 === 0 ? 'bg-muted/20' : ''}>
-                <td className="px-2 py-1.5 font-mono text-primary font-semibold whitespace-nowrap">
-                  {row.id}
-                </td>
-                <td className="px-2 py-1.5 font-mono">{row.n}</td>
-                <td className="px-2 py-1.5 font-mono">{row.h}</td>
-                <td className="px-2 py-1.5 font-mono">{row.d}</td>
-                <td className="px-2 py-1.5 font-mono">{row.hp}</td>
-                <td className="px-2 py-1.5 font-mono">{row.a}</td>
-                <td className="px-2 py-1.5 font-mono">{row.k}</td>
-                <td className="px-2 py-1.5 font-mono">{row.sig.toLocaleString()}</td>
-                <td className="px-2 py-1.5 font-mono">{row.nist}</td>
-                <td className="px-2 py-1.5 text-muted-foreground">{row.note}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ResponsiveTable
+        caption="FIPS 205 parameter sets"
+        testId="slhdsa-param-sets"
+        head={['Param set', 'n', 'h', 'd', 'h/d', 'a', 'k', 'Sig (B)', 'NIST category', 'Note']}
+        rows={PARAM_TABLE.map((row) => [
+          <span key="id" className="font-mono text-primary font-semibold">
+            {row.id}
+          </span>,
+          <span key="n" className="font-mono">
+            {row.n}
+          </span>,
+          <span key="h" className="font-mono">
+            {row.h}
+          </span>,
+          <span key="d" className="font-mono">
+            {row.d}
+          </span>,
+          <span key="hp" className="font-mono">
+            {row.hp}
+          </span>,
+          <span key="a" className="font-mono">
+            {row.a}
+          </span>,
+          <span key="k" className="font-mono">
+            {row.k}
+          </span>,
+          <span key="sig" className="font-mono">
+            {row.sig.toLocaleString()}
+          </span>,
+          <span key="nist" className="font-mono">
+            {row.nist}
+          </span>,
+          <span key="note" className="text-muted-foreground">
+            {row.note}
+          </span>,
+        ])}
+      />
       <p className="text-[11px] text-muted-foreground leading-relaxed">
         SHAKE variants (SHAKE-128s/f, SHAKE-192s/f, SHAKE-256s/f) use identical (n,h,d,a,k) values
         but replace SHA-2 with SHAKE-256 as the tree hash function.

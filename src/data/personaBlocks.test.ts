@@ -45,7 +45,7 @@ describe('PERSONA_BLOCKS - certification engineer lab-test pointers', () => {
     const text = PERSONA_BLOCKS['/learn/secure-boot-pqc']!['cert-engineer']!
     expect(
       text.startsWith(
-        "Start with 'What the lab tests' on the Learn tab: it separates the verifier on the device (algorithm tests) from the signer that holds the private key (module rules), and the SP 800-193 box after it covers the integrity checks around the signature. "
+        "Start with 'What the lab tests', inside 'ML-DSA-65 for Firmware Signature Migration' on the Learn tab: it separates the verifier on the device (algorithm tests) from the signer that holds the private key (module rules), and the SP 800-193 box after it covers the integrity checks around the signature. "
       )
     ).toBe(true)
     // the earlier text follows the new first sentence
@@ -59,5 +59,19 @@ describe('PERSONA_BLOCKS - certification engineer lab-test pointers', () => {
       )
     ).toBe(true)
     expect(text).toContain("Step 4 replays NIST's published LMS verification samples.")
+  })
+})
+
+describe('PERSONA_BLOCKS - certification engineer pointers that name a place', () => {
+  it('OpenSSL Studio says the Validation tab is on the Algorithms page', () => {
+    expect(PERSONA_BLOCKS['/playground/openssl-studio']!['cert-engineer']).toBe(
+      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build supports; it is educational and not FIPS-validated, so do not use it as evidence. For NIST known-answer samples use the Validation tab on the Algorithms page."
+    )
+  })
+  it('SLH-DSA names the workshop step and the link that reaches Algorithm checks', () => {
+    const text = PERSONA_BLOCKS['/learn/slh-dsa']!['cert-engineer']!
+    expect(text).toContain(
+      'run the NIST sigVer sample under Algorithm checks (in Workshop Step 1, use Go to Algorithm checks)'
+    )
   })
 })

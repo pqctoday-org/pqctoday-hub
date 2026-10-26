@@ -13,12 +13,37 @@ interface Rec {
   id: string
   type: string
   euccCertificateId?: string
+  productName?: string
 }
 
 const records: Rec[] = JSON.parse(
   fs.readFileSync(path.join(process.cwd(), 'public/data/compliance-data.json'), 'utf-8')
 )
 const eucc = records.filter((r) => r.type === 'EUCC')
+
+describe('EUCC numbers in Common Criteria Portal product names', () => {
+  const trailing = /\(\s*(EUCC(?:-[A-Za-z0-9]+){3,})\s*\)\s*$/
+  const portal = records.filter(
+    (r) => r.type === 'Common Criteria' && /^cc-.+-[0-9a-f]{8}$/.test(r.id)
+  )
+  const withNumber = portal.filter((r) => trailing.test(r.productName ?? ''))
+
+  it('has Portal listings that end their name with an EUCC number', () => {
+    expect(withNumber.length).toBeGreaterThan(0)
+  })
+
+  it('shows that number for each of them instead of "no scheme number"', () => {
+    for (const r of withNumber) {
+      expect(schemeCertificateId(r), r.id).toBe(trailing.exec(r.productName ?? '')?.[1])
+    }
+  })
+
+  it('still shows none for a Portal listing that names no EUCC number', () => {
+    const without = portal.find((r) => !/EUCC-/.test(r.productName ?? ''))
+    expect(without).toBeDefined()
+    expect(schemeCertificateId(without!)).toBeNull()
+  })
+})
 
 describe('EUCC certificate numbers in the shipped records', () => {
   it('has EUCC records, each with a certificate number of its own', () => {

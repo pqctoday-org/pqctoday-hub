@@ -114,7 +114,7 @@ const TAB_FRAMEWORK_ID: Record<string, string> = {
   cc: 'COMMON-CRITERIA',
 }
 /** Tabs for a record type that has no framework: their tooltip describes the type. */
-const TAB_RECORD_TYPE: Record<string, string> = { cspn: 'CSPN', esv: 'ESV' }
+const TAB_RECORD_TYPE: Record<string, string> = { eucc: 'EUCC', cspn: 'CSPN', esv: 'ESV' }
 
 const PQC_ALGOS = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS', 'XMSS', 'HSS', 'FN-DSA', 'Falcon']
 
@@ -886,7 +886,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             placeholder={
               isEsvTab
                 ? 'Search entropy sources, vendors or certificate # (E321)...'
-                : 'Search products, vendors, types...'
+                : 'Search products, vendors, types or certificate #...'
             }
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}

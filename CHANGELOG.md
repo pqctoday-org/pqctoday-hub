@@ -29,6 +29,47 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.182.0] - 2026-10-26
+
+Forty-four corrections on the certification engineer's path: wrong figures and unsourced claims replaced with what the standards say, phone tables that were cut off now stack, the certificates page has an EUCC tab and finds EUCC numbers, and the certificate data is refreshed.
+
+### Added
+
+- **The Certificates page has its own EUCC (ENISA) tab** [view:/compliance] [persona:cert-engineer] [persona:grc]: the 112 European EUCC certificates now sit under one tab, and the search finds a certificate by the EUCC number the table shows. Common Criteria Portal rows whose product name ends with an EUCC number now show that number instead of "No scheme number in the listing".
+- **A "Go to Algorithm checks" button in the SLH-DSA workshop** [view:/learn/slh-dsa] [persona:cert-engineer]: the three workshop steps share one demo page, so the button takes you to the checks the role line points to.
+- **The phone quiz tells you how long each length takes** [view:/learn/quiz] [persona:cert-engineer]: each choice shows its question count and time, a line above says what the quiz covers, and "Quick pick" now means 20 questions on phone and desktop alike (the desktop 5-minute run is called "Short run").
+
+### Changed
+
+- **Four lesson tables that were cut off on a phone now stack** [view:/learn/entropy-randomness] [view:/learn/hsm-pqc] [view:/learn/slh-dsa] [view:/learn/secure-boot-pqc] [persona:cert-engineer]: the random-input rules, the four HSM tables (including the "FIPS Recert" column), the SLH-DSA parameter table and the key-hierarchy table show every column as a block per row.
+- **The Navigate panel names a link in plain words** [view:/navigate] [persona:cert-engineer] [persona:grc]: a record such as FIPS 140-3 now reads "Applies to these industries", "Governed by" or "Cited by" instead of "Governs (from) 4: Public Administration, Finance and Insurance".
+- **The Stages board button says where it goes** [view:/] [persona:cert-engineer]: "See the migration programme's closure gate" replaces "See the evidence closure gate".
+- **The first checkpoint quiz on My Path is named for what it covers** [view:/learn] [persona:cert-engineer]: "Certificates, FIPS 140-3, ACVP & Entropy" replaces "Algorithms & Entropy". Long lesson titles on the phone path list wrap to two lines.
+- **On the certification route, the Network Testing lesson ends with the two workshops that apply** [view:/learn/pqc-testing-validation] [persona:cert-engineer]: TVLA leakage analysis and ACVP validation.
+- **The first-visit notice no longer floats over the home page** [view:/] [persona:cert-engineer]: after you pick a role it sits in the page, above the board on a desktop and below it on a phone.
+- **Crypto Lab no longer shows the same three tools twice** [view:/playground] [persona:cert-engineer]: tools already shown for your role are left out of the recommended list, and the phone note counts the Docker scenarios from the same list as the desktop header.
+- **The Validation Workbench heading is shown in full** [view:/playground/hsm] [persona:cert-engineer]: the page title wraps instead of being cut to "PKCS#11 HSM Play...", and the page now points to the ACVP Lab Workflow lesson that teaches it.
+- **The PCI Certification lesson ends by sending you to the final quiz** [view:/learn/pci-certification] [persona:cert-engineer].
+- **A lesson's Tools and Products tab no longer calls every product PQC-ready** [view:/learn] [persona:cert-engineer]: when a module lists products that are there for their certificates and carry no PQC support, the header says each badge shows its PQC support.
+
+### Fixed
+
+- **The Network Testing lesson no longer says a TCP handshake adds six round trips** [view:/learn/pqc-testing-validation] [persona:cert-engineer] [persona:ops]: a TCP connection costs one round trip and a TLS 1.3 handshake one more; the unsourced "6x" figure is gone, and the lesson summary, the benchmark designer and the lesson's answer in search say the same.
+- **The Hybrid lesson no longer says NIST's ACVP does not cover hybrids, or that the FIPS 140-3 Implementation Guidance uses "hybrid" only for hybrid modules** [view:/learn/hybrid-crypto] [persona:cert-engineer]: the workshop now names the X-Wing tests on the CAVP prerequisites page, and the lesson says the guidance names a hybrid key-establishment scheme that uses ML-KEM and that a hybrid module is a different thing. The lesson's references now list RFC 10024 instead of the superseded TLS draft.
+- **The Secure Boot and OS lessons agree on Linux** [view:/learn/secure-boot-pqc] [view:/learn/os-pqc] [persona:cert-engineer] [persona:ops]: ML-DSA kernel module signing is in mainline Linux from 7.0 and ML-DSA verification of IMA/EVM signatures from 7.2; the unsourced "production 2027+" is gone. The key-hierarchy text names the CNSA 2.0 / NSS column it describes.
+- **The Firmware Signing Migrator compares like with like** [view:/learn/secure-boot-pqc] [persona:cert-engineer]: key sizes say which encoding they use, and the headline comparison uses certificate-form public keys (RSA-2048 294 bytes, ML-DSA-65 1,974 bytes).
+- **The FIPS 140-3 lesson says which numbers are as of its review date** [view:/learn/fips-140-3-certification] [persona:cert-engineer]: the certificate count is read from the site's own CMVP data.
+- **The Standards Bodies lesson cites its membership numbers** [view:/learn/standards-bodies] [persona:cert-engineer] [persona:grc]: ITU (194 Member States and more than 1,000 other members), ETSI (over 950 members) and 3GPP (no direct membership, through seven Organizational Partners) now carry the source and the date they were read, and a garbled sentence in the Korea card is fixed.
+- **The SLH-DSA demo warns when a category 3 or 5 set uses a SHA-256 or SHAKE128 pre-hash** [view:/learn/slh-dsa] [persona:cert-engineer]: FIPS 205 allows those pre-hash functions only for category 1 parameter sets.
+- **The entropy tests' monobit cutoff scales with the sample length, and the rollback warning reads correctly** [view:/learn/entropy-randomness] [view:/learn/stateful-signatures] [persona:cert-engineer]: the pass limit follows SP 800-22 instead of a fixed 0.05, a one-leaf rollback reads "leaf 2" rather than "leaves 2 to 2", and the LMS signature size and XMSS speed statements follow RFC 8554 and RFC 8391.
+- **OpenSSL Studio says why LMS is refused** [view:/openssl] [persona:cert-engineer] [persona:developer]: this build was not configured with enable-lms; OpenSSL 3.6 supports LMS verification only when that option is on. The glossary and lesson 10 now agree with the Explore panel about the PKCS#11 provider, and the role hint points to the Validation tab on the Algorithms page.
+- **Two quiz explanations are corrected** [view:/learn/quiz] [persona:cert-engineer]: LMS signature sizes (1,776 bytes shrinking to 1,144 for h=20, w=8, RFC 9858 Table 3) and the ML-KEM noise sampling, which produces the secret and error vectors from a seed derived from the secret seed.
+
+### Data
+
+- **Library entries tidied** [view:/library] [persona:cert-engineer]: ISO/IEC 15408-1:2022 shows as withdrawn on 19 May 2026 and replaced by the 2026 edition, NIST CSWP 37B shows as final with its real authors, RFC 10024 is listed as published, the Debian SSLkeys page names its publisher and a book is no longer labelled a standard. The FIPS 140-3 record on Navigate now links to the standard, the Implementation Guidance, the CMVP Management Manual and the SP 800-140 series.
+- **Certificate data refreshed** [view:/compliance] [persona:cert-engineer] [persona:grc]: NIST FIPS 140-3 certificate #5562 (Ergotron Cryptographic Module) and six new NIST CAVP validations for ML-KEM, ML-DSA, SLH-DSA or LMS (Versa Networks, Microchip, KIOXIA, Citrix and Chipsea) are added, and the validity end date of EUCC certificate EUCC-3087-2026-000013-I-00 now reads 16 July 2031, as ENISA states. Every record shows when it was last read.
+
 ## [4.181.0] - 2026-10-25
 
 The PQC Hardware Acceleration lesson now compares seven platforms on the same measurements, and two Library links, the PCI Quick Reference Guide entry, a Nokia product name and the Entropy board are corrected.

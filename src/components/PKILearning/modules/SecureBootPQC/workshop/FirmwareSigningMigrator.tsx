@@ -101,19 +101,27 @@ const classicalMech = (): Record<ClassicalAlgo, Record<HashAlgo, number>> => ({
 
 const MLDSA_VARIANT: Record<string, number> = { 'ML-DSA-44': 44, 'ML-DSA-65': 65, 'ML-DSA-87': 87 }
 
-// Expected key sizes from FIPS 186-5 (RSA/ECDSA) and FIPS 204/205 (PQC)
+// Expected key sizes. Public keys are raw key material: for RSA the modulus alone (no exponent, no
+// encoding), for ECDSA the uncompressed point, for ML-DSA/SLH-DSA the FIPS 204/205 public key.
 const CLASSICAL_PUBKEY_BYTES: Record<ClassicalAlgo, number> = {
   'RSA-2048': 256,
   'RSA-3072': 384,
   'ECDSA-P256': 65,
   'ECDSA-P384': 97,
 }
+// Private keys as they are stored: RSA as a PKCS#1 DER file that carries the CRT values (measured
+// with OpenSSL 3.6.3, `openssl rsa -traditional -outform DER`; a given key varies by a few bytes),
+// ECDSA as the raw scalar, ML-DSA/SLH-DSA as the raw FIPS 204/205 private key.
 const CLASSICAL_PRIVKEY_BYTES: Record<ClassicalAlgo, number> = {
   'RSA-2048': 1192,
-  'RSA-3072': 1700,
+  'RSA-3072': 1768,
   'ECDSA-P256': 32,
   'ECDSA-P384': 48,
 }
+// Public keys as a certificate carries them (DER SubjectPublicKeyInfo), measured with OpenSSL 3.6.3
+// (`openssl pkey -pubout -outform DER`): RSA-2048 294 B, ML-DSA-65 1,974 B.
+const RSA2048_SPKI_BYTES = 294
+const MLDSA65_SPKI_BYTES = 1974
 // DER-encoded signature sizes: RSA sig = modulus size; ECDSA DER(r,s) adds up to 8 bytes overhead
 const CLASSICAL_SIG_BYTES: Record<ClassicalAlgo, number> = {
   'RSA-2048': 256,
@@ -1474,7 +1482,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               Each UEFI db entry stores an EFI_CERT_X509 containing the full public key.
               {pqcAlgo === 'SLH-DSA-SHA2-128S'
                 ? ` SLH-DSA-SHA2-128S has the smallest PQC public key (${SLHDSA_PUBKEY_BYTES} B) but the largest signature (${SLHDSA_SIG_BYTES.toLocaleString()} B).`
-                : ` ML-DSA-65 public key is ${(MLDSA_PUBKEY_BYTES['ML-DSA-65'] / CLASSICAL_PUBKEY_BYTES['RSA-2048']).toFixed(1)}× larger than RSA-2048 (${MLDSA_PUBKEY_BYTES['ML-DSA-65'].toLocaleString()} B vs ${CLASSICAL_PUBKEY_BYTES['RSA-2048']} B).`}{' '}
+                : ` As a certificate carries it (SubjectPublicKeyInfo), the ML-DSA-65 public key is ${(MLDSA65_SPKI_BYTES / RSA2048_SPKI_BYTES).toFixed(1)}× larger than RSA-2048 (${MLDSA65_SPKI_BYTES.toLocaleString()} B vs ${RSA2048_SPKI_BYTES} B).`}{' '}
               Secure Boot variable storage is platform-specific; firmware reports it through
               QueryVariableInfo() (UEFI 2.11 section 8.2.4), so check your platform before planning.
             </p>
@@ -1883,13 +1891,14 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 <tbody>
                   {[
                     {
-                      metric: 'Public key',
+                      metric: 'Public key (raw key material; RSA = modulus only)',
                       classical: `${classicalPubDisplay.toLocaleString()} B`,
                       pqc: `${pqcPubDisplay.toLocaleString()} B`,
                       change: `${(pqcPubDisplay / classicalPubDisplay).toFixed(1)}×`,
                     },
                     {
-                      metric: 'Private key',
+                      metric:
+                        'Private key (as stored: RSA PKCS#1 DER with CRT values; ECDSA and post-quantum raw)',
                       classical: `${classicalPrivDisplay.toLocaleString()} B`,
                       pqc: `${pqcPrivDisplay.toLocaleString()} B`,
                       change: `${(pqcPrivDisplay / classicalPrivDisplay).toFixed(1)}×`,

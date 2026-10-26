@@ -85,6 +85,11 @@ export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps
   }
 
   const layerGroups = groupByLayer(items)
+  // A module can list products that are here for their certificates and carry no PQC support; the
+  // header must not call those "PQC-ready".
+  const hasProductWithoutPqc = items.some(
+    (item) => !/^(yes|partial|limited|planned|in progress)/i.test(item.pqcSupport || '')
+  )
   // The catalog link opens on exactly this module's products (?productIds=).
   const catalogHref = `/migrate?productIds=${[...new Set(items.map((i) => i.productId))]
     .map(encodeURIComponent)
@@ -93,7 +98,10 @@ export function ModuleMigrateTab({ moduleId, itemFilter }: ModuleMigrateTabProps
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        PQC-ready tools and products relevant to this module. All items are also available in the{' '}
+        {hasProductWithoutPqc
+          ? 'Tools and products relevant to this module; each badge shows its PQC support.'
+          : 'PQC-ready tools and products relevant to this module.'}{' '}
+        All items are also available in the{' '}
         {/* `underline`, not `hover:underline`: this link sits inside a
             paragraph, so colour alone is not a sufficient affordance
             (axe link-in-text-block / WCAG 1.4.1). */}

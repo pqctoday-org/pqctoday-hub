@@ -197,7 +197,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                     <span className="w-4 shrink-0 text-[10.5px] tabular-nums text-muted-foreground">
                       {i + 1}
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold text-foreground">
+                    <span className="min-w-0 flex-1 line-clamp-2 whitespace-normal text-left text-[12.5px] font-semibold text-foreground">
                       {mod?.title ?? id}
                     </span>
                   </Button>
@@ -274,7 +274,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                               aria-hidden="true"
                             />
                           )}
-                          <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold text-foreground">
+                          <span className="min-w-0 flex-1 line-clamp-2 whitespace-normal text-left text-[12.5px] font-semibold text-foreground">
                             {mod?.title ?? id}
                           </span>
                           <span className="shrink-0 text-[10px] font-mono text-muted-foreground">

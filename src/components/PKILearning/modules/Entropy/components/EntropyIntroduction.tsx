@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { DRBG_MECHANISMS, RNG_COMPARISON, SP800_90A_REV2_STATUS } from '../utils/entropyConstants'
 import { PQC_RANDOM_INPUTS, PQC_ERRATA_STATE } from '../utils/pqcRandomInputs'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -533,45 +534,35 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             allowed for the signing input does not apply to key generation. The table below gives
             the rule for every parameter set.
           </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">Operation</th>
-                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">Random input</th>
-                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">Length</th>
-                  <th className="text-left py-2 pr-3 font-bold text-foreground/80">RBG rule</th>
-                  <th className="text-left py-2 font-bold text-foreground/80">Source</th>
-                </tr>
-              </thead>
-              <tbody>
-                {PQC_RANDOM_INPUTS.map((row) => (
-                  <tr key={row.id} className="border-b border-border/50 align-top">
-                    <td className="py-2 pr-3 font-medium text-foreground">{row.operation}</td>
-                    <td className="py-2 pr-3">
-                      {row.inputs.map((input) => (
-                        <code key={input} className="block text-primary font-mono">
-                          {input}
-                        </code>
-                      ))}
-                    </td>
-                    <td className="py-2 pr-3 text-muted-foreground">{row.length}</td>
-                    <td className="py-2 pr-3 text-muted-foreground">
-                      {row.ruleSummary}
-                      <span className="block mt-1 text-muted-foreground/80">{row.notes}</span>
-                    </td>
-                    <td className="py-2 text-muted-foreground whitespace-nowrap">
-                      {[...new Set(row.sources.map((src) => src.section))].map((section) => (
-                        <span key={section} className="block">
-                          {section}
-                        </span>
-                      ))}
-                    </td>
-                  </tr>
+          <ResponsiveTable
+            caption="Random input and RBG rule for each FIPS 203, 204 and 205 operation"
+            testId="pqc-random-input-table"
+            head={['Operation', 'Random input', 'Length', 'RBG rule', 'Source']}
+            rows={PQC_RANDOM_INPUTS.map((row) => [
+              row.operation,
+              <>
+                {row.inputs.map((input) => (
+                  <code key={input} className="block text-primary font-mono">
+                    {input}
+                  </code>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </>,
+              <span key="length" className="text-muted-foreground">
+                {row.length}
+              </span>,
+              <span key="rule" className="text-muted-foreground">
+                {row.ruleSummary}
+                <span className="block mt-1 text-muted-foreground/80">{row.notes}</span>
+              </span>,
+              <span key="source" className="text-muted-foreground">
+                {[...new Set(row.sources.map((src) => src.section))].map((section) => (
+                  <span key={section} className="block">
+                    {section}
+                  </span>
+                ))}
+              </span>,
+            ])}
+          />
           <p className="text-[11px] text-muted-foreground mt-3">
             Errata state checked {PQC_ERRATA_STATE.checkedOn}:{' '}
             {PQC_ERRATA_STATE.entries.map((entry, i) => (

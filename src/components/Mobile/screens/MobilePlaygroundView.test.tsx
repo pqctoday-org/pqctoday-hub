@@ -66,9 +66,18 @@ describe('MobilePlaygroundView', () => {
   it('shows the real hand-authored tool count, excluding sandbox scenarios', () => {
     renderView()
     expect(screen.getByText(`${MOBILE_TOOLS.length} tools · runs in-browser`)).toBeInTheDocument()
-    // 34 hand-authored total minus the 3 dropped — never the full 58-tool
-    // registry (that includes 24 Docker sandbox scenarios, cut from mobile).
-    expect(MOBILE_TOOLS.length).toBeLessThan(34)
+    // The hand-authored tools minus the 3 dropped — never the full registry
+    // (that includes the Docker sandbox scenarios, cut from mobile).
+    expect(MOBILE_TOOLS.length).toBeLessThan(WORKSHOP_TOOLS.filter((t) => !t.sandbox).length)
+  })
+
+  it('the laptop-only note counts the Docker sandbox scenarios from the registry, the number the desktop header shows', () => {
+    renderView()
+    const sandboxCount = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
+    expect(sandboxCount).toBeGreaterThan(0)
+    expect(
+      screen.getByText(new RegExp(`and the ${sandboxCount} Docker-backed sandbox scenarios`))
+    ).toBeInTheDocument()
   })
 
   it('never shows a dropped tool — its own UI does not distill to a phone screen', () => {

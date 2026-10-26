@@ -217,6 +217,31 @@ describe('MobileComplianceView — searchable Records list', () => {
     expect(list.queryByText('Acme Crypto Module')).not.toBeInTheDocument()
   })
 
+  it('search finds an EUCC record by the certificate number its card shows, and not a Common Criteria row', () => {
+    renderAt('/compliance?tab=records&rstatus=all&q=EUCC-3089-2026-002', [fips, cc, eucc])
+    const list = within(screen.getByRole('region', { name: 'Certification records' }))
+    expect(list.getByText('Nokia Lightspan Access Node MF-2')).toBeInTheDocument()
+    expect(list.queryByText('Gamma Smart Card')).not.toBeInTheDocument()
+    expect(list.queryByText('Acme Crypto Module')).not.toBeInTheDocument()
+  })
+
+  it('has an EUCC (ENISA) type chip that lists EUCC records only', () => {
+    renderAt('/compliance?tab=records&rstatus=all', [fips, cc, eucc])
+    fireEvent.click(screen.getByRole('button', { name: 'EUCC (ENISA)' }))
+    expect(urlParams().get('rtab')).toBe('eucc')
+    const list = within(screen.getByRole('region', { name: 'Certification records' }))
+    expect(list.getByText('Nokia Lightspan Access Node MF-2')).toBeInTheDocument()
+    expect(list.queryByText('Gamma Smart Card')).not.toBeInTheDocument()
+    expect(list.queryByText('Acme Crypto Module')).not.toBeInTheDocument()
+  })
+
+  it('a shared ?rtab=cc link shows no EUCC record', () => {
+    renderAt('/compliance?tab=records&rstatus=all&rtab=cc', [fips, cc, eucc])
+    const list = within(screen.getByRole('region', { name: 'Certification records' }))
+    expect(list.getByText('Gamma Smart Card')).toBeInTheDocument()
+    expect(list.queryByText('Nokia Lightspan Access Node MF-2')).not.toBeInTheDocument()
+  })
+
   it('a shared ?q= link opens the filtered list', () => {
     renderAt('/compliance?tab=records&q=acme')
     const list = within(screen.getByRole('region', { name: 'Certification records' }))

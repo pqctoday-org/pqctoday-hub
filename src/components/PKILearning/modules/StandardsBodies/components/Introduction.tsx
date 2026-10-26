@@ -21,7 +21,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
-import { SC27_MEMBERS } from '../data'
+import { ETSI_MEMBERS, ITU_MEMBERS, SC27_MEMBERS, THREEGPP_MEMBERSHIP } from '../data'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -291,7 +291,10 @@ const Step2GovVsNonGov: React.FC = () => (
                   role: `International standards (${SC27_MEMBERS.participating} participating national bodies, ${SC27_MEMBERS.source}, read ${SC27_MEMBERS.readOn})`,
                 },
                 { body: 'IETF', role: 'Internet protocols (open membership, rough consensus)' },
-                { body: 'ETSI', role: 'European telecom standards (800+ member orgs)' },
+                {
+                  body: 'ETSI',
+                  role: `European telecom standards (${ETSI_MEMBERS.summary}, ${ETSI_MEMBERS.source}, read ${ETSI_MEMBERS.readOn})`,
+                },
                 {
                   body: '3GPP SA3',
                   role: '5G security standards, PQC transition study (TR 33.938)',
@@ -344,9 +347,9 @@ const Step2GovVsNonGov: React.FC = () => (
               in 2021, selected HAETAE and AIMer (signatures), SMAUG-T and NTRU+ (KEMs) as Korean
               national algorithms — distinct from NIST&apos;s selections. As of April 2026, Korean
               Standard proposals for the two KEMs have been submitted and the two signature
-              algorithms are under review; no standardization date is published. The national The
-              July 2023 national master plan (NIS and the Ministry of Science and ICT) targets 2035
-              for spreading PQC. Korean telecom operators may require support for KpqC algorithms
+              algorithms are under review; no standardization date is published. The July 2023
+              national master plan (NIS and the Ministry of Science and ICT) targets 2035 for
+              spreading PQC. Korean telecom operators may require support for KpqC algorithms
               alongside FIPS 203/204/205.
             </p>
           </div>
@@ -402,13 +405,13 @@ const Step3GlobalRegional: React.FC = () => (
               name: 'ITU-T SG17',
               role: 'Telecom security, X.509 co-author',
               pqc: 'X.1811 (quantum-safe for telecom)',
-              members: '193 UN member states',
+              members: `${ITU_MEMBERS.summary} (${ITU_MEMBERS.source}, read ${ITU_MEMBERS.readOn})`,
             },
             {
               name: '3GPP SA3',
               role: '5G and mobile security',
               pqc: 'TR 33.938 (Study on Preparing for Transition to PQC in 3GPP)',
-              members: '700+ member companies',
+              members: `${THREEGPP_MEMBERSHIP.summary} (${THREEGPP_MEMBERSHIP.source}, read ${THREEGPP_MEMBERSHIP.readOn})`,
             },
           ].map((item) => (
             <div key={item.name} className="bg-muted/50 rounded-lg p-3 border border-border">

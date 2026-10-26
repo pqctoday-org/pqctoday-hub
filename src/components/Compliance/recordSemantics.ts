@@ -109,6 +109,7 @@ export const RECORD_TYPE_TABS: ReadonlyArray<{ id: string; label: string }> = [
   { id: 'fips', label: 'FIPS 140-3' },
   { id: 'acvp', label: TYPE_LABEL.ACVP },
   { id: 'cc', label: 'Common Criteria' },
+  { id: 'eucc', label: 'EUCC (ENISA)' },
   { id: 'cspn', label: TYPE_LABEL.CSPN },
   { id: 'esv', label: TYPE_LABEL.ESV },
 ]
@@ -121,6 +122,7 @@ export function matchesCertType(record: { type: string }, certType: string): boo
   if (ct === 'fips' || ct === 'fips 140-3') return record.type === 'FIPS 140-3'
   if (ct === 'acvp') return record.type === 'ACVP'
   if (ct === 'cc') return record.type === 'Common Criteria'
+  if (ct === 'eucc') return record.type === 'EUCC'
   if (ct === 'cspn') return record.type === 'CSPN'
   if (ct === 'esv') return record.type === 'ESV'
   return true
@@ -135,16 +137,24 @@ export function matchesCertType(record: { type: string }, certType: string): boo
  * ('enisa-eucc-3089-2026-000002-i-00'); its certificate number is the separate
  * `euccCertificateId` ('EUCC-3089-2026-002'), which is what the ENISA page shows.
  * ANSSI, CSPN, CMVP and CAVP ids are the scheme's own numbers and are returned unchanged.
+ *
+ * Some Common Criteria Portal listings end the product name with the EUCC certificate number in
+ * parentheses ('... (EUCC-3090-2026-67)'); that number, as written there, is the one shown.
  */
 const GENERATED_CC_ID = /^cc-.+-[0-9a-f]{8}$/
+const TRAILING_EUCC_NUMBER = /\(\s*(EUCC(?:-[A-Za-z0-9]+){3,})\s*\)\s*$/
 
 export function schemeCertificateId(record: {
   id: string
   type: string
   euccCertificateId?: string
+  productName?: string
 }): string | null {
   if (record.type === 'EUCC') return record.euccCertificateId?.trim() || null
-  return record.type === 'Common Criteria' && GENERATED_CC_ID.test(record.id) ? null : record.id
+  if (record.type === 'Common Criteria' && GENERATED_CC_ID.test(record.id)) {
+    return TRAILING_EUCC_NUMBER.exec(record.productName ?? '')?.[1] ?? null
+  }
+  return record.id
 }
 
 /** What to show where a certificate number would be, when the listing has none. */

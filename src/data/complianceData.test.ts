@@ -14,6 +14,7 @@ import {
 import { BINDING_STATUSES } from '../utils/bindingSplit'
 import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
 import { maturityByRefId, maturityRequirements } from './maturityGovernanceData'
+import { libraryData } from './libraryData'
 
 describe('complianceData', () => {
   it('loads without error', () => {
@@ -269,6 +270,34 @@ describe('compliance binding_status column', () => {
       )
       .filter((framework) => !framework.bindingBasis)
       .map((framework) => framework.id)
+    expect(missing).toEqual([])
+  })
+})
+
+describe('the FIPS 140-3 record links to the CMVP documents', () => {
+  const record = complianceFrameworks.find((f) => f.id === 'FIPS-140-3')
+
+  it('cites the standard, the Implementation Guidance, the Management Manual and SP 800-140x', () => {
+    expect(record?.libraryRefs).toEqual(
+      expect.arrayContaining([
+        'FIPS-140-3-STANDARD',
+        'NIST-FIPS140-3-IG-PQC',
+        'CMVP-MGMT-MANUAL',
+        'NIST-SP-800-140',
+        'NIST-SP-800-140B',
+      ])
+    )
+  })
+
+  it('still cites the PQC standards it cited before', () => {
+    expect(record?.libraryRefs).toEqual(
+      expect.arrayContaining(['FIPS 203', 'FIPS 204', 'FIPS 205', 'NIST SP 800-227'])
+    )
+  })
+
+  it('names only documents that are in the Library', () => {
+    const ids = new Set(libraryData.map((d) => d.referenceId))
+    const missing = (record?.libraryRefs ?? []).filter((ref) => !ids.has(ref))
     expect(missing).toEqual([])
   })
 })

@@ -209,7 +209,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
           <div className="p-4 rounded-lg bg-muted border border-border space-y-3">
             <Insight
               label="TCP-to-TLS overhead dominates"
-              text={`The TLS handshake adds ${NETWORK_PROFILE_LABELS[networkProfile].rttMs * 6}ms of RTT overhead on top of ${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms network RTT — crypto cost is usually <5% of total (our estimate). PQC's main impact is byte size, not computation.`}
+              text={`A TCP handshake plus a TLS 1.3 handshake takes two round trips (${NETWORK_PROFILE_LABELS[networkProfile].rttMs * 2}ms at ${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms network RTT) before application data flows — crypto cost is usually <5% of total (our estimate). PQC's main impact is byte size, not computation.`}
             />
             {selectedMetric === 'saSetupMs' && networkProfile === 'wan' && (
               <Insight

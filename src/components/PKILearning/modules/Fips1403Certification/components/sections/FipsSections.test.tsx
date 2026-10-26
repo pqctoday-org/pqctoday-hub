@@ -326,6 +326,20 @@ describe('FIPS landscape — Hub data contract', () => {
       expect(screen.queryByText(/712/)).not.toBeInTheDocument()
     })
 
+    it('says the as-of date covers everything except the certificate count', async () => {
+      stubData({
+        schemaVersion: 1,
+        partitions: { fips: { label: 'NIST CMVP', retrievedAt: '2026-10-23T02:05:53+00:00' } },
+      })
+      wrap(<FipsLandscape />)
+      await screen.findByText(/list held 2 certificates on 23 October 2026/)
+      const intro = screen.getByText(/Four questions, kept apart/)
+      expect(intro.textContent).toContain(
+        'except the certificate count, which is read from the site’s own CMVP data'
+      )
+      expect(intro.textContent).toContain('re-check before you quote it')
+    })
+
     it('leaves the sentence out when the retrieval date is not stated', async () => {
       stubData(null)
       wrap(<FipsLandscape />)

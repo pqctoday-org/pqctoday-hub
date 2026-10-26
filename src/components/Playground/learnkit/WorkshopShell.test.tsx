@@ -35,9 +35,16 @@ describe('WorkshopShell heading', () => {
     expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(1)
   })
 
-  it('truncates a long title instead of letting it overflow the header', () => {
+  it('lets a long title wrap inside the header instead of cutting it with an ellipsis', () => {
     renderShell()
     const heading = screen.getByRole('heading', { level: 1 })
-    expect(within(heading).getByText(/A workshop with a rather long title/)).toHaveClass('truncate')
+    const title = within(heading).getByText(/A workshop with a rather long title/)
+    // min-w-0 lets the title shrink and wrap before it pushes its neighbours; no truncate, so the
+    // whole title shows.
+    expect(title).toHaveClass('min-w-0')
+    expect(title).not.toHaveClass('truncate')
+    // The header row wraps its actions below a title that has no room beside them, so the title
+    // stays on one line where it can.
+    expect(heading.parentElement).toHaveClass('sm:flex-wrap')
   })
 })

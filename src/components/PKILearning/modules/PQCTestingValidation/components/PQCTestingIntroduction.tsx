@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
+import { useActiveLearnPathId } from '@/components/PKILearning/common/useLearnPath'
 import {
   Radio,
   ScanSearch,
@@ -20,6 +21,8 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Cite } from '@/components/PKILearning/modules/AcvpLabWorkflow/components/Cite'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import manifest from '../manifest'
+import { CERTIFICATION_PATH } from '../data/learnPathTags'
 
 interface CollapsibleSectionProps {
   icon: React.ReactNode
@@ -70,6 +73,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
   useSectionAnchors()
+  const onCertificationRoute = useActiveLearnPathId(manifest.id, manifest) === CERTIFICATION_PATH
 
   return (
     <div className="space-y-8 w-full">
@@ -129,9 +133,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             The TCP-to-TLS Overhead Insight
           </p>
           <p className="text-xs">
-            Research shows that on typical Internet connections, TCP connection overhead accounts
-            for 6× more latency than the cryptographic operations themselves. On high-latency links
-            (satellite, WAN), PQC&apos;s larger key sizes matter more because they force extra
+            A TCP connection costs one round trip before application data can flow (RFC 9293 section
+            3.5), and a TLS 1.3 handshake costs one more (RFC 8446 section 2). On high-latency
+            links (satellite, WAN), PQC&apos;s larger key sizes matter more because they force extra
             round-trips — not because the math is slower. This changes where you need to optimize.
           </p>
         </div>
@@ -759,9 +763,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         <div className="flex-1">
           <h3 className="font-bold text-foreground">Ready to test your knowledge?</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Work through 7 interactive workshops covering passive discovery, active scanning,
-            performance benchmarking, interop testing, TVLA analysis, strategy building, and ACVP
-            validation.
+            {onCertificationRoute
+              ? 'Work through the 2 workshop steps on your route (TVLA leakage analysis and ACVP validation).'
+              : 'Work through 7 interactive workshops covering passive discovery, active scanning, performance benchmarking, interop testing, TVLA analysis, strategy building, and ACVP validation.'}
           </p>
         </div>
         <Button

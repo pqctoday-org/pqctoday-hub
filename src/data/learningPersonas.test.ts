@@ -250,3 +250,14 @@ describe('capstone wording', () => {
     expect(PRACTICE_QUIZ_LABEL).toBe('Practice quiz')
   })
 })
+
+describe('cert-engineer first checkpoint label', () => {
+  it('names the certificate, FIPS 140-3, ACVP and entropy lessons it quizzes', () => {
+    const item = PERSONAS['cert-engineer'].pathItems.find(
+      (p) => p.type === 'checkpoint' && p.id === 'cert-algorithms-entropy'
+    )
+    expect(item?.type === 'checkpoint' ? item.label : null).toBe(
+      'Certificates, FIPS 140-3, ACVP & Entropy'
+    )
+  })
+})

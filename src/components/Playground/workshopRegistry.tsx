@@ -1191,7 +1191,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'openssl-studio',
     pt_id: 'PT-023',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'OpenSSL Studio',
     description:
       'Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
@@ -1487,6 +1487,10 @@ const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
 }))
 
 WORKSHOP_TOOLS.push(...SANDBOX_TOOLS)
+
+/** How many Docker-backed sandbox scenarios the registry holds. The desktop header and the phone
+ *  note both read this one number. */
+export const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 
 /** Reverse lookup: tool id → PT-ID (e.g. 'slh-dsa' → 'PT-001') */
 export const PT_ID_MAP: Record<string, string> = Object.fromEntries(

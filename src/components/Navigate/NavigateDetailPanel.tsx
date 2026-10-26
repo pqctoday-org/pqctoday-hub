@@ -3,10 +3,12 @@ import { useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink, X } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
-import type {
-  ForceClusterEdge,
-  ForceClusterNode,
-  ForceClusterNodeType,
+import {
+  isSymmetricRel,
+  relHeading,
+  type ForceClusterEdge,
+  type ForceClusterNode,
+  type ForceClusterNodeType,
 } from '@/data/forceClusterGraph'
 import { GRAPH_TOKEN, TYPE_LABEL } from './graphVisuals'
 
@@ -72,8 +74,12 @@ export function NavigateDetailPanel({
       c.edge.rel === 'references' &&
       c.node.type === 'product'
         ? PRODUCTS_CITING_SOURCE_KEY
-        : `${c.direction}:${c.edge.rel}`
-    grouped.set(key, [...(grouped.get(key) ?? []), c])
+        : // A relation that reads the same from either end is one group, not two with one heading.
+          `${isSymmetricRel(c.edge.rel) ? 'both' : c.direction}:${c.edge.rel}`
+    const group = grouped.get(key) ?? []
+    // Joined from both ends, the same neighbour can arrive twice: list it once.
+    if (key.startsWith('both:') && group.some((g) => g.node.id === c.node.id)) continue
+    grouped.set(key, [...group, c])
   }
 
   // Which groups are expanded past the cap — keyed the same as `grouped`,
@@ -243,7 +249,7 @@ export function NavigateDetailPanel({
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {key === PRODUCTS_CITING_SOURCE_KEY
                   ? PRODUCTS_CITING_SOURCE_HEADING
-                  : `${rel} (${direction === 'outgoing' ? 'to' : 'from'})`}{' '}
+                  : relHeading(rel, direction === 'incoming' ? 'incoming' : 'outgoing')}{' '}
                 · {items.length}
               </h3>
               {key === PRODUCTS_CITING_SOURCE_KEY && (

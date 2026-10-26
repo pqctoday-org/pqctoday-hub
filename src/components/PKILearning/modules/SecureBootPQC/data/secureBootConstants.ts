@@ -295,7 +295,8 @@ export const BOOT_CHAIN_STAGES: BootChainStage[] = [
       'The OS kernel image is verified by the bootloader before execution. Linux uses IMA (Integrity Measurement Architecture) for runtime file integrity. Windows uses Code Integrity (CI.dll). Both must support ML-DSA verification for PQC-signed kernels.',
     signingKey: 'Kernel Build Signing Key (stored in distro HSM)',
     currentAlgorithm: 'RSA-4096 (Linux kernel signing)',
-    pqcStatus: 'Linux kernel PQC signing experimental (6.9+), production 2027+',
+    pqcStatus:
+      'ML-DSA kernel module signing is in mainline Linux from 7.0 (X.509 and PKCS#7); IMA/EVM ML-DSA signature verification from 7.2.',
     forgeryUrgency: 'high',
   },
   {

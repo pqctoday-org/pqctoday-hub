@@ -59,7 +59,7 @@ const CRYPTO_COMPONENTS: CryptoComponent[] = [
     quantumRisk: 'high',
     migrationEffort: 'high',
     notes:
-      'Kernel modules signed at build time. Migration requires recompiling kernel with ML-DSA signing key in kernel keyring. Experimental ML-DSA kernel module signing in Linux 6.13+.',
+      'Kernel modules signed at build time. Migration requires recompiling kernel with ML-DSA signing key in kernel keyring. ML-DSA kernel module signing is in mainline Linux from 7.0 (X.509 and PKCS#7); IMA/EVM ML-DSA signature verification from 7.2.',
   },
   {
     id: 'cert-store',

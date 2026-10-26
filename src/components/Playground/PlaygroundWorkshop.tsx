@@ -36,6 +36,7 @@ import { Input } from '../ui/input'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import {
   WORKSHOP_TOOLS,
+  SANDBOX_TOOL_COUNT,
   type WorkshopTool,
   type WorkshopCategory,
   type ToolDifficulty,
@@ -91,7 +92,6 @@ import { ToolEvidenceBadges } from './ToolEvidenceNotice'
 // Constants & small style maps
 // ---------------------------------------------------------------------------
 
-const SANDBOX_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => t.sandbox).length
 // Tools that actually appear in the grid (environments are surfaced as their own
 // marquee cards, never as single-concept tools).
 const GRID_TOOL_COUNT = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
@@ -1093,7 +1093,7 @@ export const PlaygroundWorkshop = () => {
   // One canonical role journey drives this pool, the marquee and role boards.
   // Executive and GRC intentionally stop after two demonstrations and exit to
   // Learn; technical roles receive three ordered browser exercises.
-  const recommendedPool = useMemo(() => {
+  const rolePicks = useMemo(() => {
     if (!role || !roleJourney) {
       return sortTools(
         visibleTools.filter((t) => t.difficulty === 'beginner' && !isLocked(t))
@@ -1105,14 +1105,27 @@ export const PlaygroundWorkshop = () => {
     })
   }, [role, roleJourney, visibleTools, isLocked, sortTools])
 
+  // The marquee above already shows the role's picks as cards, so the Recommended grid and the
+  // "other tools" list do not repeat them.
+  const marqueeRoutes = useMemo(
+    () => new Set(featurePlaygroundsFor(role).map((item) => item.to)),
+    [role]
+  )
+  const recommendedPool = useMemo(
+    () => (role ? rolePicks.filter((t) => !marqueeRoutes.has(`/playground/${t.id}`)) : rolePicks),
+    [role, rolePicks, marqueeRoutes]
+  )
+
   // The role-tagged tools the picks above do not show, in the role journey's order. Respects the
   // difficulty and run filters, like the picks do.
   const roleTaggedRest = useMemo(() => {
     if (!role) return []
-    const shown = new Set(recommendedPool.map((t) => t.id))
+    const shown = new Set(rolePicks.map((t) => t.id))
     const visible = new Set(visibleTools.map((t) => t.id))
-    return playgroundToolsForRole(role).filter((t) => visible.has(t.id) && !shown.has(t.id))
-  }, [role, recommendedPool, visibleTools])
+    return playgroundToolsForRole(role).filter(
+      (t) => visible.has(t.id) && !shown.has(t.id) && !marqueeRoutes.has(`/playground/${t.id}`)
+    )
+  }, [role, rolePicks, marqueeRoutes, visibleTools])
 
   // ── Actions ──────────────────────────────────────────────────────────────
   const openTool = useCallback(
@@ -1576,19 +1589,19 @@ export const PlaygroundWorkshop = () => {
                   GRID_TOOL_COUNT,
                   playgroundToolsForRole(role).length,
                   role,
-                  recommendedPool.length
+                  rolePicks.length
                 )
               : 'Set your role for tailored picks'}
           </p>
         </div>
         {recommendedPool.length > 0 ? (
           renderGrid(recommendedPool)
-        ) : (
+        ) : rolePicks.length === 0 ? (
           <EmptyResults
             title="Nothing at this difficulty"
             subtitle="Switch the difficulty filter back to All."
           />
-        )}
+        ) : null}
         {role && roleTaggedRest.length > 0 && (
           <div className="mt-3">
             <Button

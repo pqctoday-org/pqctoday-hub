@@ -79,7 +79,7 @@ const COMMAND_ENTRIES: Record<string, TagGlossaryEntry> = {
     def: 'FIPS 205, Stateless Hash-Based Digital Signature Algorithm. Native since OpenSSL 3.5; SHA2/SHAKE variants at 128/192/256-bit levels, each in a small-signature (s) or fast-signing (f) form.',
   },
   LMS: {
-    def: 'RFC 8554 / NIST SP 800-208 — Leighton-Micali stateful hash-based signatures. OpenSSL 3.6 supports VERIFICATION ONLY; key generation and signing are intentionally out of scope for OpenSSL core (see the "stateful signature" term below).',
+    def: 'RFC 8554 / NIST SP 800-208 — Leighton-Micali stateful hash-based signatures. OpenSSL 3.6 supports VERIFICATION ONLY, and only in a build configured with enable-lms (off by default); key generation and signing are intentionally out of scope for OpenSSL core (see the "stateful signature" term below).',
   },
   HSS: {
     def: "RFC 8554 — Hierarchical Signature System, LMS's multi-tree extension. Same OpenSSL 3.6 verify-only scope as LMS.",
@@ -250,7 +250,7 @@ const TERMS: GlossaryTerm[] = [
     id: 'composite-signature',
     label: 'Composite signature',
     cat: 'pqc',
-    def: 'A single signature combining a classical algorithm (e.g. RSA, ECDSA) with ML-DSA — a hedging strategy like hybrid KEM, but for signatures, from the IETF LAMPS working group\'s composite-signatures draft work. This build\'s pkcs11 provider registers 3 such composites (named after "draft-lamps-19" in its own algorithm labels — the revision it was built against), though that provider is not currently functional here.',
+    def: "A single signature combining a classical algorithm (e.g. RSA, ECDSA) with ML-DSA — a hedging strategy like hybrid KEM, but for signatures, from the IETF LAMPS working group's composite-signatures draft work. This build's pkcs11 provider lists composite ML-DSA algorithms (draft-lamps-19 labels); see Explore > Query this build for the current list.",
   },
 ]
 

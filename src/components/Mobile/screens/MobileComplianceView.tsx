@@ -251,7 +251,8 @@ const RECORD_PHONE_LIMIT = 20
 /**
  * Same match as desktop's matchesRecordText (Compliance/recordFilters.ts —
  * behind the mobile import boundary because it also pulls in a desktop
- * filter component): product, vendor, source, type label, certificate id.
+ * filter component): product, vendor, source, type label, certificate id, and the EUCC
+ * certificate number the card shows.
  */
 function matchesRecordSearch(record: MobileCertRecord, text: string): boolean {
   const s = text.trim().toLowerCase()
@@ -261,7 +262,8 @@ function matchesRecordSearch(record: MobileCertRecord, text: string): boolean {
     record.vendor.toLowerCase().includes(s) ||
     record.source.toLowerCase().includes(s) ||
     recordTypeLabel(record.type).toLowerCase().includes(s) ||
-    record.id.toLowerCase().includes(s)
+    record.id.toLowerCase().includes(s) ||
+    (record.euccCertificateId ?? '').toLowerCase().includes(s)
   )
 }
 

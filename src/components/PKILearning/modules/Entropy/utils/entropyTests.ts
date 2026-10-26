@@ -125,14 +125,15 @@ export function frequencyTest(data: Uint8Array): TestResult {
   }
   const proportion = total > 0 ? ones / total : 0
   const deviation = Math.abs(proportion - 0.5)
-  const threshold = 0.05
+  // SP 800-22 Rev. 1a §2.1.5 rejects at P < 0.01, i.e. s_obs > 2.576 with s_obs = |S_n| / √n.
+  // The proportion of ones is 1/2 + S_n / (2n), so that is a deviation of 2.576 / (2·√n).
+  const threshold = total > 0 ? 2.576 / (2 * Math.sqrt(total)) : 0
   return {
     name: 'Frequency (Monobit)',
     value: deviation,
     passed: total > 0 && deviation <= threshold,
     threshold,
-    description:
-      'Deviation of the proportion of 1-bits from 0.5; passes at or below 0.05 (a proportion of 0.45 to 0.55)',
+    description: `Deviation of the proportion of 1-bits from 0.5; passes at or below ${threshold.toFixed(4)} (SP 800-22 section 2.1, P >= 0.01 for this length)`,
     detail: `${ones} ones out of ${total} bits (proportion ${proportion.toFixed(4)}, ${(proportion * 100).toFixed(1)}%). Deviation from 0.5: ${deviation.toFixed(4)}`,
     group: 'visualization',
     sampleLimit: visualizationLimit(total),

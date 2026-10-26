@@ -410,8 +410,9 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           <span className="text-sm font-bold">LMS / HSS (Stateful Hash-Based Signatures)</span>
         </div>
         <p className="text-xs text-muted-foreground pl-6 mb-3">
-          LMS uses WebAssembly for key generation and signing. OpenSSL 3.6.3 CLI supports
-          verification only.
+          A bundled WebAssembly engine generates, signs and verifies LMS keys here, not the openssl
+          command line. OpenSSL 3.6 can verify LMS only when built with enable-lms; this build is
+          not.
         </p>
         <div className="ml-6 flex items-center gap-3 flex-wrap">
           <Button

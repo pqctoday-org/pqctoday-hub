@@ -103,6 +103,16 @@ describe('StateManagementVisualizer: Simulate State Loss', () => {
     expect(leaves.sort()).toEqual(['#0000', '#0001', '#0002', '#0003', '#0004', '#0005'])
   })
 
+  it('names a one-leaf rollback "leaf 2", never "leaves 2 to 2"', async () => {
+    render(<StateManagementVisualizer hsm={fakeHsm()} />)
+    await signUpTo(3)
+    fireEvent.click(screen.getByRole('button', { name: /Simulate State Loss/ }))
+    const result = await screen.findByTestId('rollback-result')
+    expect(result.textContent).toContain('from 3 to 2')
+    expect(result.textContent).toContain('the counter read 2 would make leaf 2 available again')
+    expect(result.textContent).not.toMatch(/leaves 2 to 2/)
+  })
+
   it('follows the engine instead of claiming a refusal when the engine lets the counter be written', async () => {
     engineAllowsCounterWrite = true
     render(<StateManagementVisualizer hsm={fakeHsm()} />)

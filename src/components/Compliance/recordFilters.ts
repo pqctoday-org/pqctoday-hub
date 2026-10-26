@@ -62,7 +62,9 @@ export function matchesRecordText(record: ComplianceRecord, text: string): boole
     record.vendor.toLowerCase().includes(s) ||
     record.source.toLowerCase().includes(s) ||
     recordTypeLabel(record.type).toLowerCase().includes(s) ||
-    record.id.toLowerCase().includes(s)
+    record.id.toLowerCase().includes(s) ||
+    // EUCC: the number the table shows, which is not part of the generated id.
+    (record.euccCertificateId ?? '').toLowerCase().includes(s)
   )
 }
 
