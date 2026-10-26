@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.181.0] - 2026-10-25
 
-The PQC Hardware Acceleration lesson now compares seven platforms on the same measurements, and two Library links, the PCI Quick Reference Guide entry and the Entropy board are corrected.
+The PQC Hardware Acceleration lesson now compares seven platforms on the same measurements, and two Library links, the PCI Quick Reference Guide entry, a Nokia product name and the Entropy board are corrected.
 
 ### Added
 
@@ -41,6 +41,7 @@ The PQC Hardware Acceleration lesson now compares seven platforms on the same me
 
 - **Two ISO links in the Library now open the right standard** [view:/library] [persona:cert-engineer] [persona:researcher]: ISO/IEC 27005:2022 opened the page for a different standard (ISO/IEC 15408-2:2022), and ISO/IEC 7816-4:2020 opened the 2013 edition.
 - **The PCI Quick Reference Guide entry no longer contradicts itself** [view:/library] [persona:cert-engineer] [persona:grc]: its description named PCI DSS v4.0 while the guide it links to is the 2014 version 3.0. The entry now says so and is marked superseded.
+- **A Nokia product is spelled correctly in the certification records** [view:/compliance] [persona:cert-engineer] [persona:grc]: the EUCC record for the Nokia Lightspan Access Node MF-2 read "Lightstpan"; it now matches the ENISA certificate page.
 
 ### Changed
 
