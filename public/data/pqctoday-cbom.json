@@ -7686,7 +7686,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "Europe's first ANSSI Common Criteria EAL6+ certified quantum-resistant smart card. Implements ML-DSA (FIPS 204) lattice-based digital signatures for quantum-safe identity protection. Designed for national ID cards health cards and driving licenses. Crypto-agile architecture supports classical and PQC algorithms simultaneously.",
+      "description": "Europe's first ANSSI Common Criteria certified quantum-resistant smart card, evaluated at EAL6 augmented with ALC_FLR.1 (ANSSI-CC-2025/32). Implements ML-DSA (FIPS 204) lattice-based digital signatures for quantum-safe identity protection. Designed for national ID cards health cards and driving licenses. Crypto-agile architecture supports classical and PQC algorithms simultaneously.",
       "externalReferences": [
         {
           "type": "website",
@@ -7708,7 +7708,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Partial (CC EAL6+2 ANSSI-CC-2025/32)"
+          "value": "Partial (CC EAL6 augmented with ALC_FLR.1, ANSSI-CC-2025/32)"
         },
         {
           "name": "pqctoday:algorithm_source",
