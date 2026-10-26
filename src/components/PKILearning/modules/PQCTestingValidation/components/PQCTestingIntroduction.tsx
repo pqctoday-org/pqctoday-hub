@@ -134,8 +134,8 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           </p>
           <p className="text-xs">
             A TCP connection costs one round trip before application data can flow (RFC 9293 section
-            3.5), and a TLS 1.3 handshake costs one more (RFC 8446 section 2). On high-latency
-            links (satellite, WAN), PQC&apos;s larger key sizes matter more because they force extra
+            3.5), and a TLS 1.3 handshake costs one more (RFC 8446 section 2). On high-latency links
+            (satellite, WAN), PQC&apos;s larger key sizes matter more because they force extra
             round-trips — not because the math is slower. This changes where you need to optimize.
           </p>
         </div>
