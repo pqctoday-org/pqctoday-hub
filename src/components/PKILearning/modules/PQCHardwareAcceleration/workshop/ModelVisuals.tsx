@@ -123,7 +123,7 @@ const SimdVisual: React.FC = () => {
         {[
           { y: 110, label: 'Arm NEON', bits: 128, lanes: 4 },
           { y: 135, label: 'x86 AVX2', bits: 256, lanes: 8 },
-          { y: 160, label: 'x86 AVX-512', bits: 512, lanes: 16 },
+          { y: 160, label: 'x86 AVX-512 (IFMA-capable)', bits: 512, lanes: 16 },
         ].map((r) => (
           <g key={r.label}>
             <text x={20} y={r.y + 12} className="fill-foreground text-[10px] font-bold">
@@ -152,8 +152,9 @@ const SimdVisual: React.FC = () => {
       </svg>
       <Caption>
         ML-DSA applies the same arithmetic to all 256 coefficients of a polynomial, so vector width
-        translates almost directly into speed — and it happens inside the CPU, with no data leaving
-        the core.
+        can translate into speed — but only when the selected implementation dispatches to matching
+        vector code. Our AI X1 Pro exposes AVX-512F/IFMA; its measured RSA IFMA path helped, while
+        that fact alone did not prove an AVX-512 path for every ML-DSA or ML-KEM operation.
       </Caption>
     </div>
   )

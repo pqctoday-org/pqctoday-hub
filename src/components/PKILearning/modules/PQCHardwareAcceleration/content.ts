@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Structured content for the PQCHardwareAcceleration module.
- * Measured figures live in data/measurements.ts (PQC Today's own runs);
+ * Measured figures live in data/measurements.ts (historical focused runs) and
+ * data/scenario39.ts (current common CPU/PKCS#11 runs);
  * third-party figures in data/cited.ts. Both are rendered with visible
  * provenance tags so the two are never mixed.
  */
@@ -11,10 +12,10 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-hw-acceleration',
-  version: '1.0.0',
+  version: '1.1.0',
   // No lastReviewed yet — this new module's claims have not been independently
   // reviewed via record_module_review.py (moduleReviewHonesty.test.ts).
-  lastEdited: '2026-09-27',
+  lastEdited: '2026-10-25',
 
   standards: [
     getStandard('FIPS 202'),

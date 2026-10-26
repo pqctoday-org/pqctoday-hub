@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module explains how post-quantum signature algorithms are accelerated and why the same accelerator helps ML-DSA and SLH-DSA very differently. It covers seven acceleration models (scalar CPU, SIMD vector units, dedicated crypto instructions, GPU, FPGA, ASIC/secure element, NPU), the five primitives they target (Montgomery reduction, the NTT, the Keccak permutation, SHA-3, SHAKE), and the practical limits of offloading (area, clock, CPU↔accelerator round trip, sharing one engine between cores, batch vs latency). Every performance claim is either PQC Today's own measurement — on an Apple M4 Pro, an NXP i.MX 95 (6× Cortex-A55) and an AMD Kria KV260 (4× Cortex-A53 + FPGA) — or a clearly labelled published source.
+This module explains how post-quantum signature algorithms are accelerated and why the same accelerator helps ML-DSA and SLH-DSA very differently. It covers seven acceleration models (scalar CPU, SIMD vector units, dedicated crypto instructions, GPU, FPGA, ASIC/secure element, NPU), the five primitives they target (Montgomery reduction, the NTT, the Keccak permutation, SHA-3, SHAKE), and the practical limits of offloading (area, clock, CPU↔accelerator round trip, sharing one engine between cores, batch vs latency). Its current common CPU/PKCS#11 measurement covers AI X1 Pro, i.MX95 Pro, i.MX95, KV260 CPU, Ventuno Q, M4 Pro and M5 Max; its focused Arm/KV260 FPGA experiments remain visibly separate.
 
 ## Key Concepts
 
@@ -14,6 +14,9 @@ This module explains how post-quantum signature algorithms are accelerated and w
 - **Measured: the instruction set picks the variant** — on today's engine SLH-DSA-SHA2-128s signs 9–12× faster than SLH-DSA-SHAKE-128s on every CPU (M4 Pro 124 vs 13.5/s, i.MX 95 10.9 vs 0.94/s), while the KV260's FPGA reverses it (SHAKE-128s 13.0/s = 96% of the whole M4 Pro CPU's 13.49/s, which does not yet use its SHA-3 instructions); SHA-256 runs ~3× faster than SHA-512 on those cores
 - **Measured: owning an instruction is not using it** — AES ran in software until a build flag was set (7–13× after); SLH-DSA's Keccak did not use the M4's SHA-3 instructions, and switching them on (A/B on the M4 Pro) gave only 1.17–1.21×; an AWS-LC Montgomery kernel tuned for server cores was 22–62% slower than scalar code on the A55
 - **Measured: AWS-LC NEON on vs off (M4 Pro)** — ML-DSA sign/verify about 4×, ML-DSA-65/87 keygen 7.7–8.3×, ML-KEM-768 decapsulation 1.5×
+- **Measured: Ventuno Q CPU path** — Qualcomm QCS8275 (4× Cortex-A78C + 4× Cortex-A55) measured ML-DSA-65 signing at 3,996.64 TPS with one active worker and 18,972.13 TPS with eight workers; GPU/NPU is not part of that result
+- **Measured: AI X1 Pro AMD64 dispatch** — the VM exposes AVX2, AVX-512F/IFMA, VAES, AES-NI and SHA-NI. AWS-LC IFMA RSA-PSS-2048 signing measured 2.08× faster at one worker and 1.99× whole-platform than its masked control. Extra AVX2 ML-KEM gave no saturated whole-platform gain; correct VAES-256/512 candidates were slower and rejected
+- **Measured: hybrid mechanisms** — Scenario 39 measures ML-DSA-65 + ECDSA P-256 signing and ML-KEM-768 + X25519 encapsulation directly through PKCS#11 v3.3, with component secrets combined inside the HSM. They are not arithmetic sums of their pure-operation TPS results
 - **Measured: KV260 FPGA on vs off, same board** — SLH-DSA-SHAKE-128s signing 0.46 → 13.0/s (28.4×); the KV260's lead over the i.MX 95 on SLH-DSA-SHAKE is entirely the fabric
 - **Measured: board engine update (2026-09-27)** — RSA-OAEP decrypt 2×, AES-GCM 16 KiB 6–7.6×, small-AES multi-core scaling 3.2–5×, on both the KV260 and the i.MX 95 Pro
 - **Measured: FPGA outcomes** — KV260 ML-DSA-65 with two FPGA signers: 404.45 → 522.50 sign/s (+29.2%), capped by ARM-side work (key decode, ExpandA, copies, cache sync, PKCS#11); SLH-DSA-SHAKE-128s with a 4-lane Keccak engine at 240 MHz: 12.3 s → 69 ms per signature
@@ -30,7 +33,7 @@ The workshop has 5 steps:
 
 1. **Acceleration Models, Explained** — seven models, each with an everyday analogy, an animated mechanism diagram and a fit grid (ML-DSA, SLH-DSA, single op, big batch)
 2. **Building Blocks, Explained** — Montgomery (worked decimal example), NTT butterfly network, Keccak round steps, SHA-3 and SHAKE sponges
-3. **Our Measurements** — sign throughput on M4 Pro, i.MX 95 and KV260 for 12 algorithms; before/after the engine update
+3. **Our Measurements** — current seven-platform classical, pure-PQC and hybrid CPU/PKCS#11 comparison, followed by the historical M4 Pro/i.MX95/KV260 signature and FPGA experiments
 4. **FPGA Limits Lab** — resource budget, clock-vs-critical-path slider, anatomy of the +29% ML-DSA result
 5. **Offload, Sharing and Batching** — round-trip break-even calculator, shared-engine concurrency, GPU batch crossover
 

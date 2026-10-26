@@ -31,7 +31,7 @@ const PARTS: WorkshopPart[] = [
     id: 'our-measurements',
     title: 'Step 3: Our Measurements',
     description:
-      'Apple M4 Pro vs Cortex-A55 vs Cortex-A53 on every signature algorithm, and what a software update did to the same boards.',
+      'Current seven-platform classical, PQC and hybrid CPU results, plus the historical Arm and KV260 FPGA experiments that explain the acceleration mechanisms.',
     icon: BarChart3,
   },
   {
@@ -54,7 +54,7 @@ export const PQCHardwareAccelerationModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     title="PQC Hardware Acceleration"
-    description="How post-quantum signatures are accelerated on CPUs, GPUs, FPGAs, ASICs and NPUs — backed by our own measurements on three generations of Arm cores and an FPGA."
+    description="How post-quantum signatures are accelerated on CPUs, GPUs, FPGAs, ASICs and NPUs — backed by common CPU measurements across seven platforms and focused Arm/KV260 acceleration experiments."
     learn={(api) => <AccelerationIntroduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
     exercises={(api) => (
       <AccelerationExercises
