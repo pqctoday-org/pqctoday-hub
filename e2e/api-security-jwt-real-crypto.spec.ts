@@ -189,7 +189,7 @@ test.describe('API Security & JWT workshop — real crypto', () => {
       .first()
       .click()
 
-    await page.getByRole('button', { name: /SoftHSM3 \(PKCS#11 v3\.2 WASM\)/ }).click()
+    await page.getByRole('button', { name: /SoftHSM3 \(candidate CKM_HPKE WASM\)/ }).click()
 
     // Both suites, including the X-Wing hybrid, run in the token since hsm #310
     // (SHAKE256 KDF). Encrypted Key = encapsulated secret: 1088 B for ML-KEM-768,
