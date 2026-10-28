@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { exactTlsLaunchConfig } from './tlsLaunch'
 import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router'
@@ -221,8 +222,10 @@ export const TLSSimulatorTab: React.FC = () => {
   useEffect(() => {
     if (!launchGroup) return
     setResults(null)
-    setClientConfig({ groups: [launchGroup] })
-    setServerConfig({ groups: [launchGroup] })
+    const config = exactTlsLaunchConfig(readAlgorithmLaunch('tls-simulator'))
+    if (!config) return
+    setClientConfig(config)
+    setServerConfig(config)
   }, [launchGroup, setClientConfig, setServerConfig, setResults])
   const [isSpinning, setIsSpinning] = useState(false)
   useEffect(() => {

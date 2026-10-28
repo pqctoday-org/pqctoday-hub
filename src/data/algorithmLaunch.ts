@@ -5,6 +5,10 @@ import type { ClassicalAlgorithm } from '@/components/Playground/contexts/types'
 export interface AlgorithmLaunch {
   toolId: string
   algorithm: string
+  operation:
+    'keygen' | 'sign-verify' | 'kem-round-trip' | 'tls-handshake' | 'ssh-handshake' | 'hpke' | 'jwe'
+  backend: 'selected-in-tool' | 'rust' | 'noble'
+  evidenceTarget?: string
   parameter?: string
   classical?: ClassicalAlgorithm
   family?: 'sig' | 'kem'
@@ -23,13 +27,24 @@ export function canonicalAlgorithmName(name: string): string {
 
 const launches = new Map<string, AlgorithmLaunch>()
 function add(name: string, toolId: string, config: Partial<AlgorithmLaunch> = {}) {
-  launches.set(name, { toolId, algorithm: name, ...config })
+  launches.set(name, {
+    toolId,
+    algorithm: name,
+    operation: 'keygen',
+    backend: 'selected-in-tool',
+    ...config,
+  })
 }
 for (const level of [512, 768, 1024]) add(`ML-KEM-${level}`, 'interactive', { tab: 'keystore' })
 for (const level of [44, 65, 87]) add(`ML-DSA-${level}`, 'interactive', { tab: 'keystore' })
 for (const hash of ['SHA2', 'SHAKE'])
   for (const set of ['128s', '128f', '192s', '192f', '256s', '256f'])
-    add(`SLH-DSA-${hash}-${set}`, 'slh-dsa', { parameter: `${hash.toLowerCase()}-${set}` })
+    add(`SLH-DSA-${hash}-${set}`, 'slh-dsa', {
+      parameter: `${hash.toLowerCase()}-${set}`,
+      operation: 'sign-verify',
+      backend: 'rust',
+      evidenceTarget: 'fips205-reference-checks',
+    })
 for (const name of [
   'FN-DSA-512',
   'FN-DSA-1024',
@@ -75,15 +90,38 @@ for (const size of [256, 384, 521] as const) {
   add(`ECDH P-${size}`, 'interactive', { classical: `P-${size}`, tab: 'keystore' })
 }
 for (const name of ['X25519MLKEM768', 'SecP256r1MLKEM768', 'SecP384r1MLKEM1024'])
-  add(name, 'tls-simulator', { parameter: name })
+  add(name, 'tls-simulator', { parameter: name, operation: 'tls-handshake' })
 for (const row of COMPOSITE_SIG_SETS)
-  add(row.draftName, 'hsm', { family: 'sig', parameter: String(row.ckp) })
+  add(row.draftName, 'hsm', {
+    family: 'sig',
+    parameter: String(row.ckp),
+    operation: 'sign-verify',
+    backend: 'rust',
+    evidenceTarget: 'v33-published-kats',
+  })
 for (const row of COMPOSITE_KEM_SETS)
-  add(row.draftName, 'hsm', { family: 'kem', parameter: String(row.ckp) })
-add('X-Wing', 'api-security-jwt', { suite: 'HPKE-9' })
-add('HPKE-PQ', 'hybrid-encrypt', { suite: 'MLKEM768-X25519' })
-add('mlkem768x25519-sha256', 'pqc-ssh-sim', { parameter: 'mlkem768-curve25519-sha256' })
-add('mlkem768nistp256-sha256', 'pqc-ssh-sim', { parameter: 'mlkem768-nistp256-sha256' })
+  add(row.draftName, 'hsm', {
+    family: 'kem',
+    parameter: String(row.ckp),
+    operation: 'kem-round-trip',
+    backend: 'rust',
+    evidenceTarget: 'v33-published-kats',
+  })
+add('X-Wing', 'api-security-jwt', {
+  suite: 'HPKE-9',
+  operation: 'jwe',
+  backend: 'noble',
+  evidenceTarget: 'xwing-kat-and-hpke9-example',
+})
+add('HPKE-PQ', 'hybrid-encrypt', { suite: 'MLKEM768-X25519', operation: 'hpke', backend: 'rust' })
+add('mlkem768x25519-sha256', 'pqc-ssh-sim', {
+  parameter: 'mlkem768-curve25519-sha256',
+  operation: 'ssh-handshake',
+})
+add('mlkem768nistp256-sha256', 'pqc-ssh-sim', {
+  parameter: 'mlkem768-nistp256-sha256',
+  operation: 'ssh-handshake',
+})
 
 export function getAlgorithmLaunch(name: string): AlgorithmLaunch | undefined {
   return launches.get(canonicalAlgorithmName(name))

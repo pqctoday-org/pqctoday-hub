@@ -114,6 +114,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setError(`No exact launch is available for ${launchName}`)
       return
     }
+    if (typeof WebAssembly === 'object') setExecutionMode('wasm')
+    else {
+      setError('This exact launch requires WebAssembly support.')
+      return
+    }
     if (launch.classical) setClassicalAlgorithm(launch.classical)
     else {
       const name = launch.parameter ?? launch.algorithm

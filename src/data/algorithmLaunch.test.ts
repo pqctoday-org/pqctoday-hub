@@ -48,6 +48,8 @@ describe('launch identity', () => {
     expect(getAlgorithmLaunch('X-Wing')).toMatchObject({
       toolId: 'api-security-jwt',
       suite: 'HPKE-9',
+      operation: 'jwe',
+      backend: 'noble',
     })
     expect(getAlgorithmLaunch('X25519MLKEM768')).toMatchObject({
       toolId: 'tls-simulator',
@@ -56,6 +58,8 @@ describe('launch identity', () => {
     expect(getAlgorithmLaunch('id-MLKEM768-X25519-SHA3-256')).toMatchObject({
       toolId: 'hsm',
       family: 'kem',
+      operation: 'kem-round-trip',
+      backend: 'rust',
     })
   })
   it('rejects draft sets, prefix collisions and mismatched destinations', () => {

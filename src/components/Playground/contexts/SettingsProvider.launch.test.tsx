@@ -8,7 +8,12 @@ import { algorithmLaunchHref } from '@/data/algorithmLaunch'
 vi.mock('@/wasm/liboqs_dsa', () => ({ load: vi.fn().mockResolvedValue(true) }))
 function Selection() {
   const s = useSettingsContext()
-  return <output>{`${s.algorithm}|${s.keySize}|${s.classicalAlgorithm}|${s.activeTab}`}</output>
+  return (
+    <>
+      <output>{`${s.algorithm}|${s.keySize}|${s.classicalAlgorithm}|${s.activeTab}`}</output>
+      <span data-testid="execution-mode">{s.executionMode}</span>
+    </>
+  )
 }
 describe('exact interactive launch', () => {
   it.each([
@@ -28,4 +33,16 @@ describe('exact interactive launch', () => {
     )
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(selected))
   })
+})
+
+it('uses real WASM when an exact launch follows an earlier mock session', async () => {
+  sessionStorage.setItem('playground-execution-mode', 'mock')
+  render(
+    <MemoryRouter initialEntries={[algorithmLaunchHref('ML-KEM-768')!]}>
+      <SettingsProvider>
+        <Selection />
+      </SettingsProvider>
+    </MemoryRouter>
+  )
+  await waitFor(() => expect(screen.getByTestId('execution-mode')).toHaveTextContent('wasm'))
 })
