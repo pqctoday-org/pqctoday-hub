@@ -230,6 +230,16 @@ export default defineConfig({
       },
       testMatch: EDUCATION_TOOL_PR_SPECS.map((f) => `**/${f}`),
     },
+    // Learn-module tab pattern, phone checklist/strip and axe scans: 39 tests in about 14 s
+    // (measured 28 Oct 2026). One desktop-Chrome project, because the spec sets its own desktop
+    // and phone viewports. It was nightly-only until a phone test in it passed vacuously there (an
+    // absent-element check made before the lesson had rendered), so regressions showed up only
+    // after merge. Run by the PR check.
+    {
+      name: 'a11y-modules-pr',
+      use: { ...devices['Desktop Chrome'], launchOptions: CHROMIUM_LAUNCH_OPTIONS },
+      testMatch: '**/accessibility-modules.spec.ts',
+    },
   ],
   webServer: {
     command: serverCommand,
