@@ -42,6 +42,7 @@ Java's post-quantum support is now shown as it is after Oracle's October 2026 up
 ### Data
 
 - **The Java runtime product is renamed "Java SE (JDK) PQC Runtime"** [view:/migrate] [persona:developer] [persona:ops]: it covers JDK 24 to 27 and the Oracle LTS updates rather than one version; links that use the old name "Java 24 PQC Runtime" still open it.
+- **Oracle Jipher is in the product catalog** [view:/migrate] [persona:developer] [persona:cert-engineer] [persona:ops]: Oracle's Java provider for FIPS-regulated environments added ML-KEM (512, 768, 1024) and ML-DSA (44, 65, 87) in Jipher 20 (September 2026). The entry says plainly that Oracle cites no FIPS 140-3 certificate for it yet.
 - **Oracle's Java LTS roadmap is described on the Vendor roadmaps page** [view:/migrate] [persona:executive] [persona:grc] [persona:ops]: which LTS release gets ML-KEM, ML-DSA and hybrid TLS, and when. Thanks to the community member who pointed us to it.
 
 ## [4.182.0] - 2026-10-26
