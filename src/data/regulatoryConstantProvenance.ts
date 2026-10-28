@@ -78,15 +78,16 @@ export const REGULATORY_CONSTANT_PROVENANCE: Readonly<Record<string, ConstantPro
   },
   // ── NIST IR 8547 ──
   'NIST_DEPRECATION.deprecateClassical': {
-    kind: 'policy_constant',
-    evidence: 'NIST IR 8547 (library "NIST IR 8547") — an initial public DRAFT',
-    note: "Its timeline row was deprecated (wrong page). A draft's proposed date: present it as NIST's proposal, not a final requirement.",
+    kind: 'timeline',
+    eventId: 'united-states-nist-quantum-vulnerable-public-key-algorithms-deprecated',
+    field: 'StartYear',
+    note: 'binding_force = official_target (NIST IR 8547 final, 27 Oct 2026: guidance, not a statute).',
   },
   'NIST_DEPRECATION.disallowClassical': {
     kind: 'timeline',
     eventId: 'united-states-nist-112-bit-security-algorithms-fully-disallowed',
     field: 'StartYear',
-    note: 'binding_force = draft (NIST IR 8547 initial public draft).',
+    note: 'binding_force = official_target (NIST IR 8547 final, 27 Oct 2026: guidance, not a statute).',
   },
   'NIST_DEPRECATION.fipsFinalized': {
     kind: 'timeline',
