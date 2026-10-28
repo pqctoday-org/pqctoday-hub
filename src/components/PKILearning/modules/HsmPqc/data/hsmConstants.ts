@@ -20,7 +20,7 @@ export interface FipsValidationEntry {
    * the module certificate's Approved Algorithms list (empty when there are none).
    */
   algorithms: string[]
-  /** 'Historical' = on the CMVP Historical list: existing systems only, not new procurement. */
+  /** 'Historical' = on the CMVP Historical list: NIST says Federal Agencies should not include these in new systems but can procure them for legacy systems. */
   status: 'Active' | 'Pending' | 'Planned' | 'Historical'
   date: string
   level?: string
@@ -675,7 +675,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/3925',
-    note: 'A FIPS 140-2 certificate. CMVP moved it to the Historical list at sunset: usable only in existing systems, not for new procurement.',
+    note: 'A FIPS 140-2 certificate. CMVP moved it to the Historical list at sunset: NIST says Federal Agencies should not include Historical modules in new systems but can procure them for legacy systems.',
   },
   {
     vendorId: 'marvell-ls2',

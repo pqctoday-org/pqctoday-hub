@@ -52,6 +52,9 @@ describe('PqcCertificationTrendChart — FIPS 140-3 track stages', () => {
     expect(screen.getByTestId('fips-stage-note')).toHaveTextContent(
       /CAVP validation is the prerequisite for FIPS 140-3, not a certificate/
     )
+    expect(screen.getByTestId('fips-stage-note')).toHaveTextContent(
+      /NIST says participation on those lists is voluntary and that they do not necessarily include every module being tested or reviewed/
+    )
   })
 
   it('switches to NIST listings, and says what "in progress" is dated by', async () => {

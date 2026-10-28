@@ -1090,11 +1090,11 @@ export const TransitionDeadlines = () => {
       </ul>
       <p>
         The first clock has already struck: on 21/22 September 2026 every FIPS 140-2 certificate
-        moved to the Historical list. Those modules may still run in existing systems, but a new
-        procurement that asks for a validated module needs a FIPS 140-3 record. That is what a
-        scheme transition looks like from the inside. It is not a TRNS event either: the CMVP’s TRNS
-        route exists only for published CMVP <em>algorithm</em> transitions (for example the 2024
-        non-SP 800-56Brev2 RSA key-encapsulation transition, Management Manual §7.1.12).
+        moved to the Historical list. Those modules may still be bought and used for existing
+        systems, but NIST says Federal Agencies should not include them in new systems. That is what
+        a scheme transition looks like from the inside. It is not a TRNS event either: the CMVP’s
+        TRNS route exists only for published CMVP <em>algorithm</em> transitions (for example the
+        2024 non-SP 800-56Brev2 RSA key-encapsulation transition, Management Manual §7.1.12).
       </p>
 
       <H3>Urgency without shortcuts</H3>
@@ -1399,8 +1399,8 @@ export const ElectronicExchange = () => (
       description — as a question NIST is exploring, not an entitlement. It is <strong>not</strong>{' '}
       in SP 1800-40B. Status reports on the project history: CSWP 37A (
       <SourceLink source={SHARED_SOURCES.cswp37a} />, final, 16 March 2026) and CSWP 37B (
-      <SourceLink source={SHARED_SOURCES.cswp37b} label="NIST CSWP 37B" />, final, 30 September
-      2026).
+      <SourceLink source={SHARED_SOURCES.cswp37b} label="NIST CSWP 37B" />, dated 30 September 2026;
+      NCCoE’s project page labels it an Initial Public Draft).
     </p>
 
     <H3>A future-facing model — clearly labelled as one</H3>

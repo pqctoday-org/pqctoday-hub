@@ -286,7 +286,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     keyPqcOutputs: [
       'FIPS 140-3 certificates for PQC-enabled modules',
       'FIPS 203/204/205 algorithm validation (CAVP, tested via ACVP) as a module prerequisite',
-      'FIPS 140-3 Implementation Guidance for PQC (Sep 2025)',
+      'FIPS 140-3 Implementation Guidance (one document, last updated 19 August 2026), including its PQC self-test sections',
     ],
     libraryRefs: ['NIST-FIPS140-3-IG-PQC'],
     websiteUrl: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program',

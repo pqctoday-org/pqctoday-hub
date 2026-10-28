@@ -114,11 +114,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </li>
             <li>
               <strong>Crypto Libraries</strong> &mdash; a module on the NIST CMVP Modules-in-Process
-              list has a status, not a completion date, and the September 2025 FIPS 140-3
-              Implementation Guidance retroactively imposed new{' '}
-              <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip> self-test
-              requirements on modules already validated. You cannot &ldquo;audit once&rdquo; and
-              walk away while OpenSSL and Bouncy Castle ship high-severity CVEs each release cycle.
+              list has a status, not a completion date, and the FIPS 140-3 Implementation Guidance
+              added self-test requirements for FIPS 203/204/205 in August 2024 and, in September
+              2025, let their key-generation tests check against the private key only. You cannot
+              &ldquo;audit once&rdquo; and walk away while OpenSSL and Bouncy Castle ship
+              high-severity CVEs each release cycle.
             </li>
             <li>
               <strong>Application Software</strong> &mdash; OMB Memorandum M-23-02 mandates{' '}
@@ -511,10 +511,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   Every library (OpenSSL FIPS provider, WolfCrypt FIPS, BC FIPS, BoringCrypto) and
                   every HSM (Thales Luna, Entrust nShield, Utimaco, Fortanix, YubiHSM, AWS CloudHSM)
                   carries a CMVP certificate that is bound to a specific version, firmware, and
-                  platform. The September 2025 FIPS 140-3 Implementation Guidance update added new
-                  self-test requirements for FIPS 203/204/205. A validation bound to a pre-update
-                  revision is no longer implicitly compliant. The Assurance pillar subscribes to
-                  CMVP change notices and flags drift within the same loop as CVE triage.
+                  platform. The FIPS 140-3 Implementation Guidance added self-test requirements for
+                  FIPS 203/204/205 in August 2024 and, in September 2025, let their key-generation
+                  tests check against the private key only. When a validated module is revalidated,
+                  the CMVP Management Manual (section 7.1.14) marks, route by route, whether the
+                  submission must meet all the latest guidance or only the requirements of the
+                  original validation (apart from exceptions its table lists). The Assurance pillar
+                  subscribes to CMVP change notices and flags drift within the same loop as CVE
+                  triage.
                 </p>
               </div>
             </div>
