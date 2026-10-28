@@ -35,7 +35,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Inventory',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'The Vault mTLS session (build-vault-mtls) is the highest-risk asset. It uses ECDH P-256 key exchange, has an exposure window of 10+ years (secrets fetched by the pipeline may remain sensitive long after the session ends), and is classified as HNDL: High. An adversary recording Vault mTLS traffic today can decrypt every secret the pipeline fetched post-CRQC. The PQC replacement is ML-KEM-768 X-Wing hybrid TLS.',
+        'The Vault mTLS session (build-vault-mtls) is the highest-risk asset. It uses ECDH P-256 key exchange, has an exposure window of 10+ years (secrets fetched by the pipeline may remain sensitive long after the session ends), and is classified as HNDL: High. An adversary recording Vault mTLS traffic today can decrypt every secret the pipeline fetched post-CRQC. The PQC replacement is X25519MLKEM768 hybrid TLS.',
       config: { step: 0 },
     },
     {
@@ -90,7 +90,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-accent/20 text-accent border-accent/50',
       observe:
-        'The decision path leads to: "Revert ssl-ecdh-curve to X25519:P-256. X-Wing is additive — removing it is non-breaking. File bug with client vendor for ML-KEM support." This is the correct approach because X-Wing (ML-KEM-768 + X25519) is a hybrid — removing the ML-KEM component is safe for compatibility and does not break existing sessions. The classical X25519 continues to provide forward secrecy.',
+        'The decision path leads to: "Revert ssl-ecdh-curve to X25519:P-256. The X25519MLKEM768 group is additive — removing it is non-breaking. File bug with client vendor for ML-KEM support." This is the correct approach because X25519MLKEM768 (ML-KEM-768 + X25519) is a hybrid — removing the ML-KEM component is safe for compatibility and does not break existing sessions. The classical X25519 continues to provide forward secrecy.',
       config: { step: 5 },
     },
   ]

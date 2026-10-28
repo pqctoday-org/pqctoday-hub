@@ -492,7 +492,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               },
               {
                 phase: 2,
-                title: 'TLS Key Exchange (X-Wing hybrid)',
+                title: 'TLS Key Exchange (X25519MLKEM768 hybrid)',
                 weeks: '3w',
                 priority: 'critical',
               },

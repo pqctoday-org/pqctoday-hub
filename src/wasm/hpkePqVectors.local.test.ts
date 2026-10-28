@@ -30,6 +30,7 @@ import * as SoftHSM from './softhsm'
 import type { AttrDef } from './softhsm'
 import hpkePqFile from '@/data/acvp/hpke-pq-04-test-vectors.json'
 import cfrgFile from '@/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json'
+import xwingFile from '@/data/acvp/xwing-draft-test-vectors.json'
 
 const hpkePq = hpkePqFile.vectors
 const cfrg = cfrgFile.vectors
@@ -203,6 +204,30 @@ describe('CKM_HPKE post-quantum suites — published-vector replay through the J
     ['mlkem768_p256', CKP_HPKE_KEM_MLKEM768_P256],
     ['mlkem1024_p384', CKP_HPKE_KEM_MLKEM1024_P384],
   ] as const
+
+  it.each(xwingFile.vectors.map((v, i) => ({ ...v, caseId: i })))(
+    'X-Wing author KAT $caseId: seeded public key and deterministic ciphertext',
+    (v) => {
+      const r = hsm_generateHpkeKeyPair(M, hSession, CKP_HPKE_KEM_MLKEM768_X25519, unhex(v.seed))
+      try {
+        expect(hex(hsm_extractKeyValue(M, hSession, r.pubHandle))).toBe(v.pk)
+        const snd = hsm_hpkeEncapsulate(M, hSession, r.pubHandle, {
+          kemId: CKP_HPKE_KEM_MLKEM768_X25519,
+          kdfId: CKD_HPKE_HKDF_SHA256,
+          aeadId: CKZ_HPKE_AEAD_256_GCM,
+          mode: CKZ_HPKE_MODE_BASE,
+          ephemeralSeed: unhex(v.eseed),
+        })
+        expect(hex(snd.enc)).toBe(v.ct)
+        // The existing external HPKE vectors above pin the key schedule / AEAD outputs.
+        // Raw X-Wing shared secrets are pinned in noble and Rust engine KATs, not exposed here.
+        SoftHSM.hsm_destroyObject(M, hSession, snd.keyHandle!)
+      } finally {
+        SoftHSM.hsm_destroyObject(M, hSession, r.pubHandle)
+        SoftHSM.hsm_destroyObject(M, hSession, r.privHandle)
+      }
+    }
+  )
 
   it.each(CFRG_KEMS)(
     'CFRG concrete hybrid KEM %s: seed → encapsulation key, randomness → ciphertext, both sides agree',
