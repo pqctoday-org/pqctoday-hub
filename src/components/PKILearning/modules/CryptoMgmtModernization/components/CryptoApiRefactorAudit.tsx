@@ -122,7 +122,7 @@ const LANGUAGE_CHECKLISTS: Record<string, string[]> = {
   Java: [
     'Grep for `Signature.getInstance("SHA256withRSA")`, `Cipher.getInstance("RSA/...")`, `KeyPairGenerator.getInstance("RSA")` literals',
     'Replace literal algorithm strings with a parameter sourced from config: `Signature.getInstance(algorithmFromConfig, providerFromConfig)`',
-    'Register the BouncyCastle PQC provider (`bouncycastle.pqc.crypto`) or wait for the JDK 25+ native ML-DSA implementation',
+    'Register the BouncyCastle PQC provider (`bouncycastle.pqc.crypto`) or use the built-in ML-DSA (JDK 24+, JDK 25 LTS, Oracle JDK 21.0.13 / 17.0.21)',
     'Use `Security.addProvider(new BouncyCastlePQCProvider())` once at app start; the facade is provider-agnostic from that point',
   ],
   '.NET': [

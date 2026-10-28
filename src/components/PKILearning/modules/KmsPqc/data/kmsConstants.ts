@@ -187,10 +187,11 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     name: 'X-Wing (X25519 + ML-KEM-768 combined)',
     classical: 'X25519 (built-in)',
     pqc: 'ML-KEM-768 (built-in)',
-    combiner: 'SHA-256(xwing_label || ss_mlkem || ss_x25519 || ct_mlkem || pk_x25519)',
+    combiner:
+      'SHA3-256(ss_mlkem || ss_x25519 || ct_x25519 || pk_x25519 || label), label=0x5c2e2f2f5e5c',
     outputKeySize: 32,
     totalOverhead: '1,120 bytes (combined)',
-    useCase: 'Google Cloud KMS — single standardized hybrid KEM construction',
+    useCase: 'Google Cloud KMS — X-Wing hybrid KEM (draft-connolly-cfrg-xwing-kem-11)',
   },
 ]
 

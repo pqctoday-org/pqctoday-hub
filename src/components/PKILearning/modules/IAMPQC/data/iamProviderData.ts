@@ -199,7 +199,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     mfaPqc:
       'FIDO2 WebAuthn PQC authenticator support via Keycloak SPI; TOTP quantum-safe as standard',
     apiSecurity:
-      'Undertow (WildFly) TLS — hybrid ML-KEM via JDK 21 provider or BouncyCastle JSSE extension',
+      "Undertow (WildFly) TLS — hybrid ML-KEM via the JDK's own TLS stack (JDK 27, Oracle JDK 25.0.5) or the BouncyCastle JSSE extension",
     roadmapYear: 2025,
     certifications: ['Common Criteria (RHSSO)', 'FIPS 140-2 (RHSSO with NSS)'],
     notes:

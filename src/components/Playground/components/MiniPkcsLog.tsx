@@ -21,9 +21,9 @@ interface MiniPkcsLogProps {
   /** Show the Beginner-mode plain-English column. Default false (workbench tabs). */
   showBeginnerMode?: boolean
   /**
-   * Lesson context: skip the "Crypto Only" allowlist filter entirely (every
-   * call a lesson step makes is the point, including C_Initialize/C_Login),
-   * and hide the now-meaningless toggle. Default false (workbench tabs).
+   * Lesson context: supporting calls start expanded (every call a lesson
+   * step makes is the point, including C_Initialize/C_Login). Default false
+   * (workbench tabs, where they start folded).
    */
   lessonMode?: boolean
   /** Panel title override (e.g. "PKCS#11 Call Log — Key Wrap"). */

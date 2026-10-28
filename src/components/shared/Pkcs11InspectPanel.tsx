@@ -110,6 +110,12 @@ const renderSection = (section: InspectSection, idx: number) => (
 
 export const InspectPanel = ({ inspect }: { inspect: Pkcs11LogInspect }) => (
   <div className="mt-2 ml-1 pl-2 sm:ml-4 sm:pl-3 border-l-2 border-primary/30 bg-muted/30 rounded-r-lg p-2 sm:p-3">
+    {inspect.decodeError && (
+      <p className="text-xs text-status-warning mb-2">
+        The parameters of this call could not be decoded ({inspect.decodeError}). The call itself
+        ran normally.
+      </p>
+    )}
     {inspect.inputs.map(renderSection)}
 
     {inspect.outputs && inspect.outputs.length > 0 && (

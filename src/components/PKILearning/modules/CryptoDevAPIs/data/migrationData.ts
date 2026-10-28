@@ -498,12 +498,12 @@ byte[] signature = key.SignData(message);`,
     id: 'jca-native-pqc',
     title: 'JCA: Use JDK 24+ built-in ML-KEM and ML-DSA',
     from: 'JCA with default JDK provider (classical)',
-    to: 'JDK 24+ / JDK 25 LTS default providers (ML-KEM, ML-DSA); Bouncy Castle for SLH-DSA',
+    to: 'JDK 24+, JDK 25 LTS or Oracle JDK 21.0.13 / 17.0.21 default providers (ML-KEM, ML-DSA); Bouncy Castle for SLH-DSA',
     effort: 'low',
     description:
-      'JDK 24 added ML-KEM (JEP 496) and ML-DSA (JEP 497) to the default providers; JDK 25 is the first LTS with them. JDK 21 LTS has neither, so teams on 21 either upgrade or register Bouncy Castle. Bouncy Castle is also the route to SLH-DSA.',
+      'JDK 24 added ML-KEM (JEP 496) and ML-DSA (JEP 497) to the default providers, and JDK 25 LTS has them. Oracle backported both to Oracle JDK 21.0.13 and 17.0.21 in the 20 October 2026 update; JDK 11 and 8 are planned for the second half of 2027. Teams on a JDK without them either update or register Bouncy Castle. Bouncy Castle is also the route to SLH-DSA.',
     steps: [
-      'Upgrade to JDK 25 LTS (or JDK 24+) — or add the Bouncy Castle provider if you must stay on JDK 21',
+      "Move to a JDK that has them (JDK 25 LTS, JDK 24+, or Oracle JDK 21.0.13 / 17.0.21 and later) — or add the Bouncy Castle provider; other OpenJDK builds: check your vendor's release notes",
       'Generate ML-DSA keys with KeyPairGenerator "ML-DSA" and a NamedParameterSpec',
       'Use javax.crypto.KEM with "ML-KEM" where you do key agreement today',
       'Resize key stores, database columns and wire formats for the larger keys and signatures',
@@ -523,7 +523,7 @@ KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA");
 kpg.initialize(NamedParameterSpec.ML_DSA_65);
 KeyPair kp = kpg.generateKeyPair();
 Signature sig = Signature.getInstance("ML-DSA");
-// On JDK 21: Security.addProvider(new BouncyCastleProvider())
+// On a JDK without ML-DSA: Security.addProvider(new BouncyCastleProvider())
 // and getInstance("ML-DSA-65", "BC")`,
     },
   },

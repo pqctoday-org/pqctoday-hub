@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'api-security-jwt',
-  contentVersion: 15,
+  contentVersion: 17,
   lm_id: 'LM-011',
   title: 'API Security & JWT',
   description:

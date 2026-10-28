@@ -69,7 +69,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'Java checked exceptions: NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException. Provider-not-found errors are compile-time catchable.',
     providerPattern:
       'KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA"); // JDK 24+ built-in\n// or a third-party provider: Security.addProvider(new BouncyCastleProvider()); KeyPairGenerator.getInstance("ML-DSA-65", "BC");',
-    pqcStatus: `Built-in JDK support — ${describeRuntimeSupport('java')}. JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); JDK 21 LTS does not have them, and the first LTS that does is JDK 25. The javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds SLH-DSA (and Falcon) on any JDK and ML-KEM/ML-DSA on older JDKs. JCProv (Thales) adds PKCS#11-backed PQC when HSM firmware supports it.`,
+    pqcStatus: `Built-in JDK support — ${describeRuntimeSupport('java')}. JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026 (JDK 11 and 8 planned for the second half of 2027). The javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds SLH-DSA (and Falcon) on any JDK and ML-KEM/ML-DSA on older JDKs. JCProv (Thales) adds PKCS#11-backed PQC when HSM firmware supports it.`,
     strengths: [
       'Mature provider architecture — swap algorithms without code changes',
       'Extensive ecosystem — hundreds of providers available',

@@ -137,7 +137,8 @@ export const HybridKeyWrapping: React.FC = () => {
         <p className="text-sm text-muted-foreground">
           Explore hybrid combiner modes that derive a single wrapping key from both a classical and
           PQC shared secret. Toggle between Classical-only, PQC-only, and Hybrid to compare wire
-          overhead and provider API calls.
+          overhead and provider API examples. This explorer compares constructions; it does not
+          execute Cloud KMS calls.
         </p>
       </div>
 

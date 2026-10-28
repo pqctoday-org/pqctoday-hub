@@ -20,25 +20,27 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { VALIDATION_DISCLAIMER } from '../src/data/validationDisclaimer'
+import { DISCLAIMER_TEST_INPUT } from '../src/services/acvp/disclaimers'
 
 const FIXTURES = path.join(process.cwd(), 'src/services/acvp/__fixtures__')
 const KEM_PROMPT = path.join(FIXTURES, 'nist-acvp-server/ML-KEM-encapDecap-FIPS203/prompt.json')
-const KEM_GOLDEN = path.join(FIXTURES, 'goldens/ML-KEM-encapDecap-FIPS203.response.json')
+const KEM_EXPECTED = path.join(
+  FIXTURES,
+  'nist-acvp-server/ML-KEM-encapDecap-FIPS203/expectedResults.json'
+)
 
-const canonical = (v: unknown): string =>
-  v === null || typeof v !== 'object'
-    ? JSON.stringify(v)
-    : Array.isArray(v)
-      ? `[${v.map(canonical).join(',')}]`
-      : `{${Object.keys(v as object)
-          .sort()
-          .map((k) => `${JSON.stringify(k)}:${canonical((v as Record<string, unknown>)[k])}`)
-          .join(',')}}`
-
-interface Tests {
-  testGroups: Array<{ tests: unknown[] }>
+type VectorSet = { testGroups: Array<{ tgId: number; tests: Array<Record<string, unknown>> }> }
+/** The vector-set object of a bare or `[{acvVersion}, {…}]`-framed ACVP document. */
+const vectorSet = (doc: unknown): VectorSet => (Array.isArray(doc) ? doc[1] : doc) as VectorSet
+const countTests = (doc: unknown) =>
+  vectorSet(doc).testGroups.reduce((n, g) => n + g.tests.length, 0)
+/** "tgId/tcId" → the answer fields (c, k, testPassed), for every test of an ACVP document. */
+const answers = (doc: unknown): Map<string, Record<string, unknown>> => {
+  const out = new Map<string, Record<string, unknown>>()
+  for (const g of vectorSet(doc).testGroups)
+    for (const { tcId, ...answer } of g.tests) out.set(`${g.tgId}/${String(tcId)}`, answer)
+  return out
 }
-const countTests = (d: Tests) => d.testGroups.reduce((n, g) => n + g.tests.length, 0)
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -145,10 +147,15 @@ test.describe('Validation evidence surfaces (release evidence, J-2)', () => {
     page,
     context,
   }) => {
-    const prompt = JSON.parse(readFileSync(KEM_PROMPT, 'utf8')) as Tests
-    const golden = JSON.parse(readFileSync(KEM_GOLDEN, 'utf8')) as Tests
+    const prompt = vectorSet(JSON.parse(readFileSync(KEM_PROMPT, 'utf8'))) as VectorSet & {
+      testGroups: Array<{ function: string }>
+    }
     const total = countTests(prompt)
-    const answered = countTests(golden)
+    const testsOf = (fn: RegExp) =>
+      prompt.testGroups.filter((g) => fn.test(g.function)).reduce((n, g) => n + g.tests.length, 0)
+    // Every test is answered, and every answer is NIST's own.
+    const expected = answers(JSON.parse(readFileSync(KEM_EXPECTED, 'utf8')))
+    expect(expected.size).toBe(total)
 
     await openAcvpTab(page)
     await page
@@ -164,7 +171,7 @@ test.describe('Validation evidence surfaces (release evidence, J-2)', () => {
       await page.getByRole('button', { name: 'C++ engine', exact: true }).click()
       await page.getByRole('button', { name: /Run locally/ }).click()
       await expect(page.getByTestId('acvp-io-summary')).toContainText(
-        `${total} test cases on the softhsmv3 C++ engine: ${answered} answered · ${total - answered} unsupported · 0 error`,
+        `${total} test cases on the softhsmv3 C++ engine: ${total} answered · 0 unsupported · 0 error`,
         { timeout: 120000 }
       )
       const save = async (name: RegExp) => {
@@ -183,8 +190,7 @@ test.describe('Validation evidence surfaces (release evidence, J-2)', () => {
     const online = await runOnce()
     expect(online.response.name).toBe('response.json')
     expect(online.evidence.name).toBe('evidence.json')
-    const response = JSON.parse(online.response.bytes.toString('utf8')) as Record<string, unknown>
-    expect(canonical(response)).toBe(canonical(golden))
+    expect(answers(JSON.parse(online.response.bytes.toString('utf8')))).toEqual(expected)
     // F-6: the protocol response carries no PQC Today metadata.
     expect(online.response.bytes.toString('utf8')).not.toMatch(/pqc ?today|disclaimer|evidence/i)
 
@@ -193,26 +199,44 @@ test.describe('Validation evidence surfaces (release evidence, J-2)', () => {
       evidenceClass: string
       response: { fileName: string; sha256: string }
       engine: { id: string }
-      summary: { testCases: number; answered: number; unsupported: number; error: number }
+      summary: {
+        testCases: number
+        answered: number
+        unsupported: number
+        error: number
+        byInputKind: Record<string, number>
+      }
       unsupported: Array<{ reason: string }>
     }
-    expect(evidence.disclaimers).toEqual([VALIDATION_DISCLAIMER, importDisclaimer])
+    // Every answer comes from the extended plan, so the test-input disclaimer is third.
+    expect(evidence.disclaimers).toEqual([
+      VALIDATION_DISCLAIMER,
+      importDisclaimer,
+      DISCLAIMER_TEST_INPUT,
+    ])
     expect(evidence.evidenceClass).toBe('nist-acvp-reference-sample')
     expect(evidence.engine.id).toBe('cpp')
     expect(evidence.summary).toEqual({
       testCases: total,
-      answered,
-      unsupported: total - answered,
+      answered: total,
+      unsupported: 0,
       error: 0,
+      // Encapsulation runs with NIST's m as a test-only input; the key checks are
+      // what the engine does on key import; decapsulation is a standard call.
+      byInputKind: {
+        'computed-mu': 0,
+        'computed-ph': 0,
+        'key-import-result': testsOf(/KeyCheck$/),
+        standard: testsOf(/^decapsulation$/),
+        'test-input-m': testsOf(/^encapsulation$/),
+      },
     })
     // The sidecar names the exact response bytes it describes.
     expect(evidence.response).toEqual({
       fileName: 'response.json',
       sha256: createHash('sha256').update(online.response.bytes).digest('hex'),
     })
-    // Every unsupported group says why — nothing is silently dropped.
-    expect(evidence.unsupported.length).toBeGreaterThan(0)
-    for (const u of evidence.unsupported) expect(u.reason.length).toBeGreaterThan(20)
+    expect(evidence.unsupported).toEqual([])
 
     // Offline: the engine is loaded; nothing else is needed from the network.
     await page.getByRole('button', { name: /Clear/ }).click()
@@ -223,7 +247,7 @@ test.describe('Validation evidence surfaces (release evidence, J-2)', () => {
     })
     const offline = await runOnce()
     await context.setOffline(false)
-    expect(canonical(JSON.parse(offline.response.bytes.toString('utf8')))).toBe(canonical(golden))
+    expect(answers(JSON.parse(offline.response.bytes.toString('utf8')))).toEqual(expected)
     expect(offline.response.bytes.equals(online.response.bytes)).toBe(true)
     expect(nonGet).toEqual([])
   })

@@ -62,7 +62,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'X-Wing (used by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides a standardized single-construction hybrid KEM. FIPS-compliant environments should prefer P-256+ML-KEM-768.',
+        'X-Wing (used by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides the single-construction hybrid KEM defined in draft-connolly-cfrg-xwing-kem-11. FIPS-compliant environments should prefer P-256+ML-KEM-768.',
       config: { step: 2 },
     },
     {

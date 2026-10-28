@@ -70,10 +70,10 @@ spec:
     engine: 'kyverno',
     name: 'Enforce PQC TLS Cipher Groups on Ingress',
     description:
-      'Validates nginx Ingress resources to ensure the ssl-ciphers annotation includes the X-Wing hybrid group (X25519MLKEM768) and blocks ECDHE-only cipher configurations.',
+      'Validates nginx Ingress resources to ensure the ssl-ciphers annotation includes the TLS hybrid group X25519MLKEM768 and blocks ECDHE-only cipher configurations.',
     targetResource: 'Ingress',
     blockedAlgorithms: ['ECDHE-RSA', 'ECDHE-ECDSA'],
-    requiredAlgorithms: ['X25519MLKEM768', 'X-Wing'],
+    requiredAlgorithms: ['X25519MLKEM768'],
     severity: 'warning',
     rule: `# Kyverno ClusterPolicy
 apiVersion: kyverno.io/v1

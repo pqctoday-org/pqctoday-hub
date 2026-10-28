@@ -164588,6 +164588,120 @@
       "copies": [],
       "publishabilityGaps": [],
       "notes": "Scope rule WYC-SCOPE-1 (scripts/acvp/vendor_wycheproof.py): vendored because src/components/Playground/hsm/acvp/sections/wycheproofPqc.ts executes every vendored case of this file against both engines. 1 upstream case(s) are NOT vendored, by the declared rule recorded in lineage (type subset) and in the file's _provenance.excluded_cases. 4 case(s) are Wycheproof `invalid`: reject-path evidence NIST does not publish."
+    },
+    {
+      "id": "xwing-draft-test-vectors",
+      "path": "src/data/acvp/xwing-draft-test-vectors.json",
+      "sha256": "fa48201f077e274d7c44c16fa9c3724f754b9e7af85582ecdcb804a485c64cc6",
+      "status": "quarantined",
+      "statusReason": "Author-published KAT values independently fetched and hash-checked 2026-10-27; independent source/license review remains pending. Tests may run; this is not active validation evidence.",
+      "evidenceClass": "published-standard-kat",
+      "source": {
+        "kind": "published-document",
+        "documentStatus": "internet-draft",
+        "citation": "X-Wing author reference vectors; construction checked against draft-connolly-cfrg-xwing-kem-11 §5 / Appendix C",
+        "url": "https://raw.githubusercontent.com/dconnolly/draft-connolly-cfrg-xwing-kem/984c2f7a93b8f8d8f8073ebb53f9f4ce50b5babd/spec/test-vectors.json",
+        "revision": "984c2f7a93b8f8d8f8073ebb53f9f4ce50b5babd",
+        "verification": {
+          "date": "2026-10-27",
+          "method": "Fetched pinned original bytes using GitHub; SHA-256 matches the HSM reference fixture; original array values copied unchanged under /vectors. Independent review pending.",
+          "result": "match",
+          "evidence": [
+            {
+              "title": "X-Wing author spec/test-vectors.json",
+              "url": "https://raw.githubusercontent.com/dconnolly/draft-connolly-cfrg-xwing-kem/984c2f7a93b8f8d8f8073ebb53f9f4ce50b5babd/spec/test-vectors.json",
+              "sha256": "409efe197550b22985b4a0419418a0c5f2c2b193426c55bd998399ec8d3e614d"
+            }
+          ]
+        }
+      },
+      "license": {
+        "note": "X-Wing author draft material is subject to IETF Trust Legal Provisions; independent redistribution review pending.",
+        "reviewed": false
+      },
+      "caseContainers": [
+        {
+          "pointer": "/vectors",
+          "kind": "array"
+        }
+      ],
+      "cases": [
+        {
+          "caseId": "xwing-draft-test-vectors#/vectors/0",
+          "pointer": "/vectors/0",
+          "algorithm": {
+            "name": "X-Wing",
+            "revision": "draft-connolly-cfrg-xwing-kem-11"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "X-Wing author array[0]"
+          },
+          "lineage": ["xwing-draft-test-vectors-1"]
+        },
+        {
+          "caseId": "xwing-draft-test-vectors#/vectors/1",
+          "pointer": "/vectors/1",
+          "algorithm": {
+            "name": "X-Wing",
+            "revision": "draft-connolly-cfrg-xwing-kem-11"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "X-Wing author array[1]"
+          },
+          "lineage": ["xwing-draft-test-vectors-1"]
+        },
+        {
+          "caseId": "xwing-draft-test-vectors#/vectors/2",
+          "pointer": "/vectors/2",
+          "algorithm": {
+            "name": "X-Wing",
+            "revision": "draft-connolly-cfrg-xwing-kem-11"
+          },
+          "operation": "encapsulation",
+          "parameters": {
+            "kem": "MLKEM768-X25519"
+          },
+          "testType": "published-example",
+          "expectation": "positive",
+          "upstream": {
+            "label": "X-Wing author array[2]"
+          },
+          "lineage": ["xwing-draft-test-vectors-1"]
+        }
+      ],
+      "lineage": [
+        {
+          "id": "xwing-draft-test-vectors-1",
+          "appliesTo": [
+            "xwing-draft-test-vectors#/vectors/0",
+            "xwing-draft-test-vectors#/vectors/1",
+            "xwing-draft-test-vectors#/vectors/2"
+          ],
+          "upstreamOperation": "X-Wing seed and eseed to pk, ct, ss; decapsulation from sk and ct",
+          "localOperation": "Noble direct KEM checks pk, ct, ss and decapsulation; SoftHSM CKM_HPKE checks seeded pk and deterministic ct. Shared-secret values are additionally tested at the Rust engine test boundary.",
+          "transformations": [
+            {
+              "type": "field-add",
+              "detail": "Original array wrapped under /vectors with provenance metadata; case indices and every original value unchanged."
+            }
+          ]
+        }
+      ],
+      "copies": [],
+      "publishabilityGaps": [],
+      "notes": "Author-published X-Wing KATs, hash-checked 2026-10-27. Quarantined pending independent source/license review. Running them does not promote them to active validation evidence."
     }
   ]
 }

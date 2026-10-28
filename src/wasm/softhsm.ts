@@ -334,6 +334,12 @@ export interface Pkcs11LogEntry {
   isStepHeader?: true
   hSession?: number
   /**
+   * Why this row has no decoded parameters, when the call ran where the
+   * decoder cannot read its memory (a classic-script worker, a real binary's
+   * trace). Shown in the Inspect drawer instead of a silently missing ▶.
+   */
+  inspectNote?: string
+  /**
    * Which workshop surface produced the call — `operate:<rail>`,
    * `build:<suite>`, `learn`, `inspect`, `setup`, `parity` — stamped by
    * HsmContext's `addHsmLog` from the surface currently active, so the ONE
@@ -509,9 +515,9 @@ const PKCS11_PARAMS: Record<string, string[]> = {
   C_SessionCancel: ['hSession', 'flags'],
   C_GetInterfaceList: ['pInterfacesList', 'pulCount'],
   C_GetInterface: ['pInterfaceName', 'pVersion', 'ppInterface', 'flags'],
-  C_GetSessionValidationFlags: ['hSession', 'flags', 'pulFlags'],
+  C_GetSessionValidationFlags: ['hSession', 'type', 'pFlags'],
   // PKCS#11 v3.2 — Session & admin
-  C_LoginUser: ['hSession', 'pPin', 'ulPinLen', 'pUsername'],
+  C_LoginUser: ['hSession', 'userType', 'pPin', 'ulPinLen', 'pUsername', 'ulUsernameLen'],
   C_CopyObject: ['hSession', 'hObject', 'pTemplate', 'ulCount'],
   C_GenerateRandom: ['hSession', 'pRandomData', 'ulRandomLen'],
   C_SeedRandom: ['hSession', 'pSeed', 'ulSeedLen'],
@@ -522,9 +528,9 @@ const PKCS11_PARAMS: Record<string, string[]> = {
   C_GetOperationState: ['hSession', 'pOperationState', 'pulOperationStateLen'],
   C_SetOperationState: ['hSession', 'pOperationState', 'ulOperationStateLen', 'hEncryptionKey'],
   // PKCS#11 v3.0 — G2: one-shot message signing begin/next
-  C_SignMessageBegin: ['hSession', 'pMechanism', 'hKey'],
+  C_SignMessageBegin: ['hSession', 'pParameter', 'ulParameterLen'],
   C_SignMessageNext: ['hSession', 'pParameter', 'ulParameterLen', 'pData'],
-  C_VerifyMessageBegin: ['hSession', 'pMechanism', 'hKey'],
+  C_VerifyMessageBegin: ['hSession', 'pParameter', 'ulParameterLen'],
   C_VerifyMessageNext: ['hSession', 'pParameter', 'ulParameterLen', 'pData'],
   // PKCS#11 v3.0 — G3: AES-GCM message-based encrypt/decrypt
   C_MessageEncryptInit: ['hSession', 'pMechanism', 'hKey'],
@@ -538,10 +544,10 @@ const PKCS11_PARAMS: Record<string, string[]> = {
   C_DecryptMessageNext: ['hSession', 'pParameter', 'ulParameterLen', 'pCiphertextPart'],
   C_MessageDecryptFinal: ['hSession'],
   // PKCS#11 v3.2 — G4: single-shot signature verify
-  C_VerifySignatureInit: ['hSession', 'pMechanism', 'hKey'],
-  C_VerifySignature: ['hSession', 'pData', 'ulDataLen', 'pSignature'],
+  C_VerifySignatureInit: ['hSession', 'pMechanism', 'hKey', 'pSignature', 'ulSignatureLen'],
+  C_VerifySignature: ['hSession', 'pData', 'ulDataLen'],
   C_VerifySignatureUpdate: ['hSession', 'pPart', 'ulPartLen'],
-  C_VerifySignatureFinal: ['hSession', 'pSignature', 'ulSignatureLen'],
+  C_VerifySignatureFinal: ['hSession'],
   // PKCS#11 v3.2 — G5: authenticated key wrap/unwrap (AES-GCM)
   C_WrapKeyAuthenticated: ['hSession', 'pMechanism', 'hWrappingKey', 'hKey'],
   C_UnwrapKeyAuthenticated: ['hSession', 'pMechanism', 'hUnwrappingKey', 'pWrappedKey'],
@@ -556,9 +562,9 @@ const PKCS11_PARAMS: Record<string, string[]> = {
   C_SignEncryptUpdate: ['hSession', 'pPart', 'ulPartLen', 'pEncryptedPart'],
   C_DecryptVerifyUpdate: ['hSession', 'pEncryptedPart', 'ulEncryptedPartLen', 'pPart'],
   // PKCS#11 v3.2 — Async operations
-  C_AsyncComplete: ['hSession', 'pOperation', 'pResult'],
-  C_AsyncGetID: ['hSession', 'pulID'],
-  C_AsyncJoin: ['hSession', 'pOperation'],
+  C_AsyncComplete: ['hSession', 'pFunctionName', 'pResult'],
+  C_AsyncGetID: ['hSession', 'pFunctionName', 'pulID'],
+  C_AsyncJoin: ['hSession', 'pFunctionName', 'ulID', 'pData', 'ulData'],
 }
 
 const fmtArg = (v: unknown): string =>

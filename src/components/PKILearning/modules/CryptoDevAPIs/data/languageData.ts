@@ -309,7 +309,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'String-based algorithm names in JCA are error-prone',
     ],
     cryptoDevContext:
-      'Java is the dominant language for enterprise crypto applications. The JCA provider model is the gold standard for algorithm agility. JDK 24+ ships ML-KEM and ML-DSA in the default providers (JDK 25 is the first LTS with them; JDK 21 LTS has neither). Bouncy Castle provides the most complete PQC implementation in any managed language, including SLH-DSA. The main challenge is memory safety for key material — GC cannot guarantee timely zeroing.',
+      'Java is the dominant language for enterprise crypto applications. The JCA provider model is the gold standard for algorithm agility. JDK 24+ ships ML-KEM and ML-DSA in the default providers (JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026). Bouncy Castle provides the most complete PQC implementation in any managed language, including SLH-DSA. The main challenge is memory safety for key material — GC cannot guarantee timely zeroing.',
     radar: {
       memorySafety: 7,
       cryptoEcosystem: 10,
