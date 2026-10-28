@@ -64,7 +64,7 @@ Certification lessons now say exactly what NIST's CMVP documents say, the Certif
 - **Oracle Jipher is in the product catalog** [view:/migrate] [persona:developer] [persona:cert-engineer] [persona:ops]: Oracle's Java provider for FIPS-regulated environments added ML-KEM (512, 768, 1024) and ML-DSA (44, 65, 87) in Jipher 20 (September 2026). The entry says plainly that Oracle cites no FIPS 140-3 certificate for it yet.
 - **Oracle's Java LTS roadmap is described on the Vendor roadmaps page** [view:/migrate] [persona:executive] [persona:grc] [persona:ops]: which LTS release gets ML-KEM, ML-DSA and hybrid TLS, and when. Thanks to the community member who pointed us to it.
 - **Library, quiz and role board follow the same NIST wording** [view:/library] [view:/learn/quiz] [view:/] [persona:cert-engineer]: the retired "September 2025" Implementation Guidance entry no longer says it applies retroactively, and the CSWP 37B entry is completed (final, 30 September 2026).
-- CERT_REFRESH_PLACEHOLDER
+- **EU certificate data checked against ENISA** [view:/compliance] [persona:cert-engineer] [persona:grc]: all 112 EUCC certificates were read again from ENISA; one (NXP MF0AES(H)x0, NT2H2xy1G and NT2H2xy1S, release B0, EUCC-3100-2026-7001701) is now marked Withdrawn after its re-assessment, and of the 75 Common Criteria Portal listings that name an EUCC number, 65 now link to ENISA's certificate page and 10 are marked as not on ENISA's list. NIST FIPS 140-3 and CAVP records are unchanged in this release.
 
 ### Security
 
