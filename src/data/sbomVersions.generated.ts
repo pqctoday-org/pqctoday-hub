@@ -31,7 +31,7 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   '@testing-library/react': '16.3.3',
   '@testing-library/user-event': '14.6.7',
   '@vitejs/plugin-react': '5.2.0',
-  '@vitest/coverage-v8': '5.0.2',
+  '@vitest/coverage-v8': '5.0.5',
   '@xyflow/react': '12.12.0',
   ajv: '8.20.0',
   'ajv-formats': '3.0.1',
@@ -78,7 +78,7 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   'vite-plugin-pwa': '1.3.0',
   'vite-plugin-top-level-await': '1.6.0',
   'vite-plugin-wasm': '3.6.0',
-  vitest: '5.0.1',
+  vitest: '5.0.5',
   zustand: '5.0.15',
 }
 
