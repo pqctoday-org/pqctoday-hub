@@ -13,17 +13,24 @@ vi.mock('./workshopRegistry', () => ({
   WORKSHOP_TOOLS: [
     { id: 'sab-tool', name: 'SAB Tool', category: 'Protocols', requires: ['sab'] },
     { id: 'plain-tool', name: 'Plain Tool', category: 'Protocols', requires: [] },
+    { id: 'pqc-ssh-sim', name: 'SSH tool', category: 'Protocols', requires: ['sab'] },
   ],
   ONBACK_COMPONENTS: {},
   TOOL_COMPONENTS: {
     'sab-tool': () => <div>sab tool body</div>,
     'plain-tool': () => <div>plain tool body</div>,
+    'pqc-ssh-sim': () => <div>provider-dependent SSH body</div>,
   },
 }))
 
 function Where() {
   const l = useLocation()
-  return <output data-testid="where">{l.pathname}</output>
+  return (
+    <output data-testid="where">
+      {l.pathname}
+      {l.search}
+    </output>
+  )
 }
 
 function renderAt(url: string) {
@@ -104,4 +111,15 @@ describe('TryToolModalHost — layer in the phone shell', () => {
     await screen.findByText('plain tool body')
     expect(screen.getByTestId('try-tool-modal-layer')).toHaveClass('z-50')
   })
+})
+
+it('keeps provider-dependent SSH launches on the full tool route even when isolated', async () => {
+  Object.defineProperty(window, 'crossOriginIsolated', { value: true, configurable: true })
+  renderAt('/algorithms?try=pqc-ssh-sim&launchAlgo=mlkem768x25519-sha256')
+  await waitFor(() =>
+    expect(screen.getByTestId('where')).toHaveTextContent(
+      '/playground/pqc-ssh-sim?launchAlgo=mlkem768x25519-sha256'
+    )
+  )
+  expect(screen.queryByText('provider-dependent SSH body')).not.toBeInTheDocument()
 })

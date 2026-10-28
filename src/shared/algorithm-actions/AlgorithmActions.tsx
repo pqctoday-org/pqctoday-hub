@@ -45,7 +45,7 @@ export function AlgoCtaStrip({
   const target = ctas.try ? new URL(ctas.try, 'https://www.pqctoday.com') : null
   const toolId = target?.pathname.match(/^\/playground\/([A-Za-z0-9-]+)$/)?.[1]
   let tryTo = ctas.try
-  if (toolId && toolId !== 'interactive' && toolId !== 'hsm') {
+  if (toolId && toolId !== 'interactive' && toolId !== 'hsm' && toolId !== 'pqc-ssh-sim') {
     const next = new URLSearchParams(location.search)
     next.set('try', toolId)
     const launch = target?.searchParams.get('launchAlgo')

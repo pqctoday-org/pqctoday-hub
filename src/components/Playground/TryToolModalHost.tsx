@@ -76,6 +76,10 @@ export function TryToolModalHost() {
         // eslint-disable-next-line security/detect-object-injection
         const Comp = toolId in reg.ONBACK_COMPONENTS ? undefined : reg.TOOL_COMPONENTS[toolId]
         if (!tool || !Comp) return fallback()
+        // SSH needs PlaygroundShell's HsmProvider even on an isolated page.
+        // Outside /playground, rendering its selector here would throw instead
+        // of retaining the requested algorithm on the full tool route.
+        if (toolId === 'pqc-ssh-sim') return fallback()
         // A SharedArrayBuffer tool can't run in place on a page that isn't
         // cross-origin isolated (only routes that need it reload for it —
         // src/utils/crossOriginIsolation.ts); its real route gets isolated.
