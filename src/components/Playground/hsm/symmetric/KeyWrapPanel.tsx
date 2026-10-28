@@ -215,7 +215,7 @@ const MECH_INFO: MechInfo[] = [
     nistRef: 'NIST SP 800-227 (2025) + FIPS 203 (2024) + SP 800-38F',
     fips140Level: 'FIPS 140-3 (ML-KEM approved 2024)',
     description:
-      'True hybrid key wrapping combining classical ECDH (P-256) and ML-KEM via HKDF-SHA-256 combiner per NIST SP 800-227. ECDH provides classical security guarantee; ML-KEM provides quantum resistance. The combined shared secret (classical_ss || pqc_ss = 64 bytes) is processed through HKDF to derive an AES-256 KEK. X25519 variant (X-Wing) also supported per Google Cloud KMS pattern. No single PKCS#11 composite mechanism exists — implemented as 6 separate PKCS#11 calls.',
+      'True hybrid key wrapping combining classical ECDH (P-256) and ML-KEM via HKDF-SHA-256 combiner per NIST SP 800-227. ECDH provides classical security guarantee; ML-KEM provides quantum resistance. The combined shared secret (classical_ss || pqc_ss = 64 bytes) is processed through HKDF to derive an AES-256 KEK. The X25519 variant uses this same HKDF combiner; it is a generic hybrid, distinct from X-Wing. No single PKCS#11 composite mechanism exists — implemented as 6 separate PKCS#11 calls.',
     keyConstraints:
       'P-256 + ML-KEM-768 (NIST L3) or ML-KEM-1024 (L5). HKDF info="hybrid-wrap-kek". Output: 3 blobs (ephemeral pubkey + ML-KEM ciphertext + wrapped key).',
     aws: {
@@ -1398,7 +1398,7 @@ export const KeyWrapPanel = ({
                   }}
                   className={`text-xs h-7 px-3 ${hybridCombiner === 'x25519-mlkem' ? 'bg-primary/20 text-primary' : ''}`}
                 >
-                  X25519 + ML-KEM <span className="ml-1 opacity-60">X-Wing</span>
+                  X25519 + ML-KEM
                 </Button>
               </div>
 
@@ -1455,7 +1455,12 @@ export const KeyWrapPanel = ({
               <p className="text-[10px] text-muted-foreground opacity-70">
                 {hybridCombiner === 'p256-mlkem'
                   ? 'ECDH P-256 → classical_ss (32 B) || ML-KEM → pqc_ss (32 B) → HKDF-SHA-256 → AES-256 KEK → AES-KW'
-                  : 'X25519 → classical_ss (32 B) || ML-KEM → pqc_ss (32 B) → HKDF-SHA-256 → AES-256 KEK → AES-KW'}
+                  : 'X25519 → classical_ss (32 B) || ML-KEM → pqc_ss (32 B) → HKDF-SHA-256 → AES-256 KEK → AES-KW'}{' '}
+                For X-Wing, use the{' '}
+                <a className="text-primary underline" href="/playground/api-security-jwt">
+                  API Security &amp; JWT workshop (Step 4, HPKE-9)
+                </a>
+                .
               </p>
             </div>
           )}

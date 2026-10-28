@@ -928,7 +928,8 @@ export const HpkeWorkshop: React.FC = () => {
               >
                 RFC 9180
               </a>{' '}
-              Appendix A.
+              Appendix A for the classical DHKEM suites. Hybrid round trips alone do not establish
+              conformance to published hybrid KEM vectors.
             </>
           ) : (
             <>
@@ -971,8 +972,15 @@ export const HpkeWorkshop: React.FC = () => {
           </Button>
         </div>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Same picker, same diagram, same 6 steps — this only changes which PKCS#11 mechanism(s)
-          each step actually calls. Switching resets step progress and generated keys.
+          Switching resets step progress and generated keys. Composed mode generates independent
+          component keys: its X-Wing combiner matches, but it cannot reproduce the 32-byte
+          private-seed representation or seed-based known-answer vectors. The candidate mode
+          supports that seed interface and is tested against published CFRG and HPKE vectors. For
+          browser X-Wing KATs and NIST component samples, open the{' '}
+          <a className="text-primary underline" href="/playground/api-security-jwt">
+            API Security &amp; JWT workshop (Step 4, HPKE-9)
+          </a>
+          .
         </p>
       </div>
 

@@ -18,6 +18,7 @@ import {
 import { type HsmHpkeRecipient, hsmHpkeRecipient, softHsmHpkeOps } from '../hpkeJweHsm'
 import publishedExamples from '@/data/acvp/jose-hpke-pq-pqt-01-examples.json'
 import { Button } from '@/components/ui/button'
+import { XwingEvidence } from './XwingEvidence'
 import { ShieldCheck } from 'lucide-react'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -104,6 +105,7 @@ export const JWEEncryption: React.FC = () => {
   }, [useHsm, hsm.isReady, hsm.moduleRef, hsm.hSessionRef])
 
   const reset = () => {
+    setExampleCheck(null)
     setResult(null)
     setKeys(null)
     setDecryptedPayload(null)
@@ -270,8 +272,10 @@ export const JWEEncryption: React.FC = () => {
           >
             draft-ietf-jose-hpke-pq-pqt-01
           </a>{' '}
-          registers the ML-KEM suites used here. All operations run real crypto in your browser, and
-          the code is checked against the examples published in that draft. It is still an early
+          registers the ML-KEM suites used here. This workshop pins its examples to revision -01;
+          revision -02 adds serialization references and updates recommendation context without
+          changing the HPKE-9 parameters. All operations run real crypto in your browser, and the
+          code is checked against the examples published in that draft. It is still an early
           working-group draft, so the algorithm names may change — not a format to deploy yet. An
           earlier direct-KEM design (draft-ietf-jose-pqc-kem) was dropped for JOSE in 2026.
         </p>
@@ -330,7 +334,7 @@ export const JWEEncryption: React.FC = () => {
               }}
               className={tabBtn(backend === 'softhsmv3')}
             >
-              SoftHSM3 (PKCS#11 v3.2 WASM)
+              SoftHSM3 (candidate CKM_HPKE WASM)
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
@@ -356,6 +360,8 @@ export const JWEEncryption: React.FC = () => {
           )}
         </div>
       </div>
+
+      {alg === 'HPKE-9' && <XwingEvidence />}
 
       {/* JWE Format Explainer */}
       <div className="glass-panel p-4">
