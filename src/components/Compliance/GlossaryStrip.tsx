@@ -61,8 +61,8 @@ export function GlossaryStrip() {
         <Chip
           name="Standard"
           swatch={TYPE_COLOURS.standards}
-          // ACCURACY-0705: NIST IR 8547 is still an Initial Public Draft, not
-          // published -- swapped for FIPS 205 (final, Aug 2024).
+          // ACCURACY-0705: NIST IR 8547 was still an Initial Public Draft at the
+          // time (final only on 27 Oct 2026) -- FIPS 205 is the example used.
           def="A published specification. FIPS 203, FIPS 205, RFC 9180."
         />
         <Chip

@@ -31,7 +31,8 @@ export const QC_BROAD_YEAR = 2035
  */
 export const Q_DAY_FRESHNESS: Freshness = {
   // 2026-09-17: GRI's page still presents the Quantum Threat Timeline Report
-  // 2025 (posted 9 March 2026) as current and NIST IR 8547 is still the ipd —
+  // 2025 (posted 9 March 2026) as current. NIST IR 8547 went final on 27 Oct 2026
+  // with the same 2030/2035 dates —
   // the 2030–2040 public range stands, so does the 2029 anchor below it.
   asOf: '2026-09-17',
   recheck: 'https://csrc.nist.gov/projects/post-quantum-cryptography',

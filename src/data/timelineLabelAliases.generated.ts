@@ -712,6 +712,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'united-states-nist-112-bit-security-algorithms-fully-disallowed': [
     'United States:NIST — 112-bit Security Algorithms Fully Disallowed',
+    'United States:NIST — Quantum-Vulnerable Public-Key Algorithms Disallowed',
   ],
   'united-states-nist-112-bit-security-deprecated': [
     'United States:NIST — 112-bit Security Deprecated',
@@ -750,6 +751,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   'united-states-nist-nist-ir-8545-round-4-status-report': [
     'United States:NIST — NIST IR 8545 Round 4 Status Report',
   ],
+  'united-states-nist-nist-ir-8547-final-published': [
+    'United States:NIST — NIST IR 8547 Final Published',
+  ],
   'united-states-nist-nist-ir-8547-ipd2-published': [
     'United States:NIST — NIST IR 8547 IPD2 Published',
   ],
@@ -772,6 +776,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'united-states-nist-piv-standards-pqc-working-drafts-released': [
     'United States:NIST — PIV Standards PQC Working Drafts Released',
+  ],
+  'united-states-nist-quantum-vulnerable-public-key-algorithms-deprecated': [
+    'United States:NIST — Quantum-Vulnerable Public-Key Algorithms Deprecated',
   ],
   'united-states-nist-sixth-pqc-standardization-conference': [
     'United States:NIST — Sixth PQC Standardization Conference',

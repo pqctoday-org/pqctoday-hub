@@ -250,7 +250,7 @@ export function CyberInsuranceLensSection() {
               <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
                 ALE = HNDL probability × breach cost × (1 − % migrated) × regulatory multiplier.{' '}
                 <a
-                  href="https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf"
+                  href="https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"

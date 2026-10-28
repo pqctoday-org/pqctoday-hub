@@ -136,7 +136,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     emoji: '✅',
     useCase:
       'Generate real classical, hybrid and post-quantum key material, identify each asset algorithm with OpenSSL, and emit it as a CycloneDX 1.6 CBOM of cryptographic-assets. Evaluate that CBOM against a CNSA 2.0 / NIST IR 8547 policy in OPA / Rego to produce a compliance score. Scope note: this audits the crypto THIS scenario generates, not a full-container inventory — cdxgen OS scanning needs an optional binary plugin that is not installed here and returned zero components.',
-    algorithms: ['CBOM CycloneDX 1.6', 'CNSA 2.0', 'NIST IR 8547 (draft)'],
+    algorithms: ['CBOM CycloneDX 1.6', 'CNSA 2.0', 'NIST IR 8547'],
     difficulty: 'advanced',
     trackId: 'supply-chain',
     tool: { name: 'OpenSSL + OPA', url: 'https://github.com/open-policy-agent/opa' },

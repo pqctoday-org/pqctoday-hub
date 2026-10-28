@@ -44,9 +44,9 @@ export const LIBRARY_CURIOUS_PICKS: readonly LibraryCuriousPick[] = [
   },
   {
     referenceId: 'NIST IR 8547',
-    label: 'NIST IR 8547 — Transition Timeline (draft)',
+    label: 'NIST IR 8547 — Transition Timeline',
     blurb:
-      "Initial public draft (November 2024), not yet final. NIST's proposed plan for retiring today's public-key encryption: deprecate 112-bit classical algorithms after 2030 and disallow them after 2035. Many other agencies' timelines point to similar dates.",
+      "Final since October 2026. NIST's plan for retiring today's public-key encryption: RSA and elliptic-curve algorithms are deprecated after 2030 and disallowed after 2035. Many other agencies' timelines point to similar dates.",
   },
 ] as const
 

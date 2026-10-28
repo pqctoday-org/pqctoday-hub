@@ -5,7 +5,7 @@ import { loadPQCAlgorithmsData } from './pqcAlgorithmsData'
 
 // Label and status corrections checked against primary sources on 2026-10-17:
 // NIST IR 8545 (Round 4 outcome), NIST's 11 March 2025 HQC news release, NIST IR
-// 8547 ipd Table 4, ANSSI PG-083 v3.00 section 2.2.3, NIST's Round 3
+// 8547 Table 4 (final, 27 October 2026), ANSSI PG-083 v3.00 section 2.2.3, NIST's Round 3
 // additional-signatures page (14 May 2026), the IETF datatracker entries for the
 // LAMPS composite drafts, kpqc.or.kr (final selection, 16 January 2025) and
 // iso.org record 86890 (ISO/IEC 18033-2:2006/Amd 2:2026).
@@ -44,6 +44,22 @@ describe('transition guide labels', () => {
     for (const row of rows) {
       expect(row.deprecationDate, row.pqc).toBe('2030 (Deprecated) / 2035 (Disallowed)')
       expect(row.deprecationDateISO, row.pqc).toBe('2030-01-01')
+    }
+  })
+
+  it('gives every NIST public-key row both IR 8547 steps, as the final report does', () => {
+    // NIST IR 8547 final (27 Oct 2026), Tables 2 and 4: every quantum-vulnerable
+    // public-key parameter set at 112 bits of security or more is deprecated after
+    // 2030 and disallowed after 2035. The 2024 draft deprecated only the 112-bit
+    // sets, so 128-bit-and-up rows read "2035 (Disallowed)" alone until then.
+    const rows = algorithmsData.filter(
+      (r) => r.region === 'NIST' && /^20(30|35) \((Deprecated|Disallowed)\)/.test(r.deprecationDate)
+    )
+    expect(rows.length).toBeGreaterThanOrEqual(69)
+    for (const row of rows) {
+      const id = `${row.classical} ${row.keySize} -> ${row.pqc}`
+      expect(row.deprecationDate, id).toBe('2030 (Deprecated) / 2035 (Disallowed)')
+      expect(row.deprecationDateISO, id).toBe('2030-01-01')
     }
   })
 
