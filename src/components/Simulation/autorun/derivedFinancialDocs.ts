@@ -213,7 +213,7 @@ export function deriveBreachDoc(sector: DemoSector): DemoDoc {
     data: joinMd(
       `# Breach Scenario — ${ORG[sector]}`,
       '',
-      `Industry baseline (${s.industry}): insurance-claim incident cost (lower bound), NetDiligence Cyber Claims Study 2025.`,
+      `Industry baseline (${s.industry}), IBM Cost of a Data Breach 2025.`,
       '',
       '| Metric | Value |',
       '|--------|-------|',

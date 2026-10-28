@@ -4,10 +4,11 @@
  *
  * v2 design (2026-07 rebuild — see pqctoday-priv/plans/breach-simulator-improvement-plan-2026-07-06.md):
  *
- *  - ONE source of truth for the baseline: the industry insurance-claim incident
- *    cost from roiBaselines (NetDiligence 2025, a lower bound), passed in — no
- *    private, drifted table. No separate reputational term is added on top: it
- *    would be an unsourced number, and the result is presented as a floor.
+ *  - ONE source of truth for the baseline: the industry average total breach
+ *    cost from roiBaselines (IBM 2025), passed in — no private, drifted table.
+ *    The baseline is IBM's *total* breach cost (already inclusive of detection,
+ *    notification, lost business and reputational damage), so we do NOT add a
+ *    separate reputational term on top (that would double-count).
  *  - Quantum risk has TWO independently documented ingredients, not one hidden
  *    assumption:
  *      (1) HNDL amplification — how much MORE a breach costs if harvested data
@@ -165,7 +166,7 @@ export function shelfLifeDecayFactor(yearsOfData: number, shelfLifeYears: number
 }
 
 export interface BreachModelInputs {
-  /** Industry breach-cost baseline (SLE anchor): NetDiligence 2025 insurance-claim incident cost. */
+  /** Industry average total breach cost (SLE anchor), e.g. IBM 2025. */
   baseline: number
   /** Breach severity as a multiple of the industry-average breach. */
   breachScale: number

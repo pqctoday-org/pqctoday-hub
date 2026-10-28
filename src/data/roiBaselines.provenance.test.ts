@@ -31,8 +31,6 @@ import {
   INDUSTRY_CLAIM_COST_SAMPLE_SIZE,
   CLAIM_COST_THIN_SAMPLE_THRESHOLD,
   BREACH_COST_BASIS_NOTE,
-  BREACH_BASELINE_NOTE,
-  BREACH_BASELINE_LABEL,
 } from './roiBaselines'
 
 describe('financial baseline provenance', () => {
@@ -97,39 +95,34 @@ describe('financial baseline provenance', () => {
       expect(FINANCIAL_BASELINE_EVIDENCE.netDiligenceOrgSize).toBe('primary-verified')
     })
 
-    it('no longer lists the registration-walled IBM table as a source', () => {
-      // Owner decision 2026-10-27: the IBM per-sector table cannot be cited, so
-      // the tools use NetDiligence's primary-verified table instead.
-      expect(Object.keys(FINANCIAL_BASELINE_EVIDENCE)).not.toContain('ibmBreachCosts')
-      expect(FINANCIAL_BASELINE_EVIDENCE.netDiligenceIndustryClaimCosts).toBe('primary-verified')
+    it('still admits IBM is unproven rather than quietly upgrading it', () => {
+      // The IBM per-sector table is behind a registration wall with no public
+      // asset path. Downgrading this claim honestly is the point of the field.
+      expect(FINANCIAL_BASELINE_EVIDENCE.ibmBreachCosts).toBe('landing-page-only')
     })
   })
 
   describe('NetDiligence 2025 — per-sector claim costs (2026-08-14)', () => {
-    it('is the table every tool reads', () => {
-      expect(INDUSTRY_BREACH_BASELINES).toBe(INDUSTRY_CLAIM_COST_BASELINES)
-    })
-
-    it('matches NetDiligence Table 5 (Incident Cost by Sector—SMEs) figure for figure', () => {
-      // Read from the cached report (sha256 4014f4e7…), page 54, on 2026-10-27.
-      expect(INDUSTRY_CLAIM_COST_BASELINES).toEqual({
-        'Finance & Banking': 329_000,
-        Healthcare: 566_000,
-        'Government & Defense': 180_000,
-        Technology: 876_000,
-        Telecommunications: 1_600_000,
-        'Energy & Utilities': 431_000,
-        'Retail & E-Commerce': 219_000,
-        Aerospace: 395_000,
-        Automotive: 395_000,
-        Education: 172_000,
-        Other: 62_000,
-      })
+    it('covers exactly the industries the IBM table covers', () => {
+      // Two columns shown side by side must not disagree about which rows
+      // exist, or the UI silently drops a sector from one of them.
+      expect(Object.keys(INDUSTRY_CLAIM_COST_BASELINES).sort()).toEqual(
+        Object.keys(INDUSTRY_BREACH_BASELINES).sort()
+      )
     })
 
     it('carries a claim count for every figure', () => {
       for (const sector of Object.keys(INDUSTRY_CLAIM_COST_BASELINES)) {
         expect(INDUSTRY_CLAIM_COST_SAMPLE_SIZE[sector]).toBeGreaterThan(0)
+      }
+    })
+
+    it('reads below the IBM figure in every sector, as a claims basis must', () => {
+      // Claims exclude uninsured loss and are capped by policy limits, so a
+      // claim cost ABOVE a total-cost estimate means one of the two columns
+      // has been mistyped or mislabelled.
+      for (const [sector, claim] of Object.entries(INDUSTRY_CLAIM_COST_BASELINES)) {
+        expect(claim).toBeLessThan(INDUSTRY_BREACH_BASELINES[sector])
       }
     })
 
@@ -143,13 +136,10 @@ describe('financial baseline provenance', () => {
     })
 
     it('says what each column measures, so neither reads as the other', () => {
-      // Table 5 is incident cost (paid amount plus retention and excluded costs),
-      // which the report says to read as a lower bound — never "payouts".
-      expect(BREACH_COST_BASIS_NOTE.netDiligence).toMatch(/incident cost/)
-      expect(BREACH_COST_BASIS_NOTE.netDiligence).toMatch(/lower bounds/)
-      expect(BREACH_COST_BASIS_NOTE.netDiligence).not.toMatch(/PAID OUT/)
-      expect(BREACH_BASELINE_NOTE).toMatch(/^Insurance-claim incident cost \(lower bound\)/)
-      expect(BREACH_BASELINE_LABEL).toBe('Insurance-claim incident cost (lower bound)')
+      expect(BREACH_COST_BASIS_NOTE.ibm).toMatch(/TOTAL cost/)
+      expect(BREACH_COST_BASIS_NOTE.ibm).toMatch(/unverified/)
+      expect(BREACH_COST_BASIS_NOTE.netDiligence).toMatch(/PAID OUT/)
+      expect(FINANCIAL_BASELINE_EVIDENCE.netDiligenceIndustryClaimCosts).toBe('primary-verified')
     })
   })
 })

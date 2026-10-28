@@ -18,7 +18,7 @@ import {
   HNDL_MULTIPLIER_CAP,
   type DataSensitivityClass,
 } from '@/utils/breachCostModel'
-import { BREACH_BASELINE_NOTE } from '@/data/roiBaselines'
+import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -133,8 +133,8 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
       for (const f of findings) md += `- ${f}\n`
       md += `\n`
     }
-    md += `*Illustrative — NetDiligence Cyber Claims Study 2025 per-sector insurance-claim incident costs (lower bound) and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
-    md += `\n*${BREACH_BASELINE_NOTE}*\n`
+    md += `*Illustrative — IBM Cost of a Data Breach 2025 per-sector baselines (one edition behind; IBM published its 2026 global report) and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
+    md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     return md
   }, [breachCosts, selectedIndustry, findings])
 
@@ -311,19 +311,19 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           <div className="mt-3 space-y-2 text-xs text-muted-foreground leading-relaxed">
             <p>
               <strong className="text-foreground/80">1. Cost of one breach today (SLE).</strong> The
-              industry&apos;s insurance-claim incident cost (lower bound) from the{' '}
+              industry-average total breach cost from{' '}
               <a
-                href="https://netdiligence.com/cyber-claims-study-2025-report/"
+                href="https://www.ibm.com/reports/data-breach"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-foreground"
               >
-                NetDiligence Cyber Claims Study 2025
+                IBM&apos;s Cost of a Data Breach Report 2025
               </a>
-              , multiplied by your severity setting. The figure covers claimed incidents only (what
-              was paid plus the policyholder&apos;s retention), so treat the results as a floor; no
-              separate reputational term is added on top.{' '}
-              <span className="text-muted-foreground">{BREACH_BASELINE_NOTE}</span>
+              , multiplied by your severity setting. IBM&apos;s figure already includes detection,
+              notification, lost business and reputational damage, so no separate reputational term
+              is added on top — that would double-count.{' '}
+              <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
             </p>
             <p>
               <strong className="text-foreground/80">

@@ -27,7 +27,7 @@ import {
 } from '@/utils/roiMath'
 import {
   ANNUAL_BREACH_PROBABILITY_PCT,
-  BREACH_BASELINE_NOTE,
+  IBM_BASELINE_UNVERIFIED_NOTE,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -283,7 +283,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       },
       sourceStatus: {
         breachBaseline:
-          'NetDiligence 2025 insurance-claim incident cost (lower bound), primary-verified',
+          'IBM 2025 sector assumption — one edition behind and not independently verified',
         breachProbability: 'Cyentia IRIS 2025 primary-verified',
         crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model',
       },
@@ -367,7 +367,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       const delayed = delayedResult.rows[i]
       md += `| ${row.year} | ${fmt(row.cumulativeTotal)} | ${fmt(delayed.cumulativeTotal)} | ${fmt(delayed.cumulativeTotal - row.cumulativeTotal)} |\n`
     })
-    md += `\n*Illustrative financial scenario, not a forecast or investment recommendation. NetDiligence 2025 per-sector baseline: insurance-claim incident cost, a lower bound. GRI 2025 expert-survey bands are interpolated by this model. Migration cost, delay premium and most data shelf lives are assumptions. No framework-derived fine is included automatically; only the learner-entered, organization-verified consequence above enters the arithmetic.*\n`
+    md += `\n*Illustrative financial scenario, not a forecast or investment recommendation. IBM 2025 per-sector baseline: one edition behind and not independently verified. GRI 2025 expert-survey bands are interpolated by this model. Migration cost, delay premium and most data shelf lives are assumptions. No framework-derived fine is included automatically; only the learner-entered, organization-verified consequence above enters the arithmetic.*\n`
     return md
   }, [
     selectedIndustry,
@@ -647,8 +647,8 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           <div>
             <dt className="font-semibold text-foreground">Breach baseline</dt>
             <dd>
-              {fmt(inputs.breachBaseline)} — NetDiligence 2025 insurance-claim incident cost (lower
-              bound)
+              {fmt(inputs.breachBaseline)} — IBM 2025 sector assumption, one edition behind and not
+              independently verified
             </dd>
           </div>
           <div>
@@ -681,7 +681,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             </dd>
           </div>
         </dl>
-        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{BREACH_BASELINE_NOTE}</p>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          {IBM_BASELINE_UNVERIFIED_NOTE}
+        </p>
       </section>
 
       {selectedPersona === 'executive' && (

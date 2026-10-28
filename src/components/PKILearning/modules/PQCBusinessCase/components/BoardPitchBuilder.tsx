@@ -12,7 +12,7 @@ import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSaved
 import { getPitchVariant } from './pitchVariants'
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
-import { BREACH_BASELINE_NOTE } from '@/data/roiBaselines'
+import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
 
 const MODULE_ID = 'pqc-business-case'
 
@@ -150,7 +150,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     '',
     '## Basis of figures',
     '',
-    `- **Breach cost baselines** — NetDiligence Cyber Claims Study 2025, per-sector insurance-claim incident costs (lower bound). Sectors without a dedicated NetDiligence figure use a labelled proxy. ${BREACH_BASELINE_NOTE}`,
+    `- **Breach cost baselines** — IBM Cost of a Data Breach, per-sector averages. Sectors without a dedicated IBM figure use a labelled proxy. ${IBM_BASELINE_UNVERIFIED_NOTE}`,
     '- **Annual breach probability** — Cyentia Institute, *Information Risk Insights Study (IRIS) 2025*, Figures 6 and 7, read from the report itself for the three organisation-size tiers (the report states them in charts, so they are not reproduced here). The tiers sit close together because IRIS 2025 finds they have converged.',
     '- **CRQC arrival probability** — Global Risk Institute, Quantum Threat Timeline Report 2025: a CRQC is judged ~49% likely within a decade on averaged expert estimates, with half of the 26 experts surveyed putting it at 50% or more (2025 Quantum Threat Timeline Report).',
     '- **Migration cost, delay premium, and staffing** — analyst estimates for this organization, not cited figures.',

@@ -31,7 +31,7 @@ export interface InactionScenarioRecord {
     sourceNote: string
   }
   sourceStatus: {
-    breachBaseline: 'NetDiligence 2025 insurance-claim incident cost (lower bound), primary-verified'
+    breachBaseline: 'IBM 2025 sector assumption — one edition behind and not independently verified'
     breachProbability: 'Cyentia IRIS 2025 primary-verified'
     crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model'
   }

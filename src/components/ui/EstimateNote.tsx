@@ -8,7 +8,7 @@
  * learner sees against the Library documents the item cites. 132 figures on
  * 42 items are the site's own arithmetic or judgement; no document states
  * them and none should. This note says so once per block, naming what is
- * modelled, the way roiBaselines' BREACH_BASELINE_NOTE already does
+ * modelled, the way roiBaselines' IBM_BASELINE_UNVERIFIED_NOTE already does
  * for the breach baselines. Same shape on the phone: the component has no
  * desktop-only import, so the Mobile tree may use it directly.
  */

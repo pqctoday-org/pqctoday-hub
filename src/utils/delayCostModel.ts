@@ -36,7 +36,7 @@ import { ANNUAL_BREACH_PROBABILITY_PCT } from '@/data/roiBaselines'
 import type { InactionMandateType } from './inactionDrivers'
 
 export interface DelayScenarioInputs {
-  /** Industry breach-cost baseline (SLE anchor): NetDiligence 2025 insurance-claim incident cost. */
+  /** Industry breach-cost baseline (SLE anchor), e.g. IBM 2025. */
   breachBaseline: number
   /** Breach severity as a multiple of the industry-average breach. */
   breachScale: number

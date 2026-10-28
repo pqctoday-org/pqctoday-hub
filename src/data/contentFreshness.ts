@@ -18,7 +18,7 @@ import { Q_DAY_FRESHNESS } from './quantumTimeline'
 import { PROTOCOL_MATRIX_FRESHNESS } from './pqcProtocolMatrix'
 import { SIM_MOVES } from './simMoves'
 import { NARRATION_TIME_ANCHOR_FRESHNESS } from './narrationFacts'
-import { NETDILIGENCE_CLAIM_COST_FRESHNESS } from './roiBaselines'
+import { IBM_BREACH_BASELINES_FRESHNESS } from './roiBaselines'
 import { CYCLONEDX_MAPPING_FRESHNESS } from './cryptoMechanisms'
 import { FIPS_FRESHNESS_CLAIMS } from '../components/PKILearning/modules/Fips1403Certification/data/fipsData'
 
@@ -112,11 +112,11 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     ...NARRATION_TIME_ANCHOR_FRESHNESS,
   },
   {
-    id: 'netdiligence-claim-cost-baselines',
+    id: 'ibm-breach-baselines',
     claim:
-      'Industry breach-cost baselines from the NetDiligence Cyber Claims Study 2025, Table 5 (insurance-claim incident cost, SMEs; annual refresh — re-source the table when the next edition lands)',
+      'Industry breach-cost baselines sourced from IBM Cost of a Data Breach 2025 (annual refresh ~end of July — re-source the table when the next edition lands)',
     source: 'src/data/roiBaselines.ts',
-    ...NETDILIGENCE_CLAIM_COST_FRESHNESS,
+    ...IBM_BREACH_BASELINES_FRESHNESS,
   },
   // ── pci-certification (PCI author, 2026-09-24) ──
   {
