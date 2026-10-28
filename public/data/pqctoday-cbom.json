@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:e25edc93-94ba-462f-9256-0bd7f9e6bb55",
+  "serialNumber": "urn:uuid:39ff5033-4c33-4476-8f03-caef8ab5dab3",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-24T00:00:00.000Z",
+    "timestamp": "2026-10-27T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -18831,9 +18831,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "1694d74c834d22a7",
-      "name": "Java 24 PQC Runtime",
-      "version": "26",
+      "bom-ref": "079752862db53454",
+      "name": "Java SE (JDK) PQC Runtime",
+      "version": "27",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -18841,7 +18841,7 @@
           "primitive": "kem"
         }
       },
-      "description": "JEP 496 (ML-KEM, FIPS 203) and JEP 497 (ML-DSA, FIPS 204) shipped as finalized (non-preview) cryptographic primitive APIs in JDK 24 (GA 2025-03-18) — confirmed via OpenJDK's own JEP pages, both Status: Closed/Delivered, Release: 24. JEP 527 (hybrid ML-KEM+ECDHE TLS 1.3 key exchange: X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024, default-on via javax.net.ssl) has now been integrated into the JDK 27 codebase (Status: Closed/Delivered, Release: 27, updated 2026-08-10), but JDK 27 itself has not reached General Availability — GA is scheduled for 2026-09-15. The current GA release is JDK 26 (released 2026-03-17); its official feature list does not include JEP 527, and SunJSSE/JSSE does not offer the hybrid TLS named groups by default through JDK 26.",
+      "description": "JEP 496 (ML-KEM, FIPS 203) and JEP 497 (ML-DSA, FIPS 204) shipped as finalized cryptographic APIs in JDK 24 (GA 2025-03-18). JEP 527 adds hybrid ML-KEM + ECDHE key exchange to JSSE for TLS 1.3 (X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024; X25519MLKEM768 enabled by default and most preferred) and shipped in JDK 27 (GA 2026-09-15). Oracle is bringing these to its supported LTS releases: Oracle JDK 25.0.5 (20 October 2026) adds JEP 527 hybrid TLS, reaching parity with JDK 27; Oracle JDK 21.0.13 and 17.0.21 (20 October 2026) add ML-KEM and ML-DSA, with hybrid TLS planned for the first half of 2027; Oracle JDK 11 and 8 are planned for the second half of 2027. Oracle's roadmap covers the security providers Oracle ships; other OpenJDK builds may differ, so check the vendor's release notes.",
       "externalReferences": [
         {
           "type": "website",
@@ -33329,7 +33329,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Implements hybrid key exchange for TLS 1.3 using ML-KEM combined with ECDHE. Supports X25519MLKEM768 (default), SecP256r1MLKEM768, and SecP384r1MLKEM1024. Delivered in JDK 27.",
+      "description": "Implements hybrid key exchange for TLS 1.3 using ML-KEM combined with ECDHE. Supports X25519MLKEM768 (default), SecP256r1MLKEM768, and SecP384r1MLKEM1024. Delivered in JDK 27. Oracle backported it to Oracle JDK 25.0.5 (20 October 2026) and plans it for JDK 21 and 17 in the first half of 2027 and for JDK 11 and 8 in the second half of 2027.",
       "externalReferences": [],
       "properties": [
         {
@@ -37121,6 +37121,50 @@
         {
           "name": "pqctoday:fips_validated",
           "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "beafa95bc984d6a3",
+      "name": "Oracle Jipher",
+      "version": "20",
+      "manufacturer": {
+        "name": "Oracle Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Jipher 20 adds support for Module-Lattice (ML) based algorithms. Key Encapsulation Mechanisms (KEM): ML-KEM, ML-KEM-512, ML-KEM-1024. Digital signature algorithms (DSA): ML-DSA-44, ML-DSA-65, ML-DSA-87. KeyFactory, KeyPairGenerator, KEM, and Signature service support is provided.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Oracle-Jipher"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (Oracle cites no FIPS 140-3 certificate for Jipher 20; an Oracle OpenSSL FIPS Provider is on the CMVP Modules In Process list; the FIPS status of ML-KEM and ML-DSA is not stated)"
         },
         {
           "name": "pqctoday:algorithm_source",
