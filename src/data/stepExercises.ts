@@ -396,15 +396,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     why: 'Payback uses the annual net benefit (gross benefit minus annual opex) rather than the horizon-scaled total, so a longer planning horizon cannot make payback look shorter than it really is; the KPI card describes it as capex recouped from net benefit.',
   },
   'pqc-business-case/breach-simulator': {
-    prompt:
-      "In 'How this number is built', why does the model add no separate reputational-damage term on top of the IBM breach figure?",
+    prompt: "In 'How this number is built', what does the industry breach baseline measure?",
     options: [
-      'Reputational damage is modelled in the Cost of Inaction step instead',
-      'The GRI 2025 survey does not cover reputational loss',
-      "IBM's figure already includes lost business and reputational damage, so adding it again would double-count",
+      'The full cost of a breach to a large organisation, including reputational damage',
+      'The expected loss from the GRI 2025 expert survey',
+      'The average incident cost on cyber-insurance claims for that industry, read as a lower bound',
     ],
     answer: 2,
-    why: "The cost of one breach today starts from IBM's total breach cost, which already folds in detection, notification, lost business and reputation; a second reputational line would count the same loss twice.",
+    why: "The baseline is NetDiligence's insurance-claim incident cost: what was paid on the claim plus the policyholder's retention, for incidents that became claims. NetDiligence advises reading it as a lower bound, so the simulator's results are a floor, not a full-cost estimate.",
   },
   'pqc-business-case/cost-of-inaction': {
     prompt:

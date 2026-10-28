@@ -15,9 +15,9 @@ import {
 import { Button } from '@/components/ui/button'
 import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
 import {
-  US_VS_GLOBAL_BREACH_COST_MULTIPLIER,
   ANNUAL_BREACH_PROBABILITY_PCT,
-  IBM_BASELINE_UNVERIFIED_NOTE,
+  BREACH_BASELINE_NOTE,
+  BREACH_BASELINE_LABEL,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -113,8 +113,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   onCostCalculated,
   onInputsChanged,
 }) => {
-  // Scenario inputs. "Breach severity" scales the authoritative industry-average
-  // total breach cost, rather than a fabricated flat per-record figure.
+  // Scenario inputs. "Breach severity" scales the industry baseline (insurance-claim
+  // incident cost), rather than a fabricated flat per-record figure.
   const [breachScale, setBreachScale] = useState(initialValues?.breachScale ?? 1)
   const [yearsOfData, setYearsOfData] = useState(initialValues?.yearsOfData ?? 5)
   // Default prior comes from Cyentia IRIS 2025's organization-size anchors
@@ -142,15 +142,15 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   const [migrationDurationYears, setMigrationDurationYears] = useState(
     initialValues?.migrationDurationYears ?? 3
   )
-  const [region, setRegion] = useState<'global' | 'us'>(initialValues?.region ?? 'global')
+  // Kept in the saved inputs for compatibility; the baseline no longer has a US variant
+  // (the IBM-derived US multiplier was removed with the switch to NetDiligence).
+  const region: 'global' | 'us' = initialValues?.region ?? 'global'
 
   const asOfYear = useMemo(() => new Date().getFullYear(), [])
 
-  // Single source of truth — the same IBM 2025 baseline the ROI Calculator and
+  // Single source of truth — the same NetDiligence baseline the ROI Calculator and
   // Cost Model Explorer use. No private, drifted table.
-  const globalBaseline = resolveIndustryBreachBaseline(industry)
-  const baseline =
-    region === 'us' ? globalBaseline * US_VS_GLOBAL_BREACH_COST_MULTIPLIER : globalBaseline
+  const baseline = resolveIndustryBreachBaseline(industry)
 
   const modelInputs = useMemo(
     () => ({
@@ -259,41 +259,14 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             <Info size={14} className="text-muted-foreground shrink-0 mt-0.5" />
             <div className="text-xs text-muted-foreground">
               <p>
-                Industry baseline ({industry}, {region === 'us' ? 'US' : 'global'}):{' '}
+                Industry baseline ({industry}):{' '}
                 <span className="font-mono text-foreground font-semibold">
                   {formatCurrency(baseline)}
                 </span>{' '}
-                average total breach cost &mdash; IBM Cost of a Data Breach 2025. This total already
-                includes detection, notification, lost business and reputational damage, so those
-                are not added again.
+                &mdash; {BREACH_BASELINE_LABEL.toLowerCase()}, NetDiligence Cyber Claims Study 2025.
+                It counts what was paid on the claim plus the policyholder&apos;s retention, so read
+                it as a floor; the severity setting below scales it for your scenario.
               </p>
-              <div className="flex items-center gap-2 mt-2">
-                <span>Region:</span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setRegion('global')}
-                  className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
-                    region === 'global'
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'border-border hover:text-foreground'
-                  }`}
-                >
-                  Global
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setRegion('us')}
-                  className={`h-auto px-2 py-0.5 rounded-full border text-[11px] ${
-                    region === 'us'
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'border-border hover:text-foreground'
-                  }`}
-                >
-                  US ({US_VS_GLOBAL_BREACH_COST_MULTIPLIER.toFixed(1)}× global)
-                </Button>
-              </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -759,10 +732,10 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         </summary>
         <div className="mt-3 text-sm text-muted-foreground space-y-2">
           <p>
-            <strong>Baseline:</strong> the industry average total breach cost (IBM Cost of a Data
-            Breach 2025), shared with the ROI Calculator and Cost Model Explorer — one source, no
-            drift. It already includes reputational and lost-business costs, so those are not added
-            separately.
+            <strong>Baseline:</strong> the industry&apos;s insurance-claim incident cost (lower
+            bound) from the NetDiligence Cyber Claims Study 2025, shared with the ROI Calculator and
+            Cost Model Explorer — one source, no drift. It covers claimed incidents only, so treat
+            results as a floor rather than a full-cost estimate.
           </p>
           <p>
             <strong>Severity:</strong> scales that average up or down for your scenario, instead of
@@ -810,15 +783,15 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         <ul className="mt-3 text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
           <li>
             <a
-              href="https://www.ibm.com/reports/data-breach"
+              href="https://netdiligence.com/cyber-claims-study-2025-report/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              IBM Cost of a Data Breach Report 2025
+              NetDiligence Cyber Claims Study 2025
             </a>{' '}
-            — industry breach-cost baselines and per-record costs by data type.{' '}
-            <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
+            — industry baselines (Table 5, incident cost by sector, SMEs).{' '}
+            <span className="text-muted-foreground">{BREACH_BASELINE_NOTE}</span>
           </li>
           <li>
             <a

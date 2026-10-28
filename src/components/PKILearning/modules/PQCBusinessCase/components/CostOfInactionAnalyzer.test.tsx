@@ -168,7 +168,9 @@ describe('CostOfInactionAnalyzer', () => {
     expect(lastCall.crossoverYear === null || typeof lastCall.crossoverYear === 'number').toBe(true)
     expect(lastCall.scenario?.modelVersion).toBe('coi-2')
     expect(lastCall.scenario?.verifiedConsequence.annualUSD).toBe(0)
-    expect(lastCall.scenario?.sourceStatus.breachBaseline).toMatch(/one edition behind/i)
+    expect(lastCall.scenario?.sourceStatus.breachBaseline).toMatch(
+      /insurance-claim incident cost \(lower bound\)/i
+    )
   })
 
   it('does not infer a dollar penalty from framework matches', () => {
@@ -202,9 +204,11 @@ describe('CostOfInactionAnalyzer', () => {
     expect(screen.getByText(/Before using this result/i)).toBeInTheDocument()
   })
 
-  it('surfaces the stale baseline and CRQC scenario uncertainty beside the result', () => {
+  it('surfaces the lower-bound basis of the baseline and CRQC scenario uncertainty beside the result', () => {
     render(<CostOfInactionAnalyzer />)
-    expect(screen.getAllByText(/one edition behind/i).length).toBeGreaterThan(0)
+    expect(
+      screen.getAllByText(/insurance-claim incident cost \(lower bound\)/i).length
+    ).toBeGreaterThan(0)
     expect(screen.getByText(/CRQC scenario range/i)).toBeInTheDocument()
     expect(screen.getByText(/not a confidence interval/i)).toBeInTheDocument()
   })
@@ -227,7 +231,7 @@ describe('CostOfInactionAnalyzer', () => {
     const exported = screen.getByTestId('export-data').textContent ?? ''
     expect(exported).toMatch(/Reproducible scenario inputs \(model coi-2\)/i)
     expect(exported).toMatch(/No framework-derived fine is included automatically/i)
-    expect(exported).toMatch(/one edition behind and not independently verified/i)
+    expect(exported).toMatch(/insurance-claim incident cost, a lower bound/i)
   })
 
   it('shows the methodology section', () => {

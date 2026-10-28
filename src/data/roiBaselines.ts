@@ -1,63 +1,48 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Freshness } from './contentFreshness'
-// Industry breach cost baselines — IBM Cost of a Data Breach Report 2025
-// (https://www.ibm.com/reports/data-breach), read directly from the primary
-// report's Figure 3 (average total cost of a breach by industry, USD). IBM's
-// per-sector table does not use this app's taxonomy 1:1, so each key below is
-// mapped to its nearest IBM sector — see the inline comment on each line.
-// Aerospace and Automotive have no IBM sector at all; they use the Industrial
-// figure as a labeled proxy (F11 follow-up: source a dedicated figure if one
-// becomes available).
-export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-07'
+// Industry breach-cost baselines — NetDiligence Cyber Claims Study 2025, Table 5
+// "Incident Cost by Sector—SMEs" (2020-2024), read from the report itself.
+// Owner decision 2026-10-27: these replace the IBM Cost of a Data Breach
+// per-sector table, whose current edition is registration-walled and so cannot
+// be cited (no gated references).
+//
+// WHAT THE FIGURES MEASURE. NetDiligence asked claim participants for "the
+// amount of money paid on a claim and ... an estimate of the total cost of the
+// incident, including self-insured retention (SIR) and other costs that may
+// have been excluded due to the terms of the policy." Table 5 is that incident
+// cost, averaged per sector over SME claims (under $2B revenue). It only counts
+// incidents that became insurance claims, and the report itself advises the
+// reader "to consider the costs reported in this report as lower bounds". So
+// it is NOT a total-cost-of-breach estimate for a large organisation, and the
+// tools say so wherever the figure appears (BREACH_BASELINE_NOTE).
+//
+// The large-company table exists but is NOT used: several of its sectors rest
+// on one or two claims (Hospitality N=1 -> $268M, Telecommunications N=1 ->
+// $503.5M), which is an anecdote wearing an average's clothing.
+export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-09'
 
 /**
- * Freshness stamp for the IBM-derived baselines (aggregated in
- * contentFreshness). IBM refreshes the report annually around end-July.
- *
- * STALE AS OF 2026-08-10 — the 2026 edition is published. Fetched
- * https://www.ibm.com/reports/data-breach on 2026-08-10 (capture:
- * pqctoday-priv/local-evidence-cache/library/IBM-Cost-of-a-Data-Breach-2026-landing.html):
- * the page is titled "Cost of a Data Breach Report 2026" and states a global
- * average of **USD 4.99M, "a 12% increase over last year and a record high"**.
- * That +12% is consistent with the 4.44M below being the correct 2025 figure —
- * so the table is right for 2025 and one edition behind.
- *
- * Re-sourcing needs the per-sector figures, which are inside the report PDF,
- * not on the landing page. Retrieval was ATTEMPTED on 2026-08-10 via the
- * resilient fetcher (landing page, /thank-you, and the downloads/documents
- * asset path) and failed — the report is registration-walled and the
- * post-form page resolves to a soft 404. A third-party summary was
- * deliberately not substituted: a secondary source is not the report.
- *
- * Every figure below plus the citation string in derivedFinancialDocs must
- * move together. Deliberately NOT half-updated: a 2026 global average sitting
- * on top of 2025 sector figures would be worse than a consistent 2025 table.
- *
- * RE-CHECKED 2026-10-27: https://www.ibm.com/reports/data-breach still shows
- * only the 2026 global figure (USD 4.99M, "a 12% increase over last year") and
- * a "Download report" form; no per-sector table without registration. The
- * table stays on 2025 with IBM_BASELINE_UNVERIFIED_NOTE.
+ * Freshness stamp for the NetDiligence per-sector baselines (aggregated in
+ * contentFreshness). NetDiligence publishes the study yearly (the 2025 report
+ * is dated September 2025); re-source the table from the next edition.
  */
-export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
+export const NETDILIGENCE_CLAIM_COST_FRESHNESS: Freshness = {
   asOf: '2026-10-27',
-  recheck: 'https://www.ibm.com/reports/data-breach',
+  recheck: 'https://netdiligence.com/cyber-claims-study-2025-report/',
 }
 
 /**
- * Evidence status for the three financial sources behind every dollar figure
- * in the business tools.
- *
+ * Evidence status for the financial sources behind every dollar figure in the
+ * business tools.
  * The GRI 2025 CRQC curve (hndlExposureCurve.json) IS properly proven — its
  * cached capture states "quite possible (28-49%) within the next 10 years, and
  * likely (51-70%) in the next 15" from 26 experts, exactly reproducing the
  * curve's 2035/2040 anchors.
- *
- * The 2026-08-10 audit (W1-7) found the other three at landing-page-only
+ * The 2026-08-10 audit (W1-7) found the other sources at landing-page-only
  * evidence: a page ABOUT a report is not the report. Two were closed on
  * 2026-08-11 by retrieving the primary documents, and BOTH turned out to
  * contain a wrong figure — the landing pages had been hiding real errors, not
  * merely leaving them unproven:
- *
  *  - Cyentia IRIS 2025 — PRIMARY RETRIEVED. 36-page report,
  *    https://www.cyentia.com/wp-content/uploads/2026/03/IRIS-2025.pdf (linked
  *    from cyentia.com/publication/iris2025/). Figures 6 and 7 carry the
@@ -67,91 +52,45 @@ export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
  *    https://netdiligence.com/wp-content/uploads/2025/09/NetDiligence-Cyber-Claims-Study-2025-Report-.pdf
  *    (the download form is HubSpot-gated; the asset itself is public — located
  *    via the Wayback CDX index and then fetched from the live origin). Figures
- *    9 and 10 carry the cost anchors. One of the two was wrong.
- *  - IBM Cost of a Data Breach — still landing-page-only; the per-sector
+ *    9 and 10 carry the cost anchors (one of the two was wrong); Table 5 carries
+ *    the per-sector baselines below (re-read 2026-10-27, every figure matches).
+ *  - IBM Cost of a Data Breach — no longer used (2026-10-27): its per-sector
  *    figures are inside a registration-walled PDF with no public asset path.
- *
- * Retrieval on 2026-08-11 used the resilient fetcher
- * (pqctoday-priv/scripts/fetch_resilient_bridge.py); both PDFs verified as
- * real PDFs (%PDF-1.7, 2.6 MB and 9.5 MB) before any figure was read. Both are
- * archived so every figure cited here is re-checkable without re-fetching:
- *
+ * Both PDFs are archived so every figure cited here is re-checkable without
+ * re-fetching:
  *   pqctoday-priv/local-evidence-cache/library/Cyentia-IRIS-2025.pdf
  *     sha256 00706bbbfefcc7b6cc321dcbcc2347b3082af92572cbd55abd2239a901cf8f1c
  *   pqctoday-priv/local-evidence-cache/library/NetDiligence-Cyber-Claims-Study-2025.pdf
  *     sha256 4014f4e7a52c55125e3287b2c61ca788f9ae133a8e49408d7e34ec35ba7166cb
  */
 export const FINANCIAL_BASELINE_EVIDENCE = {
-  ibmBreachCosts: 'landing-page-only',
   cyentiaBreachProbability: 'primary-verified',
   netDiligenceOrgSize: 'primary-verified',
-  // ADDED 2026-08-14: the per-sector claim costs, from the same NetDiligence
-  // PDF already opened for the org-size anchors. The report had carried a
-  // cost-by-sector table the whole time; nothing had read it, so the only
-  // per-industry figures on the site were the unverified IBM ones.
   netDiligenceIndustryClaimCosts: 'primary-verified',
 } as const
 
 /**
- * User-facing caveat for the IBM-derived figures — the one financial source
- * still standing on a landing page rather than the report.
- *
- * This exists because of what happened when the OTHER two landing-page-only
- * sources were finally opened: three of their five constants were wrong. That
- * is the base rate to assume here. An unopened citation is not weak evidence
- * of a correct number, it is no evidence either way, and it reads on screen
- * exactly like a checked one. Surfaced wherever the IBM baseline is presented
- * as a source, including in exports, since those are what reach a CFO.
+ * User-facing statement of what the per-industry baseline is. Surfaced wherever
+ * the baseline is presented as a source, including exports, since those are
+ * what reach a CFO.
  */
-export const IBM_BASELINE_UNVERIFIED_NOTE =
-  "These per-sector figures come from IBM's 2025 table and are one edition behind: IBM published its 2026 global report on 29 July 2026, but the current per-sector table is not publicly available without registration. The 2025 per-sector figures are cited but unverified because that report is " +
-  'registration-walled, so only its landing page has been read. When the two ' +
-  'other financial sources behind this suite were opened in full, three of ' +
-  'their five figures turned out to be wrong — treat these as an assumption, ' +
-  'not a sourced baseline.'
-export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
-  'Finance & Banking': 5_560_000, // IBM Financial
-  Healthcare: 7_420_000, // IBM Healthcare
-  'Government & Defense': 2_860_000, // IBM Public sector
-  Technology: 4_790_000, // IBM Technology
-  Telecommunications: 3_750_000, // IBM Communications
-  'Energy & Utilities': 4_830_000, // IBM Energy
-  'Retail & E-Commerce': 3_540_000, // IBM Retail
-  Aerospace: 5_000_000, // proxy — IBM Industrial (no dedicated IBM sector)
-  Automotive: 5_000_000, // proxy — IBM Industrial (no dedicated IBM sector)
-  Education: 3_800_000, // IBM Education
-  Other: 4_440_000, // IBM global average
-}
+export const BREACH_BASELINE_NOTE =
+  'Insurance-claim incident cost (lower bound): the average incident cost on cyber-insurance ' +
+  'claims from organisations under $2B revenue in that industry (NetDiligence Cyber Claims ' +
+  'Study 2025, Table 5: 8,936 claims, 2020–2024). It covers what the insurer paid plus the ' +
+  'policyholder’s retention and costs the policy excluded, but only for incidents that became ' +
+  'claims, so NetDiligence advises reading it as a lower bound. A full-cost estimate for a ' +
+  'large organisation would be higher.'
 
-/** Sectors above with no dedicated IBM figure — surfaced in the UI as "proxy". */
-export const INDUSTRY_BASELINE_IS_PROXY: Record<string, boolean> = {
-  Aerospace: true,
-  Automotive: true,
-}
+/** Short label for the per-industry baseline, used in tool labels and exports. */
+export const BREACH_BASELINE_LABEL = 'Insurance-claim incident cost (lower bound)'
+
+/** Short source line for the per-industry baseline, used in exports and tooltips. */
+export const BREACH_BASELINE_SOURCE = 'NetDiligence Cyber Claims Study 2025, Table 5 (SMEs)'
 
 /**
- * The same industries, from a source we have actually opened (2026-08-14).
- *
- * WHY BOTH. The IBM table above is cited but unread — its per-sector figures
- * sit behind a registration wall (see IBM_BASELINE_UNVERIFIED_NOTE). The
- * NetDiligence Cyber Claims Study 2025 is already downloaded, hash-verified
- * and open access, and it carries its own cost-by-sector table that nobody had
- * looked at. Rather than swap one number for another, present them side by
- * side: a reader can then see which figure was checked and which was not,
- * which is the distinction that actually matters here.
- *
- * THESE TWO COLUMNS DO NOT MEASURE THE SAME THING, and the gap is not error.
- * IBM estimates the TOTAL cost of a breach to the organisation. NetDiligence
- * reports what CYBER-INSURANCE CLAIMS actually paid out. Claims exclude
- * uninsured loss, are capped by policy limits, and only count incidents that
- * were claimed at all — so they run far below IBM's totals by construction.
- * Neither is wrong; showing one alone as "the" breach cost would be.
- *
- * Figures are the SME table (under $2B revenue, N=8,936 claims, 2020–2024),
- * Figure "Incident Cost by Sector—SMEs". The large-company table exists but is
- * NOT used here: several of its sectors rest on one or two claims (Hospitality
- * N=1 → $268M, Telecommunications N=1 → $503.5M), which is an anecdote wearing
- * an average's clothing.
+ * Per-industry baseline (SLE anchor) for every business tool. Figures are the
+ * SME table (under $2B revenue, N=8,936 claims, 2020–2024), Table 5, page 54.
  *
  * Source, re-checkable without re-fetching:
  *   pqctoday-priv/local-evidence-cache/library/NetDiligence-Cyber-Claims-Study-2025.pdf
@@ -169,6 +108,15 @@ export const INDUSTRY_CLAIM_COST_BASELINES: Record<string, number> = {
   Automotive: 395_000, // proxy — NetDiligence Manufacturing (N=773)
   Education: 172_000, // NetDiligence Education (N=277)
   Other: 62_000, // NetDiligence "Other" (N=2,828)
+}
+
+/** The baseline every tool reads (same table; kept under its long-standing name). */
+export const INDUSTRY_BREACH_BASELINES: Record<string, number> = INDUSTRY_CLAIM_COST_BASELINES
+
+/** Sectors above with no dedicated NetDiligence figure — surfaced in the UI as "proxy". */
+export const INDUSTRY_BASELINE_IS_PROXY: Record<string, boolean> = {
+  Aerospace: true,
+  Automotive: true,
 }
 
 /**
@@ -193,26 +141,14 @@ export const INDUSTRY_CLAIM_COST_SAMPLE_SIZE: Record<string, number> = {
 /** Below this, treat the sector figure as indicative only. */
 export const CLAIM_COST_THIN_SAMPLE_THRESHOLD = 50
 
-/** What each column means, for wherever the two are shown together. */
+/** What the baseline column means, for wherever it is described. */
 export const BREACH_COST_BASIS_NOTE = {
-  ibm:
-    'IBM Cost of a Data Breach: estimated TOTAL cost of a breach to the ' +
-    'organisation, including detection, response, lost business and fines. ' +
-    'Cited but unverified — the per-sector figures are behind a registration wall.',
   netDiligence:
-    'NetDiligence Cyber Claims Study - 2025 Report (Figure 2, N=8,936): what cyber-insurance claims actually ' +
-    'PAID OUT, from 8,936 SME claims over 2020–2024. Lower than a total-cost ' +
-    'figure by construction — claims exclude uninsured loss and are capped by ' +
-    'policy limits. Read from the report itself.',
+    'NetDiligence Cyber Claims Study - 2025 Report (Table 5, N=8,936): the average incident ' +
+    'cost on cyber-insurance claims from SMEs over 2020–2024 — the amount paid on the claim ' +
+    'plus the self-insured retention and costs the policy excluded. Only claimed incidents ' +
+    'count, so the report treats these costs as lower bounds. Read from the report itself.',
 } as const
-
-/**
- * US breach costs run far above the global average (IBM 2025: $10.22M vs
- * $4.44M) — driven by regulatory fines and detection/escalation costs. Kept
- * as a single global multiplier (not a full US-specific industry table, which
- * IBM does not publish) so the simulator can offer a US/global toggle.
- */
-export const US_VS_GLOBAL_BREACH_COST_MULTIPLIER = 10.22 / 4.44
 
 // ── Organization-size anchors (NetDiligence Cyber Claims Study 2025) ──────
 // 10,402 real cyber-insurance claims from incidents in 2020–2024. The study's
