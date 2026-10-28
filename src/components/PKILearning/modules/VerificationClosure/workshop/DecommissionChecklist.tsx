@@ -9,8 +9,9 @@ import { SAMPLE_INVENTORY } from '@/data/cryptoEstate'
  * @/data/cryptoEstate, quantum-vulnerable assets, worst-risk first) through
  * deprecate → remove → verify-removed → log. "Remove" is gated on clearing
  * dependents; "verify removed" runs a re-scan that fails if the asset was not
- * actually removed — the step teams skip. Schedule: NIST IR 8547 (draft) —
- * 112-bit deprecated after 2030, all disallowed after 2035.
+ * actually removed — the step teams skip. Schedule: NIST IR 8547 (final,
+ * Oct 2026) — quantum-vulnerable public-key deprecated after 2030 at every key
+ * size of 112-bit security and up, disallowed after 2035.
  */
 
 type StageId = 'deprecate' | 'remove' | 'verify' | 'log'

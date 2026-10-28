@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-28',
 
   standards: [
     getStandard('FIPS 203'),
@@ -67,12 +67,12 @@ export const content: ModuleContent = {
       source: 'CNSA 2.0',
     },
     {
-      label: 'NIST target: deprecate RSA-2048 and 112-bit ECC',
+      label: 'NIST: deprecate RSA, ECC and DH (all key sizes, 112-bit security and up)',
       year: NIST_DEPRECATION.deprecateClassical,
       source: 'NIST IR 8547',
     },
     {
-      label: 'NIST target: disallow all classical public-key crypto',
+      label: 'NIST: disallow quantum-vulnerable public-key crypto',
       year: NIST_DEPRECATION.disallowClassical,
       source: 'NIST IR 8547',
     },

@@ -31,7 +31,7 @@ const EXERCISES = [
   {
     title: 'Scenario: Compliance Gap Analysis',
     prompt:
-      'Using your completed risk register, run the Compliance Gap Analysis (Step 4). Set the CRQC year to 2032 and identify which assets would miss the draft NIST IR 8547 2030 deprecation milestone. List the assets with the highest compliance gap risk and their recommended PQC replacements.',
+      'Using your completed risk register, run the Compliance Gap Analysis (Step 4). Set the CRQC year to 2032 and identify which assets would miss the NIST IR 8547 2030 deprecation milestone. List the assets with the highest compliance gap risk and their recommended PQC replacements.',
     workshopStep: 3,
     workshopStepLabel: 'Step 4 — Compliance Gap Analysis',
   },

@@ -18,6 +18,6 @@ export const EXEC_QUANTUM_EXERCISES: ExecExercise[] = [
   {
     title: 'Scenario: Compliance Deadline Collision',
     prompt:
-      'Classify DORA and NIS2 as broader cyber-risk duties, NIST IR 8547 as an initial public draft transition proposal, and any scoped national roadmap or mandate separately. Determine applicability before prioritizing work, and list the official source and owner who must verify each conclusion.',
+      'Classify DORA and NIS2 as broader cyber-risk duties, NIST IR 8547 as final NIST transition guidance (not a statute), and any scoped national roadmap or mandate separately. Determine applicability before prioritizing work, and list the official source and owner who must verify each conclusion.',
   },
 ]

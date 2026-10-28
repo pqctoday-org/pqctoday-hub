@@ -64,12 +64,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
               &ldquo;This means that even if quantum computers are a decade away, organizations must
-              begin the migration to post-quantum cryptography today to avoid having their encrypted
-              data exposed once quantum computers become operational in the future.&rdquo;
+              begin the migration to post-quantum cryptography today to avoid having their
+              cryptographically protected data exposed once quantum computers become operational in
+              the future.&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NIST IR 8547 ipd (Initial Public Draft), Transition to Post-Quantum
-              Cryptography Standards, November 2024. Draft status: not final guidance.
+              &mdash; NIST IR 8547, Transition to Post-Quantum Cryptography Standards (final,
+              October 2026).
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -324,9 +325,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   for NSS by 2030&ndash;2035
                 </li>
                 <li>
-                  &bull; NIST IR 8547 ipd (draft): classical signatures at the 112-bit security
-                  level deprecated after 2030, disallowed after 2035 &mdash; a security-strength
-                  scope, not a blanket RSA/ECC ban
+                  &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable public-key
+                  algorithms at 112-bit security and up deprecated after 2030, disallowed under NIST
+                  standards after 2035
                 </li>
                 <li>&bull; EU/ANSSI: Active PQC transition guidance</li>
               </ul>

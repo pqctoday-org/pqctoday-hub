@@ -31,6 +31,6 @@ Module covering PQC migration for enterprise IAM systems including JWT/SAML toke
 ## Regulatory Context
 
 - CNSA 2.0: NSS must use ML-DSA-87 by 2027
-- NIST IR 8547 initial public draft (Nov 2024, US federal context): proposes deprecating 112-bit-security RSA/ECDSA signatures (e.g., RSA-2048, used to sign many IAM tokens) after 2030 and disallowing quantum-vulnerable RSA/ECC after 2035; the dates are not final
+- NIST IR 8547 (final, October 2026; systems that follow NIST standards): deprecates quantum-vulnerable RSA/ECDSA/EdDSA signatures at every key size of 112-bit security and up (RSA-2048 and RSA-3072, used to sign many IAM tokens, included) after 2030 and disallows them after 2035
 - PCI DSS v4.0.1: cryptographic inventory required (Req. 12.3.3)
 - DORA (EU): ICT risk management including IAM cryptographic risk

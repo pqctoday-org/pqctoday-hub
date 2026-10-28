@@ -65,9 +65,9 @@ export const VerificationClosureIntroduction: FC<Props> = ({ onNavigateToWorksho
           <Badge kind="std" />
           The migration isn&apos;t done when PQC is added — it&apos;s done when the classical
           cryptography is <em>gone</em>. The defensible schedule is the deprecation timeline:{' '}
-          <strong>NIST IR 8547</strong> (still a draft) proposes deprecating 112-bit-strength
-          RSA/ECC/finite-field key exchange after <strong>2030</strong> and disallowing all
-          quantum-vulnerable public-key cryptography after <strong>2035</strong>;{' '}
+          <strong>NIST IR 8547</strong> (final, October 2026) deprecates quantum-vulnerable
+          public-key cryptography (RSA, ECC, finite-field DH) at 112-bit security and up after{' '}
+          <strong>2030</strong> and disallows it under NIST standards after <strong>2035</strong>;{' '}
           <strong>NCSC-UK</strong> sets phased targets — 2028 (discovery + plan), 2031
           (highest-priority migration), 2035 (complete); <strong>NIST SP 800-131A</strong> carries
           the transition rules.
