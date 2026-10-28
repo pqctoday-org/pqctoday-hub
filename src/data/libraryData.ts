@@ -764,8 +764,8 @@ export function conceptIdForLibraryItem(item: { referenceId: string }): string |
 // links instead of silently opening to nothing.
 export const REFERENCE_ID_ALIASES: Record<string, string> = {
   // Was 'NIST-IR-8547-IPD2' — a fabricated "second draft" row, deprecated
-  // (no successor). The only NIST IR 8547 publication is the 2024-11-12 IPD,
-  // held as 'NIST IR 8547'.
+  // (no successor). NIST IR 8547 has two publications: the 2024-11-12 IPD and
+  // the final of 2026-10-27, held as 'NIST IR 8547'.
   'NIST-IR-8547': 'NIST IR 8547',
   'NIST-CSWP-39': 'NIST CSWP 39',
 }

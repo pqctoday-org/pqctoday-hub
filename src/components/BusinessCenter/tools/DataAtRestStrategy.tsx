@@ -111,8 +111,8 @@ export function buildMarkdown(s: DataAtRestState): string {
   lines.push('')
   lines.push(
     '> **Why most data-at-rest is lower-urgency:** bulk encryption stays AES-256, which ' +
-      "Grover's algorithm only weakens to a ~128-bit effective level (still safe per NIST IR 8547 " +
-      '— currently an Initial Public Draft, not yet finalized). Post-quantum risk concentrates at ' +
+      "Grover's algorithm only weakens to a ~128-bit effective level (still safe per NIST IR 8547, " +
+      'final October 2026). Post-quantum risk concentrates at ' +
       'the *key-wrapping* layer, so these strategies swap the KEK to ML-KEM rather than replacing ' +
       'the AES-256 data cipher.'
   )
@@ -190,8 +190,8 @@ export const DataAtRestStrategy: React.FC = () => {
             Phase 5 — Activity 5.6. Decide a per-data-store strategy: re-wrap the AES-256 key under
             an ML-KEM (PQC) KEK, write a fresh AES-256 DEK with a PQC-wrapped KEK, crypto-shred,
             delete, or accept &amp; monitor. Bulk data stays AES-256 (Grover only halves it to
-            ~128-bit — still quantum-safe per <StandardRef cite="NIST IR 8547" />, currently an
-            Initial Public Draft, not yet finalized); PQC protects the key, not the cipher.
+            ~128-bit — still quantum-safe per <StandardRef cite="NIST IR 8547" />, final October
+            2026); PQC protects the key, not the cipher.
           </p>
         </div>
       </header>
