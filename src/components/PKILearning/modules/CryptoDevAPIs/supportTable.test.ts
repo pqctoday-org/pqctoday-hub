@@ -32,6 +32,10 @@ const BANNED_PHRASES: RegExp[] = [
   /(?<!MLKemAlgorithm(?:\.|\]::))\bMLKem768\b/,
   /cryptography 4[0-6]/i,
   /JDK 21\+ does not include/i,
+  // Oracle JDK 21.0.13 and 17.0.21 (20 Oct 2026) carry ML-KEM and ML-DSA.
+  /JDK 21 LTS (does not have|has neither)/i,
+  /JDK 21 \(which has no built-in/i,
+  /JDK 24[–-]26 expose the primitive only/i,
   /zero (application )?code changes?/i,
   /PQC not yet available in CNG/i,
 ]

@@ -92,7 +92,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
       observe:
-        'The wizard recommends "JCA: Use JDK 24+ built-in ML-KEM and ML-DSA": on JDK 24+ (first LTS: JDK 25) the default providers already implement ML-DSA, so no extra library is needed; on JDK 21 you would register Bouncy Castle instead. The before code hardcodes an RSA KeyPairGenerator; the after code uses the "ML-DSA" family with a NamedParameterSpec. The engine calls barely change, but the migration is more than one line: key stores, database columns and wire formats must hold larger keys and ~3.3 KB signatures, and peers must understand the new algorithm identifiers. Crypto agility is about factoring all of that out of business logic.',
+        'The wizard recommends "JCA: Use JDK 24+ built-in ML-KEM and ML-DSA": on JDK 24+, JDK 25 LTS and Oracle JDK 21.0.13 / 17.0.21 the default providers already implement ML-DSA, so no extra library is needed; on a JDK without it you would register Bouncy Castle instead. The before code hardcodes an RSA KeyPairGenerator; the after code uses the "ML-DSA" family with a NamedParameterSpec. The engine calls barely change, but the migration is more than one line: key stores, database columns and wire formats must hold larger keys and ~3.3 KB signatures, and peers must understand the new algorithm identifiers. Crypto agility is about factoring all of that out of business logic.',
       config: { step: 7 },
     },
   ]

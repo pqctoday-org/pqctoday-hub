@@ -421,8 +421,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 lang: 'Java / Kotlin',
                 libs: ['JCA/JCE', 'Bouncy Castle', 'JCProv'],
-                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (first LTS: JDK 25); BC 1.78+ adds SLH-DSA and more',
-                note: 'JDK 21 LTS has no ML-KEM/ML-DSA; JCProv bridges to HSM',
+                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13 / 17.0.21); BC 1.78+ adds SLH-DSA and more',
+                note: 'Oracle backported ML-KEM/ML-DSA to JDK 21 and 17 in October 2026; JCProv bridges to HSM',
               },
               {
                 lang: 'Python',
@@ -495,7 +495,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 api: 'JCA/JCE (built-in)',
                 status: 'production',
-                note: `${describeRuntimeSupport('java')} — JEP 496/497, March 2025`,
+                note: `${describeRuntimeSupport('java')} — JEP 496/497 (JDK 24, March 2025); Oracle LTS backports October 2026`,
               },
               {
                 api: 'Windows CNG',
