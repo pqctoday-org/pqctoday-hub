@@ -266,6 +266,13 @@
     "total": 10
   },
   {
+    "vendor": "Arista Networks, Inc.",
+    "fips": 8,
+    "acvp": 2,
+    "cc": 0,
+    "total": 10
+  },
+  {
     "vendor": "Red Hat, Inc.",
     "fips": 6,
     "acvp": 0,
@@ -284,13 +291,6 @@
     "fips": 0,
     "acvp": 7,
     "cc": 2,
-    "total": 9
-  },
-  {
-    "vendor": "Arista Networks, Inc.",
-    "fips": 8,
-    "acvp": 1,
-    "cc": 0,
     "total": 9
   },
   {
