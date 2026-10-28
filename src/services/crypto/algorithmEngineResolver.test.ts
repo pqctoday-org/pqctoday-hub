@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { resolveEngine, getEngineLabel } from './algorithmEngineResolver'
+import {
+  resolveEngine,
+  getEngineLabel,
+  runBenchmark,
+  getBenchmarkUnavailableReason,
+} from './algorithmEngineResolver'
 
 describe('resolveEngine', () => {
   // ── softhsm (primary engine for all supported algorithms) ──
@@ -35,9 +40,6 @@ describe('resolveEngine', () => {
     'X448',
     // secp256k1
     'secp256k1',
-    // Stateful hash-based
-    'LMS-SHA256 (H20/W8)',
-    'XMSS-SHA2_20',
   ])('routes %s to softhsm', (algo) => {
     expect(resolveEngine(algo)).toBe('softhsm')
   })
@@ -55,12 +57,16 @@ describe('resolveEngine', () => {
     'Classic-McEliece-348864',
     'Classic-McEliece-460896',
     'Classic-McEliece-8192128',
+    'Classic-McEliece-6688128',
+    'Classic-McEliece-6960119',
   ])('routes %s to liboqs', (algo) => {
     expect(resolveEngine(algo)).toBe('liboqs')
   })
 
   // ── not benchmarkable (no standalone in-browser engine) ──
   it.each([
+    'LMS-SHA256 (H20/W8)',
+    'XMSS-SHA2_20',
     'Ed448',
     'DH (Diffie-Hellman)',
     'X25519MLKEM768',
@@ -83,5 +89,31 @@ describe('getEngineLabel', () => {
     ['noble', '@noble'],
   ] as const)('returns %s label as %s', (engine, label) => {
     expect(getEngineLabel(engine)).toBe(label)
+  })
+})
+
+// Reject these before loading any engine. A prefix/parseInt fallback would run
+// another algorithm and produce plausible but misattributed measurements.
+describe('exact benchmark identity', () => {
+  it.each([
+    'ML-KEM-768-ECDH-P256',
+    'ML-KEM-768-RSA-OAEP-2048',
+    ...['SHA2', 'SHAKE'].flatMap((hash) =>
+      [128, 192, 256].map((level) => `SLH-DSA-${hash}-${level}-24`)
+    ),
+    'LMS-SHA256 (H20/W8)',
+    'XMSS-SHA2_20',
+    'ML-KEM-999',
+    'ML-DSA-65-composite',
+    'ECDSA unknown',
+    'ECDH unknown',
+  ])('refuses unsupported exact identity %s', async (name) => {
+    expect(resolveEngine(name)).toBeNull()
+    expect(getBenchmarkUnavailableReason(name)).toBeTruthy()
+    await expect(runBenchmark(name)).rejects.toThrow(`No engine available for ${name}`)
+  })
+  it('explains reduced stateful demos without attributing their timings to H20', () => {
+    expect(getBenchmarkUnavailableReason('XMSS-SHA2_20')).toContain('smaller demonstration tree')
+    expect(getBenchmarkUnavailableReason('ML-KEM-768')).toBeNull()
   })
 })

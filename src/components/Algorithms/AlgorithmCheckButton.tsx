@@ -4,6 +4,7 @@ import { Play, Loader2, Check, AlertTriangle } from 'lucide-react'
 import clsx from 'clsx'
 import {
   resolveEngine,
+  getBenchmarkUnavailableReason,
   getEngineLabel,
   runBenchmark,
   type BenchmarkResult,
@@ -15,14 +16,22 @@ interface AlgorithmCheckButtonProps {
   algorithm: AlgorithmDetail
 }
 
-export function AlgorithmCheckButton({ algorithm }: AlgorithmCheckButtonProps) {
+function ExactAlgorithmCheck({ algorithm }: AlgorithmCheckButtonProps) {
   const [state, setState] = useState<'idle' | 'running' | 'done' | 'error'>('idle')
   const [result, setResult] = useState<BenchmarkResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(false)
 
   const engine = resolveEngine(algorithm.name)
-  if (!engine) return null
+  if (!engine)
+    return (
+      <span
+        className="text-[10px] text-muted-foreground"
+        title={getBenchmarkUnavailableReason(algorithm.name) ?? undefined}
+      >
+        Exact live check unavailable
+      </span>
+    )
 
   const handleRun = async () => {
     setState('running')
@@ -139,4 +148,10 @@ export function AlgorithmCheckButton({ algorithm }: AlgorithmCheckButtonProps) {
       )}
     </div>
   )
+}
+
+// A drawer can change algorithms without unmounting. Never carry the previous
+// algorithm's measurements (or an in-flight result) into its replacement row.
+export function AlgorithmCheckButton({ algorithm }: AlgorithmCheckButtonProps) {
+  return <ExactAlgorithmCheck key={algorithm.name} algorithm={algorithm} />
 }
