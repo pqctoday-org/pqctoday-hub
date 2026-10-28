@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router'
 import { Download, ExternalLink, Loader2, Play } from 'lucide-react'
@@ -216,6 +217,13 @@ export const TLSSimulatorTab: React.FC = () => {
     }
   }, [commands, triggerSimulation])
 
+  const launchGroup = readAlgorithmLaunch('tls-simulator')?.parameter
+  useEffect(() => {
+    if (!launchGroup) return
+    setResults(null)
+    setClientConfig({ groups: [launchGroup] })
+    setServerConfig({ groups: [launchGroup] })
+  }, [launchGroup, setClientConfig, setServerConfig, setResults])
   const [isSpinning, setIsSpinning] = useState(false)
   useEffect(() => {
     setIsSpinning(isSimulating)

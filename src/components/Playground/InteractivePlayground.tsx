@@ -35,7 +35,7 @@ import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 export const InteractivePlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
-  const { activeTab, setActiveTab, algorithm, error, lastLogEntry } = useSettingsContext()
+  const { activeTab, setActiveTab, algorithm, keySize, error, lastLogEntry } = useSettingsContext()
   const { keyStore } = useKeyStoreContext()
   const [, setSearchParams] = useSearchParams()
 
@@ -46,13 +46,17 @@ export const InteractivePlayground = () => {
         const next = new URLSearchParams(prev)
         if (activeTab !== 'keystore') next.set('tab', activeTab)
         else next.delete('tab')
-        if (algorithm) next.set('algo', algorithm)
+        if (algorithm)
+          next.set(
+            'algo',
+            ['ML-KEM', 'ML-DSA'].includes(algorithm) ? `${algorithm}-${keySize}` : algorithm
+          )
         else next.delete('algo')
         return next
       },
       { replace: true }
     )
-  }, [activeTab, algorithm, setSearchParams])
+  }, [activeTab, algorithm, keySize, setSearchParams])
 
   const [showQuickStart, setShowQuickStart] = useState(() => {
     try {

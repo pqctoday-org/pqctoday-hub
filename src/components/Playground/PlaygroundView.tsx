@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { useLocation } from 'react-router'
+import { algorithmLaunchError } from '@/data/algorithmLaunch'
 import { InteractivePlayground } from './InteractivePlayground'
 import { MobilePlaygroundOps } from './MobilePlaygroundOps'
 import { EducationNotice } from '@/components/shared/EducationNotice'
@@ -6,6 +8,9 @@ import { useIsBelowMdViewport } from '@/hooks/useIsBelowMdViewport'
 
 export const PlaygroundView = () => {
   const isPhone = useIsBelowMdViewport()
+  const location = useLocation()
+  const launchError = algorithmLaunchError('interactive', location.search)
+  if (launchError) return <p role="alert">{launchError}</p>
   return (
     <div>
       {/* Unconditional, on both widths and above the tool itself: until now the

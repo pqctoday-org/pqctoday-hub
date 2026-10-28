@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { algorithmLaunchError, readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import { useRef, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import {
@@ -814,6 +815,15 @@ export const HsmPlayground = () => {
     },
   ]
 
+  const launchError = algorithmLaunchError('hsm', searchParams.toString())
+  if (launchError) return <p role="alert">{launchError}</p>
+  if (readAlgorithmLaunch('hsm', searchParams.toString()) && workbenchHidden)
+    return (
+      <p role="status">
+        This exact composite operation requires the engineering workbench. Select a developer,
+        architect or researcher view to open it.
+      </p>
+    )
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
       {/* Unconditional, above the role-gated banner: the only sentence on this

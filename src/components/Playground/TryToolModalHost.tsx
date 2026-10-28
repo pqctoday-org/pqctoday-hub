@@ -14,6 +14,7 @@
  * The registry and the tool chunk load on demand, so no page pays for this
  * until someone presses Try.
  */
+import { algorithmLaunchError } from '@/data/algorithmLaunch'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -39,6 +40,9 @@ export function TryToolModalHost() {
   const [params, setParams] = useSearchParams()
   const navigate = useNavigate()
   const toolId = params.get('try')
+  const launchName = params.get('launchAlgo')
+  const launchQuery = launchName ? `?${new URLSearchParams({ launchAlgo: launchName })}` : ''
+  const launchError = algorithmLaunchError(toolId ?? '', params.toString())
   const [loaded, setLoaded] = useState<LoadedTool | null>(null)
   // Phone shell: the sticky MobileHeader / bottom nav are z-nav (70) and would
   // paint over a z-50 modal's header (Share, Close). Use the sheet layers
@@ -48,6 +52,7 @@ export function TryToolModalHost() {
   const close = () => {
     const next = new URLSearchParams(params)
     next.delete('try')
+    next.delete('launchAlgo')
     // replace, not push: Back should leave the page, not reopen the tool.
     setParams(next, { replace: true })
   }
@@ -61,7 +66,7 @@ export function TryToolModalHost() {
     // Anything this host can't render in place (unknown id, or a tool that
     // needs the playground provider) goes to the real route instead.
     const fallback = () => {
-      if (!cancelled) navigate(`/playground/${toolId}`, { replace: true })
+      if (!cancelled) navigate(`/playground/${toolId}${launchQuery}`, { replace: true })
     }
     import('./workshopRegistry')
       .then((reg) => {
@@ -82,7 +87,7 @@ export function TryToolModalHost() {
     return () => {
       cancelled = true
     }
-  }, [toolId, navigate])
+  }, [toolId, navigate, launchQuery])
 
   const open = Boolean(toolId) && loaded?.id === toolId
 
@@ -125,7 +130,7 @@ export function TryToolModalHost() {
                   </div>
                   <div className="ml-auto flex items-center gap-1">
                     <Link
-                      to={`/playground/${loaded.id}`}
+                      to={`/playground/${loaded.id}${launchQuery}`}
                       className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
                       title="Open this tool on its own page"
                     >
@@ -134,7 +139,7 @@ export function TryToolModalHost() {
                     </Link>
                     <ItemShareButton
                       title={itemShareTitle(loaded.name)}
-                      path={`/playground/${encodeURIComponent(loaded.id)}`}
+                      path={`/playground/${encodeURIComponent(loaded.id)}${launchQuery}`}
                     />
                     <Button variant="ghost" size="sm" onClick={close} aria-label="Close tool">
                       <X size={16} />
@@ -143,7 +148,11 @@ export function TryToolModalHost() {
                 </div>
                 <div className="min-h-0 flex-1 overflow-y-auto p-5">
                   <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-                    <loaded.Comp />
+                    {launchError ? (
+                      <p role="alert">{launchError}</p>
+                    ) : (
+                      <loaded.Comp key={`${loaded.id}:${launchName}`} />
+                    )}
                   </Suspense>
                 </div>
               </motion.div>
