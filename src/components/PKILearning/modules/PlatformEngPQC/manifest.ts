@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'platform-eng-pqc',
-  contentVersion: 6,
+  contentVersion: 7,
   lm_id: 'LM-031',
   title: 'Platform Engineering & PQC',
   description:

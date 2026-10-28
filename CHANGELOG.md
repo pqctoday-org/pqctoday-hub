@@ -31,10 +31,16 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.183.0] - 2026-10-27
 
-Java's post-quantum support is now shown as it is after Oracle's October 2026 update: ML-KEM and ML-DSA reached Oracle JDK 21 and 17, and hybrid post-quantum TLS reached JDK 25.
+Java's post-quantum support is now shown as it is after Oracle's October 2026 update, X-Wing is named and checked correctly across the HSM and KMS tools, and the PKCS#11 call log folds routine calls so the cryptographic ones stand out.
+
+### Changed
+
+- **The PKCS#11 call log is readable again** [view:/playground/hsm] [view:/learn] [view:/openssl] [persona:developer] [persona:architect] [persona:cert-engineer]: attribute reads, object searches and session setup fold into one expandable row, so the calls that run a mechanism stand out; Expand all and Collapse support sit in the toolbar, and errors and the calls a lesson asks for never fold. This applies to the HSM Playground, Learn lessons and workshops, OpenSSL Studio and the VPN/SSH simulators.
+- **Every PKCS#11 call in the log can be opened** [view:/playground/hsm] [persona:developer] [persona:cert-engineer]: multi-part encrypt, decrypt and verify, the v3.x message API, single-shot verify, sign and verify with recovery, random generation, named-user login (PIN never shown) and the library, slot, token and session information now open a decoded view. X-Wing and the other HPKE hybrid KEMs show their KEM, KDF, AEAD, mode and info, and multi-part composite ML-DSA signatures are split into their two parts. Ten functions that showed wrong argument labels now follow the PKCS#11 headers.
 
 ### Fixed
 
+- **X-Wing is named and computed correctly** [view:/playground/hsm] [view:/learn/kms-pqc] [view:/learn/hybrid-crypto] [persona:developer] [persona:architect] [persona:cert-engineer]: the HSM key-wrap tool no longer labels an HKDF construction as X-Wing, the KMS explorer shows X-Wing's real SHA3-256 combiner, and the TLS examples no longer confuse the X25519MLKEM768 TLS group with standalone X-Wing. A new reference check runs X-Wing's published test vectors, NIST ML-KEM-768 samples and a published X25519 example in your browser; draft test vectors stay marked as such, and nothing claims certification.
 - **The Cryptographic APIs lesson no longer says JDK 21 lacks ML-KEM and ML-DSA** [view:/learn/crypto-dev-apis] [persona:developer] [persona:architect] [persona:ops]: Oracle added both to Oracle JDK 21.0.13 and 17.0.21 on 20 October 2026, and plans JDK 11 and 8 for the second half of 2027. The support table, migration step, code notes, exercise answer and lesson answers now say so, and the timeline adds JDK 27 and the October backports. Other OpenJDK builds are not assumed: the lesson tells you to check your vendor's release notes.
 - **Hybrid post-quantum TLS in Java is dated correctly** [view:/learn/crypto-dev-apis] [view:/migrate] [persona:developer] [persona:ops]: the JDK's own TLS stack negotiates X25519MLKEM768 by default from JDK 27 (September 2026) and from Oracle JDK 25.0.5 (October 2026); Oracle plans it for JDK 21 and 17 in the first half of 2027. The Java product records no longer say JDK 27 is unreleased.
 - **Two more lessons give the current Java picture** [view:/learn/crypto-mgmt-modernization] [view:/learn/iam-pqc] [persona:developer] [persona:architect]: the Crypto Modernization refactoring checklist points to the JDK's built-in ML-DSA instead of "waiting for JDK 25", and the IAM lesson no longer credits JDK 21 with hybrid TLS for WildFly.
