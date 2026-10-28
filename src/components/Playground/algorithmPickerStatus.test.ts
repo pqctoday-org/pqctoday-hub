@@ -39,7 +39,9 @@ describe('algorithmPickerStatus (WORKSTREAMS.md §WS-A consumer — playground.m
     expect(isDraftTier(getPickerTier('OV-Ip', tiers)!)).toBe(true)
     expect(isDraftTier(getPickerTier('SNOVA-24-5-4', tiers)!)).toBe(true)
     expect(isDraftTier(getPickerTier('HQC-128', tiers)!)).toBe(true)
-    // Classic McEliece is 'regional' (BSI TR-02102-1) — final within that jurisdiction, unbadged
-    expect(isDraftTier(getPickerTier('Classic-McEliece-348864', tiers)!)).toBe(false)
+    // The authors' ISO set list excludes 348864; it must retain a warning.
+    expect(getPickerTier('Classic-McEliece-348864', tiers)).toBe('non-standardized')
+    expect(isDraftTier(getPickerTier('Classic-McEliece-348864', tiers)!)).toBe(true)
+    expect(getPickerTier('Classic-McEliece-460896', tiers)).toBe('final')
   })
 })

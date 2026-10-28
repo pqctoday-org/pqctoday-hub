@@ -140,9 +140,20 @@ describe('algorithm catalogue labels', () => {
 
   it('names Round 3 for the advancing additional-signature candidates it shows', async () => {
     const catalogue = await loadPQCAlgorithmsData()
-    // MQOM, QR-UOV and SDitH are stub rows without a family yet, so the loader
-    // does not show them; their CSV text is corrected the same way.
-    const names = ['MAYO-1', 'MAYO-2', 'MAYO-3', 'MAYO-5', 'UOV', 'SQIsign', 'FAEST', 'SNOVA']
+    // Classification now restores the three previously hidden candidates.
+    const names = [
+      'MAYO-1',
+      'MAYO-2',
+      'MAYO-3',
+      'MAYO-5',
+      'UOV',
+      'SQIsign',
+      'FAEST',
+      'SNOVA',
+      'MQOM',
+      'QR-UOV',
+      'SDitH',
+    ]
     for (const name of names) {
       const a = catalogue.find((x) => x.name === name)
       expect(a, name).toBeDefined()
@@ -154,14 +165,12 @@ describe('algorithm catalogue labels', () => {
 
   it('treats Classic McEliece as an ISO standard that NIST did not select', async () => {
     const catalogue = await loadPQCAlgorithmsData()
-    for (const name of [
-      'Classic-McEliece-348864',
-      'Classic-McEliece-460896',
-      'Classic-McEliece-8192128',
-    ]) {
+    for (const name of ['Classic-McEliece-460896', 'Classic-McEliece-8192128']) {
       const a = catalogue.find((x) => x.name === name)
       expect(a, name).toBeDefined()
-      expect(a!.fipsStandard, name).toBe('NIST PQC Round 4 (concluded 2025; not selected)')
+      expect(a!.fipsStandard, name).toContain('ISO/IEC 18033-2:2006/Amd 2:2026')
+      expect(a!.fipsStandard, name).toContain('not in NIST FIPS')
+      expect(a!.status, name).toContain('BSI advises against new use')
       expect(a!.statusTier, name).toBe('final')
     }
   })
@@ -171,7 +180,8 @@ describe('algorithm catalogue labels', () => {
     const kem = catalogue.filter((a) => a.name.startsWith('id-MLKEM'))
     expect(kem.length).toBe(12)
     for (const a of kem) {
-      expect(a.fipsStandard, a.name).toBe('draft-ietf-lamps-pq-composite-kem-23')
+      expect(a.fipsStandard, a.name).toContain('draft-ietf-lamps-pq-composite-kem-23')
+      expect(a.fipsStandard, a.name).toContain('not yet RFC')
       expect(a.statusTier, a.name).toBe('ietf-draft')
     }
   })
