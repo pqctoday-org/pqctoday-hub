@@ -12,8 +12,12 @@
  * The rule is checked, not assumed: a family is pruned only while the newest
  * file's `## ` entries include every entry of every older file. If a future file
  * carries fewer entries (an incremental file), that family is left whole and the
- * build prints why. Dev and Vitest keep every file (`apply: 'build'`), so the
- * tests that read the full set are unchanged.
+ * build prints why. Vitest keeps every file, so the tests that read the full set
+ * are unchanged.
+ *
+ * The dev server prunes too. It served all 38 files (~170 MB of raw text) to every
+ * page that reaches the enrichment loaders, so a fresh browser took 50 s or more
+ * to boot /compliance or /threats and the local-tier E2E specs timed out on it.
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
@@ -93,7 +97,8 @@ export function newestEnrichmentOnlyPlugin(
   let pruned = new Set<string>()
   return {
     name: 'newest-enrichment-only',
-    apply: 'build',
+    // Build and dev serve; Vitest reads the full set.
+    apply: (_config, env) => env.command === 'build' || !process.env.VITEST,
     enforce: 'pre',
     buildStart() {
       const decisions = decide(enrichmentsDir)

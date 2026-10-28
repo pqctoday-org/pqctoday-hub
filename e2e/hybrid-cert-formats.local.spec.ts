@@ -98,12 +98,32 @@ test.describe('hybrid certificate formats — browser smoke', () => {
       expect((await diag(page)).trackedHandles).toBe(0)
     }
 
-    // Cancel mid-run: once the ML-KEM card starts, cancel; the run stops there.
+    // Cancel mid-run: the moment a card reports its CA-key or ML-KEM stage, cancel; the
+    // run stops there. Those stage lines last milliseconds, so polling for them can miss
+    // the whole run; an in-page observer clicks Cancel in the same task the line appears.
+    const cancelledAtStage = page.evaluate(
+      () =>
+        new Promise<boolean>((resolve, reject) => {
+          const stage = /Workshop CA key \+ certificate|ML-KEM key generation/
+          const timer = setTimeout(() => reject(new Error('no stage line within 60 s')), 60_000)
+          const check = () => {
+            const live = [...document.querySelectorAll('[aria-live="polite"]')]
+            if (!live.some((el) => stage.test(el.textContent ?? ''))) return
+            const cancel = [...document.querySelectorAll('button')].find(
+              (b) => b.textContent?.trim() === 'Cancel'
+            )
+            observer.disconnect()
+            clearTimeout(timer)
+            cancel?.click()
+            resolve(cancel !== undefined)
+          }
+          const observer = new MutationObserver(check)
+          observer.observe(document.body, { childList: true, subtree: true, characterData: true })
+          check()
+        })
+    )
     await generateAll.click()
-    await expect(
-      page.getByText(/Workshop CA key \+ certificate|ML-KEM key generation/).first()
-    ).toBeVisible({ timeout: 60_000 })
-    await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+    expect(await cancelledAtStage).toBe(true)
     await expect(generateAll).toBeEnabled({ timeout: 60_000 })
     await expect(page.getByText(/^Cancelled during: /)).toHaveCount(1)
     await clear.click()
