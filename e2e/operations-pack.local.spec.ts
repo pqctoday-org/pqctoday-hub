@@ -69,7 +69,8 @@ test('ops user builds an operations pack from saved tool results', async ({ page
   ).toBe(true)
   const md = await zip.file('operations-pack/operations-pack.md')!.async('string')
   expect(md).toContain('## 4. HSM Capacity Plan')
-  expect(md).toContain('Editorial estimate (not a measurement)')
+  // The calculator rewrite (19 Oct) states the claim once per report instead of per rate.
+  expect(md).toContain('Claim status: Estimate.')
   expect(md).toContain('## 5. Certificate Capacity Plan')
   expect(md).toContain('## What is missing')
 })
