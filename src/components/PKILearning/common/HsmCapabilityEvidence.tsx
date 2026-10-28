@@ -25,7 +25,7 @@ export function HsmCapabilityEvidence({ softwareName }: { softwareName?: string 
           <summary className="cursor-pointer text-foreground">
             {fact.algorithm}: {fact.available} · Review: {fact.verificationStatus}
           </summary>
-          <dl className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-muted-foreground">
+          <dl className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-muted-foreground [&>div]:min-w-0 [&_dd]:[overflow-wrap:anywhere]">
             <div>
               <dt>PKCS#11 mechanism</dt>
               <dd>

@@ -621,7 +621,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                 <th className="p-2 font-bold">Firmware</th>
                 <th className="p-2 font-bold">FIPS level</th>
                 <th className="p-2 font-bold">ESV (SP 800-90B)</th>
-                <th className="p-2 font-bold">PQC in boundary</th>
+                <th className="p-2 font-bold">Algorithm evidence and scope</th>
                 <th className="p-2 font-bold">Platform binding</th>
                 <th className="p-2 font-bold">Posture</th>
               </tr>

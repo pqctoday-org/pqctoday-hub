@@ -76,7 +76,7 @@ export const VendorComparison: React.FC = () => {
         </div>
         <div className="glass-panel p-3 text-center">
           <div className="text-2xl font-bold text-success">{stats.productionReady}</div>
-          <div className="text-xs text-muted-foreground">Production Ready</div>
+          <div className="text-xs text-muted-foreground">Listed as available</div>
         </div>
       </div>
 

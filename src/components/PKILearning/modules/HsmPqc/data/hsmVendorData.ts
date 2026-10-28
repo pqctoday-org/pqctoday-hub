@@ -459,7 +459,7 @@ export function getVendorPqcSupportStatus(v: HSMVendor): PqcSupportStatusKey {
 
 export const STATUS_LABELS: Record<PqcSupportStatusKey, { label: string; className: string }> = {
   production: {
-    label: 'PRODUCTION',
+    label: 'AVAILABLE',
     className: 'bg-success/10 text-success border-success/20',
   },
   beta: {
