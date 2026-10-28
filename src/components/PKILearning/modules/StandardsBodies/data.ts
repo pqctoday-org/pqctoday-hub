@@ -94,7 +94,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'FIPS 204 (ML-DSA, August 2024)',
       'FIPS 205 (SLH-DSA, August 2024)',
       'FIPS 206 (FN-DSA / Falcon — in development, not yet published)',
-      'NIST IR 8547 (Transition to PQC, initial public draft Nov 2024)',
+      'NIST IR 8547 (Transition to PQC, final October 2026)',
       'NIST SP 800-227 (KEM recommendations)',
       'FIPS 140-3 (cryptographic module standard)',
     ],
@@ -609,7 +609,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'NIST IR 8547',
         body: 'NIST',
         description:
-          'NIST IR 8547 is the Transition to Post-Quantum Cryptography Standards roadmap (initial public draft, November 2024; comment period closed January 2025). When finalized, it will specify which classical algorithms are deprecated (by 2030) and disallowed (by 2035), and require services to migrate to FIPS 203/204/205.',
+          'NIST IR 8547 is the Transition to Post-Quantum Cryptography Standards roadmap (final, October 2026; it replaced the November 2024 draft). It deprecates quantum-vulnerable public-key algorithms after 2030 and disallows them under NIST standards and guidelines after 2035, with FIPS 203/204/205 as the replacements.',
       },
       {
         id: 'acvp-cert',
@@ -625,7 +625,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'FedRAMP PQC Requirement',
         body: 'GSA / CISA',
         description:
-          "FedRAMP (Federal Risk and Authorization Management Program) governs cloud service authorization for US federal agencies. Once NIST IR 8547 is finalized (currently in initial public draft as of November 2024), FedRAMP's cryptographic requirements will reference FIPS 203/204/205 — requiring CAVP-validated algorithm implementations (tested through NIST's ACVP service) in cloud services.",
+          "FedRAMP (Federal Risk and Authorization Management Program) governs cloud service authorization for US federal agencies. With NIST IR 8547 final (October 2026), FedRAMP's cryptographic requirements are expected to reference FIPS 203/204/205 — requiring CAVP-validated algorithm implementations (tested through NIST's ACVP service) in cloud services.",
       },
     ],
   },

@@ -400,16 +400,16 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     },
   },
   {
-    source: 'NIST IR 8547 (IPD, Nov 2024)',
+    source: 'NIST IR 8547 (final, Oct 2026)',
     claimId: 'crqc-nist-ir8547-dates',
     kind: 'migration-deadline',
     yearLow: 2030,
     yearHigh: 2035,
     confidence: 'Planning horizon',
     notes:
-      'Deprecate RSA/ECC by 2030, disallow by 2035. Assumes CRQC is imminent enough to act now. Re-verified 2026-07-30 directly against csrc.nist.gov: still Initial Public Draft status (comment period closed 2025-01-10, no second draft or final version published) \u2014 a third-party aggregator claimed a "final 2025 version" that does not match the authoritative NIST page.',
-    url: 'https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf',
-    lastReviewed: '2026-07-30',
+      'Deprecate quantum-vulnerable public-key crypto (RSA/ECC) after 2030, disallow it under NIST standards and guidelines after 2035. Assumes CRQC is imminent enough to act now. Re-verified 2026-10-27 directly against csrc.nist.gov: the final version was published on 27 October 2026, replacing the November 2024 initial public draft.',
+    url: 'https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf',
+    lastReviewed: '2026-10-27',
   },
   {
     source: 'NSA CNSA 2.0 FAQ version 2.2 (August 2026)',

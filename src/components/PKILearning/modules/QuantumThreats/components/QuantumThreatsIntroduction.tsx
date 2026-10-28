@@ -258,7 +258,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           {[
             {
               org: 'NIST IR 8547',
-              timeline: 'Deprecate by 2030, disallow by 2035',
+              timeline: 'Deprecate after 2030, disallow after 2035',
               color: 'primary',
             },
             {

@@ -61,7 +61,7 @@ const POLICY_ITEMS: ChecklistItem[] = [
     label: 'PQC policy published',
     description:
       'Organizational policy mandating transition to post-quantum cryptographic algorithms with defined timelines.',
-    reference: 'NIST IR 8547 (draft)',
+    reference: 'NIST IR 8547',
   },
   {
     value: 'raci-defined',
@@ -99,7 +99,7 @@ const RISK_ITEMS: ChecklistItem[] = [
     label: 'HNDL risk assessment completed',
     description:
       'Harvest Now, Decrypt Later (HNDL) exposure assessed — data at risk of retroactive decryption when CRQCs arrive.',
-    reference: 'NSA CNSA 2.0 FAQ; NIST IR 8547 (draft)',
+    reference: 'NSA CNSA 2.0 FAQ; NIST IR 8547',
   },
   {
     value: 'data-classified',
@@ -213,7 +213,7 @@ const EVIDENCE_ITEMS: ChecklistItem[] = [
     label: 'Migration plan documented',
     description:
       'Comprehensive migration plan with timelines, milestones, resource allocation, and success criteria.',
-    reference: 'NIST IR 8547 (draft)',
+    reference: 'NIST IR 8547',
   },
   {
     value: 'test-results',
