@@ -4,7 +4,8 @@
  *
  * Self-contained (no HsmContext dependency). Pass log entries from useHSM().
  * Rows with inspect data show a ▶ chevron — click to expand decoded parameters.
- * Default: collapsible, starts collapsed.
+ * Default: collapsible, starts collapsed. Runs of supporting (non-mechanism)
+ * calls fold into one expandable row so the crypto calls stand out.
  */
 import { useState } from 'react'
 import {
@@ -15,7 +16,8 @@ import {
   CheckCircle,
   Eye,
   BookOpenText,
-  Filter,
+  ChevronsDownUp,
+  ChevronsUpDown,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
@@ -44,7 +46,7 @@ const LogEntryRow = ({
     )
   }
 
-  const hasInspect = inspectMode && !!entry.inspect
+  const hasInspect = inspectMode && (!!entry.inspect || !!entry.inspectNote)
 
   const rvColor = entry.ok
     ? 'text-status-success'
@@ -114,6 +116,11 @@ const LogEntryRow = ({
 
       {/* Inspect drawer — reuses the same InspectPanel as the HSM Playground */}
       {expanded && entry.inspect && <InspectPanel inspect={entry.inspect} />}
+      {expanded && !entry.inspect && entry.inspectNote && (
+        <p className="mt-1 mb-1 ml-4 pl-3 border-l-2 border-border text-[11px] text-muted-foreground">
+          {entry.inspectNote}
+        </p>
+      )}
 
       {/* Error hint */}
       {!entry.ok &&
@@ -132,14 +139,27 @@ const LogEntryRow = ({
 
 // ── PKCS#11 function classification ──────────────────────────────────────────
 
-const CRYPTO_OPS = new Set([
+/**
+ * Calls that run a cryptographic mechanism — the rows a learner came to see.
+ * Every other C_* call (attribute reads, object search, session/token setup,
+ * mechanism discovery, object import/policy edits) is supporting plumbing:
+ * a single sign can trigger a dozen C_GetAttributeValue reads, which buried
+ * the call that mattered. Supporting calls are folded into an expandable
+ * group row by default, never removed.
+ */
+const MECHANISM_OPS = new Set([
+  // Key generation, derivation, wrapping
   'C_GenerateKeyPair',
   'C_GenerateKey',
-  'C_CreateObject', // key import (e.g. importing an externally-derived secret) — a real op, not housekeeping
-  'C_SetAttributeValue', // policy changes (e.g. CKA_TRUSTED, CKA_WRAP_WITH_TRUSTED) — a real op, not housekeeping
   'C_DeriveKey',
   'C_WrapKey',
   'C_UnwrapKey',
+  'C_WrapKeyAuthenticated',
+  'C_UnwrapKeyAuthenticated',
+  // KEM (FIPS 203, PKCS#11 v3.2)
+  'C_EncapsulateKey',
+  'C_DecapsulateKey',
+  // Encrypt / decrypt
   'C_EncryptInit',
   'C_Encrypt',
   'C_EncryptUpdate',
@@ -148,34 +168,38 @@ const CRYPTO_OPS = new Set([
   'C_Decrypt',
   'C_DecryptUpdate',
   'C_DecryptFinal',
+  // Sign / verify (incl. recover and the v3.2 single-shot VerifySignature)
   'C_SignInit',
   'C_Sign',
   'C_SignUpdate',
   'C_SignFinal',
+  'C_SignRecoverInit',
+  'C_SignRecover',
   'C_VerifyInit',
   'C_Verify',
   'C_VerifyUpdate',
   'C_VerifyFinal',
+  'C_VerifyRecoverInit',
+  'C_VerifyRecover',
+  'C_VerifySignatureInit',
+  'C_VerifySignature',
+  'C_VerifySignatureUpdate',
+  'C_VerifySignatureFinal',
+  // Digest
   'C_DigestInit',
   'C_Digest',
   'C_DigestUpdate',
+  'C_DigestKey',
   'C_DigestFinal',
-  // KEM extensions (CKM_ML_KEM)
-  'C_EncapsulateKey',
-  'C_DecapsulateKey',
-  // Random generation and authenticated (AEAD) wrap/unwrap — real crypto
-  // operations with their own dedicated decoders, previously hidden behind
-  // the default Crypto-Only filter.
+  // Dual-function multi-part
+  'C_DigestEncryptUpdate',
+  'C_DecryptDigestUpdate',
+  'C_SignEncryptUpdate',
+  'C_DecryptVerifyUpdate',
+  // Random
   'C_GenerateRandom',
-  'C_WrapKeyAuthenticated',
-  'C_UnwrapKeyAuthenticated',
-  // Object introspection — a real, deliberate action (inspecting or locating
-  // a key), not administrative noise; previously gated on the Inspect
-  // toggle instead of Crypto Only, which meant toggling parameter decode
-  // also silently changed how many rows were visible.
-  'C_GetAttributeValue',
-  'C_FindObjects',
-  // PKCS#11 v3.2 Message API (ML-DSA, SLH-DSA multi-message sign/verify)
+  'C_SeedRandom',
+  // PKCS#11 v3.0+ Message API (ML-DSA/SLH-DSA sign, AES-GCM encrypt)
   'C_MessageSignInit',
   'C_SignMessage',
   'C_SignMessageBegin',
@@ -186,7 +210,145 @@ const CRYPTO_OPS = new Set([
   'C_VerifyMessageBegin',
   'C_VerifyMessageNext',
   'C_MessageVerifyFinal',
+  'C_MessageEncryptInit',
+  'C_EncryptMessage',
+  'C_EncryptMessageBegin',
+  'C_EncryptMessageNext',
+  'C_MessageEncryptFinal',
+  'C_MessageDecryptInit',
+  'C_DecryptMessage',
+  'C_DecryptMessageBegin',
+  'C_DecryptMessageNext',
+  'C_MessageDecryptFinal',
 ])
+
+/**
+ * C_GetAttributeValue's per-attribute "no" answers (PKCS#11 v3.2 §5.7.5):
+ * the attribute isn't defined for this object, or it's sensitive. Readers
+ * probe optional attributes and expect these, so they are answers, not
+ * failures — one keygen can produce a dozen of them.
+ */
+const ATTRIBUTE_PROBE_RVS = new Set(['0x00000011', '0x00000012'])
+
+const isAttributeProbeMiss = (e: Pkcs11LogEntry) =>
+  e.fn === 'C_GetAttributeValue' && ATTRIBUTE_PROBE_RVS.has(e.rvHex)
+
+/**
+ * A row that folds into a "supporting calls" group: a real C_* call that runs
+ * no mechanism. Real failures always stay visible (an error is never noise);
+ * attribute-probe misses fold. Synthetic rows ('Dual-Engine Parity', '[WRAP]')
+ * and any function the caller named in `filterFns` stay visible too — the
+ * module asked for it.
+ */
+const isSupportCall = (e: Pkcs11LogEntry, pinned: readonly string[] | undefined) =>
+  !e.isStepHeader &&
+  (e.ok || isAttributeProbeMiss(e)) &&
+  e.fn.startsWith('C_') &&
+  !MECHANISM_OPS.has(e.fn) &&
+  !(pinned && pinned.includes(e.fn))
+
+type DisplayItem =
+  | { kind: 'entry'; entry: Pkcs11LogEntry }
+  | { kind: 'group'; id: number; entries: Pkcs11LogEntry[] }
+
+/** Fold runs of 2+ consecutive supporting calls; a lone one stays a plain row. */
+const foldSupportCalls = (
+  ordered: Pkcs11LogEntry[],
+  pinned: readonly string[] | undefined
+): DisplayItem[] => {
+  const items: DisplayItem[] = []
+  let run: Pkcs11LogEntry[] = []
+  const flush = () => {
+    if (run.length >= 2) items.push({ kind: 'group', id: run[0].id, entries: run })
+    else for (const e of run) items.push({ kind: 'entry', entry: e })
+    run = []
+  }
+  for (const e of ordered) {
+    if (isSupportCall(e, pinned)) {
+      run.push(e)
+    } else {
+      flush()
+      items.push({ kind: 'entry', entry: e })
+    }
+  }
+  flush()
+  return items
+}
+
+/** "C_GetAttributeValue ×8 · C_FindObjects ×2", most frequent first. */
+const summarizeFns = (entries: Pkcs11LogEntry[]) => {
+  const counts = new Map<string, number>()
+  for (const e of entries) counts.set(e.fn, (counts.get(e.fn) ?? 0) + 1)
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([fn, n]) => (n > 1 ? `${fn} ×${n}` : fn))
+    .join(' · ')
+}
+
+const SupportGroupRow = ({
+  entries,
+  expanded,
+  onToggle,
+  inspectMode,
+  beginnerMode,
+}: {
+  entries: Pkcs11LogEntry[]
+  expanded: boolean
+  onToggle: () => void
+  inspectMode: boolean
+  beginnerMode: boolean
+}) => {
+  const summary = summarizeFns(entries)
+  const probeMisses = entries.filter((e) => !e.ok).length
+  return (
+    <div data-testid="pkcs11-log-support-group">
+      <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        className="flex items-center gap-2 text-[11px] font-mono text-muted-foreground py-0.5 px-1 border-b border-border/10 rounded cursor-pointer hover:bg-muted/30"
+        onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onToggle()
+          }
+        }}
+        title={expanded ? 'Collapse supporting calls' : `Show ${entries.length} supporting calls`}
+      >
+        {expanded ? (
+          <ChevronDown size={10} className="shrink-0" />
+        ) : (
+          <ChevronRight size={10} className="shrink-0" />
+        )}
+        <span className="shrink-0 italic font-sans">{entries.length} supporting calls</span>
+        {probeMisses > 0 && (
+          <span
+            className="shrink-0 font-sans text-status-warning"
+            title="Attributes the object doesn't have or won't reveal (CKR_ATTRIBUTE_TYPE_INVALID / CKR_ATTRIBUTE_SENSITIVE) — expected answers to an attribute probe"
+          >
+            {probeMisses} attribute{probeMisses === 1 ? '' : 's'} not available
+          </span>
+        )}
+        <span className="truncate opacity-70" title={summary}>
+          {summary}
+        </span>
+      </div>
+      {expanded && (
+        <div className="ml-1.5 pl-1 border-l border-border/40">
+          {entries.map((e) => (
+            <LogEntryRow
+              key={e.id}
+              entry={e}
+              inspectMode={inspectMode}
+              beginnerMode={beginnerMode}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ── Main panel ────────────────────────────────────────────────────────────────
 
@@ -215,24 +377,15 @@ interface Pkcs11LogPanelProps {
   /**
    * Lesson context: every call a lesson step makes is the point (including
    * C_Initialize/C_OpenSession/C_Login when the lesson is about those calls
-   * specifically), so the `CRYPTO_OPS` "hide administrative noise" allowlist
-   * — built for the free-form workbench tabs — doesn't apply here. When
-   * true, skip that filtering entirely and hide the now-meaningless "Crypto
-   * Only" toggle.
+   * specifically), so supporting calls start expanded here. The collapse
+   * toggle stays available.
    */
   lessonMode?: boolean
   /**
-   * Start with the "Crypto Only" filter OFF, while keeping the toggle itself
-   * available (unlike `lessonMode`, which also hides it).
-   *
-   * For a surface whose traced calls are mostly token lifecycle —
-   * OpenSSL Studio, where the crypto itself runs provider-internally inside
-   * openssl.wasm and only Initialize/InitToken/Login/OpenSession/keygen cross
-   * into JS — defaulting the filter ON hides nearly every row and reads as
-   * "the log is broken". Defaults to the existing behaviour so no other
-   * caller changes.
+   * Start with supporting (non-mechanism) calls folded into group rows.
+   * Defaults to true, or false under `lessonMode`.
    */
-  defaultHideAdminOps?: boolean
+  defaultCollapseSupport?: boolean
   /**
    * Section (isStepHeader-grouped) display order. Defaults to
    * 'newest-first' — the existing behaviour every other caller relies on
@@ -287,27 +440,40 @@ export const Pkcs11LogPanel = ({
   showBeginnerMode = false,
   defaultBeginnerMode = false,
   lessonMode = false,
-  defaultHideAdminOps,
+  defaultCollapseSupport,
   groupOrder = 'newest-first',
 }: Pkcs11LogPanelProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
   const [inspectMode, setInspectMode] = useState(false)
   const [beginnerMode, setBeginnerMode] = useState(defaultBeginnerMode)
-  const [hideAdminOps, setHideAdminOps] = useState(defaultHideAdminOps ?? !lessonMode)
+  const [collapseSupport, setCollapseSupport] = useState(defaultCollapseSupport ?? !lessonMode)
+  // Groups the user flipped away from the global collapse state, keyed by the
+  // group's first (oldest) entry id — stable as new calls extend the run.
+  const [flippedGroups, setFlippedGroups] = useState<ReadonlySet<number>>(new Set())
+
+  const toggleCollapseAll = () => {
+    setCollapseSupport((v) => !v)
+    setFlippedGroups(new Set())
+  }
+  const toggleGroup = (id: number) =>
+    setFlippedGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
 
   const visibleLog = log.filter((e) => {
     if (e.isStepHeader) return true
-    // Crypto-only filter: hide everything that isn't a core crypto operation.
-    // Doesn't apply in lesson context — every call a step makes is the point.
-    if (!lessonMode && hideAdminOps && !CRYPTO_OPS.has(e.fn)) return false
-    if (CRYPTO_OPS.has(e.fn)) return true
+    if (MECHANISM_OPS.has(e.fn)) return true
     if (filterFns && filterFns.length > 0) {
       return filterFns.includes(e.fn)
     }
     return true
   })
 
+  const mechanismCount = visibleLog.filter((e) => MECHANISM_OPS.has(e.fn)).length
   const inspectableCount = visibleLog.filter((e) => !!e.inspect).length
 
   // Build display order: newest section first, but chronological inside the section.
@@ -331,6 +497,9 @@ export const Pkcs11LogPanel = ({
     // unless the caller asked to keep sections in the order they happened.
     return (groupOrder === 'newest-first' ? groups.reverse() : groups).flat()
   })()
+
+  const displayItems = foldSupportCalls(orderedLog, filterFns)
+  const hasSupportGroups = displayItems.some((i) => i.kind === 'group')
 
   const copyAll = () => {
     const text = visibleLog
@@ -380,6 +549,7 @@ export const Pkcs11LogPanel = ({
             <span className="truncate">{title}</span>
             <span className="shrink-0 text-xs font-normal text-muted-foreground">
               ({visibleLog.length} calls
+              {mechanismCount > 0 && <span> · {mechanismCount} crypto</span>}
               {inspectableCount > 0 && (
                 <span className="text-primary"> · {inspectableCount} inspectable</span>
               )}
@@ -405,20 +575,25 @@ export const Pkcs11LogPanel = ({
               Beginner
             </Button>
           )}
-          {!lessonMode && (
+          {hasSupportGroups && (
             <Button
-              variant={hideAdminOps ? 'secondary' : 'ghost'}
+              variant={collapseSupport ? 'secondary' : 'ghost'}
               size="sm"
               className="h-6 px-1.5 text-xs mr-1"
-              onClick={() => setHideAdminOps(!hideAdminOps)}
+              onClick={toggleCollapseAll}
+              aria-pressed={collapseSupport}
               title={
-                hideAdminOps
-                  ? 'Showing crypto ops only — click to include admin ops'
-                  : 'Show crypto operations only (hide C_Initialize, C_OpenSession, etc.)'
+                collapseSupport
+                  ? 'Supporting calls (attribute reads, object search, session setup) are folded — click to expand them all'
+                  : 'Fold supporting calls so only cryptographic mechanism calls stand out'
               }
             >
-              <Filter size={11} className="mr-1" />
-              Crypto Only
+              {collapseSupport ? (
+                <ChevronsUpDown size={11} className="mr-1" />
+              ) : (
+                <ChevronsDownUp size={11} className="mr-1" />
+              )}
+              {collapseSupport ? 'Expand all' : 'Collapse support'}
             </Button>
           )}
           <Button
@@ -489,14 +664,25 @@ export const Pkcs11LogPanel = ({
                   <span className="text-right">Duration</span>
                   {beginnerMode && <span>Plain English</span>}
                 </div>
-                {orderedLog.map((e) => (
-                  <LogEntryRow
-                    key={e.id}
-                    entry={e}
-                    inspectMode={inspectMode}
-                    beginnerMode={beginnerMode}
-                  />
-                ))}
+                {displayItems.map((item) =>
+                  item.kind === 'group' ? (
+                    <SupportGroupRow
+                      key={`g${item.id}`}
+                      entries={item.entries}
+                      expanded={collapseSupport === flippedGroups.has(item.id)}
+                      onToggle={() => toggleGroup(item.id)}
+                      inspectMode={inspectMode}
+                      beginnerMode={beginnerMode}
+                    />
+                  ) : (
+                    <LogEntryRow
+                      key={item.entry.id}
+                      entry={item.entry}
+                      inspectMode={inspectMode}
+                      beginnerMode={beginnerMode}
+                    />
+                  )
+                )}
               </div>
             </>
           )}

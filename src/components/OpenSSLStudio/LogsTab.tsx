@@ -34,9 +34,8 @@ export const LogsTab = () => {
         onClear={clearPkcs11Log}
         title="PKCS#11 Call Log (token lifecycle + HSM keygen)"
         className="shrink-0"
-        // Most of what's traceable here IS the lifecycle, so the default
-        // "Crypto Only" filter would hide nearly every row.
-        defaultHideAdminOps={false}
+        // Most of what's traceable here IS the lifecycle; it folds into
+        // expandable "supporting calls" rows, never hidden.
         emptyMessage="No PKCS#11 calls yet. Calls appear when a command touches the token — generating an HSM-backed key, or the first pkcs11: operation that provisions it. Note: crypto driven through a pkcs11: URI runs inside openssl.wasm (CLI → pkcs11-provider → engine) and never crosses into JavaScript, so those individual operations cannot be traced here."
       />
 
