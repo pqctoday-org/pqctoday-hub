@@ -180,7 +180,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is NIST IR 8547?',
         answer:
-          'NIST IR 8547 (Interagency Report) provides transition guidance for migrating federal cryptographic systems to post-quantum algorithms, recommending that classical algorithms like RSA and ECDSA be deprecated by 2030 and disallowed by 2035. Note: it is still an Initial Public Draft (published Nov 2024, not yet finalized), so its 2030/2035 dates are draft guidance rather than settled policy. It is the most widely referenced US government transition timeline and complements the FIPS algorithm standards. The Reference Library links to the full document with implementation details.',
+          'NIST IR 8547 (Interagency Report) provides transition guidance for migrating federal cryptographic systems to post-quantum algorithms, deprecating quantum-vulnerable public-key algorithms such as RSA and ECDSA after 2030 and disallowing them under NIST standards after 2035, at every key size of 112 bits of security or more. NIST published the final report on 27 October 2026, replacing the November 2024 initial public draft. It is the most widely referenced US government transition timeline and complements the FIPS algorithm standards. The Reference Library links to the full document with implementation details.',
         deepLink: '/library?ref=NIST%20IR%208547',
       },
       {
@@ -244,7 +244,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'When does NIST plan to deprecate classical algorithms?',
         answer:
-          'According to NIST IR 8547 (currently an Initial Public Draft, Nov 2024), classical public-key algorithms such as RSA and ECDSA should be deprecated by 2030 and fully disallowed by 2035 in federal systems. These draft dates create a roughly 10-year window for organizations to complete their post-quantum migration. The Timeline view plots these milestones alongside country-specific deadlines.',
+          'According to NIST IR 8547 (final, October 2026), quantum-vulnerable public-key algorithms such as RSA and ECDSA are deprecated after 2030 and disallowed after 2035 for systems that follow NIST standards. These dates create a roughly 10-year window for organizations to complete their post-quantum migration. The Timeline view plots these milestones alongside country-specific deadlines.',
         deepLink: '/timeline',
       },
       {
@@ -280,7 +280,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the CNSA 2.0 exclusive phase deadline?',
         answer:
-          'There is no single current deadline accurately described as a 2033 CNSA 2.0 exclusive phase. FAQ version 2.2 requires compliant new NSS acquisitions from 1 January 2027, phases out unsupported equipment and services by 31 December 2030 unless excepted, and mandates CNSA 2.0 algorithms by 31 December 2031 unless otherwise noted. Earlier category guidance sets 2030 exclusive-use milestones for software and firmware signing and traditional networking. The separate 2035 NSM-10 objective and the draft NIST IR 8547 civilian disallowance date have different scope and authority.',
+          'There is no single current deadline accurately described as a 2033 CNSA 2.0 exclusive phase. FAQ version 2.2 requires compliant new NSS acquisitions from 1 January 2027, phases out unsupported equipment and services by 31 December 2030 unless excepted, and mandates CNSA 2.0 algorithms by 31 December 2031 unless otherwise noted. Earlier category guidance sets 2030 exclusive-use milestones for software and firmware signing and traditional networking. The separate 2035 NSM-10 objective and the NIST IR 8547 disallowance date have different scope and authority.',
         deepLink: '/timeline',
       },
       {

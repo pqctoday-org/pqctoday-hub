@@ -99,8 +99,8 @@
   },
   {
     "term": "NIST IR 8547",
-    "definition": "NIST Internal Report establishing the PQC transition timeline: deprecation of classical asymmetric crypto by 2030, disallowment by 2035. Still an Initial Public Draft (issued 2024-11-12) — not yet a final publication. NIST's own CSRC page shows only this one draft; no second draft has been published.",
-    "technicalNote": "Covers RSA, ECDSA, ECDH, EdDSA, DH, and DSA. The most authoritative U.S. government PQC migration deadline document.",
+    "definition": "NIST Internal Report setting the PQC transition timeline: quantum-vulnerable public-key algorithms are deprecated after 2030 and disallowed under NIST standards after 2035. Final since 27 October 2026; it replaced the initial public draft of 12 November 2024.",
+    "technicalNote": "Covers RSA, ECDSA, EdDSA, finite-field and elliptic-curve DH and MQV at every key size of 112 bits of security or more. It recommends ML-KEM-768 as the default ML-KEM parameter set and allows a hybrid key-establishment scheme to be FIPS 140-validated when one input is approved.",
     "relatedModule": "/library?ref=NIST IR 8547",
     "complexity": "intermediate",
     "category": "standard"

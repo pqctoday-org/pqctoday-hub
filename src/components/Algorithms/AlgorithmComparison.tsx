@@ -745,7 +745,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 className="text-[10px] text-muted-foreground"
                                 title={TRANSITION_GUIDANCE_NOTE}
                               >
-                                Proposed: NIST IR 8547 (draft), US federal
+                                NIST IR 8547 (final)
                               </span>
                             )}
                             {transitionDateSource(algo.deprecationDate, algo.region) ===

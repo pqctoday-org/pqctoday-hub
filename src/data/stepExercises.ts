@@ -1183,10 +1183,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // vendor-risk
   'vendor-risk/contract-clauses': {
     prompt:
-      'In the PQC Compliance Deadline Year dropdown, which year is labelled as CNSA 2.0 full enforcement for all NSS and the year the NIST IR 8547 initial public draft proposes to disallow RSA/ECC (US federal context)?',
+      'In the PQC Compliance Deadline Year dropdown, which year is labelled as CNSA 2.0 full enforcement for all NSS and the year NIST IR 8547 disallows RSA/ECC under NIST standards?',
     options: ['2030', '2033', '2035'],
     answer: 2,
-    why: "The dropdown stacks the milestones: 2030 is CNSA 2.0 exclusivity for signing and networking plus the NIST deprecation target, 2033 covers browsers, servers, cloud and operating systems, and 2035 is the point where CNSA 2.0 applies to every NSS and NIST's draft schedule disallows classical public-key algorithms.",
+    why: 'The dropdown stacks the milestones: 2030 is CNSA 2.0 exclusivity for signing and networking plus the NIST deprecation target, 2033 covers browsers, servers, cloud and operating systems, and 2035 is the point where CNSA 2.0 applies to every NSS and NIST IR 8547 disallows quantum-vulnerable public-key algorithms.',
   },
   // research-quantum-impact
   'research-quantum-impact/how-to-act': {

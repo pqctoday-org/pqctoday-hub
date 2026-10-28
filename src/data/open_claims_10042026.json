@@ -26,17 +26,17 @@
     },
     {
       "id": "crqc-nist-ir8547-dates",
-      "claim": "NIST's initial public draft IR 8547 (November 2024) proposes that 112-bit RSA, ECDSA and EdDSA be deprecated after 2030 and that quantum-vulnerable algorithms be disallowed after 2035.",
-      "madeBy": "NIST (IR 8547, initial public draft, November 2024)",
+      "claim": "NIST IR 8547 (final, October 2026) deprecates quantum-vulnerable public-key algorithms (RSA, ECDSA, EdDSA, DH and MQV) at 112 bits of security or more after 2030 and disallows them under NIST standards and guidelines after 2035.",
+      "madeBy": "NIST (IR 8547, final, October 2026)",
       "state": "Settled",
-      "reason": "What the draft says is checked against the draft itself. It is a draft: the comment period closed on 2025-01-10 and no final version was found on 2026-07-30.",
-      "lastChecked": "2026-10-03",
+      "reason": "Checked against the final report itself (Tables 2 and 4 and Section 4.1.2). NIST published it on 2026-10-27; it replaces the November 2024 initial public draft, which deprecated only the 112-bit parameter sets after 2030.",
+      "lastChecked": "2026-10-27",
       "sources": [
         {
-          "name": "NIST IR 8547 ipd",
-          "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
-          "states": "Transition table: deprecated after 2030, disallowed after 2035.",
-          "quote": "Deprecated after 2030 Disallowed after 2035"
+          "name": "NIST IR 8547",
+          "url": "https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf",
+          "states": "Tables 2 and 4: every listed parameter set (112 bits of security or more) is deprecated after 2030 and disallowed after 2035.",
+          "quote": "NIST will deprecate all quantum-vulnerable cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035."
         }
       ],
       "topics": ["estimates", "migration-deadline"]
