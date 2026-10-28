@@ -185,7 +185,7 @@ test('certification journey remains readable at a 200%-zoom-equivalent viewport'
 test('critical certification screens expose accessible structure and official source links', async ({
   page,
 }) => {
-  test.setTimeout(90_000)
+  test.setTimeout(150_000)
   await seedCertificationEngineer(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -216,6 +216,9 @@ test('critical certification screens expose accessible structure and official so
 
   await page.goto('/compliance?tab=cswp39')
   await page.waitForSelector('main', { timeout: 20_000 })
+  // The tab waits for the ~10 MB compliance dataset; on a cold dev server with
+  // four workers that alone can take over 30 s.
+  await expect(page.getByText('Loading compliance data')).toHaveCount(0, { timeout: 60_000 })
   // The CSWP 39 explorer renders only once the compliance data has loaded,
   // which can take longer than the default expect timeout under gate load.
   const officialPdf = page.getByRole('link', { name: 'Official PDF' })
