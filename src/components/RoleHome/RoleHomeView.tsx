@@ -35,10 +35,8 @@ const PERSONA_ICONS: Record<LearningPersona['icon'], LucideIcon> = {
 
 /** Which track-line template a persona's card uses. Every persona shows an
  *  "essentials" summary except researcher, who gets the full-corpus framing
- *  (no funnel) instead — see `trackLine` below. `essentialsFirstLesson` is the
- *  essentials summary for a card whose first win is the whole first lesson, so
- *  the total already contains it and must not read as "then" more. */
-type TrackKind = 'essentials' | 'essentialsFirstLesson' | 'fullCorpus'
+ *  (no funnel) instead — see `trackLine` below. */
+type TrackKind = 'essentials' | 'fullCorpus'
 
 interface RoleCopy {
   /** Why-now hook — editorial copy from the approved design, not derived data. */
@@ -86,8 +84,8 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
   'cert-engineer': {
     urgency:
       'A certificate covers one module, one boundary, one algorithm list. Know exactly what yours will prove.',
-    firstWin: 'First win — learn what a certificate actually covers · 95 min',
-    track: 'essentialsFirstLesson',
+    firstWin: 'First win — run the validation tests',
+    track: 'essentials',
   },
   researcher: {
     urgency: 'FIPS 203/204/205 are out and ACVP vectors are live. Trace it end to end.',
@@ -118,9 +116,6 @@ const ROLE_ORDER: PersonaId[] = [
  *  always computed from the persona object passed in, never a literal number. */
 function trackLine(persona: LearningPersona, track: TrackKind): string {
   if (track === 'fullCorpus') return `full corpus · ${persona.estimatedMinutes} min available`
-  if (track === 'essentialsFirstLesson') {
-    return `${persona.essentials.length} modules in all · ${persona.essentialsMinutes} min, this lesson first`
-  }
   return `then ${persona.essentials.length} modules · ${persona.essentialsMinutes} min`
 }
 

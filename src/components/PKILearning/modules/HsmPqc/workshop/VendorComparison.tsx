@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
 import React, { useState, useMemo, useCallback } from 'react'
 import { ChevronDown, ChevronUp, ArrowUpDown, Server, Cloud, Filter, Shield } from 'lucide-react'
 import {
@@ -241,8 +242,11 @@ export const VendorComparison: React.FC = () => {
                         </div>
                       </div>
                     </div>
+                    <HsmCapabilityEvidence softwareName={vendor.catalogName} />
                     <div>
-                      <h5 className="font-bold text-foreground mb-2">PQC Algorithms</h5>
+                      <h5 className="font-bold text-foreground mb-2">
+                        Available algorithm families
+                      </h5>
                       <div className="flex flex-wrap gap-1">
                         {vendor.supportedPQCAlgorithms.map((alg) => (
                           <span
@@ -257,8 +261,11 @@ export const VendorComparison: React.FC = () => {
                     <div>
                       <h5 className="font-bold text-foreground mb-2">
                         <Shield size={12} className="inline mr-1" />
-                        Side-Channel Countermeasures
+                        Side-channel topics to investigate
                       </h5>
+                      <p className="text-muted-foreground">
+                        These are review topics, not verified countermeasures for this product.
+                      </p>
                       <ul className="space-y-0.5">
                         {vendor.sideChannelCountermeasures.map((cm) => (
                           <li key={cm} className="text-muted-foreground">

@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import { RoleHomeView } from './RoleHomeView'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
-import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 
 const ROLE_ORDER: PersonaId[] = [
   'executive',
@@ -29,7 +28,7 @@ const FIRST_WIN_COPY: Record<PersonaId, string> = {
   architect: 'First win — flip a policy, watch it rekey · 15 min',
   ops: 'First win — size your HSM fleet · 10 min',
   researcher: 'No funnel — open the evidence workspace',
-  'cert-engineer': 'First win — learn what a certificate actually covers · 95 min',
+  'cert-engineer': 'First win — run the validation tests',
   curious: 'First win — see what breaks · 6 min',
 }
 
@@ -76,21 +75,15 @@ describe('RoleHomeView', () => {
       const expectedTrackLine =
         id === 'researcher'
           ? `full corpus · ${persona.estimatedMinutes} min available`
-          : id === 'cert-engineer'
-            ? `${persona.essentials.length} modules in all · ${persona.essentialsMinutes} min, this lesson first`
-            : `then ${persona.essentials.length} modules · ${persona.essentialsMinutes} min`
+          : `then ${persona.essentials.length} modules · ${persona.essentialsMinutes} min`
       expect(card).toHaveTextContent(expectedTrackLine)
     }
   )
 
-  it("the certification engineer's typed first-win minutes equal the first essential lesson's manifest duration", () => {
-    const persona = PERSONAS['cert-engineer']
-    const firstEssential = persona.essentials[0]
-    const manifestMinutes = Number(/(\d+)\s*min/.exec(MANIFEST_BY_ID[firstEssential].duration)?.[1])
-    const typedMinutes = Number(/(\d+) min$/.exec(FIRST_WIN_COPY['cert-engineer'])?.[1])
-    expect(typedMinutes).toBe(manifestMinutes)
+  it('promises validation tests before the optional learning path', () => {
     render(<RoleHomeView onSelectPersona={vi.fn()} onSkip={vi.fn()} />)
-    expect(getCard('cert-engineer')).toHaveTextContent(`· ${manifestMinutes} min`)
+    expect(getCard('cert-engineer')).toHaveTextContent('First win — run the validation tests')
+    expect(getCard('cert-engineer')).not.toHaveTextContent('this lesson first')
   })
 
   it.each(ROLE_ORDER)('calls onSelectPersona with %s when its card is clicked', async (id) => {

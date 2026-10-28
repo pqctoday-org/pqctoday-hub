@@ -10,6 +10,7 @@
  * csrc.nist.gov/projects/cryptographic-module-validation-program before relying on them.
  */
 
+import { hsmCapabilitySummary } from '@/data/hsmCapabilityXrefData'
 import type { EsvStatus, FipsStatus, RiskColor } from './cryptoLibraries'
 import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
@@ -31,7 +32,7 @@ export interface HsmVendorRecord {
   notes: string
 }
 
-export const HSM_VENDORS: HsmVendorRecord[] = [
+const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
   {
     id: 'thales-luna-7',
     catalogName: 'Thales Luna HSM',
@@ -42,8 +43,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'active',
     cmvpCertNumber: '#4962 (Luna G7)',
     esvStatus: 'active',
-    pqcSupport:
-      'ML-KEM-768/1024, ML-DSA-65/87 in firmware; not in the approved-algorithm list of #4962 or the K7 module #4684',
     platformBinding: 'Luna Network appliance; K7 crypto module',
     lastVerified: '2026-09-24',
     posture: 'green',
@@ -60,8 +59,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'active',
     cmvpCertNumber: '#5329 (nShield 5s; replaces #4765, now historical)',
     esvStatus: 'active',
-    pqcSupport:
-      'ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s (CAVP A7285); not in the approved-algorithm list of #5329',
     platformBinding: 'nShield 5c network appliance / nShield 5s PCIe',
     lastVerified: '2026-09-24',
     posture: 'green',
@@ -78,8 +75,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'historical',
     cmvpCertNumber: '#3925 (CryptoServer Se-Series Gen2; FIPS 140-2 L3, historical)',
     esvStatus: 'active',
-    pqcSupport:
-      'ML-KEM, ML-DSA (CAVP A7400, Lattice Module - ML on the u.trust Anchor cHSM; algorithm validation only, no CMVP certificate lists them)',
     platformBinding: 'CP5 Se-Gen2 PCIe',
     lastVerified: '2026-09-24',
     posture: 'yellow',
@@ -97,8 +92,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     cmvpCertNumber:
       '#5497 = FIPS 140-3 Level 3 (19 Aug 2026, QASM Cryptographic Module); #4250 (FIPS 140-2) historical',
     esvStatus: 'active',
-    pqcSupport:
-      'ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS (CAVP A4204 = LMS; A5631 = LMS/ML-DSA/ML-KEM/SLH-DSA)',
     platformBinding: 'QxBMC-1/3/12 chassis (desktop/1U/4U); FPGA-based QASM core',
     lastVerified: '2026-09-24',
     posture: 'green',
@@ -115,7 +108,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'historical',
     cmvpCertNumber: '#4139 (SDKMS Appliance; FIPS 140-2, historical)',
     esvStatus: 'active',
-    pqcSupport: 'ML-KEM, ML-DSA via SGX-backed key objects (outside FIPS boundary)',
     platformBinding: 'Intel SGX-enabled appliance / cloud tenant',
     lastVerified: '2026-09-24',
     posture: 'yellow',
@@ -132,7 +124,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'active',
     cmvpCertNumber: '#5302 (YubiHSM 2; FIPS 140-3 L3). #3916 (FIPS 140-2) is historical',
     esvStatus: 'not-validated',
-    pqcSupport: 'Ed25519, ECDSA, RSA; no PQC in FIPS boundary yet',
     platformBinding: 'YubiHSM 2 FIPS USB device',
     lastVerified: '2026-04-11',
     posture: 'yellow',
@@ -149,8 +140,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'active',
     cmvpCertNumber: '#4703 (Marvell LS2 HSM Family; FIPS 140-3 L3, per AWS CloudHSM docs)',
     esvStatus: 'active',
-    pqcSupport:
-      'ML-DSA-44/65/87 in the HSM; FIPS mode on hsm2m.medium from 1 Sep 2026; not on certificate #4703; no ML-KEM',
     platformBinding: 'hsm2m.medium instance; region-bound',
     lastVerified: '2026-10-15',
     posture: 'yellow',
@@ -168,7 +157,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'historical',
     cmvpCertNumber: null,
     esvStatus: 'active',
-    pqcSupport: 'None in validated boundary',
     platformBinding: 'Luna 7 appliance hosted by Azure',
     lastVerified: '2026-03-30',
     posture: 'red',
@@ -185,7 +173,6 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
     fipsStatus: 'active',
     cmvpCertNumber: '#4703 / #5502 (Marvell LS2 HSM Family; confirm with Google which applies)',
     esvStatus: 'active',
-    pqcSupport: 'No PQC in FIPS boundary; roadmap disclosed 2026H2',
     platformBinding: 'Marvell LiquidSecurity 2 HSM',
     lastVerified: '2026-09-24',
     posture: 'yellow',
@@ -193,6 +180,11 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
       'GCP Cloud HSM uses Marvell LS2 (LiquidSecurity 2) hardware; Marvell\u2019s LS2 certificates are #4703 and #5502, neither listing a PQC algorithm as approved (#5220 is a JISA Softech LS2 certificate). #5502\u2019s Security Policy cites ESV E231 (Marvell OCTEON TRNG). PQC integration pending.',
   },
 ]
+
+export const HSM_VENDORS: HsmVendorRecord[] = HSM_VENDOR_SCENARIOS.map((vendor) => ({
+  ...vendor,
+  pqcSupport: hsmCapabilitySummary(vendor.catalogName),
+}))
 
 // ── Catalog-derived headline status ───────────────────────────────────────────
 // Map catalog availability → this module's posture vocabulary. The catalog is

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
 import React, { useState } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
@@ -330,11 +331,21 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
         >
           <div className="space-y-4 text-sm text-foreground/80">
             <p>
-              On-premises HSMs from the three major vendors now ship PQC firmware, but the algorithm
-              sets, APIs and FIPS 140 certificate coverage differ. Each takes a different approach
-              to integrating post-quantum algorithms.
+              Algorithm availability, API support and certificate scope are separate questions. The
+              records below show the source and checked date for each product; the documentation
+              examples that follow describe the versions named in those examples.
             </p>
 
+            {['Thales Luna HSM', 'Entrust nShield', 'Utimaco uTrust HSM'].map((name) => (
+              <div key={name} className="rounded border border-border p-3">
+                <h3 className="font-bold">{name}</h3>
+                <HsmCapabilityEvidence softwareName={name} />
+              </div>
+            ))}
+            <h3 className="font-bold">Version-specific documentation examples</h3>
+            <p>
+              These examples do not establish the current certification scope of another version.
+            </p>
             <div className="grid grid-cols-1 gap-4">
               {/* Thales Luna */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -491,6 +502,19 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
         icon={<Cloud size={24} className="text-primary" />}
       >
         <div className="space-y-4 text-sm text-foreground/80">
+          {['AWS CloudHSM', 'Google Cloud HSM', 'Azure Dedicated HSM (Thales Luna 7)'].map(
+            (name) => (
+              <div key={name} className="rounded border border-border p-3">
+                <h3 className="font-bold">{name}</h3>
+                <HsmCapabilityEvidence softwareName={name} />
+              </div>
+            )
+          )}
+          <h3 className="font-bold">Version-specific documentation examples</h3>
+          <p>
+            Read the source dates and product identities separately. A provider's service statement
+            and a module certificate can describe different scopes.
+          </p>
           <p>
             Cloud HSMs provide managed hardware security, and each service exposes a different PQC
             algorithm list, API and protection level. Read the provider&apos;s own documentation for
