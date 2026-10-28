@@ -36,5 +36,5 @@ export const DATA_FILENAMES: GeneratedDataFilenames = {
   authoritativeSources: 'pqc_authoritative_sources_reference_10232026_r1.csv',
   certificationXref: 'migrate_certification_xref_10232026_r1.csv',
   hsmCapabilityXref: 'migrate_hsm_capability_xref_10222026.csv',
-  quiz: 'pqcquiz_10262026.csv',
+  quiz: 'pqcquiz_10272026.csv',
 }
