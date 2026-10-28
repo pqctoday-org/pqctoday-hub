@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'exec-quantum-impact',
   version: '1.1.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-10-27',
   lastEdited: '2026-10-28',
 
   standards: [

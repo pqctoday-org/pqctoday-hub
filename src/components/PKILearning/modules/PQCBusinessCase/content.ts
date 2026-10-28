@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-business-case',
   version: '1.0.2',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-10-27',
   lastEdited: '2026-10-28',
 
   standards: [

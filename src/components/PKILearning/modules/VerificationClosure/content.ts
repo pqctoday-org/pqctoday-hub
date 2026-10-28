@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'verification-closure',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-10-27',
   version: '1.1.0',
   lastEdited: '2026-10-28',
 

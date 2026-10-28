@@ -15,7 +15,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'talking-about-pqc',
-  lastReviewed: '2026-10-01',
+  lastReviewed: '2026-10-27',
   version: '1.0.0',
   // lastReviewed set by record_module_review.py: owner review, 1 Oct 2026,
   // clean (revisions.jsonl review_only entry). Never edit it by hand.
