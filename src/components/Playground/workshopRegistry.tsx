@@ -260,11 +260,11 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-encrypt',
     pt_id: 'PT-003',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Hybrid KEM + ECDH',
     description: 'ML-KEM + X25519 ECDH + HKDF hybrid encryption pipeline',
     category: 'HSM / PKCS#11',
-    algorithms: ['ML-KEM-768', 'X25519', 'HKDF'],
+    algorithms: ['ML-KEM-768', 'X25519', 'HKDF', 'HPKE-PQ'],
     icon: Lock,
     moduleLink: '/learn/hybrid-crypto',
     keywords: ['hybrid', 'kem', 'ecdh', 'hkdf', 'ml-kem', 'x25519', 'encryption', 'key agreement'],
@@ -378,7 +378,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'slh-dsa',
     pt_id: 'PT-001',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'SLH-DSA Sign & Verify',
     description: 'All 12 FIPS 205 parameter sets with pre-hash support',
     category: 'HSM / PKCS#11',
@@ -528,7 +528,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tls-simulator',
     pt_id: 'PT-024',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'TLS 1.3 Simulator',
     description:
       'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
@@ -615,7 +615,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pqc-ssh-sim',
     pt_id: 'PT-SSH-PQC',
-    version: '1.0.4',
+    version: '1.0.5',
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
@@ -1239,7 +1239,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.3.3',
+    version: '1.3.4',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half names the draft revisions it was verified against

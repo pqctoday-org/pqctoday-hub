@@ -450,6 +450,34 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // 14888-3:2018) — 'regional' (final within its own jurisdiction, not a
   // NIST FIPS), same tier China/KpqC national winners already use.
   'Published|||GB/T 32918 (China); ISO/IEC 14888-3:2018; NOT in NIST FIPS': 'regional',
+  // Exact current publication/recommendation pairs (27 October 2026).
+  'Selected by NIST; standard in development|||Selected March 2025; draft FIPS not yet published; final expected 2027':
+    'fips-draft',
+  'Author specification; BSI advises against new use|||Not in ISO parameter list per scheme authors; not in NIST FIPS; BSI advisory dated 2026-09-29, announced 2026-10-01; no new developments':
+    'non-standardized',
+  'ISO 18033-2 Amd2; BSI advises against new use|||ISO/IEC 18033-2:2006/Amd 2:2026; not in NIST FIPS; BSI advisory dated 2026-09-29, announced 2026-10-01; no new developments':
+    'final',
+  'NIST Round 4 concluded; not selected|||NIST PQC Round 4 (concluded 2025; not selected)':
+    'round4-not-selected',
+  'Selected by NIST; FIPS 206 in development|||FIPS 206 (in development)': 'fips-draft',
+  'SP 800-56A Rev. 3|||SP 800-56A Rev. 3 (P-curve key agreement; revision planned 2026-01-06)':
+    'final',
+  'RFC 7748 (Informational)|||RFC 7748; not a FIPS 186-5 key-agreement approval': 'final',
+  'RFC 10024 (Proposed Standard)|||RFC 10024': 'final',
+  'Candidate|||KpqC final specifications (2026-01-30); KS KEM proposals submitted (2026-04-22)':
+    'regional',
+  'Candidate|||KpqC final specifications (2026-01-30); KS signature proposals under review (2026-04-22)':
+    'regional',
+  'Not among NIST Additional Sig Round 3 candidates (2026-05; inferred from published list)|||NIST Additional Signatures Round 3 candidate list (May 2026); not standardised':
+    'eliminated',
+  'IETF Internet-Draft; RFC Editor queue (blocked)|||draft-ietf-lamps-pq-composite-sigs-19; final approval pending; not yet RFC':
+    'ietf-draft',
+  'IETF Internet-Draft; RFC Editor queue|||draft-ietf-lamps-pq-composite-kem-23; RFC Editor queue; not yet RFC':
+    'ietf-draft',
+  'Active individual Internet-Draft (Independent Submission)|||draft-connolly-cfrg-xwing-kem-11; not an adopted IETF/IRTF standard':
+    'ietf-draft',
+  'RFC 9941 (Informational)|||RFC 9941': 'final',
+  'RFC 10042 (Informational; verified errata 9159, 9160)|||RFC 10042': 'final',
 }
 
 /** Throws on any (status, fips_standard) pair not in the lookup table above —

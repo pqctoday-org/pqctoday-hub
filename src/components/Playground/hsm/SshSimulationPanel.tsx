@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 //
 // SshSimulationPanel — Playground tool PT-SSH-PQC.
 //
@@ -72,7 +73,10 @@ export function SshSimulationPanel() {
   const [phase, setPhase] = useState<
     'idle' | 'initializing' | 'running-classical' | 'running-pqc' | 'done' | 'error'
   >('idle')
-  const [pqcKex, setPqcKex] = useState<SshKexAlg>('mlkem768-curve25519-sha256')
+  const [pqcKex, setPqcKex] = useState<SshKexAlg>(
+    () =>
+      (readAlgorithmLaunch('pqc-ssh-sim')?.parameter as SshKexAlg) ?? 'mlkem768-curve25519-sha256'
+  )
   const [pqcHostKey, setPqcHostKey] = useState<SshHostKeyAlg>('ssh-mldsa-65')
   const [classicalResult, setClassicalResult] = useState<SshHandshakeResult | undefined>()
   const [pqcResult, setPqcResult] = useState<SshHandshakeResult | undefined>()

@@ -40,10 +40,41 @@ const LIBOQS_ONLY = new Set([
   'Classic-McEliece-348864',
   'Classic-McEliece-460896',
   'Classic-McEliece-8192128',
+  'Classic-McEliece-6688128',
+  'Classic-McEliece-6960119',
 ])
 
-// softhsmv3 Rust supports LMS/XMSS — routed to 'softhsm' (see resolveEngine)
-const LMS_ALGOS = new Set(['LMS-SHA256 (H20/W8)', 'XMSS-SHA2_20'])
+// Exact identities only: a composite or a draft parameter set must never inherit
+// a component benchmark. Stateful H20 catalogue rows need an exact implementation;
+// the shorter trees available in workshop demos are not measurements of H20.
+const SOFTHSM_ALGOS = new Set([
+  'ML-KEM-512',
+  'ML-KEM-768',
+  'ML-KEM-1024',
+  'ML-DSA-44',
+  'ML-DSA-65',
+  'ML-DSA-87',
+  ...['SHA2', 'SHAKE'].flatMap((hash) =>
+    ['128s', '128f', '192s', '192f', '256s', '256f'].map((set) => `SLH-DSA-${hash}-${set}`)
+  ),
+  'ECDSA P-256',
+  'ECDSA P-384',
+  'ECDSA P-521',
+  'ECDH P-256',
+  'ECDH P-384',
+  'ECDH P-521',
+  'secp256k1',
+  'Ed25519',
+  'X25519',
+  'X448',
+])
+
+export function getBenchmarkUnavailableReason(algoName: string): string | null {
+  if (resolveEngine(algoName)) return null
+  if (algoName === 'LMS-SHA256 (H20/W8)' || algoName === 'XMSS-SHA2_20')
+    return 'Exact H20 benchmark unavailable. The workshop uses a smaller demonstration tree.'
+  return 'No exact benchmark is available for this algorithm and parameter set.'
+}
 
 const RSA_ALGOS = new Set(['RSA-2048', 'RSA-3072', 'RSA-4096'])
 
@@ -56,16 +87,7 @@ export function resolveEngine(algoName: string): CryptoEngine | null {
   if (LIBOQS_ONLY.has(algoName)) return 'liboqs'
   if (HYBRID_KEMS.has(algoName)) return null // No standalone benchmark for hybrids
   if (NOT_BENCHMARKABLE.has(algoName)) return null // No portable browser engine
-  // softhsmv3 Rust — all supported algorithms
-  if (algoName.startsWith('ML-KEM') || algoName.startsWith('ML-DSA')) return 'softhsm'
-  if (algoName.startsWith('SLH-DSA')) return 'softhsm'
-  if (RSA_ALGOS.has(algoName)) return 'softhsm'
-  if (algoName.startsWith('ECDSA')) return 'softhsm' // P-256, P-384, P-521
-  if (algoName === 'secp256k1') return 'softhsm'
-  if (algoName === 'Ed25519') return 'softhsm'
-  if (algoName.startsWith('ECDH ')) return 'softhsm' // P-256, P-384, P-521
-  if (algoName === 'X25519' || algoName === 'X448') return 'softhsm'
-  if (LMS_ALGOS.has(algoName)) return 'softhsm'
+  if (SOFTHSM_ALGOS.has(algoName) || RSA_ALGOS.has(algoName)) return 'softhsm'
   return null
 }
 
@@ -264,7 +286,7 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
         paramSet = softhsm.CKP_SLH_DSA_SHAKE_256F
         break
       default:
-        paramSet = softhsm.CKP_SLH_DSA_SHA2_128S
+        throw new Error(`Unsupported SLH-DSA parameter set: ${algoName}`)
     }
     let slhResult: ReturnType<typeof softhsm.hsm_generateSLHDSAKeyPair>
     keyGenMs = timeMs(() => {
@@ -376,78 +398,8 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     })
     sharedSecretBytes = 32
     sigCiphertextBytes = null
-  } else if (algoName.startsWith('LMS-SHA256')) {
-    // LMS_SHA256_M32_H5 (lmsType=0x05) + LMOTS_SHA256_N32_W1 (lmotsType=0x01)
-    // H20 keygen (~30s) is impractical in-browser; H5/W1 is the confirmed-working playground config
-    let lmsResult: ReturnType<typeof softhsm.hsm_generateLMSKeyPair>
-    keyGenMs = timeMs(() => {
-      lmsResult = softhsm.hsm_generateLMSKeyPair(mod, hSession)
-    })
-    publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, lmsResult!.pubHandle).length
-    // Not measurable, and deliberately so. An HBS private key holds the
-    // one-time-signature state; both engines now force CKA_SENSITIVE=TRUE /
-    // CKA_EXTRACTABLE=FALSE on it and the C++ engine refuses a template asking
-    // otherwise, so this used to request extractable=true and then read the
-    // private CKA_VALUE — two operations that can no longer both succeed.
-    // Left at 0 rather than filled with a spec figure: nothing renders this
-    // field, and a hardcoded number here would read as a measurement.
-    privateKeyBytes = 0
-    const lmsMsg = new Uint8Array(32)
-    crypto.getRandomValues(lmsMsg)
-    let lmsSig: Uint8Array
-    signEncapsMs = timeMs(() => {
-      lmsSig = softhsm.hsm_statefulSignBytes(
-        mod,
-        hSession,
-        softhsm.CKM_LMS,
-        lmsResult!.privHandle,
-        lmsMsg
-      )
-    })
-    sigCiphertextBytes = lmsSig!.length
-    verifyDecapsMs = timeMs(() => {
-      softhsm.hsm_statefulVerifyBytes(
-        mod,
-        hSession,
-        softhsm.CKM_LMS,
-        lmsResult!.pubHandle,
-        lmsMsg,
-        lmsSig!
-      )
-    })
-  } else if (algoName.startsWith('XMSS-SHA2')) {
-    // paramSet=1 (XMSS-SHA2_10_256, H=10) — H=20 keygen (~30s) is impractical in-browser
-    let xmssResult: ReturnType<typeof softhsm.hsm_generateXMSSKeyPair>
-    keyGenMs = timeMs(() => {
-      xmssResult = softhsm.hsm_generateXMSSKeyPair(mod, hSession, 1)
-    })
-    publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, xmssResult!.pubHandle).length
-    // See the LMS branch above — an HBS private key is non-extractable by
-    // mandate on both engines now, so its size cannot be measured here.
-    privateKeyBytes = 0
-    const xmssMsg = new Uint8Array(32)
-    crypto.getRandomValues(xmssMsg)
-    let xmssSig: Uint8Array
-    signEncapsMs = timeMs(() => {
-      xmssSig = softhsm.hsm_statefulSignBytes(
-        mod,
-        hSession,
-        softhsm.CKM_XMSS,
-        xmssResult!.privHandle,
-        xmssMsg
-      )
-    })
-    sigCiphertextBytes = xmssSig!.length
-    verifyDecapsMs = timeMs(() => {
-      softhsm.hsm_statefulVerifyBytes(
-        mod,
-        hSession,
-        softhsm.CKM_XMSS,
-        xmssResult!.pubHandle,
-        xmssMsg,
-        xmssSig!
-      )
-    })
+  } else {
+    throw new Error(`No exact SoftHSM benchmark for ${algoName}`)
   }
 
   return {

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 
 import React, { useState, useCallback, useMemo } from 'react'
 import { Lock, Unlock, ArrowRight, Key, XCircle, CheckCircle } from 'lucide-react'
@@ -80,7 +81,9 @@ const KID = 'workshop-recipient'
 
 export const JWEEncryption: React.FC = () => {
   const [backend, setBackend] = useState<JwsBackend>('noble')
-  const [alg, setAlg] = useState<HpkeJweAlg>('HPKE-12')
+  const [alg, setAlg] = useState<HpkeJweAlg>(() =>
+    readAlgorithmLaunch('api-security-jwt')?.suite === 'HPKE-9' ? 'HPKE-9' : 'HPKE-12'
+  )
   const [activeStep, setActiveStep] = useState<JWEStep>('keygen')
   const [keys, setKeys] = useState<JWEKeys | null>(null)
   const [result, setResult] = useState<JWEResult | null>(null)

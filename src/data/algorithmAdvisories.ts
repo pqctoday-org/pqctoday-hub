@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Dated advisories from a standards or national body that change how an algorithm
- * should be used without changing its standards status. Classic McEliece stays a
- * published ISO/IEC 18033-2 Amd 2 standard and stays listed in BSI TR-02102-1
- * (2026-01), so its status tier is unchanged. What changed is the BSI's advice for
+ * should be used without changing its standards status. Publication and recommendation are separate assertions. ISO and historical
+ * BSI parameter coverage vary by exact set (348864 is not in the ISO list
+ * supplied by the scheme authors). What changed is the BSI's advice for
  * new work, and readers need to see that next to the algorithm.
  *
  * Each entry quotes its source. Wording must say "advises against new use", never
@@ -20,11 +20,17 @@ export interface AlgorithmAdvisory {
   /** ISO date the advisory was published */
   date: string
   sourceUrl: string
+  documentDate?: string
+  publishedAt?: string
+  sourceHash?: string
 }
 
 export const BSI_CLASSIC_MCELIECE_ADVISORY: AlgorithmAdvisory = {
   label: 'BSI: not for new use',
-  note: 'On 1 Oct 2026 the BSI advised against using Classic McEliece for new developments or new cryptographic applications, citing 2026 progress in its cryptanalysis. It reports no practical attack on the TR-02102-1 parameter sets. TR-02102-1 (2026-01) still lists it for hybrid use until its next revision.',
+  note: 'BSI advises against Classic McEliece for new developments. Its 29 Sep 2026 advisory, announced 1 Oct, reports an unreviewed key-recovery claim of 2^99–2^102 operations and expects further improvements. It reports no practical attack on the TR parameter sets; this does not remove the warning. Historical hybrid recommendations apply only to the listed sets; revision is expected early 2027.',
+  documentDate: '2026-09-29',
+  publishedAt: '2026-10-01',
+  sourceHash: '2cde870a80059ca747391fec90e26be97c3ce81f23e16d15c60bdd349bc9ef89',
   issuer: 'BSI',
   date: '2026-10-01',
   sourceUrl:

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react'
@@ -57,8 +58,8 @@ const SECTIONS = [
 export const APISecurityJWTPlayground: React.FC = () => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     'jwt-inspector': false,
-    'pqc-signing': true,
-    'hybrid-jwt': true,
+    'pqc-signing': !readAlgorithmLaunch('api-security-jwt'),
+    'hybrid-jwt': !readAlgorithmLaunch('api-security-jwt'),
     'jwe-encryption': true,
     'token-size': false,
     'matrix-audit': false,

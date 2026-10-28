@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { AlgoCtaStrip } from '@/shared/algorithm-actions/AlgorithmActions'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { ChevronRight, Shield } from 'lucide-react'
@@ -420,65 +421,70 @@ export function MobileAlgorithmsView() {
         testId="algorithm-detail-sheet"
       >
         {selected && (
-          <dl className="grid grid-cols-2 gap-x-3 gap-y-3">
-            <div>
-              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                Family
-              </dt>
-              <dd className="mt-0.5 text-[12px] text-foreground">{selected.family}</dd>
-            </div>
-            <div>
-              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                FIPS standard
-              </dt>
-              <dd className="mt-0.5 text-[12px] text-foreground">
-                {selected.fipsStandard ?? 'None'}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                Security level
-              </dt>
-              <dd className="mt-0.5 text-[12px] text-foreground">{securityLevelText(selected)}</dd>
-            </div>
-            <div>
-              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                Public key
-              </dt>
-              <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                {formatByteField(selected.publicKeyBytes, selected.evidence?.publicKey)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                Private key
-              </dt>
-              <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                {formatByteField(selected.privateKeyBytes, selected.evidence?.privateKey)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                Signature / ciphertext
-              </dt>
-              <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                {formatByteField(
-                  selected.signatureOrCiphertextBytes,
-                  selected.evidence?.signatureOrCiphertext
-                )}
-              </dd>
-            </div>
-            {selected.sharedSecretBytes != null && (
+          <>
+            <AlgoCtaStrip algoName={selected.name} className="mb-3" />
+            <dl className="grid grid-cols-2 gap-x-3 gap-y-3">
               <div>
                 <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                  Shared secret
+                  Family
                 </dt>
-                <dd className="mt-0.5 font-mono text-[12px] text-foreground">
-                  {formatByteField(selected.sharedSecretBytes, selected.evidence?.sharedSecret)}
+                <dd className="mt-0.5 text-[12px] text-foreground">{selected.family}</dd>
+              </div>
+              <div>
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  FIPS standard
+                </dt>
+                <dd className="mt-0.5 text-[12px] text-foreground">
+                  {selected.fipsStandard ?? 'None'}
                 </dd>
               </div>
-            )}
-          </dl>
+              <div>
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Security level
+                </dt>
+                <dd className="mt-0.5 text-[12px] text-foreground">
+                  {securityLevelText(selected)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Public key
+                </dt>
+                <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                  {formatByteField(selected.publicKeyBytes, selected.evidence?.publicKey)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Private key
+                </dt>
+                <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                  {formatByteField(selected.privateKeyBytes, selected.evidence?.privateKey)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Signature / ciphertext
+                </dt>
+                <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                  {formatByteField(
+                    selected.signatureOrCiphertextBytes,
+                    selected.evidence?.signatureOrCiphertext
+                  )}
+                </dd>
+              </div>
+              {selected.sharedSecretBytes != null && (
+                <div>
+                  <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                    Shared secret
+                  </dt>
+                  <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                    {formatByteField(selected.sharedSecretBytes, selected.evidence?.sharedSecret)}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </>
         )}
       </MobileSheet>
     </div>

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 //
 // V33TestBench — Build › "v3.3 draft": a hands-on bench for the PKCS#11 v3.3
 // working-draft features (plan C3; owner decision D5 put it under Build).
@@ -159,8 +160,10 @@ export function V33TestBench({
 }) {
   const hsm = useHsmContext()
   const [support, setSupport] = useState<V33Support | null>(null)
-  const [family, setFamily] = useState<Family>('kem')
-  const [selected, setSelected] = useState<number>(COMPOSITE_KEM_SETS[3].ckp)
+  const [family, setFamily] = useState<Family>(() => readAlgorithmLaunch('hsm')?.family ?? 'kem')
+  const [selected, setSelected] = useState<number>(() =>
+    Number(readAlgorithmLaunch('hsm')?.parameter ?? COMPOSITE_KEM_SETS[3].ckp)
+  )
   const [setRows, setSetRows] = useState<Record<string, V33CheckRow>>({})
   const [katRows, setKatRows] = useState<V33CheckRow[]>([])
   const [extraRows, setExtraRows] = useState<V33CheckRow[]>([])
