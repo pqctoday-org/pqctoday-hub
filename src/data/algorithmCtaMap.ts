@@ -186,7 +186,9 @@ export function getAlgoCtas(requestedName: string): AlgoCtas | null {
   const url = specificationUrls.get(algoName) ?? familySource ?? choiceSource
   if (!context && !tryHref && !url) return null
   const standardSlh = /^SLH-DSA-(SHA2|SHAKE)-(128|192|256)[sf]$/.test(algoName)
-  const component = algoName.startsWith('ML-KEM-') && !/^ML-KEM-(512|768|1024)$/.test(algoName)
+  const component =
+    (algoName.startsWith('ML-KEM-') && !/^ML-KEM-(512|768|1024)$/.test(algoName)) ||
+    (algoName.startsWith('ML-DSA') && !/^ML-DSA-(44|65|87)$/.test(algoName))
   const tls = /^(X25519MLKEM|SecP)/.test(algoName)
   const specRef =
     component || tls || (algoName.startsWith('SLH-DSA') && !standardSlh)

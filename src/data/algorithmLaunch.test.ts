@@ -128,3 +128,9 @@ it('resolves exact legacy Transition labels without choosing for family/choice r
     expect(cta.specRef || cta.specUrl, family).toBeTruthy()
   }
 })
+
+it('does not label a signature choice or composite as the component FIPS specification', () => {
+  expect(getAlgoCtasWithFallback('ML-DSA / SLH-DSA').specRef).toBeUndefined()
+  expect(getAlgoCtasWithFallback('ML-DSA / SLH-DSA').specUrl).toContain('post-quantum-cryptography')
+  expect(getAlgoCtasWithFallback('ML-DSA-65-composite').specRef).toBeUndefined()
+})
