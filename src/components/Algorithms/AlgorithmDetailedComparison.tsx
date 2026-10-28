@@ -734,6 +734,7 @@ function BrowseTable({
                         </span>
                       )}
                       <AlgoCtaStrip
+                        showAdvisory={false}
                         algoName={algo.name}
                         trailing={<AlgorithmCheckButton algorithm={algo} />}
                       />
@@ -819,6 +820,7 @@ function BrowseTable({
                 )}
               </div>
               <AlgoCtaStrip
+                showAdvisory={false}
                 algoName={algo.name}
                 trailing={<AlgorithmCheckButton algorithm={algo} />}
               />
