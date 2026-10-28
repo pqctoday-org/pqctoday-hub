@@ -1506,8 +1506,7 @@ export const FipsAutomation = () => (
       environment; ESV tests the entropy source on it; AMVP then submits the module-level test
       evidence and the request for FIPS 140-3 validation. The project’s status reports are{' '}
       <Cite std={CSWP_37A}>CSWP 37A</Cite> (final, 16 March 2026) and{' '}
-      <Cite std={CSWP_37B}>CSWP 37B</Cite> (dated 30 September 2026; NCCoE’s project page labels it
-      an Initial Public Draft).
+      <Cite std={CSWP_37B}>CSWP 37B</Cite> (final, 30 September 2026).
     </p>
     <Callout tone="warning" title="What automation does not change">
       <p>

@@ -1399,8 +1399,8 @@ export const ElectronicExchange = () => (
       description — as a question NIST is exploring, not an entitlement. It is <strong>not</strong>{' '}
       in SP 1800-40B. Status reports on the project history: CSWP 37A (
       <SourceLink source={SHARED_SOURCES.cswp37a} />, final, 16 March 2026) and CSWP 37B (
-      <SourceLink source={SHARED_SOURCES.cswp37b} label="NIST CSWP 37B" />, dated 30 September 2026;
-      NCCoE’s project page labels it an Initial Public Draft).
+      <SourceLink source={SHARED_SOURCES.cswp37b} label="NIST CSWP 37B" />, final, 30 September
+      2026).
     </p>
 
     <H3>A future-facing model — clearly labelled as one</H3>

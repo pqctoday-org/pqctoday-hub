@@ -118,14 +118,12 @@ describe('FIPS sections render', () => {
     expect(para).not.toHaveTextContent('not for new ones')
   })
 
-  it('automation: CSWP 37B carries the NCCoE project page label, not “final”', () => {
+  it('automation: CSWP 37B is final, as NIST CSRC records it', () => {
     wrap(<FipsAutomation />)
     const para = screen.getByText(/The project documentation sets out the sequence/)
     expect(para).toHaveTextContent('CSWP 37A (final, 16 March 2026)')
-    expect(para).toHaveTextContent(
-      'CSWP 37B (dated 30 September 2026; NCCoE’s project page labels it an Initial Public Draft)'
-    )
-    expect(para).not.toHaveTextContent('CSWP 37B (final')
+    expect(para).toHaveTextContent('CSWP 37B (final, 30 September 2026)')
+    expect(para).not.toHaveTextContent('Initial Public Draft')
   })
 
   it('acvp bridge and route table render', () => {

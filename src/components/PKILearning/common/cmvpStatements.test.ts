@@ -13,7 +13,8 @@
  *  - The IUT and MIP lists are voluntary and do not include every module in testing or review.
  *  - Historical modules: NIST says Federal Agencies "should not include these in new systems but
  *    can be procured for legacy systems" and that the certificates are not revoked.
- *  - CSWP 37B is shown as NCCoE's project page labels it, not as "final".
+ *  - CSWP 37B is final (NIST CSRC: "09/30/26: CSWP 37B (Final)"), not a draft; the NCCoE
+ *    project page still links the draft.
  *  - The Implementation Guidance cites draft-ietf-tls-ecdhe-mlkem-01 for the TLS 1.3 hybrid.
  */
 import { describe, it, expect } from 'vitest'
@@ -121,16 +122,14 @@ describe('Historical modules: "should not include in new systems", not "no longe
 })
 
 describe('CSWP 37B and the hybrid TLS citation', () => {
-  it('CSWP 37B is dated, with the NCCoE project page label, in both lessons that mention it', () => {
+  it('CSWP 37B is shown as final (30 September 2026), as NIST CSRC records it, in both lessons', () => {
     for (const file of [
       `${MODULES}/CryptoProductCertification/components/sections/SharedSections.tsx`,
       `${MODULES}/Fips1403Certification/components/sections/FipsSections.tsx`,
     ]) {
       const text = read(file)
-      expect(text, file).toMatch(
-        /dated 30 September 2026; NCCoE’s project page labels it an Initial Public Draft/
-      )
-      expect(text, file).not.toContain('final, 30 September 2026')
+      expect(text.replace(/\s+/g, ' '), file).toContain('final, 30 September 2026')
+      expect(text.replace(/\s+/g, ' '), file).not.toMatch(/CSWP 37B[^.]{0,200}Initial Public Draft/)
     }
   })
 
