@@ -23,6 +23,9 @@
 // wasm32 ABI: CK_ULONG and pointers are 4 bytes; CK_ATTRIBUTE and
 // CK_MECHANISM are three consecutive u32 words.
 
+import type { Pkcs11LogInspect } from '@/wasm/pkcs11Inspect'
+import { capturePkcs11Calls } from '@/wasm/pkcs11CallCapture'
+
 /** The subset of the softhsmrustv3 wasm-bindgen exports this lesson calls. */
 export interface DiscoveryEngine {
   _C_Initialize(pInitArgs: number): number
@@ -71,6 +74,8 @@ export interface CallRecord {
   args: string
   rv: number
   ms: number
+  /** Decoded parameters, built in the worker while the call's buffers are live. */
+  inspect?: Pkcs11LogInspect
 }
 
 export interface CertRow {
@@ -221,9 +226,11 @@ class Session {
   private allocs: number[] = []
 
   private readonly E: DiscoveryEngine
+  private readonly capture: ReturnType<typeof capturePkcs11Calls>
 
   constructor(E: DiscoveryEngine) {
     this.E = E
+    this.capture = capturePkcs11Calls(E, () => E.memory())
   }
 
   private view(): DataView {
@@ -281,7 +288,8 @@ class Session {
   call(fn: string, args: string, thunk: () => number): number {
     const t0 = performance.now()
     const rv = thunk() >>> 0
-    this.calls.push({ fn, args, rv, ms: Math.round((performance.now() - t0) * 100) / 100 })
+    const ms = Math.round((performance.now() - t0) * 100) / 100
+    this.calls.push({ fn, args, rv, ms, inspect: this.capture.inspectLast(fn) })
     return rv
   }
   must(fn: string, args: string, thunk: () => number): void {

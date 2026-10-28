@@ -58,6 +58,8 @@ export interface Pkcs11LogInspect {
   inputs: InspectSection[]
   outputs?: Array<{ name: string; value: string; note?: string }>
   spec?: string
+  /** Set when this function's decoder threw — shown instead of hiding the drawer. */
+  decodeError?: string
 }
 
 // ── Private constant tables ───────────────────────────────────────────────────
@@ -216,6 +218,10 @@ export const CKK_TABLE: Record<number, ConstEntry> = {
   0x4d: {
     name: 'CKK_COMP_SIG',
     description: 'Composite ML-DSA key, both halves in one object (PKCS#11 v3.3 working draft)',
+  },
+  0x80000003: {
+    name: 'CKK_HPKE_KEM',
+    description: 'HPKE KEM key — classical DHKEM, ML-KEM or PQ/T hybrid such as X-Wing (vendor)',
   },
 }
 
@@ -431,6 +437,25 @@ export const CKP_CLASSIC_MCELIECE: Record<number, ConstEntry> = {
  * (e.g. HSS, whose LMS/LMOTS shape travels in the mechanism parameter, not
  * CKA_PARAMETER_SET) or an unrecognized value.
  */
+// CK_HPKE_KEM_PARAMETER_SET_TYPE (CKM_HPKE vendor family) — equal to the
+// RFC 9180 §7.1 / draft-ietf-hpke-pq kem_id; values as softhsm.ts CKP_HPKE_KEM_*.
+export const CKP_HPKE_KEM: Record<number, ConstEntry> = {
+  0x0010: { name: 'DHKEM(P-256, HKDF-SHA256)', description: 'RFC 9180 classical' },
+  0x0011: { name: 'DHKEM(P-384, HKDF-SHA384)', description: 'RFC 9180 classical' },
+  0x0012: { name: 'DHKEM(P-521, HKDF-SHA512)', description: 'RFC 9180 classical' },
+  0x0020: { name: 'DHKEM(X25519, HKDF-SHA256)', description: 'RFC 9180 classical' },
+  0x0021: { name: 'DHKEM(X448, HKDF-SHA512)', description: 'RFC 9180 classical' },
+  0x0040: { name: 'ML-KEM-512', description: 'Pure ML-KEM (draft-ietf-hpke-pq)' },
+  0x0041: { name: 'ML-KEM-768', description: 'Pure ML-KEM (draft-ietf-hpke-pq)' },
+  0x0042: { name: 'ML-KEM-1024', description: 'Pure ML-KEM (draft-ietf-hpke-pq)' },
+  0x0050: { name: 'MLKEM768-P256', description: 'PQ/T hybrid (draft-ietf-hpke-pq)' },
+  0x0051: { name: 'MLKEM1024-P384', description: 'PQ/T hybrid (draft-ietf-hpke-pq)' },
+  0x647a: {
+    name: 'MLKEM768-X25519 (X-Wing)',
+    description: 'PQ/T hybrid — X-Wing (draft-connolly-cfrg-xwing-kem)',
+  },
+}
+
 export const describeParameterSetByKeyType = (
   ckKeyType: number,
   paramSet: number
@@ -454,7 +479,9 @@ export const describeParameterSetByKeyType = (
                     ? CKP_FRODOKEM
                     : ckKeyType === 0x80000002 // CKK_PQCTODAY_CLASSIC_MCELIECE
                       ? CKP_CLASSIC_MCELIECE
-                      : null
+                      : ckKeyType === 0x80000003 // CKK_HPKE_KEM
+                        ? CKP_HPKE_KEM
+                        : null
   return table?.[paramSet] ?? null
 }
 
@@ -717,7 +744,15 @@ const decodeFlagsBitmask = (flags: number): string => {
 
 /** Determine algo context from mechanism type (for CKP_ dispatch). */
 type AlgoContext =
-  'ml-kem' | 'ml-dsa' | 'slh-dsa' | 'xmss' | 'xmssmt' | 'comp-sig' | 'comp-kem' | undefined
+  | 'ml-kem'
+  | 'ml-dsa'
+  | 'slh-dsa'
+  | 'xmss'
+  | 'xmssmt'
+  | 'comp-sig'
+  | 'comp-kem'
+  | 'hpke-kem'
+  | undefined
 
 const algoFromMechType = (mechType: number): AlgoContext => {
   if (mechType === 0x0000000f || mechType === 0x00000017) return 'ml-kem'
@@ -729,6 +764,8 @@ const algoFromMechType = (mechType: number): AlgoContext => {
   if (mechType >= 0x0000403d && mechType <= 0x0000403f) return 'comp-sig'
   // CKM_COMP_KEM_KEY_PAIR_GEN / CKM_COMP_KEM
   if (mechType === 0x00004040 || mechType === 0x00004041) return 'comp-kem'
+  // CKM_HPKE_KEM_KEY_PAIR_GEN / CKM_HPKE (vendor) — X-Wing and the other HPKE KEMs
+  if (mechType === 0x80000013 || mechType === 0x80000014) return 'hpke-kem'
   return undefined
 }
 
@@ -773,7 +810,9 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
                   ? CKP_COMP_SIG
                   : algo === 'comp-kem'
                     ? CKP_COMP_KEM
-                    : null
+                    : algo === 'hpke-kem'
+                      ? CKP_HPKE_KEM
+                      : null
     const entry = table ? table[v] : null
     return entry
       ? { kind: 'constant', display: `${entry.name} (${hex})`, description: entry.description }
@@ -1285,6 +1324,8 @@ const decodeEncapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkc
 
   const inputs: InspectSection[] = []
   if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  const hpke = readHpkeParamsSection(M, mechPtr)
+  if (hpke) inputs.push(hpke)
   inputs.push({
     label: 'Parameters',
     primitives: [
@@ -1349,6 +1390,8 @@ const decodeDecapsulateKey = (M: SoftHSMModule, args: number[], rv: number): Pkc
 
   const inputs: InspectSection[] = []
   if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  const hpke = readHpkeParamsSection(M, mechPtr)
+  if (hpke) inputs.push(hpke)
   inputs.push({
     label: 'Parameters',
     primitives: [
@@ -2361,6 +2404,8 @@ const decodeClassicSignFinal = (M: SoftHSMModule, args: number[], rv: number): P
           name: 'Signature Payload',
           value: safeReadBytesAsHex(M, pSignature, sigLen),
         })
+      if (pSignature !== 0 && rv === 0)
+        outputs.push(...compositeSignatureRows('sign', args[0] ?? 0, sigLen))
     }
   }
   return {
@@ -2491,6 +2536,1092 @@ const decodeUnwrapKeyAuthenticated = (
 }
 
 // ── Main export ───────────────────────────────────────────────────────────────
+
+// ── PKCS#11 v3.x coverage: multi-part, Message API, recover, info structs ────
+//
+// Signatures from pqctoday-hsm src/lib/pkcs11/pkcs11f.h; struct offsets are
+// the wasm32 ABI (4-byte CK_ULONG and pointers, CK_VERSION = 2 bytes), the
+// same offsets softhsm.ts's hsm_get*Info readers use.
+
+type Row = { name: string; value: string; note?: string }
+
+const paramsOnly = (rows: Row[], spec: string, outputs?: Row[]): Pkcs11LogInspect => ({
+  inputs: [{ label: 'Parameters', primitives: rows }],
+  outputs: outputs && outputs.length ? outputs : undefined,
+  spec,
+})
+
+const outPtrRow = (name: string, p: number): Row => ({
+  name,
+  value: p === 0 ? 'NULL (size query)' : `0x${p.toString(16)}`,
+  note: p === 0 ? 'Two-step: call with NULL first to get the output length' : undefined,
+})
+
+/** Output length (+ payload when written) behind a CK_ULONG_PTR length. */
+const lenAndPayload = (
+  M: SoftHSMModule,
+  rv: number,
+  pOut: number,
+  pulLen: number,
+  lenName: string,
+  payloadName: string
+): Row[] => {
+  const rows: Row[] = []
+  if ((rv === 0 || rv === 0x150) && pulLen) {
+    const n = safeRead32(M, pulLen)
+    if (n !== null) {
+      rows.push({ name: lenName, value: `${n} bytes` })
+      if (pOut !== 0 && rv === 0 && n > 0)
+        rows.push({ name: payloadName, value: safeReadBytesAsHex(M, pOut, n) })
+    }
+  }
+  return rows
+}
+
+const verificationRow = (rv: number): Row[] =>
+  rv === 0
+    ? [{ name: 'Verification', value: 'VALID — signature matches', note: 'CKR_OK' }]
+    : rv === 0xc0
+      ? [
+          {
+            name: 'Verification',
+            value: 'INVALID — signature does not match',
+            note: 'CKR_SIGNATURE_INVALID',
+          },
+        ]
+      : []
+
+/** Blank-padded fixed-width UTF-8 field (CK_INFO / CK_TOKEN_INFO strings). */
+const readFixedText = (M: SoftHSMModule, ptr: number, len: number): string => {
+  try {
+    return `"${new TextDecoder().decode(M.HEAPU8.slice(ptr, ptr + len)).replace(/[\s\x00]+$/, '')}"`
+  } catch {
+    return '(unreadable)'
+  }
+}
+
+/** NUL-terminated UTF-8 string (CK_UTF8CHAR_PTR names), capped at `max`. */
+const readCString = (M: SoftHSMModule, ptr: number, max = 64): string => {
+  if (!ptr) return 'NULL'
+  try {
+    const bytes = M.HEAPU8.slice(ptr, ptr + max)
+    const end = bytes.indexOf(0)
+    return `"${new TextDecoder().decode(end === -1 ? bytes : bytes.slice(0, end))}"`
+  } catch {
+    return '(unreadable)'
+  }
+}
+
+const readVersion = (M: SoftHSMModule, ptr: number): string => {
+  try {
+    return `${M.HEAPU8[ptr]}.${M.HEAPU8[ptr + 1]}`
+  } catch {
+    return '?'
+  }
+}
+
+const flagNames = (flags: number, table: Array<[number, string]>): string => {
+  const names = table.filter(([bit]) => flags & bit).map(([, n]) => n)
+  const raw = `0x${flags.toString(16).padStart(8, '0')}`
+  return names.length ? `${names.join(' | ')} (${raw})` : raw
+}
+
+const CKF_SLOT_FLAGS: Array<[number, string]> = [
+  [0x1, 'CKF_TOKEN_PRESENT'],
+  [0x2, 'CKF_REMOVABLE_DEVICE'],
+  [0x4, 'CKF_HW_SLOT'],
+]
+
+const CKF_TOKEN_FLAGS: Array<[number, string]> = [
+  [0x1, 'CKF_RNG'],
+  [0x2, 'CKF_WRITE_PROTECTED'],
+  [0x4, 'CKF_LOGIN_REQUIRED'],
+  [0x8, 'CKF_USER_PIN_INITIALIZED'],
+  [0x20, 'CKF_RESTORE_KEY_NOT_NEEDED'],
+  [0x40, 'CKF_CLOCK_ON_TOKEN'],
+  [0x100, 'CKF_PROTECTED_AUTHENTICATION_PATH'],
+  [0x200, 'CKF_DUAL_CRYPTO_OPERATIONS'],
+  [0x400, 'CKF_TOKEN_INITIALIZED'],
+  [0x800, 'CKF_SECONDARY_AUTHENTICATION'],
+  [0x10000, 'CKF_USER_PIN_COUNT_LOW'],
+  [0x20000, 'CKF_USER_PIN_FINAL_TRY'],
+  [0x40000, 'CKF_USER_PIN_LOCKED'],
+  [0x80000, 'CKF_USER_PIN_TO_BE_CHANGED'],
+  [0x100000, 'CKF_SO_PIN_COUNT_LOW'],
+  [0x200000, 'CKF_SO_PIN_FINAL_TRY'],
+  [0x400000, 'CKF_SO_PIN_LOCKED'],
+  [0x800000, 'CKF_SO_PIN_TO_BE_CHANGED'],
+  [0x1000000, 'CKF_ERROR_STATE'],
+  [0x2000000, 'CKF_SEED_RANDOM_REQUIRED'],
+]
+
+const CKF_SESSION_INFO_FLAGS: Array<[number, string]> = [
+  [0x2, 'CKF_RW_SESSION'],
+  [0x4, 'CKF_SERIAL_SESSION'],
+  [0x8, 'CKF_ASYNC_SESSION'],
+]
+
+/** Operation flags (CK_MECHANISM_INFO.flags bits) — C_SessionCancel's mask. */
+const CKF_OPERATION_FLAGS: Array<[number, string]> = [
+  [0x2, 'CKF_MESSAGE_ENCRYPT'],
+  [0x4, 'CKF_MESSAGE_DECRYPT'],
+  [0x8, 'CKF_MESSAGE_SIGN'],
+  [0x10, 'CKF_MESSAGE_VERIFY'],
+  [0x100, 'CKF_ENCRYPT'],
+  [0x200, 'CKF_DECRYPT'],
+  [0x400, 'CKF_DIGEST'],
+  [0x800, 'CKF_SIGN'],
+  [0x1000, 'CKF_SIGN_RECOVER'],
+  [0x2000, 'CKF_VERIFY'],
+  [0x4000, 'CKF_VERIFY_RECOVER'],
+  [0x8000, 'CKF_GENERATE'],
+  [0x10000, 'CKF_GENERATE_KEY_PAIR'],
+  [0x20000, 'CKF_WRAP'],
+  [0x40000, 'CKF_UNWRAP'],
+  [0x80000, 'CKF_DERIVE'],
+  [0x10000000, 'CKF_ENCAPSULATE'],
+  [0x20000000, 'CKF_DECAPSULATE'],
+]
+
+const CKS_TABLE: Record<number, string> = {
+  0: 'CKS_RO_PUBLIC_SESSION',
+  1: 'CKS_RO_USER_FUNCTIONS',
+  2: 'CKS_RW_PUBLIC_SESSION',
+  3: 'CKS_RW_USER_FUNCTIONS',
+  4: 'CKS_RW_SO_FUNCTIONS',
+}
+
+const CKG_TABLE: Record<number, string> = {
+  0: 'CKG_NO_GENERATE',
+  1: 'CKG_GENERATE',
+  2: 'CKG_GENERATE_COUNTER',
+  3: 'CKG_GENERATE_RANDOM',
+  4: 'CKG_GENERATE_COUNTER_XOR',
+}
+
+// ── HPKE (CKM_HPKE, PQCToday vendor) — the X-Wing / PQ-T hybrid path ─────────
+
+const CKD_HPKE_TABLE: Record<number, string> = {
+  0x0001: 'HKDF-SHA256',
+  0x0002: 'HKDF-SHA384',
+  0x0003: 'HKDF-SHA512',
+  0x0011: 'SHAKE256 (one-stage, draft-ietf-hpke-pq)',
+}
+const CKZ_HPKE_AEAD_TABLE: Record<number, string> = {
+  0x0001: 'AES-128-GCM',
+  0x0002: 'AES-256-GCM',
+  0x0003: 'ChaCha20-Poly1305',
+  0xffff: 'Export-only (no AEAD)',
+}
+const CKZ_HPKE_MODE_TABLE: Record<number, string> = {
+  0: 'Base',
+  1: 'PSK',
+  2: 'Auth',
+  3: 'AuthPSK',
+}
+
+const idName = (table: Record<number, string>, v: number) => {
+  const n = table[v]
+  const hex = `0x${v.toString(16).padStart(4, '0')}`
+  return n ? `${n} (${hex})` : hex
+}
+
+/**
+ * CK_HPKE_PARAMS (68 bytes on wasm32 — 17 words; layout in softhsm.ts
+ * buildHpkeParams): kemId, kdfId, aeadId, mode, hPsk, pPskId, ulPskIdLen,
+ * pInfo, ulInfoLen, hSenderStaticKey, pSenderPk, ulSenderPkLen, pBaseNonce,
+ * ulBaseNonceLen, pExporterKey, pEphemeralSeed, ulEphemeralSeedLen.
+ */
+const CKM_HPKE = 0x80000014
+const readHpkeParamsSection = (M: SoftHSMModule, mechPtr: number): InspectSection | null => {
+  if (safeRead32(M, mechPtr) !== CKM_HPKE) return null
+  const p = safeRead32(M, mechPtr + 4)
+  const len = safeRead32(M, mechPtr + 8)
+  if (!p || len === null || len < 68) return null
+  const w = (i: number) => safeRead32(M, p + i * 4) ?? 0
+  const kem = CKP_HPKE_KEM[w(0)]
+  const rows: Row[] = [
+    {
+      name: 'kemId',
+      value: kem
+        ? `${kem.name} (0x${w(0).toString(16).padStart(4, '0')})`
+        : `0x${w(0).toString(16)}`,
+      note: kem?.description,
+    },
+    { name: 'kdfId', value: idName(CKD_HPKE_TABLE, w(1)) },
+    { name: 'aeadId', value: idName(CKZ_HPKE_AEAD_TABLE, w(2)) },
+    { name: 'mode', value: idName(CKZ_HPKE_MODE_TABLE, w(3)) },
+  ]
+  if (w(4)) rows.push({ name: 'hPsk', value: String(w(4)) })
+  if (w(6)) rows.push({ name: 'pskId', value: `${w(6)} bytes` })
+  rows.push({
+    name: 'info',
+    value: w(8) ? `${w(8)} bytes  [${safeReadBytesAsHex(M, w(7), w(8), 16)}]` : 'empty',
+  })
+  if (w(9))
+    rows.push({ name: 'hSenderStaticKey', value: String(w(9)), note: 'Auth mode sender key' })
+  if (w(11))
+    rows.push({ name: 'senderPk', value: `${w(11)} bytes`, note: 'Auth mode sender public key' })
+  if (w(12) && w(13)) {
+    const nonce = safeReadBytesAsHex(M, w(12), w(13))
+    if (nonce && !/^0+$/.test(nonce))
+      rows.push({ name: 'baseNonce', value: nonce, note: 'Written by the token' })
+  }
+  if (w(14))
+    rows.push({
+      name: 'pExporterKey',
+      value: 'requested',
+      note: 'CK_DERIVED_KEY for the exporter secret',
+    })
+  if (w(16))
+    rows.push({
+      name: 'ephemeralSeed',
+      value: `${w(16)} bytes`,
+      note: 'Fixed encapsulation randomness — known-answer tests only',
+    })
+  return { label: 'CK_HPKE_PARAMS', primitives: rows }
+}
+
+// ── Random ───────────────────────────────────────────────────────────────────
+
+/** C_GenerateRandom(hSession, pRandomData, ulRandomLen) — §5.19 */
+const decodeGenerateRandom = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const p = args[1] ?? 0
+  const n = args[2] ?? 0
+  return paramsOnly(
+    [{ name: 'ulRandomLen', value: `${n} bytes` }],
+    'PKCS#11 v3.2 §5.19 (C_GenerateRandom)',
+    rv === 0 && p && n ? [{ name: 'Random Data', value: safeReadBytesAsHex(M, p, n) }] : undefined
+  )
+}
+
+// ── Multi-part encrypt / decrypt / verify ────────────────────────────────────
+
+/** C_EncryptUpdate / C_DecryptUpdate / dual-function updates:
+ *  (hSession, pIn, ulInLen, pOut, pulOutLen) */
+const decodeUpdateWithOutput =
+  (fn: string, inName: string, outName: string, spec: string) =>
+  (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+    const pIn = args[1] ?? 0
+    const inLen = args[2] ?? 0
+    const pOut = args[3] ?? 0
+    return paramsOnly(
+      [
+        { name: 'ulPartLen', value: `${inLen} bytes` },
+        { name: inName, value: safeReadBytesAsHex(M, pIn, inLen) },
+        outPtrRow('pOutPart', pOut),
+      ],
+      `${spec} (${fn})`,
+      lenAndPayload(M, rv, pOut, args[4] ?? 0, '*pulOutPartLen', outName)
+    )
+  }
+
+/** C_EncryptFinal / C_DecryptFinal (hSession, pLastPart, pulLastPartLen) */
+const decodeFinalWithOutput =
+  (fn: string, outName: string, spec: string) =>
+  (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+    const pOut = args[1] ?? 0
+    return paramsOnly(
+      [outPtrRow('pLastPart', pOut)],
+      `${spec} (${fn})`,
+      lenAndPayload(M, rv, pOut, args[2] ?? 0, '*pulLastPartLen', outName)
+    )
+  }
+
+/** C_VerifyUpdate(hSession, pPart, ulPartLen) — §5.19 */
+const decodeVerifyUpdate = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =>
+  paramsOnly(
+    [
+      { name: 'ulPartLen', value: `${args[2] ?? 0} bytes` },
+      { name: 'Data Part', value: safeReadBytesAsHex(M, args[1] ?? 0, args[2] ?? 0) },
+    ],
+    'PKCS#11 v3.2 §5.19 (C_VerifyUpdate)'
+  )
+
+/** C_VerifyFinal(hSession, pSignature, ulSignatureLen) — §5.19 */
+const decodeClassicVerifyFinal = (
+  M: SoftHSMModule,
+  args: number[],
+  rv: number
+): Pkcs11LogInspect => {
+  const sigLen = args[2] ?? 0
+  return paramsOnly(
+    [
+      { name: 'ulSignatureLen', value: `${sigLen} bytes` },
+      { name: 'Signature Payload', value: safeReadBytesAsHex(M, args[1] ?? 0, sigLen) },
+      ...compositeSignatureRows('verify', args[0] ?? 0, sigLen),
+    ],
+    'PKCS#11 v3.2 §5.19 (C_VerifyFinal)',
+    verificationRow(rv)
+  )
+}
+
+// ── v3.2 single-shot signature verification (§5.20) ─────────────────────────
+
+/** C_VerifySignatureInit(hSession, pMechanism, hKey, pSignature, ulSignatureLen) */
+const decodeVerifySignatureInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const mechType = safeRead32(M, mechPtr)
+  const hKey = args[2] ?? 0
+  const sigLen = args[4] ?? 0
+  const rows: Row[] = [
+    { name: 'hKey', value: String(hKey) },
+    { name: 'ulSignatureLen', value: `${sigLen} bytes` },
+    { name: 'Signature Payload', value: safeReadBytesAsHex(M, args[3] ?? 0, sigLen) },
+  ]
+  if (mechType !== null && isCompSigMech(mechType)) {
+    const sp = splitCompositeSignature(sigLen, readKeyParamSet(M, args[0] ?? 0, hKey))
+    if (sp) rows.push(...splitRows('Signature', sp))
+  }
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({ label: 'Parameters', primitives: rows })
+  return {
+    inputs,
+    spec: 'PKCS#11 v3.2 §5.20 (C_VerifySignatureInit — the signature is supplied up front)',
+  }
+}
+
+/** C_VerifySignature(hSession, pData, ulDataLen) */
+const decodeVerifySignature = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect =>
+  paramsOnly(
+    [
+      { name: 'ulDataLen', value: `${args[2] ?? 0} bytes` },
+      { name: 'Data Payload', value: safeReadBytesAsHex(M, args[1] ?? 0, args[2] ?? 0) },
+    ],
+    'PKCS#11 v3.2 §5.20 (C_VerifySignature)',
+    verificationRow(rv)
+  )
+
+/** C_VerifySignatureUpdate(hSession, pPart, ulPartLen) */
+const decodeVerifySignatureUpdate = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =>
+  paramsOnly(
+    [
+      { name: 'ulPartLen', value: `${args[2] ?? 0} bytes` },
+      { name: 'Data Part', value: safeReadBytesAsHex(M, args[1] ?? 0, args[2] ?? 0) },
+    ],
+    'PKCS#11 v3.2 §5.20 (C_VerifySignatureUpdate)'
+  )
+
+/** C_VerifySignatureFinal(hSession) */
+const decodeVerifySignatureFinal = (_M: SoftHSMModule, args: number[], rv: number) =>
+  paramsOnly(
+    [{ name: 'hSession', value: String(args[0] ?? '?') }],
+    'PKCS#11 v3.2 §5.20 (C_VerifySignatureFinal)',
+    verificationRow(rv)
+  )
+
+// ── Sign / verify with recovery (§5.13, §5.14) ──────────────────────────────
+
+/** C_SignRecoverInit / C_VerifyRecoverInit (hSession, pMechanism, hKey) */
+const decodeRecoverInit =
+  (fn: string, spec: string) =>
+  (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+    const mech = readMechanism(M, args[1] ?? 0)
+    const inputs: InspectSection[] = []
+    if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+    inputs.push({
+      label: 'Parameters',
+      primitives: [{ name: 'hKey', value: String(args[2] ?? 0) }],
+    })
+    return { inputs, spec: `${spec} (${fn})` }
+  }
+
+/** C_SignRecover(hSession, pData, ulDataLen, pSignature, pulSignatureLen) */
+const decodeSignRecover = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect =>
+  paramsOnly(
+    [
+      { name: 'ulDataLen', value: `${args[2] ?? 0} bytes` },
+      { name: 'Data Payload', value: safeReadBytesAsHex(M, args[1] ?? 0, args[2] ?? 0) },
+      outPtrRow('pSignature', args[3] ?? 0),
+    ],
+    'PKCS#11 v3.2 §5.13 (C_SignRecover — data is recoverable from the signature)',
+    lenAndPayload(M, rv, args[3] ?? 0, args[4] ?? 0, '*pulSignatureLen', 'Signature Payload')
+  )
+
+/** C_VerifyRecover(hSession, pSignature, ulSignatureLen, pData, pulDataLen) */
+const decodeVerifyRecover = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect =>
+  paramsOnly(
+    [
+      { name: 'ulSignatureLen', value: `${args[2] ?? 0} bytes` },
+      { name: 'Signature Payload', value: safeReadBytesAsHex(M, args[1] ?? 0, args[2] ?? 0) },
+      outPtrRow('pData', args[3] ?? 0),
+    ],
+    'PKCS#11 v3.2 §5.14 (C_VerifyRecover)',
+    [
+      ...lenAndPayload(M, rv, args[3] ?? 0, args[4] ?? 0, '*pulDataLen', 'Recovered Data'),
+      ...(rv === 0xc0 ? verificationRow(rv) : []),
+    ]
+  )
+
+// ── Message API: multi-part sign / verify (§5.20-5.21) ──────────────────────
+
+const messageParamRows = (M: SoftHSMModule, p: number, len: number): Row[] => {
+  if (!p || !len)
+    return [{ name: 'pParameter', value: 'NULL', note: 'Per-message context unchanged' }]
+  const sp = len >= 12 ? readSignParam(M, p, len) : null
+  return sp
+    ? [
+        { name: 'hedgeVariant', value: sp.hedgeName, note: sp.hedgeDescription },
+        { name: 'ulContextLen', value: `${sp.contextLen} bytes`, note: sp.contextHex },
+      ]
+    : [{ name: 'pParameter', value: `${len} bytes  [${safeReadBytesAsHex(M, p, len, 16)}]` }]
+}
+
+/** C_SignMessageBegin / C_VerifyMessageBegin (hSession, pParameter, ulParameterLen) */
+const decodeMessageBegin =
+  (isVerify: boolean) =>
+  (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =>
+    paramsOnly(
+      messageParamRows(M, args[1] ?? 0, args[2] ?? 0),
+      `${signSpec(_lastMessageAlgo, isVerify)} (C_${isVerify ? 'Verify' : 'Sign'}MessageBegin — starts one message)`
+    )
+
+/** C_SignMessageNext(hSession, pParameter, ulParameterLen, pData, ulDataLen, pSignature, pulSignatureLen)
+ *  pulSignatureLen = NULL means "more parts follow"; non-NULL finishes the message. */
+const decodeSignMessageNext = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pSig = args[5] ?? 0
+  const pulSig = args[6] ?? 0
+  return paramsOnly(
+    [
+      ...messageParamRows(M, args[1] ?? 0, args[2] ?? 0),
+      { name: 'ulDataLen', value: `${args[4] ?? 0} bytes` },
+      { name: 'Data Part', value: safeReadBytesAsHex(M, args[3] ?? 0, args[4] ?? 0) },
+      {
+        name: 'pulSignatureLen',
+        value: pulSig ? 'set' : 'NULL',
+        note: pulSig ? 'Last part — the signature is produced' : 'More parts follow',
+      },
+    ],
+    `${signSpec(_lastMessageAlgo, false)} (C_SignMessageNext)`,
+    pulSig ? lenAndPayload(M, rv, pSig, pulSig, '*pulSignatureLen', 'Signature Payload') : undefined
+  )
+}
+
+/** C_VerifyMessageNext(hSession, pParameter, ulParameterLen, pData, ulDataLen, pSignature, ulSignatureLen)
+ *  pSignature = NULL means "more parts follow". */
+const decodeVerifyMessageNext = (
+  M: SoftHSMModule,
+  args: number[],
+  rv: number
+): Pkcs11LogInspect => {
+  const pSig = args[5] ?? 0
+  const sigLen = args[6] ?? 0
+  const rows: Row[] = [
+    ...messageParamRows(M, args[1] ?? 0, args[2] ?? 0),
+    { name: 'ulDataLen', value: `${args[4] ?? 0} bytes` },
+    { name: 'Data Part', value: safeReadBytesAsHex(M, args[3] ?? 0, args[4] ?? 0) },
+  ]
+  if (pSig) {
+    rows.push({ name: 'ulSignatureLen', value: `${sigLen} bytes`, note: 'Last part — checked now' })
+    rows.push({ name: 'Signature Payload', value: safeReadBytesAsHex(M, pSig, sigLen) })
+  } else rows.push({ name: 'pSignature', value: 'NULL', note: 'More parts follow' })
+  return paramsOnly(
+    rows,
+    `${signSpec(_lastMessageAlgo, true)} (C_VerifyMessageNext)`,
+    pSig ? verificationRow(rv) : undefined
+  )
+}
+
+// ── Message API: AEAD encrypt / decrypt (§5.16-5.17) ────────────────────────
+
+/** C_MessageEncryptInit / C_MessageDecryptInit (hSession, pMechanism, hKey) */
+const decodeMessageCipherInit =
+  (fn: string) =>
+  (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+    const mech = readMechanism(M, args[1] ?? 0)
+    const inputs: InspectSection[] = []
+    if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+    inputs.push({
+      label: 'Parameters',
+      primitives: [{ name: 'hKey', value: String(args[2] ?? 0) }],
+    })
+    return { inputs, spec: `PKCS#11 v3.2 §5.16 (${fn} — one key, many messages)` }
+  }
+
+/**
+ * Per-message AEAD parameter, told apart by size (wasm32):
+ *   CK_GCM_MESSAGE_PARAMS 24 B: pIv, ulIvLen, ulIvFixedBits, ivGenerator, pTag, ulTagBits
+ *   CK_CCM_MESSAGE_PARAMS 28 B: ulDataLen, pNonce, ulNonceLen, ulNonceFixedBits, nonceGenerator, pMAC, ulMACLen
+ *   CK_SALSA20_CHACHA20_POLY1305_MSG_PARAMS 12 B: pNonce, ulNonceLen, pTag
+ * The IV/nonce and tag are read after the call, so token-generated values show.
+ */
+const aeadMessageParamRows = (M: SoftHSMModule, p: number, len: number): Row[] => {
+  const w = (i: number) => safeRead32(M, p + i * 4) ?? 0
+  if (!p) return [{ name: 'pParameter', value: 'NULL' }]
+  if (len === 24) {
+    const tagBytes = Math.floor(w(5) / 8)
+    return [
+      { name: 'IV', value: `${w(1)} bytes  [${safeReadBytesAsHex(M, w(0), w(1))}]` },
+      { name: 'ulIvFixedBits', value: String(w(2)) },
+      { name: 'ivGenerator', value: CKG_TABLE[w(3)] ?? `0x${w(3).toString(16)}` },
+      { name: 'Tag', value: `${w(5)} bits  [${safeReadBytesAsHex(M, w(4), tagBytes)}]` },
+    ]
+  }
+  if (len === 28)
+    return [
+      { name: 'ulDataLen', value: `${w(0)} bytes` },
+      { name: 'Nonce', value: `${w(2)} bytes  [${safeReadBytesAsHex(M, w(1), w(2))}]` },
+      { name: 'nonceGenerator', value: CKG_TABLE[w(4)] ?? `0x${w(4).toString(16)}` },
+      { name: 'MAC', value: `${w(6)} bytes  [${safeReadBytesAsHex(M, w(5), w(6))}]` },
+    ]
+  if (len === 12)
+    return [
+      { name: 'Nonce', value: `${w(1)} bytes  [${safeReadBytesAsHex(M, w(0), w(1))}]` },
+      { name: 'Tag', value: `16 bytes  [${safeReadBytesAsHex(M, w(2), 16)}]` },
+    ]
+  return [{ name: 'pParameter', value: `${len} bytes  [${safeReadBytesAsHex(M, p, len, 16)}]` }]
+}
+
+/** C_EncryptMessage(hSession, pParameter, ulParameterLen, pAssociatedData, ulAssociatedDataLen,
+ *  pPlaintext, ulPlaintextLen, pCiphertext, pulCiphertextLen)
+ *  C_DecryptMessage: same shape, ciphertext in / plaintext out. */
+const decodeCipherMessage =
+  (isDecrypt: boolean) =>
+  (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+    const inName = isDecrypt ? 'Ciphertext' : 'Plaintext'
+    const outName = isDecrypt ? 'Plaintext Payload' : 'Ciphertext Payload'
+    return {
+      inputs: [
+        {
+          label: 'Message parameter',
+          primitives: aeadMessageParamRows(M, args[1] ?? 0, args[2] ?? 0),
+        },
+        {
+          label: 'Parameters',
+          primitives: [
+            { name: 'ulAssociatedDataLen', value: `${args[4] ?? 0} bytes` },
+            { name: 'Associated Data', value: safeReadBytesAsHex(M, args[3] ?? 0, args[4] ?? 0) },
+            { name: `ul${inName}Len`, value: `${args[6] ?? 0} bytes` },
+            { name: `${inName} Payload`, value: safeReadBytesAsHex(M, args[5] ?? 0, args[6] ?? 0) },
+            outPtrRow(isDecrypt ? 'pPlaintext' : 'pCiphertext', args[7] ?? 0),
+          ],
+        },
+      ],
+      outputs: (() => {
+        const o = lenAndPayload(
+          M,
+          rv,
+          args[7] ?? 0,
+          args[8] ?? 0,
+          isDecrypt ? '*pulPlaintextLen' : '*pulCiphertextLen',
+          outName
+        )
+        if (isDecrypt && rv === 0x42)
+          o.push({
+            name: 'Authentication',
+            value: 'FAILED — tag does not match',
+            note: 'CKR_AEAD_DECRYPT_FAILED',
+          })
+        return o.length ? o : undefined
+      })(),
+      spec: `PKCS#11 v3.2 §${isDecrypt ? '5.17' : '5.16'} (C_${isDecrypt ? 'Decrypt' : 'Encrypt'}Message)`,
+    }
+  }
+
+/** C_EncryptMessageBegin / C_DecryptMessageBegin
+ *  (hSession, pParameter, ulParameterLen, pAssociatedData, ulAssociatedDataLen) */
+const decodeCipherMessageBegin =
+  (fn: string) =>
+  (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+    inputs: [
+      {
+        label: 'Message parameter',
+        primitives: aeadMessageParamRows(M, args[1] ?? 0, args[2] ?? 0),
+      },
+      {
+        label: 'Parameters',
+        primitives: [
+          { name: 'ulAssociatedDataLen', value: `${args[4] ?? 0} bytes` },
+          { name: 'Associated Data', value: safeReadBytesAsHex(M, args[3] ?? 0, args[4] ?? 0) },
+        ],
+      },
+    ],
+    spec: `PKCS#11 v3.2 §5.16 (${fn})`,
+  })
+
+/** C_EncryptMessageNext / C_DecryptMessageNext
+ *  (hSession, pParameter, ulParameterLen, pIn, ulInLen, pOut, pulOutLen, flags) */
+const decodeCipherMessageNext =
+  (fn: string, isDecrypt: boolean) =>
+  (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+    const last = ((args[7] ?? 0) & 0x1) !== 0
+    return {
+      inputs: [
+        {
+          label: 'Message parameter',
+          primitives: aeadMessageParamRows(M, args[1] ?? 0, args[2] ?? 0),
+        },
+        {
+          label: 'Parameters',
+          primitives: [
+            { name: 'ulPartLen', value: `${args[4] ?? 0} bytes` },
+            { name: 'Data Part', value: safeReadBytesAsHex(M, args[3] ?? 0, args[4] ?? 0) },
+            {
+              name: 'flags',
+              value: last ? 'CKF_END_OF_MESSAGE (0x1)' : '0',
+              note: last ? 'Last part of this message' : 'More parts follow',
+            },
+          ],
+        },
+      ],
+      outputs: (() => {
+        const o = lenAndPayload(
+          M,
+          rv,
+          args[5] ?? 0,
+          args[6] ?? 0,
+          '*pulOutPartLen',
+          isDecrypt ? 'Plaintext Part' : 'Ciphertext Part'
+        )
+        return o.length ? o : undefined
+      })(),
+      spec: `PKCS#11 v3.2 §5.16 (${fn})`,
+    }
+  }
+
+/** C_MessageEncryptFinal / C_MessageDecryptFinal (hSession) */
+const decodeMessageCipherFinal = (fn: string) => (_M: SoftHSMModule, args: number[]) =>
+  paramsOnly(
+    [{ name: 'hSession', value: String(args[0] ?? '?') }],
+    `PKCS#11 v3.2 §5.16 (${fn} — closes the message-based operation)`
+  )
+
+// ── Session, admin, info ────────────────────────────────────────────────────
+
+/** C_LoginUser(hSession, userType, pPin, ulPinLen, pUsername, ulUsernameLen) — §5.6 */
+const decodeLoginUser = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const userType = args[1] ?? 0
+  const entry = CKU_TABLE[userType]
+  const pUser = args[4] ?? 0
+  const userLen = args[5] ?? 0
+  let username = 'NULL'
+  if (pUser && userLen) {
+    try {
+      username = `"${new TextDecoder().decode(M.HEAPU8.slice(pUser, pUser + Math.min(userLen, 64)))}"`
+    } catch {
+      username = '(unreadable)'
+    }
+  }
+  return paramsOnly(
+    [
+      {
+        name: 'userType',
+        value: entry ? `${entry.name} (${userType})` : String(userType),
+        note: entry?.description,
+      },
+      { name: 'ulPinLen', value: String(args[3] ?? '?'), note: 'PIN value never shown' },
+      { name: 'pUsername', value: username },
+    ],
+    'PKCS#11 v3.2 §5.6 (C_LoginUser — named-user login)'
+  )
+}
+
+/** C_SetPIN(hSession, pOldPin, ulOldLen, pNewPin, ulNewLen) — §5.6 */
+const decodeSetPIN = (_M: SoftHSMModule, args: number[]) =>
+  paramsOnly(
+    [
+      { name: 'ulOldLen', value: String(args[2] ?? '?') },
+      { name: 'ulNewLen', value: String(args[4] ?? '?'), note: 'PIN values never shown' },
+    ],
+    'PKCS#11 v3.2 §5.6 (C_SetPIN)'
+  )
+
+const readInterface = (M: SoftHSMModule, p: number): Row[] => {
+  const name = readCString(M, safeRead32(M, p) ?? 0)
+  const fl = safeRead32(M, p + 4)
+  const version = fl ? readVersion(M, fl) : '?'
+  const flags = safeRead32(M, p + 8) ?? 0
+  return [
+    {
+      name: `${name} ${version}`,
+      value: flags & 0x1 ? 'CKF_INTERFACE_FORK_SAFE' : 'no flags',
+    },
+  ]
+}
+
+/** C_GetInterfaceList(pInterfacesList, pulCount) — §5.4 */
+const decodeGetInterfaceList = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pList = args[0] ?? 0
+  const count = (rv === 0 || rv === 0x150) && args[1] ? safeRead32(M, args[1]) : null
+  const outputs: Row[] = []
+  if (count !== null) outputs.push({ name: '*pulCount', value: String(count) })
+  if (rv === 0 && pList && count)
+    for (let i = 0; i < Math.min(count, 8); i++) outputs.push(...readInterface(M, pList + i * 12))
+  return paramsOnly(
+    [outPtrRow('pInterfacesList', pList)],
+    'PKCS#11 v3.2 §5.4 (C_GetInterfaceList)',
+    outputs
+  )
+}
+
+/** C_GetInterface(pInterfaceName, pVersion, ppInterface, flags) — §5.4 */
+const decodeGetInterface = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pName = args[0] ?? 0
+  const pVer = args[1] ?? 0
+  const outputs: Row[] = []
+  if (rv === 0 && args[2]) {
+    const pIface = safeRead32(M, args[2])
+    if (pIface) outputs.push(...readInterface(M, pIface))
+  }
+  return paramsOnly(
+    [
+      {
+        name: 'pInterfaceName',
+        value: pName ? readCString(M, pName) : 'NULL',
+        note: pName ? undefined : 'Default interface',
+      },
+      {
+        name: 'pVersion',
+        value: pVer ? readVersion(M, pVer) : 'NULL',
+        note: pVer ? undefined : 'Any version',
+      },
+      { name: 'flags', value: (args[3] ?? 0) & 0x1 ? 'CKF_INTERFACE_FORK_SAFE' : '0' },
+    ],
+    'PKCS#11 v3.2 §5.4 (C_GetInterface)',
+    outputs
+  )
+}
+
+/** C_GetFunctionList(ppFunctionList) — §5.4 */
+const decodeGetFunctionList = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const outputs: Row[] = []
+  if (rv === 0 && args[0]) {
+    const pList = safeRead32(M, args[0])
+    if (pList) outputs.push({ name: 'CK_FUNCTION_LIST.version', value: readVersion(M, pList) })
+  }
+  return paramsOnly(
+    [],
+    'PKCS#11 v3.2 §5.4 (C_GetFunctionList — v2.x-compatible entry point)',
+    outputs
+  )
+}
+
+/** C_GetInfo(pInfo) — CK_INFO: version@0, manufacturerID[32]@2, flags@36,
+ *  libraryDescription[32]@40, libraryVersion@72 */
+const decodeGetInfo = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const p = args[0] ?? 0
+  return paramsOnly(
+    [],
+    'PKCS#11 v3.2 §5.4 (C_GetInfo)',
+    rv === 0 && p
+      ? [
+          { name: 'cryptokiVersion', value: readVersion(M, p) },
+          { name: 'manufacturerID', value: readFixedText(M, p + 2, 32) },
+          { name: 'libraryDescription', value: readFixedText(M, p + 40, 32) },
+          { name: 'libraryVersion', value: readVersion(M, p + 72) },
+        ]
+      : undefined
+  )
+}
+
+/** C_GetSlotInfo(slotID, pInfo) — CK_SLOT_INFO: slotDescription[64]@0,
+ *  manufacturerID[32]@64, flags@96, hardwareVersion@100, firmwareVersion@102 */
+const decodeGetSlotInfo = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const p = args[1] ?? 0
+  return paramsOnly(
+    [{ name: 'slotID', value: String(args[0] ?? '?') }],
+    'PKCS#11 v3.2 §5.5 (C_GetSlotInfo)',
+    rv === 0 && p
+      ? [
+          { name: 'slotDescription', value: readFixedText(M, p, 64) },
+          { name: 'manufacturerID', value: readFixedText(M, p + 64, 32) },
+          { name: 'flags', value: flagNames(safeRead32(M, p + 96) ?? 0, CKF_SLOT_FLAGS) },
+          { name: 'hardwareVersion', value: readVersion(M, p + 100) },
+          { name: 'firmwareVersion', value: readVersion(M, p + 102) },
+        ]
+      : undefined
+  )
+}
+
+/** C_GetTokenInfo(slotID, pInfo) — CK_TOKEN_INFO (160 B; offsets as hsm_getTokenInfo) */
+const decodeGetTokenInfo = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const p = args[1] ?? 0
+  const u = (off: number) => {
+    const v = safeRead32(M, p + off)
+    return v === null
+      ? '?'
+      : v === 0xffffffff
+        ? 'CK_UNAVAILABLE_INFORMATION'
+        : v === 0
+          ? '0'
+          : String(v)
+  }
+  return paramsOnly(
+    [{ name: 'slotID', value: String(args[0] ?? '?') }],
+    'PKCS#11 v3.2 §5.5 (C_GetTokenInfo)',
+    rv === 0 && p
+      ? [
+          { name: 'label', value: readFixedText(M, p, 32) },
+          { name: 'manufacturerID', value: readFixedText(M, p + 32, 32) },
+          { name: 'model', value: readFixedText(M, p + 64, 16) },
+          { name: 'serialNumber', value: readFixedText(M, p + 80, 16) },
+          { name: 'flags', value: flagNames(safeRead32(M, p + 96) ?? 0, CKF_TOKEN_FLAGS) },
+          { name: 'sessions (open / max)', value: `${u(104)} / ${u(100)}` },
+          { name: 'R/W sessions (open / max)', value: `${u(112)} / ${u(108)}` },
+          { name: 'PIN length (min–max)', value: `${u(120)}–${u(116)}` },
+          { name: 'hardwareVersion', value: readVersion(M, p + 140) },
+          { name: 'firmwareVersion', value: readVersion(M, p + 142) },
+        ]
+      : undefined
+  )
+}
+
+/** C_GetSessionInfo(hSession, pInfo) — CK_SESSION_INFO: slotID@0, state@4, flags@8, ulDeviceError@12 */
+const decodeGetSessionInfo = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const p = args[1] ?? 0
+  const state = safeRead32(M, p + 4) ?? 0
+  return paramsOnly(
+    [{ name: 'hSession', value: String(args[0] ?? '?') }],
+    'PKCS#11 v3.2 §5.6 (C_GetSessionInfo)',
+    rv === 0 && p
+      ? [
+          { name: 'slotID', value: String(safeRead32(M, p) ?? '?') },
+          { name: 'state', value: `${CKS_TABLE[state] ?? '?'} (${state})` },
+          { name: 'flags', value: flagNames(safeRead32(M, p + 8) ?? 0, CKF_SESSION_INFO_FLAGS) },
+          { name: 'ulDeviceError', value: String(safeRead32(M, p + 12) ?? '?') },
+        ]
+      : undefined
+  )
+}
+
+/** C_CloseAllSessions(slotID) — §5.6 */
+const decodeCloseAllSessions = (_M: SoftHSMModule, args: number[]) =>
+  paramsOnly(
+    [{ name: 'slotID', value: String(args[0] ?? '?') }],
+    'PKCS#11 v3.2 §5.6 (C_CloseAllSessions)'
+  )
+
+/** C_SessionCancel(hSession, flags) — §5.6, cancels the operations named in flags */
+const decodeSessionCancel = (_M: SoftHSMModule, args: number[]) =>
+  paramsOnly(
+    [
+      {
+        name: 'flags',
+        value: flagNames(args[1] ?? 0, CKF_OPERATION_FLAGS),
+        note: 'Operations to cancel',
+      },
+    ],
+    'PKCS#11 v3.2 §5.6 (C_SessionCancel)'
+  )
+
+/** C_GetOperationState(hSession, pOperationState, pulOperationStateLen) — §5.6 */
+const decodeGetOperationState = (M: SoftHSMModule, args: number[], rv: number) =>
+  paramsOnly(
+    [outPtrRow('pOperationState', args[1] ?? 0)],
+    'PKCS#11 v3.2 §5.6 (C_GetOperationState)',
+    lenAndPayload(M, rv, args[1] ?? 0, args[2] ?? 0, '*pulOperationStateLen', 'Saved State')
+  )
+
+/** C_SetOperationState(hSession, pOperationState, ulLen, hEncryptionKey, hAuthenticationKey) — §5.6 */
+const decodeSetOperationState = (_M: SoftHSMModule, args: number[]) =>
+  paramsOnly(
+    [
+      { name: 'ulOperationStateLen', value: `${args[2] ?? 0} bytes` },
+      { name: 'hEncryptionKey', value: String(args[3] ?? 0) },
+      { name: 'hAuthenticationKey', value: String(args[4] ?? 0) },
+    ],
+    'PKCS#11 v3.2 §5.6 (C_SetOperationState)'
+  )
+
+/** C_CopyObject(hSession, hObject, pTemplate, ulCount, phNewObject) — §5.7 */
+const decodeCopyObject = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const tmpl = readTemplate(M, args[2] ?? 0, args[3] ?? 0)
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [{ name: 'hObject', value: String(args[1] ?? 0), note: 'Source object' }],
+    },
+  ]
+  if (tmpl.length) inputs.push({ label: 'Attribute overrides', attributes: tmpl })
+  const h = rv === 0 && args[4] ? safeRead32(M, args[4]) : null
+  return {
+    inputs,
+    outputs: h !== null ? [{ name: '*phNewObject', value: String(h) }] : undefined,
+    spec: 'PKCS#11 v3.2 §5.7 (C_CopyObject)',
+  }
+}
+
+/** C_GetObjectSize(hSession, hObject, pulSize) — §5.7 */
+const decodeGetObjectSize = (M: SoftHSMModule, args: number[], rv: number) => {
+  const n = rv === 0 && args[2] ? safeRead32(M, args[2]) : null
+  return paramsOnly(
+    [{ name: 'hObject', value: String(args[1] ?? 0) }],
+    'PKCS#11 v3.2 §5.7 (C_GetObjectSize)',
+    n !== null
+      ? [
+          {
+            name: '*pulSize',
+            value: n === 0xffffffff ? 'CK_UNAVAILABLE_INFORMATION' : `${n} bytes`,
+          },
+        ]
+      : undefined
+  )
+}
+
+/** C_DigestKey(hSession, hKey) — §5.12, digests a secret key's value inside the token */
+const decodeDigestKey = (_M: SoftHSMModule, args: number[]) =>
+  paramsOnly(
+    [
+      {
+        name: 'hKey',
+        value: String(args[1] ?? 0),
+        note: 'Key value is digested inside the token, never exported',
+      },
+    ],
+    'PKCS#11 v3.2 §5.12 (C_DigestKey)'
+  )
+
+/** C_GetFunctionStatus / C_CancelFunction (hSession) — legacy parallel-function calls */
+const decodeLegacyParallel = (fn: string) => (_M: SoftHSMModule, args: number[]) =>
+  paramsOnly(
+    [
+      {
+        name: 'hSession',
+        value: String(args[0] ?? '?'),
+        note: 'Legacy call — a v2.20+ library returns CKR_FUNCTION_NOT_PARALLEL',
+      },
+    ],
+    `PKCS#11 v3.2 §5.22 (${fn})`
+  )
+
+/** C_WaitForSlotEvent(flags, pSlot, pReserved) — §5.5 */
+const decodeWaitForSlotEvent = (M: SoftHSMModule, args: number[], rv: number) => {
+  const slot = rv === 0 && args[1] ? safeRead32(M, args[1]) : null
+  return paramsOnly(
+    [{ name: 'flags', value: (args[0] ?? 0) & 0x1 ? 'CKF_DONT_BLOCK (0x1)' : '0 (blocking)' }],
+    'PKCS#11 v3.2 §5.5 (C_WaitForSlotEvent)',
+    slot !== null ? [{ name: '*pSlot', value: String(slot), note: 'Slot that changed' }] : undefined
+  )
+}
+
+/** C_AsyncComplete(hSession, pFunctionName, pResult) / C_AsyncGetID(hSession, pFunctionName, pulID)
+ *  / C_AsyncJoin(hSession, pFunctionName, ulID, pData, ulData) — §5.23 */
+const decodeAsync =
+  (fn: 'C_AsyncComplete' | 'C_AsyncGetID' | 'C_AsyncJoin') =>
+  (M: SoftHSMModule, args: number[], rv: number) => {
+    const rows: Row[] = [{ name: 'pFunctionName', value: readCString(M, args[1] ?? 0) }]
+    const outputs: Row[] = []
+    if (fn === 'C_AsyncGetID' && rv === 0 && args[2]) {
+      const id = safeRead32(M, args[2])
+      if (id !== null) outputs.push({ name: '*pulID', value: String(id) })
+    }
+    if (fn === 'C_AsyncJoin') {
+      rows.push({ name: 'ulID', value: String(args[2] ?? 0) })
+      rows.push({ name: 'ulData', value: `${args[4] ?? 0} bytes` })
+    }
+    return paramsOnly(rows, `PKCS#11 v3.2 §5.23 (${fn})`, outputs)
+  }
+
+const decodeEncryptUpdate = decodeUpdateWithOutput(
+  'C_EncryptUpdate',
+  'Plaintext Part',
+  'Ciphertext Part',
+  'PKCS#11 v3.2 §5.15'
+)
+const decodeDecryptUpdate = decodeUpdateWithOutput(
+  'C_DecryptUpdate',
+  'Ciphertext Part',
+  'Plaintext Part',
+  'PKCS#11 v3.2 §5.16'
+)
+const decodeEncryptFinal = decodeFinalWithOutput(
+  'C_EncryptFinal',
+  'Last Ciphertext Part',
+  'PKCS#11 v3.2 §5.15'
+)
+const decodeDecryptFinal = decodeFinalWithOutput(
+  'C_DecryptFinal',
+  'Last Plaintext Part',
+  'PKCS#11 v3.2 §5.16'
+)
+const decodeDigestEncryptUpdate = decodeUpdateWithOutput(
+  'C_DigestEncryptUpdate',
+  'Plaintext Part',
+  'Ciphertext Part',
+  'PKCS#11 v3.2 §5.24'
+)
+const decodeDecryptDigestUpdate = decodeUpdateWithOutput(
+  'C_DecryptDigestUpdate',
+  'Ciphertext Part',
+  'Plaintext Part',
+  'PKCS#11 v3.2 §5.24'
+)
+const decodeSignEncryptUpdate = decodeUpdateWithOutput(
+  'C_SignEncryptUpdate',
+  'Plaintext Part',
+  'Ciphertext Part',
+  'PKCS#11 v3.2 §5.24'
+)
+const decodeDecryptVerifyUpdate = decodeUpdateWithOutput(
+  'C_DecryptVerifyUpdate',
+  'Ciphertext Part',
+  'Plaintext Part',
+  'PKCS#11 v3.2 §5.24'
+)
+
+/** Name → decoder for the functions above; buildInspect consults it after its switch. */
+const V3X_DECODERS: Record<
+  string,
+  (M: SoftHSMModule, args: number[], rv: number) => Pkcs11LogInspect
+> = {
+  C_GenerateRandom: decodeGenerateRandom,
+  C_EncryptUpdate: decodeEncryptUpdate,
+  C_EncryptFinal: decodeEncryptFinal,
+  C_DecryptUpdate: decodeDecryptUpdate,
+  C_DecryptFinal: decodeDecryptFinal,
+  C_VerifyUpdate: decodeVerifyUpdate,
+  C_VerifyFinal: decodeClassicVerifyFinal,
+  C_DigestEncryptUpdate: decodeDigestEncryptUpdate,
+  C_DecryptDigestUpdate: decodeDecryptDigestUpdate,
+  C_SignEncryptUpdate: decodeSignEncryptUpdate,
+  C_DecryptVerifyUpdate: decodeDecryptVerifyUpdate,
+  C_DigestKey: decodeDigestKey,
+  C_VerifySignatureInit: decodeVerifySignatureInit,
+  C_VerifySignature: decodeVerifySignature,
+  C_VerifySignatureUpdate: decodeVerifySignatureUpdate,
+  C_VerifySignatureFinal: decodeVerifySignatureFinal,
+  C_SignRecoverInit: decodeRecoverInit('C_SignRecoverInit', 'PKCS#11 v3.2 §5.13'),
+  C_SignRecover: decodeSignRecover,
+  C_VerifyRecoverInit: decodeRecoverInit('C_VerifyRecoverInit', 'PKCS#11 v3.2 §5.14'),
+  C_VerifyRecover: decodeVerifyRecover,
+  C_SignMessageBegin: decodeMessageBegin(false),
+  C_SignMessageNext: decodeSignMessageNext,
+  C_VerifyMessageBegin: decodeMessageBegin(true),
+  C_VerifyMessageNext: decodeVerifyMessageNext,
+  C_MessageEncryptInit: decodeMessageCipherInit('C_MessageEncryptInit'),
+  C_EncryptMessage: decodeCipherMessage(false),
+  C_EncryptMessageBegin: decodeCipherMessageBegin('C_EncryptMessageBegin'),
+  C_EncryptMessageNext: decodeCipherMessageNext('C_EncryptMessageNext', false),
+  C_MessageEncryptFinal: decodeMessageCipherFinal('C_MessageEncryptFinal'),
+  C_MessageDecryptInit: decodeMessageCipherInit('C_MessageDecryptInit'),
+  C_DecryptMessage: decodeCipherMessage(true),
+  C_DecryptMessageBegin: decodeCipherMessageBegin('C_DecryptMessageBegin'),
+  C_DecryptMessageNext: decodeCipherMessageNext('C_DecryptMessageNext', true),
+  C_MessageDecryptFinal: decodeMessageCipherFinal('C_MessageDecryptFinal'),
+  C_LoginUser: decodeLoginUser,
+  C_SetPIN: decodeSetPIN,
+  C_GetInterfaceList: decodeGetInterfaceList,
+  C_GetInterface: decodeGetInterface,
+  C_GetFunctionList: decodeGetFunctionList,
+  C_GetInfo: decodeGetInfo,
+  C_GetSlotInfo: decodeGetSlotInfo,
+  C_GetTokenInfo: decodeGetTokenInfo,
+  C_GetSessionInfo: decodeGetSessionInfo,
+  C_CloseAllSessions: decodeCloseAllSessions,
+  C_SessionCancel: decodeSessionCancel,
+  C_GetOperationState: decodeGetOperationState,
+  C_SetOperationState: decodeSetOperationState,
+  C_CopyObject: decodeCopyObject,
+  C_GetObjectSize: decodeGetObjectSize,
+  C_GetFunctionStatus: decodeLegacyParallel('C_GetFunctionStatus'),
+  C_CancelFunction: decodeLegacyParallel('C_CancelFunction'),
+  C_WaitForSlotEvent: decodeWaitForSlotEvent,
+  C_AsyncComplete: decodeAsync('C_AsyncComplete'),
+  C_AsyncGetID: decodeAsync('C_AsyncGetID'),
+  C_AsyncJoin: decodeAsync('C_AsyncJoin'),
+}
 
 /**
  * Build a structured inspect payload for a PKCS#11 call.
@@ -2625,11 +3756,16 @@ export const buildInspect = (
         return decodeWrapKeyAuthenticated(M, args, rv)
       case 'C_UnwrapKeyAuthenticated':
         return decodeUnwrapKeyAuthenticated(M, args, rv)
-      default:
-        return undefined
+      default: {
+        const decode = V3X_DECODERS[fn]
+        return decode ? decode(M, args, rv) : undefined
+      }
     }
-  } catch {
-    // Never let inspect errors surface to users
-    return undefined
+  } catch (err) {
+    // A throwing decoder must never break the call it describes. Surface it in
+    // the drawer (and the dev console) instead of looking like "no decoder".
+    const message = err instanceof Error ? err.message : String(err)
+    if (import.meta.env?.DEV) console.warn(`[pkcs11Inspect] ${fn} decoder failed:`, err)
+    return { inputs: [], decodeError: message }
   }
 }

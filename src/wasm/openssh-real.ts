@@ -173,6 +173,8 @@ export function mapPkcs11Event(
     ms: 0,
     ok: rv === 0,
     engineName: 'openssh (real)',
+    inspectNote:
+      'Traced from the real OpenSSH binary, not from this page — only the summary fields it reports are available.',
   }
 }
 
