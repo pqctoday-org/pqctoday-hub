@@ -15,7 +15,8 @@
  *    can be procured for legacy systems" and that the certificates are not revoked.
  *  - CSWP 37B is final (NIST CSRC: "09/30/26: CSWP 37B (Final)"), not a draft; the NCCoE
  *    project page still links the draft.
- *  - The Implementation Guidance cites draft-ietf-tls-ecdhe-mlkem-01 for the TLS 1.3 hybrid.
+ *  - The Implementation Guidance cites an early version of the IETF draft later published as
+ *    RFC 10024 for the TLS 1.3 hybrid (lessons name the RFC, not the draft; tls-hybrid-citation).
  */
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
@@ -136,7 +137,7 @@ describe('CSWP 37B and the hybrid TLS citation', () => {
   it('the Hybrid lesson says what the IG cites and keeps RFC 10024 as the published successor', () => {
     const text = read(`${MODULES}/HybridCrypto/components/HybridCryptoIntroduction.tsx`)
     expect(text).toMatch(
-      /it cites draft-ietf-tls-ecdhe-mlkem-01; RFC 10024, whose previous version is -05 of that draft, is the draft&apos;s published successor/
+      /the IG cites an early version of the IETF draft that was later published as RFC 10024/
     )
     expect(text).not.toContain('key exchange (RFC 10024) may meet Scenario 2')
   })
