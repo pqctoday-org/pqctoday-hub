@@ -4,6 +4,7 @@
  * Provides KEM + Sign & Verify tabs via scroll-snap carousel with WASM capability check.
  */
 import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react'
+import { useLocation } from 'react-router'
 import {
   AlertTriangle,
   Key,
@@ -21,6 +22,7 @@ import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { useHsmContext } from './hsm/HsmContext'
 import { Button } from '../ui/button'
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities'
+import { algorithmLaunchPhoneReason } from '@/data/algorithmLaunch'
 
 const MobilePlaygroundView = lazy(() =>
   import('./MobilePlaygroundView').then((m) => ({ default: m.MobilePlaygroundView }))
@@ -65,6 +67,21 @@ function CapabilityWarning({
           View Info
         </Button>
       </div>
+    </div>
+  )
+}
+
+/** An exact launch from the Algorithms page (`?launchAlgo=`) cannot run on the phone
+ *  layout, which has no Key Store: say so, naming the algorithm, instead of showing
+ *  the phone screen's defaults as if they were the requested algorithm. */
+function LaunchNotice() {
+  const { search } = useLocation()
+  const reason = algorithmLaunchPhoneReason('interactive', search)
+  if (!reason) return null
+  return (
+    <div role="alert" className="glass-panel mx-3 my-2 p-3 flex items-start gap-2">
+      <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
+      <p className="text-xs text-foreground leading-relaxed">{reason}</p>
     </div>
   )
 }
@@ -176,9 +193,12 @@ export const MobilePlaygroundOps = () => {
 
   if (showFallback) {
     return (
-      <Suspense fallback={null}>
-        <MobilePlaygroundView />
-      </Suspense>
+      <>
+        <LaunchNotice />
+        <Suspense fallback={null}>
+          <MobilePlaygroundView />
+        </Suspense>
+      </>
     )
   }
 
@@ -192,15 +212,19 @@ export const MobilePlaygroundOps = () => {
 
   if (status === 'unsupported') {
     return (
-      <CapabilityWarning
-        onContinue={() => setStatus('dismissed')}
-        onFallback={() => setShowFallback(true)}
-      />
+      <>
+        <LaunchNotice />
+        <CapabilityWarning
+          onContinue={() => setStatus('dismissed')}
+          onFallback={() => setShowFallback(true)}
+        />
+      </>
     )
   }
 
   return (
     <PlaygroundProvider>
+      <LaunchNotice />
       <div className="min-h-[60vh]">
         <MobileOpsContent />
       </div>
