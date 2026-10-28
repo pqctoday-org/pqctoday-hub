@@ -1239,7 +1239,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.3.2',
+    version: '1.3.3',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half names the draft revisions it was verified against
