@@ -767,10 +767,10 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`p_crqc_within_horizon × value_of_long_lived_secrets × hndl_capture_fraction\n= ${fmtPct(pCrqc, 0)} × ${fmt$(quantumP.valueOfLongLivedSecrets)} × ${fmtPct(quantumP.hndlCaptureFraction, 0)}\n= ${fmt$(qDep)}/yr`}
-            explanation="HNDL is asymmetric — already-exfiltrated data cannot be retroactively protected. This stream measures the value of FUTURE-stored long-lived secrets that quantum-resistant migration would protect from harvest-now/decrypt-later attack. Capture fraction is the share of long-lived secrets adversaries plausibly already collect today. P(CRQC within horizon) lives in the global controls above so its effect is auditable. NIST IR 8547 (Initial Public Draft) discusses HNDL throughout — it is the principal urgency driver for confidentiality."
+            explanation="HNDL is asymmetric — already-exfiltrated data cannot be retroactively protected. This stream measures the value of FUTURE-stored long-lived secrets that quantum-resistant migration would protect from harvest-now/decrypt-later attack. Capture fraction is the share of long-lived secrets adversaries plausibly already collect today. P(CRQC within horizon) lives in the global controls above so its effect is auditable. NIST IR 8547 (final, October 2026) discusses HNDL throughout — it is the principal urgency driver for confidentiality."
             source={{
-              label: 'NIST IR 8547 (IPD)',
-              href: 'https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf',
+              label: 'NIST IR 8547 (final)',
+              href: 'https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf',
             }}
           >
             <ParamSlider

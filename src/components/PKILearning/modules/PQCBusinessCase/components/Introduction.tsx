@@ -50,9 +50,10 @@ const Step1WhyConceptsCosts: React.FC = () => (
             more legacy cryptography to unwind, and less time before published transition dates.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
-            Our summary. Sources for the dates: NIST IR 8547 (draft) proposes deprecating RSA and
-            elliptic-curve algorithms after 2030; the joint CISA, NSA and NIST quantum-readiness
-            factsheet (2023) urges organizations to start inventories and roadmaps now.
+            Our summary. Sources for the dates: NIST IR 8547 (final, October 2026) deprecates RSA
+            and elliptic-curve algorithms after 2030 and disallows them after 2035; the joint CISA,
+            NSA and NIST quantum-readiness factsheet (2023) urges organizations to start inventories
+            and roadmaps now.
           </p>
         </div>
         <p>

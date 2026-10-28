@@ -24,7 +24,7 @@ This module explores Quantum Key Distribution, a method of distributing encrypti
 
 ## Related Standards
 
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, Initial Public Draft)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final, October 2026)
 - FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
 - NIST SP 800-108 (KDF in Counter Mode)
 - ETSI QKD standards (GS QKD series)
