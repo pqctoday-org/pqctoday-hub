@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10262026.csv
+ * Source: src/data/role_board_content_10272026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2971,7 +2971,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Prerequisite met', value: 'PQC algorithms CAVP-validated' },
-            { label: 'In progress', value: 'only when NIST lists the module (IUT / MIP)' },
+            {
+              label: 'In progress',
+              value:
+                'counted when NIST lists it (IUT / MIP); listing is voluntary, so the lists may omit modules',
+            },
             { label: 'Certified', value: 'a FIPS 140-3 certificate covers the PQC' },
           ],
           punchline: 'A CAVP number on a datasheet is not a module certificate.',
