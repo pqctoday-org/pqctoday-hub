@@ -363,7 +363,7 @@ export const ENTERPRISE_SCENARIO = {
       framework: 'NIST IR 8547',
       deadline: '2030 / 2035',
       requirement:
-        'Deprecate 112-bit classical crypto (RSA-2048, etc.) after 2030. Disallow all classical public-key crypto (RSA, ECDSA, EdDSA, DH, ECDH) after 2035.',
+        'Deprecate quantum-vulnerable public-key crypto (RSA, ECDSA, EdDSA, DH, ECDH) at 112 bits of security or more after 2030. Disallow it under NIST standards and guidelines after 2035.',
     },
     {
       framework: 'ANSSI & BSI (EU)',

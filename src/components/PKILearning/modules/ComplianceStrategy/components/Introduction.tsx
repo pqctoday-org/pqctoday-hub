@@ -123,11 +123,11 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              NIST&apos;s transition guidance for post-quantum cryptography standards (Initial
-              Public Draft published November 2024; comment period closed January 2025; final
-              version pending). Recommends deprecating RSA, ECC, and other classical public-key
-              algorithms by 2030 and disallowing them entirely after 2035. Emphasizes cryptographic
-              agility and hybrid approaches during the transition period.
+              NIST&apos;s transition guidance for post-quantum cryptography standards (final,
+              October 2026; it replaced the November 2024 draft). Deprecates RSA, ECC, and other
+              quantum-vulnerable public-key algorithms after 2030 and disallows them under NIST
+              standards and guidelines after 2035. Emphasizes cryptographic agility and hybrid
+              approaches during the transition period.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -236,7 +236,7 @@ const Step2ApproachAndDeadlines: React.FC = () => (
             {
               year: '2024',
               event:
-                'NIST IR 8547 Initial Public Draft published — PQC transition guidance (final version pending)',
+                'NIST IR 8547 initial public draft published — PQC transition guidance (final version published October 2026)',
               source: 'NIST',
             },
             {

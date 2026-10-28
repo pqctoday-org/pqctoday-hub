@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'quantum-threats',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-28',
 
   standards: [
     // Resource-estimate papers first — every qubit figure in this module comes
@@ -65,7 +65,7 @@ export const content: ModuleContent = {
     },
     { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
     {
-      label: 'NIST: deprecate RSA-2048 and 112-bit ECC',
+      label: 'NIST: deprecate quantum-vulnerable public-key crypto (RSA, ECC)',
       year: NIST_DEPRECATION.deprecateClassical,
       source: 'NIST IR 8547',
     },

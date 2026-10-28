@@ -27,9 +27,9 @@ const EXERCISES = [
     id: 'ex-3',
     title: 'Scenario: Healthcare PQC Compliance Timeline',
     prompt:
-      'A hospital network must protect patient records (30-year retention) while complying with HIPAA and the draft NIST IR 8547 deprecation of RSA/ECC by 2030. Build a compliance timeline that includes assessment, hybrid deployment, and full PQC migration phases. Where does the HNDL risk window overlap with compliance deadlines?',
+      'A hospital network must protect patient records (30-year retention) while complying with HIPAA and the NIST IR 8547 deprecation of RSA/ECC after 2030. Build a compliance timeline that includes assessment, hybrid deployment, and full PQC migration phases. Where does the HNDL risk window overlap with compliance deadlines?',
     workshopHint:
-      'Use the Compliance Timeline Builder (Step 3) to overlay NIST and HIPAA deadlines with migration phases. Factor in the draft 2035 NIST IR 8547 disallowance date against 30-year data retention.',
+      'Use the Compliance Timeline Builder (Step 3) to overlay NIST and HIPAA deadlines with migration phases. Factor in the 2035 NIST IR 8547 disallowance date against 30-year data retention.',
   },
   {
     id: 'ex-4',

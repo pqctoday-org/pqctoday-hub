@@ -6,7 +6,7 @@ The Compliance & Regulatory Strategy module teaches executives how to navigate t
 
 ## Key Concepts
 
-- **Major PQC Compliance Frameworks** — CNSA 2.0 (NSA, US national security systems), NIST IR 8547 (US federal guidance, initial public draft Nov 2024, not yet finalized), ETSI (European standards), ANSSI (French national agency), BSI (German federal office)
+- **Major PQC Compliance Frameworks** — CNSA 2.0 (NSA, US national security systems), NIST IR 8547 (US federal guidance; final, October 2026), ETSI (European standards), ANSSI (French national agency), BSI (German federal office)
 - **CNSA 2.0 Timeline (National Security Systems)** — software/firmware signing preferred 2025, exclusive 2030; new networking equipment support 2026, exclusive 2030; web browsers/servers, cloud and operating systems exclusive 2033; NSS transition complete by 2035 per NSM-10
 - **EO 14412 Timeline (federal civilian systems)** — Executive Order 14412, "Securing the Nation Against Advanced Cryptographic Attacks" (signed 22 June 2026), requires federal High Value Assets, high-impact systems and covered contractors to use PQC for key establishment by 31 December 2030 and for digital signatures by 31 December 2031. FAR Council proposed rule on contractor FIPS/PQC compliance due 19 December 2026; CISA minimum-CBOM-elements guidance due 19 March 2027. OMB M-26-15 (24 June 2026) is the implementing guidance and does not apply to National Security Systems
 - **Compliance-First vs. Risk-First Strategy** — two approaches: compliance-first (driven by regulatory deadlines, ensures certification) vs. risk-first (driven by threat assessment, prioritizes highest-risk systems)
@@ -28,7 +28,7 @@ The workshop has 3 interactive steps:
 ## Related Standards
 
 - NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0)
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, initial public draft Nov 2024, not yet finalized)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards; final, October 2026)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms, Sep 2025)
 - ETSI TS 103 744 (Quantum-Safe Cryptography)
 - ANSSI Technical Position on PQC (2022 initial, 2023 follow-up)

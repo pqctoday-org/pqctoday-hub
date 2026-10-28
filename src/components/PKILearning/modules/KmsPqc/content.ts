@@ -100,7 +100,7 @@ export const content: ModuleContent = {
     },
     { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
     {
-      label: 'NIST: deprecate RSA-2048 and 112-bit ECC',
+      label: 'NIST: deprecate quantum-vulnerable public-key crypto (RSA, ECC)',
       year: NIST_DEPRECATION.deprecateClassical,
       source: 'NIST IR 8547',
     },

@@ -318,7 +318,7 @@ export const HONESTY_TIERS: { id: HonestyTier; label: string; example: string }[
   {
     id: 'draft',
     label: 'Published draft or public review',
-    example: 'ACM v3; SP 1800-40B (Initial Public Draft); NIST IR 8547 (Initial Public Draft).',
+    example: 'ACM v3; SP 1800-40B (Initial Public Draft).',
   },
   {
     id: 'engineering',
