@@ -32,7 +32,7 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { Button } from '@/components/ui/button'
 import {
   ANNUAL_BREACH_PROBABILITY_PCT,
-  IBM_BASELINE_UNVERIFIED_NOTE,
+  BREACH_BASELINE_NOTE,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -365,7 +365,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `- **Total capex: ${formatCurrency(financials.totalMigrationCost)}**\n`
     md += `- Annual opex: ${assumptions.annualOpexPct}% of capex = ${formatCurrency(financials.annualOpex)}/year\n\n`
     md += `### Risk Reduction (quantum amplification ${quantumMultiplier.toFixed(2)}× - illustrative)\n`
-    md += `- Industry baseline (${data.industry || 'Other'}): ${formatCurrency(industryBreachBaseline)} (IBM 2025)\n`
+    md += `- Industry baseline (${data.industry || 'Other'}): ${formatCurrency(industryBreachBaseline)} (insurance-claim incident cost, lower bound — NetDiligence 2025)\n`
     md += `- HNDL exposure: ${assumptions.hndlExposurePct}%\n`
     md += `- Post-CRQC attacker uplift: ${assumptions.crqcAttackerUpliftPct}%\n`
     md += `- Detection-timeline uplift: ${assumptions.detectionTimelineUpliftPct}%\n`
@@ -400,8 +400,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     for (const row of tornado) {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
-    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025 per-sector table (one edition behind; IBM published its 2026 global report). Compliance penalties: published regulatory enforcement data.*\n`
-    md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
+    md += `\n*Educational estimate for planning purposes. Breach baseline: NetDiligence Cyber Claims Study 2025 per-sector insurance-claim incident cost (lower bound). Compliance penalties: published regulatory enforcement data.*\n`
+    md += `\n*${BREACH_BASELINE_NOTE}*\n`
     md += '\n---\n\n'
     md +=
       '*Aligned to NIST CSWP 39 §2.4 (Resource and Performance Challenges) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
@@ -752,8 +752,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               <span className="font-mono text-foreground font-semibold">
                 {formatCurrency(industryBreachBaseline)}
               </span>{' '}
-              &mdash; IBM Cost of a Data Breach Report 2025. Quantum amplification is composed from
-              three defensible factors below.
+              &mdash; insurance-claim incident cost (lower bound), NetDiligence Cyber Claims Study
+              2025. Quantum amplification is composed from three defensible factors below.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1106,12 +1106,12 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             audit — industry defaults are 10–20% of capex.
           </p>
           <p>
-            <strong>Risk reduction:</strong> Industry breach baseline (IBM Cost of a Data Breach
-            Report 2025) × a composed quantum amplification factor × annual breach probability. The
-            amplification factor is the sum of three defensible components — HNDL exposure (fraction
-            of data at risk of retroactive decryption), post-CRQC attacker uplift (new capability
-            ceiling once a CRQC exists), and detection-timeline uplift (mean time to detect will
-            lengthen).
+            <strong>Risk reduction:</strong> Industry breach baseline (insurance-claim incident
+            cost, lower bound — NetDiligence Cyber Claims Study 2025) × a composed quantum
+            amplification factor × annual breach probability. The amplification factor is the sum of
+            three defensible components — HNDL exposure (fraction of data at risk of retroactive
+            decryption), post-CRQC attacker uplift (new capability ceiling once a CRQC exists), and
+            detection-timeline uplift (mean time to detect will lengthen).
           </p>
           <p>
             <strong>Regulatory exposure:</strong> Number of applicable regulatory frameworks ×
