@@ -15,9 +15,9 @@
  * regulatoryConstantProvenance.test.ts against the reviewed timeline CSV.
  *
  * Sources:
- *   - CNSA 2.0: NSA FAQ version 2.2 (August 2026), which supersedes the
+ *   - CNSA 2.0: NSA FAQ version 2.2 (October 2026), which supersedes the
  *     earlier category dates for current planning
- *   - NIST IR 8547: Transition to Post-Quantum Cryptography Standards (November 2024)
+ *   - NIST IR 8547: Transition to Post-Quantum Cryptography Standards (final, October 2026)
  *   - ANSSI: Avis relatif à la migration vers la cryptographie post-quantique (2024)
  *   - BSI TR-02102: Cryptographic Mechanisms: Recommendations and Key Lengths (2024)
  */
@@ -107,11 +107,11 @@ export const CNSA_2_0_BY_CLASS: ReadonlyArray<{
 
 // ── NIST Deprecation Targets ──────────────────────────────────────────────
 
-/** NIST deprecation and disallowance timeline (NIST IR 8547, November 2024) */
+/** NIST deprecation and disallowance timeline (NIST IR 8547, final, October 2026) */
 export const NIST_DEPRECATION = {
-  /** Target year to deprecate RSA-2048 and 112-bit ECC */
+  /** Year after which quantum-vulnerable public-key algorithms (112-bit security or more) are deprecated */
   deprecateClassical: 2030,
-  /** Target year to fully disallow all classical public-key crypto */
+  /** Year after which they are disallowed under NIST standards and guidelines */
   disallowClassical: 2035,
   /** FIPS 203/204/205 finalization date */
   fipsFinalized: '2024-08-13',

@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { PERSONA_BLOCKS } from './personaBlocks'
 import { claimedPersonasFor } from './claimedPersonas'
+import { splitLinkedText } from '@/utils/linkedText'
 import { PERSONA_IDS } from '@/data/personaIds'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
@@ -63,10 +64,24 @@ describe('PERSONA_BLOCKS - certification engineer lab-test pointers', () => {
 })
 
 describe('PERSONA_BLOCKS - certification engineer pointers that name a place', () => {
-  it('OpenSSL Studio says the Validation tab is on the Algorithms page', () => {
+  it('OpenSSL Studio says the Validation tab is on the Algorithms page, and links to it', () => {
     expect(PERSONA_BLOCKS['/playground/openssl-studio']!['cert-engineer']).toBe(
-      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build supports; it is educational and not FIPS-validated, so do not use it as evidence. For NIST known-answer samples use the Validation tab on the Algorithms page."
+      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build supports; it is educational and not FIPS-validated, so do not use it as evidence. For NIST known-answer samples use the [Validation tab on the Algorithms page](/algorithms?tab=validation)."
     )
+  })
+  it('every link written in a paragraph points inside the app', () => {
+    for (const [route, blocks] of Object.entries(PERSONA_BLOCKS)) {
+      for (const [persona, text] of Object.entries(blocks)) {
+        // Whatever is left once the link syntax is parsed out must hold no half-written link.
+        const plain = splitLinkedText(text as string)
+          .map((part) => part.text)
+          .join('')
+        expect(plain, `${route}/${persona}`).not.toMatch(/\]\(|\[[^\]]*\]\(/)
+        for (const part of splitLinkedText(text as string)) {
+          if (part.to) expect(part.to, `${route}/${persona}`).toMatch(/^\/[a-z]/)
+        }
+      }
+    }
   })
   it('SLH-DSA names the workshop step and the link that reaches Algorithm checks', () => {
     const text = PERSONA_BLOCKS['/learn/slh-dsa']!['cert-engineer']!

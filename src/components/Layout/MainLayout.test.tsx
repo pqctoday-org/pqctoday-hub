@@ -41,6 +41,7 @@ function renderLayout(initialEntry = '/', reportElement: ReactNode = <TestReport
           <Route path="/timeline" element={<div>Real Timeline Page</div>} />
           <Route path="/explore" element={<TestExplore />} />
           <Route path="/compliance" element={<TestCompliance />} />
+          <Route path="/navigate" element={<div>Navigate Canvas</div>} />
           <Route path="/report" element={reportElement} />
         </Route>
       </Routes>
@@ -143,19 +144,55 @@ describe('MainLayout', () => {
       expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
     })
 
-    it('desktop on any page other than the home page: the first-visit notice is the fixed card', () => {
+    it('desktop on any page other than the home page: the first-visit notice is the same strip in flow above the page, not a fixed card over it', () => {
       useDisclaimerStore.getState().resetForTesting()
       usePersonaStore.setState({ selectedPersona: null, hasSkippedPersonalization: false })
       const { unmount } = renderLayout('/about')
-      expect(screen.getByRole('alert', { name: 'Welcome to PQC Today' }).className).toMatch(
-        /\bfixed\b/
-      )
+      const notice = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+      expect(notice.className).not.toMatch(/\bfixed\b/)
+      expect(
+        screen.getByText('About Page').compareDocumentPosition(notice) &
+          Node.DOCUMENT_POSITION_PRECEDING
+      ).toBeTruthy()
+      expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
       unmount()
+      // With a role chosen, on another page: still the strip.
       usePersonaStore.getState().setPersona('executive')
-      renderLayout('/about')
-      expect(screen.getByRole('alert', { name: 'Welcome to PQC Today' }).className).toMatch(
-        /\bfixed\b/
-      )
+      renderLayout('/migrate')
+      const chosen = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+      expect(chosen.className).not.toMatch(/\bfixed\b/)
+      expect(
+        screen.getByText('Migrate Page').compareDocumentPosition(chosen) &
+          Node.DOCUMENT_POSITION_PRECEDING
+      ).toBeTruthy()
+      expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
+    })
+
+    it('the full-screen Navigate canvas gets the strip above it in a column, not a fixed card over it', () => {
+      useDisclaimerStore.getState().resetForTesting()
+      usePersonaStore.getState().setPersona('executive')
+      renderLayout('/navigate')
+      const notice = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+      expect(notice.className).not.toMatch(/\bfixed\b/)
+      const canvas = screen.getByText('Navigate Canvas')
+      expect(canvas.compareDocumentPosition(notice) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+      // The strip and the canvas share one column, and the canvas takes the rest of the height.
+      const column = screen.getByRole('main')
+      expect(column).toHaveClass('flex', 'flex-col', 'h-full')
+      expect(column).toContainElement(notice)
+      expect(canvas.parentElement).toHaveClass('flex-1', 'min-h-0')
+      expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
+    })
+
+    it('"I Understand" on a page other than home removes the strip and keeps it removed on the next page', () => {
+      useDisclaimerStore.getState().resetForTesting()
+      usePersonaStore.getState().setPersona('executive')
+      const { unmount } = renderLayout('/about')
+      fireEvent.click(screen.getByRole('button', { name: 'I Understand' }))
+      expect(screen.queryByRole('alert', { name: 'Welcome to PQC Today' })).not.toBeInTheDocument()
+      unmount()
+      renderLayout('/migrate')
+      expect(screen.queryByRole('alert', { name: 'Welcome to PQC Today' })).not.toBeInTheDocument()
     })
 
     it('desktop home page once a role is chosen: the first-visit notice stays a strip in flow above the board, not a fixed card over it', () => {

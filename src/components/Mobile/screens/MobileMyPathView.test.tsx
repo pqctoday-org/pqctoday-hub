@@ -72,20 +72,28 @@ describe('MobileMyPathView — new-to-PQC pointer', () => {
 describe('MobileMyPathView — long module titles', () => {
   const LONG = MODULE_CATALOG['crypto-product-certification'].title
 
-  it('wraps a long module title to two lines in the Essentials list instead of cutting it with an ellipsis', () => {
-    renderPath('cert-engineer')
-    const title = screen.getByText(LONG)
-    // The button keeps its text on one line unless the title asks for normal wrapping.
-    expect(title).toHaveClass('line-clamp-2', 'whitespace-normal')
+  /** A title wraps in full: no clamp, no ellipsis, and its row grows instead of keeping 44 px. */
+  function expectWrapsInFull(title: HTMLElement) {
+    expect(title).toHaveClass('whitespace-normal', 'break-words')
+    expect(title.className).not.toMatch(/line-clamp/)
     expect(title).not.toHaveClass('truncate')
+    const row = title.closest('button')!
+    expect(row).toHaveClass('h-auto', 'min-h-11')
+    expect(row.className).not.toMatch(/(^|\s)h-11(\s|$)/)
+  }
+
+  it('wraps a long module title in full in the Essentials list instead of cutting it', () => {
+    renderPath('cert-engineer')
+    expectWrapsInFull(screen.getByText(LONG))
   })
 
-  it('wraps a long module title to two lines in the Full track list too', () => {
+  it('wraps every module title in full in the Full track list too, at any width', () => {
     renderPath('cert-engineer')
     fireEvent.click(screen.getByRole('tab', { name: /Full track/ }))
-    const title = screen.getAllByText(LONG)[0]
-    expect(title).toHaveClass('line-clamp-2', 'whitespace-normal')
-    expect(title).not.toHaveClass('truncate')
+    const titles = screen.getAllByText(/./, { selector: 'button span.whitespace-normal' })
+    expect(titles.length).toBeGreaterThan(0)
+    for (const title of titles) expectWrapsInFull(title)
+    expect(screen.getAllByText(LONG).length).toBeGreaterThan(0)
   })
 })
 

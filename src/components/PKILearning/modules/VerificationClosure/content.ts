@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'verification-closure',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-10-27',
   version: '1.1.0',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-28',
 
   // CORRECTED 2026-08-23. This read that NCSC-UK's 2028/2031/2035 targets and ISO/IEC
   // 27001 "have no ACTIVE library row to cite". Both halves were wrong by the time it was
@@ -57,20 +57,20 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'Classical PKC (112-bit) deprecated',
+      label: 'Classical PKC (112-bit security and up) deprecated',
       year: NIST_DEPRECATION.deprecateClassical,
-      source: 'NIST IR 8547 (draft)',
+      source: 'NIST IR 8547',
     },
     {
       label: 'Classical PKC disallowed',
       year: NIST_DEPRECATION.disallowClassical,
-      source: 'NIST IR 8547 (draft)',
+      source: 'NIST IR 8547',
     },
   ],
 
   narratives: {
     overview:
-      'The end of a PQC migration is two distinct jobs that are routinely neglected: decommissioning the classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, still a draft: deprecate 112-bit classical public-key after 2030, disallow all after 2035; NCSC-UK targets of 2028 discovery+plan / 2031 high-priority / 2035 complete), executed via an inventory→plan→execute lifecycle drawn from ETSI TR 103 619 and TR 104 016 (ETSI TC CYBER) and the separate AIVD/CWI/TNO PQC Migration Handbook (2nd ed., 2024).',
+      'The end of a PQC migration is two distinct jobs that are routinely neglected: decommissioning the classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, final October 2026: deprecate quantum-vulnerable public-key at 112-bit security and up after 2030, disallow after 2035; NCSC-UK targets of 2028 discovery+plan / 2031 high-priority / 2035 complete), executed via an inventory→plan→execute lifecycle drawn from ETSI TR 103 619 and TR 104 016 (ETSI TC CYBER) and the separate AIVD/CWI/TNO PQC Migration Handbook (2nd ed., 2024).',
     verification:
       'A system is "migrated" when its behaviour shows it — the handshake negotiates ML-KEM/ML-DSA — not when a change ticket says so. This evidence-by-observed-behaviour standard and the estate-scale sampling approach are the framework author\'s practitioner guidance; the control basis (mapping migration capabilities to risk frameworks) is NIST CSWP 48 (draft) onto CSF 2.0 and SP 800-53.',
     closure:

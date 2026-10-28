@@ -45,11 +45,11 @@ test('ops user builds an operations pack from saved tool results', async ({ page
   await expect(count).toContainText('0 of 12 sections saved', { timeout: 30_000 })
 
   await page.goto('/playground/hsm-capacity', { waitUntil: 'domcontentloaded' })
-  await page.getByTestId('hsm-capacity-save-to-pack').click({ timeout: 30_000 })
-  await expect(page.getByTestId('hsm-capacity-save-to-pack')).toHaveText('Saved to operations pack')
+  await page.getByTestId('save-to-operations-pack').click({ timeout: 30_000 })
+  await expect(page.getByTestId('save-to-operations-pack')).toHaveText('Saved to operations pack')
 
   await page.goto('/playground/cert-capacity', { waitUntil: 'domcontentloaded' })
-  await page.getByTestId('cert-capacity-save-to-pack').click({ timeout: 30_000 })
+  await page.getByTestId('save-to-operations-pack').click({ timeout: 30_000 })
 
   await page.goto('/playground/vpn-sim', { waitUntil: 'domcontentloaded' })
   await expect(page.getByTestId('vpn-sim-save-to-pack')).toBeDisabled({ timeout: 30_000 })
@@ -69,7 +69,8 @@ test('ops user builds an operations pack from saved tool results', async ({ page
   ).toBe(true)
   const md = await zip.file('operations-pack/operations-pack.md')!.async('string')
   expect(md).toContain('## 4. HSM Capacity Plan')
-  expect(md).toContain('Editorial estimate (not a measurement)')
+  // The calculator rewrite (19 Oct) states the claim once per report instead of per rate.
+  expect(md).toContain('Claim status: Estimate.')
   expect(md).toContain('## 5. Certificate Capacity Plan')
   expect(md).toContain('## What is missing')
 })

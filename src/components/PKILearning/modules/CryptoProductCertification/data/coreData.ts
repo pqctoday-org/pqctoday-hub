@@ -273,7 +273,7 @@ export const DISTINCT_TERMS: DistinctTerm[] = [
   {
     term: 'Historical (CMVP)',
     meaning:
-      'No longer valid for new procurement. FIPS 140-2 modules moved there on 21/22 September 2026 and may be used only in existing systems.',
+      'Federal Agencies should not include Historical modules in new systems, but the certificates are not revoked. FIPS 140-2 modules moved there on 21/22 September 2026, and NIST still supports buying and using them for existing systems.',
   },
   {
     term: 'Target of Evaluation (TOE)',
@@ -572,7 +572,7 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
     clarify: [
       'Which module version and approved mode will the agency’s workloads use?',
       'Is PQC needed in the approved mode now, or by a policy date? (See the deadlines section.)',
-      'A Historical FIPS 140-2 module is for existing systems only — is this a new procurement?',
+      'NIST says Federal Agencies should not include a Historical FIPS 140-2 module in new systems — is this a new system?',
       'A Modules-in-Process entry is not evidence. What does the agency accept while a validation is in the queue?',
     ],
     cloudNote:

@@ -58,9 +58,9 @@ const DATES: { what: string; who: string; status: string }[] = [
     status: 'In force',
   },
   {
-    what: `Deprecate the weakest quantum-vulnerable algorithms after ${NIST_DEPRECATION.deprecateClassical}; disallow all of them after ${NIST_DEPRECATION.disallowClassical}`,
+    what: `Deprecate quantum-vulnerable public-key algorithms after ${NIST_DEPRECATION.deprecateClassical}; disallow them after ${NIST_DEPRECATION.disallowClassical}`,
     who: 'Systems that follow NIST rules (NIST IR 8547)',
-    status: 'Draft proposal',
+    status: 'Final NIST guidance',
   },
   {
     what: 'A quantum computer able to break today’s encryption',

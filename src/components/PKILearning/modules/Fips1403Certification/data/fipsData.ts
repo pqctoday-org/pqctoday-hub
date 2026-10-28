@@ -9,9 +9,10 @@
  * Every fact here was read on 24 September 2026 from a primary document
  * (CMVP certificate pages, public Security Policies, the FIPS 140-3
  * Management Manual v2.7, the FIPS 140-3 IG of 19 August 2026, EO 14412,
- * SP 1800-40B IPD) or comes from plan r2. No ISO/IEC 19790 / 24759 text is
- * reproduced: per-area levels come from the published Security Policies'
- * own "Security Levels" tables (SP 800-140B format).
+ * SP 1800-40B IPD) or comes from plan r2, except an item that carries its own
+ * later date (the algorithm records below, the 23 October 2026 ISO check).
+ * No ISO/IEC 19790 / 24759 text is reproduced: per-area levels come from the
+ * published Security Policies' own "Security Levels" tables (SP 800-140B format).
  *
  * This file imports TYPES only, so contentFreshness.ts can import the claims
  * without pulling React or the library CSV into the audit script.
@@ -21,7 +22,7 @@ import type { FreshnessClaim } from '@/data/contentFreshness'
 import type { AnchorComponentId } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 
-/** The day every FIPS-path fact below was read against its source. */
+/** The day the FIPS-path facts below were read against their sources (a later-read item gives its own date). */
 export const FIPS_AS_OF = '2026-09-24'
 export const FIPS_AS_OF_LABEL = '24 September 2026'
 
@@ -250,12 +251,12 @@ export interface MipState {
 export const MIP_STATES: readonly MipState[] = [
   {
     state: 'Cost Recovery',
-    whoActs: 'Lab',
+    whoActs: 'NIST Billing and the lab',
     meaning:
       'Submitted; where it applies, the NIST cost-recovery fee must be paid before review can be scheduled (Cost Recovery is entered only if applicable).',
   },
   {
-    state: 'Pending Resubmission – Lab',
+    state: 'Pending Resubmission',
     whoActs: 'Lab',
     meaning:
       'Triage found comments; the lab must resubmit before the module can move to Pending Review. Without triage comments the module goes straight to Pending Review.',
@@ -284,7 +285,7 @@ export const MIP_STATES: readonly MipState[] = [
   },
   {
     state: 'Finalization',
-    whoActs: 'CMVP',
+    whoActs: 'CMVP and the lab',
     meaning: 'Final check of vendor and module details before the certificate is posted.',
   },
   {

@@ -10,8 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'compliance-strategy',
   version: '1.0.3',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastReviewed: '2026-10-27',
+  lastEdited: '2026-10-28',
   // IR 8547 added 2026-08-22: relatedStandards asserts a date or version for it, so
   // nothing could check that deprecation-timeline claim without it being declared.
 
@@ -98,7 +98,7 @@ export const content: ModuleContent = {
     },
     { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
     {
-      label: 'NIST: deprecate RSA-2048 and 112-bit ECC',
+      label: 'NIST: deprecate quantum-vulnerable public-key crypto (RSA, ECC)',
       year: NIST_DEPRECATION.deprecateClassical,
       source: 'NIST IR 8547',
     },
@@ -123,10 +123,10 @@ export const content: ModuleContent = {
     overview:
       'The Compliance & Regulatory Strategy module teaches executives how to navigate the complex and evolving landscape of PQC compliance requirements across jurisdictions. It covers jurisdiction mapping to identify applicable frameworks and deadline conflicts, audit readiness checklisting with 30 evidence items across 6 categories (Cryptographic Inventory, Policy & Governance, Risk Assessment, Technical Controls, Vendor Management, Evidence & Documentation), and compliance timeline building that overlays organizational milestones on regulatory deadlines with gap analysis.',
     keyConcepts:
-      'Major PQC Compliance Frameworks — CNSA 2.0 (NSA, US national security systems), EO 14412 (US federal civilian systems and covered contractors: key establishment by 31 Dec 2030, digital signatures by 31 Dec 2031, implemented via OMB M-26-15), NIST IR 8547 (US federal guidance, initial public draft Nov 2024, not yet finalized), ETSI (European standards), ANSSI (French national agency), BSI (German federal office). CNSA 2.0 Timeline — software/firmware signing preferred 2025, exclusive 2030; new networking equipment 2026; web, cloud, servers and operating systems by 2033; NSM-10 targets all remaining NSS quantum-resistant by 2035. Compliance-First vs.',
+      'Major PQC Compliance Frameworks — CNSA 2.0 (NSA, US national security systems), EO 14412 (US federal civilian systems and covered contractors: key establishment by 31 Dec 2030, digital signatures by 31 Dec 2031, implemented via OMB M-26-15), NIST IR 8547 (US federal guidance; final, October 2026), ETSI (European standards), ANSSI (French national agency), BSI (German federal office). CNSA 2.0 Timeline — software/firmware signing preferred 2025, exclusive 2030; new networking equipment 2026; web, cloud, servers and operating systems by 2033; NSM-10 targets all remaining NSS quantum-resistant by 2035. Compliance-First vs.',
     workshopSummary:
       'The workshop has 3 interactive steps: Jurisdiction Mapper — select from 24 jurisdictions across 4 regions (North America, Europe, Asia Pacific, Middle East); see matching compliance frameworks, earliest deadlines, and automatically detected conflicts including China algorithm divergence and early-deadline countries; export as Markdown/CSV.',
     relatedStandards:
-      'NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0). EO 14412 (Securing the Nation Against Advanced Cryptographic Attacks, signed 22 June 2026) and OMB M-26-15 (24 June 2026), the US federal civilian PQC mandate and its implementing guidance. NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, initial public draft Nov 2024, not yet finalized). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms, Sep 2025). ETSI TS 103 744 (Quantum-Safe Cryptography). ANSSI Technical Position on PQC (2022 initial, 2023 follow-up). BSI Technical Guideline TR-02102 (Cryptographic Mechanisms). NSM-10 (National Security Memorandum on Promoting U.S.',
+      'NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0). EO 14412 (Securing the Nation Against Advanced Cryptographic Attacks, signed 22 June 2026) and OMB M-26-15 (24 June 2026), the US federal civilian PQC mandate and its implementing guidance. NIST IR 8547 (Transition to Post-Quantum Cryptography Standards; final, October 2026). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms, Sep 2025). ETSI TS 103 744 (Quantum-Safe Cryptography). ANSSI Technical Position on PQC (2022 initial, 2023 follow-up). BSI Technical Guideline TR-02102 (Cryptographic Mechanisms). NSM-10 (National Security Memorandum on Promoting U.S.',
   },
 }

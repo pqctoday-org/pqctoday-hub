@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
+import { HpkeWorkshop } from './HpkeWorkshop'
 import React, { useCallback, useRef } from 'react'
 import { Link } from 'react-router'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
@@ -236,7 +238,7 @@ const STEPS: Step[] = [
 ]
 
 // ── Component ────────────────────────────────────────────────────────────────
-export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
+const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
   const hsm = useHSM()
   const stateRef = useRef<Partial<HybridState>>({})
   const wizard = useStepWizard({ steps: STEPS, onBack: () => {}, initialStep })
@@ -666,3 +668,10 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
     </div>
   )
 }
+
+export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = (props) =>
+  readAlgorithmLaunch('hybrid-encrypt')?.algorithm === 'HPKE-PQ' ? (
+    <HpkeWorkshop />
+  ) : (
+    <HybridKemDemo {...props} />
+  )

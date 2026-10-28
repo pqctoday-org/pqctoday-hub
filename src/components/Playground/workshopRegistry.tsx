@@ -260,11 +260,11 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-encrypt',
     pt_id: 'PT-003',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Hybrid KEM + ECDH',
     description: 'ML-KEM + X25519 ECDH + HKDF hybrid encryption pipeline',
     category: 'HSM / PKCS#11',
-    algorithms: ['ML-KEM-768', 'X25519', 'HKDF'],
+    algorithms: ['ML-KEM-768', 'X25519', 'HKDF', 'HPKE-PQ'],
     icon: Lock,
     moduleLink: '/learn/hybrid-crypto',
     keywords: ['hybrid', 'kem', 'ecdh', 'hkdf', 'ml-kem', 'x25519', 'encryption', 'key agreement'],
@@ -332,7 +332,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'firmware-signing',
     pt_id: 'PT-007',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Firmware Signing',
     // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
     // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
@@ -378,7 +378,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'slh-dsa',
     pt_id: 'PT-001',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'SLH-DSA Sign & Verify',
     description: 'All 12 FIPS 205 parameter sets with pre-hash support',
     category: 'HSM / PKCS#11',
@@ -528,7 +528,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tls-simulator',
     pt_id: 'PT-024',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'TLS 1.3 Simulator',
     description:
       'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
@@ -615,7 +615,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pqc-ssh-sim',
     pt_id: 'PT-SSH-PQC',
-    version: '1.0.4',
+    version: '1.0.5',
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
@@ -1191,7 +1191,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'openssl-studio',
     pt_id: 'PT-023',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'OpenSSL Studio',
     description:
       'Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
@@ -1239,13 +1239,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.3.1',
+    version: '1.3.4',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half names the draft revisions it was verified against
       // (hpke-encrypt-22, hpke-pq-pqt-01). The earlier direct-KEM JWE
       // (draft-ietf-jose-pqc-kem-05) was removed when -06 narrowed to COSE.
-      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01, in the browser or entirely inside softhsmv3 (PKCS#11 CKM_HPKE).',
+      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-01, in the browser or entirely inside softhsmv3 (PQCToday candidate CKM_HPKE mechanism).',
     category: 'OpenSSL Studio',
     algorithms: [
       'ML-DSA-44',

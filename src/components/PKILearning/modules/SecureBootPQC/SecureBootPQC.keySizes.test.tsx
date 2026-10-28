@@ -59,4 +59,18 @@ describe('Firmware Signing Migrator: the db callout compares certificate-form pu
     expect(text).not.toContain('7.6× larger than RSA-2048')
     expect(text).not.toContain('1,952 B vs 256 B')
   })
+
+  it('says, once and beside the callout, why the table ratio differs from the certificate ratio', () => {
+    renderAtStep(1)
+    const callout = screen.getByText('Key size impact on UEFI Secure Boot db').parentElement!
+    const text = flat(callout.textContent ?? '')
+    const why =
+      'The raw public-key sizes above, and in the Migration Comparison table, give a different ratio because they count the raw key (RSA: the modulus only), while a certificate adds the SubjectPublicKeyInfo wrapper around each key.'
+    expect(text).toContain(`(1,974 B vs 294 B). ${why}`)
+    expect(text.split(why)).toHaveLength(2) // exactly one sentence, not repeated
+    // the table the sentence points at is the one that shows the other ratio
+    renderAtStep(3)
+    expect(screen.getByText('Migration Comparison: RSA-2048 → ML-DSA-65')).toBeInTheDocument()
+    expect(screen.getByRole('row', { name: /^Public key/ })).toHaveTextContent('7.6×')
+  })
 })

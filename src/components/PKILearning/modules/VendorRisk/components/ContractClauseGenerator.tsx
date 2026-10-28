@@ -36,7 +36,7 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
           {
             value: '2030',
             label:
-              '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive; NIST IR 8547 RSA/ECC deprecation (draft, dates subject to change)',
+              '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive; NIST IR 8547 RSA/ECC deprecation (final, October 2026)',
           },
           {
             value: '2031',
@@ -46,7 +46,7 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
           {
             value: '2035',
             label:
-              '2035 — NSM-10 quantum-risk objective; NIST IR 8547 RSA/ECC disallowed (draft, dates subject to change)',
+              '2035 — NSM-10 quantum-risk objective; NIST IR 8547 RSA/ECC disallowed (final, October 2026)',
           },
         ],
       },

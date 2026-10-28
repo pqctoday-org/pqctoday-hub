@@ -73,7 +73,10 @@ test('curious persona sees the same workbench (no minimal-mode gate)', async ({ 
   // No page-local persona control exists (Phase 0.2) — Playground only reads
   // the seeded persona and re-titles its content, it never renders a picker.
   await expect(page.getByRole('button', { name: /Viewing as/i })).toHaveCount(0)
-  await expect(page.getByText('Recommended for Curious Explorer')).toBeVisible()
+  // The role's picks are the featured cards above, so the grid names the other tagged tools.
+  await expect(
+    page.getByText('More tools tagged for Curious Explorer', { exact: true })
+  ).toBeVisible()
   // The removed minimal-mode CTA must not reappear.
   await expect(page.getByTestId('playground-show-full-catalog')).toHaveCount(0)
   // Overview hero is present (catalog is not gated behind a disclosure step).
@@ -87,7 +90,7 @@ test('developer persona re-titles the recommended pool', async ({ page }) => {
   await page.goto('/playground')
 
   await expect(page.getByText('Crypto Lab', { exact: true })).toBeVisible({ timeout: 15000 })
-  await expect(page.getByText('Recommended for Developer')).toBeVisible()
+  await expect(page.getByText('More tools tagged for Developer', { exact: true })).toBeVisible()
 })
 
 test('search spans all categories and switches to a flat result list', async ({ page }) => {

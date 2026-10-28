@@ -18,8 +18,9 @@ schedule or never?"
    private PKI, device, code-signing or document-signing certificates, which follow their own policies. Manual CLM
    becomes mathematically impossible at this cadence.
 2. **FIPS 140-3 Level 3 validation drift**. Every CMVP certificate is bound to a specific
-   version, firmware, and platform. The September 2025 FIPS 140-3 Implementation Guidance
-   retroactively added new self-test requirements for ML-KEM/ML-DSA/SLH-DSA. The CMVP
+   version, firmware, and platform. The FIPS 140-3 Implementation Guidance added self-test
+   requirements for ML-KEM/ML-DSA/SLH-DSA in August 2024 and, in September 2025, let their
+   key-generation tests check against the private key only. The CMVP
    Modules-in-Process list gives each module's status and status date, not a completion date. Tracking this is a continuous monthly monitor,
    not an annual audit.
 3. **Library EoL and CVE cadence**. OpenSSL 1.1.1 EoL (September 2023). Bouncy Castle
@@ -68,7 +69,7 @@ Quantum-dependent benefits are additive, never load-bearing.
 
 ## Key standards
 
-CA/B Forum SC-081v3 · NIST FIPS 140-3 IG (last updated 16 Apr 2026) · SP 800-140B · CMVP Validated Modules + MIP
+CA/B Forum SC-081v3 · NIST FIPS 140-3 IG (last updated 19 Aug 2026) · SP 800-140B · CMVP Validated Modules + MIP
 · OMB M-23-02 · NSA CNSA 2.0 · ENISA PQC Integration Study · BSI/ANSSI joint 2025 · OWASP
 CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI of DigiCert ONE (2025) · Entrust/Ponemon 2024 Global PKI & PQC Trends Study · NIST IR 8547 (HNDL) · Microsoft
 CPM (2026-04) · Keyfactor/EJBCA CPM · Gartner (Mahdi, Lowans).

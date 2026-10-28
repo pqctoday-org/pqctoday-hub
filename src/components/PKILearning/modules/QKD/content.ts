@@ -9,8 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'qkd',
   version: '1.0.2',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-09-20',
+  lastReviewed: '2026-10-27',
+  lastEdited: '2026-10-28',
 
   standards: [
     getStandard('FIPS 203'),
@@ -70,6 +70,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'BB84 Protocol Simulator: Visual simulation with configurable Eve interception slider and adjustable qubit count; observe basis matching, sifted key generation, and QBER calculation. Post-Processing: Error correction, privacy amplification, and hybrid key derivation from raw QKD output. Global Deployments Explorer: Interactive database of worldwide QKD deployments including satellite and terrestrial networks with adoption trends.',
     relatedStandards:
-      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, Initial Public Draft). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-108 (KDF in Counter Mode). ETSI QKD standards (GS QKD series). EuroQCI initiative (pan-European quantum communication infrastructure). BB84 protocol (Bennett & Brassard, Quantum cryptography — Public key distribution and coin tossing, 1984)',
+      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final, October 2026). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-108 (KDF in Counter Mode). ETSI QKD standards (GS QKD series). EuroQCI initiative (pan-European quantum communication infrastructure). BB84 protocol (Bennett & Brassard, Quantum cryptography — Public key distribution and coin tossing, 1984)',
   },
 }

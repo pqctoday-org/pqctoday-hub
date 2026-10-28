@@ -245,19 +245,23 @@
     {
       "refId": "NIST IR 8547",
       "label": "Transition to Post-Quantum Cryptography Standards",
-      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf",
       "status": "downloaded",
       "file": "library/NIST_IR_8547.pdf",
       "filename": "NIST_IR_8547.pdf",
-      "sizeBytes": 722379,
+      "sizeBytes": 738711,
       "contentType": "application/pdf",
-      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "sha256": "1cd010673502d04f21f9d27609489ca621b09c752809ba036d66277c33b90f7f",
       "verifiedAt": "2026-09-11",
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
-      "admittedBy": "admit.py"
+      "admittedAt": "2026-10-28T03:39:02.775109+00:00",
+      "admittedBy": "evidence admission",
+      "superseded_file": "_superseded-10272026/library/NIST_IR_8547.pdf",
+      "replacedAt": "2026-10-28T03:39:01.526564+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "NIST published the final IR 8547 on 2026-10-27; the row now cites the final PDF, the cached file is the 2024 initial public draft"
     },
     {
       "refId": "NIST IR 8545",
@@ -23481,6 +23485,36 @@
       "replacedAt": "2026-10-25T18:30:52.395841+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "New entry for the ACVP LMS test specification, draft-celi-acvp-lms-01 of 2 October 2026"
+    },
+    {
+      "refId": "draft-becker-cnsa2-tls-profile-05",
+      "title": "Commercial National Security Algorithm (CNSA) Suite 2.0 Profile for TLS 1.3",
+      "url": "https://datatracker.ietf.org/doc/html/draft-becker-cnsa2-tls-profile-05",
+      "status": "downloaded",
+      "filename": "draft-becker-cnsa2-tls-profile-05.html",
+      "sizeBytes": 95598,
+      "contentType": "text/html",
+      "sha256": "a8f7511cbf6f4a545d3822d74a61eb9b484d1025c93d9e2187292b2234013d1a",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-28T06:18:37.227662+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "OpenSSH-10.0-Release-Notes",
+      "title": "OpenSSH 10.0 Release Notes",
+      "url": "https://www.openssh.com/txt/release-10.0",
+      "status": "downloaded",
+      "filename": "OpenSSH-10.0-Release-Notes.html",
+      "sizeBytes": 11334,
+      "contentType": "text/html",
+      "sha256": "988550ce34c719416640a4a0d7cb5fa7c072da0af30097ed0a87ef76d8767dd3",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-28T06:19:03.299623+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
@@ -23684,17 +23718,21 @@
     {
       "refId": "NIST IR 8547",
       "title": "Transition to Post-Quantum Cryptography Standards",
-      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf",
       "status": "downloaded",
       "filename": "NIST_IR_8547.pdf",
-      "sizeBytes": 722379,
+      "sizeBytes": 738711,
       "contentType": "application/pdf",
-      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "sha256": "1cd010673502d04f21f9d27609489ca621b09c752809ba036d66277c33b90f7f",
       "artefact": "SOURCE",
       "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-09-17T19:13:49.204006+00:00",
-      "admittedBy": "admit.py"
+      "admittedAt": "2026-10-28T03:39:02.775109+00:00",
+      "admittedBy": "evidence admission",
+      "replacedAt": "2026-10-28T03:39:01.526564+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "NIST published the final IR 8547 on 2026-10-27; the row now cites the final PDF, the cached file is the 2024 initial public draft",
+      "superseded_file": "_superseded-10272026/library/NIST_IR_8547.pdf"
     },
     {
       "refId": "HQC Specification",

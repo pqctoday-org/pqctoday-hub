@@ -55,6 +55,13 @@ describe('certificate-discovery lesson (fresh Rust engine)', () => {
     expect(short.calls).toHaveLength(3 + 3 * S + certs)
     expect(count(short, 'C_GetSlotList')).toBe(1)
     expect(count(short, 'C_GetAttributeValue')).toBe(certs)
+    // Every traced call carries its decoded parameters (built in the worker,
+    // where the call's buffers live), so each Log row can be inspected.
+    expect(short.calls.filter((c) => !c.inspect).map((c) => c.fn)).toEqual([])
+    const tokenInfo = runLongFlow(engine).calls.find((c) => c.fn === 'C_GetTokenInfo')
+    expect(tokenInfo?.inspect?.outputs?.find((o) => o.name === 'flags')?.value).toContain(
+      'CKF_TOKEN_INITIALIZED'
+    )
 
     const long = runLongFlow(engine)
     // The size query adds one spare, uninitialized slot; the long flow sees

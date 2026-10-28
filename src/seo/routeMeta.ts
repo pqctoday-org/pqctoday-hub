@@ -96,7 +96,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
               name: 'What are the NIST PQC standards?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'NIST published three PQC standards in August 2024: FIPS 203 (ML-KEM for key encapsulation), FIPS 204 (ML-DSA for digital signatures), and FIPS 205 (SLH-DSA for hash-based signatures). FIPS 206 (FN-DSA for compact signatures) is still in development — no public draft yet. The draft NIST IR 8547 proposes the transition timeline: deprecate classical algorithms by 2030, disallow by 2035.',
+                text: 'NIST published three PQC standards in August 2024: FIPS 203 (ML-KEM for key encapsulation), FIPS 204 (ML-DSA for digital signatures), and FIPS 205 (SLH-DSA for hash-based signatures). FIPS 206 (FN-DSA for compact signatures) is still in development — no public draft yet. NIST IR 8547 (final, October 2026) sets the transition timeline: quantum-vulnerable public-key algorithms are deprecated after 2030 and disallowed after 2035.',
               },
             },
           ],
@@ -129,7 +129,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
               name: 'When does NIST plan to deprecate classical cryptographic algorithms?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'According to the draft NIST IR 8547, classical algorithms like RSA, ECDSA, and ECDH will be deprecated by 2030 and fully disallowed by 2035. Organizations should begin planning their migration now to meet these deadlines.',
+                text: 'Under NIST IR 8547 (final, October 2026), quantum-vulnerable public-key algorithms such as RSA, ECDSA and ECDH are deprecated after 2030 and disallowed under NIST standards after 2035. Organizations should begin planning their migration now to meet these deadlines.',
               },
             },
             {

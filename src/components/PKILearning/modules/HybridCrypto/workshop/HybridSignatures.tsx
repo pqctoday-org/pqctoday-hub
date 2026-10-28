@@ -33,8 +33,7 @@ import {
   hsmNestingVerify,
   type HsmHybridKeyPair,
 } from '../services/HybridSignatureHsmService'
-import { getSoftHSMRustModule } from '@/wasm/softhsm'
-import { createLoggingProxy } from '@/wasm/softhsm/logging'
+import { getSoftHSMRustModule, createLoggingProxy } from '@/wasm/softhsm'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import {

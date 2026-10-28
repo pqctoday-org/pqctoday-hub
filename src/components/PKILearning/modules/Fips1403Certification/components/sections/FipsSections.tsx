@@ -1024,9 +1024,12 @@ export const FipsLifecycle = () => (
     <p>
       Two kinds of validation exist today. A full validation lasts five years. An{' '}
       <strong>interim</strong> validation is “a temporary measure to shorten the queue”, is “valid
-      for two years only”, and relies “more on the CSTL submission with less CMVP oversight”. It can
-      be converted to a five-year validation (the INTU route) before it expires. Check the sunset
-      date on any certificate you rely on.
+      for two years only”, and relies “more on the CSTL submission with less CMVP oversight”. NIST’s{' '}
+      <Cite std={TRANSITION}>transition page</Cite> required the original submission to reach the
+      CMVP before 1 January 2024 and the lab to notify the CMVP of the vendor’s intent before 1
+      October 2024. Both dates have passed, so the route is closed to new cases. An existing interim
+      validation can be converted to a five-year validation (the INTU route) before it expires.
+      Check the sunset date on any certificate you rely on.
     </p>
 
     <Callout tone="warning" title="Pipeline, not proof">
@@ -1052,8 +1055,9 @@ export const FipsLifecycle = () => (
     <p>
       After the sunset date, or when a transition retires it, a validation moves to the{' '}
       <strong>Historical</strong> list. The CMVP’s <Cite std={TRANSITION}>transition page</Cite>{' '}
-      says it still supports buying and using Historical modules “for existing systems” — not for
-      new ones.
+      says it still supports buying and using Historical FIPS 140-2 modules “for existing systems”,
+      and the <Cite std={VALIDATED_MODULES}>Validated Modules page</Cite> says Federal Agencies
+      “should not include these in new systems”.
     </p>
   </Body>
 )
@@ -1551,8 +1555,9 @@ export const FipsLandscape = () => (
   <Body>
     <p>
       Four questions, kept apart: what applies today, what is validated today, what is only in
-      process or in transition, and what is still a draft. Everything here is <AsOf />, except the
-      certificate count, which is read from the site’s own CMVP data — re-check before you quote it.
+      process or in transition, and what is still a draft. Everything in this section is <AsOf />,
+      except the certificate count, which is read from the site’s own CMVP data — re-check before
+      you quote it. Items elsewhere in the lesson that were read later give their own dates.
     </p>
 
     <SubHeading>1 · Applicable today</SubHeading>
@@ -1640,9 +1645,9 @@ export const FipsLandscape = () => (
         <strong>Superseded:</strong> every FIPS 140-2 validation moved to the Historical list on
         21/22 September 2026 (NIST’s pages give both dates). Certificate #4282, for example, now
         reads “Moved to historical list due to sunsetting”. This is a live example of a scheme
-        transition: the certificates did not fail; the scheme moved on. NIST: historical modules
-        should not be included in new systems but &ldquo;can be procured for legacy systems&rdquo;,
-        so a new procurement needs a FIPS 140-3 validation.
+        transition: the certificates did not fail; the scheme moved on. NIST: Federal Agencies
+        &ldquo;should not include these in new systems but can be procured for legacy
+        systems&rdquo;.
       </li>
       <li>
         <strong>In process:</strong> a MIP entry is a queue state and date — pipeline, not proof

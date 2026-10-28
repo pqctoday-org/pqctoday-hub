@@ -37,7 +37,7 @@ PrivateKey priv = kp.getPrivate();
 // JDK 21 or earlier: register Bouncy Castle and use
 // KeyPairGenerator.getInstance("ML-DSA-65", "BC")`,
     notes:
-      'Built into JDK 24+ (first LTS: JDK 25). On JDK 21, register the Bouncy Castle provider. Algorithm name is string-based.',
+      'Built into JDK 24+, JDK 25 LTS and Oracle JDK 21.0.13 / 17.0.21 (October 2026). On a JDK without it, register the Bouncy Castle provider. Algorithm name is string-based.',
   },
   {
     apiId: 'openssl',

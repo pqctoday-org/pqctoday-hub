@@ -20,9 +20,11 @@ import clsx from 'clsx'
 import {
   cavpValidationUrl,
   EMPTY_ENTROPY_INDEX,
+  euccEnisaListing,
   formatIsoDate,
   isPqcApplicable,
   isSecurityTargetType,
+  NOT_ON_ENISA_LIST_LABEL,
   pqcCoverageState,
   pqcUnknownReason,
   pqcEvidenceLabel,
@@ -30,6 +32,7 @@ import {
   recordPath,
   recordTypeDescription,
   recordTypeLabel,
+  safeHttpUrl,
   schemeCertificateId,
   statusBadgeClass,
   statusTone,
@@ -43,6 +46,7 @@ import { buildRecordEndorsementUrl, buildRecordFlagUrl, recordLabel } from './co
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
+import { EnisaCertificateLink } from './EnisaCertificateLink'
 
 interface ComplianceDetailPopoverProps {
   isOpen: boolean
@@ -161,6 +165,32 @@ const FipsEntropyCertificates = ({
           <ExtLink href={src.policyUrl}>Security Policy (PDF)</ExtLink>
         </p>
       )}
+    </div>
+  )
+}
+
+/**
+ * EUCC: a certificate ENISA lists as withdrawn. The sentence is ENISA's own, verbatim; a
+ * replacement is shown only when ENISA names one. Nothing is shown for a record with neither.
+ */
+const EuccWithdrawal = ({ record }: { record: ComplianceRecord }) => {
+  const note = record.euccWithdrawalNote?.trim()
+  const replacedBy = record.euccReplacedBy?.trim()
+  if (record.type !== 'EUCC' || (!note && !replacedBy)) return null
+  const replacedByUrl = safeHttpUrl(replacedBy)
+  return (
+    <div
+      className="space-y-2 rounded-md border border-border bg-muted/40 p-3"
+      data-testid="eucc-withdrawal"
+    >
+      <FieldLabel>Withdrawn</FieldLabel>
+      {note && <p className="text-sm text-foreground whitespace-normal break-words">{note}</p>}
+      {replacedBy && (
+        <Field label="Replaced by">
+          {replacedByUrl ? <ExtLink href={replacedByUrl}>{replacedBy}</ExtLink> : replacedBy}
+        </Field>
+      )}
+      <p className="text-xs text-muted-foreground">Stated by ENISA.</p>
     </div>
   )
 }
@@ -503,6 +533,9 @@ export const ComplianceDetailPopover = ({
 
   if (!isOpen || !record) return null
 
+  // A Common Criteria Portal listing's EUCC number, checked against ENISA's certificate list.
+  const enisaListing = euccEnisaListing(record)
+
   const content = (
     <>
       {/* Backdrop */}
@@ -533,7 +566,19 @@ export const ComplianceDetailPopover = ({
                     <StatusBadge status={record.status} />
                     {schemeCertificateId(record) && (
                       <span className="text-xs text-muted-foreground font-mono">
-                        {schemeCertificateId(record)}
+                        {enisaListing?.state === 'listed' ? (
+                          <EnisaCertificateLink
+                            url={enisaListing.url}
+                            number={enisaListing.number}
+                          />
+                        ) : (
+                          schemeCertificateId(record)
+                        )}
+                      </span>
+                    )}
+                    {enisaListing?.state === 'not-listed' && (
+                      <span className="text-xs text-muted-foreground">
+                        {NOT_ON_ENISA_LIST_LABEL}
                       </span>
                     )}
                   </div>
@@ -691,6 +736,9 @@ export const ComplianceDetailPopover = ({
                   </div>
                 </div>
               </div>
+
+              {/* EUCC: ENISA's withdrawal sentence, when the record has one */}
+              <EuccWithdrawal record={record} />
 
               {/* Algorithms Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { useLocation } from 'react-router'
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import type { LogEntry } from '../../../types'
 import * as MLDSA from '../../../wasm/liboqs_dsa'
 import { SettingsContext } from './SettingsContext'
@@ -100,7 +102,34 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return tab as InteractiveTabId
     return DEFAULT_INTERACTIVE_TAB
   })
-  const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
+  const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>(
+    () => readAlgorithmLaunch('interactive')?.classical ?? 'RSA-2048'
+  )
+  const location = useLocation()
+  const launchName = new URLSearchParams(location.search).get('launchAlgo')
+  useEffect(() => {
+    if (location.pathname !== '/playground/interactive' || !launchName) return
+    const launch = readAlgorithmLaunch('interactive', location.search)
+    if (!launch) {
+      setError(`No exact launch is available for ${launchName}`)
+      return
+    }
+    if (typeof WebAssembly === 'object') setExecutionMode('wasm')
+    else {
+      setError('This exact launch requires WebAssembly support.')
+      return
+    }
+    if (launch.classical) setClassicalAlgorithm(launch.classical)
+    else {
+      const name = launch.parameter ?? launch.algorithm
+      const match = name.match(/^(ML-KEM|ML-DSA)-(\d+)$/)
+      setAlgorithm(match ? match[1] : name)
+      setKeySize(match ? match[2] : name)
+    }
+    setActiveTab(launch.tab ?? 'keystore')
+    // Selection changes inside the tool must not replay the original launch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, launchName])
 
   // --- Helpers (stable callbacks) ---
   const handleAlgorithmChange = useCallback((newAlgorithm: string) => {

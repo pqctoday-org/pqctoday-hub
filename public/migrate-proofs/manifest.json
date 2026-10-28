@@ -24282,6 +24282,21 @@
       "identity": "SKIPPED",
       "tier": "curl_cffi:chrome124",
       "superseded_file": "_superseded-10222026/migrate-proofs/Samsung-Evan-FW-Crypto-Engine-d97ae430.html"
+    },
+    {
+      "product_id": "Oracle-Jipher",
+      "refId": "Oracle-Jipher",
+      "file": "Oracle-Jipher-088a6b1b.html",
+      "sizeBytes": 23145,
+      "content_type": "text/html",
+      "url": "https://docs.oracle.com/en/java/java-components/jipher/20/jipher-release-notes/",
+      "sha256": "626bef1c9915ab78225be4a329fcd04fb3a0e1172205e60ef0ea5457c2b28314",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-28T01:40:12.051479+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "SKIPPED",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."

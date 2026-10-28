@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import React, { useState, useCallback, useRef } from 'react'
 import { Loader2, CheckCircle, XCircle, Info, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -339,7 +340,9 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
   const isLive = hsm.isReady && !!hsm.moduleRef.current
 
   // Parameter set & pre-hash selection
-  const [paramSetId, setParamSetId] = useState('sha2-128s')
+  const [paramSetId, setParamSetId] = useState(
+    () => readAlgorithmLaunch('slh-dsa')?.parameter ?? 'sha2-128s'
+  )
   const [preHash, setPreHash] = useState('')
   const [signContext, setSignContext] = useState('')
   const [verifyContext, setVerifyContext] = useState('')

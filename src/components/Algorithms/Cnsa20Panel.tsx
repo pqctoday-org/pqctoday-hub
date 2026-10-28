@@ -116,8 +116,8 @@ export function Cnsa20Panel() {
             <strong className="text-foreground">US federal, non-NSS:</strong> Executive Order 14412
             (June 2026) directs agencies to move high-value assets and high-impact systems to
             post-quantum key establishment by 31 Dec 2030 and post-quantum signatures by 31 Dec
-            2031. NIST IR 8547 (draft) proposes deprecating quantum-vulnerable algorithms after 2030
-            and disallowing them after 2035.
+            2031. NIST IR 8547 (final, October 2026) deprecates quantum-vulnerable public-key
+            algorithms after 2030 and disallows them under NIST standards after 2035.
           </li>
           <li>
             <strong className="text-foreground">IETF / ETSI:</strong> specify hybrid/composite

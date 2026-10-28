@@ -62,7 +62,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'X-Wing (used by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides a standardized single-construction hybrid KEM. FIPS-compliant environments should prefer P-256+ML-KEM-768.',
+        'X-Wing (used by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides the single-construction hybrid KEM defined in draft-connolly-cfrg-xwing-kem-11. FIPS-compliant environments should prefer P-256+ML-KEM-768.',
       config: { step: 2 },
     },
     {
@@ -80,7 +80,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       id: 'compliance-rotation',
       title: '5. Compliance-Driven Rotation',
       description:
-        'Plan a key rotation schedule for 500 certificates against CNSA 2.0 FAQ version 2.2 (2027/2030/2031), the NIST IR 8547 initial public draft (proposed 2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
+        'Plan a key rotation schedule for 500 certificates against CNSA 2.0 FAQ version 2.2 (2027/2030/2031), NIST IR 8547 (final, October 2026: 2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:

@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { PlaygroundWorkshop } from './PlaygroundWorkshop'
+import { PlaygroundWorkshop, playgroundCountsLine } from './PlaygroundWorkshop'
 import { WORKSHOP_TOOLS } from './workshopRegistry'
 import { isEnvironmentTool } from './cryptoLabTaxonomy'
 import { FEATURE_PLAYGROUNDS, featurePlaygroundsFor } from './cryptoLabMeta'
@@ -124,32 +124,43 @@ describe('Crypto Lab Workbench', () => {
     expect(screen.getByText('Good places to start')).toBeInTheDocument()
   })
 
-  it('re-titles Recommended when the global persona store already has a role', () => {
+  it('re-titles the picks block when the global persona store already has a role', () => {
     // The page still READS the shared store — it never writes to it locally.
-    // Simulate the global top-bar switcher having set a role.
+    // Simulate the global top-bar switcher having set a role. The developer's three picks are
+    // all featured cards in the row above, so the block below them is about the other tools.
     usePersonaStore.setState({ selectedPersona: 'developer' })
     renderWorkbench()
-    expect(screen.getByText('Recommended for Developer')).toBeInTheDocument()
+    expect(screen.getByText('More tools tagged for Developer')).toBeInTheDocument()
+    expect(screen.queryByText('Recommended for Developer')).not.toBeInTheDocument()
   })
 
-  it('caps the "Start here" row at 3 tools (playground.md Phase 9.2)', () => {
+  it('caps the picks at 3 tools (playground.md Phase 9.2) and says they are featured above', () => {
     // The developer role has well over 3 eligible non-sandbox tools in the
     // real registry, so this genuinely exercises the cap rather than
     // coincidentally landing on 3.
     usePersonaStore.setState({ selectedPersona: 'developer' })
     renderWorkbench()
-    expect(screen.getByText(/· 3 to start$/)).toBeInTheDocument()
+    expect(screen.getByText(/· 3 featured above$/)).toBeInTheDocument()
   })
 
-  it('explains the overview counts from the registry: all tools, tagged for the role, to start', () => {
+  it('explains the overview counts from the registry: all tools, tagged for the role, featured above', () => {
     usePersonaStore.setState({ selectedPersona: 'researcher' })
     renderWorkbench()
     const total = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id)).length
     const tagged = playgroundToolsForRole('researcher').length
     expect(tagged).toBe(toolsForRole('researcher').playground.length) // same count as the Home board
     expect(
-      screen.getByText(`${total} tools · ${tagged} tagged for Researcher · 3 to start`)
+      screen.getByText(`${total} tools · ${tagged} tagged for Researcher · 3 featured above`)
     ).toBeInTheDocument()
+  })
+
+  it('the count line wording follows what is shown: "to start" only when picks are listed below', () => {
+    expect(playgroundCountsLine(56, 10, 'cert-engineer', 3)).toBe(
+      '56 tools · 10 tagged for Certification & Validation Engineer · 3 to start'
+    )
+    expect(playgroundCountsLine(56, 10, 'cert-engineer', 3, true)).toBe(
+      '56 tools · 10 tagged for Certification & Validation Engineer · 3 featured above'
+    )
   })
 
   it('searches across all categories and shows a flat result list', () => {
@@ -397,7 +408,34 @@ describe('Crypto Lab Overview — role picks are not shown twice', () => {
     usePersonaStore.setState({ selectedPersona: 'cert-engineer' })
     renderWorkbench()
     const picks = playgroundJourneyFor('cert-engineer').toolIds.length
-    expect(screen.getByText(new RegExp(`· ${picks} to start$`))).toBeInTheDocument()
+    expect(screen.getByText(new RegExp(`· ${picks} featured above$`))).toBeInTheDocument()
     expect(screen.getByText(/^Show the other \d+ tools tagged for /)).toBeInTheDocument()
   })
+
+  it.each(['executive', 'grc'] as const)(
+    '%s: the two picks are both featured above and no other tool is tagged, so no heading is left over nothing',
+    (role) => {
+      usePersonaStore.setState({ selectedPersona: role })
+      renderWorkbench()
+      expect(screen.queryByText(/^Recommended for /)).not.toBeInTheDocument()
+      expect(screen.queryByText(/^More tools tagged for /)).not.toBeInTheDocument()
+      expect(screen.queryByText(/^Show the other \d+ tools/)).not.toBeInTheDocument()
+      // The count line stays, and says where the picks are.
+      expect(screen.getByText(/ · 2 featured above$/)).toBeInTheDocument()
+    }
+  )
+
+  it.each(['cert-engineer', 'developer', 'researcher', 'ops'] as const)(
+    '%s: no "Recommended for" heading or "to start" count sits over an empty list',
+    (role) => {
+      usePersonaStore.setState({ selectedPersona: role })
+      renderWorkbench()
+      // The picks are the featured cards above, so no list of picks follows the heading ...
+      expect(screen.queryByText(/^Recommended for /)).not.toBeInTheDocument()
+      expect(screen.queryByText(/ to start$/)).not.toBeInTheDocument()
+      // ... the heading names the tools that do follow it: the others tagged for the role.
+      expect(screen.getByText(/^More tools tagged for /)).toBeInTheDocument()
+      expect(screen.getByText(/^Show the other \d+ tools tagged for /)).toBeInTheDocument()
+    }
+  )
 })

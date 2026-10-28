@@ -5,7 +5,7 @@ import { loadPQCAlgorithmsData } from './pqcAlgorithmsData'
 
 // Label and status corrections checked against primary sources on 2026-10-17:
 // NIST IR 8545 (Round 4 outcome), NIST's 11 March 2025 HQC news release, NIST IR
-// 8547 ipd Table 4, ANSSI PG-083 v3.00 section 2.2.3, NIST's Round 3
+// 8547 Table 4 (final, 27 October 2026), ANSSI PG-083 v3.00 section 2.2.3, NIST's Round 3
 // additional-signatures page (14 May 2026), the IETF datatracker entries for the
 // LAMPS composite drafts, kpqc.or.kr (final selection, 16 January 2025) and
 // iso.org record 86890 (ISO/IEC 18033-2:2006/Amd 2:2026).
@@ -44,6 +44,22 @@ describe('transition guide labels', () => {
     for (const row of rows) {
       expect(row.deprecationDate, row.pqc).toBe('2030 (Deprecated) / 2035 (Disallowed)')
       expect(row.deprecationDateISO, row.pqc).toBe('2030-01-01')
+    }
+  })
+
+  it('gives every NIST public-key row both IR 8547 steps, as the final report does', () => {
+    // NIST IR 8547 final (27 Oct 2026), Tables 2 and 4: every quantum-vulnerable
+    // public-key parameter set at 112 bits of security or more is deprecated after
+    // 2030 and disallowed after 2035. The 2024 draft deprecated only the 112-bit
+    // sets, so 128-bit-and-up rows read "2035 (Disallowed)" alone until then.
+    const rows = algorithmsData.filter(
+      (r) => r.region === 'NIST' && /^20(30|35) \((Deprecated|Disallowed)\)/.test(r.deprecationDate)
+    )
+    expect(rows.length).toBeGreaterThanOrEqual(69)
+    for (const row of rows) {
+      const id = `${row.classical} ${row.keySize} -> ${row.pqc}`
+      expect(row.deprecationDate, id).toBe('2030 (Deprecated) / 2035 (Disallowed)')
+      expect(row.deprecationDateISO, id).toBe('2030-01-01')
     }
   })
 
@@ -140,9 +156,20 @@ describe('algorithm catalogue labels', () => {
 
   it('names Round 3 for the advancing additional-signature candidates it shows', async () => {
     const catalogue = await loadPQCAlgorithmsData()
-    // MQOM, QR-UOV and SDitH are stub rows without a family yet, so the loader
-    // does not show them; their CSV text is corrected the same way.
-    const names = ['MAYO-1', 'MAYO-2', 'MAYO-3', 'MAYO-5', 'UOV', 'SQIsign', 'FAEST', 'SNOVA']
+    // Classification now restores the three previously hidden candidates.
+    const names = [
+      'MAYO-1',
+      'MAYO-2',
+      'MAYO-3',
+      'MAYO-5',
+      'UOV',
+      'SQIsign',
+      'FAEST',
+      'SNOVA',
+      'MQOM',
+      'QR-UOV',
+      'SDitH',
+    ]
     for (const name of names) {
       const a = catalogue.find((x) => x.name === name)
       expect(a, name).toBeDefined()
@@ -154,14 +181,12 @@ describe('algorithm catalogue labels', () => {
 
   it('treats Classic McEliece as an ISO standard that NIST did not select', async () => {
     const catalogue = await loadPQCAlgorithmsData()
-    for (const name of [
-      'Classic-McEliece-348864',
-      'Classic-McEliece-460896',
-      'Classic-McEliece-8192128',
-    ]) {
+    for (const name of ['Classic-McEliece-460896', 'Classic-McEliece-8192128']) {
       const a = catalogue.find((x) => x.name === name)
       expect(a, name).toBeDefined()
-      expect(a!.fipsStandard, name).toBe('NIST PQC Round 4 (concluded 2025; not selected)')
+      expect(a!.fipsStandard, name).toContain('ISO/IEC 18033-2:2006/Amd 2:2026')
+      expect(a!.fipsStandard, name).toContain('not in NIST FIPS')
+      expect(a!.status, name).toContain('BSI advises against new use')
       expect(a!.statusTier, name).toBe('final')
     }
   })
@@ -171,7 +196,8 @@ describe('algorithm catalogue labels', () => {
     const kem = catalogue.filter((a) => a.name.startsWith('id-MLKEM'))
     expect(kem.length).toBe(12)
     for (const a of kem) {
-      expect(a.fipsStandard, a.name).toBe('draft-ietf-lamps-pq-composite-kem-23')
+      expect(a.fipsStandard, a.name).toContain('draft-ietf-lamps-pq-composite-kem-23')
+      expect(a.fipsStandard, a.name).toContain('not yet RFC')
       expect(a.statusTier, a.name).toBe('ietf-draft')
     }
   })

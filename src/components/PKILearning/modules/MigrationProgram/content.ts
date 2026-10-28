@@ -10,8 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'migration-program',
   version: '1.1.1',
-  lastReviewed: '2026-08-29',
-  lastEdited: '2026-10-23',
+  lastReviewed: '2026-10-27',
+  lastEdited: '2026-10-28',
 
   standards: [
     getStandard('NIST IR 8547'),

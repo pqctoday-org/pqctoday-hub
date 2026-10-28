@@ -125,6 +125,8 @@ export const useOpenSSL = () => {
             rvName: name,
             ms: event.data.ms,
             ok: event.data.rv === 0,
+            inspectNote:
+              'Traced inside the OpenSSL worker, whose memory the parameter decoder cannot read — only the function, return value and the summary above are available.',
           })
           break
         }

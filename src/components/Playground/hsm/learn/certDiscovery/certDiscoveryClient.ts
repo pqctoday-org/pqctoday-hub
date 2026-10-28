@@ -76,5 +76,6 @@ export const toLogEntries = (calls: CallRecord[]): Pkcs11LogEntry[] => {
     ms: c.ms,
     ok: c.rv === 0,
     engineName: ISOLATED_ENGINE_LABEL,
+    inspect: c.inspect,
   }))
 }

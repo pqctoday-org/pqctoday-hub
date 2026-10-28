@@ -273,8 +273,9 @@ export function PqcCertificationTrendChart({
             that ship PQC had reached each stage that month; the rest have no PQC validation yet —
             dated from the product&apos;s own first PQC CAVP validation, NIST listing and
             PQC-covering certificate. A CAVP validation is the prerequisite for FIPS 140-3, not a
-            certificate; &ldquo;in progress&rdquo; only when NIST lists the module as Implementation
-            Under Test or Modules In Process.
+            certificate; the in-progress band counts only modules NIST lists as Implementation Under
+            Test or Modules In Process; NIST says participation on those lists is voluntary and that
+            they do not necessarily include every module being tested or reviewed.
             {!!productTimeline?.undated &&
               ` ${productTimeline.undated} product${productTimeline.undated === 1 ? ' is' : 's are'} at a stage we cannot yet date, and ${productTimeline.undated === 1 ? 'is' : 'are'} drawn at the last stage we can.`}{' '}
             NIST keeps no history of its in-process lists, so the in-progress band covers modules

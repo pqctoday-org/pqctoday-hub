@@ -88,7 +88,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         keySize: 'P-256 / TLS 1.3 ECDHE',
         quantumVulnerable: true,
         hndlRisk: 'high',
-        pqcReplacement: 'ML-KEM-768 (X-Wing hybrid TLS)',
+        pqcReplacement: 'X25519MLKEM768 (TLS hybrid key exchange)',
         pqcAlgorithm: 'ml-kem',
         exposureWindow: '10+ years (secrets may remain sensitive long after session)',
         notes:

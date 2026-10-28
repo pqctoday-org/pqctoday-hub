@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react'
@@ -57,8 +58,8 @@ const SECTIONS = [
 export const APISecurityJWTPlayground: React.FC = () => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     'jwt-inspector': false,
-    'pqc-signing': true,
-    'hybrid-jwt': true,
+    'pqc-signing': !readAlgorithmLaunch('api-security-jwt'),
+    'hybrid-jwt': !readAlgorithmLaunch('api-security-jwt'),
     'jwe-encryption': true,
     'token-size': false,
     'matrix-audit': false,
@@ -71,8 +72,8 @@ export const APISecurityJWTPlayground: React.FC = () => {
     <div className="space-y-4">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm text-foreground/80">
         Full API Security &amp; JWT workshop — real PQC signing (ML-DSA, SLH-DSA, composite) and
-        HPKE-based ML-KEM JWE encryption, which can run entirely inside softhsmv3 via PKCS#11
-        CKM_HPKE.{' '}
+        HPKE-based ML-KEM JWE encryption, which can run entirely inside softhsmv3 via the PQCToday
+        candidate PKCS#11 CKM_HPKE mechanism.{' '}
         <Link
           to="/learn/api-security-jwt?tab=workshop"
           className="text-primary underline underline-offset-2"

@@ -32,8 +32,8 @@ export interface IndustryPenalty {
 }
 
 /**
- * NIST IR 8547 is still an initial public draft (csrc.nist.gov/pubs/ir/8547/ipd)
- * recommending deprecation by 2030 and disallowance by 2035 — a citable planning
+ * NIST IR 8547 (final, 27 Oct 2026, csrc.nist.gov/pubs/ir/8547/final) deprecates
+ * quantum-vulnerable public-key algorithms after 2030 and disallows them after 2035 — a citable planning
  * anchor, not a binding mandate, used only when no framework or country deadline
  * applies to the selected industry.
  */
@@ -74,7 +74,7 @@ function frameworksForIndustry(industry: string): ComplianceFramework[] {
 const PLANNING_ANCHOR_FALLBACK: IndustryMandate = {
   deadlineYear: NIST_IR_8547_DISALLOW_YEAR,
   mandateType: 'NONE',
-  driverName: 'NIST IR 8547 (draft) disallow-by guidance',
+  driverName: 'NIST IR 8547 disallow-by guidance',
   driverSource: 'planning-anchor',
 }
 
@@ -98,7 +98,7 @@ export function resolveMandate(candidates: IndustryMandate[]): IndustryMandate {
  * Resolve the industry's real regulatory deadline: the earliest HARD mandate
  * (a framework with pqcRequirement 'yes', or a country tagged HARD in the
  * timeline CSV) if one applies; else the earliest SOFT guidance/target; else a
- * labeled planning anchor (NIST IR 8547, explicitly marked draft/non-binding).
+ * labeled planning anchor (NIST IR 8547, NIST guidance rather than a statute).
  */
 export function deriveIndustryMandate(industry: string, country?: string): IndustryMandate {
   const candidates: IndustryMandate[] = []

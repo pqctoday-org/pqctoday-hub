@@ -52,9 +52,13 @@ export interface RuntimeSupportRow {
 }
 
 /** Date the table as a whole was last reviewed. Rows older than 180 days before it fail the guard test. */
-export const TABLE_REVIEW_DATE = '2026-10-15'
+export const TABLE_REVIEW_DATE = '2026-10-27'
 
 const CHECKED = '2026-10-15'
+
+/** Java rows re-checked against Oracle's October 2026 Critical Patch Update release notes. */
+const JAVA_CHECKED = '2026-10-27'
+const ORACLE_JDK_RELNOTES = 'https://www.oracle.com/java/technologies/javase/'
 
 const GO_124 = 'https://go.dev/doc/go1.24'
 const GO_127 = 'https://go.dev/doc/go1.27'
@@ -206,12 +210,13 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     api: 'javax.crypto.KEM / KeyPairGenerator "ML-KEM" (JEP 496)',
     algorithm: 'ML-KEM',
     status: 'stable',
-    minVersion: 'JDK 24 (first LTS with it: JDK 25)',
-    backend: 'Built into the default JDK providers. JDK 21 LTS does not have it.',
+    minVersion: 'JDK 24; Oracle JDK 25, 21.0.13 and 17.0.21',
+    backend:
+      "Built into the default JDK providers. Oracle backported it to its LTS releases in the 20 October 2026 update (JDK 21.0.13 and 17.0.21; JDK 25 has it); Oracle JDK 11 and 8 are planned for the second half of 2027. Other OpenJDK builds: check your vendor's release notes.",
     protocolNote:
-      'JSSE hybrid post-quantum key exchange for TLS 1.3 arrived later, in JDK 27 (JEP 527); JDK 24–26 expose the primitive only.',
-    evidenceUrl: 'https://openjdk.org/jeps/496',
-    checkedDate: CHECKED,
+      'JSSE hybrid post-quantum key exchange for TLS 1.3 (JEP 527, X25519MLKEM768 on by default) shipped in JDK 27 and in Oracle JDK 25.0.5 (20 October 2026); Oracle plans it for JDK 21 and 17 in the first half of 2027.',
+    evidenceUrl: `${ORACLE_JDK_RELNOTES}25-0-5-relnotes.html`,
+    checkedDate: JAVA_CHECKED,
     sampleId: 'java-mlkem',
     codeSnippet:
       'KeyPairGenerator g = KeyPairGenerator.getInstance("ML-KEM");\ng.initialize(NamedParameterSpec.ML_KEM_768);\nKEM kem = KEM.getInstance("ML-KEM");',
@@ -222,12 +227,13 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     api: 'Signature / KeyPairGenerator "ML-DSA" (JEP 497)',
     algorithm: 'ML-DSA',
     status: 'stable',
-    minVersion: 'JDK 24 (first LTS with it: JDK 25)',
-    backend: 'Built into the default JDK providers. JDK 21 LTS does not have it.',
+    minVersion: 'JDK 24; Oracle JDK 25, 21.0.13 and 17.0.21',
+    backend:
+      "Built into the default JDK providers. Oracle backported it to its LTS releases in the 20 October 2026 update (JDK 21.0.13 and 17.0.21; JDK 25 has it); Oracle JDK 11 and 8 are planned for the second half of 2027. Other OpenJDK builds: check your vendor's release notes.",
     protocolNote:
       'JEP 497 covers the signature APIs; check your JDK release notes before relying on ML-DSA certificates in JSSE.',
-    evidenceUrl: 'https://openjdk.org/jeps/497',
-    checkedDate: CHECKED,
+    evidenceUrl: `${ORACLE_JDK_RELNOTES}21-0-13-relnotes.html`,
+    checkedDate: JAVA_CHECKED,
     sampleId: 'java-mldsa',
     codeSnippet:
       'KeyPairGenerator g = KeyPairGenerator.getInstance("ML-DSA");\ng.initialize(NamedParameterSpec.ML_DSA_65);\nSignature sig = Signature.getInstance("ML-DSA");',
@@ -798,6 +804,20 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
     apiId: 'Go',
     date: '2026-Q3',
     event: 'Go 1.27: crypto/mldsa; ML-DSA in crypto/x509 and crypto/tls; MLKEM1024 in TLS',
+    algorithms: ['ml-kem', 'ml-dsa'],
+  },
+  {
+    apiId: 'jca-jce',
+    date: '2026-Q3',
+    event:
+      'JDK 27: hybrid ML-KEM key exchange in JSSE TLS 1.3 (JEP 527), X25519MLKEM768 on by default',
+    algorithms: ['ml-kem'],
+  },
+  {
+    apiId: 'jca-jce',
+    date: '2026-Q4',
+    event:
+      'Oracle JDK LTS backports: 25.0.5 adds hybrid TLS (JEP 527); 21.0.13 and 17.0.21 add ML-KEM and ML-DSA',
     algorithms: ['ml-kem', 'ml-dsa'],
   },
 ]

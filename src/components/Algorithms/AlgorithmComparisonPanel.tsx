@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { Fragment, useState, useCallback, useMemo } from 'react'
 import { X, Loader2, Play, AlertTriangle, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -165,6 +166,7 @@ export function AlgorithmComparisonPanel({
                     )}
                   >
                     {a.name}
+                    <AlgoCtaStrip algoName={a.name} className="mt-2 font-normal normal-case" />
                     {isBase && (
                       <span className="ml-1 text-[10px] font-medium text-primary/70 uppercase">
                         baseline
@@ -405,7 +407,13 @@ function BenchmarkSection({
 
     for (const algo of algorithms) {
       const engine = resolveEngine(algo.name)
-      if (!engine) continue
+      if (!engine) {
+        setLogEntries((prev) => [
+          ...prev,
+          { status: 'error', message: `${algo.name}: exact benchmark unavailable` },
+        ])
+        continue
+      }
 
       setProgress(`Running ${algo.name}...`)
       for (let i = 0; i < opsCount; i++) {

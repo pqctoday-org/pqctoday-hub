@@ -163,12 +163,18 @@ describe('D3 guardrail: the deterministic-encapsulation hook stays in known-answ
   it('no non-test source file except the binding itself sets ephemeralSeed', () => {
     const src = join(__dirname, '../../../..')
     const binding = join(src, 'wasm/softhsm.ts')
+    // The call-log decoder only names the field when it shows its length; any
+    // other mention there (reading or setting it) still counts.
+    const decoder = join(src, 'wasm/pkcs11Inspect.ts')
     const files = sourceFiles(src)
     expect(files).toContain(binding)
     expect(files).toContain(join(__dirname, 'hpkeJweHsm.ts'))
-    const offenders = files.filter(
-      (f) => f !== binding && readFileSync(f, 'utf8').includes('ephemeralSeed')
-    )
+    const offenders = files.filter((f) => {
+      if (f === binding) return false
+      let text = readFileSync(f, 'utf8')
+      if (f === decoder) text = text.replace(/name: 'ephemeralSeed'/g, '')
+      return text.includes('ephemeralSeed')
+    })
     expect(offenders).toEqual([])
   })
 })

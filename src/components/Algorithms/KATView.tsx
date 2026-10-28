@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { algorithmLaunchHref } from '@/data/algorithmLaunch'
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import {
   Shield,
@@ -515,6 +516,14 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
 
   return (
     <div className="space-y-8">
+      <p className="text-sm text-muted-foreground">
+        X-Wing construction KATs, NIST ML-KEM component samples and published HPKE-9 JWE checks are
+        available in{' '}
+        <a className="text-primary underline" href={algorithmLaunchHref('X-Wing')!}>
+          X-Wing reference checks
+        </a>
+        . Draft KATs remain quarantined pending source review.
+      </p>
       {/* Intro banner */}
       <div className="flex items-start gap-3 p-4 bg-status-info border border-border rounded-lg">
         <Info className="text-primary flex-shrink-0 mt-0.5" size={20} />

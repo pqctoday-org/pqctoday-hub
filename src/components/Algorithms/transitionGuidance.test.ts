@@ -11,7 +11,7 @@ describe('transitionDateSource', () => {
     expect(transitionDateSource('2030 (Deprecated)', 'NIST')).toBe('nist-ir-8547')
   })
 
-  it('does not lend the NIST draft to other bodies', () => {
+  it('does not lend the NIST dates to other bodies', () => {
     expect(transitionDateSource('2035 (Disallowed)', 'BSI/ANSSI')).toBe('not-recorded')
     expect(transitionDateSource('2035 (Disallowed)', 'KpqC')).toBe('not-recorded')
     expect(transitionDateSource('2035 (Disallowed)', 'IETF')).toBe('not-recorded')

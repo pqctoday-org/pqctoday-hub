@@ -52,12 +52,12 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     region: 'US Federal',
     scope: 'All US federal systems; strongly recommended for private sector',
     pqcRequirement:
-      'Deprecate RSA/ECC after 2030; disallow entirely after 2035. Mandates ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205).',
+      'Final guidance (October 2026): deprecate RSA/ECC at 112-bit security and up after 2030; disallow under NIST standards after 2035. Names ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205) and LMS/XMSS (SP 800-208) as the replacements.',
     hardDeadline: '2030',
     deadlineYear: 2030,
     pqcMandatoryNow: false,
-    relevantArticles: ['Section 2.1 Deprecation Timeline', 'Table 1'],
-    url: 'https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf',
+    relevantArticles: ['Section 4.1 Toward a PQC Standards Transition Timeline', 'Tables 2 and 4'],
+    url: 'https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf',
   },
   {
     id: 'GDPR',

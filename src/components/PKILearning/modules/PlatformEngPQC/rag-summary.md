@@ -25,7 +25,7 @@
 
 - 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh
 - 16 crypto assets across stages with HNDL exposure ratings and PQC replacements
-- HNDL: High assets: Vault mTLS (→ ML-KEM-768 X-Wing), Container Image Signing Key (→ ML-DSA-65), SBOM Attestation (→ SLH-DSA-SHAKE-128f), kube-apiserver TLS (→ ML-DSA-65 hybrid), Helm Chart Signing (→ ML-DSA-87), Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512)
+- HNDL: High assets: Vault mTLS (→ X25519MLKEM768), Container Image Signing Key (→ ML-DSA-65), SBOM Attestation (→ SLH-DSA-SHAKE-128f), kube-apiserver TLS (→ ML-DSA-65 hybrid), Helm Chart Signing (→ ML-DSA-87), Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512)
 
 ### Step 2: Quantum Threat Timeline
 
@@ -59,7 +59,7 @@
 ### Step 6: Platform Migration Planner
 
 - 6 phases with dependency graph, action checklists, rollback strategies
-- Phase 0: Inventory (2w) → Phase 1: Root CA ML-DSA-65 (4w, CRITICAL) → Phase 2: X-Wing TLS KEX (3w, CRITICAL) → Phase 3: Artifact Signing ML-DSA (6w, HIGH) → Phase 4: Source Control + CI Identity (4w, HIGH) → Phase 5: Policy Enforcement Cut-Over (2w, MEDIUM)
+- Phase 0: Inventory (2w) → Phase 1: Root CA ML-DSA-65 (4w, CRITICAL) → Phase 2: X25519MLKEM768 TLS KEX (3w, CRITICAL) → Phase 3: Artifact Signing ML-DSA (6w, HIGH) → Phase 4: Source Control + CI Identity (4w, HIGH) → Phase 5: Policy Enforcement Cut-Over (2w, MEDIUM)
 - Rollback decision tree with 11 nodes covering TLS failures, cert validation, policy blocks
 
 ## Key Data Points

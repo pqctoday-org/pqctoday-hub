@@ -77,10 +77,32 @@ test('Playground landing is accessible and does not probe a local sandbox on arr
   expect(privateRequests).toEqual([])
 })
 
-for (const [persona, heading, expectedTools] of [
-  ['executive', 'Executive / Business Leader', ['HSM Capacity', 'Cert Capacity']],
-  ['cert-engineer', 'Certification & Validation Engineer', ['Entropy Testing', 'DRBG']],
-  ['curious', 'Curious Explorer', ['QRNG', 'PKI Workshop']],
+// Desktop: the role's picks are the featured cards above the grid, so the grid heading names the
+// other tagged tools ("More tools tagged for …"), or is absent when the role has none, and the
+// count line says the picks are featured above. The phone renders its own Playground screen, which
+// keeps the "Recommended for …" heading over the role's picks.
+for (const [persona, label, heading, countLine, expectedTools] of [
+  [
+    'executive',
+    'Executive / Business Leader',
+    null,
+    '56 tools · 2 tagged for Executive / Business Leader · 2 featured above',
+    ['HSM Capacity', 'Cert Capacity'],
+  ],
+  [
+    'cert-engineer',
+    'Certification & Validation Engineer',
+    'More tools tagged for Certification & Validation Engineer',
+    '56 tools · 10 tagged for Certification & Validation Engineer · 3 featured above',
+    ['Entropy Testing', 'DRBG'],
+  ],
+  [
+    'curious',
+    'Curious Explorer',
+    'More tools tagged for Curious Explorer',
+    '56 tools · 4 tagged for Curious Explorer · 3 featured above',
+    ['QRNG', 'PKI Workshop'],
+  ],
 ] as const) {
   test(`${persona} gets its canonical short journey and a Learn exit`, async ({ page }) => {
     await page.addInitScript(([key, value]) => localStorage.setItem(key, value), [
@@ -88,7 +110,21 @@ for (const [persona, heading, expectedTools] of [
       personaState(persona),
     ] as const)
     await page.goto('/playground')
-    await expect(page.getByText(`Recommended for ${heading}`)).toBeVisible({ timeout: 15_000 })
+    if (test.info().project.name === 'playground-pr-mobile') {
+      await expect(page.getByText(`Recommended for ${label}`, { exact: true })).toBeVisible({
+        timeout: 15_000,
+      })
+    } else {
+      await expect(page.getByText(countLine, { exact: true })).toBeVisible({ timeout: 15_000 })
+      if (heading) {
+        await expect(page.getByText(heading, { exact: true })).toBeVisible()
+      } else {
+        await expect(page.getByText(`More tools tagged for ${label}`, { exact: true })).toHaveCount(
+          0
+        )
+      }
+      await expect(page.getByText(`Recommended for ${label}`, { exact: true })).toHaveCount(0)
+    }
     for (const name of expectedTools) {
       await expect(page.getByText(name, { exact: false }).first()).toBeVisible()
     }

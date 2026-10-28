@@ -13,6 +13,9 @@
  * every route resolves, every persona listed is one the item claims, and an
  * item present here covers all of its claimed personas. Pages keep their
  * "What this means for you" strip (pagePersonaNotes.ts).
+ *
+ * A paragraph may link inside the app with `[words](/path?query)`; the words are the
+ * words of the sentence (see utils/linkedText.ts, rendered by ui/LinkedText).
  */
 import type { PersonaId } from '@/data/personaIds'
 
@@ -287,7 +290,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       "Lesson L5, An honest LMS, is a claim you can check yourself; the Explore tab's Algorithm Explorer and the glossary's commands and flags are the reference for reproducing each lesson at a terminal.",
     ops: "Use the Workbench's Quick Start, Key Generation, CSR and Certificate forms with Command Preview open: the commands are what your scripts will run, and lesson L10 demystifies the config files they read.",
     'cert-engineer':
-      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build supports; it is educational and not FIPS-validated, so do not use it as evidence. For NIST known-answer samples use the Validation tab on the Algorithms page.",
+      "Lesson L5, An honest LMS, and the Explore tab's Query this build show what this OpenSSL build supports; it is educational and not FIPS-validated, so do not use it as evidence. For NIST known-answer samples use the [Validation tab on the Algorithms page](/algorithms?tab=validation).",
   },
   '/playground/api-security-jwt': {
     developer:

@@ -110,7 +110,7 @@ for (const viewport of VIEWPORTS) {
     if (isMobile) {
       await expect(page.getByText(/in your focus areas/)).toBeVisible()
     } else {
-      await expect(page.getByText(/apply to\s+Healthcare/)).toBeVisible()
+      await expect(page.getByText(/in the catalog match\s+Healthcare/)).toBeVisible()
     }
   })
 }

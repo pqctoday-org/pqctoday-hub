@@ -105,8 +105,13 @@ export function crqcBandSentence(sector: NarrationSector): string {
  * CURRENT_YEAR which mirrors it). Re-check yearly-ish: when the program-start
  * framing moves, the fiction dates move with it by construction, but the
  * anchor itself should be a deliberate choice, not an heirloom.
+ *
+ * RE-CHECKED 2026-10-27: PROGRAM_START_YEAR 2026 is still the current year;
+ * the Federal Register's newest post-quantum presidential document is still
+ * EO 14412 (published 2026-06-25), and its 31 Dec 2030 / 31 Dec 2031 dates
+ * match NIST IR 8547 (final, October 2026), which cites them.
  */
 export const NARRATION_TIME_ANCHOR_FRESHNESS: Freshness = {
-  asOf: '2026-07-29',
+  asOf: '2026-10-27',
   recheck: 'https://www.federalregister.gov/documents/search?conditions%5Bterm%5D=post-quantum',
 }

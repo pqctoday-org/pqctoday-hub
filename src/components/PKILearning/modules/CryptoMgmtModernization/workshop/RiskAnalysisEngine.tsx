@@ -52,7 +52,8 @@ const SAMPLE_ASSETS: CbomExportItem[] = [
     esvStatus: 'not-validated',
     pqcSupport: 'ML-KEM, ML-DSA available in BC-FIPS 2.x',
     posture: 'red',
-    notes: 'CMVP cert #4943 moved to historical after Sep 2025 IG update.',
+    notes:
+      'Example: the certificate for this deployed version has reached its sunset date, so CMVP lists it as Historical. (The current BC-FJA certificate, #4943, is Active.)',
   },
   {
     name: 'Azure Dedicated HSM (Luna 7.7.2)',

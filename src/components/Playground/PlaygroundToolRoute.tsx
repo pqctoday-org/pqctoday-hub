@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { algorithmLaunchError } from '@/data/algorithmLaunch'
 import React, { Suspense, useEffect, useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router'
 import { ArrowLeft, ArrowRight, GraduationCap } from 'lucide-react'
@@ -227,7 +228,10 @@ export const PlaygroundToolRoute = () => {
           </div>
         }
       >
-        {Comp &&
+        {algorithmLaunchError(toolId ?? '', searchParams.toString()) ? (
+          <p role="alert">{algorithmLaunchError(toolId ?? '', searchParams.toString())}</p>
+        ) : (
+          Comp &&
           (isOnBack ? (
             toolId === 'suci-flow' ? (
               <Comp onBack={handleBack} initialProfile={suciProfile} initialPqcMode={suciPqcMode} />
@@ -235,8 +239,9 @@ export const PlaygroundToolRoute = () => {
               <Comp onBack={handleBack} />
             )
           ) : (
-            <Comp />
-          ))}
+            <Comp key={`${toolId}:${searchParams.get('launchAlgo')}`} />
+          ))
+        )}
       </Suspense>
 
       <ToolEvidenceNotice toolId={tool.id} resultBoundary />

@@ -58,10 +58,12 @@ import {
   buildEntropyIndex,
   cavpValidationUrl,
   computeRecordsSnapshotDate,
+  euccEnisaListing,
   formatIsoDate,
   isPqcApplicable,
   isSecurityTargetType,
   matchesCertType,
+  NOT_ON_ENISA_LIST_LABEL,
   pqcCoverageState,
   pqcEvidenceLabel,
   pqcNames,
@@ -71,6 +73,7 @@ import {
   recordTypeDescription,
   recordTypeLabel,
   retrievalSummary,
+  safeHttpUrl,
   schemeCertificateId,
   SNAPSHOT_NOTICE,
   snapshotRetrievalEntries,
@@ -193,6 +196,16 @@ export interface MobileCertRecord {
   ccArchivedDate?: string | null
   /** EUCC: the certificate number the ENISA page shows; `id` is only a generated key. */
   euccCertificateId?: string
+  /** EUCC: ENISA's sentence for a withdrawn certificate, verbatim. */
+  euccWithdrawalNote?: string
+  /** EUCC: the replacement certificate number or link ENISA names, when it states one. */
+  euccReplacedBy?: string
+  /** Common Criteria Portal listing: the EUCC number its product name ends with, cleaned. */
+  euccCertificateNumber?: string
+  /** Common Criteria Portal listing: whether that number is on ENISA's certificate list (absent = not checked). */
+  euccOnEnisaList?: boolean
+  /** Common Criteria Portal listing: the ENISA certificate page, when the number is on the list. */
+  euccEnisaLink?: string
   // FIPS 140-3 (NIST CMVP certificate page)
   cmvpStandard?: string
   cmvpStatus?: string
@@ -263,7 +276,8 @@ function matchesRecordSearch(record: MobileCertRecord, text: string): boolean {
     record.source.toLowerCase().includes(s) ||
     recordTypeLabel(record.type).toLowerCase().includes(s) ||
     record.id.toLowerCase().includes(s) ||
-    (record.euccCertificateId ?? '').toLowerCase().includes(s)
+    (record.euccCertificateId ?? '').toLowerCase().includes(s) ||
+    (record.euccCertificateNumber ?? '').toLowerCase().includes(s)
   )
 }
 
@@ -1034,7 +1048,13 @@ export function MobileComplianceView({
                         {[
                           r.vendor,
                           recordTypeLabel(r.type),
-                          schemeCertificateId(r) ? `#${schemeCertificateId(r)}` : null,
+                          schemeCertificateId(r)
+                            ? `#${schemeCertificateId(r)}${
+                                euccEnisaListing(r)?.state === 'not-listed'
+                                  ? ` ${NOT_ON_ENISA_LIST_LABEL}`
+                                  : ''
+                              }`
+                            : null,
                           r.date,
                         ]
                           .filter(Boolean)
@@ -1371,6 +1391,9 @@ function MobileRecordDetailSheet({
   const envs = record?.operationalEnvironments ?? []
   const caps = record?.cavpCapabilities ?? []
   const cavpProductUrl = record?.cavpProductUrl || record?.link
+  // A Common Criteria Portal listing's EUCC number, checked against ENISA's certificate list.
+  const enisaListing = record ? euccEnisaListing(record) : null
+  const replacedByUrl = safeHttpUrl(record?.euccReplacedBy)
   const docs = record
     ? [
         ...(record.certificationReportUrls ?? []).map((url, i) => ({
@@ -1406,8 +1429,15 @@ function MobileRecordDetailSheet({
             </span>
             {schemeCertificateId(record) && (
               <span className="font-mono text-[10.5px] text-muted-foreground">
-                {schemeCertificateId(record)}
+                {enisaListing?.state === 'listed' ? (
+                  <RecordLink href={enisaListing.url}>{enisaListing.number}</RecordLink>
+                ) : (
+                  schemeCertificateId(record)
+                )}
               </span>
+            )}
+            {enisaListing?.state === 'not-listed' && (
+              <span className="text-[10.5px] text-muted-foreground">{NOT_ON_ENISA_LIST_LABEL}</span>
             )}
           </div>
           {record.vendor && <p className="text-[11.5px] text-muted-foreground">{record.vendor}</p>}
@@ -1458,6 +1488,35 @@ function MobileRecordDetailSheet({
               )}
             </div>
           ))}
+
+          {record.type === 'EUCC' && (record.euccWithdrawalNote || record.euccReplacedBy) && (
+            <section
+              aria-label="Withdrawn"
+              data-testid="eucc-withdrawal"
+              className="flex flex-col gap-2 rounded-lg border border-border bg-muted/40 p-2.5"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Withdrawn
+              </p>
+              {record.euccWithdrawalNote && (
+                <p className="break-words text-[11.5px] text-foreground">
+                  {record.euccWithdrawalNote}
+                </p>
+              )}
+              {record.euccReplacedBy && (
+                <dl>
+                  <RecordFact label="Replaced by">
+                    {replacedByUrl ? (
+                      <RecordLink href={replacedByUrl}>{record.euccReplacedBy}</RecordLink>
+                    ) : (
+                      record.euccReplacedBy
+                    )}
+                  </RecordFact>
+                </dl>
+              )}
+              <p className="text-[10.5px] text-muted-foreground">Stated by ENISA.</p>
+            </section>
+          )}
 
           {record.type === 'FIPS 140-3' && (
             <section

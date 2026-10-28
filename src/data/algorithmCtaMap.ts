@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { algorithmLaunchHref, canonicalAlgorithmName } from './algorithmLaunch'
+import { algorithmCatalogue } from './algorithmCatalogue'
+
 export interface AlgoCtas {
   /** Route to a playground tool that demonstrates this algorithm. */
   try?: string
@@ -12,6 +15,8 @@ export interface AlgoCtas {
   specRef?: string
   /** Internal learn module route explaining why this algorithm matters. */
   why: string
+  specUrl?: string
+  unavailableReason?: string
 }
 
 /** Full-page fallback for a spec, used when the in-place drawer can't resolve it. */
@@ -30,7 +35,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'ML-KEM',
     {
-      try: '/playground/hybrid-encrypt',
       specRef: 'FIPS 203',
       why: '/learn/hybrid-crypto',
     },
@@ -38,7 +42,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'ML-DSA',
     {
-      try: '/playground/token-migration',
       specRef: 'FIPS 204',
       why: '/learn/pqc-101',
     },
@@ -46,7 +49,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'SLH-DSA',
     {
-      try: '/playground/slh-dsa',
       specRef: 'FIPS 205',
       why: '/learn/slh-dsa',
     },
@@ -54,14 +56,12 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'FN-DSA',
     {
-      try: '/playground/interactive?algo=FN-DSA-512&tab=sign_verify',
       why: '/learn/pqc-101',
     },
   ],
   [
     'LMS',
     {
-      try: '/playground/lms-hss',
       specRef: 'NIST SP 800-208',
       why: '/learn/stateful-signatures',
     },
@@ -69,7 +69,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'XMSS',
     {
-      try: '/playground/lms-hss',
       specRef: 'NIST SP 800-208',
       why: '/learn/stateful-signatures',
     },
@@ -77,7 +76,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'HQC',
     {
-      try: '/playground/interactive?algo=HQC-128&tab=keystore',
       specRef: 'HQC Specification',
       why: '/learn/hybrid-crypto',
     },
@@ -85,42 +83,36 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'FrodoKEM',
     {
-      try: '/playground/interactive?algo=FrodoKEM-640&tab=keystore',
       why: '/learn/hybrid-crypto',
     },
   ],
   [
     'MAYO',
     {
-      try: '/playground/interactive?algo=MAYO-1&tab=sign_verify',
       why: '/learn/pqc-101',
     },
   ],
   [
     'CROSS',
     {
-      try: '/playground/interactive?algo=CROSS-RSDP-128-balanced&tab=sign_verify',
       why: '/learn/pqc-101',
     },
   ],
   [
     'UOV',
     {
-      try: '/playground/interactive?algo=OV-Ip&tab=sign_verify',
       why: '/learn/pqc-101',
     },
   ],
   [
     'OV-',
     {
-      try: '/playground/interactive?algo=OV-Ip&tab=sign_verify',
       why: '/learn/pqc-101',
     },
   ],
   [
     'SNOVA',
     {
-      try: '/playground/interactive?algo=SNOVA-24-5-4&tab=sign_verify',
       why: '/learn/pqc-101',
     },
   ],
@@ -140,7 +132,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'X25519MLKEM',
     {
-      try: '/playground/hybrid-encrypt',
       specRef: 'FIPS 203',
       why: '/learn/hybrid-crypto',
     },
@@ -148,7 +139,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'SecP',
     {
-      try: '/playground/hybrid-encrypt',
       specRef: 'FIPS 203',
       why: '/learn/hybrid-crypto',
     },
@@ -157,13 +147,79 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
 
 const FALLBACK_WHY = '/learn/pqc-101'
 
-export function getAlgoCtas(algoName: string): AlgoCtas | null {
-  for (const [prefix, ctas] of PREFIX_CTA_MAP) {
-    if (algoName.startsWith(prefix)) return ctas
-  }
-  return null
-}
+// Publication links come from the same latest catalogue as the Algorithms page.
+// Prefixes supply educational context only; executable selection is exact.
+const specificationUrls = new Map(algorithmCatalogue.map((row) => [row.algorithm, row.status_url]))
 
+export function getAlgoCtas(requestedName: string): AlgoCtas | null {
+  const algoName = canonicalAlgorithmName(requestedName)
+  const context = PREFIX_CTA_MAP.find(([prefix]) => algoName.startsWith(prefix))?.[1]
+  const tryHref = algorithmLaunchHref(algoName)
+  // Transition rows also name families/choices. They may link to background
+  // sources but must never silently choose a parameter set for execution.
+  const familyNames = new Set([
+    'ML-KEM',
+    'ML-DSA',
+    'SLH-DSA',
+    'FN-DSA',
+    'FrodoKEM',
+    'MAYO',
+    'HAWK',
+    'Classic-McEliece',
+    'AIMer',
+    'Aigis-enc',
+    'Aigis-sig',
+    'HAETAE',
+    'SMAUG-T',
+    'NTRU+',
+    'LMS-SHA256',
+  ])
+  const familySource = familyNames.has(algoName)
+    ? algorithmCatalogue.find(
+        (row) =>
+          row.algorithm.startsWith(`${algoName}-`) || row.algorithm.startsWith(`${algoName} `)
+      )?.status_url
+    : undefined
+  const choiceSource = algoName.includes('/')
+    ? 'https://csrc.nist.gov/projects/post-quantum-cryptography'
+    : undefined
+  const url = specificationUrls.get(algoName) ?? familySource ?? choiceSource
+  if (!context && !tryHref && !url) return null
+  const standardSlh = /^SLH-DSA-(SHA2|SHAKE)-(128|192|256)[sf]$/.test(algoName)
+  const component =
+    (algoName.startsWith('ML-KEM-') && !/^ML-KEM-(512|768|1024)$/.test(algoName)) ||
+    (algoName.startsWith('ML-DSA') && !/^ML-DSA-(44|65|87)$/.test(algoName))
+  const tls = /^(X25519MLKEM|SecP)/.test(algoName)
+  const specRef =
+    component || tls || (algoName.startsWith('SLH-DSA') && !standardSlh)
+      ? undefined
+      : context?.specRef
+  return {
+    why:
+      algoName === 'X-Wing' || algoName === 'HPKE-PQ'
+        ? '/learn/hybrid-crypto'
+        : (context?.why ?? FALLBACK_WHY),
+    try: tryHref,
+    specRef,
+    specUrl: specRef ? undefined : url,
+    unavailableReason: tryHref
+      ? undefined
+      : algoName.startsWith('SLH-DSA')
+        ? 'No exact implementation of this draft parameter set.'
+        : algoName.startsWith('LMS') || algoName.startsWith('XMSS')
+          ? 'The workshop uses smaller trees; no exact H20 demonstration is available.'
+          : algoName === 'DH (Diffie-Hellman)'
+            ? 'Choose a DH group before running an exact demonstration.'
+            : algoName.startsWith('sntrup')
+              ? 'The sntrup761 KEM is not bundled in the served SSH build.'
+              : 'Reference only: no exact executable launch is available.',
+  }
+}
 export function getAlgoCtasWithFallback(algoName: string): AlgoCtas {
-  return getAlgoCtas(algoName) ?? { why: FALLBACK_WHY }
+  return (
+    getAlgoCtas(algoName) ?? {
+      why: FALLBACK_WHY,
+      unavailableReason: 'No exact executable launch is available.',
+    }
+  )
 }

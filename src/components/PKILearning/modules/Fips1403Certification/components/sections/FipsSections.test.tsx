@@ -14,6 +14,7 @@ import type { ReactNode } from 'react'
 import {
   FipsAcvpBridge,
   FipsAttackEvidence,
+  FipsAutomation,
   FipsLandscape,
   FipsLevels,
   FipsLifecycle,
@@ -86,6 +87,43 @@ describe('FIPS sections render', () => {
     wrap(<FipsLifecycle />)
     expect(screen.getByText('Pipeline, not proof')).toBeInTheDocument()
     expect(screen.getByText(/does not imply or guarantee FIPS 140/)).toBeInTheDocument()
+  })
+
+  it('lifecycle: the MIP table uses NIST’s state names and names each actor NIST names', () => {
+    wrap(<FipsLifecycle />)
+    const table = screen.getByRole('table', { name: 'Modules-in-Process states' })
+    const row = (state: string) =>
+      within(table)
+        .getAllByRole('row')
+        .find((r) => within(r).queryByRole('rowheader', { name: state })) as HTMLElement
+    expect(within(table).queryByRole('rowheader', { name: /Resubmission – Lab/ })).toBeNull()
+    expect(row('Pending Resubmission')).toHaveTextContent('Lab')
+    expect(row('Cost Recovery')).toHaveTextContent('NIST Billing and the lab')
+    expect(row('Finalization')).toHaveTextContent('CMVP and the lab')
+  })
+
+  it('lifecycle: the interim route is described as closed, with NIST’s two dates', () => {
+    wrap(<FipsLifecycle />)
+    const para = screen.getByText(/Two kinds of validation exist today/)
+    expect(para).toHaveTextContent('before 1 January 2024')
+    expect(para).toHaveTextContent('before 1 October 2024')
+    expect(para).toHaveTextContent('Both dates have passed, so the route is closed to new cases.')
+  })
+
+  it('lifecycle: Historical modules are “not in new systems” by NIST’s words, not a ban on buying', () => {
+    wrap(<FipsLifecycle />)
+    const para = screen.getByText(/After the sunset date, or when a transition retires it/)
+    expect(para).toHaveTextContent('Historical FIPS 140-2 modules “for existing systems”')
+    expect(para).toHaveTextContent('Federal Agencies “should not include these in new systems”')
+    expect(para).not.toHaveTextContent('not for new ones')
+  })
+
+  it('automation: CSWP 37B is final, as NIST CSRC records it', () => {
+    wrap(<FipsAutomation />)
+    const para = screen.getByText(/The project documentation sets out the sequence/)
+    expect(para).toHaveTextContent('CSWP 37A (final, 16 March 2026)')
+    expect(para).toHaveTextContent('CSWP 37B (final, 30 September 2026)')
+    expect(para).not.toHaveTextContent('Initial Public Draft')
   })
 
   it('acvp bridge and route table render', () => {
@@ -338,6 +376,35 @@ describe('FIPS landscape — Hub data contract', () => {
         'except the certificate count, which is read from the site’s own CMVP data'
       )
       expect(intro.textContent).toContain('re-check before you quote it')
+    })
+
+    it('scopes the as-of date to its own section and sends later-read items to their own dates', async () => {
+      stubData(null)
+      wrap(<FipsLandscape />)
+      await waitFor(() =>
+        expect(screen.getAllByText('not in Hub data — see certificate').length).toBeGreaterThan(0)
+      )
+      const intro = screen.getByText(/Four questions, kept apart/)
+      expect(intro.textContent).toContain('Everything in this section is')
+      expect(intro.textContent).toContain(
+        'Items elsewhere in the lesson that were read later give their own dates.'
+      )
+      expect(intro.textContent).not.toContain('Everything here is')
+    })
+
+    it('quotes NIST on Historical modules without a procurement rule NIST does not state', async () => {
+      stubData(null)
+      wrap(<FipsLandscape />)
+      await waitFor(() =>
+        expect(screen.getAllByText('not in Hub data — see certificate').length).toBeGreaterThan(0)
+      )
+      const bullet = screen
+        .getAllByRole('listitem')
+        .find((li) => li.textContent?.includes('Superseded:')) as HTMLElement
+      expect(bullet).toHaveTextContent(
+        'Federal Agencies “should not include these in new systems but can be procured for legacy systems”'
+      )
+      expect(bullet).not.toHaveTextContent('needs a FIPS 140-3 validation')
     })
 
     it('leaves the sentence out when the retrieval date is not stated', async () => {

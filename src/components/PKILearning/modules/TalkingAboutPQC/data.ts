@@ -105,12 +105,12 @@ export const CLAIMS: DrillItem[] = [
         correct: false,
       },
       {
-        text: `In a draft report (NIST IR 8547), NIST proposes deprecating the weakest of today’s quantum-vulnerable algorithms, such as RSA-2048, after ${NIST_DEPRECATION.deprecateClassical}, and disallowing all of them after ${NIST_DEPRECATION.disallowClassical}.`,
+        text: `In NIST IR 8547 (final, October 2026), NIST deprecates today’s quantum-vulnerable public-key algorithms, such as RSA and ECDSA, after ${NIST_DEPRECATION.deprecateClassical} and disallows them under NIST standards and guidelines after ${NIST_DEPRECATION.disallowClassical}.`,
         correct: true,
       },
       { text: 'RSA is already banned.', correct: false },
     ],
-    why: 'NIST IR 8547 is still a draft, so its dates are proposals. “Deprecated” means allowed but discouraged; “disallowed” comes later.',
+    why: 'NIST IR 8547 is NIST guidance, not a ban. “Deprecated” means still allowed, with a risk the user accepts; “disallowed” comes later, and applies under NIST standards and guidelines.',
   },
 ]
 

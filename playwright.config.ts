@@ -180,8 +180,20 @@ export default defineConfig({
     // or `playwright test --project=local`.
     {
       name: 'local',
-      use: { ...devices['Desktop Chrome'], launchOptions: CHROMIUM_LAUNCH_OPTIONS },
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: CHROMIUM_LAUNCH_OPTIONS,
+        // Same reason as `expect` below: actions such as scrollIntoViewIfNeeded on a
+        // heavy page wait for its first render on the dev server.
+        actionTimeout: 30_000,
+      },
       testMatch: ['**/*.local.spec.ts'],
+      // The local tier runs on the dev server (`E2E_SERVER=dev`, test:e2e:local-tier),
+      // where every page load fetches ~550 unbundled modules: /timeline and
+      // /leaders take 6.3–7.6 s to render even warm with one worker (measured
+      // 2026-10-28), at or past the 7.5 s default below, and longer with four
+      // workers. Give first-render assertions room; what they assert is unchanged.
+      expect: { timeout: 30_000 },
     },
     // MOBILE-SMOKE tier — NEW (2026-08-02), NOT yet CI-gated. Runs the
     // SMOKE_SPECS allowlist minus MOBILE_SMOKE_EXCLUDE (desktop-only specs,

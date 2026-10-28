@@ -104,7 +104,7 @@ export function buildPlanCbom(input: PlanExportInput): Record<string, unknown> {
     disclaimer:
       'Educational planning draft only. It is not a discovered inventory, CBOM, readiness assessment, product recommendation or compliance determination.',
     sources: {
-      nistIr8547Status: 'Initial Public Draft',
+      nistIr8547Status: 'Final (October 2026)',
       cnsaScope: 'CNSA 2.0 applies primarily to U.S. National Security Systems',
       ...(input.catalogSnapshot ? { catalogSnapshot: input.catalogSnapshot } : {}),
     },

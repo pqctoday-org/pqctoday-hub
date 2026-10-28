@@ -93,8 +93,8 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
               cryptographically relevant quantum computer exists.
             </p>
             <p className="text-xs text-muted-foreground mt-2">
-              Source: NIST IR 8547, <em>Transition to Post-Quantum Cryptography Standards</em>,
-              initial public draft (November 2024).
+              Source: NIST IR 8547, <em>Transition to Post-Quantum Cryptography Standards</em>
+              (final, October 2026).
             </p>
           </div>
           <p>
@@ -149,9 +149,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
               <AlertTriangle size={14} className="text-primary mt-0.5 shrink-0" />
               <span>
                 <strong>2035:</strong> NSM-10 sets a broader federal quantum-risk objective.
-                Separately, the initial public draft of NIST IR 8547 proposes disallowing affected
-                classical public-key algorithms after 2035 — neither is a global sunset of RSA and
-                ECC
+                Separately, NIST IR 8547 (final, October 2026) disallows quantum-vulnerable
+                public-key algorithms under NIST standards after 2035 — neither is a global sunset
+                of RSA and ECC
               </span>
             </li>
           </ul>

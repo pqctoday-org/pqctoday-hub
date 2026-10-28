@@ -43,7 +43,7 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
       },
       {
         label: 'NIST IR 8547 — Transition to PQC Standards',
-        href: 'https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf',
+        href: 'https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf',
         external: true,
       },
       {
@@ -164,7 +164,7 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
     external: [
       {
         label: 'NIST IR 8547 — PQC Migration Timing',
-        href: 'https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf',
+        href: 'https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf',
         external: true,
       },
       {

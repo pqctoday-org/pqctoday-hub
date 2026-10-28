@@ -3,7 +3,7 @@
     "description": "Cumulative probability that a Cryptographically Relevant Quantum Computer (CRQC) exists by a given year, 2026–2046.",
     "sources": [
       "Global Risk Institute — Quantum Threat Timeline Report 2025 (https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/) — expert survey (26 respondents): 28-49% probability within 10 years (by 2035), 51-70% within 15 years (by 2040), 92% of respondents ≥50% within 20 years (by 2045), ~50% call 20-year arrival 'extremely likely' (>99%)",
-      "NIST IR 8547 (https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) — migration timeline assumptions"
+      "NIST IR 8547 (https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf) — migration timeline assumptions"
     ],
     "methodology": "Values at 2026, 2035, 2040 and 2045 are anchored to the GRI 2025 survey ranges above (low end of each range = 'slow' scenario, high end = 'fast' scenario). All other years are LINEARLY INTERPOLATED between those anchors — this curve is not itself a GRI-published series, only the four anchor points are. 2046 repeats the 2045 value (no anchor beyond 20 years).",
     "scenarios": {

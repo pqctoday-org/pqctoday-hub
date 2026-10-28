@@ -10,8 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'secure-boot-pqc',
   version: '1.1.0',
-  lastReviewed: '2026-10-25',
-  lastEdited: '2026-10-26',
+  lastReviewed: '2026-10-27',
+  lastEdited: '2026-10-27',
 
   // DECLARED 2026-08-22. This module renders <LibRef> links — clickable, reader-facing
   // citations into the library — for eleven documents while declaring three, so eight of
