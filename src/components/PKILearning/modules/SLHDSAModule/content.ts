@@ -6,7 +6,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'slh-dsa',
   version: '1.0.0',
-  lastReviewed: '2026-10-25',
+  lastReviewed: '2026-10-27',
   lastEdited: '2026-10-26',
 
   standards: [

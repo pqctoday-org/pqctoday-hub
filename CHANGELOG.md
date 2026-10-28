@@ -29,6 +29,38 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.184.0] - 2026-10-27
+
+Certification lessons now say exactly what NIST's CMVP documents say, the Certificates page shows when ENISA has withdrawn a certificate, and the welcome notice no longer covers the page on phones.
+
+### Fixed
+
+- **FIPS 140-3 self-test history is stated correctly** [view:/learn/crypto-mgmt-modernization] [view:/learn/quiz] [persona:cert-engineer] [persona:architect] [persona:grc]: the Crypto Management Modernization lesson, its workshop and a quiz answer no longer say the September 2025 Implementation Guidance "retroactively" imposed post-quantum self-tests. NIST added those self-tests in August 2024; in September 2025 it let the key-generation tests check against the private key only. The lesson also explains how the CMVP Management Manual decides, route by route, which requirements a revalidation must meet.
+- **"In progress" no longer means "on NIST's list"** [view:/learn/fips-140-3-certification] [view:/compliance] [persona:cert-engineer] [persona:grc]: the Modules In Process and Implementation Under Test lists are voluntary and may omit modules, as the Management Manual says. The FIPS 140-3 summary, the Certificates chart note and the certification role board now say so.
+- **Historical FIPS modules are described in NIST's words** [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/learn/vendor-risk] [view:/learn/hsm-pqc] [view:/learn/quiz] [persona:cert-engineer] [persona:grc] [persona:executive]: instead of "no longer valid for new procurement", the lessons, glossary, HSM notes and three quiz questions say that Federal Agencies should not include Historical modules in new systems, that NIST still supports buying and using them for existing systems, and that the certificates are not revoked.
+- **A certificate becomes Historical at its sunset date** [view:/learn/crypto-mgmt-modernization] [persona:cert-engineer] [persona:ops]: an exercise and the risk engine no longer say an Implementation Guidance update moved a certificate to the Historical list, and the risk engine no longer calls the Active Bouncy Castle certificate #4943 Historical.
+- **Smaller CMVP corrections** [view:/learn/fips-140-3-certification] [view:/learn/standards-bodies] [view:/learn/hybrid-crypto] [persona:cert-engineer]: the Implementation Guidance is one document, last updated 19 August 2026; the queue state is "Pending Resubmission", with NIST Billing and the lab named where they act; the interim-validation route is shown as closed to new cases (NIST's two cut-off dates have passed); the FIPS 140-3 "as of" date covers only its own section; and the Hybrid lesson names the TLS draft the Implementation Guidance cites, with RFC 10024 as its published successor.
+
+### Added
+
+- **The Certificates page shows ENISA withdrawals** [view:/compliance] [persona:cert-engineer] [persona:grc]: an EUCC certificate that ENISA has withdrawn is marked Withdrawn, its detail view quotes ENISA's own sentence, and it no longer counts as current.
+- **Common Criteria Portal rows say where an EUCC number stands with ENISA** [view:/compliance] [persona:cert-engineer]: when a Portal listing names an EUCC certificate, the number links to ENISA's certificate page if ENISA lists it, and otherwise reads "not on ENISA's certificate list". Each ENISA document is now named by ENISA's own title (Certificate, Certification Report, Security Target) instead of "ENISA document".
+
+### Changed
+
+- **The welcome notice is a slim strip on every page** [view:/] [view:/learn] [persona:curious] [persona:cert-engineer]: the same text and "I Understand" button now sit at the top of the page instead of a sheet covering the lower half of a phone screen.
+- **Smaller reading fixes** [view:/playground] [view:/learn/quiz] [view:/learn/secure-boot-pqc] [view:/openssl] [persona:cert-engineer] [persona:developer]: OpenSSL Studio links straight to the Validation tab on the Algorithms page; the Crypto Lab no longer shows an empty "Recommended" heading; the phone quiz length screen has side margins; long Learn path titles wrap on narrow phones; and the Firmware Signing Migrator explains why its raw and certificate-form key-size ratios differ.
+- **Eleven certification lessons, OpenSSL Studio and two quiz explanations were reviewed again by the owner** [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/openssl] [persona:cert-engineer]: nine lessons (PQC Network Testing, Hybrid, Secure Boot, OS PQC, Standards Bodies, SLH-DSA, Entropy, HSM, Stateful Signatures), OpenSSL Studio and two quiz explanations after the 4.182.0 changes, and FIPS 140-3 Certification and Cryptographic Product Certification after this release's corrections.
+
+### Data
+
+- **Library, quiz and role board follow the same NIST wording** [view:/library] [view:/learn/quiz] [view:/] [persona:cert-engineer]: the retired "September 2025" Implementation Guidance entry no longer says it applies retroactively, and the CSWP 37B entry is completed (final, 30 September 2026).
+- CERT_REFRESH_PLACEHOLDER
+
+### Security
+
+- **Development tools updated with security fixes** [persona:developer]: build-time dependencies are updated; nothing changes on the site.
+
 ## [4.183.0] - 2026-10-27
 
 Java's post-quantum support is now shown as it is after Oracle's October 2026 update, X-Wing is named and checked correctly across the HSM and KMS tools, and the PKCS#11 call log folds routine calls so the cryptographic ones stand out.

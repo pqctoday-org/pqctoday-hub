@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'hsm-pqc',
   version: '1.0.3',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-10-27',
   lastEdited: '2026-10-27',
 
   standards: [

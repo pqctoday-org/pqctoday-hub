@@ -25,6 +25,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-product-certification',
+  lastReviewed: '2026-10-27',
   // No lastReviewed: facts were corrected after the owner's 24 October 2026 sign-off, so the
   // sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The on-page notice
   // follows it (common/moduleReviewStatus.ts).
