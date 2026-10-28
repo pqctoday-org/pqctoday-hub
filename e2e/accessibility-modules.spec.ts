@@ -137,6 +137,36 @@ for (const { id, track } of MODULES) {
 
 const TAB_PATTERN_MODULES = ['pqc-101', 'qkd', 'secrets-management-pqc']
 
+// Lessons with a phone workshop: src/data/mobileWorkshops.ts MOBILE_WORKSHOP_READY. Listed here on
+// purpose rather than imported, so a change to that list has to be made in this spec as well.
+const PHONE_WORKSHOP_MODULES = ['pqc-101', 'qkd', 'secrets-management-pqc']
+// Lessons with no phone workshop: the phone shows no tab strip at all.
+const NO_PHONE_WORKSHOP_MODULES = ['tls-basics', 'talking-about-pqc']
+
+/** The phone lesson has rendered: its section checklist is on screen. A count-of-zero
+ *  assertion made before this passes on a page that has no lesson in it yet. */
+async function settledMobileLesson(page: Page) {
+  await settle(page)
+  await expect(page.getByRole('progressbar', { name: /\d+\/\d+ sections read/i })).toBeVisible({
+    timeout: 20_000,
+  })
+}
+
+for (const id of NO_PHONE_WORKSHOP_MODULES) {
+  test(`module: /learn/${id} — mobile (390x844) has no tab strip, only a section checklist`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto(`/learn/${id}`)
+    await settledMobileLesson(page)
+
+    await expect(page.getByRole('tablist')).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'More tabs' })).toHaveCount(0)
+    const sectionButtons = page.locator('ul > li > button[aria-pressed]')
+    expect(await sectionButtons.count()).toBeGreaterThanOrEqual(1)
+  })
+}
+
 for (const id of TAB_PATTERN_MODULES) {
   test(`module: /learn/${id} — desktop tab row is a real ARIA tablist`, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
@@ -196,27 +226,31 @@ for (const id of TAB_PATTERN_MODULES) {
     await expect(tabs.nth(count - 1)).toBeFocused()
   })
 
-  test(`module: /learn/${id} — mobile (390x844) has no tab bar, only a section checklist`, async ({
+  test(`module: /learn/${id} — mobile (390x844) has no desktop tab bar, only Learn / Workshop and a section checklist`, async ({
     page,
   }) => {
-    // The desktop tab pattern above (tablist/tab/tabpanel + the "More tabs"
-    // overflow popover) does not exist on mobile at all — it isn't hidden
-    // behind a control, it's a different component. MobileModuleShell
-    // (default-on 2026-08-23) mounts only a Learn-tab-equivalent view: a
-    // section-read checklist over the same real prose, with no
-    // Workshop/Exercises/References/Tools tab strip. This replaces the
-    // three "··· overflow popover" tests that asserted a pattern this
-    // breakpoint has never rendered since that date — they were failing on
-    // every module, every nightly run, for that reason alone.
+    // The desktop tab pattern above (the "Module sections" tablist + the
+    // "More tabs" overflow popover) does not exist on mobile — it's a
+    // different component. MobileModuleShell (default-on 2026-08-23) shows a
+    // section-read checklist over the same real prose. These three lessons
+    // also have a phone workshop (PHONE_WORKSHOP_MODULES below), so the shell
+    // adds a two-tab "Module view" strip, Learn / Workshop.
+    expect(PHONE_WORKSHOP_MODULES).toContain(id)
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(`/learn/${id}`)
-    await settle(page)
+    await settledMobileLesson(page)
 
-    await expect(page.getByRole('tablist')).toHaveCount(0)
+    const strip = page.getByRole('tablist')
+    await expect(strip).toHaveCount(1)
+    await expect(strip).toHaveAccessibleName('Module view')
+    const tabs = strip.getByRole('tab')
+    await expect(tabs).toHaveCount(2)
+    await expect(tabs.nth(0)).toHaveText('Learn')
+    await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'true')
+    await expect(tabs.nth(1)).toHaveText('Workshop')
+    await expect(page.getByRole('tablist', { name: 'Module sections' })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'More tabs' })).toHaveCount(0)
 
-    const checklist = page.getByRole('progressbar', { name: /\d+\/\d+ sections read/i })
-    await expect(checklist).toBeVisible()
     const sectionButtons = page.locator('ul > li > button[aria-pressed]')
     expect(await sectionButtons.count()).toBeGreaterThanOrEqual(1)
   })
