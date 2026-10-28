@@ -54,4 +54,18 @@ describe('PlaygroundView: exactly one of the two versions is in the page', () =>
       'Interactive Playground (desktop)'
     )
   })
+
+  it('on a phone, an unknown launch gets the page-level reason once, and the phone version is not shown', () => {
+    atWidth(true)
+    render(
+      <MemoryRouter initialEntries={['/playground/interactive?launchAlgo=Not-An-Algorithm']}>
+        <PlaygroundView />
+      </MemoryRouter>
+    )
+    expect(screen.getAllByRole('alert')).toHaveLength(1)
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'No exact Not-An-Algorithm launch is available in this tool.'
+    )
+    expect(screen.queryByText('Phone version')).toBeNull()
+  })
 })

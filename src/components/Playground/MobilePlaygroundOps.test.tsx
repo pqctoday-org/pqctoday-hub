@@ -7,7 +7,7 @@
 // 4.183.0 browser check: every phone launch landed on the KEM screen silently).
 import { describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 const caps = vi.hoisted(() => ({ sab: true, lowMemory: false }))
@@ -22,6 +22,7 @@ vi.mock('./tabs/KemOpsTab', () => ({ KemOpsTab: () => <p>KEM screen</p> }))
 vi.mock('./tabs/SignVerifyTab', () => ({ SignVerifyTab: () => <p>Sign screen</p> }))
 vi.mock('./tabs/WorkshopToolsTab', () => ({ WorkshopToolsTab: () => null }))
 vi.mock('../shared/Pkcs11LogPanel', () => ({ Pkcs11LogPanel: () => null }))
+vi.mock('./MobilePlaygroundView', () => ({ MobilePlaygroundView: () => <p>Info view</p> }))
 
 import { MobilePlaygroundOps } from './MobilePlaygroundOps'
 
@@ -69,6 +70,20 @@ describe('MobilePlaygroundOps: exact algorithm launches on a phone', () => {
         'No exact FN-DSA-512 launch is available on a phone'
       )
       expect(screen.getByText('Limited Device Support')).toBeInTheDocument()
+    } finally {
+      caps.sab = true
+    }
+  })
+
+  it("keeps the notice after the capability warning's View Info fallback", async () => {
+    caps.sab = false
+    try {
+      at('/playground/interactive?launchAlgo=ML-KEM-768&algo=ML-KEM-768&tab=keystore')
+      fireEvent.click(screen.getByRole('button', { name: /View Info/ }))
+      expect(await screen.findByText('Info view')).toBeInTheDocument()
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'No exact ML-KEM-768 launch is available on a phone'
+      )
     } finally {
       caps.sab = true
     }
