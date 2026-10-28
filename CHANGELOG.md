@@ -29,17 +29,9 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.184.0] - 2026-10-27
+## [4.183.0] - 2026-10-27
 
-Certification lessons now say exactly what NIST's CMVP documents say, the Certificates page shows when ENISA has withdrawn a certificate, and the welcome notice no longer covers the page on phones.
-
-### Fixed
-
-- **FIPS 140-3 self-test history is stated correctly** [view:/learn/crypto-mgmt-modernization] [view:/learn/quiz] [persona:cert-engineer] [persona:architect] [persona:grc]: the Crypto Management Modernization lesson, its workshop and a quiz answer no longer say the September 2025 Implementation Guidance "retroactively" imposed post-quantum self-tests. NIST added those self-tests in August 2024; in September 2025 it let the key-generation tests check against the private key only. The lesson also explains how the CMVP Management Manual decides, route by route, which requirements a revalidation must meet.
-- **"In progress" no longer means "on NIST's list"** [view:/learn/fips-140-3-certification] [view:/compliance] [persona:cert-engineer] [persona:grc]: the Modules In Process and Implementation Under Test lists are voluntary and may omit modules, as the Management Manual says. The FIPS 140-3 summary, the Certificates chart note and the certification role board now say so.
-- **Historical FIPS modules are described in NIST's words** [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/learn/vendor-risk] [view:/learn/hsm-pqc] [view:/learn/quiz] [persona:cert-engineer] [persona:grc] [persona:executive]: instead of "no longer valid for new procurement", the lessons, glossary, HSM notes and three quiz questions say that Federal Agencies should not include Historical modules in new systems, that NIST still supports buying and using them for existing systems, and that the certificates are not revoked.
-- **A certificate becomes Historical at its sunset date** [view:/learn/crypto-mgmt-modernization] [persona:cert-engineer] [persona:ops]: an exercise and the risk engine no longer say an Implementation Guidance update moved a certificate to the Historical list, and the risk engine no longer calls the Active Bouncy Castle certificate #4943 Historical.
-- **Smaller CMVP corrections** [view:/learn/fips-140-3-certification] [view:/learn/standards-bodies] [view:/learn/hybrid-crypto] [persona:cert-engineer]: the Implementation Guidance is one document, last updated 19 August 2026; the queue state is "Pending Resubmission", with NIST Billing and the lab named where they act; the interim-validation route is shown as closed to new cases (NIST's two cut-off dates have passed); the FIPS 140-3 "as of" date covers only its own section; and the Hybrid lesson names the TLS draft the Implementation Guidance cites, with RFC 10024 as its published successor.
+Certification lessons now say exactly what NIST's CMVP documents say, the Certificates page shows when ENISA has withdrawn a certificate, Java's post-quantum support is shown as it is after Oracle's October 2026 update, X-Wing is named and checked correctly, and the PKCS#11 call log folds routine calls so the cryptographic ones stand out.
 
 ### Added
 
@@ -48,27 +40,11 @@ Certification lessons now say exactly what NIST's CMVP documents say, the Certif
 
 ### Changed
 
+- **The PKCS#11 call log is readable again** [view:/playground/hsm] [view:/learn] [view:/openssl] [persona:developer] [persona:architect] [persona:cert-engineer]: attribute reads, object searches and session setup fold into one expandable row, so the calls that run a mechanism stand out; Expand all and Collapse support sit in the toolbar, and errors and the calls a lesson asks for never fold. This applies to the HSM Playground, Learn lessons and workshops, OpenSSL Studio and the VPN/SSH simulators.
+- **Every PKCS#11 call in the log can be opened** [view:/playground/hsm] [persona:developer] [persona:cert-engineer]: multi-part encrypt, decrypt and verify, the v3.x message API, single-shot verify, sign and verify with recovery, random generation, named-user login (PIN never shown) and the library, slot, token and session information now open a decoded view. X-Wing and the other HPKE hybrid KEMs show their KEM, KDF, AEAD, mode and info, and multi-part composite ML-DSA signatures are split into their two parts. Ten functions that showed wrong argument labels now follow the PKCS#11 headers.
 - **The welcome notice is a slim strip on every page** [view:/] [view:/learn] [persona:curious] [persona:cert-engineer]: the same text and "I Understand" button now sit at the top of the page instead of a sheet covering the lower half of a phone screen.
 - **Smaller reading fixes** [view:/playground] [view:/learn/quiz] [view:/learn/secure-boot-pqc] [view:/openssl] [persona:cert-engineer] [persona:developer]: OpenSSL Studio links straight to the Validation tab on the Algorithms page; the Crypto Lab no longer shows an empty "Recommended" heading; the phone quiz length screen has side margins; long Learn path titles wrap on narrow phones; and the Firmware Signing Migrator explains why its raw and certificate-form key-size ratios differ.
 - **Eleven certification lessons, OpenSSL Studio and two quiz explanations were reviewed again by the owner** [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/openssl] [persona:cert-engineer]: nine lessons (PQC Network Testing, Hybrid, Secure Boot, OS PQC, Standards Bodies, SLH-DSA, Entropy, HSM, Stateful Signatures), OpenSSL Studio and two quiz explanations after the 4.182.0 changes, and FIPS 140-3 Certification and Cryptographic Product Certification after this release's corrections.
-
-### Data
-
-- **Library, quiz and role board follow the same NIST wording** [view:/library] [view:/learn/quiz] [view:/] [persona:cert-engineer]: the retired "September 2025" Implementation Guidance entry no longer says it applies retroactively, and the CSWP 37B entry is completed (final, 30 September 2026).
-- CERT_REFRESH_PLACEHOLDER
-
-### Security
-
-- **Development tools updated with security fixes** [persona:developer]: build-time dependencies are updated; nothing changes on the site.
-
-## [4.183.0] - 2026-10-27
-
-Java's post-quantum support is now shown as it is after Oracle's October 2026 update, X-Wing is named and checked correctly across the HSM and KMS tools, and the PKCS#11 call log folds routine calls so the cryptographic ones stand out.
-
-### Changed
-
-- **The PKCS#11 call log is readable again** [view:/playground/hsm] [view:/learn] [view:/openssl] [persona:developer] [persona:architect] [persona:cert-engineer]: attribute reads, object searches and session setup fold into one expandable row, so the calls that run a mechanism stand out; Expand all and Collapse support sit in the toolbar, and errors and the calls a lesson asks for never fold. This applies to the HSM Playground, Learn lessons and workshops, OpenSSL Studio and the VPN/SSH simulators.
-- **Every PKCS#11 call in the log can be opened** [view:/playground/hsm] [persona:developer] [persona:cert-engineer]: multi-part encrypt, decrypt and verify, the v3.x message API, single-shot verify, sign and verify with recovery, random generation, named-user login (PIN never shown) and the library, slot, token and session information now open a decoded view. X-Wing and the other HPKE hybrid KEMs show their KEM, KDF, AEAD, mode and info, and multi-part composite ML-DSA signatures are split into their two parts. Ten functions that showed wrong argument labels now follow the PKCS#11 headers.
 
 ### Fixed
 
@@ -76,12 +52,23 @@ Java's post-quantum support is now shown as it is after Oracle's October 2026 up
 - **The Cryptographic APIs lesson no longer says JDK 21 lacks ML-KEM and ML-DSA** [view:/learn/crypto-dev-apis] [persona:developer] [persona:architect] [persona:ops]: Oracle added both to Oracle JDK 21.0.13 and 17.0.21 on 20 October 2026, and plans JDK 11 and 8 for the second half of 2027. The support table, migration step, code notes, exercise answer and lesson answers now say so, and the timeline adds JDK 27 and the October backports. Other OpenJDK builds are not assumed: the lesson tells you to check your vendor's release notes.
 - **Hybrid post-quantum TLS in Java is dated correctly** [view:/learn/crypto-dev-apis] [view:/migrate] [persona:developer] [persona:ops]: the JDK's own TLS stack negotiates X25519MLKEM768 by default from JDK 27 (September 2026) and from Oracle JDK 25.0.5 (October 2026); Oracle plans it for JDK 21 and 17 in the first half of 2027. The Java product records no longer say JDK 27 is unreleased.
 - **Two more lessons give the current Java picture** [view:/learn/crypto-mgmt-modernization] [view:/learn/iam-pqc] [persona:developer] [persona:architect]: the Crypto Modernization refactoring checklist points to the JDK's built-in ML-DSA instead of "waiting for JDK 25", and the IAM lesson no longer credits JDK 21 with hybrid TLS for WildFly.
+- **FIPS 140-3 self-test history is stated correctly** [view:/learn/crypto-mgmt-modernization] [view:/learn/quiz] [persona:cert-engineer] [persona:architect] [persona:grc]: the Crypto Management Modernization lesson, its workshop and a quiz answer no longer say the September 2025 Implementation Guidance "retroactively" imposed post-quantum self-tests. NIST added those self-tests in August 2024; in September 2025 it let the key-generation tests check against the private key only. The lesson also explains how the CMVP Management Manual decides, route by route, which requirements a revalidation must meet.
+- **"In progress" no longer means "on NIST's list"** [view:/learn/fips-140-3-certification] [view:/compliance] [persona:cert-engineer] [persona:grc]: the Modules In Process and Implementation Under Test lists are voluntary and may omit modules, as the Management Manual says. The FIPS 140-3 summary, the Certificates chart note and the certification role board now say so.
+- **Historical FIPS modules are described in NIST's words** [view:/learn/fips-140-3-certification] [view:/learn/crypto-product-certification] [view:/learn/vendor-risk] [view:/learn/hsm-pqc] [view:/learn/quiz] [persona:cert-engineer] [persona:grc] [persona:executive]: instead of "no longer valid for new procurement", the lessons, glossary, HSM notes and three quiz questions say that Federal Agencies should not include Historical modules in new systems, that NIST still supports buying and using them for existing systems, and that the certificates are not revoked.
+- **A certificate becomes Historical at its sunset date** [view:/learn/crypto-mgmt-modernization] [persona:cert-engineer] [persona:ops]: an exercise and the risk engine no longer say an Implementation Guidance update moved a certificate to the Historical list, and the risk engine no longer calls the Active Bouncy Castle certificate #4943 Historical.
+- **Smaller CMVP corrections** [view:/learn/fips-140-3-certification] [view:/learn/standards-bodies] [view:/learn/hybrid-crypto] [persona:cert-engineer]: the Implementation Guidance is one document, last updated 19 August 2026; the queue state is "Pending Resubmission", with NIST Billing and the lab named where they act; the interim-validation route is shown as closed to new cases (NIST's two cut-off dates have passed); the FIPS 140-3 "as of" date covers only its own section; and the Hybrid lesson names the TLS draft the Implementation Guidance cites, with RFC 10024 as its published successor.
 
 ### Data
 
 - **The Java runtime product is renamed "Java SE (JDK) PQC Runtime"** [view:/migrate] [persona:developer] [persona:ops]: it covers JDK 24 to 27 and the Oracle LTS updates rather than one version; links that use the old name "Java 24 PQC Runtime" still open it.
 - **Oracle Jipher is in the product catalog** [view:/migrate] [persona:developer] [persona:cert-engineer] [persona:ops]: Oracle's Java provider for FIPS-regulated environments added ML-KEM (512, 768, 1024) and ML-DSA (44, 65, 87) in Jipher 20 (September 2026). The entry says plainly that Oracle cites no FIPS 140-3 certificate for it yet.
 - **Oracle's Java LTS roadmap is described on the Vendor roadmaps page** [view:/migrate] [persona:executive] [persona:grc] [persona:ops]: which LTS release gets ML-KEM, ML-DSA and hybrid TLS, and when. Thanks to the community member who pointed us to it.
+- **Library, quiz and role board follow the same NIST wording** [view:/library] [view:/learn/quiz] [view:/] [persona:cert-engineer]: the retired "September 2025" Implementation Guidance entry no longer says it applies retroactively, and the CSWP 37B entry is completed (final, 30 September 2026).
+- CERT_REFRESH_PLACEHOLDER
+
+### Security
+
+- **Development tools updated with security fixes** [persona:developer]: build-time dependencies are updated; nothing changes on the site.
 
 ## [4.182.0] - 2026-10-26
 
