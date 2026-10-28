@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.183.0] - 2026-10-27
+
+Java's post-quantum support is now shown as it is after Oracle's October 2026 update: ML-KEM and ML-DSA reached Oracle JDK 21 and 17, and hybrid post-quantum TLS reached JDK 25.
+
+### Fixed
+
+- **The Cryptographic APIs lesson no longer says JDK 21 lacks ML-KEM and ML-DSA** [view:/learn/crypto-dev-apis] [persona:developer] [persona:architect] [persona:ops]: Oracle added both to Oracle JDK 21.0.13 and 17.0.21 on 20 October 2026, and plans JDK 11 and 8 for the second half of 2027. The support table, migration step, code notes, exercise answer and lesson answers now say so, and the timeline adds JDK 27 and the October backports. Other OpenJDK builds are not assumed: the lesson tells you to check your vendor's release notes.
+- **Hybrid post-quantum TLS in Java is dated correctly** [view:/learn/crypto-dev-apis] [view:/migrate] [persona:developer] [persona:ops]: the JDK's own TLS stack negotiates X25519MLKEM768 by default from JDK 27 (September 2026) and from Oracle JDK 25.0.5 (October 2026); Oracle plans it for JDK 21 and 17 in the first half of 2027. The Java product records no longer say JDK 27 is unreleased.
+- **Two more lessons give the current Java picture** [view:/learn/crypto-mgmt-modernization] [view:/learn/iam-pqc] [persona:developer] [persona:architect]: the Crypto Modernization refactoring checklist points to the JDK's built-in ML-DSA instead of "waiting for JDK 25", and the IAM lesson no longer credits JDK 21 with hybrid TLS for WildFly.
+
+### Data
+
+- **The Java runtime product is renamed "Java SE (JDK) PQC Runtime"** [view:/migrate] [persona:developer] [persona:ops]: it covers JDK 24 to 27 and the Oracle LTS updates rather than one version; links that use the old name "Java 24 PQC Runtime" still open it.
+- **Oracle's Java LTS roadmap is described on the Vendor roadmaps page** [view:/migrate] [persona:executive] [persona:grc] [persona:ops]: which LTS release gets ML-KEM, ML-DSA and hybrid TLS, and when. Thanks to the community member who pointed us to it.
+
 ## [4.182.0] - 2026-10-26
 
 Forty-four corrections on the certification engineer's path: wrong figures and unsourced claims replaced with what the standards say, phone tables that were cut off now stack, the certificates page has an EUCC tab and finds EUCC numbers, and the certificate data is refreshed.
