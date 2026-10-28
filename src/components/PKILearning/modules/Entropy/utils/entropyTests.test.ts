@@ -13,6 +13,7 @@ import { describe, it, expect } from 'vitest'
 import {
   adaptiveProportionTest,
   aptCutoff,
+  frequencyTest,
   groupResults,
   aptWindowSize,
   rctCutoff,
@@ -82,6 +83,60 @@ describe('adaptiveProportionTest — SP 800-90B §4.4.2', () => {
     const r = adaptiveProportionTest(new Uint8Array(1))
     expect(r.passed).toBe(false)
     expect(r.detail).toBe('Insufficient data')
+  })
+})
+
+describe('frequencyTest (monobit) — SP 800-22 Rev. 1a §2.1', () => {
+  /** n bytes where the first `extra` bytes carry five 1-bits and the rest carry four. */
+  function withOnes(n: number, extra: number): Uint8Array {
+    return new Uint8Array(n).map((_, i) => (i < extra ? 0x57 : 0x55))
+  }
+
+  it('scales its cutoff with the sample length: 2.576 / (2·√n), the 1% level', () => {
+    for (const bytes of [64, 1024, 4096]) {
+      const r = frequencyTest(goodSource(bytes))
+      expect(r.threshold).toBeCloseTo(2.576 / (2 * Math.sqrt(bytes * 8)), 10)
+    }
+    // 64 bytes (512 bits) allows a larger deviation than 4,096 bytes (32,768 bits).
+    expect(frequencyTest(goodSource(64)).threshold).toBeGreaterThan(
+      frequencyTest(goodSource(4096)).threshold
+    )
+  })
+
+  it('rejects a 3% bias on 8,192 bits that a fixed 0.05 cutoff let through', () => {
+    const r = frequencyTest(withOnes(1024, 246)) // 4,342 ones of 8,192 bits
+    expect(r.value).toBeCloseTo(0.03, 3)
+    expect(r.threshold).toBeLessThan(0.03)
+    expect(r.passed).toBe(false)
+  })
+
+  it('accepts the same 3% bias on 512 bits, where it is within the 1% level', () => {
+    // 64 bytes with 15 extra ones: 271 of 512 bits, deviation 0.029 < 0.057
+    const r = frequencyTest(withOnes(64, 15))
+    expect(r.value).toBeLessThan(r.threshold)
+    expect(r.passed).toBe(true)
+  })
+
+  it('states the length-dependent cutoff and its source in the description', () => {
+    const r = frequencyTest(goodSource(1024))
+    expect(r.description).toBe(
+      `Deviation of the proportion of 1-bits from 0.5; passes at or below ${r.threshold.toFixed(4)} (SP 800-22 section 2.1, P >= 0.01 for this length)`
+    )
+    expect(r.description).not.toContain('0.05')
+    expect(r.description).not.toContain('0.45')
+  })
+
+  it('treats the cutoff as the 1% level of s_obs = |S_n| / √n', () => {
+    const data = withOnes(1024, 246)
+    const r = frequencyTest(data)
+    const sObsAtCutoff = 2 * r.threshold * Math.sqrt(data.length * 8)
+    expect(sObsAtCutoff).toBeCloseTo(2.576, 6)
+  })
+
+  it('fails empty data without dividing by zero', () => {
+    const r = frequencyTest(new Uint8Array(0))
+    expect(r.passed).toBe(false)
+    expect(Number.isFinite(r.threshold)).toBe(true)
   })
 })
 

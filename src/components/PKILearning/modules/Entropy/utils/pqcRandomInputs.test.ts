@@ -159,8 +159,12 @@ describe('Entropy Learn and QRNG surfaces: removed claims stay removed', () => {
     const panel = screen.getByTestId('pqc-random-inputs')
     const bodyRows = within(panel).getAllByRole('row').slice(1)
     expect(bodyRows).toHaveLength(PQC_RANDOM_INPUTS.length)
+    // The matrix is rendered twice (a table from 640 px up, stacked blocks below), so look in each.
+    const table = within(screen.getByTestId('pqc-random-input-table-table'))
+    const stacked = within(screen.getByTestId('pqc-random-input-table-stacked'))
     for (const r of PQC_RANDOM_INPUTS) {
-      expect(within(panel).getByText(r.operation)).toBeTruthy()
+      expect(table.getByText(r.operation)).toBeTruthy()
+      expect(stacked.getByText(r.operation)).toBeTruthy()
     }
   })
 

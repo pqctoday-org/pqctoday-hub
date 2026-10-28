@@ -25,6 +25,11 @@ const MIN_PER_CATEGORY = 2
 /** The Quick pick size: the desktop's default 15-minute run (15 x 60 / 45 s). */
 const QUICK_PICK_QUESTIONS = 20
 
+/** The time a run of `questions` takes at the quiz's pace, to the nearest 5 minutes. */
+function aboutMinutes(questions: number): number {
+  return Math.max(5, Math.round((questions * SECONDS_PER_QUESTION) / 60 / 5) * 5)
+}
+
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -336,6 +341,10 @@ export const QuizModule: React.FC = () => {
     } else if (view === 'intro' && offerLengthChoice && initialCategories) {
       body = (
         <div className="flex flex-col gap-3" data-testid="quiz-length-choice">
+          <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+            {mobilePoolSize} questions across {initialCategories.length}{' '}
+            {initialCategories.length === 1 ? 'topic' : 'topics'}.
+          </p>
           <Button
             variant="gradient"
             onClick={() => {
@@ -343,7 +352,8 @@ export const QuizModule: React.FC = () => {
               handleStart('category', initialCategories, undefined, QUICK_PICK_QUESTIONS)
             }}
           >
-            Quick pick ({QUICK_PICK_QUESTIONS} questions)
+            Quick pick ({QUICK_PICK_QUESTIONS} questions, about {aboutMinutes(QUICK_PICK_QUESTIONS)}{' '}
+            min)
           </Button>
           <Button
             variant="outline"
@@ -352,7 +362,7 @@ export const QuizModule: React.FC = () => {
               handleStart('category', initialCategories)
             }}
           >
-            Full quiz ({mobilePoolSize} questions)
+            Full quiz ({mobilePoolSize} questions, about {aboutMinutes(mobilePoolSize)} min)
           </Button>
         </div>
       )

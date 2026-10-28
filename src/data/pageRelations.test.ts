@@ -34,4 +34,9 @@ describe('PAGE_RELATIONS (round 9, wave 1.1)', () => {
       expect(new Set(es.map((e) => e.to)).size).toBe(es.length)
     }
   })
+  it('the validation workbench page links the ACVP Lab Workflow lesson as well as the HSM lesson', () => {
+    const targets = PAGE_RELATIONS['/playground/hsm'].map((e) => e.to)
+    expect(targets).toContain('/learn/acvp-lab-workflow')
+    expect(targets).toContain('/learn/hsm-pqc')
+  })
 })

@@ -149,6 +149,10 @@ describe('QuizModule on a phone: the final quiz offers a length choice (owner de
   const allCategories = QUIZ_CATEGORIES.map((c) => c.id)
   const allQuestions = QUIZ_QUESTIONS.filter((q) => allCategories.includes(q.category)).length
   const finalQuizPath = `/learn/quiz?category=${allCategories.join(',')}`
+  // The quiz's pace is 45 seconds a question; the buttons round the time to 5 minutes.
+  const aboutMin = (questions: number) => Math.round((questions * 45) / 60 / 5) * 5
+  const quickName = 'Quick pick (20 questions, about 15 min)'
+  const fullName = `Full quiz (${allQuestions} questions, about ${aboutMin(allQuestions)} min)`
 
   it('the data has more than 20 questions in the final quiz, so the choice applies', () => {
     expect(allQuestions).toBeGreaterThan(20)
@@ -157,25 +161,37 @@ describe('QuizModule on a phone: the final quiz offers a length choice (owner de
   it('shows Quick pick and the full run before any question, and no question yet', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderQuiz(finalQuizPath)
-    expect(screen.getByRole('button', { name: 'Quick pick (20 questions)' })).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: `Full quiz (${allQuestions} questions)` })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: quickName })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: fullName })).toBeInTheDocument()
     expect(screen.queryByText(/Question 1 of/)).not.toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
+
+  it('gives each choice a time estimate and one line on what the quiz covers', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz(finalQuizPath)
+    const choice = screen.getByTestId('quiz-length-choice')
+    expect(choice).toHaveTextContent(
+      `${allQuestions} questions across ${allCategories.length} topics.`
+    )
+    // Both choices name their length and their time.
+    for (const button of screen.getAllByRole('button')) {
+      if (!/pick|Full quiz/.test(button.textContent ?? '')) continue
+      expect(button.textContent).toMatch(/\d+ questions, about \d+ min/)
+    }
   })
 
   it('Quick pick runs 20 questions', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderQuiz(finalQuizPath)
-    fireEvent.click(screen.getByRole('button', { name: 'Quick pick (20 questions)' }))
+    fireEvent.click(screen.getByRole('button', { name: quickName }))
     expect(screen.getByText('Question 1 of 20')).toBeInTheDocument()
   })
 
   it('the full run runs every question in the quiz', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderQuiz(finalQuizPath)
-    fireEvent.click(screen.getByRole('button', { name: `Full quiz (${allQuestions} questions)` }))
+    fireEvent.click(screen.getByRole('button', { name: fullName }))
     expect(screen.getByText(`Question 1 of ${allQuestions}`)).toBeInTheDocument()
   })
 
@@ -195,5 +211,17 @@ describe('QuizModule on a phone: the final quiz offers a length choice (owner de
     renderQuiz(`/learn/quiz?category=${small.id}`)
     expect(screen.queryByRole('button', { name: /Quick pick/ })).not.toBeInTheDocument()
     expect(screen.getByText(/Question 1 of/)).toBeInTheDocument()
+  })
+})
+
+describe('QuizModule on a desktop: "Quick" is not used for a different size than on the phone', () => {
+  it('the 5-minute button is called a short run, and sets the slider to 5 minutes (7 questions)', () => {
+    mockUseIsMobileShell.mockReturnValue(false)
+    renderQuiz('/learn/quiz')
+    expect(screen.queryByRole('button', { name: /Quick/i })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Short run (5 min)' }))
+    const slider = screen.getByLabelText('Quiz duration in minutes')
+    expect(slider).toHaveValue('5')
+    expect(slider).toHaveAttribute('aria-valuetext', '5 minutes, 7 questions')
   })
 })

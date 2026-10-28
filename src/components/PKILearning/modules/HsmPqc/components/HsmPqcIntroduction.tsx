@@ -27,6 +27,7 @@ import {
   KEY_SIZE_COMPARISONS,
 } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
+import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -245,105 +246,78 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
 
             {/* Classical Mechanisms Table */}
             <h3 className="text-sm font-bold text-foreground">Classical Mechanisms (v2.40+)</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left p-2 text-muted-foreground font-medium">Mechanism</th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">Code</th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">Description</th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">Key Size</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {classicalMechanisms.map((m) => (
-                    <tr key={m.id} className="border-b border-border/50">
-                      <td className="p-2 font-mono text-xs text-foreground">{m.name}</td>
-                      <td className="p-2 font-mono text-xs text-muted-foreground">
-                        {m.mechanismCode}
-                      </td>
-                      <td className="p-2 text-xs text-muted-foreground">{m.description}</td>
-                      <td className="p-2 text-xs text-muted-foreground">{m.keySize}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ResponsiveTable
+              caption="Classical PKCS#11 mechanisms from v2.40"
+              testId="hsm-classical-mechanisms"
+              head={['Mechanism', 'Code', 'Description', 'Key Size']}
+              rows={classicalMechanisms.map((m) => [
+                <span key="n" className="font-mono">
+                  {m.name}
+                </span>,
+                <span key="c" className="font-mono text-muted-foreground">
+                  {m.mechanismCode}
+                </span>,
+                <span key="d" className="text-muted-foreground">
+                  {m.description}
+                </span>,
+                <span key="k" className="text-muted-foreground">
+                  {m.keySize}
+                </span>,
+              ])}
+            />
 
             {/* PQC Mechanisms Table */}
             <h3 className="text-sm font-bold text-foreground">PQC Mechanisms (v3.2)</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left p-2 text-muted-foreground font-medium">Mechanism</th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">Code</th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">Description</th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">Parameters</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pqcMechanisms.map((m) => (
-                    <tr key={m.id} className="border-b border-border/50 bg-primary/5">
-                      <td className="p-2 font-mono text-xs text-primary font-bold">{m.name}</td>
-                      <td className="p-2 font-mono text-xs text-muted-foreground">
-                        {m.mechanismCode}
-                      </td>
-                      <td className="p-2 text-xs text-foreground">{m.description}</td>
-                      <td className="p-2 text-xs text-muted-foreground">{m.keySize}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ResponsiveTable
+              caption="Post-quantum PKCS#11 mechanisms in v3.2"
+              testId="hsm-pqc-mechanisms"
+              head={['Mechanism', 'Code', 'Description', 'Parameters']}
+              rows={pqcMechanisms.map((m) => [
+                <span key="n" className="font-mono text-primary">
+                  {m.name}
+                </span>,
+                <span key="c" className="font-mono text-muted-foreground">
+                  {m.mechanismCode}
+                </span>,
+                <span key="d" className="text-foreground">
+                  {m.description}
+                </span>,
+                <span key="k" className="text-muted-foreground">
+                  {m.keySize}
+                </span>,
+              ])}
+            />
 
             {/* Key Size Comparison */}
             <h3 className="text-sm font-bold text-foreground">Buffer Size Impact</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left p-2 text-muted-foreground font-medium">Algorithm</th>
-                    <th className="text-right p-2 text-muted-foreground font-medium">Public Key</th>
-                    <th className="text-right p-2 text-muted-foreground font-medium">
-                      Private Key
-                    </th>
-                    <th className="text-right p-2 text-muted-foreground font-medium">
-                      Sig/Ciphertext
-                    </th>
-                    <th className="text-center p-2 text-muted-foreground font-medium">
-                      Quantum Safe
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {KEY_SIZE_COMPARISONS.map((k) => (
-                    <tr
-                      key={k.algorithm}
-                      className={`border-b border-border/50 ${k.quantumSafe ? 'bg-primary/5' : ''}`}
-                    >
-                      <td className="p-2 font-mono text-xs text-foreground">{k.algorithm}</td>
-                      <td className="p-2 text-right font-mono text-xs text-foreground">
-                        {k.publicKeyBytes.toLocaleString()} B
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs text-foreground">
-                        {k.privateKeyBytes.toLocaleString()} B
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs text-foreground">
-                        {k.signatureOrCiphertextBytes.toLocaleString()} B
-                      </td>
-                      <td className="p-2 text-center">
-                        {k.quantumSafe ? (
-                          <span className="text-success font-bold text-xs">Yes</span>
-                        ) : (
-                          <span className="text-destructive font-bold text-xs">No</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ResponsiveTable
+              caption="Key, signature and ciphertext sizes by algorithm"
+              testId="hsm-buffer-sizes"
+              head={['Algorithm', 'Public Key', 'Private Key', 'Sig/Ciphertext', 'Quantum Safe']}
+              rows={KEY_SIZE_COMPARISONS.map((k) => [
+                <span key="a" className="font-mono">
+                  {k.algorithm}
+                </span>,
+                <span key="p" className="font-mono text-foreground">
+                  {k.publicKeyBytes.toLocaleString()} B
+                </span>,
+                <span key="s" className="font-mono text-foreground">
+                  {k.privateKeyBytes.toLocaleString()} B
+                </span>,
+                <span key="c" className="font-mono text-foreground">
+                  {k.signatureOrCiphertextBytes.toLocaleString()} B
+                </span>,
+                k.quantumSafe ? (
+                  <span key="q" className="text-success font-bold">
+                    Yes
+                  </span>
+                ) : (
+                  <span key="q" className="text-destructive font-bold">
+                    No
+                  </span>
+                ),
+              ])}
+            />
           </div>
         </CollapsibleSection>
       </div>
@@ -843,64 +817,47 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               vendor has a different upgrade path, complexity, and recertification timeline.
             </p>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left p-2 text-muted-foreground font-medium">Vendor</th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">
-                      Current &rarr; Target
-                    </th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">
-                      Algorithms Added
-                    </th>
-                    <th className="text-center p-2 text-muted-foreground font-medium">
-                      Complexity
-                    </th>
-                    <th className="text-left p-2 text-muted-foreground font-medium">
-                      Downtime (est.)
-                    </th>
-                    <th className="text-center p-2 text-muted-foreground font-medium">
-                      FIPS Recert
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {FIRMWARE_UPGRADE_PATHS.map((path) => (
-                    <tr key={path.vendorId} className="border-b border-border/50">
-                      <td className="p-2 text-xs font-bold text-foreground">{path.vendorName}</td>
-                      <td className="p-2 text-xs font-mono text-muted-foreground">
-                        {path.currentFirmware} &rarr; {path.targetFirmware}
-                      </td>
-                      <td className="p-2 text-xs text-foreground">
-                        {path.pqcAlgorithmsAdded.slice(0, 2).join(', ')}
-                        {path.pqcAlgorithmsAdded.length > 2 &&
-                          ` +${path.pqcAlgorithmsAdded.length - 2} more`}
-                      </td>
-                      <td className="p-2 text-center">
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
-                            path.upgradeComplexity === 'low'
-                              ? 'bg-success/10 text-success border-success/20'
-                              : path.upgradeComplexity === 'medium'
-                                ? 'bg-warning/10 text-warning border-warning/20'
-                                : 'bg-destructive/10 text-status-error border-destructive/20'
-                          }`}
-                        >
-                          {path.upgradeComplexity.toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="p-2 text-xs text-muted-foreground">
-                        {path.estimatedDowntime}
-                      </td>
-                      <td className="p-2 text-center">
-                        <span className="text-warning text-xs font-bold">Required</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ResponsiveTable
+              caption="HSM firmware migration paths by vendor"
+              testId="hsm-firmware-migration"
+              head={[
+                'Vendor',
+                <>Current &rarr; Target</>,
+                'Algorithms Added',
+                'Complexity',
+                'Downtime (est.)',
+                'FIPS Recert',
+              ]}
+              rows={FIRMWARE_UPGRADE_PATHS.map((path) => [
+                path.vendorName,
+                <span key="t" className="font-mono text-muted-foreground">
+                  {path.currentFirmware} &rarr; {path.targetFirmware}
+                </span>,
+                <span key="a" className="text-foreground">
+                  {path.pqcAlgorithmsAdded.slice(0, 2).join(', ')}
+                  {path.pqcAlgorithmsAdded.length > 2 &&
+                    ` +${path.pqcAlgorithmsAdded.length - 2} more`}
+                </span>,
+                <span
+                  key="c"
+                  className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
+                    path.upgradeComplexity === 'low'
+                      ? 'bg-success/10 text-success border-success/20'
+                      : path.upgradeComplexity === 'medium'
+                        ? 'bg-warning/10 text-warning border-warning/20'
+                        : 'bg-destructive/10 text-status-error border-destructive/20'
+                  }`}
+                >
+                  {path.upgradeComplexity.toUpperCase()}
+                </span>,
+                <span key="d" className="text-muted-foreground">
+                  {path.estimatedDowntime}
+                </span>,
+                <span key="r" className="text-warning font-bold">
+                  Required
+                </span>,
+              ])}
+            />
 
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
               <strong>Note:</strong> Recertification time varies by module and queue; the CMVP

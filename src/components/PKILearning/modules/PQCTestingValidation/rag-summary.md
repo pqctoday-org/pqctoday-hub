@@ -47,7 +47,7 @@ Key limitation: passive tools can only detect algorithms in _current_ flows. If 
 
 ## PQC Performance Benchmarking Methodology
 
-Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN link with 50ms RTT, the TCP handshake adds 6 RTTs (300ms) before any crypto begins. ML-KEM key generation adds ~0.7ms — negligible. The real cost is message size.
+Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN link with 50ms RTT, the TCP handshake costs one round trip (50ms) and the TLS 1.3 handshake one more (RFC 9293 section 3.5; RFC 8446 section 2) before application data flows. ML-KEM key generation adds ~0.7ms — negligible. The real cost is message size.
 
 ### Critical benchmark data (from VIAVI TeraVM + PQC-LEO):
 

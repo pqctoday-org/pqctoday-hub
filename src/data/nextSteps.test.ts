@@ -58,6 +58,8 @@ const known = new Set([
   ...businessRoutes,
   ...PAGE_ROUTES,
   '/playground/cacp-kmip',
+  // The quiz that closes a role path is a routed page, not a module with a lesson of its own.
+  '/learn/quiz',
 ])
 
 describe('NEXT_STEPS (round 9, wave 1.2)', () => {
@@ -168,6 +170,10 @@ describe('certification engineer next steps follow the role path', () => {
     '/playground/slh-dsa': '/learn/hybrid-crypto',
     '/playground/hybrid-certs': '/learn/secure-boot-pqc',
     '/playground/firmware-signing': '/learn/pci-certification',
+    // The validation workbench is the lab behind the ACVP lesson.
+    '/playground/hsm': '/learn/acvp-lab-workflow',
+    // The last lesson on the path hands on to the quiz that closes it.
+    '/learn/pci-certification': '/learn/quiz',
   }
 
   it('every override names an existing route, and a Build tab that exists', () => {
@@ -187,11 +193,11 @@ describe('certification engineer next steps follow the role path', () => {
   it('every override is the next lesson in the role path order, or a pinned non-path destination', () => {
     for (const [route, step] of Object.entries(overrides)) {
       const lesson = pathLessons.findIndex((id) => lessonRoute(id) === route)
-      if (lesson === -1) {
-        expect(NON_PATH_DESTINATIONS[route], `${route} is not a path lesson`).toBe(step.to)
+      if (lesson === -1 || lesson === pathLessons.length - 1) {
+        // Not a path lesson, or the last one, whose next step is the quiz that closes the path.
+        expect(NON_PATH_DESTINATIONS[route], `${route} is not a mid-path lesson`).toBe(step.to)
       } else {
         const next = pathLessons[lesson + 1]
-        expect(next, `${route} is the last path lesson`).toBeDefined()
         expect(step.to, route).toBe(lessonRoute(next))
       }
     }
@@ -246,6 +252,27 @@ describe('certification engineer next steps follow the role path', () => {
     // Other roles keep the shared exits.
     expect(nextStepFor('/learn/hsm-pqc', 'executive')).toEqual(nextStepFor('/learn/hsm-pqc'))
     expect(nextStepFor('/playground/slh-dsa', null)?.to).toBe('/learn/soc-implementation-pqc')
+  })
+
+  it('PCI Certification, the last lesson on the path, hands on to the final quiz, not the Vendor Scorecard Builder', () => {
+    const step = nextStepFor('/learn/pci-certification', 'cert-engineer')
+    expect(step?.to).toBe('/learn/quiz')
+    expect(step?.label).toBe('Next on your path: the final quiz')
+    expect(PERSONAS['cert-engineer'].recommendedPath.at(-1)).toBe('quiz')
+    // Other roles keep the shared exit.
+    expect(nextStepFor('/learn/pci-certification', 'executive')).toEqual(
+      nextStepFor('/learn/pci-certification')
+    )
+    expect(nextStepFor('/learn/pci-certification')?.to).not.toBe('/learn/quiz')
+  })
+
+  it('the validation workbench page points at the ACVP Lab Workflow lesson that teaches it', () => {
+    const step = nextStepFor('/playground/hsm', 'cert-engineer')
+    expect(step?.to).toBe('/learn/acvp-lab-workflow')
+    expect(step?.label).toBe('Next on your path: ACVP Lab Workflow')
+    // Other roles keep the HSM lesson.
+    expect(nextStepFor('/playground/hsm', 'executive')?.to).toBe('/learn/hsm-pqc')
+    expect(nextStepFor('/playground/hsm')?.to).toBe('/learn/hsm-pqc')
   })
 
   it('the path order used here is the persona path (guards the test itself)', () => {

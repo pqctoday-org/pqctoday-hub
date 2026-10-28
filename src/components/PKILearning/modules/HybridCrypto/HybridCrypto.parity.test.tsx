@@ -118,7 +118,13 @@ describe('HybridCrypto render parity', () => {
     expect(note).toHaveTextContent(
       'The IG (last updated 19 August 2026) has no section on composite'
     )
-    expect(note).toHaveTextContent('its only use of the word hybrid is for hybrid modules (IG 1.B)')
+    expect(note).toHaveTextContent(
+      'It does name one hybrid key-establishment scheme that uses ML-KEM (IG D.S, “Hybrid scheme that uses an approved ML-KEM”)'
+    )
+    expect(note).toHaveTextContent(
+      'a hybrid module (IG 1.B) is a different thing, about how a module is built, not about combining algorithms'
+    )
+    expect(note).not.toHaveTextContent('only use of the word hybrid')
     expect(note).toHaveTextContent('needs the self-tests of IG 10.3.A')
     expect(note).toHaveTextContent('is not answered in the published guidance; ask the lab.')
   })

@@ -722,12 +722,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
 
           <p data-testid="ig-signatures-note" className="text-xs text-muted-foreground">
             IG D.S covers key encapsulation only. The IG (last updated 19 August 2026) has no
-            section on composite or hybrid signatures; its only use of the word hybrid is for hybrid
-            modules (IG 1.B), which are about how a module is built, not about combining algorithms.
-            What the IG does say applies to each algorithm on its own: a module that implements
-            ML-DSA signing or verification needs the self-tests of IG 10.3.A. Whether a composite
-            signature can be offered as an approved service is not answered in the published
-            guidance; ask the lab.
+            section on composite or hybrid signatures. It does name one hybrid key-establishment
+            scheme that uses ML-KEM (IG D.S, &ldquo;Hybrid scheme that uses an approved
+            ML-KEM&rdquo;); a hybrid module (IG 1.B) is a different thing, about how a module is
+            built, not about combining algorithms. What the IG does say applies to each algorithm on
+            its own: a module that implements ML-DSA signing or verification needs the self-tests of
+            IG 10.3.A. Whether a composite signature can be offered as an approved service is not
+            answered in the published guidance; ask the lab.
           </p>
         </div>
       </section>

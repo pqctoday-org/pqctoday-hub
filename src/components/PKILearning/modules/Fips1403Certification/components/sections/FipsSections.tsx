@@ -1551,8 +1551,8 @@ export const FipsLandscape = () => (
   <Body>
     <p>
       Four questions, kept apart: what applies today, what is validated today, what is only in
-      process or in transition, and what is still a draft. Everything here is <AsOf /> — re-check
-      before you quote it.
+      process or in transition, and what is still a draft. Everything here is <AsOf />, except the
+      certificate count, which is read from the site’s own CMVP data — re-check before you quote it.
     </p>
 
     <SubHeading>1 · Applicable today</SubHeading>

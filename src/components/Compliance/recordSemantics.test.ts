@@ -202,6 +202,28 @@ describe('schemeCertificateId', () => {
     ).toBe('EUCC-3089-2026-002')
   })
 
+  it('reads the EUCC number a Common Criteria Portal listing ends its product name with', () => {
+    const slug = 'cc-st33ktpm2xspi-st33ktpm2x-tpm-firmware-9-528-eucc-3090-2026-64-6c2e08dd'
+    const portal = (productName: string) =>
+      schemeCertificateId(rec({ type: 'Common Criteria', id: slug, productName }))
+    expect(portal('ST33KTPM2XSPI & ST33KTPM2X,TPM FIRMWARE 9.528 (EUCC-3090-2026-64)')).toBe(
+      'EUCC-3090-2026-64'
+    )
+    // A stray space after the bracket, and the ANSSI-issued form, are read as written.
+    expect(portal('S3D384C/S3D352C_20260630 ( EUCC-3090-2026-80)')).toBe('EUCC-3090-2026-80')
+    expect(portal('ST54J / ST54K (A07) (EUCC-ANSSI-2025-03-01)')).toBe('EUCC-ANSSI-2025-03-01')
+  })
+
+  it('shows no number for a Portal listing whose bracketed text is not an EUCC number', () => {
+    const slug = 'cc-secure-module-1-0-3881cf5c'
+    const portal = (productName: string) =>
+      schemeCertificateId(rec({ type: 'Common Criteria', id: slug, productName }))
+    expect(portal('Secure Module 1.0 (B04)')).toBeNull()
+    expect(portal('Secure Module 1.0')).toBeNull()
+    // The number must be the trailing bracket, not one mentioned earlier in the name.
+    expect(portal('Replaces (EUCC-3090-2026-64) Secure Module 1.0')).toBeNull()
+  })
+
   it('shows no number for an EUCC record that carries none, rather than its generated id', () => {
     expect(
       schemeCertificateId(rec({ type: 'EUCC', id: 'enisa-eucc-3089-2026-000002-i-00' }))

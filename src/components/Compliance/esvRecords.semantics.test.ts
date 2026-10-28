@@ -92,7 +92,15 @@ describe('ESV record type', () => {
 
 describe('the Entropy (ESV) tab', () => {
   it('is the last tab, and desktop and phone read the same list', () => {
-    expect(RECORD_TYPE_TABS.map((t) => t.id)).toEqual(['all', 'fips', 'acvp', 'cc', 'cspn', 'esv'])
+    expect(RECORD_TYPE_TABS.map((t) => t.id)).toEqual([
+      'all',
+      'fips',
+      'acvp',
+      'cc',
+      'eucc',
+      'cspn',
+      'esv',
+    ])
     expect(RECORD_TYPE_TABS.at(-1)).toEqual({ id: 'esv', label: 'Entropy (ESV)' })
   })
 
@@ -101,7 +109,9 @@ describe('the Entropy (ESV) tab', () => {
     expect(matchesCertType(fips, 'esv')).toBe(false)
     expect(matchesCertType(esv, 'ESV')).toBe(true)
     expect(matchesCertType(esv, 'all')).toBe(true)
-    for (const tab of ['fips', 'acvp', 'cc', 'cspn']) expect(matchesCertType(esv, tab)).toBe(false)
+    for (const tab of ['fips', 'acvp', 'cc', 'eucc', 'cspn']) {
+      expect(matchesCertType(esv, tab)).toBe(false)
+    }
   })
 
   it('ignores the PQC and Migrate-category facets, which would silently empty it', () => {

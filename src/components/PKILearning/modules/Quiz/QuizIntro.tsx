@@ -184,7 +184,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={handleQuickPick} className="gap-1.5">
               <Zap size={14} />
-              Quick Pick (5 min)
+              Short run (5 min)
             </Button>
             <div className="flex-grow" />
             <Button
