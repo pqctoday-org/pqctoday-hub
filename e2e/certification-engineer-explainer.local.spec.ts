@@ -215,10 +215,14 @@ test('critical certification screens expose accessible structure and official so
   }
 
   await page.goto('/compliance?tab=cswp39')
+  await page.waitForSelector('main', { timeout: 20_000 })
+  // The CSWP 39 explorer renders only once the compliance data has loaded,
+  // which can take longer than the default expect timeout under gate load.
   const officialPdf = page.getByRole('link', { name: 'Official PDF' })
   await expect(officialPdf).toHaveAttribute(
     'href',
-    'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf'
+    'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39-upd1.pdf',
+    { timeout: 30_000 }
   )
   await officialPdf.focus()
   await page.keyboard.press('Shift+Tab')

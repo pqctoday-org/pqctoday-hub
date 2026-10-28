@@ -57,6 +57,7 @@ import {
 import { TourCaption } from './TourCaption'
 import { Button } from '@/components/ui/button'
 import { NavigateGuide } from './NavigateGuide'
+import { isGuideVisible, REOPEN_GUIDE } from './guideState'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 function resolveGraphColor(varName: string, fallback: string): THREE.Color {
@@ -913,8 +914,11 @@ export function ForceClusterView() {
     saveGuideDismissed()
   }
   const reopenGuide = () => {
-    setSelectedNodeId(null) // the guide only shows with no record selected
-    setGuideDismissed(false)
+    // The guide only shows with no record selected and the Filters panel closed,
+    // so "About this graph" inside the panel closes the panel too.
+    setSelectedNodeId(REOPEN_GUIDE.selectedNodeId)
+    setGuideDismissed(REOPEN_GUIDE.guideDismissed)
+    setPanelOpen(REOPEN_GUIDE.panelOpen)
   }
   // Starts collapsed to a small pill so the graph gets the full screen by
   // default; expanding is a deliberate click, and PANEL_IDLE_COLLAPSE_MS
@@ -1135,8 +1139,14 @@ export function ForceClusterView() {
 
   // Hidden while the filter panel is open: both sit in the left margin, and the guide
   // (about 400 px tall) would cover the top of a tall panel. It returns when the panel closes.
-  const guideVisible =
-    !loading && !error && !selectedNode && !guideDismissed && motionMode !== 'tour' && !panelOpen
+  const guideVisible = isGuideVisible({
+    loading,
+    error: Boolean(error),
+    hasSelectedNode: Boolean(selectedNode),
+    guideDismissed,
+    touring: motionMode === 'tour',
+    panelOpen,
+  })
 
   // Picking a record means the reader has found their way around — the guide
   // should not come back when its drawer closes.
