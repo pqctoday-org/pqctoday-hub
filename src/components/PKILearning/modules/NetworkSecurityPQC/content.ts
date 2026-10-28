@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'network-security-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-28',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (deprecation-timeline claim). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -76,7 +76,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'NGFW Cipher Analyzer — cipher policy comparison (classical/hybrid/pure PQC), hardware tier impact, cert size and latency metrics. TLS Inspection Lab — pass-through vs full inspection simulation, PQC cert chain sizes, inspection feasibility matrix. IDS Signature Updater — PQC-aware rule categories, false positive rate analysis, detection coverage balancing. Vendor Migration Matrix — interactive filtering by ML-KEM/ML-DSA support, TLS inspection, hardware offload, readiness status.',
     relatedStandards:
-      'NIST SP 800-227: Recommendations for Key-Encapsulation Mechanisms (KEMs generally, not TLS-specific). NIST SP 800-207A: access-control model for cloud-native/multi-cloud zero trust (no PQC content). RFC 9370: Multiple Key Exchanges in IKEv2. CNSA 2.0 FAQ version 2.2: compliant new NSS acquisitions from 2027, unsupported equipment and services phased out by 2030, and CNSA 2.0 algorithms mandated by 2031 unless otherwise noted; CNSA 2.0 does not generally require hybrid constructions. NSM-10 separately targets broader quantum-risk reduction by 2035. NIST IR 8547 (initial public draft): proposed classical-crypto transition timeline (2030/2035).',
+      'NIST SP 800-227: Recommendations for Key-Encapsulation Mechanisms (KEMs generally, not TLS-specific). NIST SP 800-207A: access-control model for cloud-native/multi-cloud zero trust (no PQC content). RFC 9370: Multiple Key Exchanges in IKEv2. CNSA 2.0 FAQ version 2.2: compliant new NSS acquisitions from 2027, unsupported equipment and services phased out by 2030, and CNSA 2.0 algorithms mandated by 2031 unless otherwise noted; CNSA 2.0 does not generally require hybrid constructions. NSM-10 separately targets broader quantum-risk reduction by 2035. NIST IR 8547 (final, October 2026): quantum-vulnerable public-key algorithms deprecated after 2030 and disallowed after 2035.',
   },
 }
 

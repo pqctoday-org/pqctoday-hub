@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'data-asset-sensitivity',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-28',
 
   standards: [
     getStandard('FIPS 199'),
@@ -92,7 +92,7 @@ export const content: ModuleContent = {
     },
     { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
     {
-      label: 'NIST: deprecate RSA-2048 and 112-bit ECC',
+      label: 'NIST: deprecate RSA, ECC and DH (all key sizes, 112-bit security and up)',
       year: NIST_DEPRECATION.deprecateClassical,
       source: 'NIST IR 8547',
     },

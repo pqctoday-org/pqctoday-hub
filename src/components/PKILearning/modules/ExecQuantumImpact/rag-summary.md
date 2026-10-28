@@ -29,7 +29,7 @@ The workshop has 4 interactive steps:
 ## Related Standards
 
 - NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0 — 2022 advisory)
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards — initial public draft, November 2024)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards — final, October 2026)
 - NSM-10 (National Security Memorandum on Promoting U.S. Leadership in Quantum Computing, May 2022)
 - EO 14306 (Presidential order sustaining PQC migration, June 2025)
 - EO 14412 (Securing the Nation Against Advanced Cryptographic Attacks, signed 22 June 2026) — federal civilian PQC mandate: key establishment 2030, digital signatures 2031

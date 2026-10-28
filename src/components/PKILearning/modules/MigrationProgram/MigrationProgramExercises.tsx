@@ -11,9 +11,9 @@ const EXERCISES = [
     id: 'ex-1',
     title: 'Scenario: Financial Institution Migration',
     prompt:
-      'Your bank has 500+ applications using RSA-2048 and must plan for the 2030 deprecation of RSA/ECC proposed in NIST IR 8547 initial public draft (Nov 2024), alongside PQC expectations from its financial regulators. The CISO wants a 3-year migration roadmap. Build a phased roadmap with milestones, identify the top 5 stakeholders and their concerns, and define 4 KPIs to track progress. Consider regulatory drivers from NIST and your primary financial regulator (CNSA 2.0 applies to national security systems, not commercial banks).',
+      'Your bank has 500+ applications using RSA-2048 and must plan for the 2030 deprecation of RSA/ECC set by NIST IR 8547 (final, October 2026), alongside PQC expectations from its financial regulators. The CISO wants a 3-year migration roadmap. Build a phased roadmap with milestones, identify the top 5 stakeholders and their concerns, and define 4 KPIs to track progress. Consider regulatory drivers from NIST and your primary financial regulator (CNSA 2.0 applies to national security systems, not commercial banks).',
     workshopHint:
-      'Use the Roadmap Builder (Step 1) to lay out phases against the 2030 deprecation date in NIST IR 8547 initial public draft (Nov 2024). Map stakeholders in the Stakeholder Comms Planner (Step 2). Define weighted KPIs in the KPI Tracker (Step 3). Review the Deployment Playbook (Step 4) for execution checklists.',
+      'Use the Roadmap Builder (Step 1) to lay out phases against the 2030 deprecation date in NIST IR 8547 (final, October 2026). Map stakeholders in the Stakeholder Comms Planner (Step 2). Define weighted KPIs in the KPI Tracker (Step 3). Review the Deployment Playbook (Step 4) for execution checklists.',
   },
   {
     id: 'ex-2',

@@ -78,7 +78,7 @@ const MILESTONES = [
     label: 'NIST Deprecation',
     year: NIST_DEPRECATION.deprecateClassical,
     source: 'NIST IR 8547',
-    description: 'Target: deprecate RSA-2048 and 112-bit ECC',
+    description: 'Deprecate RSA, ECC and DH at every key size of 112-bit security and up',
     scope: 'Federal / Industry',
   },
   {
@@ -94,7 +94,7 @@ const MILESTONES = [
     label: 'NIST Disallowance',
     year: NIST_DEPRECATION.disallowClassical,
     source: 'NIST IR 8547',
-    description: 'Target: disallow all classical public-key cryptography',
+    description: 'Disallow quantum-vulnerable public-key cryptography under NIST standards',
     scope: 'Federal / Industry',
   },
 ]

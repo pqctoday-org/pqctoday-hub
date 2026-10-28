@@ -8,7 +8,7 @@ The risk starts before that machine exists because of "Harvest Now, Decrypt Late
 
 ### The Key Takeaway
 
-The algorithms are ready. In August 2024, NIST published the first three Post-Quantum Cryptography (PQC) standards (FIPS 203, 204, 205). Protocols, products and certifications are still catching up, so organizations should begin the transition with a cryptographic inventory and a risk assessment. NIST's draft transition plan (IR 8547, initial public draft) proposes deprecating 112-bit classical public-key algorithms after 2030 and disallowing them after 2035.
+The algorithms are ready. In August 2024, NIST published the first three Post-Quantum Cryptography (PQC) standards (FIPS 203, 204, 205). Protocols, products and certifications are still catching up, so organizations should begin the transition with a cryptographic inventory and a risk assessment. NIST's transition plan (IR 8547, final since October 2026) deprecates quantum-vulnerable public-key algorithms such as RSA and elliptic-curve cryptography after 2030 and disallows them after 2035.
 
 ### What's Happening
 
