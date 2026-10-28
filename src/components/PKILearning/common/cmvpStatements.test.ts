@@ -141,3 +141,20 @@ describe('CSWP 37B and the hybrid TLS citation', () => {
     expect(text).not.toContain('key exchange (RFC 10024) may meet Scenario 2')
   })
 })
+
+describe('a certificate moves to Historical at its sunset date, not after an IG update', () => {
+  it('the Crypto Management Modernization exercise and risk engine give the sunset reason', () => {
+    for (const file of [
+      `${MODULES}/CryptoMgmtModernization/CryptoMgmtModernizationExercises.tsx`,
+      `${MODULES}/CryptoMgmtModernization/workshop/RiskAnalysisEngine.tsx`,
+    ]) {
+      const text = read(file).replace(/\s+/g, ' ')
+      expect(text, file).toMatch(/sunset date/)
+      expect(text, file).not.toMatch(/historical after (the )?Sep(tember)? 2025 IG update/i)
+    }
+    // #4943 (BC-FJA) is an Active certificate; it is never presented as Historical.
+    expect(read(`${MODULES}/CryptoMgmtModernization/workshop/RiskAnalysisEngine.tsx`)).toContain(
+      'The current BC-FJA certificate, #4943, is Active.'
+    )
+  })
+})

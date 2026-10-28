@@ -29,11 +29,11 @@ const EXERCISES = [
   },
   {
     id: 'fips-revoke-response',
-    title: 'A FIPS 140-3 cert goes historical overnight',
+    title: 'A FIPS 140-3 cert goes historical',
     badge: 'FIPS Assurance',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     scenario:
-      'CMVP moves the cert covering your production Bouncy Castle FIPS module to historical after the September 2025 IG update. Your regulated workloads are required by policy to run inside a FIPS 140-3 validated boundary.',
+      'The certificate covering your production Bouncy Castle FIPS module reaches its sunset date, and CMVP moves it to the Historical list. Your regulated workloads are required by policy to run inside a FIPS 140-3 validated boundary.',
     hint: "Use the Library & Hardware CBOM Builder to inventory affected deployments, then map remediation paths. The Assurance pillar's monthly FIPS monitor should have flagged this a day after CMVP posted the notice.",
     step: 2,
   },
