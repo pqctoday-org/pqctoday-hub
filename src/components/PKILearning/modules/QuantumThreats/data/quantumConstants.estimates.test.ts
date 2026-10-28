@@ -41,7 +41,7 @@ describe('CRQC_ESTIMATES (the Threats sources list)', () => {
 
   it('NSA identifies the current FAQ and keeps its 2030–2031 mandate range', () => {
     const nsa = CRQC_ESTIMATES.find((e) => e.source.startsWith('NSA CNSA 2.0'))!
-    expect(nsa.source).toMatch(/FAQ version 2\.2 \(August 2026\)/)
+    expect(nsa.source).toMatch(/FAQ version 2\.2 \(October 2026\)/)
     expect(nsa.notes).toMatch(/1 January 2027/)
     expect(nsa.notes).toMatch(/31 December 2030/)
     expect(nsa.notes).toMatch(/31 December 2031/)

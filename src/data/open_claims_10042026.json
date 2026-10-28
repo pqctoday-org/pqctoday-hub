@@ -324,14 +324,14 @@
     },
     {
       "id": "crqc-nsa-cnsa2-faq-v22-dates",
-      "claim": "NSA's August 2026 CNSA 2.0 FAQ (version 2.2) says that CNSA 2.0 is required for new National Security System acquisitions from 1 January 2027, unsupported equipment and services must be phased out by 31 December 2030 unless excepted, and CNSA 2.0 algorithms are mandated for use by 31 December 2031 unless otherwise noted.",
-      "madeBy": "NSA, \"The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ\", version 2.2, August 2026",
+      "claim": "NSA's October 2026 CNSA 2.0 FAQ (version 2.2) says that CNSA 2.0 is required for new National Security System acquisitions from 1 January 2027, unsupported equipment and services must be phased out by 31 December 2030 unless excepted, and CNSA 2.0 algorithms are mandated for use by 31 December 2031 unless otherwise noted.",
+      "madeBy": "NSA, \"The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ\", version 2.2, October 2026",
       "state": "Settled",
       "reason": "The milestones were checked against FAQ version 2.2. They govern National Security Systems and are migration requirements, not a forecast of CRQC arrival. The separate 2035 goal belongs to NSM-10 and must not be presented as the current CNSA 2.0 product deadline.",
       "lastChecked": "2026-10-17",
       "sources": [
         {
-          "name": "NSA CNSA 2.0 and Quantum Computing FAQ, version 2.2 (August 2026)",
+          "name": "NSA CNSA 2.0 and Quantum Computing FAQ, version 2.2 (October 2026)",
           "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
           "states": "The 2027 acquisition, 2030 phase-out and 2031 mandate milestones.",
           "quote": "By December 31, 2031, CNSA 2.0 algorithms are mandated for use, unless otherwise noted, to achieve full QR for NSS."

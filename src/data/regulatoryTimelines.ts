@@ -15,7 +15,7 @@
  * regulatoryConstantProvenance.test.ts against the reviewed timeline CSV.
  *
  * Sources:
- *   - CNSA 2.0: NSA FAQ version 2.2 (August 2026), which supersedes the
+ *   - CNSA 2.0: NSA FAQ version 2.2 (October 2026), which supersedes the
  *     earlier category dates for current planning
  *   - NIST IR 8547: Transition to Post-Quantum Cryptography Standards (final, October 2026)
  *   - ANSSI: Avis relatif à la migration vers la cryptographie post-quantique (2024)

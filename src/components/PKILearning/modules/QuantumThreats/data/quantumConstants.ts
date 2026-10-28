@@ -412,7 +412,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     lastReviewed: '2026-10-27',
   },
   {
-    source: 'NSA CNSA 2.0 FAQ version 2.2 (August 2026)',
+    source: 'NSA CNSA 2.0 FAQ version 2.2 (October 2026)',
     claimId: 'crqc-nsa-cnsa2-faq-v22-dates',
     kind: 'migration-deadline',
     yearLow: 2030,

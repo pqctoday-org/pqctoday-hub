@@ -27,7 +27,7 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
     referenceId: 'NIST IR 8547',
     label: 'NIST IR 8547 — PQC Transition Timeline',
     blurb:
-      "NIST's Initial Public Draft transition plan. It proposes deprecating 112-bit classical asymmetric cryptography after 2030 and disallowing it after 2035; it is influential guidance, not a final regulation.",
+      "NIST's final transition plan (October 2026). It deprecates quantum-vulnerable public-key cryptography, at 112-bit security and up, after 2030 and disallows it under NIST standards after 2035; it is NIST guidance, not a regulation.",
   },
   {
     referenceId: 'NSA CNSA 2.0',
