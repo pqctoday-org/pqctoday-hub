@@ -33,6 +33,7 @@ import fixtureProvenance from './__fixtures__/nist-acvp-server/PROVENANCE.json'
 // because tsx erases them; see `src/services/acvp-xplat/compare.ts` for the
 // same relative convention on this same CLI-reachable path.)
 import { VALIDATION_DISCLAIMER } from '../../data/validationDisclaimer'
+import { DISCLAIMER_IMPORT, DISCLAIMER_TEST_INPUT } from './disclaimers'
 
 export const EVIDENCE_VERSION = 'pqctoday.acvp-evidence/2'
 
@@ -47,16 +48,7 @@ export const EVIDENCE_VERSION = 'pqctoday.acvp-evidence/2'
  */
 export const DISCLAIMER_GENERAL = VALIDATION_DISCLAIMER
 
-/** Plan §2.2, second required disclaimer (prompt import) — verbatim. */
-export const DISCLAIMER_IMPORT =
-  'Import and response generation do not submit results to NIST and do not establish validation. The laboratory or authorized submitter remains responsible for the ACVTS session and submission.'
-
-/**
- * Third disclaimer of an evidence v3 document (extended plan profile only).
- * Wording approved by the owner on 24 October 2026.
- */
-export const DISCLAIMER_TEST_INPUT =
-  'Some answers in this run were produced with a test-only input (the random value m of ML-KEM encapsulation, which outside testing FIPS 203 has the module sample itself), with a value computed outside the engine, or from what the engine does when a key is imported. They are teaching evidence that the engine reproduces NIST\u2019s published values; they are not a validation and not an ACVTS response.'
+export { DISCLAIMER_IMPORT, DISCLAIMER_TEST_INPUT } from './disclaimers'
 
 export const PROTOTYPE_LABEL = 'ACVP-format compatible prototype'
 
