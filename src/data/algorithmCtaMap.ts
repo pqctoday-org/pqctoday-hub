@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { algorithmLaunchHref } from './algorithmLaunch'
+import { algorithmLaunchHref, canonicalAlgorithmName } from './algorithmLaunch'
 import { algorithmCatalogue } from './algorithmCatalogue'
 
 export interface AlgoCtas {
@@ -151,10 +151,39 @@ const FALLBACK_WHY = '/learn/pqc-101'
 // Prefixes supply educational context only; executable selection is exact.
 const specificationUrls = new Map(algorithmCatalogue.map((row) => [row.algorithm, row.status_url]))
 
-export function getAlgoCtas(algoName: string): AlgoCtas | null {
+export function getAlgoCtas(requestedName: string): AlgoCtas | null {
+  const algoName = canonicalAlgorithmName(requestedName)
   const context = PREFIX_CTA_MAP.find(([prefix]) => algoName.startsWith(prefix))?.[1]
   const tryHref = algorithmLaunchHref(algoName)
-  const url = specificationUrls.get(algoName)
+  // Transition rows also name families/choices. They may link to background
+  // sources but must never silently choose a parameter set for execution.
+  const familyNames = new Set([
+    'ML-KEM',
+    'ML-DSA',
+    'SLH-DSA',
+    'FN-DSA',
+    'FrodoKEM',
+    'MAYO',
+    'HAWK',
+    'Classic-McEliece',
+    'AIMer',
+    'Aigis-enc',
+    'Aigis-sig',
+    'HAETAE',
+    'SMAUG-T',
+    'NTRU+',
+    'LMS-SHA256',
+  ])
+  const familySource = familyNames.has(algoName)
+    ? algorithmCatalogue.find(
+        (row) =>
+          row.algorithm.startsWith(`${algoName}-`) || row.algorithm.startsWith(`${algoName} `)
+      )?.status_url
+    : undefined
+  const choiceSource = algoName.includes('/')
+    ? 'https://csrc.nist.gov/projects/post-quantum-cryptography'
+    : undefined
+  const url = specificationUrls.get(algoName) ?? familySource ?? choiceSource
   if (!context && !tryHref && !url) return null
   const standardSlh = /^SLH-DSA-(SHA2|SHAKE)-(128|192|256)[sf]$/.test(algoName)
   const component = algoName.startsWith('ML-KEM-') && !/^ML-KEM-(512|768|1024)$/.test(algoName)

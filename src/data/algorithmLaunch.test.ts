@@ -100,3 +100,27 @@ describe('independent status assertions', () => {
     expect(getAlgorithmStatusAssertions('Aigis-enc-L1')[0].evidenceState).toBe('needs-review')
   })
 })
+
+it('resolves exact legacy Transition labels without choosing for family/choice rows', () => {
+  for (const [legacy, canonical] of [
+    ['Classic McEliece 460896', 'Classic-McEliece-460896'],
+    ['Classic McEliece 6688128', 'Classic-McEliece-6688128'],
+  ]) {
+    const href = getAlgoCtasWithFallback(legacy).try!
+    expect(new URL(href, 'https://example.org').searchParams.get('launchAlgo')).toBe(canonical)
+  }
+  for (const family of [
+    'Classic McEliece',
+    'FrodoKEM',
+    'FrodoKEM-976/1344',
+    'ML-KEM',
+    'ML-KEM-768/1024',
+    'ML-DSA / SLH-DSA',
+    'LMS-SHA256',
+  ]) {
+    const cta = getAlgoCtasWithFallback(family)
+    expect(cta.try, family).toBeUndefined()
+    expect(cta.unavailableReason, family).toBeTruthy()
+    expect(cta.specRef || cta.specUrl, family).toBeTruthy()
+  }
+})

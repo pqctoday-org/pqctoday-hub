@@ -12,6 +12,15 @@ export interface AlgorithmLaunch {
   tab?: 'keystore' | 'sign_verify'
 }
 
+const ALGORITHM_ALIASES = new Map([
+  ['Classic McEliece 460896', 'Classic-McEliece-460896'],
+  ['Classic McEliece 6688128', 'Classic-McEliece-6688128'],
+  ['Classic McEliece', 'Classic-McEliece'],
+])
+export function canonicalAlgorithmName(name: string): string {
+  return ALGORITHM_ALIASES.get(name) ?? name
+}
+
 const launches = new Map<string, AlgorithmLaunch>()
 function add(name: string, toolId: string, config: Partial<AlgorithmLaunch> = {}) {
   launches.set(name, { toolId, algorithm: name, ...config })
@@ -77,12 +86,12 @@ add('mlkem768x25519-sha256', 'pqc-ssh-sim', { parameter: 'mlkem768-curve25519-sh
 add('mlkem768nistp256-sha256', 'pqc-ssh-sim', { parameter: 'mlkem768-nistp256-sha256' })
 
 export function getAlgorithmLaunch(name: string): AlgorithmLaunch | undefined {
-  return launches.get(name)
+  return launches.get(canonicalAlgorithmName(name))
 }
 export function algorithmLaunchHref(name: string): string | undefined {
   const launch = getAlgorithmLaunch(name)
   if (!launch) return undefined
-  const params = new URLSearchParams({ launchAlgo: name })
+  const params = new URLSearchParams({ launchAlgo: launch.algorithm })
   if (launch.toolId === 'interactive') {
     if (!launch.classical) params.set('algo', launch.parameter ?? launch.algorithm)
     params.set('tab', launch.tab ?? 'keystore')

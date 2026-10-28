@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { canonicalAlgorithmName } from './algorithmLaunch'
 import { algorithmCatalogue } from './algorithmCatalogue'
 import { getAlgorithmAdvisory } from './algorithmAdvisories'
 
@@ -21,7 +22,8 @@ export interface AlgorithmStatusAssertion {
   evidenceState: 'source-linked' | 'verified-source' | 'needs-review'
 }
 
-export function getAlgorithmStatusAssertions(name: string): AlgorithmStatusAssertion[] {
+export function getAlgorithmStatusAssertions(requestedName: string): AlgorithmStatusAssertion[] {
+  const name = canonicalAlgorithmName(requestedName)
   const row = algorithmCatalogue.find((r) => r.algorithm === name)
   if (!row) return []
   const assertions: AlgorithmStatusAssertion[] = [
