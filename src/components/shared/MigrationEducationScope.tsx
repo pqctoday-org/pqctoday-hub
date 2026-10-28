@@ -17,7 +17,7 @@ export function MigrationEducationScope({ compact = false }: { compact?: boolean
           >
             NIST IR 8547
           </a>{' '}
-          is still an Initial Public Draft.{' '}
+          is NIST&apos;s final transition guidance (October 2026).{' '}
           <a
             className="text-primary underline underline-offset-2"
             href={MIGRATION_EDUCATION.cnsaUrl}
