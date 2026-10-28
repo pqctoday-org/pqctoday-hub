@@ -32,9 +32,14 @@ export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-07'
  * Every figure below plus the citation string in derivedFinancialDocs must
  * move together. Deliberately NOT half-updated: a 2026 global average sitting
  * on top of 2025 sector figures would be worse than a consistent 2025 table.
+ *
+ * RE-CHECKED 2026-10-27: https://www.ibm.com/reports/data-breach still shows
+ * only the 2026 global figure (USD 4.99M, "a 12% increase over last year") and
+ * a "Download report" form; no per-sector table without registration. The
+ * table stays on 2025 with IBM_BASELINE_UNVERIFIED_NOTE.
  */
 export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
-  asOf: '2026-07-29',
+  asOf: '2026-10-27',
   recheck: 'https://www.ibm.com/reports/data-breach',
 }
 
