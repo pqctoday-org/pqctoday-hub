@@ -142,6 +142,8 @@ describe('QuizModule on a phone: the page names itself in every view', () => {
     renderQuiz('/learn/quiz')
     expect(screen.getByText('Nothing to quiz here yet')).toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    // The dashed box has the same 16 px side gutter, so it does not touch the screen edges.
+    expect(screen.getByText('Nothing to quiz here yet').parentElement).toHaveClass('mx-4')
   })
 })
 
@@ -179,6 +181,17 @@ describe('QuizModule on a phone: the final quiz offers a length choice (owner de
       if (!/pick|Full quiz/.test(button.textContent ?? '')) continue
       expect(button.textContent).toMatch(/\d+ questions, about \d+ min/)
     }
+  })
+
+  it('keeps the standard 16 px side gutter: the line and both buttons do not touch the screen edges', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderQuiz(finalQuizPath)
+    // The wrapper holds the line and both buttons, so its padding is their gutter.
+    const choice = screen.getByTestId('quiz-length-choice')
+    expect(choice).toHaveClass('px-4')
+    expect(choice).toContainElement(screen.getByRole('button', { name: quickName }))
+    expect(choice).toContainElement(screen.getByRole('button', { name: fullName }))
+    expect(choice).toContainElement(screen.getByText(/questions across \d+ topics\./))
   })
 
   it('Quick pick runs 20 questions', () => {

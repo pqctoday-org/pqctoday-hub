@@ -332,7 +332,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'firmware-signing',
     pt_id: 'PT-007',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Firmware Signing',
     // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
     // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
@@ -1191,7 +1191,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'openssl-studio',
     pt_id: 'PT-023',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'OpenSSL Studio',
     description:
       'Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',

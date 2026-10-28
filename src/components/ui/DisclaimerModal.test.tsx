@@ -76,27 +76,19 @@ describe('DisclaimerModal', () => {
     expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(true)
   })
 
-  it('inline placement (mobile first-run picker) renders in flow, not fixed over the page (UX-17)', () => {
-    render(
-      <BrowserRouter>
-        <DisclaimerModal placement="inline" />
-      </BrowserRouter>
-    )
-    const banner = screen.getByRole('alert')
-    expect(banner.className).not.toMatch(/\bfixed\b/)
-    expect(banner.className).not.toMatch(/\bz-disclaimer\b/)
-    expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
-  })
-  it('banner placement (desktop first-run picker) is one in-flow strip with the same text and button', async () => {
-    const user = userEvent.setup()
-    render(
-      <BrowserRouter>
-        <DisclaimerModal placement="banner" />
-      </BrowserRouter>
-    )
+  it('is one slim strip in flow: never fixed or layered over the page, and with no separate close button', () => {
+    renderBanner()
     const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
-    expect(banner.className).not.toMatch(/\bfixed\b/)
+    expect(banner.className).not.toMatch(/\b(fixed|absolute|sticky)\b/)
     expect(banner.className).not.toMatch(/\bz-disclaimer\b/)
+    // The one acknowledgement is "I Understand"; the old card's extra close button is gone.
+    expect(screen.queryByRole('button', { name: 'Close disclaimer' })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('button')).toHaveLength(1)
+  })
+
+  it('has the same text, links and button on every page', async () => {
+    const user = userEvent.setup()
+    renderBanner()
     expect(screen.getByText(/not received endorsement/)).toBeInTheDocument()
     expect(screen.getByText(/may contain inaccuracies/)).toBeInTheDocument()
     expect(screen.getByText(/written consent/)).toBeInTheDocument()
@@ -104,5 +96,13 @@ describe('DisclaimerModal', () => {
     await user.click(screen.getByRole('button', { name: 'I Understand' }))
     expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(true)
     expect(screen.queryByText('Welcome to PQC Today')).not.toBeInTheDocument()
+  })
+
+  it('keeps the same stored acknowledgement as before', async () => {
+    const user = userEvent.setup()
+    renderBanner()
+    await user.click(screen.getByRole('button', { name: 'I Understand' }))
+    const stored = JSON.parse(localStorage.getItem('pqc-disclaimer-storage') ?? '{}')
+    expect(stored.state.acknowledgedMajorVersion).toEqual(expect.any(Number))
   })
 })

@@ -340,7 +340,8 @@ export const QuizModule: React.FC = () => {
       )
     } else if (view === 'intro' && offerLengthChoice && initialCategories) {
       body = (
-        <div className="flex flex-col gap-3" data-testid="quiz-length-choice">
+        // px-4 pb-4 pt-4: the same 16 px side gutter the quiz and its results screen use.
+        <div className="flex flex-col gap-3 px-4 pb-4 pt-4" data-testid="quiz-length-choice">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
             {mobilePoolSize} questions across {initialCategories.length}{' '}
             {initialCategories.length === 1 ? 'topic' : 'topics'}.
@@ -368,7 +369,7 @@ export const QuizModule: React.FC = () => {
       )
     } else {
       body = (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-4 py-6 text-center">
+        <div className="mx-4 mt-4 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-4 py-6 text-center">
           <p className="text-[12.5px] font-semibold text-foreground">Nothing to quiz here yet</p>
           <p className="text-[11.5px] leading-relaxed text-muted-foreground">
             Open a checkpoint from a phase in Learn to take its quiz.

@@ -10,6 +10,7 @@ import { PERSONAS } from '@/data/learningPersonas'
 import { PERSONA_IDS } from '@/data/personaIds'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
+import { LinkedText } from '@/components/ui/LinkedText'
 
 interface PersonaBlockProps {
   route: string
@@ -31,7 +32,8 @@ export function PersonaBlock({ route, className }: PersonaBlockProps) {
     return (
       <section aria-label="For your role" data-testid="persona-block" className={box}>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-foreground">For your role:</span> {text}
+          <span className="font-semibold text-foreground">For your role:</span>{' '}
+          <LinkedText>{text}</LinkedText>
         </p>
       </section>
     )
@@ -44,8 +46,10 @@ export function PersonaBlock({ route, className }: PersonaBlockProps) {
           <div key={id} className="contents">
             {/* eslint-disable-next-line security/detect-object-injection -- id from PERSONA_IDS */}
             <dt className="font-medium text-foreground">{PERSONAS[id].label}</dt>
-            {/* eslint-disable-next-line security/detect-object-injection -- id from PERSONA_IDS */}
-            <dd className="m-0">{blocks[id]}</dd>
+            <dd className="m-0">
+              {/* eslint-disable-next-line security/detect-object-injection -- id from PERSONA_IDS */}
+              <LinkedText>{blocks[id] ?? ''}</LinkedText>
+            </dd>
           </div>
         ))}
       </dl>

@@ -122,6 +122,10 @@ const CLASSICAL_PRIVKEY_BYTES: Record<ClassicalAlgo, number> = {
 // (`openssl pkey -pubout -outform DER`): RSA-2048 294 B, ML-DSA-65 1,974 B.
 const RSA2048_SPKI_BYTES = 294
 const MLDSA65_SPKI_BYTES = 1974
+// The key cards and the Migration Comparison table count raw key material, so their public-key ratio
+// differs from the certificate-form ratio in the db callout; this one sentence says why, beside it.
+const KEY_RATIO_NOTE =
+  'The raw public-key sizes above, and in the Migration Comparison table, give a different ratio because they count the raw key (RSA: the modulus only), while a certificate adds the SubjectPublicKeyInfo wrapper around each key.'
 // DER-encoded signature sizes: RSA sig = modulus size; ECDSA DER(r,s) adds up to 8 bytes overhead
 const CLASSICAL_SIG_BYTES: Record<ClassicalAlgo, number> = {
   'RSA-2048': 256,
@@ -1482,7 +1486,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               Each UEFI db entry stores an EFI_CERT_X509 containing the full public key.
               {pqcAlgo === 'SLH-DSA-SHA2-128S'
                 ? ` SLH-DSA-SHA2-128S has the smallest PQC public key (${SLHDSA_PUBKEY_BYTES} B) but the largest signature (${SLHDSA_SIG_BYTES.toLocaleString()} B).`
-                : ` As a certificate carries it (SubjectPublicKeyInfo), the ML-DSA-65 public key is ${(MLDSA65_SPKI_BYTES / RSA2048_SPKI_BYTES).toFixed(1)}× larger than RSA-2048 (${MLDSA65_SPKI_BYTES.toLocaleString()} B vs ${RSA2048_SPKI_BYTES} B).`}{' '}
+                : ` As a certificate carries it (SubjectPublicKeyInfo), the ML-DSA-65 public key is ${(MLDSA65_SPKI_BYTES / RSA2048_SPKI_BYTES).toFixed(1)}× larger than RSA-2048 (${MLDSA65_SPKI_BYTES.toLocaleString()} B vs ${RSA2048_SPKI_BYTES} B). ${KEY_RATIO_NOTE}`}{' '}
               Secure Boot variable storage is platform-specific; firmware reports it through
               QueryVariableInfo() (UEFI 2.11 section 8.2.4), so check your platform before planning.
             </p>

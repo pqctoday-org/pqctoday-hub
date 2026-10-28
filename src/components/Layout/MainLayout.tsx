@@ -483,15 +483,11 @@ export const MainLayout = () => {
   const isMobileFirstRun = hasNoRoleYet && !deepLinkBypass && isHomeRoute
   // Shown only where the page renders: the picker, which replaces the page, never shows with it.
   const showMobileRolePrompt = isMobileShell && hasNoRoleYet
-  // The desktop role picker (LandingView's first-run screen) shows the first-visit notice as a
-  // compact strip in flow above the role cards. The fixed bottom card covered the lower rows of
-  // cards, including the Certification & Validation Engineer card, until it was dismissed. Same
-  // reason as the phone's inline notice (UX-17); the reader still meets it before choosing anything.
-  const isDesktopRolePicker = !isMobileShell && hasNoRoleYet && isHomeRoute
-  // The home page keeps the notice in flow after a role is chosen as well: the fixed card floated
-  // over the lower half of the role board (phone) or its next-step cards (desktop) until dismissed.
-  // The phone's first-run picker and the curious-mobile takeover render it in their own branches.
-  const showHomeFlowDisclaimer = isHomeRoute && !isCuriousMobileTakeover && !isDesktopRolePicker
+  // The first-visit notice is one slim strip in flow on every page (DisclaimerModal). It used to be
+  // a fixed bottom card on every page but the home page, which covered the lower half of a phone
+  // screen, and the lower rows of the role cards on desktop, until it was dismissed. It now renders
+  // above the page content in the main area, above the content in the full-bleed branch, and below
+  // the role choices on the phone's first-run picker (UX-17); never over anything.
 
   // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {
@@ -1401,27 +1397,34 @@ export const MainLayout = () => {
                like ForceClusterView's canvas wrapper has nothing to inherit
                from and collapses to its content's natural height instead of
                filling the viewport (found via real browser verification,
-               2026-08-28). */
-            <div id="main-content" role="main" className="h-full">
-              <React.Suspense
-                fallback={
-                  <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                      {/* The spinner ring keeps `animate-spin` — purely decorative
+               2026-08-28). The first-visit strip sits above the content in
+               a column, and the content takes the rest (`min-h-0 flex-1`),
+               so the canvas never grows past the viewport and the strip
+               covers nothing; once it is acknowledged the content fills
+               the same height as before. */
+            <div id="main-content" role="main" className="flex h-full flex-col">
+              <DisclaimerModal />
+              <div className="min-h-0 flex-1">
+                <React.Suspense
+                  fallback={
+                    <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                        {/* The spinner ring keeps `animate-spin` — purely decorative
                           motion, doesn't affect legibility. "Loading..." lost its
                           `animate-pulse` (2026-08-02): pulsing a word's OPACITY
                           means it is, by construction, below full contrast for
                           part of every cycle — axe caught it on the CI runner at
                           ratios as low as 2.26:1, and a sighted low-vision reader
                           hits the identical dip in real use, not just in CI. */}
-                      <p className="text-muted-foreground">Loading...</p>
+                        <p className="text-muted-foreground">Loading...</p>
+                      </div>
                     </div>
-                  </div>
-                }
-              >
-                <Outlet />
-              </React.Suspense>
+                  }
+                >
+                  <Outlet />
+                </React.Suspense>
+              </div>
             </div>
           ) : isMobileShell && isMobileFirstRun ? (
             /* Mobile first run — the "Who's asking?" role picker renders as
@@ -1437,7 +1440,7 @@ export const MainLayout = () => {
               </React.Suspense>
               {/* The disclaimer sits BELOW the role choices here, in flow — the
                   fixed bottom banner covered them on a phone (UX-17). */}
-              <DisclaimerModal placement="inline" />
+              <DisclaimerModal />
             </div>
           ) : (
             <>
@@ -1464,9 +1467,8 @@ export const MainLayout = () => {
                   </React.Suspense>
                 )}
 
-                {(isDesktopRolePicker || (showHomeFlowDisclaimer && !isMobileShell)) && (
-                  <DisclaimerModal placement="banner" />
-                )}
+                {/* First-visit notice: the slim strip above the page, on every page. */}
+                <DisclaimerModal />
 
                 {/* Offline mode info banner */}
                 <AirplaneModeBanner />
@@ -1533,9 +1535,6 @@ export const MainLayout = () => {
                     </div>
                   </motion.div>
                 </React.Suspense>
-
-                {/* Phone home board after a role is chosen: the notice follows the board in flow. */}
-                {showHomeFlowDisclaimer && isMobileShell && <DisclaimerModal placement="inline" />}
               </main>
 
               {/* Footer */}
@@ -1596,14 +1595,6 @@ export const MainLayout = () => {
           <React.Suspense fallback={null}>
             <WhatsNewModal />
           </React.Suspense>
-
-          {/* First-visit disclaimer — must acknowledge before using the app.
-              On the phone's first-run role picker it renders inline instead
-              (above), below the role choices; on the desktop role picker it
-              renders as a compact strip above them. */}
-          {!(isMobileShell && isMobileFirstRun) &&
-            !isDesktopRolePicker &&
-            !showHomeFlowDisclaimer && <DisclaimerModal />}
 
           {/* Toast notifications — role="status" so screen readers announce them.
               A plain <div>'s implicit role is "generic", which prohibits aria-label

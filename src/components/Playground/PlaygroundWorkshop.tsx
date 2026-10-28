@@ -111,10 +111,13 @@ export function playgroundCountsLine(
   total: number,
   tagged: number,
   role: PersonaId,
-  toStart: number
+  toStart: number,
+  picksFeaturedAbove = false
 ): string {
+  // When the picks are already the featured cards above, they are not "to start" in a list below.
+  const picks = picksFeaturedAbove ? `${toStart} featured above` : `${toStart} to start`
   // eslint-disable-next-line security/detect-object-injection -- role is the typed PersonaId union
-  return `${total} tools · ${tagged} tagged for ${PERSONA_CHIP_LABEL[role]} · ${toStart} to start`
+  return `${total} tools · ${tagged} tagged for ${PERSONA_CHIP_LABEL[role]} · ${picks}`
 }
 
 const ALL_PLAYGROUND_ROUTES = Array.from(
@@ -1115,6 +1118,10 @@ export const PlaygroundWorkshop = () => {
     () => (role ? rolePicks.filter((t) => !marqueeRoutes.has(`/playground/${t.id}`)) : rolePicks),
     [role, rolePicks, marqueeRoutes]
   )
+  // Every pick is already a featured card above: nothing is left for the Recommended grid, so the
+  // heading and the count line must describe what follows instead (the other tagged tools, or
+  // nothing when the role has none).
+  const picksFeaturedAbove = role !== null && rolePicks.length > 0 && recommendedPool.length === 0
 
   // The role-tagged tools the picks above do not show, in the role journey's order. Respects the
   // difficulty and run filters, like the picks do.
@@ -1580,16 +1587,25 @@ export const PlaygroundWorkshop = () => {
         </div>
 
         <div className="mt-8 mb-3 flex items-end justify-between">
-          <p className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
-            {role ? `Recommended for ${roleLabel(role)}` : 'Good places to start'}
-          </p>
-          <p className="text-[11.5px] text-muted-foreground">
+          {/* No heading over an empty block: with the picks featured above and no other tagged
+              tools, nothing follows, so only the count line is left. */}
+          {!(picksFeaturedAbove && roleTaggedRest.length === 0) && (
+            <p className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
+              {role
+                ? picksFeaturedAbove
+                  ? `More tools tagged for ${roleLabel(role)}`
+                  : `Recommended for ${roleLabel(role)}`
+                : 'Good places to start'}
+            </p>
+          )}
+          <p className="ml-auto text-[11.5px] text-muted-foreground">
             {role
               ? playgroundCountsLine(
                   GRID_TOOL_COUNT,
                   playgroundToolsForRole(role).length,
                   role,
-                  rolePicks.length
+                  rolePicks.length,
+                  picksFeaturedAbove
                 )
               : 'Set your role for tailored picks'}
           </p>

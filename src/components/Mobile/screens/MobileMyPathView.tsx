@@ -179,7 +179,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                     type="button"
                     variant="ghost"
                     onClick={() => navigate(`/learn/${id}`)}
-                    className="h-11 w-full items-center justify-start gap-2.5 rounded-lg border border-border/60 px-2.5 text-left font-normal"
+                    className="h-auto min-h-11 w-full items-center justify-start gap-2.5 rounded-lg border border-border/60 px-2.5 py-2 text-left font-normal"
                   >
                     {done ? (
                       <CheckCircle2
@@ -197,7 +197,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                     <span className="w-4 shrink-0 text-[10.5px] tabular-nums text-muted-foreground">
                       {i + 1}
                     </span>
-                    <span className="min-w-0 flex-1 line-clamp-2 whitespace-normal text-left text-[12.5px] font-semibold text-foreground">
+                    <span className="min-w-0 flex-1 whitespace-normal break-words text-left text-[12.5px] font-semibold text-foreground">
                       {mod?.title ?? id}
                     </span>
                   </Button>
@@ -259,7 +259,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                           type="button"
                           variant="ghost"
                           onClick={() => navigate(`/learn/${id}`)}
-                          className="h-11 w-full items-center justify-start gap-2.5 rounded-lg border border-border/60 px-2.5 text-left font-normal"
+                          className="h-auto min-h-11 w-full items-center justify-start gap-2.5 rounded-lg border border-border/60 px-2.5 py-2 text-left font-normal"
                         >
                           {done ? (
                             <CheckCircle2
@@ -274,7 +274,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                               aria-hidden="true"
                             />
                           )}
-                          <span className="min-w-0 flex-1 line-clamp-2 whitespace-normal text-left text-[12.5px] font-semibold text-foreground">
+                          <span className="min-w-0 flex-1 whitespace-normal break-words text-left text-[12.5px] font-semibold text-foreground">
                             {mod?.title ?? id}
                           </span>
                           <span className="shrink-0 text-[10px] font-mono text-muted-foreground">

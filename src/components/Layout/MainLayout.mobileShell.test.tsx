@@ -87,7 +87,7 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
   })
 
-  it('flag on, role chosen, home page: the disclaimer follows the board in flow, not fixed over it', async () => {
+  it('flag on, role chosen, home page: the disclaimer is the same strip in flow above the board, not fixed over it', async () => {
     useDisclaimerStore.getState().resetForTesting()
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().setPersona('executive')
@@ -95,19 +95,22 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     const board = await screen.findByText('Home Page')
     const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
     expect(banner.className).not.toMatch(/\bfixed\b/)
-    expect(board.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(board.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
     expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
   })
 
-  it('flag on, role chosen, another page: the disclaimer is still the fixed card', async () => {
+  it('flag on, role chosen, another page: the disclaimer is the same strip in flow above the page, not a bottom sheet over it', async () => {
     useDisclaimerStore.getState().resetForTesting()
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().setPersona('executive')
     renderLayout('/timeline')
-    await screen.findByText('Timeline Page')
-    expect(screen.getByRole('alert', { name: 'Welcome to PQC Today' }).className).toMatch(
-      /\bfixed\b/
-    )
+    const page = await screen.findByText('Timeline Page')
+    const banner = screen.getByRole('alert', { name: 'Welcome to PQC Today' })
+    expect(banner.className).not.toMatch(/\b(fixed|absolute)\b/)
+    expect(page.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+    expect(screen.getAllByRole('alert', { name: 'Welcome to PQC Today' })).toHaveLength(1)
+    // Same acknowledgement as everywhere else.
+    expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
   })
 
   it('flag on, no persona chosen and not skipped: shows the first-run role picker WITH the header and bottom nav still visible', async () => {

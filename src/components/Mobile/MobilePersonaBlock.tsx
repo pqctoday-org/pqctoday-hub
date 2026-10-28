@@ -7,6 +7,7 @@
 import { personaBlocksFor } from '@/data/personaBlocks'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
+import { LinkedText } from '@/components/ui/LinkedText'
 
 export function MobilePersonaBlock({ route, className }: { route: string; className?: string }) {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
@@ -21,7 +22,9 @@ export function MobilePersonaBlock({ route, className }: { route: string; classN
       className={cn('rounded-xl border border-border bg-muted/30 p-3', className)}
     >
       <p className="text-[10.5px] font-bold uppercase tracking-wide text-primary">For your role</p>
-      <p className="mt-1 text-[12.5px] leading-[1.55] text-foreground/90">{text}</p>
+      <p className="mt-1 text-[12.5px] leading-[1.55] text-foreground/90">
+        <LinkedText>{text}</LinkedText>
+      </p>
     </section>
   )
 }
