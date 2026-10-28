@@ -112,6 +112,22 @@ export interface ComplianceRecord {
   packageInfo?: string // Full package/augmentation details
   /** EUCC: the certificate number the ENISA page shows (e.g. 'EUCC-3089-2026-002'); `id` is only a generated key. */
   euccCertificateId?: string
+  /**
+   * EUCC: ENISA's own sentence for a withdrawn certificate, verbatim (e.g. "This certificate was
+   * withdrawn following a successful re-assessment ..."). Present only when ENISA states one.
+   */
+  euccWithdrawalNote?: string
+  /** EUCC: the certificate number or link ENISA names as the replacement, when it states one. */
+  euccReplacedBy?: string
+  /**
+   * Common Criteria Portal listing: the EUCC certificate number the Portal's product name ends
+   * with, cleaned (e.g. 'EUCC-3090-2026-72'). Preferred over reading it from the product name.
+   */
+  euccCertificateNumber?: string
+  /** Common Criteria Portal listing: whether that EUCC number is on ENISA's certificate list (absent = not checked). */
+  euccOnEnisaList?: boolean
+  /** Common Criteria Portal listing: the ENISA certificate page, when the number is on the list. */
+  euccEnisaLink?: string
 
   // ── FIPS 140-3 (NIST CMVP certificate page) ──
   cmvpStandard?: string

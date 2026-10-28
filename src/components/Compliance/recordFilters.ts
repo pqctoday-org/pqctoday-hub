@@ -63,8 +63,10 @@ export function matchesRecordText(record: ComplianceRecord, text: string): boole
     record.source.toLowerCase().includes(s) ||
     recordTypeLabel(record.type).toLowerCase().includes(s) ||
     record.id.toLowerCase().includes(s) ||
-    // EUCC: the number the table shows, which is not part of the generated id.
-    (record.euccCertificateId ?? '').toLowerCase().includes(s)
+    // EUCC: the number the table shows, which is not part of the generated id. A Portal
+    // listing carries the same kind of number as `euccCertificateNumber`.
+    (record.euccCertificateId ?? '').toLowerCase().includes(s) ||
+    (record.euccCertificateNumber ?? '').toLowerCase().includes(s)
   )
 }
 

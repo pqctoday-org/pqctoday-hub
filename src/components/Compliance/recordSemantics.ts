@@ -139,7 +139,9 @@ export function matchesCertType(record: { type: string }, certType: string): boo
  * ANSSI, CSPN, CMVP and CAVP ids are the scheme's own numbers and are returned unchanged.
  *
  * Some Common Criteria Portal listings end the product name with the EUCC certificate number in
- * parentheses ('... (EUCC-3090-2026-67)'); that number, as written there, is the one shown.
+ * parentheses ('... (EUCC-3090-2026-67)'); that number, as written there, is the one shown. When the
+ * snapshot carries `euccCertificateNumber` (the same number, cleaned) it is preferred, which also
+ * covers names where the closing bracket is garbled ('... (EUCC-3090-2026-72à').
  */
 const GENERATED_CC_ID = /^cc-.+-[0-9a-f]{8}$/
 const TRAILING_EUCC_NUMBER = /\(\s*(EUCC(?:-[A-Za-z0-9]+){3,})\s*\)\s*$/
@@ -148,13 +150,63 @@ export function schemeCertificateId(record: {
   id: string
   type: string
   euccCertificateId?: string
+  euccCertificateNumber?: string
   productName?: string
 }): string | null {
   if (record.type === 'EUCC') return record.euccCertificateId?.trim() || null
   if (record.type === 'Common Criteria' && GENERATED_CC_ID.test(record.id)) {
-    return TRAILING_EUCC_NUMBER.exec(record.productName ?? '')?.[1] ?? null
+    return (
+      record.euccCertificateNumber?.trim() ||
+      TRAILING_EUCC_NUMBER.exec(record.productName ?? '')?.[1] ||
+      null
+    )
   }
   return record.id
+}
+
+/** Shown after the EUCC number of a Portal listing that ENISA's certificate list does not carry. */
+export const NOT_ON_ENISA_LIST_LABEL = "not on ENISA's certificate list"
+
+/** An http(s) URL as written, or null: a link in the data is never trusted to be safe to open. */
+export function safeHttpUrl(url: unknown): string | null {
+  if (typeof url !== 'string') return null
+  const trimmed = url.trim()
+  try {
+    const parsed = new URL(trimmed)
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:' ? trimmed : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * How a Common Criteria Portal listing's EUCC number relates to ENISA's certificate list.
+ * `listed`: the number is on the list and the snapshot has ENISA's page for it (link it).
+ * `not-listed`: ENISA's list was checked and does not carry the number (say so).
+ * null: nothing to add: not a Portal listing with an EUCC number, the list was not checked
+ * (field absent), or it is listed but the snapshot has no usable link. Such a row shows its
+ * number exactly as before.
+ */
+export type EnisaListing =
+  { state: 'listed'; number: string; url: string } | { state: 'not-listed'; number: string }
+
+export function euccEnisaListing(record: {
+  id: string
+  type: string
+  productName?: string
+  euccCertificateNumber?: string
+  euccOnEnisaList?: boolean
+  euccEnisaLink?: string
+}): EnisaListing | null {
+  if (record.type !== 'Common Criteria' || !GENERATED_CC_ID.test(record.id)) return null
+  const number = schemeCertificateId(record)
+  if (!number) return null
+  if (record.euccOnEnisaList === false) return { state: 'not-listed', number }
+  if (record.euccOnEnisaList === true) {
+    const url = safeHttpUrl(record.euccEnisaLink)
+    if (url) return { state: 'listed', number, url }
+  }
+  return null
 }
 
 /** What to show where a certificate number would be, when the listing has none. */

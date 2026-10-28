@@ -22,6 +22,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import clsx from 'clsx'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
+import { EnisaCertificateLink } from './EnisaCertificateLink'
 import { EsvCard, EsvTable, type EsvSortColumn } from './EsvRecords'
 import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
@@ -41,7 +42,9 @@ import {
   pqcNames,
   recordTypeDescription,
   buildEntropyIndex,
+  euccEnisaListing,
   NO_SCHEME_ID_LABEL,
+  NOT_ON_ENISA_LIST_LABEL,
   RECORD_TYPE_TABS,
   recordTypeLabel,
   retrievalSummary,
@@ -142,6 +145,8 @@ export const ComplianceRow = ({
   const pqcFromSt = isSecurityTargetType(record.type)
   // The number a reader can look up at the scheme; for EUCC the ENISA number, never the generated id.
   const certNumber = schemeCertificateId(record)
+  // A Common Criteria Portal listing's EUCC number, checked against ENISA's certificate list.
+  const enisaListing = euccEnisaListing(record)
 
   return (
     <tr
@@ -158,11 +163,24 @@ export const ComplianceRow = ({
       </td>
 
       {/* Certification # Column — with the record type and its verbatim status */}
-      <td className="px-4 py-3 text-xs w-32">
+      <td className="px-4 py-3 text-xs w-44">
         {certNumber ? (
-          <div className="font-mono truncate" title={certNumber}>
-            {certNumber.length > 20 ? certNumber.substring(0, 20) + '...' : certNumber}
-          </div>
+          <>
+            <div className="font-mono truncate" title={certNumber}>
+              {enisaListing?.state === 'listed' ? (
+                <EnisaCertificateLink url={enisaListing.url} number={certNumber} />
+              ) : certNumber.length > 20 ? (
+                certNumber.substring(0, 20) + '...'
+              ) : (
+                certNumber
+              )}
+            </div>
+            {enisaListing?.state === 'not-listed' && (
+              <div className="text-[10px] leading-tight text-muted-foreground">
+                {NOT_ON_ENISA_LIST_LABEL}
+              </div>
+            )}
+          </>
         ) : (
           <div className="truncate italic text-muted-foreground" title={NO_SCHEME_ID_LABEL}>
             {NO_SCHEME_ID_LABEL}
@@ -1263,7 +1281,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                   {/* Certification # Column */}
                   <th
                     scope="col"
-                    className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
+                    className="px-4 py-3 w-44 cursor-pointer hover:text-foreground"
                     onClick={() => handleSort('id')}
                   >
                     <div className="flex items-center gap-1">
@@ -1715,6 +1733,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             >
               {mobileVirtualRows.map((virtualRow) => {
                 const record = filteredAndSortedData[virtualRow.index]
+                const enisaListing = euccEnisaListing(record)
                 return (
                   <div
                     key={`${record.id}-${record.source}`}
@@ -1795,8 +1814,21 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               Cert ID
                             </span>
                             <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
-                              {schemeCertificateId(record) ?? NO_SCHEME_ID_LABEL}
+                              {enisaListing?.state === 'listed' ? (
+                                <EnisaCertificateLink
+                                  url={enisaListing.url}
+                                  number={enisaListing.number}
+                                  isolateEvents
+                                />
+                              ) : (
+                                (schemeCertificateId(record) ?? NO_SCHEME_ID_LABEL)
+                              )}
                             </span>
+                            {enisaListing?.state === 'not-listed' && (
+                              <span className="text-[10px] leading-tight text-muted-foreground">
+                                {NOT_ON_ENISA_LIST_LABEL}
+                              </span>
+                            )}
                           </div>
                           <div className="flex flex-col gap-0.5 items-end">
                             <span className="text-[10px] text-muted-foreground uppercase opacity-70">
