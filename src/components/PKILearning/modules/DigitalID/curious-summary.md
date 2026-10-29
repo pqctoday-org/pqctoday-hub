@@ -4,7 +4,7 @@ The eIDAS 2.0 regulation mandates that all 27 EU member states provide citizens 
 
 ### Why It Matters
 
-The OpenID4VP and OpenID4VCI specifications give classical ECDSA (P-256) signatures as their example for issuing attestations and binding identities to devices. If an attacker leverages a quantum computer to forge these signatures, they can create perfectly valid but counterfeit credentials, enabling total identity impersonation and fraud across the entire European Union.
+The OpenID4VP and OpenID4VCI specifications use classical ECDSA (P-256) signatures in most of their examples for issuing attestations and binding identities to devices. If an attacker leverages a quantum computer to forge these signatures, they can create perfectly valid but counterfeit credentials, enabling total identity impersonation and fraud across the entire European Union.
 
 ### The Key Takeaway
 

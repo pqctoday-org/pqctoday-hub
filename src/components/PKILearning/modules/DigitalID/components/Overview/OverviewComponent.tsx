@@ -224,12 +224,12 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <AlertTriangle size={20} /> Post-Quantum Readiness
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          The OpenID4VP and OpenID4VCI specifications give classical{' '}
+          The OpenID4VP and OpenID4VCI specifications use classical{' '}
           <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> (for example ECDSA with SHA-256 on a
-          P-256 key) as their example signature algorithm. The eIDAS 2.0 regulation text and the ARF
-          text we checked do not mention quantum computing. The SD-JWT standard (RFC 9901) leaves
-          the choice of signature algorithm to the application, including post-quantum algorithms
-          &ldquo;when they are ready&rdquo;. NIST has standardised{' '}
+          P-256 key) in most of their examples. The eIDAS 2.0 regulation text and the ARF text we
+          checked do not mention quantum computing. The SD-JWT standard (RFC 9901) leaves the choice
+          of signature algorithm to the application, including post-quantum algorithms &ldquo;when
+          they are ready&rdquo;. NIST has standardised{' '}
           <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> and{' '}
           <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> as post-quantum signatures.
         </p>
@@ -244,8 +244,8 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           </ul>
         </div>
         <p className="text-xs text-muted-foreground">
-          This simulation uses classical algorithms such as ECDSA, the example signature algorithm
-          in the OpenID4VP and OpenID4VCI specifications. The ARF text we checked does not mention
+          This simulation uses classical algorithms such as ECDSA, which most examples in the
+          OpenID4VP and OpenID4VCI specifications use. The ARF text we checked does not mention
           quantum computing, and ETSI says its cryptographic suites specification (TS 119 312
           V2.1.1) is incomplete for the EUDI Wallet, with an update in preparation.
         </p>

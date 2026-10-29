@@ -32,10 +32,10 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
       <div className="bg-primary/5 p-3 rounded-lg border border-primary/20 text-xs text-muted-foreground">
         <p className="font-medium text-foreground mb-1">PQC Readiness</p>
         <p>
-          The OpenID4VP and OpenID4VCI specifications give classical ECDSA (for example on a P-256
-          key) as their example signature algorithm. The eIDAS 2.0 regulation (Regulation (EU)
-          2024/1183) and ARF texts we checked do not mention quantum computing. NIST has
-          standardised ML-DSA and SLH-DSA as post-quantum signatures.
+          The OpenID4VP and OpenID4VCI specifications use classical ECDSA (for example on a P-256
+          key) in most of their examples. The eIDAS 2.0 regulation (Regulation (EU) 2024/1183) and
+          ARF texts we checked do not mention quantum computing. NIST has standardised ML-DSA and
+          SLH-DSA as post-quantum signatures.
           <span className="text-muted-foreground/80">
             {' '}
             Target: the NIS Cooperation Group Coordinated Implementation Roadmap (2025) asks for
