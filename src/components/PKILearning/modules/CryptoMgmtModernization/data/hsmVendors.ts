@@ -41,13 +41,13 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
     firmwareRev: '7.13.3',
     fipsLevel: 3,
     fipsStatus: 'active',
-    cmvpCertNumber: '#4962 (Luna G7)',
+    cmvpCertNumber: '#4684 (Luna K7 module; firmware 7.8.4 and 7.8.5 only)',
     esvStatus: 'active',
     platformBinding: 'Luna Network appliance; K7 crypto module',
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      "Thales's Luna T7 module (NIST CMVP Certificate #5450, 29 Jul 2026) does list ML-KEM and ML-DSA as approved; check which module certificate your appliance and firmware map to. Firmware-bound cert; upgrade requires re-validation path.",
+      'Certificate #4684 (Luna K7 module, FIPS 140-3 Level 3, Active) covers firmware 7.8.4 and 7.8.5 only and lists no PQC algorithm; this record’s firmware 7.13.3 is not named on it. ML-KEM and ML-DSA are available from firmware 7.9.0, which that certificate does not cover. The Luna T7 is a different module: its certificate #5450 (29 Jul 2026) does list ML-KEM and ML-DSA as approved, so check which module certificate your appliance and firmware map to. A firmware upgrade needs its own re-validation path.',
   },
   {
     id: 'entrust-nshield-5',
