@@ -23672,21 +23672,6 @@
       "admittedBy": "evidence admission"
     },
     {
-      "refId": "EMVCo-Security-Position-Statement-Quantum-Computing",
-      "title": "Security Position Statement: Update on Quantum Computing and EMV Chip Cryptography",
-      "url": "https://www.emvco.com/resources/security-position-statement-update-on-quantum-computing-and-emv-chip-cryptography/",
-      "status": "downloaded",
-      "filename": "EMVCo-Security-Position-Statement-Quantum-Computing.html",
-      "sizeBytes": 173242,
-      "contentType": "text/html",
-      "sha256": "0d7a2932f00f3ac5ae11e4a03c86c677b9c5169c16c6099943f68b93f802912c",
-      "artefact": "SOURCE",
-      "identity": "SKIPPED",
-      "unified": "converted",
-      "admittedAt": "2026-10-29T01:14:59.471593+00:00",
-      "admittedBy": "evidence admission"
-    },
-    {
       "refId": "3GPP-Post-Quantum-Cryptography-SA3-Overview",
       "title": "Post Quantum Cryptography in 3GPP",
       "url": "https://www.3gpp.org/technologies/pqc-sa3",
