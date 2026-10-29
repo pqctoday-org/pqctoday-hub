@@ -11,7 +11,7 @@
   },
   "source": "3GPP TS 33.501 Annex C.4 — Official ETSI/3GPP Test Vectors",
   "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.501/",
-  "notes": "All key material taken directly from 3GPP TS 33.501 Annex C.4. Derived values (K_enc, K_mac, cipher_msin, mac_tag) for the Profile B IMSI tool-default vector are computed using ANSI X9.63-KDF(SHA-256) with SharedInfo=raw 65-byte uncompressed P-256 ephemeral public key per §C.3.4. The SUCI tool uses SUPI 310260123456789 (US example) while the 3GPP official vectors use imsi-26283000123456 (European example).",
+  "notes": "All key material taken directly from 3GPP TS 33.501 Annex C.4. Derived values (K_enc, K_mac, cipher_msin, mac_tag) for the Profile B IMSI tool-default vector are computed using ANSI X9.63-KDF(SHA-256) per §C.3.4 with SharedInfo = the raw 65-byte uncompressed P-256 ephemeral public key (this tool's choice; §C.3.4.2 specifies the compressed point, which the Annex C.4 vectors use). The SUCI tool uses SUPI 310260123456789 (US example) while the 3GPP official vectors use imsi-26283000123456 (European example).",
   "profiles": {
     "A": {
       "note": "Deferred — X25519 WASM vector pending",
