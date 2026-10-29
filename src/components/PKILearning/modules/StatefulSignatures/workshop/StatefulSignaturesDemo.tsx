@@ -15,7 +15,7 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import hssKatData from '@/data/kat/lms_hss_rfc8554.json'
-import xmssKatData from '@/data/kat/xmss_rfc8391.json'
+import xmssKatData from '@/data/kat/xmss_sha2_10_256_keygen_selfcheck.json'
 import {
   CKK_HSS,
   CKM_HSS,

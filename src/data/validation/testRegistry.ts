@@ -3179,6 +3179,57 @@ const withSkipRows = (tests: RegisteredTest[]): RegisteredTest[] =>
     SKIP_ROW_PREFIX[t.id] ? { ...t, skipRowId: `${SKIP_ROW_PREFIX[t.id]}-skip-{engine}` } : t
   )
 
+// ── CKM_HPKE through the JS/WASM binding (engineVitestSuite) ─────────────────
+//
+// src/wasm/hpkeCkmHpke.test.ts proves the single-call CKM_HPKE mechanism family
+// (Rust engine only) across the real JS/WASM boundary: key generation, Base and
+// Auth modes, an export-only AEAD, an exporter template alongside a real AEAD
+// key, and a 3 KEM x 3 KDF x 3 AEAD x 2 mode hybrid cross-product (54 cases).
+// Each case seals on the sender's key handle and opens on the recipient's, which
+// succeeds only if two independent Encap/Decap calls derived byte-identical keys
+// and nonces. That is functional round-trip evidence, not a comparison with a
+// published vector: the byte-exact RFC 9180 Appendix A.3 vectors live in
+// hpkeService.test.ts, which composes primitive PKCS #11 calls and is not
+// registered here. The suite has no recorded result yet.
+const HPKE_NOTE =
+  'Round-trip evidence from src/wasm/hpkeCkmHpke.test.ts (Rust engine only). No result of this suite is recorded in the matrix, so it is registered, not passed.'
+const HPKE_ID = 'engine.hpke-ckm-hpke'
+const HPKE_CELLS = (keygen: boolean): CaseExercise[] => [
+  ...(keygen ? [x('CKM_HPKE_KEM_KEY_PAIR_GEN', 'generate-key-pair')] : []),
+  x('CKM_HPKE', 'encapsulate'),
+  x('CKM_HPKE', 'decapsulate'),
+]
+const HPKE_HYBRID_KEMS = ['MLKEM768-X25519', 'MLKEM768-P256', 'MLKEM1024-P384']
+const HPKE_KDFS = ['HKDF-SHA256', 'HKDF-SHA384', 'HKDF-SHA512']
+const HPKE_AEADS = ['AES-128-GCM', 'AES-256-GCM', 'ChaCha20-Poly1305']
+const HPKE_MODES = ['Base', 'PSK']
+const HPKE_ENGINE_SUITE: RegisteredTest[] = [
+  {
+    id: HPKE_ID,
+    runner: 'engineVitestSuite',
+    ref: 'src/wasm/hpkeCkmHpke.test.ts',
+    title:
+      'CKM_HPKE single-call Encap/Decap through the JS/WASM binding: P-256 Base, Auth mode, export-only AEAD, exporter template, and the 54-case hybrid cross-product',
+    engines: RUST,
+    cases: [
+      lc(HPKE_ID, 'dhkem-p256-base', RT, 'positive', HPKE_CELLS(true)),
+      lc(HPKE_ID, 'auth-mode', RT, 'positive', HPKE_CELLS(true)),
+      lc(HPKE_ID, 'export-only-aead', RT, 'positive', HPKE_CELLS(true)),
+      lc(HPKE_ID, 'exporter-template', RT, 'positive', HPKE_CELLS(true)),
+      ...HPKE_HYBRID_KEMS.flatMap((kem) =>
+        HPKE_KDFS.flatMap((kdf) =>
+          HPKE_AEADS.flatMap((aead) =>
+            HPKE_MODES.map((mode) =>
+              lc(HPKE_ID, `hybrid/${kem}/${kdf}/${aead}/${mode}`, RT, 'positive', HPKE_CELLS(true))
+            )
+          )
+        )
+      ),
+    ],
+    note: HPKE_NOTE,
+  },
+]
+
 const BASE_REGISTRY: RegisteredTest[] = [
   ...withSkipRows(USE_ACVP_SUITE),
   ...KAT_RUNNER,
@@ -3192,6 +3243,7 @@ export const TEST_REGISTRY: RegisteredTest[] = [
   ...BASE_REGISTRY,
   ...errorPathTests(BASE_REGISTRY),
   ...V33_DRAFT_FEATURES,
+  ...HPKE_ENGINE_SUITE,
 ]
 
 /** Exposed for the registry's own consistency test. */
