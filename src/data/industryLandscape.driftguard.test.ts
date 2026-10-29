@@ -43,11 +43,18 @@ const rowByIdForTargets = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
  *  segment — only analyst estimates exist), IoT (verified 2026-07-29: no
  *  official source publishes a market size). Insurance was exempt for one
  *  revision (its threats evidence was audit-rejected) and was re-grounded on
- *  Munich Re's 2025 cyber-trends report + BEA value added on 2026-07-29. */
+ *  Munich Re's 2025 cyber-trends report + BEA value added on 2026-07-29.
+ *  Government Identity & Travel Documents and Semiconductors / Secure
+ *  Elements (2026-10-28): no official statistic — identity documents are a
+ *  government function, and secure elements are a product segment of the
+ *  semiconductor industry — so no figure is stated rather than an invented
+ *  one; give either a row (and drop it here) the moment a sourced one exists. */
 const MARKET_SIZE_EXEMPT = new Set([
   'Cross-Industry',
+  'Government Identity & Travel Documents',
   'Hardware Security Modules',
   'Internet of Things (IoT)',
+  'Semiconductors / Secure Elements',
 ])
 
 /** Mechanism for industries a freshness pass deprecates because their

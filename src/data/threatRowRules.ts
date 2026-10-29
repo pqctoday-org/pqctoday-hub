@@ -46,13 +46,17 @@ export function isRetiredThreatStatus(status: string | null | undefined): boolea
  * OLD label working — in `?industry=` deep links, persona maps and anything
  * built from an older snapshot. Other modules (Learn, industry landscape,
  * assessment) keep their own site-wide vocabulary; this map is the bridge
- * from theirs into the Threats page's, never a rename of theirs.
+ * from theirs into the Threats page's, never a rename of theirs. The last two
+ * entries (2026-10-28) are of that second kind: Industry Landscape sectors
+ * with no Threats-page sector of their own, which open the closest one.
  */
 export const THREAT_INDUSTRY_ALIASES: Readonly<Record<string, string>> = {
   'Critical Infrastructure': 'Critical Infrastructure / OT',
   'Energy / Critical Infrastructure': 'Critical Infrastructure / OT',
   'Critical Infrastructure / Energy': 'Critical Infrastructure / OT',
   'Aerospace / Aviation': 'Aerospace / Aviation / Space',
+  'Government Identity & Travel Documents': 'Government & Defense',
+  'Semiconductors / Secure Elements': 'IT Industry / Software',
 }
 
 /** The industry label the Threats page shows (and filters on) for a raw CSV label. */

@@ -68,7 +68,7 @@ describe('sectorCodesFor', () => {
 })
 
 describe('learnModulesForIndustry', () => {
-  it('resolves a module for the 20 industries that declare one', () => {
+  it('resolves a module for the 22 industries that declare one', () => {
     // 2026-08-19: was 20 — Supply Chain / Logistics's learn_module_id was
     // cleared (vendor-risk covers vendor/software supply-chain risk, not the
     // physical maritime/customs/EBL use cases this industry actually lists;
@@ -88,10 +88,13 @@ describe('learnModulesForIndustry', () => {
     // 2026-09-17: 19 → 20 — the sibling rule that forced the 09-01 clearing
     // is gone; learn_module_id is per row now, so Cross-Industry's rows each
     // carry their own Protocols-track module (tls-basics, pki-workshop, …).
+    // 2026-10-28: 20 → 22 — two new Landscape sectors, Government Identity &
+    // Travel Documents and Semiconductors / Secure Elements, each with use
+    // cases that declare a Learn module.
     const withModule = getLandscapeIndustries().filter(
       (i) => learnModulesForIndustry(i, useCases).length > 0
     )
-    expect(withModule).toHaveLength(20)
+    expect(withModule).toHaveLength(22)
   })
 
   it('returns nothing for the two industries with no module', () => {
