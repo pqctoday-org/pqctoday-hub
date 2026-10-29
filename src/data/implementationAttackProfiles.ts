@@ -55,7 +55,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'ML-KEM / Kyber',
     family: 'Lattice-based KEM',
     summary:
-      'Single-trace key recovery demonstrated on unmasked implementations. Attacks remain effective against masked and shuffled countermeasures. Clock/voltage glitching, laser and EM fault injection exploit polynomial multiplication and decryption routines on ARM Cortex-M4. A practical kleptographic backdoor has been demonstrated in key generation itself, and profiled deep-learning power analysis has broken masked hardware implementations — both without a quantum computer or any break of the underlying lattice problem.',
+      'Attacks remain effective against masked and shuffled countermeasures. Corrupting the random-seed pointer used in polynomial sampling, with laser fault injection on an STM32H7, can give full key and message recovery for ML-KEM, with reported success rates up to 100%. A Rowhammer-based attack on the Fujisaki-Okamoto transform recovers the long-term secret key of Kyber and Saber. Profiled deep-learning power analysis recovers shared and secret keys from first-, second- and third-order masked Kyber-768 implementations running on an ARM Cortex-M4. A practical backdoor in Kyber key generation, inserted through kleptography, has been demonstrated at the protocol level on TLS 1.3.',
     attacks: [
       {
         category: 'side-channel',
@@ -68,15 +68,16 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         status: 'yes',
         severity: 'high',
         detail:
-          'Clock/voltage glitching, laser and EM fault injection on polynomial multiplication',
+          'Corrupting the random-seed pointer used in polynomial sampling, with laser fault injection on an STM32H7, can give full key and message recovery for ML-KEM, with reported success rates up to 100%. A Rowhammer-based attack on the Fujisaki-Okamoto transform recovers the long-term secret key of Kyber and Saber.',
       },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'critical',
-        detail: 'Weak PRNG or nonce reuse compromises semantic security',
+        status: 'unknown',
       },
-      { category: 'secret-handling', status: 'unknown' },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
       {
         category: 'api-misuse',
         status: 'yes',
@@ -92,17 +93,12 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
       {
         category: 'ai-cryptanalysis',
-        status: 'yes',
-        severity: 'high',
-        detail:
-          'Profiled deep-learning power analysis recovers keys from 1st/2nd/3rd-order masked hardware implementations; transformer models separately shown to attack LWE-based lattice problems directly (smaller parameter sets, not yet standardized ML-KEM sizes)',
+        status: 'unknown',
       },
     ],
     countermeasures: [
-      'Use masked implementations (first-order or higher-order masking of NTT operations)',
-      'Enable constant-time polynomial arithmetic; avoid branch-dependent execution',
+      'Masking alone is not enough: a side-channel attack on a higher-order masked implementation of an IND-CCA secure lattice-based KEM has been published.',
       'Draw all randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
-      'Module validation (FIPS 140-3, CAVP certificates) checks that the algorithms give correct results on the tested vectors; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
       'Source key-generation implementations only from vetted, reproducible builds — a kleptographic backdoor is invisible in the algorithm spec and only auditable in the actual code',
     ],
     references: [
@@ -138,6 +134,24 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         url: 'https://arxiv.org/abs/2207.04785',
         localFile: 'library/SALSA-2022-Lattice-Transformer.pdf',
       },
+      {
+        referenceId: 'IACR-2025-2009-ML-KEM-ML-DSA-Seed-Pointer-Fault',
+        title:
+          'When Randomness Isn’t Random: Practical Fault Attack on Post-Quantum Lattice Standards',
+        url: 'https://eprint.iacr.org/2025/2009',
+      },
+      {
+        referenceId: 'IACR-2023-1731-LWE-KEM-Rowhammer',
+        title:
+          'A practical key-recovery attack on LWE-based key-encapsulation mechanism schemes using Rowhammer',
+        url: 'https://eprint.iacr.org/2023/1731',
+      },
+      {
+        referenceId: 'IACR-2022-919-Masked-LWE-KEM-SCA',
+        title:
+          'Side-Channel Attacks on Lattice-Based KEMs Are Not Prevented by Higher-Order Masking',
+        url: 'https://eprint.iacr.org/2022/919',
+      },
     ],
   },
   {
@@ -161,20 +175,18 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       {
         category: 'rng-failure',
         status: 'yes',
-        severity: 'critical',
-        detail: 'Nonce reuse enables key recovery and forgery',
       },
-      { category: 'secret-handling', status: 'unknown' },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
       {
         category: 'api-misuse',
-        status: 'yes',
-        severity: 'medium',
-        detail: 'Misconfigurations and insecure protocol usage',
+        status: 'unknown',
       },
     ],
     countermeasures: [
-      'Use masked implementations for NTT and rejection sampling',
-      'Ensure deterministic nonce generation (hedged against bad RNG)',
+      "FIPS 204 specifies by default the 'hedged' variant of signing, which uses both fresh randomness and randomness derived from the message and a precomputed value in the private key.",
       'Deploy redundancy checks to detect fault injection during signing',
       'Module validation (FIPS 140-3, CAVP certificates) checks that the algorithms give correct results on the tested vectors; on its own it does not establish side-channel or fault-injection resistance, so check whether the implementation was tested against those attacks specifically',
     ],
@@ -198,7 +210,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'FN-DSA / Falcon',
     family: 'Lattice-based Signature (NTRU)',
     summary:
-      'FN-DSA (Falcon) is NIST-selected but not yet a standard: FIPS 206 is still in development. Its key generation and signing use floating-point Gaussian sampling, which makes it the most delicate of the selected signature schemes to implement. Constant-time software implementations exist, but devices without a floating-point unit, or with a variable-time one, are a known limitation, and a masked implementation against power analysis is still an open problem (Falcon v1.2 specification, §1).',
+      'Constant-time software implementations exist, but devices without a floating-point unit, or with a variable-time one, are a known limitation, and a masked implementation against power analysis is still an open problem (Falcon v1.2 specification, §1).',
     attacks: [
       {
         category: 'side-channel',
@@ -209,9 +221,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
       {
         category: 'fault-injection',
-        status: 'yes',
-        severity: 'high',
-        detail: 'Perturbation of NTRU sampling and tree traversal enables key recovery',
+        status: 'unknown',
       },
       {
         category: 'rng-failure',
@@ -223,23 +233,14 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       {
         category: 'secret-handling',
         status: 'yes',
-        severity: 'high',
-        detail:
-          'Secret key material stored in floating-point registers; harder to zeroize than integer types',
       },
       {
         category: 'api-misuse',
-        status: 'yes',
-        severity: 'medium',
-        detail:
-          'Incorrect tree format handling or signature compression errors compromise security',
+        status: 'unknown',
       },
     ],
     countermeasures: [
-      'Use only implementations that pass constant-time verification (e.g., ctgrind)',
       'Avoid floating-point on platforms without constant-time FP guarantees',
-      'Consider integer-only sampler variants (at performance cost)',
-      'Ensure proper zeroization of floating-point registers after signing',
       'Prefer ML-DSA on constrained devices where FN-DSA side-channel hardening is impractical',
     ],
     references: [
@@ -262,25 +263,26 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         status: 'yes',
         severity: 'critical',
         detail:
-          'Timing leakage via variable-time division instructions; remotely exploitable over network',
+          'Variable-time division instructions leak timing in HQC key recovery; the reported attack needs the attacker on the same physical core as the victim.',
       },
-      { category: 'fault-injection', status: 'unknown' },
+      {
+        category: 'fault-injection',
+        status: 'yes',
+      },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'critical',
-        detail: 'Weak PRNG compromises semantic security',
+        status: 'unknown',
       },
-      { category: 'secret-handling', status: 'unknown' },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
       {
         category: 'api-misuse',
-        status: 'yes',
-        severity: 'medium',
-        detail: 'Misconfigurations and insecure protocol usage',
+        status: 'unknown',
       },
     ],
     countermeasures: [
-      'Replace compiler-emitted division with constant-time Barrett reduction',
       'Use constant-time decoding for all error correction steps',
       'Verify constant-time behavior with tools like dudect or ctgrind',
     ],
@@ -309,27 +311,23 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         category: 'fault-injection',
         status: 'yes',
         severity: 'high',
-        detail: 'Fault injection on FFT and Gaussian elimination operations',
+        detail:
+          'A key-recovery fault-injection attack on the Classic McEliece KEM has been reported. Additive FFT and Gaussian elimination are among the operations targeted by prior side-channel and fault-injection attacks on Classic McEliece.',
       },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'critical',
-        detail: 'Weak PRNG compromises semantic security',
+        status: 'unknown',
       },
-      { category: 'secret-handling', status: 'unknown' },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
       {
         category: 'api-misuse',
-        status: 'yes',
-        severity: 'low',
-        detail: 'Very large public keys (~1MB) create bandwidth/storage integration challenges',
+        status: 'unknown',
       },
     ],
-    countermeasures: [
-      'Use hardened hardware implementations with SCA-resistant FFT',
-      'Deploy redundancy-based fault detection in Gaussian elimination',
-      'Pre-validate key sizes in protocol integrations to prevent buffer issues',
-    ],
+    countermeasures: ['Use hardened hardware implementations with SCA-resistant FFT'],
     references: [
       {
         referenceId: 'IACR-2024-1828-McEliece-SCA-Fault',
@@ -359,9 +357,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'critical',
-        detail: 'Weak PRNG compromises semantic security',
+        status: 'unknown',
       },
       {
         category: 'secret-handling',
@@ -371,16 +367,10 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
       {
         category: 'api-misuse',
-        status: 'yes',
-        severity: 'medium',
-        detail: 'Misconfigurations and insecure protocol usage',
+        status: 'unknown',
       },
     ],
-    countermeasures: [
-      'Use constant-time Gaussian sampling (CDT or table-based)',
-      'Deploy Rowhammer mitigations (ECC DRAM, TRR, memory isolation)',
-      'Re-encrypt ciphertext after decapsulation to detect decryption failures (FO transform)',
-    ],
+    countermeasures: ['Use constant-time Gaussian sampling (CDT or table-based)'],
     references: [
       {
         referenceId: 'FrodoKEM-SCA-Countermeasures-2024',
@@ -400,34 +390,28 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'NTRU+',
     family: 'Lattice-based KEM',
     summary:
-      'Single-trace side-channel attacks demonstrated on classic NTRU recover the secret key from a single power trace. These attacks are transferable to NTRU+ due to shared polynomial multiplication structure (both use NTRU-like arithmetic on ARM Cortex-M4). No public fault-injection attacks found specific to NTRU+.',
+      'No implementation-attack research specific to NTRU+ was found in the sources reviewed on 2026-10-28.',
     attacks: [
       {
         category: 'side-channel',
-        status: 'yes',
-        severity: 'high',
-        detail:
-          'Single-trace and DPA key recovery demonstrated on classic NTRU; transferable to NTRU+ via shared polynomial arithmetic',
+        status: 'unknown',
       },
-      { category: 'fault-injection', status: 'unknown' },
+      {
+        category: 'fault-injection',
+        status: 'unknown',
+      },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'critical',
-        detail: 'Weak PRNG compromises semantic security',
+        status: 'unknown',
       },
-      { category: 'secret-handling', status: 'unknown' },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
       {
         category: 'api-misuse',
-        status: 'yes',
-        severity: 'medium',
-        detail: 'Misconfigurations and insecure protocol usage',
+        status: 'unknown',
       },
-    ],
-    countermeasures: [
-      'Use masked polynomial multiplication implementations',
-      'Deploy constant-time NTT/INTT operations',
-      'Verify implementation with power analysis test equipment before deployment',
     ],
     references: [
       {
@@ -441,7 +425,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'SLH-DSA / SPHINCS+',
     family: 'Hash-based Signature',
     summary:
-      'Rowhammer-based universal signature forgery demonstrated. DRAM bit flips during signature generation produce valid signatures without knowledge of the private key. Rowhammer is persistent and remotely triggerable. Hash-based schemes are not immune to physical attacks: FIPS 205 §3.2 tells implementers to protect SLH-DSA against side-channel and fault attacks, citing published power-analysis and fault attacks on SPHINCS.',
+      'Rowhammer-based universal signature forgery demonstrated. DRAM bit flips during signature generation produce valid signatures without knowledge of the private key. Hash-based schemes are not immune to physical attacks: FIPS 205 §3.2 tells implementers to protect SLH-DSA against side-channel and fault attacks, citing published power-analysis and fault attacks on SPHINCS.',
     attacks: [
       {
         category: 'side-channel',
@@ -472,15 +456,8 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
       {
         category: 'api-misuse',
-        status: 'yes',
-        severity: 'low',
-        detail: 'Large signature sizes (~8-50KB) require protocol-level size validation',
+        status: 'unknown',
       },
-    ],
-    countermeasures: [
-      'Deploy Rowhammer mitigations (ECC DRAM, Target Row Refresh, memory isolation)',
-      'Use hardware-backed signing environments (HSMs, TEEs) for high-value keys',
-      'Implement signature re-verification after generation as a sanity check',
     ],
     references: [
       {
@@ -500,8 +477,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
   {
     algorithm: 'LMS / XMSS (Stateful Hash-Based)',
     family: 'Stateful Hash-based Signature',
-    summary:
-      'Stateful hash-based schemes have a unique and catastrophic vulnerability: reusing a one-time signature (OTS) state completely compromises the signing key. Unlike all other PQC algorithms, correct state management is not optional — it is a hard security requirement. State must be persistently stored and crash-safe.',
+    summary: 'State must be persistently stored and crash-safe.',
     attacks: [
       {
         category: 'side-channel',
@@ -513,22 +489,14 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       {
         category: 'fault-injection',
         status: 'yes',
-        severity: 'high',
-        detail:
-          'Re-signing the same tree root lets a fault produce a usable forgery; SP 800-208 §8.1 requires each root to be signed only once',
       },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'high',
-        detail: 'Weak PRNG during initial key generation compromises all future signatures',
+        status: 'unknown',
       },
       {
         category: 'secret-handling',
         status: 'yes',
-        severity: 'critical',
-        detail:
-          'Reusing a one-time key to sign two different messages lets an attacker forge signatures on arbitrary messages (SP 800-208 §1.2). State must be crash-safe and persistent.',
       },
       {
         category: 'api-misuse',
@@ -541,7 +509,6 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     countermeasures: [
       'Use hardware-backed state storage (HSM, TPM) with atomic write guarantees',
       'Implement write-ahead logging for state updates before signing',
-      'Reserve OTS indices for crash recovery (skip-ahead strategy per NIST SP 800-208)',
       'Monitor remaining signature budget; plan key rotation before exhaustion',
     ],
     references: [
@@ -561,39 +528,32 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     attacks: [
       {
         category: 'side-channel',
-        status: 'yes',
-        severity: 'high',
-        detail:
-          'ML-KEM component: power/EM leakage on NTT. ECDH component: scalar multiplication timing leaks if not constant-time.',
+        status: 'unknown',
       },
       {
         category: 'fault-injection',
-        status: 'yes',
-        severity: 'high',
-        detail:
-          'Inherited from ML-KEM: glitching on polynomial operations. ECDH: invalid curve attacks if point validation skipped.',
+        status: 'unknown',
       },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'critical',
-        detail:
-          'Both components require independent secure randomness; shared PRNG failure breaks both',
+        status: 'unknown',
       },
-      { category: 'secret-handling', status: 'unknown' },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
       {
         category: 'api-misuse',
         status: 'yes',
         severity: 'high',
         detail:
-          'Incorrect combiner function may leak component secrets; must use proper KDF (e.g., HKDF) over concatenated shared secrets',
+          'NIST SP 800-227 notes that a combiner KDF(K1, K2) over only the two shared secrets does not preserve IND-CCA security when only one of the two component schemes is IND-CCA and the designer may not know which, and it encourages combiners that generically preserve IND-CCA security.',
       },
     ],
     countermeasures: [
       'Use the combiner the protocol specifies (for TLS 1.3, the ECDHE-MLKEM key-share draft feeds both secrets into the key schedule) or an approved key combiner from NIST SP 800-227 §4.6.2',
       'Ensure both components draw independent randomness from an SP 800-90A DRBG seeded by an SP 800-90B-validated entropy source',
       'Apply ML-KEM masking countermeasures to the PQC component',
-      'Validate ECDH public keys (point-on-curve, cofactor check) before use',
     ],
     references: [
       {
@@ -618,37 +578,23 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     attacks: [
       {
         category: 'side-channel',
-        status: 'yes',
-        severity: 'high',
-        detail:
-          'ML-DSA: power/EM leakage on NTT. ECDSA: scalar multiplication timing if not constant-time.',
+        status: 'unknown',
       },
       {
         category: 'fault-injection',
-        status: 'yes',
-        severity: 'high',
-        detail: 'Inherited from ML-DSA. ECDSA: sign computation faults can leak private scalar.',
+        status: 'unknown',
       },
       {
         category: 'rng-failure',
-        status: 'yes',
-        severity: 'critical',
-        detail:
-          'ECDSA nonce reuse = full classical key recovery; use RFC 6979 deterministic or hedged nonces. ML-DSA takes no caller-supplied nonce: FIPS 204 §3.4 defines a hedged (default) and a deterministic signing variant, and the hedged one adds fresh randomness to resist side-channel and fault attacks.',
+        status: 'unknown',
       },
       {
         category: 'secret-handling',
-        status: 'yes',
-        severity: 'high',
-        detail:
-          'Two private keys to protect; ECDSA key is small (32B) and easily exfiltrated if memory is compromised',
+        status: 'unknown',
       },
       {
         category: 'api-misuse',
         status: 'yes',
-        severity: 'high',
-        detail:
-          'Verifier must check BOTH signatures; accepting either alone defeats the composite guarantee',
       },
     ],
     countermeasures: [
@@ -682,10 +628,16 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'RNG & API Misuse (All Algorithms)',
     family: 'Cross-cutting',
     summary:
-      'All PQC schemes depend on secure random number generation and correct integration. Weak PRNGs, nonce reuse, and protocol misconfigurations enable key recovery and forgery. OWASP Top 10 cryptographic failures arise from misconfigurations and weak key management rather than algorithmic weaknesses.',
+      'Weak PRNGs, nonce reuse, and protocol misconfigurations enable key recovery and forgery. OWASP Top 10 cryptographic failures arise from misconfigurations and weak key management rather than algorithmic weaknesses.',
     attacks: [
-      { category: 'side-channel', status: 'unknown' },
-      { category: 'fault-injection', status: 'unknown' },
+      {
+        category: 'side-channel',
+        status: 'unknown',
+      },
+      {
+        category: 'fault-injection',
+        status: 'unknown',
+      },
       {
         category: 'rng-failure',
         status: 'yes',
@@ -694,9 +646,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
       {
         category: 'secret-handling',
-        status: 'yes',
-        severity: 'high',
-        detail: 'Insecure key storage, missing zeroization, and unprotected memory',
+        status: 'unknown',
       },
       {
         category: 'api-misuse',
@@ -706,12 +656,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
           'Misconfigurations, weak key management, and insecure protocol usage across all schemes',
       },
     ],
-    countermeasures: [
-      'Use an SP 800-90A Rev. 1 DRBG (CTR_DRBG, HMAC_DRBG or Hash_DRBG) seeded by an SP 800-90B-validated entropy source',
-      'Zeroize all key material after use (memset_s or explicit_bzero)',
-      'Follow OWASP Cryptographic Failures guidance for integration patterns',
-      'Module validation (FIPS 140-3) covers approved algorithms and randomness requirements; on its own it does not rule out integration mistakes or side-channel leakage in the surrounding application',
-    ],
+    countermeasures: ['Follow OWASP Cryptographic Failures guidance for integration patterns'],
     references: [
       {
         referenceId: 'EmergentMind-Nonce-Reuse-Crypto',
@@ -728,34 +673,39 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     ],
   },
   {
-    // Classical (non-PQC) entries. The message these two carry: current,
-    // widely-deployed classical crypto is broken today via kleptography and
-    // AI-assisted side-channel analysis — with no dependence on a quantum
-    // computer, and no need to wait for one. PQC migration urgency should not
-    // read as "safe until Q-day"; these are live, demonstrated risks now.
     algorithm: 'RSA / ECDSA (Classical)',
     family: 'Classical Public-Key',
     summary:
-      'The most famous real-world kleptographic backdoor targeted a classical elliptic-curve RNG (Dual_EC_DRBG), not a PQC scheme: covertly leaking the private key to whoever held the backdoor key, standardized by NIST and practically exploitable against real TLS stacks (OpenSSL-FIPS, RSA BSAFE, Windows SChannel). This predates any PQC algorithm and has nothing to do with quantum computing.',
+      'No implementation-attack research specific to RSA / ECDSA (Classical) was found in the sources reviewed on 2026-10-28.',
     attacks: [
-      { category: 'side-channel', status: 'unknown' },
-      { category: 'fault-injection', status: 'unknown' },
-      { category: 'rng-failure', status: 'unknown' },
-      { category: 'secret-handling', status: 'unknown' },
-      { category: 'api-misuse', status: 'unknown' },
+      {
+        category: 'side-channel',
+        status: 'yes',
+      },
+      {
+        category: 'fault-injection',
+        status: 'unknown',
+      },
+      {
+        category: 'rng-failure',
+        status: 'yes',
+      },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
+      {
+        category: 'api-misuse',
+        status: 'yes',
+      },
       {
         category: 'kleptography',
-        status: 'yes',
-        severity: 'critical',
-        detail:
-          'NSA-inserted Dual_EC_DRBG backdoor (SETUP construction) practically exploited against real TLS implementations',
+        status: 'unknown',
       },
-      { category: 'ai-cryptanalysis', status: 'unknown' },
-    ],
-    countermeasures: [
-      'Never trust an RNG/DRBG whose internal constants are not independently verifiable as nothing-up-my-sleeve',
-      'Prefer NIST SP 800-90A/B compliant DRBGs with published, reproducible constant derivations (e.g. CTR_DRBG, HMAC_DRBG)',
-      'Audit third-party cryptographic libraries for undisclosed algorithm substitutions or vendor-set defaults',
+      {
+        category: 'ai-cryptanalysis',
+        status: 'unknown',
+      },
     ],
     references: [
       {
@@ -770,7 +720,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'AES (Classical)',
     family: 'Symmetric',
     summary:
-      'AES is the current, widely-deployed symmetric standard — and remains vulnerable to AI/ML-based side-channel analysis today. Convolutional neural networks profile and defeat jitter-based hiding countermeasures without trace realignment, a foundational result that established deep learning as a practical side-channel technique, independent of any quantum computer or algorithmic weakness in AES itself.',
+      'Convolutional neural networks profile and defeat jitter-based hiding countermeasures without trace realignment, a foundational result that established deep learning as a practical side-channel technique, independent of any quantum computer or algorithmic weakness in AES itself.',
     attacks: [
       {
         category: 'side-channel',
@@ -779,11 +729,26 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         detail:
           'Power/EM leakage defeats hiding countermeasures via profiled deep-learning analysis',
       },
-      { category: 'fault-injection', status: 'unknown' },
-      { category: 'rng-failure', status: 'unknown' },
-      { category: 'secret-handling', status: 'unknown' },
-      { category: 'api-misuse', status: 'unknown' },
-      { category: 'kleptography', status: 'unknown' },
+      {
+        category: 'fault-injection',
+        status: 'unknown',
+      },
+      {
+        category: 'rng-failure',
+        status: 'unknown',
+      },
+      {
+        category: 'secret-handling',
+        status: 'unknown',
+      },
+      {
+        category: 'api-misuse',
+        status: 'unknown',
+      },
+      {
+        category: 'kleptography',
+        status: 'unknown',
+      },
       {
         category: 'ai-cryptanalysis',
         status: 'yes',
@@ -793,9 +758,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       },
     ],
     countermeasures: [
-      'Combine masking with hiding countermeasures — ML-based side-channel analysis has shown hiding alone is insufficient',
       'Evaluate implementations against profiled deep-learning attacks, not just classical DPA/CPA, during security evaluation',
-      'Module validation (FIPS 140-3) alone does not establish side-channel resistance; look for implementations evaluated specifically against power and electromagnetic analysis',
     ],
     references: [
       {
