@@ -120,3 +120,21 @@ export function getHsmFacts(productId: string, algorithm?: HsmAlgorithm): HsmCap
 
 /** CSV file metadata. */
 export const hsmCapabilityMetadata = metadata
+
+/** Exact catalogue names only: a similarly named product may have a different boundary. */
+export function getHsmFactsForSoftware(softwareName: string | undefined): HsmCapabilityFact[] {
+  if (!softwareName) return []
+  return hsmCapabilityFacts.filter((fact) => fact.softwareName === softwareName)
+}
+
+/** Family-level availability is separate from approval or certificate inclusion. */
+export function hsmCapabilitySummary(softwareName: string | undefined): string {
+  const facts = getHsmFactsForSoftware(softwareName)
+  if (!facts.length) return 'No capability evidence recorded for this product.'
+  return facts
+    .map(
+      (fact) =>
+        `${fact.algorithm}: ${fact.available}; approved mode: ${fact.approvedMode}; listed on CMVP certificate: ${fact.cmvpCertListsIt}`
+    )
+    .join('. ')
+}

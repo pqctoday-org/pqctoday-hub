@@ -77,3 +77,5 @@ CPM (2026-04) · Keyfactor/EJBCA CPM · Gartner (Mahdi, Lowans).
 ## Pairs with
 
 Crypto Agility (LM-007) · PQC Governance (LM-037) · KMS & PQC (LM-024) · Business Case (LM-036).
+
+Vendor algorithm availability and validation evidence are shown from shared, product-specific capability records with source links, checked dates and the recorded review state. Availability, approved mode and inclusion on a named CMVP certificate are separate facts; missing records remain unknown. Version-specific documentation examples and integration scenarios do not establish support for another firmware, parameter set or environment.

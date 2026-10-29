@@ -6,6 +6,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
+// This prose check never opens the editor; avoid starting Monaco in jsdom.
+vi.mock('@/components/Playground/dev/monacoSelfHost', () => ({
+  installMonacoSelfHost: vi.fn().mockResolvedValue(undefined),
+}))
+
 vi.mock('@/hooks/useHSM', () => ({
   useHSM: () => ({
     isReady: false,

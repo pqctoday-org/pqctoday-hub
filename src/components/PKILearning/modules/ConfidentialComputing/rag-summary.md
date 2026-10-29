@@ -34,3 +34,5 @@ workshop_steps: 5
 - AMD SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging)
 - AWS Nitro Enclaves attestation framework
 - PKCS#11 v3.2 (TEE-HSM integration)
+
+Vendor algorithm availability and validation evidence are shown from shared, product-specific capability records with source links, checked dates and the recorded review state. Availability, approved mode and inclusion on a named CMVP certificate are separate facts; missing records remain unknown. Version-specific documentation examples and integration scenarios do not establish support for another firmware, parameter set or environment.
