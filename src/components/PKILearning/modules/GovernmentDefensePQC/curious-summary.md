@@ -6,7 +6,7 @@ Most organisations decide for themselves when to adopt post-quantum cryptography
 
 ## Why It Matters
 
-The deadlines reach much further than government itself. From 1 January 2027, anything newly bought for a National Security System is required to support the new algorithms — which makes it a supplier requirement, not just a buyer one. Separately, the rules covering Controlled Unclassified Information reach contractors, universities and suppliers who never go near a classified system. A June 2026 executive order also directs a proposed rule that would require covered contractors to comply with NIST's Federal Information Processing Standards, including all applicable ones that cover post-quantum algorithms, by the end of 2030. If you sell to the US government, someone else's deadline has become yours.
+The deadlines reach much further than government itself. From 1 January 2027, CNSA 2.0 algorithms will be required in all new acquisitions for National Security Systems. Separately, the rules covering Controlled Unclassified Information reach contractors, universities and suppliers who never go near a classified system. A June 2026 executive order also directs a proposed rule that would require covered contractors to comply with NIST's Federal Information Processing Standards, including all applicable ones that cover post-quantum algorithms, by the end of 2030. If you sell to the US government, someone else's deadline has become yours.
 
 ## The Key Takeaway
 

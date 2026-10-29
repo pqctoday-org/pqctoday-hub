@@ -8,7 +8,7 @@ Current EUDI implementations are secured by classical ECDSA (P-256) signatures f
 
 ### The Key Takeaway
 
-Because digital identities represent high-value targets, there is a case for national wallet infrastructures to plan for PQC early. As of October 2026, neither eIDAS 2.0 nor the EU reference framework for the wallet (the ARF) requires it, but NIST algorithms like ML-DSA and SLH-DSA, which are designed to resist a large-scale quantum computer, are available to sign long-lived credentials.
+The text of eIDAS 2.0 and of the EUDI wallet Architecture and Reference Framework (ARF) that we checked contains no occurrence of “quantum.” FIPS 204 says ML-DSA is believed to be secure against adversaries with a large-scale quantum computer, and FIPS 205 says SLH-DSA is designed to resist attacks from one.
 
 ### What's Happening
 
