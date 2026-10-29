@@ -261,7 +261,7 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.EXTRACT_PUB(filenames.mlPriv, file
       id: 'sign',
       title: '2. Sign the Same Transaction',
       description:
-        "Both algorithms sign an identical message. Notice how the signature sizes differ — this is what drives Bitcoin's estimated 9–46× witness data overhead for PQC transactions (BIP-360).",
+        'Both algorithms sign an identical message. Notice how the signature sizes differ — this is the size cost a post-quantum signature scheme would add to Bitcoin transactions (BIP-360 itself includes none).',
       code: `# Message
 MSG="${DEMO_MESSAGE}"
 
@@ -297,18 +297,21 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
           <SizeBars classicalSig={classical.sigBytes} pqcSig={pqc.sigBytes} />
           {classical.sigBytes !== null && pqc.sigBytes !== null && (
             <div className="glass-panel p-4 border-l-4 border-l-accent text-sm text-muted-foreground leading-relaxed">
-              <p className="font-semibold text-foreground mb-1">What this means for BIP-360</p>
+              <p className="font-semibold text-foreground mb-1">
+                What this means for a future Bitcoin PQ signature
+              </p>
               <p className="text-xs">
-                Every P2QRH transaction (BIP-360) must include the full ML-DSA public key (
-                {pqc.pubBytes ?? PQC_SIG_BYTES} B) and signature ({pqc.sigBytes} B) in the witness.
-                Compared to secp256k1 ({classical.sigBytes} B sig + {classical.pubBytes ?? 33} B
-                pubkey), this is roughly{' '}
+                BIP-360 (P2MR) itself includes no post-quantum signature; the authors intend a
+                separate proposal. A scheme such as ML-DSA would bring a public key of{' '}
+                {pqc.pubBytes ?? PQC_SIG_BYTES} B and a signature of {pqc.sigBytes} B. Compared to
+                secp256k1 ({classical.sigBytes} B sig + {classical.pubBytes ?? 33} B pubkey), this
+                is roughly{' '}
                 {Math.round(
                   ((pqc.sigBytes + (pqc.pubBytes ?? 0)) /
                     (classical.sigBytes + (classical.pubBytes ?? 33))) *
                     10
                 ) / 10}
-                × more witness data — the cost of quantum resistance.
+                × more key and signature data — the cost of quantum resistance.
               </p>
             </div>
           )}

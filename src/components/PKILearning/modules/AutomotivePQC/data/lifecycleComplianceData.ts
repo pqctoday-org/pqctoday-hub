@@ -44,7 +44,7 @@ export const LIFECYCLE_PHASES: LifecyclePhaseConfig[] = [
     pqcRequirements: [
       'Generate ML-DSA key pairs in factory HSM for new vehicles (2027+)',
       'Dual-provision classical + PQC root keys for crypto-agility',
-      'V2X CA must support hybrid ECDSA + ML-DSA certificate issuance',
+      'V2X CA: PQC certificate issuance once a V2X PQC profile exists (none identified publicly; ETSI TR 103 949 suggests a hybrid mode is not adopted, subject to more detailed analysis)',
     ],
   },
   {
@@ -73,8 +73,8 @@ export const LIFECYCLE_PHASES: LifecyclePhaseConfig[] = [
     ],
     pqcRequirements: [
       'OTA crypto upgrade: push PQC firmware to HSM-capable ECUs',
-      'Hybrid TLS 1.3 (ML-KEM + X25519) for telematics sessions',
-      'V2X pseudonym certificate renewal with ML-DSA signatures',
+      'Hybrid TLS 1.3 (ML-KEM + X25519, RFC 10024) for telematics sessions',
+      'V2X pseudonym certificate renewal with ML-DSA signatures, once a V2X PQC profile exists',
       'Key rotation from ECDSA → ML-DSA via staged OTA campaign',
       'Monitor CRQC threat level; escalate migration timeline if needed',
     ],
@@ -142,14 +142,15 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     id: 'v2x-hsm',
     name: 'V2X Security Credential Management System (SCMS)',
     location: 'Regional V2X PKI infrastructure',
-    standard: 'IEEE 1609.2 / ETSI TS 102 941',
-    fipsLevel: 'Level 3',
+    standard:
+      'IEEE 1609.2 / ETSI TS 102 941; EU C-ITS Certificate Policy 3.0 (Common Criteria, EAL4 or higher)',
+    fipsLevel: 'Not required by EU C-ITS CP 3.0 (Common Criteria applies)',
     // CORRECTED 2026-08-23: read "IEEE 1609.2 PQC amendment in progress (ML-DSA + ML-KEM)".
-    // No such project exists. IEEE's own page for 1609.2 contains zero occurrences of
-    // "post-quantum", "quantum", "ML-DSA", "ML-KEM" or "P1609.2", which matches the
-    // library row's determination of 2026-07-31.
+    // No such amendment is identified in the public specifications: IEEE 1609.2-2025 and
+    // ETSI TS 103 097 V2.2.1 (2026-03) specify ECC/ECDSA. ETSI TR 103 949 V1.1.1 (2023-05)
+    // is a quantum-safe migration study for ITS and C-ITS, not a standard amendment.
     pqcSupport:
-      'No IEEE PQC amendment project; 1609.2-2025 specifies ECC. PQC for V2X is research literature',
+      'No public PQC amendment identified; IEEE 1609.2-2025 and ETSI TS 103 097 specify ECC/ECDSA. ETSI TR 103 949 (2023) is a quantum-safe migration study',
     typicalVendors: ['Qualcomm / Autotalks SCMS', 'CAMP LLC (US V2X PKI)', 'C-ITS (EU V2X PKI)'],
     keyTypes: ['Root CA', 'Enrollment CA', 'Pseudonym CA', 'Linkage Authority keys'],
     operationsPerSecond: '50,000+ ECDSA pseudonym certs/sec',
@@ -191,7 +192,8 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     location: 'Infotainment head unit, telematics control unit',
     standard: 'TCG TPM 2.0 / ISO/IEC 11889',
     fipsLevel: 'Level 1-2 (varies)',
-    pqcSupport: 'TCG PQC profile draft (2025) — ML-DSA + ML-KEM support planned',
+    pqcSupport:
+      'TCG PQC profile draft (2025) — ML-DSA + ML-KEM support planned. Vendor-stated: Infineon OPTIGA TPM SLB 9672 and SLB 9673 use XMSS for firmware updates',
     typicalVendors: ['Infineon OPTIGA TPM', 'STMicro ST33', 'Nuvoton NPCT75x'],
     keyTypes: [
       'Platform identity key',
@@ -271,51 +273,60 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     region: 'eu',
     year: 2021,
     quarter: 'Q3',
-    description: 'Full vehicle cybersecurity lifecycle standard — production to decommission.',
-    pqcRelevance: 'direct',
+    description:
+      'Cybersecurity engineering standard for road-vehicle E/E systems, from concept and development to production, operation, maintenance and decommissioning. ISO describes it as technology-agnostic (processes and risk management, not specific tools) and, while not legally mandatory, increasingly a de facto requirement. It was published in 2021, before FIPS 203 and FIPS 204.',
+    pqcRelevance: 'indirect',
     confidence: 'published',
     affectedSystems: ['All ECUs', 'Supply chain', 'Key management'],
   },
   {
-    id: 'ieee-1609-pqc',
-    name: 'IEEE 1609.2 PQC Amendment',
-    authority: 'IEEE',
-    region: 'us',
-    year: 2025,
-    quarter: 'Q4',
+    id: 'etsi-tr-103-949',
+    name: 'ETSI TR 103 949 — Quantum-Safe Migration Study for ITS',
+    authority: 'ETSI',
+    region: 'eu',
+    year: 2023,
+    quarter: 'Q2',
     description:
-      'V2X security standard. IEEE 1609.2-2025 specifies ECC-based security services; no IEEE post-quantum amendment project exists, and the previously stated "Amendment P1609.2/D1.2" and its Q4 2025-Q2 2026 ratification window were unsupported. Post-quantum V2X remains research literature.',
+      'ETSI TR 103 949 (V1.1.1, May 2023) is a technical report, not a standard: a quantum-safe migration study for ITS and C-ITS. The public V2X specifications still use ECC: IEEE 1609.2-2025 specifies ECC-based security services, ETSI TS 103 097 approves ECDSA, and no public post-quantum amendment is identified.',
     pqcRelevance: 'direct',
-    confidence: 'in-development',
+    confidence: 'published',
     affectedSystems: ['V2X module', 'V2X PKI/SCMS', 'Roadside units'],
   },
   {
     id: 'cnsa-2-firmware',
     csvId: 'CNSA-2',
-    name: 'CNSA 2.0 — Firmware Signing Deadline',
+    name: 'CNSA 2.0 — Firmware Signing Deadline (National Security Systems)',
     authority: 'NSA',
     region: 'us',
     year: 2030,
     quarter: 'Q4',
     description:
-      'All firmware/software signing must use LMS, XMSS, or ML-DSA by 2030. (Note: 2025 was set as a preference target).',
+      'For National Security Systems (NSS), NSA’s CNSA 2.0 advisory anticipates 2025 to support and prefer CNSA 2.0 for software and firmware signing and 2030 to use it exclusively. LMS and XMSS from NIST SP 800-208 are approved for firmware signing (not HSS or XMSS^MT), and validated ML-DSA is approved for all signing use cases. CNSA 2.0 algorithms are required in all new NSS acquisitions from 1 January 2027. For vehicles outside NSS this is a reference timeline.',
     pqcRelevance: 'direct',
     confidence: 'published',
-    affectedSystems: ['ECU firmware signing', 'OTA infrastructure', 'Secure boot'],
+    affectedSystems: [
+      'Firmware signing (NSS scope)',
+      'OTA infrastructure (NSS scope)',
+      'Secure boot (NSS scope)',
+    ],
   },
   {
     id: 'cnsa-2-mandate',
     csvId: 'CNSA-2',
-    name: 'CNSA 2.0 — General NSS Algorithm Mandate',
+    name: 'CNSA 2.0 — General Algorithm Mandate (National Security Systems)',
     authority: 'NSA',
     region: 'us',
     year: 2031,
     quarter: 'Q4',
     description:
-      'FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 31 December 2031 unless otherwise noted, after the 2030 phase-out milestone for unsupported equipment and services. NSM-10 separately sets a broader 2035 quantum-risk objective.',
+      'FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 31 December 2031 unless otherwise noted, after the 2030 phase-out milestone for unsupported equipment and services. NSM-10 separately sets a broader 2035 quantum-risk objective. These dates apply to National Security Systems; for other vehicles this is a reference timeline.',
     pqcRelevance: 'direct',
     confidence: 'published',
-    affectedSystems: ['All vehicle crypto', 'Supply chain', 'Backend infrastructure'],
+    affectedSystems: [
+      'Vehicle crypto (NSS scope)',
+      'NSS supply chain',
+      'Backend infrastructure (NSS scope)',
+    ],
   },
   {
     id: 'china-gbt-pqc',

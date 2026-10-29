@@ -81,7 +81,6 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
       'RSA-2048 key transport for PIN encryption keys',
       'TLS to host/switch (RSA/ECDSA key exchange)',
       'Remote key loading (RSA key transport)',
-      'PIN block encryption (3DES \u2014 Grover reduces to 56-bit effective)',
     ],
     pqcConstraints: [
       'Abundant compute/memory for all PQC algorithms',
@@ -124,7 +123,7 @@ export const KEY_INJECTION_CEREMONY: KeyInjectionCeremony = {
       order: 1,
       label: 'BDK Generation in Payment HSM',
       description:
-        'The Base Derivation Key (BDK) is generated inside a FIPS 140-3 Level 3 validated payment HSM. The BDK never leaves the HSM in cleartext. Dual custody is required (two key custodians each contribute key components).',
+        'The Base Derivation Key (BDK) is generated inside a payment HSM that is either FIPS 140-2 or 140-3 Level 3 (or higher) certified or PCI-approved (PTS HSM), as the PCI PIN Security Requirements v3.1 allow. The BDK never leaves the HSM in cleartext. Dual custody is required (two key custodians each contribute key components).',
       cryptoUsed: 'AES-256 key generation (HSM internal)',
       quantumVulnerable: false,
       pqcReplacement: 'No change needed \u2014 symmetric key generation is quantum-safe',

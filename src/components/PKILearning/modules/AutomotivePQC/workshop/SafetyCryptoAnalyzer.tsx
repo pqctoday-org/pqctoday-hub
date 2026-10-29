@@ -14,7 +14,7 @@ const AUTOMOTIVE_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'auto-v2x-sigver',
     useCase: 'V2X Basic Safety Message signing (ML-DSA-44)',
-    standard: 'IEEE 1609.2 + FIPS 204',
+    standard: 'FIPS 204 (illustrative; IEEE 1609.2 itself specifies ECC)',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 44 },
     message: 'IEEE 1609.2 BSM: msgCount=42,tempId=0xA7B3,latitude=37.7749,longitude=-122.4194',

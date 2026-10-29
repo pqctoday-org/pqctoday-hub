@@ -9,6 +9,7 @@
  * rather than by a CRQC date, which nobody knows.
  */
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router'
 import { Landmark, TriangleAlert, ShieldCheck, Clock } from 'lucide-react'
 import { SETTLEMENT_RAILS } from '../data/bankingData'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -35,9 +36,12 @@ export const SettlementExposureModeller = () => {
 
   const result = useMemo(() => {
     const thisYear = 2026
-    // Mosca's inequality, stated in the form that matters here: data captured
-    // today is still sensitive when a CRQC arrives if
+    // Mosca's theorem is X + Y > Z: data shelf life (X) plus the time to migrate
+    // (Y) against the time until a CRQC (Z). This model sets the migration-time
+    // term Y to zero, which is the form that matters here: data captured today is
+    // still sensitive when a CRQC arrives if
     //   captureYear + retention > crqcYear.
+    // A real migration time only widens the window, so the result is a floor.
     const stillSensitiveUntil = thisYear + retention
     const exposedYears = stillSensitiveUntil - band.year
     const exposed = exposedYears > 0
@@ -59,6 +63,18 @@ export const SettlementExposureModeller = () => {
             <p className="text-sm text-muted-foreground">
               Harvest-now-decrypt-later exposure for a settlement rail, driven by how long its data
               stays sensitive.
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              This applies Mosca&rsquo;s theorem: data shelf life plus the time your migration takes
+              must be shorter than the time until a CRQC, or the data is at risk (as framed in the{' '}
+              <Link
+                to="/library?ref=FRB-FEDS-2025093-Blockchain-PQC"
+                className="text-primary hover:underline"
+              >
+                Federal Reserve&rsquo;s harvest-now-decrypt-later paper
+              </Link>
+              ). The model sets the migration-time term to zero, so treat the result as a floor: a
+              migration that takes longer widens the exposure.
             </p>
           </div>
         </div>

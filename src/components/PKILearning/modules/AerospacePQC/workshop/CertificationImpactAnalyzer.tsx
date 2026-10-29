@@ -198,7 +198,7 @@ export const CertificationImpactAnalyzer: React.FC = () => {
 
       {/* Certification Authorities */}
       <div className="glass-panel p-4 space-y-3">
-        <h3 className="text-sm font-bold text-foreground">Certification Authority Requirements</h3>
+        <h3 className="text-sm font-bold text-foreground">Certification Authority Guidance</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {CERTIFICATION_AUTHORITIES.map((auth) => (
             <div key={auth.id} className="bg-muted/50 rounded-lg p-3 text-xs">

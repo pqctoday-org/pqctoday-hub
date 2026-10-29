@@ -8,7 +8,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     componentLabel: 'Payment HSM Key Wrapping',
     currentCrypto: ['RSA-2048 key transport', 'ECDH P-256 key agreement'],
     vulnerability:
-      'HSMs use RSA-2048 to wrap and transport master keys between HSM clusters and to downstream systems. Quantum computers can recover wrapped keys, exposing the entire key hierarchy.',
+      'HSMs use RSA-2048 to wrap and transport master keys between HSM clusters and to downstream systems. Quantum computers can recover wrapped keys, exposing the entire key hierarchy. PCI P2PE v3.1 (September 2021) approves key establishment under NIST SP 800-56A and SP 800-56B and itself flags those families as vulnerable to large-scale quantum computers, advising only awareness of the threat and its mitigations.',
     severity: 'critical',
     hndlExposure: true,
     affectedScale: 'All payment HSMs globally (~100,000+ devices)',
@@ -17,6 +17,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     pqcSolution: [
       'ML-KEM-768 key encapsulation',
       'Hybrid RSA + ML-KEM during transition',
+      'PKCS#11 v3.2 (OASIS Standard, 3 June 2026) defines ML-KEM key-encapsulation mechanisms; confirm how a given payment HSM exposes them',
       'Futurex says its PCI HSM-approved HSMs support PQC (press release, 11 Jun 2025). A PCI listing PQC flag records only that PQC support exists; algorithms are in the device PCI HSM Security Policy',
     ],
     dependencies: [],
@@ -54,14 +55,14 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
       'RSA-2048 key transport (master key injection)',
     ],
     vulnerability:
-      'New cards issued with RSA-2048 ICC keys are quantum-vulnerable from day one. The 3-5 year card replacement cycle means cards issued today will be in circulation until 2029-2031.',
+      'New cards issued with RSA-2048 ICC keys are quantum-vulnerable from day one. On an assumed 3-5 year card replacement cycle (this module’s estimate, not a sourced figure), cards issued today could stay in circulation until about 2029-2031.',
     severity: 'critical',
     hndlExposure: false,
     affectedScale: '~4 billion new cards issued annually',
     migrationEffort: 5,
     migrationTimeline: '2028-2033',
     pqcSolution: [
-      'FN-DSA-512 ICC key pairs (compact, fits card NVM)',
+      'FN-DSA-512 ICC key pairs (smaller than ML-DSA-44; whether it fits depends on the chip and application profile)',
       'Hybrid RSA + FN-DSA dual-certificate cards during transition',
       'ML-DSA-44 Issuer CA certificates',
       'Requires FIPS 206 finalization for FN-DSA',
@@ -85,7 +86,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     pqcSolution: [
       'FN-DSA-512 certificate chain and dynamic signatures',
       'Terminal firmware update for PQC signature verification',
-      'Full card fleet replacement over 3-5 year cycle',
+      'Full card fleet replacement (assumed 3-5 year cycle: this module’s estimate, not a sourced figure)',
       'Transition period: accept both RSA and PQC certificates',
     ],
     dependencies: ['hsm-key-wrapping', 'key-injection', 'card-personalization'],
@@ -123,15 +124,15 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     componentLabel: 'PIN Block Encryption',
     currentCrypto: ['3DES DUKPT (legacy)', 'AES DUKPT (migration underway)'],
     vulnerability:
-      'Legacy 3DES PIN encryption provides only 56-bit effective security against Grover\u2019s algorithm. Millions of terminals still use 3DES DUKPT. The BDK RSA wrapping is the acute quantum risk.',
+      'Moving PIN encryption from 3DES to AES is classical modernisation, not a quantum fix: EMVCo states that the choice of symmetric algorithm and key size is driven by classical attack feasibility rather than by Grover\u2019s algorithm, and that even 2-key Triple DES keeps a significant security margin against a Grover attack. Millions of terminals still use 3DES DUKPT. The quantum-exposed link is the RSA wrapping of the BDK at key injection.',
     severity: 'high',
     hndlExposure: true,
     affectedScale: 'Millions of terminals with 3DES DUKPT',
     migrationEffort: 4,
     migrationTimeline: '2026-2030',
     pqcSolution: [
-      'Complete 3DES \u2192 AES DUKPT migration (industry direction, not yet a PCI mandate: PCI PIN Security v3.1 still allows TDEA and AES for online PIN, and since 1 Jan 2023 disallows fixed-key TDEA PIN encryption; PTS POI v5+ devices doing online PIN and HSM v4+ devices doing PIN processing must support AES ISO PIN block format 4)',
-      'AES-256 provides 128-bit post-quantum security via Grover',
+      'Classical modernisation alongside the PQC work: complete 3DES \u2192 AES DUKPT migration (industry direction, not yet a PCI mandate: PCI PIN Security v3.1 still allows TDEA and AES for online PIN, and since 1 Jan 2023 disallows fixed-key TDEA PIN encryption; PTS POI v5+ devices doing online PIN and HSM v4+ devices doing PIN processing must support AES ISO PIN block format 4)',
+      'AES-256 is allowed for contingency, but EMVCo sees no need for it on quantum grounds',
       'ML-KEM-768 for BDK key transport at KIFs',
     ],
     dependencies: ['hsm-key-wrapping', 'key-injection'],

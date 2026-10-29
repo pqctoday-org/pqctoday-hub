@@ -136,7 +136,8 @@ export const AUTOMOTIVE_FUNCTIONS: AutomotiveFunctionProfile[] = [
     failModeDescription: 'Infotainment reboots or shows error screen. No impact on vehicle safety.',
     quantumRisk: 'HNDL on streaming/navigation data. Payment fraud via forged tokenization.',
     pqcConstraint: 'Full-powered SoC — no PQC performance constraints.',
-    pqcDesignPattern: 'Hybrid TLS 1.3 (ML-KEM + X25519). ML-DSA-65 for app and payment signing.',
+    pqcDesignPattern:
+      'Hybrid TLS 1.3 (ML-KEM + X25519, RFC 10024). ML-DSA-65 for app and payment signing.',
   },
 ]
 

@@ -107,7 +107,7 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
           quantumAttack:
             "Shor's algorithm breaks ECDHE key exchange and ECDSA certificate authentication. Harvest-now-decrypt-later (HNDL) risk for recorded TLS sessions.",
           pqcCountermeasures: [
-            'ML-KEM-768 hybrid key exchange (RFC 9370)',
+            'ML-KEM-768 hybrid key exchange (RFC 10024)',
             'ML-DSA-65 certificate chains',
             'Hybrid TLS 1.3 (X25519MLKEM768)',
           ],
@@ -354,7 +354,7 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         description:
           'Fully airgapped, offline HSMs in secure facilities. Manual key ceremony for initialization. Shamir secret sharing for disaster recovery. Holds 60-85% of total assets.',
         cryptoPrimitives: [
-          'Offline HSM key generation (FIPS 140-3 Level 3+)',
+          'Offline HSM key generation (reference design: FIPS 140-3 Level 3+ module)',
           'Shamir Secret Sharing (K-of-N shards)',
           'QR code / USB airgap transfer',
           'Dual-control key ceremony procedures',
@@ -388,7 +388,7 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         id: 'hsm',
         name: 'Hardware Security Modules',
         description:
-          'Tamper-resistant hardware that generates, stores, and uses cryptographic keys without ever exposing them. PKCS#11 v3.2 interface. FIPS 140-3 Level 3 certified.',
+          'Tamper-resistant hardware that generates, stores, and uses cryptographic keys without ever exposing them. PKCS#11 v3.2 interface. This reference design assumes a module validated to FIPS 140-3 Level 3. The Hong Kong SFC Guidelines for Virtual Asset Trading Platform Operators say that, where practicable, keys should be kept in a secure environment such as an HSM "with appropriate certification", and the Dubai VARA Custody Services Rulebook says custodians "shall at all times maintain appropriate certifications as may be required under industry best practices applicable to the safekeeping of Virtual Assets". Neither text names a scheme.',
         cryptoPrimitives: [
           'PKCS#11 v3.2 API',
           'ECDSA / RSA key generation & signing',
@@ -559,12 +559,12 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
             'The broadcast transaction contains the public key and signature. Between broadcast and block inclusion, a quantum adversary could theoretically extract the private key and submit a competing transaction.',
           pqcCountermeasures: [
             'Commit-reveal schemes (hash commitment before signature reveal)',
-            'Chain-level PQC signature support (BIP-360, EIP-7702)',
+            'Chain-level PQC signature support (EIP-7702)',
             'Minimize mempool exposure time',
           ],
           migrationReadiness: 'not-ready',
           migrationNotes:
-            'Depends entirely on blockchain protocol-level PQC adoption. See PQC Defense flow for chain-specific timelines.',
+            'Depends entirely on blockchain protocol-level PQC adoption. BIP-360 (P2MR) does not by itself protect against this short-exposure window. See PQC Defense flow for chain-specific timelines.',
         },
       },
     ],

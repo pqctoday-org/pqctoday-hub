@@ -187,21 +187,21 @@ export const CERTIFICATION_AUTHORITIES = [
     id: 'faa',
     name: 'FAA',
     country: 'United States',
-    standard: 'AC 20-175A',
-    framework: 'DO-326A / DO-356A',
-    status: 'Mandated since 2021',
+    standard: 'Project-specific special conditions',
+    framework: 'DO-326 / DO-355 / DO-356',
+    status: 'Proposed rule published 21 Aug 2024',
     notes:
-      'Advisory Circular requires DO-326A security assessment for all new Type Certificates and major STCs.',
+      'In its 21 August 2024 notice of proposed rulemaking (Federal Register), the FAA described addressing aircraft cybersecurity through project-specific special conditions and proposed adding aircraft cybersecurity requirements to 14 CFR parts 25, 33 and 35. RTCA DO-326, DO-355 and DO-356 are the industry guidance that applicants have wanted to use as a method of compliance. As of 29 October 2026 the Federal Register lists no final rule in docket FAA-2024-1398.',
   },
   {
     id: 'easa',
     name: 'EASA',
     country: 'European Union',
     standard: 'AMC 20-42',
-    framework: 'ED-202A / ED-203A',
-    status: 'Mandated since 2022',
+    framework: 'ED-202A / ED-203A / ED-204',
+    status: 'Accepted means of compliance',
     notes:
-      'Acceptable Means of Compliance for airborne security. ED-202A is the European equivalent of DO-326A.',
+      'AMC 20-42 (ED Decision 2020/006/R) recognises ED-202A, ED-203A and ED-204 as acceptable means of compliance for airworthiness information security risk assessment. Compliance with the AMC is not mandatory: an applicant may use an alternative means of compliance that EASA accepts. ED-202A is the European equivalent of DO-326A.',
   },
   {
     id: 'tcca',

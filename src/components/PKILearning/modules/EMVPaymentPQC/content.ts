@@ -58,7 +58,7 @@ export const content: ModuleContent = {
     // sector roadmap. rag-summary.md already listed this as a source, so the
     // summary described a citation the module did not make.
     getStandard('BIS-Paper-158'),
-    // Adds a sixth jurisdiction to the five in SECTOR_BODIES. NOTE: this row's
+    // Adds a jurisdiction to those in SECTOR_BODIES. NOTE: this row's
     // module_ids does not yet include emv-payment-pqc — the reverse link is owed
     // in the next library revision.
     getStandard('CA-CFDIR-Quantum-Readiness-2023'),
@@ -89,6 +89,23 @@ export const content: ModuleContent = {
     getStandard('ISO-8583-2023-Financial-transaction-card-originated-messages'), // m-emv-payment-pqc: ISO 8583
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'), // TLS 1.3 (RFC 8446 row is retired; 9846 is the current text) — m-emv-payment-pqc: 1.3
     getStandard('The-Straits-Times-DBS-PayLah-users-can-scan-UnionPay-QR-code'), // m-emv-payment-pqc: 9.4B
+    // Cited in learner text for the hybrid TLS update (published RFC), the card-side findings
+    // and EMVCo's stated position, the PCI device and 3DS standards, the NIST transition
+    // trajectory shown on the migration timeline, and the Federal Reserve HNDL paper behind
+    // Mosca's theorem. Nacha-Quantum-Safe-Payments-Readiness-Road-Map is linked from
+    // SECTOR_BODIES as a recommended roadmap only; add it here once its library row is reviewed.
+    getStandard('RFC-10024'),
+    getStandard('EMVCo-Quantum-Position-Statement'),
+    getStandard('Post-Quantum-Protocols-for-Banking-Applications'),
+    getStandard('Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape'),
+    getStandard('PCI-3DS-Core-v1-0-ROC-Reporting-Template'),
+    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
+    getStandard('PCI-P2PE-Security-Requirements-v3-1'),
+    getStandard('PKCS11-V32-OS-OASIS'),
+    getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
+    getStandard('PCI-SSC-Bulletin-PTS-HSM-v4-Extension'),
+    getStandard('NIST IR 8547'),
+    getStandard('FRB-FEDS-2025093-Blockchain-PQC'),
   ],
 
   algorithms: [
@@ -132,6 +149,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Payment Network Comparator — official stance, public evidence, and a clearly labelled public or tentative plan for Visa, Mastercard, American Express, UnionPay and Discover. Transaction Simulator. Card Provisioning Visualizer. Tokenization Explorer. POS Crypto Analyzer. Migration Risk Matrix. Settlement Exposure Modeller — HNDL exposure per rail, driven by retention rather than a guessed CRQC year. Sector Regulation Timeline — sector bodies filtered by jurisdiction, each linked to its cached source document.',
     relatedStandards:
-      'EPC 342-08 v16.0.1 (24 June 2026) anchors the banking half: it names ML-KEM, ML-DSA, SLH-DSA and FN-DSA. Planned FIPS 206 remains in development with no public draft, so this hub cites the distinct Falcon v1.2 candidate specification rather than presenting it as FIPS text. EPC also cites ANSI X9.143 as the current key-block standard. Swift CSCF v2026 controls 2.1/2.4/2.5A/2.6 point at Swift cryptography guidance that Swift states will follow its post-quantum strategy. BIS Project Leap Phase 2 is the central-bank experiment. PCI DSS v4.0.1 is current — there is no v5.0 — but only the Quick Reference Guide is freely downloadable. ANSI X9.143, X9.24-1/-2 and TR-31 are paywalled, and are cited here as normative but unobtainable rather than paraphrased.',
+      'EPC 342-08 v16.0.1 (24 June 2026) anchors the banking half: it names ML-KEM, ML-DSA, SLH-DSA and FN-DSA. Planned FIPS 206 is listed by NIST as in development (checked 29 October 2026), so this hub cites the distinct Falcon v1.2 candidate specification rather than presenting it as FIPS text. EPC also cites ANSI X9.143 as the current key-block standard. Swift CSCF v2026 controls 2.1/2.4/2.5A/2.6 point at Swift cryptography guidance that Swift states will follow its post-quantum strategy. BIS Project Leap Phase 2 is the central-bank experiment. PCI DSS v4.0.1 is current — there is no v5.0 — but only the Quick Reference Guide is freely downloadable. ANSI X9.143, X9.24-1/-2 and TR-31 are paywalled, and are cited here as normative but unobtainable rather than paraphrased.',
   },
 }
