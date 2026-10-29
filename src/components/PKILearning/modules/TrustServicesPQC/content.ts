@@ -31,8 +31,9 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('RFC-5816-ESSCertIDv2-Update-for-RFC-3161'),
+    // Applies EN 319 422 V1.1.1 to qualified time-stamps and replaces its algorithm clauses
+    getStandard('CIR-EU-2025-1929-Qualified-Electronic-Time-Stamps'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
-    getStandard('Commission-Implementing-Regulation-EU-2025-2162-of-27-Octobe'), // m-trust-services-pqc: October 2025
     getStandard('Electronic-Signatures-and-Infrastructures-ESI-Algorithms-and'), // m-trust-services-pqc: ETSI TS 102 176-1
   ],
 
@@ -45,11 +46,13 @@ export const content: ModuleContent = {
   ],
 
   deadlines: [
-    // The one dated item in this area is the replacement Technical
-    // Specification for ETSI EN 319 422, targeted for 2027-05-31 after the
-    // European Commission concluded in October 2025 that the standard needs
-    // updating. It is a standards-body target, not a compliance deadline, and
-    // is stated as such in the module.
+    // One dated item in this area, stated in the module text rather than listed
+    // here: 2030-12-31, the end of the FIPS 140-3 level 3 route for the device
+    // holding a qualified provider's CA key (CIR (EU) 2025/1943) or time-stamp
+    // unit key (CIR (EU) 2025/1929); Common Criteria / EUCC at EAL 4 or higher
+    // remains. That rule is about the provider's own key hardware, not the
+    // signer's device. No replacement date for ETSI EN 319 422 is stated: no
+    // cited document gives one.
   ],
 
   narratives: {
@@ -60,6 +63,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Signature Longevity Calculator — pick a validity horizon and see which degradation stages apply, and when the existing archive must be re-timestamped. Standards Supersession Explorer — the same ETSI standard before and after PQC, with the superseded edition marked. Hybrid Suite Picker — TS 119 312 V2.1.1 Table 3.3 filtered by use case.',
     relatedStandards:
-      'ETSI TS 119 312 V2.1.1 (June 2026) supersedes V1.5.1 (December 2024): the older edition names only RSA and ECDSA, the newer adds ML-DSA, SLH-DSA, LMS, XMSS and hybrid modes. V2.1.1 also records that ETSI TS 102 176-1 is withdrawn and superseded by TS 119 312. ETSI EN 319 422 V1.1.1 (2016) remains the current published timestamp profile and names no algorithm itself, deferring to TS 119 312; the European Commission concluded in October 2025 that it needs updating, with a replacement expected in 2027.',
+      'ETSI TS 119 312 V2.1.1 (June 2026) supersedes V1.5.1 (December 2024): the older edition names only RSA and ECDSA, the newer adds ML-DSA, SLH-DSA, LMS, XMSS and hybrid modes. V2.1.1 also records that ETSI TS 102 176-1 is withdrawn and superseded by TS 119 312. ETSI EN 319 422 V1.1.1 (2016) is the timestamp profile that Implementing Regulation (EU) 2025/1929 applies to qualified time-stamps. It names no algorithm itself and defers to TS 119 312, but the Regulation’s version of the standard replaces its algorithm clauses with clauses under which hash and time-stamp signature algorithms shall be compliant with the Agreed Cryptographic Mechanisms endorsed by the European Cybersecurity Certification Group. V2.1.1 says of itself that it is incomplete for the EU Digital Identity Wallet and some other trust services, with an update in preparation, and leaves post-quantum migration scheduling to a separate document under development. Regulations (EU) 2025/1943 (qualified certificates) and 2025/1929 (qualified time-stamps) accept FIPS 140-3 level 3 for the CA and time-stamp-unit key device of a provider only until 31 December 2030; Common Criteria or EUCC at EAL 4 or higher remains.',
   },
 }

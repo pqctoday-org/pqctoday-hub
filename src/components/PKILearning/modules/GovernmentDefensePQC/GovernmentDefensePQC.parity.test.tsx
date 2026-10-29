@@ -3,10 +3,11 @@
  * Render + grounding checks for the Government & Defense module.
  *
  * The CNSA dates are the reason this module exists, and they are the kind of
- * fact that rots silently: NSA revised them once already (the 2022 advisory
- * carried a vaguer "2025–2030 depending on equipment type" before CNSSP 15 set
- * hard dates). Pinning them here means a future edit that drifts from the
- * cached FAQ fails a test rather than quietly teaching the wrong deadline.
+ * fact that rots silently: the 2022 advisory carried a different,
+ * per-equipment-type timetable (2025 to 2033), and the dated CNSSP 15
+ * milestones are the ones the October 2026 FAQ (Ver 2.2) states. Pinning them
+ * here means a future edit that drifts from that FAQ fails a test rather than
+ * quietly teaching the wrong deadline.
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'

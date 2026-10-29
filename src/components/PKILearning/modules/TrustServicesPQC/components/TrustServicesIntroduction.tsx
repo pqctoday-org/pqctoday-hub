@@ -253,6 +253,19 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
           That audit relationship is what makes a migration in this sector slow: changing signing
           algorithms means re-establishing conformity, not just deploying software.
         </p>
+        <p className="text-muted-foreground">
+          The hardware that holds a provider&apos;s signing keys is certified too. The EU
+          implementing rules for qualified certificates (Commission Implementing Regulation (EU)
+          2025/1943) and qualified time-stamps (Commission Implementing Regulation (EU) 2025/1929)
+          list reference standards, and supervisory bodies should presume that a provider that
+          follows them complies, although a provider may still rely on other practices. Those
+          standards require the secure cryptographic device that holds the provider&apos;s
+          certificate-signing (CA) key, or a time-stamping unit&apos;s key, to be certified to
+          Common Criteria or the EU scheme EUCC at EAL 4 or higher &mdash; or, until 31 December
+          2030, to FIPS 140-3 level 3. In the text adopted on 29 September 2025, only the Common
+          Criteria and EUCC routes remain after that date. This requirement covers the
+          provider&apos;s own keys, not the signer&apos;s device.
+        </p>
         <div className="flex flex-wrap gap-3 text-xs">
           <Link to="/library?ref=ETSI-EN-319-411" className="text-primary hover:underline">
             ETSI EN 319 411-1 (policy requirements for TSPs)
@@ -275,10 +288,18 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
         </div>
         <p className="text-sm text-muted-foreground">
           The practical sequence for a TSP is therefore: the suites document gains PQC modes (done —
-          TS 119 312 V2.1.1), the timestamp and policy standards are updated to match (EN 319 422
-          replacement targeted for 2027), conformity assessment schemes absorb the change, and only
-          then can a qualified service issue post-quantum signatures under audit. Each step gates
-          the next.
+          TS 119 312 V2.1.1), the timestamp and policy standards have to follow (EN 319 422 dates
+          from 2016 and defers algorithm choice to the suites document, although for qualified
+          time-stamps Implementing Regulation (EU) 2025/1929 lists a version of EN 319 422 in which
+          those clauses are replaced by clauses under which hash and time-stamp signature algorithms
+          shall be compliant with the Agreed Cryptographic Mechanisms endorsed by the European
+          Cybersecurity Certification Group), conformity assessment schemes absorb the change, and
+          only then can a qualified service issue post-quantum signatures under audit. Each step
+          gates the next. One caution on the first step: V2.1.1 (June 2026) says of itself that it
+          is incomplete for the EU Digital Identity Wallet and for certain other trust services,
+          including preservation and electronic registered delivery, with an update already in
+          preparation, and it says that scheduling of the post-quantum migration is planned to be
+          addressed in a separate document under development.
         </p>
       </LearnSection>
 

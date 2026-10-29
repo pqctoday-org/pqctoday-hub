@@ -21,6 +21,12 @@ export const content: ModuleContent = {
     // is what confirms this module's Profile A description.
     getStandard('3GPP TS 33.501 Rel-19'),
     getStandard('3GPP-PQC-Study-2025'),
+    // Telecom-body guidance named in the Introduction (library ids)
+    getStandard('GSMA PQ.03 PQC Guidelines'),
+    getStandard('ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar'),
+    getStandard('ETSI TS 103 744'),
+    getStandard('3GPP-Post-Quantum-Cryptography-SA3-Overview'),
+    getStandard('GSMA-SGP24-v2-4-4'),
     getStandard('NIST-CSWP-36A'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
@@ -51,10 +57,10 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'SUCI concealment: encrypts the subscriber permanent identity (SUPI/IMSI) before transmission over the air interface, preventing IMSI catcher surveillance attacks that plagued 2G/3G/4G networks. Profile A (X25519): Curve25519 ECDH key agreement, 32-byte public keys, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable. Profile B (P-256): NIST secp256r1 ECDH, 65-byte uncompressed public keys, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable.',
+      'SUCI concealment: encrypts the subscriber permanent identity (SUPI/IMSI) before transmission over the air interface, preventing IMSI catcher surveillance attacks that plagued 2G/3G/4G networks. Profile A (X25519): Curve25519 ECDH key agreement, 32-byte public keys, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable. Profile B (P-256): NIST secp256r1 ECDH, ephemeral public key sent point-compressed (33 bytes) in the scheme output, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable.',
     workshopSummary:
       'Part 1 -- SUCI Deconcealment: Step through the full 11-step SUCI construction and deconcealment process for Profile A (X25519), Profile B (P-256), and Profile C (ML-KEM), with real OpenSSL commands showing key generation, ECDH/KEM operations, KDF derivation, AES encryption, and HMAC computation.',
     relatedStandards:
-      '3GPP TS 33.501 (5G security architecture), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.938 (3GPP Cryptographic Inventory — an inventory of where ECIES/ECDH/RSA are used today, not a PQC profile). 3GPP TS 23.003 (SUPI/SUCI identifier formats), 3GPP TS 31.102 (USIM application). FIPS 203 (ML-KEM), NIST SP 800-56C (KDF recommendations). RFC 7748 (X25519 Diffie-Hellman), ANSI X9.63 (Key Derivation Function)',
+      '3GPP TS 33.501 (5G security architecture), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.938 (3GPP Cryptographic Inventory — an inventory of the cryptography used in the 3GPP specifications for the 5G System in standalone mode, including ECIES, ECDH and RSA; not a PQC profile). 3GPP TS 23.003 (SUPI/SUCI identifier formats), 3GPP TS 31.102 (USIM application). FIPS 203 (ML-KEM), NIST SP 800-56C (KDF recommendations). RFC 7748 (X25519 Diffie-Hellman), ANSI X9.63 (Key Derivation Function)',
   },
 }
