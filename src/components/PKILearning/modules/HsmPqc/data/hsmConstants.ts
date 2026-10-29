@@ -888,8 +888,8 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     vendorId: 'azure-dhsm',
     vendorName: 'Azure Dedicated HSM',
     currentFirmware: 'Thales Luna 7 firmware 7.0.3 (the version Azure documents)',
-    targetFirmware: 'Thales Luna 7.9 (customer-administered)',
-    pqcAlgorithmsAdded: ['ML-KEM (FIPS 203)', 'ML-DSA (FIPS 204)'],
+    targetFirmware: 'Thales Luna 7.9.0 or newer (customer-administered)',
+    pqcAlgorithmsAdded: ['ML-KEM (FIPS 203)', 'ML-DSA (FIPS 204)', 'LMS-HSS (from 7.8.9)'],
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM (same as Thales Luna 7)',
     notes:
