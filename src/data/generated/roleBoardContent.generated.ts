@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10282026.csv
+ * Source: src/data/role_board_content_10292026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2736,7 +2736,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Run the vectors before the lab does.',
         sub: 'Reference vectors and known-answer tests run in this browser against a PKCS#11 engine you pick — C++, Rust, or both in parity — with the evidence class stated on every result. Evidence for that test on that build, not a certificate.',
         ctaPrimary: 'Open the validation workbench',
-        ctaPrimaryHref: '/playground/hsm?tab=build&dtab=acvp',
+        ctaPrimaryHref: '/playground/hsm?tab=build&dtab=acvp&engine=dual',
         ctaSecondary: 'Start with certification fundamentals',
         ctaSecondaryHref: '/learn/crypto-product-certification',
         proofChips: [
