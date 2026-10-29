@@ -23730,6 +23730,36 @@
       "unified": "converted",
       "admittedAt": "2026-10-29T01:16:07.848449+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "EASA-Easy-Access-Rules-AMC-20",
+      "title": "Easy Access Rules for Acceptable Means of Compliance for Airworthiness of Products, Parts and Appliances (AMC-20) - Initial issue & Amendments 1 - 21",
+      "url": "https://www.easa.europa.eu/en/document-library/easy-access-rules/online-publications/easy-access-rules-acceptable-means-0?page=21",
+      "status": "downloaded",
+      "filename": "EASA-Easy-Access-Rules-AMC-20.html",
+      "sizeBytes": 107605,
+      "contentType": "text/html",
+      "sha256": "c6e3ab2406e1a3532c3592ac7e0da5fc7c3da59dc034c40885aa92a75fe1998e",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:26:36.212386+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "AIA-Civil-Aviation-Software-Cybersecurity-Recommendations-2021",
+      "title": "Civil Aviation Software Cybersecurity Recommendations (AIA Software Distribution Security White Paper, 2021)",
+      "url": "https://www.aia-aerospace.org/wp-content/uploads/AIA-Civil-Aviation-Cyber-Security-Subcommittee-Software-Distribution-Security-White-Paper-2021.pdf",
+      "status": "downloaded",
+      "filename": "AIA-Civil-Aviation-Software-Cybersecurity-Recommendations-2021.pdf",
+      "sizeBytes": 698233,
+      "contentType": "application/pdf",
+      "sha256": "80215ac7bb6e7b7afb3ef21d0b63578fcc461885d737771b2381002391fb0b98",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:26:57.110676+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
