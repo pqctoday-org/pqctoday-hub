@@ -3475,16 +3475,16 @@
         "artifacts": [
           {
             "path": "src/wasm/softhsmrustv3_bg.wasm",
-            "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789"
+            "sha256": "549c0b134bcfd0b450b9c3a68143b2b1e34444ac709dc571967d1073a1fb4591"
           },
           {
             "path": "src/wasm/softhsmrustv3_bg.js",
-            "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
+            "sha256": "1e4692718112fdceeb7373ab3d8eab348b5b067fc2fb996bbe05cb8bb2342d88"
           }
         ],
-        "sourceCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
+        "sourceCommit": "e18cb6905fa2f3cb8a1bebd22a771f66e5da14c8",
         "sourceRepo": "pqctoday-org/pqctoday-hsm",
-        "builtAt": "2026-10-22",
+        "builtAt": "2026-10-28",
         "sourceCommitProvenance": "public/wasm/wasm-provenance.json"
       },
       "capture": {

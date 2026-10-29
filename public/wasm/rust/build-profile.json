@@ -1,0 +1,6 @@
+{
+  "profile": "release",
+  "features": ["acvp", "educational-replication"],
+  "acvp_test_hooks": true,
+  "wasm_sha256": "549c0b134bcfd0b450b9c3a68143b2b1e34444ac709dc571967d1073a1fb4591"
+}
