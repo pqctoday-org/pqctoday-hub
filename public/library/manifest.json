@@ -23760,6 +23760,21 @@
       "unified": "converted",
       "admittedAt": "2026-10-29T01:26:57.110676+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "DLR-CEAS-Agile-Post-Quantum-Secure-Cryptography-in-Avionics",
+      "title": "Agile, post-quantum secure cryptography in avionics",
+      "url": "https://elib.dlr.de/220557/1/s13272-025-00806-5.pdf",
+      "status": "downloaded",
+      "filename": "DLR-CEAS-Agile-Post-Quantum-Secure-Cryptography-in-Avionics.pdf",
+      "sizeBytes": 4315790,
+      "contentType": "application/pdf",
+      "sha256": "0148b8bbc022b329aefbc00a1e1e34011f9d3741ad636f8f58a506346852b752",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:41:55.342431+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
