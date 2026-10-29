@@ -104,7 +104,8 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     product: 'LiquidSecurity 2 (LS2)',
     type: 'on-prem',
     catalogName: 'Marvell LiquidSecurity 2',
-    fips140Level: 'FIPS 140-3 Level 3',
+    fips140Level:
+      'FIPS 140-3 Level 3 (CMVP #4703 and #5502, Marvell LS2 HSM Family; no PQC algorithm among the approved algorithms of either certificate, and both security policies list ML-DSA and ML-KEM only as non-compliant operations; checked 2026-10-29)',
     formFactor: 'pcie',
     firmwareVersion: 'Beta firmware',
     pkcs11Version: '2.40',
