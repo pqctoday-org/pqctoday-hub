@@ -656,7 +656,12 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
           'Misconfigurations, weak key management, and insecure protocol usage across all schemes',
       },
     ],
-    countermeasures: ['Follow OWASP Cryptographic Failures guidance for integration patterns'],
+    countermeasures: [
+      'Follow OWASP Cryptographic Failures guidance for integration patterns',
+      "In X25519 and X448, a public key that is a point of small order removes the other party's private key from the result, so the result is the all-zero value; RFC 7748 says both sides may check for an all-zero shared secret and abort if so, for example by combining all of its bytes with OR.",
+      'RFC 9180 (HPKE), section 7.1.4, goes further for X25519 and X448: recipients must check whether the Diffie-Hellman shared secret is the all-zero value and abort if so.',
+      "Project Wycheproof's X448 file marks 11 cases as expecting an all-zero shared secret, all graded “acceptable”: refusing them and computing them are both defensible, and rejecting low-order public keys is not a strict requirement of RFC 7748. In the Hub's tests the Rust engine refuses 40 of the 42 such cases across the X25519 and X448 files and returns the all-zero value for the other two, X448 cases 70 and 71, whose public keys are the non-canonical values u = p and u = p + 1 (read as 0 and 1); the C++ engine refuses all 42. An open pull request in the HSM source repository makes the Rust engine refuse those two.",
+    ],
     references: [
       {
         referenceId: 'EmergentMind-Nonce-Reuse-Crypto',
@@ -669,6 +674,23 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         title: 'Cryptographic Failures: 2025 OWASP Top 10 Risk',
         url: 'https://www.invicti.com/blog/web-security/cryptographic-failures',
         localFile: 'library/Invicti-OWASP-CryptoFailures-2025.html',
+      },
+      {
+        referenceId: 'RFC-7748-Elliptic-Curves-for-Security',
+        title: 'Elliptic Curves for Security (RFC 7748)',
+        url: 'https://www.rfc-editor.org/rfc/rfc7748',
+        localFile: 'library/IETF_RFC_7748.html',
+      },
+      {
+        referenceId: 'RFC-9180-Hybrid-Public-Key-Encryption',
+        title: 'Hybrid Public Key Encryption (RFC 9180)',
+        url: 'https://www.rfc-editor.org/rfc/rfc9180',
+        localFile: 'library/IETF_RFC_9180.html',
+      },
+      {
+        referenceId: 'Wycheproof-Project-Test-Vectors',
+        title: 'Project Wycheproof test vectors',
+        url: 'https://github.com/C2SP/wycheproof',
       },
     ],
   },
