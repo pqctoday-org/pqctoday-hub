@@ -2879,6 +2879,23 @@
       "status": "downloaded",
       "admittedFor": "Industry Landscape source documents",
       "admittedOn": "2026-10-29T02:30:19.093453+00:00"
+    },
+    {
+      "refId": "crypto-solana-signing",
+      "filename": "crypto-solana-signing.html",
+      "sizeBytes": 1730243,
+      "contentType": "text/html",
+      "url": "https://solana.com/docs/core/transactions/transaction-structure",
+      "sha256": "4dbe2344f465a7111c3e30096b43d12bc756a5d15a29272d1d570525fd578566",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T02:52:37.462261+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "UNCONFIRMED",
+      "file": "crypto-solana-signing.html",
+      "status": "downloaded",
+      "admittedFor": "Industry Landscape source documents",
+      "admittedOn": "2026-10-29T02:52:37.116441+00:00"
     }
   ],
   "archivedEntries": [
