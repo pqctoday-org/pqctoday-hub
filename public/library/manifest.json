@@ -1817,7 +1817,7 @@
     },
     {
       "refId": "EUDI-Wallet-ARF",
-      "label": "EUDI Wallet ARF v3.0.0",
+      "label": "EUDI Wallet ARF v2.9.0",
       "url": "https://raw.githubusercontent.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/v2.9.0/docs/architecture-and-reference-framework-main.md",
       "status": "downloaded",
       "file": "library/EUDI-Wallet-ARF.html",
