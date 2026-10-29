@@ -23791,6 +23791,51 @@
       "file": "SAE-ARINC-835-2-Loadable-Software-Parts-Digital-Signatures.html",
       "status": "downloaded",
       "admittedOn": "2026-10-29T01:42:54.148958+00:00"
+    },
+    {
+      "refId": "OMS-Specification-Vol2-Annex-F-Security-Mode-13-TLS",
+      "title": "Open Metering System Specification Vol. 2, Annex F: Security Mode 13 - Transport Layer Security (TLS), Issue 5.0.1, Release C (2023-12)",
+      "url": "https://oms-group.org/wp-content/uploads/2025/07/OMS-Spec_Vol2_AnnexF_C111.pdf",
+      "status": "downloaded",
+      "filename": "OMS-Specification-Vol2-Annex-F-Security-Mode-13-TLS.pdf",
+      "sizeBytes": 2687337,
+      "contentType": "application/pdf",
+      "sha256": "e43dc1498e503889cfdc67961460e4382918de2eee66136af6588b8f9d3ce7a9",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:49:00.862137+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "OMS-Specification-Vol1-General-Part",
+      "title": "Open Metering System Specification Volume 1, General Part, Issue 2.4.1 / 2023-12 (RELEASE)",
+      "url": "https://oms-group.org/wp-content/uploads/2024/05/OMS-Spec_Vol1_General_v241.pdf",
+      "status": "downloaded",
+      "filename": "OMS-Specification-Vol1-General-Part.pdf",
+      "sizeBytes": 883047,
+      "contentType": "application/pdf",
+      "sha256": "95f209b449c1e0a2ba87adaacea492effe6d42626d19b6276af440803d259b6f",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:49:15.888535+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "OMS-Specification-Vol2-Primary-Communication",
+      "title": "Open Metering System Specification Vol. 2 - Primary Communication, Issue 5.0.1 / 2023-12 (RELEASE)",
+      "url": "https://oms-group.org/wp-content/uploads/2024/10/OMS-Spec_Vol2_Primary_v501_01.pdf",
+      "status": "downloaded",
+      "filename": "OMS-Specification-Vol2-Primary-Communication.pdf",
+      "sizeBytes": 4548853,
+      "contentType": "application/pdf",
+      "sha256": "1b708b4ff67a263a028b88a3d8e0e43824876ddebf623b39a4130d4a471eba1e",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:49:33.588230+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [

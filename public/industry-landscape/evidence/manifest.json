@@ -2267,6 +2267,23 @@
       "status": "downloaded",
       "admittedFor": "Industry Landscape source documents",
       "admittedOn": "2026-10-29T01:44:06.274790+00:00"
+    },
+    {
+      "refId": "water-ami",
+      "filename": "water-ami.pdf",
+      "sizeBytes": 2687337,
+      "contentType": "application/pdf",
+      "url": "https://oms-group.org/wp-content/uploads/2025/07/OMS-Spec_Vol2_AnnexF_C111.pdf",
+      "sha256": "e43dc1498e503889cfdc67961460e4382918de2eee66136af6588b8f9d3ce7a9",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:54:24.839334+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "UNCONFIRMED",
+      "file": "water-ami.pdf",
+      "status": "downloaded",
+      "admittedFor": "Industry Landscape source documents",
+      "admittedOn": "2026-10-29T01:54:21.021778+00:00"
     }
   ],
   "archivedEntries": [
