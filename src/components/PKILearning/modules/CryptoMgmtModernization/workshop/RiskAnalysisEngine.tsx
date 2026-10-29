@@ -99,11 +99,11 @@ const SAMPLE_ASSETS: CbomExportItem[] = [
     name: 'Thales Luna Network HSM 7',
     version: 'fw 7.8.4',
     type: 'hsm',
-    fipsStatus: 'active-pqc',
+    fipsStatus: 'active',
     esvStatus: 'active',
-    pqcSupport: 'ML-DSA, ML-KEM in FIPS boundary',
-    posture: 'green',
-    notes: 'CMVP #4962 active. PQC in FIPS boundary.',
+    pqcSupport: 'None at fw 7.8.4 (ML-KEM and ML-DSA arrive in fw 7.9.0)',
+    posture: 'yellow',
+    notes: 'CMVP #4684 (Luna K7 module) covers fw 7.8.4 and 7.8.5 and lists no PQC algorithm.',
   },
 ]
 

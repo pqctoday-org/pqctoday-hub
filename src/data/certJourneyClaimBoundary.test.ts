@@ -85,6 +85,21 @@ const BANNED: { file: string; banned: RegExp; why: string }[] = [
     why: 'ML-DSA in FIPS mode on hsm2m.medium from 1 Sep 2026; not on certificate #4703',
   },
   {
+    file: `${HSM}/components/HsmPqcIntroduction.tsx`,
+    banned: /^\s*PRODUCTION\s*$/m,
+    why: 'vendor badges read the central catalog through STATUS_LABELS; a typed status word drifts',
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/data/hsmVendors.ts',
+    banned: /#4962 \(Luna G7\)/,
+    why: 'Luna Network HSM 7 is the K7 module: certificate #4684, firmware 7.8.4 and 7.8.5, no PQC algorithm listed; #4962 is the Luna G7 module',
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/workshop/RiskAnalysisEngine.tsx',
+    banned: /CMVP #4962 active\. PQC in FIPS boundary/,
+    why: 'Luna certificate #4684 (firmware 7.8.4 and 7.8.5) lists no PQC algorithm',
+  },
+  {
     file: 'src/components/PKILearning/modules/KmsPqc/data/kmsProviderData.ts',
     banned: /none are GA yet/,
     why: 'Cloud KMS PQC signing GA 16 Jul 2026 (release notes)',

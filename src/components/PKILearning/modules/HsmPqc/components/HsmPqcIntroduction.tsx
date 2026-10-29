@@ -27,6 +27,7 @@ import {
   FIRMWARE_UPGRADE_PATHS,
   KEY_SIZE_COMPARISONS,
 } from '../data/hsmConstants'
+import { HSM_VENDORS, STATUS_LABELS, getVendorPqcSupportStatus } from '../data/hsmVendorData'
 import { Button } from '@/components/ui/button'
 import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -35,6 +36,18 @@ import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCove
 
 interface HsmPqcIntroductionProps {
   onNavigateToWorkshop: () => void
+}
+
+/** Availability badge for a vendor card: read from the central catalog, never typed in. */
+const VendorStatusBadge: React.FC<{ vendorId: string }> = ({ vendorId }) => {
+  const vendor = HSM_VENDORS.find((v) => v.id === vendorId)
+  if (!vendor) return null
+  const status = STATUS_LABELS[getVendorPqcSupportStatus(vendor)]
+  return (
+    <span className={`text-[10px] px-2 py-0.5 rounded border font-bold ${status.className}`}>
+      {status.label}
+    </span>
+  )
 }
 
 interface CollapsibleSectionProps {
@@ -351,9 +364,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-bold text-foreground">Thales Luna Network HSM 7</h3>
-                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                    PRODUCTION
-                  </span>
+                  <VendorStatusBadge vendorId="thales-luna" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
@@ -392,9 +403,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-bold text-foreground">Entrust nShield 5</h3>
-                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                    PRODUCTION
-                  </span>
+                  <VendorStatusBadge vendorId="entrust-nshield" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
@@ -452,9 +461,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <h3 className="text-sm font-bold text-foreground">
                     Utimaco SecurityServer Se Gen2 (Quantum Protect)
                   </h3>
-                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                    PRODUCTION
-                  </span>
+                  <VendorStatusBadge vendorId="utimaco" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
@@ -639,9 +646,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-foreground">Azure Dedicated HSM</h3>
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                  PRODUCTION
-                </span>
+                <VendorStatusBadge vendorId="azure-dhsm" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
