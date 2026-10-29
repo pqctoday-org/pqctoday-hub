@@ -298,11 +298,10 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'SP 800-232 (standardised) — lightweight symmetric, NOT a post-quantum public-key algorithm|||SP 800-232':
     'final', // Ascon-AEAD128, Ascon-Hash256
   'Candidate|||Draft (Selected 2025)': 'fips-draft', // HQC
-  // HQC wording corrected 2026-10-17: NIST selected HQC on 11 March 2025, has
-  // not published a draft FIPS yet, and expects the final standard in 2027
-  // (NIST news release, 11 March 2025; NIST IR 8545).
-  'Candidate|||Selected March 2025; draft FIPS not yet published; final expected 2027':
-    'fips-draft', // HQC
+  // HQC wording corrected 2026-10-28: the labels state only the selection (NIST's PQC
+  // page: "HQC was selected for standardization on March 11, 2025"); the draft-in-a-year
+  // and 2027 dates were NIST's plan of 11 March 2025, not a current schedule.
+  'Candidate|||Selected by NIST on 11 March 2025': 'fips-draft', // HQC
   // FN-DSA: FIPS 206 is announced/in development — NO public draft exists yet
   // (csrc.nist.gov is the source of truth; the ipd URL 404s). Tier stays
   // 'fips-draft' (the NIST-FIPS-pipeline tier HQC also uses) — see
@@ -451,8 +450,7 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // NIST FIPS), same tier China/KpqC national winners already use.
   'Published|||GB/T 32918 (China); ISO/IEC 14888-3:2018; NOT in NIST FIPS': 'regional',
   // Exact current publication/recommendation pairs (27 October 2026).
-  'Selected by NIST; standard in development|||Selected March 2025; draft FIPS not yet published; final expected 2027':
-    'fips-draft',
+  'Selected by NIST for standardization|||Selected by NIST on 11 March 2025': 'fips-draft',
   'Author specification; BSI advises against new use|||Not in ISO parameter list per scheme authors; not in NIST FIPS; BSI advisory dated 2026-09-29, announced 2026-10-01; no new developments':
     'non-standardized',
   'ISO 18033-2 Amd2; BSI advises against new use|||ISO/IEC 18033-2:2006/Amd 2:2026; not in NIST FIPS; BSI advisory dated 2026-09-29, announced 2026-10-01; no new developments':
