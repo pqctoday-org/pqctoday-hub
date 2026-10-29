@@ -110,6 +110,11 @@ const BANNED: { file: string; banned: RegExp; why: string }[] = [
     why: 'NIST IR 8413: call for proposals Dec 2016, 7 finalists and 8 alternates in round 3, first algorithms selected July 2022',
   },
   {
+    file: 'src/components/PKILearning/modules/StandardsBodies/rag-summary.md',
+    banned: /6-year PQC/,
+    why: 'NIST IR 8413: call for proposals Dec 2016, first algorithms selected July 2022',
+  },
+  {
     file: 'src/components/OpenSSLStudio/learn/opensslLessons.ts',
     banned: /kdf \(3\.6\+\)|two brand-new subcommands/,
     why: 'openssl-kdf(1) HISTORY: "Added in OpenSSL 3.0"; only configutl was added in 3.6',
