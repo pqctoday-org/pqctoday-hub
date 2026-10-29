@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:39ff5033-4c33-4476-8f03-caef8ab5dab3",
+  "serialNumber": "urn:uuid:bb098e62-3ce6-4868-bc83-02ccf2c23e23",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-27T00:00:00.000Z",
+    "timestamp": "2026-10-28T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -15725,7 +15725,7 @@
           "primitive": "kem"
         }
       },
-      "description": "I4P's own official Trident HSM product page's Cryptography specification table lists exactly one entry under 'Post-Quantum algorithms': SPHINCS+ (= SLH-DSA) -- confirming SLH-DSA support. The same table has no ML-KEM/Kyber or ML-DSA/Dilithium entry; those algorithms named in pqc_support are not independently confirmed by this primary source. (Common Criteria certification status is out of this skill's scope.)",
+      "description": "The vendor's product page, in its cryptography specification table, lists exactly one entry under 'Post-Quantum algorithms': SPHINCS+. The table has no ML-KEM/Kyber or ML-DSA/Dilithium entry. The Common Criteria security target for Trident 3.2.3 says Trident supports quantum-resistant public-key cryptographic algorithms, such as SPHINCS+, ML-DSA, NTRU and ML-KEM, and its cryptographic tables list SLH-DSA parameter sets under 'SPHINCS+ [FIPS 205]'. The product page does not name SLH-DSA.",
       "externalReferences": [
         {
           "type": "website",
