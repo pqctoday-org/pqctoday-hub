@@ -691,7 +691,7 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               integrity, and <LibLink id="NERC-CIP-012-2">CIP-012-2</LibLink> — effective 2026-07-01
               — which protects confidentiality, integrity and availability of real-time data between
               Control Centers and is technology-neutral (encryption is one way to meet it, not a
-              mandate). US pipelines fall under{' '}
+              mandate). TSA-designated US pipelines fall under{' '}
               <LibLink id="TSA-SD-PIPELINE-2021-02G">
                 TSA Security Directive Pipeline-2021-02G
               </LibLink>
@@ -823,7 +823,8 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </li>
             <li>
               <strong>TSA SD Pipeline-2021-02G</strong> — mandatory measures for designated US
-              pipelines, including encryption of data in transit; in force 3 May 2026 to 2 May 2027.
+              pipelines; operational-technology services may not traverse the IT system unless their
+              content is encrypted while in transit. In force 3 May 2026 to 2 May 2027.
             </li>
           </ul>
           <h3 className="text-sm font-bold text-foreground">NERC CIP (North American grid)</h3>

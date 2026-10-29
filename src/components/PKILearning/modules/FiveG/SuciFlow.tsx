@@ -959,8 +959,8 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
               .join('')
               .toUpperCase()
             hsmResult = `Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}
-KDF: ANSI X9.63-KDF (SHA-256) — spec-compliant per 3GPP TS 33.501 §C.3.3
-SharedInfo: raw ${profile === 'A' ? '32-byte X25519' : '65-byte P-256'} ephemeral public key
+KDF: ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
+SharedInfo: raw ${profile === 'A' ? '32-byte X25519' : '65-byte P-256 (demo; the Annex C.4.4.1 vectors use the 33-byte compressed key)'} ephemeral public key
 Counter: 0x00000001 → block1, 0x00000002 → block2
 block1 = SHA-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1Hex}
 → K_enc handle: ${kEncHandle} | K_enc (${kEnc.length} bytes): ${kEncHex}

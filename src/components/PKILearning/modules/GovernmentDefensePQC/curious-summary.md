@@ -14,4 +14,4 @@ Only the public-key half of the estate is being replaced. The NSA suite swaps ou
 
 ## What's Happening
 
-The dates are set: new purchases must comply from January 2027, equipment that cannot be upgraded must be gone by the end of 2030, and the new algorithms become mandatory at the end of 2031. One practical wrinkle catches people out — the 2022 advisory called the algorithms Kyber and Dilithium, while the 2024 update calls the same things ML-KEM and ML-DSA. Both documents are still in force, so searching your own estate for only one set of names will quietly miss half of what you have.
+The dates are set: new purchases must use the new algorithms from January 2027, equipment that cannot be upgraded must be gone by the end of 2030 unless an exception is granted, and the new algorithms become mandatory at the end of 2031. One practical wrinkle catches people out — the 2022 advisory called the algorithms Kyber and Dilithium, while the October 2026 update calls the same things ML-KEM and ML-DSA. Both documents are still in force, so searching your own estate for only one set of names will quietly miss half of what you have.

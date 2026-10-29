@@ -145,7 +145,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             <div className="text-sm font-bold text-secondary mb-2">Profile B (P-256)</div>
             <div className="space-y-1 text-xs text-muted-foreground">
               <p>NIST secp256r1 curve (ECDH)</p>
-              <p>65-byte uncompressed public keys</p>
+              <p>33-byte compressed ephemeral public key (point compression is mandatory)</p>
               <p>AES-128-CTR encryption</p>
               <p>HMAC-SHA-256 integrity</p>
               <p className="text-destructive font-medium pt-1">Quantum-vulnerable</p>
@@ -226,11 +226,13 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </div>
         <p className="text-foreground/80 leading-relaxed mt-3 text-sm">
           CK and IK feed the 5G key hierarchy:{' '}
-          <code className="text-xs bg-muted px-1 rounded">KAUSF</code> (anchor key) {' \u2192 '}
-          <code className="text-xs bg-muted px-1 rounded">KSEAF</code> {' \u2192 '}
-          <code className="text-xs bg-muted px-1 rounded">KAMF</code> {' \u2192 '}
-          <code className="text-xs bg-muted px-1 rounded">KNASint / KNASenc</code> {' \u2192 '}
-          <code className="text-xs bg-muted px-1 rounded">KgNB</code> (radio layer).
+          <code className="text-xs bg-muted px-1 rounded">KAUSF</code> {' \u2192 '}
+          <code className="text-xs bg-muted px-1 rounded">KSEAF</code> (the anchor key) {' \u2192 '}
+          <code className="text-xs bg-muted px-1 rounded">KAMF</code>, and from{' '}
+          <code className="text-xs bg-muted px-1 rounded">KAMF</code> the NAS keys{' '}
+          <code className="text-xs bg-muted px-1 rounded">KNASint / KNASenc</code> and the
+          radio-layer key <code className="text-xs bg-muted px-1 rounded">KgNB</code> are each
+          derived.
         </p>
       </section>
 

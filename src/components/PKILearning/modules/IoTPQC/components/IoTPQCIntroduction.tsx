@@ -661,9 +661,9 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </li>
           <li>
             <strong>EU Radio Equipment Directive</strong>: Delegated Regulation (EU) 2022/30 makes
-            cybersecurity essential requirements apply to internet-connected radio equipment from 1
-            August 2025; EN 18031-1/-2/-3 are the harmonised standards, cited (with restrictions) by
-            Implementing Decision (EU) 2025/138.
+            cybersecurity essential requirements apply to internet-connected radio equipment; EN
+            18031-1/-2/-3 are the harmonised standards, cited (with restrictions) by Implementing
+            Decision (EU) 2025/138.
           </li>
           <li>
             <strong>US Cyber Trust Mark</strong> (FCC 24-26): a voluntary label for consumer IoT

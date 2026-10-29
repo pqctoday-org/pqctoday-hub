@@ -34,7 +34,7 @@ const KINDS: { id: SystemKind; label: string; blurb: string }[] = [
     id: 'contractor',
     label: 'Nonfederal system handling CUI',
     blurb:
-      'Reached by NIST SP 800-171 Rev. 3 (and CMMC where it applies) even with no National Security System involvement at all. Executive Order 14412 also directs a proposed Federal Acquisition Regulation rule that would require covered contractors to comply with NIST FIPS, including the PQC ones, by 31 December 2030; the order directs that proposed rule and is not itself the rule.',
+      'Reached by NIST SP 800-171 Rev. 3 (and CMMC where it applies) even with no National Security System involvement at all. DoD’s CMMC briefing (cleared for open publication 21 January 2025) says CMMC assessments remain against Rev. 2 until DoD formally adopts Rev. 3 through rulemaking. Executive Order 14412 also directs a proposed Federal Acquisition Regulation rule that would require covered contractors to comply with NIST FIPS, including the PQC ones, by 31 December 2030; the order directs that proposed rule and is not itself the rule.',
   },
 ]
 

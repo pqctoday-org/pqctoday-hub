@@ -126,7 +126,7 @@ function VectorCard({ vector }: { vector: VectorEntry }) {
             )}
             {vector.eph_pub_hex && (
               <HexField
-                label={`Ephemeral Public Key (${vector.profile === 'A' ? '32-byte raw X25519' : 'uncompressed P-256, 65 bytes — SharedInfo for KDF'})`}
+                label={`Ephemeral Public Key (${vector.profile === 'A' ? '32-byte raw X25519' : 'uncompressed P-256, 65 bytes'})`}
                 value={vector.eph_pub_hex}
               />
             )}
@@ -212,10 +212,11 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
         <div className="overflow-y-auto flex-1 p-4 space-y-3">
           <div className="text-xs text-muted-foreground bg-muted/40 rounded px-3 py-2">
             Each vector provides both IMSI-based and NAI-based SUPI variants. For Profile B, the
-            scheme output uses the <strong>compressed</strong> ephemeral public key (33 bytes with
-            02/03 prefix), while the ECDH computation and KDF SharedInfo use the{' '}
-            <strong>uncompressed</strong> form (65 bytes). The same home network key pair is reused
-            across both Profile B vectors.
+            scheme output and the KDF SharedInfo use the <strong>compressed</strong> ephemeral
+            public key (33 bytes with 02/03 prefix): the derived keys in the vectors follow from
+            that form, not from the <strong>uncompressed</strong> form (65 bytes), which is the same
+            point written in full. The same home network key pair is reused across both Profile B
+            vectors.
           </div>
 
           {vectors.map((v) => (

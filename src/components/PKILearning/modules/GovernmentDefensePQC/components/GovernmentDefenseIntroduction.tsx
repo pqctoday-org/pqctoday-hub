@@ -80,8 +80,8 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
         <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30 space-y-2">
           <h3 className="font-semibold text-foreground">Same requirement, two vocabularies</h3>
           <p className="text-sm text-muted-foreground">
-            The 2022 advisory names {CNSA_NAMING_DRIFT.advisory2022.join(' and ')}. The December
-            2024 FAQ names {CNSA_NAMING_DRIFT.faq2024.join(' and ')} for the same algorithms.{' '}
+            The 2022 advisory names {CNSA_NAMING_DRIFT.advisory2022.join(' and ')}. The October 2026
+            FAQ (Ver. 2.2) names {CNSA_NAMING_DRIFT.faq2024.join(' and ')} for the same algorithms.{' '}
             {CNSA_NAMING_DRIFT.note}
           </p>
           <p className="text-sm text-muted-foreground">
@@ -117,8 +117,9 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
       >
         <p className="text-muted-foreground">
           These dates are what separates this sector from every other one in this track. They come
-          from CNSSP 15 as quoted in the December 2024 CNSA 2.0 FAQ — not from the 2022 advisory,
-          which carried a vaguer &ldquo;2025&ndash;2030 depending on equipment type&rdquo; framing.
+          from CNSSP 15 as stated in the October 2026 CNSA 2.0 FAQ (Ver. 2.2) — not from the 2022
+          advisory, which carried a different, per-equipment-type timetable running from 2025 to
+          2033.
         </p>
 
         <ol className="space-y-3">
@@ -137,12 +138,11 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           <p className="text-sm">
             <AlertTriangle size={14} className="inline mr-1.5 -mt-0.5 text-status-warning" />
             The binding date for most vendors is the earliest one. From 1 January 2027 new NSS
-            acquisitions are required to be CNSA 2.0 compliant unless otherwise noted, regardless of
-            how long the rest of the transition runs. That does not make every other product
-            automatically unbuyable: NSA&rsquo;s FAQ allows an updateable product to be bought on a
-            vendor&rsquo;s contractual commitment to deliver CNSA 2.0, and NIAP Policy Letter #33
-            asks that contracts from that date require products that implement PQC or can be updated
-            to.
+            acquisitions are required to use CNSA 2.0 algorithms, regardless of how long the rest of
+            the transition runs. That does not make every other product automatically unbuyable:
+            NSA&rsquo;s FAQ allows an updateable product to be bought on a vendor&rsquo;s
+            contractual commitment to deliver CNSA 2.0, and NIAP Policy Letter #33 asks that
+            contracts from that date require products that implement PQC or can be updated to.
           </p>
         </div>
 
@@ -299,11 +299,13 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
         <p className="text-muted-foreground">
           NIST SP 800-171 Rev. 3 reaches further still — it applies to nonfederal systems handling
           Controlled Unclassified Information, which pulls contractors, universities and suppliers
-          into the same conversation even when they never touch a National Security System.
-          Executive Order 14412 goes a step further for contractors: it directs a proposed Federal
-          Acquisition Regulation rule that would require covered contractors to comply by 31
-          December 2030 with NIST&rsquo;s FIPS, including the FIPS that incorporate PQC algorithms.
-          The order directs that proposed rule; it is not itself the rule.
+          into the same conversation even when they never touch a National Security System. For
+          defence contractors, DoD&rsquo;s CMMC briefing (cleared for open publication on 21 January
+          2025) says assessments remain against Rev. 2 until DoD formally adopts Rev. 3 through
+          rulemaking. Executive Order 14412 goes a step further for contractors: it directs a
+          proposed Federal Acquisition Regulation rule that would require covered contractors to
+          comply by 31 December 2030 with NIST&rsquo;s FIPS, including the FIPS that incorporate PQC
+          algorithms. The order directs that proposed rule; it is not itself the rule.
         </p>
         <p className="text-muted-foreground">
           Algorithm support is only one gate. CNSSP 11 requires commercial IA and IA-enabled IT

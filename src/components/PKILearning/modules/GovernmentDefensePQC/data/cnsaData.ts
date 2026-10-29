@@ -4,8 +4,8 @@
  *
  * Every figure here is transcribed from cached evidence, not recalled:
  *  - NSA CNSA 2.0 Advisory (PP-22-1338, Sep 2022 Ver 1.0)  → library `NSA CNSA 2.0`
- *  - CNSA 2.0 and Quantum Computing FAQ (U/OO/194427-22 | PP-24-4014,
- *    December 2024 Ver 2.1)                                → library `NSA CNSA 2.0 FAQ`
+ *  - CNSA 2.0 and Quantum Computing FAQ (U/OO/6072712-26 | PP-26-3194,
+ *    October 2026 Ver 2.2)                                 → library `NSA CNSA 2.0 FAQ`
  *
  * The FAQ is the fresher of the two and is where the dated milestones live;
  * the advisory is where the algorithm selections live.
@@ -68,34 +68,35 @@ export interface CnsaMilestone {
 }
 
 /**
- * Dated milestones, quoted from the December 2024 FAQ (Ver 2.1). These
- * superseded the vaguer "2025–2030 depending on equipment type" framing that
- * the 2022 advisory carried, which is itself a useful thing for a learner to
- * see — the deadline moved because the policy was revised, not because anyone
- * missed it.
+ * Dated milestones, quoted from the October 2026 FAQ (Ver 2.2), which states
+ * the CNSSP 15 dates; the 2016 edition of CNSSP 15 does not carry them. These replaced the per-equipment-type timetable (2025 to
+ * 2033) that the 2022 advisory carried, which is itself a useful thing for a
+ * learner to see — the deadline moved because the policy was revised, not
+ * because anyone missed it.
  */
 export const CNSA_MILESTONES: CnsaMilestone[] = [
   {
     date: '1 January 2027',
-    requirement: 'All new acquisitions for NSS must be CNSA 2.0 compliant unless otherwise noted.',
-    source: 'CNSSP 15, quoted in CNSA 2.0 FAQ Ver 2.1',
+    requirement: 'CNSA 2.0 algorithms will be required in all new acquisitions for NSS.',
+    source: 'CNSSP 15, as stated in CNSA 2.0 FAQ Ver 2.2 (October 2026)',
   },
   {
     date: '31 December 2030',
     requirement:
-      'All equipment and services that cannot support CNSA 2.0 must be phased out unless otherwise noted.',
-    source: 'CNSSP 15, quoted in CNSA 2.0 FAQ Ver 2.1',
+      'All NSS equipment and services that cannot support CNSA 2.0 must be phased out unless otherwise granted an exception. NSA also expects encryption to be broadly quantum resistant by default by this date.',
+    source: 'CNSSP 15, as stated in CNSA 2.0 FAQ Ver 2.2 (October 2026)',
   },
   {
     date: '31 December 2031',
     requirement:
-      'CNSA 2.0 algorithms are mandated for use unless otherwise noted. NSA expects the vast majority of cryptography in an NSS to be quantum resistant by this date.',
-    source: 'CNSSP 15, quoted in CNSA 2.0 FAQ Ver 2.1',
+      'CNSA 2.0 algorithms are mandated for use, unless otherwise noted, to achieve full quantum resistance for NSS.',
+    source: 'CNSSP 15, as stated in CNSA 2.0 FAQ Ver 2.2 (October 2026)',
   },
   {
     date: '2035',
-    requirement: 'All National Security Systems quantum-resistant, per the goal set in NSM-10.',
-    source: 'NSM-10, restated in CNSA 2.0 FAQ Ver 2.1',
+    requirement:
+      'The goal set in NSM-10 for achieving quantum resistance. NSA intends that all NSS will be quantum-resistant well ahead of 2035.',
+    source: 'NSM-10, as described in CNSA 2.0 FAQ Ver 2.2 (October 2026)',
   },
 ]
 
@@ -122,8 +123,8 @@ export const CNSA_HYBRID_OBJECTIONS = [
 /**
  * A detail that makes the freshness point better than any lecture could: the
  * September 2022 advisory names the algorithms CRYSTALS-Kyber and
- * CRYSTALS-Dilithium, because FIPS 203/204 did not exist yet. The December
- * 2024 FAQ calls the same algorithms ML-KEM-1024 and ML-DSA-87. Same suite,
+ * CRYSTALS-Dilithium, because FIPS 203/204 did not exist yet. The October
+ * 2026 FAQ (Ver 2.2) calls the same algorithms ML-KEM-1024 and ML-DSA-87. Same suite,
  * same requirement, two vocabularies — and a search for "Kyber" in your own
  * estate will not find documents written after standardisation.
  */

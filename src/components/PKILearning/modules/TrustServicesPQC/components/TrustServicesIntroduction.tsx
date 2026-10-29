@@ -285,13 +285,14 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
         </div>
         <p className="text-sm text-muted-foreground">
           The practical sequence for a TSP is therefore: the suites document gains PQC modes (done —
-          TS 119 312 V2.1.1), the timestamp and policy standards are updated to match (EN 319 422
-          replacement targeted for 2027), conformity assessment schemes absorb the change, and only
-          then can a qualified service issue post-quantum signatures under audit. Each step gates
-          the next. One caution on the first step: V2.1.1 says of itself that it is incomplete for
-          the EU Digital Identity Wallet and for some other trust services (preservation and
-          electronic registered delivery), with an update already in preparation, and it leaves the
-          schedule for the post-quantum migration to a separate document still under development.
+          TS 119 312 V2.1.1), the timestamp and policy standards have to follow (EN 319 422 dates
+          from 2016 and leaves algorithm choice to the suites document), conformity assessment
+          schemes absorb the change, and only then can a qualified service issue post-quantum
+          signatures under audit. Each step gates the next. One caution on the first step: V2.1.1
+          says of itself that it is incomplete for the EU Digital Identity Wallet and for some other
+          trust services (preservation and electronic registered delivery), with an update already
+          in preparation, and it leaves the schedule for the post-quantum migration to a separate
+          document still under development.
         </p>
       </LearnSection>
 

@@ -1008,7 +1008,7 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
     year: 2030,
     quarter: 'Q1',
     description:
-      'Transition guidance recommending deprecation of 112-bit classical asymmetric algorithms by 2030 and disallowance by 2035.',
+      'Transition guidance: NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035.',
     affectedLayers: [
       'patient-portal',
       'clinical-workstations',

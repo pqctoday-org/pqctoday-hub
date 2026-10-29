@@ -9,6 +9,9 @@
  *    profiles. Library `ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp`.
  *  - RFC 3161 — Time-Stamp Protocol. Library
  *    `RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp`.
+ *  - Commission Implementing Regulation (EU) 2025/1929 — reference standards for
+ *    qualified electronic time stamps. Library
+ *    `CIR-EU-2025-1929-Qualified-Electronic-Time-Stamps`.
  *  - eIDAS 1.0 (EU 910/2014) and eIDAS 2.0 (EU 2024/1183).
  */
 
@@ -106,7 +109,7 @@ export const TIMESTAMP_FACTS = {
   agilityPoint:
     'Because RFC 3161 carries the algorithm in the TSA certificate rather than in the protocol, a TSA can migrate to ML-DSA without a protocol change. The layer that has to move is the trust list and the validation policy, not the wire format.',
   updateDue:
-    'The European Commission concluded in October 2025 that EN 319 422 needs updating for eIDAS 2.0; a replacement Technical Specification is targeted for 31 May 2027. Until then V1.1.1 remains the current published edition.',
+    'Implementing Regulation (EU) 2025/1929 (September 2025) applies V1.1.1 to qualified time-stamps, and TS 119 312 V2.1.1 (June 2026) still cites that 2016 edition. For qualified time-stamps the Regulation replaces the profile’s algorithm clauses: hash and time-stamp signature algorithms must comply with the Agreed Cryptographic Mechanisms endorsed by the European Cybersecurity Certification Group, not the TS 119 312 clauses the profile points to.',
 }
 
 export interface LtvStage {

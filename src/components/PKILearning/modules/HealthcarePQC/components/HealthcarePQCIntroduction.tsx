@@ -463,12 +463,15 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
                   <li>
                     &bull;{' '}
                     <strong>
-                      465,000+ pacemaker recall (2017, FDA safety communication and ICS Medical
-                      Advisory ICSMA-17-241-01)
+                      Abbott (formerly St. Jude Medical) pacemaker vulnerabilities (2017, FDA safety
+                      communication and ICS Medical Advisory ICSMA-17-241-01)
                     </strong>{' '}
-                    &mdash; St. Jude Medical / Abbott recalled nearly half a million pacemakers due
-                    to firmware vulnerabilities that could allow unauthorized access to modify
-                    pacing commands, potentially causing battery depletion or inappropriate pacing.
+                    &mdash; the advisory says a nearby attacker could gain unauthorized access to an
+                    affected pacemaker and issue commands, change settings, or otherwise interfere
+                    with its intended function. The pacemaker&apos;s authentication algorithm could
+                    be compromised or bypassed, and the devices did not limit &ldquo;RF
+                    wake-up&rdquo; commands, which could be sent repeatedly to reduce battery life.
+                    Abbott&apos;s mitigation was a firmware update applied by a healthcare provider.
                   </li>
                   <li>
                     &bull; <strong>MedJack attacks</strong> &mdash; attackers compromise medical
