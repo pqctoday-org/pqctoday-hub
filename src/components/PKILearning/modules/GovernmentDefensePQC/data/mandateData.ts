@@ -65,7 +65,7 @@ export const FEDERAL_MANDATES: FederalMandate[] = [
     appliesTo:
       'Federal agencies (high value assets and high impact systems, not National Security Systems); covered contractors through a directed FAR rule',
     obligation:
-      'Section 4(b) directs OMB to require agencies to move all high value assets and high impact systems to post-quantum cryptography for key establishment by 31 December 2030 and for digital signatures by 31 December 2031. Section 6(c) directs the FAR Council to publish, within 180 days, a proposed rule requiring covered contractors to comply by 31 December 2030 with NIST FIPS, including the FIPS that incorporate PQC algorithms. The order directs a proposed rule; it is not itself that rule.',
+      'Section 4(b) directs OMB to require agencies to move all high value assets and high impact systems to post-quantum cryptography for key establishment by 31 December 2030 and for digital signatures by 31 December 2031. Section 6(c) directs the FAR Council to publish, within 180 days, a proposed rule requiring covered contractors to comply by 31 December 2030 with NIST FIPS, including all applicable FIPS incorporating PQC-compliant algorithms. The order directs a proposed rule; it is not itself that rule.',
   },
   {
     id: 'cnssp-15',

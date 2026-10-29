@@ -230,11 +230,16 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                     In a production EUDI Wallet, activation begins with the Wallet Provider issuing
                     a WUA. This process: (1) generates a key pair in the Wallet Secure Cryptographic
                     Device (WSCD), (2) binds the wallet instance to the user&apos;s device, and (3)
-                    proves to PID Providers and Relying Parties that the wallet is genuine,
+                    proves to PID Providers and Attestation Providers that the wallet is genuine,
                     unmodified, and running on certified hardware. Commission Implementing
-                    Regulation (EU) 2024/2981 requires that hardware to be assessed at assurance
-                    level high, with a vulnerability assessment at Common Criteria AVA_VAN.5 level
-                    unless a lower level is duly justified. Without a valid WUA, no PID Provider
+                    Regulation (EU) 2024/2981 requires the WSCD to be assessed against assurance
+                    level high as a prerequisite to certification under national schemes. When that
+                    hardware is provided, directly or indirectly, by the wallet solution and is
+                    needed to meet the desired level of assurance, the evaluation also includes a
+                    Common Criteria AVA_VAN.5 vulnerability assessment, unless it is duly justified
+                    to the certification body that the security characteristics of the wallet secure
+                    cryptographic application (WSCA) make a lower assessment level possible while
+                    the overall assurance level stays high. Without a valid WUA, no PID Provider
                     will issue credentials. This simulation starts from PID issuance for simplicity.
                   </p>
                 </div>

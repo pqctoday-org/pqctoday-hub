@@ -4,7 +4,7 @@
  *
  * Answers the question that actually decides a programme's deadline: is this
  * system a National Security System or not? The two answers lead to different
- * instruments, different obligations, and — critically — different dated
+ * instruments, different obligations, and — critically — separately set
  * deadlines: CNSA 2.0 for National Security Systems, Executive Order 14412 for
  * federal civilian high value assets and high impact systems.
  */
@@ -28,13 +28,13 @@ const KINDS: { id: SystemKind; label: string; blurb: string }[] = [
     id: 'civilian',
     label: 'Federal civilian system',
     blurb:
-      'Follows the QCCPA, the OMB memoranda and Executive Order 14412: inventory and annual reporting of quantum-vulnerable systems, plus dated PQC deadlines for high value assets and high impact systems (key establishment by 31 December 2030, digital signatures by 31 December 2031). These are not the CNSA dates.',
+      'Follows the QCCPA, the OMB memoranda and Executive Order 14412: inventory and annual reporting of quantum-vulnerable systems, plus dated PQC deadlines for high value assets and high impact systems (key establishment by 31 December 2030, digital signatures by 31 December 2031). National Security Systems are excluded from these deadlines and follow CNSSP 15 instead.',
   },
   {
     id: 'contractor',
     label: 'Nonfederal system handling CUI',
     blurb:
-      'Reached by NIST SP 800-171 Rev. 3 (and CMMC where it applies) even with no National Security System involvement at all. DoD’s CMMC briefing (cleared for open publication 21 January 2025) says CMMC assessments remain against Rev. 2 until DoD formally adopts Rev. 3 through rulemaking. Executive Order 14412 also directs a proposed Federal Acquisition Regulation rule that would require covered contractors to comply with NIST FIPS, including the PQC ones, by 31 December 2030; the order directs that proposed rule and is not itself the rule.',
+      'Reached by NIST SP 800-171 Rev. 3 (and CMMC where it applies) even with no National Security System involvement at all. DoD’s CMMC briefing (cleared for open publication 21 January 2025) says CMMC assessments remain against Rev. 2 until DoD formally adopts Rev. 3 through rulemaking. Executive Order 14412 also directs a proposed Federal Acquisition Regulation rule that would require covered contractors to comply with NIST FIPS, including all applicable FIPS incorporating PQC-compliant algorithms, by 31 December 2030; the order directs that proposed rule and is not itself the rule.',
   },
 ]
 
@@ -129,10 +129,12 @@ export const MandateExplorer = () => {
         <section className="glass-panel p-6">
           <p className="text-sm text-muted-foreground">
             <strong className="text-foreground">The CNSA 2.0 dates do not apply here.</strong> The
-            obligations are the instruments listed above: inventory, reporting and migration
-            planning, plus the dated deadlines of Executive Order 14412 where they apply. Programmes
-            in this category often adopt the CNSA 2.0 dates voluntarily as a planning anchor — which
-            is reasonable, as long as it is not described to auditors as a requirement.
+            obligations are the instruments listed above: for federal civilian systems, inventory,
+            reporting and migration planning plus the Executive Order 14412 deadlines for high value
+            assets and high impact systems; for nonfederal systems, NIST SP 800-171 Rev. 3, with
+            Executive Order 14412 only directing a proposed rule. Programmes in this category often
+            adopt the CNSA 2.0 dates voluntarily as a planning anchor — which is reasonable, as long
+            as it is not described to auditors as a requirement.
           </p>
         </section>
       )}

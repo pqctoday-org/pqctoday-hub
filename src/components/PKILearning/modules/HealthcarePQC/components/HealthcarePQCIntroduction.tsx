@@ -603,13 +603,17 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
               Healthcare data exchange relies on standards that were designed decades before PQC was
               a consideration. <strong>HL7 v2</strong> messages often travel over MLLP (Minimal
               Lower Layer Protocol) with no encryption at all. <strong>FHIR</strong> (Fast
-              Healthcare Interoperability Resources) uses REST/TLS, and the signature algorithms in
-              common use with it today are RSA and ECDSA. <strong>DICOM</strong> supports TLS for
-              image transfer but has no PQC cipher suite definitions.
+              Healthcare Interoperability Resources) uses REST/TLS; the SMART App Launch v2.2.0
+              launch-and-authorization page requires apps to send authentication secrets,
+              authorization codes and tokens only to authenticated servers over TLS-secured
+              channels, and it does not mandate a PQC algorithm or a particular access-token
+              signature format. <strong>DICOM</strong> supports TLS for image transfer but has no
+              PQC cipher suite definitions.
             </p>
             <p className="text-xs text-muted-foreground mb-2">
-              For the transport itself, TLS 1.3 is specified in RFC 9846, and RFC 10024 defines the
-              ML-KEM hybrid key agreement for TLS 1.3 &mdash; the building blocks for telehealth
+              For the transport itself, TLS 1.3 is specified in RFC 9846, and RFC 10024 defines
+              three ML-KEM hybrid key agreement mechanisms for TLS 1.3 (X25519MLKEM768,
+              SecP256r1MLKEM768 and SecP384r1MLKEM1024) &mdash; the building blocks for telehealth
               sessions and FHIR API traffic. On the US certification side, the ONC criteria for
               certified EHR software (&sect;&nbsp;170.315(d)(7)&ndash;(d)(9): end-user device
               encryption, integrity and trusted connection) refer to NIST-approved encryption and

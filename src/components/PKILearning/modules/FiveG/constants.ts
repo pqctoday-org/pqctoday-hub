@@ -703,7 +703,7 @@ const RAND = crypto.randomBytes(16);`,
       id: 'compute_milenage',
       title: '3. Compute MILENAGE Functions',
       description:
-        "Using K, OPc, and RAND, the HSM computes the MILENAGE function set (f1-f5) per 3GPP TS 35.206. MILENAGE uses AES-128 internally — a symmetric algorithm that Shor's algorithm does not break (Grover's algorithm can only erode the effective key length). This means 5G-AKA authentication itself does not need the PQC key-exchange or signature upgrades that SUCI concealment needs, because SUCI relies on asymmetric crypto. On the UE side, the USIM performs the identical MILENAGE computation with its copy of K to verify the network and produce RES.",
+        "Using K, OPc, and RAND, the HSM computes the MILENAGE function set (f1-f5) per 3GPP TS 35.206. MILENAGE uses AES-128 internally — a symmetric algorithm that Shor's algorithm does not break (Grover's algorithm can only erode the effective key length). This means 5G-AKA authentication itself needs no PQC key-exchange or signature upgrade, unlike SUCI concealment, whose ECIES key agreement is asymmetric and for which ATIS recommends that 3GPP specify quantum-resistant key encapsulation. On the UE side, the USIM performs the identical MILENAGE computation with its copy of K to verify the network and produce RES.",
       code: `// Execute MILENAGE algorithm (both UDM and USIM compute this)
 const { MAC, XRES, CK, IK, AK } = milenage(K, OPc, RAND, SQN, AMF);
 

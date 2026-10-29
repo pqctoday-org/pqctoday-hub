@@ -140,9 +140,13 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
             The binding date for most vendors is the earliest one. From 1 January 2027 new NSS
             acquisitions are required to use CNSA 2.0 algorithms, regardless of how long the rest of
             the transition runs. That does not make every other product automatically unbuyable:
-            NSA&rsquo;s FAQ allows an updateable product to be bought on a vendor&rsquo;s
-            contractual commitment to deliver CNSA 2.0, and NIAP Policy Letter #33 asks that
-            contracts from that date require products that implement PQC or can be updated to.
+            NSA&rsquo;s FAQ (version 2.2, October 2026) says that where no CNSA 2.0 compliant
+            product meeting the need is available on 1 January 2027, a deployment may, if needed, be
+            accepted on a vendor&rsquo;s contractual commitment to provide a CNSA 2.0 update,
+            combined with a realistic deployment plan that prioritises partial quantum resistance
+            and meets the 2030 deadline for full quantum resistance, and NIAP Policy Letter #33 says
+            that from 1 January 2027 government contracts must include language requiring products
+            used in NSS to implement PQC or be updateable to implement PQC.
           </p>
         </div>
 
@@ -183,15 +187,16 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           under the Quantum Computing Cybersecurity Preparedness Act and Executive Order 14412 (22
           June 2026), which directs OMB to require agencies to move their high value assets and high
           impact systems to post-quantum cryptography for key establishment by 31 December 2030 and
-          for digital signatures by 31 December 2031. Those are different dates from the CNSA ones,
-          and National Security Systems are excluded from them. Confusing the two is the most common
-          planning error in this sector.
+          for digital signatures by 31 December 2031. Those deadlines are separate from the CNSA
+          ones: National Security Systems are excluded from them and follow CNSSP 15, whose
+          requirements and timelines NSA describes as comparable. Confusing the two is the most
+          common planning error in this sector.
         </p>
         <p className="text-muted-foreground">
           Commercial Solutions for Classified (CSfC) layers two independent commercial encryption
           implementations to protect classified data without government-furnished cryptography. Its
           PQC guidance addendum is the document that tells integrators how the layers change under
-          CNSA 2.0 — but it is still a draft (version 1.0 draft .5, April 2025) whose planned
+          CNSA 2.0 — but the April 2025 edition (version 1.0 draft .5) is a draft whose planned
           timeline, subject to change, aims for all CSfC solutions to implement post-quantum
           cryptography by 2030. And because a CSfC solution composes two implementations, it
           inherits the migration problem twice.
@@ -200,10 +205,12 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           <p className="text-sm text-muted-foreground">
             Systems validated against a NIAP or CSfC profile can stay in use while the transition
             runs, but any reliance on non-CNSA-2.0 algorithms becomes reportable under NSM-10. NSA
-            expects that reporting to continue for many customers through 31 December 2031, and it
-            expects NIAP to start archiving certificates for products that are not fully
-            quantum-resistant in late 2027, after which those products are no longer appropriate for
-            NSS.
+            expects that reporting to continue for many customers through 31 December 2031. NSA also
+            says that NIAP will begin archiving the certificates of partially quantum-resistant and
+            quantum-vulnerable products generally within a year of fully quantum-resistant products
+            coming on the market, that it expects this archiving to start in late 2027, and that
+            products with archived certificates will not comply with CNSSP 11 and will not be
+            appropriate for NSS.
           </p>
           <div className="mt-2 flex flex-wrap gap-3 text-xs">
             <Link
@@ -263,9 +270,9 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           Two further details from the Federal PKI. The Federal PKI page announced that the Federal
           Bridge Certification Authority (FBCA) G4 would be replaced by the FBCA G5 starting 27
           August 2026, to meet federal cryptographic-strength requirements, and that applications
-          may need to update their trust stores with new intermediate CA certificates; this is
-          separate from the draft PQC profile above. And under the Common Policy, CA private keys
-          must be held in cryptographic modules validated to FIPS 140 Level 3.
+          may need to update their trust stores with new intermediate CA certificates. And under the
+          Common Policy, CA private keys must be held in cryptographic modules validated to at least
+          FIPS 140 Level 3.
         </p>
 
         <p className="text-sm text-muted-foreground">
@@ -304,16 +311,18 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           2025) says assessments remain against Rev. 2 until DoD formally adopts Rev. 3 through
           rulemaking. Executive Order 14412 goes a step further for contractors: it directs a
           proposed Federal Acquisition Regulation rule that would require covered contractors to
-          comply by 31 December 2030 with NIST&rsquo;s FIPS, including the FIPS that incorporate PQC
-          algorithms. The order directs that proposed rule; it is not itself the rule.
+          comply by 31 December 2030 with NIST&rsquo;s FIPS, including all applicable FIPS
+          incorporating PQC-compliant algorithms. The order directs that proposed rule; it is not
+          itself the rule.
         </p>
         <p className="text-muted-foreground">
           Algorithm support is only one gate. CNSSP 11 requires commercial IA and IA-enabled IT
           products bought to protect information on NSS to comply with the NIAP program, with
           agencies selecting evaluated products from the NIAP Product Compliant List, and, where
-          applicable, with the FIPS cryptographic validation programs. NSA&rsquo;s CNSA 2.0 FAQ says
-          NIAP and FIPS validation are required in most circumstances, so a product needs NIAP
-          evaluation and FIPS validation as well as CNSA 2.0 algorithm support.
+          applicable, with the FIPS cryptographic validation programs. NSA&rsquo;s CNSA 2.0 FAQ
+          (version 2.2, October 2026) says NIAP and FIPS validation are required in most
+          circumstances, so in most cases a product needs NIAP evaluation and FIPS validation as
+          well as CNSA 2.0 algorithm support.
         </p>
         <div className="flex flex-wrap gap-3 text-xs">
           <Link

@@ -105,7 +105,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
               </li>
               <li>
                 <span className="font-medium text-foreground">Device proof:</span> a device
-                signature (ECDSA) or a MAC (HMAC 256/256 over an ECDH-derived key)
+                signature (for example ECDSA) or a MAC (HMAC 256/256 over an ECDH-derived key)
               </li>
               <li>
                 <span className="font-medium text-foreground">Used in this module:</span> PID

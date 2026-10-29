@@ -990,7 +990,7 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
     year: 2026,
     quarter: 'Ongoing',
     description:
-      'No explicit PQC timeline yet, but healthcare data has long sensitivity periods making HNDL risk significant for long-lived ePHI. The Security Rule treats encryption of ePHI as an addressable specification.',
+      'The Security Rule sets no post-quantum date, but healthcare data has long sensitivity periods making HNDL risk significant for long-lived ePHI. The Security Rule treats encryption of ePHI as an addressable specification.',
     affectedLayers: [
       'patient-portal',
       'clinical-workstations',

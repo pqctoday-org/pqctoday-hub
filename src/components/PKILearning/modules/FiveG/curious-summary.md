@@ -16,4 +16,4 @@ So the honest position is that the quantum weakness in SUCI concealment is real 
 
 ## What's Happening
 
-Quantum-safe schemes need heavier processing and larger messages, so operators and equipment makers will have to plan how to adopt them once standards exist without degrading network latency. For now the guidance comes from bodies such as ATIS and GSMA, and 3GPP has not yet specified a post-quantum scheme.
+Quantum-safe schemes need heavier processing and larger messages, so operators and equipment makers need to plan how to adopt them without degrading network latency. As of TS 33.501 Release 19 (V19.5.0, February 2026), the guidance comes from bodies such as ATIS and GSMA, and 3GPP has not specified a post-quantum protection scheme for subscriber identities.

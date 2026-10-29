@@ -254,14 +254,17 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
           algorithms means re-establishing conformity, not just deploying software.
         </p>
         <p className="text-muted-foreground">
-          The hardware that holds a provider&apos;s signing keys is certified too. Under the EU
-          implementing rules for qualified certificates (Regulation (EU) 2025/1943) and qualified
-          time-stamps (Regulation (EU) 2025/1929), the secure cryptographic device that holds a
-          provider&apos;s certificate-signing (CA) key, or a time-stamping unit&apos;s key, must be
-          certified to Common Criteria or the EU scheme EUCC at EAL 4 or higher &mdash; or, until 31
-          December 2030, to FIPS 140-3 level 3. After that date only the Common Criteria and EUCC
-          routes remain in those rules. They govern the provider&apos;s own keys, not the
-          signer&apos;s device.
+          The hardware that holds a provider&apos;s signing keys is certified too. The EU
+          implementing rules for qualified certificates (Commission Implementing Regulation (EU)
+          2025/1943) and qualified time-stamps (Commission Implementing Regulation (EU) 2025/1929)
+          list reference standards, and supervisory bodies should presume that a provider that
+          follows them complies, although a provider may still rely on other practices. Those
+          standards require the secure cryptographic device that holds the provider&apos;s
+          certificate-signing (CA) key, or a time-stamping unit&apos;s key, to be certified to
+          Common Criteria or the EU scheme EUCC at EAL 4 or higher &mdash; or, until 31 December
+          2030, to FIPS 140-3 level 3. In the text adopted on 29 September 2025, only the Common
+          Criteria and EUCC routes remain after that date. This requirement covers the
+          provider&apos;s own keys, not the signer&apos;s device.
         </p>
         <div className="flex flex-wrap gap-3 text-xs">
           <Link to="/library?ref=ETSI-EN-319-411" className="text-primary hover:underline">
@@ -289,10 +292,11 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
           from 2016 and leaves algorithm choice to the suites document), conformity assessment
           schemes absorb the change, and only then can a qualified service issue post-quantum
           signatures under audit. Each step gates the next. One caution on the first step: V2.1.1
-          says of itself that it is incomplete for the EU Digital Identity Wallet and for some other
-          trust services (preservation and electronic registered delivery), with an update already
-          in preparation, and it leaves the schedule for the post-quantum migration to a separate
-          document still under development.
+          (June 2026) says of itself that it is incomplete for the EU Digital Identity Wallet and
+          for certain other trust services, including preservation and electronic registered
+          delivery, with an update already in preparation, and it says that scheduling of the
+          post-quantum migration is planned to be addressed in a separate document under
+          development.
         </p>
       </LearnSection>
 

@@ -29,7 +29,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-epassport-decap',
     useCase: 'ePassport key agreement (illustrative)',
-    standard: 'FIPS 203 ACVP — ICAO has no PQC PACE profile yet',
+    standard: 'FIPS 203 ACVP — ICAO Doc 9303 Part 11 (8th ed., 2021): PACE uses DH or ECDH',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },

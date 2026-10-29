@@ -165,7 +165,9 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         <p className="text-xs text-muted-foreground mt-3">
           Profile C is not a 3GPP profile: TS 33.501 Annex C defines Profiles A and B and stops
           there. The name comes from a research proposal (Khan, Purification & Chang, Information
-          2025, 16, 617). It supports both hybrid (X25519 + ML-KEM) and pure PQC modes.
+          2025, 16, 617), which uses ML-KEM (Kyber-512). The parameters on this card, including
+          ML-KEM-768 and the hybrid (X25519 + ML-KEM) and pure PQC modes, are this playground&apos;s
+          own, not the proposal&apos;s and not 3GPP&apos;s.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           TS 33.501 caps the output of a proprietary protection scheme at 3000 octets plus the size
@@ -285,10 +287,12 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          The secure element that holds K is itself a certified product. For eSIMs (eUICCs), GSMA
-          SGP.24 says the IC/hardware platform shall be certified to Common Criteria protection
-          profile PP-0084 or PP-0035, and the eUICC software is evaluated against the protection
-          profile that BSI registers as BSI-CC-PP-0100 (published as GSMA SGP.25).
+          For consumer eSIMs that declare compliance with GSMA SGP.24, the eUICC itself is subject
+          to product security requirements. GSMA SGP.24 says the IC/hardware platform on which the
+          eUICC is based shall be certified to Common Criteria protection profile PP-0084 or
+          PP-0035. It also says eUICC security evaluations are expected to include the complete
+          Target of Evaluation defined in GSMA SGP.25, the protection profile for eUICC software
+          that BSI registers as BSI-CC-PP-0100.
         </p>
       </section>
 
@@ -299,10 +303,11 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           Not all parts of 5G security are equally vulnerable to quantum computers. SUCI concealment
-          relies on asymmetric cryptography (ECDH in Profile A/B), which is broken by{' '}
-          <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip>. However,
-          5G-AKA authentication uses an algorithm set such as MILENAGE (built on AES-128) or TUAK —
-          symmetric algorithms that Shor&apos;s algorithm does not break.{' '}
+          relies on asymmetric cryptography (ECDH in Profile A/B), which a large-scale quantum
+          computer running{' '}
+          <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip> could break.
+          However, 5G-AKA authentication uses an algorithm set such as MILENAGE (built on AES-128)
+          or TUAK — symmetric algorithms that Shor&apos;s algorithm does not break.{' '}
           <InlineTooltip term="Grover's Algorithm">Grover&apos;s algorithm</InlineTooltip> can only
           erode the effective key length of a symmetric cipher. The 128-NEA and 128-NIA ciphering
           and integrity algorithms used on the air interface are symmetric too, so none of them
@@ -332,17 +337,20 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           </div>
         </div>
         <p className="text-foreground/80 leading-relaxed mb-4 text-sm">
-          Profile C is a proposed migration path to quantum-resistant subscriber privacy. It
-          replaces ECDH key agreement with ML-KEM (Kyber) encapsulation, supporting both a hybrid
-          transition mode (X25519 + ML-KEM-768) and a pure PQC target mode.
+          Profile C is a proposed migration path to quantum-resistant subscriber privacy. The
+          research proposal replaces ECDH key agreement with ML-KEM (Kyber-512) encapsulation; this
+          playground implements ML-KEM-768 and adds a hybrid transition mode (X25519 + ML-KEM-768)
+          next to a pure PQC target mode, and those choices are the playground&apos;s own, not the
+          proposal&apos;s and not 3GPP&apos;s.
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4 text-sm">
-          Telecom bodies are already publishing guidance ahead of any 3GPP specification.
-          GSMA&apos;s PQ.03 guidelines for telecom use cases present a phased approach to migration,
-          and ETSI TS 103 744 covers quantum-safe hybrid key exchanges. 3GPP&apos;s SA3 security
-          group has started a study of the transition to post-quantum cryptography (TR 33.703); this
-          is separate from TR 33.938, which is an inventory of the cryptography the 3GPP
-          specifications use today.
+          Telecom bodies have published post-quantum guidance and specifications, although TS 33.501
+          (Release 19, V19.5.0, February 2026) defines no post-quantum protection scheme for
+          subscriber identities. GSMA&apos;s PQ.03 guidelines for telecom use cases present a phased
+          approach to migration, and ETSI TS 103 744 covers quantum-safe hybrid key establishment.
+          3GPP&apos;s SA3 security group has started a study of the transition to post-quantum
+          cryptography (TR 33.703); this is separate from TR 33.938, which is an inventory of the
+          cryptography used in the 3GPP specifications for the 5G System in standalone mode.
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs space-y-1 mb-4">
           <p className="font-bold text-foreground/80">Hybrid Mode Secret Combination</p>

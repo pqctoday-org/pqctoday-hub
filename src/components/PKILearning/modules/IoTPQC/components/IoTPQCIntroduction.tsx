@@ -582,9 +582,9 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           <li>
             <strong>TPM 2.0.</strong> The TCG TPM 2.0 Library Specification version 1.85 adds ML-KEM
             and ML-DSA. The TCG PC Client Platform TPM Profile version 1.07 (23 March 2026) makes
-            ML-KEM (768 or 1024) and ML-DSA (65 or 87) support mandatory for PC-client TPMs. Chips
-            trail the specification: Infineon says its OPTIGA TPM SLB 9678, designed to be fully
-            PQC-ready, will be coming in 2027.
+            ML-KEM (768 or 1024) and ML-DSA (65 or 87) support mandatory for PC-client TPMs. TPM
+            chips can trail the specification: Infineon says its OPTIGA TPM SLB 9678, designed to be
+            fully PQC-ready, will be coming in 2027.
           </li>
           <li>
             <strong>Assurance schemes.</strong> PSA Certified (Level 2 builds on the SESIP

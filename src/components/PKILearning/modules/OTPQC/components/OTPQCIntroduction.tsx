@@ -651,10 +651,12 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </li>
             <li>
               <strong>IPsec / IKEv2 VPNs</strong> — two IETF routes protect the key exchange of a
-              recorded session. RFC 8784 (Standards Track) mixes a preshared key into IKEv2, making
-              it quantum-resistant without any new algorithm. RFC 9370 lets IKEv2 add a post-quantum
-              key exchange alongside the classical (EC)DH one. Post-quantum signature authentication
-              for IKEv2 is still an IETF draft.
+              recorded session. RFC 8784 (Standards Track) stirs an additional shared secret into
+              the IKEv2 key derivation, so that, where the two ends share a long secret key, the
+              exchange is quantum secure without waiting for new key-exchange algorithms. RFC 9370
+              lets IKEv2 add a post-quantum key exchange alongside the classical (EC)DH one. As of
+              21 August 2026 (version 12), post-quantum signature authentication for IKEv2 was
+              specified in an IETF Internet-Draft, draft-ietf-ipsecme-ikev2-pqc-auth.
             </li>
             <li>
               <strong>IIoT platforms</strong> — gateways and cloud connectors belong on their own
