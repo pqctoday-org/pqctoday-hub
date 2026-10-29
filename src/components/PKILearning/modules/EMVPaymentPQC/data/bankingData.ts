@@ -45,7 +45,7 @@ export const SETTLEMENT_RAILS: SettlementRail[] = [
     dataLifetime:
       'Individual payments are short-lived, but participant identity keys and the audit trail are long-lived.',
     pqcPosture:
-      'BIS Project Leap Phase 2 is the reference experiment: in it, the RSA signature on the Business Application Header of the payment messages was replaced by a CRYSTALS-Dilithium post-quantum signature (the algorithm now standardised as ML-DSA).',
+      'BIS Project Leap Phase 2 is the reference experiment: in it, the RSA signature on the Business Application Header of the payment messages was replaced by a CRYSTALS-Dilithium post-quantum signature (the pre-standard version of what is now ML-DSA; BIS says it could not test the more recent ML-DSA version).',
   },
   {
     id: 'correspondent',
@@ -118,7 +118,7 @@ export const SECTOR_BODIES: SectorBody[] = [
     jurisdiction: 'Global (central banks)',
     libraryRef: 'BIS-OTHP107',
     contribution:
-      'A technical experiment in quantum-proofing payment-system communications: the RSA signature on the Business Application Header of the payment messages was replaced by a CRYSTALS-Dilithium post-quantum signature (the algorithm now standardised as ML-DSA).',
+      'A technical experiment in quantum-proofing payment-system communications: the RSA signature on the Business Application Header of the payment messages was replaced by a CRYSTALS-Dilithium post-quantum signature (the pre-standard version of what is now ML-DSA; BIS says it could not test the more recent ML-DSA version).',
   },
   {
     id: 'g7-ceg',

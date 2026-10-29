@@ -58,7 +58,7 @@ export const content: ModuleContent = {
     // sector roadmap. rag-summary.md already listed this as a source, so the
     // summary described a citation the module did not make.
     getStandard('BIS-Paper-158'),
-    // Adds a sixth jurisdiction to the five in SECTOR_BODIES. NOTE: this row's
+    // Adds a jurisdiction to those in SECTOR_BODIES. NOTE: this row's
     // module_ids does not yet include emv-payment-pqc — the reverse link is owed
     // in the next library revision.
     getStandard('CA-CFDIR-Quantum-Readiness-2023'),

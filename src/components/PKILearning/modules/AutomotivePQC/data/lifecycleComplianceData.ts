@@ -144,7 +144,7 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     location: 'Regional V2X PKI infrastructure',
     standard:
       'IEEE 1609.2 / ETSI TS 102 941; EU C-ITS Certificate Policy 3.0 (Common Criteria, EAL4 or higher)',
-    fipsLevel: 'Level 3 where held (not named in EU C-ITS CP 3.0)',
+    fipsLevel: 'Not required by EU C-ITS CP 3.0 (Common Criteria applies)',
     // CORRECTED 2026-08-23: read "IEEE 1609.2 PQC amendment in progress (ML-DSA + ML-KEM)".
     // No such amendment is identified in the public specifications: IEEE 1609.2-2025 and
     // ETSI TS 103 097 V2.2.1 (2026-03) specify ECC/ECDSA. ETSI TR 103 949 V1.1.1 (2023-05)
@@ -301,7 +301,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     year: 2030,
     quarter: 'Q4',
     description:
-      'For National Security Systems (NSS), NSA CNSA 2.0 sets 2025 to support and prefer CNSA 2.0 for software and firmware signing and 2030 to use it exclusively. LMS and XMSS from NIST SP 800-208 are approved for firmware signing (not HSS or XMSS^MT), and validated ML-DSA is approved for all signing use cases. CNSA 2.0 algorithms are required in all new NSS acquisitions from 1 January 2027. For vehicles outside NSS this is a reference timeline.',
+      'For National Security Systems (NSS), NSA’s CNSA 2.0 advisory anticipates 2025 to support and prefer CNSA 2.0 for software and firmware signing and 2030 to use it exclusively. LMS and XMSS from NIST SP 800-208 are approved for firmware signing (not HSS or XMSS^MT), and validated ML-DSA is approved for all signing use cases. CNSA 2.0 algorithms are required in all new NSS acquisitions from 1 January 2027. For vehicles outside NSS this is a reference timeline.',
     pqcRelevance: 'direct',
     confidence: 'published',
     affectedSystems: [

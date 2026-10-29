@@ -780,9 +780,10 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <li>
               <strong className="text-foreground">FN-DSA (Falcon, FIPS 206 in development):</strong>{' '}
               Compact signatures (666 bytes, a fixed padded size, vs ML-DSA&apos;s 2,420 bytes) make
-              it attractive for constrained card chips on size alone. EMVCo names no post-quantum
-              algorithm for EMV cards; the card-side evidence is research, such as a 2022 IDEMIA
-              prototype that tried Falcon and Dilithium on a banking card
+              it attractive for constrained card chips on size alone. In its March 2024 position
+              statement, EMVCo names no post-quantum algorithm for EMV cards; the card-side evidence
+              is research, such as a 2022 IDEMIA prototype that tried Falcon and Dilithium on a
+              banking card
             </li>
             <li>
               <strong className="text-foreground">Hybrid approach:</strong> Dual-signature cards
@@ -796,7 +797,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <li>
               <strong className="text-foreground">HSM dependency:</strong> Payment HSMs must support
               PQC key wrapping before any downstream migration can begin. PCI PTS HSM v5.0
-              (published 18 May 2026) adds, in PCI SSC&rsquo;s words, &ldquo;support for
+              (announced 18 May 2026) adds, in PCI SSC&rsquo;s words, &ldquo;support for
               post-quantum cryptography considerations&rdquo;; the announcement names no
               post-quantum algorithm (
               <Link

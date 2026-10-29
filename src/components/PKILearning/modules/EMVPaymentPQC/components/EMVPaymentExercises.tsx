@@ -61,7 +61,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Provisioning',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'RSA-2048 chain: ~1.5 KB (4 \u00d7 384 bytes). ML-DSA-44 chain: ~15.3 KB (4 \u00d7 3,832 bytes, each a 2,420 B signature + 1,312 B key + ~100 B of fields). FN-DSA-512: ~6.7 KB (4 \u00d7 1,687 bytes, each a 666 B signature + 897 B key + ~124 B of fields). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 6.7 KB, FN-DSA fits within 32-64 KB card NVM, while ML-DSA at 15.3 KB is tight for 32 KB NVM. FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
+        'RSA-2048 chain: ~1.5 KB (4 \u00d7 384 bytes). ML-DSA-44 chain: ~15.3 KB (4 \u00d7 3,832 bytes, each a 2,420 B signature + 1,312 B key + ~100 B of fields). FN-DSA-512: ~6.7 KB (4 \u00d7 1,687 bytes, each a 666 B signature + 897 B key + ~124 B of fields). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 6.7 KB, FN-DSA is smaller than ML-DSA at 15.3 KB; whether either fits depends on the chip and the application profile (the 32-64 KB card NVM range is this module\u2019s assumption). FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
       config: { step: 2 },
     },
     {

@@ -62,7 +62,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     migrationEffort: 5,
     migrationTimeline: '2028-2033',
     pqcSolution: [
-      'FN-DSA-512 ICC key pairs (compact, fits card NVM)',
+      'FN-DSA-512 ICC key pairs (smaller than ML-DSA-44; whether it fits depends on the chip and application profile)',
       'Hybrid RSA + FN-DSA dual-certificate cards during transition',
       'ML-DSA-44 Issuer CA certificates',
       'Requires FIPS 206 finalization for FN-DSA',
@@ -132,7 +132,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     migrationTimeline: '2026-2030',
     pqcSolution: [
       'Classical modernisation alongside the PQC work: complete 3DES \u2192 AES DUKPT migration (industry direction, not yet a PCI mandate: PCI PIN Security v3.1 still allows TDEA and AES for online PIN, and since 1 Jan 2023 disallows fixed-key TDEA PIN encryption; PTS POI v5+ devices doing online PIN and HSM v4+ devices doing PIN processing must support AES ISO PIN block format 4)',
-      'AES-256 provides 128-bit post-quantum security via Grover',
+      'AES-256 is allowed for contingency, but EMVCo sees no need for it on quantum grounds',
       'ML-KEM-768 for BDK key transport at KIFs',
     ],
     dependencies: ['hsm-key-wrapping', 'key-injection'],

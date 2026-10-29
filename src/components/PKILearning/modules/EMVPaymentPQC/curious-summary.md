@@ -8,7 +8,7 @@ A quantum computer able to break RSA-2048 could forge EMV certificates, letting 
 
 ### The Key Takeaway
 
-ML-DSA signatures (2,420 bytes) are large for constrained smart cards, and FN-DSA (Falcon) signatures are much smaller at 666 bytes — but EMVCo names no post-quantum algorithm for EMV cards, and the card-side evidence is research, such as a 2022 IDEMIA prototype that tried Falcon and Dilithium on a banking card. FIPS 206 is still in preparation, so FN-DSA is not yet deployable. Unlike government, the financial sector has no dated algorithm mandate: the pressure comes from operational-resilience regulation and from how long data stays sensitive. Plan against card replacement cycles — this module assumes roughly 3-5 years per card fleet, an estimate rather than a sourced figure — because cards issued today could still be in wallets at the end of the decade.
+ML-DSA signatures (2,420 bytes) are large for constrained smart cards, and FN-DSA (Falcon) signatures are much smaller at 666 bytes — but in its March 2024 position statement EMVCo names no post-quantum algorithm for EMV cards, and the card-side evidence is research, such as a 2022 IDEMIA prototype that tried Falcon and Dilithium on a banking card. FIPS 206 is still in preparation, so FN-DSA is not yet deployable. Unlike government, the financial sector has no dated algorithm mandate: the pressure comes from operational-resilience regulation and from how long data stays sensitive. Plan against card replacement cycles — this module assumes roughly 3-5 years per card fleet, an estimate rather than a sourced figure — because cards issued today could still be in wallets at the end of the decade.
 
 ### What's Happening
 

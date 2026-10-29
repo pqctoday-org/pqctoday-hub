@@ -526,9 +526,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 <ShieldCheck size={14} className="text-status-warning" /> V2X SCMS HSM
               </h3>
               <p className="text-[10px] font-medium text-status-warning mb-2">
-                EU C-ITS Certificate Policy 3.0: Common Criteria, EAL4 or higher (SOG-IS). Backend
-                HSMs may also hold FIPS 140-3 Level 3 &mdash; check the certificate for the named
-                components
+                EU C-ITS Certificate Policy 3.0: Common Criteria, EAL4 or higher (SOG-IS). It does
+                not name FIPS 140
               </p>
               <p className="text-xs text-muted-foreground mb-2">
                 Backend HSMs in the Security Credential Management System. Issue pseudonym
@@ -733,11 +732,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           <p>
             <InlineTooltip term="AUTOSAR">AUTOSAR</InlineTooltip> Adaptive Platform R23-11 includes
             the Crypto Service Manager (ara::crypto) which supports algorithm-agnostic key
-            management. AUTOSAR Classic (used in most ECUs) can map its crypto stack onto the
-            SHE/SHE 2.0 hardware interface, which on SHE-only ECUs has a fixed AES-128 algorithm set
-            with no asymmetric or PQC support. The Classic R23-11 Crypto Driver specification itself
-            defines ECC and RSA algorithm families but no post-quantum family. The
-            Classic-to-Adaptive migration is itself a multi-year effort that must be coordinated
+            management. AUTOSAR Classic (used in most ECUs) can map its crypto stack onto the SHE
+            (Secure Hardware Extensions) interface, which on SHE-only ECUs has a fixed AES-128
+            algorithm set with no asymmetric or PQC support. The Classic R23-11 Crypto Driver
+            specification itself defines ECC and RSA algorithm families but no post-quantum family.
+            The Classic-to-Adaptive migration is itself a multi-year effort that must be coordinated
             with PQC adoption.
           </p>
         </div>
@@ -1187,8 +1186,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 Used in most automotive ECUs. The Crypto Stack (Csm + CryIf + Crypto Driver) can map
                 onto SHE hardware: fixed AES-128 + CMAC, no asymmetric crypto on SHE-only ECUs. The
                 R23-11 Crypto Driver specification itself defines ECDSA, ECDH and RSA algorithm
-                families, so Classic stacks can offer ECC today, but it defines no post-quantum
-                family. Secure boot on SHE-only ECUs uses AES-CMAC chains, not digital signatures.
+                families, so the Classic specification accommodates ECC, but it defines no
+                post-quantum family. Secure boot on SHE-only ECUs uses AES-CMAC chains, not digital
+                signatures.
               </p>
               <p className="text-[10px] text-status-error font-medium mt-2">
                 No post-quantum algorithm family in the R23-11 Crypto Driver
@@ -1361,8 +1361,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                   Track, August 2026)
                 </li>
                 <li>
-                  NIST SP 800-208 &mdash; stateful hash-based signatures (LMS, XMSS) for firmware
-                  signing
+                  NIST SP 800-208 &mdash; stateful hash-based signature schemes (LMS, HSS, XMSS,
+                  XMSS^MT); authentication of firmware updates for constrained devices is a use that
+                  may fit
                 </li>
                 <li>CCC Digital Key 3.0 &mdash; Car Connectivity Consortium</li>
                 <li>ISO 14443 &mdash; NFC proximity card standard (car key transport)</li>

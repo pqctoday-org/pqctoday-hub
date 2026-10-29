@@ -277,7 +277,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
     algorithm: 'fn-dsa-512',
     label: 'FN-DSA-512 (FIPS 206 in development)',
     description:
-      'Hash-and-sign lattice scheme with compact signatures, giving the smallest footprint of the three chains compared here. EMVCo has named no post-quantum algorithm for EMV cards; the card-side evidence is research (IDEMIA, 2022: Falcon or Dilithium in the certificates of a banking-card prototype). FIPS 206 still in development — no public draft released as of 2026.',
+      'Hash-and-sign lattice scheme with compact signatures, giving the smallest footprint of the post-quantum chains compared here. In its March 2024 position statement EMVCo named no post-quantum algorithm for EMV cards; the card-side evidence is research (IDEMIA, 2022: Falcon or Dilithium in the certificates of a banking-card prototype). FIPS 206 still in development — no public draft released as of 2026.',
     fipsStatus: 'FIPS 206 (in development \u2014 not yet published)',
     levels: [
       {
@@ -332,7 +332,8 @@ export const PQC_ALGORITHM_SIZES = [
     signatureOrCiphertextBytes: 666,
     suitableForCard: true,
     suitableForTerminal: true,
-    notes: 'Compact signatures: the smallest of the options compared. FIPS 206 in development.',
+    notes:
+      'Compact signatures: the smallest of the post-quantum signatures compared. FIPS 206 in development.',
   },
   {
     algorithm: 'ML-DSA-44',
@@ -340,7 +341,8 @@ export const PQC_ALGORITHM_SIZES = [
     signatureOrCiphertextBytes: 2420,
     suitableForCard: false,
     suitableForTerminal: true,
-    notes: 'Large signatures strain card NVM (32-64 KB). Better for terminal/server.',
+    notes:
+      'Large signatures strain card NVM (the 32-64 KB range is this module’s assumption). Better for terminal/server.',
   },
   {
     algorithm: 'ML-DSA-65',
