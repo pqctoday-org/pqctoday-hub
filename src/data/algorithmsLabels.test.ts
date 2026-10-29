@@ -84,6 +84,7 @@ describe('transition guide labels', () => {
     )
     expect(advanced.length).toBe(5)
     for (const row of advanced) {
+      expect(row.pqc, row.pqc).toMatch(/\(NIST Sig Round 3 — /)
       expect(row.standardizationDate, row.pqc).toBe(ROUND3)
       expect(row.statusUrl, row.pqc).toBe(ROUND3_URL)
       expect(row.statusTier, row.pqc).toBe('round2-candidate')
@@ -91,9 +92,13 @@ describe('transition guide labels', () => {
     const dropped = algorithmsData.filter((r) => /^(CROSS|LESS) \(NIST Sig/.test(r.pqc))
     expect(dropped.length).toBe(2)
     for (const row of dropped) {
+      expect(row.pqc, row.pqc).toMatch(/\(NIST Sig Round 2 — Code-based, did not advance\)$/)
       expect(row.standardizationDate, row.pqc).toMatch(/^Did not advance to NIST .* Round 3/)
       expect(row.statusTier, row.pqc).toBe('eliminated')
     }
+    const hawk = algorithmsData.filter((r) => r.pqc.startsWith('HAWK ('))
+    expect(hawk.map((r) => r.pqc)).toEqual(['HAWK (NIST Sig Round 3 — Lattice, withdrawn)'])
+    expect(hawk[0].statusTier).toBe('eliminated')
     const mayo = algorithmsData.filter((r) => /^MAYO-\d$/.test(r.pqc))
     expect(mayo.length).toBe(4)
     for (const row of mayo) {
