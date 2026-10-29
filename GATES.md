@@ -96,7 +96,9 @@ The only checks `main`'s branch protection requires: `pr-check`, `pr-test (1)`,
 `pr-test (2)`, with "branch must be up to date". `pr-check`: install, the committed SBOM version list check
 (`gen:sbom-versions:check`, skipped for dependabot PRs), `lint`
 (security rules), `verify-attestations`, and a clean `build`
-(which includes `tsc -b`), ~8–10 min. `pr-test`: the unit suite in 2 shards,
+(which includes `tsc -b`), then a short browser tier against that build
+(`playground-pr-desktop`, `playground-pr-mobile`, and `a11y-modules-pr`: the Playground and Business
+Tool contract, and the Learn-module tab, phone and accessibility spec), ~8–10 min. `pr-test`: the unit suite in 2 shards,
 ~8 min, in parallel. It exists so a PR can satisfy protection
 without an override, and so the proof that a PR builds does not rest on a
 developer machine. Data checks run outside this repository on the same head
@@ -191,6 +193,13 @@ production build — the round-9 lesson: 15 browser regressions shipped through
 `*.local.spec.ts` specs, which both CI projects exclude and which no gate ran
 before 2026-09-26) (`gate:cacp` and `sync:wasm:check` are manual-only since 2026-09-27, H2), then the receipt `.gate-ok-<sha>` so the
 pre-push hook does not repeat it.
+
+**Sitemap dates, before signing.** Each route's `<lastmod>` in `public/sitemap.xml` is the date of the
+last commit that touched the files behind it, and every `npm run build` rewrites the file. Commits made
+after it was last committed (a release's own content commits) move those dates, so the build leaves the
+tree dirty and the live sitemap would stay a day behind. Make the build-outputs commit (the sitemap
+included) the last commit before signing. The sitemap is not a signed file, so this needs no re-sign.
+`generate:sitemap:check` compares the URL set only, not the dates, so it does not catch this.
 
 `E2E_SERVER=dev`, matching every other local-tier script here
 (`test:e2e:cacp-visual`, `test:e2e:cacp-local`): several of these specs
