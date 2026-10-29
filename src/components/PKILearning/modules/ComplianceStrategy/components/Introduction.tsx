@@ -492,12 +492,13 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               <InlineTooltip term="eIDAS">eIDAS 2.0</InlineTooltip> (EU Digital Identity)
             </div>
             <p className="text-xs text-muted-foreground">
-              The updated EU regulation for electronic identification mandates European Digital
-              Identity (EUDI) wallets with deployments starting 2027+. eIDAS 2.0 does not yet
-              mandate PQC. The SD-JWT standard (RFC 9901) leaves the choice of signature algorithm
-              to the application, including post-quantum algorithms &ldquo;when they are
-              ready&rdquo;, and NIST has standardised ML-DSA and SLH-DSA as post-quantum signatures
-              that issuers could adopt for long-lived credentials.
+              The updated EU regulation for electronic identification requires each Member State to
+              provide at least one European Digital Identity (EUDI) wallet within 24 months of the
+              entry into force of the wallet implementing acts (Implementing Regulation (EU)
+              2024/2981 was published on 4 December 2024). The regulation text and the ARF v3.0.0 do
+              not mention quantum computing; the SD-JWT standard (RFC 9901) leaves the choice of
+              signature algorithm to the application, including post-quantum algorithms &ldquo;when
+              they are ready&rdquo;.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
