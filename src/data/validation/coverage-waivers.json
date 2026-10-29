@@ -12,20 +12,20 @@
       "mechanism": "CKM_ECDH1_DERIVE",
       "engines": ["cpp"],
       "cells": ["encapsulate|X25519|*", "decapsulate|X25519|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
+      "reason": "Accepted gap (decided 28 Oct 2026), review by 2027-01-31. No registered test drives these X25519 key-agreement cells (C++) yet; the RFC 7748 test vectors are to be added.",
+      "owner": "PQC Today, LLC",
+      "date": "2026-10-28",
+      "status": "approved"
     },
     {
       "id": "baseline-CKM_ECDH1_DERIVE-cpp+rust",
       "mechanism": "CKM_ECDH1_DERIVE",
       "engines": ["cpp", "rust"],
       "cells": ["encapsulate|X448|*", "decapsulate|X448|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
+      "reason": "Accepted gap (decided 28 Oct 2026), review by 2027-01-31. No registered test drives these X448 key-agreement cells yet; the RFC 7748 test vectors are to be added. The Rust engine's known behaviour with low-order X448 public keys is kept as an educational example; the fix is in the HSM source and ships with the next engine release.",
+      "owner": "PQC Today, LLC",
+      "date": "2026-10-28",
+      "status": "approved"
     },
     {
       "id": "baseline-CKM_RSA_AES_KEY_WRAP",
@@ -112,10 +112,10 @@
       "mechanism": "CKM_EC_MONTGOMERY_KEY_DERIVE",
       "engines": ["rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
+      "reason": "Accepted gap (decided 28 Oct 2026), review by 2027-01-31. No registered test drives this Rust-only derive cell yet; the RFC 7748 test vectors are to be added. The Rust engine's known behaviour with low-order X448 public keys is kept as an educational example; the fix is in the HSM source and ships with the next engine release.",
+      "owner": "PQC Today, LLC",
+      "date": "2026-10-28",
+      "status": "approved"
     },
     {
       "id": "baseline-CKM_KMAC_128",
@@ -162,20 +162,20 @@
       "mechanism": "CKM_X25519",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
+      "reason": "Accepted gap (decided 28 Oct 2026), review by 2027-01-31. No registered test drives this key-agreement cell yet; the RFC 7748 test vectors are to be added.",
+      "owner": "PQC Today, LLC",
+      "date": "2026-10-28",
+      "status": "approved"
     },
     {
       "id": "baseline-CKM_X448",
       "mechanism": "CKM_X448",
       "engines": ["cpp", "rust"],
       "cells": ["derive|*|*"],
-      "reason": "Advertised and without any registered test at the WS-C baseline. Recorded so that the gate fails on NEW untested capabilities; this is not an approval — it awaits review (plan J-5) and is tracked in the open-gaps register.",
-      "owner": "unassigned",
-      "date": "2026-09-24",
-      "status": "baseline-pending-review"
+      "reason": "Accepted gap (decided 28 Oct 2026), review by 2027-01-31. No registered test drives this key-agreement cell yet; the RFC 7748 test vectors are to be added. The Rust engine's known behaviour with low-order X448 public keys is kept as an educational example; the fix is in the HSM source and ships with the next engine release.",
+      "owner": "PQC Today, LLC",
+      "date": "2026-10-28",
+      "status": "approved"
     },
     {
       "id": "baseline-CKM_BIP32_MASTER_DERIVE",

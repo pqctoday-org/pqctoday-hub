@@ -18,11 +18,11 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | C++: advertised capability cells (denominator)          |              2,211 | `public/data/validation/coverage-matrix.json`                     |
 | Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 19 | `src/data/validation/coverage-waivers.json`                       |
-| Waivers approved                                        |                 14 | `src/data/validation/coverage-waivers.json`                       |
+| Waivers approved                                        |                 19 | `src/data/validation/coverage-waivers.json`                       |
 | Open gaps (register entries)                            |                 71 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |             71 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
-**Waivers:** 5 of 19 waivers are baseline-pending-review (not approvals); 14 approved.
+**Waivers:** 0 of 19 waivers are baseline-pending-review (not approvals); 19 approved.
 
 ## Vector files and cases by evidence class
 
@@ -335,8 +335,8 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `39093cf821e491842b20765d449d406bc93d974d2886088f30de3687a0115376` |
-| `src/data/validation/coverage-waivers.json`                             | `3db4aa4ccd8aaaea46b94bbb8810b5b01e88a411ede035992d7f8f41505b26c3` |
+| `public/data/validation/coverage-matrix.json`                           | `38575333776fd6ff726e268a5255f7e1c2668640232269864b703eadaa310584` |
+| `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2` |
 | `src/data/validation/open-gaps.json`                                    | `a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |
