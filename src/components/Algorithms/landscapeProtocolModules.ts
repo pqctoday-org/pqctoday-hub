@@ -34,6 +34,7 @@ export const PROTOCOL_LEARN_MODULE: Readonly<Record<string, string>> = {
   kerberos: 'iam-pqc',
   '5g-suci': '5g-security',
   dnssec: 'dnssec-pqc',
+  mls: 'mls-group-messaging',
 }
 
 /** `pqc_mechanisms` value → Learn module id, for mechanism families with a module of their own. */

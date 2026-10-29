@@ -22,7 +22,7 @@ describe('landscape protocol → module edge (round 9, wave 1.6)', () => {
     const used = new Set(useCases.flatMap((u) => u.protocolsTarget))
     const unmapped = [...used].filter((p) => !PROTOCOL_LEARN_MODULE[p]).sort()
     // No Learn module teaches these; add the module first, then the mapping.
-    expect(unmapped).toEqual(['cose', 'eap-radius', 'macsec', 'rpki-bgpsec', 'tpm'])
+    expect(unmapped).toEqual(['cose', 'eap-radius', 'macsec', 'rpki-bgpsec', 'signal-pqxdh', 'tpm'])
   })
   it('a TLS use case links tls-basics via tls-1-3 and never repeats its sector module', () => {
     const { useCases } = loadIndustryLandscape()
