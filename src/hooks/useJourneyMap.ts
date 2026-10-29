@@ -9,7 +9,7 @@ import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { PERSONAS } from '@/data/learningPersonas'
-import { NAV_PATH_LABELS, PERSONA_MILESTONES } from '@/data/personaConfig'
+import { JOURNEY_START_PHASE, NAV_PATH_LABELS, PERSONA_MILESTONES } from '@/data/personaConfig'
 import { quizQuestions } from '@/data/quizDataLoader'
 import {
   MODULE_CATALOG,
@@ -90,7 +90,9 @@ export function getMilestoneStatus(
     execDocCount,
     opensslFileCount,
   } = inputs
-  switch (route) {
+  // A route may carry a query (a milestone that opens a tool on a given tab); the signal is the page's.
+  const path = route.split('?')[0]
+  switch (path) {
     case '/assess':
       return assessmentStatus === 'complete'
         ? 'completed'
@@ -102,6 +104,7 @@ export function getMilestoneStatus(
     case '/migrate':
       return migrationStarted ? 'completed' : 'available'
     case '/playground':
+    case '/playground/hsm':
     case '/openssl':
       return artifactCount > 0 ? 'completed' : 'available'
     case '/playground/openssl-studio':
@@ -187,6 +190,41 @@ export function useJourneyMap(): JourneyMapResult {
     const phases: JourneyPhase[] = []
     let currentItems: JourneyItem[] = []
 
+    // A milestone is a page-level action between learning phases. Start milestones come before
+    // the first phase and are never the "you are here" marker: they are a first step, not the
+    // part of the path the learner is working through.
+    const startMilestoneIds = new Set<string>()
+    const addMilestonePhases = (list: typeof milestones | undefined, isStart = false) => {
+      for (const ms of list ?? []) {
+        const msStatus = getMilestoneStatus(ms.route, {
+          assessmentStatus,
+          myFrameworkCount,
+          migrationStarted,
+          artifactCount,
+          execDocCount,
+          opensslFileCount,
+        })
+        const msId = `milestone-${ms.route}-${ms.label.toLowerCase().replace(/\s+/g, '-')}`
+        if (isStart) startMilestoneIds.add(msId)
+        phases.push({
+          id: msId,
+          label: ms.label,
+          type: 'milestone',
+          status: msStatus,
+          items: [
+            {
+              id: msId,
+              label: ms.label,
+              type: 'page-action',
+              status: msStatus,
+              route: ms.route,
+            },
+          ],
+        })
+      }
+    }
+    addMilestonePhases(milestonesByPhase.get(JOURNEY_START_PHASE), true)
+
     for (const item of pathItems) {
       if (item.type === 'module') {
         const moduleId = item.moduleId
@@ -240,35 +278,7 @@ export function useJourneyMap(): JourneyMapResult {
         })
 
         // Insert any milestones after this checkpoint
-        const milestonesAfter = milestonesByPhase.get(item.id)
-        if (milestonesAfter) {
-          for (const ms of milestonesAfter) {
-            const msStatus = getMilestoneStatus(ms.route, {
-              assessmentStatus,
-              myFrameworkCount,
-              migrationStarted,
-              artifactCount,
-              execDocCount,
-              opensslFileCount,
-            })
-            const msId = `milestone-${ms.route}-${ms.label.toLowerCase().replace(/\s+/g, '-')}`
-            phases.push({
-              id: msId,
-              label: ms.label,
-              type: 'milestone',
-              status: msStatus,
-              items: [
-                {
-                  id: msId,
-                  label: ms.label,
-                  type: 'page-action',
-                  status: msStatus,
-                  route: ms.route,
-                },
-              ],
-            })
-          }
-        }
+        addMilestonePhases(milestonesByPhase.get(item.id))
 
         currentItems = []
       }
@@ -288,7 +298,8 @@ export function useJourneyMap(): JourneyMapResult {
 
     // ── Current phase index ────────────────────────────────────────────────
     let currentPhaseIdx = phases.findIndex(
-      (p) => p.status === 'in-progress' || p.status === 'available'
+      (p) =>
+        !startMilestoneIds.has(p.id) && (p.status === 'in-progress' || p.status === 'available')
     )
     if (currentPhaseIdx === -1) currentPhaseIdx = phases.length - 1
 

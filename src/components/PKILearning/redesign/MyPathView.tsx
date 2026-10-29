@@ -22,6 +22,7 @@ import {
   essentialsQuizCategories,
   type PersonaId,
 } from '@/data/learningPersonas'
+import { PERSONA_FIRST_STEP } from '@/data/personaConfig'
 import { useModuleStore } from '@/store/useModuleStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { MODULE_CATALOG, MODULE_STEP_COUNTS } from '../moduleData'
@@ -105,6 +106,13 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
   if (!summary) return null
 
   const resumeModule = resumeId ? MODULE_CATALOG[resumeId] : undefined
+
+  // A role whose first action is a page (the validation tests for a certification engineer)
+  // sees it above the Resume card until a lesson on the path has been started.
+  const firstStep = PERSONA_FIRST_STEP[personaId]
+  const pathStarted = persona.recommendedPath.some(
+    (id) => id !== 'quiz' && (statusById[id] === 'in-progress' || statusById[id] === 'completed')
+  )
   const resumePct = resumeId
     ? Math.min(
         100,
@@ -220,6 +228,33 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
 
       {/* A path that starts at the certificate, not at PQC 101: point a reader new to PQC at the basics. */}
       {pathSkipsPqcBasics(personaId) && <NewToPqcNote className="px-1" />}
+
+      {firstStep && !pathStarted && (
+        <div
+          className="glass-panel border-primary/30 p-4 flex items-center justify-between gap-4"
+          data-testid="first-step-card"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <FlaskConical className="text-primary shrink-0" size={20} aria-hidden="true" />
+            <div className="min-w-0">
+              <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">
+                First step
+              </span>
+              <div className="text-sm font-semibold text-foreground">{firstStep.label}</div>
+              <p className="text-xs text-muted-foreground mt-0.5">{firstStep.purpose}</p>
+            </div>
+          </div>
+          <Button
+            variant="gradient"
+            size="sm"
+            onClick={() => navigate(firstStep.route)}
+            className="shrink-0 gap-1.5"
+          >
+            Start
+            <ArrowRight size={14} />
+          </Button>
+        </div>
+      )}
 
       {/* Resume + progress dial */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch">
