@@ -102,8 +102,9 @@ jobs:
       - name: Browser Playground and Business Tool routes, roles, mobile layout and accessibility
         # Fast education-tool UI contract only. Real-WASM/crypto execution
         # remains in the nightly and release suites so this required PR check
-        # stays bounded.
-        run: npx playwright test --project=playground-pr-desktop --project=playground-pr-mobile
+        # stays bounded. a11y-modules-pr adds the Learn-module tab/phone/axe spec
+        # (about 14 s), which used to run only in the nightly.
+        run: npx playwright test --project=playground-pr-desktop --project=playground-pr-mobile --project=a11y-modules-pr
 
   pr-test:
     # The unit suite, moved off the pre-push hook to here on 2026-09-29 (owner

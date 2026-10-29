@@ -61,3 +61,5 @@ A PQC-capable HSM is checked in four places. CAVP is NIST's algorithm validation
 - FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA)
 - NIST SP 800-208 (Stateful Hash-Based Signatures)
 - CNSA 2.0 (NSA)
+
+Vendor algorithm availability and validation evidence are shown from shared, product-specific capability records with source links, checked dates and the recorded review state. Availability, approved mode and inclusion on a named CMVP certificate are separate facts; missing records remain unknown. Version-specific documentation examples and integration scenarios do not establish support for another firmware, parameter set or environment.

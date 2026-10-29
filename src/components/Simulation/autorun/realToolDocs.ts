@@ -131,7 +131,7 @@ const THALES_LUNA_VENDOR = HSM_VENDORS.find((v) => v.id === 'thales-luna')
 const thalesLunaInventoryLine = (): string => {
   const v = THALES_LUNA_VENDOR
   if (!v) return 'Thales Luna Network HSM 7; 4 units across 2 data centers'
-  return `${v.product} — full PQC support in firmware ${v.firmwareVersion} (${v.supportedPQCAlgorithms.join(', ')}); 4 units across 2 data centers`
+  return `${v.product} — the capability record lists ${v.supportedPQCAlgorithms.join(', ')} as available in firmware 7.9.0 or newer; 4 units across 2 data centers`
 }
 
 const ALL_ROLE_IDS: FrameworkRoleId[] = [

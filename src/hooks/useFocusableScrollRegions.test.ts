@@ -44,6 +44,37 @@ describe('applyFocusableScrollRegions', () => {
     expect(own.hasAttribute('tabindex')).toBe(false)
   })
 
+  it('preserves the implicit textbox role of an overflowing textarea', () => {
+    const root = document.createElement('main')
+    const textarea = document.createElement('textarea')
+    textarea.className = 'overflow-auto'
+    textarea.setAttribute('aria-label', 'Policy YAML source')
+    Object.defineProperty(textarea, 'scrollHeight', { value: 500 })
+    Object.defineProperty(textarea, 'clientHeight', { value: 100 })
+    root.appendChild(textarea)
+    applyFocusableScrollRegions(root)
+    expect(textarea.hasAttribute('role')).toBe(false)
+    expect(textarea.hasAttribute('tabindex')).toBe(false)
+    expect(textarea.getAttribute('aria-label')).toBe('Policy YAML source')
+  })
+
+  it('cleans up its own old attributes on a native control without removing its name', () => {
+    const root = document.createElement('main')
+    const textarea = document.createElement('textarea')
+    textarea.className = 'overflow-auto'
+    textarea.setAttribute('data-scroll-region', 'auto')
+    textarea.setAttribute('role', 'region')
+    textarea.setAttribute('tabindex', '0')
+    textarea.setAttribute('aria-label', 'Policy YAML source')
+    Object.defineProperty(textarea, 'scrollHeight', { value: 500 })
+    Object.defineProperty(textarea, 'clientHeight', { value: 100 })
+    root.appendChild(textarea)
+    applyFocusableScrollRegions(root)
+    expect(textarea.hasAttribute('role')).toBe(false)
+    expect(textarea.hasAttribute('data-scroll-region')).toBe(false)
+    expect(textarea.getAttribute('aria-label')).toBe('Policy YAML source')
+  })
+
   it('removes what it added once the box no longer overflows', () => {
     const root = document.createElement('main')
     const el = box('overflow-x-auto', '<span>x</span>', 900, 300)

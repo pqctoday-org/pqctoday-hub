@@ -49,6 +49,10 @@ interface RawTransitionRow {
   Deprecation_Date_ISO: string
   Standardization_Date_ISO: string
   data_quality_notes: string
+  /** Row lifecycle (DS01): blank/absent = active; 'deprecated' rows are kept for id history only. */
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
 /**
@@ -118,16 +122,26 @@ const TRANSITION_CANDIDATE_PQC_TIER_LOOKUP: Record<string, AlgorithmStatusTier> 
   'NTRU+ (KpqC Level 3)': 'regional',
   'HAETAE (KpqC Lattice Signature)': 'regional',
   'AIMer (KpqC Symmetric Signature)': 'regional',
-  // Keys are the CSV's literal pqc_replacement text (still "Round 2" until the data
-  // row is updated); the tier id is historical — the UI labels it Round 3.
+  // Keys are the CSV's literal pqc_replacement text; the tier id is historical — the UI
+  // labels it Round 3. The Round 2 names below are the deprecated rows kept in the CSV so
+  // their ids stay resolvable (revision records cite them); the loader drops those rows, but
+  // the drift guard maps every raw row, so the keys stay.
   'UOV (NIST Sig Round 2 — Multivariate)': 'round2-candidate',
   'MAYO (NIST Sig Round 2 — Multivariate)': 'round2-candidate',
   'SQIsign (NIST Sig Round 2 — Isogeny)': 'round2-candidate',
-  'CROSS (NIST Sig Round 2 — Code-based)': 'eliminated', // not advanced to Round 3 (NIST, 14 May 2026)
-  'LESS (NIST Sig Round 2 — Code-based)': 'eliminated', // not advanced to Round 3 (NIST, 14 May 2026)
+  'CROSS (NIST Sig Round 2 — Code-based)': 'eliminated',
+  'LESS (NIST Sig Round 2 — Code-based)': 'eliminated',
   'FAEST (NIST Sig Round 2 — Hash-based)': 'round2-candidate',
-  'HAWK (NIST Sig Round 2 — Lattice)': 'eliminated', // entered Round 3, withdrawn 29 Jul 2026
+  'HAWK (NIST Sig Round 2 — Lattice)': 'eliminated',
   'SNOVA (NIST Sig Round 2 — Multivariate)': 'round2-candidate',
+  'UOV (NIST Sig Round 3 — Multivariate)': 'round2-candidate',
+  'MAYO (NIST Sig Round 3 — Multivariate)': 'round2-candidate',
+  'SQIsign (NIST Sig Round 3 — Isogeny)': 'round2-candidate',
+  'CROSS (NIST Sig Round 2 — Code-based, did not advance)': 'eliminated', // not advanced to Round 3 (NIST, 14 May 2026)
+  'LESS (NIST Sig Round 2 — Code-based, did not advance)': 'eliminated', // not advanced to Round 3 (NIST, 14 May 2026)
+  'FAEST (NIST Sig Round 3 — Hash-based)': 'round2-candidate',
+  'HAWK (NIST Sig Round 3 — Lattice, withdrawn)': 'eliminated', // entered Round 3, withdrawn 29 Jul 2026
+  'SNOVA (NIST Sig Round 3 — Multivariate)': 'round2-candidate',
   'ML-DSA-44-RSA2048-PSS (IETF Composite Sig)': 'ietf-draft',
   'ML-DSA-44-ECDSA-P256 (IETF Composite Sig)': 'ietf-draft',
   'ML-DSA-44-Ed25519 (IETF Composite Sig)': 'ietf-draft',
@@ -173,33 +187,37 @@ const csvModules = import.meta.glob('./algorithms_transitions_*.csv', {
 const { data, metadata } = loadLatestCSV<RawTransitionRow, AlgorithmTransition>(
   csvModules,
   /algorithms_transitions_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
-  (row) => ({
-    classical: row.classical_algorithm,
-    keySize: row.key_size,
-    pqc: row.pqc_replacement,
-    function: row.Function as AlgorithmTransition['function'],
-    deprecationDate: row.Deprecation_Date_Label || row.Deprecation_Date_ISO || '',
-    standardizationDate: row.Standardization_Date_Label || row.Standardization_Date_ISO || '',
-    deprecationDateISO: row.Deprecation_Date_ISO || undefined,
-    standardizationDateISO: row.Standardization_Date_ISO || undefined,
-    region: row.Region || '',
-    status: row.Status || '',
-    statusUrl: row.status_url || undefined,
-    dataQualityNotes: row.data_quality_notes || undefined,
-    statusTier: mapTransitionStatusToTier(row.Status || '', row.pqc_replacement || ''),
-    evidenceStates: {
-      replacement: row.pqc_replacement?.trim() ? 'stated' : 'not-researched',
-      deprecationDate:
-        row.Deprecation_Date_Label?.trim() || row.Deprecation_Date_ISO?.trim()
-          ? 'stated'
-          : 'not-specified',
-      standardizationDate:
-        row.Standardization_Date_Label?.trim() || row.Standardization_Date_ISO?.trim()
-          ? 'stated'
-          : 'not-specified',
-      source: row.status_url?.trim() ? 'stated' : 'not-specified',
-    },
-  })
+  (row) => {
+    const lifecycle = (row.status ?? '').trim().toLowerCase()
+    if (lifecycle && lifecycle !== 'active') return null // deprecated/obsolete: id history only
+    return {
+      classical: row.classical_algorithm,
+      keySize: row.key_size,
+      pqc: row.pqc_replacement,
+      function: row.Function as AlgorithmTransition['function'],
+      deprecationDate: row.Deprecation_Date_Label || row.Deprecation_Date_ISO || '',
+      standardizationDate: row.Standardization_Date_Label || row.Standardization_Date_ISO || '',
+      deprecationDateISO: row.Deprecation_Date_ISO || undefined,
+      standardizationDateISO: row.Standardization_Date_ISO || undefined,
+      region: row.Region || '',
+      status: row.Status || '',
+      statusUrl: row.status_url || undefined,
+      dataQualityNotes: row.data_quality_notes || undefined,
+      statusTier: mapTransitionStatusToTier(row.Status || '', row.pqc_replacement || ''),
+      evidenceStates: {
+        replacement: row.pqc_replacement?.trim() ? 'stated' : 'not-researched',
+        deprecationDate:
+          row.Deprecation_Date_Label?.trim() || row.Deprecation_Date_ISO?.trim()
+            ? 'stated'
+            : 'not-specified',
+        standardizationDate:
+          row.Standardization_Date_Label?.trim() || row.Standardization_Date_ISO?.trim()
+            ? 'stated'
+            : 'not-specified',
+        source: row.status_url?.trim() ? 'stated' : 'not-specified',
+      },
+    }
+  }
 )
 
 export const algorithmsData: AlgorithmTransition[] = data

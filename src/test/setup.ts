@@ -122,6 +122,16 @@ vi.mock('@tanstack/react-virtual', () => ({
   },
 }))
 
+// Monaco is imported lazily by the dev-tab editors (installMonacoSelfHost). A test that
+// renders one of them and ends before that import resolves lets monaco's browser modules
+// evaluate after jsdom is torn down ("window is not defined" / EnvironmentTeardownError, an
+// unhandled rejection that fails the whole run on a loaded runner). No unit test needs a real
+// editor, so resolve at once and render nothing for it; a file can still mock these itself.
+vi.mock('@/components/Playground/dev/monacoSelfHost', () => ({
+  installMonacoSelfHost: () => Promise.resolve(),
+}))
+vi.mock('@monaco-editor/react', () => ({ default: () => null, loader: { config: () => {} } }))
+
 // Default EmbedProvider mocks — components that call useIsEmbedded/useEmbedState
 // outside an EmbedProvider (e.g. in unit tests) get safe non-embedded defaults.
 vi.mock('@/embed/EmbedProvider', async (importOriginal) => {

@@ -16,8 +16,8 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "4796d9f31a6b9c09e681f9da9cd2f6beb24244afb97d172c1b8a17fade6b8071",
-    "src/data/validation/coverage-waivers.json": "868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130",
+    "public/data/validation/coverage-matrix.json": "38575333776fd6ff726e268a5255f7e1c2668640232269864b703eadaa310584",
+    "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
     "src/data/validation/native-conformance.generated.json": "3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2",
     "src/data/validation/open-gaps.json": "a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21",
@@ -204,14 +204,14 @@
         "unsupportedCells": 8,
         "overall": {
           "covered": 16,
-          "sampled": 2190,
-          "untested": 29
+          "sampled": 2193,
+          "untested": 26
         },
         "byPolarity": {
           "positive": {
             "covered": 254,
-            "sampled": 1848,
-            "untested": 133,
+            "sampled": 1851,
+            "untested": 130,
             "denominator": 2235,
             "byStatus": {
               "acvts-issued": 0,
@@ -219,9 +219,9 @@
               "standard-kat": 5,
               "oracle": 25,
               "differential": 0,
-              "round-trip": 866,
+              "round-trip": 869,
               "behavior-only": 462,
-              "untested": 133,
+              "untested": 130,
               "unsupported": 0
             }
           },
@@ -280,7 +280,7 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2206,
+            "registeredCells": 2209,
             "passedCells": 2197,
             "failedCells": 2,
             "skippedCells": 0
@@ -377,15 +377,15 @@
   },
   "waivers": {
     "source": "src/data/validation/coverage-waivers.json",
-    "entries": 22,
+    "entries": 19,
     "byStatus": {
-      "baseline-pending-review": 22
+      "approved": 19
     },
-    "approvedEntries": 0,
-    "waivedCells": 51,
-    "pendingReviewCells": 51,
-    "staleCells": 20,
-    "statement": "All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5)."
+    "approvedEntries": 19,
+    "waivedCells": 48,
+    "pendingReviewCells": 0,
+    "staleCells": 0,
+    "statement": "0 of 19 waivers are baseline-pending-review (not approvals); 19 approved."
   },
   "nativeSuites": {
     "source": "src/data/validation/native-conformance.generated.json",
@@ -2214,17 +2214,17 @@
   },
   "openGaps": {
     "source": "public/data/validation/coverage-matrix.json (openGaps; curated entries from src/data/validation/open-gaps.json)",
-    "total": 73,
+    "total": 71,
     "byStatus": {
-      "open": 66,
+      "open": 64,
       "in-progress": 1,
       "accepted-limitation": 6
     },
     "byOrigin": {
       "curated": 30,
-      "generated": 43
+      "generated": 41
     },
-    "unassignedOwner": 73,
+    "unassignedOwner": 71,
     "curated": [
       {
         "id": "kmac256-quarantined",
@@ -2491,12 +2491,12 @@
     "validRecords": 96,
     "statusCounts": {
       "source-verified": 94,
-      "awaiting-review": 28,
+      "awaiting-review": 25,
       "stale-review": 2
     },
     "awaiting": {
       "vector-source": 4,
-      "coverage-waiver": 22,
+      "coverage-waiver": 19,
       "public-claim": 3,
       "learn-module-practitioner": 1
     },
@@ -3188,156 +3188,135 @@
         "status": "source-verified"
       },
       {
-        "id": "coverage-waiver:baseline-CKM_HASH_SLH_DSA-cpp+rust",
-        "kind": "coverage-waiver",
-        "title": "CKM_HASH_SLH_DSA (cpp, rust): 10 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
         "id": "coverage-waiver:baseline-CKM_ECDH1_DERIVE-cpp",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDH1_DERIVE (cpp): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDH1_DERIVE (cpp): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_ECDH1_DERIVE-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_ECDH1_DERIVE (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ECDH1_DERIVE (cpp, rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_RSA_AES_KEY_WRAP",
         "kind": "coverage-waiver",
-        "title": "CKM_RSA_AES_KEY_WRAP (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_RSA_AES_KEY_WRAP (cpp, rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_XMSSMT_KEY_PAIR_GEN",
         "kind": "coverage-waiver",
-        "title": "CKM_XMSSMT_KEY_PAIR_GEN (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_XMSSMT_KEY_PAIR_GEN (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_XMSSMT",
         "kind": "coverage-waiver",
-        "title": "CKM_XMSSMT (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_XMSSMT (cpp, rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_ML_DSA_EXTERNAL_MU_GEN",
         "kind": "coverage-waiver",
-        "title": "CKM_ML_DSA_EXTERNAL_MU_GEN (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_ML_DSA_EXTERNAL_MU_GEN (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN",
         "kind": "coverage-waiver",
-        "title": "CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN (rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_PQCTODAY_FRODOKEM_KEY_PAIR_GEN (rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_PQCTODAY_FRODOKEM_ENCAPSULATE",
         "kind": "coverage-waiver",
-        "title": "CKM_PQCTODAY_FRODOKEM_ENCAPSULATE (rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_PQCTODAY_FRODOKEM_ENCAPSULATE (rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN",
         "kind": "coverage-waiver",
-        "title": "CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_PQCTODAY_CLASSIC_MCELIECE_KEY_PAIR_GEN (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE",
         "kind": "coverage-waiver",
-        "title": "CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE (cpp, rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_EC_MONTGOMERY_KEY_DERIVE",
         "kind": "coverage-waiver",
-        "title": "CKM_EC_MONTGOMERY_KEY_DERIVE (rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_EC_MONTGOMERY_KEY_DERIVE (rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_KMAC_128",
         "kind": "coverage-waiver",
-        "title": "CKM_KMAC_128 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_KMAC_128 (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_KMAC_256",
         "kind": "coverage-waiver",
-        "title": "CKM_KMAC_256 (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_KMAC_256 (cpp, rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_EDDSA_PH-cpp+rust",
         "kind": "coverage-waiver",
-        "title": "CKM_EDDSA_PH (cpp, rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_EDDSA_PH (cpp, rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_EDDSA_PH-rust",
         "kind": "coverage-waiver",
-        "title": "CKM_EDDSA_PH (rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_EDDSA_PH (rust): 2 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_X25519",
         "kind": "coverage-waiver",
-        "title": "CKM_X25519 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_X25519 (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_X448",
         "kind": "coverage-waiver",
-        "title": "CKM_X448 (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_X448 (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_BIP32_MASTER_DERIVE",
         "kind": "coverage-waiver",
-        "title": "CKM_BIP32_MASTER_DERIVE (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_BIP32_MASTER_DERIVE (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
       {
         "id": "coverage-waiver:baseline-CKM_BIP32_CHILD_DERIVE",
         "kind": "coverage-waiver",
-        "title": "CKM_BIP32_CHILD_DERIVE (cpp, rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HPKE_KEM_KEY_PAIR_GEN",
-        "kind": "coverage-waiver",
-        "title": "CKM_HPKE_KEM_KEY_PAIR_GEN (rust): 1 cell pattern(s), status baseline-pending-review",
-        "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
-        "status": "awaiting-review"
-      },
-      {
-        "id": "coverage-waiver:baseline-CKM_HPKE",
-        "kind": "coverage-waiver",
-        "title": "CKM_HPKE (rust): 2 cell pattern(s), status baseline-pending-review",
+        "title": "CKM_BIP32_CHILD_DERIVE (cpp, rust): 1 cell pattern(s), status approved",
         "requirement": "Two distinct named reviewers confirm the untested cells may stay untested for this release (or reject the waiver).",
         "status": "awaiting-review"
       },
@@ -3381,7 +3360,7 @@
         "src/data/validation/validation-counts.generated.json",
         "src/utils/katEvidence.test.ts"
       ],
-      "basis": "All 9711 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
+      "basis": "All 9769 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here)."
     },
     {
       "n": 2,

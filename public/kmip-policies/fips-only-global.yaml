@@ -123,12 +123,15 @@ rules:
     reason: "Algorithm not FIPS-approved (Round-4 / alternate scheme)"
 
   # 3. RSA minimum 3072 bits. NOTE: FIPS 186-5 approves RSA >= 2048; the 3072
-  #    floor here is the SP 800-57 Part 1 / NIST IR 8547 ">=128-bit security"
-  #    horizon, not a FIPS 186-5 requirement (corrected 2026-07-01).
+  #    floor here is SP 800-57 Part 1 Rev. 5: RSA-3072 is its Table 2 size for
+  #    128-bit security, the projected minimum for applying protection from 2031
+  #    (Table 4). Not a FIPS 186-5 requirement (corrected 2026-07-01). NIST IR
+  #    8547 (final, October 2026) is no longer cited for it: it deprecates RSA at
+  #    every size of 112-bit security or more after 2030, RSA-3072 included.
   - type: min_key_length
     algorithm: RSA
     min_bits: 3072
-    reason: "RSA >= 3072 (SP 800-57 128-bit-security floor; FIPS 186-5 minimum is 2048)"
+    reason: "RSA >= 3072 (SP 800-57 Part 1 Rev. 5: the RSA size for 128-bit security, the minimum for applying protection from 2031; FIPS 186-5 minimum is 2048)"
 
   # 4. AES minimum 128 bits (already enforced by AES-128 allowlist, but explicit).
   - type: min_key_length

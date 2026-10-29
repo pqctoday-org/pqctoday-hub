@@ -62,7 +62,7 @@ test('opens the Visual editor, edits a policy, simulates, and reflects it in YAM
   // The YAML drawer reflects the edited graph. It's an editable `<textarea>`
   // (the drawer round-trips edits back to the graph), not a read-only `<pre>`.
   await page.getByRole('button', { name: /policy source \(YAML\)/i }).click()
-  await expect(page.getByRole('textbox', { name: 'Policy YAML source' })).toContainText(
-    'schema_version: 1'
-  )
+  const yamlSource = page.getByRole('textbox', { name: 'Policy YAML source' })
+  await expect(yamlSource).toHaveValue(/schema_version: 1/)
+  await expect(yamlSource).toHaveValue(/algorithm_denylist/)
 })

@@ -118,7 +118,7 @@ describe('phone compare', () => {
     const cards = screen.getAllByRole('article')
     expect(cards[0]).toHaveTextContent('Published standard')
     expect(cards[1]).toHaveTextContent('Selected; standard pending')
-    // Raw tier ids only; reader text such as "final expected 2027" is fine.
+    // Raw tier ids only; reader text such as "Selected; standard pending" is fine.
     for (const c of cards)
       expect(c.textContent).not.toMatch(/fips-draft|round2-candidate|ietf-draft|Maturityfinal\b/)
   })

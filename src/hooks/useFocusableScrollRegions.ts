@@ -26,6 +26,8 @@ const SCROLL_BOX =
   '[class*="overflow-x-auto"], [class*="overflow-auto"], [class*="overflow-y-auto"]'
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]'
+const NATIVE_CONTROL =
+  'a[href], button, input, select, textarea, summary, [contenteditable]:not([contenteditable="false"])'
 const MARK = 'data-scroll-region'
 
 function overflows(el: HTMLElement): boolean {
@@ -37,7 +39,10 @@ export function applyFocusableScrollRegions(root: HTMLElement): void {
   boxes.forEach((el) => {
     const managed = el.getAttribute(MARK) === 'auto'
     if (!managed && (el.hasAttribute('tabindex') || el.hasAttribute('role'))) return
-    const needs = overflows(el) && !el.querySelector(FOCUSABLE)
+    // A textarea already has keyboard behavior and an implicit textbox role.
+    // querySelector only checks descendants, so it must not be used to decide
+    // whether the scroll box itself is a native control.
+    const needs = !el.matches(NATIVE_CONTROL) && overflows(el) && !el.querySelector(FOCUSABLE)
     if (needs && !managed) {
       el.setAttribute(MARK, 'auto')
       el.setAttribute('tabindex', '0')

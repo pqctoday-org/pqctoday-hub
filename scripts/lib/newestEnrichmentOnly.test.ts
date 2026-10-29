@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { join } from 'node:path'
 import {
   NEWEST_ONLY_FAMILIES,
@@ -94,8 +94,21 @@ describe('plugin', () => {
     return plugin
   }
 
-  it('applies to production builds only', () => {
-    expect(newestEnrichmentOnlyPlugin(dir).apply).toBe('build')
+  it('applies to production builds and the dev server, not to Vitest', () => {
+    const apply = newestEnrichmentOnlyPlugin(dir).apply as (
+      c: object,
+      e: { command: 'build' | 'serve'; mode: string }
+    ) => boolean
+    const build = { command: 'build', mode: 'production' } as const
+    const serve = { command: 'serve', mode: 'development' } as const
+    expect(apply({}, build)).toBe(true)
+    expect(apply({}, serve)).toBe(!process.env.VITEST)
+    vi.stubEnv('VITEST', '')
+    expect(apply({}, serve)).toBe(true)
+    vi.stubEnv('VITEST', 'true')
+    expect(apply({}, serve)).toBe(false)
+    expect(apply({}, build)).toBe(true)
+    vi.unstubAllEnvs()
   })
 
   it('blanks a pruned file imported as raw text', () => {

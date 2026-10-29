@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
 import React, { useState, useMemo, useCallback } from 'react'
 import { Link } from 'react-router'
 import {
@@ -158,6 +159,12 @@ interface ProvisioningStep {
 // The "Key size comparison" panel below previously hardcoded the intel-sgx
 // pairing's sizes (ML-DSA-65/ML-KEM-768, ECDSA/ECDH P-256) for every vendor
 // pairing, including ones that use ML-DSA-87/ML-KEM-1024 or P-384.
+const CAPABILITY_PRODUCT_BY_INTEGRATION: Readonly<Record<string, string>> = {
+  'sgx-luna-pkcs11': 'Thales Luna HSM',
+  'sev-snp-nshield': 'Entrust nShield',
+  'nitro-cloudhsm': 'AWS CloudHSM',
+}
+
 const KEY_SIZE_BYTES: Record<string, number> = {
   'ECDSA P-256': 64, // raw X||Y, no 0x04 prefix
   'ECDSA P-384': 96,
@@ -1183,9 +1190,12 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
             </div>
 
             {/* Notes */}
+            <HsmCapabilityEvidence
+              softwareName={CAPABILITY_PRODUCT_BY_INTEGRATION[integration.id]}
+            />
             {integration.notes && (
               <p className="text-[10px] text-muted-foreground mt-3 border-t border-border pt-2">
-                {integration.notes}
+                Integration scenario, not deployment evidence: {integration.notes}
               </p>
             )}
           </div>
@@ -1409,9 +1419,12 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   </span>
                 </div>
               </div>
+              <HsmCapabilityEvidence
+                softwareName={CAPABILITY_PRODUCT_BY_INTEGRATION[integration.id]}
+              />
               {integration.notes && (
                 <p className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">
-                  {integration.notes}
+                  Integration scenario, not deployment evidence: {integration.notes}
                 </p>
               )}
             </div>

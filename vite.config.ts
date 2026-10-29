@@ -377,6 +377,23 @@ export default defineConfig({
           // stay available offline. embed/manifest.json (16 KB) is left
           // alone too — not worth the risk for the bytes.
           '{algorithms,compliance,compliance-docs,crqc-watch,library,migrate-proofs,patents,product-certifications,products,protocol-matrix,threats,timeline,vendor-roadmaps,vendors}/manifest.json',
+          // Four more files of the same kind that the rule above missed because
+          // they sit in differently named folders: the compliance evidence
+          // index (0.59 MB), the trusted-sources and authoritative-sources
+          // manifests (0.54 and 0.40 MB) and the Industry Landscape evidence
+          // manifest (0.12 MB). 1.66 MB together. Nothing in src/, index.html,
+          // the service worker or e2e/ requests any of them by URL (checked
+          // 2026-10-28, including template strings and variables), so a
+          // precached copy serves no request and a reader sees the same pages
+          // offline as before. With them the install payload was 25.13 MB
+          // against the 25.00 MB ceiling (140 entries); without them it is
+          // 23.48 MB (136 entries). If a feature starts fetching one of them,
+          // add a runtime cache route for it in src/sw.ts instead of removing
+          // this line.
+          'compliance/evidence.json',
+          'trusted-sources/manifest.json',
+          'authoritative-sources/manifest.json',
+          'industry-landscape/evidence/manifest.json',
         ],
         /**
          * Fail-safe. If the allow-list were ever empty — plugin removed, rollup

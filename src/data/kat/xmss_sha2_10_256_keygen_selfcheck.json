@@ -1,6 +1,6 @@
 {
-  "source": "NIST SP 800-208 / RFC 8391",
-  "description": "XMSS-SHA2_10_256 Deterministic Keygen Self-Test",
+  "source": "Repeatability check of this engine's key generation (RFC 8391 and NIST SP 800-208 publish no test vectors)",
+  "description": "XMSS-SHA2_10_256 deterministic key generation from an all-zero seed: the expected public key was produced by this engine, so a match shows repeatability, not agreement with a published vector",
   "parameter_set": "XMSS-SHA2_10_256",
   "oid": "0x00000001",
   "notes": "RFC 8391 (informational) and NIST SP 800-208 (normative) specify XMSS-SHA2_10_256 but do not publish KAT vectors. This test uses the _set_kat_seed hook (softhsmv3 Rust WASM) to inject a known 96-byte seed (SK_SEED||SK_PRF||PUB_SEED = all zeros) and prove that keygen is deterministic — the derived public key must match expected_pub_key_hex on every run. Height h=10 (2^10=1024 signatures), n=32, w=16. Signature length: 2500 bytes (RFC 8391 §4 formula: 4+4+67×32+10×32 = 2500).",

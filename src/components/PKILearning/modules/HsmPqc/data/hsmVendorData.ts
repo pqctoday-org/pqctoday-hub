@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { getHsmFactsForSoftware, hsmCapabilitySummary } from '@/data/hsmCapabilityXrefData'
 import { getCatalogStatus, type CatalogAvailability } from '@/data/catalogStatus'
 
 export type PqcSupportStatusKey = 'production' | 'beta' | 'limited' | 'roadmap'
@@ -40,7 +41,7 @@ export interface PKCS11Operation {
   vendorNotes?: { onPrem: string; cloud: string }
 }
 
-export const HSM_VENDORS: HSMVendor[] = [
+const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[] = [
   // On-prem vendors
   {
     id: 'thales-luna',
@@ -49,10 +50,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     type: 'on-prem',
     catalogName: 'Thales Luna HSM',
     fips140Level: 'FIPS 140-3 Level 3',
-    supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     formFactor: 'network',
-    notes:
-      'Full PQC support in firmware v7.9.2+. PKCS#11 mechanisms: CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM (512/768/1024), CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_HASH_ML_DSA_{SHA256,SHA512,SHA3_256,SHA3_512,SHAKE128,SHAKE256}, CKM_EXTMU_ML_DSA. KEM encap/decap uses proprietary CA_EncapsulateKey/CA_DecapsulateKey pending PKCS#11 v3.2 ratification. SLH-DSA not yet supported in v7.9.2 (no roadmap date). CBOM via REST API. Luna Client 10.9.2+ required.',
     firmwareVersion: '7.9.2+',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
@@ -71,16 +69,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     catalogName: 'Entrust nShield',
     fips140Level:
       'FIPS 140-3 Level 3 (cert #5329, no PQC in its approved list; a newer nShield 5s entry is in CMVP Modules in Process)',
-    supportedPQCAlgorithms: [
-      'ML-KEM-512/768/1024',
-      'ML-DSA-44/65/87',
-      'SLH-DSA (all 12 param sets)',
-      'LMS/HSS (PQSDK)',
-      'XMSS (PQSDK)',
-    ],
     formFactor: 'network',
-    notes:
-      'Firmware v13.8.0 adds native ML-DSA, ML-KEM and SLH-DSA; Entrust states the implementation is CAVP-validated. Through PKCS#11 the algorithms arrived one release at a time: ML-DSA in Security World v13.9.0 (CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_HASH_ML_DSA with _SHA256, _SHA512, _SHAKE128 and _SHAKE256 variants), ML-KEM in v13.9.3 (CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM; firmware v13.8.3 or later) and SLH-DSA in v13.9.5 (CKM_SLH_DSA_KEY_PAIR_GEN, CKM_SLH_DSA, CKM_HASH_SLH_DSA and variants; 12 parameter sets). The PostQuantum feature must be enabled and the firmware must be v13.8 or later. In v13.9.0 ML-KEM and SLH-DSA were nCore-only. The Entrust pages checked do not describe LMS or XMSS support. CNG and JCE interfaces also supported. Hardware-accelerated PQC operations.',
     firmwareVersion: '13.8.0+',
     pkcs11Version: 'Not stated in the release notes (PQC mechanisms are listed per release)',
     hybridSupport: true,
@@ -98,10 +87,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     type: 'on-prem',
     catalogName: 'Utimaco uTrust HSM',
     fips140Level: 'FIPS 140-2 Level 3 (cert #3925, Historical since sunset)',
-    supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
     formFactor: 'pcie',
-    notes:
-      'Quantum Protect software package (Q-safe v5.0) adds PQC via in-field upgrade — no hardware swap required. Its FIPS 140-2 Level 3 certificate #3925 is now Historical. Utimaco announced CAVP results for ML-KEM, ML-DSA and LMS on 14 Oct 2025; the CAVP database lists A7400 (Lattice Module - ML: ML-KEM, ML-DSA) and A7401 (HBS: LMS). XMSS supported; SLH-DSA on roadmap (no date). PQC simulator available for API testing without hardware.',
     firmwareVersion: '5.0+ (Q-safe)',
     pkcs11Version: '3.0',
     hybridSupport: true,
@@ -119,10 +105,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     type: 'on-prem',
     catalogName: 'Marvell LiquidSecurity 2',
     fips140Level: 'FIPS 140-3 Level 3',
-    supportedPQCAlgorithms: ['ML-KEM-768', 'ML-DSA-65', 'LMS'],
     formFactor: 'pcie',
-    notes:
-      'PCIe HSM with hardware PQC acceleration. PQC algorithms in beta firmware. Powers Azure Managed HSM backend. Designed for cloud infrastructure and financial transaction processing.',
     firmwareVersion: 'Beta firmware',
     pkcs11Version: '2.40',
     hybridSupport: false,
@@ -135,10 +118,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     type: 'on-prem',
     catalogName: 'Futurex CryptoHub',
     fips140Level: 'FIPS 140-3 Level 3',
-    supportedPQCAlgorithms: ['ML-KEM-768', 'ML-DSA-65'],
     formFactor: 'network',
-    notes:
-      'Enterprise HSM with PQC firmware development in progress. PCI HSM certified. PQC support targeting production readiness.',
     firmwareVersion: 'PQC beta',
     pkcs11Version: '2.40',
     hybridSupport: false,
@@ -153,10 +133,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     catalogName: 'AWS CloudHSM',
     fips140Level:
       'FIPS 140-3 Level 3 (hsm2m.medium: CMVP #4703, Marvell LS2 HSM Family; no PQC algorithm on the certificate, checked 2026-10-15)',
-    supportedPQCAlgorithms: ['ML-DSA-44/65/87'],
     formFactor: 'cloud',
-    notes:
-      "Dedicated managed HSM. ML-DSA-44/65/87 key generation and signing inside the HSM; available in FIPS mode on hsm2m.medium clusters from 1 Sep 2026 (AWS CloudHSM documentation, checked 15 Oct 2026). No ML-KEM command is documented. CMVP certificate #4703 (Marvell LS2 HSM Family) lists no PQC algorithm (checked 15 Oct 2026), so FIPS mode is not the same as appearing on the certificate. The NIST Security Policy for #4703 (dated January 29, 2026) lists ML-DSA and ML-KEM as non-approved ('non-compliant') algorithms and services (Table 6 p. 23, Table 11 p. 66), while AWS's documentation says ML-DSA is available in FIPS mode on hsm2m.medium from 1 September 2026. We have not found a document that reconciles the two. Through its PKCS#11 library (version 2.40) ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA), not the standard v3.2 CKM_ML_DSA. (AWS KMS, a separate service, offers ML-DSA signing keys and uses ML-KEM only for hybrid post-quantum TLS to its endpoints; it does not offer ML-KEM KMS keys.) The HSM's Level 3 certificate is Marvell's #4703 (named on AWS's CloudHSM compliance page); AWS-LC's own certificates (e.g. #5314) are separate Level 1 software modules and do not make the HSM Level 3. Multi-AZ redundancy.",
     firmwareVersion: 'Provider-managed',
     pkcs11Version: '2.40 (ML-DSA via vendor-defined mechanisms)',
     hybridSupport: false,
@@ -169,10 +146,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     type: 'cloud',
     catalogName: 'Azure Dedicated HSM (Thales Luna 7)',
     fips140Level: 'FIPS 140-3 Level 3 (via Thales Luna 7 cert)',
-    supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     formFactor: 'cloud',
-    notes:
-      "Backed by Thales Luna Network HSM 7 (model A790, per Microsoft's own Dedicated HSM overview) — PQC available via firmware v7.9.2+ (customer-requested upgrade via Azure Support; not auto-applied). SLH-DSA not yet in Thales Luna 7.9.2. NOTE: Azure Dedicated HSM is retiring — no new customer onboardings, and Microsoft states full support for existing customers until 31 July 2028. Azure Managed HSM is the one on Marvell LiquidSecurity, with a separate PQC roadmap; do not read the two as the same product.",
     firmwareVersion: '7.9.2+ (customer-requested via Azure Support)',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
@@ -188,10 +162,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     type: 'cloud',
     catalogName: 'Google Cloud HSM',
     fips140Level: 'FIPS 140-2 Level 3',
-    supportedPQCAlgorithms: ['None at the HSM protection level'],
     formFactor: 'cloud',
-    notes:
-      "Hardware HSM backing for Cloud KMS keys. Cloud KMS made its PQC signing algorithms (ML-DSA-44/65/87, SLH-DSA-SHA2-128S) generally available on 16 July 2026, and ML-KEM-768/1024 and X-Wing are in preview, but Google's algorithm table lists all of them at the SOFTWARE protection level only; none is offered at the HSM level (checked 15 Oct 2026). No CAVP validations for Cloud HSM hardware yet.",
     firmwareVersion: 'N/A',
     pkcs11Version: 'N/A (Cloud KMS API)',
     hybridSupport: false,
@@ -207,17 +178,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     type: 'on-prem',
     catalogName: 'Crypto4A QxHSM',
     fips140Level: 'FIPS 140-3 Level 3 (cert #5497, lists ML-KEM, ML-DSA, SLH-DSA, LMS as approved)',
-    supportedPQCAlgorithms: [
-      'ML-KEM-512/768/1024',
-      'ML-DSA-44/65/87',
-      'SLH-DSA (all 12 param sets)',
-      'LMS/HSS',
-      'XMSS',
-      'Classic McEliece (roadmap)',
-    ],
     formFactor: 'network',
-    notes:
-      "FIPS 140-3 Level 3 certificate #5497 (19 Aug 2026) lists ML-KEM, ML-DSA, SLH-DSA and LMS as approved; the earlier FIPS 140-2 certificate #4250 is Historical. CAVP A4204 (LMS — world's first PQC cert) and A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) validated. FPGA-based crypto-agility enables firmware updates for new algorithms without hardware replacement. QxOS 5 (June 2025). Modular blade design (QxBMC-1/3/12 chassis — up to 12 blades per 4RU). Classic McEliece support on roadmap (not yet CAVP validated). Integrations: EJBCA (v9.3+), DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
     firmwareVersion: 'v4.4+ (production PQC)',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
@@ -229,6 +190,14 @@ export const HSM_VENDORS: HSMVendor[] = [
     ],
   },
 ]
+
+export const HSM_VENDORS: HSMVendor[] = HSM_VENDOR_SCENARIOS.map((vendor) => ({
+  ...vendor,
+  supportedPQCAlgorithms: getHsmFactsForSoftware(vendor.catalogName)
+    .filter((fact) => fact.available === 'yes' || fact.available === 'preview')
+    .map((fact) => (fact.available === 'preview' ? `${fact.algorithm} — preview` : fact.algorithm)),
+  notes: hsmCapabilitySummary(vendor.catalogName),
+}))
 
 export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   {
@@ -490,7 +459,7 @@ export function getVendorPqcSupportStatus(v: HSMVendor): PqcSupportStatusKey {
 
 export const STATUS_LABELS: Record<PqcSupportStatusKey, { label: string; className: string }> = {
   production: {
-    label: 'PRODUCTION',
+    label: 'AVAILABLE',
     className: 'bg-success/10 text-success border-success/20',
   },
   beta: {

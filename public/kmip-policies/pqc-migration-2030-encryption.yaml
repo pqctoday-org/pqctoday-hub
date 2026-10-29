@@ -14,7 +14,7 @@ metadata:
   effective: "2026-01-01"
   scopes: [encryption]
   compliance_mapping:
-    - { framework: "NIST IR 8547 (ipd)", status: stricter-than }
+    - { framework: "NIST IR 8547",       status: stricter-than }
     - { framework: "CNSA-2.0",           status: partial }
 
 rules:

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Download, FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -620,7 +621,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                 <th className="p-2 font-bold">Firmware</th>
                 <th className="p-2 font-bold">FIPS level</th>
                 <th className="p-2 font-bold">ESV (SP 800-90B)</th>
-                <th className="p-2 font-bold">PQC in boundary</th>
+                <th className="p-2 font-bold">Algorithm evidence and scope</th>
                 <th className="p-2 font-bold">Platform binding</th>
                 <th className="p-2 font-bold">Posture</th>
               </tr>
@@ -657,7 +658,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                       {ESV_LABEL[h.esvStatus]}
                     </span>
                   </td>
-                  <td className="p-2 text-muted-foreground max-w-[220px]">{h.pqcSupport}</td>
+                  <td className="p-2 text-muted-foreground max-w-[360px]">
+                    <HsmCapabilityEvidence softwareName={h.catalogName} />
+                  </td>
                   <td className="p-2 text-muted-foreground max-w-[180px]">{h.platformBinding}</td>
                   <td className="p-2">
                     <span

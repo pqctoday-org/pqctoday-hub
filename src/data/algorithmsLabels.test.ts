@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
+import { readdirSync, readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import Papa from 'papaparse'
 import { algorithmsData } from './algorithmsData'
 import { loadPQCAlgorithmsData } from './pqcAlgorithmsData'
 
@@ -11,7 +15,7 @@ import { loadPQCAlgorithmsData } from './pqcAlgorithmsData'
 // iso.org record 86890 (ISO/IEC 18033-2:2006/Amd 2:2026).
 
 const NOT_SELECTED = 'Not selected by NIST (Round 4 concluded March 2025)'
-const HQC_LABEL = 'Selected March 2025; draft FIPS not yet published; final expected 2027'
+const HQC_LABEL = 'Selected by NIST on 11 March 2025'
 const ROUND3 = 'NIST Additional Signatures Round 3 (May 2026)'
 const ROUND3_URL = 'https://csrc.nist.gov/projects/pqc-dig-sig/round-3-additional-signatures'
 const KPQC_FINAL = 'KpqC final selection (January 2025)'
@@ -84,6 +88,7 @@ describe('transition guide labels', () => {
     )
     expect(advanced.length).toBe(5)
     for (const row of advanced) {
+      expect(row.pqc, row.pqc).toMatch(/\(NIST Sig Round 3 — /)
       expect(row.standardizationDate, row.pqc).toBe(ROUND3)
       expect(row.statusUrl, row.pqc).toBe(ROUND3_URL)
       expect(row.statusTier, row.pqc).toBe('round2-candidate')
@@ -91,9 +96,13 @@ describe('transition guide labels', () => {
     const dropped = algorithmsData.filter((r) => /^(CROSS|LESS) \(NIST Sig/.test(r.pqc))
     expect(dropped.length).toBe(2)
     for (const row of dropped) {
+      expect(row.pqc, row.pqc).toMatch(/\(NIST Sig Round 2 — Code-based, did not advance\)$/)
       expect(row.standardizationDate, row.pqc).toMatch(/^Did not advance to NIST .* Round 3/)
       expect(row.statusTier, row.pqc).toBe('eliminated')
     }
+    const hawk = algorithmsData.filter((r) => r.pqc.startsWith('HAWK ('))
+    expect(hawk.map((r) => r.pqc)).toEqual(['HAWK (NIST Sig Round 3 — Lattice, withdrawn)'])
+    expect(hawk[0].statusTier).toBe('eliminated')
     const mayo = algorithmsData.filter((r) => /^MAYO-\d$/.test(r.pqc))
     expect(mayo.length).toBe(4)
     for (const row of mayo) {
@@ -214,5 +223,87 @@ describe('algorithm catalogue labels', () => {
     for (const row of transitions) {
       expect(row.statusUrl, row.pqc).not.toBe('https://www.iso.org/standard/85646.html')
     }
+  })
+})
+
+// The eight additional-signature replacement names changed on 2026-10-28. A row id is
+// classical:key_size:pqc_replacement:Function:Region, so the renamed rows are NEW ids; the old
+// rows stay in the newest file as deprecated (their ids are cited by signed revision records)
+// and the page shows only the active ones.
+describe('renamed additional-signature rows keep their history', () => {
+  const dataDir = dirname(fileURLToPath(import.meta.url))
+  const newest = readdirSync(dataDir)
+    .filter((f) => /^algorithms_transitions_\d{8}(?:_r\d+)?\.csv$/.test(f))
+    .sort((a, b) => {
+      const key = (f: string) => {
+        const m = f.match(/_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)!
+        return Number(m[3] + m[1] + m[2]) * 1000 + Number(m[4] ?? 0)
+      }
+      return key(b) - key(a)
+    })[0]
+  const rows = Papa.parse<Record<string, string>>(
+    readFileSync(join(dataDir, newest), 'utf-8').trim(),
+    {
+      header: true,
+      skipEmptyLines: true,
+    }
+  ).data
+  const id = (r: Record<string, string>) =>
+    [r.classical_algorithm, r.key_size, r.pqc_replacement, r.Function, r.Region].join(':')
+  const deprecated = rows.filter((r) => r.status === 'deprecated')
+
+  it('keeps the eight Round 2 rows as deprecated, each with a reason and a date', () => {
+    expect(deprecated.map((r) => r.pqc_replacement).sort()).toEqual(
+      [
+        'CROSS (NIST Sig Round 2 — Code-based)',
+        'FAEST (NIST Sig Round 2 — Hash-based)',
+        'HAWK (NIST Sig Round 2 — Lattice)',
+        'LESS (NIST Sig Round 2 — Code-based)',
+        'MAYO (NIST Sig Round 2 — Multivariate)',
+        'SNOVA (NIST Sig Round 2 — Multivariate)',
+        'SQIsign (NIST Sig Round 2 — Isogeny)',
+        'UOV (NIST Sig Round 2 — Multivariate)',
+      ].sort()
+    )
+    for (const r of deprecated) {
+      expect(r.deprecated_reason, r.pqc_replacement).toMatch(/Round 3 outcome name/)
+      expect(r.deprecated_at, r.pqc_replacement).toBe('2026-10-28')
+    }
+  })
+
+  it('has an active replacement row for each, differing only in name and note', () => {
+    const active = rows.filter((r) => !r.status || r.status === 'active')
+    for (const old of deprecated) {
+      const stem = old.pqc_replacement.split(' (')[0]
+      const fresh = active.filter(
+        (r) =>
+          r.classical_algorithm === old.classical_algorithm &&
+          r.key_size === old.key_size &&
+          r.Function === old.Function &&
+          r.Region === old.Region &&
+          r.pqc_replacement.startsWith(stem + ' (NIST Sig')
+      )
+      expect(fresh.length, old.pqc_replacement).toBe(1)
+      for (const col of [
+        'Deprecation_Date_Label',
+        'Standardization_Date_Label',
+        'Status',
+        'status_url',
+      ]) {
+        expect(fresh[0][col], `${stem} ${col}`).toBe(old[col])
+      }
+      expect(fresh[0].data_quality_notes).toContain(`\u201c${old.pqc_replacement}\u201d`)
+    }
+  })
+
+  it('keeps every id unique and shows only the active rows on the page', () => {
+    expect(new Set(rows.map(id)).size).toBe(rows.length)
+    const active = rows.filter((r) => !r.status || r.status === 'active')
+    expect(algorithmsData.length).toBe(active.length)
+    expect(
+      algorithmsData.some((r) =>
+        /NIST Sig Round 2 — (Multivariate|Isogeny|Lattice|Hash-based|Code-based)\)$/.test(r.pqc)
+      )
+    ).toBe(false)
   })
 })
