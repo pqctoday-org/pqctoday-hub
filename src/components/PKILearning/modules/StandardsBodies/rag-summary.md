@@ -29,7 +29,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 ### Standards Bodies
 
-**NIST** — US federal agency. Led 6-year PQC competition (2016–2024). Published FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA) in August 2024. Governmental, regional (US), globally influential.
+**NIST** — US federal agency. Led the PQC competition (call for proposals December 2016; first algorithms selected July 2022 from 7 finalists and 8 alternates). Published FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA) in August 2024. Governmental, regional (US), globally influential.
 
 **ISO/IEC JTC 1/SC 27** — International standards body. National member bodies (56 participating and 38 observing in SC 27: ISO committee page, participation view, read 25 October 2026) ballot cryptographic standards. 5-stage process (WD → IS). Published ISO/IEC 14888-4:2024 (XMSS/LMS). Non-governmental, global.
 

@@ -61,7 +61,7 @@ const COMMAND_ENTRIES: Record<string, TagGlossaryEntry> = {
     def: 'docs.openssl.org/3.6/man1/openssl-pkcs12 — bundles/unpacks a key + certificate(+ chain) into one password-protected .p12 file. OpenSSL 3.x defaults to AES-256-CBC + PBKDF2; -legacy reverts to RC2/3DES.',
   },
   kdf: {
-    def: 'docs.openssl.org/3.6/man1/openssl-kdf — new in OpenSSL 3.6. Drives HKDF, PBKDF2, SCRYPT, SSKDF and more behind one command; -kdfopt keys are algorithm-specific.',
+    def: 'docs.openssl.org/3.6/man1/openssl-kdf — added in OpenSSL 3.0. Drives HKDF, PBKDF2, SCRYPT, SSKDF and more behind one command; -kdfopt keys are algorithm-specific.',
   },
   configutl: {
     def: 'docs.openssl.org/3.6/man1/openssl-configutl — new in OpenSSL 3.6. Parses a config file and (with -out) re-dumps its linearized, expanded form.',

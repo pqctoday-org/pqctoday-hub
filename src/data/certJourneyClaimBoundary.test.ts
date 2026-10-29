@@ -104,6 +104,21 @@ const BANNED: { file: string; banned: RegExp; why: string }[] = [
     banned: /Status = Certified|algorithms safe to deploy/,
     why: 'the status bucket includes FIPS-pending and non-US picks',
   },
+  {
+    file: 'src/components/PKILearning/modules/StandardsBodies/data.ts',
+    banned: /6-year PQC|4 finalists|4 rounds of evaluation/,
+    why: 'NIST IR 8413: call for proposals Dec 2016, 7 finalists and 8 alternates in round 3, first algorithms selected July 2022',
+  },
+  {
+    file: 'src/components/OpenSSLStudio/learn/opensslLessons.ts',
+    banned: /kdf \(3\.6\+\)|two brand-new subcommands/,
+    why: 'openssl-kdf(1) HISTORY: "Added in OpenSSL 3.0"; only configutl was added in 3.6',
+  },
+  {
+    file: 'src/components/OpenSSLStudio/learn/opensslGlossary.ts',
+    banned: /openssl-kdf — new in OpenSSL 3\.6/,
+    why: 'openssl-kdf(1) HISTORY: "Added in OpenSSL 3.0"',
+  },
 ]
 
 describe('certification-engineer journey claim boundary (15 Oct 2026 review)', () => {
