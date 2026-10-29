@@ -25,7 +25,8 @@ export interface HSMVendor {
   notes: string
   firmwareVersion: string
   pkcs11Version: string
-  hybridSupport: boolean
+  /** Omitted when the vendor's own pages do not say. */
+  hybridSupport?: boolean
   sideChannelCountermeasures: string[]
 }
 
@@ -147,9 +148,9 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     catalogName: 'Azure Dedicated HSM (Thales Luna 7)',
     fips140Level: 'FIPS 140-2 Level 3 (Azure documents validated firmware 7.0.3)',
     formFactor: 'cloud',
-    firmwareVersion: '7.0.3 documented by Azure; customer-administered upgrade to 7.9 for PQC',
-    pkcs11Version: '3.0 (PQC extensions)',
-    hybridSupport: true,
+    firmwareVersion:
+      '7.0.3 documented by Azure; customer-administered upgrade to 7.9.0 or newer for ML-KEM and ML-DSA',
+    pkcs11Version: 'Not stated by Azure',
     sideChannelCountermeasures: [
       'Thales Luna hardware protections (identical to on-prem Luna 7)',
       'Azure physical data center security',

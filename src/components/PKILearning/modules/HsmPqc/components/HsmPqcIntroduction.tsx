@@ -653,8 +653,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
                   <span className="text-foreground">
-                    None listed by Azure. Luna firmware 7.9 adds ML-KEM and ML-DSA if the customer
-                    upgrades.
+                    None listed by Azure. If the customer upgrades, Luna firmware 7.9.0 or newer
+                    adds ML-KEM and ML-DSA, and 7.8.9 or newer adds LMS-HSS.
                   </span>
                 </div>
                 <div>
@@ -668,10 +668,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
                   Powered by the Thales Luna 7 HSM (model A790). Azure&apos;s pages list no PQC
-                  algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9. Customers
-                  administer the firmware themselves, after consulting Thales Support, and Azure
-                  does not say whether the service offers firmware 7.9. Azure Managed HSM (Marvell
-                  LS2 backend) has a separate PQC roadmap.
+                  algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS
+                  from 7.8.9. Customers administer the firmware themselves, after consulting Thales
+                  Support, and Azure does not say whether the service offers firmware 7.9. Azure
+                  Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.
                 </p>
                 <p>
                   <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers

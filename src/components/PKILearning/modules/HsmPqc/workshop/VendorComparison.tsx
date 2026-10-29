@@ -242,7 +242,9 @@ export const VendorComparison: React.FC = () => {
                         </div>
                         <div>
                           <span className="text-muted-foreground">Hybrid Support:</span>{' '}
-                          {vendor.hybridSupport ? (
+                          {vendor.hybridSupport === undefined ? (
+                            <span className="text-muted-foreground">Not stated</span>
+                          ) : vendor.hybridSupport ? (
                             <span className="text-success font-bold">Yes</span>
                           ) : (
                             <span className="text-destructive font-bold">No</span>

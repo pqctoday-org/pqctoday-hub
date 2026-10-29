@@ -160,7 +160,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
     lastVerified: '2026-10-29',
     posture: 'green',
     notes:
-      "Azure's FAQ names client software 7.2, compatible with FIPS 140-2 Level 3 validated firmware 7.0.3, and lists no PQC algorithm. The CMVP certificate for that firmware was not identified here (#3892, listed previously, is a Red Hat OpenSSH module), and CMVP moved FIPS 140-2 certificates to the Historical list on 21 Sep 2026. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9; Azure says the customer administers the firmware, after consulting Thales Support, and does not say whether the service offers 7.9. The Luna 7 K7 and G7 hardware entropy sources hold active ESV certificates E98 and E97 (checked 2026-09-24). Azure Dedicated HSM is retiring: no new customer onboardings, existing customers supported until 31 July 2028 (Azure pages checked 2026-10-29).",
+      "Azure's FAQ names client software 7.2, compatible with FIPS 140-2 Level 3 validated firmware 7.0.3, and lists no PQC algorithm. The CMVP certificate for that firmware was not identified here (#3892, listed previously, is a Red Hat OpenSSH module), and CMVP moved FIPS 140-2 certificates to the Historical list on 21 Sep 2026. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS from 7.8.9; Azure says the customer administers the firmware, after consulting Thales Support, and does not say whether the service offers those firmware versions. The Luna 7 K7 and G7 hardware entropy sources hold active ESV certificates E98 and E97 (checked 2026-09-24). Azure Dedicated HSM is retiring: no new customer onboardings, existing customers supported until 31 July 2028 (Azure pages checked 2026-10-29).",
   },
   {
     id: 'gcp-cloud-hsm',
