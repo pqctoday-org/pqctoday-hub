@@ -258,6 +258,10 @@ export type RunnerId =
   | 'errorPathProbes'
   /** PKCS#11 v3.3 working-draft checks (v33DraftFeatures.ts) — not a v3.2 verdict. */
   | 'v33DraftFeatures'
+  /** A stand-alone Vitest suite that drives an engine through the JS/WASM binding (for example
+   *  src/wasm/hpkeCkmHpke.test.ts). It emits no matrix row ids and has no recorded result yet, so
+   *  its cells are registered, never reported as passed. */
+  | 'engineVitestSuite'
 
 export interface RegisteredTest {
   id: string

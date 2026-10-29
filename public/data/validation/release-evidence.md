@@ -17,12 +17,12 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Active cases: positive / negative                       |      3,775 / 1,782 | `src/data/validation/validation-counts.generated.json`            |
 | C++: advertised capability cells (denominator)          |              2,211 | `public/data/validation/coverage-matrix.json`                     |
 | Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
-| Coverage waivers (entries; all statuses)                |                 22 | `src/data/validation/coverage-waivers.json`                       |
-| Waivers approved                                        |                  0 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |                 73 | `public/data/validation/coverage-matrix.json`                     |
+| Coverage waivers (entries; all statuses)                |                 19 | `src/data/validation/coverage-waivers.json`                       |
+| Waivers approved                                        |                 19 | `src/data/validation/coverage-waivers.json`                       |
+| Open gaps (register entries)                            |                 71 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |             71 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
-**Waivers:** All 22 waivers are baseline-pending-review. None is an approval: they record, at the WS-C baseline, capabilities advertised without any registered test, so that the coverage gate fails on NEW untested capabilities. Each awaits two-person review (plan J-5).
+**Waivers:** 0 of 19 waivers are baseline-pending-review (not approvals); 19 approved.
 
 ## Vector files and cases by evidence class
 
@@ -72,15 +72,15 @@ Artifacts:
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
-| positive    |     254 |   1,848 |      133 |       2,235 |
+| positive    |     254 |   1,851 |      130 |       2,235 |
 | negative    |      94 |      66 |    2,075 |       2,235 |
 | boundary    |      47 |     193 |    1,995 |       2,235 |
 | state-error |     923 |       1 |    1,311 |       2,235 |
-| **overall** |      16 |   2,190 |       29 |       2,235 |
+| **overall** |      16 |   2,193 |       26 |       2,235 |
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,206 |         2,197 |             2 |
+| wasm          | registered |            2,209 |         2,197 |             2 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -245,7 +245,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-73 entries — by status: open 66, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 43; owner unassigned: 73.
+71 entries — by status: open 64, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 41; owner unassigned: 71.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
@@ -289,7 +289,7 @@ Valid review records: 96.
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
 | vector-source             |                  4 |
-| coverage-waiver           |                 22 |
+| coverage-waiver           |                 19 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
 
@@ -308,7 +308,7 @@ Machine-evaluated. A human item is never marked PASS.
 
 |   # | Item                                                                                                       | Status             | Evidence                                                                                                                                                                                                                                                                                                                                                                              | Basis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | --: | ---------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 9711 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
+|   1 | Every visible test has a correct evidence-class label                                                      | **PASS**           | `src/data/validation/coverage-matrix.generated.json`<br>`src/data/validation/validation-counts.generated.json`<br>`src/utils/katEvidence.test.ts`                                                                                                                                                                                                                                     | All 9769 registered cases carry one of the 8 plan §2.1 classes and 0 active cases are unverified. UI wording is held to those classes by the static guards in src/utils/katEvidence.test.ts (unit suite, not re-run here).                                                                                                                                                                                                                                                                                                                                   |
 |   2 | All active vectors have provenance or are blocked/quarantined                                              | **PASS**           | `src/data/validation/vector-manifest.json`<br>`src/data/validation/validation-counts.generated.json`                                                                                                                                                                                                                                                                                  | 98 active vector files, 0 without provenance; 58 case(s) quarantined. Recorded publishability gaps (provenance present but incomplete): oracle-version-not-recorded ×1.                                                                                                                                                                                                                                                                                                                                                                                      |
 |   3 | Deck, script, UI and report counts are generated from the same manifest                                    | **HUMAN-REQUIRED** | `src/data/validation/validation-counts.generated.json`<br>`public/data/validation/release-evidence.json`<br>`scripts/audit-validation-claims.ts`                                                                                                                                                                                                                                      | This report and the UI read the generated counts (validation-counts.generated.json). The deck and script live outside this repo, so a person must run `npm run gen:release-evidence:check -- <presentation dir>` on the FINAL deck; `npm run release:freeze -- --presentation <dir>` records that result in the freeze manifest.                                                                                                                                                                                                                             |
 |   4 | The disclaimer is visible in the workbench and the report                                                  | **PASS**           | `src/components/Playground/dev/pipeline/suites/AcvpSuiteWorkbench.tsx`<br>`src/components/Algorithms/KATView.tsx`<br>`src/components/Algorithms/CoverageMatrixView.tsx`<br>`public/data/validation/coverage-matrix.{md,html,json}`<br>`public/data/validation/release-evidence.md`<br>`e2e/validation-release-evidence.spec.ts`                                                       | Workbench, Algorithms KAT view and coverage matrix render <ValidationDisclaimer/> (the one shared constant); all three coverage exports (.md, .html and the machine-readable .json) and this report carry it verbatim; e2e/validation-release-evidence.spec.ts asserts it is visible in a browser.                                                                                                                                                                                                                                                           |
@@ -335,8 +335,8 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `4796d9f31a6b9c09e681f9da9cd2f6beb24244afb97d172c1b8a17fade6b8071` |
-| `src/data/validation/coverage-waivers.json`                             | `868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130` |
+| `public/data/validation/coverage-matrix.json`                           | `38575333776fd6ff726e268a5255f7e1c2668640232269864b703eadaa310584` |
+| `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2` |
 | `src/data/validation/open-gaps.json`                                    | `a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |

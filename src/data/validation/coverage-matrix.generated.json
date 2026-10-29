@@ -6,9 +6,9 @@
     "src/data/validation/mechanism-inventory.generated.json": "f4c12be298468dd79920abc998a065cbc8b0e6bbcfbada48e00b5178558ab47d",
     "src/data/validation/capability-map.json": "1048fb1080cc877891d59ff825d98b26d220bde12781c98cdaf97749a27b926a",
     "src/data/validation/vector-manifest.json": "9d8a90ca8719e8e27c42cda642ab3f42f9fcbb3531cd1b6c2d182c01d87be1fc",
-    "src/data/validation/coverage-waivers.json": "868dd8126df2e6594c0c29ba3d8034dd8c818a6008a1b749bec9ad0cc0c35130",
+    "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
     "src/data/validation/open-gaps.json": "a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f",
-    "src/data/validation/testRegistry.ts": "7bac90e71fc1dacb30fa61a270ea56654614a4fe76c114d11e13f4a2ed6cbd93"
+    "src/data/validation/testRegistry.ts": "2e4bb93416906300a42b865c66c859004ac0405a1b841c749cb8c46dd5e53e96"
   },
   "statuses": [
     "acvts-issued",
@@ -266,14 +266,14 @@
         "unsupportedCells": 8,
         "overall": {
           "covered": 16,
-          "sampled": 2190,
-          "untested": 29
+          "sampled": 2193,
+          "untested": 26
         },
         "byDimension": {
           "algorithm": {
             "covered": 304,
-            "sampled": 1353,
-            "untested": 578
+            "sampled": 1356,
+            "untested": 575
           },
           "api": {
             "covered": 924,
@@ -284,17 +284,17 @@
         "byPolarity": {
           "positive": {
             "covered": 254,
-            "sampled": 1848,
-            "untested": 133,
+            "sampled": 1851,
+            "untested": 130,
             "byStatus": {
               "acvts-issued": 0,
               "nist-reference": 744,
               "standard-kat": 5,
               "oracle": 25,
               "differential": 0,
-              "round-trip": 866,
+              "round-trip": 869,
               "behavior-only": 462,
-              "untested": 133,
+              "untested": 130,
               "unsupported": 0
             }
           },
@@ -350,7 +350,7 @@
         "byArtifact": {
           "wasm": {
             "status": "registered",
-            "registeredCells": 2206,
+            "registeredCells": 2209,
             "passedCells": 2197,
             "failedCells": 2,
             "skippedCells": 0
@@ -399,9 +399,9 @@
       }
     },
     "waivers": {
-      "waivedCells": 51,
-      "pendingReviewCells": 51,
-      "staleCells": 20
+      "waivedCells": 48,
+      "pendingReviewCells": 0,
+      "staleCells": 0
     }
   },
   "openGaps": [
@@ -814,28 +814,6 @@
       "scope": "Rust",
       "origin": "generated",
       "cells": 1
-    },
-    {
-      "id": "untested:CKM_HPKE_KEM_KEY_PAIR_GEN",
-      "title": "CKM_HPKE_KEM_KEY_PAIR_GEN: advertised, no registered test",
-      "detail": "1 advertised cell(s) with no registered test in any polarity — operations: generate-key-pair. Disposition: waiver baseline-CKM_HPKE_KEM_KEY_PAIR_GEN.",
-      "planItem": "C-5 / G-2",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust",
-      "origin": "generated",
-      "cells": 1
-    },
-    {
-      "id": "untested:CKM_HPKE",
-      "title": "CKM_HPKE: advertised, no registered test",
-      "detail": "2 advertised cell(s) with no registered test in any polarity — operations: encapsulate, decapsulate. Disposition: waiver baseline-CKM_HPKE.",
-      "planItem": "C-5 / G-2",
-      "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust",
-      "origin": "generated",
-      "cells": 2
     },
     {
       "id": "untested:CKM_KMAC_128",
@@ -11062,7 +11040,65 @@
     {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-kem-with-parameter","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-kem-with-parameter","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-kem-with-parameter"},
     {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-kem-ciphertext-wrong-length","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-kem-ciphertext-wrong-length","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-kem-ciphertext-wrong-length"},
     {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-sig-key-with-comp-kem","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-sig-key-with-comp-kem","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-sig-key-with-comp-kem"},
-    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-kem-key-with-comp-sig","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-kem-key-with-comp-sig","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-kem-key-with-comp-sig"}
+    {"id":"v33.composite-error-paths#local:v33.composite-error-paths/comp-kem-key-with-comp-sig","test":"v33.composite-error-paths","runner":"v33DraftFeatures","caseId":"local:v33.composite-error-paths/comp-kem-key-with-comp-sig","evidenceClass":"product-mechanism-probe","status":"behavior-only","polarity":"negative","engines":["rust"],"rowId":"v33.errpath.comp-kem-key-with-comp-sig"},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/dhkem-p256-base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/dhkem-p256-base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/auth-mode","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/auth-mode","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/export-only-aead","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/export-only-aead","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/exporter-template","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/exporter-template","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA256/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA384/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-X25519/HKDF-SHA512/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA256/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA384/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM768-P256/HKDF-SHA512/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA256/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA384/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-128-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-128-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-128-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-128-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-256-GCM/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-256-GCM/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-256-GCM/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/AES-256-GCM/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/ChaCha20-Poly1305/Base","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/ChaCha20-Poly1305/Base","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]},
+    {"id":"engine.hpke-ckm-hpke#local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/ChaCha20-Poly1305/PSK","test":"engine.hpke-ckm-hpke","runner":"engineVitestSuite","caseId":"local:engine.hpke-ckm-hpke/hybrid/MLKEM1024-P384/HKDF-SHA512/ChaCha20-Poly1305/PSK","evidenceClass":"functional-round-trip","status":"round-trip","polarity":"positive","engines":["rust"]}
   ],
   "rows": [
     {"k":"CKM_RSA_PKCS_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_RSA_PKCS_KEY_PAIR_GEN","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[7147,7148,7149]],"state-error":["behavior-only","covered",[7183,7191,7199,7207]]},"run":[4,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[7129,7130,7147,7148,7149]],"state-error":["behavior-only","covered",[7183,7191,7199,7207]]},"run":[6,0]}},"par":{"positive":"not-established","negative":"not-established","boundary":"not-established","state-error":"parity"}},
@@ -13293,9 +13329,9 @@
     {"k":"CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE|decapsulate|*|*","c":"CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE","e":{"cpp":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE"},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_PQCTODAY_CLASSIC_MCELIECE_ENCAPSULATE"}},"par":"not-established"},
     {"k":"CKM_KECCAK_256|digest|*|*","c":"CKM_KECCAK_256","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[8544]],"state-error":["behavior-only","covered",[8548,8562,8576,8590]]},"run":[5,0]}},"par":"single-engine"},
     {"k":"CKM_EC_MONTGOMERY_KEY_DERIVE|derive|*|*","c":"CKM_EC_MONTGOMERY_KEY_DERIVE","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_EC_MONTGOMERY_KEY_DERIVE"}},"par":"single-engine"},
-    {"k":"CKM_HPKE_KEM_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_HPKE_KEM_KEY_PAIR_GEN","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_HPKE_KEM_KEY_PAIR_GEN"}},"par":"single-engine"},
-    {"k":"CKM_HPKE|encapsulate|*|*","c":"CKM_HPKE","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_HPKE"}},"par":"single-engine"},
-    {"k":"CKM_HPKE|decapsulate|*|*","c":"CKM_HPKE","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_HPKE"}},"par":"single-engine"},
+    {"k":"CKM_HPKE_KEM_KEY_PAIR_GEN|generate-key-pair|*|*","c":"CKM_HPKE_KEM_KEY_PAIR_GEN","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9711,9712,9713,9714,9715,9716,9717,9718,9719,9720,9721,9722,9723,9724,9725,9726,9727,9728,9729,9730,9731,9732,9733,9734,9735,9736,9737,9738,9739,9740,9741,9742,9743,9744,9745,9746,9747,9748,9749,9750,9751,9752,9753,9754,9755,9756,9757,9758,9759,9760,9761,9762,9763,9764,9765,9766,9767,9768]]}}},"par":"single-engine"},
+    {"k":"CKM_HPKE|encapsulate|*|*","c":"CKM_HPKE","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9711,9712,9713,9714,9715,9716,9717,9718,9719,9720,9721,9722,9723,9724,9725,9726,9727,9728,9729,9730,9731,9732,9733,9734,9735,9736,9737,9738,9739,9740,9741,9742,9743,9744,9745,9746,9747,9748,9749,9750,9751,9752,9753,9754,9755,9756,9757,9758,9759,9760,9761,9762,9763,9764,9765,9766,9767,9768]]}}},"par":"single-engine"},
+    {"k":"CKM_HPKE|decapsulate|*|*","c":"CKM_HPKE","e":{"cpp":{"adv":false,"why":4},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["round-trip","sampled",[9711,9712,9713,9714,9715,9716,9717,9718,9719,9720,9721,9722,9723,9724,9725,9726,9727,9728,9729,9730,9731,9732,9733,9734,9735,9736,9737,9738,9739,9740,9741,9742,9743,9744,9745,9746,9747,9748,9749,9750,9751,9752,9753,9754,9755,9756,9757,9758,9759,9760,9761,9762,9763,9764,9765,9766,9767,9768]]}}},"par":"single-engine"},
     {"k":"CKM_KMAC_128|sign|*|*","c":"CKM_KMAC_128","e":{"cpp":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_KMAC_128"},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_KMAC_128"}},"par":"not-established"},
     {"k":"CKM_KMAC_128|verify|*|*","c":"CKM_KMAC_128","tt":["MVT","published-example"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[2318,2320]],"negative":["nist-reference","sampled",[2319]]},"run":[3,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[2318,2320]],"negative":["nist-reference","sampled",[2319]]},"run":[3,0]}},"par":{"positive":"parity","negative":"parity","boundary":"not-established","state-error":"not-established"}},
     {"k":"CKM_KMAC_256|sign|*|*","c":"CKM_KMAC_256","e":{"cpp":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_KMAC_256"},"rust":{"adv":true,"lvl":"untested","waiver":"baseline-CKM_KMAC_256"}},"par":"not-established"},
