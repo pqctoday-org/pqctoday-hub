@@ -495,10 +495,10 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               The updated EU regulation for electronic identification requires each Member State to
               provide at least one European Digital Identity (EUDI) wallet within 24 months of the
               entry into force of the wallet implementing acts (Implementing Regulation (EU)
-              2024/2981 was published on 4 December 2024). The regulation text and the ARF v3.0.0 do
-              not mention quantum computing; the SD-JWT standard (RFC 9901) leaves the choice of
-              signature algorithm to the application, including post-quantum algorithms &ldquo;when
-              they are ready&rdquo;.
+              2024/2981 was published on 4 December 2024). The regulation text and the EUDI Wallet
+              architecture and reference framework (ARF) we checked do not mention quantum
+              computing; the SD-JWT standard (RFC 9901) leaves the choice of signature algorithm to
+              the application, including post-quantum algorithms &ldquo;when they are ready&rdquo;.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
