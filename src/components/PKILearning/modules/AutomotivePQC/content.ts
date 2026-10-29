@@ -59,6 +59,15 @@ export const content: ModuleContent = {
     getStandard('Road-vehicles-Vehicle-to-grid-communication-interface-Part-2'), // m-automotive-pqc: ISO 15118-20
     getStandard('Use-of-FN-DSA-in-TLS-1-3'), // m-automotive-pqc: 666 bytes
     getStandard('IEEE-Std-802-3bp-2016-1000BASE-T1-PHY'), // m-automotive-pqc: 1000
+    // V2X, CNSA 2.0, AUTOSAR Classic, hybrid TLS and OCPP sources named in the Introduction
+    getStandard('ETSI-TR-103-949'),
+    getStandard('C-ITS-Certificate-Policy-Release-3.0'),
+    getStandard('BSI-CC-PP-0114-V2X-HSM'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('NIST SP 800-208'),
+    getStandard('AUTOSAR-CP-SWS-CryptoDriver-R23-11'),
+    getStandard('RFC-10024'),
+    getStandard('PKI-Consortium-Post-Quantum-Cryptography-Conference-2025-Kua'),
   ],
 
   algorithms: [
@@ -77,11 +86,15 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: 'CNSA 2.0 software signing preferred',
+      label: 'CNSA 2.0 software signing preferred (National Security Systems)',
       year: CNSA_2_0.softwarePreferred,
       source: 'CNSA 2.0',
     },
-    { label: 'CNSA 2.0 software exclusive', year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    {
+      label: 'CNSA 2.0 software exclusive (National Security Systems)',
+      year: CNSA_2_0.softwareExclusive,
+      source: 'CNSA 2.0',
+    },
   ],
 
   narratives: {

@@ -39,8 +39,8 @@ Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptogra
 - **DSRC → C-V2X**: in the US the FCC moved the 5.9 GHz ITS band from DSRC to C-V2X (ET Docket 19-138; 2020 order, finalized November 2024). 6 Mbps is the 802.11p (DSRC / ITS-G5) reference; C-V2X sidelink capacity differs, but kilobyte-scale per-message PQC signatures remain a channel-capacity problem either way.
 - CCC Digital Key 3.0 UWB ranging precision: ±10 cm — PQC key exchange must complete within 500 ms for passive entry user experience
 - UNECE R155 compliance: mandatory for new type approvals in 54 UNECE member states since July 2024; retroactive for existing types by July 2027
-- **Regulatory confidence**: UNECE R155/R156, ISO/SAE 21434, CNSA 2.0 are published. IEEE 1609.2-2025 specifies ECC and has no post-quantum amendment project. China GB/T, Japan NISC, TISAX v7 PQC dates are projected (no official timelines published).
-- ISO/SAE 21434 TARA (Threat Analysis and Risk Assessment): cryptographic asset inventory and risk classification required; ML-DSA/ML-KEM migration must be captured as cybersecurity goals
+- **Regulatory confidence**: UNECE R155/R156, ISO/SAE 21434, CNSA 2.0 are published. IEEE 1609.2-2025 and ETSI TS 103 097 specify ECC (ECDSA), and no public post-quantum amendment is identified; ETSI TR 103 949 (May 2023) is a quantum-safe migration study for ITS and C-ITS. CNSA 2.0 deadlines bind National Security Systems; for other vehicles they are a reference timeline. China GB/T, Japan NISC, TISAX v7 PQC dates are projected (no official timelines published).
+- ISO/SAE 21434 TARA (Threat Analysis and Risk Assessment): ISO describes the standard (2021, before FIPS 203/204) as technology-agnostic and, while not legally mandatory, increasingly a de facto requirement. In practice, an OEM would record cryptographic assets in the TARA and capture an ML-DSA/ML-KEM migration as cybersecurity goals; the standard itself does not require that migration
 
 ## Standards Referenced
 

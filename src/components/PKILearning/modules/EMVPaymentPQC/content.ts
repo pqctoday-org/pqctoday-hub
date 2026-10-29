@@ -89,6 +89,23 @@ export const content: ModuleContent = {
     getStandard('ISO-8583-2023-Financial-transaction-card-originated-messages'), // m-emv-payment-pqc: ISO 8583
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'), // TLS 1.3 (RFC 8446 row is retired; 9846 is the current text) — m-emv-payment-pqc: 1.3
     getStandard('The-Straits-Times-DBS-PayLah-users-can-scan-UnionPay-QR-code'), // m-emv-payment-pqc: 9.4B
+    // Cited in learner text for the hybrid TLS update (published RFC), the card-side findings
+    // and EMVCo's stated position, the PCI device and 3DS standards, the NIST transition
+    // trajectory shown on the migration timeline, and the Federal Reserve HNDL paper behind
+    // Mosca's theorem. Nacha-Quantum-Safe-Payments-Readiness-Road-Map is linked from
+    // SECTOR_BODIES as a recommended roadmap only; add it here once its library row is reviewed.
+    getStandard('RFC-10024'),
+    getStandard('EMVCo-Quantum-Position-Statement'),
+    getStandard('Post-Quantum-Protocols-for-Banking-Applications'),
+    getStandard('Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape'),
+    getStandard('PCI-3DS-Core-v1-0-ROC-Reporting-Template'),
+    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
+    getStandard('PCI-P2PE-Security-Requirements-v3-1'),
+    getStandard('PKCS11-V32-OS-OASIS'),
+    getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
+    getStandard('PCI-SSC-Bulletin-PTS-HSM-v4-Extension'),
+    getStandard('NIST IR 8547'),
+    getStandard('FRB-FEDS-2025093-Blockchain-PQC'),
   ],
 
   algorithms: [

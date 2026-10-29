@@ -63,7 +63,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
       'Quantum computers could forge ICC signatures, undermining the entire offline trust model',
     ],
     pqcMigrationPath:
-      'FN-DSA-512 (Falcon, FIPS 206 in development) produces compact signatures (~666 bytes, fixed padded size) that fit constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
+      'FN-DSA-512 (Falcon, FIPS 206 in development) produces compact signatures (~666 bytes, fixed padded size) that are easier to fit in constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
     prevalence: '~35% of active EMV cards',
   },
   {
@@ -277,7 +277,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
     algorithm: 'fn-dsa-512',
     label: 'FN-DSA-512 (FIPS 206 in development)',
     description:
-      'Hash-and-sign lattice scheme with compact signatures. Leading candidate for EMV cards due to smaller footprint. FIPS 206 still in development — no public draft released as of 2026.',
+      'Hash-and-sign lattice scheme with compact signatures, giving the smallest footprint of the three chains compared here. EMVCo has named no post-quantum algorithm for EMV cards; the card-side evidence is research (IDEMIA, 2022: Falcon or Dilithium in the certificates of a banking-card prototype). FIPS 206 still in development — no public draft released as of 2026.',
     fipsStatus: 'FIPS 206 (in development \u2014 not yet published)',
     levels: [
       {
@@ -332,7 +332,7 @@ export const PQC_ALGORITHM_SIZES = [
     signatureOrCiphertextBytes: 666,
     suitableForCard: true,
     suitableForTerminal: true,
-    notes: 'Compact signatures. Best fit for card NVM. FIPS 206 in development.',
+    notes: 'Compact signatures: the smallest of the options compared. FIPS 206 in development.',
   },
   {
     algorithm: 'ML-DSA-44',
@@ -357,5 +357,56 @@ export const PQC_ALGORITHM_SIZES = [
     suitableForCard: false,
     suitableForTerminal: true,
     notes: 'Key encapsulation for TLS and key transport. Not used on cards directly.',
+  },
+]
+
+/**
+ * Card-side findings that were measured or reported by others, kept apart from
+ * the computed size tables above. Each statement follows its source's own
+ * modality: one research prototype is not a general limit, and a report cited
+ * by a vendor white paper is not a measurement made here.
+ */
+export interface CardChipFinding {
+  id: string
+  label: string
+  statement: string
+  /** Library reference id of the document the statement comes from */
+  libraryRef: string
+  source: string
+}
+
+export const CARD_CHIP_FINDINGS: CardChipFinding[] = [
+  {
+    id: 'idemia-prototype',
+    label: 'One measured prototype',
+    statement:
+      'IDEMIA researchers built post-quantum and hybrid versions of two EMV payment protocols on a banking smart card (an Arm Cortex-M3 derivative running a basic “toy” application profile), with NTRU or Kyber512 for key encapsulation and Falcon or Dilithium in the certificates. Dilithium-5 data reached the application’s maximum capacity and could not be loaded. The authors conclude that such products are possible, but that several issues remain. Figures depend on the chip and the application profile, so this is one prototype, not a general limit.',
+    libraryRef: 'Post-Quantum-Protocols-for-Banking-Applications',
+    source:
+      'Bettale, De Oliveira and Dottax (IDEMIA), NIST 4th PQC Standardization Conference, 2022',
+  },
+  {
+    id: 'idemia-timing',
+    label: 'Where the time goes',
+    statement:
+      'In the same prototype, most of the transaction time was the transmission of the card’s certificate chain to the terminal, because post-quantum certificates are large and the card-terminal interface is slow. This is the same chain-size effect the certificate chain comparison above shows.',
+    libraryRef: 'Post-Quantum-Protocols-for-Banking-Applications',
+    source: 'Bettale, De Oliveira and Dottax (IDEMIA), 2022',
+  },
+  {
+    id: 'banque-de-france-ram',
+    label: 'Chip RAM',
+    statement:
+      'A Mastercard white paper cites a Banque de France report (annual report of the Observatoire de la sécurité des moyens de paiement, 2023) estimating 4 to 6 times more chip RAM for post-quantum algorithms, depending on the algorithm chosen. The same paper calls combining chip cards and quantum resistance a work in progress.',
+    libraryRef: 'Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape',
+    source: 'Mastercard, Migration to Post-Quantum Cryptography white paper (2025)',
+  },
+  {
+    id: 'emvco-position',
+    label: 'EMVCo names no algorithm',
+    statement:
+      'EMVCo’s position statement (8 March 2024, published September 2024) names no post-quantum algorithm. Its Security Working Group says it will monitor and support standards development of quantum-resistant solutions.',
+    libraryRef: 'EMVCo-Quantum-Position-Statement',
+    source: 'EMVCo Position Statement: Quantum Computing and EMV Chip Cryptography',
   },
 ]

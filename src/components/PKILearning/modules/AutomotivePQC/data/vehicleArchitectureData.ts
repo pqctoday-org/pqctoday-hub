@@ -126,7 +126,7 @@ export const ECU_ZONES: ECUZoneConfig[] = [
       'Payment tokenization (ISO 15118)',
     ],
     pqcRecommendation: {
-      kem: 'ML-KEM-768 (hybrid TLS)',
+      kem: 'ML-KEM-768 (hybrid TLS, RFC 10024)',
       signature: 'ML-DSA-65 (app signing, payment auth)',
       rationale: 'Full-powered SoC can handle larger PQC operations; TLS hybrid migration first',
     },
@@ -153,7 +153,7 @@ export const ECU_ZONES: ECUZoneConfig[] = [
       'Fleet management API auth',
     ],
     pqcRecommendation: {
-      kem: 'ML-KEM-768 (hybrid TLS 1.3)',
+      kem: 'ML-KEM-768 (hybrid TLS 1.3, RFC 10024)',
       signature: 'ML-DSA-65 (OTA signing) + SLH-DSA (long-lived root keys)',
       rationale: 'Gateway ECU has resources; SLH-DSA for root keys that outlive vehicle',
     },

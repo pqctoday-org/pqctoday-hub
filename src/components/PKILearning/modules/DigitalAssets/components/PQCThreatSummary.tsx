@@ -45,17 +45,19 @@ export const PQCThreatSummary: React.FC = () => {
             <tbody className="text-muted-foreground">
               <tr className="border-b border-border/50">
                 <td className="p-3 font-medium text-foreground">Bitcoin</td>
-                <td className="p-3 font-mono text-xs">secp256k1 ECDSA</td>
+                <td className="p-3 font-mono text-xs">
+                  secp256k1 ECDSA; Schnorr (BIP-340) for Taproot
+                </td>
                 <td className="p-3">
-                  Shor's algorithm breaks ECDLP. A large share of early P2PK outputs sits in
-                  addresses with exposed public keys.
+                  Shor's algorithm breaks ECDLP, and with it both ECDSA and Schnorr signatures. A
+                  large share of early P2PK outputs sits in addresses with exposed public keys.
                 </td>
                 <td className="p-3 space-y-1">
                   <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-warning/20 text-warning">
-                    BIP-360 (P2QRH) — Draft
+                    BIP-360 (P2MR) — Draft
                   </span>
                   <p className="text-xs text-muted-foreground">
-                    New quantum-resistant address type via soft fork
+                    New output type via soft fork; no post-quantum signature yet
                   </p>
                 </td>
               </tr>
@@ -126,20 +128,21 @@ export const PQCThreatSummary: React.FC = () => {
             <div className="flex items-center gap-2">
               <Bitcoin size={18} className="text-warning shrink-0" />
               <span className="font-semibold text-foreground text-sm">
-                Bitcoin — BIP-360 (P2QRH)
+                Bitcoin — BIP-360 (P2MR)
               </span>
             </div>
             <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-warning/20 text-warning">
               Draft
             </span>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Hunter Beast&apos;s proposal introduces a new SegWit v3 output type (
-              <code className="font-mono">bc1r…</code>) using post-quantum signatures (ML-DSA or
-              FN-DSA-512). Requires a soft fork. Removes the quantum-vulnerable key-spend path from
-              Taproot.
+              The proposal introduces a new SegWit v2 output type (
+              <code className="font-mono">bc1z…</code>) that works like Taproot with the
+              quantum-vulnerable key-spend path removed. Requires a soft fork. It contains no
+              post-quantum signature: its authors say they intend to offer a separate proposal for
+              that upon further research.
             </p>
             <a
-              href="https://delvingbitcoin.org/t/changes-to-bip-360-pay-to-quantum-resistant-hash-p2qrh/1811"
+              href="https://github.com/bitcoin/bips/blob/master/bip-0360.mediawiki"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
@@ -162,9 +165,12 @@ export const PQCThreatSummary: React.FC = () => {
             <p className="text-xs text-muted-foreground leading-relaxed">
               Two complementary paths: EIP-4337 Account Abstraction (live) lets smart-contract
               wallets verify PQC signatures today. EIP-7702 (Pectra) allows EOAs to delegate to
-              contract code, enabling PQC signing without a full migration. The Ethereum Foundation
-              PQC team is researching a future protocol-level replacement (STARK-based or
-              lattice-based signatures).
+              contract code, enabling PQC signing without a full migration. The Ethereum
+              Foundation&apos;s Lean Ethereum roadmap proposes replacing validator BLS signatures
+              with the hash-based leanXMSS scheme and using EIP-8141 account abstraction (considered
+              for Hegotá in the second half of 2026) to give accounts signature agility, targeting
+              core post-quantum infrastructure by approximately 2029. STARK-based or lattice-based
+              schemes are candidates to replace KZG commitments, not account signatures.
             </p>
             <div className="flex flex-wrap gap-2">
               <a
@@ -183,6 +189,14 @@ export const PQCThreatSummary: React.FC = () => {
               >
                 Roadmap <ExternalLink size={11} />
               </a>
+              <a
+                href="https://ethereum.org/roadmap/security/quantum-resistance/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+              >
+                Quantum resistance <ExternalLink size={11} />
+              </a>
             </div>
           </div>
 
@@ -196,10 +210,11 @@ export const PQCThreatSummary: React.FC = () => {
               Community Discussion
             </span>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              No ratified SIMD (Solana Improvement Document) for PQC yet. The core challenge is
-              structural: Solana addresses <em>are</em> Ed25519 public keys — there is no hash layer
-              to hide behind. Community proposals explore new PQC-keyed account types requiring
-              users to explicitly migrate all assets and positions.
+              No ratified SIMD (Solana Improvement Document) for PQC yet; SIMD-0461, a Falcon
+              signature-verification syscall, was closed by its author in June 2026. The core
+              challenge is structural: Solana addresses <em>are</em> Ed25519 public keys — there is
+              no hash layer to hide behind. Community proposals explore new PQC-keyed account types
+              requiring users to explicitly migrate all assets and positions.
             </p>
             <a
               href="https://github.com/solana-foundation/solana-improvement-documents"

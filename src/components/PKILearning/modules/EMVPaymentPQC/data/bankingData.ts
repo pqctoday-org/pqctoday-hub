@@ -45,7 +45,7 @@ export const SETTLEMENT_RAILS: SettlementRail[] = [
     dataLifetime:
       'Individual payments are short-lived, but participant identity keys and the audit trail are long-lived.',
     pqcPosture:
-      'BIS Project Leap Phase 2 is the reference experiment — quantum-proofing payment-system communications between central banks.',
+      'BIS Project Leap Phase 2 is the reference experiment: in it, the RSA signature on the Business Application Header of the payment messages was replaced by a CRYSTALS-Dilithium post-quantum signature (the algorithm now standardised as ML-DSA).',
   },
   {
     id: 'correspondent',
@@ -89,7 +89,9 @@ export const EPC_PQC_POSITION = {
   inPreparation:
     'A further signature standard based on FALCON is in preparation, renamed FN-DSA (FIPS 206).',
   tlsDirection:
-    'Two IETF drafts for PQC TLS are in standardisation: a native scheme using ML-KEM and a hybrid combining EC-DHE with ML-KEM, so an eavesdropper must break both.',
+    'EPC (June 2026) described two IETF drafts for PQC TLS as in standardisation: a native scheme using ML-KEM and a hybrid combining EC-DHE with ML-KEM, so an eavesdropper must break both.',
+  tlsUpdate:
+    'The hybrid scheme has since been published as RFC 10024 (IETF Standards Track, August 2026). The native ML-KEM scheme is still an Internet-Draft.',
   hndlDriver:
     'EPC attributes the urgency to Harvest Now, Decrypt Later — adopting PQC without the scrutiny period normally advisable for new primitives, under confirmed high-risk circumstances.',
   symmetricNote:
@@ -115,7 +117,8 @@ export const SECTOR_BODIES: SectorBody[] = [
     label: 'BIS Project Leap Phase 2',
     jurisdiction: 'Global (central banks)',
     libraryRef: 'BIS-OTHP107',
-    contribution: 'Practical quantum-proofing of payment-system communications.',
+    contribution:
+      'A technical experiment in quantum-proofing payment-system communications: the RSA signature on the Business Application Header of the payment messages was replaced by a CRYSTALS-Dilithium post-quantum signature (the algorithm now standardised as ML-DSA).',
   },
   {
     id: 'g7-ceg',
@@ -132,7 +135,8 @@ export const SECTOR_BODIES: SectorBody[] = [
     label: 'CMORG PQC Guidance',
     jurisdiction: 'United Kingdom',
     libraryRef: 'UK-CMORG-PQC-Guidance-2025',
-    contribution: 'UK financial-sector guidance for the migration.',
+    contribution:
+      'UK financial-sector guidance for the migration. It names the three NIST algorithms ML-KEM, ML-DSA and SLH-DSA, and describes its use as voluntary: not regulatory rules or supervisory expectations.',
   },
   {
     id: 'qsff',
@@ -162,6 +166,14 @@ export const SECTOR_BODIES: SectorBody[] = [
     libraryRef: 'DORA-REG-2022-2554',
     contribution:
       'Operational-resilience obligations. Not PQC-specific, but the instrument under which an EU institution’s crypto-resilience failures become a regulatory matter.',
+  },
+  {
+    id: 'nacha-roadmap',
+    label: 'Nacha Quantum-Safe Payments Readiness Road Map',
+    jurisdiction: 'United States',
+    libraryRef: 'Nacha-Quantum-Safe-Payments-Readiness-Road-Map',
+    contribution:
+      'A recommended roadmap, not a mandate, from the Quantum Payments Project Team of Nacha’s Payments Innovation Alliance: three phases (years 1-2, 2-4 and 4+), and a recommendation that all requests for information and proposals require vendors to be quantum-safe by 2030.',
   },
   {
     id: 'eu-nis-cg-roadmap',

@@ -21,6 +21,6 @@ The Blockchain Cryptography module teaches the cryptographic primitives underpin
 
 ## Related Standards
 
-- SEC 2 (secp256k1 curve specification), RFC 8032 (Ed25519/EdDSA), BIP-32 (HD wallet derivation), BIP-39 (mnemonic seed phrases), BIP-44 (multi-account hierarchy), SLIP-0010 (Ed25519 HD derivation)
+- SEC 2 (secp256k1 curve specification), RFC 8032 (Ed25519/EdDSA), BIP-32 (HD wallet derivation), BIP-39 (mnemonic seed phrases), BIP-44 (multi-account hierarchy), SLIP-0010 (Ed25519 HD derivation), BIP-340 (Schnorr signatures for secp256k1, used by Bitcoin Taproot spends)
 - EIP-55 (Ethereum address checksumming), EIP-155 (replay protection with chain ID)
 - FIPS 204 (ML-DSA), FIPS 203 (ML-KEM) as potential PQC replacements for blockchain signature and key exchange schemes

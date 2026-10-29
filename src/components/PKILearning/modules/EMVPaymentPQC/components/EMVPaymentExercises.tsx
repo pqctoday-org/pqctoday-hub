@@ -90,11 +90,11 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       id: 'migration-priority',
       title: '6. End-to-End Migration Priority \u2014 Identify the critical-path dependency chain',
       description:
-        'In the Migration Risk Matrix, examine the dependency graph. Identify the critical-path migration sequence. Which 3 components must migrate first? What is the dependency chain that determines the minimum migration timeline?',
+        'In the Migration Risk Matrix, examine the dependency graph. Identify the critical-path migration sequence. Which 3 components must migrate first? What is the dependency chain that sets the order of the migration?',
       badge: 'Migration',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Critical path: (1) Payment HSM key wrapping must migrate to ML-KEM first (enables all downstream changes), (2) Key injection ceremonies at KIFs must switch to ML-KEM key transport (unblocks terminal re-keying), (3) Card personalization must generate PQC certificates (unblocks offline auth). Dependency chain: HSM \u2192 KIF \u2192 Card Personalization \u2192 Offline Auth. This sets the minimum timeline at 5-7 years given the 3-5 year card replacement cycle.',
+        'Critical path: (1) Payment HSM key wrapping must migrate to ML-KEM first (enables all downstream changes), (2) Key injection ceremonies at KIFs must switch to ML-KEM key transport (unblocks terminal re-keying), (3) Card personalization must generate PQC certificates (unblocks offline auth). Dependency chain: HSM \u2192 KIF \u2192 Card Personalization \u2192 Offline Auth. The chain sets the order of work; how long it takes depends on card and terminal replacement cycles, and this module\u2019s assumed 3-5 year card cycle is an estimate, not a sourced figure.',
       config: { step: 5 },
     },
   ]

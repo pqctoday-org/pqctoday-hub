@@ -56,8 +56,8 @@ const PARTS = [
   },
   {
     id: 'bitcoin-p2qrh',
-    title: 'Part 2: Bitcoin — BIP-360 (P2QRH)',
-    shortTitle: 'Bitcoin P2QRH',
+    title: 'Part 2: Bitcoin — BIP-360 (P2MR)',
+    shortTitle: 'Bitcoin P2MR',
     icon: Bitcoin,
   },
   {
@@ -169,7 +169,8 @@ const VulnerabilityLandscape: React.FC = () => (
       </h4>
       <p className="text-xs text-muted-foreground mb-3">
         Post-quantum signatures are significantly larger than elliptic curve signatures. This
-        directly increases transaction fees and block space requirements.
+        directly increases transaction fees and block space requirements. On Bitcoin these sizes
+        apply to a future post-quantum signature scheme; BIP-360 itself does not include one.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
@@ -217,28 +218,30 @@ const BitcoinP2QRH: React.FC = () => (
       <Bitcoin size={24} className="text-warning mt-1 shrink-0" />
       <div>
         <h3 className="text-lg font-bold text-foreground mb-1">
-          BIP-360: Pay to Quantum Resistant Hash
+          BIP-360: Pay-to-Merkle-Root (P2MR)
         </h3>
         <p className="text-sm text-muted-foreground">
-          Proposed by Hunter Beast (2024). A soft fork that introduces a new native SegWit output
-          type resistant to quantum attacks by removing the elliptic curve key-spend path.
+          A draft BIP by Hunter Beast, Ethan Heilman and Isabel Foxen Duke (number assigned
+          2024-12-18). A proposed soft fork that adds a new native SegWit output type, working like
+          Taproot with the elliptic curve key-spend path removed. It contains no post-quantum
+          signature scheme.
         </p>
       </div>
     </div>
 
     {/* How it works */}
     <div className="glass-panel p-4">
-      <h4 className="font-semibold text-foreground mb-3">How P2QRH Works</h4>
+      <h4 className="font-semibold text-foreground mb-3">How P2MR Works</h4>
       <div className="space-y-3">
         <div className="flex items-start gap-3">
           <span className="w-6 h-6 rounded-full bg-warning/20 text-warning text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
             1
           </span>
           <div>
-            <p className="text-sm font-medium text-foreground">Generate a PQC keypair</p>
+            <p className="text-sm font-medium text-foreground">Commit to a script tree</p>
             <p className="text-xs text-muted-foreground">
-              Use ML-DSA-65 (FIPS 204) — a finalized NIST standard — or FN-DSA-512 (FIPS 206, still
-              in draft) instead of secp256k1.
+              Build a script tree as in Taproot (BIP-341). The output commits to the 32-byte Merkle
+              root of that tree and, unlike Taproot, to no internal public key.
             </p>
           </div>
         </div>
@@ -247,11 +250,11 @@ const BitcoinP2QRH: React.FC = () => (
             2
           </span>
           <div>
-            <p className="text-sm font-medium text-foreground">Hash the PQC public key</p>
+            <p className="text-sm font-medium text-foreground">Remove the key-path spend</p>
             <p className="text-xs text-muted-foreground">
-              Apply SHA-256 then HASH160 (SHA-256 → RIPEMD-160) to the PQC public key, mirroring
-              Bitcoin&apos;s existing address derivation pattern. The hash hides the full public key
-              until spending time.
+              A Taproot output can be spent with just a Schnorr signature (the key path). P2MR drops
+              that path, so every spend is a script-path spend that reveals a leaf script and a
+              control block.
             </p>
           </div>
         </div>
@@ -261,10 +264,10 @@ const BitcoinP2QRH: React.FC = () => (
           </span>
           <div>
             <p className="text-sm font-medium text-foreground">
-              New address type: <code className="font-mono text-warning">bc1r…</code> (SegWit v3)
+              New address type: <code className="font-mono text-warning">bc1z…</code> (SegWit v2)
             </p>
             <p className="text-xs text-muted-foreground">
-              Bech32m encoding with a new version byte. Distinguishable from current SegWit v0 (
+              Bech32m encoding with SegWit version 2. Distinguishable from current SegWit v0 (
               <code className="font-mono">bc1q…</code>) and Taproot v1 (
               <code className="font-mono">bc1p…</code>) addresses.
             </p>
@@ -276,12 +279,12 @@ const BitcoinP2QRH: React.FC = () => (
           </span>
           <div>
             <p className="text-sm font-medium text-foreground">
-              Spending reveals the PQC signature
+              Spending reveals a leaf script, not a PQC signature
             </p>
             <p className="text-xs text-muted-foreground">
-              When spending, the full PQC public key and signature are revealed in the witness. The
-              node verifies the PQC signature using the standardised NIST algorithm. The key is only
-              exposed once — at the moment of spending.
+              The witness carries the chosen leaf script, its input stack and the control block.
+              Existing tapscript programs can be used in P2MR outputs mostly without modification,
+              so P2MR on its own does not change which signature scheme is used.
             </p>
           </div>
         </div>
@@ -309,22 +312,26 @@ const BitcoinP2QRH: React.FC = () => (
         </ul>
       </div>
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-semibold text-foreground mb-2">P2QRH (Proposed BIP-360)</h4>
+        <h4 className="text-sm font-semibold text-foreground mb-2">P2MR (Proposed BIP-360)</h4>
         <ul className="text-xs text-muted-foreground space-y-1">
           <li className="flex items-start gap-1.5">
             <span className="text-status-success mt-0.5">✓</span> Removes quantum-vulnerable
             key-spend path
           </li>
           <li className="flex items-start gap-1.5">
-            <span className="text-status-success mt-0.5">✓</span> NIST PQC signature schemes (ML-DSA
-            / FALCON)
+            <span className="text-status-success mt-0.5">✓</span> Resists long-exposure attacks,
+            provided public keys are not reused
           </li>
           <li className="flex items-start gap-1.5">
             <span className="text-status-success mt-0.5">✓</span> Soft fork — backwards compatible
           </li>
           <li className="flex items-start gap-1.5">
-            <span className="text-status-warning mt-0.5">~</span> ~9–46× larger transaction witness
-            data
+            <span className="text-destructive mt-0.5">✗</span> No post-quantum signature of its own:
+            does not by itself stop short-exposure attacks on keys revealed in the mempool
+          </li>
+          <li className="flex items-start gap-1.5">
+            <span className="text-status-warning mt-0.5">~</span> Witness is always larger than a
+            Taproot key-path spend (135 vs 66 bytes in the BIP&apos;s depth-1 example)
           </li>
         </ul>
       </div>
@@ -334,20 +341,29 @@ const BitcoinP2QRH: React.FC = () => (
     <div className="glass-panel p-4 border-l-4 border-l-warning">
       <h4 className="font-semibold text-foreground mb-2">Current Status</h4>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        BIP-360 is in <strong className="text-foreground">Draft</strong> status with active
-        discussion on DelvingBitcoin.org and the bitcoin-dev mailing list. Bitcoin&apos;s
+        BIP-360 is in <strong className="text-foreground">Draft</strong> status. Bitcoin&apos;s
         conservative upgrade process (demonstrated by the multi-year SegWit and Taproot activations)
-        means timeline to mainnet activation is uncertain. The proposal has evolved — PQ signatures
-        have been separated into a companion BIP to allow the address type soft fork to proceed
-        independently.
+        means timeline to mainnet activation is uncertain. The proposal has changed substantially:
+        earlier drafts were titled P2QRH and included post-quantum signature algorithms, then were
+        renamed P2TSH (2025-09-17) and P2MR (2026-02-10), and moved from SegWit version 3 to version
+        2 (2025-07-20). Descriptions of the earlier P2QRH design are out of date.
+      </p>
+      <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+        <strong className="text-foreground">
+          Post-quantum signatures are a separate proposal.
+        </strong>{' '}
+        The BIP&apos;s authors say they intend to offer one upon further research. The BIP names
+        ML-DSA and SLH-DSA only as examples that should be scrutinised before use, and says its
+        authors are still researching options. The sizes in the live demo apply to such a future
+        signature scheme, not to P2MR itself.
       </p>
       <a
-        href="https://delvingbitcoin.org/t/changes-to-bip-360-pay-to-quantum-resistant-hash-p2qrh/1811"
+        href="https://github.com/bitcoin/bips/blob/master/bip-0360.mediawiki"
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
       >
-        Read the DelvingBitcoin discussion <ExternalLink size={11} />
+        Read BIP-360 <ExternalLink size={11} />
       </a>
     </div>
   </div>
@@ -469,7 +485,8 @@ const EthereumPQC: React.FC = () => (
           </span>
           <span className="text-muted-foreground">
             <strong className="text-foreground">BLS consensus signatures</strong> — replace with
-            hash-based alternatives (Winternitz variants), using STARK proofs for aggregation
+            hash-based alternatives (Winternitz variants; leanXMSS is the proposed hash-based
+            scheme), using STARK proofs for aggregation
           </span>
         </div>
         <div className="flex items-start gap-2">
@@ -502,8 +519,11 @@ const EthereumPQC: React.FC = () => (
       </div>
       <p className="text-xs text-muted-foreground mt-3">
         EIP-8141 &quot;validation frames&quot; would allow bundling many signatures into a single
-        compressed proof, keeping costs manageable. Targeted for the{' '}
-        <strong className="text-foreground">Hegota upgrade, planned for 2026</strong>.
+        compressed proof, keeping costs manageable. EIP-8141 was being considered for the{' '}
+        <strong className="text-foreground">Hegotá upgrade in the second half of 2026</strong>, and
+        the Lean Ethereum roadmap targets completion of core post-quantum infrastructure by
+        approximately 2029 (ethereum.org roadmap, page updated 2026-09-08). STARK-based and
+        lattice-based schemes are candidates to replace KZG commitments, not account signatures.
       </p>
       <div className="flex flex-wrap gap-2 mt-3">
         <a
@@ -633,8 +653,12 @@ const SolanaHardProblem: React.FC = () => (
       <h4 className="font-semibold text-foreground mb-3">The SIMD Process</h4>
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
         Solana protocol changes go through Solana Improvement Documents (SIMDs) — a process similar
-        to Bitcoin&apos;s BIPs and Ethereum&apos;s EIPs. As of early 2026, no SIMD for PQC has been
-        ratified. Community proposals in active discussion include:
+        to Bitcoin&apos;s BIPs and Ethereum&apos;s EIPs. As of 2026, no SIMD for PQC has been
+        ratified. The one concrete proposal, SIMD-0461, would have added a Falcon (FN-DSA)
+        signature-verification syscall as an exploratory, verification-only addition that would not
+        replace Ed25519. Its author closed the pull request on 2026-06-17 and said it would be
+        reopened if there is more demand, pointing to an existing Falcon implementation that runs as
+        an on-chain (SBF) programme. Approaches that have been discussed include:
       </p>
       <ul className="text-xs text-muted-foreground space-y-2">
         <li className="flex items-start gap-1.5">
@@ -658,18 +682,29 @@ const SolanaHardProblem: React.FC = () => (
           <span>
             <strong className="text-foreground">Programme-level PQC verification</strong>: Using
             Solana&apos;s native programs to verify PQC signatures, similar to how Ethereum&apos;s
-            EIP-4337 uses smart contracts — but with Solana&apos;s programme model.
+            EIP-4337 uses smart contracts — but with Solana&apos;s programme model. A comment in the
+            SIMD-0461 thread cites a Falcon implementation in SBF at under 170,000 compute units.
           </span>
         </li>
       </ul>
-      <a
-        href="https://github.com/solana-foundation/solana-improvement-documents"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-3"
-      >
-        SIMD repository <ExternalLink size={11} />
-      </a>
+      <div className="flex flex-wrap gap-3 mt-3">
+        <a
+          href="https://github.com/solana-foundation/solana-improvement-documents"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+        >
+          SIMD repository <ExternalLink size={11} />
+        </a>
+        <a
+          href="https://github.com/solana-foundation/solana-improvement-documents/pull/461"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+        >
+          SIMD-0461 (closed) <ExternalLink size={11} />
+        </a>
+      </div>
     </div>
 
     {/* Comparison table */}
@@ -696,14 +731,19 @@ const SolanaHardProblem: React.FC = () => (
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">PQC usable today?</td>
             <td className="p-3 text-status-success font-medium">Yes — via smart accounts</td>
-            <td className="p-3">No — requires protocol change</td>
+            <td className="p-3">
+              No native PQC accounts or verification syscall; programme-level verification is the
+              route discussed
+            </td>
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">Official PQC proposal?</td>
             <td className="p-3 text-status-success font-medium">
               Multiple EIPs active (4337, 7702, 8141)
             </td>
-            <td className="p-3 text-status-warning">Community discussion only</td>
+            <td className="p-3 text-status-warning">
+              No ratified SIMD; SIMD-0461 (Falcon verification syscall) closed in June 2026
+            </td>
           </tr>
           <tr>
             <td className="p-3 font-medium text-foreground">Migration complexity</td>
