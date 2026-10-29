@@ -2896,6 +2896,23 @@
       "status": "downloaded",
       "admittedFor": "Industry Landscape source documents",
       "admittedOn": "2026-10-29T02:52:37.116441+00:00"
+    },
+    {
+      "refId": "leg-qes",
+      "filename": "leg-qes.pdf",
+      "sizeBytes": 303240,
+      "contentType": "application/pdf",
+      "url": "https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/02.01.01_60/ts_119312v020101p.pdf",
+      "sha256": "7d8428f6433221fae87525507ec204f39ef31a1d5547338444708a801ed18f72",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T13:10:41.465039+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "leg-qes.pdf",
+      "status": "downloaded",
+      "admittedFor": "Industry Landscape source documents",
+      "admittedOn": "2026-10-29T13:10:40.171827+00:00"
     }
   ],
   "archivedEntries": [
