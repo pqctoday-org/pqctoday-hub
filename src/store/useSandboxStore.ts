@@ -36,6 +36,9 @@ export const useSandboxStore = create<SandboxState>((set, get) => ({
     const timer = setTimeout(() => ctrl.abort(), PROBE_TIMEOUT_MS)
     try {
       const res = await fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
+      // Only the status matters. An unread body keeps the request pending in Chromium, so
+      // the page never reaches network idle while a sandbox answers.
+      void res.body?.cancel()
       // A resolved fetch is not enough — the backend returns 503 when the
       // pqc-network upstream is down. Treat any non-2xx as offline so the
       // catalog doesn't surface sandbox tools that can't actually run.

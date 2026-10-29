@@ -41,6 +41,22 @@ describe('useSandboxStore', () => {
     expect(useSandboxStore.getState().error).toMatch(/503/)
   })
 
+  it('cancels the unread response body so the request does not stay pending', async () => {
+    const res = new Response('{"status":"ok"}', { status: 200 })
+    const cancel = vi.spyOn(res.body!, 'cancel')
+    global.fetch = vi.fn().mockResolvedValue(res)
+    expect(await useSandboxStore.getState().probe()).toBe('online')
+    expect(cancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('cancels the body of a non-2xx answer too', async () => {
+    const res = new Response('{"error":"upstream down"}', { status: 503 })
+    const cancel = vi.spyOn(res.body!, 'cancel')
+    global.fetch = vi.fn().mockResolvedValue(res)
+    expect(await useSandboxStore.getState().probe()).toBe('offline')
+    expect(cancel).toHaveBeenCalledTimes(1)
+  })
+
   it('marks status offline when fetch rejects', async () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('ECONNREFUSED'))
     const result = await useSandboxStore.getState().probe()
