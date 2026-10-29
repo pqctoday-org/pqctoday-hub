@@ -104,6 +104,10 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
                 eu.europa.ec.eudi.pid.1
               </li>
               <li>
+                <span className="font-medium text-foreground">Device proof:</span> a device
+                signature (ECDSA) or a MAC (HMAC 256/256 over an ECDH-derived key)
+              </li>
+              <li>
                 <span className="font-medium text-foreground">Used in this module:</span> PID
                 credential
               </li>
@@ -222,11 +226,12 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         <p className="text-foreground/80 leading-relaxed mb-3">
           Current EUDI implementations use classical{' '}
           <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> (P-256, P-384) for signatures and key
-          binding. eIDAS 2.0 does not yet mandate post-quantum cryptography, but ENISA has
-          identified wallet providers as high-impact entities for early PQC adoption. Future ARF
-          versions are expected to require PQC-safe algorithms (
-          <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>,{' '}
-          <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>) for long-lived credentials.
+          binding. eIDAS 2.0 does not yet mandate post-quantum cryptography. The SD-JWT standard
+          (RFC 9901) leaves the choice of signature algorithm to the application, including
+          post-quantum algorithms &ldquo;when they are ready&rdquo;. NIST has standardised{' '}
+          <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> and{' '}
+          <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> as post-quantum signatures that
+          issuers could adopt for long-lived credentials.
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-3">
           <div className="text-xs font-bold text-foreground mb-1">
@@ -239,8 +244,9 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           </ul>
         </div>
         <p className="text-xs text-muted-foreground">
-          This simulation uses classical algorithms to match current ARF specifications. The PQC
-          migration path for EUDI is an active area of ETSI and ENISA research.
+          This simulation uses classical algorithms to match current ARF specifications. The ARF
+          sets no PQC roadmap, and ETSI says its cryptographic suites specification (TS 119 312
+          V2.1.1) is incomplete for the EUDI Wallet, with an update in preparation.
         </p>
       </section>
 

@@ -231,9 +231,11 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                     a WUA. This process: (1) generates a key pair in the Wallet Secure Cryptographic
                     Device (WSCD), (2) binds the wallet instance to the user&apos;s device, and (3)
                     proves to PID Providers and Relying Parties that the wallet is genuine,
-                    unmodified, and running on certified hardware. Without a valid WUA, no PID
-                    Provider will issue credentials. This simulation starts from PID issuance for
-                    simplicity.
+                    unmodified, and running on certified hardware. Commission Implementing
+                    Regulation (EU) 2024/2981 requires that hardware to be assessed at assurance
+                    level high, with a vulnerability assessment at Common Criteria AVA_VAN.5 level
+                    unless a lower level is duly justified. Without a valid WUA, no PID Provider
+                    will issue credentials. This simulation starts from PID issuance for simplicity.
                   </p>
                 </div>
                 <Button variant="ghost" onClick={handleStart} className="w-full">

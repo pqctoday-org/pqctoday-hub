@@ -27,9 +27,9 @@ export const SUITE_COMPARISON: SuiteAlgorithm[] = [
   {
     purpose: 'Software & firmware signing',
     cnsa1: 'RSA-3072 / ECDSA P-384',
-    cnsa2: 'LMS or XMSS (NIST SP 800-208)',
+    cnsa2: 'LMS or XMSS (NIST SP 800-208); ML-DSA-87 also approved',
     rationale:
-      'NSA moved this use case first, for three stated reasons: NIST had already standardised the algorithms, the use case is more urgent than others, and stateful hash-based signatures have the longest cryptanalytic history — their performance costs matter least here. NSA recommends Leighton-Micali with SHA-256/192, though all SP 800-208 algorithms are approved.',
+      'NSA moved this use case first, for three stated reasons: NIST had already standardised the algorithms, the use case is more urgent than others, and stateful hash-based signatures have the longest cryptanalytic history — their performance costs matter least here. LMS and XMSS are the approved SP 800-208 schemes (all parameter sets; NSA recommends LMS with SHA-256/192); the multi-tree variants HSS and XMSS^MT are not allowed. Validated ML-DSA-87 is also approved for software and firmware signing, but NSA wants LMS and XMSS adopted now where possible because validated implementations have been available longer. ML-DSA can make sense when a signing strategy needs more signatures than a single LMS or XMSS key can reasonably provide, or in distributed signing environments.',
   },
   {
     purpose: 'Key establishment',
@@ -43,7 +43,7 @@ export const SUITE_COMPARISON: SuiteAlgorithm[] = [
     cnsa1: 'ECDSA P-384 / RSA-3072',
     cnsa2: 'ML-DSA-87 (FIPS 204)',
     rationale:
-      'Again level-5 only. ML-DSA-44 and ML-DSA-65 are FIPS-approved but not CNSA 2.0-approved.',
+      'Again level-5 only. ML-DSA-44 and ML-DSA-65 are FIPS-approved but not CNSA 2.0-approved. ML-DSA-87 is approved for any signing use case, including software and firmware.',
   },
   {
     purpose: 'Symmetric encryption',

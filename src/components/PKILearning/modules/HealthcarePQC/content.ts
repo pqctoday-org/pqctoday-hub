@@ -33,10 +33,15 @@ export const content: ModuleContent = {
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
-    getStandard('FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023'), // m-healthcare-pqc: September 2023 guidance, current edition
+    getStandard('FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023'), // m-healthcare-pqc: current edition 3 February 2026 (first issued September 2023)
     getStandard('IEC-62443-4-2-2019-Security-for-industrial-automation-and-co'), // m-healthcare-pqc: IEC 62443-4
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('ICS-Medical-Advisory-ICSMA-17-241-01-Abbott-Laboratories-Acc'), // m-healthcare-pqc: wave 4c
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'), // m-healthcare-pqc: TLS 1.3 for telehealth and FHIR API transport
+    getStandard('RFC-10024'), // m-healthcare-pqc: ML-KEM hybrid key agreement for TLS 1.3
+    getStandard('ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D'), // m-healthcare-pqc: ONC certification, end-user device encryption
+    getStandard('ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity'), // m-healthcare-pqc: ONC certification, integrity
+    getStandard('ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co'), // m-healthcare-pqc: ONC certification, trusted connection
   ],
 
   algorithms: [
@@ -67,6 +72,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'BiometricVaultAssessor — Inventory biometric data types by replaceability tier, template size, and storage system; map each to recommended ML-KEM/ML-DSA variant; calculate vault re-keying scope and estimated data re-encryption time for a hospital network with 500K patient records.',
     relatedStandards:
-      'HIPAA Security Rule (45 CFR Part 164) — PHI encryption standards and administrative safeguards. GDPR Articles 9, 17, 32 — Special category data, Right to Erasure, technical security measures. FDA Cybersecurity in Medical Devices Guidance (September 2023) — premarket and post-market requirements. IEC 62443-4-2 — Security for Industrial Automation and Control Systems: Component Requirements. HL7 FHIR R4/R5 — Fast Healthcare Interoperability Resources (API security).',
+      'HIPAA Security Rule (45 CFR Part 164) — encryption of electronic PHI as an addressable specification, and administrative safeguards. GDPR Articles 9, 17, 32 — Special category data, Right to Erasure, technical security measures. FDA Cybersecurity in Medical Devices guidance (current edition 3 February 2026, first issued September 2023) — premarket and post-market recommendations; FD&C Act section 524B sets the mandatory cybersecurity documentation for cyber devices. IEC 62443-4-2 — Security for Industrial Automation and Control Systems: Component Requirements. HL7 FHIR R4/R5 — Fast Healthcare Interoperability Resources (API security). TLS 1.3 (RFC 9846) and hybrid ML-KEM key agreement for TLS 1.3 (RFC 10024) — telehealth and FHIR API transport. ONC health IT certification criteria § 170.315(d)(7)–(d)(9) — encryption, integrity and trusted connection for certified EHR software; they name no post-quantum algorithm.',
   },
 }

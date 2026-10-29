@@ -61,7 +61,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'QES / QTSP',
     badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
     observe:
-      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs that issue qualified certificates follow ETSI EN 319 411, while remote QES signing with SCAL2 is governed by the CEN standards for server signing (with the QSCD covered by the CEN protection profile for its cryptographic module — those standards come from CEN/TC 224, not ETSI); QTSPs are listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
+      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs that issue qualified certificates follow ETSI EN 319 411, while remote QES signing with SCAL2 is governed by the CEN standards for server signing (with the QSCD's cryptographic module covered by the CEN protection profiles for remote QSCDs, EN 419 241-2 and EN 419 221-5 — those standards come from CEN/TC 224, not ETSI); QTSPs are listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
     stepIndex: 4,
   },
   {
@@ -72,7 +72,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'PQC Roadmap',
     badgeColor: 'bg-success/20 text-success border-success/50',
     observe:
-      'PID Issuers and QTSPs are high-risk entities per ENISA guidance — they should target Phase 2 (2030) or earlier. The wallet device key (used in all presentation proofs) is the single highest-priority migration item: once it becomes quantum-safe, every relying party interaction benefits. University attestation issuers and banks are lower priority but must accept PQC wallet proofs once migration begins.',
+      'PID Issuers and QTSPs hold the long-lived signing keys that every credential depends on, so they are strong candidates to target Phase 2 (2030) or earlier. The wallet device key (used in all presentation proofs) is the single highest-priority migration item: once it becomes quantum-safe, every relying party interaction benefits. University attestation issuers and banks are lower priority but must accept PQC wallet proofs once migration begins.',
     stepIndex: 0,
   },
 ]

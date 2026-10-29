@@ -84,7 +84,7 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
       badge: 'Authentication',
       badgeColor: 'bg-tertiary/20 text-tertiary border-tertiary/50',
       observe:
-        'Watch the MILENAGE algorithm compute all five functions (MAC-A, XRES, CK, IK, AK) from K, OPc, and RAND. Note that MILENAGE uses AES-128 — a symmetric algorithm that is already quantum-resistant.',
+        'Watch the MILENAGE algorithm compute all five functions (MAC-A, XRES, CK, IK, AK) from K, OPc, and RAND. Note that MILENAGE uses AES-128 — a symmetric algorithm that Shor’s algorithm does not break, so it needs no PQC key-exchange or signature upgrade.',
       config: { part: 1 },
     },
     {

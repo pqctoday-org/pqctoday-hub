@@ -45,11 +45,15 @@ export const content: ModuleContent = {
   ],
 
   deadlines: [
-    // The one dated item in this area is the replacement Technical
-    // Specification for ETSI EN 319 422, targeted for 2027-05-31 after the
-    // European Commission concluded in October 2025 that the standard needs
-    // updating. It is a standards-body target, not a compliance deadline, and
-    // is stated as such in the module.
+    // Two dated items in this area, both stated in the module text rather than
+    // listed here. (1) The replacement Technical Specification for ETSI EN
+    // 319 422, targeted for 2027-05-31 after the European Commission concluded
+    // in October 2025 that the standard needs updating: a standards-body target,
+    // not a compliance deadline, and stated as such in the module. (2) 2030-12-31,
+    // the end of the FIPS 140-3 level 3 route for the device holding a qualified
+    // provider's CA key (CIR (EU) 2025/1943) or time-stamp unit key (CIR (EU)
+    // 2025/1929); Common Criteria / EUCC at EAL 4 or higher remains. That rule
+    // is about the provider's own key hardware, not the signer's device.
   ],
 
   narratives: {
@@ -60,6 +64,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Signature Longevity Calculator — pick a validity horizon and see which degradation stages apply, and when the existing archive must be re-timestamped. Standards Supersession Explorer — the same ETSI standard before and after PQC, with the superseded edition marked. Hybrid Suite Picker — TS 119 312 V2.1.1 Table 3.3 filtered by use case.',
     relatedStandards:
-      'ETSI TS 119 312 V2.1.1 (June 2026) supersedes V1.5.1 (December 2024): the older edition names only RSA and ECDSA, the newer adds ML-DSA, SLH-DSA, LMS, XMSS and hybrid modes. V2.1.1 also records that ETSI TS 102 176-1 is withdrawn and superseded by TS 119 312. ETSI EN 319 422 V1.1.1 (2016) remains the current published timestamp profile and names no algorithm itself, deferring to TS 119 312; the European Commission concluded in October 2025 that it needs updating, with a replacement expected in 2027.',
+      'ETSI TS 119 312 V2.1.1 (June 2026) supersedes V1.5.1 (December 2024): the older edition names only RSA and ECDSA, the newer adds ML-DSA, SLH-DSA, LMS, XMSS and hybrid modes. V2.1.1 also records that ETSI TS 102 176-1 is withdrawn and superseded by TS 119 312. ETSI EN 319 422 V1.1.1 (2016) remains the current published timestamp profile and names no algorithm itself, deferring to TS 119 312; the European Commission concluded in October 2025 that it needs updating, with a replacement expected in 2027. V2.1.1 says of itself that it is incomplete for the EU Digital Identity Wallet and some other trust services, with an update in preparation, and leaves post-quantum migration scheduling to a separate document under development. Regulations (EU) 2025/1943 (qualified certificates) and 2025/1929 (qualified time-stamps) accept FIPS 140-3 level 3 for the CA and time-stamp-unit key device of a provider only until 31 December 2030; Common Criteria or EUCC at EAL 4 or higher remains.',
   },
 }

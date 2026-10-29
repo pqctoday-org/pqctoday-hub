@@ -3,7 +3,8 @@
  * The US federal mandate stack and the Federal PKI profile pair.
  *
  * Sources, all cached in the evidence library:
- *   QCCPA-2022, OMB-M-23-02, OMB-M-26-15, EO-14306, CNSSP 15,
+ *   QCCPA-2022, OMB-M-23-02, OMB-M-26-15, EO-14306, EO-2026-06-22-Securing-the-Nation
+ *   (Executive Order 14412), CNSSP 15,
  *   CISA-PQC-CATEGORY-LIST-2026, NIST-SP-800-171-Rev-3,
  *   Common-Policy-X-509-Certificate-and-CRL-Profile (classical),
  *   Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile (PQC DRAFT).
@@ -45,7 +46,7 @@ export const FEDERAL_MANDATES: FederalMandate[] = [
     instrument: 'OMB Memorandum',
     appliesTo: 'Federal civilian agencies',
     obligation:
-      'The execution-phase successor to M-23-02 — moves the programme from inventory to delivery.',
+      'The execution-phase successor to M-23-02 — moves the programme from inventory to delivery. It implements Executive Order 14412: each agency submits a PQC migration plan within 120 days, phased from discovery (2026–2027) through pilots (2027–2028), prioritised key-establishment migration (2028–2030) and signature migration (2031) to full migration (2035). It does not apply to National Security Systems.',
   },
   {
     id: 'eo-14306',
@@ -55,6 +56,16 @@ export const FEDERAL_MANDATES: FederalMandate[] = [
     appliesTo: 'Federal agencies and their suppliers',
     obligation:
       'Sustains and amends prior federal cybersecurity direction, including the PQC provisions that drive the CISA product-category work.',
+  },
+  {
+    id: 'eo-14412',
+    libraryRef: 'EO-2026-06-22-Securing-the-Nation',
+    label: 'Executive Order 14412 — Securing the Nation Against Advanced Cryptographic Attacks',
+    instrument: 'Executive Order',
+    appliesTo:
+      'Federal agencies (high value assets and high impact systems, not National Security Systems); covered contractors through a directed FAR rule',
+    obligation:
+      'Section 4(b) directs OMB to require agencies to move all high value assets and high impact systems to post-quantum cryptography for key establishment by 31 December 2030 and for digital signatures by 31 December 2031. Section 6(c) directs the FAR Council to publish, within 180 days, a proposed rule requiring covered contractors to comply by 31 December 2030 with NIST FIPS, including the FIPS that incorporate PQC algorithms. The order directs a proposed rule; it is not itself that rule.',
   },
   {
     id: 'cnssp-15',

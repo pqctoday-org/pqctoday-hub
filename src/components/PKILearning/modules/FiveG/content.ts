@@ -21,6 +21,12 @@ export const content: ModuleContent = {
     // is what confirms this module's Profile A description.
     getStandard('3GPP TS 33.501 Rel-19'),
     getStandard('3GPP-PQC-Study-2025'),
+    // Telecom-body guidance named in the Introduction (library ids)
+    getStandard('GSMA PQ.03 PQC Guidelines'),
+    getStandard('ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar'),
+    getStandard('ETSI TS 103 744'),
+    getStandard('3GPP-Post-Quantum-Cryptography-SA3-Overview'),
+    getStandard('GSMA-SGP24-v2-4-4'),
     getStandard('NIST-CSWP-36A'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document

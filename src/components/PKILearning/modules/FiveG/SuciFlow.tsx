@@ -39,16 +39,16 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: '5g-gnb-decap',
-    useCase: 'gNB session key derivation',
-    standard: 'FIPS 203 ACVP (use case: 5G SUCI)',
+    useCase: 'ML-KEM-768 decapsulate (algorithm test)',
+    standard: 'FIPS 203 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },
   },
   {
     id: '5g-nas-sigver',
-    useCase: 'NAS/RRC control plane integrity',
-    standard: 'FIPS 204 ACVP (use case: 5G NAS/RRC)',
+    useCase: 'ML-DSA-65 signature verify (algorithm test)',
+    standard: 'FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },

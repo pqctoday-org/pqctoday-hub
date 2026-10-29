@@ -968,7 +968,7 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
     year: 2023,
     quarter: 'Q3',
     description:
-      'Requires cryptographic risk assessment and Software Bill of Materials for new device submissions. Devices with 10-20 year lifecycles deploying now will operate into the CRQC era.',
+      'First issued September 2023; the current edition is dated 3 February 2026. A nonbinding guidance that recommends cryptography expected to stay strong throughout the device service life; the Software Bill of Materials duty for cyber devices comes from section 524B of the FD&C Act. Devices with 10-20 year lifecycles deploying now will operate into the CRQC era.',
     affectedLayers: ['medical-devices'],
     pqcRelevance: 'direct',
   },
@@ -990,7 +990,7 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
     year: 2026,
     quarter: 'Ongoing',
     description:
-      'No explicit PQC timeline yet, but healthcare data has long sensitivity periods making HNDL risk significant for long-lived ePHI. HITECH mandates strong encryption.',
+      'No explicit PQC timeline yet, but healthcare data has long sensitivity periods making HNDL risk significant for long-lived ePHI. The Security Rule treats encryption of ePHI as an addressable specification.',
     affectedLayers: [
       'patient-portal',
       'clinical-workstations',

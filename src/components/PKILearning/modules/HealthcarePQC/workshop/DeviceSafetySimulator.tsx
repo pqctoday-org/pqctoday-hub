@@ -89,7 +89,7 @@ const FDA_PREMARKET_CHECKLIST = [
     id: 'sbom-crypto',
     label: 'SBOM includes cryptographic dependencies',
     detail:
-      'The SBOM (per FDA Section 524B) explicitly enumerates cryptographic libraries, their versions, and the specific algorithms/key sizes used by each component.',
+      'The SBOM (required for cyber devices by section 524B of the FD&C Act) explicitly enumerates cryptographic libraries, their versions, and the specific algorithms/key sizes used by each component.',
   },
   {
     id: 'hybrid-transition',
@@ -383,7 +383,7 @@ const FDAChecklistSection: React.FC<{
         <div className="flex items-center gap-2">
           <AlertTriangle size={18} className="text-status-warning" />
           <h3 className="text-base font-bold text-foreground">
-            FDA Premarket Cybersecurity Checklist
+            PQC Readiness Checklist for Premarket Submissions
           </h3>
         </div>
         <span className="text-xs text-muted-foreground">
@@ -391,8 +391,11 @@ const FDAChecklistSection: React.FC<{
         </span>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Key items for PQC readiness in FDA 510(k) and PMA cybersecurity documentation. Check each
-        item as you review it for your device submission.
+        A PQC readiness checklist for FDA 510(k) and PMA cybersecurity documentation. The items are
+        this module&apos;s own, derived from FDA&apos;s recommendation to use cryptography that
+        stays strong throughout the device&apos;s service life; FDA&apos;s guidance itself does not
+        mention quantum computers or PQC algorithms. Check each item as you review it for your
+        device submission.
       </p>
 
       {/* Progress bar */}
@@ -446,7 +449,7 @@ const FDAChecklistSection: React.FC<{
           <Check size={16} className="text-status-success shrink-0" />
           <p className="text-sm text-status-success font-medium">
             All checklist items reviewed. This device submission addresses quantum-resistant
-            cryptography across all FDA-recommended dimensions.
+            cryptography across every item on this checklist.
           </p>
         </div>
       )}
@@ -506,7 +509,7 @@ export const DeviceSafetySimulator: React.FC = () => {
       <p className="text-sm text-foreground/80">
         Browse a catalog of connected medical devices, explore quantum attack scenarios with patient
         impact ratings, and evaluate PQC algorithm feasibility against constrained hardware. Use the
-        FDA premarket checklist to verify quantum readiness for regulatory submissions.
+        PQC readiness checklist to check quantum readiness before a premarket submission.
       </p>
 
       {/* Device Selector */}

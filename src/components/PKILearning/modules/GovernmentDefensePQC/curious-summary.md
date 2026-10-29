@@ -2,11 +2,11 @@
 
 ## What This Is About
 
-Most organisations decide for themselves when to adopt post-quantum cryptography. US government systems do not. A stack of laws, executive orders and policies turns it into a requirement with dates attached — and the dates depend on which kind of system you run. National Security Systems follow one instrument with hard deadlines; ordinary federal civilian agencies follow a different one that requires inventories and reports but sets no algorithm deadline at all.
+Most organisations decide for themselves when to adopt post-quantum cryptography. US government systems do not. A stack of laws, executive orders and policies turns it into a requirement with dates attached — and the dates depend on which kind of system you run. National Security Systems follow one instrument with hard deadlines; federal civilian agencies follow a different set of rules: inventories, reports and migration plans, plus, since June 2026, their own dated deadlines for their most important systems (key exchange moved by the end of 2030, digital signatures by the end of 2031).
 
 ## Why It Matters
 
-The deadlines reach much further than government itself. From 1 January 2027, anything newly bought for a National Security System has to support the new algorithms — which makes it a supplier requirement, not just a buyer one. Separately, the rules covering Controlled Unclassified Information reach contractors, universities and suppliers who never go near a classified system. If you sell to the US government, someone else's deadline has become yours.
+The deadlines reach much further than government itself. From 1 January 2027, anything newly bought for a National Security System is required to support the new algorithms, with limited exceptions — which makes it a supplier requirement, not just a buyer one. Separately, the rules covering Controlled Unclassified Information reach contractors, universities and suppliers who never go near a classified system. A June 2026 executive order also directs a proposed rule that would require contractors to follow NIST's cryptography standards, including the post-quantum ones, by the end of 2030. If you sell to the US government, someone else's deadline has become yours.
 
 ## The Key Takeaway
 

@@ -28,8 +28,8 @@ import type { KatTestSpec } from '@/utils/katRunner'
 const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-epassport-decap',
-    useCase: 'ePassport chip auth (PACE)',
-    standard: 'ICAO MRTD specifications + BSI TR-03116 + FIPS 203 ACVP',
+    useCase: 'ePassport key agreement (illustrative)',
+    standard: 'FIPS 203 ACVP — ICAO has no PQC PACE profile yet',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },
@@ -37,7 +37,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-pid-sigver',
     useCase: 'PID credential SD-JWT signing',
-    standard: 'eIDAS 2.0 ARF v3.0.0 + FIPS 204 ACVP',
+    standard: 'FIPS 204 ACVP (illustrative only)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -45,7 +45,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-mdoc-sigver',
     useCase: 'mDL attribute attestation',
-    standard: 'ISO 18013-5 + FIPS 204 ACVP',
+    standard: 'FIPS 204 ACVP (illustrative only)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -53,7 +53,7 @@ const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'did-qes-sigver',
     useCase: 'Qualified Electronic Signature',
-    standard: 'eIDAS Reg 910/2014 + FIPS 204 ACVP',
+    standard: 'ETSI TS 119 312 V2.1.1 + FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 87 },
@@ -430,7 +430,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
       <KatValidationPanel
         specs={DIGITAL_ID_KAT_SPECS}
         label="EU Digital Identity KATs"
-        authorityNote="eIDAS 2.0 ARF · ISO 18013-5 · NIST FIPS 203/204"
+        authorityNote="NIST FIPS 203/204 known-answer vectors · illustrative tests, not EUDI profiles"
       />
     </>
   )

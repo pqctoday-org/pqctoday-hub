@@ -507,6 +507,12 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
+            The series is not standing still. A Siemens presentation at the ITU-T X.509 Day
+            (September 2025) reports that the PQC transition for IEC 62351 has started in IEC TC57,
+            with further refinements needed, and points to IEC 62351-90-4, which gives guidance on
+            migrating from one cryptographic algorithm to another.
+          </p>
+          <p className="text-xs text-muted-foreground">
             The workshop&rsquo;s Protocol Analyzer covers {OT_PROTOCOLS.length} protocols;{' '}
             {OT_PROTOCOLS.filter((p) => summarizeProtocol(p).symmetricSafe > 0).length} of them
             already have at least one symmetric layer that needs no PQC change. Survey background:{' '}
@@ -644,6 +650,13 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               of them protects the recorded session.
             </li>
             <li>
+              <strong>IPsec / IKEv2 VPNs</strong> — two IETF routes protect the key exchange of a
+              recorded session. RFC 8784 (Standards Track) mixes a preshared key into IKEv2, making
+              it quantum-resistant without any new algorithm. RFC 9370 lets IKEv2 add a post-quantum
+              key exchange alongside the classical (EC)DH one. Post-quantum signature authentication
+              for IKEv2 is still an IETF draft.
+            </li>
+            <li>
               <strong>IIoT platforms</strong> — gateways and cloud connectors belong on their own
               segment, routed through the DMZ border firewall; a direct cloud link from L1–L2 is a
               DMZ bypass. Hybrid ML-KEM on the cloud link and PQC-ready gateway certificates cover
@@ -712,8 +725,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               <LibLink id="ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch">
                 ETSI TS 103 764
               </LibLink>{' '}
-              and the TS 103 765 series), names no mechanism and delegates crypto to 3GPP. US
-              Positive Train Control (
+              and the TS 103 765 series), names no algorithm. Its security is layered: a TLS-backed,
+              mutually authenticated Local Binding links applications to the On-Board FRMCS or the
+              Trackside Gateway, and the transport and service layers defer to 3GPP security
+              specifications. US Positive Train Control (
               <LibLink id="49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems">
                 49 CFR Part 236 Subpart I
               </LibLink>

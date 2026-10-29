@@ -4,8 +4,9 @@
  *
  * Answers the question that actually decides a programme's deadline: is this
  * system a National Security System or not? The two answers lead to different
- * instruments, different obligations, and — critically — only one of them
- * carries dated algorithm requirements.
+ * instruments, different obligations, and — critically — different dated
+ * deadlines: CNSA 2.0 for National Security Systems, Executive Order 14412 for
+ * federal civilian high value assets and high impact systems.
  */
 import { useMemo, useState } from 'react'
 import { Landmark, ExternalLink, CalendarClock } from 'lucide-react'
@@ -21,26 +22,26 @@ const KINDS: { id: SystemKind; label: string; blurb: string }[] = [
     id: 'nss',
     label: 'National Security System',
     blurb:
-      'Follows CNSSP 15 and the CNSA 2.0 dates. This is the only category with dated algorithm requirements.',
+      'Follows CNSSP 15 and the CNSA 2.0 dates. National Security Systems are not covered by the civilian Executive Order 14412 and OMB M-26-15 deadlines.',
   },
   {
     id: 'civilian',
     label: 'Federal civilian system',
     blurb:
-      'Follows the QCCPA and the OMB memoranda: inventory and annual reporting of quantum-vulnerable systems, but no algorithm-level deadline of the CNSA kind.',
+      'Follows the QCCPA, the OMB memoranda and Executive Order 14412: inventory and annual reporting of quantum-vulnerable systems, plus dated PQC deadlines for high value assets and high impact systems (key establishment by 31 December 2030, digital signatures by 31 December 2031). These are not the CNSA dates.',
   },
   {
     id: 'contractor',
     label: 'Nonfederal system handling CUI',
     blurb:
-      'Reached by NIST SP 800-171 Rev. 3 (and CMMC where it applies) even with no National Security System involvement at all.',
+      'Reached by NIST SP 800-171 Rev. 3 (and CMMC where it applies) even with no National Security System involvement at all. Executive Order 14412 also directs a proposed Federal Acquisition Regulation rule that would require covered contractors to comply with NIST FIPS, including the PQC ones, by 31 December 2030; the order directs that proposed rule and is not itself the rule.',
   },
 ]
 
 const RELEVANT: Record<SystemKind, string[]> = {
   nss: ['cnssp-15'],
-  civilian: ['qccpa', 'omb-m-23-02', 'omb-m-26-15', 'eo-14306'],
-  contractor: ['sp-800-171r3'],
+  civilian: ['qccpa', 'omb-m-23-02', 'omb-m-26-15', 'eo-14306', 'eo-14412'],
+  contractor: ['sp-800-171r3', 'eo-14412'],
 }
 
 export const MandateExplorer = () => {
@@ -127,10 +128,11 @@ export const MandateExplorer = () => {
       ) : (
         <section className="glass-panel p-6">
           <p className="text-sm text-muted-foreground">
-            <strong className="text-foreground">No dated algorithm mandate applies here.</strong>{' '}
-            The obligation is inventory, reporting and migration planning. Programmes in this
-            category often adopt the CNSA 2.0 dates voluntarily as a planning anchor — which is
-            reasonable, as long as it is not described to auditors as a requirement.
+            <strong className="text-foreground">The CNSA 2.0 dates do not apply here.</strong> The
+            obligations are the instruments listed above: inventory, reporting and migration
+            planning, plus the dated deadlines of Executive Order 14412 where they apply. Programmes
+            in this category often adopt the CNSA 2.0 dates voluntarily as a planning anchor — which
+            is reasonable, as long as it is not described to auditors as a requirement.
           </p>
         </section>
       )}

@@ -32,14 +32,14 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
       <div className="bg-primary/5 p-3 rounded-lg border border-primary/20 text-xs text-muted-foreground">
         <p className="font-medium text-foreground mb-1">PQC Readiness</p>
         <p>
-          Current EUDI credentials use classical algorithms (P-256, P-384). Future ARF versions are
-          expected to mandate PQC-safe algorithms (ML-DSA, SLH-DSA) for long-lived credentials to
-          protect against quantum threats.
+          Current EUDI credentials use classical algorithms (P-256, P-384). Neither the ARF nor
+          eIDAS 2.0 requires PQC-safe algorithms (ML-DSA, SLH-DSA) yet, but long-lived credentials
+          are the ones most exposed to a future quantum computer.
           <span className="text-muted-foreground/80">
             {' '}
-            Target: high-risk use cases (which EUDI Wallets qualify as) migrated by the end of 2030,
-            per the NIS Cooperation Group Coordinated Implementation Roadmap (2025) — not ETSI TS
-            119 182-1, which is the unrelated JAdES JSON-signature format spec.
+            Target: the NIS Cooperation Group Coordinated Implementation Roadmap (2025) asks for
+            high-risk use cases to be migrated by the end of 2030 (it does not name EUDI Wallets) —
+            not ETSI TS 119 182-1, which is the unrelated JAdES JSON-signature format spec.
           </span>
         </p>
       </div>
