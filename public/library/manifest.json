@@ -23775,6 +23775,22 @@
       "unified": "converted",
       "admittedAt": "2026-10-29T01:41:55.342431+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "SAE-ARINC-835-2-Loadable-Software-Parts-Digital-Signatures",
+      "filename": "SAE-ARINC-835-2-Loadable-Software-Parts-Digital-Signatures.html",
+      "sizeBytes": 145428,
+      "contentType": "text/html",
+      "url": "https://saemobilus.sae.org/standards/arinc835-2-arinc-835-2-guidance-security-loadable-software-parts-using-digital-signatures",
+      "sha256": "84e63ce1424721d8895fb6e489bc3699b0298f5d34fad0cf31b5b0cfdbe572cf",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:42:54.259680+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "SAE-ARINC-835-2-Loadable-Software-Parts-Digital-Signatures.html",
+      "status": "downloaded",
+      "admittedOn": "2026-10-29T01:42:54.148958+00:00"
     }
   ],
   "archivedEntries": [
