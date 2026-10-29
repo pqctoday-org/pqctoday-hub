@@ -2250,6 +2250,23 @@
       "status": "downloaded",
       "admittedFor": "Industry Landscape source documents",
       "admittedOn": "2026-10-29T01:20:14.965521+00:00"
+    },
+    {
+      "refId": "aero-avionics-pki",
+      "filename": "aero-avionics-pki.pdf",
+      "sizeBytes": 4315790,
+      "contentType": "application/pdf",
+      "url": "https://elib.dlr.de/220557/1/s13272-025-00806-5.pdf",
+      "sha256": "0148b8bbc022b329aefbc00a1e1e34011f9d3741ad636f8f58a506346852b752",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-29T01:44:08.864432+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "UNCONFIRMED",
+      "file": "aero-avionics-pki.pdf",
+      "status": "downloaded",
+      "admittedFor": "Industry Landscape source documents",
+      "admittedOn": "2026-10-29T01:44:06.274790+00:00"
     }
   ],
   "archivedEntries": [
