@@ -72,7 +72,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'PQC Roadmap',
     badgeColor: 'bg-success/20 text-success border-success/50',
     observe:
-      'PID Issuers and QTSPs sign the PIDs, attestations and qualified certificates that relying parties verify, so placing them in Phase 2 (2030) or earlier is a planning judgement rather than a requirement: the NIS Cooperation Group roadmap asks for high-risk use cases to be migrated by the end of 2030 and does not name PID Issuers. The wallet device key (used in all presentation proofs) is a strong first candidate for migration: once it becomes quantum-safe, every relying party interaction benefits. University attestation issuers and banks are lower priority but must accept PQC wallet proofs once migration begins.',
+      'PID Issuers and QTSPs sign the PIDs, attestations and qualified certificates that relying parties verify, so placing them in Phase 2 (2030) or earlier is a planning judgement rather than a requirement: the NIS Cooperation Group roadmap asks for high-risk use cases to be migrated by the end of 2030 and does not name PID Issuers. The wallet device key is the key a Wallet Unit uses to sign data from the relying party when it proves that a PID or device-bound attestation is bound to it, and relying parties also verify the signature of the PID Provider or Attestation Provider on the credential, so both kinds of key matter for a post-quantum migration. A university attestation issuer also signs credentials that relying parties verify, and a bank, as a relying party, verifies the signatures on the credentials it receives; the roadmap does not rank these actors, so their order is a planning choice too.',
     stepIndex: 0,
   },
 ]

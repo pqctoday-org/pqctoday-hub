@@ -523,7 +523,8 @@ const Z = zKemBytes`,
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
             .toUpperCase()
-          // AES-128-CTR with zero IV per 3GPP TS 33.501 §C.3.3
+          // TS 33.501 Annex C.3.4 profiles use AES-128 in CTR mode with the ICB taken from the KDF
+          // output; this demo uses a zero IV instead
           const zeroIv = new Uint8Array(16)
           const ct = hsm_aesEncrypt(M, hSession, aesHandle, msinBcd, 'ctr', zeroIv)
           // Store ciphertext only (IV is zero/fixed; MAC is computed over ciphertext per spec)
@@ -538,7 +539,7 @@ MSIN BCD:       ${msinBcdHex} (${msinBcd.length} bytes, nibble-swapped per TS 23
 Algorithm:      AES-${keyBits}-CTR | IV: ${Array.from(zeroIv)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-            .toUpperCase()} (zero per TS 33.501)
+            .toUpperCase()} (zero in this demo; TS 33.501 Annex C.3.4 takes the ICB from the KDF output)
 Key source:     ${keySource}
 
 > C_Encrypt(CKM_AES_CTR)
@@ -893,7 +894,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
           let kMac: Uint8Array = new Uint8Array(0)
 
           if (profile !== 'C') {
-            // Profiles A/B: ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.3
+            // Profiles A/B: ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.4
             // ECDH Z stays inside HSM; KDF computed via SubtleCrypto SHA-256.
             // PKCS#11 v3.2 has no CKM_ANSI_X9_63_KDF mechanism — SubtleCrypto is the correct bridge.
             const zBytes = hsm_extractKeyValue(
@@ -959,7 +960,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
               .join('')
               .toUpperCase()
             hsmResult = `Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}
-KDF: ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
+KDF: ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.4
 SharedInfo: raw ${profile === 'A' ? '32-byte X25519' : '65-byte P-256 (demo; the Annex C.4.4.1 vectors use the 33-byte compressed key)'} ephemeral public key
 Counter: 0x00000001 → block1, 0x00000002 → block2
 block1 = SHA-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1Hex}
@@ -1413,7 +1414,7 @@ ML-KEM Decapsulation executed via SoftHSM3 WASM.`
 ephPub bytes: ${ephPubBytes.length}
 → SIDF Shared Secret Handle: ${sidfSecretHandle}
 → Z (hex): ${sidfZHex.slice(0, 64)}...
-KDF: ANSI X9.63-KDF (SHA-256) — spec-compliant
+KDF: ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.4
 → K_enc (${sidfKEnc.length} bytes): ${sidfKEncHex}
 → K_mac (${sidfKMac.length} bytes): ${sidfKMacHex}
 

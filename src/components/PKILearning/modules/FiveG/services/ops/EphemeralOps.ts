@@ -499,7 +499,7 @@ export function buildKdfInput(
 }
 
 // Extract the raw public key bytes from a DER-encoded SubjectPublicKeyInfo blob.
-// Per 3GPP TS 33.501 §C.3.3, SharedInfo for ANSI X9.63 KDF must be the raw key bytes,
+// Per 3GPP TS 33.501 §C.3.4, SharedInfo for ANSI X9.63 KDF must be the raw key bytes,
 // not the ASN.1 wrapper.
 //   X25519 SPKI DER: 44 bytes total — 12-byte OID header + 32-byte raw key
 //   P-256 SPKI DER:  91 bytes total — 26-byte OID/wrapper + 65-byte uncompressed EC point (04 prefix)
@@ -533,7 +533,7 @@ export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
     if (!ctx.state.sharedSecretHex) window.crypto.getRandomValues(z)
     const zHex = bytesToHex(z)
 
-    // 2. SharedInfo = raw ephemeral public key bytes (per 3GPP TS 33.501 §C.3.3)
+    // 2. SharedInfo = raw ephemeral public key bytes (per 3GPP TS 33.501 §C.3.4)
     // Strip the ASN.1 SubjectPublicKeyInfo wrapper — X25519 offset=12, P-256 offset=26
     const ephPubHex = ctx.state.ephemeralPubKeyHex || ''
     const sharedInfo = ephPubHex ? extractRawPubKeyBytes(ephPubHex, profile) : new Uint8Array(0)
@@ -578,7 +578,7 @@ Step 1: Input Shared Secret (Z)
   (Reading from ECDH output...)
 Z: ${zHex}
 
-Step 2: SharedInfo = raw ephemeral public key (per 3GPP TS 33.501 §C.3.3)
+Step 2: SharedInfo = raw ephemeral public key (per 3GPP TS 33.501 §C.3.4)
   Note: ASN.1/SPKI wrapper stripped — ${profile === 'A' ? '32-byte X25519 key' : profile === 'B' ? '65-byte uncompressed P-256 point (demo; spec: 33-byte compressed key per TS 33.501 Annex C)' : sharedInfo.length > 0 ? '32-byte X25519 key (hybrid mode)' : 'empty (pure PQC mode)'}
 ${sharedInfoHex ? sharedInfoHex.substring(0, 64) + (sharedInfoHex.length > 64 ? '...' : '') : '(empty)'}
 

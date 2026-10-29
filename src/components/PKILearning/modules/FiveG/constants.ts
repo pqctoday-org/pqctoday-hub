@@ -76,8 +76,8 @@ const sharedSecretHandle = hsm_ecdhDerive(
       id: 'derive_keys',
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
-        'The shared secret (Z) is passed through ANSI X9.63 KDF (SHA-256, per 3GPP TS 33.501 §C.3.3) with the ephemeral public key as SharedInfo. Two iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC). SharedInfo size differs by curve: Profile A uses the raw 32-byte X25519 scalar (Montgomery curves expose only the x-coordinate per RFC 7748 §5 — no 04‖x‖y uncompressed format exists); Profile B uses the 33-byte compressed P-256 point (02/03‖x), which is the form the TS 33.501 Annex C.4.4.1 test vectors derive their keys from. This workshop step passes the 65-byte uncompressed point (04‖x‖y per SEC 1) instead, so its derived keys differ from the Annex vectors.',
-      code: `// ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.3: Z ‖ counter ‖ SharedInfo
+        'The shared secret (Z) is passed through ANSI X9.63 KDF (SHA-256, per 3GPP TS 33.501 §C.3.4) with the ephemeral public key as SharedInfo. Two iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC). SharedInfo size differs by curve: Profile A uses the raw 32-byte X25519 scalar (Montgomery curves expose only the x-coordinate per RFC 7748 §5 — no 04‖x‖y uncompressed format exists); Profile B uses the 33-byte compressed P-256 point (02/03‖x), which is the form the TS 33.501 Annex C.4.4.1 test vectors derive their keys from. This workshop step passes the 65-byte uncompressed point (04‖x‖y per SEC 1) instead, so its derived keys differ from the Annex vectors.',
+      code: `// ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.4: Z ‖ counter ‖ SharedInfo
 // SharedInfo = raw ephemeral public key (size differs by curve):
 //   Profile A (X25519): 32 bytes — Montgomery curve raw x-scalar (RFC 7748 §5)
 //   Profile B (P-256):  33 bytes — compressed point 02/03‖x (TS 33.501 Annex C.4.4.1 vectors)
@@ -97,8 +97,9 @@ const kMac = [...block1.slice(16), ...block2.slice(0, 16)];`,
       description:
         'This is the Encryption Point where the MSIN becomes ciphertext. AES-CTR mode is chosen deliberately: it is length-preserving — the ciphertext is exactly the same byte length as the plaintext MSIN, keeping the SUCI compact over the air interface.',
       code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-CTR)
-// 3GPP TS 33.501 §C.3.3 mandates AES-128-CTR with zero IV
-const iv = new Uint8Array(16) // zero per TS 33.501 — all 16 bytes = 0x00
+// TS 33.501 Annex C.3.4 profiles use AES-128 in CTR mode with the ICB taken from the KDF output;
+// this demo uses a zero IV instead
+const iv = new Uint8Array(16) // zero IV (demo choice) — all 16 bytes = 0x00
 const ciphertext = hsm_aesEncrypt(
   hsmd, sessionHandle, hKenc, msinBcd, iv, 'ctr'
 );`,
@@ -194,7 +195,7 @@ const suciB = {
 const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
 // → C_DeriveKey(CKM_ECDH1_DERIVE) — X25519 path selected by key type
 
-// 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
+// 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.4
 const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
 const block2 = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA256)
 const kEnc = block1.slice(0, 16)                          // 128-bit AES-128 key
@@ -205,7 +206,8 @@ const macBytes = hsm_hmac(M, hSession, kMacHandle, ciphertext)
 const recomputedTag = Array.from(macBytes.slice(0, 8)).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase()
 if (recomputedTag !== storedMacTag) throw new Error('MAC mismatch — SUCI rejected by SIDF')
 
-// 4. Decrypt MSIN only after MAC passes (AES-128-CTR, zero IV per TS 33.501)
+// 4. Decrypt MSIN only after MAC passes (AES-128-CTR; this demo uses a zero IV, whereas
+//    TS 33.501 takes the ICB from the KDF output)
 const iv = new Uint8Array(16) // all zeros
 const msinBcd = hsm_aesDecrypt(hsmd, hSession, kEncHandle, ciphertext, iv, 'ctr')
 
@@ -289,8 +291,8 @@ const sharedSecretHandle = hsm_ecdhDerive(
       id: 'derive_keys',
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
-        'The shared secret (Z) is passed through ANSI X9.63 KDF (SHA-256, per 3GPP TS 33.501 §C.3.3) with the ephemeral public key as SharedInfo. Two iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC). Profile B SharedInfo is the 33-byte compressed P-256 point (02/03‖x) in the TS 33.501 Annex C.4.4.1 vectors — contrast with Profile A where 32 bytes are used (Montgomery x-scalar, RFC 7748 §5). This workshop step passes the 65-byte uncompressed point (04‖x‖y per SEC 1) instead, so its derived keys differ from the Annex vectors.',
-      code: `// ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.3: Z ‖ counter ‖ SharedInfo
+        'The shared secret (Z) is passed through ANSI X9.63 KDF (SHA-256, per 3GPP TS 33.501 §C.3.4) with the ephemeral public key as SharedInfo. Two iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC). Profile B SharedInfo is the 33-byte compressed P-256 point (02/03‖x) in the TS 33.501 Annex C.4.4.1 vectors — contrast with Profile A where 32 bytes are used (Montgomery x-scalar, RFC 7748 §5). This workshop step passes the 65-byte uncompressed point (04‖x‖y per SEC 1) instead, so its derived keys differ from the Annex vectors.',
+      code: `// ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.4: Z ‖ counter ‖ SharedInfo
 // SharedInfo = raw ephemeral public key:
 //   Profile B (P-256):  33 bytes — compressed 02/03‖x (TS 33.501 Annex C.4.4.1 vectors);
 //                       this demo passes the 65-byte uncompressed 04‖x‖y instead
@@ -310,8 +312,9 @@ const kMac = [...block1.slice(16), ...block2.slice(0, 16)];`,
       description:
         'This is the Encryption Point where the MSIN becomes ciphertext. AES-CTR mode is chosen deliberately: it is length-preserving — the ciphertext is exactly the same byte length as the plaintext MSIN, keeping the SUCI compact over the air interface.',
       code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-CTR)
-// 3GPP TS 33.501 §C.3.3 mandates AES-128-CTR with zero IV
-const iv = new Uint8Array(16) // zero per TS 33.501 — all 16 bytes = 0x00
+// TS 33.501 Annex C.3.4 profiles use AES-128 in CTR mode with the ICB taken from the KDF output;
+// this demo uses a zero IV instead
+const iv = new Uint8Array(16) // zero IV (demo choice) — all 16 bytes = 0x00
 const ciphertext = hsm_aesEncrypt(
   hsmd, sessionHandle, hKenc, msinBcd, iv, 'ctr'
 );`,
@@ -409,7 +412,7 @@ const suci = {
 // 1. Re-derive Z (ECDH P-256: HN private key + UE ephemeral public key)
 const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
 
-// 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
+// 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.4
 const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
 const block2 = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA256)
 const kEnc = block1.slice(0, 16)                          // 128-bit AES-128 key
@@ -420,7 +423,8 @@ const macBytes = hsm_hmac(M, hSession, kMacHandle, ciphertext)
 const recomputedTag = Array.from(macBytes.slice(0, 8)).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase()
 if (recomputedTag !== storedMacTag) throw new Error('MAC mismatch — SUCI rejected by SIDF')
 
-// 4. Decrypt MSIN only after MAC passes (AES-128-CTR, zero IV per TS 33.501)
+// 4. Decrypt MSIN only after MAC passes (AES-128-CTR; this demo uses a zero IV, whereas
+//    TS 33.501 takes the ICB from the KDF output)
 const iv = new Uint8Array(16) // all zeros
 const msinBcd = hsm_aesDecrypt(hsmd, hSession, kEncHandle, ciphertext, iv, 'ctr')
 
@@ -742,7 +746,7 @@ const AUTN = concealedSQN + AMF + MAC;
       id: 'derive_kausf',
       title: '5. Derive 5G Keys (KAUSF)',
       description:
-        'The AUSF key (KAUSF) is derived from CK and IK bound to the Serving Network Name (SNN). This binding ensures keys cannot be reused across networks (preventing roaming attacks). KAUSF feeds the 5G key hierarchy: KAUSF → KSEAF (the anchor key, provided to the serving network) → KAMF (at AMF), from which KNASint/KNASenc (NAS signaling protection) and KgNB (radio layer) are each derived. The SEAF in the serving AMF receives KSEAF and never sees KAUSF itself, enforcing home-network control.',
+        'The AUSF key (KAUSF) is derived from CK and IK bound to the Serving Network Name (SNN). This binding ties the anchor key to the serving network, which prevents one serving network from claiming to be a different serving network. KAUSF feeds the 5G key hierarchy: KAUSF → KSEAF (the anchor key, provided to the serving network) → KAMF (at AMF), from which KNASint/KNASenc (NAS signaling protection) and KgNB (radio layer) are each derived. The SEAF in the serving AMF receives KSEAF and never sees KAUSF itself, enforcing home-network control.',
       code: `// KDF for KAUSF (TS 33.501 Annex A.2)
 // FC=0x6A binds to serving network name
 const SNN = "5G:mnc260.mcc310.3gppnetwork.org";

@@ -166,8 +166,8 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           Profile C is not a 3GPP profile: TS 33.501 Annex C defines Profiles A and B and stops
           there. The name comes from a research proposal (Khan, Purification & Chang, Information
           2025, 16, 617), which uses ML-KEM (Kyber-512). The parameters on this card, including
-          ML-KEM-768 and the hybrid (X25519 + ML-KEM) and pure PQC modes, are this playground&apos;s
-          own, not the proposal&apos;s and not 3GPP&apos;s.
+          ML-KEM-768, and the hybrid (X25519 + ML-KEM) mode that this playground adds, are the
+          playground&apos;s own, not the proposal&apos;s and not 3GPP&apos;s.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           TS 33.501 caps the output of a proprietary protection scheme at 3000 octets plus the size
@@ -340,8 +340,8 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           Profile C is a proposed migration path to quantum-resistant subscriber privacy. The
           research proposal replaces ECDH key agreement with ML-KEM (Kyber-512) encapsulation; this
           playground implements ML-KEM-768 and adds a hybrid transition mode (X25519 + ML-KEM-768)
-          next to a pure PQC target mode, and those choices are the playground&apos;s own, not the
-          proposal&apos;s and not 3GPP&apos;s.
+          next to a pure PQC target mode, and the ML-KEM-768 parameter set and the hybrid mode are
+          the playground&apos;s own, not the proposal&apos;s and not 3GPP&apos;s.
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4 text-sm">
           Telecom bodies have published post-quantum guidance and specifications, although TS 33.501

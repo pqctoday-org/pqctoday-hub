@@ -225,7 +225,7 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
 
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
             <ExternalLink size={11} />
-            <span>Source: 3GPP TS 33.501 V18.x.x Annex C.4, publicly available via ETSI</span>
+            <span>Source: 3GPP TS 33.501 Annex C.4 (V19.5.0), publicly available via ETSI</span>
           </div>
         </div>
 

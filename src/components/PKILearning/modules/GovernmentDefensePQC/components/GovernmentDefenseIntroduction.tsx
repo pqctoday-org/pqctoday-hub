@@ -78,7 +78,7 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
         </div>
 
         <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30 space-y-2">
-          <h3 className="font-semibold text-foreground">Same requirement, two vocabularies</h3>
+          <h3 className="font-semibold text-foreground">Same algorithms, two vocabularies</h3>
           <p className="text-sm text-muted-foreground">
             The 2022 advisory names {CNSA_NAMING_DRIFT.advisory2022.join(' and ')}. The October 2026
             FAQ (Ver. 2.2) names {CNSA_NAMING_DRIFT.faq2024.join(' and ')} for the same algorithms.{' '}
@@ -189,8 +189,8 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           impact systems to post-quantum cryptography for key establishment by 31 December 2030 and
           for digital signatures by 31 December 2031. Those deadlines are separate from the CNSA
           ones: National Security Systems are excluded from them and follow CNSSP 15, whose
-          requirements and timelines NSA describes as comparable. Confusing the two is the most
-          common planning error in this sector.
+          requirements and timelines NSA describes as comparable. Confusing the two is a planning
+          error to avoid in this sector.
         </p>
         <p className="text-muted-foreground">
           Commercial Solutions for Classified (CSfC) layers two independent commercial encryption

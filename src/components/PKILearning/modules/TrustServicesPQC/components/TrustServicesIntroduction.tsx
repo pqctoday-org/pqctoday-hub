@@ -289,14 +289,17 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
         <p className="text-sm text-muted-foreground">
           The practical sequence for a TSP is therefore: the suites document gains PQC modes (done —
           TS 119 312 V2.1.1), the timestamp and policy standards have to follow (EN 319 422 dates
-          from 2016 and leaves algorithm choice to the suites document), conformity assessment
-          schemes absorb the change, and only then can a qualified service issue post-quantum
-          signatures under audit. Each step gates the next. One caution on the first step: V2.1.1
-          (June 2026) says of itself that it is incomplete for the EU Digital Identity Wallet and
-          for certain other trust services, including preservation and electronic registered
-          delivery, with an update already in preparation, and it says that scheduling of the
-          post-quantum migration is planned to be addressed in a separate document under
-          development.
+          from 2016 and defers algorithm choice to the suites document, although for qualified
+          time-stamps Implementing Regulation (EU) 2025/1929 lists a version of EN 319 422 in which
+          those clauses are replaced by clauses under which hash and time-stamp signature algorithms
+          shall be compliant with the Agreed Cryptographic Mechanisms endorsed by the European
+          Cybersecurity Certification Group), conformity assessment schemes absorb the change, and
+          only then can a qualified service issue post-quantum signatures under audit. Each step
+          gates the next. One caution on the first step: V2.1.1 (June 2026) says of itself that it
+          is incomplete for the EU Digital Identity Wallet and for certain other trust services,
+          including preservation and electronic registered delivery, with an update already in
+          preparation, and it says that scheduling of the post-quantum migration is planned to be
+          addressed in a separate document under development.
         </p>
       </LearnSection>
 

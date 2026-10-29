@@ -69,10 +69,9 @@ export interface CnsaMilestone {
 
 /**
  * Dated milestones, quoted from the October 2026 FAQ (Ver 2.2), which states
- * the CNSSP 15 dates; the 2016 edition of CNSSP 15 does not carry them. These replaced the per-equipment-type timetable (2025 to
- * 2033) that the 2022 advisory carried, which is itself a useful thing for a
- * learner to see — the deadline moved because the policy was revised, not
- * because anyone missed it.
+ * the CNSSP 15 dates; the 2016 edition of CNSSP 15 does not carry them. The
+ * 2022 advisory carried a different, per-equipment-type timetable (2025 to
+ * 2033), which is itself a useful thing for a learner to see.
  */
 export const CNSA_MILESTONES: CnsaMilestone[] = [
   {
@@ -124,12 +123,12 @@ export const CNSA_HYBRID_OBJECTIONS = [
  * A detail that makes the freshness point better than any lecture could: the
  * September 2022 advisory names the algorithms CRYSTALS-Kyber and
  * CRYSTALS-Dilithium, because FIPS 203/204 did not exist yet. The October
- * 2026 FAQ (Ver 2.2) calls the same algorithms ML-KEM-1024 and ML-DSA-87. Same suite,
- * same requirement, two vocabularies — and a search for "Kyber" in your own
+ * 2026 FAQ (Ver 2.2) calls the same algorithms ML-KEM-1024 and ML-DSA-87. Same
+ * algorithms, two vocabularies — and a search for "Kyber" in your own
  * estate will not find documents written after standardisation.
  */
 export const CNSA_NAMING_DRIFT = {
   advisory2022: ['CRYSTALS-Kyber', 'CRYSTALS-Dilithium'],
   faq2024: ['ML-KEM-1024', 'ML-DSA-87'],
-  note: 'The advisory predates FIPS 203/204 final. Both documents remain current and in force; only the naming changed.',
+  note: 'The advisory predates FIPS 203/204 final. The two documents name the same algorithms differently.',
 }
