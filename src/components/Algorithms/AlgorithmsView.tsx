@@ -788,10 +788,10 @@ export function AlgorithmsView() {
                 <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
                   <Info size={16} className="text-info shrink-0 mt-0.5" />
                   <p className="text-xs text-foreground/85 leading-relaxed">
-                    These are NIST Additional Signatures Round-2 / Round-3 candidates, not yet
-                    standardised. To understand the standardisation lifecycle — the four math
-                    families, the cryptanalysis events, and the worldwide parallel tracks (KpqC,
-                    CACR, ISO/IEC) — see the{' '}
+                    These are NIST Additional Signatures Round 3 candidates, not yet standardised.
+                    To understand the standardisation lifecycle — the four math families, the
+                    cryptanalysis events, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC) —
+                    see the{' '}
                     <Link
                       to="/learn/pqc-candidates"
                       className="text-info hover:underline font-semibold inline-flex items-center gap-1"
