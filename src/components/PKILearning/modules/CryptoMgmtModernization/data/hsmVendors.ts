@@ -148,20 +148,19 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
   },
   {
     id: 'azure-dedicated-hsm',
-    // No catalogName: this product is deprecated in the active catalog (EOL Aug 2025 — no new customers).
-    // posture: 'red' is correct and intentional; do not wire to a Marvell or Managed HSM entry.
+    catalogName: 'Azure Dedicated HSM (Thales Luna 7)',
     vendor: 'Microsoft Azure',
     product: 'Azure Dedicated HSM (Luna 7)',
-    firmwareRev: '7.7.2',
+    firmwareRev: '7.0.3',
     fipsLevel: 3,
     fipsStatus: 'historical',
     cmvpCertNumber: null,
     esvStatus: 'active',
-    platformBinding: 'Luna 7 appliance hosted by Azure',
-    lastVerified: '2026-03-30',
-    posture: 'red',
+    platformBinding: 'Luna 7 appliance (model A790) hosted by Azure',
+    lastVerified: '2026-10-29',
+    posture: 'green',
     notes:
-      'Current Azure Dedicated HSM ships Luna 7.7.2 firmware whose CMVP cert is historical (cert number not verified here; #3892, listed previously, is a Red Hat OpenSSH module). The Luna 7 K7 and G7 hardware entropy sources hold active ESV certificates E98 and E97 (checked 2026-09-24). Customers should request migration to Luna Network HSM 7.13.x for PQC firmware, and check which CMVP certificate lists the PQC algorithms as approved.',
+      "Azure's FAQ names client software 7.2, compatible with FIPS 140-2 Level 3 validated firmware 7.0.3, and lists no PQC algorithm. The CMVP certificate for that firmware was not identified here (#3892, listed previously, is a Red Hat OpenSSH module), and CMVP moved FIPS 140-2 certificates to the Historical list on 21 Sep 2026. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9; Azure says the customer administers the firmware, after consulting Thales Support, and does not say whether the service offers 7.9. The Luna 7 K7 and G7 hardware entropy sources hold active ESV certificates E98 and E97 (checked 2026-09-24). Azure Dedicated HSM is retiring: no new customer onboardings, existing customers supported until 31 July 2028 (Azure pages checked 2026-10-29).",
   },
   {
     id: 'gcp-cloud-hsm',

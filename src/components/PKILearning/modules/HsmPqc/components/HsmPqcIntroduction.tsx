@@ -210,8 +210,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   FIPS-approved is unreconciled, see the Cloud HSM deep dive)
                 </li>
                 <li>
-                  &bull; Azure Dedicated HSM (Thales Luna backend; PQC by firmware upgrade;
-                  retiring)
+                  &bull; Azure Dedicated HSM (Thales Luna 7; PQC needs a customer-administered
+                  firmware upgrade; retiring)
                 </li>
                 <li>&bull; Google Cloud HSM (Cloud KMS lists no PQC algorithm for HSM keys)</li>
               </ul>
@@ -543,11 +543,12 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 from 1 September 2026, while the NIST Security Policy for the same module (CMVP
                 #4703) lists ML-DSA and ML-KEM as non-approved services and the certificate lists no
                 PQC algorithm among its approved ones; we have not found a document that reconciles
-                the two (see the AWS CloudHSM card). Azure Dedicated HSM has PQC available via
-                customer-requested firmware upgrade (note: Azure Dedicated HSM is retiring &mdash;
-                no new customer onboardings); Google Cloud KMS lists its PQC algorithms at the
-                software protection level only, with none for HSM keys (AWS and Google statements
-                checked 23 Oct 2026; the Azure statement checked 15 Oct 2026).
+                the two (see the AWS CloudHSM card). Azure Dedicated HSM is a Thales Luna 7
+                appliance: Azure lists no PQC algorithm, and ML-KEM and ML-DSA come with Luna
+                firmware 7.9 if the customer upgrades, after consulting Thales Support (the service
+                is retiring &mdash; no new customer onboardings); Google Cloud KMS lists its PQC
+                algorithms at the software protection level only, with none for HSM keys (AWS and
+                Google statements checked 23 Oct 2026; the Azure statements checked 29 Oct 2026).
               </p>
             </div>
           </div>
@@ -652,21 +653,25 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
                   <span className="text-foreground">
-                    ML-KEM-512/768/1024, ML-DSA-44/65/87, LMS/HSS (firmware v7.9.2+)
+                    None listed by Azure. Luna firmware 7.9 adds ML-KEM and ML-DSA if the customer
+                    upgrades.
                   </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
                   <span className="text-foreground">
-                    FIPS 140-3 Level 3 (via Thales Luna 7 cert)
+                    FIPS 140-2 Level 3 (Azure documents client software 7.2 and validated firmware
+                    7.0.3)
                   </span>
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  Powered by Thales Luna 7 hardware. PQC available via firmware v7.9.2+ — customers
-                  must request the upgrade via Azure Support. SLH-DSA not yet in Luna v7.9.2. Azure
-                  Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.
+                  Powered by the Thales Luna 7 HSM (model A790). Azure&apos;s pages list no PQC
+                  algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9. Customers
+                  administer the firmware themselves, after consulting Thales Support, and Azure
+                  does not say whether the service offers firmware 7.9. Azure Managed HSM (Marvell
+                  LS2 backend) has a separate PQC roadmap.
                 </p>
                 <p>
                   <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers
