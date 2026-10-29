@@ -493,10 +493,11 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
             </div>
             <p className="text-xs text-muted-foreground">
               The updated EU regulation for electronic identification mandates European Digital
-              Identity (EUDI) wallets with deployments starting 2027+. While eIDAS 2.0 does not yet
-              mandate PQC specifically, these wallets will need quantum-safe cryptography for
-              long-term trust. ENISA identifies wallet providers as high-impact entities for early
-              PQC adoption.
+              Identity (EUDI) wallets with deployments starting 2027+. eIDAS 2.0 does not yet
+              mandate PQC. The SD-JWT standard (RFC 9901) leaves the choice of signature algorithm
+              to the application, including post-quantum algorithms &ldquo;when they are
+              ready&rdquo;, and NIST has standardised ML-DSA and SLH-DSA as post-quantum signatures
+              that issuers could adopt for long-lived credentials.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
