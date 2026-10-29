@@ -277,7 +277,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
     algorithm: 'fn-dsa-512',
     label: 'FN-DSA-512 (FIPS 206 in development)',
     description:
-      'Hash-and-sign lattice scheme with compact signatures, giving the smallest footprint of the post-quantum chains compared here. In its March 2024 position statement EMVCo named no post-quantum algorithm for EMV cards; the card-side evidence is research (IDEMIA, 2022: Falcon or Dilithium in the certificates of a banking-card prototype). FIPS 206 still in development — no public draft released as of 2026.',
+      'Hash-and-sign lattice scheme with compact signatures, giving the smallest footprint of the post-quantum chains compared here. In its March 2024 position statement EMVCo named no post-quantum algorithm for EMV cards; the card-side evidence is research (IDEMIA, 2022: Falcon or Dilithium in the certificates of a banking-card prototype). NIST lists FIPS 206 as in development (checked 29 October 2026).',
     fipsStatus: 'FIPS 206 (in development \u2014 not yet published)',
     levels: [
       {
