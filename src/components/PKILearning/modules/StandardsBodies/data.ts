@@ -88,7 +88,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       'US federal agency that develops and promotes measurement standards, including cryptographic standards that are widely adopted worldwide. NIST led the post-quantum algorithm competition, which opened with a call for proposals in December 2016, selected its first algorithms in July 2022, and published FIPS 203, 204, and 205 in August 2024.',
     decisionMaking:
-      'Open competition → public comment period → FIPS publication. The PQC standardization ran from 2016–2024: 82 submissions (69 met the requirements) → 26 candidates in round 2 → 7 finalists and 8 alternates in round 3 → first algorithms selected July 2022 → FIPS 203/204/205 published August 2024 → fourth round for key establishment ended March 2025 with HQC selected. All draft standards undergo public comment (minimum 90 days).',
+      'Open competition → public comment period → FIPS publication. The PQC standardization began in 2016: 82 submissions (69 met the requirements) → 26 candidates in round 2 → 7 finalists and 8 alternates in round 3 → first algorithms selected July 2022 → FIPS 203/204/205 published August 2024 → fourth round for key establishment ended March 2025 with HQC selected. All draft standards undergo public comment (minimum 90 days).',
     keyPqcOutputs: [
       'FIPS 203 (ML-KEM, August 2024)',
       'FIPS 204 (ML-DSA, August 2024)',
