@@ -1168,8 +1168,11 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
  * Journey map milestones — page-level actions inserted between learning phases
  * ────────────────────────────────────────────────────────────────────────────── */
 
+/** `afterPhase` value that puts a milestone before the first learning phase. */
+export const JOURNEY_START_PHASE = 'start'
+
 export interface JourneyMilestoneConfig {
-  /** Insert this milestone after the checkpoint with this ID */
+  /** Insert this milestone after the checkpoint with this ID, or before the first phase with JOURNEY_START_PHASE */
   afterPhase: string
   route: string
   label: string
@@ -1180,6 +1183,26 @@ export interface JourneyMilestoneConfig {
    * Required (not optional) so a new milestone cannot be added without one.
    */
   purpose: string
+}
+
+/**
+ * A role whose first action is a page rather than a lesson. My Path shows it above the Resume
+ * card until the learner has started a lesson on the path.
+ */
+export interface PersonaFirstStepConfig {
+  route: string
+  label: string
+  purpose: string
+}
+
+export const PERSONA_FIRST_STEP: Partial<Record<PersonaId, PersonaFirstStepConfig>> = {
+  // Tests first (owner decision, 29 Oct 2026).
+  'cert-engineer': {
+    route: '/playground/hsm?tab=build&dtab=acvp&engine=dual',
+    label: 'Run the validation tests',
+    purpose:
+      'Replay selected NIST reference samples and known-answer tests against the PKCS#11 engines, then follow the lessons from the certificate to the tests behind it.',
+  },
 }
 
 export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
@@ -1328,9 +1351,11 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     },
   ],
   'cert-engineer': [
+    // Tests first (owner decision, 29 Oct 2026): the validation workbench opens the journey, as it
+    // opens the home board and the Learn landing's next step.
     {
-      afterPhase: 'cert-algorithms-entropy',
-      route: '/playground',
+      afterPhase: JOURNEY_START_PHASE,
+      route: '/playground/hsm?tab=build&dtab=acvp&engine=dual',
       label: 'Run Validation Tests',
       purpose:
         'Check our numbers against selected public NIST ACVP-Server reference samples and published KATs rather than trusting them.',
