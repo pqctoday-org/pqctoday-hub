@@ -11,7 +11,7 @@ import { loadPQCAlgorithmsData } from './pqcAlgorithmsData'
 // iso.org record 86890 (ISO/IEC 18033-2:2006/Amd 2:2026).
 
 const NOT_SELECTED = 'Not selected by NIST (Round 4 concluded March 2025)'
-const HQC_LABEL = 'Selected March 2025; draft FIPS not yet published; final expected 2027'
+const HQC_LABEL = 'Selected by NIST on 11 March 2025'
 const ROUND3 = 'NIST Additional Signatures Round 3 (May 2026)'
 const ROUND3_URL = 'https://csrc.nist.gov/projects/pqc-dig-sig/round-3-additional-signatures'
 const KPQC_FINAL = 'KpqC final selection (January 2025)'
