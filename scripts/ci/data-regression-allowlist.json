@@ -1,0 +1,26 @@
+{
+  "emptiedOk": {
+    "industry-landscape": {
+      "national_certification": {
+        "expectedEmptied": 18,
+        "reason": "The cited law (PRC Cryptography Law: Art. 25 voluntary; Art. 26 mandatory only for catalogue products, no sector named) does not support a mandated national scheme for these rows, and on five telecom rows the cited documents do not state the India or GSMA scheme either, so the value is set to none.",
+        "until": "2026-11-11"
+      },
+      "national_certification_scheme": {
+        "expectedEmptied": 18,
+        "reason": "The cited documents do not state the scheme text, so it is cleared on the same rows.",
+        "until": "2026-11-11"
+      },
+      "hsm_certification_logic": {
+        "expectedEmptied": 14,
+        "reason": "The HSM certification logic no longer asserts a requirement the cited documents do not state.",
+        "until": "2026-11-11"
+      },
+      "hsm_certification_refs": {
+        "expectedEmptied": 14,
+        "reason": "The references go with the logic that no longer asserts a requirement.",
+        "until": "2026-11-11"
+      }
+    }
+  }
+}
