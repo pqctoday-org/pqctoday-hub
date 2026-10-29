@@ -10,7 +10,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
     maxPayloadBytes: 220,
     dataRateKbps: 2.4,
     linkType: 'VHF / HF / SATCOM',
-    currentCrypto: 'None (plaintext)',
+    currentCrypto: 'None in typical use (ARINC 823 Part 1 message security is rarely adopted)',
     bidirectional: true,
     standardRef: 'ARINC 618 / ARINC 619 · ARINC 823 Part 1 (message security)',
     pqcOverhead: {
@@ -31,7 +31,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
     maxPayloadBytes: 1024,
     dataRateKbps: 10,
     linkType: 'SATCOM (Inmarsat/Iridium) / VDL Mode 2',
-    currentCrypto: 'None (unencrypted and unauthenticated data links)',
+    currentCrypto: 'None reported (2024 paper: unencrypted and unauthenticated data links)',
     bidirectional: true,
     standardRef: 'RTCA DO-258A / ED-100A (FANS 1/A) · DO-280B / ED-110B (ATN B1)',
     pqcOverhead: {

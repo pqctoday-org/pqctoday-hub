@@ -388,7 +388,7 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
         id: 'hsm',
         name: 'Hardware Security Modules',
         description:
-          'Tamper-resistant hardware that generates, stores, and uses cryptographic keys without ever exposing them. PKCS#11 v3.2 interface. This reference design assumes a module validated to FIPS 140-3 Level 3. The Hong Kong SFC Guidelines for Virtual Asset Trading Platform Operators say keys should be kept in a secure environment such as an HSM "with appropriate certification", and the Dubai VARA Custody Services Rulebook says custodians "shall at all times maintain appropriate certifications as may be required under industry best practices"; neither names a certification scheme.',
+          'Tamper-resistant hardware that generates, stores, and uses cryptographic keys without ever exposing them. PKCS#11 v3.2 interface. This reference design assumes a module validated to FIPS 140-3 Level 3. The Hong Kong SFC Guidelines for Virtual Asset Trading Platform Operators say that, where practicable, keys should be kept in a secure environment such as an HSM "with appropriate certification", and the Dubai VARA Custody Services Rulebook says custodians "shall at all times maintain appropriate certifications as may be required under industry best practices applicable to the safekeeping of Virtual Assets". Neither text names a scheme.',
         cryptoPrimitives: [
           'PKCS#11 v3.2 API',
           'ECDSA / RSA key generation & signing',

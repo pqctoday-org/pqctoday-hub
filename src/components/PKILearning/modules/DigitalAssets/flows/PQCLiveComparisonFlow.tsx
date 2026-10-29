@@ -261,7 +261,7 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.EXTRACT_PUB(filenames.mlPriv, file
       id: 'sign',
       title: '2. Sign the Same Transaction',
       description:
-        'Both algorithms sign an identical message. Notice how the signature sizes differ — this is what would drive an estimated 9–46× witness data overhead on Bitcoin if a PQC signature scheme were adopted (BIP-360 itself includes none).',
+        'Both algorithms sign an identical message. Notice how the signature sizes differ — this is the size cost a post-quantum signature scheme would add to Bitcoin transactions (BIP-360 itself includes none).',
       code: `# Message
 MSG="${DEMO_MESSAGE}"
 

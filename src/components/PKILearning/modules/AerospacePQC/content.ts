@@ -51,7 +51,8 @@ export const content: ModuleContent = {
       source: 'CNSA 2.0',
     },
     {
-      label: 'NSS equipment and services that cannot support CNSA 2.0 phased out',
+      label:
+        'NSS equipment and services that cannot support CNSA 2.0 phased out, unless an exception is granted',
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0',
     },
@@ -64,7 +65,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Advanced-level module (120 min, 6 workshop steps) covering post-quantum cryptography migration for the aerospace and space industries — environments with extreme bandwidth constraints, multi-decade asset lifetimes, mandatory re-certification requirements, and export-control implications for cryptographic algorithm changes.',
+      'Advanced-level module (120 min, 6 workshop steps) covering post-quantum cryptography migration for the aerospace and space industries — environments with extreme bandwidth constraints, multi-decade asset lifetimes, re-certification requirements, and export-control implications for cryptographic algorithm changes.',
     keyConcepts:
       'Avionics protocols and crypto constraints: ARINC 429 (12–14.5 kbit/s low speed or 100 kbit/s high speed, 1960s legacy, 32-bit/4-byte data word — PQC signatures physically impossible on-wire), ARINC 664/AFDX (100 Mbps Ethernet, ML-DSA overhead manageable with proper framing), MIL-STD-1553 (1 Mbps, strict deterministic latency, real-time command/response), EFB (Electronic Flight Bag) TLS connections, ACARS (very limited bandwidth, 2400 bps VHF — PQC handshake infeasible).',
     workshopSummary:

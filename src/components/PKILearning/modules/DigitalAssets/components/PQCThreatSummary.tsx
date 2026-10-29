@@ -169,8 +169,8 @@ export const PQCThreatSummary: React.FC = () => {
               Foundation&apos;s Lean Ethereum roadmap proposes replacing validator BLS signatures
               with the hash-based leanXMSS scheme and using EIP-8141 account abstraction (considered
               for Hegotá in the second half of 2026) to give accounts signature agility, targeting
-              core post-quantum infrastructure by approximately 2029. STARK-based or lattice-based
-              schemes are candidates to replace KZG commitments, not account signatures.
+              core post-quantum infrastructure by approximately 2029. STARK-based and lattice-based
+              commitments are the two leading candidates to replace KZG commitments.
             </p>
             <div className="flex flex-wrap gap-2">
               <a
@@ -210,11 +210,11 @@ export const PQCThreatSummary: React.FC = () => {
               Community Discussion
             </span>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              No ratified SIMD (Solana Improvement Document) for PQC yet; SIMD-0461, a Falcon
-              signature-verification syscall, was closed by its author in June 2026. The core
-              challenge is structural: Solana addresses <em>are</em> Ed25519 public keys — there is
-              no hash layer to hide behind. Community proposals explore new PQC-keyed account types
-              requiring users to explicitly migrate all assets and positions.
+              SIMD-0461 (Solana Improvement Document), a proposed Falcon signature-verification
+              syscall, was closed by its author on 2026-06-17. The core challenge is structural:
+              Solana addresses <em>are</em> Ed25519 public keys — there is no hash layer to hide
+              behind. Community proposals explore new PQC-keyed account types requiring users to
+              explicitly migrate all assets and positions.
             </p>
             <a
               href="https://github.com/solana-foundation/solana-improvement-documents"

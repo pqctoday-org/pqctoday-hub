@@ -77,10 +77,13 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
               <p className="text-xs text-muted-foreground">
                 Avionics with RSA-2048 / ECDSA P-256 for nav database auth and SATCOM. Crypto
                 libraries certified under <InlineTooltip term="DO-178C">DO-178C</InlineTooltip>.
-                ARINC 835-2 (information report, December 2025) gives guidance on securing loadable
-                software parts with digital signatures and public key infrastructure. Fleet-wide PQC
-                rollout:
+                Fleet-wide PQC rollout:
                 <strong> 5&ndash;10 years</strong>.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                <strong>Loadable software:</strong> ARINC 835-2 (information report, December 2025)
+                gives guidance on securing loadable software parts with digital signatures and
+                public key infrastructure.
               </p>
             </div>
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">

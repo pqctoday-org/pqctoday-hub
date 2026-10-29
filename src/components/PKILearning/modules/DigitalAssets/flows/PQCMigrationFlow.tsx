@@ -484,9 +484,8 @@ const EthereumPQC: React.FC = () => (
             1
           </span>
           <span className="text-muted-foreground">
-            <strong className="text-foreground">BLS consensus signatures</strong> — replace with
-            hash-based alternatives (Winternitz variants; leanXMSS is the proposed hash-based
-            scheme), using STARK proofs for aggregation
+            <strong className="text-foreground">BLS consensus signatures</strong> — replace with the
+            hash-based leanXMSS scheme, using the leanVM zkVM for SNARK-based signature aggregation
           </span>
         </div>
         <div className="flex items-start gap-2">
@@ -518,12 +517,13 @@ const EthereumPQC: React.FC = () => (
         </div>
       </div>
       <p className="text-xs text-muted-foreground mt-3">
-        EIP-8141 &quot;validation frames&quot; would allow bundling many signatures into a single
-        compressed proof, keeping costs manageable. EIP-8141 was being considered for the{' '}
+        EIP-8141 would give accounts signature agility: individual accounts could switch to a
+        post-quantum signature scheme without waiting for the entire protocol to change. It was
+        being considered for the{' '}
         <strong className="text-foreground">Hegotá upgrade in the second half of 2026</strong>, and
         the Lean Ethereum roadmap targets completion of core post-quantum infrastructure by
         approximately 2029 (ethereum.org roadmap, page updated 2026-09-08). STARK-based and
-        lattice-based schemes are candidates to replace KZG commitments, not account signatures.
+        lattice-based commitments are the two leading candidates to replace KZG commitments.
       </p>
       <div className="flex flex-wrap gap-2 mt-3">
         <a
@@ -653,12 +653,14 @@ const SolanaHardProblem: React.FC = () => (
       <h4 className="font-semibold text-foreground mb-3">The SIMD Process</h4>
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
         Solana protocol changes go through Solana Improvement Documents (SIMDs) — a process similar
-        to Bitcoin&apos;s BIPs and Ethereum&apos;s EIPs. As of 2026, no SIMD for PQC has been
-        ratified. The one concrete proposal, SIMD-0461, would have added a Falcon (FN-DSA)
-        signature-verification syscall as an exploratory, verification-only addition that would not
-        replace Ed25519. Its author closed the pull request on 2026-06-17 and said it would be
-        reopened if there is more demand, pointing to an existing Falcon implementation that runs as
-        an on-chain (SBF) programme. Approaches that have been discussed include:
+        to Bitcoin&apos;s BIPs and Ethereum&apos;s EIPs. A concrete proposal, SIMD-0461, would have
+        added a Falcon (FN-DSA) signature-verification syscall as an exploratory, verification-only
+        addition that would not replace Ed25519. Its author closed the pull request on 2026-06-17
+        and said it would be reopened if there is more demand, pointing to an existing Falcon
+        implementation that runs as an on-chain (SBF) programme. A commenter in the thread says
+        Falcon-512 and Hawk-512 verifiers already exist as on-chain programmes and work without
+        protocol changes, and that a Keccak-p1600 syscall (#563) is planned instead to speed up many
+        such signature schemes. Approaches that have been discussed include:
       </p>
       <ul className="text-xs text-muted-foreground space-y-2">
         <li className="flex items-start gap-1.5">
@@ -732,8 +734,8 @@ const SolanaHardProblem: React.FC = () => (
             <td className="p-3 font-medium text-foreground">PQC usable today?</td>
             <td className="p-3 text-status-success font-medium">Yes — via smart accounts</td>
             <td className="p-3">
-              No native PQC accounts or verification syscall; programme-level verification is the
-              route discussed
+              Reported: Falcon-512 and Hawk-512 verifiers run as on-chain programmes without
+              protocol changes (SIMD-0461 thread)
             </td>
           </tr>
           <tr className="border-b border-border/50">
@@ -742,7 +744,7 @@ const SolanaHardProblem: React.FC = () => (
               Multiple EIPs active (4337, 7702, 8141)
             </td>
             <td className="p-3 text-status-warning">
-              No ratified SIMD; SIMD-0461 (Falcon verification syscall) closed in June 2026
+              SIMD-0461 (Falcon verification syscall) closed by its author in June 2026
             </td>
           </tr>
           <tr>
@@ -758,8 +760,8 @@ const SolanaHardProblem: React.FC = () => (
       <p className="text-xs text-muted-foreground leading-relaxed italic">
         <strong className="text-foreground not-italic">Key takeaway:</strong> Solana&apos;s quantum
         risk is structurally higher than Ethereum&apos;s. Every account&apos;s public key is
-        permanently and irrevocably on-chain from the moment of first use. Without a ratified SIMD
-        and broad wallet/protocol support, the window to migrate safely is shrinking with each
+        permanently and irrevocably on-chain from the moment of first use. Without protocol-level
+        PQC support and broad wallet support, the window to migrate safely is shrinking with each
         passing year.
       </p>
     </div>

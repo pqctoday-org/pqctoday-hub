@@ -188,8 +188,8 @@ export const CERTIFICATION_AUTHORITIES = [
     name: 'FAA',
     country: 'United States',
     standard: 'Project-specific special conditions',
-    framework: 'DO-326A / DO-356A / DO-355',
-    status: 'Rule proposed 21 Aug 2024',
+    framework: 'DO-326 / DO-355 / DO-356',
+    status: 'Proposed rule published 21 Aug 2024',
     notes:
       'In its 21 August 2024 notice of proposed rulemaking (Federal Register), the FAA described addressing aircraft cybersecurity through project-specific special conditions and proposed adding aircraft cybersecurity requirements to 14 CFR parts 25, 33 and 35. RTCA DO-326, DO-355 and DO-356 are the industry guidance that applicants have wanted to use as a method of compliance.',
   },
