@@ -887,13 +887,13 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
   {
     vendorId: 'azure-dhsm',
     vendorName: 'Azure Dedicated HSM',
-    currentFirmware: 'Thales Luna 7.8.x',
-    targetFirmware: 'Thales Luna 7.9.2+ (same as on-prem)',
-    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
+    currentFirmware: 'Thales Luna 7 firmware 7.0.3 (the version Azure documents)',
+    targetFirmware: 'Thales Luna 7.9 (customer-administered)',
+    pqcAlgorithmsAdded: ['ML-KEM (FIPS 203)', 'ML-DSA (FIPS 204)'],
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM (same as Thales Luna 7)',
     notes:
-      'Azure Dedicated HSM is the same Thales Luna Network HSM 7 hardware — identical PQC upgrade path. Customer initiates via Azure Support portal (not auto-applied). Backup/restore recommended before upgrade. Note: Azure Dedicated HSM is retiring — no new customers after August 2025. FIPS 140-3 CMVP resubmission follows Thales Luna 7 resubmission timeline.',
+      'Azure Dedicated HSM is the Thales Luna 7 HSM (model A790). Azure lists no PQC algorithm. Azure says the customer has full administrative control, including upgrading firmware, and should consult Thales Support first; Azure does not say whether the service offers firmware 7.9. Backup/restore recommended before upgrade. The service is retiring: no new customer onboardings, and existing customers are supported until 31 July 2028.',
   },
   {
     vendorId: 'crypto4a-qxhsm',

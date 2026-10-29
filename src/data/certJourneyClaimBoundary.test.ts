@@ -100,6 +100,16 @@ const BANNED: { file: string; banned: RegExp; why: string }[] = [
     why: 'Luna certificate #4684 (firmware 7.8.4 and 7.8.5) lists no PQC algorithm',
   },
   {
+    file: `${HSM}/components/HsmPqcIntroduction.tsx`,
+    banned: /customers\s+must request the upgrade via Azure Support|firmware v7\.9\.2\+\)/,
+    why: "Azure's FAQ: the customer administers firmware after consulting Thales Support; Azure lists no PQC algorithm and documents FIPS 140-2 Level 3, not 140-3",
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/data/hsmVendors.ts',
+    banned: /firmwareRev: '7\.7\.2'|EOL Aug 2025/,
+    why: 'Azure documents firmware 7.0.3, and Azure Dedicated HSM is supported until 31 July 2028',
+  },
+  {
     file: 'src/components/PKILearning/modules/KmsPqc/data/kmsProviderData.ts',
     banned: /none are GA yet/,
     why: 'Cloud KMS PQC signing GA 16 Jul 2026 (release notes)',

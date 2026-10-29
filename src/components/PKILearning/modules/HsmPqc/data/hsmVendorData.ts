@@ -145,9 +145,9 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     product: 'Azure Dedicated HSM',
     type: 'cloud',
     catalogName: 'Azure Dedicated HSM (Thales Luna 7)',
-    fips140Level: 'FIPS 140-3 Level 3 (via Thales Luna 7 cert)',
+    fips140Level: 'FIPS 140-2 Level 3 (Azure documents validated firmware 7.0.3)',
     formFactor: 'cloud',
-    firmwareVersion: '7.9.2+ (customer-requested via Azure Support)',
+    firmwareVersion: '7.0.3 documented by Azure; customer-administered upgrade to 7.9 for PQC',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
     sideChannelCountermeasures: [

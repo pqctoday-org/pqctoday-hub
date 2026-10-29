@@ -56,14 +56,15 @@ const SAMPLE_ASSETS: CbomExportItem[] = [
       'Example: the certificate for this deployed version has reached its sunset date, so CMVP lists it as Historical. (The current BC-FJA certificate, #4943, is Active.)',
   },
   {
-    name: 'Azure Dedicated HSM (Luna 7.7.2)',
-    version: 'fw 7.7.2',
+    name: 'Azure Dedicated HSM (Luna 7)',
+    version: 'fw 7.0.3',
     type: 'hsm',
     fipsStatus: 'historical',
     esvStatus: 'not-validated',
     pqcSupport: 'No PQC in FIPS boundary for this firmware',
     posture: 'red',
-    notes: 'CMVP cert historical. Firmware upgrade required.',
+    notes:
+      'FIPS 140-2 validation (Historical list). Azure lists no PQC algorithm; PQC needs a customer-administered firmware upgrade.',
   },
   {
     name: 'wolfCrypt FIPS',

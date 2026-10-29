@@ -671,6 +671,11 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
               ))}
             </tbody>
           </table>
+          <p className="text-[10px] text-muted-foreground mt-3">
+            Posture colour shows PQC availability from the product catalog (green: available;
+            yellow: partial, roadmap or unverified; red: none). The FIPS level and certificate
+            column is separate: green does not mean the PQC algorithms are FIPS-validated.
+          </p>
           <p className="text-[10px] text-muted-foreground italic mt-3">
             CMVP certificates bind to a specific firmware revision and platform list. A firmware
             upgrade on an HSM may invalidate its current cert — subscribe to NIST CMVP change

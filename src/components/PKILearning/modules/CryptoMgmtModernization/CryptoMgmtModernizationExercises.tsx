@@ -39,11 +39,11 @@ const EXERCISES = [
   },
   {
     id: 'hsm-pqc-swap',
-    title: 'Azure Dedicated HSM is historical; now what?',
+    title: 'Azure Dedicated HSM is retiring; now what?',
     badge: 'Hardware',
     badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
     scenario:
-      'Your KEK hierarchy lives inside Azure Dedicated HSM (Luna 7.7.2 firmware, CMVP cert historical). A major compliance audit is 6 months away and your policy requires active FIPS 140-3 L3 coverage.',
+      'Your KEK hierarchy lives inside Azure Dedicated HSM (Luna 7; Azure documents FIPS 140-2 L3 validated firmware 7.0.3, takes no new customers and supports existing ones until 31 July 2028). A major compliance audit is 6 months away and your policy requires active FIPS 140-3 L3 coverage.',
     hint: "Walk the hardware through the CBOM Builder's HSM view. Plan key export, envelope bridging, KMIP sync, pilot scope. Model cost/benefit in the No-Regret ROI Builder.",
     step: 2,
   },
