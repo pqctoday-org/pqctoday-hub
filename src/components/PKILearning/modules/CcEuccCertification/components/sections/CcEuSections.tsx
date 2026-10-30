@@ -816,12 +816,13 @@ export const CcLifecycle = () => (
         December 2027.
       </p>
       <p>
-        <strong>Under EUCC:</strong> The change must also use post-quantum mechanisms that the ECCG
-        Agreed Cryptographic Mechanisms accept — for example, lattice schemes combined with a
-        classical mechanism — and EUCC’s own change rules (CIR 2025/2462) decide whether it is minor
-        or major. An EUCC carve-out keeps older protection profiles (CC 3.1 revisions 1–4) usable
-        where eIDAS, Decision 2016/650 or the tachograph rules require them, with no end date (see
-        the EUCC path).
+        <strong>Under EUCC:</strong> The change should preferably use post-quantum mechanisms from
+        the ECCG Agreed Cryptographic Mechanisms (ACM v2): the EUCC cryptography guidelines say
+        evaluators should verify that products preferably rely on them, and the ACM is a guideline
+        rather than a legal list. EUCC’s own change rules (CIR 2025/2462) decide whether the change
+        is minor or major. An EUCC carve-out keeps older protection profiles (CC 3.1 revisions 1–4)
+        usable where eIDAS, Decision 2016/650 or the tachograph rules require them, with no end date
+        (see the EUCC path).
       </p>
     </Callout>
 
@@ -1067,7 +1068,10 @@ export const EuccScheme = () => (
       The certificate must also show whether components were used as in the Common Criteria or
       augmented. And AVA_VAN.4 or .5 is not open to everyone: under Article 7(3) it is possible only
       if the product falls in a technical domain listed in Annex I, or in a product category covered
-      by an Annex II Protection Profile — or, exceptionally, after notifying the national authority.
+      by an Annex II Protection Profile — or, in exceptional and duly justified cases (Article
+      7(3)(c)), after the conformity assessment body notifies the national cybersecurity
+      certification authority with a justification and a proposed methodology; the authority
+      approves or amends the methodology, and no certificate is issued before it decides.
     </P>
     <DataTable
       caption="What Annex I and Annex II contain"
@@ -1130,9 +1134,9 @@ export const EuccScheme = () => (
         [
           'Guideline',
           <>
-            Cryptography (ACM v2); product series (v1, 9 July 2025); assurance-continuity change
-            scenarios (v1, 10 December 2025); vulnerability management and disclosure (v1.1, adopted
-            10 January 2025)
+            Cryptography (ACM v2); product series (version 1, July 2025); assurance-continuity
+            change scenarios (v1, 10 December 2025); vulnerability management and disclosure (v1.1,
+            adopted 10 January 2025)
           </>,
           'No — recommendations to developers and evaluators',
         ],
@@ -1196,7 +1200,7 @@ export const EuccScheme = () => (
       <SourceCite id="CIR-EU-2025-2462-EUCC-Amendment" label="CIR 2025/2462" />; ENISA EUCC
       certification library page;{' '}
       <PlainSource>
-        ENISA product-series methodology v1 (9 July 2025); ENISA assurance-continuity change
+        ENISA product-series methodology version 1 (July 2025); ENISA assurance-continuity change
         scenarios v1 (10 December 2025)
       </PlainSource>
       ; ENISA certificate page EUCC-3110-2025-12-2500098-01;{' '}
@@ -2586,9 +2590,10 @@ export const CcRegionalSchemes = () => (
   <div className="space-y-4" data-as-of={REGIONAL_AS_OF}>
     <P>
       Common Criteria is one standard (ISO/IEC 15408, with ISO/IEC 18045 for the evaluation method),
-      but nobody is certified by “Common Criteria”. A certificate is always issued by a national
-      scheme, and what it is worth elsewhere depends on a recognition arrangement. Every scheme
-      starts from the same criteria and then adds its own requirements on top.
+      but nobody is certified by “Common Criteria”. A certificate is issued under a certification
+      scheme: a national scheme or, in the EU, the EUCC set out in Regulation (EU) 2024/482. What it
+      is worth elsewhere depends on a recognition arrangement. Every scheme starts from the same
+      criteria and then adds its own requirements on top.
     </P>
 
     <H3>Three layers</H3>
@@ -2605,8 +2610,9 @@ export const CcRegionalSchemes = () => (
           '2. Recognition',
           <>
             <strong>CCRA</strong> (worldwide): mutual recognition only for a collaborative PP, or up
-            to EAL2 + ALC_FLR. <strong>EUCC</strong> (EU law): ‘substantial’ and ‘high’, up to
-            AVA_VAN.5 inside the technical domains.
+            to EAL2 + ALC_FLR. <strong>EUCC</strong> (EU law): ‘substantial’ and ‘high’; AVA_VAN 4
+            or 5 where the product is covered by an Annex I technical domain or by a certified
+            protection profile listed in Annex II (Art 7(3)).
           </>,
           <span key="r">
             <Ref source={CCRA_SOURCE} />,{' '}
@@ -2624,15 +2630,17 @@ export const CcRegionalSchemes = () => (
       ]}
     />
 
-    <Callout tone="key" title="The CCRA recognises the evaluation — never the cryptography">
+    <Callout
+      tone="key"
+      title="The CCRA recognises the evaluation; national cryptographic approvals are added by each scheme"
+    >
       <p>
         The 2014 arrangement says collaborative PPs “shall not contain requirements that have a
         dependency on national conformity assessment schemes” and should allow “other national
-        approved primitives/protocols so nations can provide their own refinements”. So no algorithm
-        or module validation travels with a CC certificate: the US asks for a CAVP certificate,
-        Canada for Cyber Centre-approved cryptography, Korea for KCMVP, Malaysia for MyCV, the EU
-        for the ECCG Agreed Cryptographic Mechanisms. That is exactly where post-quantum
-        requirements enter.
+        approved primitives/protocols so nations can provide their own refinements”. So algorithm
+        and module validation is left to each scheme: the US asks for a CAVP certificate, Canada for
+        Cyber Centre-approved cryptography, Korea for KCMVP, Malaysia for MyCV, the EU for the ECCG
+        Agreed Cryptographic Mechanisms. That is exactly where post-quantum requirements enter.
       </p>
       <p className="text-xs text-muted-foreground">
         <Ref source={CCRA_SOURCE} />, Annex K.1
@@ -2670,8 +2678,8 @@ export const CcRegionalSchemes = () => (
       (validation or an approved-mechanism list), a <strong>lighter national method</strong>{' '}
       (France’s CSPN, Germany’s BSZ, Spain’s LINCE, Japan’s ST confirmation), and a{' '}
       <strong>procurement or legal mandate</strong> that turns a certificate into a condition of
-      sale (NIAP’s Product Compliant List, the EU regulation, Australia’s ISM, Spain’s CPSTIC
-      catalogue).
+      sale (NIAP’s Product Compliant List, Australia’s ISM, Spain’s CPSTIC catalogue; the EUCC
+      scheme itself is voluntary-based, per ENISA).
     </P>
 
     <H3>Post-quantum positions — where a scheme or its government has published one</H3>

@@ -456,7 +456,7 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
         text: 'The ISM requires CC evaluation against an ASD-endorsed PP for cryptographic equipment protecting sensitive government data.',
       },
     ],
-    pqc: 'ISM: traditional asymmetric cryptography ceases by 2030; ML-KEM-1024 and ML-DSA-87 are the approved post-quantum parameter sets.',
+    pqc: 'ISM: DH, ECDH, ECDSA and RSA will not be approved beyond 2030; ML-KEM-768 and ML-KEM-1024 and ML-DSA-65 and ML-DSA-87 are approved, but ML-KEM-768 and ML-DSA-65 will not be approved beyond 2030.',
     sources: [{ label: 'ISM — guidelines for cryptography', libraryId: 'AU-ASD-ISM-Crypto-2024' }],
   },
   {

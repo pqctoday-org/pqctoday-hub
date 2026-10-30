@@ -88,21 +88,23 @@ export const ASSURANCE_COMPONENTS: ReadonlyMap<string, AssuranceComponent> = new
         name: 'Basic flaw remediation',
         plain: 'The developer tracks and corrects reported security flaws.',
         vsEal4:
-          'ALC_FLR is in no EAL — it only ever appears as an augmentation (CC:2022 Part 5, note to Table 1).',
+          'ALC_FLR is in no EAL; CC:2022 Part 5 notes that the ALC_FLR and ALC_TDA families are not shown in Table 1 and are often used as an augmentation to the EALs.',
       },
       {
         code: 'ALC_FLR.2',
         name: 'Flaw reporting procedures',
         plain:
           'As ALC_FLR.1, plus procedures for users to report flaws and for fixes to reach them.',
-        vsEal4: 'ALC_FLR is in no EAL — it only ever appears as an augmentation.',
+        vsEal4:
+          'ALC_FLR is in no EAL; CC:2022 Part 5 notes that the ALC_FLR and ALC_TDA families are not shown in Table 1 and are often used as an augmentation to the EALs.',
       },
       {
         code: 'ALC_FLR.3',
         name: 'Systematic flaw remediation',
         plain:
           'As ALC_FLR.2, plus a way for users to register with the developer to receive flaw reports and corrections, and named points of contact for security issues.',
-        vsEal4: 'ALC_FLR is in no EAL — it only ever appears as an augmentation.',
+        vsEal4:
+          'ALC_FLR is in no EAL; CC:2022 Part 5 notes that the ALC_FLR and ALC_TDA families are not shown in Table 1 and are often used as an augmentation to the EALs.',
       },
       {
         code: 'ADV_IMP.2',
@@ -575,10 +577,10 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
           {
             id: 'annex',
             label:
-              'Only where the product is covered by an Annex I technical domain or an Annex II certified PP (or, exceptionally, with NCCA notification) — and it is then assurance level “high”',
+              'Only where the product is covered by an Annex I technical domain or an Annex II certified PP (or, in exceptional and duly justified cases, once the authority approves or amends the proposed methodology) — and it is then assurance level “high”',
             correct: true,
             feedback:
-              'Right. Article 7(3) limits AVA_VAN.4/.5 to Annex I technical domains and Annex II PPs; Article 4 maps AVA_VAN 3–5 to “high”. Annex II lists EN 419241-2 and EN 419221-5 for remote QSCDs.',
+              'Right. Article 7(3) allows AVA_VAN 4 or 5 where the product is covered by an Annex I technical domain or an Annex II protection profile and, in exceptional and duly justified cases, with the national cybersecurity certification authority’s approval (Art 7(3)(c), 7(4)); Article 4 maps AVA_VAN 3–5 to “high”. Annex II lists EN 419241-2 and EN 419221-5 for remote QSCDs.',
           },
           {
             id: 'any',
@@ -972,7 +974,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
               'Only if the CB confirms the impact is minor. A new cryptographic implementation changes SFRs, design and vulnerability analysis, so expect it to be major; a product series does not make differences minor by definition',
             correct: true,
             feedback:
-              'Right. CIR 2025/2462 lets a CB certify a product series, and ENISA’s product-series methodology (v1, 9 July 2025) has one certificate cover a reference TOE and declared variants — but the minor/major test still applies to anything new.',
+              'Right. CIR 2025/2462 lets a CB certify a product series, and ENISA’s product-series methodology (version 1, July 2025) has the certification body issue a single certificate identifying all products in the series; where a certified ICT product has been subject to changes, CIR 2025/2462 Annex IV.3 requires an impact analysis report.',
           },
           {
             id: 'automatic',
@@ -1130,6 +1132,6 @@ export const stepExercises: Record<string, StepExercise> = {
       'The duty from eIDAS (910/2014 as amended by 2024/1183); the requirements from Protection Profiles such as EN 419221-5, evaluated under a CC-based scheme',
     ],
     answer: 2,
-    why: 'eIDAS is law: it defines QSCDs and requires their certification. It is not a Protection Profile. The evaluable requirements are in the PPs (EN 419221-5, EN 419241-2), and EUCC is the scheme that runs the evaluation.',
+    why: 'eIDAS is law: it defines QSCDs and requires their certification (Art 30). It is not a Protection Profile. The evaluable requirements are in PPs such as EN 419221-5 and EN 419241-2, which EUCC Annex II lists for remote QSCDs; Art 30(3) also provides for another notified process.',
   },
 }
