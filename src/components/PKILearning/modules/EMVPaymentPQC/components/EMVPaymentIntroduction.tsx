@@ -163,9 +163,10 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
       >
         <p className="text-muted-foreground">
           EMV defines three offline authentication methods, all based on{' '}
-          <strong className="text-foreground">RSA signatures</strong>. The card contains a
-          certificate chain signed by the EMVCo Root CA. The terminal verifies this chain to
-          authenticate the card without contacting the issuer.
+          <strong className="text-foreground">RSA signatures</strong>. The card carries the issuer
+          certificate and its own ICC certificate; the terminal holds the payment-system (scheme) CA
+          public key and verifies the chain up to it, so it can authenticate the card without
+          contacting the issuer.
         </p>
 
         <div className="grid gap-4">
