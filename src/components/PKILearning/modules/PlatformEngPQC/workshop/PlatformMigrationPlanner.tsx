@@ -52,19 +52,19 @@ const MIGRATION_PHASES: MigrationPhase[] = [
     phase: 1,
     title: 'Root CA Migration',
     description:
-      'Provision ML-DSA-65 root CA in Vault PKI or EJBCA. Issue hybrid (ML-DSA-65 + ECDSA P-256) intermediate CA. All new cert issuance uses hybrid intermediate.',
+      'Provision ML-DSA-65 root CA in Vault PKI or EJBCA. Issue an ML-DSA-65 intermediate CA under it. All new cert issuance uses the ML-DSA intermediate.',
     durationWeeks: 4,
     dependencies: ['phase-0'],
     stageIds: ['deploy', 'runtime'],
     actions: [
       'Generate ML-DSA-65 root CA key (offline HSM)',
-      'Create hybrid intermediate CA (in an issuer that supports ML-DSA, for example Vault PKI or EJBCA)',
-      'Update ClusterIssuer to use ML-DSA hybrid intermediate',
+      'Create an ML-DSA intermediate CA (in an issuer that supports ML-DSA, for example Vault PKI or EJBCA)',
+      'Update ClusterIssuer to use the ML-DSA intermediate',
       'Verify certificate chain validation in test namespace',
-      'Begin issuing hybrid certs to all cert-manager Certificates',
+      'Begin issuing certificates signed by the ML-DSA intermediate to all cert-manager Certificates',
     ],
     rollbackNote:
-      'Keep ECDSA root CA active in parallel for 90 days. Clients that cannot parse hybrid certs fall back to ECDSA chain. Remove ECDSA root only after 0% ECDSA-only client traffic confirmed.',
+      'Keep ECDSA root CA active in parallel for 90 days. Clients that cannot validate an ML-DSA-signed chain fall back to the ECDSA chain. Remove ECDSA root only after 0% ECDSA-only client traffic confirmed.',
     crqcUrgency: 'critical',
   },
   {
@@ -195,14 +195,14 @@ const ROLLBACK_TREE: Record<string, RollbackNode> = {
   },
   'cert-fail': {
     id: 'cert-fail',
-    question: 'Is the cert signed by the new ML-DSA hybrid intermediate CA?',
+    question: 'Is the cert signed by the new ML-DSA intermediate CA?',
     yesId: 'hybrid-fail',
     noId: 'wrong-issuer',
   },
   'hybrid-fail': {
     id: 'hybrid-fail',
     action:
-      'Client cannot parse hybrid X.509 certificate. Check client OpenSSL/BoringSSL version. Add ECDSA-only certificate exception for affected client until upgrade is possible.',
+      'Client cannot validate an X.509 certificate chain signed with ML-DSA. Check client OpenSSL/BoringSSL version. Add ECDSA-only certificate exception for affected client until upgrade is possible.',
     severity: 'warning',
     question: '',
   },

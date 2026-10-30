@@ -25,7 +25,7 @@
 
 - 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh
 - 16 crypto assets across stages with HNDL exposure ratings and PQC replacements
-- HNDL: High assets include Vault mTLS (→ X25519MLKEM768), kube-apiserver TLS (→ ML-DSA-65 hybrid) and Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512); the signing keys (container image, SBOM attestation, build provenance, image manifest, Helm chart, Git commit and deploy keys) are quantum-vulnerable but rated no HNDL risk, because NIST IR 8547 ties harvest now, decrypt later to encrypted data and says the authentication algorithm may be transitioned at a different time
+- HNDL: High assets include Vault mTLS (→ X25519MLKEM768), kube-apiserver TLS (→ ML-DSA-65 certificate) and Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512); the signing keys (container image, SBOM attestation, build provenance, image manifest, Helm chart, Git commit and deploy keys) are quantum-vulnerable but rated no HNDL risk, because NIST IR 8547 ties harvest now, decrypt later to encrypted data and says the authentication algorithm may be transitioned at a different time
 
 ### Step 2: Quantum Threat Timeline
 

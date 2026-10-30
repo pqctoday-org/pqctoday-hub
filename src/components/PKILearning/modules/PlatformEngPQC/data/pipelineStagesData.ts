@@ -181,11 +181,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         keySize: "P-256 / Let's Encrypt",
         quantumVulnerable: true,
         hndlRisk: 'medium',
-        pqcReplacement: 'ML-DSA-65 hybrid cert (dual-algorithm X.509)',
+        pqcReplacement:
+          'ML-DSA-65 certificate from an issuer that supports ML-DSA (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '1–2 years (short-lived, but TLS sessions recorded during lifetime)',
         notes:
-          'Even short-lived certs create HNDL risk because adversaries can record the TLS session and decrypt it later. Hybrid certificates maintain backward compatibility during migration.',
+          'Even short-lived certs create HNDL risk because adversaries can record the TLS session and decrypt it later.',
       },
       {
         id: 'reg-manifest-sig',
