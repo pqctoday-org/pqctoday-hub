@@ -124,7 +124,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'PCI PTS HSM v5.0 published 18 May 2026; v5.0 change list taught from the announcement only (the requirements themselves are not read)',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://blog.pcisecuritystandards.org/pci-ssc-publishes-pci-pts-hsm-v5.0',
   },
   {
@@ -132,7 +132,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'Listing expiry table: HSM v5.x requirements approval May 2030 and device models April 2036; v4.x June 2027 and April 2033; v3.x December 2022 and April 2028 (approval expiry dates, not post-quantum deadlines)',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://listings.pcisecuritystandards.org/popups/pts_device.php?appnum=4-80032',
   },
   {
@@ -140,7 +140,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'PTS listing field definitions: PQC notation = existence of PQC support (v3+ HSMs); restricted (valid only in a Controlled Environment) or unrestricted approval; expiry table (HSM v5.x May 2030/April 2036, v4.x June 2027/April 2033, v3.x Dec 2022/April 2028)',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://listings.pcisecuritystandards.org/popups/pts_device.php?appnum=4-80032',
   },
   {
@@ -148,7 +148,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'PCI workshop fixture: real PTS HSM listings 4-40266, 4-70041, 4-40069 copied verbatim (versions, expiry, approved usage, no PQC notation)',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://listings.pcisecuritystandards.org/popups/pts_device.php?appnum=4-40266',
   },
   {
@@ -156,7 +156,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'No PQC algorithm, parameter set or deadline in the v5.0 announcement or the listing definitions; Cryptography Guidance PQC content an open question',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://www.pcisecuritystandards.org/document_library/',
   },
   {
@@ -164,7 +164,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       "PCI KMO v1.0 published 14 September 2026 (Document Library: KMO Standard and KMO Program Guide 14 September, KMO Assessor Qualification Requirements 21 September 2026); the KMO page shows listings 'Coming Soon'; how KMO relates to the PIN and P2PE key-management requirements an open question",
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://www.pcisecuritystandards.org/standards/key-management-and-operations-kmo/',
   },
   {
@@ -172,7 +172,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'P2PE v3.2 announced 30 June 2025 as a minor revision; all new submissions must comply from 1 January 2026; this module states nothing about the v3.1 or v3.2 requirements',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://www.pcisecuritystandards.org/standards/point-to-point-encryption-p2pe/',
   },
   {
@@ -180,7 +180,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'PCI PIN Security v3.1 (announced 12 March 2021, a minor revision); the Document Library feed lists "PIN Security Requirements and Testing Procedures" on 11 March 2021 and no later entry with that title; the PIN requirement text is not read',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck: 'https://www.pcisecuritystandards.org/standards/pin-security/',
   },
   {
@@ -188,7 +188,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim:
       'PTS change routing is not taught: the Device Testing and Approval Program Guide (listed 18 May 2026, no version number in the feed) is not read',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
-    asOf: '2026-09-24',
+    asOf: '2026-10-30',
     recheck:
       'https://www.pcisecuritystandards.org/document_library/?category=pts&document=pts_approval_guide',
   },

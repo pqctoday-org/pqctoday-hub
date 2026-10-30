@@ -30,18 +30,13 @@ import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProduc
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 
 /** Date every version-sensitive PCI claim was verified (contentFreshness.ts). */
-export const PCI_AS_OF = '2026-09-24'
-export const PCI_AS_OF_LABEL = '24 September 2026'
+export const PCI_AS_OF = '2026-10-30'
+export const PCI_AS_OF_LABEL = '30 October 2026'
 
 /** Library rows the PCI path cites (src/data/library_09242026_r1.csv). */
 export const PCI_REF = {
   v5Blog: 'PCI-SSC-Blog-Publishes-PTS-HSM-v5-0',
-  v4Bulletin: 'PCI-SSC-Bulletin-PTS-HSM-v4-Extension',
-  hsmV4: 'PCI-PTS-HSM-Modular-Security-Requirements-v4-0',
-  programGuide19: 'PCI-PTS-Program-Guide-v1-9',
   listingFields: 'PCI-PTS-Listing-Field-Definitions',
-  pinRoc: 'PCI-PIN-v3-1-ROC-Reporting-Template',
-  p2pe31: 'PCI-P2PE-Security-Requirements-v3-1',
   p2peProgram: 'PCI-SSC-P2PE-Program-Page',
   kmoBlog: 'PCI-SSC-Blog-KMO-v1-0-Published',
   cryptoGuidanceBlog: 'PCI-SSC-Blog-Authentication-Cryptography-Guidance',
@@ -66,36 +61,11 @@ export const PCI_PLAIN_SOURCES = {
     date: 'read 24 September 2026',
     url: 'https://www.pcisecuritystandards.org/standards/pts-hardware-security-module-hsm/',
   },
-  pinProgramPage: {
-    title: 'PIN Security — standard page',
-    publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
-    url: 'https://www.pcisecuritystandards.org/standards/pin-security/',
-  },
   kmoProgramPage: {
     title: 'Key Management and Operations (KMO) — standard page',
     publisher: 'PCI SSC',
     date: 'read 24 September 2026',
     url: 'https://www.pcisecuritystandards.org/standards/key-management-and-operations-kmo/',
-  },
-  v5Rfc: {
-    title: 'Request for Comments: PCI PTS HSM v5.0 (PCI Perspectives blog)',
-    publisher: 'PCI SSC',
-    date: '30 October 2025',
-    url: 'https://blog.pcisecuritystandards.org/request-for-comments-pci-pts-hsm-v5.0',
-  },
-  kmoRfc: {
-    title: 'Request for Comments: PCI Key Management Operations (KMO) v1.0 Standard',
-    publisher: 'PCI SSC',
-    date: '16 June 2025',
-    url: 'https://blog.pcisecuritystandards.org/request-for-comments-pci-key-management-operations-kmo-v1.0-standard',
-  },
-  v4PressRelease: {
-    title:
-      'PCI Security Standards Council Updates Hardware Security Module Standard (press release)',
-    publisher: 'PCI SSC',
-    date: '17 December 2021',
-    url: 'https://www.pcisecuritystandards.org/about_us/press_releases/pci-security-standards-council-updates-hardware-security-module-standard/',
   },
   pin31Blog: {
     title: 'Just Released: Version 3.1 of the PCI PIN Security Standard (PCI Perspectives blog)',
@@ -122,13 +92,6 @@ export const PCI_PLAIN_SOURCES = {
     publisher: 'PCI SSC',
     date: '30 June 2025',
     url: 'https://blog.pcisecuritystandards.org/pci-ssc-releases-version-3-2-of-the-pci-point-to-point-encryption-p2pe-standard',
-  },
-  fsisacAtmPos: {
-    title:
-      'Post Quantum PCI Use Cases: ATM and POS Card Capture; ATM and POS Setup with Backend Acquiring Systems (industry source)',
-    publisher: 'FS-ISAC PQC Working Group',
-    date: '2025',
-    url: 'https://fsisac.com/hubfs/Knowledge/PQC/PCIUseCases-ATM&POSCardCapture_ATM&POSSetupWithBackendAcquiringSystems.pdf',
   },
 } satisfies Record<string, PlainSource>
 
