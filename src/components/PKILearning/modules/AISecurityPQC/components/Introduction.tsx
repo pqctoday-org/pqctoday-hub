@@ -192,10 +192,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </h4>
           <p className="text-sm text-foreground/70 mt-1">
             Provenance signatures must outlive the data they protect — potentially decades.
-            ECDSA-signed provenance records become forgeable post-CRQC, allowing retroactive
-            injection of synthetic data into verified datasets. Migration to{' '}
-            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> signatures ensures long-term
-            provenance trust.
+            Provenance records signed with ECDSA, RSA-PSS or Ed25519 (the signature algorithms C2PA
+            2.4 allows) become forgeable post-CRQC, allowing retroactive injection of synthetic data
+            into verified datasets. Migration to <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>{' '}
+            signatures ensures long-term provenance trust.
           </p>
         </div>
         <ReadingCompleteButton />
