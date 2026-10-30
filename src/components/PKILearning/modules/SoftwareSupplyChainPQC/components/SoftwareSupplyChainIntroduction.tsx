@@ -101,7 +101,7 @@ export const SoftwareSupplyChainIntroduction: React.FC<Props> = ({ onNavigateToW
         icon={<Map size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
-          For each ecosystem below, the lesson quotes what the held edition of one document says. A
+          For each ecosystem below, the lesson reports what the held edition of one document says. A
           label next to a sentence says what kind of statement it is. The labels are about the
           document, never about a plan or a date.
         </p>
@@ -132,9 +132,10 @@ export const SoftwareSupplyChainIntroduction: React.FC<Props> = ({ onNavigateToW
 
         <ReadingNote title="How to read a silent entry">
           <p>
-            A silent entry means the held text of one edition contains none of the post-quantum
-            terms the lesson searched for. It does not say that anyone plans or declines a
-            migration, and it does not describe other editions of the same document.
+            A silent entry means the held text of one edition contains none of these terms:
+            post-quantum, quantum, PQC, ML-DSA, SLH-DSA, Dilithium, SPHINCS, LMS, XMSS, hash-based
+            signature, Kyber, ML-KEM. It does not say that anyone plans or declines a migration, and
+            it does not describe other editions of the same document.
           </p>
         </ReadingNote>
       </LearnSection>
@@ -199,9 +200,9 @@ export const SoftwareSupplyChainIntroduction: React.FC<Props> = ({ onNavigateToW
         icon={<Stamp size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
-          Provenance records how an artifact was built, and an attestation is a signed statement
-          about an artifact. This section reads the SLSA v1.2 Build pages and the in-toto Statement
-          page for what each says about signatures.
+          Provenance records how an artifact was built. The SLSA v1.2 pages call it an attestation
+          and ask for it to be signed from Build L2. This section reads the SLSA v1.2 Build pages
+          and the in-toto Statement page for what each says about signatures.
         </p>
 
         <ClaimLine id="SC-4.2" />

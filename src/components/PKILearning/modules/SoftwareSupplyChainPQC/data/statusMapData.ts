@@ -7,7 +7,7 @@
  * Labels describe what the held document says about its own form, never a plan or a deadline:
  *  - rfc: the document is an RFC that specifies the mechanism
  *  - draft: the document is an Internet-Draft, not an RFC
- *  - experimental: the document marks the mechanism experimental
+ *  - experimental: the document marks the post-quantum entries it lists as experimental
  *  - requirement: the document sets a requirement on keys or key protection
  *  - recommended: a standards body recommends the mechanism
  *  - silent: the held text of this edition contains no post-quantum term
@@ -25,7 +25,7 @@ export const STATUS_LABELS: Record<StatusLabel, { text: string; meaning: string 
   draft: { text: 'Draft', meaning: 'The document is an Internet-Draft. It is not an RFC.' },
   experimental: {
     text: 'Experimental',
-    meaning: 'The document marks the mechanism as experimental.',
+    meaning: 'The document marks the post-quantum entries it lists as experimental.',
   },
   requirement: {
     text: 'Requirement',
@@ -38,7 +38,7 @@ export const STATUS_LABELS: Record<StatusLabel, { text: string; meaning: string 
   silent: {
     text: 'Silent in this edition',
     meaning:
-      'The held text of this edition contains no post-quantum term. That is a statement about one document; it does not say what anyone plans.',
+      'The held text of this edition contains none of the post-quantum terms listed in the note under the map. That is a statement about one document; it does not say what anyone plans.',
   },
 }
 
@@ -63,9 +63,9 @@ export interface StatusGroup {
 export const STATUS_GROUPS: StatusGroup[] = [
   {
     id: 'policy',
-    title: 'Where signing keys are issued and protected',
+    title: 'Where signing keys and algorithms are specified',
     intro:
-      'Three documents that set rules for signing keys or key formats. For each, the lesson reads what the held edition says and whether it contains a post-quantum term.',
+      'Three documents that set rules for signing keys or list the signature algorithms a signing system supports. For each, the lesson reads what the held edition says and whether it contains a post-quantum term.',
     rows: [
       {
         id: 'sigstore',
