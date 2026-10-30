@@ -14436,7 +14436,11 @@
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
       "stampedAt": "2026-09-17T13:06:48.156174+00:00",
-      "superseded_file": "_superseded-20260924/threats/FIN-004.pdf"
+      "superseded_file": "_superseded-10302026/library/PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.pdf",
+      "ok": false,
+      "supersededAt": "2026-10-30T11:37:22.000036+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "PCI rows: public SSC pages only — replaced by PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.html"
     },
     {
       "refId": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",
@@ -24426,6 +24430,24 @@
       "provenanceCorrectedBy": "evidence replacement",
       "provenanceCorrectedFrom": "https://www.epa.gov/system/files/documents/2023-10/action-memo_rescinding-cyber-memo-october-2023.pdf",
       "provenanceReason": "The saved copy was recorded under a dead address (hyphen before october, HTTP 404); the working address (underscore, HTTP 200, same bytes) is the one the row now carries"
+    },
+    {
+      "refId": "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures",
+      "filename": "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.html",
+      "sizeBytes": 84211,
+      "contentType": "text/html",
+      "url": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
+      "sha256": "b31e74f7283312fbaf5190b3acbd321562bd81182f87295463d6f3df87fc0a03",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T11:37:22.205622+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.html",
+      "status": "downloaded",
+      "replacedAt": "2026-10-30T11:37:22.000036+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "PCI rows: public SSC pages only"
     }
   ],
   "archivedEntries": [
@@ -37325,7 +37347,11 @@
       "unified": "converted",
       "admittedAt": "2026-09-17T13:06:48.156174+00:00",
       "admittedBy": "admit.py --stamp-existing",
-      "superseded_file": "_superseded-20260924/threats/FIN-004.pdf"
+      "superseded_file": "_superseded-10302026/library/PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.pdf",
+      "ok": false,
+      "supersededAt": "2026-10-30T11:37:22.000036+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "PCI rows: public SSC pages only — replaced by PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.html"
     },
     {
       "refId": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",

@@ -134,23 +134,26 @@
     },
     {
       "refId": "PCI-DSS",
-      "url": "https://www.pcisecuritystandards.org",
+      "url": "https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1",
       "status": "downloaded",
       "filename": "PCI-DSS.html",
-      "sizeBytes": 795809,
+      "sizeBytes": 84211,
       "contentType": "text/html",
-      "sha256": "1cfe795fafc4a6723201334f630dec0bac375c941f8c595f7d11534431523a7c",
+      "sha256": "b31e74f7283312fbaf5190b3acbd321562bd81182f87295463d6f3df87fc0a03",
       "artefact": "SOURCE",
       "identity": "MATCH",
-      "unified": "current",
-      "admittedAt": "2026-07-14T01:05:17.415622+00:00",
-      "admittedBy": "admit.py --stamp-existing",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T11:40:27.609393+00:00",
+      "admittedBy": "evidence admission",
       "stampedAt": "2026-09-17T12:55:53.432226+00:00",
-      "ok": false,
       "superseded_file": "_superseded-10162026/compliance/PCI-DSS.html",
       "supersededAt": "2026-10-16T15:21:45.485033+00:00",
       "supersededBy": "evidence replacement",
-      "superseded_reason": "cached file was the PCI SSC homepage, not the standard — replaced by PCI-DSS.pdf"
+      "superseded_reason": "cached file was the PCI SSC homepage, not the standard — replaced by PCI-DSS.pdf",
+      "file": "compliance/PCI-DSS.html",
+      "replacedAt": "2026-10-30T11:40:27.450120+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "PCI rows: public SSC pages only"
     },
     {
       "refId": "HIPAA",
@@ -3383,7 +3386,12 @@
       "provenanceCorrectedAt": "2026-10-16T18:04:44.973635+00:00",
       "provenanceCorrectedBy": "evidence replacement",
       "provenanceCorrectedFrom": "https://www.pcisecuritystandards.org",
-      "provenanceReason": "the filed copy is byte-identical to the PCI DSS v4.0.1 PDF published on a Middlebury College mirror, not a PCI SSC download"
+      "provenanceReason": "the filed copy is byte-identical to the PCI DSS v4.0.1 PDF published on a Middlebury College mirror, not a PCI SSC download",
+      "ok": false,
+      "superseded_file": "_superseded-10302026/compliance/PCI-DSS.pdf",
+      "supersededAt": "2026-10-30T11:40:27.450120+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "PCI rows: public SSC pages only — replaced by PCI-DSS.html"
     },
     {
       "refId": "BRAZIL-BACEN-4893",
