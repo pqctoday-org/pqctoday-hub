@@ -770,10 +770,12 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h3 className="text-sm font-bold text-foreground mb-2">Use cases</h3>
             <p className="mb-2">
-              A KEM has no way for the sender to supply a chosen shared secret (unlike ECDH) — HPKE
-              always encapsulates a fresh, sender-unpredictable one. That property is why it shows
-              up wherever a protocol needs one-shot public-key encryption rather than an interactive
-              handshake:
+              A KEM&rsquo;s Encaps takes only the recipient&rsquo;s public key and returns both the
+              shared secret and the ciphertext, so the sender cannot supply a secret of its own
+              choosing, unlike key transport (for example RSA-OAEP), where one party selects the key
+              and transmits it &mdash; HPKE always encapsulates a fresh, sender-unpredictable one.
+              That property is why it shows up wherever a protocol needs one-shot public-key
+              encryption rather than an interactive handshake:
             </p>
             <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
               <li>
@@ -971,9 +973,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="text-xs font-bold text-foreground mb-1">Size Impact</div>
               <p className="text-xs text-muted-foreground">
                 Classical X25519 ClientHello key_share is 32 bytes. X25519MLKEM768 is 1,216 bytes
-                &mdash; a 38&times; increase. This can push the ClientHello beyond a single TCP
-                segment (the 1,460-byte MSS assumed by RFC 6928), requiring an extra round trip on
-                some networks.
+                &mdash; a 38&times; increase. A ClientHello that used to fit in one packet can now
+                span more than one; RFC 6928 sets the initial window at up to 10 segments (min
+                (10*MSS, max (2*MSS, 14600))).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -1010,8 +1012,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <p>
             SP 800-227 §3 is explicit: a compliant ML-KEM deployment is more than &ldquo;call the
             library.&rdquo; After the required input checks, decapsulation must conceal the result
-            of its internal ciphertext comparison. Implementations must also address timing and
-            other side-channel leakage.
+            of its internal ciphertext comparison. SP 800-227 §3.3 says KEM modules should be
+            designed with appropriate countermeasures against side-channel attacks, including
+            constant-time implementations and protecting memory from leakage.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border md:col-span-2">
