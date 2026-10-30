@@ -145,7 +145,7 @@ controller:
     tool: 'kubernetes',
     title: 'kubeconfig: Client Certificate Key Type',
     vulnerability:
-      'kubeconfig client certificates (used by CI/CD tools like kubectl, Argo) use ECDSA P-256 or RSA-2048. These authenticate high-privilege cluster operations — HNDL targets.',
+      'kubeconfig client certificates (used by CI/CD tools like kubectl, Argo) use ECDSA P-256 or RSA-2048. These authenticate high-privilege cluster operations; with RSA or ECDSA a future quantum computer could forge them: a forgery risk, not harvest-now-decrypt-later.',
     algorithm: 'ecdsa',
     pqcAlgorithm: 'ml-dsa',
     impact:

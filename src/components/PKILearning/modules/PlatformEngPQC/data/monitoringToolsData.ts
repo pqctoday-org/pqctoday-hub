@@ -19,7 +19,7 @@ export const MONITORING_TOOLS: MonitoringTool[] = [
       {
         name: 'LongLivedCertExpiresAfterCRQCWindow',
         expression: '(certmanager_certificate_expiration_timestamp_seconds - time()) / 86400 > 730',
-        threshold: '> 730 days remaining (potential HNDL exposure)',
+        threshold: '> 730 days remaining (long forgery window)',
         severity: 'warning',
       },
       {
@@ -113,7 +113,7 @@ export const MONITORING_TOOLS: MonitoringTool[] = [
       {
         name: 'LongLivedCertInCluster',
         expression: '(x509_cert_not_after - time()) / 86400 > 730',
-        threshold: 'Certificate with > 2 years validity (HNDL window risk)',
+        threshold: 'Certificate with > 2 years validity (forgery window)',
         severity: 'warning',
       },
       {
@@ -414,7 +414,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'cert-manager renews certificates at 2/3 of the certificate lifetime (e.g., 60 days into a 90-day cert).',
     pqcNote:
-      'ML-DSA certificates have the same rotation logic. Shorter TTLs (30 days) are recommended for PQC transition to reduce HNDL exposure window. cert-manager renewBefore: 20d achieves this.',
+      'ML-DSA certificates have the same rotation logic. Shorter TTLs (30 days) are recommended for PQC transition to shorten the window in which a forged certificate would be accepted. cert-manager renewBefore: 20d achieves this.',
     status: 'pqc',
   },
   {

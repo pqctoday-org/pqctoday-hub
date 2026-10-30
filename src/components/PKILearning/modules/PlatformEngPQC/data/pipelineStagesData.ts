@@ -170,7 +170,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Registries store signed images. TLS sessions for pushes and pulls, image manifest signatures, and registry certificates are all quantum-vulnerable.',
     tools: ['Docker Hub', 'Amazon ECR', 'Google Artifact Registry', 'Harbor', 'Quay.io'],
-    hndlExposure: 'medium',
+    hndlExposure: 'none',
     migrationPriority: 'high',
     cryptoAssets: [
       {
@@ -180,13 +180,14 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: "P-256 / Let's Encrypt",
         quantumVulnerable: true,
-        hndlRisk: 'medium',
+        hndlRisk: 'none',
         pqcReplacement:
           'ML-DSA-65 certificate from an issuer that supports ML-DSA (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
-        exposureWindow: '1–2 years (short-lived, but TLS sessions recorded during lifetime)',
+        exposureWindow:
+          '1–2 years (certificate lifetime: the window in which a forged signature would be accepted)',
         notes:
-          'Even short-lived certs create HNDL risk because adversaries can record the TLS session and decrypt it later.',
+          'A short-lived certificate limits how long a forged signature would stay useful; it does not protect a recorded TLS session, whose confidentiality depends on the key exchange (NIST IR 8547: harvest-now-decrypt-later concerns encrypted data, and authentication may be transitioned at a different time).',
       },
       {
         id: 'reg-manifest-sig',
@@ -210,7 +211,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Kubernetes API server, admission webhooks, kubeconfig TLS, and Helm chart signatures all use classical cryptography that must be migrated.',
     tools: ['kubectl', 'Helm', 'ArgoCD', 'Flux', 'Kustomize'],
-    hndlExposure: 'high',
+    hndlExposure: 'none',
     migrationPriority: 'critical',
     cryptoAssets: [
       {
@@ -220,13 +221,14 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 / RSA-2048',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement:
           'ML-DSA-65 certificate from an issuer that supports ML-DSA (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
-        exposureWindow: '1 year (rotated annually, but control plane TLS is high-value target)',
+        exposureWindow:
+          '1 year (rotated annually: the window in which a forged signature would be accepted; the control plane is a high-value target)',
         notes:
-          'The kube-apiserver certificate is the master key to the entire cluster. All kubectl and controller traffic is encrypted with this cert. A HNDL adversary recording this traffic gains access to every resource operation.',
+          'The kube-apiserver certificate authenticates the control plane to every kubectl and controller connection. With an RSA or ECDSA key, a future quantum computer could forge it and impersonate the API server: a forgery risk, not harvest-now-decrypt-later. The confidentiality of recorded kubectl and controller traffic depends on the TLS key exchange (NIST IR 8547).',
       },
       {
         id: 'deploy-webhook-tls',
@@ -235,8 +237,9 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
-        pqcReplacement: 'ML-DSA-65 via cert-manager',
+        hndlRisk: 'none',
+        pqcReplacement:
+          'ML-DSA-65 certificate from an ML-DSA-capable issuer, delivered through cert-manager',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '1 year',
         notes:
@@ -269,8 +272,8 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'run-mesh-mtls',
-        name: 'Service Mesh mTLS (SPIFFE SVIDs)',
-        type: 'certificate',
+        name: 'Service Mesh mTLS (key exchange and SPIFFE SVIDs)',
+        type: 'tls-session',
         algorithm: 'ecdsa',
         keySize: 'P-256 (SPIFFE SVID, 1-hour TTL)',
         quantumVulnerable: true,
@@ -280,7 +283,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         exposureWindow:
           '1 hour (short-lived certs, but encrypted payloads may be sensitive for 10+ years)',
         notes:
-          'SPIFFE SVIDs are short-lived, but the data they protect (API calls, internal service responses) may remain sensitive for years. HNDL adversaries record the traffic and decrypt post-CRQC.',
+          'A forged SPIFFE SVID is an authentication risk, and SVIDs are short-lived. The harvest-now-decrypt-later exposure is the mTLS key exchange: the data it protects (API calls, internal service responses) may remain sensitive for years, and an adversary who records the traffic can decrypt it once the key exchange can be broken.',
       },
       {
         id: 'run-certmanager-certs',
@@ -289,7 +292,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 (configurable)',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-44 from an ML-DSA-capable issuer (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '90 days – 1 year',

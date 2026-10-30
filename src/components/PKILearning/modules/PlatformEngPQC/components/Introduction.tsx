@@ -347,8 +347,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               {
                 tool: 'kubeconfig client certs',
                 problem:
-                  'CI/CD deploy certs are ECDSA P-256. All kubectl sessions are HNDL targets.',
-                fix: 'Rotate to ML-DSA-44 via cert-manager Certificate (usages: client auth).',
+                  'CI/CD deploy certs are ECDSA P-256 (a forgery risk). The ECDHE key exchange in kubectl sessions is the harvest-now-decrypt-later target.',
+                fix: 'Rotate to an ML-DSA-44 client certificate from an ML-DSA-capable issuer (for example Vault PKI or EJBCA).',
               },
             ].map((item) => (
               <div
