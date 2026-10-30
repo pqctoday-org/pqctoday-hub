@@ -39,7 +39,11 @@ const EMAIL_KAT_SPECS: KatTestSpec[] = [
 type SigningStep = 'content' | 'hash' | 'sign' | 'wrap'
 type AlgorithmView = 'ecdsa' | 'ml-dsa'
 
-const SIGNING_STEPS: { id: SigningStep; label: string; description: string }[] = [
+const SIGNING_STEPS: {
+  id: SigningStep
+  label: string
+  description: string | Record<AlgorithmView, string>
+}[] = [
   {
     id: 'content',
     label: '1. Content',
@@ -48,14 +52,22 @@ const SIGNING_STEPS: { id: SigningStep; label: string; description: string }[] =
   {
     id: 'hash',
     label: '2. Hash',
-    description:
-      'SHA-256 digest is computed over the signed attributes (content type, message digest, signing time).',
+    description: {
+      ecdsa:
+        'The message digest of the complete DER encoding of the signed attributes is computed (SHA-256 here).',
+      'ml-dsa':
+        'ML-DSA is used in pure mode (RFC 9882), so no digest of the signed attributes is computed; the DER encoding of the signed attributes is the input.',
+    },
   },
   {
     id: 'sign',
     label: '3. Sign',
-    description:
-      "The digest is signed using the sender's private key (ECDSA or ML-DSA) to produce the signature value.",
+    description: {
+      ecdsa:
+        "ECDSA signs that digest with the sender's private key to produce the signature value.",
+      'ml-dsa':
+        "ML-DSA signs the DER encoding of the signed attributes directly with the sender's private key to produce the signature value.",
+    },
   },
   {
     id: 'wrap',
@@ -64,6 +76,11 @@ const SIGNING_STEPS: { id: SigningStep; label: string; description: string }[] =
       'Everything is assembled into a CMS SignedData structure: version, digest algorithms, content, certificates, and signer infos.',
   },
 ]
+
+const describeStep = (
+  description: string | Record<AlgorithmView, string> | undefined,
+  view: AlgorithmView
+) => (typeof description === 'object' ? description[view] : description)
 
 const ASN1TreeNode: React.FC<{
   node: ASN1Node
@@ -169,7 +186,7 @@ export const CMSSigningDemo: React.FC = () => {
       {/* Step Description */}
       <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
         <p className="text-sm text-foreground">
-          {SIGNING_STEPS.find((s) => s.id === activeStep)?.description}
+          {describeStep(SIGNING_STEPS.find((s) => s.id === activeStep)?.description, algorithmView)}
         </p>
       </div>
 
