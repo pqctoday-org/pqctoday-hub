@@ -51,7 +51,7 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
       badge: 'NIST',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        "Compare the 65-byte uncompressed P-256 public key with Profile A's 32-byte X25519 key. The SUCI structure is slightly larger due to the bigger public key.",
+        "Compare the 33-byte compressed P-256 ephemeral public key in the Profile B scheme output with Profile A's 32-byte X25519 key. The SUCI structure is one byte larger because of the compression prefix.",
       config: { part: 0, profile: 'B' },
     },
     {
@@ -84,7 +84,7 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
       badge: 'Authentication',
       badgeColor: 'bg-tertiary/20 text-tertiary border-tertiary/50',
       observe:
-        'Watch the MILENAGE algorithm compute all five functions (MAC-A, XRES, CK, IK, AK) from K, OPc, and RAND. Note that MILENAGE uses AES-128 — a symmetric algorithm that is already quantum-resistant.',
+        'Watch the MILENAGE algorithm compute all five functions (MAC-A, XRES, CK, IK, AK) from K, OPc, and RAND. Note that MILENAGE uses AES-128 — a symmetric algorithm that Shor’s algorithm does not break, so it needs no PQC key-exchange or signature upgrade.',
       config: { part: 1 },
     },
     {

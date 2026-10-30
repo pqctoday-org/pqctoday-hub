@@ -41,7 +41,10 @@ export function useSandboxAvailable(): SandboxAvailability {
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS)
     fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
-      .then(() => {
+      .then((res) => {
+        // Only the status matters. An unread body keeps the request pending in Chromium, so
+        // the page never reaches network idle while a sandbox answers.
+        void res.body?.cancel()
         if (!cancelled) setState('available')
       })
       .catch(() => {

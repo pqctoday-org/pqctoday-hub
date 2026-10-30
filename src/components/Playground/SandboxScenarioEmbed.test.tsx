@@ -166,6 +166,15 @@ describe('SandboxScenarioEmbed', () => {
     expect(document.querySelector('iframe')).toBeNull()
   })
 
+  it('cancels the unread status response body so the request does not stay pending', async () => {
+    const res = new Response('{"status":"ok"}', { status: 200 })
+    const cancel = vi.spyOn(res.body!, 'cancel')
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(res))
+    renderAt(`/playground/sbx-${firstScenario.id}`)
+    await waitFor(() => expect(document.querySelector('iframe')).not.toBeNull())
+    expect(cancel).toHaveBeenCalled()
+  })
+
   it('renders an EmptyState for an unknown scenario id', async () => {
     renderAt('/playground/sbx-does-not-exist')
     expect(await screen.findByText(/Unknown sandbox scenario/i)).toBeInTheDocument()

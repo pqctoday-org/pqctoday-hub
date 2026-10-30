@@ -18,4 +18,4 @@ The fastest messages — like the 3-millisecond trip signals inside a substation
 
 ## What's Happening
 
-Industrial standards such as IEC 62443 don't mention post-quantum cryptography yet, and protocols like OPC UA, BACnet/SC and DNP3 have no quantum-safe options published. Operators are starting with an inventory, moving their signing keys to new schemes such as LMS and ML-DSA, and protecting remote access with hybrid key exchange while the standards catch up.
+Industrial standards such as IEC 62443 don't mention post-quantum cryptography yet, and protocols like OPC UA, BACnet/SC and DNP3 have no quantum-safe options published. Post-quantum work on the IEC 62351 power-grid security standards has started, but further refinements are needed. Operators are starting with an inventory, moving their signing keys to new schemes such as LMS and ML-DSA, and protecting remote access with hybrid key exchange while the standards catch up.

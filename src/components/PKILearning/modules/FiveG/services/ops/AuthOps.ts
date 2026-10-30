@@ -193,7 +193,7 @@ export async function deriveKAUSF(ctx: FiveGService): Promise<string> {
   }
 
   return `═══════════════════════════════════════════════════════════════
-            5G ANCHOR KEY DERIVATION (KAUSF)
+            KAUSF DERIVATION (TS 33.501 A.2)
 ═══════════════════════════════════════════════════════════════
 
 Step 1: Constructing Key Input
@@ -214,7 +214,7 @@ Step 3: HMAC-SHA-256(CK||IK, S)
 Step 4: Result
   > KAUSF: ${kausfHex}
 
-[SUCCESS] 5G Anchor Key derived.
+[SUCCESS] KAUSF derived.
 [INFO] Authentication Vector Ready: RAND, AUTN, XRES*, KAUSF`
 }
 

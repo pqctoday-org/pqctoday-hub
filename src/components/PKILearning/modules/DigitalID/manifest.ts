@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-id',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-030',
   title: 'Digital ID',
   description:
     'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
   whyThisMatters:
-    "A digital identity credential is meant to outlive the person it identifies — if its signature can be forged retroactively, the fraud isn't limited to one transaction, it's identity theft at national scale.",
+    'A digital identity credential such as the PID is issued under Union or national law and lets a person establish who they are — if its signature can be forged, a counterfeit credential would pass verification.',
   duration: '80 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',

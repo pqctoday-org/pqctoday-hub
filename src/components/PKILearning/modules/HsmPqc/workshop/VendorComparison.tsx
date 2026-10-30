@@ -15,6 +15,14 @@ type FilterType = 'all' | 'on-prem' | 'cloud'
 type FilterStatus = 'all' | PqcSupportStatusKey
 type SortKey = 'name' | 'type'
 
+/** Chip text: the same word the vendor badges show ("AVAILABLE" reads "Available"). */
+const chipLabel = (status: FilterStatus): string => {
+  if (status === 'all') return 'All'
+  // eslint-disable-next-line security/detect-object-injection -- key is a typed union
+  const { label } = STATUS_LABELS[status]
+  return label.charAt(0) + label.slice(1).toLowerCase()
+}
+
 export const VendorComparison: React.FC = () => {
   const [filterType, setFilterType] = useState<FilterType>('all')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
@@ -47,10 +55,10 @@ export const VendorComparison: React.FC = () => {
 
   const stats = useMemo(() => {
     const total = filteredVendors.length
-    const productionReady = filteredVendors.filter(
+    const listedAvailable = filteredVendors.filter(
       (v) => getVendorPqcSupportStatus(v) === 'production'
     ).length
-    return { total, productionReady }
+    return { total, listedAvailable }
   }, [filteredVendors])
 
   const toggleExpand = useCallback((vendorId: string) => {
@@ -75,7 +83,7 @@ export const VendorComparison: React.FC = () => {
           <div className="text-xs text-muted-foreground">Total Vendors</div>
         </div>
         <div className="glass-panel p-3 text-center">
-          <div className="text-2xl font-bold text-success">{stats.productionReady}</div>
+          <div className="text-2xl font-bold text-success">{stats.listedAvailable}</div>
           <div className="text-xs text-muted-foreground">Listed as available</div>
         </div>
       </div>
@@ -122,7 +130,7 @@ export const VendorComparison: React.FC = () => {
                       : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
                   }`}
                 >
-                  {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
+                  {chipLabel(status)}
                 </Button>
               )
             )}
@@ -234,7 +242,9 @@ export const VendorComparison: React.FC = () => {
                         </div>
                         <div>
                           <span className="text-muted-foreground">Hybrid Support:</span>{' '}
-                          {vendor.hybridSupport ? (
+                          {vendor.hybridSupport === undefined ? (
+                            <span className="text-muted-foreground">Not stated</span>
+                          ) : vendor.hybridSupport ? (
                             <span className="text-success font-bold">Yes</span>
                           ) : (
                             <span className="text-destructive font-bold">No</span>

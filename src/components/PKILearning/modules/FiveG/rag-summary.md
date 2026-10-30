@@ -6,13 +6,13 @@ The 5G Security Architecture module teaches the three pillars of 3GPP 5G securit
 
 - SUCI concealment: encrypts the subscriber permanent identity (SUPI/IMSI) before transmission over the air interface, preventing IMSI catcher surveillance attacks that plagued 2G/3G/4G networks
 - Profile A (X25519): Curve25519 ECDH key agreement, 32-byte public keys, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable
-- Profile B (P-256): NIST secp256r1 ECDH, 65-byte uncompressed public keys, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable
+- Profile B (P-256): NIST secp256r1 ECDH, ephemeral public key sent point-compressed (33 bytes) in the scheme output, AES-128-CTR encryption, HMAC-SHA-256 integrity; quantum-vulnerable
 - Profile C (ML-KEM): NOT a 3GPP profile. TS 33.501 Annex C defines null-scheme (0x0), Profile A (0x1) and Profile B (0x2) only. The name and the 0x3 identifier come from a research proposal — Khan, Purification & Chang, _Information_ 2025, 16, 617 (open access) — which specifies ML-KEM-512 and leaves the KDF generic. This playground implements ML-KEM-768 (1,184-byte public keys) with AES-256-CTR, HMAC-SHA3-256 and an ANSI X9.63 KDF, and adds a hybrid X25519 + ML-KEM mode; the KDF choice, the key size and the hybrid mode are this project's, not the paper's and not 3GPP's
 - SUCI construction pipeline: retrieve HN public key from USIM, generate ephemeral key pair, compute shared secret (ECDH or KEM encapsulation), derive encryption and MAC keys via ANSI X9.63 KDF, encrypt MSIN with AES-CTR, compute HMAC tag, assemble SUCI structure
-- 5G-AKA authentication: mutual authentication using MILENAGE algorithm (AES-128 based, five functions f1-f5 producing MAC-A, XRES, CK, IK, AK); AES-128 is quantum-resistant (Grover's algorithm only halves effective key length to 64 bits)
-- 5G key hierarchy: CK and IK feed KAUSF (anchor key) derived with HMAC-SHA-256 bound to Serving Network Name, then KAUSF to KSEAF to KAMF to KNASint/KNASenc to KgNB for radio layer protection
+- 5G-AKA authentication: mutual authentication using MILENAGE algorithm (AES-128 based, five functions f1-f5 producing MAC-A, XRES, CK, IK, AK); AES-128 is a symmetric algorithm that Shor's algorithm does not break (Grover's algorithm can only erode the effective key length); the 128-NEA and 128-NIA air-interface algorithms are symmetric too
+- 5G key hierarchy: CK and IK feed KAUSF, derived with HMAC-SHA-256 bound to the Serving Network Name; KAUSF yields KSEAF (the anchor key, passed to the serving network), KSEAF yields KAMF, and KNASint/KNASenc (NAS signalling) and KgNB (radio layer) are each derived from KAMF
 - SIM provisioning supply chain: K generation in factory HSM (TRNG), OPc computation (AES(K, OP) XOR OP), USIM personalization, encrypted transport (eK), and import into operator's encrypted subscriber database
-- Differential quantum vulnerability: SUCI concealment (asymmetric ECDH) is broken by Shor's algorithm and needs PQC migration; MILENAGE/5G-AKA (symmetric AES) and SIM provisioning (symmetric encryption) remain quantum-resistant
+- Differential quantum vulnerability: SUCI concealment (asymmetric ECDH) could be broken by a large-scale quantum computer running Shor's algorithm, and ATIS recommends that 3GPP specify quantum-resistant key encapsulation for SUPI protection; MILENAGE/5G-AKA (symmetric AES; TUAK is the alternative algorithm set) and SIM provisioning (symmetric encryption) are not broken by Shor's algorithm
 
 ## Workshop Activities
 
@@ -22,7 +22,7 @@ The 5G Security Architecture module teaches the three pillars of 3GPP 5G securit
 
 ## Related Standards
 
-- 3GPP TS 33.501 (5G security architecture, incl. Annex C SUCI protection schemes), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.938 (3GPP Cryptographic Inventory — records where ECIES/ECDH/RSA are used today; contains no PQC specification)
+- 3GPP TS 33.501 (5G security architecture, incl. Annex C SUCI protection schemes), 3GPP TS 35.206 (MILENAGE algorithm), 3GPP TR 33.938 (3GPP Cryptographic Inventory — an inventory of the cryptography used in the 3GPP specifications for the 5G System in standalone mode, including ECIES, ECDH and RSA; it does not include resolution to PQC migration)
 - 3GPP TS 23.003 (SUPI/SUCI identifier formats), 3GPP TS 31.102 (USIM application)
 - FIPS 203 (ML-KEM), NIST SP 800-56C (KDF recommendations)
 - RFC 7748 (X25519 Diffie-Hellman), ANSI X9.63 (Key Derivation Function)

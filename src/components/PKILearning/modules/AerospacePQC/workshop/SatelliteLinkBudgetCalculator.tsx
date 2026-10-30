@@ -32,7 +32,7 @@ const AEROSPACE_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'aero-link-kem',
     useCase: 'Space-ground link key establishment',
-    standard: 'FIPS 203 ACVP (ML-KEM-768; CNSA 2.0 mandates ML-KEM-1024)',
+    standard: 'FIPS 203 ACVP (ML-KEM-768; CNSA 2.0 specifies ML-KEM-1024 for NSS)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },
@@ -240,6 +240,13 @@ export const SatelliteLinkBudgetCalculator: React.FC = () => {
               </span>
             </div>
           </div>
+          <p className="text-xs text-muted-foreground">
+            A simplified {HANDSHAKE_ROUNDS}-round model, not a specific protocol. For satellite IoT
+            links, GSMA PQ.07 (version 1.0, 4 February 2026) says IPsec and DTLS tunnels should
+            integrate quantum-resistant key exchange such as ML-KEM. A link that is part of a
+            National Security System follows CNSA 2.0, which specifies ML-KEM-1024 rather than the
+            ML-KEM-768 modelled here.
+          </p>
         </div>
 
         <div className="glass-panel p-4 space-y-3">

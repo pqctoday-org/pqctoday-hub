@@ -213,7 +213,7 @@ export const CRYPTO_TOOLTIPS = {
   hsm: {
     title: 'Hardware Security Module (HSM)',
     description:
-      'Tamper-resistant physical device that generates, stores, and uses cryptographic keys without exposing them. FIPS 140-3 certified. Provides hardware-enforced key isolation for custody platforms.',
+      'Tamper-resistant physical device that generates, stores, and uses cryptographic keys without exposing them. Modules can be validated under FIPS 140-3; the Hong Kong SFC guidelines say that, where practicable, keys should be kept in a secure environment such as an HSM "with appropriate certification", and the Dubai VARA rulebook says custodians "shall at all times maintain appropriate certifications as may be required under industry best practices applicable to the safekeeping of Virtual Assets". Neither text names a scheme. Provides hardware-enforced key isolation for custody platforms.',
   },
   shamir: {
     title: "Shamir's Secret Sharing",

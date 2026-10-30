@@ -6,13 +6,13 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
     id: 'acars',
     name: 'ACARS',
     description:
-      'Aircraft Communications Addressing and Reporting System. Digital data link for operational messages, weather, and maintenance. Text-based, limited payload.',
+      'Aircraft Communications Addressing and Reporting System. Digital data link for operational messages, weather, and maintenance. Text-based, limited payload. Message security is specified in ARINC 823 Part 1, though a 2024 research paper (IACR ePrint 2024/046) says this approach is rarely adopted by any major airlines.',
     maxPayloadBytes: 220,
     dataRateKbps: 2.4,
     linkType: 'VHF / HF / SATCOM',
-    currentCrypto: 'None (plaintext)',
+    currentCrypto: 'None in typical use (ARINC 823 Part 1 message security is rarely adopted)',
     bidirectional: true,
-    standardRef: 'ARINC 618 / ARINC 619',
+    standardRef: 'ARINC 618 / ARINC 619 · ARINC 823 Part 1 (message security)',
     pqcOverhead: {
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,
@@ -27,11 +27,11 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
     id: 'cpdlc',
     name: 'CPDLC',
     description:
-      'Controller-Pilot Data Link Communications. Safety-critical ATC text messages replacing voice. Strict latency requirements under FANS-1/A and ATN/CPDLC.',
+      'Controller-Pilot Data Link Communications. Safety-critical ATC text messages replacing voice. Strict latency requirements under FANS-1/A and ATN/CPDLC. A 2024 research paper (IACR ePrint 2024/046) says all CPDLC communications run over unencrypted and unauthenticated data links; it proposes two hybrid post-quantum key exchange protocols as a research proposal with an implementation, and several research proposals secure CPDLC over LDACS, a newer aeronautical data link.',
     maxPayloadBytes: 1024,
     dataRateKbps: 10,
     linkType: 'SATCOM (Inmarsat/Iridium) / VDL Mode 2',
-    currentCrypto: 'None (integrity via link layer)',
+    currentCrypto: 'None reported (2024 paper: unencrypted and unauthenticated data links)',
     bidirectional: true,
     standardRef: 'RTCA DO-258A / ED-100A (FANS 1/A) · DO-280B / ED-110B (ATN B1)',
     pqcOverhead: {

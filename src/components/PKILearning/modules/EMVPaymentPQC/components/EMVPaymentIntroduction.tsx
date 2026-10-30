@@ -323,7 +323,17 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <strong className="text-foreground">3-D Secure 2.0</strong>
           </InlineTooltip>{' '}
           (Visa Secure, Mastercard Identity Check) adds cardholder authentication using ECDSA
-          challenge signing and device binding.
+          challenge signing and device binding. The 3DS core components (ACS, DS and 3DS server)
+          fall under the PCI 3DS Core Security Standard, which requires strong cryptography to
+          safeguard 3DS data in transmission and a trusted certificate authority to issue all
+          digital certificates used between those components (
+          <Link
+            to="/library?ref=PCI-3DS-Core-v1-0-ROC-Reporting-Template"
+            className="text-primary hover:underline"
+          >
+            ROC Reporting Template v1.0
+          </Link>
+          , December 2017, requirements 5.2.1 and 6.1.8).
         </p>
 
         <div className="glass-panel p-4 space-y-2">
@@ -395,6 +405,20 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             . Compromising the BDK allows deriving ALL past and future transaction keys.
           </p>
         </div>
+
+        <p className="text-sm text-muted-foreground">
+          <strong className="text-foreground">What certifies the device.</strong> Under the{' '}
+          <Link
+            to="/library?ref=PCI-PIN-v3-1-ROC-Reporting-Template"
+            className="text-primary hover:underline"
+          >
+            PCI PIN Security Requirements v3.1
+          </Link>
+          , every HSM must be either FIPS 140-2 or 140-3 Level 3 (or higher) certified or
+          PCI-approved (PTS HSM), and POI devices are evidenced by PCI PTS approval. Check any
+          post-quantum change to key transport or terminal firmware against these approval regimes,
+          not only against the algorithm.
+        </p>
 
         <Link
           to="/learn/hsm-pqc?tab=workshop&step=0"
@@ -509,6 +533,14 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </Link>
             .
           </p>
+          <p className="text-sm text-muted-foreground border-t border-border pt-2">
+            <strong className="text-foreground">Since that text:</strong>{' '}
+            {EPC_PQC_POSITION.tlsUpdate}{' '}
+            <Link to="/library?ref=RFC-10024" className="text-primary hover:underline">
+              RFC 10024 in the Library
+            </Link>
+            .
+          </p>
         </div>
       </LearnSection>
 
@@ -519,9 +551,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         icon={<Scale size={20} className="text-primary" />}
       >
         <p className="text-muted-foreground">
-          No single authority sets the financial sector&rsquo;s post-quantum timetable. The eight
-          bodies below publish across five jurisdictions, and which of them binds a given
-          institution depends on where it is regulated — not on where it operates.
+          No single authority sets the financial sector&rsquo;s post-quantum timetable. The nine
+          bodies below publish across six jurisdictions, and which of them binds a given institution
+          depends on where it is regulated — not on where it operates.
         </p>
         <div className="space-y-2">
           {SECTOR_BODIES.map((b) => (
@@ -550,9 +582,11 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           <strong className="text-foreground">transition expectation</strong> for EU Member States —
           high-risk use cases transitioned by end-2030 — that reaches EU-regulated banks indirectly
           through NIS2 and DORA&rsquo;s state-of-the-art-cryptography requirements. It is a
-          Commission Recommendation, not a law, and it names no algorithm. Otherwise, the
-          sector&rsquo;s pressure comes from operational-resilience regulation and from
-          harvest-now-decrypt-later exposure, not from a compliance cliff.
+          Commission Recommendation, not a law, and it names no algorithm. The Nacha roadmap (above)
+          is a recommendation, not a mandate: an industry alliance project team recommends that all
+          requests for information and proposals require vendors to be quantum-safe by 2030.
+          Otherwise, the sector&rsquo;s pressure comes from operational-resilience regulation and
+          from harvest-now-decrypt-later exposure, not from a compliance cliff.
         </p>
         <p className="text-sm text-muted-foreground border-l-2 border-border pl-3">
           <strong className="text-foreground">Out of scope.</strong> This module covers card
@@ -745,20 +779,61 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1.5">
             <li>
               <strong className="text-foreground">FN-DSA (Falcon, FIPS 206 in development):</strong>{' '}
-              Leading candidate for constrained card chips — compact signatures (666 bytes, a fixed
-              padded size, vs ML-DSA&apos;s 2,420 bytes)
+              Compact signatures (666 bytes, a fixed padded size, vs ML-DSA&apos;s 2,420 bytes) make
+              it attractive for constrained card chips on size alone. In its March 2024 position
+              statement, EMVCo names no post-quantum algorithm for EMV cards; the card-side evidence
+              is research, such as a 2022 IDEMIA prototype that tried Falcon and Dilithium on a
+              banking card
             </li>
             <li>
               <strong className="text-foreground">Hybrid approach:</strong> Dual-signature cards
               (RSA + FN-DSA) during transition enable backwards compatibility with legacy terminals
             </li>
             <li>
-              <strong className="text-foreground">Card replacement cycle:</strong> 3-5 years per
-              card fleet — cards issued today are in circulation until 2029-2031 (our estimate)
+              <strong className="text-foreground">Card replacement cycle:</strong> an assumed 3-5
+              years per card fleet (this module&apos;s estimate, not a sourced figure) — on that
+              assumption, cards issued today could stay in circulation until about 2029-2031
             </li>
             <li>
               <strong className="text-foreground">HSM dependency:</strong> Payment HSMs must support
-              PQC key wrapping before any downstream migration can begin
+              PQC key wrapping before any downstream migration can begin. PCI PTS HSM v5.0
+              (announced 18 May 2026) adds, in PCI SSC&rsquo;s words, &ldquo;support for
+              post-quantum cryptography considerations&rdquo;; the announcement names no
+              post-quantum algorithm (
+              <Link
+                to="/library?ref=PCI-SSC-Blog-Publishes-PTS-HSM-v5-0"
+                className="text-primary hover:underline"
+              >
+                PCI SSC announcement
+              </Link>
+              ). Separately, PCI SSC keeps PTS HSM v4 open for new device approvals until 30 June
+              2027 (
+              <Link
+                to="/library?ref=PCI-SSC-Bulletin-PTS-HSM-v4-Extension"
+                className="text-primary hover:underline"
+              >
+                bulletin
+              </Link>
+              ): that is a certification cut-off for v4, not a post-quantum deadline
+            </li>
+            <li>
+              <strong className="text-foreground">PCI P2PE and PKCS#11:</strong> PCI P2PE v3.1
+              (September 2021; a later version exists and was not reviewed here) approves key
+              establishment under NIST SP 800-56A and SP 800-56B and itself flags those families as
+              vulnerable to large-scale quantum computers, advising only that entities become aware
+              of the threat and its mitigations (
+              <Link
+                to="/library?ref=PCI-P2PE-Security-Requirements-v3-1"
+                className="text-primary hover:underline"
+              >
+                P2PE v3.1
+              </Link>
+              ). On the interface side, PKCS#11 v3.2 (OASIS Standard, 3 June 2026) now defines
+              ML-KEM key-encapsulation mechanisms (
+              <Link to="/library?ref=PKCS11-V32-OS-OASIS" className="text-primary hover:underline">
+                PKCS#11 v3.2
+              </Link>
+              )
             </li>
             {/* NARROWED 2026-08-23. This read "v4.0.1 is the current standard — there is no
                 v5.0. PCI SSC opened a six-week request for comments on it on 3 June 2026".

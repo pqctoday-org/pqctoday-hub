@@ -337,6 +337,16 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           SLH-DSA and FN-DSA are still drafts. Step 2 signs a manifest with ML-DSA or LMS for real
           and shows the COSE_Sign1 layout.
         </p>
+        <p>
+          Some devices cannot update the code that checks signatures. RFC 9019 recommends that
+          unchangeable bootloader code in ROM use post-quantum secure signature schemes such as
+          hash-based signatures, because RSA and ECC signatures may become vulnerable to
+          quantum-accelerated key extraction; a bootloader author has to weigh the product&apos;s
+          service lifetime against that risk. NIST IR 8547 (final, October 2026) makes the same
+          point for any device whose signature-checking code cannot be updated after manufacture: it
+          should be designed to require quantum-resistant signatures on the executable code if it
+          may still be in use once cryptanalytically relevant quantum computers exist.
+        </p>
         <p className="text-xs text-muted-foreground">
           The boot-time side — verifying the image before it runs — is in{' '}
           <L to="/learn/secure-boot-pqc">Secure Boot PQC</L>; LMS/XMSS state management in{' '}
@@ -397,7 +407,10 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           <li>
             <strong>Matter</strong> commissions with PASE (SPAKE2+ over P-256), checks a DAC → PAI →
             PAA attestation chain, then uses CASE (ECDH + ECDSA). A PQC Matter needs new CASE suites
-            and PQC attestation certificates.
+            and PQC attestation certificates. Matter 1.6 does not define them yet, but a note in its
+            onboarding payload table says that PQC Phase 1 will likely soon replace the
+            AttestationCryptoInfo mechanism in the onboarding payload with an equivalent mechanism
+            using the Operational Credentials cluster.
           </li>
           <li>
             <strong>Bluetooth Mesh</strong> provisioning exchanges P-256 keys in PB-ADV segments;
@@ -540,12 +553,20 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
       >
         <ul className="list-disc pl-5 space-y-2 text-xs">
           <li>
-            <strong>Secure elements with PQC on the chip now exist.</strong> Infineon reports Common
-            Criteria EAL6 certification for an ML-KEM implementation on its TEGRION security
-            controllers; Samsung&apos;s S3SSE2A was among the first products to receive an ANSSI PQC
-            security certification (2025); STMicroelectronics has announced PQC for its ST54M secure
-            element. Check each certificate&apos;s scope — it covers one target of evaluation, not
-            &quot;PQC&quot; in general.
+            <strong>Secure elements with PQC on the chip now exist.</strong> Infineon reports that
+            its TEGRION SLC27 security controller is Common Criteria EAL6+ certified and includes a
+            cryptographic library with ML-KEM and ML-DSA, and that in January 2025 it received the
+            first Common Criteria EAL6+ certificate for a security controller comprising a
+            post-quantum algorithm (ML-KEM); Samsung&apos;s S3SSE2A was among the first products to
+            receive an ANSSI PQC security certification (2025); STMicroelectronics has announced PQC
+            for its ST54M secure element. Check each certificate&apos;s scope — it covers one target
+            of evaluation, not &quot;PQC&quot; in general.
+          </li>
+          <li>
+            <strong>Hash-based firmware protection is also in hardware.</strong> Infineon says two
+            of its OPTIGA TPMs (SLB 9672 and SLB 9673) use XMSS for firmware updates, and that a
+            PSoC Control microcontroller line supports LMS/XMSS firmware protection with a roadmap
+            toward ML-DSA and ML-KEM.
           </li>
           <li>
             <strong>Many deployed secure elements are ECC-only.</strong> Microchip&apos;s ATECC608B,
@@ -560,7 +581,10 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </li>
           <li>
             <strong>TPM 2.0.</strong> The TCG TPM 2.0 Library Specification version 1.85 adds ML-KEM
-            and ML-DSA; shipping TPMs will follow the specification with a lag.
+            and ML-DSA. The TCG PC Client Platform TPM Profile version 1.07 (23 March 2026) makes
+            ML-KEM (768 or 1024) and ML-DSA (65 or 87) support mandatory for PC-client TPMs. TPM
+            chips can trail the specification: Infineon says its OPTIGA TPM SLB 9678, designed to be
+            fully PQC-ready, will be coming in 2027.
           </li>
           <li>
             <strong>Assurance schemes.</strong> PSA Certified (Level 2 builds on the SESIP
@@ -614,7 +638,7 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
         title="IoT security regulations"
       >
         <p>
-          None of these rules names a PQC algorithm. What they require — secure updates over a
+          None of these rules requires a PQC algorithm. What they require — secure updates over a
           support period, state-of-the-art protection, vulnerability handling — is what makes a
           later PQC migration possible or impossible.
         </p>
@@ -622,7 +646,13 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           <li>
             <strong>EU Cyber Resilience Act</strong> (Regulation (EU) 2024/2847): vulnerability and
             incident reporting obligations apply from 11 September 2026; the essential requirements
-            (secure by design, security updates for the support period) from 11 December 2027.
+            (secure by design, security updates for the support period) from 11 December 2027. From
+            that date, critical products listed in Annex IV — which include smartcards or similar
+            devices, including secure elements — must demonstrate conformity through a European
+            cybersecurity certification scheme or, where the conditions of Article 8(1) are not met,
+            through one of the procedures in Article 32(3) (EU-type examination, full quality
+            assurance, or a certification scheme at assurance level &quot;substantial&quot; or
+            higher).
           </li>
           <li>
             <strong>ETSI EN 303 645</strong>: the consumer-IoT baseline — no universal default
@@ -631,9 +661,9 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </li>
           <li>
             <strong>EU Radio Equipment Directive</strong>: Delegated Regulation (EU) 2022/30 makes
-            cybersecurity essential requirements apply to internet-connected radio equipment from 1
-            August 2025; EN 18031-1/-2/-3 are the harmonised standards, cited (with restrictions) by
-            Implementing Decision (EU) 2025/138.
+            cybersecurity essential requirements apply to internet-connected radio equipment; EN
+            18031-1/-2/-3 are the harmonised standards, cited (with restrictions) by Implementing
+            Decision (EU) 2025/138.
           </li>
           <li>
             <strong>US Cyber Trust Mark</strong> (FCC 24-26): a voluntary label for consumer IoT

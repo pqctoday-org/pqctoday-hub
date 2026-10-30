@@ -9,6 +9,7 @@ import {
   GitBranch,
   BarChart3,
 } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { MIGRATION_VECTORS } from '../data/migrationRiskData'
@@ -510,8 +511,8 @@ export const MigrationRiskMatrix: React.FC = () => {
             <div className="flex-1 relative h-3">
               {[
                 { year: 2026, label: 'PCI 4.0', color: 'text-status-warning' },
-                { year: 2030, label: 'NIST PQC', color: 'text-status-error' },
-                { year: 2035, label: 'Full PQC', color: 'text-status-error' },
+                { year: 2030, label: 'RSA/ECC deprecated after 2030', color: 'text-status-error' },
+                { year: 2035, label: 'RSA/ECC disallowed after 2035', color: 'text-status-error' },
               ].map((deadline) => {
                 const pct = ((deadline.year - TIMELINE_START) / TIMELINE_SPAN) * 100
                 return (
@@ -615,6 +616,15 @@ export const MigrationRiskMatrix: React.FC = () => {
               <span className="text-[10px] text-muted-foreground">HNDL Exposed</span>
             </div>
           </div>
+          <p className="mt-2 text-[10px] text-muted-foreground">
+            The 2030 and 2035 markers are the transition trajectory in{' '}
+            <Link to="/library?ref=NIST%20IR%208547" className="text-primary hover:underline">
+              NIST IR 8547
+            </Link>
+            : NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow
+            its use under NIST standards and guidelines after 2035. It is NIST&rsquo;s trajectory
+            for NIST standards and federal systems, not a payments-sector mandate.
+          </p>
         </div>
       </div>
     </div>

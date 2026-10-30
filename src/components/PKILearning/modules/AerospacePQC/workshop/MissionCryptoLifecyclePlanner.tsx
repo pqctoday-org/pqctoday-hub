@@ -101,7 +101,8 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
         name: 'Algorithm Selection',
         start: designPhaseStart,
         end: designPhaseStart + 1,
-        crypto: 'Evaluate ML-KEM-768/1024, ML-DSA-44/65, LMS/XMSS for platform constraints',
+        crypto:
+          'Evaluate ML-KEM-768/1024, ML-DSA-44/65/87, LMS/XMSS for platform constraints. NSS links: CNSA 2.0 specifies ML-KEM-1024 and ML-DSA-87',
         color: 'bg-primary/20 border-primary/40',
         critical: true,
       },

@@ -55,12 +55,12 @@ describe('PAGE_PERSONA_NOTES — shape (Wave C, 2026-09-19)', () => {
 })
 
 describe('PAGE_PERSONA_NOTES — certification engineer on /learn', () => {
-  it('says the essentials start at the certificate and that the Full track opens with an optional orientation', () => {
+  it('says to start with the validation tests and then follow the essentials from the certificate', () => {
     const note = PAGE_PERSONA_NOTES['/learn']['cert-engineer']
     expect(note).toContain(
-      'Your essentials start at the certificate (the Full track opens with an optional orientation on who writes and certifies): '
+      'Start with the validation tests, then follow your essentials from the certificate: '
     )
-    expect(note).not.toContain('Your path starts at the certificate')
+    expect(note).not.toContain('Your essentials start at the certificate')
   })
 })
 

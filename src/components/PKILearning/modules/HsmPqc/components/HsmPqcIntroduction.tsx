@@ -27,6 +27,7 @@ import {
   FIRMWARE_UPGRADE_PATHS,
   KEY_SIZE_COMPARISONS,
 } from '../data/hsmConstants'
+import { HSM_VENDORS, STATUS_LABELS, getVendorPqcSupportStatus } from '../data/hsmVendorData'
 import { Button } from '@/components/ui/button'
 import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -35,6 +36,18 @@ import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCove
 
 interface HsmPqcIntroductionProps {
   onNavigateToWorkshop: () => void
+}
+
+/** Availability badge for a vendor card: read from the central catalog, never typed in. */
+const VendorStatusBadge: React.FC<{ vendorId: string }> = ({ vendorId }) => {
+  const vendor = HSM_VENDORS.find((v) => v.id === vendorId)
+  if (!vendor) return null
+  const status = STATUS_LABELS[getVendorPqcSupportStatus(vendor)]
+  return (
+    <span className={`text-[10px] px-2 py-0.5 rounded border font-bold ${status.className}`}>
+      {status.label}
+    </span>
+  )
 }
 
 interface CollapsibleSectionProps {
@@ -197,8 +210,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   FIPS-approved is unreconciled, see the Cloud HSM deep dive)
                 </li>
                 <li>
-                  &bull; Azure Dedicated HSM (Thales Luna backend; PQC by firmware upgrade;
-                  retiring)
+                  &bull; Azure Dedicated HSM (Thales Luna 7; PQC needs a customer-administered
+                  firmware upgrade; retiring)
                 </li>
                 <li>&bull; Google Cloud HSM (Cloud KMS lists no PQC algorithm for HSM keys)</li>
               </ul>
@@ -351,9 +364,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-bold text-foreground">Thales Luna Network HSM 7</h3>
-                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                    PRODUCTION
-                  </span>
+                  <VendorStatusBadge vendorId="thales-luna" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
@@ -392,9 +403,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-bold text-foreground">Entrust nShield 5</h3>
-                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                    PRODUCTION
-                  </span>
+                  <VendorStatusBadge vendorId="entrust-nshield" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
@@ -452,9 +461,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <h3 className="text-sm font-bold text-foreground">
                     Utimaco SecurityServer Se Gen2 (Quantum Protect)
                   </h3>
-                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                    PRODUCTION
-                  </span>
+                  <VendorStatusBadge vendorId="utimaco" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
@@ -536,11 +543,12 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 from 1 September 2026, while the NIST Security Policy for the same module (CMVP
                 #4703) lists ML-DSA and ML-KEM as non-approved services and the certificate lists no
                 PQC algorithm among its approved ones; we have not found a document that reconciles
-                the two (see the AWS CloudHSM card). Azure Dedicated HSM has PQC available via
-                customer-requested firmware upgrade (note: Azure Dedicated HSM is retiring &mdash;
-                no new customer onboardings); Google Cloud KMS lists its PQC algorithms at the
-                software protection level only, with none for HSM keys (AWS and Google statements
-                checked 23 Oct 2026; the Azure statement checked 15 Oct 2026).
+                the two (see the AWS CloudHSM card). Azure Dedicated HSM is a Thales Luna 7
+                appliance: Azure lists no PQC algorithm, and ML-KEM and ML-DSA come with Luna
+                firmware 7.9 if the customer upgrades, after consulting Thales Support (the service
+                is retiring &mdash; no new customer onboardings); Google Cloud KMS lists its PQC
+                algorithms at the software protection level only, with none for HSM keys (AWS and
+                Google statements checked 23 Oct 2026; the Azure statements checked 29 Oct 2026).
               </p>
             </div>
           </div>
@@ -639,28 +647,30 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-foreground">Azure Dedicated HSM</h3>
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                  PRODUCTION
-                </span>
+                <VendorStatusBadge vendorId="azure-dhsm" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
                   <span className="text-foreground">
-                    ML-KEM-512/768/1024, ML-DSA-44/65/87, LMS/HSS (firmware v7.9.2+)
+                    None listed by Azure. If the customer upgrades, Luna firmware 7.9.0 or newer
+                    adds ML-KEM and ML-DSA, and 7.8.9 or newer adds LMS-HSS.
                   </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
                   <span className="text-foreground">
-                    FIPS 140-3 Level 3 (via Thales Luna 7 cert)
+                    FIPS 140-2 Level 3 (Azure documents client software 7.2 and validated firmware
+                    7.0.3)
                   </span>
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  Powered by Thales Luna 7 hardware. PQC available via firmware v7.9.2+ — customers
-                  must request the upgrade via Azure Support. SLH-DSA not yet in Luna v7.9.2. Azure
+                  Powered by the Thales Luna 7 HSM (model A790). Azure&apos;s pages list no PQC
+                  algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS
+                  from 7.8.9. Customers administer the firmware themselves, after consulting Thales
+                  Support, and Azure does not say whether the service offers firmware 7.9. Azure
                   Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.
                 </p>
                 <p>

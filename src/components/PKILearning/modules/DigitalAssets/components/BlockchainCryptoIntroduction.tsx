@@ -94,7 +94,8 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
             <p className="text-xs text-muted-foreground">
               Used by Bitcoin and Ethereum. Defined in SEC 2 (Certicom, 2010). 128-bit security
               level. Public keys are 33 bytes (compressed) or 65 bytes (uncompressed). Signatures
-              use <InfoTooltip term="ecdsa" />.
+              use <InfoTooltip term="ecdsa" />; Bitcoin Taproot (P2TR) spends use Schnorr signatures
+              (BIP-340) on the same curve.
             </p>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">

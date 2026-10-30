@@ -968,7 +968,7 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
     year: 2023,
     quarter: 'Q3',
     description:
-      'Requires cryptographic risk assessment and Software Bill of Materials for new device submissions. Devices with 10-20 year lifecycles deploying now will operate into the CRQC era.',
+      'First issued September 2023; the current edition is dated 3 February 2026. A nonbinding guidance that recommends cryptography expected to stay strong throughout the device service life; the Software Bill of Materials duty for cyber devices comes from section 524B of the FD&C Act. Devices with 10-20 year lifecycles deploying now will operate into the CRQC era.',
     affectedLayers: ['medical-devices'],
     pqcRelevance: 'direct',
   },
@@ -990,7 +990,7 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
     year: 2026,
     quarter: 'Ongoing',
     description:
-      'No explicit PQC timeline yet, but healthcare data has long sensitivity periods making HNDL risk significant for long-lived ePHI. HITECH mandates strong encryption.',
+      'The Security Rule sets no post-quantum date, but healthcare data has long sensitivity periods making HNDL risk significant for long-lived ePHI. The Security Rule treats encryption of ePHI as an addressable specification.',
     affectedLayers: [
       'patient-portal',
       'clinical-workstations',
@@ -1008,7 +1008,7 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
     year: 2030,
     quarter: 'Q1',
     description:
-      'Transition guidance recommending deprecation of 112-bit classical asymmetric algorithms by 2030 and disallowance by 2035.',
+      'Transition guidance: NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035.',
     affectedLayers: [
       'patient-portal',
       'clinical-workstations',

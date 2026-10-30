@@ -2,8 +2,8 @@
 /**
  * Sector Regulation Timeline.
  *
- * The financial sector's PQC guidance is published by the seven bodies in
- * SECTOR_BODIES across five jurisdictions, and which ones bind you depends
+ * The financial sector's PQC guidance is published by the nine bodies in
+ * SECTOR_BODIES across six jurisdictions, and which ones bind you depends
  * entirely on where you are regulated. This filters the set down to the ones
  * that actually apply, and links each to its cached document in the Library.
  */

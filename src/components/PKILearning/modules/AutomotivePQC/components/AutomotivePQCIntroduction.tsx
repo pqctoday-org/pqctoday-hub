@@ -521,24 +521,26 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 <CheckCircle size={10} className="text-status-success" /> ML-DSA + ML-KEM available
               </p>
             </div>
-            <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
+            <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
               <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-2">
-                <ShieldCheck size={14} className="text-status-success" /> V2X SCMS HSM
+                <ShieldCheck size={14} className="text-status-warning" /> V2X SCMS HSM
               </h3>
-              <p className="text-[10px] font-medium text-status-success mb-2">
-                FIPS 140-3 Level 3 / CC EAL4 augmented (check the certificate for the named
-                components)
+              <p className="text-[10px] font-medium text-status-warning mb-2">
+                EU C-ITS Certificate Policy 3.0: Common Criteria, EAL4 or higher (SOG-IS). It does
+                not name FIPS 140
               </p>
               <p className="text-xs text-muted-foreground mb-2">
                 Backend HSMs in the Security Credential Management System. Issue pseudonym
-                certificates, manage butterfly key expansion, and run misbehavior detection.
+                certificates, manage butterfly key expansion, and run misbehavior detection. On the
+                vehicle side, the V2X HSM protection profile BSI-CC-PP-0114 (EAL4 augmented with
+                AVA_VAN.4) specifies ECC operations (ECDSA, ECIES) and no post-quantum algorithm.
               </p>
               <p className="text-[10px] text-muted-foreground">
                 <strong>Vendors:</strong> Qualcomm / Autotalks SCMS, Denso V2X PKI
               </p>
               <p className="text-[10px] text-foreground mt-1 flex items-center gap-1">
-                <CheckCircle size={10} className="text-status-success" /> PQC hybrid mode in
-                development
+                <Minus size={10} className="text-status-warning" /> ECC/ECDSA today; no public PQC
+                amendment identified (ETSI TR 103 949 is a migration study)
               </p>
             </div>
             <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/20">
@@ -589,7 +591,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               <p className="text-xs text-muted-foreground mb-2">
                 Discrete or firmware TPM in the infotainment head unit and telematics control unit
                 (TCU). Provides measured boot, platform attestation, and DRM key protection. Runs
-                RSA-2048 and ECDSA P-256 today.
+                RSA-2048 and ECDSA P-256 today. Vendor-stated: Infineon&rsquo;s OPTIGA TPM SLB 9672
+                and SLB 9673 use XMSS for firmware updates.
               </p>
               <p className="text-[10px] text-muted-foreground">
                 <strong>Vendors:</strong> Infineon SLB 9672, STMicro ST33, Nuvoton NPCT7xx
@@ -729,10 +732,12 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           <p>
             <InlineTooltip term="AUTOSAR">AUTOSAR</InlineTooltip> Adaptive Platform R23-11 includes
             the Crypto Service Manager (ara::crypto) which supports algorithm-agnostic key
-            management. However, AUTOSAR Classic (used in most ECUs) relies on the SHE/SHE 2.0
-            hardware interface, which has a fixed AES-128 algorithm set with no extensibility for
-            PQC. The Classic-to-Adaptive migration is itself a multi-year effort that must be
-            coordinated with PQC adoption.
+            management. AUTOSAR Classic (used in most ECUs) can map its crypto stack onto the SHE
+            (Secure Hardware Extensions) interface, which on SHE-only ECUs has a fixed AES-128
+            algorithm set with no asymmetric or PQC support. The Classic R23-11 Crypto Driver
+            specification itself defines ECC and RSA algorithm families but no post-quantum family.
+            The Classic-to-Adaptive migration is itself a multi-year effort that must be coordinated
+            with PQC adoption.
           </p>
         </div>
       </LearnSection>
@@ -873,6 +878,15 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             Charging Point Operator&rsquo;s (CPO) trust chain, and charging begins &mdash; no RFID
             card, no app, no user interaction. This entire flow depends on classical RSA/ECDSA
             certificates that a CRQC would break.
+          </p>
+
+          <p>
+            A related demonstration concerns OCPP. A talk abstract at the PKI Consortium PQC
+            Conference 2025 (Kuala Lumpur) reports that TNO, NXP and Infiniot upgraded OCPP with
+            hybrid quantum-safe cryptography (TLS handshake and X.509 certificates) for electric
+            vehicle charging infrastructure, tested on an NXP i.MX 8 board similar to those in real
+            charging stations. The abstract names no algorithm, so treat it as a reported
+            demonstration rather than an established standard.
           </p>
 
           <p>
@@ -1169,13 +1183,15 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 AUTOSAR Classic (SHE-based)
               </h3>
               <p className="text-xs text-muted-foreground">
-                Used in most automotive ECUs. Crypto Stack (CryIf + Csm) is tightly coupled to SHE
-                hardware: fixed AES-128 + CMAC. No extensibility for asymmetric crypto, let alone
-                PQC. Secure boot uses AES-CMAC chains, not digital signatures. PQC migration
-                requires replacing ECU hardware entirely or adding an external secure element.
+                Used in most automotive ECUs. The Crypto Stack (Csm + CryIf + Crypto Driver) can map
+                onto SHE hardware: fixed AES-128 + CMAC, no asymmetric crypto on SHE-only ECUs. The
+                R23-11 Crypto Driver specification itself defines ECDSA, ECDH and RSA algorithm
+                families, so the Classic specification accommodates ECC, but it defines no
+                post-quantum family. Secure boot on SHE-only ECUs uses AES-CMAC chains, not digital
+                signatures.
               </p>
               <p className="text-[10px] text-status-error font-medium mt-2">
-                No PQC path without hardware replacement
+                No post-quantum algorithm family in the R23-11 Crypto Driver
               </p>
             </div>
             <div className="bg-status-success/10 rounded-lg p-4 border border-status-success/20">
@@ -1304,7 +1320,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
               <ul className="space-y-1 list-disc list-inside">
                 <li>UNECE WP.29 R155 &mdash; Cybersecurity Management System (CSMS)</li>
                 <li>UNECE WP.29 R156 &mdash; Software Update Management System (SUMS)</li>
-                <li>NSA CNSA 2.0 Suite (September 2022) &mdash; PQC transition deadlines</li>
+                <li>
+                  NSA CNSA 2.0 &mdash; transition deadlines for National Security Systems (advisory
+                  first published September 2022; FAQ version 2.2, October 2026)
+                </li>
+                <li>
+                  EU C-ITS Certificate Policy, Release 3.0 (May 2024) &mdash; Common Criteria
+                  requirements for V2X cryptographic modules
+                </li>
               </ul>
             </div>
             <div className="space-y-1.5">
@@ -1327,7 +1350,20 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 <li>FIPS 205 (SLH-DSA) &mdash; Stateless hash-based signatures</li>
                 <li>
                   IEEE 1609.2 &mdash; V2X Security Services. The current (2025) edition of IEEE
-                  1609.2 specifies ECC; there is no IEEE post-quantum amendment project
+                  1609.2 and ETSI TS 103 097 specify ECC (ECDSA); no public post-quantum amendment
+                  is identified
+                </li>
+                <li>
+                  ETSI TR 103 949 (May 2023) &mdash; quantum-safe migration study for ITS and C-ITS
+                </li>
+                <li>
+                  RFC 10024 &mdash; hybrid ML-KEM + ECDHE key agreement for TLS 1.3 (IETF Standards
+                  Track, August 2026)
+                </li>
+                <li>
+                  NIST SP 800-208 &mdash; stateful hash-based signature schemes (LMS, HSS, XMSS,
+                  XMSS^MT); authentication of firmware updates for constrained devices is a use that
+                  may fit
                 </li>
                 <li>CCC Digital Key 3.0 &mdash; Car Connectivity Consortium</li>
                 <li>ISO 14443 &mdash; NFC proximity card standard (car key transport)</li>

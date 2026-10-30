@@ -3,7 +3,8 @@
  * The US federal mandate stack and the Federal PKI profile pair.
  *
  * Sources, all cached in the evidence library:
- *   QCCPA-2022, OMB-M-23-02, OMB-M-26-15, EO-14306, CNSSP 15,
+ *   QCCPA-2022, OMB-M-23-02, OMB-M-26-15, EO-14306, EO-2026-06-22-Securing-the-Nation
+ *   (Executive Order 14412), CNSSP 15,
  *   CISA-PQC-CATEGORY-LIST-2026, NIST-SP-800-171-Rev-3,
  *   Common-Policy-X-509-Certificate-and-CRL-Profile (classical),
  *   Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile (PQC DRAFT).
@@ -36,7 +37,7 @@ export const FEDERAL_MANDATES: FederalMandate[] = [
     instrument: 'OMB Memorandum',
     appliesTo: 'Federal civilian agencies',
     obligation:
-      'Operationalises the QCCPA: prioritised cryptographic inventories and annual reporting of quantum-vulnerable systems.',
+      'To comply with NSM-10, directs agencies to submit a prioritised inventory of CRQC-vulnerable cryptographic systems (excluding National Security Systems) by 4 May 2023 and annually thereafter until 2035, or as directed by superseding guidance.',
   },
   {
     id: 'omb-m-26-15',
@@ -45,7 +46,7 @@ export const FEDERAL_MANDATES: FederalMandate[] = [
     instrument: 'OMB Memorandum',
     appliesTo: 'Federal civilian agencies',
     obligation:
-      'The execution-phase successor to M-23-02 — moves the programme from inventory to delivery.',
+      'Implements the accelerated migration set by Executive Order 14412 (22 June 2026), and fulfils OMB’s responsibility under the QCCPA to issue guidance directing each agency to prioritise critical IT for migration to PQC and to plan that migration. Each agency submits a PQC migration plan within 120 days, phased from discovery (2026–2027) through pilots (2027–2028), prioritised key-establishment migration (2028–2030) and signature migration (2031) to full migration (2035). It does not apply to National Security Systems.',
   },
   {
     id: 'eo-14306',
@@ -55,6 +56,16 @@ export const FEDERAL_MANDATES: FederalMandate[] = [
     appliesTo: 'Federal agencies and their suppliers',
     obligation:
       'Sustains and amends prior federal cybersecurity direction, including the PQC provisions that drive the CISA product-category work.',
+  },
+  {
+    id: 'eo-14412',
+    libraryRef: 'EO-2026-06-22-Securing-the-Nation',
+    label: 'Executive Order 14412 — Securing the Nation Against Advanced Cryptographic Attacks',
+    instrument: 'Executive Order',
+    appliesTo:
+      'Federal agencies (high value assets and high impact systems, not National Security Systems); covered contractors through a directed FAR rule',
+    obligation:
+      'Section 4(b) directs OMB to require agencies to move all high value assets and high impact systems to post-quantum cryptography for key establishment by 31 December 2030 and for digital signatures by 31 December 2031. Section 6(c) directs the FAR Council to publish, within 180 days, a proposed rule requiring covered contractors to comply by 31 December 2030 with NIST FIPS, including all applicable FIPS incorporating PQC-compliant algorithms. The order directs a proposed rule; it is not itself that rule.',
   },
   {
     id: 'cnssp-15',
@@ -72,7 +83,7 @@ export const FEDERAL_MANDATES: FederalMandate[] = [
     instrument: 'Agency Guidance',
     appliesTo: 'Nonfederal systems processing Controlled Unclassified Information',
     obligation:
-      'Reaches contractors, universities, and suppliers who never touch an NSS. Supersedes Rev. 2 (2021).',
+      'Reaches contractors, universities, and suppliers who never touch an NSS. NIST states that it supersedes Rev. 2 (February 2020), but DoD’s CMMC briefing (cleared for open publication 21 January 2025) says CMMC assessments remain against Rev. 2 until DoD formally adopts Rev. 3 through rulemaking.',
   },
 ]
 
@@ -93,7 +104,7 @@ export const FPKI_PROFILE_PAIR = {
     libraryRef: 'Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile',
     label: 'Common Policy X.509 Certificate and CRL Profiles — PQC',
     status: 'DRAFT, 21 April 2026',
-    algorithms: 'ML-DSA, ML-KEM (plus RSA for the transition)',
+    algorithms: 'ML-DSA, ML-KEM',
     note: 'Created to profile ML-DSA and ML-KEM certificates for CITE testing, starting from v2.2 of the Common Policy profiles. Draft — do not cite as binding.',
   },
 } as const

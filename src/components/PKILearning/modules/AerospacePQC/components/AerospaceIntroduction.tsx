@@ -52,7 +52,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             Aerospace is uniquely vulnerable to the quantum threat because its cryptographic systems
             must protect data across <strong>three segments</strong> with fundamentally different
             upgrade cadences &mdash; and because its equipment lifetimes span the entire PQC
-            transition window.
+            transition window. A 2025 CEAS Aeronautical Journal paper on post-quantum cryptography
+            in avionics (Varner et al., &ldquo;Agile, post-quantum secure cryptography in
+            avionics&rdquo;) states that long development times, certification delay and decades of
+            operation make beginning the migration to post-quantum cryptography a particularly
+            urgent need for avionics.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -75,6 +79,11 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                 libraries certified under <InlineTooltip term="DO-178C">DO-178C</InlineTooltip>.
                 Fleet-wide PQC rollout:
                 <strong> 5&ndash;10 years</strong>.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                <strong>Loadable software:</strong> ARINC 835-2 (information report, December 2025)
+                gives guidance on securing loadable software parts with digital signatures and
+                public key infrastructure.
               </p>
             </div>
             <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/20">
@@ -221,6 +230,26 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             bandwidth-constrained aviation links, hash-based stateful signatures may be the only
             viable PQC option &mdash; but they require secure monotonic counters to prevent state
             reuse.
+          </p>
+
+          <p>
+            <strong>Aviation data links today:</strong> A 2024 research paper (Dowling and
+            Wimalasiri, IACR ePrint 2024/046) says that at the time of writing all CPDLC
+            communications run over unencrypted and unauthenticated data links. It proposes two
+            quantum-secure hybrid key exchange protocols for aircraft-to-ground links (PQAG-KEM and
+            PQAG-SIG) as a research proposal with an implementation, not a deployed standard. ACARS
+            message security is specified in ARINC 823 Part 1, though the same paper says this
+            approach is rarely adopted by any major airlines. Several research proposals secure
+            CPDLC over LDACS, a newer aeronautical data link.
+          </p>
+
+          <p>
+            <strong>Satellite links:</strong> GSMA PQ.07 (Post Quantum Cryptography for
+            Non-Terrestrial Networks, version 1.0, 4 February 2026) recommends starting the
+            migration of legacy satellite systems with hybrid solutions that combine legacy and PQC
+            keys. It says IPsec and DTLS tunnels for satellite IoT connections should integrate
+            quantum-resistant key exchange such as ML-KEM, and advises watching CCSDS for
+            PQC-related recommendations.
           </p>
         </div>
       </LearnSection>
@@ -420,11 +449,17 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
           </div>
 
           <p>
-            <InlineTooltip term="DO-326A">DO-326A</InlineTooltip> (Airborne Security Process
-            Specification, mandated since 2021) requires threat modeling of all cryptographic
-            systems. <InlineTooltip term="ARINC 653">ARINC 653</InlineTooltip> partitioned RTOS
-            constraints mean PQC libraries must fit within 1&ndash;4 MB memory budgets and complete
-            all operations within deterministic time windows.
+            EASA&rsquo;s AMC 20-42 (airworthiness information security risk assessment) recognises
+            three EUROCAE/RTCA document pairs as acceptable means of compliance: ED-202A /{' '}
+            <InlineTooltip term="DO-326A">DO-326A</InlineTooltip> (Airworthiness Security Process
+            Specification), ED-203A / DO-356 (Airworthiness Security Methods and Considerations) and
+            ED-204 / DO-355 (Information Security Guidance for Continuing Airworthiness, which
+            covers security after the product enters service). Compliance with the AMC is not
+            mandatory: an applicant may use an alternative means of compliance that EASA accepts.
+            The assessment it describes applies to new products and to changes to a product.{' '}
+            <InlineTooltip term="ARINC 653">ARINC 653</InlineTooltip> partitioned RTOS constraints
+            mean PQC libraries must fit within 1&ndash;4 MB memory budgets and complete all
+            operations within deterministic time windows.
           </p>
 
           <p>
@@ -599,6 +634,25 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             command uplinks. The 3&ndash;5 year satellite development cycle means PQC algorithm
             selection must happen in <strong>2025&ndash;2026</strong> &mdash; during the current
             standardization window.
+          </p>
+
+          <p>
+            <strong>If the satellite link is part of a National Security System (NSS)</strong>, NSA
+            CNSA 2.0 applies (CNSA 2.0 FAQ, version 2.2). It replaces RSA and elliptic-curve
+            algorithms with <strong>ML-KEM-1024</strong> and <strong>ML-DSA-87</strong> &mdash; not
+            the ML-KEM-768 and ML-DSA-44/65 used in most examples in this module. CNSA 2.0
+            algorithms are required in all new NSS acquisitions from 1 January 2027; NSS equipment
+            and services that cannot support them must be phased out by 31 December 2030 unless an
+            exception is granted; and their use is mandated by 31 December 2031, unless otherwise
+            noted.
+          </p>
+
+          <p>
+            For the implementation, the same FAQ says quantum-resistant algorithms should be
+            implemented in NSS mission systems as NIAP-validated products, or in accordance with
+            other implementation-specific guidance, and that this typically includes requiring
+            cryptographic modules validated by the NIST Cryptographic Module Validation Program
+            (CMVP).
           </p>
 
           <p>

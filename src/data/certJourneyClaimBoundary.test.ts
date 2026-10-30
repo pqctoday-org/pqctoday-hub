@@ -85,6 +85,31 @@ const BANNED: { file: string; banned: RegExp; why: string }[] = [
     why: 'ML-DSA in FIPS mode on hsm2m.medium from 1 Sep 2026; not on certificate #4703',
   },
   {
+    file: `${HSM}/components/HsmPqcIntroduction.tsx`,
+    banned: /^\s*PRODUCTION\s*$/m,
+    why: 'vendor badges read the central catalog through STATUS_LABELS; a typed status word drifts',
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/data/hsmVendors.ts',
+    banned: /#4962 \(Luna G7\)/,
+    why: 'Luna Network HSM 7 is the K7 module: certificate #4684, firmware 7.8.4 and 7.8.5, no PQC algorithm listed; #4962 is the Luna G7 module',
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/workshop/RiskAnalysisEngine.tsx',
+    banned: /CMVP #4962 active\. PQC in FIPS boundary/,
+    why: 'Luna certificate #4684 (firmware 7.8.4 and 7.8.5) lists no PQC algorithm',
+  },
+  {
+    file: `${HSM}/components/HsmPqcIntroduction.tsx`,
+    banned: /customers\s+must request the upgrade via Azure Support|firmware v7\.9\.2\+\)/,
+    why: "Azure's FAQ: the customer administers firmware after consulting Thales Support; Azure lists no PQC algorithm and documents FIPS 140-2 Level 3, not 140-3",
+  },
+  {
+    file: 'src/components/PKILearning/modules/CryptoMgmtModernization/data/hsmVendors.ts',
+    banned: /firmwareRev: '7\.7\.2'|EOL Aug 2025/,
+    why: 'Azure documents firmware 7.0.3, and Azure Dedicated HSM is supported until 31 July 2028',
+  },
+  {
     file: 'src/components/PKILearning/modules/KmsPqc/data/kmsProviderData.ts',
     banned: /none are GA yet/,
     why: 'Cloud KMS PQC signing GA 16 Jul 2026 (release notes)',
@@ -103,6 +128,26 @@ const BANNED: { file: string; banned: RegExp; why: string }[] = [
     file: 'src/components/Algorithms/AlgorithmsView.tsx',
     banned: /Status = Certified|algorithms safe to deploy/,
     why: 'the status bucket includes FIPS-pending and non-US picks',
+  },
+  {
+    file: 'src/components/PKILearning/modules/StandardsBodies/data.ts',
+    banned: /6-year PQC|4 finalists|4 rounds of evaluation/,
+    why: 'NIST IR 8413: call for proposals Dec 2016, 7 finalists and 8 alternates in round 3, first algorithms selected July 2022',
+  },
+  {
+    file: 'src/components/PKILearning/modules/StandardsBodies/rag-summary.md',
+    banned: /6-year PQC/,
+    why: 'NIST IR 8413: call for proposals Dec 2016, first algorithms selected July 2022',
+  },
+  {
+    file: 'src/components/OpenSSLStudio/learn/opensslLessons.ts',
+    banned: /kdf \(3\.6\+\)|two brand-new subcommands/,
+    why: 'openssl-kdf(1) HISTORY: "Added in OpenSSL 3.0"; only configutl was added in 3.6',
+  },
+  {
+    file: 'src/components/OpenSSLStudio/learn/opensslGlossary.ts',
+    banned: /openssl-kdf — new in OpenSSL 3\.6/,
+    why: 'openssl-kdf(1) HISTORY: "Added in OpenSSL 3.0"',
   },
 ]
 

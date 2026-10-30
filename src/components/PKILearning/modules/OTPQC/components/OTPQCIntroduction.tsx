@@ -507,6 +507,12 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
+            The series is not standing still. A Siemens presentation at the ITU-T X.509 Day
+            (September 2025) reports that the PQC transition for IEC 62351 has started in IEC TC57,
+            with further refinements needed, and points to IEC 62351-90-4, which gives guidance on
+            migrating from one cryptographic algorithm to another.
+          </p>
+          <p className="text-xs text-muted-foreground">
             The workshop&rsquo;s Protocol Analyzer covers {OT_PROTOCOLS.length} protocols;{' '}
             {OT_PROTOCOLS.filter((p) => summarizeProtocol(p).symmetricSafe > 0).length} of them
             already have at least one symmetric layer that needs no PQC change. Survey background:{' '}
@@ -644,6 +650,15 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               of them protects the recorded session.
             </li>
             <li>
+              <strong>IPsec / IKEv2 VPNs</strong> — two IETF routes protect the key exchange of a
+              recorded session. RFC 8784 (Standards Track) stirs an additional shared secret into
+              the IKEv2 key derivation, so that, where the two ends share a long secret key, the
+              exchange is quantum secure without waiting for new key-exchange algorithms. RFC 9370
+              lets IKEv2 add a post-quantum key exchange alongside the classical (EC)DH one. As of
+              21 August 2026 (version 12), post-quantum signature authentication for IKEv2 was
+              specified in an IETF Internet-Draft, draft-ietf-ipsecme-ikev2-pqc-auth.
+            </li>
+            <li>
               <strong>IIoT platforms</strong> — gateways and cloud connectors belong on their own
               segment, routed through the DMZ border firewall; a direct cloud link from L1–L2 is a
               DMZ bypass. Hybrid ML-KEM on the cloud link and PQC-ready gateway certificates cover
@@ -678,7 +693,7 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               integrity, and <LibLink id="NERC-CIP-012-2">CIP-012-2</LibLink> — effective 2026-07-01
               — which protects confidentiality, integrity and availability of real-time data between
               Control Centers and is technology-neutral (encryption is one way to meet it, not a
-              mandate). US pipelines fall under{' '}
+              mandate). TSA-designated US pipelines fall under{' '}
               <LibLink id="TSA-SD-PIPELINE-2021-02G">
                 TSA Security Directive Pipeline-2021-02G
               </LibLink>
@@ -712,8 +727,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               <LibLink id="ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch">
                 ETSI TS 103 764
               </LibLink>{' '}
-              and the TS 103 765 series), names no mechanism and delegates crypto to 3GPP. US
-              Positive Train Control (
+              and the TS 103 765 series), names no algorithm. Its security is layered: a TLS-backed,
+              mutually authenticated Local Binding links applications to the On-Board FRMCS or the
+              Trackside Gateway, and the transport and service layers defer to 3GPP security
+              specifications. US Positive Train Control (
               <LibLink id="49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems">
                 49 CFR Part 236 Subpart I
               </LibLink>
@@ -808,7 +825,8 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </li>
             <li>
               <strong>TSA SD Pipeline-2021-02G</strong> — mandatory measures for designated US
-              pipelines, including encryption of data in transit; in force 3 May 2026 to 2 May 2027.
+              pipelines; operational-technology services may not traverse the IT system unless their
+              content is encrypted while in transit. In force 3 May 2026 to 2 May 2027.
             </li>
           </ul>
           <h3 className="text-sm font-bold text-foreground">NERC CIP (North American grid)</h3>

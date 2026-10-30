@@ -108,6 +108,30 @@ describe('MyPathView — Essentials tier (A1)', () => {
     }
   })
 
+  it('a certification engineer is offered the validation tests first, until a lesson is started', () => {
+    renderMyPath('cert-engineer')
+    const card = screen.getByTestId('first-step-card')
+    expect(card).toHaveTextContent(/Run the validation tests/)
+    expect(within(card).getByRole('button', { name: /Start/ })).toBeInTheDocument()
+    // A fresh learning path remains available after the validation-first action.
+    expect(screen.getByText('Start your next module')).toBeInTheDocument()
+  })
+
+  it('the first step goes away once a lesson on the path is under way', () => {
+    useModuleStore.setState({
+      modules: {
+        'crypto-product-certification': { status: 'in-progress', completedSteps: [] },
+      } as never,
+    })
+    renderMyPath('cert-engineer')
+    expect(screen.queryByTestId('first-step-card')).toBeNull()
+  })
+
+  it('a role without a first-step page shows no such card', () => {
+    renderMyPath('developer')
+    expect(screen.queryByTestId('first-step-card')).toBeNull()
+  })
+
   it('a path that already opens with PQC 101 shows no such note', () => {
     renderMyPath('developer')
     expect(screen.queryByTestId('new-to-pqc-note')).toBeNull()

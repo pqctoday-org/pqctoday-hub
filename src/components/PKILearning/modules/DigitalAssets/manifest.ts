@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-assets',
-  contentVersion: 11,
+  contentVersion: 12,
   lm_id: 'LM-045',
   title: 'Digital Assets',
   description:
@@ -47,7 +47,7 @@ const manifest: ModuleManifest = {
   // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
   taxonomy: {
     algorithms: ['Falcon', 'ML-DSA', 'ML-KEM', 'SLH-DSA'],
-    standards: ['RFC 9370', 'FIPS 140-3'],
+    standards: ['RFC 10024', 'FIPS 140-3'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DigitalAssetsModule })),

@@ -4,12 +4,12 @@ The eIDAS 2.0 regulation mandates that all 27 EU member states provide citizens 
 
 ### Why It Matters
 
-Current EUDI implementations are secured by classical ECDSA (P-256) signatures for issuing attestations and binding identities to devices. If an attacker leverages a quantum computer to forge these signatures, they can create perfectly valid but counterfeit credentials, enabling total identity impersonation and fraud across the entire European Union.
+The OpenID4VP and OpenID4VCI specifications use classical ECDSA (P-256) signatures in most of their examples for issuing attestations and binding identities to devices. If an attacker leverages a quantum computer to forge these signatures, they can create perfectly valid but counterfeit credentials, enabling total identity impersonation and fraud across the entire European Union.
 
 ### The Key Takeaway
 
-Because digital identities represent high-value targets, national wallet infrastructures must be among the first adopters of PQC. Future architecture frameworks must officially mandate NIST algorithms (like ML-DSA and SLH-DSA) to protect long-lived credentials against Harvest Now, Decrypt Later threats.
+The text of eIDAS 2.0 and of the EUDI wallet Architecture and Reference Framework (ARF) that we checked contains no occurrence of “quantum.” FIPS 204 says ML-DSA is believed to be secure against adversaries with a large-scale quantum computer, and FIPS 205 says SLH-DSA is designed to resist attacks from one.
 
 ### What's Happening
 
-The eIDAS 2.0 framework requires all 27 EU member states to deploy EUDI Wallets by 2026, creating an urgent timeline to integrate quantum-safe signatures (ML-DSA and SLH-DSA) into national digital identity infrastructure before these systems go live.
+The eIDAS 2.0 framework requires all 27 EU member states to deploy EUDI Wallets by 2026. As of October 2026, quantum-safe signatures (ML-DSA and SLH-DSA) are not required, and ETSI says its cryptographic suites specification (TS 119 312 V2.1.1, June 2026) is incomplete for the EUDI Wallet, with an update in preparation.
