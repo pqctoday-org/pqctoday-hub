@@ -215,11 +215,11 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
     scheme: 'EUCC (Implementing Regulation (EU) 2024/482)',
     role: 'EU law; not a CCRA party',
     recognition:
-      "Assurance level 'substantial' (AVA_VAN.1–2) or 'high' (AVA_VAN.3–5); AVA_VAN.4–5 where the product is covered by an Annex I technical domain or a listed Annex II protection profile, or in exceptional cases with the authority's approval (Art 7(3)). EUCC builds on the SOG-IS MRA; the national schemes it covers ceased to produce effects from 27 February 2026.",
+      "Assurance level 'substantial' (AVA_VAN.1–2) or 'high' (AVA_VAN.3–5); AVA_VAN.4–5 where the product is covered by an Annex I technical domain or a listed Annex II protection profile, or in exceptional cases with the authority's approval (Art 7(3)). EUCC builds on the SOG-IS MRA. SOG-IS stopped issuing certificates on 27 February 2026, and the Swedish certification body says national certification bodies may not issue new certificates after that date.",
     additions: [
       {
         kind: 'procurement',
-        text: 'Applies by regulation in every EU member state; the scheme itself is voluntary-based (ENISA), and certification becomes a condition of sale only where sector law requires it, as eIDAS does for qualified signature creation devices (Art 30); no self-assessment.',
+        text: 'Applies by regulation in every EU member state; the scheme itself is voluntary-based (ENISA), and sector law can require certification for particular products, as eIDAS does for qualified signature creation devices (Art 30); no self-assessment.',
       },
       {
         kind: 'protection-profiles',
@@ -548,7 +548,7 @@ export const OUTSIDE_CCRA: readonly OutsideCcra[] = [
       'GB/T 18336.1 to GB/T 18336.5-2024 (Parts 1 and 3 identical to ISO/IEC 15408-1 and 15408-3:2022) and GB/T 30270-2024 (identical to ISO/IEC 18045:2022)',
     body: 'China Information Technology Security Evaluation Center (CNITSEC)',
     additions:
-      'Listed network critical equipment and specialised cybersecurity products need security certification or security testing by a qualified body before sale (Cybersecurity Law Art. 23; GB 42250 for specialised cybersecurity products); commercial cryptography is governed separately by the Cryptography Law, with testing mandatory only for listed products.',
+      'Listed network critical equipment and specialised cybersecurity products need security certification or security testing by a qualified body before sale (Cybersecurity Law; GB 42250 for specialised cybersecurity products); commercial cryptography is governed separately by the Cryptography Law, with testing mandatory only for listed products.',
     pqc: 'A national call for next-generation (post-quantum) public-key algorithms opened in February 2025. No national PQC standard is published yet.',
     sources: [
       { label: 'Cryptography Law', libraryId: 'China-Cryptography-Law-2019-NPC' },
@@ -560,11 +560,11 @@ export const OUTSIDE_CCRA: readonly OutsideCcra[] = [
   },
   {
     country: 'Russia',
-    standard: 'GOST R ISO/IEC 15408 (national adoption of ISO/IEC 15408)',
+    standard: 'GOST R ISO/IEC 15408',
     body: 'FSTEC (certification of information-protection means); cryptography under the FSB',
     additions:
       'FSTEC certifies against its own six-level “trust level” scale; cryptography is regulated separately, by the FSB, with GOST algorithms from technical committee TC 26.',
-    pqc: 'TC 26 reported (March 2024) that Kryptonit staff developed the code-based mechanism “Kodieum”, then going through drafting of standardisation recommendations before open publication; no post-quantum GOST standard yet.',
+    pqc: 'A March 2024 TC 26 news item says developers at Kryptonit created the code-based mechanism “Kodieum”, then going through drafting of standardisation recommendations before open publication; we found no later TC 26 item in the documents we hold.',
     sources: [
       { label: 'TC 26 — post-quantum mechanism', libraryId: 'tc26-Kodieum-Kryptonit-PQ-Mechanism' },
     ],
