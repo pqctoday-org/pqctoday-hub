@@ -2708,11 +2708,12 @@ export const CcRegionalSchemes = () => (
         January 2028 a product that does not meet CNSA 2.0 for every cryptographic function is not
         accepted into NIAP evaluation, and from 1 January 2029 it is not posted to the Product
         Compliant List — so a certificate from any CCRA scheme stops opening the US
-        national-security market unless its cryptography is CNSA 2.0. The same policy sets earlier
-        cut-offs for products that do not meet CNSA 1.0 minimum requirements: they can no longer
-        extend a certificate through Assurance Maintenance or hold one for more than two years, are
-        not accepted into NIAP evaluation from 1 January 2027, and are not posted to the Product
-        Compliant List from 1 July 2027.
+        national-security market unless its cryptography is CNSA 2.0. The policy states one
+        exception: AES-128 for Bluetooth is exempt until the Bluetooth standard is updated. The same
+        policy sets earlier cut-offs for products that do not meet CNSA 1.0 minimum requirements:
+        they can no longer extend a certificate through Assurance Maintenance or hold one for more
+        than two years, are not accepted into NIAP evaluation from 1 January 2027, and are not
+        posted to the Product Compliant List from 1 July 2027.
       </p>
     </Callout>
 
