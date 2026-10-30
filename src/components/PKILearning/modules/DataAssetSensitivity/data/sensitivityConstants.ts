@@ -763,7 +763,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'CMVP / FIPS 140-3',
         prescribedTier: 'critical',
         reason:
-          'FIPS 140-3 applies to cryptographic modules protecting sensitive but unclassified information; classified systems use modules approved for classified use.',
+          "This module's own tier for a root CA key, not a FIPS 140-3 requirement: FIPS 140-3 applies to cryptographic modules protecting sensitive but unclassified information; classified systems use modules approved for classified use.",
       },
       {
         framework: 'CNSA 2.0',
