@@ -202,7 +202,7 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     hybridSupport: true,
     hardwareOffload: false,
     notes:
-      'pfSense CE 2.9.0 added a post-quantum key exchange in its SSH daemon; the catalog says IPsec post-quantum key exchange needs a strongSwan upgrade not yet in pfSense packages. OPNsense 26.7.4 and later offers hybrid IKEv2 key exchanges that pair X25519 or P-256 with ML-KEM-768, or P-384 with ML-KEM-1024, through strongSwan.',
+      'pfSense CE 2.9.0 added post-quantum key exchange algorithms to its SSH daemon and updated strongSwan to 6.0.3; its release notes do not describe post-quantum IPsec options. OPNsense 26.7.4 and later offers hybrid IKEv2 key exchanges that pair X25519 or P-256 with ML-KEM-768, or P-384 with ML-KEM-1024, through strongSwan.',
   },
 ]
 
