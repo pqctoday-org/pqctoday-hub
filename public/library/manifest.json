@@ -24094,6 +24094,36 @@
       "replacedAt": "2026-10-29T11:45:39.153002+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "Admit the saved arXiv copy the Industry Landscape energy-scada sentences were checked against; the live fetch is refused only because the paper's template leaves a placeholder title"
+    },
+    {
+      "refId": "CISA-AA20-352A",
+      "title": "Advanced Persistent Threat Compromise of Government Agencies, Critical Infrastructure, and Private Sector Organizations (CISA Alert AA20-352A)",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a",
+      "status": "downloaded",
+      "filename": "CISA-AA20-352A.html",
+      "sizeBytes": 133362,
+      "contentType": "text/html",
+      "sha256": "f57ce082db0bfbfac21ef47f28603c3b802706633f3436f42dc7fe267f886655",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T01:38:48.183335+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "Mandiant-3CX-Software-Supply-Chain-Compromise",
+      "title": "3CX Software Supply Chain Compromise Initiated by a Prior Software Supply Chain Compromise; Suspected North Korean Actor Responsible (Mandiant)",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/3cx-software-supply-chain-compromise/",
+      "status": "downloaded",
+      "filename": "Mandiant-3CX-Software-Supply-Chain-Compromise.html",
+      "sizeBytes": 344834,
+      "contentType": "text/html",
+      "sha256": "110a953b594c075461ae1e6a63be92cc47a0b7f95aa60d1875ef20f8da285e35",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T01:39:10.475791+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [

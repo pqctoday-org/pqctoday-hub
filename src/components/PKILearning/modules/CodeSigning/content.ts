@@ -44,6 +44,9 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
     getStandard('SolarWinds-Corporation-Form-8-K-December-14-2020'), // m-code-signing: 18,000
+    getStandard('CISA-AA20-352A'), // SolarWinds: the malicious Orion library was signed by SolarWinds' certificate
+    getStandard('Mandiant-3CX-Software-Supply-Chain-Compromise'), // 3CX: X_TRADER chain
+    getStandard('Analysis-of-the-Codecov-Supply-Chain-Compromise'), // Codecov Bash Uploader
   ],
 
   algorithms: [
