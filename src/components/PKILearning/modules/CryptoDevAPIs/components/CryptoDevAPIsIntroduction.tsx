@@ -372,7 +372,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                   {
                     name: 'PQClean',
                     lang: 'C',
-                    use: 'Clean reference implementations (no longer maintained), feeds other libs',
+                    use: 'Clean reference implementations (no longer under active maintenance), feeds other libs',
                     fips: 'Reference',
                   },
                   {
