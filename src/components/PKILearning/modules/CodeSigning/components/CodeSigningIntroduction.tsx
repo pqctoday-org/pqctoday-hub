@@ -404,7 +404,8 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
           <p>
             Every major package manager uses code signing to verify package authenticity. Migration
             to PQC varies widely &mdash; RPM is leading with hybrid ML-DSA-87+Ed448 support in RHEL
-            10, while most others rely on upstream Sigstore PQC adoption.
+            10.1, while npm and PyPI sign through Sigstore, whose ML-DSA support is listed as
+            experimental.
           </p>
 
           <div className="overflow-x-auto">

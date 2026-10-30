@@ -66,7 +66,7 @@ const STEP_DETAILS: Record<number, { classical: string; pqc: string; detail: str
     classical: 'ECDSA P-256 keypair (valid ~20 min)',
     pqc: 'ML-DSA-65 keypair (valid ~20 min)',
     detail:
-      "A short-lived keypair is generated locally. The private key never leaves the developer's machine and is automatically destroyed after signing. Key size: ECDSA = 32 bytes, ML-DSA-65 = 1,952 bytes.",
+      "A short-lived keypair is generated locally. The private key never leaves the developer's machine and is automatically destroyed after signing. Private key: ECDSA P-256 = 32 bytes, ML-DSA-65 = 4,032 bytes. The ML-DSA-65 public key is 1,952 bytes.",
   },
   3: {
     classical: 'X.509 cert with ECDSA P-256 public key',

@@ -8,7 +8,7 @@ This module teaches post-quantum code signing and software supply chain security
 - **Quantum amplifier for supply chains**: Quantum computers transform supply chain risk from key theft to key forgery via Shor's algorithm; adversaries could derive any publisher's private key from their public certificate; HNDL applied to signed artifacts enables future signature forgery; a quantum-compromised Root CA key affects the entire ecosystem simultaneously
 - **Classical vs PQC code signing algorithms**: ECDSA P-256 (64 B sig, quantum vulnerable), RSA-4096 (512 B sig, quantum vulnerable), ML-DSA-44 (2,420 B sig, quantum safe), ML-DSA-87 (4,627 B sig, quantum safe), SLH-DSA-128s (7,856 B sig, quantum safe); PQC signatures are 38-123x larger than ECDSA but acceptable for code signing since verification is per-install
 - **Code signing certificate chains**: Root CA (ML-DSA-87, strongest), Intermediate CA (ML-DSA-65), end-entity Code Signing Certificate (ML-DSA-44, EKU OID 1.3.6.1.5.5.7.3.3, 1-year validity); PQC timestamping (RFC 3161) requires PQC-capable TSAs
-- **Package manager signing**: RPM leading with hybrid ML-DSA-87+Ed448 in RHEL 10; most others (npm, PyPI, Maven, NuGet, APT/DPKG) rely on upstream Sigstore PQC adoption; hybrid signing provides backward compatibility
+- **Package manager signing**: RPM leading with hybrid ML-DSA-87+Ed448 in RHEL 10.1, with the RSA signature kept in the package for older systems; npm and PyPI sign through Sigstore, whose ML-DSA support is listed as experimental
 - **Sigstore keyless signing**: Identity-based trust (GitHub/Google auth) with short-lived certificates from Fulcio CA; all signatures recorded in Rekor transparency log; centralizes PQC migration to Fulcio and Rekor infrastructure
 - **Secure boot and firmware signing**: Trust chain from immutable root of trust (ROM/TPM) through UEFI Secure Boot, OS kernel, to runtime firmware; firmware keys have 10-20 year lifetimes making them priority PQC migration targets
 - **CNSA 2.0 mandate**: NSA permits ML-DSA-87 or the stateful LMS/XMSS schemes specified by SP 800-208 for firmware/software signing in National Security Systems; the category guidance says prefer CNSA 2.0 signing from 2025 and use it exclusively by 2030. FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 2031 unless otherwise noted; 2035 is the separate NSM-10 objective.
@@ -18,7 +18,7 @@ This module teaches post-quantum code signing and software supply chain security
 
 1. **Binary Signing**: Sign a file hash with ML-DSA and verify the signature interactively
 2. **Certificate Chain Builder**: Build a complete PQC code signing certificate chain (Root CA, Intermediate CA, end-entity)
-3. **Package Signing**: Simulate RPM-style hybrid ML-DSA-87+Ed448 composite package signing
+3. **Package Signing**: Simulate RPM-style ML-DSA-87+Ed448 hybrid package signing
 4. **Sigstore Flow**: Walk through keyless signing workflow including OIDC authentication, Fulcio certificate issuance, and Rekor transparency log recording
 5. **Secure Boot Chain**: Explore firmware signing trust chain with LMS, XMSS, and ML-DSA across boot stages
 

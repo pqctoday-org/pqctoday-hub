@@ -56,7 +56,7 @@ const STAGE_DETAILS: Record<
     },
     xmss: {
       detail:
-        'XMSS public key (68 bytes) stored in secure element. Slightly larger than LMS but provides forward secrecy — past signatures remain valid even if the current key state is compromised.',
+        'XMSS public key (68 bytes: 4-byte parameter type, 32-byte root, 32-byte seed; RFC 8391) stored in secure element. Slightly larger than the 56-byte LMS public key.',
       verification:
         'ROM code reads the XMSS public key and verifies the bootloader signature. WOTS+ hash chain provides multi-target resistance.',
     },
@@ -96,7 +96,7 @@ const STAGE_DETAILS: Record<
     },
     xmss: {
       detail:
-        'OS kernel signed with XMSS. Forward secrecy means a compromised signing key cannot be used to forge signatures for previously released kernel versions.',
+        'OS kernel signed with XMSS; the signing state must be managed so that no leaf is ever used twice.',
       verification:
         'Kernel signature verified with XMSS. Measured boot extends TPM PCRs. Remote attestation servers can verify the complete boot chain via PCR quotes.',
     },
@@ -112,13 +112,12 @@ const STAGE_DETAILS: Record<
       detail:
         'Device firmware (NIC, GPU, BMC) signed with LMS. Firmware updates are infrequent — a tree height of H=20 provides over 1 million signing operations, sufficient for most device lifetimes.',
       verification:
-        'Firmware update service verifies the LMS signature before flashing. State counter advances atomically — if power is lost mid-update, the counter is not incremented.',
+        'Firmware update service verifies the LMS signature before flashing (verification keeps no state). The signing HSM increments its counter before it releases a signature, so a crash can skip a leaf but never reuses one.',
     },
     xmss: {
       detail:
         'Device firmware signed with XMSS. BSI (German Federal Office for Information Security) recommends XMSS for firmware signing in European government systems.',
-      verification:
-        'Firmware image hash verified against XMSS signature. The forward secrecy property prevents retroactive forgery of previously deployed firmware versions.',
+      verification: 'Firmware image hash verified against the XMSS signature.',
     },
     'ml-dsa': {
       detail:
