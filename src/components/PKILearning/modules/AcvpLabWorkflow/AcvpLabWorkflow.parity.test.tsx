@@ -48,7 +48,7 @@ describe('AcvpLabWorkflowModule render parity', () => {
     fireEvent.mouseDown(tab)
     fireEvent.click(tab)
     expect(screen.getByTestId('tools-intro')).toHaveTextContent(
-      'These products hold NIST CAVP algorithm validation certificates for algorithms such as ML-KEM and ML-DSA. They are products that were tested, not tools for running ACVP tests.'
+      "Many of these products hold NIST CAVP algorithm validation certificates for algorithms such as ML-KEM and ML-DSA; each product's entry says whether a CAVP certificate is linked. They are products that were tested, not tools for running ACVP tests."
     )
     // the shell writes the open tab to the URL; leave a clean address for the next test
     window.history.replaceState(null, '', '/')
