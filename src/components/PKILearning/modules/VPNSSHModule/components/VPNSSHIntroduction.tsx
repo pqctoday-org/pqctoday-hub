@@ -100,7 +100,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             The IETF draft <strong>draft-ietf-ipsecme-ikev2-mlkem</strong> defines how to integrate
             ML-KEM (<InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>) into IKEv2 using the{' '}
             <strong>multiple key exchanges</strong> framework (RFC 9370). This enables hybrid key
-            exchange without modifying the core IKEv2 state machine.
+            exchange while limiting the changes to the exchanged messages and the IKEv2 state
+            machine (RFC 9370).
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -205,10 +206,12 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">The CNSA 2.0 squeeze</div>
               <p className="text-xs text-muted-foreground">
-                CNSA 2.0 requires ML-KEM-1024, but ML-KEM-512 is the only size the draft allows in a
-                pure UDP IKE_SA_INIT without conditions. A pure CNSA 2.0 IKEv2 deployment therefore
-                has to run IKE over TCP (RFC 9329), guarantee the path MTU, or accept IP
-                fragmentation.
+                CNSA 2.0 lists ML-KEM-1024 for key establishment. The draft says ML-KEM-512 MAY be
+                used in IKE_SA_INIT as a quantum-resistant-only key exchange; implementations
+                transporting IKE over UDP and not performing PMTU discovery SHOULD NOT use
+                ML-KEM-768 or ML-KEM-1024 in IKE_SA_INIT on networks where the PMTU is unknown or
+                restricted, and MAY use any ML-KEM parameter when reliable transport (for example
+                RFC 9329) is used or a sufficient PMTU is guaranteed.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -469,8 +472,9 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               The migration to PQC only applies to the <strong>Control Plane</strong> (key exchange
               &amp; auth). The actual <strong>Data Plane</strong> (the VPN tunnel) already uses
               symmetric algorithms like AES-GCM or ChaCha20-Poly1305. These algorithms are naturally
-              quantum-resistant, requiring only standard key lengths (256-bit) to be secure against
-              Grover&apos;s algorithm.
+              quantum-resistant: per NIST (cited in RFC 9370), applications can continue using AES
+              with a minimum key length of 128 bits, and a longer key size can be considered for
+              data that must remain secure for many years.
             </p>
           </div>
         </div>

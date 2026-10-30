@@ -571,11 +571,12 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     id: 'imperva-waf',
     name: 'Imperva WAF',
     category: 'waf',
-    pqcStatus: 'planned',
-    pqcVersion: 'TBD (Thales integration)',
-    algorithms: [],
+    pqcStatus: 'production',
+    pqcVersion: 'GA from early 2026',
+    algorithms: ['X25519MLKEM768'],
     fipsStatus: 'Pending',
-    notes: 'Enterprise WAF under Thales portfolio. PQC roadmap pending ML-KEM hybrid adoption.',
+    notes:
+      'Enterprise WAF under Thales portfolio. Hybrid TLS with X25519 plus ML-KEM-768 for client-to-Imperva connections reached general availability at the start of 2026 (Imperva).',
   },
   {
     id: 'cloudflare-zt',
@@ -591,11 +592,12 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     id: 'zscaler',
     name: 'Zscaler ZTE',
     category: 'sase',
-    pqcStatus: 'planned',
-    pqcVersion: 'TBD',
-    algorithms: [],
+    pqcStatus: 'production',
+    pqcVersion: 'Inline inspection, announced Feb 2026',
+    algorithms: ['Hybrid PQC key exchange'],
     fipsStatus: 'No',
-    notes: 'Cloud SASE. TLS interception requires ML-KEM upgrade. No GA date published.',
+    notes:
+      'Cloud SASE. Zscaler Internet Access inline inspection supports hybrid PQC key exchange (Zscaler, 17 February 2026); the Hub catalogue rates the product partial.',
   },
   {
     id: 'palo-alto',
@@ -622,12 +624,12 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     id: 'broadcom-avi',
     name: 'Broadcom Avi / NSX ALB',
     category: 'load-balancer',
-    pqcStatus: 'planned',
-    pqcVersion: 'TBD',
-    algorithms: [],
+    pqcStatus: 'production',
+    pqcVersion: '31.2.1+',
+    algorithms: ['ML-KEM (pure and hybrid)', 'ML-DSA'],
     fipsStatus: 'FIPS 140-2',
     notes:
-      'VMware NSX Advanced Load Balancer (formerly Avi Networks). PQC roadmap pending Broadcom integration.',
+      'VMware NSX Advanced Load Balancer (formerly Avi Networks). Avi 31.2.1 introduced PQC support: pure ML-KEM, hybrid KEMs and the ML-DSA signature algorithm (Broadcom documentation).',
   },
 ]
 
