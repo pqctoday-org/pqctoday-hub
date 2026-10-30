@@ -480,7 +480,7 @@
     "term": "Content Credentials",
     "acronym": "C2PA",
     "definition": "A technical standard by the Coalition for Content Provenance and Authenticity that embeds cryptographically signed metadata into digital content to verify its origin, creation method, and edit history.",
-    "technicalNote": "C2PA uses X.509 certificates and CMS signatures to create tamper-evident provenance chains. Current implementations use ECDSA/RSA — quantum-vulnerable. Migration to ML-DSA signatures is needed to ensure provenance claims remain trustworthy beyond Q-Day.",
+    "technicalNote": "C2PA signs the claim in each manifest with a COSE_Sign1 signature and X.509 certificate chains to create tamper-evident provenance chains. C2PA 2.4 allows ECDSA, RSASSA-PSS and Ed25519 signatures, all quantum-vulnerable, and its allowed list holds no post-quantum algorithm, so moving to ML-DSA signatures would take a revision of the specification. Provenance signed today stays forgeable beyond Q-Day.",
     "relatedModule": "/learn/ai-security-pqc",
     "complexity": "intermediate",
     "category": "standard"

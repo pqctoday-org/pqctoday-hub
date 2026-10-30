@@ -44,14 +44,14 @@ const ENGINE_LABELS: Record<PolicyEngine, string> = {
   cel: 'CEL',
 }
 
-const SLSA_LEVELS = [1, 2, 3, 4] as const
+const SLSA_LEVELS = [1, 2, 3] as const
 
 export const PolicyAsCodeEnforcer: React.FC = () => {
   const [engineFilter, setEngineFilter] = useState<EngineFilter>('All')
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('All')
   const [expandedId, setExpandedId] = useState<string | null>('opa-cert-algo')
   const [showSlsa, setShowSlsa] = useState(false)
-  const [selectedSlsaLevel, setSelectedSlsaLevel] = useState<1 | 2 | 3 | 4>(3)
+  const [selectedSlsaLevel, setSelectedSlsaLevel] = useState<1 | 2 | 3>(3)
 
   const filtered = useMemo(() => {
     return POLICY_RULES.filter((r) => {
@@ -137,7 +137,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
       {showSlsa && (
         <div className="glass-panel p-4 space-y-4 animate-fade-in">
           <h4 className="text-sm font-bold text-foreground">
-            SLSA Supply Chain Levels — PQC Requirements
+            SLSA Build Levels and Post-Quantum Cryptography
           </h4>
           <div className="flex gap-2 flex-wrap">
             {SLSA_LEVELS.map((level) => (
@@ -157,26 +157,19 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           </div>
           <div className="space-y-2">
             {SLSA_LEVEL_REQUIREMENTS[selectedSlsaLevel].map((req, i) => {
-              const isPqcReq =
-                req.toLowerCase().includes('ml-dsa') || req.toLowerCase().includes('slh-dsa')
               return (
                 <div key={i} className="flex items-start gap-2">
-                  <CheckCircle
-                    size={14}
-                    className={`mt-0.5 shrink-0 ${isPqcReq ? 'text-status-success' : 'text-muted-foreground'}`}
-                  />
-                  <span
-                    className={`text-xs ${isPqcReq ? 'text-foreground font-medium' : 'text-muted-foreground'}`}
-                  >
-                    {req}
-                  </span>
+                  <CheckCircle size={14} className="mt-0.5 shrink-0 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">{req}</span>
                 </div>
               )
             })}
           </div>
           <p className="text-[10px] text-muted-foreground italic">
-            PQC-specific requirements highlighted in bold. SLSA Level 3+ mandates ML-DSA or SLH-DSA
-            for provenance signatures — classical ECDSA signatures no longer satisfy Level 3.
+            SLSA (v1.2) names no signature algorithm and does not mention post-quantum cryptography,
+            so ECDSA, Ed25519, ML-DSA and SLH-DSA signatures can all satisfy Build L2 and L3. The
+            policy rules below that require ML-DSA or SLH-DSA are this module&apos;s projection for
+            post-quantum-ready provenance, not a SLSA requirement.
           </p>
         </div>
       )}

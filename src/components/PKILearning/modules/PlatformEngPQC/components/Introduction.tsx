@@ -395,10 +395,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
                 <strong className="text-foreground">
-                  SLSA Level 3 (projected PQC requirement)
+                  SLSA Build L3 (this module&apos;s projected PQC rule)
                 </strong>{' '}
-                — ML-DSA or SLH-DSA signature on build provenance. Enforce via OPA Deployment
-                annotation check.
+                — ML-DSA or SLH-DSA signature on build provenance; SLSA itself names no signature
+                algorithm. Enforce via OPA Deployment annotation check.
               </span>
             </div>
             <div className="flex items-start gap-2">

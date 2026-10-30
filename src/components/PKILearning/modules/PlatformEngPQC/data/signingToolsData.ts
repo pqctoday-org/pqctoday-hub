@@ -20,7 +20,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
       'Keyless signing via OIDC (no long-lived private key to protect)',
       'OCI-native — signatures stored in registry alongside images',
       'Rekor transparency log provides append-only audit trail',
-      'Widely adopted in SLSA Level 3+ build systems',
+      'Widely used for signing build artifacts in supply chain pipelines',
     ],
     limitations: [
       "Current ECDSA P-256 signature vulnerable to Shor's algorithm",
