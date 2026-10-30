@@ -481,7 +481,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 api: 'Bouncy Castle (Java/.NET)',
                 status: 'production',
-                note: `${describeRuntimeSupport('bouncy-castle')}; FN-DSA and LMS/XMSS too`,
+                note: `${describeRuntimeSupport('bouncy-castle')}; Falcon (the basis of FN-DSA) and LMS/XMSS too`,
               },
               {
                 api: 'OpenSSL (native)',
