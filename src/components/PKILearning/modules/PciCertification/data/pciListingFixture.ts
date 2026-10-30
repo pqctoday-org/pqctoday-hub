@@ -6,10 +6,9 @@
  *
  * Provenance (read 24 September 2026):
  *  - Each entry was fetched from its public listing popup
- *    (listings.pcisecuritystandards.org/popups/pts_device.php?appnum=…). The popups answered HTTP 200
- *    with no licence or agreement step. The searchable device list
- *    (…/assessors_and_solutions/pin_transaction_devices) redirects to an
- *    agreement page; it was NOT accepted and NOT used (plan r2 D4).
+ *    (listings.pcisecuritystandards.org/popups/pts_device.php?appnum=…), which answered HTTP 200.
+ *    The searchable device list (…/assessors_and_solutions/pin_transaction_devices) is not a
+ *    public page and was NOT used (plan r2 D4).
  *  - Approval 4-40266 was found through the vendor's own product page, which
  *    links to that popup; 4-70041 and 4-40069 through a public web search that
  *    returned the popup URLs.
@@ -49,7 +48,7 @@ export interface PciListingFixtureEntry {
   fields: Record<PciListingColumn, string>
   /** public listing URL the fields were read from */
   sourceUrl: string
-  /** how the approval number was found (no licence-gated page involved) */
+  /** how the approval number was found (public pages only) */
   foundVia: string
 }
 
