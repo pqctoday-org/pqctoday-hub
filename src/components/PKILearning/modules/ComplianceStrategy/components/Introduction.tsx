@@ -68,8 +68,12 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-primary mb-1">Industry Standards</div>
             <p className="text-xs text-muted-foreground">
-              PCI DSS, HIPAA, FedRAMP, and CMMC are incorporating quantum-safe requirements into
-              their compliance frameworks.
+              Some sector frameworks now mention quantum computing. The 2025 HHS proposal to update
+              the HIPAA Security Rule would expect a regulated entity, as part of its risk analysis,
+              to consider whether quantum computing poses a reasonably anticipated threat to the
+              confidentiality, integrity, or availability of its ePHI, and PCI SSC&apos;s May 2026
+              announcement of PTS HSM v5.0 says that update addresses emerging threats such as
+              post-quantum risks.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -407,9 +411,10 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-medium text-foreground">Israel</td>
                 <td className="py-2 px-2">INCD</td>
-                <td className="py-2 px-2 font-mono text-primary">2025</td>
+                <td className="py-2 px-2 font-mono text-primary">&mdash;</td>
                 <td className="py-2 px-2">
-                  Quantum threat assessments completed by end of 2025; PQC required in new contracts
+                  No PQC deadline found: the INCD cybersecurity strategy document we hold does not
+                  mention quantum
                 </td>
               </tr>
               <tr className="border-b border-border/50">
