@@ -47,10 +47,10 @@ const Step1WhyAndMerkle: React.FC = () => (
           <InlineTooltip term="Lattice-Based Cryptography">lattice-based</InlineTooltip> or{' '}
           <InlineTooltip term="Code-Based Cryptography">code-based</InlineTooltip> constructions.
           Unlike those schemes, they require no new hardness assumptions.{' '}
-          <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> security rests on collision and
-          second-preimage resistance; <InlineTooltip term="XMSS">XMSS</InlineTooltip> has a tighter
-          proof requiring only <strong>second-preimage resistance</strong> &mdash; a weaker
-          assumption that provides a stronger theoretical guarantee.
+          <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> requires its hash function to have{' '}
+          <strong>second-preimage resistance</strong> (RFC 8554 §9);{' '}
+          <InlineTooltip term="XMSS">XMSS</InlineTooltip> does not rely on the collision resistance
+          of its hash functions but on weaker properties (RFC 8391).
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <blockquote className="text-sm italic text-foreground/90">
@@ -429,8 +429,8 @@ const Step2LmsXmss: React.FC = () => (
             (up to 67 hash values) into a single leaf via an unbalanced binary tree.{' '}
             <strong>RAND_HASH</strong> randomizes each internal node by XOR&rsquo;ing inputs with
             PRF-derived bitmasks before hashing, providing domain separation and multi-target attack
-            resistance. These add ~4&times; the hash computations of LMS but yield the tighter
-            second-preimage-only security proof.
+            resistance. These add ~4&times; the hash computations of LMS but yield a security proof
+            that does not rely on the collision resistance of the hash functions (RFC 8391).
           </p>
           <p>
             Both LMS and XMSS are approved by NIST SP 800-208. NSA CNSA 2.0 allows only the
