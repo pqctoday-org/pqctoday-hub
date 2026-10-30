@@ -659,7 +659,9 @@ export const SecureBootChain: React.FC = () => {
                     ) : alg.id === 'xmss' ? (
                       <span className="text-success font-bold">Listed</span>
                     ) : alg.id === 'ml-dsa' ? (
-                      <span className="text-muted-foreground">Approved (FAQ)</span>
+                      <span className="text-muted-foreground">
+                        ML-DSA-87 approved (FAQ); not this ML-DSA-65 set
+                      </span>
                     ) : (
                       <span className="text-muted-foreground">Not listed</span>
                     )}
