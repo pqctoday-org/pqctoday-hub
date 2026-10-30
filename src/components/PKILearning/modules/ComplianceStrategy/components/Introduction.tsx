@@ -445,10 +445,10 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2">CEG</td>
                 <td className="py-2 px-2 font-mono text-primary">2035</td>
                 <td className="py-2 px-2">
-                  Cyber Expert Group (January 2026): a non-prescriptive roadmap for the financial
-                  sector; guidance from several jurisdictions often points to 2035 as an overall
-                  target date, and prioritising the most critical systems in 2030&ndash;32 is
-                  suggested
+                  Cyber Expert Group (January 2026): a roadmap for the financial sector that does
+                  not prescribe fixed timelines; guidance from several jurisdictions often points to
+                  2035 as an overall target date, and the period 2030&ndash;32 reflects the
+                  approaches G7 jurisdictions envisage for migrating critical systems
                 </td>
               </tr>
             </tbody>
@@ -457,11 +457,12 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
         <div className="bg-muted/50 rounded-lg p-3 border border-border">
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Key takeaway:</strong> Organizations must meet the{' '}
-            <em>earliest</em> deadline across all jurisdictions where they operate. A company in A
+            <em>earliest</em> deadline across all jurisdictions where they operate. A
             multi-jurisdiction organisation can plan to the earliest date that applies to it. ASD
             recommends ceasing the use of traditional asymmetric cryptography by the end of 2030;
-            the EU roadmap asks for high-risk use cases to be transitioned by the end of 2030 and
-            for as many systems as practically feasible to be completed by 2035.
+            the EU roadmap recommends that high-risk use cases be transitioned as soon as possible
+            and no later than the end of 2030, and that the transition be completed for as many
+            systems as practically feasible by 2035.
           </p>
         </div>
       </div>
