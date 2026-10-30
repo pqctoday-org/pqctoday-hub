@@ -153,7 +153,7 @@ export const timelineMilestones = [
   },
   {
     year: String(NIST_DEPRECATION.deprecateClassical),
-    event: 'NIST target: deprecate RSA-2048 and 112-bit ECC',
+    event: 'NIST target: deprecate RSA, ECC and DH (all key sizes, 112-bit security and up)',
     phase: 'Deprecation',
   },
   {

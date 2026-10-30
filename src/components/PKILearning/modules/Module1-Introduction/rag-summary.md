@@ -11,7 +11,7 @@ PQC 101 is the foundational learning module that introduces post-quantum cryptog
 - **Harvest Now, Forge Later (HNFL)** targets digital signatures — adversaries capture signed artifacts and forge them once a CRQC can recover private keys
 - **Three PQC algorithm families**: lattice-based (ML-KEM, ML-DSA, FN-DSA), hash-based (SLH-DSA, LMS/HSS), and code-based (Classic McEliece, HQC)
 - **NIST PQC standards**: FIPS 203 (ML-KEM for key establishment), FIPS 204 (ML-DSA for digital signatures), FIPS 205 (SLH-DSA for conservative signatures), published August 2024
-- **Migration timeline**: NIST targets deprecation of RSA-2048 and 112-bit ECC by 2030, full disallowance of classical public-key crypto by 2035
+- **Migration timeline**: NIST IR 8547 (final, October 2026) deprecates quantum-vulnerable public-key algorithms (RSA, ECC, DH) at 112 bits of security and up after 2030 and disallows them under NIST standards and guidelines after 2035
 - **CNSA 2.0** mandates phased PQC adoption for U.S. national security systems starting 2025
 - **Industry urgency**: Finance and government are critical priority; healthcare, telecom, blockchain are high; IoT and automotive are medium
 

@@ -15,7 +15,7 @@
         "RSA private keys must be replaced before Q-day",
         "Harvest-now-decrypt-later attacks are already occurring",
         "Certificate re-issuance required — plan PKI inventory now",
-        "NIST recommends deprecating RSA-2048 by 2030"
+        "NIST IR 8547 deprecates RSA at 112 bits of security and up (RSA-2048 included) after 2030"
       ]
     },
     {
