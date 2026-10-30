@@ -403,6 +403,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'EMV chip card authentication, payment network PQC migration, tokenization, POS terminal crypto, and PCI DSS compliance.',
       icon: 'CreditCard',
     },
+    'software-supply-chain-pqc': {
+      label: 'Software Supply Chain PQC',
+      description:
+        'Reading the signature links of a software supply chain from their documents: the status of post-quantum signatures per ecosystem, TUF and Uptane roles and thresholds, SLSA and in-toto provenance, and changing an algorithm after a verifier has shipped.',
+      icon: 'FileCheck',
+    },
     'healthcare-pqc': {
       label: 'Healthcare PQC',
       description:

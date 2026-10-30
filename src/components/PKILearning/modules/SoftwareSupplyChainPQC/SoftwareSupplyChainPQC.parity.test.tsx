@@ -30,7 +30,7 @@ describe('SoftwareSupplyChainPQC', () => {
     expect(manifest.track).toBe('Industries')
     expect(manifest.id).toBe('software-supply-chain-pqc')
     expect(manifest.lm_id).toBe('LM-078')
-    expect(manifest.trackOrder).toBe(9)
+    expect(manifest.trackOrder).toBe(8)
   })
 
   it('declares one Learn section per section id and three workshop steps', () => {

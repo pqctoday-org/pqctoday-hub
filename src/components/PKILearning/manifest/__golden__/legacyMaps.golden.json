@@ -584,6 +584,15 @@
       "difficulty": "advanced",
       "frameworkPhase": "p6"
     },
+    "software-supply-chain-pqc": {
+      "id": "software-supply-chain-pqc",
+      "lm_id": "LM-078",
+      "title": "Software Supply Chain PQC",
+      "description": "How the signature links of a software supply chain stand on post-quantum signatures, read from the documents: a status map across Sigstore, the CA/Browser Forum code signing requirements, UEFI, COSE, CMS, X.509, OpenPGP and SUIT; the TUF and Uptane update frameworks; SLSA v1.2 and in-toto provenance; and what changes when a verifier has already shipped.",
+      "duration": "40 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
+    },
     "standards-bodies": {
       "id": "standards-bodies",
       "lm_id": "LM-004",
@@ -732,6 +741,7 @@
     "secure-boot-pqc": 6,
     "skills-team-structure": 2,
     "soc-implementation-pqc": 5,
+    "software-supply-chain-pqc": 3,
     "standards-bodies": 5,
     "stateful-signatures": 5,
     "tls-basics": 4,
@@ -2259,6 +2269,28 @@
       {
         "id": "how-to-act",
         "label": "How to Act"
+      }
+    ],
+    "software-supply-chain-pqc": [
+      {
+        "id": "chain",
+        "label": "The Chain, One Control per Link"
+      },
+      {
+        "id": "status",
+        "label": "Status Map: Signature Links"
+      },
+      {
+        "id": "updates",
+        "label": "Update Frameworks: TUF and Uptane"
+      },
+      {
+        "id": "provenance",
+        "label": "Provenance and Attestation"
+      },
+      {
+        "id": "transition",
+        "label": "Changing an Algorithm After Shipping"
       }
     ],
     "standards-bodies": [
@@ -3795,6 +3827,20 @@
         "label": "SOC Readiness"
       }
     ],
+    "software-supply-chain-pqc": [
+      {
+        "id": "roles-and-thresholds",
+        "label": "Roles and Thresholds"
+      },
+      {
+        "id": "provenance-chain-check",
+        "label": "Provenance Chain Check"
+      },
+      {
+        "id": "transition-planner",
+        "label": "Transition Planner"
+      }
+    ],
     "standards-bodies": [
       {
         "id": "body-classifier",
@@ -4651,6 +4697,15 @@
           "duration": "60 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"
+        },
+        {
+          "id": "software-supply-chain-pqc",
+          "lm_id": "LM-078",
+          "title": "Software Supply Chain PQC",
+          "description": "How the signature links of a software supply chain stand on post-quantum signatures, read from the documents: a status map across Sigstore, the CA/Browser Forum code signing requirements, UEFI, COSE, CMS, X.509, OpenPGP and SUIT; the TUF and Uptane update frameworks; SLSA v1.2 and in-toto provenance; and what changes when a verifier has already shipped.",
+          "duration": "40 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p5"
         }
       ]
     }
@@ -4956,6 +5011,10 @@
     "soc-implementation-pqc": {
       "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA"],
       "standards": ["RFC 9846", "NIST SP 800-227", "NIST IR 8547"]
+    },
+    "software-supply-chain-pqc": {
+      "algorithms": ["ML-DSA", "SLH-DSA", "LMS/XMSS", "ECDSA"],
+      "standards": ["FIPS 204", "FIPS 205", "NIST SP 800-208", "NSA CNSA 2.0", "RFC 9580"]
     },
     "standards-bodies": {
       "algorithms": ["ML-DSA", "ML-KEM"],

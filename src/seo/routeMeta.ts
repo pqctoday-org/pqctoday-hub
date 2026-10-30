@@ -696,6 +696,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('IoT & Embedded Device PQC', 'PT90M', 'Advanced'),
   },
 
+  '/learn/software-supply-chain-pqc': {
+    title: 'Software Supply Chain PQC — Signatures, TUF, Uptane & SLSA | PQC Today',
+    description:
+      'The signature links of a software supply chain read from their documents: a status map across Sigstore, code signing requirements, UEFI, COSE, CMS, X.509 and OpenPGP, TUF and Uptane roles and thresholds, SLSA and in-toto provenance, and changing an algorithm after a verifier has shipped.',
+    canonical: `${BASE_URL}/learn/software-supply-chain-pqc`,
+    structuredData: buildModuleSchema('Software Supply Chain PQC', 'PT40M', 'Intermediate'),
+  },
+
   '/learn/data-asset-sensitivity': {
     title: 'Data & Asset Sensitivity Assessment — NIST RMF, ISO 27005, FAIR, DORA | PQC Today',
     description:

@@ -14,7 +14,9 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Industries',
-  trackOrder: 9,
+  // 8 until the Media, Entertainment & DRM module (LM-077, also in Industries) is folded into the same
+  // tree; it then sits at 8 and this module moves to 9.
+  trackOrder: 8,
   learnSections: [
     { id: 'chain', label: 'The Chain, One Control per Link' },
     { id: 'status', label: 'Status Map: Signature Links' },

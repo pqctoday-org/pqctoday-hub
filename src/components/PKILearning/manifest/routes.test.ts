@@ -92,6 +92,7 @@ const GOLDEN_ROUTE_PATHS = [
   'skills-team-structure',
   'slh-dsa',
   'soc-implementation-pqc',
+  'software-supply-chain-pqc',
   'standards-bodies',
   'stateful-signatures',
   'talking-about-pqc',
