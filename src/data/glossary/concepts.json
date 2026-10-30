@@ -1349,7 +1349,7 @@
   },
   {
     "term": "Notation",
-    "definition": "A CNCF OCI artifact signing tool that supports any OCI artifact (images, Helm charts, SBOMs) using X.509 certificate-backed signatures. This module found no vendor documentation stating that Notation, or the AWS Crypto Tools plugin, supports ML-DSA, so any post-quantum support is unconfirmed.",
+    "definition": "A CNCF OCI artifact signing tool that supports any OCI artifact (images, Helm charts, SBOMs) using X.509 certificate-backed signatures. We found no vendor documentation stating that Notation, or its AWS Signer plugin, supports ML-DSA, so any post-quantum support is unconfirmed.",
     "relatedModule": "/learn/platform-eng-pqc",
     "complexity": "intermediate",
     "category": "concept"
