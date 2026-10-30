@@ -30,7 +30,7 @@ Module covering PQC migration for enterprise IAM systems including JWT/SAML toke
 
 ## Regulatory Context
 
-- CNSA 2.0: NSS must use ML-DSA-87 by 2027
+- CNSA 2.0: the NSA FAQ (v2.2, October 2026) quotes CNSSP 15 as requiring CNSA 2.0 algorithms in all new NSS acquisitions by 1 January 2027 and mandating their use by 31 December 2031, unless otherwise noted; ML-DSA-87 is the signature algorithm for general signing, with LMS or XMSS for software and firmware signing
 - NIST IR 8547 (final, October 2026; systems that follow NIST standards): deprecates quantum-vulnerable RSA/ECDSA/EdDSA signatures at every key size of 112-bit security and up (RSA-2048 and RSA-3072, used to sign many IAM tokens, included) after 2030 and disallows them after 2035
 - PCI DSS v4.0.1: cryptographic inventory required (Req. 12.3.3)
 - DORA (EU): ICT risk management including IAM cryptographic risk
