@@ -26,14 +26,14 @@ export function RegulatoryClock({
         Upcoming reference milestones
       </p>
       {lines.length ? (
-        lines.map((item) => (
+        lines.map(({ item, year }) => (
           <div key={item.id} className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-foreground">{item.deadlineYear}</span>
+            <span className="font-semibold text-foreground">{year}</span>
             {onSelectFramework ? (
               <Button
                 variant="link"
                 type="button"
-                className="text-primary underline text-left"
+                className="text-primary underline text-left whitespace-normal h-auto py-1"
                 onClick={() => onSelectFramework(item)}
                 aria-label={`Inspect source for ${item.label}`}
               >

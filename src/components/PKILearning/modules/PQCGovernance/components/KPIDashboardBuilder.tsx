@@ -16,6 +16,10 @@ import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
+import {
+  OVERALL_SCORE_MIN_COVERAGE,
+  scoredWeightShare,
+} from '@/components/PKILearning/common/executive/scorecardCoverage'
 import type { PolicyOutput } from '../types'
 
 const SURFACE = 'governance' as const
@@ -32,7 +36,7 @@ const METHODOLOGY_MD = `## How this score is computed
 The **Overall Score** is the weighted average of the KPI sliders below, using the
 per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
 measure; the weighted average is rounded to a whole number. A combined score is
-withheld until at least 70% of intended KPI weight has organization-specific
+withheld until at least 70% of the weight of unlocked KPIs has organization-specific
 evidence. Missing rows remain visible and never improve the result by disappearing.
 
 The KPI set follows the Applied Quantum framework's Board-Level KPI Pack —
@@ -72,21 +76,23 @@ export function buildKpiDashboardMarkdown(
 
   let weightedSum = 0
   let totalWeight = 0
-  let intendedWeight = 0
   for (const d of dimensions) {
-    intendedWeight += ew(d)
     const value = scores[d.id] ?? d.autoScore
     if (d.disabled || value === undefined) continue
     weightedSum += value * ew(d)
     totalWeight += ew(d)
   }
   const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-  const coverage = intendedWeight > 0 ? totalWeight / intendedWeight : 0
+  const coverage = scoredWeightShare(
+    dimensions,
+    ew,
+    (d) => (scores[d.id] ?? d.autoScore) !== undefined
+  )
 
   let md = '# PQC Governance KPI Dashboard\n\n'
   md += `**Persona Lens:** ${activePersona}\n`
   md +=
-    coverage >= 0.7
+    coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
       : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
@@ -385,7 +391,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         exportFilename={`pqc-governance-kpi-${activePersona}`}
         exportFormats={['markdown', 'csv', 'pdf']}
         includeTargetsInExport={true}
-        minimumCoverageForOverall={0.7}
+        minimumCoverageForOverall={OVERALL_SCORE_MIN_COVERAGE}
         observations={observations}
         onObservationChange={handleObservationChange}
       />

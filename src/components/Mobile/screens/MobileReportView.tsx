@@ -157,8 +157,11 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
         <section className="mb-3 rounded-xl border border-border p-3">
           <h2 className="text-sm font-semibold">Inspect the report&apos;s figures</h2>
           <p className="my-2 text-xs text-muted-foreground">
-            Download this learning example with its figure sources, methods and caveats. The pack
-            does not establish organizational readiness or compliance.
+            {sharedView?.sample
+              ? 'Download this fictional worked example'
+              : 'Download this learning report, built from the answers entered,'}{' '}
+            with its figure sources, methods and caveats. The pack does not establish organizational
+            readiness or compliance.
           </p>
           <BoardPackExport
             result={result}

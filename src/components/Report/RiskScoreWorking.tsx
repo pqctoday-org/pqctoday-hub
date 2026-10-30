@@ -273,9 +273,12 @@ export function RiskScoreWorking({
               </p>
               <p className="mb-2 text-[11px] leading-relaxed text-muted-foreground">
                 Points are measured by re-running the score as if you had answered
-                &ldquo;don&rsquo;t know&rdquo; to that question alone. The weights come from
-                published data for{' '}
-                {working.weightSource === 'industry' ? 'your industry' : 'the default profile'}.
+                &ldquo;don&rsquo;t know&rdquo; to that question alone. The weights are this
+                site&rsquo;s{' '}
+                {working.weightSource === 'industry'
+                  ? 'weighting for your industry'
+                  : 'default weighting'}
+                : modelling choices, not measured values.
               </p>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
@@ -311,8 +314,8 @@ export function RiskScoreWorking({
             </div>
           )}
           <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
-            Change any answer in the assessment and this table changes with it — the score is
-            computed from your answers on every run, never stored and re-shown.
+            Change any answer in the assessment and this table changes with it: the score is
+            recomputed from your answers each time you run it.
           </p>
         </div>
       )}

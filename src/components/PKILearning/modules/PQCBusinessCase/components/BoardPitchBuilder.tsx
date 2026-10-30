@@ -10,6 +10,7 @@ import { PersonaPitchBanner } from './PersonaPitchBanner'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { getPitchVariant } from './pitchVariants'
+import { MODELLED_COST_NOTE, NO_COST_ESTIMATE_NOTE } from './pitchVariants/sectionDefaults'
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
 import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
@@ -99,6 +100,19 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
           return {
             ...f,
             defaultValue: formatCurrency(effectiveRoiOutput.totalCostUSD),
+          }
+        }
+        // The amount now comes from the ROI model, so the breakdown must not
+        // go on saying that no cost estimate is attached.
+        if (
+          effectiveRoiOutput &&
+          s.id === 'budget' &&
+          f.id === 'breakdown' &&
+          typeof f.defaultValue === 'string'
+        ) {
+          return {
+            ...f,
+            defaultValue: f.defaultValue.replace(NO_COST_ESTIMATE_NOTE, MODELLED_COST_NOTE),
           }
         }
         return f

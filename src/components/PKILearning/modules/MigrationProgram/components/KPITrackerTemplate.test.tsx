@@ -223,6 +223,78 @@ describe('KPITrackerTemplate', () => {
     expect(screen.getByLabelText('Systems Inventoried Numerator')).toHaveValue('100')
   })
 
+  it('counts only unlocked KPIs toward the coverage rule, so a fresh GRC worksheet can reach a combined score', () => {
+    const dimensions = buildDimensions('grc', 'migration', mockData)
+    const unlocked = dimensions.filter((d) => !d.disabled)
+    // On a fresh worksheet the locked KPIs hold more than 30% of the intended weight.
+    expect(dimensions.some((d) => d.disabled)).toBe(true)
+    const report = buildKpiTrackerMarkdown({
+      dimensions,
+      activePersona: 'grc',
+      riskHistory: [],
+      userScores: Object.fromEntries(unlocked.map((d) => [d.id, 50])),
+      userWeights: {},
+      touchedIds: new Set(unlocked.map((d) => d.id)),
+    })
+    expect(report).toContain('Overall Score: 50/100')
+    // Scoring only one of them is still below the threshold.
+    const partial = buildKpiTrackerMarkdown({
+      dimensions,
+      activePersona: 'grc',
+      riskHistory: [],
+      userScores: { [unlocked[0].id]: 50 },
+      userWeights: {},
+      touchedIds: new Set([unlocked[0].id]),
+    })
+    expect(partial).toContain('Overall Score: not available')
+  })
+
+  it('does not let a stored score for an untouched KPI outrank its live auto score', () => {
+    mockPersona = 'executive'
+    mockData = { ...baseData(60), isAssessmentComplete: true }
+    mockStoreState.artifacts.executiveDocuments = [
+      {
+        id: 'stale-auto',
+        moduleId: 'migration-program',
+        type: 'kpi-tracker',
+        title: 'Earlier worksheet',
+        data: '',
+        createdAt: 1,
+        inputs: {
+          personaOverride: 'executive',
+          startYear: null,
+          userScores: { 'risk-posture': 99 },
+          userWeights: {},
+          touchedIds: [],
+        },
+      },
+    ]
+    render(<KPITrackerTemplate />)
+    fireEvent.click(screen.getAllByText('Evidence details', { exact: true })[0])
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
+    const saved = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
+    expect(saved.data).not.toContain('99/100')
+    expect(
+      (saved.inputs as { userScores: Record<string, number> }).userScores['risk-posture']
+    ).not.toBe(99)
+  })
+
+  it('restores a save made before touched ids were stored without throwing', () => {
+    mockPersona = 'executive'
+    mockStoreState.artifacts.executiveDocuments = [
+      {
+        id: 'old-shape',
+        moduleId: 'migration-program',
+        type: 'kpi-tracker',
+        title: 'Old worksheet',
+        data: '',
+        createdAt: 1,
+        inputs: { personaOverride: 'executive', startYear: null, userScores: {}, userWeights: {} },
+      },
+    ]
+    expect(() => render(<KPITrackerTemplate />)).not.toThrow()
+  })
+
   it('does not push a snapshot when riskScore is null', () => {
     render(<KPITrackerTemplate />)
     expect(pushRiskScoreSnapshot).not.toHaveBeenCalled()

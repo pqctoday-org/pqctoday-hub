@@ -334,7 +334,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     workedExample:
-      'Choose the Executive lens, enter Systems Inventoried from your estate and select the products your organization uses in Migrate. Vendor Readiness then derives only from that scope; the combined score stays unavailable until at least 70% of intended KPI weight has evidence.',
+      'Choose the Executive lens, enter Systems Inventoried from your estate and select the products your organization uses in Migrate. Vendor Readiness then derives only from that scope; the combined score stays unavailable until at least 70% of the weight of unlocked KPIs has evidence.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',

@@ -31,10 +31,10 @@ describe('MyPathView — Essentials tier (A1)', () => {
 
   it('offers Start to a new executive without suggesting previous progress', () => {
     renderMyPath('executive')
-    expect(screen.getByRole('button', { name: 'Start' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /^Start: / })).toBeEnabled()
     expect(screen.getByText('Start your next module')).toBeInTheDocument()
     expect(screen.queryByText('Continue where you left off')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Resume' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Resume: / })).not.toBeInTheDocument()
   })
 
   it('resumes a started module even before its first completed step', () => {
@@ -43,17 +43,17 @@ describe('MyPathView — Essentials tier (A1)', () => {
       completedSteps: [],
     })
     renderMyPath('executive')
-    expect(screen.getByRole('button', { name: 'Resume' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /^Resume: / })).toBeEnabled()
     expect(screen.getByText('Continue where you left off')).toBeInTheDocument()
   })
 
   it('offers Start for the next unstarted module after an essential is completed', () => {
     markComplete([PERSONAS.executive.essentials[0]])
     renderMyPath('executive')
-    expect(screen.getByRole('button', { name: 'Start' })).toBeEnabled()
-    expect(screen.queryByRole('button', { name: 'Resume' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Start: / })).toBeEnabled()
+    expect(screen.queryByRole('button', { name: /^Resume: / })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('tab', { name: /Full track/i }))
-    expect(screen.getByRole('button', { name: 'Start' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /^Start: / })).toBeEnabled()
   })
 
   it('defaults to the Essentials view with the capstone locked', () => {
@@ -115,6 +115,10 @@ describe('MyPathView — Essentials tier (A1)', () => {
     expect(within(card).getByRole('button', { name: /Start/ })).toBeInTheDocument()
     // A fresh learning path remains available after the validation-first action.
     expect(screen.getByText('Start your next module')).toBeInTheDocument()
+    // Both actions read "Start", so each carries its own target in its accessible name.
+    const starts = screen.getAllByRole('button', { name: /^Start: / })
+    expect(starts).toHaveLength(2)
+    expect(new Set(starts.map((b) => b.getAttribute('aria-label'))).size).toBe(2)
   })
 
   it('the first step goes away once a lesson on the path is under way', () => {

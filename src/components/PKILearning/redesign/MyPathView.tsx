@@ -252,6 +252,7 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
             variant="gradient"
             size="sm"
             onClick={() => navigate(firstStep.route)}
+            aria-label={`Start: ${firstStep.label}`}
             className="shrink-0 gap-1.5"
           >
             Start
@@ -299,6 +300,7 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
               variant="gradient"
               size="sm"
               onClick={() => navigate(`/learn/${resumeModule.id}`)}
+              aria-label={`${resumeStarted ? 'Resume' : 'Start'}: ${resumeModule.title}`}
               className="shrink-0 gap-1.5"
             >
               {resumeStarted ? 'Resume' : 'Start'}

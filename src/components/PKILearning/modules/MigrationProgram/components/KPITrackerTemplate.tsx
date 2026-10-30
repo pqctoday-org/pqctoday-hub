@@ -16,6 +16,10 @@ import { KPI_CATALOG, KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { useHasUserInteracted } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import type { ScorecardObservation } from '@/components/PKILearning/common/executive/DataDrivenScorecard'
+import {
+  OVERALL_SCORE_MIN_COVERAGE,
+  scoredWeightShare,
+} from '@/components/PKILearning/common/executive/scorecardCoverage'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -96,7 +100,6 @@ export function buildKpiTrackerMarkdown({
   // per the scorecard's own touched-set — not a value-based `=== 0` guess.
   const isPending = (d: (typeof dimensions)[number]) =>
     d.notYetScored === true && !touchedIds.has(d.id)
-  const intendedWeight = dimensions.reduce((sum, d) => sum + ew(d), 0)
   let totalWeight = 0
   let weightedSum = 0
   for (const d of dimensions) {
@@ -108,9 +111,9 @@ export function buildKpiTrackerMarkdown({
   const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
 
   md += `**Persona Lens:** ${activePersona}\n`
-  const coverage = intendedWeight > 0 ? totalWeight / intendedWeight : 0
+  const coverage = scoredWeightShare(dimensions, ew, (d) => !isPending(d))
   md +=
-    coverage >= 0.7
+    coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
       : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
   md += `Educational planning worksheet; entered values and catalogue status are not verified migration progress.\n\n`
@@ -160,6 +163,17 @@ interface SavedKpiTrackerInputs {
   userWeights: Record<string, number>
   touchedIds: string[]
   observations?: Record<string, ScorecardObservation>
+}
+
+/**
+ * Scores the person actually set. An untouched KPI follows its live auto score,
+ * so a value saved for it earlier must not outrank the one on screen.
+ */
+function touchedScoresOf(saved: SavedKpiTrackerInputs | null | undefined): Record<string, number> {
+  const touched = new Set(saved?.touchedIds ?? [])
+  return Object.fromEntries(
+    Object.entries(saved?.userScores ?? {}).filter(([id]) => touched.has(id))
+  )
 }
 
 export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapOutput }) => {
@@ -216,8 +230,8 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   // The scorecard manages its own internal scores. We mirror them into local
   // state ONLY when they actually differ — blindly forwarding every sync feeds
   // back into the scorecard's auto-sync effect and causes an update storm.
-  const [userScores, setUserScores] = useState<Record<string, number>>(
-    savedInputs?.userScores ?? {}
+  const [userScores, setUserScores] = useState<Record<string, number>>(() =>
+    touchedScoresOf(savedInputs)
   )
   const lastSyncedRef = useRef<string>('')
   const handleScoreSnapshot = useCallback((scores: Record<string, number>) => {
@@ -468,7 +482,8 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         <p className="text-xs text-muted-foreground mt-1 mb-2">
           Use this as planning context for a dated baseline. Setting a start year does not calculate
           migration progress or establish which milestone applies. Enter Pace-to-Deadline from your
-          own reviewed measures; its target is an example, not a compliance result.
+          own reviewed measures; the deadline year shown is an example target, not a compliance
+          result.
         </p>
         <input
           id="kpi-start-year"
@@ -486,7 +501,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       <DataDrivenScorecard
         title="PQC Migration KPI Tracker"
         description={`Educational planning worksheet — ${activePersona} lens; values are not independently verified.`}
-        minimumCoverageForOverall={0.7}
+        minimumCoverageForOverall={OVERALL_SCORE_MIN_COVERAGE}
         dimensions={dimensions}
         colorScale="readiness"
         onScoreChange={handleScoreSnapshot}
@@ -501,15 +516,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         // nothing read them back into the scorecard itself — it initialized
         // every slider from d.autoScore regardless of a restored save, so a
         // saved score looked reset on reload even though the write succeeded.
-        initialScores={
-          savedInputs
-            ? Object.fromEntries(
-                Object.entries(savedInputs.userScores).filter(([id]) =>
-                  savedInputs.touchedIds.includes(id)
-                )
-              )
-            : undefined
-        }
+        initialScores={savedInputs ? touchedScoresOf(savedInputs) : undefined}
         initialWeights={savedInputs?.userWeights}
       />
 
@@ -528,9 +535,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         <strong>
           {scoredCount} of {dimensions.length}
         </strong>{' '}
-        here. The combined score is withheld below 70% of intended KPI weight with values. That
-        coverage threshold is a display rule, not proof of readiness. Weights are the per-persona
-        defaults unless you have edited them.
+        here. The combined score is withheld below 70% of the weight of unlocked KPIs having values.
+        That coverage threshold is a display rule, not proof of readiness. Weights are the
+        per-persona defaults unless you have edited them.
       </p>
 
       <ExportableArtifact

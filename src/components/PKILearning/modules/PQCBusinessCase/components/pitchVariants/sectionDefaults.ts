@@ -241,11 +241,19 @@ export function buildCostBenefitDefault(data: Data): string {
   ].join('\n\n')
 }
 
+/** First line of the budget breakdown when no products are selected. */
+export const NO_COST_ESTIMATE_NOTE =
+  'No reviewed estate cost estimate is attached. Catalogue size is not an organisation inventory.'
+
+/** Replaces the line above when the funding amount is filled from an ROI model output. */
+export const MODELLED_COST_NOTE =
+  'The programme total above comes from the ROI model, an illustrative scenario and not a reviewed estate cost estimate. Catalogue size is not an organisation inventory.'
+
 export function buildBudgetDefault(data: Data): { amount: string; breakdown: string } {
   const scopeNote =
     data.myProducts.length > 0
       ? `${data.myProducts.length} selected product types provide dependency context, not a system count or cost estimate.`
-      : 'No reviewed estate cost estimate is attached. Catalogue size is not an organisation inventory.'
+      : NO_COST_ESTIMATE_NOTE
   return {
     amount:
       'Not estimated — enter the reviewed total programme budget and incremental funding request.',

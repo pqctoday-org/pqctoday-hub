@@ -416,7 +416,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   '/business/tools/kpi-tracker': {
     executive:
       'Choose the Executive lens, select your products in Migrate and enter your own reviewed progress and compliance measures. A start year provides planning context; it does not measure progress. Missing values remain visible and the combined score requires sufficient evidence coverage.',
-    grc: 'Enter the scores you can evidence, note which KPIs are auto-scored from live data and which need input, and export the .csv each period: the trend fills in as later assessments add snapshots.',
+    grc: 'Enter the scores you can evidence, note which measures use catalogue data for the products you selected and which need your own values, and export the .csv each period. Assessment-index history is context, not measured migration progress.',
   },
   '/business/tools/deployment-playbook': {
     executive:
