@@ -95,8 +95,8 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           <h3 className="font-semibold text-foreground">Hybrids: not required, not forbidden</h3>
           <p className="text-sm text-muted-foreground">{CNSA_HYBRID_POSITION}</p>
           <p className="text-sm text-muted-foreground">
-            NSA&rsquo;s stated objections, which are worth knowing because most of the commercial
-            world has taken the opposite default — see{' '}
+            NSA&rsquo;s stated objections, which are worth knowing because other bodies recommend or
+            require hybrids (for example BSI, ANSSI and ETSI TS 119 312) — see{' '}
             <Link to="/learn/hybrid-crypto" className="text-primary hover:underline">
               Hybrid Cryptography
             </Link>

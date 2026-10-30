@@ -463,7 +463,7 @@ export const TLSBasicsModule: React.FC = () => {
                 from. The signed transcript here uses a placeholder string for illustration; real
                 CertificateVerify content is{' '}
                 <code className="font-mono">ContextString || SHA-256(handshake messages)</code> (RFC
-                9846 §4.4.3).
+                9846 §4.5.2).
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />

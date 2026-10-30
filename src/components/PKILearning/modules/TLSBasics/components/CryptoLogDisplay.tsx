@@ -150,23 +150,23 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
   // Per-flight educational annotations (RFC 9846 §4)
   const FLIGHT_NOTES: Record<string, string> = {
     ClientHello:
-      'Client advertises supported cipher suites, key_share groups (e.g. ML-KEM-768 encapsulation key), and extensions. §4.1.2',
+      'Client advertises supported cipher suites, key_share groups (e.g. ML-KEM-768 encapsulation key), and extensions. §4.2.2',
     ServerHello:
-      'Server selects cipher suite and responds with its own key_share (e.g. ML-KEM-768 ciphertext). After this, all records are encrypted. §4.1.3',
+      'Server selects cipher suite and responds with its own key_share (e.g. ML-KEM-768 ciphertext). All handshake messages after the ServerHello are encrypted. §4.2.3',
     EncryptedExtensions:
-      'First encrypted message — server sends negotiated extensions (ALPN, SNI response, etc.) under the handshake_key. §4.3.1',
+      'First encrypted message — server sends negotiated extensions (ALPN, SNI response, etc.) under the handshake_key. §4.4.1',
     Certificate:
-      "Server's X.509 certificate chain. The end-entity cert carries the authentication key (ML-DSA or ECDSA). §4.4.2",
+      "Server's X.509 certificate chain. The end-entity cert carries the authentication key (ECDSA, RSA or Ed25519; ML-DSA is not defined in RFC 9846, see draft-ietf-tls-mldsa). §4.5.1",
     CertificateVerify:
-      'Server signs the entire handshake transcript so far with its private key, proving it owns the cert. §4.4.3',
+      'Server signs the entire handshake transcript so far with its private key, proving it owns the cert. §4.5.2',
     Finished:
-      'HMAC over the transcript using the finished_key — both sides verify before sending application data. §4.4.4',
+      'HMAC over the transcript using the finished_key — both sides verify before sending application data. §4.5.3',
     NewSessionTicket:
-      'Post-handshake session ticket for 0-RTT resumption in a future connection. Not used for initial quantum resistance assessment. §4.6.1',
+      'Post-handshake session ticket for 0-RTT resumption in a future connection. Not used for initial quantum resistance assessment. §4.7.1',
     CertificateRequest:
-      'Server requests a certificate from the client (mutual TLS). Client must respond with Certificate + CertificateVerify. §4.3.2',
+      'Server requests a certificate from the client (mutual TLS). Client must respond with Certificate + CertificateVerify. §4.4.2',
     KeyUpdate:
-      'Either side may request a new traffic key mid-connection without a full re-handshake. §4.6.3',
+      'Either side may request a new traffic key mid-connection without a full re-handshake. §4.7.3',
   }
 
   // TLS 1.3 Handshake Message Type detection for App/Decrypted Logs

@@ -120,7 +120,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     hardness:
       'Search Module Lattice Isomorphism Problem (smLIP) and One-More-Shortest-Vector Problem (omSVP). Newer than the standard SVP/LWE/SIS family but related.',
     whyKept:
-      "HAWK eliminates Falcon's floating-point Gaussian-sampling pain — pure integer arithmetic on a rank-2 module lattice. Compact 555 B signatures at Category 1, smaller than both ML-DSA and FN-DSA, and easier to implement in constant time on constrained hardware.",
+      "HAWK eliminates Falcon's floating-point Gaussian-sampling pain — pure integer arithmetic on a rank-2 module lattice. Compact 555 B signatures at Category 1, smaller than both ML-DSA and FN-DSA, and, per NIST IR 8610, HAWK's primary advantage over Falcon is its reliance on integer-only arithmetic.",
     openConcerns:
       "omSVP definition discrepancy required refinement during Round 2. Advances in solving smLIP variants exist but do not currently apply to HAWK's cyclotomic number fields — flagged for further community analysis.",
     candidateIds: ['hawk'],
@@ -129,11 +129,11 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     bgClass: 'bg-primary/10',
     layman: {
       analogy:
-        'Picture a five-hundred-dimensional crystal where atoms sit at regular grid points. Find the atom closest to a randomly-pointed laser dot — easy enough if your math handles five-hundred-dimensional rounding. Falcon (selected for standardisation as FN-DSA, FIPS 206 still in development) does this with fractional decimal numbers, which is brittle to implement safely on a phone or a smart card. HAWK does the exact same problem with whole numbers only — same security, simpler implementation, fewer ways to accidentally leak the secret.',
+        'Picture a five-hundred-dimensional crystal where atoms sit at regular grid points. Find the atom closest to a randomly-pointed laser dot — easy enough if your math handles five-hundred-dimensional rounding. Falcon (selected for standardisation as FN-DSA, FIPS 206 still in development) does this with fractional decimal numbers, which is brittle to implement safely on a phone or a smart card. HAWK is also a lattice hash-and-sign scheme with some similarities to Falcon, but it uses integer arithmetic only, which NIST says facilitates easier implementation; its security rests on newer assumptions that NIST encourages the community to analyse.',
       whatsDifferent:
-        "This is the same broad family of math as ML-DSA — the lattice signer that's already standardised — so the underlying assumptions are the most-studied of the four families. What makes HAWK distinctive is a fresh approach that ditches floating-point math entirely. That matters enormously for tiny devices where one rounding bug can leak your key over time.",
+        "This is the same broad family of math as ML-DSA — the lattice signer that's already standardised — and HAWK uses the same classes of cyclotomic rings, but its security assumptions are relatively novel and NIST encouraged further analysis of them. What makes HAWK distinctive is a fresh approach that ditches floating-point math entirely. That matters enormously for tiny devices where one rounding bug can leak your key over time.",
       catch:
-        "The specific flavour of lattice problem HAWK is built on is younger than the standard lattice problems. It's been studied for several years and looks solid, but it hasn't accumulated the decades of beating-on that, say, the lattice math behind ML-KEM has had. That's the only real reservation NIST flagged.",
+        "The specific flavour of lattice problem HAWK is built on is younger than the standard lattice problems. NIST's report (May 2026) flagged HAWK's relatively novel security assumptions for further analysis; on 28 July 2026 an improved key-recovery attack was announced on the pqc-forum, and on 29 July 2026 the HAWK team withdrew its candidate from the process.",
     },
   },
 }

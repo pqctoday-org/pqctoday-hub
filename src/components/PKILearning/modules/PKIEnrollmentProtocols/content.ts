@@ -71,6 +71,7 @@ export const content: ModuleContent = {
   narratives: {
     estTransport: 'HTTPS POST to /.well-known/est/*',
     cmpTransport: 'HTTP POST application/pkixcmp (RFC 9811, obsoletes RFC 6712)',
-    primaryRfc: 'RFC 9810 (CMP Updates for KEM, 2025-07)',
+    primaryRfc:
+      'RFC 9810 (Certificate Management Protocol, July 2025; obsoletes RFC 4210 and adds support for KEM keys)',
   },
 }

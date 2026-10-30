@@ -52,7 +52,7 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
       actor: 'attacker',
       label: 'PQC handshake blocked',
       detail:
-        'Attacker drops or resets every connection offering a PQC key_share. Note: silently rewriting the ClientHello in flight would NOT work — the server signs the transcript as it received it (CertificateVerify, RFC 9846 §4.4.3), so the client, hashing its original ClientHello, would detect the mismatch and abort. The attacker can only make the PQC attempt fail.',
+        'Attacker drops or resets every connection offering a PQC key_share. Note: silently rewriting the ClientHello in flight would NOT work — the server signs the transcript as it received it (CertificateVerify, RFC 9846 §4.5.2), so the client, hashing its original ClientHello, would detect the mismatch and abort. The attacker can only make the PQC attempt fail.',
       isCompromised: true,
     },
     {
@@ -109,7 +109,7 @@ const SCENARIO_STEPS: Record<ScenarioMode, Step[]> = {
       actor: 'system',
       label: 'Fallback refused',
       detail:
-        'Client refuses the classical retry and surfaces a connection error instead of a silently-downgraded session. The attacker can deny service but cannot force a quantum-vulnerable session. PQC Continuity (draft-sheffer-tls-pqc-continuity, an individual Internet-Draft, not adopted by the TLS working group) proposes the same idea at the TLS layer: the server signs a downgrade limit (e.g. 1 year) that the client caches. Like PQ Lock, it needs one earlier successful PQC connection, so neither can protect the very first visit.',
+        'Client refuses the classical retry and surfaces a connection error instead of a silently-downgraded session. The attacker can deny service but cannot force a quantum-vulnerable session. PQC Continuity (draft-sheffer-tls-pqc-continuity, an individual Internet-Draft, not adopted by the TLS working group) addresses a related certificate rollback: it defines a TLS extension by which a server declares, for a stated duration (for example one year), a commitment to present PQC or composite certificates, which the client caches and then uses to reject traditional-only certificates. Like PQ Lock, it needs one earlier successful PQC connection, so neither can protect the very first visit.',
       isBlocked: true,
     },
   ],
@@ -260,9 +260,10 @@ export function TLSDowngradeScenario() {
             that this server supports PQC; future classical-only negotiations are rejected.{' '}
             <span className="font-semibold">PQC Continuity</span> (
             <code>draft-sheffer-tls-pqc-continuity</code>, an individual Internet-Draft by Sheffer
-            et al., not adopted by the TLS working group): server signs a "downgrade limit" duration
-            that the client caches across restarts, for TLS clients other than browsers too. Both
-            need one earlier successful PQC connection; neither protects the first visit.
+            et al., not adopted by the TLS working group): a TLS extension that allows a TLS client
+            to cache a server&apos;s declared commitment to present PQC or composite certificates
+            for a specified duration, for TLS clients other than browsers too. Both need one earlier
+            successful PQC connection; neither protects the first visit.
           </p>
         </div>
       )}
@@ -313,9 +314,11 @@ export function TLSDowngradeScenario() {
               </tr>
               <tr>
                 <td className="py-2 pr-4 font-medium text-foreground">
-                  PQC Continuity (downgrade limit)
+                  PQC Continuity (cached commitment)
                 </td>
-                <td className="py-2 pr-4 text-muted-foreground">TLS extension (server-signed)</td>
+                <td className="py-2 pr-4 text-muted-foreground">
+                  TLS extension (cached server commitment)
+                </td>
                 <td className="py-2 pr-4 text-status-warning">⚠ Only after first success</td>
                 <td className="py-2 text-muted-foreground">
                   Individual Internet-Draft (Sheffer et al.; not WG-adopted)

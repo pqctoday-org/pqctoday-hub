@@ -47,9 +47,9 @@ export const NATIONAL_CANDIDATES: NationalCandidate[] = [
     name: 'PALOMA',
     track: 'kpqc',
     kind: 'KEM',
-    family: 'Code-based (QC-LDPC)',
+    family: 'Code-based',
     summary:
-      'KpqC Round 2 KEM finalist. Code-based KEM for code-family diversity in the Korean portfolio.',
+      'KpqC Round 2 KEM finalist, not among the four algorithms selected on 16 January 2025 (AIMer, HAETAE, NTRU+, SMAUG-T). Code-based KEM.',
     alsoInNistOnRamp: false,
   },
   {
@@ -58,7 +58,8 @@ export const NATIONAL_CANDIDATES: NationalCandidate[] = [
     track: 'kpqc',
     kind: 'KEM',
     family: 'Code-based (rank metric)',
-    summary: 'KpqC Round 2 KEM finalist. Rank-metric code-based design.',
+    summary:
+      'KpqC Round 2 KEM finalist, not among the four algorithms selected on 16 January 2025 (AIMer, HAETAE, NTRU+, SMAUG-T). Rank-metric code-based design.',
     alsoInNistOnRamp: false,
   },
   {
@@ -67,7 +68,8 @@ export const NATIONAL_CANDIDATES: NationalCandidate[] = [
     track: 'kpqc',
     kind: 'KEM',
     family: 'Code-based (rank metric)',
-    summary: 'KpqC Round 2 KEM finalist. Korean adaptation of the ROLLO design.',
+    summary:
+      'KpqC Round 2 KEM finalist, not among the four algorithms selected on 16 January 2025 (AIMer, HAETAE, NTRU+, SMAUG-T). Korean adaptation of the ROLLO design.',
     alsoInNistOnRamp: false,
   },
   {
@@ -77,7 +79,7 @@ export const NATIONAL_CANDIDATES: NationalCandidate[] = [
     kind: 'Signature',
     family: 'Lattice (Module-LWE)',
     summary:
-      'KpqC signature finalist. Also submitted to the NIST Additional Signatures Round 1 but did not advance to Round 2. Continued domestic evaluation in Korea.',
+      'KpqC signature finalist. Also submitted to the NIST Additional Signatures Round 1 but did not advance to Round 2.',
     alsoInNistOnRamp: false,
   },
   {
@@ -96,7 +98,8 @@ export const NATIONAL_CANDIDATES: NationalCandidate[] = [
     track: 'kpqc',
     kind: 'Signature',
     family: 'Lattice (NTRU variant)',
-    summary: 'KpqC signature finalist. NTRU-style Falcon-adjacent design.',
+    summary:
+      'KpqC signature finalist, not among the four algorithms selected on 16 January 2025 (AIMer, HAETAE, NTRU+, SMAUG-T). NTRU-style Falcon-adjacent design.',
     alsoInNistOnRamp: false,
   },
 

@@ -32,7 +32,7 @@ export const SUPERSESSION_PAIRS: SupersessionPair[] = [
     older: {
       label: 'V1.5.1',
       date: 'December 2024',
-      algorithms: 'RSA, ECDSA — classical only',
+      algorithms: 'RSA, DSA, EC-DSA, EC-SDSA-opt — classical only',
     },
     newer: {
       label: 'V2.1.1',
@@ -64,13 +64,13 @@ export const SUPERSESSION_PAIRS: SupersessionPair[] = [
 /**
  * ETSI's hybrid signature rule, quoted from TS 119 312 V2.1.1 clause 6.4.1.
  * Deliberately paired with the Government & Defense module, where NSA takes
- * the opposite default for National Security Systems.
+ * a different default for National Security Systems.
  */
 export const HYBRID_RULE = {
   requirement:
     'For hybrid signatures, implementations shall combine a classical signature and a post-quantum signature. Acceptance requires both signatures to be valid.',
   contrast:
-    'The same algorithms, two authorities, opposite defaults. ETSI specifies hybrid modes and the exact pairs to use; NSA does not require hybrids for National Security Systems and lists concrete objections to them. Neither is wrong — they are protecting different things over different lifetimes. Which one applies to you is a jurisdiction question, not a cryptography question.',
+    'The same algorithms, two authorities, different defaults. ETSI specifies hybrid modes and the exact pairs to use; NSA will not require NSS developers to use hybrid certified products for security purposes, although product availability and interoperability requirements may lead to adopting hybrid solutions in specific cases. Neither is wrong — they are protecting different things over different lifetimes. Which one applies to you is a jurisdiction question, not a cryptography question.',
 }
 
 export interface HybridSuite {

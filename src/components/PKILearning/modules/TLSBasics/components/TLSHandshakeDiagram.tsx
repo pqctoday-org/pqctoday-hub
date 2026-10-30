@@ -36,7 +36,7 @@ const MESSAGES = [
   {
     label: 'ClientHello',
     sublabel: '+ key_share (encapsulation key), supported_groups',
-    rfcRef: 'RFC 9846 §4.1.2',
+    rfcRef: 'RFC 9846 §4.2.2',
     direction: 'right' as const,
     encrypted: false,
     mtls: false,
@@ -44,7 +44,7 @@ const MESSAGES = [
   {
     label: 'ServerHello',
     sublabel: '+ key_share (ciphertext for KEM / ECDH response)',
-    rfcRef: 'RFC 9846 §4.1.3',
+    rfcRef: 'RFC 9846 §4.2.3',
     direction: 'left' as const,
     encrypted: false,
     mtls: false,
@@ -52,7 +52,7 @@ const MESSAGES = [
   {
     label: '{EncryptedExtensions}',
     sublabel: '',
-    rfcRef: 'RFC 9846 §4.3.1',
+    rfcRef: 'RFC 9846 §4.4.1',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -60,7 +60,7 @@ const MESSAGES = [
   {
     label: '{CertificateRequest}',
     sublabel: 'mTLS: server requests client cert',
-    rfcRef: 'RFC 9846 §4.3.2',
+    rfcRef: 'RFC 9846 §4.4.2',
     direction: 'left' as const,
     encrypted: true,
     mtls: true,
@@ -68,15 +68,16 @@ const MESSAGES = [
   {
     label: '{Certificate}',
     sublabel: 'Server identity',
-    rfcRef: 'RFC 9846 §4.4.2',
+    rfcRef: 'RFC 9846 §4.5.1',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
   },
   {
     label: '{CertificateVerify}',
-    sublabel: 'Signature proof (ML-DSA / ECDSA / RSA-PSS / Ed25519)',
-    rfcRef: 'RFC 9846 §4.4.3',
+    sublabel:
+      'Signature proof (ECDSA / RSA-PSS / Ed25519; ML-DSA is not defined in RFC 9846, see draft-ietf-tls-mldsa)',
+    rfcRef: 'RFC 9846 §4.5.2',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -84,7 +85,7 @@ const MESSAGES = [
   {
     label: '{Finished}',
     sublabel: 'Server handshake MAC',
-    rfcRef: 'RFC 9846 §4.4.4',
+    rfcRef: 'RFC 9846 §4.5.3',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -92,7 +93,7 @@ const MESSAGES = [
   {
     label: '{Certificate}',
     sublabel: 'Client identity (mTLS)',
-    rfcRef: 'RFC 9846 §4.4.2',
+    rfcRef: 'RFC 9846 §4.5.1',
     direction: 'right' as const,
     encrypted: true,
     mtls: true,
@@ -100,7 +101,7 @@ const MESSAGES = [
   {
     label: '{CertificateVerify}',
     sublabel: 'Client signature (mTLS)',
-    rfcRef: 'RFC 9846 §4.4.3',
+    rfcRef: 'RFC 9846 §4.5.2',
     direction: 'right' as const,
     encrypted: true,
     mtls: true,
@@ -108,7 +109,7 @@ const MESSAGES = [
   {
     label: '{Finished}',
     sublabel: 'Client handshake MAC',
-    rfcRef: 'RFC 9846 §4.4.4',
+    rfcRef: 'RFC 9846 §4.5.3',
     direction: 'right' as const,
     encrypted: true,
     mtls: false,
