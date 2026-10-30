@@ -451,7 +451,7 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     pqcSolution:
       'ML-DSA-65/87 for attestation key signing. Hybrid ECDSA+ML-DSA during transition period. Certificate chain re-issuance from vendor root CAs.',
     vendorTimeline: 'Intel: 2027, ARM: 2028, AMD: 2028, AWS: TBD',
-    hndlExposure: true,
+    hndlExposure: false,
     migrationEffort: 4,
   },
   {

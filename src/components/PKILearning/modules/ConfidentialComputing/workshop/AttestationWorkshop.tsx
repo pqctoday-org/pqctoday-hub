@@ -367,11 +367,11 @@ export const AttestationWorkshop: React.FC = () => {
             <div className="flex items-start gap-2">
               <ShieldAlert size={14} className="text-status-warning shrink-0 mt-0.5" />
               <div className="text-xs text-foreground">
-                <strong>HNDL Exposure Warning:</strong> Attestation flows using ECDSA signatures are
-                vulnerable to Harvest Now, Decrypt Later attacks. An adversary recording attestation
-                quotes today can forge attestation evidence once a cryptographically relevant
-                quantum computer is available, potentially impersonating legitimate enclaves
-                retroactively.
+                <strong>Forgery Warning:</strong> Attestation flows using ECDSA signatures are
+                quantum vulnerable. Once a cryptographically relevant quantum computer is available,
+                an adversary can forge attestation evidence and impersonate legitimate enclaves.
+                This is a signature-forgery risk, not harvest-now-decrypt-later, which concerns
+                encrypted data (NIST IR 8547).
               </div>
             </div>
           </div>
