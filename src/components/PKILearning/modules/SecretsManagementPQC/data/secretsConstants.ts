@@ -252,7 +252,8 @@ vault write transit/encrypt/rsa-key \\
   plaintext=$(base64 <<< "32-byte-dek")
 # Result: 256-byte ciphertext
 
-# PQC: ML-KEM-768 key encapsulation
+# PQC: ML-KEM-768 key encapsulation (ILLUSTRATIVE ONLY: Vault transit has no ML-KEM
+# key type; its post-quantum types are Enterprise ml-dsa, slh-dsa and hybrid sign/verify keys)
 vault write transit/keys/ml-kem-key \\
   type=ml-kem-768
 vault write transit/encrypt/ml-kem-key \\

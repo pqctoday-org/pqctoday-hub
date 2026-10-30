@@ -53,7 +53,7 @@ export const MIGRATION_CHECKLIST: MigrationChecklistItem[] = [
     phase: 'Phase 3: Algorithm Migration',
     title: 'Re-key DEKs Under ML-KEM Envelope Encryption',
     description:
-      'For each secret category using envelope encryption, generate new ML-KEM-768 or ML-KEM-1024 KEKs and re-wrap all DEKs. Data does not need re-encryption (AES-256-GCM is already quantum-safe). This is a key metadata operation only.',
+      'For each secret category using envelope encryption, generate new ML-KEM-768 or ML-KEM-1024 KEKs and re-wrap the DEKs. For DEKs whose old wrapped form was never exposed this is a key metadata operation, and the data does not need re-encryption (AES-256-GCM is already quantum-safe). For DEKs whose RSA- or ECDH-wrapped form was transmitted or stored where an adversary could have saved it, NIST SP 800-57 says such keys may need to be considered compromised even after re-encryption for storage, so generate new DEKs and re-encrypt the data they protect.',
     priority: 'medium-term',
     effort: 'medium',
   },
