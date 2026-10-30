@@ -564,8 +564,7 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     framework: 'NSM-8 / CNSA 2.0',
     requirement:
       'US federal systems and NSS must transition to CNSA 2.0 algorithms: ML-KEM-1024 for key establishment.',
-    cryptoStandard:
-      'ML-KEM-1024 (FIPS 203), ML-DSA-87 (FIPS 204), SLH-DSA (FIPS 205) — exclusive by 2033.',
+    cryptoStandard: 'ML-KEM-1024 (FIPS 203), ML-DSA-87 (FIPS 204) — exclusive by 2033.',
     deadlineNote:
       'New capabilities: ML-KEM by 2027. Legacy systems: ML-KEM exclusively by 2033. NSM-8 issued Jan 2022.',
     pqcImplication:
