@@ -26,7 +26,7 @@ export interface GeneratedDataFilenames {
 }
 
 export const DATA_FILENAMES: GeneratedDataFilenames = {
-  library: 'library_10302026_r17.csv',
+  library: 'library_10302026_r19.csv',
   timeline: 'timeline_10272026.csv',
   migrate: 'pqc_product_catalog_10292026_r8.csv',
   threats: 'quantum_threats_hsm_industries_10302026_r6.csv',
@@ -36,5 +36,5 @@ export const DATA_FILENAMES: GeneratedDataFilenames = {
   authoritativeSources: 'pqc_authoritative_sources_reference_10232026_r1.csv',
   certificationXref: 'migrate_certification_xref_10282026.csv',
   hsmCapabilityXref: 'migrate_hsm_capability_xref_10292026.csv',
-  quiz: 'pqcquiz_10302026_r21.csv',
+  quiz: 'pqcquiz_10302026_r23.csv',
 }
