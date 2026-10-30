@@ -189,8 +189,8 @@ export const PqcImpact = () => (
       ). Third, <strong>PCI names no PQC algorithm or date</strong> in its standards: the listing
       notation says only that PQC support exists (
       <SourceLink source={SHARED_SOURCES.ptsListing} />
-      ), and PCI DSS v4.0.1 Requirement 12.3.3 — a cipher inventory, monitoring and a response plan
-      — supports crypto-agility but is not a PQC mandate (
+      ), and the public PCI DSS v4.0.1 announcement states no PQC algorithm, parameter set or
+      deadline for the standard (
       <SourceLink source={SHARED_SOURCES.dss} label="PCI DSS v4.0.1" />
       ). PCI SSC&rsquo;s blog does host guest posts in which HSM vendors discuss ML-KEM and ML-DSA (
       <SourceLink source={SHARED_SOURCES.pciQuantumLeapFuturex} label="Futurex" />,{' '}

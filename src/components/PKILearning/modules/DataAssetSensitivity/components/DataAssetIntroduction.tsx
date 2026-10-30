@@ -324,7 +324,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     name: 'PCI DSS v4.0',
                     region: 'Global',
                     scope: 'Cardholder data',
-                    req: 'Req 12.3.3 — cryptographic inventory required; Req 4.2.1 — strong crypto',
+                    req: 'Public PCI SSC pages state no PQC algorithm, parameter set or deadline',
                     deadline: '2025',
                   },
                   {

@@ -288,10 +288,10 @@ export const PCI_PQC_FINDINGS: PqcFinding[] = [
     status: 'read',
   },
   {
-    source: 'PCI DSS v4.0.1, Requirement 12.3.3',
-    says: 'Document and review, at least every 12 months, an inventory of cipher suites and protocols, "active monitoring of industry trends", and a plan "to respond to anticipated changes in cryptographic vulnerabilities". Its guidance calls this cryptographic agility.',
+    source: 'PCI DSS v4.0.1 (PCI SSC announcement, 11 June 2024)',
+    says: 'PCI DSS v4.0.1 is the only active version of the standard (v4.0 retired on 31 December 2024); the new requirements of v4.0 have been effective since 31 March 2025; v4.0.1 adds or deletes no requirements.',
     doesNotSay:
-      'Anything about quantum computing — the DSS text does not mention it. 12.3.3 is an agility requirement, not a PQC mandate.',
+      'Anything about quantum computing: the public page states no PQC algorithm, parameter set or deadline. The requirement text of the standard is not reproduced in this module.',
     status: 'read',
   },
   {

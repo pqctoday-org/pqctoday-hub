@@ -47,8 +47,9 @@ export interface SatisfiesRow {
 
 export const SATISFIES_ROWS: SatisfiesRow[] = [
   {
-    regulation: 'PCI DSS 4.0 — 12.3.3',
-    obligation: 'Inventory of cipher suites & protocols in use',
+    regulation: 'PCI DSS v4.0.1',
+    obligation:
+      'No PQC deadline on the public PCI pages; a cryptographic inventory is a sensible planning basis',
     deliverable: 'Machine-verifiable CBOM (CycloneDX)',
     phase: 'CBOM',
   },
@@ -133,8 +134,9 @@ export interface DossierDef {
 export const DOSSIER_DEFS: DossierDef[] = [
   {
     id: 'pci',
-    regulation: 'PCI DSS 4.0 — 12.3.3',
-    focus: 'Documented, current inventory of cipher suites & protocols.',
+    regulation: 'PCI DSS v4.0.1',
+    focus:
+      'A cryptographic inventory as a planning basis (a suggestion of this tracker, not a PCI statement).',
     items: [
       'CycloneDX CBOM export with timestamp',
       'Scan / inventory report covering in-scope systems',

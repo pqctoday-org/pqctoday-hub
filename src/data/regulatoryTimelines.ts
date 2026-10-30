@@ -507,7 +507,7 @@ export interface SatisfiesItEntry {
 
 export const PHASE_REGULATION_SATISFIES: ReadonlyArray<SatisfiesItEntry> = [
   {
-    regulation: 'PCI DSS 12.3.3',
+    regulation: 'PCI DSS v4.0.1',
     satisfiedBy: 'Cryptographic inventory (CBOM) + QRA',
     phase: 'p3',
   },

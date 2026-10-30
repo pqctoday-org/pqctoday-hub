@@ -461,7 +461,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
                 phase: 'Phase 1: Inventory',
                 timeline: '2025-2026',
                 description:
-                  'Catalog all cryptographic assets, identify quantum-vulnerable keys, establish baseline metrics. Required by PCI DSS v4.0.1 Req. 12.3.3.',
+                  'Catalog all cryptographic assets, identify quantum-vulnerable keys, establish baseline metrics.',
               },
               {
                 phase: 'Phase 2: Hybrid Deploy',

@@ -450,17 +450,16 @@ export const PciPqcTruth = () => (
     </p>
 
     <Panel
-      title="PCI DSS 12.3.3 is agility, not a PQC mandate"
+      title="What the public PCI pages say about PQC"
       tone="info"
       icon={<Lightbulb size={16} className="text-status-info" aria-hidden="true" />}
     >
       <p>
-        Requirement 12.3.3 asks for an up-to-date inventory of cipher suites and protocols, “active
-        monitoring of industry trends regarding continued viability”, and “a plan, to respond to
-        anticipated changes in cryptographic vulnerabilities”, reviewed at least every 12 months.
-        Its guidance calls this cryptographic agility.{' '}
-        <PciCite refKey="dss401" label="PCI DSS v4.0.1" /> A PQC migration plan is a good way to
-        satisfy it; the requirement does not demand PQC.
+        The public PCI SSC pages used for this module state no PQC algorithm, parameter set or
+        deadline for PCI DSS. PCI DSS v4.0.1 is the only active version of the standard since v4.0
+        retired on 31 December 2024, and the new requirements of v4.0 have been effective since 31
+        March 2025. <PciCite refKey="dss401" label="PCI DSS v4.0.1" /> The requirement text of the
+        standard itself is not reproduced in this module.
       </p>
     </Panel>
 
