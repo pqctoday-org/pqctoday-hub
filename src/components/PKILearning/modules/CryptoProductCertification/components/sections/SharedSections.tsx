@@ -1276,8 +1276,8 @@ export const ChangeRoutesDetail = () => (
         ;
       </li>
       <li>
-        the product-series methodology, v1 of 9 July 2025{' '}
-        <PlainSource>ENISA, EUCC product-series methodology v1, 9 July 2025</PlainSource>;
+        the product-series methodology, v1 of July 2025{' '}
+        <PlainSource>ENISA, EUCC product-series methodology v1, July 2025</PlainSource>;
       </li>
       <li>
         the vulnerability-management guideline, v1.1 of January 2025{' '}

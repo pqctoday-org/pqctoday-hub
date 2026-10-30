@@ -19,7 +19,7 @@ _Payment HSM evidence review_: review a payment HSM's evidence — PTS listing, 
 
 ## Source Currency
 
-This module states only what public PCI SSC pages state: PCI Perspectives blogs, the P2PE and PTS HSM program pages, the Document Library feed (titles and dates only) and the PTS listing field definitions. The PTS HSM v5.0 requirements, the Device Testing and Approval Program Guide, the KMO standard and the P2PE standard are not read, so their content is not taught. The v5.0 announcement names no post-quantum algorithm and no deadline.
+This module states only what public PCI SSC pages state: PCI Perspectives blogs, the P2PE and PTS HSM program pages, the Document Library feed (titles and dates only) and the PTS listing field definitions. The PTS HSM v5.0 requirements, the Device Testing and Approval Program Guide, the KMO standard and the P2PE standard are not read, so their content is not taught. The v5.0 announcement names no post-quantum algorithm and no deadline. PCI SSC announced P2PE v3.2 on 30 June 2025 as a minor revision; from 1 January 2026 all new P2PE submissions, including reassessments of listed products, must comply with it, and validations already done to P2PE v3.0 or v3.1 are not affected (P2PE v3.2 announcement).
 
 ## Related Standards
 

@@ -230,7 +230,7 @@ export const PQC_HARDWARE_CHANGES: ImpactItem[] = [
   },
   {
     change: 'Physical boundary and composition evidence when PQC runs in a coprocessor or FPGA',
-    why: 'FIPS 140-3 IG 2.3.B allows multiple sub-chip subsystems per certificate (27 February 2026).',
+    why: 'FIPS 140-3 IG 2.3.B allows multiple disjoint sub-chip cryptographic subsystems on one certificate only when Management Manual §7.8 is met (27 February 2026).',
   },
   {
     change: 'Performance and availability under HSM transaction loads',
@@ -875,7 +875,7 @@ export const CHANGE_CASES: ChangeCase[] = [
     detail: 'A new chassis revision with different tamper-detection sensors.',
     likely: ['bounded', 'broad'],
     explanation:
-      'Physical protection is central to an HSM in all three schemes. A passive enclosure change that keeps the same protection may fit a bounded FIPS route; changing the tamper sensors is a major change for Common Criteria and EUCC.',
+      'Physical protection is central to an HSM in all three schemes. A passive enclosure change that keeps the same protection may fit a bounded FIPS route; changing the tamper sensors is a major change in ENISA’s EUCC change scenarios.',
     fips: {
       affected:
         'Physical-security evidence (IG 7.A covers reusable physical-security evidence, 2 September 2025).',
