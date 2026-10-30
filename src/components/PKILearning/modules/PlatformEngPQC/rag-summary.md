@@ -46,7 +46,7 @@
 
 - 6 policy rules: 4 OPA Gatekeeper ConstraintTemplates, 2 Kyverno ClusterPolicies
 - Blocked: RSA, ECDSA, Ed25519; Required: ML-DSA-44/65/87, SLH-DSA-128, X25519MLKEM768
-- SLSA Level mapping: Level 3 requires ML-DSA or SLH-DSA provenance; Level 4 requires ML-DSA-87 or SLH-DSA-256
+- SLSA build levels: L2 requires signed provenance from a hosted build platform and L3 a hardened build platform; SLSA (v1.2) names no signature algorithm and has no post-quantum text. The ML-DSA and SLH-DSA provenance rules in this module are a projection, not a SLSA requirement
 - Deployment strategy: Audit mode first → 2-week baseline → Enforce mode rollout
 
 ### Step 5: Crypto Posture Monitor (4 tabs)

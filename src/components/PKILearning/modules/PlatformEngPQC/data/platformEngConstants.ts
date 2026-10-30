@@ -81,7 +81,7 @@ export interface PolicyRule {
   targetResource: string
   blockedAlgorithms: string[]
   requiredAlgorithms: string[]
-  slsaLevel?: 1 | 2 | 3 | 4
+  slsaLevel?: 1 | 2 | 3
   rule: string
   severity: 'error' | 'warning'
 }

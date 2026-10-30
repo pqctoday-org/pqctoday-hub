@@ -160,7 +160,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10–20 years (provenance used in supply chain audits)',
         notes:
-          'SLSA build provenance attestations link artifacts to their build environment. Forged provenance allows SLSA Level 4 bypass even with other controls in place.',
+          'SLSA build provenance attestations link artifacts to their build environment. Forged provenance lets an attacker pass SLSA provenance checks even with other controls in place.',
       },
     ],
   },
