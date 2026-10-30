@@ -7,7 +7,7 @@ export const POLICY_RULES: PolicyRule[] = [
     engine: 'opa',
     name: 'Block Non-PQC Certificate Algorithms',
     description:
-      'Rejects cert-manager Certificate resources that request RSA or ECDSA private keys. Enforces ML-DSA or SLH-DSA keys cluster-wide via OPA Gatekeeper ConstraintTemplate.',
+      'Rejects cert-manager Certificate resources that request RSA or ECDSA private keys. Enforces ML-DSA or SLH-DSA keys cluster-wide via OPA Gatekeeper ConstraintTemplate. Target-state rule: cert-manager accepts only RSA, ECDSA or Ed25519 private keys today.',
     targetResource: 'certificates.cert-manager.io',
     blockedAlgorithms: ['RSA', 'ECDSA', 'Ed25519'],
     requiredAlgorithms: ['MLDSA44', 'MLDSA65', 'MLDSA87', 'SLH-DSA-128'],

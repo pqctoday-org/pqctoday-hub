@@ -302,7 +302,7 @@ export const SIZE_COMPARISONS: PQCSizeComparison[] = [
     hybridSize: 17344,
     unit: 'bytes',
     notes:
-      'SLH-DSA-128f preferred for SBOMs (stateless, long-lived). Signature is 67× larger than ECDSA. Acceptable since SBOMs are read rarely.',
+      'SLH-DSA-128f preferred for SBOMs (stateless, long-lived). Signature is 267× larger than ECDSA P-256. Acceptable since SBOMs are read rarely.',
   },
 ]
 
@@ -364,7 +364,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'cert-manager generates a private key for the Certificate resource. Key type is specified in spec.privateKey.algorithm.',
     pqcNote:
-      'Set algorithm: MLDSA44 in cert-manager v1.17+ to generate an ML-DSA-44 key. Until CA ACME supports PQC, use hybrid: set algorithm: MLDSA44 + hybridAlgorithm: ECDSA-P256.',
+      'The cert-manager Certificate privateKey.algorithm field accepts RSA, ECDSA or Ed25519 only and has no hybridAlgorithm field, so ML-DSA keys come from an issuer that supports them, for example Vault PKI or EJBCA.',
     status: 'pqc',
   },
   {

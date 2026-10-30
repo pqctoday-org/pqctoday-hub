@@ -325,7 +325,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 tool: 'cert-manager ClusterIssuer',
                 problem:
                   'Default key type is RSA-2048. Every cert issued from this root is quantum-vulnerable.',
-                fix: 'Set algorithm: MLDSA44 in Certificate.spec.privateKey (cert-manager v1.17+).',
+                fix: 'The cert-manager Certificate privateKey.algorithm field accepts RSA, ECDSA or Ed25519 only; obtain ML-DSA certificates from an issuer that supports them, for example Vault PKI or EJBCA.',
               },
               {
                 tool: 'HashiCorp Vault PKI role',

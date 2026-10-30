@@ -54,7 +54,7 @@
 **Metrics & Alerts**: 4 Prometheus exporters (cert-manager, Vault audit log, Istio/Envoy, x509-certificate-exporter)
 **SIEM Integration**: 4 queries (Splunk, Elastic, Datadog, Microsoft Sentinel)
 **Capacity Planner**: ML-DSA-65 sig 3,309B vs ECDSA 64B (52×); TLS cert chain 2.4KB → 17.4KB (7.25×); TLS handshake 4KB → 18KB (4.5×); etcd growth: 3MB → 14MB per 1000 certs
-**ACME Lifecycle**: 7 steps; Let's Encrypt PQC ACME: 2026 staging → 2027 production; cert-manager v1.17+ supports ML-DSA key generation; internal CAs (Vault PKI, EJBCA) required for ML-DSA certs until ACME supports PQC
+**ACME Lifecycle**: 7 steps; Let's Encrypt PQC ACME: 2026 staging → 2027 production; cert-manager's Certificate privateKey.algorithm accepts RSA, ECDSA or Ed25519 (no ML-DSA value); internal CAs (Vault PKI, EJBCA) required for ML-DSA certs until ACME supports PQC
 
 ### Step 6: Platform Migration Planner
 
@@ -69,7 +69,7 @@
 - ECDSA P-256 signature: 64 bytes
 - ML-DSA-44 signature: 2,420 bytes (38×)
 - ML-DSA-65 signature: 3,309 bytes (52×)
-- SLH-DSA-128f signature: 17,088 bytes (67×)
+- SLH-DSA-128f signature: 17,088 bytes (267×)
 - ECDSA P-256 X.509 cert: 800 bytes
 - ML-DSA-65 X.509 cert: 5,800 bytes (7.25×)
 - TLS 1.3 handshake (classical): 4,096 bytes
@@ -78,15 +78,15 @@
 
 ### IaC Quantum-Vulnerable Defaults
 
-- cert-manager: RSA-2048 default → set algorithm: MLDSA44 in Certificate.spec.privateKey
-- Vault PKI role: key_type=rsa → key_type=ml-dsa, key_bits=44
+- cert-manager: RSA-2048 default; Certificate.spec.privateKey.algorithm accepts RSA, ECDSA or Ed25519 only, so ML-DSA certificates come from an issuer that supports them (Vault PKI, EJBCA)
+- Vault PKI role: key_type=rsa → key_type=ml-dsa with parameter_set=ml-dsa-44
 - nginx-ingress: ECDHE → ssl-ecdh-curve: X25519MLKEM768:X25519:P-256
 - Terraform ACM: RSA_2048 → ML-DSA-44 when supported (AWS roadmap 2026)
-- kubeconfig certs: ECDSA P-256 → MLDSA44 via cert-manager Certificate usages: client auth
+- kubeconfig certs: ECDSA P-256 → ML-DSA-44 client certificate from an ML-DSA-capable issuer
 
 ### ACME + PQC Timeline
 
-- cert-manager v1.17+: supports ML-DSA key generation (algorithm: MLDSA44)
+- cert-manager: Certificate privateKey.algorithm accepts RSA, ECDSA or Ed25519; ML-DSA certificates come from issuers such as Vault PKI or EJBCA
 - Let's Encrypt staging: PQC ACME support planned 2026
 - Let's Encrypt production: PQC ACME support planned 2027
 - Until ACME supports PQC: use Vault PKI or EJBCA as internal CAs for ML-DSA certificates

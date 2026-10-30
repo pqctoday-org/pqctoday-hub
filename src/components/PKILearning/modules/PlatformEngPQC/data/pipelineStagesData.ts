@@ -220,7 +220,8 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         keySize: 'P-256 / RSA-2048',
         quantumVulnerable: true,
         hndlRisk: 'high',
-        pqcReplacement: 'ML-DSA-65 hybrid cert (cert-manager v1.17+ PQC issuer)',
+        pqcReplacement:
+          'ML-DSA-65 certificate from an issuer that supports ML-DSA (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '1 year (rotated annually, but control plane TLS is high-value target)',
         notes:
@@ -288,11 +289,11 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         keySize: 'P-256 (configurable)',
         quantumVulnerable: true,
         hndlRisk: 'medium',
-        pqcReplacement: 'ML-DSA-44 via cert-manager PQC issuer (v1.17+)',
+        pqcReplacement: 'ML-DSA-44 from an ML-DSA-capable issuer (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '90 days – 1 year',
         notes:
-          'cert-manager v1.17+ supports PQC algorithms via OpenSSL 3.5 integration. Change CertificateRequest.spec.privateKey.algorithm to ML-DSA-44.',
+          'The cert-manager Certificate privateKey.algorithm field accepts RSA, ECDSA or Ed25519; request ML-DSA-44 certificates from an issuer that supports them.',
       },
     ],
   },

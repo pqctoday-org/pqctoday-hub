@@ -58,7 +58,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
     stageIds: ['deploy', 'runtime'],
     actions: [
       'Generate ML-DSA-65 root CA key (offline HSM)',
-      'Create hybrid intermediate CA (cert-manager v1.17+)',
+      'Create hybrid intermediate CA (in an issuer that supports ML-DSA, for example Vault PKI or EJBCA)',
       'Update ClusterIssuer to use ML-DSA hybrid intermediate',
       'Verify certificate chain validation in test namespace',
       'Begin issuing hybrid certs to all cert-manager Certificates',
