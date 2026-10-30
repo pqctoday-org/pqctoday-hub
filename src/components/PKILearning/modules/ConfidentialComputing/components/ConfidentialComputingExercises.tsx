@@ -39,7 +39,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'SGX has a smaller TCB (CPU + enclave only); legacy client SGX was capped at ~256 MB EPC (too small for large ML models without partitioning), though recent Xeon server parts raise this to hundreds of GB. SEV-SNP encrypts the full VM including guest OS, which results in a larger TCB. Both are available on Azure and have distinct PQC attestation roadmaps.',
+        'SGX has a smaller TCB (CPU + enclave only); legacy client SGX was capped at ~256 MB EPC (too small for large ML models without partitioning), though recent Xeon server parts raise this to hundreds of GB. SEV-SNP encrypts the full VM including guest OS, which results in a larger TCB. Both are available on Azure; we found no published PQC attestation roadmap for either.',
       config: { step: 0 },
     },
     {

@@ -18,7 +18,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-256',
     pqcMigrationStatus: 'planned',
     pqcMigrationNotes:
-      'Intel has committed to PQC attestation key migration for DCAP. Estimated timeline: 2027. Will require PCK certificate chain re-issuance with ML-DSA keys.',
+      "We found no published Intel date or plan for moving DCAP attestation, which Intel documents as ECDSA based, to post-quantum algorithms. The module's own estimate is 2027, which would require PCK certificate chain re-issuance with ML-DSA keys.",
     steps: [
       {
         id: 'dcap-1',
@@ -94,7 +94,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-384',
     pqcMigrationStatus: 'planned',
     pqcMigrationNotes:
-      'ARM has indicated PQC support for CCA attestation tokens on the roadmap. Initial implementations use ECDSA P-384 per PSA Attestation Token specification. Estimated PQC timeline (ML-DSA): 2028.',
+      "We found no published Arm roadmap or date for PQC support in CCA attestation tokens. The module's own estimate is ML-DSA around 2028, and it assumes initial implementations use ECDSA P-384.",
     steps: [
       {
         id: 'cca-1',
@@ -378,7 +378,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'HSM generates PQC keypair → Wrapped export via TLS 1.3 channel → Enclave receives wrapped key → Unsealed with EGETKEY-derived wrapping key → Key loaded into enclave memory',
     migrationComplexity: 'high',
     notes:
-      'Requires both Intel DCAP attestation key migration (ECDSA → ML-DSA) and Luna firmware upgrade (v7.9+ for ML-KEM/ML-DSA preview). PKCS#11 v3.2 mechanisms required on both sides. Thales Luna Partition Owner role must configure PQC-enabled partition. Note: Intel SGX SDK EOL (2024) for consumer platforms — this integration applies to Xeon data center deployments.',
+      'Luna HSM firmware v7.9 has ML-KEM (FIPS 203) and ML-DSA (FIPS 204) in the core firmware (Thales). The module assumes this integration also needs the Intel DCAP attestation keys to move from ECDSA to ML-DSA, PKCS#11 v3.2 mechanisms on both sides, and a PQC-enabled Luna partition configured by the Partition Owner. The module applies it to Xeon data center deployments.',
   },
   {
     id: 'sev-snp-nshield',
@@ -465,7 +465,8 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     migrationPriority: 2,
     pqcSolution:
       'Upgrade sealing key derivation to AES-256 (128-bit post-quantum security). Add PQC KDF (HKDF-SHA3-256) for key derivation chain.',
-    vendorTimeline: 'Requires next-gen CPU silicon: Intel 2027+, AMD 2028+',
+    vendorTimeline:
+      "Requires next-generation CPU silicon; no Intel or AMD dates are published in the sources we hold (the module's own estimate is Intel 2027+, AMD 2028+)",
     hndlExposure: false,
     migrationEffort: 5,
   },
@@ -512,7 +513,7 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     pqcSolution:
       'ML-DSA-65/87 or SLH-DSA for firmware signing. Dual-signature (classical + PQC) during transition. Hardware root of trust must support PQC verification.',
     vendorTimeline:
-      'Requires silicon refresh: Intel (2027+), AMD (2028+), ARM (SoC vendor dependent)',
+      "Requires a silicon refresh; no vendor dates are published in the sources we hold (the module's own estimate is Intel 2027+, AMD 2028+; Arm depends on the SoC vendor)",
     hndlExposure: false,
     migrationEffort: 4,
   },
