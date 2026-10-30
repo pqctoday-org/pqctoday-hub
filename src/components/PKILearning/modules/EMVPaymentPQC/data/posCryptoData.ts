@@ -150,7 +150,7 @@ export const KEY_INJECTION_CEREMONY: KeyInjectionCeremony = {
       order: 4,
       label: 'Terminal Key Injection & Derivation',
       description:
-        'The BDK is loaded into the terminal\u2019s tamper-resistant security module. The terminal derives an Initial PIN Encryption Key (IPEK) from the BDK using the terminal\u2019s unique Key Serial Number (KSN). All subsequent per-transaction keys are derived from the IPEK using symmetric DUKPT derivation.',
+        'The injection facility derives the Initial PIN Encryption Key (IPEK) from the BDK using the terminal\u2019s unique Key Serial Number (KSN), and only the derived key is loaded into the terminal\u2019s tamper-resistant security module; the BDK itself stays with the injection facility. All subsequent per-transaction keys are derived from the IPEK using symmetric DUKPT derivation.',
       cryptoUsed: '3DES/AES DUKPT key derivation (symmetric)',
       quantumVulnerable: false,
       pqcReplacement: 'No change needed \u2014 symmetric DUKPT derivation is quantum-safe',

@@ -75,9 +75,9 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     id: 'mv-4',
     component: 'emv-offline-auth',
     componentLabel: 'EMV Offline Authentication (DDA/CDA)',
-    currentCrypto: ['RSA-2048 certificate chain (4 levels)', 'RSA-2048 dynamic signatures'],
+    currentCrypto: ['RSA-2048 certificate chain (3 levels)', 'RSA-2048 dynamic signatures'],
     vulnerability:
-      'Offline authentication relies entirely on RSA signatures. A quantum computer can forge ICC signatures, allowing counterfeit cards to pass offline terminal verification. 14.7 billion cards affected (EMVCo, end of 2024).',
+      'Offline authentication relies on RSA (or ECC) signatures. A cryptographically relevant quantum computer breaking an issuer or payment-system key could let forged cards pass offline checks; breaking one card key only clones that card. Up to 14.7 billion EMV cards (EMVCo, Q4 2024) carry such keys, and EMVCo says that on current projections a realised quantum threat is unlikely prior to 2040.',
     severity: 'critical',
     hndlExposure: false,
     affectedScale: '14.7 billion EMV cards globally (EMVCo, end of 2024)',

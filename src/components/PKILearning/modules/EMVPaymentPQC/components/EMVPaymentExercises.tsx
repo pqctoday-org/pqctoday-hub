@@ -57,11 +57,11 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       id: 'cert-chain-size',
       title: '3. EMV Certificate Chain Size Impact \u2014 Compare RSA vs ML-DSA vs FN-DSA',
       description:
-        'In the Card Provisioning Visualizer, toggle between RSA-2048, ML-DSA-44, and FN-DSA-512 certificate chains. Compare the total chain size for all 4 levels (Root \u2192 Network \u2192 Issuer \u2192 ICC). Assess whether FN-DSA-512 fits within typical EMV card NVM constraints (32-64 KB).',
+        'In the Card Provisioning Visualizer, toggle between RSA-2048, ML-DSA-44, and FN-DSA-512 certificate chains. Compare the total chain size for the 3 levels (payment-system CA \u2192 Issuer \u2192 ICC); the terminal holds the payment-system CA public key, so the card itself carries the issuer and ICC certificates. Assess whether FN-DSA-512 fits within typical EMV card NVM constraints (32-64 KB).',
       badge: 'Provisioning',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'RSA-2048 chain: ~1.5 KB (4 \u00d7 384 bytes). ML-DSA-44 chain: ~15.3 KB (4 \u00d7 3,832 bytes, each a 2,420 B signature + 1,312 B key + ~100 B of fields). FN-DSA-512: ~6.7 KB (4 \u00d7 1,687 bytes, each a 666 B signature + 897 B key + ~124 B of fields). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 6.7 KB, FN-DSA is smaller than ML-DSA at 15.3 KB; whether either fits depends on the chip and the application profile (the 32-64 KB card NVM range is this module\u2019s assumption). FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
+        'RSA-2048 chain: ~1.2 KB (3 \u00d7 384 bytes). ML-DSA-44 chain: ~11.5 KB (3 \u00d7 3,832 bytes, each a 2,420 B signature + 1,312 B key + ~100 B of fields). FN-DSA-512: ~5.1 KB (3 \u00d7 1,687 bytes, each a 666 B signature + 897 B key + ~124 B of fields). The card itself carries only the issuer and ICC certificates (about 0.8 KB for RSA, 7.7 KB for ML-DSA-44, 3.4 KB for FN-DSA-512). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 5.1 KB, FN-DSA is smaller than ML-DSA at 11.5 KB; whether either fits depends on the chip and the application profile (the 32-64 KB card NVM range is this module\u2019s assumption). FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
       config: { step: 2 },
     },
     {

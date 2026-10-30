@@ -33,11 +33,11 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         fromActor: 'card',
         toActor: 'terminal',
         description:
-          'Terminal verifies the ICC public key certificate chain: EMVCo Root CA \u2192 Network CA \u2192 Issuer CA \u2192 ICC certificate. All signatures are RSA-2048.',
+          'Terminal verifies the ICC certificate chain: payment-system (scheme) CA public key held in the terminal \u2192 Issuer certificate \u2192 ICC certificate. All signatures are RSA.',
         cryptoUsed: ['RSA-2048 signature verification (3 levels)'],
         quantumVulnerable: true,
         pqcReplacement: 'ML-DSA-44 or FN-DSA-512 certificate chain',
-        dataSize: '~1.5 KB (certificate chain)',
+        dataSize: '~0.8 KB (issuer and ICC certificates from the card)',
         latencyMs: 80,
       },
       {
@@ -149,11 +149,11 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         fromActor: 'card',
         toActor: 'terminal',
         description:
-          'Terminal recovers and verifies the ICC public key from the certificate chain: EMVCo Root CA \u2192 Network CA \u2192 Issuer CA \u2192 ICC public key certificate. All RSA-2048.',
+          'Terminal recovers and verifies the ICC public key from the chain: payment-system CA public key (in the terminal) \u2192 Issuer certificate \u2192 ICC certificate. All RSA.',
         cryptoUsed: ['RSA-2048 signature verification (3 levels)'],
         quantumVulnerable: true,
         pqcReplacement: 'FN-DSA-512 certificate chain (compact signatures)',
-        dataSize: '~1.5 KB',
+        dataSize: '~0.8 KB',
         latencyMs: 80,
       },
       {
@@ -236,7 +236,7 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         cryptoUsed: ['RSA-2048 signature verification (3 levels)'],
         quantumVulnerable: true,
         pqcReplacement: 'FN-DSA-512 certificate chain',
-        dataSize: '~1.5 KB',
+        dataSize: '~0.8 KB',
         latencyMs: 80,
       },
       {
