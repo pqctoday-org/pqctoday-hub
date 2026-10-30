@@ -35,7 +35,7 @@ export const content: ModuleContent = {
     tradeoff:
       '-s variants use fewer hypertree layers: smaller signatures but more hash rounds per layer. -f variants use more layers: faster signing but larger signatures.',
     context:
-      'FIPS 205 §9.2 context strings provide domain separation — they bind a signature to a specific protocol or application context, preventing cross-context forgery.',
+      'FIPS 205 §10.2 context strings provide domain separation: the context is signed together with the message, so a signature made for one protocol or application context does not verify under another.',
     deterministic:
       'FIPS 205 §9.2 deterministic signing uses PK.seed for opt_rand and produces identical signatures with the same key, message, context and settings. This demonstrates repeatability, not random-generator quality or resistance to attacks.',
   },
