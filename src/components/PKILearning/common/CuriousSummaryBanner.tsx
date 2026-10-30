@@ -55,6 +55,8 @@ const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
     'A bar comparison showing a classical ECDSA signature as a small block next to a much larger ML-DSA-44 signature block, both measured against a dashed line marking the DNS UDP size limit; alongside it, a resolver icon labeled Cloudflare 1.1.1.1 checking a green checkmark against a signed test-zone icon labeled dnstest.dev, with a roadmap timeline below leading toward a 2029 target.',
   'media-drm-pqc':
     "Six panels on content protection read as written: a compromised padlock beside a row of identical padlocks; the AACS key ladder from Device Keys through a Processing Key to a Media Key; the CI Plus signature, key negotiation and scrambler primitives; the hybrid key agreement mechanisms of RFC 10024; the signature algorithms C2PA 2.4 allows; and NIST's 2030 and 2035 dates, which the media documents do not set.",
+  'software-supply-chain-pqc':
+    "Six panels on signatures along the software supply chain: signed releases; a status map of what each held document says about post-quantum signatures and where it is silent; the TUF roles root, targets, snapshot, timestamp and the optional mirrors; Uptane's Director and Image repositories checked against each other; the SLSA Build track levels; and what changes after a verifier has shipped.",
 }
 
 const DIR_TO_MODULE_ID: Record<string, string> = {
@@ -92,6 +94,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   PQCBusinessCase: 'pqc-business-case',
   PQCGovernance: 'pqc-governance',
   CodeSigning: 'code-signing',
+  SoftwareSupplyChainPQC: 'software-supply-chain-pqc',
   APISecurityJWT: 'api-security-jwt',
   IoTPQC: 'iot-pqc',
   ConfidentialComputing: 'confidential-computing',

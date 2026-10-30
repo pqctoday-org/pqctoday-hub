@@ -216,6 +216,7 @@ const MODULE_NAMES: Record<string, string> = {
   'ot-pqc': 'OT & Industrial Control Systems PQC',
   'automotive-pqc': 'Automotive PQC',
   'aerospace-pqc': 'Aerospace PQC',
+  'software-supply-chain-pqc': 'Software Supply Chain PQC',
   'confidential-computing': 'Confidential Computing & TEEs',
   'homomorphic-encryption': 'Homomorphic Encryption (FHE) & HSM Key Custody',
   'database-encryption-pqc': 'Database Encryption & PQC',
@@ -439,6 +440,11 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'Why is FN-DSA-512 preferred over ML-DSA for constrained payment cards?',
     'Which EMV authentication methods (SDA, DDA, CDA) are quantum-vulnerable?',
     'What is the PQC migration timeline for payment network HSMs?',
+  ],
+  'software-supply-chain-pqc': [
+    'Which documents specify ML-DSA or SLH-DSA signatures in CMS, X.509 and COSE, and which are drafts?',
+    'What does the Sigstore algorithm registry say about ML-DSA?',
+    'How does a TUF threshold change what an attacker needs to sign for a role?',
   ],
   'healthcare-pqc': [
     'Why are biometric data and genomic records the highest HNDL priority?',

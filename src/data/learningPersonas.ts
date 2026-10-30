@@ -445,6 +445,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'database-encryption-pqc',
       'code-signing',
       'platform-eng-pqc',
+      'software-supply-chain-pqc',
       'secrets-management-pqc',
       'os-pqc',
       'iot-pqc',
@@ -542,6 +543,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         categories: ['api-security-jwt', 'iam-pqc', 'database-encryption-pqc', 'code-signing'],
       },
       { type: 'module', moduleId: 'platform-eng-pqc' },
+      { type: 'module', moduleId: 'software-supply-chain-pqc' },
       { type: 'module', moduleId: 'secrets-management-pqc' },
       { type: 'module', moduleId: 'os-pqc' },
       { type: 'module', moduleId: 'iot-pqc' },
@@ -555,6 +557,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         label: 'Platform & Infrastructure',
         categories: [
           'platform-eng-pqc',
+          'software-supply-chain-pqc',
           'secrets-management-pqc',
           'os-pqc',
           'iot-pqc',
@@ -566,7 +569,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2225,
+    estimatedMinutes: 2265,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -666,6 +669,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'iam-pqc',
       'api-security-jwt',
       'code-signing',
+      'software-supply-chain-pqc',
       'iot-pqc',
       'ot-pqc',
       'automotive-pqc',
@@ -779,6 +783,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'api-security-jwt' },
       { type: 'module', moduleId: 'code-signing' },
+      { type: 'module', moduleId: 'software-supply-chain-pqc' },
       { type: 'module', moduleId: 'iot-pqc' },
       { type: 'module', moduleId: 'ot-pqc' },
       { type: 'module', moduleId: 'automotive-pqc' },
@@ -797,7 +802,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2595,
+    estimatedMinutes: 2635,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -901,6 +906,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'iam-pqc',
       'code-signing',
       'platform-eng-pqc',
+      'software-supply-chain-pqc',
       'iot-pqc',
       'ai-security-pqc',
       'digital-assets',
@@ -1023,6 +1029,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'iam-pqc' },
       { type: 'module', moduleId: 'code-signing' },
       { type: 'module', moduleId: 'platform-eng-pqc' },
+      { type: 'module', moduleId: 'software-supply-chain-pqc' },
       { type: 'module', moduleId: 'iot-pqc' },
       { type: 'module', moduleId: 'ai-security-pqc' },
       {
@@ -1034,6 +1041,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'iam-pqc',
           'code-signing',
           'platform-eng-pqc',
+          'software-supply-chain-pqc',
           'iot-pqc',
           'ai-security-pqc',
         ],
@@ -1087,7 +1095,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 3270,
+    estimatedMinutes: 3310,
     essentials: [
       'pqc-101',
       'research-quantum-impact',
@@ -1253,6 +1261,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'verification-closure',
       'soc-implementation-pqc',
       'platform-eng-pqc',
+      'software-supply-chain-pqc',
       'iot-pqc',
       'ot-pqc',
       'ai-security-pqc',
@@ -1330,6 +1339,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'verification-closure' },
       { type: 'module', moduleId: 'soc-implementation-pqc' },
       { type: 'module', moduleId: 'platform-eng-pqc' },
+      { type: 'module', moduleId: 'software-supply-chain-pqc' },
       {
         type: 'checkpoint',
         id: 'ops-cp-4a',
@@ -1346,6 +1356,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'verification-closure',
           'soc-implementation-pqc',
           'platform-eng-pqc',
+          'software-supply-chain-pqc',
         ],
       },
       { type: 'module', moduleId: 'iot-pqc' },
@@ -1361,7 +1372,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2160,
+    estimatedMinutes: 2200,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',

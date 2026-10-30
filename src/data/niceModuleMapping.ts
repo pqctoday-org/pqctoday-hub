@@ -568,6 +568,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    moduleId: 'software-supply-chain-pqc',
+    competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'security-developer'],
+    isCommonGround: false,
+  },
+  {
     // 2026-10-01: cross-sector OT module (was the Energy & Utilities vertical).
     moduleId: 'ot-pqc',
     nfExtra: ['NF-COM-010'],

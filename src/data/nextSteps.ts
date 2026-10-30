@@ -236,6 +236,11 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Produce the artifact: MTI Negotiator',
     why: 'This module belongs to phase 5 (Pilots & Migration); MTI Negotiator produces a deliverable of that phase in the Command Center.',
   },
+  '/learn/software-supply-chain-pqc': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
   // ── module→tool ──
   '/learn/kms-pqc': {
     to: '/playground/envelope-encrypt',

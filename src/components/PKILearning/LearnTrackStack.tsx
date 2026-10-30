@@ -107,6 +107,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'automotive-pqc',
     'media-drm-pqc',
     'emv-payment-pqc',
+    'software-supply-chain-pqc',
     'iot-pqc',
     'industry-threats',
   ],

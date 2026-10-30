@@ -70,6 +70,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'crypto-dev-apis': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'web-gateway-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'iot-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
+  'software-supply-chain-pqc': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'pqc-risk-management': { phasesServed: ['p3'], legs: ['learn', 'reference'] },
   'pqc-business-case': { phasesServed: ['p0'], legs: ['learn', 'reference'] },
   'pqc-governance': { phasesServed: ['p0'], legs: ['learn', 'reference'] },
