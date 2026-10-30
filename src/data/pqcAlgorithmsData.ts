@@ -275,6 +275,7 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'SP 800-208|||NIST SP 800-208': 'final',
   'SP 800-56B|||SP 800-56B': 'final',
   'RFC 7919|||RFC 7919': 'final',
+  'RFC 3526 (Standards Track)|||RFC 3526': 'final',
   'SEC 2|||SEC 2': 'final',
   'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); BSI/ANSSI & ISO 18033-2 recommended':
     'final',
