@@ -15,6 +15,7 @@ import type { KpiDefinition, KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_CATALOG, KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { useHasUserInteracted } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import type { ScorecardObservation } from '@/components/PKILearning/common/executive/DataDrivenScorecard'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -70,6 +71,7 @@ export interface KpiTrackerMarkdownInput {
   userScores: Record<string, number>
   userWeights: Record<string, number>
   touchedIds: Set<string>
+  observations?: Record<string, ScorecardObservation>
 }
 
 export function buildKpiTrackerMarkdown({
@@ -79,6 +81,7 @@ export function buildKpiTrackerMarkdown({
   userScores,
   userWeights,
   touchedIds,
+  observations = {},
 }: KpiTrackerMarkdownInput): string {
   const scores = userScores
   let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
@@ -122,6 +125,18 @@ export function buildKpiTrackerMarkdown({
     const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? d.autoScore ?? 0}/100`
     md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
   }
+  md += '\n## Measurement Evidence\n\n'
+  md +=
+    '| KPI | Numerator | Denominator | Unit | Period | As of | Owner | Evidence | Verification |\n'
+  md +=
+    '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|\n'
+  const cell = (value: string | undefined) =>
+    (value || 'not provided').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')
+  for (const dimension of dimensions) {
+    const observation = observations[dimension.id]
+    if (!observation) continue
+    md += `| ${cell(dimension.label)} | ${cell(observation.numerator)} | ${cell(observation.denominator)} | ${cell(observation.unit)} | ${cell(observation.reportingPeriod)} | ${cell(observation.asOfDate)} | ${cell(observation.owner)} | ${cell(observation.evidenceReference)} | ${observation.verificationState} |\n`
+  }
   md += '\n## Data Sources\n\n'
   md += `- Vendor and FIPS measures use only products explicitly selected in Migrate; catalogue status does not verify deployment. Compliance closure, exposure coverage and pace require organization-entered values.\n`
   md += `- Assessment planning-index history: ${trendSummary(riskHistory)} (self-reported inputs, not measured migration progress)\n`
@@ -144,6 +159,7 @@ interface SavedKpiTrackerInputs {
   userScores: Record<string, number>
   userWeights: Record<string, number>
   touchedIds: string[]
+  observations?: Record<string, ScorecardObservation>
 }
 
 export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapOutput }) => {
@@ -161,6 +177,12 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     savedInputs?.personaOverride ?? null
   )
   const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
+  const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
+    savedInputs?.observations ?? {}
+  )
+  const handleObservationChange = useCallback((id: string, observation: ScorecardObservation) => {
+    setObservations((previous) => ({ ...previous, [id]: observation }))
+  }, [])
 
   // roadmapOutput only arrives as a live prop inside the linear
   // `/learn/migration-program` wizard. Reached any other way — the
@@ -242,8 +264,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         userScores,
         userWeights,
         touchedIds,
+        observations,
       }),
-    [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds]
+    [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds, observations]
   )
 
   // Structured CSV (one row per KPI) built from the live dimensions — not the
@@ -259,6 +282,14 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       'Framework Mappings',
       'Description',
       'Persona',
+      'Numerator',
+      'Denominator',
+      'Unit',
+      'Period',
+      'As of',
+      'Owner',
+      'Evidence',
+      'Verification',
     ]
     const rows = dimensions.map((d) => {
       const pending = d.notYetScored === true && !touchedIds.has(d.id)
@@ -275,10 +306,18 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         formatMappings(mappingsFor(d.id)),
         d.description,
         activePersona,
+        observations[d.id]?.numerator ?? '',
+        observations[d.id]?.denominator ?? '',
+        observations[d.id]?.unit ?? '',
+        observations[d.id]?.reportingPeriod ?? '',
+        observations[d.id]?.asOfDate ?? '',
+        observations[d.id]?.owner ?? '',
+        observations[d.id]?.evidenceReference ?? '',
+        observations[d.id]?.verificationState ?? 'not-verified',
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, activePersona, userScores, userWeights, touchedIds])
+  }, [dimensions, activePersona, userScores, userWeights, touchedIds, observations])
 
   // Everything that round-trips through `inputs`. Watched by the autosave
   // below instead of the markdown, because a value can change here without
@@ -293,8 +332,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         userScores,
         userWeights,
         touchedIds: Array.from(touchedIds),
+        observations,
       }) satisfies SavedKpiTrackerInputs,
-    [personaOverride, startYear, userScores, userWeights, touchedIds]
+    [personaOverride, startYear, userScores, userWeights, touchedIds, observations]
   )
   const inputsSignature = useMemo(() => JSON.stringify(savedInputsSnapshot), [savedInputsSnapshot])
 
@@ -452,6 +492,8 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         onScoreChange={handleScoreSnapshot}
         onTouchedChange={handleTouchedChange}
         onWeightChange={handleWeightSnapshot}
+        observations={observations}
+        onObservationChange={handleObservationChange}
         allowWeightEditing={true}
         showExport={false}
         exportFilename={`pqc-kpi-tracker-${activePersona}`}

@@ -172,6 +172,57 @@ describe('KPITrackerTemplate', () => {
     expect(risk).toHaveAttribute('data-disabled', 'true')
   })
 
+  it('restores, edits, saves and exports measurement evidence with its denominator', () => {
+    mockPersona = 'executive'
+    mockStoreState.artifacts.executiveDocuments = [
+      {
+        id: 'bank-kpis',
+        moduleId: 'migration-program',
+        type: 'kpi-tracker',
+        title: 'Bank case',
+        data: '',
+        createdAt: 1,
+        inputs: {
+          personaOverride: 'executive',
+          startYear: 2027,
+          userScores: { 'systems-inventoried': 40 },
+          userWeights: {},
+          touchedIds: ['systems-inventoried'],
+          observations: {
+            'systems-inventoried': {
+              numerator: '100',
+              denominator: '250',
+              reportingPeriod: '2027 Q1',
+              owner: 'Inventory Lead',
+              evidenceReference: 'CASE-INV-001',
+              verificationState: 'not-verified',
+            },
+          },
+        },
+      },
+    ]
+    const view = render(<KPITrackerTemplate />)
+    fireEvent.click(screen.getAllByText('Evidence details', { exact: true })[0])
+    expect(screen.getByLabelText('Systems Inventoried Denominator')).toHaveValue('250')
+    fireEvent.change(screen.getByLabelText('Systems Inventoried Evidence owner'), {
+      target: { value: 'Reviewed Inventory Team' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Save', exact: true }))
+    const saved = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
+    expect(saved.data).toContain('100 | 250')
+    expect(saved.data).toContain('2027 Q1')
+    expect(saved.data).toContain('Reviewed Inventory Team')
+    expect(saved.data).toContain('CASE-INV-001')
+    expect(saved.data).toContain('not-verified')
+    view.unmount()
+    mockStoreState.artifacts.executiveDocuments = [saved]
+    render(<KPITrackerTemplate />)
+    expect(screen.getByLabelText('Systems Inventoried Evidence owner')).toHaveValue(
+      'Reviewed Inventory Team'
+    )
+    expect(screen.getByLabelText('Systems Inventoried Numerator')).toHaveValue('100')
+  })
+
   it('does not push a snapshot when riskScore is null', () => {
     render(<KPITrackerTemplate />)
     expect(pushRiskScoreSnapshot).not.toHaveBeenCalled()

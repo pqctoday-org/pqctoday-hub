@@ -28,3 +28,5 @@ The workshop has 4 interactive steps:
 - NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0)
 - PMI PMBOK (Project Management Body of Knowledge)
 - CISA Post-Quantum Cryptography Initiative
+
+Measurement evidence fields in KPI Tracker (numerator, denominator, unit, period, as-of date, owner, reference and verification state) are saved with the scorecard, restored on reopening and included in Markdown and CSV exports. Entering a reference does not verify it; the default verification state remains not verified.
