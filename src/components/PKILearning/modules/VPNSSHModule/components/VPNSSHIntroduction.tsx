@@ -99,8 +99,9 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           <p>
             The IETF draft <strong>draft-ietf-ipsecme-ikev2-mlkem</strong> defines how to integrate
             ML-KEM (<InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>) into IKEv2 using the{' '}
-            <strong>Additional Key Exchange (AKE)</strong> framework (RFC 9370). This enables hybrid
-            key exchange without modifying the core IKEv2 state machine.
+            <strong>multiple key exchanges</strong> framework (RFC 9370). This enables hybrid key
+            exchange while limiting the changes to the exchanged messages and the IKEv2 state
+            machine (RFC 9370).
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -121,7 +122,9 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-primary mb-1">Additional KE (AKE)</div>
+              <div className="text-xs font-bold text-primary mb-1">
+                Additional key exchange (RFC 9370)
+              </div>
               <p className="text-xs text-muted-foreground">
                 ML-KEM-768 encapsulation key (1,184 B) in IKE_INTERMEDIATE. Adds one round trip.
               </p>
@@ -180,13 +183,13 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                   {
                     name: 'ML-KEM-768 (36)',
                     size: '1,192 / 1,096 B',
-                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
+                    rule: 'SHOULD NOT over UDP without PMTU discovery when the path MTU is unknown, unless IKE runs over TCP',
                     color: 'text-warning',
                   },
                   {
                     name: 'ML-KEM-1024 (37)',
                     size: '1,576 / 1,576 B',
-                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
+                    rule: 'SHOULD NOT over UDP without PMTU discovery when the path MTU is unknown, unless IKE runs over TCP',
                     color: 'text-warning',
                   },
                 ].map((row) => (
@@ -203,10 +206,12 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">The CNSA 2.0 squeeze</div>
               <p className="text-xs text-muted-foreground">
-                CNSA 2.0 requires ML-KEM-1024, but ML-KEM-512 is the only size the draft allows in a
-                pure UDP IKE_SA_INIT without conditions. A pure CNSA 2.0 IKEv2 deployment therefore
-                has to run IKE over TCP (RFC 9329), guarantee the path MTU, or accept IP
-                fragmentation.
+                CNSA 2.0 lists ML-KEM-1024 for key establishment. The draft says ML-KEM-512 MAY be
+                used in IKE_SA_INIT as a quantum-resistant-only key exchange; implementations
+                transporting IKE over UDP and not performing PMTU discovery SHOULD NOT use
+                ML-KEM-768 or ML-KEM-1024 in IKE_SA_INIT on networks where the PMTU is unknown or
+                restricted, and MAY use any ML-KEM parameter when reliable transport (for example
+                RFC 9329) is used or a sufficient PMTU is guaranteed.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -250,7 +255,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             OpenSSH has been a pioneer in deploying post-quantum key exchange. Since version 8.5
             (March 2021), it has shipped with <strong>sntrup761x25519-sha512</strong> &mdash; a
             hybrid of Streamlined NTRU Prime and X25519. In OpenSSH 9.9 (September 2024),
-            NIST-standard <strong>mlkem768x25519-sha256</strong> was added.
+            <strong>mlkem768x25519-sha256</strong>, OpenSSH&rsquo;s hybrid of ML-KEM-768 (FIPS 203,
+            standardised by NIST) and X25519, was added.
           </p>
           <div className="space-y-2">
             {[
@@ -443,8 +449,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">IKEv2 (IKE_AUTH)</div>
               <p className="text-xs text-muted-foreground">
-                In addition to the AKE payloads, draft-ietf-ipsecme-ikev2-pqc-auth updates the
-                IKE_AUTH phase to support{' '}
+                In addition to the additional key exchanges, draft-ietf-ipsecme-ikev2-pqc-auth
+                updates the IKE_AUTH phase to support{' '}
                 <InlineTooltip term="ML-DSA">
                   <strong>ML-DSA</strong>
                 </InlineTooltip>{' '}
@@ -465,10 +471,12 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <h3 className="font-bold text-primary mb-1">Control Plane vs. Data Plane</h3>
             <p className="text-xs text-muted-foreground">
               The migration to PQC only applies to the <strong>Control Plane</strong> (key exchange
-              &amp; auth). The actual <strong>Data Plane</strong> (the VPN tunnel) already uses
-              symmetric algorithms like AES-GCM or ChaCha20-Poly1305. These algorithms are naturally
-              quantum-resistant, requiring only standard key lengths (256-bit) to be secure against
-              Grover&apos;s algorithm.
+              &amp; auth). The actual <strong>Data Plane</strong> (the VPN tunnel) uses symmetric
+              algorithms like AES-GCM or ChaCha20-Poly1305. The data plane&rsquo;s symmetric
+              algorithms are affected by Grover&rsquo;s algorithm rather than Shor&rsquo;s; per NIST
+              (cited in RFC 9370), applications can continue using AES with a minimum key length of
+              128 bits, and a longer key size can be considered for data that must remain secure for
+              many years.
             </p>
           </div>
         </div>

@@ -347,13 +347,16 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             Content Delivery Networks deploy PQC at{' '}
             <InlineTooltip term="Edge PoP">edge Points of Presence (PoPs)</InlineTooltip>{' '}
             distributed globally. Cloudflare&apos;s edge network deploys X25519MLKEM768 hybrid key
-            agreement in production across its global edge. AWS CloudFront added hybrid post-quantum
-            key establishment for client-to-edge TLS in September 2025, in its TLS1.3_2025 security
-            policy — our proof-gated catalogue records the announcement of 5 September 2025. nginx
-            supports X25519MLKEM768 through OpenSSL 3.5+ (nginx 1.30.2 stable / 1.31.1 mainline).
-            Browsers are further ahead than most gateways: Chrome has used ML-KEM as its default TLS
-            and QUIC key exchange since Chrome 131, Firefox since 132, Edge since 131. Between the
-            browser default and the CDN edge, this is the largest real-world PQC deployment today.
+            agreement in production across its global edge. AWS announced on 5 September 2025 that
+            CloudFront supports hybrid post-quantum key establishment for client-to-edge connections
+            across all existing TLS security policies, enabled by default with no customer
+            configuration; it also launched a new TLS 1.3-only policy, TLS1.3_2025 (our proof-gated
+            catalogue records the announcement). nginx supports X25519MLKEM768 through OpenSSL 3.5+.
+            Browsers are further ahead than most gateways. Cloudflare&apos;s browser table lists
+            post-quantum key agreement as the default for TLS in Chrome 131+, Edge 131+, Opera 116+,
+            Firefox 132+ (desktop) and 145+ (Android), and Safari 26+; for QUIC/HTTP3 the same table
+            gives Firefox 135+ (desktop). Cloudflare reports that the majority of human-initiated
+            traffic to it uses post-quantum encryption (Cloudflare, 2025).
           </p>
 
           <div className="space-y-2">
@@ -368,7 +371,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               },
               {
                 t: 'Last Mile Problem',
-                d: 'CDN edge PQC only protects the client-to-edge segment if the client browser also supports PQC. Chrome, Firefox, and Edge already support X25519MLKEM768 \u2014 but Safari and older browsers do not, requiring hybrid fallback.',
+                d: 'CDN edge PQC only protects the client-to-edge segment if the client browser also supports PQC. The Cloudflare browser table lists Chrome, Edge, Firefox and Safari 26+ as negotiating post-quantum key agreement by default, but older browsers do not, so the edge keeps a classical fallback.',
               },
             ].map((item) => (
               <div key={item.t} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
@@ -395,10 +398,13 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           <p>
             Gateway vendor PQC readiness varies significantly. F5 BIG-IP carries ML-KEM hybrid key
             exchange from the 17.5.1 PQC minor, generally available across the product in 21.1
-            (2026); Envoy supports hybrid PQC TLS in production. Others (Imperva WAF, Broadcom Avi,
-            Zscaler) are still on the roadmap. Understanding each vendor&apos;s status and upgrade
-            path is critical for planning &mdash; and version numbers here move quickly, so confirm
-            against the vendor&apos;s own release notes before committing to a date.
+            (2026); Envoy supports hybrid PQC TLS in production. Broadcom Avi 31.2.1 introduced PQC
+            support (pure ML-KEM, hybrid KEMs and ML-DSA); Imperva reports hybrid X25519 +
+            ML-KEM-768 TLS for client-to-Imperva connections generally available from the start of
+            2026; ZIA inline inspection supports hybrid PQC key exchange (Zscaler, 17 February
+            2026). Understanding each vendor&apos;s status and upgrade path is critical for planning
+            &mdash; and version numbers here move quickly, so confirm against the vendor&apos;s own
+            release notes before committing to a date.
           </p>
 
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

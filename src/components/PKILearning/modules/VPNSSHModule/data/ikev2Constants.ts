@@ -58,7 +58,7 @@ export const IKE_V2_MODES: IKEv2ModeConfig[] = [
     id: 'pure-pqc',
     label: 'Pure PQC (ML-KEM)',
     description:
-      'Pure post-quantum IKEv2 with ML-KEM alone in IKE_SA_INIT — no classical DH (draft-ietf-ipsecme-ikev2-mlkem, Key Exchange Methods 35/36/37). HNDL-safe from the first exchange. Limit: IKE_SA_INIT cannot be fragmented (RFC 7383), so over UDP the draft allows only ML-KEM-512 unconditionally; ML-KEM-768/1024 SHOULD NOT be used there unless the path MTU is guaranteed or IKE runs over TCP. Auth can use ML-DSA per draft-ietf-ipsecme-ikev2-pqc-auth.',
+      'Pure post-quantum IKEv2 with ML-KEM alone in IKE_SA_INIT — no classical DH (draft-ietf-ipsecme-ikev2-mlkem, Key Exchange Methods 35/36/37). HNDL-safe from the first exchange. Limit: per the draft, IKE_SA_INIT messages could not be IKEv2 fragmented (RFC 7383); ML-KEM-512 MAY be used there, while implementations transporting IKE over UDP and not performing PMTU discovery SHOULD NOT use ML-KEM-768 or ML-KEM-1024 on networks where the PMTU is unknown or restricted, and with reliable transport or a guaranteed sufficient PMTU any ML-KEM parameter MAY be used. Auth can use ML-DSA per draft-ietf-ipsecme-ikev2-pqc-auth.',
     dhGroup: 'ML-KEM (IKE_SA_INIT, Key Exchange Method 35/36/37)',
     encAlgorithm: 'AES-256-CBC',
     integrityAlgorithm: 'HMAC-SHA-256',
