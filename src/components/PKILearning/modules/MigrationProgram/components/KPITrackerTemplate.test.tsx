@@ -207,7 +207,7 @@ describe('KPITrackerTemplate', () => {
     fireEvent.change(screen.getByLabelText('Systems Inventoried Evidence owner'), {
       target: { value: 'Reviewed Inventory Team' },
     })
-    fireEvent.click(screen.getByRole('button', { name: 'Save', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: /^Save$/ }))
     const saved = addExecutiveDocument.mock.calls.at(-1)?.[0] as ExecutiveDocument
     expect(saved.data).toContain('100 | 250')
     expect(saved.data).toContain('2027 Q1')
