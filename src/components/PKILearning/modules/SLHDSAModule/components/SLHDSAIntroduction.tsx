@@ -260,8 +260,8 @@ const Step2Internals: React.FC = () => (
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
         The hypertree is a <em>d</em>-layer stack of XMSS trees, each of height <em>h/d</em>. Each
-        layer authenticates the root of the layer below using a WOTS+ signature. The top root is the
-        SLH-DSA public key.
+        layer authenticates the root of the layer below using a WOTS+ signature. The top root
+        (PK.root), together with PK.seed, is the SLH-DSA public key.
       </p>
       <div className="bg-muted/40 rounded-lg p-4 text-xs font-mono space-y-1 text-muted-foreground">
         <div>PK.root (layer d−1 XMSS root)</div>
