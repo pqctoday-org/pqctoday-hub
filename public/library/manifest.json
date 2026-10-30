@@ -19976,7 +19976,12 @@
       "stampedAt": "2026-09-20T05:53:38.016330+00:00",
       "admittedBy": "admit.py --stamp-existing",
       "identity": "UNCONFIRMED",
-      "admittedAt": "2026-09-20T05:44:35.610691+00:00"
+      "admittedAt": "2026-09-20T05:44:35.610691+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10292026/library/Specification-of-the-MILENAGE-algorithm-set-An-example-algor.html",
+      "supersededAt": "2026-10-30T04:50:06.530141+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "T-C1: the saved file is the 3GPP landing page; the row now points at the ETSI PDF of TS 35.206 V19.0.0 — replaced by Specification-of-the-MILENAGE-algorithm-set-An-example-algor.pdf"
     },
     {
       "refId": "Satellite-Relayed-Intercontinental-Quantum-Network",
@@ -24301,6 +24306,24 @@
       "unified": "current",
       "admittedAt": "2026-10-30T04:30:41.416118+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "Specification-of-the-MILENAGE-algorithm-set-An-example-algor",
+      "filename": "Specification-of-the-MILENAGE-algorithm-set-An-example-algor.pdf",
+      "sizeBytes": 189830,
+      "contentType": "application/pdf",
+      "url": "https://www.etsi.org/deliver/etsi_ts/135200_135299/135206/19.00.00_60/ts_135206v190000p.pdf",
+      "sha256": "d41f63152af1a9edc169c21c551bdafbc7a88f1e9ca087753e929dd68f5f1237",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T04:50:08.000972+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/Specification-of-the-MILENAGE-algorithm-set-An-example-algor.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-30T04:50:06.530141+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "T-C1: the saved file is the 3GPP landing page; the row now points at the ETSI PDF of TS 35.206 V19.0.0"
     }
   ],
   "archivedEntries": [
