@@ -178,14 +178,15 @@ $ openssl list -providers
     id: 'windows',
     label: 'Windows Server 2025',
     currentPolicy: 'TLS 1.3 Default (PQC hybrid disabled)',
-    pqcPolicy: 'X25519MLKEM768 enabled via Group Policy / TLS cmdlets (Insider preview)',
-    configFile: 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Cryptography\\Configuration',
+    pqcPolicy:
+      'x25519_mlkem768 enabled via Group Policy / TLS cmdlets (available from KB5089573 / KB5099536)',
+    configFile: 'Group Policy: Network > SSL Configuration Settings > ECC Curve Order',
     currentCiphers: [
       {
-        name: 'X25519MLKEM768 (hybrid)',
+        name: 'x25519_mlkem768 (hybrid)',
         quantumSafe: true,
         enabled: false,
-        note: 'TLS 1.3 — Insider preview, disabled by default',
+        note: 'TLS 1.3 — available from KB5089573 / KB5099536, disabled by default',
       },
       { name: 'TLS_AES_256_GCM_SHA384', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
       { name: 'TLS_AES_128_GCM_SHA256', quantumSafe: true, enabled: true, note: 'TLS 1.3' },
@@ -205,7 +206,7 @@ $ openssl list -providers
     ],
     pqcCiphers: [
       {
-        name: 'X25519MLKEM768 (hybrid)',
+        name: 'x25519_mlkem768 (hybrid)',
         quantumSafe: true,
         enabled: true,
         note: 'Priority 0 — TLS 1.3',
@@ -240,18 +241,19 @@ TLS_AES_256_GCM_SHA384                    (null)
 TLS_AES_128_GCM_SHA256                    (null)
 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384    ECDH
 
-# Check if ML-KEM is available:
-Get-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Cryptography\\Configuration\\Local\\SSL\\00010003" | Select-Object Functions`,
-    afterConfig: `# Windows Insider builds only — Schannel PQC hybrid is a preview feature
-# X25519MLKEM768 is DISABLED by default and must be enabled explicitly.
+# Check the ECC Curve Order Group Policy (Computer Configuration > Administrative Templates >
+#   Network > SSL Configuration Settings) for the group strings in effect.`,
+    afterConfig: `# Hybrid ML-KEM groups: Windows 11 update KB5089573, Windows Server 2025 update KB5099536 (14 July 2026).
+# x25519_mlkem768 is DISABLED by default and must be enabled explicitly.
 
 # Enable via Group Policy:
 # Computer Configuration > Administrative Templates > Network >
 #   SSL Configuration Settings > ECC Curve Order
-# Add X25519MLKEM768 to the curve order list.
+# Add x25519_mlkem768 to the curve order list.
 
 # Or enable via TLS cmdlets:
-Enable-TlsEccCurve -Name "X25519MLKEM768" -Position 0
+# Group string from the Microsoft TLS Supported Groups page; confirm the cmdlet accepts it on your build.
+Enable-TlsEccCurve -Name "x25519_mlkem768" -Position 0
 # (ML-KEM is negotiated as a TLS 1.3 key-exchange group, not a cipher suite)
 
 # Verify ML-KEM negotiation:
@@ -267,7 +269,7 @@ Set-ItemProperty -Path $regPath -Name "Enabled" -Value 0 -Type DWord
 # Verify SymCrypt / CNG ML-KEM support (GA since November 2025):
 certutil -csplist | findstr /i "ml-kem"`,
     impactNote:
-      'Schannel X25519MLKEM768 is preview-only (Windows Insider builds) and disabled by default — it requires explicit enablement via Group Policy or TLS cmdlets. The CNG PQC APIs (ML-KEM, ML-DSA, SLH-DSA) are GA since November 2025. Verify your .NET applications and legacy Win32 apps use Schannel and will inherit this setting once enabled.',
+      'Schannel hybrid key exchange (x25519_mlkem768) is available from KB5089573 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026) and is documented as disabled by default — it requires explicit enablement via Group Policy or TLS cmdlets. The CNG PQC APIs for ML-KEM and ML-DSA are GA since November 2025; SLH-DSA is not implemented by the default CNG provider.',
     compatNote:
       'Applications that bypass Schannel and use OpenSSL directly (e.g., Python, Node.js, some Java apps) require separate OpenSSL configuration. WinHTTP and .NET HttpClient use Schannel automatically.',
   },

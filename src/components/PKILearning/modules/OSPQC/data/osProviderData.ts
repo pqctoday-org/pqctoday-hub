@@ -123,17 +123,18 @@ export const OS_VENDORS: OSVendorStatus[] = [
     id: 'windows-server',
     vendor: 'Microsoft',
     platform: 'Windows Server 2025 / Windows 11 24H2',
-    opensslVersion: 'CNG (native) + SymCrypt 103.4+',
+    opensslVersion: 'CNG (native) + SymCrypt',
     catalogName: 'Windows Server 2025',
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'Win32-OpenSSH tracking upstream OpenSSH experimental PQC branch',
     pkgSigningPqc: 'Windows Update uses RSA-4096; ML-DSA code signing in Windows roadmap 2027',
     roadmapYear: '2025-11 (Nov 2025 Update)',
     mlKemSupport:
-      'ML-KEM GA in CNG APIs (Nov 2025); Schannel TLS 1.3 X25519MLKEM768 is preview (Insider builds), disabled by default',
-    mlDsaSupport: 'ML-DSA (and SLH-DSA) GA in CNG APIs since November 2025',
+      'ML-KEM GA in CNG APIs (Nov 2025); Schannel TLS 1.3 hybrid groups (x25519_mlkem768 etc.) available from KB5089573 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026), disabled by default',
+    mlDsaSupport:
+      'ML-DSA GA in CNG APIs since November 2025; SLH-DSA not implemented by the default CNG provider',
     notes:
-      'The November 2025 GA covers the CNG APIs (ML-KEM, ML-DSA, SLH-DSA) on Windows 11 24H2+ and Windows Server 2025. Schannel TLS hybrid key exchange (X25519MLKEM768) remains preview via Windows Insider builds and is disabled by default — enable it via Group Policy or TLS cmdlets. SymCrypt (the underlying crypto library) fully supports ML-KEM and ML-DSA. FIPS 140-3 certificate covers SymCrypt 103.4.0+.',
+      'The November 2025 GA covers the CNG APIs for ML-KEM and ML-DSA on Windows 11 24H2+ and Windows Server 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) is available from Windows 11 update KB5089573 (24H2 and 25H2) and, with the 14 July 2026 update KB5099536, on Windows Server 2025. Microsoft documents the groups as disabled by default, so enable them explicitly via Group Policy (ECC Curve Order) or TLS cmdlets; the Microsoft TLS Supported Groups page still mentions Insider builds, so confirm the behaviour on your build. SymCrypt (the underlying crypto library) supports ML-KEM (final FIPS 203 from release 103.5.0) and ML-DSA (from 103.7.0). The SymCrypt FIPS 140-3 certificate (CMVP #5313) lists no ML-KEM or ML-DSA in the Hub CMVP snapshot; Microsoft notes the legacy FIPS mode setting is no longer recommended, and using FIPS-approved algorithms is the configuration that matters.',
   },
   {
     id: 'debian',
