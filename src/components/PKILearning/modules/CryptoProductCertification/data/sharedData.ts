@@ -62,9 +62,7 @@ export const SHARED_SOURCES = {
   nisCgRoadmap: getStandard('EU-NIS-CG-Roadmap-v1.1'),
   eidas: getStandard('eIDAS-2-Regulation'),
   ptsV5: getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
-  ptsV4Bulletin: getStandard('PCI-SSC-Bulletin-PTS-HSM-v4-Extension'),
   ptsListing: getStandard('PCI-PTS-Listing-Field-Definitions'),
-  ptsGuide19: getStandard('PCI-PTS-Program-Guide-v1-9'),
   kmo: getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
   pciCryptoGuidance: getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
   dss: getStandard('PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures'),
@@ -232,7 +230,7 @@ export const PQC_HARDWARE_CHANGES: ImpactItem[] = [
   },
   {
     change: 'Physical boundary and composition evidence when PQC runs in a coprocessor or FPGA',
-    why: 'FIPS 140-3 IG 2.3.B allows multiple disjoint sub-chip cryptographic subsystems on one certificate only when Management Manual §7.8 is met (27 February 2026).',
+    why: 'FIPS 140-3 IG 2.3.B allows multiple sub-chip subsystems per certificate (27 February 2026).',
   },
   {
     change: 'Performance and availability under HSM transaction loads',
@@ -293,10 +291,10 @@ export const PQC_SCHEME_TABLE: SchemePqcRow[] = [
   {
     scheme: 'PCI',
     current:
-      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. No PCI standard or listing rule names a PQC algorithm, parameter set or deadline.',
+      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. The v5.0 announcement and the listing definitions name no PQC algorithm, parameter set or deadline.',
     currentSources: [SHARED_SOURCES.ptsV5, SHARED_SOURCES.ptsListing],
     planning:
-      'KMO v1.0 (14 September 2026) and its evolution. The Cryptography Guidance (August 2025) is non-mandatory; its PQC content is an open question for this v1 (licence-gated, not read).',
+      'KMO v1.0 (14 September 2026) and its evolution. The Cryptography Guidance (August 2025) is non-mandatory; its PQC content is an open question for this v1 (the guidance document is not used here, and the blog announcing it does not mention quantum).',
     planningSources: [SHARED_SOURCES.kmo, SHARED_SOURCES.pciCryptoGuidance],
   },
 ]
@@ -490,19 +488,15 @@ export const ROUTE_DECISION_AID: RouteAid[] = [
   },
   {
     scheme: 'PCI PTS HSM',
-    source: SHARED_SOURCES.ptsGuide19,
+    source: SHARED_SOURCES.ptsV5,
     steps: [
       {
-        ask: 'Is the change limited enough for a delta evaluation of the approved device?',
-        then: 'A PCI-recognized lab scopes the delta and submits it; the listing is updated before the changed device is approved.',
-      },
-      {
-        ask: 'Does it add a new function, module or material security change?',
-        then: 'Expect a broader or full evaluation against the applicable requirements version.',
+        ask: 'Does the change touch the approved device’s hardware, firmware or security functions?',
+        then: 'Ask a PCI-recognized lab how the change is scoped; read PCI’s current Device Testing and Approval Program Guide.',
       },
     ],
     caveat:
-      'The delta concept is taught from Program Guide v1.9 (public, June 2020). The Device Testing and Approval Program Guide (listed in the Document Library on 18 May 2026) is the authority, and current v5 routing is an open question for this v1 — check the current document.',
+      'No PCI page used here describes how a change to an approved device is routed. The Device Testing and Approval Program Guide is listed in the Document Library on 18 May 2026 (title and date only); its content is not used here — check the current document.',
   },
 ]
 
@@ -570,10 +564,10 @@ export const SCHEME_CLOCKS: SchemeClock[] = [
   {
     id: 'pci-pts-hsm-v4',
     scheme: 'PCI PTS HSM',
-    when: '30 June 2027',
+    when: 'June 2027',
     isoDate: '2027-06-30',
-    what: 'Last date PTS HSM v4 can be used for new approvals. v4 device approvals expire April 2033 (moved from April 2032 by the 2 March 2026 bulletin); v3 expiry was moved to April 2028. No separate v5.0 effective date was found.',
-    sources: [SHARED_SOURCES.ptsV4Bulletin],
+    what: 'The listing’s expiry table gives, for HSM v4.x, “Expiration of Requirements Approval” June 2027 and “Expiration of Device Models” April 2033; for v3.x, device models April 2028; for v5.x, May 2030 and April 2036. These are approval-expiry dates, not post-quantum deadlines, and the v5.0 announcement states no separate effective date.',
+    sources: [SHARED_SOURCES.ptsListing],
   },
   {
     id: 'cc31-sunset',
@@ -669,8 +663,8 @@ export const NO_SHORTCUT: { deadline: string; notAShortcut: string; source: Stan
   {
     deadline: 'PCI delta',
     notAShortcut:
-      'Whether a change fits a delta is scoped by a PCI-recognized lab under the Program Guide. A deadline does not shrink the change.',
-    source: SHARED_SOURCES.ptsGuide19,
+      'How a change to an approved PCI device is scoped is for a PCI-recognized lab and PCI’s current Device Testing and Approval Program Guide. A deadline does not shrink the change.',
+    source: SHARED_SOURCES.ptsV5,
   },
 ]
 
@@ -728,8 +722,7 @@ export const CHANGE_CASES: ChangeCase[] = [
     pci: {
       affected:
         'Firmware version on the listing; Security Policy algorithm tables; the PQC notation.',
-      candidates:
-        'Lab scoping for a delta or fuller evaluation under the current Program Guide (the current Program Guide decides).',
+      candidates: 'Lab scoping under the current Device Testing and Approval Program Guide.',
     },
     ask: 'Do the change ratios stay within the Manual’s 30% limits in a way the CMVP will accept? Will the certification body treat the new claims as a major change?',
   },
@@ -882,7 +875,7 @@ export const CHANGE_CASES: ChangeCase[] = [
     detail: 'A new chassis revision with different tamper-detection sensors.',
     likely: ['bounded', 'broad'],
     explanation:
-      'Physical protection is central to an HSM in all three schemes. A passive enclosure change that keeps the same protection may fit a bounded FIPS route; changing the tamper sensors is a major change in ENISA’s EUCC change scenarios.',
+      'Physical protection is central to an HSM in all three schemes. A passive enclosure change that keeps the same protection may fit a bounded FIPS route; changing the tamper sensors is a major change for Common Criteria and EUCC.',
     fips: {
       affected:
         'Physical-security evidence (IG 7.A covers reusable physical-security evidence, 2 September 2025).',

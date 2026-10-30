@@ -75,7 +75,7 @@ export const KEY_BLOCK_FACTS = {
   paywallNote:
     'X9.143, X9.24-1/-2 and TR-31 are all ANSI-webstore purchases. This module teaches the concepts from EPC 342-08 (freely downloadable and mechanism-naming) and cites the X9 documents as normative but unobtainable, rather than paraphrasing standards nobody on the team has read.',
   pciMandate:
-    'PCI SSC mandates key blocks for PIN security (Requirement 18-3), phased across acquiring and POS estates.',
+    'The PCI PIN Security Standard requires implementation of Key Blocks (Requirement 18-3); PIN Security v3.1 incorporated the revised effective dates announced in July 2020 (v3.1 announcement).',
 }
 
 /**

@@ -1281,7 +1281,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'That the device’s FIPS 140-3 certificate also covers its PQC algorithms',
     ],
     answer: 0,
-    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. Public PCI material names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
+    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. The v5.0 announcement names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
   },
 
   // ── crypto-product-certification — FIPS author (2026-09-24) ──
