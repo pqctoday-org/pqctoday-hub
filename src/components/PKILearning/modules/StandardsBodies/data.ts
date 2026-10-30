@@ -123,7 +123,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     //     "Authenticated encryption", not a PQC work item.
     keyPqcOutputs: [
       'ISO/IEC 14888-4:2024 (Digital signatures with appendix – Part 4: Stateful hash-based mechanisms, XMSS/LMS)',
-      'ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers – post-quantum KEMs: FrodoKEM, Classic McEliece, ML-KEM)',
+      "ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers amendment; covers Classic McEliece per a BSI note; FrodoKEM and ML-KEM not confirmed against the amendment's scope text)",
       'ISO/IEC 20085 (KEM reference, in development)',
     ],
     libraryRefs: [
@@ -213,7 +213,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       'French national cybersecurity agency. It strongly recommends hybrid (classical + PQC) cryptography, and hybridisation is mandatory only inside the regulated perimeter: defence-classified and Diffusion Restreinte information, vital information systems, and products certified or qualified through ANSSI security visas. ANSSI published influential PQC position papers in 2022 and 2023 distinguishing hash-based algorithms (no systematic hybridisation recommended) from lattice-based algorithms (hybrid recommended).',
     decisionMaking:
-      'Government agency (under Prime Minister). Issues position papers and technical notes through expert review. Three-phase PQC roadmap: Phase 1 (2022–2025, classical preferred) → Phase 2 (2025–2030, hybrid preferred) → Phase 3 (2030+, PQC preferred). The one exception to systematic hybridisation is hash-based signatures (SLH-DSA, XMSS, LMS): ANSSI considers them usable without hybridisation because of their well-studied underlying problem, while noting their limited range of application.',
+      'Government agency (under Prime Minister). Issues position papers and technical notes through expert review. Three-phase roadmap (2022 position paper): Phase 1 (today) hybridation to add post-quantum defence-in-depth to pre-quantum assurance; Phase 2 (not earlier than 2025) hybridation to provide post-quantum security assurance; Phase 3 (probably not earlier than 2030) optional standalone post-quantum cryptography. The one exception to systematic hybridisation is hash-based signatures (SLH-DSA, XMSS, LMS): ANSSI considers them usable without hybridisation because of their well-studied underlying problem, while noting their limited range of application.',
     keyPqcOutputs: [
       'ANSSI PQC Position Paper (2022)',
       'ANSSI PQC Follow-up Paper (2023)',
