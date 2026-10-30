@@ -70,15 +70,21 @@ export function buildKpiDashboardMarkdown(
   activePersona: KpiPersonaId,
   scores: Record<string, number>,
   weights: Record<string, number>,
-  observations: Record<string, ScorecardObservation> = {}
+  observations: Record<string, ScorecardObservation> = {},
+  /** The KPIs the person has set. A manual KPI with no baseline stays "not yet
+   *  scored" until it is in this set, as on the scorecard. Omit it to treat every
+   *  score passed in as entered (the simulation's generated documents do). */
+  touchedIds?: ReadonlySet<string>
 ): string {
   const ew = (d: (typeof dimensions)[number]) => (d.id in weights ? (weights[d.id] ?? 0) : d.weight)
+  const isPending = (d: (typeof dimensions)[number]) =>
+    touchedIds !== undefined && d.notYetScored === true && !touchedIds.has(d.id)
 
   let weightedSum = 0
   let totalWeight = 0
   for (const d of dimensions) {
     const value = scores[d.id] ?? d.autoScore
-    if (d.disabled || value === undefined) continue
+    if (d.disabled || isPending(d) || value === undefined) continue
     weightedSum += value * ew(d)
     totalWeight += ew(d)
   }
@@ -86,7 +92,7 @@ export function buildKpiDashboardMarkdown(
   const coverage = scoredWeightShare(
     dimensions,
     ew,
-    (d) => (scores[d.id] ?? d.autoScore) !== undefined
+    (d) => !isPending(d) && (scores[d.id] ?? d.autoScore) !== undefined
   )
 
   let md = '# PQC Governance KPI Dashboard\n\n'
@@ -106,7 +112,7 @@ export function buildKpiDashboardMarkdown(
       continue
     }
     const value = scores[d.id] ?? d.autoScore
-    md += `| ${d.label} | ${value === undefined ? '_not yet scored_' : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
+    md += `| ${d.label} | ${value === undefined || isPending(d) ? '_not yet scored_' : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
     md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
   }
 
@@ -135,6 +141,9 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const scoresRef = useRef<Record<string, number>>(savedInputs?.scores ?? {})
+  // The scorecard reports which KPIs the person has set; the saved Markdown reads
+  // the same set so it agrees with the screen about what is still "not yet scored".
+  const touchedRef = useRef<ReadonlySet<string>>(new Set(Object.keys(savedInputs?.scores ?? {})))
   const weightsRef = useRef<Record<string, number>>(savedInputs?.weights ?? {})
   const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
     () => savedInputs?.observations ?? {}
@@ -180,7 +189,8 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       activePersona,
       scoresRef.current,
       weightsRef.current,
-      observationsRef.current
+      observationsRef.current,
+      touchedRef.current
     )
 
     addExecutiveDocument({
@@ -256,6 +266,10 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
     },
     [scheduleSave]
   )
+
+  const handleTouchedChange = useCallback((ids: Set<string>) => {
+    touchedRef.current = ids
+  }, [])
 
   // Weight edits must also re-persist (with the latest scores) so saved == on-screen.
   const handleWeightChange = useCallback(
@@ -383,6 +397,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         dimensions={dimensions}
         colorScale="readiness"
         onScoreChange={handleScoreChange}
+        onTouchedChange={handleTouchedChange}
         onWeightChange={handleWeightChange}
         initialScores={savedInputs?.scores}
         initialWeights={savedInputs?.weights}

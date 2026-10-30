@@ -149,6 +149,29 @@ describe('KPIDashboardBuilder', () => {
     )
   })
 
+  it('keeps a manual KPI "not yet scored" in the Markdown until it is touched, as on screen', () => {
+    const dimensions = buildDimensions('grc', 'governance', mockData, mockData.country)
+    const manual = dimensions.filter((d) => d.notYetScored && !d.disabled)
+    expect(manual.length).toBeGreaterThan(0)
+    const scores = Object.fromEntries(dimensions.map((d) => [d.id, d.autoScore ?? 0]))
+    const fresh = buildKpiDashboardMarkdown(dimensions, 'grc', scores, {}, {}, new Set())
+    expect(fresh).toContain('_not yet scored_')
+    expect(fresh).not.toMatch(/Overall Score: \d+\/100/)
+    const touchedAll = buildKpiDashboardMarkdown(
+      dimensions,
+      'grc',
+      scores,
+      {},
+      {},
+      new Set(manual.map((d) => d.id))
+    )
+    expect(touchedAll).not.toContain('_not yet scored_')
+    // Without a touched set (the simulation's generated documents) every score counts as entered.
+    expect(buildKpiDashboardMarkdown(dimensions, 'grc', scores, {})).not.toContain(
+      '_not yet scored_'
+    )
+  })
+
   it('uses the same structured observation in the saved Markdown', () => {
     const dimensions = buildDimensions('executive', 'governance', mockData, mockData.country)
     const markdown = buildKpiDashboardMarkdown(

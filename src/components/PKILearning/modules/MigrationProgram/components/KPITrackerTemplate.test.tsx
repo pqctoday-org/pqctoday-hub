@@ -289,7 +289,12 @@ describe('KPITrackerTemplate', () => {
         title: 'Old worksheet',
         data: '',
         createdAt: 1,
-        inputs: { personaOverride: 'executive', startYear: null, userScores: {}, userWeights: {} },
+        inputs: {
+          personaOverride: 'executive',
+          startYear: null,
+          userScores: { 'risk-posture': 50 },
+          userWeights: {},
+        },
       },
     ]
     expect(() => render(<KPITrackerTemplate />)).not.toThrow()
