@@ -305,7 +305,7 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       label: 'Entropy & Randomness',
       description:
         'SP 800-90 A/B/C, DRBGs, entropy sources, TRNG vs QRNG, and min-entropy estimation.',
-      icon: 'Dice',
+      icon: 'Dice1',
     },
     'merkle-tree-certs': {
       label: 'Merkle Tree Certificates',
