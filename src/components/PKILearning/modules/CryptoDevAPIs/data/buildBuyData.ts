@@ -141,7 +141,7 @@ export const SOURCING_STRATEGIES: SourcingStrategyData[] = [
       'Your team cannot maintain and patch open-source dependencies',
     ],
     pqcImplications:
-      'Open source leads PQC adoption. OpenSSL 3.5+ (native), Bouncy Castle, liboqs, and the Go, Java, .NET and Python standard crypto libraries provide the fastest path to PQC. However, of the libraries named in this module only AWS-LC has a PQC algorithm (ML-KEM) approved on an active CMVP certificate (AWS-LC 3, #5298/#5314; checked 24 Sep 2026). Bouncy Castle #4943 approves LMS signature verification only; wolfCrypt #4718 lists no PQC algorithm.',
+      'Open source leads PQC adoption. OpenSSL 3.5+ (native), Bouncy Castle, liboqs, and the Go, Java, .NET and Python standard crypto libraries provide the fastest path to PQC. However, of the libraries named in this module, AWS-LC 3 (#5298/#5314) and the Go Cryptographic Module (#5247, validated 27 Apr 2026) have ML-KEM listed on an active CMVP certificate. Bouncy Castle #4943 approves LMS signature verification only; wolfCrypt #4718 lists no PQC algorithm.',
     estimatedTCO: {
       year1: '$50K-200K (integration engineering, testing)',
       year3: '$150K-500K (maintenance, patching, compliance verification)',
