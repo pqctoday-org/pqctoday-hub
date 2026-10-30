@@ -343,10 +343,11 @@ export const ZTNAPQCDesigner: React.FC = () => {
               <p>
                 <strong className="text-foreground">Hybrid mode:</strong> Keeps classical protection
                 while adding quantum resistance. BSI recommends hybrid use for quantum-safe key
-                agreement (TR-02102-1, 2026), with sole classical key agreement acceptable only
-                until the end of 2031; NSA does not require hybrids for national security systems.
-                NIST SP 800-227 (final, September 2025) specifies approved key combiners for PQ/T
-                hybrid KEMs rather than mandating hybrid.
+                agreement (TR-02102-1, 2026), and recommends the sole use of classical key agreement
+                only until the end of 2031; NSA does not require hybrids for national security
+                systems (where NSA has published hybrid guidance for a protocol, only that hybrid
+                counts as CNSA 2.0 compliant). NIST SP 800-227 (final, September 2025) specifies
+                approved key combiners for PQ/T hybrid KEMs rather than mandating hybrid.
               </p>
             </div>
           </div>

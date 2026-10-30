@@ -131,7 +131,7 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     pqcStatus: 'supported',
     version: 'Windows 11 24H2+ / Server 2025 (Nov 2025)',
     notes:
-      'ML-KEM and ML-DSA APIs GA in CNG since November 2025 on Windows 11 24H2+ and Windows Server 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) shipped in the 14 July 2026 updates (KB5089573 for Windows 11 24H2 and 25H2, KB5099536 for Windows Server 2025) and is disabled by default — it must be enabled via Group Policy or TLS cmdlets.',
+      'ML-KEM and ML-DSA APIs GA in CNG since November 2025 on Windows 11 24H2+ and Windows Server 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) is available from Windows 11 update KB5089573 (24H2 and 25H2) and, with the 14 July 2026 update KB5099536, on Windows Server 2025. Microsoft documents the groups as disabled by default, so enable them explicitly via Group Policy (ECC Curve Order) or TLS cmdlets; the Microsoft TLS Supported Groups page still mentions Insider builds, so confirm the behaviour on your build.',
   },
   {
     id: 'gnutls',
@@ -286,10 +286,10 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
     policyMechanism: 'Schannel Group Policy + PowerShell TLS cmdlets',
     defaultPolicy: 'TLS 1.3 with classical groups; PQC hybrid disabled by default',
     pqcPolicy:
-      'x25519_mlkem768 shipped in the 14 July 2026 updates — disabled by default, must be enabled via Group Policy or TLS cmdlets',
+      'x25519_mlkem768 is available from KB5089573 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026): disabled by default, enable via Group Policy or TLS cmdlets',
     command:
       'Enable-TlsEccCurve / Group Policy: SSL Configuration Settings → ECC Curve Order (add X25519MLKEM768)',
     notes:
-      'CNG PQC APIs (ML-KEM and ML-DSA) are GA since November 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768) shipped in the 14 July 2026 updates (KB5089573 for Windows 11 24H2 and 25H2, KB5099536 for Windows Server 2025) and is disabled by default. Enable it explicitly via Group Policy (ECC Curve Order) or TLS cmdlets.',
+      'CNG PQC APIs (ML-KEM and ML-DSA) are GA since November 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768) is available from Windows 11 update KB5089573 (24H2 and 25H2) and, with the 14 July 2026 update KB5099536, on Windows Server 2025. Microsoft documents the groups as disabled by default, so enable them explicitly via Group Policy (ECC Curve Order) or TLS cmdlets; the Microsoft TLS Supported Groups page still mentions Insider builds, so confirm the behaviour on your build.',
   },
 ]

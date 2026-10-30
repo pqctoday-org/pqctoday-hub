@@ -158,7 +158,7 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
               mechanism: 'Schannel (hybrid groups)',
               command: 'Enable X25519MLKEM768 via Group Policy or TLS cmdlets',
               effect:
-                'Disabled by default — hybrid groups ship in the 14 July 2026 updates and require explicit enablement',
+                'Disabled by default — hybrid groups are available from KB5089573 / KB5099536 and require explicit enablement',
               status: 'experimental',
             },
             {
