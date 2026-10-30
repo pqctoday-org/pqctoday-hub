@@ -10,8 +10,8 @@ One timed ~60-minute route. Deeper material is kept as optional reference sectio
 
 ## Key Concepts
 
-- **PCI device approval is not entity assessment** — PTS HSM approval covers a device; PIN Security, P2PE and KMO assess the entities that operate it. A PCI listing's PQC flag means PQC support exists; it does not approve a specific algorithm.
-- **A FIPS certificate is not a PCI approval** — a FIPS 140-3 certificate and a PTS approval are separate evidence under separate schemes, each tied to versions; which HSM evidence a PCI standard accepts is for the current standard and the payment brands.
+- **PCI device approval is not entity assessment** — in this module’s reading, a PTS HSM approval is about the device (independent laboratories evaluate HSMs; PCI SSC approves and lists them), while PIN Security, P2PE and KMO are about how HSMs are operated and the solutions built on them. A PCI listing’s PQC notation records that PQC support exists; the implementation details are in the device’s security policy.
+- **A FIPS certificate is not a PCI approval** — a FIPS 140-3 certificate and a PTS approval are separate evidence under separate schemes, each tied to versions; which HSM evidence a PCI standard accepts is set out in that standard, which this module does not read.
 
 ## Workshop / Interactive Activities
 

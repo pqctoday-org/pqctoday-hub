@@ -283,7 +283,7 @@ export const PCI_PQC_FINDINGS: PqcFinding[] = [
     source: 'P2PE v3.2 (announcement, 30 June 2025)',
     says: 'v3.2 "is a minor revision of the standard"; the Council is developing P2PE v4.0. From 1 January 2026 all new P2PE submissions, including reassessments, must comply with v3.2, and validations to v3.0 or v3.1 are not affected by its release.',
     doesNotSay:
-      'What changed in v3.2: the announcement says only that it "expediently addresses stakeholder feedback".',
+      'What changed in v3.2 in detail: the announcement names areas (POI device testing and sampling, and the management of whitelists, non-payment software and P2PE Applications) and points to a Summary of Changes document; this module does not read that document.',
     status: 'read',
   },
   {
@@ -346,8 +346,8 @@ export const PCI_STACK: StackLayer[] = [
     whatIsAssessed:
       'The PIN Security Standard gives "requirements and testing procedures for the secure management, processing, and transmission of PIN data at ATMs and attended and unattended point-of-sale (POS) terminals". In this module’s scenario: an acquirer’s or agent’s PIN processing, including the HSMs it runs.',
     whoAssesses:
-      'An assessment of the entity, not of the device; which entities must validate is for the payment brands',
-    artifact: 'The entity’s assessment report, as the payment brands’ programs require',
+      'In this module’s reading, an assessment of the entity’s PIN operations rather than of the device; compliance programs for PCI SSC standards are managed by the payment brands, and which entities must validate is for them',
+    artifact: 'Not read here: compliance programs for PCI SSC standards are managed by the payment brands',
     listing: 'None described in the sources this module reads',
     anchorRole: 'Orrin N7 appliances inside a payment processor’s PIN-translation environment',
   },
@@ -383,7 +383,7 @@ export const PCI_STACK: StackLayer[] = [
     artifact: 'CMVP certificate and Security Policy',
     listing: 'CMVP validated-modules list',
     anchorRole:
-      'Separate evidence under a separate scheme: a FIPS 140-3 certificate is not a PTS approval. Which HSM evidence a PCI standard accepts is for the current standard and the payment brands',
+      'Separate evidence under a separate scheme: a FIPS 140-3 certificate is not a PTS approval. Which HSM evidence a PCI standard accepts is set out in that standard, which this module does not read',
   },
 ]
 
@@ -506,7 +506,7 @@ export const EVIDENCE_DOCS: EvidenceDoc[] = [
       ['HSMs in scope', 'Orrin N7 appliances, firmware 3.2.1, approval FICT-0007'],
       ['Not tested', 'Key-injection facility; Orrin Cloud tenant partitions'],
     ],
-    note: 'An assessment of an entity’s operations — not of the device.',
+    note: 'In this module’s reading: an assessment of an entity’s operations, not of the device.',
   },
   {
     id: 'program-guide',
@@ -557,7 +557,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
         claim: 'The PTS approval covers firmware 3.2.1, the version Northgate runs.',
         verdict: 'supported',
         doc: 'listing',
-        why: 'In this module’s fictional listing, the Firmware # field names 3.2.1. The deployed firmware has to match a listed version, so this is the field to check.',
+        why: 'In this module’s fictional listing, the Firmware # field names 3.2.1. In this module’s reading, the deployed firmware should match a listed version, so this is the field to check.',
       },
       {
         id: 'a-pqc-flag',
@@ -579,14 +579,14 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
         claim: 'Northgate’s PIN environment is PCI compliant because the HSM is PCI approved.',
         verdict: 'not-supported',
         doc: 'entity-assessment',
-        why: 'A device approval is listed for a device model. Whether Northgate’s operations comply is an assessment of the entity under the PIN Security Standard, and which entities must validate is for the payment brands.',
+        why: 'A device approval is listed for a device model. In this module’s reading, whether Northgate’s operations comply is a question for an assessment of the entity, not for the device listing; which entities must validate is for the payment brands.',
       },
       {
         id: 'a-fips-version',
         claim: 'The FIPS 140-3 certificate in the packet covers the firmware Northgate runs.',
         verdict: 'not-supported',
         doc: 'fips-certificate',
-        why: 'This certificate covers firmware 3.1.0, not 3.2.1, and a FIPS certificate is a different scheme from the PTS listing: the PTS listing is the evidence that names 3.2.1. Which HSM evidence a PCI standard accepts is for the current standard and the payment brands.',
+        why: 'This certificate covers firmware 3.1.0, not 3.2.1, and a FIPS certificate is a different scheme from the PTS listing: the PTS listing is the evidence that names 3.2.1. Which HSM evidence a PCI standard accepts is set out in that standard, which this module does not read.',
       },
     ],
   },
@@ -602,7 +602,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
           'Firmware 4.0.0 is already covered by the approval because the hardware is unchanged.',
         verdict: 'not-supported',
         doc: 'listing',
-        why: 'In this module’s fictional listing only firmware 3.2.0 and 3.2.1 are listed; 4.0.0 is not, and a listing says nothing about versions it does not list. How a new firmware version gets listed is for the current program documents and a test laboratory.',
+        why: 'In this module’s fictional listing only firmware 3.2.0 and 3.2.1 are listed; 4.0.0 is not. In this module’s reading, an approval listing covers the firmware versions it lists, so the packet gives no support for the claim that 4.0.0 is covered. How a new firmware version gets listed is for the current program documents and a test laboratory.',
       },
       {
         id: 'f-cross-major',
@@ -623,7 +623,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
         claim: 'Because a PQC deadline applies, PCI can list 4.0.0 without a lab evaluation.',
         verdict: 'not-supported',
         doc: 'listing',
-        why: 'The public PCI pages read here name no PQC deadline: the v5.0 announcement names none, and the dates in the listing table are approval expiry dates. Urgency from a customer or market is not a route to a listing; how a new version is listed is for the current program documents and a test laboratory.',
+        why: 'The v5.0 announcement names no PQC deadline, and the dates in the listing table are approval expiry dates. In this module’s reading, urgency from a customer or market is not a route to a listing; how a new version is listed is for the current program documents and a test laboratory.',
       },
     ],
   },
@@ -763,7 +763,7 @@ export function readListing(fields: Record<string, string>, asOf: string): Listi
     out.push({
       label: 'Expiry',
       text: expired
-        ? `Expired ${expiry}, before this listing was read (${asOf}). Whether expired devices may stay in service is up to the organizations that manage compliance programs, such as a payment brand or acquirer.`
+        ? `Expired ${expiry}, before this listing was read (${asOf}). The pages this module reads do not say whether an expired device may stay in service; compliance programs for PCI SSC standards are managed by the payment brands.`
         : `Approval runs until ${expiry}. That date comes from the version’s row in the listing’s expiry table, not from this device.`,
       tone: expired ? 'warn' : 'ok',
     })
@@ -847,7 +847,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'In the multi-tenant scenario, separate what the device listing shows from what only an assessment of the operator can show.',
     observe:
-      'Remote administration and partitioning are device properties on the listing. Key ceremonies and tenant onboarding are operations — an assessment of the operator (PIN Security and P2PE assess entities; KMO includes the validation of remote and as-a-service HSM implementations).',
+      'Remote administration and partitioning are device properties on the listing. Key ceremonies and tenant onboarding are operations. In this module’s reading, those are what an assessment of the operator looks at; the KMO page says KMO includes “the validation of remote and as-a-service based HSM implementations”.',
     stepId: 'pci-evidence-review',
     config: { scenario: 'cloud' },
   },
@@ -857,7 +857,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Open the real listing 4-40069 (payShield 9000, captured 24 September 2026) and read its version and expiry against the read date.',
     observe:
-      'An approval is tied to a requirements version and expires on that version’s schedule (the listing’s expiry table). Whether expired devices may stay in service is up to the organizations that manage compliance programs, such as a payment brand or acquirer.',
+      'An approval is tied to a requirements version and expires on that version’s schedule (the listing’s expiry table). The pages this module reads do not say whether an expired device may stay in service; compliance programs for PCI SSC standards are managed by the payment brands.',
     stepId: 'pci-evidence-review',
     config: { listing: '4-40069' },
   },

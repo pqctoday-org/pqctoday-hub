@@ -178,7 +178,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cert-pci-pin-v3-1-current',
     claim:
-      'PCI PIN Security v3.1 (announced 12 March 2021, a minor revision) is the latest PIN Security Requirements and Testing Procedures entry in the Document Library feed (11 March 2021); the PIN requirement text is not read',
+      'PCI PIN Security v3.1 (announced 12 March 2021, a minor revision); the Document Library feed lists "PIN Security Requirements and Testing Procedures" on 11 March 2021 and no later entry with that title; the PIN requirement text is not read',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
     asOf: '2026-09-24',
     recheck: 'https://www.pcisecuritystandards.org/standards/pin-security/',
