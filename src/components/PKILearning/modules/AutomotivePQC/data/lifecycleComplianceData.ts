@@ -193,7 +193,7 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     standard: 'TCG TPM 2.0 / ISO/IEC 11889',
     fipsLevel: 'Level 1-2 (varies)',
     pqcSupport:
-      'TCG TPM 2.0 v1.85 (March 2026) includes ML-KEM (including endorsement keys) and ML-DSA (including attestation keys). Vendor-stated: Infineon OPTIGA TPM SLB 9672 and SLB 9673 use XMSS for firmware updates',
+      'TCG TPM 2.0 v185 (March 2026) includes ML-KEM (including endorsement keys) and ML-DSA (including attestation keys). Vendor-stated: Infineon OPTIGA TPM SLB 9672 and SLB 9673 use XMSS for firmware updates',
     typicalVendors: ['Infineon OPTIGA TPM', 'STMicro ST33', 'Nuvoton NPCT75x'],
     keyTypes: [
       'Platform identity key',
