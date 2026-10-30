@@ -701,7 +701,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4703',
-    note: 'Powers Azure Managed HSM backend. No PQC algorithm in the approved list.',
+    note: 'Marvell LiquidSecurity family; Microsoft says Managed HSMs use Marvell LiquidSecurity HSM adapters but does not name this certificate. No PQC algorithm in the approved list.',
   },
   {
     vendorId: 'futurex-cryptohub',
@@ -858,7 +858,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     targetFirmware: '13.8.0+',
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
     upgradeComplexity: 'low',
-    estimatedDowntime: '1-2 hours per HSM',
+    estimatedDowntime: '1-2 hours per HSM (planning estimate)',
     notes:
       'ML-KEM, ML-DSA and SLH-DSA are native in firmware v13.8.0 with the PostQuantum feature enabled. The PKCS#11 API gained the algorithms one release at a time: ML-DSA in Security World v13.9.0 (standard CKM_ML_DSA mechanisms), ML-KEM in v13.9.3 (CKM_ML_KEM; firmware v13.8.3 or later) and SLH-DSA in v13.9.5 (12 parameter sets). In v13.9.0 ML-KEM and SLH-DSA were available only through the native nCore API (release notes sections 3.4 and 3.5). The Entrust pages checked do not describe LMS or XMSS support. Entrust states the post-quantum implementation is CAVP-validated. CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
   },

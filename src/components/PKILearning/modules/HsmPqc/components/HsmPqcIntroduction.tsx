@@ -437,8 +437,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     <strong>Upgrade Path:</strong> Through PKCS#11 the PostQuantum feature must be
                     enabled and the firmware must be v13.8 or later (v13.8.3 or later for ML-KEM).
                     The 1&ndash;2 hours per HSM figure is this module&apos;s own planning estimate;
-                    Entrust states no duration. An nShield 5s module is on the CMVP Modules in
-                    Process list &mdash; a queue position, not evidence of the outcome.
+                    the Entrust release notes and product pages we hold give no duration. An nShield
+                    5s module is on the CMVP Modules in Process list &mdash; a queue position, not
+                    evidence of the outcome.
                   </p>
                   <p>
                     <strong>Interfaces:</strong> The PKCS#11 interface gained the PQC algorithms one

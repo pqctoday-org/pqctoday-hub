@@ -393,7 +393,7 @@ export const PCI_OPEN_QUESTIONS: OpenQuestion[] = [
     question:
       'How does PCI route a change to an approved HSM today — no-impact letter, delta, or new evaluation — and what does v5.0 change about that?',
     whyOpen:
-      'Program Guide v1.9 (June 2020) is public and teaches the delta concept. The current Device Testing and Approval Program Guide (the plan records v2.3, May 2026) is licence-gated and decides.',
+      'Program Guide v1.9 (June 2020) is public and teaches the delta concept. The current Device Testing and Approval Program Guide (listed in the Document Library on 18 May 2026, with no version number in the public listing) is licence-gated and decides.',
     checkIn: 'Current Device Testing and Approval Program Guide; your PCI-recognized laboratory.',
   },
   {

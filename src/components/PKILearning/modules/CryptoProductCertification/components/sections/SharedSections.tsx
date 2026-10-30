@@ -1149,8 +1149,8 @@ export const TransitionDeadlines = () => {
         <li>
           <strong>PTS HSM v4 new approvals end 30 June 2027:</strong> a new approval after that date
           uses v5.0, with its multi-tenant, remote-administration and PQC-definition changes. How a
-          change to a v4-approved device is handled is for the current Program Guide (v2.3) — an
-          open question in this v1.
+          change to a v4-approved device is handled is for the current Program Guide (no version
+          number in the public listing) — an open question in this v1.
         </li>
         <li>
           <strong>EUCC transitional issuance rules, through 31 December 2027:</strong> Article 3(2)

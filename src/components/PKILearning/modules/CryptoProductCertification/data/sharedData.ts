@@ -729,7 +729,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       affected:
         'Firmware version on the listing; Security Policy algorithm tables; the PQC notation.',
       candidates:
-        'Lab scoping for a delta or fuller evaluation under the current Program Guide (v2.3 decides).',
+        'Lab scoping for a delta or fuller evaluation under the current Program Guide (the current Program Guide decides).',
     },
     ask: 'Do the change ratios stay within the Manual’s 30% limits in a way the CMVP will accept? Will the certification body treat the new claims as a major change?',
   },
