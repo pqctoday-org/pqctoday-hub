@@ -19,7 +19,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 19 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                 19 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |                 52 | `public/data/validation/coverage-matrix.json`                     |
+| Open gaps (register entries)                            |                 71 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |             71 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** 0 of 19 waivers are baseline-pending-review (not approvals); 19 approved.
@@ -80,7 +80,7 @@ Artifacts:
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,209 |             0 |             0 |
+| wasm          | registered |            2,209 |         2,197 |             2 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -91,9 +91,9 @@ Artifacts:
 
 ## Recorded runs
 
-- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 4,988 results: cpp 2,434 pass, 60 skip; rust 2,469 pass, 25 skip.
-- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 96 results: rust 96 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-23 at hub `919fa5f66fe3`; 14,092 results: cpp 7,041 pass, 1 fail, 4 skip; rust 7,027 pass, 19 fail.
+- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `9e61dd12cd10`; 4,988 results: cpp 2,434 pass, 60 skip; rust 2,469 pass, 25 skip.
+- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `9e61dd12cd10`; 96 results: rust 96 pass.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `e64a414cb9e7`; 14,092 results: cpp 7,041 pass, 1 fail, 4 skip; rust 7,027 pass, 19 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
@@ -245,7 +245,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-52 entries — by status: open 45, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 22; owner unassigned: 52.
+71 entries — by status: open 64, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 41; owner unassigned: 71.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
@@ -335,12 +335,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `6ebcf455c69b530b893c42299252ed5589bdcade36a7ba2bf59de981ae29956c` |
+| `public/data/validation/coverage-matrix.json`                           | `dc0ffd2d14f65d1d09dd792a9404b0cb67064dc095b66139f72052dd5729cbd8` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `9989ddbe108ebed6ba7a0b4766c92795f3d754f292ea3bd597d5d7ee0ab59425` |
 | `src/data/validation/open-gaps.json`                                    | `a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f` |
-| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`              | `42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `ec0a2a98ca0f2c7c32754a4b43f5999a6a929d819597be4a9326953a697e53c6` |
+| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`              | `f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `88a03cd5ad6306be37e63ba523e56add1cb71dad2a1a837d0d42772de3eb768d` |
 | `src/data/validation/validation-counts.generated.json`                  | `3396a29fc05d1ff480fc272047c1498451522fad04ed6c56c789d772dbd0c9ce` |
 | `src/data/validation/vector-manifest.json`                              | `9d8a90ca8719e8e27c42cda642ab3f42f9fcbb3531cd1b6c2d182c01d87be1fc` |
