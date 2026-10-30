@@ -1153,9 +1153,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   </span>
                 </div>
                 <p className="text-[10px] text-muted-foreground pl-5">
-                  The HSM presents its own certificate chain (e.g., FIPS 140-3 validation cert or
-                  vendor device certificate). The TEE validates this chain to confirm it is
-                  provisioning keys into a genuine, tamper-resistant HSM — not a software mock.
+                  In this demo, the HSM presents its own certificate chain (for example a vendor
+                  device certificate). The TEE validates this chain to confirm it is provisioning
+                  keys into a genuine, tamper-resistant HSM — not a software mock.
                 </p>
               </div>
 

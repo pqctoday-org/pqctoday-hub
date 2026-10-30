@@ -691,7 +691,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Cpu size={16} className="text-primary" />
-                Vendor PQC Attestation Timeline
+                Vendor PQC Attestation Timeline (the module's expectation; no vendor has published
+                these dates)
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
