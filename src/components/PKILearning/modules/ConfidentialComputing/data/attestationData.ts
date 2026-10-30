@@ -221,7 +221,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-384',
     pqcMigrationStatus: 'preview',
     pqcMigrationNotes:
-      'AWS KMS offers ML-DSA signing keys (GA June 2025) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints; it does not offer ML-KEM KMS keys. Nitro attestation documents still use ECDSA P-384, and the attestation document PQC migration timeline is not yet public.',
+      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints. Nitro attestation documents still use ECDSA P-384, and the attestation document PQC migration timeline is not yet public.',
     steps: [
       {
         id: 'nitro-1',
@@ -414,7 +414,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'Nitro Enclave connects to CloudHSM via vsock proxy → KMS attestation policy gates access → CloudHSM provisions key via PKCS#11 → Key material decrypted inside enclave',
     migrationComplexity: 'medium',
     notes:
-      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS offers ML-DSA signing keys and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but no ML-KEM KMS keys — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
+      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS offers ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
   },
   {
     id: 'tdx-marvell-pkcs11',
@@ -432,7 +432,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'TD sends attestation quote to a key broker → broker verifies via Intel PCS → TLS 1.3 channel → broker calls the HSM through PKCS#11 → wrapped keys are provisioned to the TD',
     migrationComplexity: 'medium',
     notes:
-      "Marvell's LiquidSecurity 2 product brief lists PKCS#11, Java JCA/JCE, Microsoft CNG/KSP and an OpenSSL engine as client APIs, and says the adapter supports post-quantum algorithms in non-FIPS mode. The security policy of CMVP certificate 4703 lists ML-KEM and ML-DSA as non-compliant services. TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled. GCP C3 TDX instances went GA in 2025.",
+      "Marvell's LiquidSecurity 2 product brief lists PKCS#11, Java JCA/JCE, Microsoft CNG/KSP and an OpenSSL engine as client APIs, and says the adapter supports post-quantum algorithms in non-FIPS mode. The security policy of CMVP certificate 4703 lists ML-KEM and ML-DSA as non-compliant services. TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled. GCP C3 instances with Intel TDX went generally available in September 2024.",
   },
 ]
 
