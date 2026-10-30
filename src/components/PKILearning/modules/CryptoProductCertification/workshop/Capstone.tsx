@@ -525,7 +525,7 @@ export const Capstone: FC<CertWorkshopStepProps> = ({ config }) => {
               label="Requirements version for the new approval"
               value={s.pci.requirements}
               options={[
-                { id: 'v4' as const, label: 'PTS HSM v4 (new approvals until 30 June 2027)' },
+                { id: 'v4' as const, label: 'PTS HSM v4.x' },
                 { id: 'v5' as const, label: 'PTS HSM v5.0' },
               ]}
               onChange={(requirements) => update({ pci: { ...s.pci, requirements } })}

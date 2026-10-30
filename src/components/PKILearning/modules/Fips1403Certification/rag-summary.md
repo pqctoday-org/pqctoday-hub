@@ -16,7 +16,7 @@ One timed ~80-minute route. Deeper material is kept as optional reference sectio
 - **Vendor-affirmed is not an algorithm test certificate** — vendor-affirmed means the vendor states that an algorithm meets the standard without an algorithm test certificate; NIST's FIPS 140-3 Implementation Guidance allows it only where a specific IG section permits it, for example IG C.O for HSS signatures.
 - **Modules in Process is a queue, not an outcome** — a CMVP MIP entry is not evidence of validation.
 - **FIPS 140-3 is unchanged** — no 2025–2026 draft revises FIPS 140-3 or Level 3. Executive Order 14412 §6(b) directs NIST to revise CMVP processes to accelerate validations, with a deadline of about 19 December 2026. FIPS 140-2 certificates moved to the Historical list on 21/22 September 2026.
-- **FIPS Level 3 is not a PCI approval** — a FIPS 140-3 Level 3 HSM does not thereby hold PCI PTS HSM approval, though PCI PIN Security v3.1 and P2PE v3.1 accept FIPS Level 3+ HSMs.
+- **FIPS Level 3 is not a PCI approval** — a FIPS 140-3 Level 3 HSM does not thereby hold PCI PTS HSM approval; whether a PCI operational standard accepts a FIPS certificate in place of a PTS approval is set in that standard’s own requirement text, which this module does not state.
 
 ## Workshop / Interactive Activities
 

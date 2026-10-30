@@ -123,7 +123,7 @@ export const KEY_INJECTION_CEREMONY: KeyInjectionCeremony = {
       order: 1,
       label: 'BDK Generation in Payment HSM',
       description:
-        'The Base Derivation Key (BDK) is generated inside a payment HSM that is either FIPS 140-2 or 140-3 Level 3 (or higher) certified or PCI-approved (PTS HSM), as the PCI PIN Security Requirements v3.1 allow. The BDK never leaves the HSM in cleartext. Dual custody is required (two key custodians each contribute key components).',
+        'The Base Derivation Key (BDK) is generated inside a payment HSM (for example a PCI-approved PTS HSM). The BDK never leaves the HSM in cleartext. Dual custody is required (two key custodians each contribute key components).',
       cryptoUsed: 'AES-256 key generation (HSM internal)',
       quantumVulnerable: false,
       pqcReplacement: 'No change needed \u2014 symmetric key generation is quantum-safe',

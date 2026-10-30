@@ -33,8 +33,6 @@ export const CORE_SOURCES = {
   securityIc: getStandard('BSI-CC-PP-0084-V2-2026'),
   ptsV5: getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
   ptsListing: getStandard('PCI-PTS-Listing-Field-Definitions'),
-  pinV31: getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-  p2peV31: getStandard('PCI-P2PE-Security-Requirements-v3-1'),
   kmo: getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
   p2peProgram: getStandard('PCI-SSC-P2PE-Program-Page'),
 } satisfies Record<string, StandardRef>
@@ -495,7 +493,7 @@ export const SELECTOR_CLAIMS: SelectorClaim[] = [
     claim:
       'Show that the PIN-processing environment we run on this HSM meets the PIN security requirements.',
     answer: 'pci-entity',
-    why: 'PIN Security assesses the entity’s operations, not the device. Its HSM requirement (Req 1-3) accepts HSMs that are FIPS 140-2 or 140-3 Level 3 or higher, or PCI-approved — but the assessment is of the processor.',
+    why: 'PIN Security assesses the entity’s operations, not the device. The device is one component of the processor’s environment, and the assessment is of the processor.',
     timed: true,
   },
   {
@@ -656,7 +654,7 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
       {
         scheme: 'FIPS 140-3 (CMVP)',
         status: 'may-apply',
-        note: 'PIN v3.1 Req 1-3 and P2PE v3.1 4A-1.1 accept HSMs that are FIPS Level 3 or higher, or PCI-approved, for their purposes (P2PE excludes certificates listed as historical or revoked). That never turns a FIPS validation into PTS approval.',
+        note: 'Whether a PCI operational standard accepts a FIPS certificate in place of a PTS approval is set in that standard’s own requirement text, which this module does not state. A FIPS validation never turns into PTS approval.',
       },
       {
         scheme: 'Common Criteria / EUCC',
@@ -826,7 +824,7 @@ export function evaluateBoundary(
       out.push({
         severity: 'info',
         component: 'tenant-partition',
-        text: 'PTS HSM v5.0 adds multi-tenant isolation and tenant key-erasure requirements (public v5.0 announcement; the requirement text is licence-gated).',
+        text: 'PTS HSM v5.0 adds multi-tenant isolation and tenant key-erasure requirements (public v5.0 announcement; the requirement text is not a public PCI SSC page).',
       })
   }
 
@@ -842,7 +840,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Open the scheme selector for the payment processor and answer its two claims — one about the device, one about the processor’s PIN environment.',
     observe:
-      'Device approval (PTS HSM) and entity assessment (PIN Security) are different objects. A FIPS Level 3 validation never becomes PTS approval, yet PIN v3.1 Req 1-3 accepts a FIPS Level 3 HSM for the entity’s purposes.',
+      'Device approval (PTS HSM) and entity assessment (PIN Security) are different objects. A FIPS Level 3 validation never becomes PTS approval.',
     stepId: 'scheme-selector',
     config: { customer: 'payment-processor' },
   },

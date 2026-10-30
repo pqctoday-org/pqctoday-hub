@@ -75,7 +75,7 @@ describe('EMV introduction source statements', () => {
     expect(sectionText('banking-key-management')).toContain(
       'RFC 10024 (IETF Standards Track, August 2026)'
     )
-    expect(sectionText('ecommerce')).toContain('PCI 3DS Core Security Standard')
+    expect(sectionText('ecommerce')).toContain('separate PCI 3DS Core standard')
     expect(sectionText('pos-terminals')).toContain('What certifies the device')
     const regulation = sectionText('sector-regulation')
     expect(regulation).toContain('Nacha Quantum-Safe Payments Readiness Road Map')
@@ -85,7 +85,7 @@ describe('EMV introduction source statements', () => {
   it('labels the card cycle as an estimate and keeps the HSM cut-off out of PQ dates', () => {
     const landscape = sectionText('migration-landscape')
     expect(landscape).toContain('not a sourced figure')
-    expect(landscape).toContain('not a post-quantum deadline')
+    expect(landscape).toContain('not post-quantum deadlines')
     expect(landscape).not.toContain('Leading candidate')
   })
 })

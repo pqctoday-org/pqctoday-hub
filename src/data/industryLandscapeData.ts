@@ -172,11 +172,9 @@ export interface IndustryUseCase {
    *   ''  (empty) — NOT YET ASSESSED. Deliberately distinct from 'none': an
    *                 unresearched row must never render as a verified negative.
    *
-   * `certificationLogic` is what stops the single worst misreading here. Every
-   * PCI standard that imposes an HSM requirement (PIN 1-3, Card Production
-   * 7.14.c, 3DS P2-6.1.2, P2PE 4A-1.1) joins FIPS validation and PCI approval
-   * with "or", and the eIDAS implementing acts join CC / EUCC / FIPS the same
-   * way. Rendering fipsCertification='mandated' beside pciCertification=
+   * `certificationLogic` is what stops the single worst misreading here. A
+   * requirement that accepts FIPS validation or PCI approval joins them with
+   * "or", and the eIDAS implementing acts join CC / EUCC / FIPS the same way. Rendering fipsCertification='mandated' beside pciCertification=
    * 'mandated' without 'any-of' would tell a reader they need BOTH
    * certifications when any one of them satisfies the requirement.
    */
