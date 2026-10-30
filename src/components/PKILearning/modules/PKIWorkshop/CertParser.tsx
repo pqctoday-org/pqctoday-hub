@@ -504,7 +504,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     },
     'hybrid-pure-pqc-slh.pem': {
       title: 'Pure PQC — SLH-DSA-SHA2-128s end entity (RFC 9909)',
-      note: 'An SLH-DSA end-entity certificate issued by an SLH-DSA workshop CA. Stateless hash-based signatures (7,856 bytes each) whose security rests only on hash-function properties. Algorithm OID 2.16.840.1.101.3.4.3.20.',
+      note: 'An SLH-DSA end-entity certificate issued by an SLH-DSA workshop CA. Stateless hash-based signatures (7,856 bytes each) whose security rests only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1). Algorithm OID 2.16.840.1.101.3.4.3.20.',
     },
     'hybrid-composite.pem': {
       title: 'Composite signature (draft-ietf-lamps-pq-composite-sigs-19)',

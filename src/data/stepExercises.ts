@@ -60,7 +60,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Which signature scheme in the demo is hash-based, with tiny keys but large signatures?',
     options: ['SLH-DSA-SHA2-128s', 'ML-DSA-65', 'ED25519'],
     answer: 0,
-    why: 'SLH-DSA rests on hash functions alone and pays for that conservative assumption with signature size; ML-DSA is lattice-based, and ED25519 is classical elliptic-curve.',
+    why: 'SLH-DSA security rests only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1) and pays for that conservative assumption with signature size; ML-DSA is lattice-based, and ED25519 is classical elliptic-curve.',
   },
   // ── Quantum Threats ──
   'quantum-threats/security-levels': {
