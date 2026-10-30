@@ -87,7 +87,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'Generic Object Oriented Substation Event — Layer 2 multicast for protection trips, interlocks and status. Repeats on change, so it cannot wait for a handshake.',
     standardStatus:
-      'IEC 62351-6:2020 profiles include HMAC-SHA256 and AES-GMAC message authentication. No PQC work item is public.',
+      'IEC 62351-6:2020 profiles include HMAC-SHA256 and AES-GMAC message authentication. These symmetric profiles need no PQC algorithm change; the public-key parts of IEC 62351 are where the PQC work sits.',
     cryptoLayers: [
       {
         layerName: 'Per-message authentication',
@@ -118,7 +118,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'Streams of current and voltage samples from merging units to protection relays. Every sample is a frame, so per-message crypto must cost microseconds.',
     standardStatus:
-      'Same IEC 62351-6 symmetric profiles and IEC 62351-9 group keys as GOOSE. No PQC work item is public.',
+      'Same IEC 62351-6 symmetric profiles and IEC 62351-9 group keys as GOOSE; the symmetric profiles need no PQC algorithm change.',
     cryptoLayers: [
       {
         layerName: 'Per-message authentication',
@@ -520,7 +520,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     transport: 'TCP',
     timingRequirement: null,
     description:
-      'Utility-to-DER protocol for inverters, batteries and EV chargers, with mandatory TLS and device certificates.',
+      'Utility-to-DER protocol for inverters, batteries and EV chargers, with mandatory TLS and device certificates. EV charging also uses OCPP; a 2025 conference abstract reports a hybrid quantum-safe OCPP prototype (TNO, NXP, Infiniot) that names no algorithm.',
     standardStatus:
       'TLS 1.2 with ECDHE-ECDSA P-256. Device certificates chain to the SERCA root through a manufacturer CA (not a utility CA).',
     cryptoLayers: [
@@ -532,7 +532,8 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         classicalBytes: X25519_SHARE,
         pqcBytes: ML_KEM_768_CT,
         sizeBasis: 'key share',
-        notes: 'Needs TLS 1.3 support first.',
+        notes:
+          'Needs TLS 1.3 support first; the SunSpec/Sandia DER workgroup already recommends TLS 1.3 for all DER communications (SAND2022-1118).',
       },
       {
         layerName: 'Device certificates (SERCA → manufacturer CA → device)',

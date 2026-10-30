@@ -15,7 +15,7 @@ export async function encryptMSIN(ctx: FiveGService) {
   // Determine algorithm based on key length (16 bytes = AES-128, 32 bytes = AES-256)
   const keyLen = ctx.state.kEncHex.length / 2
   const algo = keyLen === 32 ? 'aes-256-ctr' : 'aes-128-ctr'
-  const iv = '00000000000000000000000000000000' // Zero IV per 3GPP spec
+  const iv = '00000000000000000000000000000000' // Zero IV (demo choice; TS 33.501 Annex C.3.4 takes the ICB from the KDF output)
 
   // File names
   const msinFile = `msin_${ctx.getTimestamp()}.bin`
@@ -49,7 +49,7 @@ Algorithm: ${algo.toUpperCase()}
 MSIN Digits: ${msinDigits}
 BCD Encoded: ${msinHex} (${msinBytes.length} bytes)
 Key: ${ctx.state.kEncHex}
-IV: ${iv} (zero IV per 3GPP spec)
+IV: ${iv} (zero IV in this demo; TS 33.501 Annex C.3.4 takes the ICB from the KDF output)
 
 > C_Encrypt(CKM_AES_CTR)
 
@@ -217,7 +217,7 @@ export async function assembleSUCI(ctx: FiveGService, profile: 'A' | 'B' | 'C') 
   const ephSpki = ctx.state.ephemeralPubKeyHex || ''
   const kemCt = ctx.state.ciphertextHex || ''
 
-  // Per 3GPP TS 33.501 §C.3.3 + TS 23.003 §8.3:
+  // Per 3GPP TS 33.501 §C.3.2 and §C.3.4 + TS 23.003 §8.3:
   // schemeOutput = rawEphemeralPublicKey || msinCiphertext || macTag (hex concat, no separators)
   // Profile A: raw 32-byte X25519 key (strip 12-byte SPKI header)
   // Profile B: COMPRESSED 33-byte P-256 key per spec (02/03 prefix + 32-byte x-coord)

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:bb098e62-3ce6-4868-bc83-02ccf2c23e23",
+  "serialNumber": "urn:uuid:cc903bbb-c9ca-4f1c-b1ac-a4d0eae7630e",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-28T00:00:00.000Z",
+    "timestamp": "2026-10-29T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -6271,7 +6271,7 @@
           "primitive": "kem"
         }
       },
-      "description": "First HSM submitted for FIPS 140-3 Level 3 certification with all NIST PQC algorithms. Powered by the QASM cryptographic core natively supporting ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and LMS stateful hash-based signatures. QxHSM v4.4 (Dec 2024) added ML-DSA and full NIST PQC OID support. QxOS 5 firmware (June 2025) delivers next-generation quantum-safe HSM platform. FIPS 140-3 Level 3 certification submitted March 2025, currently in NIST MIP list. Available in desktop (QxBMC-1) and 1U three-blade (QxBMC-3) chassis; the 4U twelve-blade (QxBMC-12) chassis is listed by the vendor as 'Coming Soon' and not yet shipping. Engineered, manufactured, and assembled in Canada.",
+      "description": "QxHSM is powered by the QASM cryptographic core, natively supporting ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and LMS stateful hash-based signatures. QxHSM v4.4 (Dec 2024) added ML-DSA and full NIST PQC OID support. QxOS 5 firmware (June 2025) delivers next-generation quantum-safe HSM platform. Its QASM cryptographic module holds FIPS 140-3 Level 3 certificate CMVP #5497 (validated 19 August 2026). Available in desktop (QxBMC-1) and 1U three-blade (QxBMC-3) chassis; the 4U twelve-blade (QxBMC-12) chassis is listed by the vendor as 'Coming Soon' and not yet shipping. Engineered, manufactured, and assembled in Canada.",
       "externalReferences": [
         {
           "type": "website",
@@ -6293,7 +6293,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Pending (FIPS 140-3 L3 submitted Mar 2025)"
+          "value": "Uses the QASM Cryptographic Module, which holds Active FIPS 140-3 Level 3 certificate CMVP #5497 (initial validation 2026-08-19; the certificate lists ML-KEM, ML-DSA, SLH-DSA and LMS). Crypto4A describes QASM as the cryptographic module at the core of its HSM; the certificate record names the QASM module, not QxHSM."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -7879,9 +7879,13 @@
       "bom-ref": "1143c239a3c8d014",
       "name": "Azure Dedicated HSM (Thales Luna 7)",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
       },
-      "description": "Azure Dedicated HSM is a single-tenant Azure HSM service delivered on Thales Luna 7 HSM model A790 appliances (FIPS 140-2 Level 3), according to Microsoft's overview. The overview does not mention post-quantum algorithms or which Luna firmware version is deployed, so no PQC capability can be attributed to the service from Microsoft's documentation. Microsoft is retiring the service: no new customer onboardings, existing customers fully supported until July 31, 2028, and Azure Cloud HSM is named the successor.",
+      "description": "Azure Dedicated HSM is a single-tenant Azure HSM service delivered on Thales Luna 7 HSM model A790 appliances. Microsoft's FAQ names FIPS 140-2 Level 3 validated firmware version 7.0.3, and neither the FAQ nor the overview names a post-quantum algorithm. Thales documents ML-DSA and ML-KEM from Luna firmware 7.9.0 and LMS-HSS from 7.8.9; Microsoft's FAQ says the customer has full administrative control including upgrading firmware but does not say whether Azure supports those firmware versions, so post-quantum support depends on the customer upgrading. Microsoft is retiring the service: no new customer onboardings, existing customers fully supported until July 31, 2028, and Azure Cloud HSM is named the successor.",
       "externalReferences": [
         {
           "type": "website",
@@ -7903,7 +7907,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Azure Dedicated HSM uses Thales Luna 7 HSM model A790 appliances. CMVP #4684 is an Active FIPS 140-3 Level 3 certificate for the Thales Luna K7 Cryptographic Module, whose CMVP record identifies Thales as the vendor."
+          "value": "Microsoft's FAQ names FIPS 140-2 Level 3 validated firmware version 7.0.3 on the Thales Luna 7 HSM model A790 appliances that Azure Dedicated HSM uses, and gives no certificate number. CMVP #4684 (Thales Luna K7 Cryptographic Module, Active) covers Luna firmware 7.8.4 and 7.8.5 only, so it does not cover the firmware Microsoft names."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -12376,7 +12380,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Pending (FIPS 140-3 L3 submission)"
+          "value": "Uses the QASM Cryptographic Module, which holds Active FIPS 140-3 Level 3 certificate CMVP #5497 (initial validation 2026-08-19; the certificate lists ML-KEM, ML-DSA, SLH-DSA and LMS). Crypto4A's 2025 release says QASM is the core component of QxEDGE; the certificate record names the QASM module, not QxEDGE."
         },
         {
           "name": "pqctoday:algorithm_source",

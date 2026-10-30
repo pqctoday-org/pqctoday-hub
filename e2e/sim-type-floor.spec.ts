@@ -70,13 +70,18 @@ test.describe('Simulation — type floor & Guided mode (PR-4)', () => {
         })
       )
     })
-    await page.goto('/report', { waitUntil: 'networkidle', timeout: 45_000 })
+    await page.goto('/report', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem('pqc-assessment-result')), {
         timeout: 30_000,
       })
       .toBeTruthy()
-    await page.goto('/simulation', { waitUntil: 'networkidle', timeout: 45_000 })
+    // NOT networkidle: the first visit installs the service worker, which fetches the whole
+    // precache, and the sandbox availability probe may wait on a local sandbox, so /simulation
+    // does not go network-idle within 45 s on every machine (a run on 29 Oct 2026 timed out here
+    // while a sandbox was listening on port 4000). domcontentloaded plus the End Quarter
+    // assertion is the readiness signal, as in the other sim-*.spec.ts files.
+    await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
     await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({
       timeout: 45_000,
     })

@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'iot-pqc',
   lastReviewed: '2026-10-01',
   version: '2.0.1',
-  lastEdited: '2026-10-09',
+  lastEdited: '2026-10-29',
 
   standards: [
     // The yardstick first: RFC 7228 defines Classes 0-2 and the 7228bis draft
@@ -36,6 +36,7 @@ export const content: ModuleContent = {
     getStandard('draft-ietf-suit-manifest'),
     getStandard('RFC 8778'),
     getStandard('RFC-9964'),
+    getStandard('NIST IR 8547'),
     // Constrained protocols
     getStandard('RFC-7252'),
     getStandard('RFC 9147'),
@@ -58,6 +59,7 @@ export const content: ModuleContent = {
     getStandard('RFC-9148'),
     // Hardware
     getStandard('TCG-TPM-V185-Part1'),
+    getStandard('TCG-PC-Client-Platform-TPM-Profile-v1.07'),
     getStandard('PSA-Certified-Security-Model-v1-1'),
     getStandard('PSA-Certified-Level-2-PP-SESIP-v2-0'),
     getStandard('EN-17927-2023'),

@@ -98,7 +98,12 @@ export function SandboxScenarioEmbed({ scenarioId: scenarioIdProp }: { scenarioI
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), REACHABILITY_TIMEOUT_MS)
     fetch(`${baseUrl}${HEALTH_PATH}`, { mode: 'cors', signal: ctrl.signal })
-      .then(() => setReach('reachable'))
+      .then((res) => {
+        // Only the answer matters. An unread body keeps the request pending in Chromium, so
+        // the page never reaches network idle while a sandbox answers.
+        void res.body?.cancel()
+        setReach('reachable')
+      })
       .catch(() => setReach('unreachable'))
       .finally(() => clearTimeout(timer))
     return () => {

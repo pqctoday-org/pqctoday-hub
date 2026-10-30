@@ -117,10 +117,6 @@ export const PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS: Record<string, Incidental
       coverage: 'teaches',
       reason: 'Migration comparison; wallet derivation remains BIP39/BIP32.',
     },
-    'hd-wallet:SLH-DSA': {
-      coverage: 'teaches',
-      reason: 'Migration comparison; wallet derivation remains BIP39/BIP32.',
-    },
     'openssl-studio:LMS': {
       coverage: 'teaches',
       reason: 'Reference/help material; LMS is not advertised as a runnable Studio algorithm.',

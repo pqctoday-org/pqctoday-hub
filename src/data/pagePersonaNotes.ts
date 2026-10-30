@@ -267,7 +267,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
       '"Guided routing" asks where you are — "Have an inventory, but no risk priorities", "Know the priorities, need a multi-year plan" — and names the first module; in "Browse all" the Protocols track chip is yours.',
     researcher:
       '"Check our work: reproduce a known-answer test" sits above your path — "Run the ACVP vectors" and "Find the published vectors"; the "Practice quiz" is open any time, and the Capstone Quiz unlocks after your Essentials.',
-    'cert-engineer': `Your essentials start at the certificate (the Full track opens with an optional orientation on who writes and certifies): ${countWord(PERSONAS['cert-engineer'].essentials.length)} essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.`,
+    'cert-engineer': `Start with the validation tests, then follow your essentials from the certificate: ${countWord(PERSONAS['cert-engineer'].essentials.length)} essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.`,
     ops: '"My Path" has an "Essentials" / "Full track" toggle with the hours for each and a "Continue where you left off" card with "Resume"; in "Browse all", filter by status to see "In progress" modules.',
     curious:
       '"Pick a role in the top bar for a guided path — or" browse every module; "New here? Start with the right module" includes "Not sure — assess me", and the "Quiz" button sits beside the page title.',

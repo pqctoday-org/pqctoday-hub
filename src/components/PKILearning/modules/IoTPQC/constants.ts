@@ -622,7 +622,7 @@ export const IOT_PROTOCOLS: IoTProtocol[] = [
     publicKeyCrypto:
       'PASE (SPAKE2+ on P-256, setup passcode) then CASE (Sigma with ECDSA P-256 + ECDH); DAC → PAI → PAA attestation chain',
     pqcPath:
-      'Needs a specification revision: new CASE suites and PQC device-attestation certificates.',
+      'Needs a specification revision: new CASE suites and PQC device-attestation certificates. Matter 1.6 notes that PQC Phase 1 will likely soon change the onboarding payload.',
     status: 'spec-change',
   },
   {

@@ -347,9 +347,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           },
           {
             label: 'Bitcoin BIP-360',
-            value: 'P2QRH (Pay-to-Quantum-Resistant-Hash)',
+            value: 'P2MR (Pay-to-Merkle-Root)',
             description:
-              'Active BIP proposal (2024) introducing a new output type using post-quantum signatures (SPHINCS+/SLH-DSA). Requires a soft-fork.',
+              'Draft BIP proposing a new output type that works like Taproot with the key-spend path removed. It includes no post-quantum signature; its authors intend a separate proposal for those. Requires a soft-fork.',
           },
           {
             label: 'Ethereum EIP-7932',
@@ -687,7 +687,8 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         '✓  PBKDF2-HMAC-SHA512 (BIP39 seed) — Quantum-Safe\n' +
         '   Your mnemonic and seed are safe; the derived EC keys are not.\n\n' +
         'Migration Path:\n' +
-        '  • Bitcoin: BIP-360 (P2QRH) proposes SLH-DSA / SPHINCS+ support.\n' +
+        '  • Bitcoin: BIP-360 (P2MR) removes the key-spend path;\n' +
+        '    PQ signatures are a separate, not yet specified proposal.\n' +
         '  • Ethereum: EIP-7932 + ERC-4337 explore ML-DSA in smart contract wallets.\n' +
         '  • Both require protocol-level changes (soft-fork or hard-fork).\n\n' +
         'HNDL Risk (Harvest Now, Decrypt Later):\n' +

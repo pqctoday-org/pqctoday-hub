@@ -6,7 +6,7 @@ Pre-5G networks exposed subscriber identities to "IMSI catchers." 5G fixes this 
 
 ## Why It Matters
 
-Adversaries are actively harvesting encrypted cellular traffic today. When quantum computers arrive, this recorded data can be easily decrypted. Without quantum protection, the mobile privacy of every 5G subscriber will be stripped retroactively, allowing attackers to track past movements.
+"Harvest now, decrypt later" is the risk: someone could record encrypted cellular traffic today and decrypt it once quantum computers arrive. ATIS describes roaming signalling between operators as exposed to this threat. Without quantum protection, the mobile privacy of 5G subscribers could be stripped retroactively, allowing attackers to track past movements.
 
 ## The Key Takeaway
 
@@ -16,4 +16,4 @@ So the honest position is that the quantum weakness in SUCI concealment is real 
 
 ## What's Happening
 
-Telecom equipment manufacturers and operators are currently upgrading mobile architectures to support the heavier processing required by these new quantum-safe standards without degrading network latency.
+Quantum-safe schemes need heavier processing and larger messages, so operators and equipment makers need to plan how to adopt them without degrading network latency. As of TS 33.501 Release 19 (V19.5.0, February 2026), the guidance comes from bodies such as ATIS and GSMA, and 3GPP has not specified a post-quantum protection scheme for subscriber identities.

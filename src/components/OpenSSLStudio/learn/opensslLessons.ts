@@ -558,7 +558,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
       },
     ],
     notes: [
-      'openssl kdf (3.6+) also supports SSKDF, SCRYPT, TLS1-PRF, IKEV2KDF, X942KDF, X963KDF, and more — one command, algorithm-specific -kdfopt keys.',
+      'openssl kdf (added in OpenSSL 3.0) also supports SSKDF, SCRYPT, TLS1-PRF, IKEV2KDF, X942KDF, X963KDF, and more — one command, algorithm-specific -kdfopt keys.',
       'This is the same PBKDF2 the enc and pkcs12 lessons used implicitly via -pbkdf2 — kdf just lets you drive it (and see its output) directly.',
     ],
     whyItMatters:
@@ -708,7 +708,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     ],
     notes: [
       "req -subj in Lessons 2 and 8 overrode the subject entirely, so this curriculum never depended on openssl.cnf's [req_distinguished_name] defaults — but a real deployment without -subj absolutely does.",
-      'configutl is one of the two brand-new subcommands in OpenSSL 3.6 alongside kdf (Lesson 7) — both postdate most existing OpenSSL tutorials.',
+      'configutl is a new subcommand in OpenSSL 3.6 — it postdates most existing OpenSSL tutorials.',
       "In OpenSSL, the part that can be FIPS validated is the FIPS provider, a separate loadable module. Only a FIPS provider built from an OpenSSL version that has a valid FIPS certificate counts, and the certificate links to a Security Policy that you must follow. The openssl fipsinstall command runs the module's self-tests and writes the module configuration file. This in-browser build loads the default, legacy and PKCS#11 providers and no FIPS provider, so it is not the validated module.",
     ],
     whyItMatters:

@@ -61,7 +61,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Provisioning',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'RSA-2048 chain: ~1.5 KB (4 \u00d7 384 bytes). ML-DSA-44 chain: ~15.3 KB (4 \u00d7 3,832 bytes, each a 2,420 B signature + 1,312 B key + ~100 B of fields). FN-DSA-512: ~6.7 KB (4 \u00d7 1,687 bytes, each a 666 B signature + 897 B key + ~124 B of fields). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 6.7 KB, FN-DSA fits within 32-64 KB card NVM, while ML-DSA at 15.3 KB is tight for 32 KB NVM. FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
+        'RSA-2048 chain: ~1.5 KB (4 \u00d7 384 bytes). ML-DSA-44 chain: ~15.3 KB (4 \u00d7 3,832 bytes, each a 2,420 B signature + 1,312 B key + ~100 B of fields). FN-DSA-512: ~6.7 KB (4 \u00d7 1,687 bytes, each a 666 B signature + 897 B key + ~124 B of fields). FN-DSA is ~2.3\u00d7 smaller than ML-DSA but 4.4\u00d7 larger than RSA. At 6.7 KB, FN-DSA is smaller than ML-DSA at 15.3 KB; whether either fits depends on the chip and the application profile (the 32-64 KB card NVM range is this module\u2019s assumption). FIPS 206 standardization for FN-DSA (Falcon) is still pending, so it is not yet a deployable option.',
       config: { step: 2 },
     },
     {
@@ -90,11 +90,11 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       id: 'migration-priority',
       title: '6. End-to-End Migration Priority \u2014 Identify the critical-path dependency chain',
       description:
-        'In the Migration Risk Matrix, examine the dependency graph. Identify the critical-path migration sequence. Which 3 components must migrate first? What is the dependency chain that determines the minimum migration timeline?',
+        'In the Migration Risk Matrix, examine the dependency graph. Identify the critical-path migration sequence. Which 3 components must migrate first? What is the dependency chain that sets the order of the migration?',
       badge: 'Migration',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Critical path: (1) Payment HSM key wrapping must migrate to ML-KEM first (enables all downstream changes), (2) Key injection ceremonies at KIFs must switch to ML-KEM key transport (unblocks terminal re-keying), (3) Card personalization must generate PQC certificates (unblocks offline auth). Dependency chain: HSM \u2192 KIF \u2192 Card Personalization \u2192 Offline Auth. This sets the minimum timeline at 5-7 years given the 3-5 year card replacement cycle.',
+        'Critical path: (1) Payment HSM key wrapping must migrate to ML-KEM first (enables all downstream changes), (2) Key injection ceremonies at KIFs must switch to ML-KEM key transport (unblocks terminal re-keying), (3) Card personalization must generate PQC certificates (unblocks offline auth). Dependency chain: HSM \u2192 KIF \u2192 Card Personalization \u2192 Offline Auth. The chain sets the order of work; how long it takes depends on card and terminal replacement cycles, and this module\u2019s assumed 3-5 year card cycle is an estimate, not a sourced figure.',
       config: { step: 5 },
     },
   ]

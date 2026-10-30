@@ -267,8 +267,8 @@
   },
   {
     "term": "BIP-360",
-    "definition": "Pay to Quantum Resistant Hash, a proposed Bitcoin soft fork that introduces a new native SegWit v3 output type using NIST PQC signature algorithms (ML-DSA or FN-DSA) instead of secp256k1 ECDSA. Proposed by Hunter Beast in 2024.",
-    "technicalNote": "P2QRH addresses use bech32m encoding (bc1r…). The PQC public key is hashed (SHA-256 then HASH160) until spending time, when the full public key and PQC signature are revealed in the witness data. Transaction witness sizes increase 9–46× depending on the algorithm.",
+    "definition": "Pay-to-Merkle-Root (P2MR), a draft Bitcoin soft fork that adds a new native SegWit output type (version 2, bc1z… addresses) working like Taproot with the elliptic-curve key-spend path removed. It contains no post-quantum signature of its own: its authors (Hunter Beast, Ethan Heilman and Isabel Foxen Duke) intend to offer a separate proposal for that upon further research. Earlier drafts were titled P2QRH.",
+    "technicalNote": "P2MR addresses use bech32m encoding (bc1z…). Every spend reveals a leaf script and a control block. The BIP says P2MR outputs are resistant to long-exposure attacks (keys exposed for longer than needed to confirm a spending transaction), and that protection against short-exposure attacks, where a key is exposed in the mempool while a transaction waits to be confirmed, may require post-quantum signatures. In the BIP's depth-1 example the P2MR witness is 135 bytes, against 66 bytes for a Taproot key-path spend.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
     "category": "standard"
@@ -276,7 +276,7 @@
   {
     "term": "Solana Improvement Document",
     "acronym": "SIMD",
-    "definition": "The formal proposal process for Solana protocol changes, analogous to Bitcoin BIPs and Ethereum EIPs. As of early 2026, no SIMD for PQC has been ratified, making Solana's quantum migration path the least defined of the three major blockchains.",
+    "definition": "The formal proposal process for Solana protocol changes, analogous to Bitcoin BIPs and Ethereum EIPs. SIMD-0461, a proposed Falcon (FN-DSA) signature-verification syscall, was closed by its author on 2026-06-17; a commenter in the thread says Falcon-512 and Hawk-512 verifiers already work as on-chain programmes without protocol changes.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
     "category": "standard"

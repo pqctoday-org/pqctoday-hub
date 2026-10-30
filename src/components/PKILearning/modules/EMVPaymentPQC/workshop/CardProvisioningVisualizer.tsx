@@ -11,12 +11,14 @@ import {
   ArrowDown,
   FileKey,
 } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
   CARD_AUTH_SPECS,
   PROVISIONING_STEPS,
   CERT_CHAIN_COMPARISONS,
   PQC_ALGORITHM_SIZES,
+  CARD_CHIP_FINDINGS,
 } from '../data/cardCryptoData'
 import {
   PROVISIONING_PHASE_LABELS,
@@ -473,6 +475,33 @@ export const CardProvisioningVisualizer: React.FC = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Measured and reported card-side findings */}
+        <div className="glass-panel p-4 space-y-3">
+          <h4 className="font-semibold text-foreground">What has been measured on real cards</h4>
+          <p className="text-xs text-muted-foreground">
+            The Card and Terminal columns above are size-based judgements, not measured limits. The
+            card-side findings below come from other people&rsquo;s work and are reported with their
+            own caveats.
+          </p>
+          <ul className="space-y-3">
+            {CARD_CHIP_FINDINGS.map((f) => (
+              <li key={f.id} className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">{f.label}.</span> {f.statement}{' '}
+                <span className="text-xs">
+                  Source: {f.source} &mdash;{' '}
+                  <Link
+                    to={`/library?ref=${encodeURIComponent(f.libraryRef)}`}
+                    className="text-primary hover:underline"
+                  >
+                    open in the Library
+                  </Link>
+                  .
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </div>

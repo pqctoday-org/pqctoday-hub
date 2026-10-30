@@ -161,8 +161,8 @@ describe('certification engineer next steps follow the role path', () => {
   const NON_PATH_DESTINATIONS: Record<string, string> = {
     // Home footer: the board's own secondary button.
     '/': '/playground/hsm?tab=build&dtab=acvp',
-    // The path opens with optional orientation; the first essential lesson is the real start.
-    '/learn': '/learn/crypto-product-certification',
+    // Tests first (owner decision, 29 Oct 2026): the Learn landing hands on to the workbench, like the home board.
+    '/learn': '/playground/hsm?tab=build&dtab=acvp&engine=dual',
     // Tools that practise Entropy & Randomness hand on to the lesson after it.
     '/playground/entropy-test': '/learn/hsm-pqc',
     '/playground/drbg-demo': '/learn/hsm-pqc',

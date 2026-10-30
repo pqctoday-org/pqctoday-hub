@@ -1017,10 +1017,12 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       label: 'Open the validation workbench',
       why: 'Selected NIST ACVP-Server reference samples, standard known-answer tests and oracle comparisons, replayed against the PKCS#11 engines.',
     },
+    // Tests first (owner decision, 29 Oct 2026): the home picker, the board's main button, the
+    // Journey panel and this exit all open the validation workbench; the lessons follow.
     '/learn': {
-      to: '/learn/crypto-product-certification',
-      label: 'Start with certification fundamentals',
-      why: 'Your essentials start at the certificate: what one covers, before the tests that lead to it.',
+      to: '/playground/hsm?tab=build&dtab=acvp&engine=dual',
+      label: 'Start with the validation tests',
+      why: 'Run selected NIST reference samples and known-answer tests against the PKCS#11 engines first; the lessons then follow the path from the certificate to the tests behind it.',
     },
     '/learn/standards-bodies': {
       to: '/learn/crypto-product-certification',

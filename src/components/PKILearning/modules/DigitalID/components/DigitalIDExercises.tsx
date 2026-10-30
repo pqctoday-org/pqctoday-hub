@@ -28,18 +28,18 @@ const SCENARIOS: Scenario[] = [
     badge: 'Key Management',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Under a CRQC threat, harvested presentations could be used to forge proofs. ML-DSA-65 (FIPS 204) is the parameter set this module standardises on for wallet device keys: BSI TR-02102-1 recommends ML-DSA/SLH-DSA at NIST security categories 3 and 5, and ML-DSA-44 (category 2) sits below that floor. No EUDI specification mandates a parameter set yet.',
+      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Under a CRQC threat, harvested presentations could be used to forge proofs. ML-DSA-65 (FIPS 204) is the parameter set this module standardises on for wallet device keys: BSI TR-02102-1 recommends ML-DSA/SLH-DSA at NIST security categories 3 and 5, and ML-DSA-44 (category 2) sits below that floor.',
     stepIndex: 0,
   },
   {
     id: 'pid-issuance-flow',
     title: '2. PID Issuance and Trust Chain',
     description:
-      'Use the PID Issuer (Step 2) to issue a Person Identification Data credential. After issuance, answer: What format is the PID (mso_mdoc or SD-JWT VC)? Who signed it? Where is the issuer certificate anchored? What is the PQC migration deadline for national PID issuers per the EUDI ARF roadmap?',
+      'Use the PID Issuer (Step 2) to issue a Person Identification Data credential. After issuance, answer: What format is the PID (mso_mdoc or SD-JWT VC)? Who signed it? Where is the issuer certificate anchored? What does the EU Coordinated Implementation Roadmap for PQC ask of high-risk use cases, and does the EUDI ARF set a PQC deadline for national PID issuers?',
     badge: 'PID Issuance',
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     observe:
-      'The PID is issued in mso_mdoc format (ISO 18013-5), signed by the national PID Issuer using ECDSA P-256. The issuer certificate is anchored to the national Trusted List. The EU Coordinated Implementation Roadmap for PQC recommends national PQC roadmaps by 2026 and migration of high-risk use cases such as identity by 2030 — a policy recommendation rather than a binding EUDI ARF mandate.',
+      'The PID is issued in mso_mdoc format (ISO 18013-5), signed by the national PID Issuer using ECDSA P-256. The issuer certificate is anchored to the national Trusted List. The EU Coordinated Implementation Roadmap for PQC recommends national PQC roadmaps by 2026 and migration of high-risk use cases by 2030 — a policy recommendation rather than a binding EUDI ARF mandate.',
     stepIndex: 1,
   },
   {
@@ -61,7 +61,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'QES / QTSP',
     badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
     observe:
-      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs that issue qualified certificates follow ETSI EN 319 411, while remote QES signing with SCAL2 is governed by the CEN standards for server signing (with the QSCD covered by the CEN protection profile for its cryptographic module — those standards come from CEN/TC 224, not ETSI); QTSPs are listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
+      "QES requires SCAL2 because the signing key must be under the sole control of the signatory — the QTSP must ensure no third party (including the QTSP itself) can sign on the user's behalf without their active authorisation. QTSPs that issue qualified certificates follow ETSI EN 319 411, while remote QES signing with SCAL2 is governed by the CEN standards for server signing (the remote QSCD combines a signature activation module under the CEN protection profile EN 419 241-2 with a cryptographic module certified against EN 419 221-5 — those standards come from CEN/TC 224, not ETSI); QTSPs are listed on National Trusted Lists. The CSC API v2 (Cloud Signature Consortium) standardises the remote signing protocol.",
     stepIndex: 4,
   },
   {
@@ -72,7 +72,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'PQC Roadmap',
     badgeColor: 'bg-success/20 text-success border-success/50',
     observe:
-      'PID Issuers and QTSPs are high-risk entities per ENISA guidance — they should target Phase 2 (2030) or earlier. The wallet device key (used in all presentation proofs) is the single highest-priority migration item: once it becomes quantum-safe, every relying party interaction benefits. University attestation issuers and banks are lower priority but must accept PQC wallet proofs once migration begins.',
+      'PID Issuers and QTSPs sign the PIDs, attestations and qualified certificates that relying parties verify, so placing them in Phase 2 (2030) or earlier is a planning judgement rather than a requirement: the NIS Cooperation Group roadmap asks for high-risk use cases to be migrated by the end of 2030 and does not name PID Issuers. The wallet device key is the key a Wallet Unit uses to sign data from the relying party when it proves that a PID or device-bound attestation is bound to it, and relying parties also verify the signature of the PID Provider or Attestation Provider on the credential, so both kinds of key matter for a post-quantum migration. A university attestation issuer also signs credentials that relying parties verify, and a bank, as a relying party, verifies the signatures on the credentials it receives; the roadmap does not rank these actors, so their order is a planning choice too.',
     stepIndex: 0,
   },
 ]
