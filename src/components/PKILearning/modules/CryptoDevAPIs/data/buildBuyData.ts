@@ -341,12 +341,12 @@ export const CASE_STUDIES: CaseStudy[] = [
     decision:
       'Forked OpenSSL in 2014, stripped unused code, added their own optimizations, and deployed ML-KEM (Kyber) for TLS in Chrome years before any other browser.',
     outcome:
-      'BoringSSL powers billions of daily TLS connections. First production ML-KEM deployment. BoringCrypto holds FIPS 140-3 certificate #5244 (no PQC algorithm approved). However, requires a dedicated team of ~15 crypto engineers.',
+      'BoringSSL powers billions of daily TLS connections. BoringCrypto holds FIPS 140-3 certificate #5244 (no PQC algorithm approved). However, it requires a dedicated crypto engineering team.',
     libraryUsed: 'BoringSSL (fork of OpenSSL)',
     lessonsLearned: [
-      'Only viable with dedicated crypto engineering team (15+ engineers)',
+      'Only viable with a dedicated crypto engineering team',
       'Forking is more practical than building from zero',
-      'First-mover advantage on PQC was significant',
+      "The module reads Google's early PQC deployment (a draft Kyber hybrid, then ML-KEM from Chrome 131) as a first-mover advantage",
       'Ongoing maintenance cost is substantial but manageable at Google scale',
     ],
   },
@@ -357,7 +357,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     strategy: 'build',
     title: 'AWS forked BoringSSL to create AWS-LC with FIPS',
     situation:
-      'AWS needed FIPS 140-3 validated crypto for government cloud workloads (GovCloud, FedRAMP) while also shipping PQC (ML-KEM) for commercial customers.',
+      'AWS describes AWS-LC as its "open-source FIPS-140-3-validated cryptographic library used throughout AWS", and it also ships PQC (ML-KEM).',
     decision:
       'Forked BoringSSL, added FIPS 140-3 validation process, integrated ML-KEM into the FIPS boundary, and created Rust bindings (aws-lc-rs) for memory safety.',
     outcome:
