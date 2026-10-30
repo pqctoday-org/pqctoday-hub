@@ -408,7 +408,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
         </p>
         <MathModel
           formula={`fte_count × fte_loaded_cost + clm_tool_license + ca_contract_annual + hsm_lifecycle_amortized + audit_attestation_annual\n= ${costP.fteCount} × ${fmt$(costP.fteLoadedCost)} + ${fmt$(costP.clmToolLicense)} + ${fmt$(costP.caContractAnnual)} + ${fmt$(costP.hsmLifecycleAmortized)} + ${fmt$(costP.auditAttestationAnnual)}\n= ${fmt$(annualProgramCost)}/yr`}
-          explanation="Anchored to the CSWP.39 Program Office Model: 5 named CPM roles (Crypto PM, FIPS/CMVP Engineer, CLM Architect, Crypto Developer Champion, Supplier Risk Analyst) plus tooling, CA contracts, amortised HSM lifecycle, and annual audit/attestation. Adjust headcount and tool license to match your org size."
+          explanation="Anchored to five illustrative program roles (Crypto PM, FIPS/CMVP Engineer, CLM Architect, Crypto Developer Champion, Supplier Risk Analyst) plus tooling, CA contracts, amortised HSM lifecycle, and annual audit/attestation; NIST CSWP 39-upd1 describes cryptography governance as “an important function of a crypto agility strategic plan”. Adjust headcount and tool license to match your org size."
         >
           <ParamSlider
             label="FTE count"
