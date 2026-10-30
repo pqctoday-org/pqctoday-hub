@@ -113,7 +113,7 @@ function detectConflicts(
   if (hasUS && hasEU) {
     conflicts.push({
       description:
-        'CNSA 2.0 requires ML-KEM-1024 and ML-DSA-87 minimum security levels for U.S. NSS. ANSSI/BSI recommend a hybrid classical+PQC approach during transition. These requirements are compatible: deploy hybrid mode at CNSA 2.0 minimum security levels to satisfy both.',
+        'CNSA 2.0 requires ML-KEM-1024 and ML-DSA-87 minimum security levels for U.S. NSS. ANSSI/BSI recommend a hybrid classical+PQC approach during transition. These requirements can be reconciled only where NSA has identified a hybrid for the protocol; otherwise they conflict, so check which authority governs the system.',
       jurisdictions: ['United States', 'EU/ANSSI/BSI'],
       severity: 'medium',
     })
@@ -124,7 +124,7 @@ function detectConflicts(
   if (hasUS && frOrDe) {
     conflicts.push({
       description:
-        'ANSSI (France) makes hybrid mandatory in its regulated perimeter and recommends it elsewhere; BSI (Germany) recommends hybrid; NSA CNSA 2.0 targets pure PQC and does not require hybrids. Plan for hybrid deployments that satisfy both.',
+        'ANSSI (France) makes hybrid mandatory in its regulated perimeter and recommends it elsewhere; BSI (Germany) recommends hybrid; NSA CNSA 2.0 targets pure PQC, does not require hybrids and counts only hybrids it has specifically identified. Where a French or German authority applies to the same system, check whether NSA has identified a hybrid for that protocol before planning one.',
       jurisdictions: ['United States', 'France/Germany'],
       severity: 'low',
     })

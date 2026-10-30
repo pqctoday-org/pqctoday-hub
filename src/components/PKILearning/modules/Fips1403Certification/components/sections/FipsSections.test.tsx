@@ -107,7 +107,9 @@ describe('FIPS sections render', () => {
     const para = screen.getByText(/Two kinds of validation exist today/)
     expect(para).toHaveTextContent('before 1 January 2024')
     expect(para).toHaveTextContent('before 1 October 2024')
-    expect(para).toHaveTextContent('Both dates have passed, so the route is closed to new cases.')
+    expect(para).toHaveTextContent(
+      'Both dates have passed, so new cases can no longer use this route (our reading of those dates).'
+    )
   })
 
   it('lifecycle: Historical modules are “not in new systems” by NIST’s words, not a ban on buying', () => {

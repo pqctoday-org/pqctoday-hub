@@ -130,7 +130,7 @@ describe('CNSA 2.0 timeline and hybrid wording', () => {
 
   it('keeps BSI (recommends hybrid) distinct from ANSSI (requires hybrid)', () => {
     const note = jurisdictionStanceForRegion('BSI/ANSSI')?.note ?? ''
-    expect(note).toMatch(/BSI .*recommends PQC only in hybrid use/)
+    expect(note).toMatch(/BSI .*recommends PQC in hybrid form, except that hash-based signatures/)
     expect(note).toMatch(/ANSSI .*mandatory/)
   })
 })

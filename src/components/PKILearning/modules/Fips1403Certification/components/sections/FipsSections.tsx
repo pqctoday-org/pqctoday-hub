@@ -52,6 +52,7 @@ const IG = getStandard('NIST-FIPS140-3-IG-PQC')
 const MIP_LIST = getStandard('NIST-CMVP-MIP-List')
 const VALIDATED_MODULES = getStandard('NIST-CMVP-Validated-Modules')
 const TRANSITION = getStandard('NIST-CMVP-140-2-to-140-3-Transition-Timeline')
+const PROGRAMMATIC_TRANSITIONS = getStandard('NIST-CMVP-Programmatic-Transitions')
 const EO_14412 = getStandard('EO-2026-06-22-Securing-the-Nation')
 const SP_800_140 = getStandard('NIST-SP-800-140')
 const SP_800_140A = getStandard('NIST-SP-800-140A')
@@ -556,7 +557,7 @@ const PLANNING_CASES: readonly { level: string; case: string; why: string }[] = 
   {
     level: 'Level 4',
     case: 'An offline root-key HSM at an unattended site, with physical attack in the threat model',
-    why: 'Planning target from a stated physical threat, not prestige. Confirm every applicable area against ISO/IEC 19790 as modified by SP 800-140 with the laboratory.',
+    why: 'Planning target from a stated physical threat, not prestige. Confirm every applicable area against ISO/IEC 19790 as modified by the SP 800-140 series with the laboratory.',
   },
 ]
 
@@ -931,8 +932,9 @@ const LIFECYCLE_STEPS: readonly { title: string; body: ReactNode }[] = [
     title: 'Get algorithm and entropy validations',
     body: (
       <>
-        Each approved algorithm needs CAVP validation (tested through <Cite std={ACVP}>ACVP</Cite>);
-        entropy sources go through ESV. The Manual expects these done before submission.
+        Each approved algorithm needs CAVP validation (tested through <Cite std={ACVP}>ACVP</Cite>),
+        or vendor affirmation where the IG permits it; entropy sources go through ESV. The Manual
+        expects these done before submission.
       </>
     ),
   },
@@ -1024,12 +1026,13 @@ export const FipsLifecycle = () => (
     <p>
       Two kinds of validation exist today. A full validation lasts five years. An{' '}
       <strong>interim</strong> validation is “a temporary measure to shorten the queue”, is “valid
-      for two years only”, and relies “more on the CSTL submission with less CMVP oversight”. NIST’s{' '}
-      <Cite std={TRANSITION}>transition page</Cite> required the original submission to reach the
-      CMVP before 1 January 2024 and the lab to notify the CMVP of the vendor’s intent before 1
-      October 2024. Both dates have passed, so the route is closed to new cases. An existing interim
-      validation can be converted to a five-year validation (the INTU route) before it expires.
-      Check the sunset date on any certificate you rely on.
+      for two years only”, and relies “more on the CSTL submission with less CMVP oversight”.{' '}
+      <Cite std={PROGRAMMATIC_TRANSITIONS}>NIST’s CMVP Programmatic Transitions page</Cite> requires
+      the original submission to have reached the CMVP before 1 January 2024 and the lab to notify
+      the CMVP of the vendor’s intent before 1 October 2024. Both dates have passed, so new cases
+      can no longer use this route (our reading of those dates). An existing interim validation can
+      be converted to a five-year validation (the INTU route) before it expires. Check the sunset
+      date on any certificate you rely on.
     </p>
 
     <Callout tone="warning" title="Pipeline, not proof">
