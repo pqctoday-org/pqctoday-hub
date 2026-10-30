@@ -377,10 +377,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             >
               <p>
                 Sometimes called close access: someone on site or nearby, on a field network, serial
-                link or wireless segment. Only a small minority of installed field-level traffic is
-                authenticated or encrypted. CISA found that &ldquo;many OT systems built in 2026
-                still rely on protocol implementations designed decades ago, leaving their networks
-                fully trusting anyone with access&rdquo; (
+                link or wireless segment. CISA concludes that secure versions of industrial
+                protocols remain underutilized in OT environments, and found that &ldquo;many OT
+                systems built in 2026 still rely on protocol implementations designed decades ago,
+                leaving their networks fully trusting anyone with access&rdquo; (
                 <LibLink id="Barriers-to-Secure-OT-Communication-Why-Johnny-Can-t-Authent">
                   CISA, 2026
                 </LibLink>
@@ -750,8 +750,8 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               BACnet/SC brings TLS 1.3 and X.509 to HVAC, lighting and access control (
               <LibLink id="ASHRAE-BACnet-SC-Whitepaper-2019">ASHRAE BACnet/SC white paper</LibLink>
               ). Because it already uses TLS 1.3, adding a hybrid ML-KEM group is a stack update;
-              its elliptic-curve certificates are the forgery exposure. Most installed BACnet/IP and
-              MS/TP has no security at all.
+              its elliptic-curve certificates are the forgery exposure. Much installed BACnet/IP and
+              MS/TP lacks TLS-based security.
             </p>
           </Card>
         </div>
