@@ -82,7 +82,7 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       badge: 'Firmware',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'LMS signatures (2,512 bytes per RFC 8554) are smaller than ML-DSA (3,309 bytes), but require a monotonic state counter that must never be reset or cloned. CNSA 2.0 mandates LMS/XMSS for firmware signing in national security systems by 2030, despite the state management burden.',
+        'LMS signatures (2,512 bytes per RFC 8554) are smaller than ML-DSA (3,309 bytes), but require a monotonic state counter that must never be reset or cloned. CNSA 2.0 lists LMS and XMSS for firmware signing in national security systems and expects exclusive CNSA 2.0 use for software and firmware signing by 2030; its FAQ says NSA wants LMS and XMSS used whenever possible, while ML-DSA is also approved for all signing use cases, so the state management burden is the price of that preference.',
       config: { step: 4 },
     },
   ]

@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'code-signing',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-30',
 
   standards: [
     // Added 2026-08-22. This module states "CNSA 2.0 mandates LMS/XMSS for firmware
@@ -20,6 +20,9 @@ export const content: ModuleContent = {
     // and Xtended Merkle Signature Scheme (XMSS) as the "Asymmetric algorithm for
     // digitally signing firmware and software" per NIST SP 800-208, and the timing
     // section gives software and firmware signing as exclusively CNSA 2.0 by 2030.
+    // Reworded 2026-10-30: the module now says CNSA 2.0 lists LMS and XMSS and NSA wants them
+    // used whenever possible, because the FAQ (version 2.2) answers "Can I use ML-DSA for
+    // firmware or software signing? A: Yes" and says HSS and XMSSMT are not allowed.
     // Declared FIRST so the four-document stride opens it.
     getStandard('NSA CNSA 2.0'),
     getStandard('FIPS 204'),
@@ -44,6 +47,9 @@ export const content: ModuleContent = {
     getStandard('NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
     getStandard('SolarWinds-Corporation-Form-8-K-December-14-2020'), // m-code-signing: 18,000
+    getStandard('CISA-AA20-352A'), // SolarWinds: the malicious Orion library was signed by SolarWinds' certificate
+    getStandard('Mandiant-3CX-Software-Supply-Chain-Compromise'), // 3CX: X_TRADER chain
+    getStandard('Analysis-of-the-Codecov-Supply-Chain-Compromise'), // Codecov Bash Uploader
   ],
 
   algorithms: [

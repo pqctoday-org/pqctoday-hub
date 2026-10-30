@@ -53,7 +53,7 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badge: 'Active Scanning',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
       observe:
-        'VPN gateway shows DH Group 14 (2048-bit) — quantum-vulnerable and scheduled for NIST deprecation by 2030. RSA-2048 certificate also flags for replacement. SSH bastion uses legacy curve25519 key exchange without hybrid. The cloud proxy is already using X25519+ML-KEM-768 hybrid TLS — ahead of the VPN.',
+        'VPN gateway shows DH Group 14 (2048-bit) — quantum-vulnerable and scheduled for NIST deprecation after 2030. RSA-2048 certificate also flags for replacement. SSH bastion uses legacy curve25519 key exchange without hybrid. The cloud proxy is already using X25519+ML-KEM-768 hybrid TLS — ahead of the VPN.',
       config: { step: 1 },
       paths: [NETWORK_PATH],
     },

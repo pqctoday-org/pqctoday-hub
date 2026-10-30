@@ -245,8 +245,8 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
                 &bull; <strong>keyUsage:</strong> keyEncipherment (RSA) or keyAgreement (
-                <InlineTooltip term="ECDH">ECDH</InlineTooltip>). KEM keyUsage is still being
-                standardized
+                <InlineTooltip term="ECDH">ECDH</InlineTooltip>). For ML-KEM certificates
+                keyEncipherment is the only key usage set when keyUsage is present (RFC 9935 §5)
               </li>
               <li>
                 &bull; <strong>extKeyUsage:</strong> id-kp-emailProtection

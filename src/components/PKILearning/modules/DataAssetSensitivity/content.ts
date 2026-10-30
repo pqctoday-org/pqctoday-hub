@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'data-asset-sensitivity',
   version: '1.0.1',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-30',
 
   standards: [
     getStandard('FIPS 199'),

@@ -290,8 +290,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="flex items-start gap-2">
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
-                <strong className="text-foreground">Docker Content Trust (DCT)</strong> — no PQC
-                roadmap. Migrate to Notation immediately; Notary v1 is in maintenance mode.
+                <strong className="text-foreground">Docker Content Trust (DCT)</strong> — being
+                fully retired with the Notary v1 service (full shutdown 8 December 2026; the
+                upstream Notary v1 codebase is no longer maintained). Docker names Sigstore/Cosign
+                and Notation as the alternatives; its guidance says nothing about post-quantum
+                signatures.
               </span>
             </div>
           </div>
@@ -395,10 +398,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
                 <strong className="text-foreground">
-                  SLSA Level 3 (projected PQC requirement)
+                  SLSA Build L3 (this module&apos;s projected PQC rule)
                 </strong>{' '}
-                — ML-DSA or SLH-DSA signature on build provenance. Enforce via OPA Deployment
-                annotation check.
+                — ML-DSA or SLH-DSA signature on build provenance; SLSA itself names no signature
+                algorithm. Enforce via OPA Deployment annotation check.
               </span>
             </div>
             <div className="flex items-start gap-2">

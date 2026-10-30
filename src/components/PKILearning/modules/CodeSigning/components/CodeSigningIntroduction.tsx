@@ -55,27 +55,23 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             after publication.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;A compromised signing key is a skeleton key to every machine that trusts
-              it.&rdquo;
-            </blockquote>
-            <p className="text-xs text-muted-foreground mt-2">
-              &mdash; Lessons from the SolarWinds supply chain attack (2020)
+            <p className="text-sm font-medium text-foreground/90">
+              A compromised signing key is a skeleton key to every machine that trusts it.
             </p>
           </div>
           <div className="space-y-2">
             {[
               {
                 t: 'SolarWinds (2020)',
-                d: 'Attackers injected malicious code into the Orion build pipeline. The trojanized update was signed with a legitimate certificate and deployed to ~18,000 organizations.',
+                d: 'Attackers compromised the Orion software build system, so a vulnerability shipped inside Orion updates released between March and June 2020; it was not present in the source code repository. CISA reports that the adversary added a malicious version of an Orion library to the software lifecycle and that it was then signed by the legitimate SolarWinds code signing certificate. SolarWinds believed fewer than 18,000 customers may have had an installation of the affected Orion products.',
               },
               {
                 t: '3CX Supply Chain (2023)',
-                d: 'A cascading supply chain attack: a compromised upstream dependency led to trojanized 3CX desktop clients signed with valid certificates.',
+                d: 'Mandiant found that 3CX\u2019s network was first breached through malicious software downloaded from the Trading Technologies website: a tampered X_TRADER installer, signed with the subject \u201cTrading Technologies International, Inc\u201d. The attackers then distributed a trojanized 3CX DesktopApp (18.12.416 and earlier) that 3CX offered for download. Mandiant called it the first time it had seen one software supply chain attack lead to another.',
               },
               {
                 t: 'Codecov Bash Uploader (2021)',
-                d: 'Attackers modified a CI/CD script without signature verification, exfiltrating environment variables from thousands of CI pipelines.',
+                d: 'A malicious party gained access to Codecov’s Bash Uploader script and modified it without authorization, so it exported CI-related information to a third-party server. That information could include API keys, deploy keys, passwords and authentication tokens.',
               },
             ].map((attack) => (
               <div key={attack.t} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
@@ -123,15 +119,15 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             {[
               {
                 t: 'Dependency Sprawl',
-                d: 'The average enterprise application pulls in 200\u2013500 transitive dependencies. Each dependency is a link in the trust chain \u2014 and each link is only as strong as its maintainer\u2019s signing practices.',
+                d: 'Applications pull in many transitive dependencies. Each dependency is a link in the trust chain \u2014 and each link is only as strong as its maintainer\u2019s signing practices.',
               },
               {
                 t: 'The Transitive Trust Problem',
-                d: 'You audit your direct dependencies, but do you audit their dependencies? A malicious package five levels deep in the dependency tree can execute arbitrary code in your application. The 3CX attack exploited exactly this pattern.',
+                d: 'You audit your direct dependencies, but do you audit their dependencies? A malicious package five levels deep in the dependency tree can execute arbitrary code in your application.',
               },
               {
                 t: 'CI/CD Pipeline as Attack Surface',
-                d: 'Build systems, artifact registries, and deployment pipelines are high-value targets. The Codecov bash uploader attack demonstrates that unsigned CI scripts can be silently replaced. Every step from source code to deployed binary is an attack surface.',
+                d: 'Build systems, artifact registries, and deployment pipelines are high-value targets. The Codecov Bash Uploader attack shows that a script a pipeline downloads and runs can be modified at its source, and the modified script then runs in the CI systems that fetch it. The SolarWinds compromise shows that checking only the source repository is not enough, because the vulnerability came from the build system. Every step from source code to deployed binary is an attack surface.',
               },
               {
                 t: 'Build Provenance & SBOM',
@@ -573,14 +569,14 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
 
           {/* CNSA 2.0 Callout */}
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <div className="text-xs font-bold text-primary mb-2">CNSA 2.0 Mandate</div>
+            <div className="text-xs font-bold text-primary mb-2">CNSA 2.0 guidance</div>
             <p className="text-xs text-muted-foreground mb-2">
-              The NSA&apos;s <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> guidance
-              mandates stateful hash-based signatures (
-              <InlineTooltip term="LMS/HSS">LMS/HSS</InlineTooltip> or{' '}
+              The NSA&apos;s <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> guidance lists
+              stateful hash-based signatures (<InlineTooltip term="LMS/HSS">LMS</InlineTooltip> or{' '}
               <InlineTooltip term="XMSS">XMSS</InlineTooltip>) for firmware and software signing in
-              National Security Systems &mdash; ahead of{' '}
-              <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> for general use.
+              National Security Systems, and its FAQ says NSA wants them used whenever possible
+              rather than waiting for <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>, which is
+              also approved for all signing use cases.
             </p>
             <div className="space-y-1">
               {[

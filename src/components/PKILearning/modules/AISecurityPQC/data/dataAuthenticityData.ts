@@ -13,9 +13,13 @@ export const VERIFICATION_LAYERS: VerificationLayerProfile[] = [
     name: 'C2PA Content Credentials',
     description:
       'Coalition for Content Provenance and Authenticity standard. Embeds cryptographically signed metadata (creator identity, creation tool, edit history) directly into content files. Creates a verifiable chain of custody from origin to consumption.',
-    cryptoInvolved: 'X.509 certificate chains, ECDSA/RSA signatures on JUMBF metadata boxes',
+    cryptoInvolved:
+      'X.509 certificate chains; COSE_Sign1 claim signatures using ECDSA, RSASSA-PSS or Ed25519, written into the claim signature box of a JUMBF manifest',
     pqcRelevance:
-      'Current C2PA signatures use ECDSA P-256 — quantum-vulnerable. Migration to ML-DSA needed to preserve long-term provenance trust. Data signed today with ECDSA can be forged post-CRQC, undermining the entire provenance chain.',
+      'C2PA 2.4 allows seven signature algorithms: ES256, ES384 and ES512 (ECDSA on P-256, P-384 or P-521), PS256, PS384 and PS512 (RSASSA-PSS) ' +
+      'and Ed25519. All are quantum-vulnerable, and the allowed list holds no post-quantum algorithm; the specification says implementations shall not support ' +
+      'additional algorithms on an optional basis, so adding one such as ML-DSA would take a revision of the specification. Provenance signed today with any of ' +
+      'these can be forged after a CRQC, undermining the provenance chain.',
     accuracy: '100% for signed content (cryptographic verification), 0% for unsigned content',
     performanceOverhead: 'Minimal — metadata signing adds <10ms per content item',
     maturity: 'production',

@@ -334,6 +334,15 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
     },
+    "media-drm-pqc": {
+      "id": "media-drm-pqc",
+      "lm_id": "LM-077",
+      "title": "Media, Entertainment & DRM PQC",
+      "description": "How content protection and content provenance use public-key cryptography, read from the editions themselves: the AACS key ladder, CI Plus broadcast conditional access, the MovieLabs ECP specification, streaming licenses and transport, and C2PA Content Credentials, set against what NIST IR 8547 says about the primitives they use.",
+      "duration": "60 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
+    },
     "merkle-tree-certs": {
       "id": "merkle-tree-certs",
       "lm_id": "LM-025",
@@ -584,6 +593,15 @@
       "difficulty": "advanced",
       "frameworkPhase": "p6"
     },
+    "software-supply-chain-pqc": {
+      "id": "software-supply-chain-pqc",
+      "lm_id": "LM-078",
+      "title": "Software Supply Chain PQC",
+      "description": "How the signature links of a software supply chain stand on post-quantum signatures, read from the documents: a status map across Sigstore, the CA/Browser Forum code signing requirements, UEFI, COSE, CMS, X.509, OpenPGP and SUIT; the TUF and Uptane update frameworks; SLSA v1.2 and in-toto provenance; and what changes when a verifier has already shipped.",
+      "duration": "40 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
+    },
     "standards-bodies": {
       "id": "standards-bodies",
       "lm_id": "LM-004",
@@ -704,6 +722,7 @@
     "iot-pqc": 6,
     "kms-pqc": 6,
     "mls-group-messaging": 2,
+    "media-drm-pqc": 3,
     "merkle-tree-certs": 5,
     "migration-program": 4,
     "pqc-101": 4,
@@ -732,6 +751,7 @@
     "secure-boot-pqc": 6,
     "skills-team-structure": 2,
     "soc-implementation-pqc": 5,
+    "software-supply-chain-pqc": 3,
     "standards-bodies": 5,
     "stateful-signatures": 5,
     "tls-basics": 4,
@@ -1696,6 +1716,32 @@
         "label": "PQ Ciphersuites & Crypto"
       }
     ],
+    "media-drm-pqc": [
+      {
+        "id": "threat-model",
+        "label": "Why Content Protection Differs"
+      },
+      {
+        "id": "disc-keys",
+        "label": "The AACS Key Ladder"
+      },
+      {
+        "id": "broadcast-ci-plus",
+        "label": "Broadcast: CI Plus"
+      },
+      {
+        "id": "streaming-transport",
+        "label": "Streaming: Transport and Licenses"
+      },
+      {
+        "id": "provenance",
+        "label": "Provenance: C2PA Content Credentials"
+      },
+      {
+        "id": "migration-surface",
+        "label": "What a Migration Would Touch"
+      }
+    ],
     "merkle-tree-certs": [
       {
         "id": "cert-bloat",
@@ -2259,6 +2305,28 @@
       {
         "id": "how-to-act",
         "label": "How to Act"
+      }
+    ],
+    "software-supply-chain-pqc": [
+      {
+        "id": "chain",
+        "label": "The Chain, One Control per Link"
+      },
+      {
+        "id": "status",
+        "label": "Status Map: Signature Links"
+      },
+      {
+        "id": "updates",
+        "label": "Update Frameworks: TUF and Uptane"
+      },
+      {
+        "id": "provenance",
+        "label": "Provenance and Attestation"
+      },
+      {
+        "id": "transition",
+        "label": "Changing an Algorithm After Shipping"
       }
     ],
     "standards-bodies": [
@@ -3234,6 +3302,20 @@
         "label": "OpenMLS ↔ PKCS#11 Provider Architecture"
       }
     ],
+    "media-drm-pqc": [
+      {
+        "id": "key-ladder-explorer",
+        "label": "Key Ladder Explorer"
+      },
+      {
+        "id": "spec-vs-quantum",
+        "label": "Spec vs Quantum"
+      },
+      {
+        "id": "provenance-algorithm-check",
+        "label": "Provenance Algorithm Check"
+      }
+    ],
     "merkle-tree-certs": [
       {
         "id": "build-tree",
@@ -3793,6 +3875,20 @@
       {
         "id": "self-assessment",
         "label": "SOC Readiness"
+      }
+    ],
+    "software-supply-chain-pqc": [
+      {
+        "id": "roles-and-thresholds",
+        "label": "Roles and Thresholds"
+      },
+      {
+        "id": "provenance-chain-check",
+        "label": "Provenance Chain Check"
+      },
+      {
+        "id": "transition-planner",
+        "label": "Transition Planner"
       }
     ],
     "standards-bodies": [
@@ -4651,6 +4747,24 @@
           "duration": "60 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"
+        },
+        {
+          "id": "media-drm-pqc",
+          "lm_id": "LM-077",
+          "title": "Media, Entertainment & DRM PQC",
+          "description": "How content protection and content provenance use public-key cryptography, read from the editions themselves: the AACS key ladder, CI Plus broadcast conditional access, the MovieLabs ECP specification, streaming licenses and transport, and C2PA Content Credentials, set against what NIST IR 8547 says about the primitives they use.",
+          "duration": "60 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p5"
+        },
+        {
+          "id": "software-supply-chain-pqc",
+          "lm_id": "LM-078",
+          "title": "Software Supply Chain PQC",
+          "description": "How the signature links of a software supply chain stand on post-quantum signatures, read from the documents: a status map across Sigstore, the CA/Browser Forum code signing requirements, UEFI, COSE, CMS, X.509, OpenPGP and SUIT; the TUF and Uptane update frameworks; SLSA v1.2 and in-toto provenance; and what changes when a verifier has already shipped.",
+          "duration": "40 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p5"
         }
       ]
     }
@@ -4830,6 +4944,18 @@
       "algorithms": ["ML-KEM", "ML-DSA"],
       "standards": ["JOSE"]
     },
+    "media-drm-pqc": {
+      "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA", "ECDSA", "ECDH", "RSA"],
+      "standards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST IR 8547",
+        "NIST SP 800-57",
+        "RFC 10024",
+        "RFC 3161"
+      ]
+    },
     "merkle-tree-certs": {
       "algorithms": ["LMS/XMSS"],
       "standards": ["NIST SP 800-208"]
@@ -4956,6 +5082,10 @@
     "soc-implementation-pqc": {
       "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA"],
       "standards": ["RFC 9846", "NIST SP 800-227", "NIST IR 8547"]
+    },
+    "software-supply-chain-pqc": {
+      "algorithms": ["ML-DSA", "SLH-DSA", "LMS/XMSS", "ECDSA"],
+      "standards": ["FIPS 204", "FIPS 205", "NIST SP 800-208", "NSA CNSA 2.0", "RFC 9580"]
     },
     "standards-bodies": {
       "algorithms": ["ML-DSA", "ML-KEM"],

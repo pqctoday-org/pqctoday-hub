@@ -696,6 +696,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('IoT & Embedded Device PQC', 'PT90M', 'Advanced'),
   },
 
+  '/learn/software-supply-chain-pqc': {
+    title: 'Software Supply Chain PQC — Signatures, TUF, Uptane & SLSA | PQC Today',
+    description:
+      'The signature links of a software supply chain read from their documents: a status map across Sigstore, code signing requirements, UEFI, COSE, CMS, X.509 and OpenPGP, TUF and Uptane roles and thresholds, SLSA and in-toto provenance, and changing an algorithm after a verifier has shipped.',
+    canonical: `${BASE_URL}/learn/software-supply-chain-pqc`,
+    structuredData: buildModuleSchema('Software Supply Chain PQC', 'PT40M', 'Intermediate'),
+  },
+
   '/learn/data-asset-sensitivity': {
     title: 'Data & Asset Sensitivity Assessment — NIST RMF, ISO 27005, FAIR, DORA | PQC Today',
     description:
@@ -758,6 +766,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       'The federal post-quantum policy layer: the CNSA 2.0 suite, the dated CNSSP 15 milestones for National Security Systems, CSfC, Federal PKI and its draft ML-DSA/ML-KEM certificate profile, and PQC procurement requirements.',
     canonical: `${BASE_URL}/learn/government-defense-pqc`,
     structuredData: buildModuleSchema('Government & Defense PQC', 'PT60M', 'Advanced'),
+  },
+  '/learn/media-drm-pqc': {
+    title: 'Media, Entertainment & DRM PQC — AACS, CI Plus, ECP & C2PA | PQC Today',
+    description:
+      'Content protection and content provenance read from the editions themselves: the AACS key ladder, CI Plus conditional access, the MovieLabs ECP specification, streaming licenses and C2PA Content Credentials, set against NIST IR 8547.',
+    canonical: `${BASE_URL}/learn/media-drm-pqc`,
+    structuredData: buildModuleSchema('Media, Entertainment & DRM PQC', 'PT60M', 'Intermediate'),
   },
   '/learn/trust-services-pqc': {
     title: 'Trust Services & Long-Term Signatures — Timestamping, LTV & PQC | PQC Today',

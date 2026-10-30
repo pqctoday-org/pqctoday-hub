@@ -31,6 +31,14 @@ function algoToMode(algo: SSHKexAlgorithm): 'classical' | 'pqc' | 'spec-only' {
   return 'spec-only'
 }
 
+/** Share names as each spec writes them: RFC 8731 uses Q_C / Q_S, the ML-KEM
+ *  hybrid draft (draft-ietf-sshm-mlkem-hybrid-kex) uses C_INIT / S_REPLY. */
+function shareLabels(mode: 'classical' | 'pqc'): { client: string; server: string } {
+  return mode === 'pqc'
+    ? { client: 'Client share (C_INIT)', server: 'Server share (S_REPLY)' }
+    : { client: 'Client share (Q_C)', server: 'Server share (Q_S)' }
+}
+
 function CompareCell({
   label,
   spec,
@@ -38,7 +46,8 @@ function CompareCell({
   unit = 'B',
 }: {
   label: string
-  spec: number
+  /** Omitted for measurements the spec has no value for (wall-time). */
+  spec?: number
   live: number | null
   unit?: string
 }) {
@@ -46,18 +55,26 @@ function CompareCell({
   return (
     <div className="rounded border border-border/60 bg-muted/20 p-2.5 space-y-0.5">
       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>
-      <p className="text-sm font-mono text-foreground">
-        {spec.toLocaleString()} {unit}
-        <span className="text-[10px] text-muted-foreground"> spec</span>
-      </p>
-      {live !== null && (
-        <p
-          className={`text-xs font-mono ${matches ? 'text-status-success' : 'text-status-warning'}`}
-        >
-          {matches ? '✓' : '≠'} {live.toLocaleString()} {unit}
-          <span className="text-[10px]"> live</span>
+      {spec !== undefined && (
+        <p className="text-sm font-mono text-foreground">
+          {spec.toLocaleString()} {unit}
+          <span className="text-[10px] text-muted-foreground"> spec</span>
         </p>
       )}
+      {live !== null &&
+        (spec === undefined ? (
+          <p className="text-sm font-mono text-foreground">
+            {live.toLocaleString()} {unit}
+            <span className="text-[10px] text-muted-foreground"> live</span>
+          </p>
+        ) : (
+          <p
+            className={`text-xs font-mono ${matches ? 'text-status-success' : 'text-status-warning'}`}
+          >
+            {matches ? '✓' : '≠'} {live.toLocaleString()} {unit}
+            <span className="text-[10px]"> live</span>
+          </p>
+        ))}
     </div>
   )
 }
@@ -95,6 +112,8 @@ function RunnerInner({ algorithm }: Props) {
       sshEngine.bindHsm({ module: moduleRef.current, hSession: hSessionRef.current })
       setPhase('running')
       const r = await sshEngine.runHandshake(mode)
+      // The engine reports a failed handshake in the result, not by throwing.
+      if (!r.connection_ok) throw new Error(r.error ?? 'SSH handshake failed')
       setResult(r)
       setPhase('done')
     } catch (err) {
@@ -140,6 +159,7 @@ function RunnerInner({ algorithm }: Props) {
   }
 
   const isRunning = phase === 'initializing' || phase === 'running'
+  const labels = shareLabels(mode)
   const runLabel =
     phase === 'initializing'
       ? 'Initializing softhsmv3…'
@@ -196,27 +216,19 @@ function RunnerInner({ algorithm }: Props) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <CompareCell
-          label="KEX init share"
-          spec={sizes.clientKexDHInitBytes}
+          label={labels.client}
+          spec={sizes.publicKeyBytes}
           live={result?.kex_share_bytes ?? null}
         />
         <CompareCell
-          label="KEX reply share"
-          spec={sizes.serverKexDHReplyBytes}
+          label={labels.server}
+          spec={sizes.ciphertextOrShareBytes}
           live={result?.kex_reply_share_bytes ?? null}
         />
         <CompareCell
-          label="Pub component"
-          spec={sizes.publicKeyBytes}
-          live={
-            result ? (mode === 'pqc' ? result.kex_share_bytes - 32 : result.kex_share_bytes) : null
-          }
-        />
-        <CompareCell
           label="Wall-time (live only)"
-          spec={0}
           live={result ? Math.round(result.auth_ms) : null}
           unit="ms"
         />

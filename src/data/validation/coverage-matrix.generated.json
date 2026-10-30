@@ -3,11 +3,11 @@
   "$disclaimer": "PQC Today executes selected public reference vectors, standards tests, conformance cases, and implementation probes. A passing result is evidence only for the identified test, operation, parameters, implementation build, and target. It is not an ACVTS verdict, a CAVP/CMVP certificate, or proof of exhaustive conformance.",
   "schema": "pqctoday.coverage-matrix/v1",
   "inputs": {
-    "src/data/validation/mechanism-inventory.generated.json": "f4c12be298468dd79920abc998a065cbc8b0e6bbcfbada48e00b5178558ab47d",
+    "src/data/validation/mechanism-inventory.generated.json": "7030d2a4dbd2b54b7f5ffd7da1c83ad556e390be13b59c21f7a3b9f1c9c68c68",
     "src/data/validation/capability-map.json": "1048fb1080cc877891d59ff825d98b26d220bde12781c98cdaf97749a27b926a",
     "src/data/validation/vector-manifest.json": "9d8a90ca8719e8e27c42cda642ab3f42f9fcbb3531cd1b6c2d182c01d87be1fc",
     "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
-    "src/data/validation/open-gaps.json": "a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f",
+    "src/data/validation/open-gaps.json": "89d1d1dae18e4574a84cc39d37b0cc13e4f46d12b3f7af8d34272eef281cf835",
     "src/data/validation/testRegistry.ts": "2e4bb93416906300a42b865c66c859004ac0405a1b841c749cb8c46dd5e53e96"
   },
   "statuses": [
@@ -76,15 +76,15 @@
       "label": "Rust",
       "mechanismCount": 179,
       "inventorySha256": "e14b4db3a4785dd1c8bdaf46db1f4fd427f8500a4970b20280479ded04973ed6",
-      "sourceCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
+      "sourceCommit": "5443f045961e32ced16fdecc48b2700a4a1bc015",
       "artifacts": [
         {
           "path": "src/wasm/softhsmrustv3_bg.wasm",
-          "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789"
+          "sha256": "fbabbc6880500e78f7f410088c4c05ac773513f285f1c6db8606cf8f8ce08ef0"
         },
         {
           "path": "src/wasm/softhsmrustv3_bg.js",
-          "sha256": "8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8"
+          "sha256": "1e4692718112fdceeb7373ab3d8eab348b5b067fc2fb996bbe05cb8bb2342d88"
         }
       ]
     }
@@ -92,7 +92,7 @@
   "artifactKinds": {
     "wasm": {
       "status": "registered; partly recorded",
-      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-22, hub 312f5fadd); 14092 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-23, hub 919fa5f66). Tests without a recorded result are never reported as passed."
+      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 14092 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub e64a414cb). Tests without a recorded result are never reported as passed."
     },
     "native": {
       "status": "not-run",
@@ -114,8 +114,8 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
-      "recordedAt": "2026-10-22",
+      "hubCommit": "9e61dd12cd10947bba86e05456b51686b8b3a86c",
+      "recordedAt": "2026-10-30",
       "results": 4988
     },
     {
@@ -128,8 +128,8 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "312f5faddc918a704efbb1e603ef3b99916d6856",
-      "recordedAt": "2026-10-22",
+      "hubCommit": "9e61dd12cd10947bba86e05456b51686b8b3a86c",
+      "recordedAt": "2026-10-30",
       "results": 96
     },
     {
@@ -138,12 +138,12 @@
       "artifactKind": "wasm",
       "host": "Node.js via vitest local venue (not a browser)",
       "environment": {
-        "node": "v24.11.1",
+        "node": "v22.23.1",
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "919fa5f66fe307716b2f5d45e78c5620727a7df6",
-      "recordedAt": "2026-10-23",
+      "hubCommit": "e64a414cb9e7ad3feb076ef6efefd7e7a1addf57",
+      "recordedAt": "2026-10-30",
       "results": 14092
     }
   ],
@@ -627,18 +627,18 @@
     },
     {
       "id": "rust-no-contributory-behaviour-check-ecdh",
-      "title": "Rust: X25519/X448 still accepts a few low-order / zero-shared-secret points (5 + 2 of Wycheproof's; C++ fewer) — mostly fixed by hsm #290",
-      "detail": "CKM_ECDH1_DERIVE on the Rust engine, measured over Wycheproof x25519_test and x448_test: of 42 ZeroSharedSecret cases it refuses only 9 and RETURNS THE ALL-ZERO SHARED SECRET for 33; of 45 LowOrderPublic cases it refuses only 9 and computes with 36. The C++ engine refuses 42 of 42 and 42 of 45. RFC 7748 section 6.1 recommends checking for an all-zero output (the contributory-behaviour check). Wycheproof classes these cases 'acceptable', so NO ROW FAILS — the gap is the cross-engine divergence and the missing check, not a failing assertion, and it is recorded here precisely because a green suite would otherwise hide it. Exact counts are pinned in the test so a fix on either engine moves the pin. Note this is the shape our corpus is structurally blind to: an engine that computes correctly on good input while accepting input it should refuse. Evidence: independent-oracle — Project Wycheproof, maintained by Google / C2SP, pinned at commit 3fa63dd0344abb611f1fb1d77e119938603ea230 (2026-09-02), Apache-2.0. NOT a standards publication: the permitted claim is agreement with that oracle version for the case, never conformance. UPDATE 2026-09-27, measured on the bundles built from hsm 1c5ed893 (hsm #290 added the check): on the Wycheproof X25519/X448 files Rust now refuses 40 of 45 LowOrderPublic cases (was 9; C++ 42) and 40 of 42 ZeroSharedSecret cases (was 9; C++ 42). The remaining accepted cases are Wycheproof 'acceptable' (either outcome allowed), so no row fails; the row stays open only for the residual 5 + 2 accepted points versus C++'s stricter behaviour.",
+      "title": "X25519/X448: both engines accept the same 3 of Wycheproof's 45 low-order public keys (graded acceptable) and refuse every zero-shared-secret case",
+      "detail": "CKM_ECDH1_DERIVE over Wycheproof x25519_test and x448_test, measured on the shipped engine build: of 42 ZeroSharedSecret cases both the Rust and the C++ engine refuse all 42, so neither returns the all-zero shared secret; of 45 LowOrderPublic cases both refuse 42 and compute with the same 3. RFC 7748 section 6.1 says both parties MAY check whether the shared secret is the all-zero value and abort if so, and RFC 9180 section 7.1.4 requires HPKE recipients to check. Wycheproof classes these cases 'acceptable', so NO ROW FAILS; the three accepted keys are recorded as a posture rather than a defect, and exact counts are pinned in the test so a change in either engine is visible. Earlier engine builds differed (Rust refused 9, then 40, of the 42 zero-shared-secret cases; C++ refused 42). Evidence: independent-oracle — Project Wycheproof, maintained by Google / C2SP, pinned at commit 3fa63dd0344abb611f1fb1d77e119938603ea230 (2026-09-02), Apache-2.0. NOT a standards publication: the permitted claim is agreement with that oracle version for the case, never conformance.",
       "planItem": "E",
       "owner": "unassigned",
-      "status": "open",
-      "scope": "Rust (wasm) — CKM_ECDH1_DERIVE X25519/X448",
+      "status": "accepted-limitation",
+      "scope": "C++ and Rust (wasm) — CKM_ECDH1_DERIVE X25519/X448",
       "origin": "curated"
     },
     {
       "id": "both-engines-compute-with-twist-points",
       "title": "Both engines compute with X25519/X448 points on the twist (defensible; posture recorded rather than assumed)",
-      "detail": "Of 455 Wycheproof Twist cases, C++ refuses 9 and Rust refuses 3; both compute with the rest. This is DEFENSIBLE under RFC 7748, whose curve choice makes the twist secure, so it is recorded to state the posture explicitly rather than leave it as an unexamined default. Not a defect. Listed so that a future reader does not mistake the passing rows for evidence that twist points are rejected. Evidence: independent-oracle — Project Wycheproof, maintained by Google / C2SP, pinned at commit 3fa63dd0344abb611f1fb1d77e119938603ea230 (2026-09-02), Apache-2.0. NOT a standards publication: the permitted claim is agreement with that oracle version for the case, never conformance.",
+      "detail": "Of 455 Wycheproof Twist cases, both engines refuse 9 and compute with the other 446. This is DEFENSIBLE under RFC 7748, whose curve choice makes the twist secure, so it is recorded to state the posture explicitly rather than leave it as an unexamined default. Not a defect. Listed so that a future reader does not mistake the passing rows for evidence that twist points are rejected. Evidence: independent-oracle — Project Wycheproof, maintained by Google / C2SP, pinned at commit 3fa63dd0344abb611f1fb1d77e119938603ea230 (2026-09-02), Apache-2.0. NOT a standards publication: the permitted claim is agreement with that oracle version for the case, never conformance.",
       "planItem": "E",
       "owner": "unassigned",
       "status": "open",

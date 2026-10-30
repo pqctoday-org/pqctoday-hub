@@ -327,7 +327,8 @@ export const ContainerSigningMigration: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <strong>Recommendation:</strong> Migrate to Notation with ML-DSA-65 support (available now
           via AWS plugin) for new deployments. For keyless signing, wait for Sigstore/cosign PQC
-          support (2026). Avoid DCT (Docker Content Trust) — Notary v1 has no PQC roadmap.
+          support (2026). Avoid DCT (Docker Content Trust): it and the Notary v1 service are being
+          retired, with full shutdown on 8 December 2026.
         </p>
       </div>
 

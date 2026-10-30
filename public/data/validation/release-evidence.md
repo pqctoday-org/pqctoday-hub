@@ -68,7 +68,7 @@ Artifacts:
 
 ### Rust engine
 
-179 mechanisms · 2,235 advertised cells (denominator) · 8 unsupported cells shown separately · source commit `d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0`
+179 mechanisms · 2,235 advertised cells (denominator) · 8 unsupported cells shown separately · source commit `5443f045961e32ced16fdecc48b2700a4a1bc015`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
@@ -86,14 +86,14 @@ Artifacts:
 
 Artifacts:
 
-- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789`
-- `src/wasm/softhsmrustv3_bg.js` — SHA-256 `8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8`
+- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `fbabbc6880500e78f7f410088c4c05ac773513f285f1c6db8606cf8f8ce08ef0`
+- `src/wasm/softhsmrustv3_bg.js` — SHA-256 `1e4692718112fdceeb7373ab3d8eab348b5b067fc2fb996bbe05cb8bb2342d88`
 
 ## Recorded runs
 
-- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 4,988 results: cpp 2,434 pass, 60 skip; rust 2,469 pass, 25 skip.
-- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-22 at hub `312f5faddc91`; 96 results: rust 96 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-23 at hub `919fa5f66fe3`; 14,092 results: cpp 7,041 pass, 1 fail, 4 skip; rust 7,027 pass, 19 fail.
+- `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `9e61dd12cd10`; 4,988 results: cpp 2,434 pass, 60 skip; rust 2,469 pass, 25 skip.
+- `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `9e61dd12cd10`; 96 results: rust 96 pass.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `e64a414cb9e7`; 14,092 results: cpp 7,041 pass, 1 fail, 4 skip; rust 7,027 pass, 19 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
@@ -119,11 +119,11 @@ Artifacts:
 
 Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `d1f62a418ce0` (2026-10-22).
 
-| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                    |
-| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | ------------------------------------------------------------------------------- |
-| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,098 |    0 | not reported | 1,098 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it |
-| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                               |
+| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                     |
+| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | -------------------------------------------------------------------------------- |
+| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it  |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,098 |    0 | not reported | 1,098 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `5443f045961e`: 17 commit(s) ahead of the engine commit, 0 behind it |
+| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                |
 
 ## Cross-target evidence runs
 
@@ -245,7 +245,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-71 entries — by status: open 64, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 41; owner unassigned: 71.
+71 entries — by status: open 63, in-progress 1, accepted-limitation 7; by origin: curated 30, generated 41; owner unassigned: 71.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
@@ -271,7 +271,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 | Ed25519 / Ed448: small-order public points are not rejected, and NO official NIST vector exists to test it                                           | open                | E               | unassigned |
 | Instrument scope mistaken for coverage: three corpus blind spots plus the reachability holes that hid them                                           | open                | E               | unassigned |
 | A KAT harness must READ a parameter the vector states, never assume it — and an ungated harness accumulates its own defects                          | open                | E               | unassigned |
-| Rust: X25519/X448 still accepts a few low-order / zero-shared-secret points (5 + 2 of Wycheproof's; C++ fewer) — mostly fixed by hsm #290            | open                | E               | unassigned |
+| X25519/X448: both engines accept the same 3 of Wycheproof's 45 low-order public keys (graded acceptable) and refuse every zero-shared-secret case    | accepted-limitation | E               | unassigned |
 | Both engines compute with X25519/X448 points on the twist (defensible; posture recorded rather than assumed)                                         | open                | E               | unassigned |
 | 145 in-scope Wycheproof files (35,193 cases, 17,406 invalid) are not yet executed                                                                    | open                | E               | unassigned |
 | The hsm gate builds the WASM engine with a 2 MiB stack while the shipped artifact uses 8 MiB — it validates a configuration nobody ships             | open                | E               | unassigned |
@@ -335,12 +335,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `38575333776fd6ff726e268a5255f7e1c2668640232269864b703eadaa310584` |
+| `public/data/validation/coverage-matrix.json`                           | `cce2869ca43b7109c48f70f7e4697d8ddd25b287ae7f7e8d473212a6fddd15a4` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
-| `src/data/validation/native-conformance.generated.json`                 | `3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2` |
-| `src/data/validation/open-gaps.json`                                    | `a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f` |
-| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |
-| `src/data/validation/run-results/wasm-node-katRunner.json`              | `42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `ec0a2a98ca0f2c7c32754a4b43f5999a6a929d819597be4a9326953a697e53c6` |
+| `src/data/validation/native-conformance.generated.json`                 | `9989ddbe108ebed6ba7a0b4766c92795f3d754f292ea3bd597d5d7ee0ab59425` |
+| `src/data/validation/open-gaps.json`                                    | `89d1d1dae18e4574a84cc39d37b0cc13e4f46d12b3f7af8d34272eef281cf835` |
+| `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a` |
+| `src/data/validation/run-results/wasm-node-katRunner.json`              | `f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `88a03cd5ad6306be37e63ba523e56add1cb71dad2a1a837d0d42772de3eb768d` |
 | `src/data/validation/validation-counts.generated.json`                  | `3396a29fc05d1ff480fc272047c1498451522fad04ed6c56c789d772dbd0c9ce` |
 | `src/data/validation/vector-manifest.json`                              | `9d8a90ca8719e8e27c42cda642ab3f42f9fcbb3531cd1b6c2d182c01d87be1fc` |

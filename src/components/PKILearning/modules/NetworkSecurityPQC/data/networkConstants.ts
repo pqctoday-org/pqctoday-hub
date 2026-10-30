@@ -14,7 +14,8 @@ export interface NGFWVendor {
   mlKemSupport: boolean
   mlDsaSupport: boolean
   hybridSupport: boolean
-  roadmapYear: number
+  /** Omitted when the vendor's own pages do not say. */
+  roadmapYear?: number
   hardwareOffload: boolean
   notes: string
 }
@@ -136,13 +137,13 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     tier: 'enterprise',
     pqcReadiness: 'beta',
     tlsInspectionPQC: false,
-    mlKemSupport: true,
+    mlKemSupport: false,
     mlDsaSupport: false,
-    hybridSupport: true,
+    hybridSupport: false,
     roadmapYear: 2026,
     hardwareOffload: false,
     notes:
-      'Junos 24.x introduces hybrid X25519+ML-KEM-768 for IPsec and SSL proxy. SRX5000 line planned for hardware offload in 2026. ML-DSA certificate inspection on roadmap for Junos 24.2R1.',
+      'Junos OS 25.4R1 adds ML-DSA-87 signatures for software images. Juniper documents post-quantum pre-shared keys (RFC 8784) for IPsec; the product catalog says an ML-KEM hybrid IKEv2 key exchange is not yet shipping in Junos OS as of release 26.2R1.',
   },
   {
     id: 'check-point',
@@ -199,10 +200,9 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     mlKemSupport: true,
     mlDsaSupport: false,
     hybridSupport: true,
-    roadmapYear: 2025,
     hardwareOffload: false,
     notes:
-      'pfSense CE has no PQC roadmap. OPNsense 24.7+ includes experimental hybrid ML-KEM IKEv2 support via strongSwan plugin. OPNsense Suricata IDS/IPS supports PQC protocol detection.',
+      'pfSense CE 2.9.0 added post-quantum key exchange algorithms to its SSH daemon and updated strongSwan to 6.0.3; its release notes do not describe post-quantum IPsec options. OPNsense 26.7.4 and later offers hybrid IKEv2 key exchanges that pair X25519 or P-256 with ML-KEM-768, or P-384 with ML-KEM-1024, through strongSwan.',
   },
 ]
 

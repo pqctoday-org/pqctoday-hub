@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.2',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-30',
 
   standards: [
     getStandard('FIPS 203'),
@@ -153,7 +153,7 @@ export const timelineMilestones = [
   },
   {
     year: String(NIST_DEPRECATION.deprecateClassical),
-    event: 'NIST target: deprecate RSA-2048 and 112-bit ECC',
+    event: 'NIST target: deprecate RSA, ECC and DH (all key sizes, 112-bit security and up)',
     phase: 'Deprecation',
   },
   {

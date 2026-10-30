@@ -39,14 +39,14 @@
 - 5 signing tools: cosign (roadmap/2026), Notation (beta/2025), GPG/OpenPGP (roadmap/2026), Sigstore Bundle (roadmap/2027), Docker Content Trust (not-planned)
 - ML-DSA-65 signature size: 3,309B vs ECDSA P-256: 64B (52× larger)
 - Notation + AWS Crypto plugin: best option for ML-DSA today
-- Docker Content Trust: migrate immediately — Notary v1 maintenance mode, no PQC roadmap
+- Docker Content Trust: being fully retired with the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained); Docker names Sigstore/Cosign and Notation as the alternatives and says nothing about post-quantum signatures (Docker, 16 June 2026)
 - SLH-DSA preferred for SBOMs (stateless, long signature lifetime, 20+ year validity)
 
 ### Step 4: Policy-as-Code Enforcer
 
 - 6 policy rules: 4 OPA Gatekeeper ConstraintTemplates, 2 Kyverno ClusterPolicies
 - Blocked: RSA, ECDSA, Ed25519; Required: ML-DSA-44/65/87, SLH-DSA-128, X25519MLKEM768
-- SLSA Level mapping: Level 3 requires ML-DSA or SLH-DSA provenance; Level 4 requires ML-DSA-87 or SLH-DSA-256
+- SLSA build levels: L2 requires signed provenance from a hosted build platform and L3 a hardened build platform; SLSA (v1.2) names no signature algorithm and has no post-quantum text. The ML-DSA and SLH-DSA provenance rules in this module are a projection, not a SLSA requirement
 - Deployment strategy: Audit mode first → 2-week baseline → Enforce mode rollout
 
 ### Step 5: Crypto Posture Monitor (4 tabs)

@@ -20,7 +20,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
       'Keyless signing via OIDC (no long-lived private key to protect)',
       'OCI-native — signatures stored in registry alongside images',
       'Rekor transparency log provides append-only audit trail',
-      'Widely adopted in SLSA Level 3+ build systems',
+      'Widely used for signing build artifacts in supply chain pipelines',
     ],
     limitations: [
       "Current ECDSA P-256 signature vulnerable to Shor's algorithm",
@@ -67,12 +67,12 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: false,
     pqcReadiness: 'roadmap',
     pqcNotes:
-      'OpenPGP PQC draft (draft-ietf-openpgp-pqc) adds ML-DSA-44/65/87 and SLH-DSA support. Note: GnuPG is pursuing the LibrePGP format (diverging from RFC 9580); Sequoia-PGP implements RFC 9580 (OpenPGP v6). PQC support awaits draft finalization in both ecosystems. Migration requires re-signing all artifacts with new PQC keys.',
+      'RFC 9980 (Standards Track, June 2026, the former draft-ietf-openpgp-pqc) adds post-quantum OpenPGP: for signatures a conformant implementation MUST implement the composite scheme ML-DSA-65+Ed25519 and SHOULD also implement ML-DSA-87+Ed448; standalone SLH-DSA is optional (MAY). Note: GnuPG is pursuing the LibrePGP format (diverging from RFC 9580); Sequoia-PGP implements RFC 9580 (OpenPGP v6). Whether each implements RFC 9980 is not stated in the held documents. Migration requires re-signing all artifacts with new PQC keys.',
     pqcAlgorithm: 'ml-dsa',
     estimatedPqcYear: '2026',
     strengths: [
       'Ubiquitous — supported by every Linux package manager',
-      'OpenPGP PQC draft adds ML-DSA and SLH-DSA (format details still being finalized)',
+      'RFC 9980 adds post-quantum signatures to OpenPGP: composite ML-DSA schemes and standalone SLH-DSA',
       'Decentralized key distribution via keyservers',
     ],
     limitations: [
@@ -119,7 +119,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: false,
     pqcReadiness: 'not-planned',
     pqcNotes:
-      "Notary v1 (DCT backend) has no PQC roadmap and is in maintenance mode. Notary v2 (now Notation) is the active successor. Ed25519 is a Schnorr-type signature scheme — quantum-vulnerable to Shor's algorithm despite being resistant to classical attacks. Migrate to Notation + ML-DSA.",
+      "Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained) and names Sigstore/Cosign and Notation as the alternatives; its guidance says nothing about post-quantum signatures. Ed25519 is a Schnorr-type signature scheme — quantum-vulnerable to Shor's algorithm despite being resistant to classical attacks.",
     estimatedPqcYear: 'N/A',
     strengths: [
       'Built into Docker CLI (DOCKER_CONTENT_TRUST=1)',
@@ -127,9 +127,9 @@ export const SIGNING_TOOLS: SigningTool[] = [
     ],
     limitations: [
       "Ed25519 is quantum-vulnerable (Shor's algorithm breaks discrete log)",
-      'Notary v1 is in maintenance mode — no PQC planned',
+      'DCT and the Notary v1 service are being fully retired (full shutdown 8 December 2026)',
       'Not OCI-native: signatures stored in separate Notary server',
-      'Migrate to Notation immediately — DCT migration path is EOL',
+      'Migrate to an OCI-native signing tool such as Sigstore/Cosign or Notation (Docker’s guidance)',
     ],
   },
 ]

@@ -73,7 +73,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'Vendor Matrix',
       badgeColor: 'bg-destructive/20 text-status-error border-destructive/50',
       observe:
-        'Vendor support varies widely and moves fast: as of mid-2026 Palo Alto (PAN-OS 11.x) leads with partial PQC TLS inspection, while Cisco and Fortinet are earlier-stage and several others are on later roadmaps. Open-source pfSense/OPNsense already supports hybrid ML-KEM via OpenSSL 3.x but lacks TLS inspection. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
+        'Vendor support varies widely and moves fast: as of mid-2026 Palo Alto (PAN-OS 11.x) leads with partial PQC TLS inspection, while Cisco and Fortinet are earlier-stage and several others are on later roadmaps. Open-source OPNsense offers hybrid ML-KEM IPsec key exchanges from release 26.7.4. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
       config: { step: 3 },
     },
     {

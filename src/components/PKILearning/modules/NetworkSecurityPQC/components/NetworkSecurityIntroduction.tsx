@@ -204,7 +204,7 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
                           </span>
                         </td>
                         <td className="py-2 px-2 text-center font-mono text-muted-foreground">
-                          {v.roadmapYear}
+                          {v.roadmapYear ?? 'Not stated'}
                         </td>
                       </tr>
                     )
@@ -359,7 +359,7 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
                           : 'Roadmap'}
                     </span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded border font-bold bg-muted text-muted-foreground border-border">
-                      {vendor.roadmapYear}
+                      {vendor.roadmapYear ?? 'Not stated'}
                     </span>
                   </div>
                 </div>

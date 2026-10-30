@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'confidential-computing',
   version: '1.0.0',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-30',
 
   standards: [
     getStandard('FIPS 203'),
@@ -36,11 +36,10 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('IETF RFC 5649'),
-    // DECLARED 2026-08-23: this module names "RFC 9360" to a reader and cited
-    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
-    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
-    // and a misnamed RFC 9700 row earlier the same day.
-    getStandard('RFC-9360-CBOR-Object-Signing-and-Encryption-COSE-Header-Para'),
+    // 2026-10-30: the step note named "RFC 9360" for COSE_Sign1, but RFC 9360 is "Header
+    // Parameters for Carrying and Referencing X.509 Certificates"; COSE_Sign1 is defined in
+    // RFC 9052, so that is the document this module declares.
+    getStandard('RFC 9052'),
     // DECLARED 2026-08-23: this module names "SP 800-38F" to a reader and cited
     // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1

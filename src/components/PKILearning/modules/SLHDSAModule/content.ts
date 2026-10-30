@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'slh-dsa',
   version: '1.0.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-26',
+  lastEdited: '2026-10-30',
 
   standards: [
     getStandard('FIPS 205'),
@@ -29,13 +29,13 @@ export const content: ModuleContent = {
 
   narratives: {
     stateless:
-      'SLH-DSA eliminates state management complexity — no per-key signing counter, no risk of key exhaustion, safe for distributed and serverless deployments.',
+      'SLH-DSA eliminates state management complexity — no per-key signing counter, safe for distributed and serverless deployments. Its security analysis assumes at most 2^64 signatures per key pair (FIPS 205 §11), so the key is not unlimited.',
     signatureSize:
       'Signature sizes range from 7,856 B (SHA2-128s) to 49,856 B (SHAKE-256f) — significantly larger than classical ECDSA but with quantum-safe security.',
     tradeoff:
       '-s variants use fewer hypertree layers: smaller signatures but more hash rounds per layer. -f variants use more layers: faster signing but larger signatures.',
     context:
-      'FIPS 205 §9.2 context strings provide domain separation — they bind a signature to a specific protocol or application context, preventing cross-context forgery.',
+      'FIPS 205 §10.2: the signer can pass a context string (at most 255 bytes, empty by default) that is signed together with the message, so the verifier must supply the same context.',
     deterministic:
       'FIPS 205 §9.2 deterministic signing uses PK.seed for opt_rand and produces identical signatures with the same key, message, context and settings. This demonstrates repeatability, not random-generator quality or resistance to attacks.',
   },

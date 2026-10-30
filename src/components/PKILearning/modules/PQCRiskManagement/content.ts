@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
   version: '1.0.1',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-30',
 
   standards: [
     // Subject documents first. The accuracy spot-check samples this list by even
@@ -26,6 +26,8 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('NIST CSWP 39'),
     getStandard('RFC 9370'),
+    // the VPN risk scenarios name the ML-KEM-in-IKEv2 draft as the ML-KEM exchange RFC 9370 carries
+    getStandard('draft-ietf-ipsecme-ikev2-mlkem-09'),
     // DECLARED 2026-08-23: this module names SP 800-131A for algorithm transition guidance and cited nothing for it. Found by
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-131A" against a row filed as NIST-SP-800-131A-Rev3.

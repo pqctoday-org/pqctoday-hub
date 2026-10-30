@@ -162,9 +162,9 @@ export const SSH_KEX_OPTIONS: ReadonlyArray<{
   id: SshKexAlg
   label: string
   family: 'classical' | 'hybrid' | 'pure'
-  /** Public-share bytes shipped by the client in KEX_ECDH_INIT (Q_C). */
+  /** Public-share bytes shipped by the client in KEX_ECDH_INIT (Q_C in RFC 8731, C_INIT in the ML-KEM hybrid draft). */
   clientShareBytes: number
-  /** Reply share bytes shipped by the server in KEX_ECDH_REPLY (Q_S). */
+  /** Reply share bytes shipped by the server in KEX_ECDH_REPLY (Q_S in RFC 8731, S_REPLY in the ML-KEM hybrid draft). */
   serverShareBytes: number
 }> = [
   {
@@ -506,8 +506,10 @@ async function runClassical(
 
   // Wire packets
   const host_pubkey_bytes = 4 + config.hostKey.length + 4 + 32
-  const kex_share_bytes = 36 // sshString(32B X25519 pub)
-  const kex_reply_share_bytes = 36
+  // Raw Q_C / Q_S, as in the hybrid path — the 4-byte string length is
+  // added where the packet sizes are built.
+  const kex_share_bytes = 32
+  const kex_reply_share_bytes = 32
   const host_sig_bytes = hostSig.length
   const client_sig_bytes = clientSig.length
   const client_pubkey_bytes = host_pubkey_bytes

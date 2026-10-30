@@ -403,6 +403,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'EMV chip card authentication, payment network PQC migration, tokenization, POS terminal crypto, and PCI DSS compliance.',
       icon: 'CreditCard',
     },
+    'software-supply-chain-pqc': {
+      label: 'Software Supply Chain PQC',
+      description:
+        'Reading the signature links of a software supply chain from their documents: the status of post-quantum signatures per ecosystem, TUF and Uptane roles and thresholds, SLSA and in-toto provenance, and changing an algorithm after a verifier has shipped.',
+      icon: 'FileCheck',
+    },
     'healthcare-pqc': {
       label: 'Healthcare PQC',
       description:
@@ -414,6 +420,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       description:
         'Avionics protocol constraints, satellite link budgets, DO-178C certification, export controls, and multi-decade fleet crypto interoperability.',
       icon: 'Rocket',
+    },
+    'media-drm-pqc': {
+      label: 'Media, Entertainment & DRM PQC',
+      description:
+        'Reading content-protection and provenance specifications precisely: the AACS key ladder, CI Plus, the MovieLabs ECP specification, streaming licenses, C2PA Content Credentials and NIST IR 8547.',
+      icon: 'Shield',
     },
     'automotive-pqc': {
       label: 'Automotive PQC',

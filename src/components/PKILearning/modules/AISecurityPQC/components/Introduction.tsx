@@ -192,10 +192,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </h4>
           <p className="text-sm text-foreground/70 mt-1">
             Provenance signatures must outlive the data they protect — potentially decades.
-            ECDSA-signed provenance records become forgeable post-CRQC, allowing retroactive
-            injection of synthetic data into verified datasets. Migration to{' '}
-            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> signatures ensures long-term
-            provenance trust.
+            Provenance records signed with ECDSA, RSA-PSS or Ed25519 (the signature algorithms C2PA
+            2.4 allows) become forgeable post-CRQC, allowing retroactive injection of synthetic data
+            into verified datasets. Migration to <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>{' '}
+            signatures ensures long-term provenance trust.
           </p>
         </div>
         <ReadingCompleteButton />
@@ -348,8 +348,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <p className="text-sm text-foreground/70 mt-1">
             Agent communication channels harvested today can be decrypted post-CRQC to reconstruct
             entire transaction histories, business strategies, and negotiation patterns. Long-lived
-            agent credentials (certificates with 1-year validity) are prime HNDL targets — a CRQC
-            could forge the agent&apos;s identity for impersonation attacks.
+            agent credentials (certificates with 1-year validity) are exposed once a CRQC exists: it
+            could forge the agent&apos;s identity and impersonate it. That is a forgery risk, not
+            harvest-now-decrypt-later, which concerns encrypted data (NIST IR 8547).
           </p>
         </div>
 
@@ -383,7 +384,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           {[
             {
               tech: 'Homomorphic Encryption',
-              desc: 'Compute on encrypted data without decrypting. Lattice-based schemes are inherently quantum-safe.',
+              desc: 'Compute on encrypted data without decrypting. Lattice-based schemes are believed to resist quantum attacks (FIPS 203 says this of ML-KEM).',
               safe: true,
             },
             {

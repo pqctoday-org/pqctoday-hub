@@ -13,8 +13,8 @@ import { loadPQCAlgorithmsData, getWithheldCatalogueRows } from './pqcAlgorithms
 
 it('accounts for every catalogue row with exact execution or an explicit reason', async () => {
   const visible = await loadPQCAlgorithmsData()
-  expect(algorithmCatalogue).toHaveLength(127)
-  expect(visible).toHaveLength(125)
+  expect(algorithmCatalogue).toHaveLength(130)
+  expect(visible).toHaveLength(128)
   expect(getWithheldCatalogueRows()).toMatchObject({ unclassified: 0, placeholder: 2 })
   for (const row of visible) {
     const cta = getAlgoCtasWithFallback(row.name)

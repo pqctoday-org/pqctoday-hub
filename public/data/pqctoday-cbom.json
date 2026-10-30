@@ -9299,7 +9299,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "pfSense uses OpenSSL/LibreSSL. PQC available when updated to OpenSSL 3.5+.",
+      "description": "pfSense CE 2.9.0 includes OpenSSL 3.5.7, and its SSH daemon (OpenSSH 10.3p1) offers post-quantum key exchange algorithms.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -9352,7 +9352,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "OPNsense uses LibreSSL/OpenSSL. LibreSSL 4.0+ includes ML-KEM support.",
+      "description": "OPNsense 26.7.4 (15 September 2026) added hybrid post-quantum variants as an additional key exchange to its IPsec settings, with strongSwan 6.1.0: X25519 or P-256 with ML-KEM-768, or P-384 with ML-KEM-1024.",
       "externalReferences": [
         {
           "type": "vcs",

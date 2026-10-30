@@ -9,7 +9,7 @@
  * AUTO-GENERATED — do not edit by hand.
  *
  * Data sourced from:
- *   - src/data/pqc_complete_algorithm_reference_10282026_r1.csv (latest reference snapshot)
+ *   - src/data/pqc_complete_algorithm_reference_10292026_r5.csv (latest reference snapshot)
  *   - HAND_CURATED blocks in scripts/generate-algorithm-properties.ts
  *     (algorithm selection, fips_standard normalization, per-algorithm overrides)
  *
@@ -482,6 +482,36 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     signatureOrCiphertextBytes: 0,
     securityLevel: null,
     fipsStandard: 'SP 800-56A',
+  },
+  'FFDH MODP-2048': {
+    name: 'FFDH MODP-2048',
+    family: 'Classical KEM',
+    publicKeyBytes: 256,
+    privateKeyBytes: 40,
+    sharedSecretBytes: 256,
+    signatureOrCiphertextBytes: 0,
+    securityLevel: null,
+    fipsStandard: null,
+  },
+  'FFDH MODP-3072': {
+    name: 'FFDH MODP-3072',
+    family: 'Classical KEM',
+    publicKeyBytes: 384,
+    privateKeyBytes: 53,
+    sharedSecretBytes: 384,
+    signatureOrCiphertextBytes: 0,
+    securityLevel: null,
+    fipsStandard: null,
+  },
+  'FFDH MODP-4096': {
+    name: 'FFDH MODP-4096',
+    family: 'Classical KEM',
+    publicKeyBytes: 512,
+    privateKeyBytes: 60,
+    sharedSecretBytes: 512,
+    signatureOrCiphertextBytes: 0,
+    securityLevel: null,
+    fipsStandard: null,
   },
 }
 

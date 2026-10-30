@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'mls-group-messaging',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-09-19',
+  lastEdited: '2026-10-30',
 
   standards: [
     getStandard('RFC 9420'),
@@ -39,7 +39,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      "MLS (RFC 9420) replaces Signal-style pairwise ratchets — which hit an O(N²) ceiling around 100 members — with TreeKEM: every member is a leaf of a binary tree, and a Commit refreshes the sender's direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. That gives forward secrecy and post-compromise security at group sizes pairwise ratchets can't reach. `draft-ietf-mls-pq-ciphersuites` (at -06; WG state: waiting for WG chair go-ahead, revised I-D needed) registers ML-KEM-768 + ML-DSA-65/87 ciphersuites that replace the DH-based KEM and signature scheme atomically; `draft-ietf-mls-combiner-02` specifies a hybrid path — run classical and PQ MLS sessions in parallel and XOR the application keys, so breaking the message requires breaking both.",
+      "MLS (RFC 9420) replaces Signal-style pairwise ratchets — which hit an O(N²) ceiling around 100 members — with TreeKEM: every member is a leaf of a binary tree, and a Commit refreshes the sender's direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. That gives forward secrecy and post-compromise security at group sizes pairwise ratchets can't reach. `draft-ietf-mls-pq-ciphersuites` (at -06; WG state: waiting for WG chair go-ahead, revised I-D needed) registers ML-KEM-768 + ML-DSA-65/87 ciphersuites that replace the DH-based KEM and signature scheme atomically; `draft-ietf-mls-combiner-02` specifies a hybrid path — run a traditional and a PQ MLS session in parallel and combine them by importing a secret exported from the PQ session as a Pre-Shared Key (PSK) into the traditional session.",
     workshopSummary:
       "TreeKEM Ratchet Tree Visualizer: watch a Commit refresh a sender's direct path and advance the group epoch secret. OpenMLS ↔ PKCS#11 Provider Architecture: see how `openmls_pqctoday_crypto` routes OpenMLS's ~15-function `OpenMlsCrypto` trait through PKCS#11 v3.2 against softhsmv3, with signature keys generated as non-extractable HSM token objects.",
   },
@@ -85,7 +85,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     body: [
       'MLS RFC 9420 defines seven baseline ciphersuites combining one of {DHKEM(X25519), DHKEM(P-256), DHKEM(X448), DHKEM(P-384), DHKEM(P-521)} × one of {HKDF-SHA256, HKDF-SHA384, HKDF-SHA512} × one of {AES-128-GCM, AES-256-GCM, ChaCha20-Poly1305} × Ed25519 / ECDSA-P-* / Ed448.',
       '`draft-ietf-mls-pq-ciphersuites-06` (July 2026; WG state "Waiting for WG Chair Go-Ahead, Revised I-D Needed") registers PQ ciphersuites using ML-KEM-768 + ML-DSA-65 (and 87 for higher security levels) — replacing the DH-based KEM and the signature scheme atomically.',
-      '`draft-ietf-mls-combiner-02` (expired, WGLC revival pending) specifies a hybrid combiner: run two parallel MLS sessions (one classical, one PQ) and XOR the application keys, so an attacker must break both to forge messages.',
+      '`draft-ietf-mls-combiner-02` (expired, WGLC revival pending) specifies a hybrid combiner: run two MLS sessions in parallel (one traditional, one PQ) and combine them by exporting a secret from the PQ session and importing it as a Pre-Shared Key (PSK) into the traditional session, to achieve amortized PQ confidentiality and authenticity.',
     ],
   },
   {
@@ -102,7 +102,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     title: 'The road to PQ MLS',
     body: [
       'Two things have to converge for production PQ MLS: (1) the upstream OpenMLS workspace registers `draft-ietf-mls-pq-ciphersuites` in `openmls_traits::types::Ciphersuite`, and (2) our provider wires `CKM_ML_KEM_*` and `CKM_ML_DSA` through. softhsmv3 already implements both (FIPS 203 + FIPS 204), so the provider side is one match-arm extension once upstream lands the registry.',
-      "A parallel path is the hybrid combiner: classical + PQ MLS sessions XOR'd together. This is the path most enterprise messaging vendors are watching, because it lets them ship MLS today and turn on PQ when their HSM fleet is ready, without re-keying.",
+      'A parallel path is the hybrid combiner: a traditional and a PQ MLS session run in parallel and combined through a PSK exported from the PQ session. This is the path most enterprise messaging vendors are watching, because it lets them ship MLS today and turn on PQ when their HSM fleet is ready, without re-keying.',
       'Status snapshot (July 2026, from the draft\'s own datatracker page): the PQ ciphersuite draft is at -06, last updated 2026-07-21, and its WG state is "Waiting for WG Chair Go-Ahead — Revised I-D Needed, Issue raised by WG" — past WG Last Call and back with the authors, not through it. The combiner draft expired and awaits revival. Treat any stabilisation date as unforecastable while a revised I-D is outstanding.',
     ],
   },

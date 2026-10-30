@@ -65,7 +65,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Identity',
     badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
     observe:
-      'The PQC chain is ~3-4x larger than classical. All 3 links are quantum-vulnerable. Identify which link has the longest credential lifetime and thus the highest HNDL risk.',
+      'The PQC chain is ~3-4x larger than classical. All 3 links are quantum-vulnerable. Identify which link has the longest credential lifetime and thus the longest window for forgery.',
     config: { step: 3 },
   },
   {
