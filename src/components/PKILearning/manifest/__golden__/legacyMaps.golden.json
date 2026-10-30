@@ -410,7 +410,7 @@
       "id": "pki-enrollment-protocols",
       "lm_id": "LM-055",
       "title": "PKI Enrollment Protocols (EST & CMP)",
-      "description": "RFC 7030 EST and RFC 9810 CMP (KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.",
+      "description": "RFC 7030 EST and RFC 9810 CMP (which adds support for KEM keys) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.",
       "duration": "50 min",
       "difficulty": "advanced",
       "frameworkPhase": "p5"
@@ -4258,7 +4258,7 @@
           "id": "pki-enrollment-protocols",
           "lm_id": "LM-055",
           "title": "PKI Enrollment Protocols (EST & CMP)",
-          "description": "RFC 7030 EST and RFC 9810 CMP (KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.",
+          "description": "RFC 7030 EST and RFC 9810 CMP (which adds support for KEM keys) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.",
           "duration": "50 min",
           "difficulty": "advanced",
           "frameworkPhase": "p5"
