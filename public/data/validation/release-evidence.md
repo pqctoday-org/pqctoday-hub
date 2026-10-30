@@ -19,7 +19,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 19 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                 19 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |                 71 | `public/data/validation/coverage-matrix.json`                     |
+| Open gaps (register entries)                            |                 52 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |             71 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** 0 of 19 waivers are baseline-pending-review (not approvals); 19 approved.
@@ -68,7 +68,7 @@ Artifacts:
 
 ### Rust engine
 
-179 mechanisms · 2,235 advertised cells (denominator) · 8 unsupported cells shown separately · source commit `d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0`
+179 mechanisms · 2,235 advertised cells (denominator) · 8 unsupported cells shown separately · source commit `5443f045961e32ced16fdecc48b2700a4a1bc015`
 
 | Polarity    | Covered | Sampled | Untested | Denominator |
 | ----------- | ------: | ------: | -------: | ----------: |
@@ -80,14 +80,14 @@ Artifacts:
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,209 |         2,197 |             2 |
+| wasm          | registered |            2,209 |             0 |             0 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
 Artifacts:
 
-- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789`
-- `src/wasm/softhsmrustv3_bg.js` — SHA-256 `8b71ea413e68308d885c653b8cdd9337e2fd757559f8d647543a8ac5aff147f8`
+- `src/wasm/softhsmrustv3_bg.wasm` — SHA-256 `fbabbc6880500e78f7f410088c4c05ac773513f285f1c6db8606cf8f8ce08ef0`
+- `src/wasm/softhsmrustv3_bg.js` — SHA-256 `1e4692718112fdceeb7373ab3d8eab348b5b067fc2fb996bbe05cb8bb2342d88`
 
 ## Recorded runs
 
@@ -119,11 +119,11 @@ Artifacts:
 
 Imported from the reports pqctoday-hsm committed; nothing here was executed by the Hub or in a browser. Pinned hsm commit `d1f62a418ce0` (2026-10-22).
 
-| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                    |
-| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | ------------------------------------------------------------------------------- |
-| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it |
-| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,098 |    0 | not reported | 1,098 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it |
-| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                               |
+| Suite                                                        | Engine       |  Pass | Fail |         Skip | Total | Engine commit               | Engine commits behind the pinned hsm commit | Engine = WASM bundle commit?                                                     |
+| ------------------------------------------------------------ | ------------ | ----: | ---: | -----------: | ----: | --------------------------- | ------------------------------------------: | -------------------------------------------------------------------------------- |
+| C++ engine (softhsmv3) PKCS#11 v3.2 compliance suite         | cpp          |   962 |    0 |            2 |   967 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `d1f62a418ce0`: 2 commit(s) ahead of the engine commit, 0 behind it  |
+| Rust engine (softhsmrustv3) PKCS#11 v3.2 conformance harness | rust         | 1,098 |    0 | not reported | 1,098 | `7dee23c2ea40` (2026-10-22) |                                           1 | no — bundle `5443f045961e`: 17 commit(s) ahead of the engine commit, 0 behind it |
+| Cross-engine (C++ vs Rust) differential harness              | cross-engine |     — |    — |            — |     — | no report committed         |                                           — | —                                                                                |
 
 ## Cross-target evidence runs
 
@@ -245,7 +245,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-71 entries — by status: open 64, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 41; owner unassigned: 71.
+52 entries — by status: open 45, in-progress 1, accepted-limitation 6; by origin: curated 30, generated 22; owner unassigned: 52.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
@@ -335,9 +335,9 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `38575333776fd6ff726e268a5255f7e1c2668640232269864b703eadaa310584` |
+| `public/data/validation/coverage-matrix.json`                           | `6ebcf455c69b530b893c42299252ed5589bdcade36a7ba2bf59de981ae29956c` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
-| `src/data/validation/native-conformance.generated.json`                 | `3135a0d4e45b85956ca5b16616988e21d58eed9dc0877868f22dd0cb1e0363a2` |
+| `src/data/validation/native-conformance.generated.json`                 | `9989ddbe108ebed6ba7a0b4766c92795f3d754f292ea3bd597d5d7ee0ab59425` |
 | `src/data/validation/open-gaps.json`                                    | `a399aef8a770f89a58c3c3cd1b8845e04aa45d3847de37f9f955af5c7d55d58f` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `fda4cce6cec3b1d317340e1a7260b79005839cf52bcc083a625434582f600e21` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `42f3a4c450a5377187f2e0bd3527a5cdfacda74b08c4a30fcc8224cd755edd29` |

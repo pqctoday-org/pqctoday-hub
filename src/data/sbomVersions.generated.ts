@@ -375,7 +375,7 @@ export const SBOM_CRATES: Readonly<
   'wasm-bindgen': { engine: ['0.2.117'], kmip: ['0.2.117'] },
   wnaf: { engine: ['0.14.1'], kmip: ['0.14.1'] },
   x448: { engine: ['0.14.0-pre.8'], kmip: ['0.14.0-pre.10'] },
-  'x509-cert': { kmip: ['0.2.5'] },
+  'x509-cert': { engine: ['0.2.5'], kmip: ['0.2.5'] },
   'x509-parser': { kmip: ['0.16.0'] },
   'xts-mode': { engine: ['0.6.0'], kmip: ['0.6.0'] },
 }
@@ -435,8 +435,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'softhsmrustv3-engine': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: 'd1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0',
-    sha256: 'a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789',
+    commit: '5443f045961e32ced16fdecc48b2700a4a1bc015',
+    sha256: 'fbabbc6880500e78f7f410088c4c05ac773513f285f1c6db8606cf8f8ce08ef0',
   },
   strongswan: {
     repo: 'pqctoday-org/pqctoday-hsm',
