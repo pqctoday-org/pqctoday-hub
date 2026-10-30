@@ -763,7 +763,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'CMVP / FIPS 140-3',
         prescribedTier: 'critical',
         reason:
-          'FIPS 140-3 Security Level 4 is required for key material protecting classified systems — requires tamper-evident physical protection and the highest cryptographic assurance.',
+          'FIPS 140-3 applies to cryptographic modules protecting sensitive but unclassified information; classified systems use modules approved for classified use.',
       },
       {
         framework: 'CNSA 2.0',
