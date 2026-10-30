@@ -38,7 +38,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Inventory',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Kerberos KDC, SAML IdP, JWT issuance, and Certificate-Based Auth all show Immediate priority. These use RSA-2048 or ECDSA in long-lived token paths — the highest HNDL targets. Sort by "Priority" to confirm your migration order.',
+        'Kerberos KDC, SAML IdP, JWT issuance, and Certificate-Based Auth all show Immediate priority. These use RSA-2048 or ECDSA in long-lived token paths: forgery targets for the signed tokens, and HNDL targets where RSA protects a key exchange (Kerberos PKINIT). Sort by "Priority" to confirm your migration order.',
       config: { step: 0 },
     },
     {
@@ -56,11 +56,11 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       id: 'directory-services-risk',
       title: '3. Directory Services Risk',
       description:
-        'Explore the quantum vulnerability analysis for Active Directory, OpenLDAP, and Azure AD / Entra ID. Review the HNDL risk scores and click "Show Scenarios" to understand specific CRQC attack vectors for each directory service.',
+        'Explore the quantum vulnerability analysis for Active Directory, OpenLDAP, and Azure AD / Entra ID. Review the quantum risk scores and click "Show Scenarios" to understand specific CRQC attack vectors for each directory service.',
       badge: 'Directory',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Active Directory exposes two critical HNDL vectors: PKINIT RSA decryption (Kerberos TGT traffic) and NTLM credential exposure. Microsoft Entra ID issues long-lived refresh tokens; unlike access-token JWTs these are opaque, encrypted artifacts (not RSA-signed), so the main quantum exposure is the TLS transport and the RSA/ECDSA-signed access tokens (JWTs) minted from them.',
+        'The Active Directory HNDL vector is PKINIT RSA decryption (Kerberos TGT traffic); NTLM credential exposure is a classical weakness, not a quantum threat. Microsoft Entra ID issues long-lived refresh tokens; unlike access-token JWTs these are opaque, encrypted artifacts (not RSA-signed), so the main quantum exposure is the TLS transport and the RSA/ECDSA-signed access tokens (JWTs) minted from them.',
       config: { step: 2 },
     },
     {
