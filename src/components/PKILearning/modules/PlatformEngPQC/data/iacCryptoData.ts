@@ -63,7 +63,7 @@ spec:
     algorithm: 'rsa',
     pqcAlgorithm: 'ml-dsa',
     impact:
-      'CI/CD pipelines authenticate to Vault via TLS client certs. If these certs use RSA/ECDSA, the authentication sessions are HNDL targets — a future CRQC can replay recorded auth traffic.',
+      'CI/CD pipelines authenticate to Vault via TLS client certs. If these certs use RSA/ECDSA, a future CRQC can forge a client certificate and authenticate to Vault as the pipeline: a forgery risk. The recorded session is an HNDL target only through its key exchange.',
     vulnerableConfig: `# Vault PKI role — defaults to RSA-2048
 vault write pki/roles/pipeline-role \\
   allowed_domains="pipeline.internal" \\

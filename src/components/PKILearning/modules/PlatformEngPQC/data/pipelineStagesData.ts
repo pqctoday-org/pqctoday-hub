@@ -72,7 +72,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'ES256 (P-256)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-65 JWT signing (JOSE draft)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow:
