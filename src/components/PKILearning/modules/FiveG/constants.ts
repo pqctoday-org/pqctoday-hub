@@ -511,7 +511,7 @@ const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)`,
       id: 'derive_keys',
       title: '6. Derive Keys (KDF w/ SHA3)',
       description:
-        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256. SHA3-256 replaces SHA-256 to ensure post-quantum security of the KDF itself. Two iterations produce K_enc (256-bit AES-256, full block1) and K_mac (256-bit HMAC-SHA3-256, full block2). SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid mode; empty for pure PQC. This KDF choice was made here: no 3GPP document specifies one for a post-quantum SUCI scheme, and the research proposal this profile is named after leaves the KDF generic. There are no test vectors to check it against.',
+        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256. This design uses SHA3-256 in place of SHA-256 for added resilience; SHA-256 is currently considered secure against quantum attacks (ATIS). Two iterations produce K_enc (256-bit AES-256, full block1) and K_mac (256-bit HMAC-SHA3-256, full block2). SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid mode; empty for pure PQC. This KDF choice was made here: no 3GPP document specifies one for a post-quantum SUCI scheme, and the research proposal this profile is named after leaves the KDF generic. There are no test vectors to check it against.',
       code: `# ANSI X9.63 KDF with SHA3-256, 2 iterations (this project's choice)
 # Hybrid:  Z = SHA256(Z_ecdh ‖ Z_kem), SharedInfo = raw X25519 eph pub key (32 bytes)
 # Pure PQC: Z = Z_kem,                  SharedInfo = empty
@@ -538,7 +538,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
           label: 'block1',
           value: 'SHA3-256(Z ‖ 0x00000001 ‖ SharedInfo)',
           description:
-            '32-byte output. Full block1 becomes K_enc (AES-256). SHA3-256 chosen for post-quantum security of the KDF itself.',
+            '32-byte output. Full block1 becomes K_enc (AES-256). SHA3-256 chosen for added resilience (SHA-256 is currently considered secure against quantum attacks, per ATIS).',
         },
         {
           label: 'block2',

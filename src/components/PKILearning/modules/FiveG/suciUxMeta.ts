@@ -167,7 +167,7 @@ const PE_PROFILE_C_OVERRIDES: Record<string, string[]> = {
     'Final Z = SHA-256(Z_ecdh ‖ Z_kem) — safe if EITHER component survives future attacks.',
   ],
   derive_keys: [
-    'Z was expanded using SHA3-256 (instead of SHA-256) for post-quantum KDF security.',
+    'Z was expanded using SHA3-256 (instead of SHA-256) for added resilience; SHA-256 is currently considered secure against quantum attacks (ATIS).',
     'K_enc is now 256 bits (AES-256); ML-KEM-768 is in NIST security category 3 (FIPS 203).',
     'K_mac uses HMAC-SHA3-256 — the full 32-byte output; only 8 bytes go on air.',
   ],
@@ -178,7 +178,7 @@ const PE_PROFILE_C_OVERRIDES: Record<string, string[]> = {
   ],
   compute_mac: [
     'The ciphertext got an HMAC-SHA3-256 integrity tag, truncated to 64 bits on air.',
-    'SHA3 replaces SHA-2 here to keep the MAC safe in a post-quantum world.',
+    'This design uses SHA3 for the MAC for added resilience; SHA-256 is currently considered secure against quantum attacks (ATIS).',
     'The home network will verify this BEFORE touching the ciphertext.',
   ],
   sidf_decryption: [
