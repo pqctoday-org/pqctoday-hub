@@ -280,9 +280,9 @@ export const CNSA20_ADVISORY_URL =
 
 export const HYBRID_COMPOSITE_GUIDANCE = {
   whenComposite:
-    'Outside US National Security Systems, a composite (PQC + classical, e.g. X25519+ML-KEM-768 or RSA-PSS+ML-DSA) is a common transition choice where defense-in-depth is wanted or a regulator recommends or requires hybrid (BSI, ANSSI). The classical half guards against an undiscovered flaw in the new scheme, at the cost of extra protocol and implementation complexity.',
+    'Outside US National Security Systems, a composite (PQC + classical, e.g. X25519+ML-KEM-768 or RSA-PSS+ML-DSA) is a common transition choice where defense-in-depth is wanted or a regulator recommends or requires hybrid (BSI recommends it; ANSSI requires it in its regulated perimeter). The classical half guards against an undiscovered flaw in the new scheme, at the cost of extra protocol and implementation complexity.',
   whenPure:
-    'Pure ML-KEM / ML-DSA is simpler and is what CNSA 2.0 requires for NSS (ML-KEM-1024 / ML-DSA-87; NSA does not require hybrids and counts only hybrids it has specifically identified). Where a jurisdiction recommends hybrid (BSI) or requires it (ANSSI), pure use may not fit that context.',
+    'Pure ML-KEM / ML-DSA is simpler and is what CNSA 2.0 requires for NSS (ML-KEM-1024 / ML-DSA-87; NSA does not require hybrids and counts only hybrids it has specifically identified). Where a jurisdiction recommends hybrid (BSI) or requires it in its regulated perimeter (ANSSI), pure use may not fit that context.',
 } as const
 
 export type JurisdictionStance = 'require' | 'recommend' | 'prefer-pure' | 'interim' | 'permit'
@@ -304,7 +304,7 @@ export function jurisdictionStanceForRegion(region: string): JurisdictionPositio
       return {
         body: 'BSI / ANSSI',
         stance: 'recommend',
-        note: 'German BSI (TR-02102-1) recommends PQC in hybrid form, except that hash-based signatures may in principle be used alone; French ANSSI recommends hybrid generally (hash-based signatures excepted) and makes it mandatory in its regulated perimeter. The two positions differ — check which applies.',
+        note: 'German BSI (TR-02102-1) recommends PQC in hybrid form, except that hash-based signatures may in principle be used alone, provided their implementation security is carefully considered; French ANSSI recommends hybrid generally (hash-based signatures excepted) and makes it mandatory in its regulated perimeter. The two positions differ — check which applies.',
       }
     case 'NIST':
       return {

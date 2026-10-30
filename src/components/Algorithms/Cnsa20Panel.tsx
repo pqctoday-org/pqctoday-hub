@@ -100,12 +100,13 @@ export function Cnsa20Panel() {
           <li>
             <strong className="text-foreground">BSI (Germany):</strong> recommends ML-KEM-768/1024,
             FrodoKEM-976/1344 and ML-DSA-65/87 only in combination with a classical scheme (hybrid);
-            stateful hash-based signatures may be used alone (TR-02102-1, 2026-01).
+            hash-based signatures may in principle be used alone, provided their implementation
+            security is carefully considered (TR-02102-1, 2026-01).
           </li>
           <li>
             <strong className="text-foreground">ANSSI (France):</strong> requires hybridization of
-            ML-KEM and ML-DSA in its regulated perimeter during the transition; hash-based
-            signatures such as SLH-DSA may be used alone.
+            ML-KEM and ML-DSA in its regulated perimeter during the transition; it does not
+            recommend systematic hybridisation for hash-based signatures such as SLH-DSA.
           </li>
           <li>
             <strong className="text-foreground">NSA / CNSA 2.0 (US NSS):</strong> requires

@@ -232,7 +232,7 @@ export const PQC_HARDWARE_CHANGES: ImpactItem[] = [
   },
   {
     change: 'Physical boundary and composition evidence when PQC runs in a coprocessor or FPGA',
-    why: 'FIPS 140-3 IG 2.3.B allows several sub-chip subsystems on one certificate only when Management Manual §7.8 is met (27 February 2026).',
+    why: 'FIPS 140-3 IG 2.3.B allows multiple disjoint sub-chip cryptographic subsystems on one certificate only when Management Manual §7.8 is met (27 February 2026).',
   },
   {
     change: 'Performance and availability under HSM transaction loads',
