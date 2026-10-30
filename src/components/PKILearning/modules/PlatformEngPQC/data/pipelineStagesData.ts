@@ -127,7 +127,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         keySize: 'P-256',
         quantumVulnerable: true,
         hndlRisk: 'high',
-        pqcReplacement: 'ML-DSA-65 (cosign v2.x with PQC support)',
+        pqcReplacement: 'ML-DSA-65 (once the signing tool supports it)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow:
           '10–25 years (images remain in production and must be verifiable for compliance)',
@@ -195,7 +195,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         keySize: 'P-256 (OCI referrers API)',
         quantumVulnerable: true,
         hndlRisk: 'high',
-        pqcReplacement: 'ML-DSA-65 via Notation or cosign v2.x',
+        pqcReplacement: 'ML-DSA-65 (once the signing tool supports it)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10+ years (images remain in use post-deployment)',
         notes:

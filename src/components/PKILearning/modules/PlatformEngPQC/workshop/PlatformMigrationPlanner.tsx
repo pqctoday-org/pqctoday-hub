@@ -92,13 +92,13 @@ const MIGRATION_PHASES: MigrationPhase[] = [
     phase: 3,
     title: 'Artifact Signing (ML-DSA)',
     description:
-      'Migrate container image signing from ECDSA cosign to ML-DSA-65 via Notation or cosign v2 (when available). Re-sign existing artifacts in production registry. Update verification policies.',
+      'Migrate container image signing from ECDSA cosign to ML-DSA-65 once your chosen signing tool documents ML-DSA support. Re-sign existing artifacts in production registry. Update verification policies.',
     durationWeeks: 6,
     dependencies: ['phase-1'],
     stageIds: ['sign', 'registry'],
     actions: [
-      'Generate ML-DSA-65 signing key (Notation + AWS Crypto plugin)',
-      'Update CI pipelines to sign images with Notation ML-DSA',
+      'Generate ML-DSA-65 signing key (in an HSM or KMS that supports ML-DSA)',
+      'Update CI pipelines to sign images with ML-DSA',
       'Re-sign all production image tags (registry migration script)',
       'Update Kyverno image verification policy to require ML-DSA',
       'Publish ML-DSA public key to internal keyserver',

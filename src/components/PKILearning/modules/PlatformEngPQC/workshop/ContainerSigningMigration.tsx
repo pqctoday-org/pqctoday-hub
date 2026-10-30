@@ -18,7 +18,7 @@ const PLATFORM_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'platform-container-sign',
     useCase: 'Container image signing (ML-DSA-65)',
-    standard: 'SLSA + FIPS 204',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: 'OCI image digest: sha256:a1b2c3d4e5f6@sha256:7890abcdef01',
@@ -48,6 +48,7 @@ const READINESS_ITEMS = [
   { id: 'beta', label: 'Beta' },
   { id: 'roadmap', label: 'On Roadmap' },
   { id: 'not-planned', label: 'Not Planned' },
+  { id: 'unconfirmed', label: 'Unconfirmed' },
 ]
 
 const COMPARE_DIMENSIONS = [

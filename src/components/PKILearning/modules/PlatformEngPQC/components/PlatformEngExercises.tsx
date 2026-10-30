@@ -53,11 +53,11 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       id: 'signing-tool-comparison',
       title: '3. Signing Tool Comparison — Choose the right migration path for container signing',
       description:
-        'In the Container Signing Migration (Step 3), enter Compare mode and select Notation and cosign. Compare their PQC Readiness status and estimated PQC year. Which tool should you use for new deployments that need ML-DSA today?',
+        "In the Container Signing Migration (Step 3), enter Compare mode and select Notation and cosign. Compare their PQC Readiness status and estimated PQC year. What does each tool's documentation let you conclude about ML-DSA support?",
       badge: 'Signing',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Notation has early PQC readiness via the AWS Crypto Tools plugin (ML-DSA-65 composite certificates); cosign has PQC on its roadmap. Vendor timelines move quickly, so confirm current status. For new deployments requiring ML-DSA today, Notation + AWS Crypto plugin is the correct choice. Docker Content Trust (DCT) should be migrated immediately — Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026), and the upstream Notary v1 codebase is no longer maintained.',
+        'No vendor documentation this module found confirms ML-DSA support in Notation, so its status is shown as unconfirmed; Sigstore (June 2025) says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments, and gives no production date. Vendor timelines move quickly, so confirm current status before choosing a tool. Docker Content Trust (DCT) should be migrated immediately — Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026), and the upstream Notary v1 codebase is no longer maintained.',
       config: { step: 2 },
     },
     {
