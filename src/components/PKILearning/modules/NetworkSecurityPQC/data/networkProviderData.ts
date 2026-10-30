@@ -16,7 +16,8 @@ export interface VendorMigrationStatus {
    */
   catalogName: string
   tlsInspectionPQC: 'supported' | 'partial' | 'roadmap' | 'not-supported'
-  mlKemStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported'
+  /** 'not-stated' when the vendor's own pages name no maturity for the capability. */
+  mlKemStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported' | 'not-stated'
   mlDsaStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported'
   /** Omitted when the vendor's own pages do not say. */
   hybridMode?: boolean
@@ -43,33 +44,39 @@ export interface StatusLabel {
 // product without the capability) while the catalogue-derived headline uses
 // 'not-planned'; both need a label, or a vendor row with an unsupported
 // capability crashed the Vendor Matrix step (round-9 walk, 2026-09-19).
-export const PQC_STATUS_LABELS: Record<PQCStatusKey | 'not-supported', StatusLabel> = {
-  ga: {
-    label: 'GA',
-    className: 'bg-success/10 text-status-success border-success/30',
-    color: 'text-status-success',
-  },
-  beta: {
-    label: 'Beta',
-    className: 'bg-primary/10 text-primary border-primary/30',
-    color: 'text-primary',
-  },
-  roadmap: {
-    label: 'Roadmap',
-    className: 'bg-warning/10 text-status-warning border-warning/30',
-    color: 'text-status-warning',
-  },
-  'not-planned': {
-    label: 'Not Planned',
-    className: 'bg-destructive/10 text-status-error border-destructive/30',
-    color: 'text-status-error',
-  },
-  'not-supported': {
-    label: 'Not Supported',
-    className: 'bg-destructive/10 text-status-error border-destructive/30',
-    color: 'text-status-error',
-  },
-}
+export const PQC_STATUS_LABELS: Record<PQCStatusKey | 'not-supported' | 'not-stated', StatusLabel> =
+  {
+    ga: {
+      label: 'GA',
+      className: 'bg-success/10 text-status-success border-success/30',
+      color: 'text-status-success',
+    },
+    beta: {
+      label: 'Beta',
+      className: 'bg-primary/10 text-primary border-primary/30',
+      color: 'text-primary',
+    },
+    roadmap: {
+      label: 'Roadmap',
+      className: 'bg-warning/10 text-status-warning border-warning/30',
+      color: 'text-status-warning',
+    },
+    'not-planned': {
+      label: 'Not Planned',
+      className: 'bg-destructive/10 text-status-error border-destructive/30',
+      color: 'text-status-error',
+    },
+    'not-supported': {
+      label: 'Not Supported',
+      className: 'bg-destructive/10 text-status-error border-destructive/30',
+      color: 'text-status-error',
+    },
+    'not-stated': {
+      label: 'Not stated',
+      className: 'bg-muted text-muted-foreground border-border',
+      color: 'text-muted-foreground',
+    },
+  }
 
 export const SUPPORT_STATUS_LABELS: Record<SupportStatusKey, StatusLabel> = {
   supported: {
@@ -241,7 +248,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     tier: 'open-source',
     catalogName: 'OPNsense',
     tlsInspectionPQC: 'not-supported',
-    mlKemStatus: 'ga',
+    mlKemStatus: 'not-stated',
     mlDsaStatus: 'not-supported',
     hybridMode: true,
     certSizeLimit: 'No limit (OS-level, no appliance buffer)',
