@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
   version: '1.0.1',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-30',
 
   standards: [
     // Subject documents first. The accuracy spot-check samples this list by even

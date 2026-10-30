@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'software-supply-chain-pqc',
-  contentVersion: 1,
+  contentVersion: 2,
   lm_id: 'LM-078',
   title: 'Software Supply Chain PQC',
   description:

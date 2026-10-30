@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'media-drm-pqc',
-  contentVersion: 1,
+  contentVersion: 2,
   lm_id: 'LM-077',
   title: 'Media, Entertainment & DRM PQC',
   description:

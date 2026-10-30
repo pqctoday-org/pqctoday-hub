@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'software-supply-chain-pqc',
   version: '1.0.0',
   // lastReviewed is left unset: it is written together with the module's review record.
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-30',
 
   standards: [
     getStandard('NIST SP 800-218'),
