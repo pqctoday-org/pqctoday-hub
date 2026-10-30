@@ -47,9 +47,9 @@ export const NATIONAL_CANDIDATES: NationalCandidate[] = [
     name: 'PALOMA',
     track: 'kpqc',
     kind: 'KEM',
-    family: 'Code-based (QC-LDPC)',
+    family: 'Code-based',
     summary:
-      'KpqC Round 2 KEM finalist, not among the four algorithms selected on 16 January 2025 (AIMer, HAETAE, NTRU+, SMAUG-T). Code-based (QC-LDPC) KEM.',
+      'KpqC Round 2 KEM finalist, not among the four algorithms selected on 16 January 2025 (AIMer, HAETAE, NTRU+, SMAUG-T). Code-based KEM.',
     alsoInNistOnRamp: false,
   },
   {

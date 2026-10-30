@@ -14,7 +14,7 @@ const PHASES = [
   {
     id: 'near',
     label: 'Near (2027–2028)',
-    body: 'Round 3 runs about two years from May 2026 (NIST). The 7th NIST PQC Standardization Conference is planned for late spring/early summer 2027. NIST has set no standardisation year; HAWK, the only lattice candidate, was withdrawn in July 2026.',
+    body: 'Round 3 started on 14 May 2026. The 7th NIST PQC Standardization Conference is planned for late spring/early summer 2027. NIST has set no standardisation year; HAWK, the only lattice candidate, was withdrawn in July 2026.',
   },
   {
     id: 'mid',
