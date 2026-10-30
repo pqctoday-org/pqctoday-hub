@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10292026_r1.csv
+ * Source: src/data/role_board_content_10302026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -125,8 +125,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/algorithms?tab=transition',
           },
           {
-            title: 'The zones a regulator will ask about',
-            body: 'Your obligations grouped the way NIST CSWP.39 groups them, so the gaps map onto the questions.',
+            title: 'The zones to map your evidence to',
+            body: 'Reference frameworks grouped the way NIST CSWP.39 groups them, so gaps map onto the same questions; confirm which apply to your organisation.',
             href: '/compliance?tab=cswp39',
           },
           {
@@ -157,7 +157,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: [],
       businessToolIds: ['risk-register'],
       board: {
-        heroEyebrow: 'Executive · risk position · the dates that already bind you',
+        heroEyebrow: 'Executive · sample risk position · source-linked dates',
 
         headline: 'Explore exposure and the evidence you need.',
         sub: 'Use a sample risk register and assessment to explore how inputs and assumptions affect priorities. Inspect the calculation and sources; the result is not measured risk or a determination of applicable obligations.',
@@ -179,7 +179,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             { label: 'Report sections generated', value: '16' },
             { label: 'Governance artifacts attached', value: 'four' },
           ],
-          punchline: 'A number you can put in front of an auditor.',
+          punchline: 'A planning index whose working you can inspect.',
           footnote:
             'Illustrative until you answer the six questions — the score, the sections and the artifacts are generated from your own answers, not from a sample estate.',
         },
@@ -193,7 +193,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'A register with owners on it',
-            body: 'The Risk Register Builder turns the score into named risks with impact, likelihood, an owner and a mitigation each — the form a risk committee accepts.',
+            body: 'The Risk Register Builder turns the score into named risks with impact, likelihood, an owner and a mitigation each — a form a risk committee can review and challenge.',
             href: '/business/tools/risk-register',
           },
           {
@@ -235,7 +235,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Practise sequencing work, assigning owners and defining review evidence. A sample roadmap is a planning worksheet; confirm dependencies, scope and milestones before adapting it.',
         ctaPrimary: 'Build the roadmap',
         ctaPrimaryHref: '/business/tools/roadmap-builder',
-        ctaSecondary: 'Check what already binds you',
+        ctaSecondary: 'Check which milestones may apply',
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
@@ -264,8 +264,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business/tools/roadmap-builder',
           },
           {
-            title: 'What already binds you',
-            body: 'The compliance view lists the standardization and certification frameworks in force and what each one already requires of you.',
+            title: 'Which milestones may apply',
+            body: 'The compliance view lists source-linked standardization and certification frameworks and what each one says; confirm which apply to your organisation.',
             href: '/compliance',
           },
           {
@@ -320,20 +320,20 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             },
             {
               label: 'Verification date',
-              value: 'on every timeline row, and on 9 of 10 library records',
+              value: 'on every timeline row, and on most library records',
             },
             { label: 'Superseded records', value: 'kept, marked deprecated, never deleted' },
           ],
           punchline: 'A claim without a date is an opinion.',
           footnote:
-            'Tiers and verification dates come from the trusted-sources registry; every timeline record and 87% of library records are joined to it.',
+            'Tiers and verification dates come from the trusted-sources registry; every timeline record and nearly every library record is joined to it.',
         },
         gridTitle: 'Where to check us',
-        gridSub: 'Provenance you can hand to an auditor',
+        gridSub: 'Provenance you can inspect',
         gridCards: [
           {
             title: 'Everything we have corrected',
-            body: 'What changed, when, and which record it touched — 96% of entries carry no PR link, so treat this as an edit log, not a review trail.',
+            body: 'What changed, when, and which record it touched. Not every entry links to a pull request, so treat this as an edit log, not a complete review trail.',
             href: '/revisions',
           },
           {
@@ -343,7 +343,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'A claim you cannot date is not evidence',
-            body: 'Anyone can publish a number. The tier, the date and the correction history are what let you put it in front of an auditor.',
+            body: 'Anyone can publish a number. The tier, the date and the correction history are what let you check it.',
             href: '/migrate?tab=vendorrisk',
           },
         ] as [
