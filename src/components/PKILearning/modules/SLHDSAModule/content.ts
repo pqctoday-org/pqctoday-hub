@@ -29,7 +29,7 @@ export const content: ModuleContent = {
 
   narratives: {
     stateless:
-      'SLH-DSA eliminates state management complexity — no per-key signing counter, no risk of key exhaustion, safe for distributed and serverless deployments.',
+      'SLH-DSA eliminates state management complexity — no per-key signing counter, safe for distributed and serverless deployments. Its security analysis assumes at most 2^64 signatures per key pair (FIPS 205 §11), so the key is not unlimited.',
     signatureSize:
       'Signature sizes range from 7,856 B (SHA2-128s) to 49,856 B (SHAKE-256f) — significantly larger than classical ECDSA but with quantum-safe security.',
     tradeoff:
