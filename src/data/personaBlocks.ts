@@ -705,7 +705,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/learn/exec-quantum-impact': {
     executive:
-      "Score your organisation's quantum exposure across nine criteria in the self-assessment, then build the phased action plan with milestones from this week onward: fiduciary risk and the 2030 and 2035 regulatory dates, in board terms.",
+      "Use the nine-question Organisational Evidence Scope to record Yes, No or Unknown, identify missing evidence and name who should supply it. Then explore the sample action plan; neither the checklist nor the plan measures your organisation's exposure or determines which obligations apply.",
   },
   '/learn/5g-security': {
     developer:
