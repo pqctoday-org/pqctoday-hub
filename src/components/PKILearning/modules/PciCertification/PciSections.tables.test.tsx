@@ -90,4 +90,12 @@ describe('PCI lesson tables on a phone', () => {
       within(screen.getByTestId('pci-pqc-findings-table')).getAllByText('open question')
     ).toHaveLength(open)
   })
+
+  it('marks a document this module does not use on the first cell of its finding in both layouts', () => {
+    renderSection(<PciPqcTruth />)
+    const notUsed = PCI_PQC_FINDINGS.filter((f) => (f.status as string) === 'not used').length
+    for (const id of ['pci-pqc-findings-stacked', 'pci-pqc-findings-table']) {
+      expect(within(screen.getByTestId(id)).queryAllByText('not used'), id).toHaveLength(notUsed)
+    }
+  })
 })
