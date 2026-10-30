@@ -625,7 +625,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'FedRAMP PQC Requirement',
         body: 'GSA / CISA',
         description:
-          "FedRAMP (Federal Risk and Authorization Management Program) governs cloud service authorization for US federal agencies. NIST IR 8547 is final (October 2026). The module expects FedRAMP's cryptographic requirements to follow NIST's PQC standards, which would mean CAVP-validated algorithm implementations (tested through NIST's ACVP service) in cloud services; no FedRAMP publication states this yet.",
+          "FedRAMP (Federal Risk and Authorization Management Program) governs cloud service authorization for US federal agencies. NIST IR 8547 is final (October 2026). The module expects FedRAMP's cryptographic requirements to follow NIST's PQC standards, which would mean CAVP-validated algorithm implementations (tested through NIST's ACVP service) in cloud services; we found no FedRAMP publication that states this.",
       },
     ],
   },
