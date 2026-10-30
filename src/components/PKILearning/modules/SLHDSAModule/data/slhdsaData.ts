@@ -105,7 +105,7 @@ export const SLH_DSA_PARAMETER_SETS: SLHDSAParameterSet[] = [
     skBytes: 96,
     ckm: 'CKM_SLH_DSA',
     tradeoffNote:
-      'Smallest signature (16,224 B) at NIST Level 3; recommended by BSI TR-02102 for government use.',
+      'Smallest signature (16,224 B) at NIST Level 3; BSI TR-02102-1 recommends the hedged variant of the category 3 and 5 parameter sets, including SLH-DSA-SHA2-192s.',
   },
   {
     id: 'SLH-DSA-SHA2-192f',
