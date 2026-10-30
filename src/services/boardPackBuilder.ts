@@ -51,6 +51,8 @@ export interface BoardPackProfile {
   region?: string
   generatedAt: string
   persona?: string | null
+  /** Explicitly distinguish a fictional worked example from self-reported inputs. */
+  sample?: boolean
   /** Program-level accountability (useReportOwnershipStore) — optional,
    *  since a user may not have filled these in yet. */
   programOwner?: string
@@ -81,6 +83,9 @@ function buildReadme(profile: BoardPackProfile, appVersion?: string): string {
     '# PQC Board Pack',
     '',
     `Generated ${profile.generatedAt} from the PQC Today Risk Assessment.`,
+    profile.sample
+      ? "Fictional worked example — this pack does not describe the viewer's organization."
+      : 'Planning inputs are self-reported and are not independently verified.',
     '',
     "## What's inside",
     '',

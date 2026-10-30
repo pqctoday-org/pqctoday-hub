@@ -384,6 +384,10 @@ export default defineConfig([
                 // of text, no desktop layout. An unscoped Compliance register
                 // and the Threats exposure card show it on both shells, and
                 // sharing it keeps one write for the sector (useScopeSector).
+                // BoardPackExport is a shared, phone-safe single button with no desktop
+                // layout. Both report shells use the same displayed-profile export
+                // and source bundle; sharing it prevents scope and download drift.
+                '!@/components/common/BoardPackExport',
                 '!@/components/common/InlineScopeStep',
                 '!@/components/common/Glossary',
                 '!@/components/common/UserManualPanel',
