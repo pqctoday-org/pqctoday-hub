@@ -121,6 +121,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   MLSGroupMessaging: 'mls-group-messaging',
   PQCCandidates: 'pqc-candidates',
   VerificationClosure: 'verification-closure',
+  MediaDrmPQC: 'media-drm-pqc',
 }
 
 /** Build a moduleId → markdown content lookup from the glob results */

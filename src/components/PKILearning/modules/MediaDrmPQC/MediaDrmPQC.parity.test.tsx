@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { MediaDrmPQCModule } from './index'
+import { CuriousSummaryBanner } from '../../common/CuriousSummaryBanner'
 import manifest from './manifest'
 import { content } from './content'
 
@@ -59,5 +60,11 @@ describe('MediaDrmPQC', () => {
     ]) {
       expect(ids, id).toContain(id)
     }
+  })
+
+  it('loads the plain-language summary for the Visual tab', () => {
+    render(<CuriousSummaryBanner moduleId="media-drm-pqc" isFullPage />)
+    expect(screen.queryByText('No visual summary yet')).not.toBeInTheDocument()
+    expect(screen.getAllByText('What This Is About').length).toBeGreaterThan(0)
   })
 })
