@@ -43,8 +43,7 @@ const METRICS = [
     label: 'ClientHello Size',
     unit: 'B',
     maxVal: 1600,
-    description:
-      'TLS ClientHello byte count (above the 1,460 B Ethernet MSS of RFC 6928 it spans two segments)',
+    description: 'TLS ClientHello byte count (above a 1,460 B MSS it spans two segments)',
   },
 ] as const
 
@@ -230,8 +229,8 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
               />
             )}
             <Insight
-              label="Fragmentation adds hidden latency"
-              text={`When ClientHello exceeds the ~1,460-byte MSS (RFC 6928), TCP fragmentation adds exactly 1 RTT (${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms). Hybrid ClientHellos (about 1,500B), pure PQC ClientHellos (1,536B) and composite certificates (17KB) all trigger this. Plan for MTU tuning or QUIC migration.`}
+              label="Large ClientHellos span several segments"
+              text={`A ClientHello of about 1,500 B spans two TCP segments at a 1,460-byte MSS, which is inside the initial window of up to 10 segments (14,600 B) that RFC 6928 applies in the first round-trip time. A flight larger than that window, such as a 17 KB composite certificate chain, takes more than one round trip. Some middleboxes assume the ClientHello fits in one packet, so measure with your own load balancers. One round trip on the selected network profile is ${NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms.`}
             />
           </div>
         )}

@@ -813,8 +813,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 value: lmsHash,
                 body:
                   lmsHash === 'SHA-256'
-                    ? 'SHA-256 relies on collision resistance. Standard choice; NIST FIPS 180-4 compliant.'
-                    : 'SHAKE-256 uses XOF bitmasks — removes the collision-resistance assumption. Stronger multi-target security than SHA-256.',
+                    ? 'SHA-256: RFC 8554 §9 requires the hash function H to have second-preimage resistance. Standard choice; NIST FIPS 180-4 compliant.'
+                    : 'SHAKE-256: SHAKE256/256 is the first 256 bits of the SHAKE256 extendable-output function (XOF) (RFC 9858 §2.2); RFC 9858 §8 describes its security as essentially the same as the SHA-256-based signatures, because the strength of HSS/LMS signatures rests on the difficulty of finding preimages or second preimages.',
               },
               {
                 label: 'm / n — Output Length',
