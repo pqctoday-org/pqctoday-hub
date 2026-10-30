@@ -413,8 +413,8 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2">INCD</td>
                 <td className="py-2 px-2 font-mono text-primary">&mdash;</td>
                 <td className="py-2 px-2">
-                  No PQC deadline found: the INCD national cybersecurity strategy for
-                  2025&ndash;2028 does not mention quantum
+                  No PQC deadline found: the INCD cybersecurity strategy document we hold does not
+                  mention quantum
                 </td>
               </tr>
               <tr className="border-b border-border/50">
