@@ -59,7 +59,7 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
       badge: 'Stateless Hash',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'SLH-DSA-SHA2-128s signatures are ~7,856 bytes (larger than ML-DSA) but rely only on hash function security. Notice the longer signing time compared to ML-DSA — the trade-off is conservative security assumptions vs performance.',
+        'SLH-DSA-SHA2-128s signatures are ~7,856 bytes (larger than ML-DSA) but rely only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1). Notice the longer signing time compared to ML-DSA — the trade-off is conservative security assumptions vs performance.',
       workshopStep: 1,
     },
     {

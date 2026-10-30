@@ -296,7 +296,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     quantumSafe: true,
     legacyCompat: false,
     description:
-      'X.509 using SLH-DSA-128s — a hash-based signature whose security rests only on hash-function properties, which diversifies away from lattice assumptions.',
+      'X.509 using SLH-DSA-128s — a hash-based signature whose security rests only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1), which diversifies away from lattice assumptions.',
     structureLines: [
       { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
       { text: 'tbsCertificate {', color: 'muted', indent: 1 },
