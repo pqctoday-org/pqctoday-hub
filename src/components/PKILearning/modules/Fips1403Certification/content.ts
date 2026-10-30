@@ -76,6 +76,7 @@ export const content: ModuleContent = {
     getStandard('PROACT-2025-SCA-Lattice-PQC'),
     getStandard('ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation'),
     getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
+    getStandard('NIST-CMVP-Programmatic-Transitions'),
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

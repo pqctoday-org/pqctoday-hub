@@ -86,6 +86,7 @@ export const content: ModuleContent = {
     getStandard('Canada CSE PQC Guidance'), // m-compliance-strategy: April 2026
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('Europol-QSFF-Call-to-Action-2025'), // m-compliance-strategy: wave 4c
+    getStandard('HHS-HIPAA-Security-Rule-NPRM-2025'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-87'), getAlgorithm('ML-KEM-1024')],
