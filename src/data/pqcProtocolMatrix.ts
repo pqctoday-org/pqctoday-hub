@@ -2280,7 +2280,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'openpgp',
     name: 'OpenPGP',
     description:
-      'OpenPGP message format — composite ML-KEM+ECDH encryption and ML-DSA+ECDSA signatures, plus standalone SLH-DSA.',
+      'OpenPGP message format — composite ML-KEM+X25519/X448 encryption and ML-DSA+Ed25519/Ed448 signatures, plus standalone SLH-DSA.',
     latestRelease: [
       {
         id: 'RFC-9580',
@@ -2323,7 +2323,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-published',
         stageNote:
           'RFC 9980 published Jun 2026 (formerly the OpenPGP-PQC draft) — covers Hybrid KEM + Pure/Hybrid Sig',
-        note: 'Composite mode pairs ML-KEM-768/1024 with ECDH P-256 / P-384 / X25519 / X448. RFC 9980 covers Pure Sig and Hybrid Sig in the same document.',
+        note: 'Composite mode pairs ML-KEM-768 with X25519 (MUST) and ML-KEM-1024 with X448 (SHOULD). RFC 9980 covers Pure Sig and Hybrid Sig in the same document; NIST and Brainpool curve composites are in draft-ietf-openpgp-nist-bp-comp.',
         refs: [
           {
             kind: 'rfc',
@@ -2352,7 +2352,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote: 'RFC 9980 published Jun 2026 — same document as Hybrid KEM',
-        note: 'Composite mode pairs ML-DSA with ECDSA / EdDSA classical signatures.',
+        note: 'Composite mode pairs ML-DSA-65 with Ed25519 (MUST) and ML-DSA-87 with Ed448 (SHOULD).',
         refs: [
           {
             kind: 'rfc',
