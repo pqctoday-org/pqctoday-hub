@@ -106,7 +106,8 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'shor',
         likelihood: 3,
         impact: 3,
-        mitigation: 'Enable IKEv2 PQC extensions (RFC 9370); hybrid ML-KEM-768 + ECDH',
+        mitigation:
+          'Enable IKEv2 multiple key exchanges (RFC 9370) and add an ML-KEM-768 exchange alongside ECDH (draft-ietf-ipsecme-ikev2-mlkem, in the RFC Editor queue)',
       },
     ],
   },
@@ -154,7 +155,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 3,
         impact: 4,
         mitigation:
-          'Deploy ML-KEM + X25519 hybrid per RFC 9370; strongSwan 6.0+ and OpenSSL 3.5+ support this',
+          'Deploy an ML-KEM + X25519 hybrid: RFC 9370 multiple key exchanges carry the ML-KEM exchange (draft-ietf-ipsecme-ikev2-mlkem, in the RFC Editor queue)',
       },
     ],
   },
