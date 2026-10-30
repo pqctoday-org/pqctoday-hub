@@ -36,9 +36,9 @@
 
 ### Step 3: Container Signing Migration
 
-- 5 signing tools: cosign (on roadmap, no date stated), Notation (ML-DSA support unconfirmed), GPG/OpenPGP (roadmap/2026), Sigstore Bundle (on roadmap, no date stated), Docker Content Trust (being retired)
+- 5 signing tools: cosign (post-quantum status unconfirmed), Notation (ML-DSA support unconfirmed), GPG/OpenPGP (post-quantum signatures defined in RFC 9980; GnuPG and Sequoia support not stated), Sigstore Bundle (on roadmap, no date stated), Docker Content Trust (being retired)
 - ML-DSA-65 signature size: 3,309B vs ECDSA P-256: 64B (52× larger)
-- Notation: no held vendor documentation states ML-DSA support, so treat it as unconfirmed; Sigstore (June 2025) says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments and gives no production date
+- Notation: the Library holds no vendor documentation that states ML-DSA support, so treat it as unconfirmed; Sigstore (June 2025) says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments and gives no production date
 - Docker Content Trust: being fully retired with the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained); Docker names Sigstore/Cosign and Notation as the alternatives and says nothing about post-quantum signatures (Docker, 16 June 2026)
 - SLH-DSA preferred for SBOMs (stateless, long signature lifetime, 20+ year validity)
 

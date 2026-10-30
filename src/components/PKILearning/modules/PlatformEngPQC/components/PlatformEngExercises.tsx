@@ -57,7 +57,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Signing',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'No vendor documentation this module found confirms ML-DSA support in Notation, so its status is shown as unconfirmed; Sigstore (June 2025) says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments, and gives no production date. Vendor timelines move quickly, so confirm current status before choosing a tool. Docker Content Trust (DCT) should be migrated immediately — Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026), and the upstream Notary v1 codebase is no longer maintained.',
+        'We found no vendor documentation that confirms ML-DSA support in Notation, and the Sigstore post (June 2025) does not mention cosign, so both are shown as unconfirmed; the post says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments, and gives no production date. Vendor timelines move quickly, so confirm current status before choosing a tool. Docker Content Trust (DCT) should be migrated immediately — Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026), and the upstream Notary v1 codebase is no longer maintained.',
       config: { step: 2 },
     },
     {

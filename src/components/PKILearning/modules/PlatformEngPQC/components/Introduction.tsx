@@ -264,7 +264,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="flex items-start gap-2">
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
-                <strong className="text-foreground">Notation</strong> — this module found no vendor
+                <strong className="text-foreground">Notation</strong> — we found no vendor
                 documentation that Notation or its AWS Signer plugin supports ML-DSA, so treat any
                 ML-DSA support as unconfirmed.
               </span>
@@ -276,7 +276,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 2025) it wants to enable post-quantum signing as soon as possible and has added
                 ML-DSA to its protocol specification for client experiments; its services will adopt
                 post-quantum algorithms once vetted implementations are in the Go ecosystem. No date
-                is given, and the Rekor transparency log must also be migrated.
+                is given, the post does not mention cosign, and the Rekor transparency log must also
+                be migrated.
               </span>
             </div>
             <div className="flex items-start gap-2">

@@ -10,7 +10,8 @@ export type AlgorithmFamily =
 
 export type HNDLExposure = 'high' | 'medium' | 'low' | 'none'
 
-export type PQCReadiness = 'available' | 'beta' | 'roadmap' | 'not-planned' | 'unconfirmed'
+export type PQCReadiness =
+  'available' | 'beta' | 'roadmap' | 'not-planned' | 'unconfirmed' | 'retiring'
 
 export type SigningSchemeId = 'cosign' | 'notation' | 'gpg' | 'sigstore-bundle' | 'dct'
 
@@ -119,6 +120,7 @@ export const PQC_READINESS_COLORS: Record<PQCReadiness, string> = {
   roadmap: 'bg-status-info/15 text-status-info border-status-info/30',
   'not-planned': 'bg-muted text-muted-foreground border-border',
   unconfirmed: 'bg-muted text-muted-foreground border-border',
+  retiring: 'bg-status-error/15 text-status-error border-status-error/30',
 }
 
 export const PRIORITY_COLORS: Record<MigrationPriority, string> = {
@@ -154,4 +156,5 @@ export const PQC_READINESS_LABELS: Record<PQCReadiness, string> = {
   roadmap: 'On Roadmap',
   'not-planned': 'Not Planned',
   unconfirmed: 'Unconfirmed',
+  retiring: 'Being Retired',
 }

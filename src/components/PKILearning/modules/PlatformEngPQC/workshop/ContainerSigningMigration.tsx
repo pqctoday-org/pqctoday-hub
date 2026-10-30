@@ -49,6 +49,7 @@ const READINESS_ITEMS = [
   { id: 'roadmap', label: 'On Roadmap' },
   { id: 'not-planned', label: 'Not Planned' },
   { id: 'unconfirmed', label: 'Unconfirmed' },
+  { id: 'retiring', label: 'Being Retired' },
 ]
 
 const COMPARE_DIMENSIONS = [

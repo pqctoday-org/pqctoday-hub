@@ -11,11 +11,10 @@ export const SIGNING_TOOLS: SigningTool[] = [
     signingAlgorithm: 'ecdsa',
     signatureFormat: 'OCI Referrers (ECDSA-P256 + SHA-256)',
     transparencyLog: true,
-    pqcReadiness: 'roadmap',
+    pqcReadiness: 'unconfirmed',
     pqcNotes:
       'Sigstore says (June 2025) that it wants people to be able to sign content with post-quantum keys as soon as possible. ML-DSA, chosen over SLH-DSA for its smaller signature size, has been added to the Sigstore protocol buffer specification so that clients can experiment with ML-DSA keys in Sigstore bundles, while the Sigstore services (Fulcio, Rekor and a timestamp authority) will adopt post-quantum algorithms when reliable, vetted implementations are available in the Go ecosystem. The post gives no production date and does not mention cosign; the held cosign changelog (v3.0.x) lists no post-quantum feature.',
-    pqcAlgorithm: 'ml-dsa',
-    estimatedPqcYear: 'No date stated',
+    estimatedPqcYear: 'Not stated',
     strengths: [
       'Keyless signing via OIDC (no long-lived private key to protect)',
       'OCI-native — signatures stored in registry alongside images',
@@ -40,7 +39,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: false,
     pqcReadiness: 'unconfirmed',
     pqcNotes:
-      'This module found no vendor documentation stating that Notation, or the plugin that signs through AWS Signer, supports ML-DSA, so any ML-DSA support is unconfirmed. Check the Notary Project and plugin documentation for current status.',
+      'We found no vendor documentation stating that Notation, or the plugin that signs through AWS Signer, supports ML-DSA, so any ML-DSA support is unconfirmed. Check the Notary Project and plugin documentation for current status.',
     estimatedPqcYear: 'Not stated',
     strengths: [
       'Certificate-backed (X.509): integrates with existing PKI and CAs',
@@ -64,11 +63,11 @@ export const SIGNING_TOOLS: SigningTool[] = [
     signingAlgorithm: 'rsa',
     signatureFormat: 'OpenPGP packet format (RFC 9580)',
     transparencyLog: false,
-    pqcReadiness: 'roadmap',
+    pqcReadiness: 'unconfirmed',
     pqcNotes:
       'RFC 9980 (Standards Track, June 2026, the former draft-ietf-openpgp-pqc) adds post-quantum OpenPGP: for signatures a conformant implementation MUST implement the composite scheme ML-DSA-65+Ed25519 and SHOULD also implement ML-DSA-87+Ed448; standalone SLH-DSA is optional (MAY). Note: GnuPG is pursuing the LibrePGP format (diverging from RFC 9580); Sequoia-PGP implements RFC 9580 (OpenPGP v6). Whether each implements RFC 9980 is not stated in the held documents. Migration requires re-signing all artifacts with new PQC keys.',
     pqcAlgorithm: 'ml-dsa',
-    estimatedPqcYear: '2026',
+    estimatedPqcYear: 'Not stated',
     strengths: [
       'Ubiquitous — supported by every Linux package manager',
       'RFC 9980 adds post-quantum signatures to OpenPGP: composite ML-DSA schemes and standalone SLH-DSA',
@@ -92,7 +91,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: true,
     pqcReadiness: 'roadmap',
     pqcNotes:
-      'Sigstore says (June 2025) that ML-DSA has been added to its protocol buffer specification so that clients can experiment with ML-DSA ephemeral keys in Sigstore bundles. The Rekor log and Fulcio CA must be post-quantum enabled before bundle signatures are quantum-safe end-to-end; Sigstore gives no date for its public services.',
+      'Sigstore says (June 2025) that ML-DSA has been added to its protocol buffer specification so that clients can experiment with ML-DSA ephemeral keys in Sigstore bundles. The post gives no date for its public services; this module reasons that bundle signatures would only be quantum-safe end-to-end once the Rekor log and Fulcio CA are post-quantum enabled.',
     pqcAlgorithm: 'ml-dsa',
     estimatedPqcYear: 'No date stated',
     strengths: [
@@ -116,7 +115,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     signingAlgorithm: 'ed25519',
     signatureFormat: 'TUF metadata (Ed25519 / RSA signatures)',
     transparencyLog: false,
-    pqcReadiness: 'not-planned',
+    pqcReadiness: 'retiring',
     pqcNotes:
       "Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained) and names Sigstore/Cosign and Notation as the alternatives; its guidance says nothing about post-quantum signatures. Ed25519 is a Schnorr-type signature scheme — quantum-vulnerable to Shor's algorithm despite being resistant to classical attacks.",
     estimatedPqcYear: 'N/A',
