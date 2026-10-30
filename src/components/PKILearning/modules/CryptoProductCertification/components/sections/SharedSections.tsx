@@ -1067,8 +1067,8 @@ export const TransitionDeadlines = () => {
       </div>
       <p className="text-xs text-muted-foreground">
         The payment processor and the secure-element manufacturer have no row of their own: payment
-        requirements come from PCI SSC and the brands (no public PCI material names a PQC deadline,{' '}
-        <AsOf />
+        requirements come from PCI SSC and the brands (the v5.0 announcement and the listing
+        definitions name no PQC deadline, <AsOf />
         ), and the chip maker inherits the deadlines of the programmes it sells into.
       </p>
 

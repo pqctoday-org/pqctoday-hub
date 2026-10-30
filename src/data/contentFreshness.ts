@@ -403,7 +403,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cert-shared-pci-pqc-no-requirement',
     claim:
-      'Crypto Product Certification: public PCI material names no PQC algorithm, parameter set or deadline; the PTS listing PQC notation marks only that PQC support exists',
+      'Crypto Product Certification: the v5.0 announcement and the listing definitions name no PQC algorithm, parameter set or deadline; the PTS listing PQC notation marks only that PQC support exists',
     source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
     asOf: '2026-09-24',
     recheck: 'https://listings.pcisecuritystandards.org/popups/pts_device.php?appnum=4-80032',

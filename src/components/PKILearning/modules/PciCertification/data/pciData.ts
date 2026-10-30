@@ -19,11 +19,9 @@
  * reasoning. A vendor’s statement is attributed to the vendor.
  *
  * Reference ids are library `reference_id`s; PciSections/PciEvidenceReview
- * resolve them through getStandard() (throws on an unknown id). The Library
- * rows for documents that are not public pages (PTS HSM v4.0 requirements, PIN
- * ROC template, P2PE v3.1 requirements, Program Guide v1.9, the v4 bulletin)
- * stay in PCI_REF for the register; this module states nothing about their
- * content.
+ * resolve them through getStandard() (throws on an unknown id). Documents that
+ * are not public pages are neither cited nor declared here; this module states
+ * nothing about their content.
  */
 import type { StepExercise } from '@/data/stepExercises'
 import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
@@ -58,13 +56,13 @@ export const PCI_PLAIN_SOURCES = {
   htsmProgramPage: {
     title: 'PTS Hardware Security Module (HSM) — standard page',
     publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
+    date: 'read 30 October 2026',
     url: 'https://www.pcisecuritystandards.org/standards/pts-hardware-security-module-hsm/',
   },
   kmoProgramPage: {
     title: 'Key Management and Operations (KMO) — standard page',
     publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
+    date: 'read 30 October 2026',
     url: 'https://www.pcisecuritystandards.org/standards/key-management-and-operations-kmo/',
   },
   pin31Blog: {
@@ -83,7 +81,7 @@ export const PCI_PLAIN_SOURCES = {
   documentLibrary: {
     title: 'PCI SSC Document Library (titles and publication dates only)',
     publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
+    date: 'read 30 October 2026',
     url: 'https://www.pcisecuritystandards.org/document_library/',
   },
   p2pe32Blog: {
@@ -310,7 +308,8 @@ export const PCI_STACK: StackLayer[] = [
       'The PIN Security Standard gives "requirements and testing procedures for the secure management, processing, and transmission of PIN data at ATMs and attended and unattended point-of-sale (POS) terminals". In this module’s scenario: an acquirer’s or agent’s PIN processing, including the HSMs it runs.',
     whoAssesses:
       'In this module’s reading, an assessment of the entity’s PIN operations rather than of the device; compliance programs for PCI SSC standards are managed by the payment brands, and which entities must validate is for them',
-    artifact: 'Not read here: compliance programs for PCI SSC standards are managed by the payment brands',
+    artifact:
+      'Not read here: compliance programs for PCI SSC standards are managed by the payment brands',
     listing: 'None described in the sources this module reads',
     anchorRole: 'Orrin N7 appliances inside a payment processor’s PIN-translation environment',
   },
