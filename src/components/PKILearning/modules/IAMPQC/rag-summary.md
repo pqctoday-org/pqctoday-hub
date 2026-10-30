@@ -8,7 +8,7 @@ Module covering PQC migration for enterprise IAM systems including JWT/SAML toke
 - Active Directory, LDAP, Kerberos quantum vulnerabilities and HNDL risk scores
 - IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak
 - Zero trust identity architecture with PQC across five pillars
-- Harvest Now, Decrypt Later (HNDL) risk for Kerberos tickets, SAML assertions, and JWT refresh tokens
+- Harvest Now, Decrypt Later (HNDL) risk for Kerberos PKINIT exchanges and the TLS channels that carry identity traffic; signed JWT, SAML and OIDC tokens carry a forgery risk, not an HNDL risk (NIST IR 8547)
 - **Identity Proxy Architecture**: Bridging PQC-migrated Identity Providers (IdP) with classical Service Providers (SP) by translating SAML signatures (ML-DSA to RSA).
 
 ## Workshop Steps

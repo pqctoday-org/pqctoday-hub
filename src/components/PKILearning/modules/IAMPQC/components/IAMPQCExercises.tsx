@@ -38,7 +38,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Inventory',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Kerberos KDC, SAML IdP, JWT issuance, and Certificate-Based Auth all show Immediate priority. These use RSA-2048 or ECDSA in long-lived token paths — the highest HNDL targets. Sort by "Priority" to confirm your migration order.',
+        'Kerberos KDC, SAML IdP, JWT issuance, and Certificate-Based Auth all show Immediate priority. These use RSA-2048 or ECDSA in long-lived token paths: forgery targets for the signed tokens, and HNDL targets where RSA protects a key exchange (Kerberos PKINIT). Sort by "Priority" to confirm your migration order.',
       config: { step: 0 },
     },
     {
