@@ -151,8 +151,9 @@ export function SbomFormatExplorer() {
           update newly requires — both formats already carried them, which is why they show up as
           real fields above rather than gaps. The general SBOM fields shown here do not describe
           cryptographic assets such as algorithms, key sizes or quantum-vulnerability status;
-          CycloneDX records them through its cryptographic-asset model (CBOM), which is why a crypto
-          inventory uses that extension. <X size={12} className="inline text-status-error" />
+          CycloneDX covers cryptographic assets such as algorithms and key lengths through its
+          cryptographic-asset model (CBOM), which is why a crypto inventory uses that extension.{' '}
+          <X size={12} className="inline text-status-error" />
         </p>
       </div>
     </div>
