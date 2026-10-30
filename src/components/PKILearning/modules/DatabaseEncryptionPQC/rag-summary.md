@@ -20,7 +20,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 1. **Inventory & Key Hierarchy Audit** — Enumerate all encrypted databases using `sys.dm_database_encryption_keys` (SQL Server) or `V$ENCRYPTED_TABLESPACES` (Oracle). Document RSA/ECC-wrapped DEK locations. Generate CBOM.
 
-2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-DSA signing keys and hybrid post-quantum TLS on its endpoints; no ML-KEM KMS keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: `CryptographicAlgorithm = ML-KEM`.
+2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to wrap 256-bit DEK. Store KEM ciphertext (1,568 bytes) + wrapped DEK alongside old RSA entry during transition.
 
@@ -45,7 +45,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 ### BYOK — Bring Your Own Key (65% PQC Readiness)
 
 - Customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
-- ML-KEM-1024 wrapping for import: Azure Key Vault planned 2026; AWS KMS offers no ML-KEM keys (its post-quantum support is ML-DSA signing keys and hybrid post-quantum TLS on its endpoints)
+- ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only; check Azure and Google Cloud per service
 - Cloud KMS briefly holds unwrapped CMK in HSM memory — residual exposure
 - Satisfies most regulatory BYOK requirements
 
@@ -71,7 +71,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 **MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries. DEK wrapping uses RSA-OAEP — ML-KEM-1024 upgrade planned in MongoDB 8.x (2026).
 
-**SQL Server Always Encrypted** with secure enclaves (VBS/SGX) supports range queries inside the enclave. CMK wrapping uses RSA-OAEP (RSA-2048/4096). Azure Key Vault ML-KEM support planned 2026.
+**SQL Server Always Encrypted** with secure enclaves (VBS/SGX) supports range queries inside the enclave. CMK wrapping uses RSA-OAEP (RSA-2048/4096).
 
 **PQC challenge**: Range-query encryption (structured encryption range schemes; MongoDB uses fully randomized ciphertext, not order-preserving encryption) is not yet standardized for PQC. Equality tokens (HMAC-SHA-256) are already quantum-safe. Expect formal NIST standards for PQC-compatible queryable encryption by 2028.
 
@@ -107,11 +107,11 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 ### NSM-8 / CNSA 2.0
 
-- ML-KEM-1024 exclusively for US federal/NSS key establishment
-- New capabilities: PQC by 2027
-- All legacy systems: ML-KEM-only by 2033
-- HYOK with FIPS 140-3 Level 3+ HSM mandatory for classified databases
-- RSA/ECC key wrapping prohibited after 2033
+- CNSA 2.0 for National Security Systems: ML-KEM-1024 for key establishment (NSA CNSA 2.0 FAQ, v2.2)
+- New NSS acquisitions: CNSA 2.0 required from 1 January 2027 (CNSSP 15)
+- Fielded equipment transitions: by 31 December 2030
+- CNSA 2.0 algorithms mandated for use in NSS by 31 December 2031
+- SLH-DSA is not part of CNSA and is not approved for any use in NSS
 
 ---
 
@@ -131,8 +131,8 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 ## Key Technical Facts
 
 - **AES-256 is quantum-safe**: Grover's algorithm reduces effective bits from 256 to 128 — still above the 112-bit security minimum. No data file re-encryption needed.
-- **DEK wrapping is the PQC target**: RSA-OAEP and ECDH used to wrap DEKs must be replaced with ML-KEM-1024.
+- **DEK wrapping is the PQC target**: RSA-OAEP and ECDH used to wrap DEKs must be replaced with a standardized KEM: ML-KEM-768 is the FIPS 203 default; ML-KEM-1024 where a policy such as CNSA 2.0 requires it.
 - **ML-KEM-1024 key sizes**: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.
 - **Online migration**: Oracle (`ALTER TABLESPACE REKEY`) and SQL Server (`ALTER DATABASE ENCRYPTION KEY REGENERATE`) support zero-downtime TDE re-keying.
 - **HNDL risk**: Database backups captured today with RSA-wrapped DEKs may be decryptable after a CRQC arrives. Priority: databases with long data retention (healthcare, financial records, classified).
-- **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard) supports `CryptographicAlgorithm = ML-KEM` via PQC enumerations; KMIP 3.0 is still a Committee Specification Draft, not ratified. Thales CipherTrust 2.15+ supports PQC key types; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.
+- **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard); ML-KEM, ML-DSA and SLH-DSA Cryptographic Algorithm values are defined in KMIP 3.0 (Committee Specification Draft 02, May 2026), which is not ratified; KMIP 2.1 has none. Thales CipherTrust 2.15+ supports PQC key types; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.
