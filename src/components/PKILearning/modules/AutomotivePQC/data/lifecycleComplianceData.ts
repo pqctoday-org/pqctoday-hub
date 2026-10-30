@@ -274,7 +274,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     year: 2021,
     quarter: 'Q3',
     description:
-      'Cybersecurity engineering standard for road-vehicle E/E systems, from concept and development to production, operation, maintenance and decommissioning. ISO describes it as technology-agnostic (processes and risk management, not specific tools) and, while not legally mandatory, increasingly a de facto requirement. It was published in 2021, before FIPS 203 and FIPS 204.',
+      'Cybersecurity engineering standard for road-vehicle E/E systems, from concept and development to production, operation, maintenance and decommissioning. It was published in 2021, before FIPS 203 and FIPS 204.',
     pqcRelevance: 'indirect',
     confidence: 'published',
     affectedSystems: ['All ECUs', 'Supply chain', 'Key management'],

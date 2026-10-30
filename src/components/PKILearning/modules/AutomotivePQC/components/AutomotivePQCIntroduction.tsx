@@ -362,14 +362,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            ISO 26262 defines the Automotive Safety Integrity Levels (ASIL) that govern all
-            safety-related electronic systems. When cryptographic verification becomes part of a
-            safety function &mdash; for example, authenticating a steering command or verifying a{' '}
+            ISO 26262 (Road vehicles &mdash; Functional safety) uses the Automotive Safety Integrity
+            Levels (ASIL), and its Part 9 covers ASIL-oriented and safety-oriented analyses. In this
+            module&rsquo;s design reading, when cryptographic verification becomes part of a safety
+            function &mdash; for example, authenticating a steering command or verifying a{' '}
             <InlineTooltip term="Secure Boot">secure boot</InlineTooltip> chain &mdash; the crypto
-            library inherits the ASIL classification of that function. PQC algorithms have
-            fundamentally different timing characteristics than classical ECDSA, and these
-            differences directly impact whether a system can meet its ASIL-mandated response
-            deadlines.
+            library is treated as carrying the ASIL of that function. PQC algorithms have different
+            timing characteristics than classical ECDSA, and these differences can affect whether a
+            system meets the response deadlines of its safety function.
           </p>
 
           <p>
@@ -970,9 +970,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             The Car Connectivity Consortium (CCC) Digital Key 3.0 specification enables smartphones
             and wearables to unlock and start vehicles using NFC, BLE, and UWB (Ultra-Wideband)
             transports. The protocol uses ECDH P-256 for key agreement and ECDSA P-256 for
-            authentication &mdash; both quantum-vulnerable. With over 200 million vehicles expected
-            to support <InlineTooltip term="CCC Digital Key">CCC Digital Key</InlineTooltip> by
-            2030, the PQC migration of this standard affects a massive installed base.
+            authentication &mdash; both quantum-vulnerable. A PQC migration of{' '}
+            <InlineTooltip term="CCC Digital Key">CCC Digital Key</InlineTooltip> would reach every
+            vehicle, phone and wearable that implements the standard.
           </p>
 
           <h3 className="text-sm font-bold text-foreground">Transport Comparison</h3>
@@ -1028,8 +1028,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                     <span className="text-status-warning font-medium">Marginal</span>
                   </td>
                   <td className="py-2 px-3 text-muted-foreground">
-                    Base PSDU is ~127 B, so ML-KEM-768 requires fragmentation; ranging itself uses
-                    quantum-safe AES-128 STS
+                    The 127 B payload is this table&rsquo;s planning value. An ML-KEM-768
+                    encapsulation key (1,184 B) or ciphertext (1,088 B; FIPS 203 Table 3) is larger,
+                    so an exchange would have to be fragmented
                   </td>
                 </tr>
               </tbody>
