@@ -183,13 +183,13 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                   {
                     name: 'ML-KEM-768 (36)',
                     size: '1,192 / 1,096 B',
-                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
+                    rule: 'SHOULD NOT over UDP without PMTU discovery when the path MTU is unknown, unless IKE runs over TCP',
                     color: 'text-warning',
                   },
                   {
                     name: 'ML-KEM-1024 (37)',
                     size: '1,576 / 1,576 B',
-                    rule: 'SHOULD NOT when the path MTU is unknown, unless IKE runs over TCP',
+                    rule: 'SHOULD NOT over UDP without PMTU discovery when the path MTU is unknown, unless IKE runs over TCP',
                     color: 'text-warning',
                   },
                 ].map((row) => (
@@ -255,7 +255,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             OpenSSH has been a pioneer in deploying post-quantum key exchange. Since version 8.5
             (March 2021), it has shipped with <strong>sntrup761x25519-sha512</strong> &mdash; a
             hybrid of Streamlined NTRU Prime and X25519. In OpenSSH 9.9 (September 2024),
-            NIST-standard <strong>mlkem768x25519-sha256</strong> was added.
+            <strong>mlkem768x25519-sha256</strong>, OpenSSH&rsquo;s hybrid of ML-KEM-768 (FIPS 203,
+            standardised by NIST) and X25519, was added.
           </p>
           <div className="space-y-2">
             {[
@@ -470,11 +471,12 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <h3 className="font-bold text-primary mb-1">Control Plane vs. Data Plane</h3>
             <p className="text-xs text-muted-foreground">
               The migration to PQC only applies to the <strong>Control Plane</strong> (key exchange
-              &amp; auth). The actual <strong>Data Plane</strong> (the VPN tunnel) already uses
-              symmetric algorithms like AES-GCM or ChaCha20-Poly1305. These algorithms are naturally
-              quantum-resistant: per NIST (cited in RFC 9370), applications can continue using AES
-              with a minimum key length of 128 bits, and a longer key size can be considered for
-              data that must remain secure for many years.
+              &amp; auth). The actual <strong>Data Plane</strong> (the VPN tunnel) uses symmetric
+              algorithms like AES-GCM or ChaCha20-Poly1305. The data plane&rsquo;s symmetric
+              algorithms are affected by Grover&rsquo;s algorithm rather than Shor&rsquo;s; per NIST
+              (cited in RFC 9370), applications can continue using AES with a minimum key length of
+              128 bits, and a longer key size can be considered for data that must remain secure for
+              many years.
             </p>
           </div>
         </div>

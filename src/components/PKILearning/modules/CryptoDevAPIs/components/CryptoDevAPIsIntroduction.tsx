@@ -241,9 +241,11 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             CNG integrates with the Windows certificate store and is the foundation for Windows FIPS
             mode. ML-KEM and ML-DSA became generally available in November 2025 on Windows 11 24H2+
             and Windows Server 2025 (and .NET 10 uses them). SLH-DSA has an identifier
-            (BCRYPT_SLHDSA_ALGORITHM) but is not currently implemented by the default CNG provider,
-            and Microsoft KB5099536 (14 July 2026) adds support for composite cryptographic formats
-            that combine traditional and post-quantum algorithms.
+            (BCRYPT_SLHDSA_ALGORITHM) but is not currently implemented by the default CNG provider.
+            Microsoft&rsquo;s CNG identifiers page (updated 30 May 2026) still marks the composite
+            identifiers as Insider Preview, while Microsoft&rsquo;s blog (14 July 2026 update) says
+            composite algorithms are available in Windows 11 update KB5095093 and Windows Server
+            2025 update KB5099536; confirm on your build.
           </p>
         </LearnSection>
       </div>
