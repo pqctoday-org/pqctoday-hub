@@ -446,7 +446,7 @@
   {
     "term": "ARINC 653",
     "definition": "Avionics Application Standard Software Interface (ARINC 653). An RTOS partitioning standard that isolates safety-critical software functions in separate memory/time partitions on shared hardware.",
-    "technicalNote": "Each ARINC 653 partition has a fixed memory budget (typically 1-4 MB) and CPU time window. PQC libraries must fit within these constraints alongside existing avionics functions, limiting algorithm choice.",
+    "technicalNote": "Each ARINC 653 partition has a fixed memory budget and CPU time window. PQC libraries must fit within these constraints alongside existing avionics functions, limiting algorithm choice.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
     "category": "standard"
