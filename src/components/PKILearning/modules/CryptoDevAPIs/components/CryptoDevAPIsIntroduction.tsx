@@ -138,7 +138,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             registered via{' '}
             <code className="text-primary font-mono text-sm">Security.addProvider()</code>), and as
             a standalone lightweight API for environments where JCA overhead is undesirable. BC has
-            had full ML-KEM, ML-DSA, SLH-DSA, and FN-DSA support since version 1.78.
+            offered ML-KEM, ML-DSA and SLH-DSA (FIPS 203, 204, 205) since release 1.79 (October
+            2024).
           </p>
           <p className="text-muted-foreground">
             <InlineTooltip term="JCProv">SafeNet/Thales Java PKCS#11 wrapper</InlineTooltip> bridges
@@ -421,7 +422,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 lang: 'Java / Kotlin',
                 libs: ['JCA/JCE', 'Bouncy Castle', 'JCProv'],
-                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13 / 17.0.21); BC 1.78+ adds SLH-DSA and more',
+                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13 / 17.0.21); BC 1.79+ adds SLH-DSA and more',
                 note: 'Oracle backported ML-KEM/ML-DSA to JDK 21 and 17 in October 2026; JCProv bridges to HSM',
               },
               {
@@ -480,7 +481,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 api: 'Bouncy Castle (Java/.NET)',
                 status: 'production',
-                note: `${describeRuntimeSupport('bouncy-castle')}; FN-DSA and LMS/XMSS too`,
+                note: `${describeRuntimeSupport('bouncy-castle')}; Falcon (the basis of FN-DSA) and LMS/XMSS too`,
               },
               {
                 api: 'OpenSSL (native)',

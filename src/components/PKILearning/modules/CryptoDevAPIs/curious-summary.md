@@ -14,4 +14,4 @@ Different APIs have vastly different mechanisms for PQC integration. For example
 
 ## What's Happening
 
-Open-source libraries are actively leading the charge in PQC adoption. Bouncy Castle has provided full ML-KEM and ML-DSA support since version 1.78. Platform runtimes have caught up: Java (JDK 24+), Go (1.24+ for ML-KEM, 1.27+ for ML-DSA), .NET 10 and Python's cryptography library (48+) now ship them, and Windows CNG has offered ML-KEM and ML-DSA to everyone on Windows 11 24H2 and Windows Server 2025 since November 2025 — though not SLH-DSA.
+Open-source libraries are actively leading the charge in PQC adoption. Bouncy Castle has provided ML-KEM and ML-DSA since release 1.79 (October 2024). Platform runtimes have caught up: Java (JDK 24+), Go (1.24+ for ML-KEM, 1.27+ for ML-DSA), .NET 10 and Python's cryptography library (48+) now ship them, and Windows CNG has offered ML-KEM and ML-DSA to everyone on Windows 11 24H2 and Windows Server 2025 since November 2025 — though not SLH-DSA.
