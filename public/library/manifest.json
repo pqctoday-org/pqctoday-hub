@@ -24406,7 +24406,7 @@
     {
       "refId": "EPA-Action-Memo-Rescinding-Cyber-Memo-2023",
       "title": "EPA Memorandum: Withdrawal of Cybersecurity Memorandum of March 3, 2023 (11 October 2023)",
-      "url": "https://www.epa.gov/system/files/documents/2023-10/action-memo_rescinding-cyber-memo-october-2023.pdf",
+      "url": "https://www.epa.gov/system/files/documents/2023-10/action-memo_rescinding-cyber-memo_october-2023.pdf",
       "status": "downloaded",
       "filename": "EPA-Action-Memo-Rescinding-Cyber-Memo-2023.pdf",
       "sizeBytes": 257089,
@@ -24417,7 +24417,11 @@
       "stampedAt": "2026-10-30T05:59:11.863283+00:00",
       "admittedBy": "evidence admission (existing copy)",
       "identity": "UNCONFIRMED",
-      "admittedAt": "2026-10-30T04:43:20.761603+00:00"
+      "admittedAt": "2026-10-30T04:43:20.761603+00:00",
+      "provenanceCorrectedAt": "2026-10-30T06:14:00.492888+00:00",
+      "provenanceCorrectedBy": "evidence replacement",
+      "provenanceCorrectedFrom": "https://www.epa.gov/system/files/documents/2023-10/action-memo_rescinding-cyber-memo-october-2023.pdf",
+      "provenanceReason": "The saved copy was recorded under a dead address (hyphen before october, HTTP 404); the working address (underscore, HTTP 200, same bytes) is the one the row now carries"
     }
   ],
   "archivedEntries": [
