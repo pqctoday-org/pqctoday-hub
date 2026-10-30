@@ -48,7 +48,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
   {
     id: 'nist-sample-decaps',
     observation:
-      'The Rust engine decapsulates every ML-KEM decapsulation test in the NIST ACVP-Server ML-KEM-encapDecap-FIPS203 sample prompt (usnistgov/ACVP-Server @ 975de31, SHA-256 pinned). Each shared secret k byte-matches that commit’s expectedResults.json.',
+      'In this module’s own test run, the Rust engine decapsulates every ML-KEM decapsulation test in the NIST ACVP-Server ML-KEM-encapDecap-FIPS203 sample prompt (usnistgov/ACVP-Server @ 975de31, SHA-256 pinned), and each shared secret k matches that commit’s expectedResults.json. This is the module’s own result, not a record published by NIST.',
     answer: 'nist-acvp-reference-sample',
     rung: 6,
     why: 'The expected values come from the public NIST ACVP-Server repository with an immutable source identity (commit + file hash). That is rung 6 — nothing was issued to an ACVTS session, so rungs 7–9 are not reached.',
