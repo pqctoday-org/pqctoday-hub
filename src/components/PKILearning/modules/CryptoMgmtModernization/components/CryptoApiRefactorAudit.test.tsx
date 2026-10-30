@@ -147,9 +147,9 @@ describe('auditCryptoApi - provider compatibility notes', () => {
     expect(rec.providerCompatNotes.join(' ')).toMatch(/OpenSSL 3/)
   })
 
-  it('accelerator provider warns PQC ops are still 2026 roadmap', () => {
+  it('accelerator provider says to check each vendor for PQC acceleration', () => {
     const rec = auditCryptoApi({ ...baseInputs, provider: ['accelerator'] })
-    expect(rec.providerCompatNotes.join(' ')).toMatch(/2026/)
+    expect(rec.providerCompatNotes.join(' ')).toMatch(/check each vendor/)
   })
 
   it('multiple providers emit one note each (order preserved)', () => {

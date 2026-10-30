@@ -238,7 +238,7 @@ const PROVIDER_NOTES: Record<string, string> = {
   tpm: 'TPM providers: TCG\'s news of 22 March 2026 announces its Trusted Platform Module 2.0 v185 specification, which includes support for ML-KEM (including Endorsement Keys) and ML-DSA (including Attestation Keys). TCG says full industry migration to post quantum "will take some time".',
   kms: "KMS-backed providers: AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM keys (ML_KEM_512, ML_KEM_768, ML_KEM_1024, from 23 October 2026) and hybrid post-quantum TLS on its endpoints. Google Cloud KMS release notes of 16 July 2026 list ML-DSA and SLH-DSA signing in General Availability, and its algorithm tables list the software protection level for the PQC signing and KEM algorithms. Check Azure Key Vault's own documentation. Verify region availability and pricing before pinning.",
   accelerator:
-    'Hardware accelerators (Intel QAT, AWS Nitro): firmware roadmap includes ML-KEM lattice ops 2026; today still RSA / ECC only. Fallback to software for PQC paths.',
+    'Hardware accelerators (Intel QAT, AWS Nitro): no vendor page held for this module states PQC acceleration, so check each vendor\'s documentation. Fall back to software for PQC paths.',
   browser:
     'Browser TPM / secure element providers: WebAuthn / Passkey ecosystem is RSA / ECDSA only; PQC for WebAuthn is in IETF draft. No native PQC in browsers today - WASM bridge required.',
 }
@@ -296,7 +296,7 @@ function computeWatchOuts(inputs: CryptoApiInputs): string[] {
   }
   if (inputs.applicationType === 'embedded firmware') {
     out.push(
-      'Embedded firmware: flash budget matters. SLH-DSA-SHA2-128s ~ 32 KB code; ML-DSA-65 ~ 18 KB; ML-KEM-768 ~ 12 KB. Measure against the target chip before committing.'
+      'Embedded firmware: flash budget matters, and code size depends on the implementation, compiler and target chip. Measure each algorithm on the target chip before committing.'
     )
   }
   if (inputs.applicationType === 'browser app') {

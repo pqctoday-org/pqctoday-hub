@@ -482,11 +482,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`avg_outage_cost × annual_incidence × avoidance_factor\n= ${fmt$(outageP.avgOutageCost)} × ${fmtPct(outageP.annualIncidence, 0)} × ${fmtPct(outageP.avoidanceFactor, 0)}\n= ${fmt$(outage)}/yr`}
-            explanation="86% of enterprises had ≥1 cert-related outage in the last 12 months at an average cost of $11M (Entrust/Ponemon 2024 PKI & PQC Trends Study, 2,000+ respondents across 9 countries). Avoidance factor is the share of those outages that automated CLM, observability, and shadow-cert discovery actually prevent — calibrate to your tooling maturity."
-            source={{
-              label: 'Entrust / Ponemon 2024 Global PKI & PQC Trends Study',
-              href: 'https://www.entrust.com/resources/reports/ponemon-post-quantum-report',
-            }}
+            explanation="This module assumes that 86% of enterprises have at least one cert-related outage a year at an average cost of $11M; both are illustrative assumptions of this module, not sourced figures, so set your own. Avoidance factor is the share of those outages that automated CLM, observability, and shadow-cert discovery actually prevent — calibrate to your tooling maturity."
           >
             <ParamSlider
               label="Avg outage cost"
@@ -703,11 +699,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`(baseline_pqc_transition_cost × cryptocoe_savings_factor × confidence_factor)\n  / amortize_years\n= (${fmt$(maP.baselinePqcTransitionCost)} × ${fmtPct(maP.cryptocoeSavingsFactor, 0)} × ${fmtPct(maP.confidenceFactor, 0)}) / ${maP.amortizeYears}\n= ${fmt$(ma)}/yr`}
-            explanation="Gartner research by David Mahdi and Brian Lowans: organizations that establish a Cryptographic Center of Excellence before 2028 will see roughly 50% lower PQC transition cost than those without one. This benefit is independent of CRQC arrival — it accrues from the unification of crypto policy, faster M&A integration, and reduced firefighting — which is why this stream is NOT flagged quantum-dependent. Confidence factor adjusts for your readiness; amortize over the years it takes to realize."
-            source={{
-              label: 'Gartner — Mahdi & Lowans (CryptoCOE research)',
-              href: 'https://www.gartner.com/en/documents/7116630',
-            }}
+            explanation="This module assumes that establishing a Cryptographic Center of Excellence before 2028 lowers PQC transition cost; the savings factor is an illustrative assumption of this module, not a sourced figure, so set your own. This benefit is independent of CRQC arrival — it accrues from the unification of crypto policy, faster M&A integration, and reduced firefighting — which is why this stream is NOT flagged quantum-dependent. Confidence factor adjusts for your readiness; amortize over the years it takes to realize."
           >
             <ParamSlider
               label="Baseline PQC transition cost (one-time)"
@@ -726,7 +718,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
               max={0.7}
               step={0.01}
               format={(v) => fmtPct(v, 0)}
-              hint="Gartner: ~50% with CryptoCOE before 2028."
+              hint="Illustrative assumption of this module: ~50% with a CryptoCOE before 2028."
             />
             <ParamSlider
               label="Confidence factor"

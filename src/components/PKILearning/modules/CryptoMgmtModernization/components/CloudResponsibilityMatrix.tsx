@@ -540,7 +540,7 @@ function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
   const isFedrampHigh = inputs.regulatoryOverlay.some((r) => /FedRAMP High|IL5|IL6/i.test(r))
   if (isFedrampHigh) {
     out.push(
-      'FedRAMP High / IL5+: ML-KEM-768 and ML-DSA-65 must wait for FIPS 140-3 module re-validation per provider — the module counts only once its CMVP certificate is issued and lists the algorithm as approved, and no standard lag after algorithm GA is published. Plan procurement around the issued certificate, not the algorithm GA date.'
+      'FedRAMP High / IL5+ (this module\'s planning guidance, not a FedRAMP rule): ML-KEM-768 and ML-DSA-65 count in a FIPS 140-3 module only once its CMVP certificate is issued and lists the algorithm as approved. Plan procurement around the issued certificate, not the algorithm GA date.'
     )
   }
 
