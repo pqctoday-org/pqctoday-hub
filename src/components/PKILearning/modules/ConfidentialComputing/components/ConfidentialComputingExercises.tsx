@@ -83,7 +83,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Two vectors are critical with HNDL exposure: ECDSA attestation chain forgery and TLS channel key exchange compromise. These must be migrated first. Memory encryption (medium severity) is lower priority because Grover only halves key strength and real-time quantum attack on AES-128 is unlikely. Sealing key and firmware vectors require silicon refresh (highest effort).',
+        'Two vectors are critical: ECDSA attestation chain forgery and TLS channel key exchange compromise. Only the TLS channel has HNDL exposure (recorded data at risk); attestation forgery is a signature risk, and NIST IR 8547 says the authentication algorithm "may be transitioned at a different time". Both are migrated first because of their severity. Memory encryption (medium severity) is lower priority because Grover only halves key strength and real-time quantum attack on AES-128 is unlikely. Sealing key and firmware vectors require silicon refresh (highest effort).',
       config: { step: 4 },
     },
     {
