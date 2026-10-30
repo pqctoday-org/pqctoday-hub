@@ -32,7 +32,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Pipeline',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'How many stages are HNDL-exposed? Which has the highest migration priority? Toggle to PQC view to verify all stages turn green.',
+      '3 of the 7 stages are HNDL-exposed: the two encryption stages and the key-wrapping stage, because encrypted data can be harvested now and decrypted once quantum technology matures (NIST IR 8547). The two signing stages are quantum-vulnerable but not HNDL-exposed: IR 8547 says the authentication algorithm "may be transitioned at a different time". Which stage has the highest migration priority? Toggle to PQC view to verify all stages turn green.',
     config: { step: 0 },
   },
   {
