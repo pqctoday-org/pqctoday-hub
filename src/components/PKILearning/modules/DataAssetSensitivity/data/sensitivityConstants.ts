@@ -763,22 +763,22 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'CMVP / FIPS 140-3',
         prescribedTier: 'critical',
         reason:
-          'FIPS 140-3 Security Level 4 is required for key material protecting classified systems — requires tamper-evident physical protection and the highest cryptographic assurance.',
+          'FIPS 140-3 applies to cryptographic modules protecting sensitive but unclassified information; classified systems use modules approved for classified use.',
       },
       {
         framework: 'CNSA 2.0',
         prescribedTier: 'critical',
         reason:
-          'NSA mandates PQC for all key material used in classified national security systems by 2030.',
+          "NSA's CNSA 2.0 FAQ (v2.2, October 2026) quotes CNSSP 15 as requiring CNSA 2.0 algorithms in all new NSS acquisitions by 1 January 2027 and says CNSA 2.0 algorithms are mandated for use by 31 December 2031, unless otherwise noted.",
       },
     ],
     resolutionRule: 'asset-type-override',
     correctTier: 'critical',
-    governingFramework: 'CNSA 2.0 + FIPS 140-3 Security Level 4',
+    governingFramework: 'CNSA 2.0 + FIPS 140-3 validation',
     explanation:
       'Key material (cryptographic keys) always escalates to the highest applicable tier. The asset-type-override rule recognizes that root CA keys are the trust anchor for all downstream certificates — their compromise is catastrophic and irreversible. Even if the data the PKI protects is only High sensitivity, the key material itself must be classified Critical. FedRAMP High (which prescribes High) applies to the data, not the key material protecting it.',
     pqcImplication:
-      'SLH-DSA-256s (FIPS 205) for root CA signing — stateless hash-based signatures provide long-term security without state management risk. ML-KEM-1024 for key transport ceremonies.',
+      'ML-DSA-87 (FIPS 204) for root CA signing: the CNSA 2.0 FAQ (v2.2) approves validated ML-DSA for all signing use cases, and SLH-DSA (FIPS 205) is not part of CNSA, so it does not fit a root that signs for classified systems. ML-KEM-1024 for key transport ceremonies.',
   },
   {
     id: 'con-04',
