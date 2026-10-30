@@ -228,7 +228,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
       onPrem:
         'Thales Luna v7.9.2+, Entrust nShield v13.8.0+, Utimaco Q-safe: native firmware support',
       cloud:
-        'AWS CloudHSM: ML-DSA only, through vendor-defined PKCS#11 mechanisms; no ML-KEM. Azure Dedicated HSM: via Thales Luna firmware upgrade. Google Cloud HSM: no PQC at the HSM level',
+        'AWS CloudHSM: ML-DSA only, through vendor-defined PKCS#11 mechanisms; no ML-KEM. Azure Dedicated HSM (Thales Luna 7) can take the Luna firmware upgrade for existing customers, but the service is being retired and accepts no new customers (Microsoft supports existing customers until July 31, 2028). Google Cloud HSM: no PQC at the HSM level',
     },
   },
   {
@@ -314,7 +314,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
       onPrem:
         'All three on-prem vendors support ML-KEM decapsulation in firmware; check the API each exposes for the exact release (nShield: PKCS#11 from Security World v13.9.3)',
       cloud:
-        'AWS CloudHSM: no ML-KEM, so no decapsulation. Azure Dedicated HSM: via Thales Luna firmware upgrade. Google Cloud HSM: no PQC at the HSM level',
+        'AWS CloudHSM: no ML-KEM, so no decapsulation. Azure Dedicated HSM (Thales Luna 7) can take the Luna firmware upgrade for existing customers, but the service is being retired and accepts no new customers (Microsoft supports existing customers until July 31, 2028). Google Cloud HSM: no PQC at the HSM level',
     },
   },
   {
@@ -346,7 +346,7 @@ C_MessageSignFinal(hSession)`,
     vendorNotes: {
       onPrem: 'All vendors: native ML-DSA with hedged signing. Entrust also supports SLH-DSA',
       cloud:
-        'AWS CloudHSM: ML-DSA via vendor-defined PKCS#11 mechanisms. Azure Dedicated HSM: via Thales Luna firmware upgrade. Google Cloud HSM: no PQC at the HSM level',
+        'AWS CloudHSM: ML-DSA via vendor-defined PKCS#11 mechanisms. Azure Dedicated HSM (Thales Luna 7) can take the Luna firmware upgrade for existing customers, but the service is being retired and accepts no new customers (Microsoft supports existing customers until July 31, 2028). Google Cloud HSM: no PQC at the HSM level',
     },
   },
   {
