@@ -33,6 +33,13 @@ const NOT_IN_SIM: Record<string, string> = {
   'aerospace-pqc':
     'the sim has no aerospace sector — the government track uses government-defense-pqc (09-28)',
   'trust-services-pqc': 'Resources list only — user decision 2026-09-28 (content plan Q2)',
+  // Industries modules added after the sim trees were generated (2026-10-29/30): each
+  // is listed in the Phase 5 Resources list (phaseResourceMap) and has no tree or
+  // sector step.
+  'media-drm-pqc':
+    'Phase 5 Resources list only (phaseResourceMap); the sim has no media or entertainment sector to place a content-protection module in',
+  'software-supply-chain-pqc':
+    'Phase 5 Resources list only (phaseResourceMap); the sim estate models code-signing keys but no software build or release pipeline, and the Phase 5 code-signing step already carries the related code-signing module',
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.
