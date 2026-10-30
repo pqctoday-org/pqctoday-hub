@@ -2363,7 +2363,7 @@
     "term": "CryptoCOE",
     "acronym": "Cryptographic Center of Excellence",
     "definition": "An organisational operating model that centralises ownership of cryptography across an enterprise — answering 'who owns it?' for crypto-agility (capability) and CPM (program).",
-    "technicalNote": "Gartner (Mahdi / Lowans) reported ~50% lower PQC transition cost for organisations with a CryptoCOE in place before 2028. The CryptoCOE typically owns standards, exception handling, KMS / HSM platform decisions, and library / vendor approvals.",
+    "technicalNote": "This module's ROI model assumes about 50% lower PQC transition cost for organisations with a CryptoCOE in place before 2028; it is an illustrative assumption, not a sourced figure. The CryptoCOE typically owns standards, exception handling, KMS / HSM platform decisions, and library / vendor approvals.",
     "relatedModule": "/learn/crypto-mgmt-modernization",
     "complexity": "intermediate",
     "category": "concept"
