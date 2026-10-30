@@ -43,7 +43,10 @@ const Step1Overview: React.FC = () => (
             <li>Signing state (leaf index) must be persisted and never reused</li>
             <li>Key exhaustion = catastrophic failure (no more valid signatures)</li>
             <li>Cannot be used in stateless or distributed environments safely</li>
-            <li>Standardized in NIST SP 800-208 / RFC 8554 / RFC 8391</li>
+            <li>
+              Approved in NIST SP 800-208; specified in RFC 8554 (LMS) and RFC 8391 (XMSS), both
+              Informational RFCs
+            </li>
           </ul>
         </div>
         <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-4 space-y-2">
@@ -211,8 +214,9 @@ const Step2Internals: React.FC = () => (
         <div className="bg-muted/40 rounded p-3 space-y-1">
           <div className="font-semibold text-foreground">One-time property</div>
           <p className="text-muted-foreground leading-relaxed">
-            WOTS+ is one-time: signing two different messages with the same key leaks the private
-            key. SLH-DSA solves this by using each WOTS+ key exactly once via the hypertree.
+            WOTS+ is one-time: each key may sign one message, and forgeries become feasible if a key
+            is used twice (FIPS 205 §6, §8). In the hypertree each WOTS+ key signs one fixed value:
+            a FORS public key at the lowest layer, or an XMSS public key of the layer below (§7).
           </p>
         </div>
       </div>
@@ -260,8 +264,8 @@ const Step2Internals: React.FC = () => (
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
         The hypertree is a <em>d</em>-layer stack of XMSS trees, each of height <em>h/d</em>. Each
-        layer authenticates the root of the layer below using a WOTS+ signature. The top root is the
-        SLH-DSA public key.
+        layer authenticates the root of the layer below using a WOTS+ signature. The top root
+        (PK.root), together with PK.seed, is the SLH-DSA public key.
       </p>
       <div className="bg-muted/40 rounded-lg p-4 text-xs font-mono space-y-1 text-muted-foreground">
         <div>PK.root (layer d−1 XMSS root)</div>
@@ -280,8 +284,9 @@ const Step2Internals: React.FC = () => (
           <div className="font-semibold text-foreground">-s variants (small, slow)</div>
           <p className="text-muted-foreground leading-relaxed">
             Fewer layers (<em>d</em> small, e.g. 7) and taller per-layer trees (<em>h/d</em> large,
-            e.g. 9). Each XMSS tree has more leaves → longer authentication paths → smaller total
-            signature but more hash rounds to traverse per tree.
+            e.g. 9). Each XMSS tree has more leaves and needs more hash rounds to traverse; fewer
+            layers means fewer WOTS+ signatures, so the total signature is smaller (a hypertree
+            signature is (<em>h</em> + <em>d</em> · <em>len</em>) · <em>n</em> bytes, §7.1).
           </p>
         </div>
         <div className="bg-muted/40 rounded p-3 space-y-1">

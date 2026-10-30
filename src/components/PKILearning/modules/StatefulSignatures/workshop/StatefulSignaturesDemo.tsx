@@ -1129,9 +1129,9 @@ export function StatefulSignaturesDemo() {
                         </Link>
                       </li>
                       <li>
-                        <strong>Cryptographic Base:</strong> Relies ONLY on{' '}
-                        <em>Second-Preimage Resistance</em>, offering mathematically tighter
-                        security bounds against multi-target attacks.
+                        <strong>Cryptographic Base:</strong> Does not rely on the collision
+                        resistance of the hash functions, but on weaker properties such as{' '}
+                        <em>multi-target second-preimage resistance</em> (RFC 8391).
                       </li>
                       <li>
                         <strong>Hashing Design:</strong> Applies pseudo-randomly generated{' '}

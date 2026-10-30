@@ -1,6 +1,6 @@
 ### What This Is About
 
-Stateful hash-based signatures (LMS and XMSS) derive their security entirely from proven hash functions like SHA-256, rather than new, emerging mathematical assumptions like lattices or isogenies.
+Stateful hash-based signatures (LMS and XMSS) derive their security only from the security of their underlying hash functions like SHA-256, not from newer mathematical assumptions like lattices or isogenies.
 
 ### Why It Matters
 
