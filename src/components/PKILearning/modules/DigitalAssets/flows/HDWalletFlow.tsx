@@ -331,7 +331,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
             label: 'HMAC-SHA512 (BIP32 derivation)',
             value: '✓ Quantum-Safe',
             description:
-              "HMAC-SHA512 is a symmetric primitive. Grover's algorithm provides at most a quadratic speedup, reducing effective security from 512 to 256 bits — still adequate.",
+              "HMAC-SHA512 is a symmetric primitive. BIP-32 states that an attacker cannot find the parent private key more efficiently than a 2^256 brute force of HMAC-SHA512; Grover's algorithm gives a quadratic speed-up over classical attacks, which for a 2^256 search is about 2^128 operations.",
           },
           {
             label: 'PBKDF2-HMAC-SHA512 (seed)',
@@ -343,7 +343,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
             label: 'Migration path',
             value: 'ML-DSA / SLH-DSA',
             description:
-              "FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) are NIST-standardized post-quantum signature schemes resistant to Shor's algorithm. Both require new address formats at the L1 protocol level.",
+              "FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) are NIST-standardized post-quantum signature schemes designed to resist large-scale quantum computers. Using them on a blockchain depends on the chain: Bitcoin's draft BIP-360 defines a new SegWit version 2 output type with its own address format, while on Ethereum smart-contract wallets (ERC-4337) can already verify other signature schemes in contract code and native accounts would need a hard fork (EIP-7932, Draft).",
           },
           {
             label: 'Bitcoin BIP-360',
@@ -355,7 +355,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
             label: 'Ethereum EIP-7932',
             value: 'Account Abstraction + PQC',
             description:
-              'EIP-7932 and related ERC-4337 extensions explore replacing ECDSA with ML-DSA or SLH-DSA in smart contract wallets. Native Ethereum accounts still require a hard-fork.',
+              'EIP-7932 (Draft) proposes a registry and precompile for alternative signature algorithms on native accounts and needs a hard fork; ERC-4337 smart-contract wallets can already verify other signature schemes in contract code.',
           },
           {
             label: 'HNDL Threat',
@@ -689,7 +689,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         'Migration Path:\n' +
         '  • Bitcoin: BIP-360 (P2MR) removes the key-spend path;\n' +
         '    PQ signatures are a separate, not yet specified proposal.\n' +
-        '  • Ethereum: EIP-7932 + ERC-4337 explore ML-DSA in smart contract wallets.\n' +
+        '  • Ethereum: EIP-7932 (Draft) proposes a registry of signature algorithms for native accounts (hard fork); ERC-4337 smart accounts can verify other schemes in contract code.\n' +
         '  • Both require protocol-level changes (soft-fork or hard-fork).\n\n' +
         'HNDL Risk (Harvest Now, Decrypt Later):\n' +
         '  • Public keys are permanently on-chain.\n' +

@@ -91,7 +91,7 @@ export const CRYPTO_TOOLTIPS = {
   derEncoding: {
     title: 'DER Encoding',
     description:
-      'Distinguished Encoding Rules (DER) — a strict ASN.1 subset. Bitcoin scripts carry ECDSA signatures in DER format: a 6-72 byte structure encoding r and s as signed big-endian integers. PKCS#11 CKM_ECDSA returns raw r||s (64 bytes, fixed-width) which is NOT DER; wallets must convert raw r||s to DER before broadcasting a transaction.',
+      'Distinguished Encoding Rules (DER) — a strict ASN.1 subset. Bitcoin scripts carry ECDSA signatures in DER format: an 8-72 byte structure (typically 70-72) encoding r and s as signed big-endian integers. PKCS#11 CKM_ECDSA returns raw r||s (64 bytes, fixed-width) which is NOT DER; wallets must convert raw r||s to DER before broadcasting a transaction.',
   },
   eddsa: {
     title: 'EdDSA',
