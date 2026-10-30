@@ -136,9 +136,9 @@ describe('auditCryptoApi - provider compatibility notes', () => {
     expect(rec.providerCompatNotes.join(' ')).toMatch(/Luna|nCipher|CloudHSM/)
   })
 
-  it('TPM provider emits PC Client Spec v1.85 note', () => {
+  it('TPM provider emits the TCG TPM 2.0 v185 note', () => {
     const rec = auditCryptoApi({ ...baseInputs, provider: ['tpm'] })
-    expect(rec.providerCompatNotes.join(' ')).toMatch(/v1\.85|PC Client/)
+    expect(rec.providerCompatNotes.join(' ')).toMatch(/Trusted Platform Module 2\.0 v185/)
   })
 
   it('software provider emits oqs-provider + OpenSSL 3.x note', () => {

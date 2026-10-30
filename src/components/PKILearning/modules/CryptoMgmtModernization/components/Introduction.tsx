@@ -623,13 +623,15 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Crypto library CVEs introduce a constraint that generic vulnerability management
-                  does not encounter: <strong>patch-then-revalidate bind.</strong> Patching OpenSSL
-                  from 3.4.x to 3.5.x closes a CVE but also bumps the library version off the CMVP
-                  validated list. The security team receives a green CVE status; the compliance team
-                  is simultaneously looking at a red FIPS status. Both are correct at the same time.
-                  The remediation workflow must treat these as two separate work items with separate
-                  timelines, and the CBOM must carry a &ldquo;patch applied, revalidation in
-                  progress&rdquo; state that is distinct from both &ldquo;vulnerable&rdquo; and
+                  does not encounter: <strong>patch-then-revalidate bind.</strong> Patching the
+                  library can leave the validated FIPS provider unchanged: the OpenSSL project lists
+                  validated provider versions 3.1.2, 3.0.9, 3.0.8 and 3.0.0 and says other OpenSSL
+                  releases &ldquo;MAY use the validated FIPS provider&rdquo;. Which provider build is
+                  in use, and whether it is on the validated list, therefore has to be tracked
+                  separately from the library version. The remediation workflow must treat the CVE
+                  fix and the validation status as two separate work items with separate timelines,
+                  and the CBOM must carry a &ldquo;patch applied, revalidation in progress&rdquo;
+                  state that is distinct from both &ldquo;vulnerable&rdquo; and
                   &ldquo;validated.&rdquo;
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">

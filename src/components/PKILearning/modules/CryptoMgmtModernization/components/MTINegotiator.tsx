@@ -89,7 +89,7 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
       mti: 'ML-DSA-65 (FIPS 204, NIST Cat 3)',
       alternates: ['SLH-DSA-SHA2-128s'],
       rationale:
-        'BSI TR-02102-1 recommends ML-DSA-65 (NIST Category 3) standalone, in the "hedged" variant. ANSSI differs and it matters here: PG-083 v3 states that ML-DSA used WITHOUT hybridisation fails RegleSecuAsym at any parameter set, so in France pair it with a classical signature. Cat 3 is acceptable to both as the PQC component; Cat 5 is ANSSI\'s preference. SLH-DSA is the size-tolerant defence-in-depth alternate.',
+        'BSI TR-02102-1 recommends ML-DSA-65 and ML-DSA-87 in the "hedged" variant and "a quantum-safe signature scheme only in combination with a classic signature scheme", with one exception: hash-based signatures such as SLH-DSA can in principle also be used alone if implementation security is carefully considered. ANSSI PG-083 v3 states that ML-DSA used without hybridisation does not satisfy RègleSécuAsym at any parameter set, so in France pair it with a classical signature. SLH-DSA is the size-tolerant defence-in-depth alternate.',
     }
   }
 
