@@ -256,7 +256,7 @@ const address = base58check.encode([0x00, ...ripemd160(sha256(pubKeyBytes))])`,
             label: 'Outputs',
             value: '~34 bytes each',
             description:
-              'Amount (8B LE satoshis) + script length + scriptPubKey (~25B for P2PKH). Two outputs are required: one to the recipient, one returning change to the sender — UTXOs must be spent in full and cannot be partially consumed.',
+              'Amount (8B LE satoshis) + script length + scriptPubKey (25B for P2PKH). A simple transaction has at most two outputs, one for the payment and one returning the change, if any, to the sender; the full value of each spent UTXO must go to outputs or to the miner fee.',
           },
           {
             label: 'Locktime',
@@ -363,12 +363,12 @@ const address = base58check.encode([0x00, ...ripemd160(sha256(pubKeyBytes))])`,
           <>
             Sign the transaction hash (Double <InfoTooltip term="sha256" />) using the sender&apos;s
             private key via <InfoTooltip term="ecdsa" /> (CKM_ECDSA — raw hash input, no internal
-            hashing). Bitcoin applies SHA-256 twice (SHA256d) to guard against length-extension
-            attacks and provide an extra security margin. In production Bitcoin, SIGHASH_ALL
-            (0x01000000 LE) is appended to the serialized transaction before hashing, committing the
-            signature to all inputs and outputs; this demo omits that suffix for clarity. Each
-            signature uses a fresh <InfoTooltip term="ecdsaNonce" />; SoftHSMv3 derives it
-            deterministically per{' '}
+            hashing). Bitcoin’s legacy signature hash applies SHA-256 twice (SHA256d); BIP-341 notes
+            there is no expected security improvement from the doubling for signature messages. In
+            production Bitcoin, SIGHASH_ALL (0x01000000 LE) is appended to the serialized
+            transaction before hashing, committing the signature to all inputs and outputs; this
+            demo omits that suffix for clarity. Each signature uses a fresh{' '}
+            <InfoTooltip term="ecdsaNonce" />; SoftHSMv3 derives it deterministically per{' '}
             <a
               href="/library?ref=IETF RFC 6979"
               className="text-primary underline"
