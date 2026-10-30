@@ -163,6 +163,7 @@ describe('KPITrackerTemplate', () => {
     render(<KPITrackerTemplate />)
     expect(screen.getByText(/Evidence coverage: 0%/)).toBeInTheDocument()
     expect(screen.getByText(/Not yet available/)).toBeInTheDocument()
+    expect(screen.queryByText(/weights sum to 0%/i)).not.toBeInTheDocument()
   })
 
   it('disables risk-posture when no assessment is complete', () => {

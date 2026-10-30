@@ -350,9 +350,10 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
             ` — enter organization-specific evidence before interpreting a combined score.`}
         </p>
         {description && <p className="text-sm text-muted-foreground mt-3">{description}</p>}
-        {allowWeightEditing && Math.abs(weightSum - 1) > 0.01 && (
+        {allowWeightEditing && Math.abs(intendedWeight - 1) > 0.01 && (
           <p className="text-xs text-status-warning mt-2">
-            Weights sum to {(weightSum * 100).toFixed(0)}% — overall score auto-normalises.
+            Configured weights sum to {(intendedWeight * 100).toFixed(0)}% — overall score
+            auto-normalises.
           </p>
         )}
       </div>
