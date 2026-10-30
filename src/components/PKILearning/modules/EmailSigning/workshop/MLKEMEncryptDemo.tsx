@@ -11,9 +11,9 @@
  *   4. openssl cms -decrypt -recip bob.crt -inkey bob.key -in enveloped.p7m
  *
  * The encrypt step produces CMS AuthEnvelopedData. With an ML-KEM
- * recipient cert, OpenSSL 3.5+ emits KEMRecipientInfo (RFC 9629) with
- * an HKDF-SHA256-derived content-encryption key per the RFC 9936
- * ML-KEM-in-CMS profile.
+ * recipient cert, OpenSSL 3.5+ emits KEMRecipientInfo (RFC 9629) with a
+ * key-encryption key derived from the ML-KEM shared secret (this demo:
+ * HKDF-SHA256) that wraps a random content-encryption key.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -58,8 +58,9 @@ interface StageResult {
 
 const DEFAULT_PAYLOAD =
   'Confidential workshop message — encrypted in-browser with ML-KEM-768.\n' +
-  'CMS AuthEnvelopedData wraps an AES-256-GCM content-encryption key\n' +
-  'derived from the ML-KEM shared secret via HKDF-SHA256 (RFC 9629).\n'
+  'CMS AuthEnvelopedData wraps a random AES-256-GCM content-encryption key\n' +
+  'under a key-encryption key derived from the ML-KEM shared secret with a\n' +
+  'key derivation function (RFC 9629; this demo uses HKDF-SHA256).\n'
 
 const KEM_ALG_CHOICES: CmsAlg[] = ['ML-KEM-768', 'ML-KEM-512', 'ML-KEM-1024', 'RSA', 'X25519']
 const CIPHER_CHOICES: CmsCipher[] = [
