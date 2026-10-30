@@ -44,7 +44,7 @@ export const MIGRATION_CHECKLIST: MigrationChecklistItem[] = [
     phase: 'Phase 2: Quick Wins',
     title: 'Plan Vault Seal Key PQC Upgrade',
     description:
-      "HashiCorp Vault's only PQC capability today is experimental transit ML-DSA/SLH-DSA sign/verify in Vault Enterprise 1.19 — PQC seal mechanisms are not announced. Track the roadmap and plan to migrate seal key wrapping to a quantum-safe mechanism when available, since a harvested vault backup with classical seal wrapping is exposed to offline decryption.",
+      "HashiCorp Vault's transit documentation lists Enterprise-only ml-dsa, slh-dsa and hybrid sign/verify key types and no ML-KEM type; we found no PQC seal mechanism announced. Track the roadmap and plan to migrate seal key wrapping to a quantum-safe mechanism when available, since a harvested vault backup with classical seal wrapping is exposed to offline decryption.",
     priority: 'short-term',
     effort: 'high',
   },
@@ -53,7 +53,7 @@ export const MIGRATION_CHECKLIST: MigrationChecklistItem[] = [
     phase: 'Phase 3: Algorithm Migration',
     title: 'Re-key DEKs Under ML-KEM Envelope Encryption',
     description:
-      'For each secret category using envelope encryption, generate new ML-KEM-768 or ML-KEM-1024 KEKs and re-wrap all DEKs. Data does not need re-encryption (AES-256-GCM is already quantum-safe). This is a key metadata operation only.',
+      'For each secret category using envelope encryption, generate new ML-KEM-768 or ML-KEM-1024 KEKs and re-wrap the DEKs. For DEKs whose old wrapped form was never exposed this is a key metadata operation, and the data does not need re-encryption (AES-256-GCM is already quantum-safe). For DEKs whose RSA- or ECDH-wrapped form was transmitted where an adversary could have saved it, NIST SP 800-57 says such keys may need to be considered compromised even after re-encryption for storage; treat those DEKs as exposed, generate new DEKs and re-encrypt the data they protect, knowing that this cannot protect copies of the data an adversary has already saved.',
     priority: 'medium-term',
     effort: 'medium',
   },

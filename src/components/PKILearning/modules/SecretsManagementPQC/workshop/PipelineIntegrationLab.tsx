@@ -103,7 +103,7 @@ export const PipelineIntegrationLab: React.FC = () => {
               {
                 label: 'Secret Encryption at Rest',
                 status:
-                  'Vault AES-256-GCM with ML-KEM KEK (roadmap; Vault transit PQC is experimental ML-DSA in 1.19+) → Protects vault backups from HNDL',
+                  'Vault AES-256-GCM with ML-KEM KEK (no ML-KEM transit key type is documented; Vault transit lists ML-DSA, SLH-DSA and hybrid sign/verify types for Enterprise) → Protects vault backups from HNDL',
                 isSafe: false,
               },
               {

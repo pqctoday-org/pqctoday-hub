@@ -231,8 +231,8 @@ vault write transit/encrypt/my-key \\
 
 # PQC Vault transit (AES-256-GCM, ML-KEM-wrapped key)
 # Key type: aes256-gcm96 (unchanged)
-# KEK wrapping: ml-kem-768 (roadmap — no ML-KEM transit key type yet;
-# Vault Enterprise 1.19 only ships experimental ML-DSA/SLH-DSA sign/verify)
+# KEK wrapping: ml-kem-768 (ILLUSTRATIVE ONLY: Vault transit has no ML-KEM key type;
+# its post-quantum types are Enterprise ml-dsa, slh-dsa and hybrid sign/verify keys)
 vault write transit/encrypt/my-pqc-key \\
   plaintext=$(base64 <<< "sensitive data") \\
   key_version=2`,
@@ -252,7 +252,8 @@ vault write transit/encrypt/rsa-key \\
   plaintext=$(base64 <<< "32-byte-dek")
 # Result: 256-byte ciphertext
 
-# PQC: ML-KEM-768 key encapsulation
+# PQC: ML-KEM-768 key encapsulation (ILLUSTRATIVE ONLY: Vault transit has no ML-KEM
+# key type; its post-quantum types are Enterprise ml-dsa, slh-dsa and hybrid sign/verify keys)
 vault write transit/keys/ml-kem-key \\
   type=ml-kem-768
 vault write transit/encrypt/ml-kem-key \\
@@ -381,9 +382,9 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'on-prem',
     catalogName: 'HashiCorp Vault',
     pqcAlgorithms: [
-      'ML-DSA (experimental, Vault Enterprise 1.19 transit)',
-      'SLH-DSA (experimental, Vault Enterprise 1.19 transit)',
-      'ML-KEM (roadmap)',
+      'ML-DSA (Enterprise transit sign/verify)',
+      'SLH-DSA (Enterprise transit sign/verify)',
+      'ML-KEM (no transit key type documented)',
     ],
     encryptionAtRest: 'AES-256-GCM with Shamir Secret Sharing for unseal keys',
     encryptionInTransit: 'TLS 1.3 (hybrid ML-KEM planned via HPKE)',
@@ -392,7 +393,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'vault-agent-injector / Vault Secrets Operator (VSO)',
     fipsMode: true,
     roadmapNote:
-      'Transit ML-DSA and SLH-DSA sign/verify shipped as experimental in Vault Enterprise 1.19. ML-KEM transit key types and PQC seal support are not yet announced. FIPS 140-3 validation for PQC algorithms expected 2027.',
+      'The Vault transit documentation lists ml-dsa, slh-dsa and hybrid sign/verify key types as Enterprise features. No ML-KEM transit key type or PQC seal support is documented, and we found none announced.',
   },
   {
     id: 'aws-secrets-manager',
@@ -629,8 +630,8 @@ provider "aws" {
 }
 
 # PQC note: Vault token auth to provider should use
-# ML-DSA-signed JWT (transit ML-DSA is experimental
-# in Vault Enterprise 1.19)`,
+# ML-DSA-signed JWT (transit ML-DSA is an Enterprise
+# key type in the Vault documentation)`,
   },
 ]
 
