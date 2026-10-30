@@ -178,7 +178,7 @@ export const DEPLOYMENT_MODES: DeploymentModeProfile[] = [
     encryptionInUse: false,
     maxModelSizeGB: 4,
     pqcConsiderations:
-      'PQC signature and ciphertext sizes are a concern for constrained devices. ML-DSA-44 and ML-KEM-768 are the lightest options. SLH-DSA may be too slow for real-time inference.',
+      'PQC signature and ciphertext sizes are a concern for constrained devices. ML-KEM-512 and ML-DSA-44 are the smallest parameter sets in FIPS 203 and FIPS 204. SLH-DSA may be too slow for real-time inference.',
   },
   {
     id: 'federated',
