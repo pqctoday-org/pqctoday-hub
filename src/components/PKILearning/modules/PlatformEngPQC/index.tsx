@@ -24,7 +24,7 @@ const PARTS: WorkshopPart[] = [
     id: 'quantum-threat-timeline',
     title: 'Step 2: Quantum Threat Timeline',
     description:
-      'Model HNDL risk for each pipeline asset under different CRQC arrival scenarios. Understand why short-lived certs do not eliminate harvest risk.',
+      'Model HNDL risk for each pipeline asset under different CRQC arrival scenarios. Understand why short-lived certificates do not protect a recorded TLS session.',
     icon: Clock,
   },
   {
@@ -45,7 +45,7 @@ const PARTS: WorkshopPart[] = [
     id: 'crypto-posture-monitor',
     title: 'Step 5: Crypto Posture Monitor',
     description:
-      'Four-panel monitor: Prometheus metrics, SIEM queries, capacity planning calculators, and ACME certificate lifecycle with cert-manager v1.17+.',
+      'Four-panel monitor: Prometheus metrics, SIEM queries, capacity planning calculators, and ACME certificate lifecycle with cert-manager.',
     icon: Activity,
   },
   {

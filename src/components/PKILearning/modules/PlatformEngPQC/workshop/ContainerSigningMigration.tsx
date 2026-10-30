@@ -18,7 +18,7 @@ const PLATFORM_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'platform-container-sign',
     useCase: 'Container image signing (ML-DSA-65)',
-    standard: 'SLSA + FIPS 204',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: 'OCI image digest: sha256:a1b2c3d4e5f6@sha256:7890abcdef01',
@@ -48,6 +48,8 @@ const READINESS_ITEMS = [
   { id: 'beta', label: 'Beta' },
   { id: 'roadmap', label: 'On Roadmap' },
   { id: 'not-planned', label: 'Not Planned' },
+  { id: 'unconfirmed', label: 'Unconfirmed' },
+  { id: 'retiring', label: 'Being Retired' },
 ]
 
 const COMPARE_DIMENSIONS = [
@@ -325,9 +327,11 @@ export const ContainerSigningMigration: React.FC = () => {
 
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Recommendation:</strong> Migrate to Notation with ML-DSA-65 support (available now
-          via AWS plugin) for new deployments. For keyless signing, wait for Sigstore/cosign PQC
-          support (2026). Avoid DCT (Docker Content Trust): it and the Notary v1 service are being
+          <strong>Recommendation:</strong> Do not plan around Notation or cosign for ML-DSA signing
+          yet: we found no vendor documentation that either supports ML-DSA, and Sigstore (June
+          2025) gives no production date for its services. For new deployments choose an OCI-native
+          tool (Notation or cosign) and keep the signing key in a place where the algorithm can be
+          swapped later. Avoid DCT (Docker Content Trust): it and the Notary v1 service are being
           retired, with full shutdown on 8 December 2026.
         </p>
       </div>
