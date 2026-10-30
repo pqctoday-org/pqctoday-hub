@@ -54,7 +54,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Model',
     badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
     observe:
-      'ML-KEM-768 is actually faster than RSA-2048 for key wrapping. Signature size increases ~50x but the model file is 140 GB — the signature overhead is negligible.',
+      'Only the symmetric key is wrapped: the ML-KEM-768 ciphertext is 1,088 bytes (FIPS 203). The ML-DSA-65 signature is 3,309 bytes against 64 bytes for ECDSA P-256, about 50 times larger, but the model file is 140 GB, so the overhead of both is negligible.',
     config: { step: 2 },
   },
   {
