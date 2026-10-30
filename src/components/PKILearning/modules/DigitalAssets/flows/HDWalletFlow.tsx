@@ -343,7 +343,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
             label: 'Migration path',
             value: 'ML-DSA / SLH-DSA',
             description:
-              "FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) are NIST-standardized post-quantum signature schemes designed to resist large-scale quantum computers. Using them on a blockchain depends on the chain: Bitcoin's draft BIP-360 defines a new SegWit version 2 output type with its own address format, while Ethereum accounts could switch signature schemes without waiting for the entire protocol to change.",
+              "FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) are NIST-standardized post-quantum signature schemes designed to resist large-scale quantum computers. Using them on a blockchain depends on the chain: Bitcoin's draft BIP-360 defines a new SegWit version 2 output type with its own address format, while on Ethereum smart-contract wallets (ERC-4337) can already verify other signature schemes in contract code and native accounts would need a hard fork (EIP-7932, Draft).",
           },
           {
             label: 'Bitcoin BIP-360',
