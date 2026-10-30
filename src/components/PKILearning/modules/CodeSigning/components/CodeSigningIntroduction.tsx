@@ -63,7 +63,11 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             {[
               {
                 t: 'SolarWinds (2020)',
-                d: 'Attackers compromised the Orion software build system, so a vulnerability shipped inside Orion updates released between March and June 2020; it was not present in the source code repository. SolarWinds believed fewer than 18,000 customers may have had an installation of the affected Orion products.',
+                d: 'Attackers compromised the Orion software build system, so a vulnerability shipped inside Orion updates released between March and June 2020; it was not present in the source code repository. CISA reports that the adversary added a malicious version of an Orion library to the software lifecycle and that it was then signed by the legitimate SolarWinds code signing certificate. SolarWinds believed fewer than 18,000 customers may have had an installation of the affected Orion products.',
+              },
+              {
+                t: '3CX Supply Chain (2023)',
+                d: 'Mandiant found that 3CX\u2019s network was first breached through malicious software downloaded from the Trading Technologies website: a tampered X_TRADER installer, signed with the subject \u201cTrading Technologies International, Inc\u201d. The attackers then distributed a trojanized 3CX DesktopApp (18.12.416 and earlier) that 3CX offered for download. Mandiant called it the first time it had seen one software supply chain attack lead to another.',
               },
               {
                 t: 'Codecov Bash Uploader (2021)',
