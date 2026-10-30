@@ -9,7 +9,7 @@ const manifest: ModuleManifest = {
   description:
     'Master FIPS 205 SLH-DSA: WOTS+, FORS, hypertree architecture, parameter trade-offs, context strings, deterministic signing, and migration from stateful schemes.',
   whyThisMatters:
-    "SLH-DSA trades signature size for a security proof that rests on hash functions alone, with no number-theoretic assumption to second-guess — which matters when the whole point of PQC is not trusting today's assumptions.",
+    "SLH-DSA trades signature size for security that rests only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1), with no number-theoretic assumption to second-guess — which matters when the whole point of PQC is not trusting today's assumptions.",
   duration: '45 min',
   difficulty: 'advanced',
   frameworkPhase: 'foundations',
