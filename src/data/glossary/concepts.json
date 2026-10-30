@@ -1650,7 +1650,7 @@
   {
     "term": "Bouncy Castle",
     "definition": "Open-source cryptography library available for Java and .NET. Plays a dual role: as a JCA provider and as a standalone lightweight API. Has the widest PQC algorithm coverage of any open-source library.",
-    "technicalNote": "Since BC 1.79 (October 2024), Bouncy Castle supports the finalized NIST PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Also supports LMS/XMSS (SP 800-208), HQC, and Classic McEliece. Bouncy Castle announced on 9 June 2025 that its C# .NET edition (2.6.1) supports the finalized PKCS#8 private key formats and CMS SignedData for these NIST PQC algorithms and ML-KEM-only TLS; check the C# release notes for the version you use.",
+    "technicalNote": "Since BC 1.79 (October 2024), Bouncy Castle supports the finalized NIST PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Also supports LMS/XMSS (SP 800-208), HQC, and Classic McEliece. Bouncy Castle announced on 9 June 2025 that its C# .NET edition (2.6.1) supports the finalized PKCS#8 private key formats for these NIST PQC algorithms, ML-DSA and SLH-DSA signatures in CMS SignedData, and ML-KEM-only TLS; check the C# release notes for the version you use.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
     "category": "concept"
