@@ -346,7 +346,8 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     algorithm: 'ML-KEM',
     status: 'stable',
     minVersion: 'BC 1.79+',
-    backend: 'Pure Java (and a C# port); no native dependency. ML-KEM-512/768/1024.',
+    backend:
+      'Pure Java (the C# edition also supports ML-KEM, per the 9 June 2025 announcement); no native dependency. ML-KEM-512/768/1024.',
     protocolNote: 'BC JSSE provider can be used for hybrid TLS experiments.',
     evidenceUrl: BC_JAVA,
     checkedDate: CHECKED,
@@ -360,7 +361,8 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     algorithm: 'ML-DSA',
     status: 'stable',
     minVersion: 'BC 1.79+',
-    backend: 'Pure Java (and a C# port); no native dependency. ML-DSA-44/65/87.',
+    backend:
+      'Pure Java (the C# edition also supports ML-DSA, per the 9 June 2025 announcement); no native dependency. ML-DSA-44/65/87.',
     protocolNote: 'BC PKIX APIs can build ML-DSA certificates.',
     evidenceUrl: BC_JAVA,
     checkedDate: CHECKED,
@@ -373,7 +375,8 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     algorithm: 'SLH-DSA',
     status: 'stable',
     minVersion: 'BC 1.79+',
-    backend: 'Pure Java (and a C# port); all 12 parameter sets.',
+    backend:
+      'Pure Java (the C# edition also supports SLH-DSA, per the 9 June 2025 announcement); all 12 parameter sets.',
     protocolNote: 'BC PKIX APIs can build SLH-DSA certificates.',
     evidenceUrl: BC_JAVA,
     checkedDate: CHECKED,
