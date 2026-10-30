@@ -546,10 +546,12 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               satisfies SP 800-56C Rev 2 §5.2 for KEM-based key establishment.
             </p>
             <p>
-              <strong>Choosing L:</strong> L = 32 → 256-bit AES key. L = 48 → 384-bit key for
-              HMAC-SHA-384. L = 64 → 512-bit material for HMAC-SHA-512. The label &amp; context bind
-              purpose and session so all three can be derived from the same QKD secret without
-              leaking information between them.
+              <strong>Choosing L:</strong> L is the requested length of the derived keying material
+              in bits: L = 256 for a 256-bit AES key, L = 384 for a 384-bit key for HMAC-SHA-384, L
+              = 512 for 512-bit material for HMAC-SHA-512 (an HSM call that takes a byte count would
+              be given 32, 48 or 64 bytes). The label &amp; context bind purpose and session so all
+              three can be derived from the same QKD secret without leaking information between
+              them.
             </p>
           </WhyThisMatters>
           <Button

@@ -93,7 +93,7 @@ const scenarios: Scenario[] = [
     badge: 'Protocol',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The QKD secret is used directly as the PSK — it replaces the ECDH-derived Early Secret in the TLS 1.3 key schedule without any protocol modifications.',
+      'The QKD secret is imported as the PSK (RFC 9258) and is the input of the Early Secret in the TLS 1.3 key schedule (RFC 9846 §7.1); both endpoints must import it.',
     config: { part: 3, protocol: 'tls' },
     icon: Network,
   },

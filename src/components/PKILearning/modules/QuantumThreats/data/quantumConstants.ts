@@ -47,7 +47,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 8194,
     status: 'broken',
     notes:
-      'Even 4096-bit RSA provides zero post-quantum security. Still the older 2016-era (2n+2) estimate — no revised resource estimate has been published for this key size, unlike RSA-2048 and RSA-3072. On the n/2 + o(n) scaling of the revised circuits the real figure would be far lower; treat the 2n+2 figure, which gives 8,194 (Häner–Roetteler–Svore 2016, arXiv:1611.07995), as an upper bound, not a target.',
+      'Even 4096-bit RSA provides zero post-quantum security. Gidney 2025 (Table 5) gives a revised estimate for this key size: 2,692 logical qubits and 4.0e+10 Toffoli gates, far below the older 2016-era 2n+2 figure of 8,194 (Häner–Roetteler–Svore 2016, arXiv:1611.07995).',
   },
   {
     name: 'ECDSA P-256',

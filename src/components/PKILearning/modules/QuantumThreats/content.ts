@@ -19,6 +19,7 @@ export const content: ModuleContent = {
     // The accuracy spot-check samples this list by even stride, so relevance
     // order is what decides which documents the numbers get checked against.
     getStandard('ref-gidney-factor-rsa'),
+    getStandard('ref-gidney-factor-rsa-8h'), // DH-2048 row: finite-field discrete-log Tables 4 and 5
     getStandard('Google-QuantumAI-EC-Crypto-Quantum-2026'),
     getStandard('FIPS 203'),
     getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Factoring'),
