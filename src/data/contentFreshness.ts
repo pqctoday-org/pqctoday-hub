@@ -155,7 +155,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cert-pci-no-pqc-requirement',
     claim:
-      'No PQC algorithm, parameter set or deadline in public PCI material (v5.0 blog, listing definitions, PIN v3.1, P2PE v3.1); Cryptography Guidance PQC content an open question',
+      'No PQC algorithm, parameter set or deadline in public PCI material (v5.0 blog, listing definitions); Cryptography Guidance PQC content an open question',
     source: 'src/components/PKILearning/modules/PciCertification/data/pciData.ts',
     asOf: '2026-09-24',
     recheck: 'https://www.pcisecuritystandards.org/document_library/',
