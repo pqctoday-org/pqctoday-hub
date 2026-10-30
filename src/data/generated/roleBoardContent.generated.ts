@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10282026.csv
+ * Source: src/data/role_board_content_10292026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -24,7 +24,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Executive · the decision that unlocks budget and names an owner',
 
         headline: 'Answer the board in an afternoon, not a quarter.',
-        sub: 'Six questions about your estate. You get a defensible risk position, the regulatory dates that already bind you, and a board pack you can present on Thursday.',
+        sub: "Practise setting a mandate and naming an owner. Use sample cases to explore priorities, scoped milestones and evidence questions; the worksheets do not establish your organisation's risk or obligations.",
         ctaPrimary: 'Start — 6 questions, about 3 minutes',
         ctaPrimaryHref: '/assess',
         ctaSecondary: 'Draft the program charter',
