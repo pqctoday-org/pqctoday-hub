@@ -22,7 +22,7 @@ const hnPrivHandle = await hsm_injectTestKey(
       id: 'provision_usim',
       title: '2. Provision USIM',
       description:
-        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256). The EF_SUCI_Calc_Info also stores the Routing Indicator (0–4 decimal digits, default 0000) — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
+        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256). The Routing Indicator (1 to 4 decimal digits, default 0 when none is configured) is held in a separate file, EF_Routing_Indicator — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
       code: `# Simulated Provisioning API
 USIM.write('EF_SUCI_Calc_Info', {
   HN_PubKey: readFile('hn_pub.key'),
@@ -87,7 +87,9 @@ block2 = SHA-256(Z || 0x00000002 || sharedInfo)  // 32 bytes
 
 // K_enc = first 128 bits of block1 (AES-128)
 const kEnc = block1.slice(0, 16);
-// K_mac = trailing 128 bits of block1 + first 128 bits of block2 (256-bit HMAC)
+// K_mac (this demo) = the next 256 bits after K_enc: trailing 128 bits of block1 + first 128 bits of block2.
+// TS 33.501 Annex C.3.2 splits the 64-octet KDF output as EK (16 octets) ‖ ICB (16) ‖ MK (32): there the ICB is
+// block1[16:32] and the MAC key is all of block2. This demo uses a zero IV instead of the ICB.
 const kMac = [...block1.slice(16), ...block2.slice(0, 16)];`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
@@ -199,6 +201,7 @@ const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
 const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
 const block2 = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA256)
 const kEnc = block1.slice(0, 16)                          // 128-bit AES-128 key
+// This demo's split, as in the concealment step (TS 33.501 Annex C.3.3: ICB = block1[16:32], MK = block2)
 const kMac = [...block1.slice(16), ...block2.slice(0, 16)] // 256-bit HMAC-SHA-256 key
 
 // 3. Authenticate-then-decrypt: verify MAC BEFORE decryption (per 3GPP TS 33.501)
@@ -241,7 +244,7 @@ const hnPrivHandle = await hsm_injectTestKey(
       id: 'provision_usim',
       title: '2. Provision USIM',
       description:
-        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256). The EF_SUCI_Calc_Info also stores the Routing Indicator (0–4 decimal digits, default 0000) — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
+        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256). The Routing Indicator (1 to 4 decimal digits, default 0 when none is configured) is held in a separate file, EF_Routing_Indicator — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
       code: `# Simulated Provisioning API
 USIM.write('EF_SUCI_Calc_Info', {
   HN_PubKey: readFile('hn_pub.key'),
@@ -302,7 +305,9 @@ block2 = SHA-256(Z || 0x00000002 || sharedInfo)  // 32 bytes
 
 // K_enc = first 128 bits of block1 (AES-128)
 const kEnc = block1.slice(0, 16);
-// K_mac = trailing 128 bits of block1 + first 128 bits of block2 (256-bit HMAC)
+// K_mac (this demo) = the next 256 bits after K_enc: trailing 128 bits of block1 + first 128 bits of block2.
+// TS 33.501 Annex C.3.2 splits the 64-octet KDF output as EK (16 octets) ‖ ICB (16) ‖ MK (32): there the ICB is
+// block1[16:32] and the MAC key is all of block2. This demo uses a zero IV instead of the ICB.
 const kMac = [...block1.slice(16), ...block2.slice(0, 16)];`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
@@ -416,6 +421,7 @@ const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
 const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
 const block2 = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA256)
 const kEnc = block1.slice(0, 16)                          // 128-bit AES-128 key
+// This demo's split, as in the concealment step (TS 33.501 Annex C.3.3: ICB = block1[16:32], MK = block2)
 const kMac = [...block1.slice(16), ...block2.slice(0, 16)] // 256-bit HMAC-SHA-256 key
 
 // 3. Authenticate-then-decrypt: verify MAC BEFORE decryption (per 3GPP TS 33.501)
@@ -458,7 +464,7 @@ const { pubHandle: eccPub, privHandle: eccPriv } = hsm_generateECKeyPair(
       id: 'provision_usim',
       title: '2. Provision USIM',
       description:
-        'The large ML-KEM Public Key (1184 bytes) is provisioned to the USIM secure file system (EF_SUCI_Calc_Info). The file also stores the Routing Indicator (0–4 decimal digits, default 0000) — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
+        'The large ML-KEM Public Key (1184 bytes) is provisioned to the USIM secure file system (EF_SUCI_Calc_Info). The Routing Indicator (1 to 4 decimal digits, default 0 when none is configured) is held in a separate file, EF_Routing_Indicator — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
       code: `# Provisioning Logic
 USIM.write('EF_SUCI_Calc_Info', {
   HN_PubKey: readFile('hn_pqc.pub'),
@@ -511,7 +517,7 @@ const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)`,
       id: 'derive_keys',
       title: '6. Derive Keys (KDF w/ SHA3)',
       description:
-        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256. SHA3-256 replaces SHA-256 to ensure post-quantum security of the KDF itself. Two iterations produce K_enc (256-bit AES-256, full block1) and K_mac (256-bit HMAC-SHA3-256, full block2). SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid mode; empty for pure PQC. This KDF choice was made here: no 3GPP document specifies one for a post-quantum SUCI scheme, and the research proposal this profile is named after leaves the KDF generic. There are no test vectors to check it against.',
+        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256. This design uses SHA3-256 in place of SHA-256 for added resilience; SHA-256 is currently considered secure against quantum attacks (ATIS). Two iterations produce K_enc (256-bit AES-256, full block1) and K_mac (256-bit HMAC-SHA3-256, full block2). SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid mode; empty for pure PQC. This KDF choice was made here: no 3GPP document specifies one for a post-quantum SUCI scheme, and the research proposal this profile is named after leaves the KDF generic. There are no test vectors to check it against.',
       code: `# ANSI X9.63 KDF with SHA3-256, 2 iterations (this project's choice)
 # Hybrid:  Z = SHA256(Z_ecdh ‖ Z_kem), SharedInfo = raw X25519 eph pub key (32 bytes)
 # Pure PQC: Z = Z_kem,                  SharedInfo = empty
@@ -538,7 +544,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
           label: 'block1',
           value: 'SHA3-256(Z ‖ 0x00000001 ‖ SharedInfo)',
           description:
-            '32-byte output. Full block1 becomes K_enc (AES-256). SHA3-256 chosen for post-quantum security of the KDF itself.',
+            '32-byte output. Full block1 becomes K_enc (AES-256). SHA3-256 chosen for added resilience (SHA-256 is currently considered secure against quantum attacks, per ATIS).',
         },
         {
           label: 'block2',

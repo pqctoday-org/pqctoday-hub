@@ -73,7 +73,7 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
       badge: 'PQC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'Compare with hybrid mode: no X25519 ephemeral key, only ML-KEM encapsulation. Notice AES-256 (vs AES-128 in Profile A/B) and SHA3-256 (vs SHA-256) for stronger post-quantum assurance.',
+        'Compare with hybrid mode: no X25519 ephemeral key, only ML-KEM encapsulation. Notice AES-256 (vs AES-128 in Profile A/B) and SHA3-256 (vs SHA-256), chosen here for added resilience.',
       config: { part: 0, profile: 'C', pqcMode: 'pure' },
     },
     {
