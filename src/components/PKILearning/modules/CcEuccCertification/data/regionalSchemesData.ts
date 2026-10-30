@@ -215,11 +215,11 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
     scheme: 'EUCC (Implementing Regulation (EU) 2024/482)',
     role: 'EU law; not a CCRA party',
     recognition:
-      "Assurance level 'substantial' (AVA_VAN.1–2) or 'high' (AVA_VAN.3–5); AVA_VAN.4–5 only inside a technical domain or under a listed PP. Replaced the national schemes and SOG-IS, which stopped issuing on 27 February 2026.",
+      "Assurance level 'substantial' (AVA_VAN.1–2) or 'high' (AVA_VAN.3–5); AVA_VAN.4–5 where the product is covered by an Annex I technical domain or a listed Annex II protection profile, or in exceptional cases with the authority's approval (Art 7(3)). EUCC builds on the SOG-IS MRA; the national schemes it covers ceased to produce effects from 27 February 2026.",
     additions: [
       {
         kind: 'procurement',
-        text: 'Applies by regulation in every EU member state; no self-assessment.',
+        text: 'Applies by regulation in every EU member state; the scheme itself is voluntary-based (ENISA), and certification becomes a condition of sale only where sector law requires it, as eIDAS does for qualified signature creation devices (Art 30); no self-assessment.',
       },
       {
         kind: 'protection-profiles',
@@ -257,7 +257,7 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
         text: 'Cryptography per BSI TR-02102 and TR-03116.',
       },
     ],
-    pqc: 'TR-02102-1: classical-only key agreement only until the end of 2031, classical signatures until the end of 2035; post-quantum mechanisms "should be used in \'hybrid\' form".',
+    pqc: 'TR-02102-1: the sole use of classic key agreement mechanisms is only recommended until the end of 2031 and classic signature mechanisms until the end of 2035; the quantum-safe mechanisms "should be used in \'hybrid\' form".',
     sources: [{ label: 'BSI TR-02102-1', libraryId: 'BSI TR-02102-1' }],
   },
   {
@@ -409,10 +409,6 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
         kind: 'method',
         text: 'A Japan-only “ST confirmation” track, lighter than full certification.',
       },
-      {
-        kind: 'procurement',
-        text: 'Government procurement lists ask for CC-certified products and ISO/IEC 19790 module validation (JCMVP; FIPS 140 accepted).',
-      },
     ],
     pqc: 'Cabinet Secretariat interim report (November 2025): government migration to PQC “in principle” by 2035. No JISEC-specific rule found.',
     sources: [
@@ -449,7 +445,7 @@ export const REGIONAL_SCHEMES: readonly RegionalScheme[] = [
     scheme: 'AISEP (Australian Certification Authority, ASD)',
     role: 'CCRA authorizing',
     recognition:
-      'PP-based evaluations preferred; EAL-based ones capped at EAL2 where no PP exists.',
+      'A cap of EAL 2 applies to all EAL-based evaluations where a suitable PP does not yet exist; EAL-based evaluations are not considered where a suitable PP already exists.',
     additions: [
       {
         kind: 'procurement',
@@ -549,10 +545,10 @@ export const OUTSIDE_CCRA: readonly OutsideCcra[] = [
   {
     country: 'China',
     standard:
-      'GB/T 18336-2024 and GB/T 30270-2024 — identical adoptions of ISO/IEC 15408:2022 and 18045:2022',
+      'GB/T 18336.1 to GB/T 18336.5-2024 (Parts 1 and 3 identical to ISO/IEC 15408-1 and 15408-3:2022) and GB/T 30270-2024 (identical to ISO/IEC 18045:2022)',
     body: 'China Information Technology Security Evaluation Center (CNITSEC)',
     additions:
-      'Listed network products need a certificate before sale (Cybersecurity Law; GB 42250-2022); commercial cryptography is governed separately by the Cryptography Law, with testing mandatory only for listed products.',
+      'Listed network critical equipment and specialised cybersecurity products need security certification or security testing by a qualified body before sale (Cybersecurity Law Art. 23; GB 42250 for specialised cybersecurity products); commercial cryptography is governed separately by the Cryptography Law, with testing mandatory only for listed products.',
     pqc: 'A national call for next-generation (post-quantum) public-key algorithms opened in February 2025. No national PQC standard is published yet.',
     sources: [
       { label: 'Cryptography Law', libraryId: 'China-Cryptography-Law-2019-NPC' },
@@ -564,11 +560,11 @@ export const OUTSIDE_CCRA: readonly OutsideCcra[] = [
   },
   {
     country: 'Russia',
-    standard: 'GOST R ISO/IEC 15408 — identical to the 2009 edition of ISO/IEC 15408',
+    standard: 'GOST R ISO/IEC 15408 (national adoption of ISO/IEC 15408)',
     body: 'FSTEC (certification of information-protection means); cryptography under the FSB',
     additions:
       'FSTEC certifies against its own six-level “trust level” scale; cryptography is regulated separately, by the FSB, with GOST algorithms from technical committee TC 26.',
-    pqc: 'Technical committee TC 26 has published a code-based candidate mechanism (2024); no post-quantum GOST standard yet.',
+    pqc: 'TC 26 reported (March 2024) that Kryptonit staff developed the code-based mechanism “Kodieum”, then going through drafting of standardisation recommendations before open publication; no post-quantum GOST standard yet.',
     sources: [
       { label: 'TC 26 — post-quantum mechanism', libraryId: 'tc26-Kodieum-Kryptonit-PQ-Mechanism' },
     ],
@@ -578,7 +574,7 @@ export const OUTSIDE_CCRA: readonly OutsideCcra[] = [
     standard: 'ST RK ISO/IEC 15408 (national adoption)',
     body: 'Accredited conformity-assessment bodies',
     additions:
-      'Government rules require a certificate of conformity to ST RK ISO/IEC 15408-3 at a stated minimum trust level for listed products.',
+      'Under Order No. 152/NK (22 April 2020), software entered in the register of trusted software and electronic-industry products needs a certificate of conformity to ST RK ISO/IEC 15408-3 at trust level 4 or higher, or a test act issued by the authorised body.',
     pqc: null,
     sources: [
       {

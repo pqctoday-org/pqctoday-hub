@@ -588,7 +588,7 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
               'Any ITSEF can evaluate any product at AVA_VAN.5; “high” just means EAL4 or above',
             correct: false,
             feedback:
-              'EUCC levels are defined by AVA_VAN, not by EAL: “substantial” is AVA_VAN 1–2 and “high” is AVA_VAN 3–5. And AVA_VAN.4/.5 is gated by Annex I/II.',
+              'EUCC levels are defined by AVA_VAN, not by EAL: “substantial” is AVA_VAN 1–2 and “high” is AVA_VAN 3–5. And AVA_VAN.4/.5 is tied to Annex I technical domains and Annex II protection profiles, apart from exceptional authority-approved cases (Art 7(3)).',
           },
           {
             id: 'substantial',
@@ -971,20 +971,20 @@ export const EIDAS_TRACE_SCENARIOS: readonly TraceScenario[] = [
           {
             id: 'cb-decides',
             label:
-              'Only if the CB confirms the impact is minor. A new cryptographic implementation changes SFRs, design and vulnerability analysis, so expect it to be major; a product series does not make differences minor by definition',
+              'Only if the CB confirms, after the impact analysis, that the change is minor; a new cryptographic implementation has to be assessed, not assumed to be minor',
             correct: true,
             feedback:
-              'Right. CIR 2025/2462 lets a CB certify a product series, and ENISA’s product-series methodology (version 1, July 2025) has the certification body issue a single certificate identifying all products in the series; where a certified ICT product has been subject to changes, CIR 2025/2462 Annex IV.3 requires an impact analysis report.',
+              'Right. CIR 2025/2462 lets a CB certify a product series, and ENISA’s product-series methodology (version 1, July 2025) has the certification body issue a single certificate identifying all products in the series; where a certified ICT product has been subject to changes, Annex IV.3 of Regulation (EU) 2024/482 (as amended by CIR 2025/2462) requires an impact analysis report.',
           },
           {
             id: 'automatic',
             label: 'Yes — any member of a certified series is covered automatically',
             correct: false,
             feedback:
-              'Series members must be declared and assessed. A product added later is a change to the certified TOE and goes through the impact analysis.',
+              'Series members are declared and evaluated before the certificate is issued (the reference TOE plus the other declared products). For a certified product that is changed, Annex IV.3 of Regulation (EU) 2024/482 requires an impact analysis report, and the certification body decides what follows.',
           },
         ],
-        link: 'Change: product series (CIR 2025/2462) + minor/major test; a new PQC implementation is expected to be major',
+        link: 'Change: product series (CIR 2025/2462) + impact analysis; the CB decides whether a new PQC implementation is minor or major',
         sourceIds: ['CIR-EU-2025-2462-EUCC-Amendment', 'ENISA-EUCC-Product-Series-Methodology'],
       },
     ],

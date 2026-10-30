@@ -555,7 +555,11 @@ export const CcEalDecoding = () => (
           'AVA_VAN.3',
           'Focused vulnerability analysis — attackers with Enhanced-Basic attack potential',
         ],
-        ['ALC_FLR', '— (none)', 'Flaw remediation is in no EAL; it can only be added'],
+        [
+          'ALC_FLR',
+          '— (none)',
+          'Flaw remediation is in no EAL; CC:2022 Part 5 notes it is often used as an augmentation',
+        ],
       ]}
     />
 
@@ -816,13 +820,13 @@ export const CcLifecycle = () => (
         December 2027.
       </p>
       <p>
-        <strong>Under EUCC:</strong> The change should preferably use post-quantum mechanisms from
-        the ECCG Agreed Cryptographic Mechanisms (ACM v2): the EUCC cryptography guidelines say
-        evaluators should verify that products preferably rely on them, and the ACM is a guideline
-        rather than a legal list. EUCC’s own change rules (CIR 2025/2462) decide whether the change
-        is minor or major. An EUCC carve-out keeps older protection profiles (CC 3.1 revisions 1–4)
-        usable where eIDAS, Decision 2016/650 or the tachograph rules require them, with no end date
-        (see the EUCC path).
+        <strong>Under EUCC:</strong> The EUCC cryptography guidelines say evaluators should verify
+        that protection profiles and products preferably rely on the agreed cryptographic mechanisms
+        in the ECCG ACM (ACM v2), which lists post-quantum mechanisms; the ACM is a guideline rather
+        than a legal list. CIR 2025/2462 defines minor and major changes, and the certification body
+        decides which applies. An EUCC carve-out keeps older protection profiles (CC 3.1 revisions
+        1–4) usable where eIDAS, Decision 2016/650 or the tachograph rules require them, with no end
+        date (see the EUCC path).
       </p>
     </Callout>
 
@@ -1135,7 +1139,7 @@ export const EuccScheme = () => (
           'Guideline',
           <>
             Cryptography (ACM v2); product series (version 1, July 2025); assurance-continuity
-            change scenarios (v1, 10 December 2025); vulnerability management and disclosure (v1.1,
+            change scenarios (v1, October 2025); vulnerability management and disclosure (v1.1,
             adopted 10 January 2025)
           </>,
           'No — recommendations to developers and evaluators',
@@ -1201,7 +1205,7 @@ export const EuccScheme = () => (
       certification library page;{' '}
       <PlainSource>
         ENISA product-series methodology version 1 (July 2025); ENISA assurance-continuity change
-        scenarios v1 (10 December 2025)
+        scenarios v1 (October 2025)
       </PlainSource>
       ; ENISA certificate page EUCC-3110-2025-12-2500098-01;{' '}
       <SourceCite
@@ -2632,15 +2636,17 @@ export const CcRegionalSchemes = () => (
 
     <Callout
       tone="key"
-      title="The CCRA recognises the evaluation; national cryptographic approvals are added by each scheme"
+      title="The CCRA recognises the evaluation; collaborative PPs leave room for national cryptographic refinements"
     >
       <p>
         The 2014 arrangement says collaborative PPs “shall not contain requirements that have a
         dependency on national conformity assessment schemes” and should allow “other national
-        approved primitives/protocols so nations can provide their own refinements”. So algorithm
-        and module validation is left to each scheme: the US asks for a CAVP certificate, Canada for
-        Cyber Centre-approved cryptography, Korea for KCMVP, Malaysia for MyCV, the EU for the ECCG
-        Agreed Cryptographic Mechanisms. That is exactly where post-quantum requirements enter.
+        approved primitives/protocols so nations can provide their own refinements”. Schemes in this
+        module add their own cryptographic requirements on top: the US asks for a CAVP certificate,
+        Canada for Cyber Centre-approved cryptography, Korea for KCMVP on the product types it
+        lists, Malaysia for MyCV, and in the EU the cryptography guidelines point evaluators to the
+        ECCG Agreed Cryptographic Mechanisms (a guideline, not a validation). Post-quantum
+        requirements enter through these scheme-level rules.
       </p>
       <p className="text-xs text-muted-foreground">
         <Ref source={CCRA_SOURCE} />, Annex K.1
