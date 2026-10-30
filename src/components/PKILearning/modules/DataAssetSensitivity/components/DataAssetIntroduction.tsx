@@ -98,13 +98,10 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           frameworks govern their protection.
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-          <blockquote className="text-sm italic text-foreground/90">
-            &ldquo;NIST SP 800-37 RMF Step 1 is &lsquo;Prepare&rsquo; — and Step 2 is
-            &lsquo;Categorize&rsquo; your information systems. Data classification is not optional;
-            it is the foundation of any risk-based approach to cryptographic migration.&rdquo;
-          </blockquote>
-          <p className="text-xs text-muted-foreground mt-2">
-            — NIST SP 800-37, Risk Management Framework
+          <p className="text-sm text-foreground/90">
+            In NIST SP 800-37 Rev. 2, RMF step 1 is Prepare and step 2 is Categorize. Our view: data
+            classification is not optional; it is the foundation of any risk-based approach to
+            cryptographic migration.
           </p>
         </div>
 
