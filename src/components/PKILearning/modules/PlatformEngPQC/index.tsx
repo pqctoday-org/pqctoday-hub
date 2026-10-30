@@ -24,7 +24,7 @@ const PARTS: WorkshopPart[] = [
     id: 'quantum-threat-timeline',
     title: 'Step 2: Quantum Threat Timeline',
     description:
-      'Model HNDL risk for each pipeline asset under different CRQC arrival scenarios. Understand why short-lived certs do not eliminate harvest risk.',
+      'Model HNDL risk for each pipeline asset under different CRQC arrival scenarios. Understand why short-lived certificates do not protect a recorded TLS session.',
     icon: Clock,
   },
   {
