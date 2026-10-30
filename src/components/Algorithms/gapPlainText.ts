@@ -77,7 +77,7 @@ export const GAP_PLAIN_TEXT: Readonly<Record<string, GapPlainText>> = {
   },
   'rust-no-contributory-behaviour-check-ecdh': {
     title:
-      'Rust: X25519/X448 still accepts a few low-order and zero-shared-secret points (5 + 2 of Wycheproof’s; C++ fewer) — mostly fixed in a later engine update',
+      'X25519/X448: both engines accept the same 3 of Wycheproof’s 45 low-order public keys (graded acceptable) and refuse every zero-shared-secret case',
   },
   'wycheproof-wave2-not-executed': {
     summary:

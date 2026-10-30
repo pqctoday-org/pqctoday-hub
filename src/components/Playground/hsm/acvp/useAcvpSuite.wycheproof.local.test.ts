@@ -210,7 +210,9 @@ describe('Project Wycheproof (Google / C2SP) adversarial vectors, both engines',
   it('pins how each engine treats low-order X25519/X448 public keys', () => {
     // Rust counts re-measured 2026-09-27 on hsm 1c5ed893 (#290 added the
     // contributory-behaviour check): low-order refused 9 -> 40, zero shared
-    // secret 9 -> 40, twist 3 -> 8.
+    // secret 9 -> 40, twist 3 -> 8. Re-measured on the shipped engines-6 engine
+    // (hsm main 5443f045, which carries the X448 refusal fix #384): low-order
+    // 40 -> 42, zero shared secret 40 -> 42, twist 8 -> 9, identical to C++.
     // These are Wycheproof `acceptable` cases — refusing them and accepting them
     // are both defensible, so the ROW passes either way. The numbers below are
     // the security-relevant fact the row alone does not tell you, and they are
@@ -223,18 +225,18 @@ describe('Project Wycheproof (Google / C2SP) adversarial vectors, both engines',
       const refused = sub.filter((r) => !/byte-equal|CKR_OK/.test(r.caseMeta?.observed ?? ''))
       return { n: sub.length, refused: refused.length, accepted: sub.length - refused.length }
     }
-    // C++ refuses nearly every low-order key; Rust accepts most of them.
+    // Both engines refuse the same 42 of 45 low-order keys and accept the same 3.
     expect(behaviour('LowOrderPublic', 'C++')).toEqual({ n: 45, refused: 42, accepted: 3 })
-    expect(behaviour('LowOrderPublic', 'Rust')).toEqual({ n: 45, refused: 40, accepted: 5 })
-    // ZeroSharedSecret: the derived secret is all-zero. C++ refuses all 42;
-    // Rust returns the all-zero secret for 33 of them (contributory-behaviour
-    // check absent — RFC 7748 §6.1 "check whether the output is all-zero").
+    expect(behaviour('LowOrderPublic', 'Rust')).toEqual({ n: 45, refused: 42, accepted: 3 })
+    // ZeroSharedSecret: the derived secret is all-zero. Both engines refuse all
+    // 42 (RFC 7748 §6.1: both parties MAY check whether the shared secret is the
+    // all-zero value and abort if so; RFC 9180 §7.1.4 requires HPKE recipients to).
     expect(behaviour('ZeroSharedSecret', 'C++')).toEqual({ n: 42, refused: 42, accepted: 0 })
-    expect(behaviour('ZeroSharedSecret', 'Rust')).toEqual({ n: 42, refused: 40, accepted: 2 })
+    expect(behaviour('ZeroSharedSecret', 'Rust')).toEqual({ n: 42, refused: 42, accepted: 0 })
     // Points on the twist: both engines compute with them (RFC 7748 allows it
     // for X25519/X448 by design — the twist is secure).
     expect(behaviour('Twist', 'C++')).toEqual({ n: 455, refused: 9, accepted: 446 })
-    expect(behaviour('Twist', 'Rust')).toEqual({ n: 455, refused: 8, accepted: 447 })
+    expect(behaviour('Twist', 'Rust')).toEqual({ n: 455, refused: 9, accepted: 446 })
   })
 
   it('pins RSA-PSS SHA-256 (rsa_pss_2048_sha256_mgf1_32): both engines pass all 108 cases', () => {
