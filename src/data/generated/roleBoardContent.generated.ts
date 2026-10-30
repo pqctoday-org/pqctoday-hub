@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10292026.csv
+ * Source: src/data/role_board_content_10292026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -23,8 +23,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive · the decision that unlocks budget and names an owner',
 
-        headline: 'Answer the board in an afternoon, not a quarter.',
-        sub: 'Six questions about your estate. You get a defensible risk position, the regulatory dates that already bind you, and a board pack you can present on Thursday.',
+        headline: 'Practise the decisions behind a funded mandate.',
+        sub: "Practise setting a mandate and naming an owner. Use sample cases to explore priorities, scoped milestones and evidence questions; the worksheets do not establish your organisation's risk or obligations.",
         ctaPrimary: 'Start — 6 questions, about 3 minutes',
         ctaPrimaryHref: '/assess',
         ctaSecondary: 'Draft the program charter',
@@ -92,7 +92,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Executive · the dates you did not choose',
 
         headline: 'The dates were set without you.',
-        sub: 'CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems, though not PQC-specific ones. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
+        sub: 'Compare source-linked milestones and learn which systems and sectors they cover. A published target is not automatically an obligation for your organisation; confirm applicability with the accountable owners.',
         ctaPrimary: 'See the mandate timeline',
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Read the threat economics',
@@ -159,8 +159,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive · risk position · the dates that already bind you',
 
-        headline: 'Know what you are actually exposed to.',
-        sub: 'The same six questions, scored. You get a risk position you can defend line by line, with each regulatory deadline attached to the finding it threatens rather than filed in an appendix.',
+        headline: 'Explore exposure and the evidence you need.',
+        sub: 'Use a sample risk register and assessment to explore how inputs and assumptions affect priorities. Inspect the calculation and sources; the result is not measured risk or a determination of applicable obligations.',
         ctaPrimary: 'See a finished example report',
         ctaPrimaryHref: '/report?example=1',
         ctaSecondary: 'Build the risk register',
@@ -231,8 +231,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive · sequenced plan · owners · KPIs',
 
-        headline: 'Show a plan your regulator will accept.',
-        sub: 'A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same six answers, so your plan and your risk position cannot quietly disagree.',
+        headline: 'Build a roadmap to review and challenge.',
+        sub: 'Practise sequencing work, assigning owners and defining review evidence. A sample roadmap is a planning worksheet; confirm dependencies, scope and milestones before adapting it.',
         ctaPrimary: 'Build the roadmap',
         ctaPrimaryHref: '/business/tools/roadmap-builder',
         ctaSecondary: 'Check what already binds you',
@@ -299,7 +299,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Executive · the question your CFO will ask',
 
         headline: 'Where did these numbers come from?',
-        sub: 'Every figure in your board pack traces to a dated, tiered source. The corrections are public, the people behind the standards are named, and the patent filings show who is actually building this rather than announcing it.',
+        sub: "Inspect the sample board pack's figure sources, methods and caveats. Distinguish published facts, estimates, scenarios and recommendations; content revisions show what changed and why.",
         ctaPrimary: 'Open the evidence corpus',
         ctaPrimaryHref: '/library?purpose=planning',
         ctaSecondary: 'See who is behind the standards',
@@ -373,7 +373,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Executive · due diligence · nothing taken on trust',
 
         headline: 'See the whole programme before you fund it.',
-        sub: 'Nine phases played through end to end — discovery, CBOM, risk scoring, roadmap, pilots, closure. One sitting to know what you are being asked to sign off on.',
+        sub: "Follow a sample programme from discovery to closure. The walkthrough illustrates gates and evidence questions; completing it does not establish your organisation's migration readiness.",
         ctaPrimary: 'Play the executive walkthrough',
         ctaPrimaryHref: '/simulation?run=exec',
         ctaSecondary: 'Open the Command Center',
