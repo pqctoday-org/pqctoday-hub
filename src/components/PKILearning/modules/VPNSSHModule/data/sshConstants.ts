@@ -81,12 +81,13 @@ export const SSH_KEX_SIZES: SSHKexSizes[] = [
     id: 'sntrup761x25519-sha512',
     clientKexInitBytes: 240,
     serverKexInitBytes: 240,
-    clientKexDHInitBytes: 1190,
-    serverKexDHReplyBytes: 1574,
+    // Same packet framing as the other rows: share + 12 B, reply = share + 468 B.
+    clientKexDHInitBytes: 1202,
+    serverKexDHReplyBytes: 1539,
     publicKeyBytes: 1190,
     ciphertextOrShareBytes: 1071, // 1039 B sntrup761 ciphertext + 32 B X25519
     sharedSecretBytes: 64,
-    totalHandshakeBytes: 3244,
+    totalHandshakeBytes: 3221,
   },
   {
     id: 'mlkem768x25519-sha256',
