@@ -439,8 +439,12 @@ describe('bare /report with no assessment shows the sample report', () => {
   it('renders the worked example with the sample banner, not "No Report Yet"', async () => {
     renderBare()
     await screen.findByTestId('report-content')
-    const props = reportContentSpy.mock.calls.at(-1)?.[0] as { result: typeof SAMPLE_RESULT }
+    const props = reportContentSpy.mock.calls.at(-1)?.[0] as {
+      result: typeof SAMPLE_RESULT
+      sharedView?: { sample?: boolean }
+    }
     expect(props.result).toEqual(EXAMPLE_REPORT_RESULT)
+    expect(props.sharedView?.sample).toBe(true)
     expect(screen.getByText(/This is a sample report/)).toBeInTheDocument()
     expect(screen.queryByText('No Report Yet')).not.toBeInTheDocument()
   })

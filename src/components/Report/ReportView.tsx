@@ -550,7 +550,9 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
             result={result}
             expandToken={expandToken}
             collapseToken={collapseToken}
-            sharedView={sharedView ? { persona: sharedView.persona } : undefined}
+            sharedView={
+              sharedView ? { persona: sharedView.persona, sample: sharedView.sample } : undefined
+            }
           />
         </div>
       </div>
