@@ -117,7 +117,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
     dependencies: ['phase-1'],
     stageIds: ['source', 'build'],
     actions: [
-      'Generate ML-DSA-44 Git commit signing keys (GPG v2.6+ / draft-ietf-openpgp-pqc)',
+      'Generate post-quantum OpenPGP Git commit signing keys (composite ML-DSA-65+Ed25519 per RFC 9980) where your OpenPGP tool supports it',
       'Distribute new signing keys via keyserver with old key cross-signature',
       'Migrate CI OIDC signing to ML-DSA-65 (GitHub issue #tracking)',
       'Rotate SSH deploy keys to ML-DSA-44 (pending IETF PQ SSH draft standardization)',

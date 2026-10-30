@@ -70,6 +70,6 @@ export const FILE_ARTIFACTS: FileArtifactRecord[] = [
     pqcTarget: 'ML-DSA-65 or SLH-DSA-SHA2-128s',
     posture: 'red',
     notes:
-      'OpenPGP PQC profile draft (draft-ietf-openpgp-pqc) defines ML-DSA + SLH-DSA composites. Plan parallel signatures during transition.',
+      'RFC 9980 (June 2026) defines composite ML-DSA + EdDSA signature schemes (with Ed25519 or Ed448) and the standalone SLH-DSA signature scheme. Plan parallel signatures during transition.',
   },
 ]

@@ -290,8 +290,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="flex items-start gap-2">
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
-                <strong className="text-foreground">Docker Content Trust (DCT)</strong> — no PQC
-                roadmap. Migrate to Notation immediately; Notary v1 is in maintenance mode.
+                <strong className="text-foreground">Docker Content Trust (DCT)</strong> — being
+                fully retired with the Notary v1 service (full shutdown 8 December 2026; the
+                upstream Notary v1 codebase is no longer maintained). Docker names Sigstore/Cosign
+                and Notation as the alternatives; its guidance says nothing about post-quantum
+                signatures.
               </span>
             </div>
           </div>
