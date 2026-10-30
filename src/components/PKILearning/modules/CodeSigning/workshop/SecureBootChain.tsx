@@ -653,11 +653,15 @@ export const SecureBootChain: React.FC = () => {
                   </td>
                   <td className="p-2 text-xs text-muted-foreground">
                     {alg.id === 'lms' ? (
-                      <span className="text-success font-bold">Mandated</span>
+                      <span className="text-success font-bold">
+                        Listed (NSA prefers SHA-256/192)
+                      </span>
                     ) : alg.id === 'xmss' ? (
-                      <span className="text-warning">Accepted</span>
+                      <span className="text-success font-bold">Listed</span>
+                    ) : alg.id === 'ml-dsa' ? (
+                      <span className="text-muted-foreground">Approved (FAQ)</span>
                     ) : (
-                      <span className="text-muted-foreground">Not required</span>
+                      <span className="text-muted-foreground">Not listed</span>
                     )}
                   </td>
                   <td className="p-2 text-xs text-muted-foreground hidden sm:table-cell">
