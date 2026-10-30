@@ -71,7 +71,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HSMVendor, 'supportedPQCAlgorithms' | 'notes'>[
     fips140Level:
       'FIPS 140-3 Level 3 (cert #5329, no PQC in its approved list; a newer nShield 5s entry is in CMVP Modules in Process)',
     formFactor: 'network',
-    firmwareVersion: '13.8.0+',
+    firmwareVersion: '13.8+ (ML-KEM: 13.8.3+)',
     pkcs11Version: 'Not stated in the release notes (PQC mechanisms are listed per release)',
     hybridSupport: true,
     sideChannelCountermeasures: [
@@ -226,7 +226,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     classicalEquivalent: 'CKM_RSA_PKCS_KEY_PAIR_GEN → RSA-2048 (256-byte public key)',
     vendorNotes: {
       onPrem:
-        'Thales Luna v7.9.2+, Entrust nShield v13.8.0+, Utimaco Q-safe: native firmware support',
+        'Thales Luna v7.9.2+, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Q-safe: PQC support in firmware',
       cloud:
         'AWS CloudHSM: ML-DSA only, through vendor-defined PKCS#11 mechanisms; no ML-KEM. Azure Dedicated HSM (Thales Luna 7) can take the Luna firmware upgrade for existing customers, but the service is being retired and accepts no new customers (Microsoft supports existing customers until July 31, 2028). Google Cloud HSM: no PQC at the HSM level',
     },
