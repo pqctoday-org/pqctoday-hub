@@ -368,7 +368,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What does PCI DSS 4.0 require for PQC?',
         answer:
-          'PCI DSS 4.0 (mandatory compliance as of March 2025) introduced Requirement 12.3.3, which mandates that organizations maintain a documented inventory of all cryptographic cipher suites and protocols in use and have a plan to address algorithm weaknesses — effectively requiring cryptographic agility planning. While PCI DSS 4.0 does not yet mandate specific PQC algorithms, the PCI Security Standards Council is actively monitoring NIST standards and is expected to incorporate PQC requirements in a future version. Organizations subject to PCI DSS should treat the Req 12.3.3 inventory as the foundation for their eventual PQC migration. The Compliance Tracker cross-references PCI DSS requirements with NIST migration guidance.',
+          'PCI DSS v4.0.1 is the only active version of the standard (v4.0 retired on 31 December 2024) and the new requirements of v4.0 have been effective since 31 March 2025 (PCI SSC announcement, 11 June 2024). The public PCI SSC pages used for this FAQ state no PQC algorithm, parameter set or deadline for PCI DSS, so organizations subject to PCI DSS should treat a cryptographic inventory as a sensible starting point for PQC migration planning. The Compliance Tracker cross-references PCI DSS requirements with NIST migration guidance.',
         deepLink: '/compliance?framework=PCI-DSS',
       },
     ],

@@ -375,7 +375,7 @@ export const ENTERPRISE_SCENARIO = {
       framework: 'PCI DSS v4.0.1',
       deadline: '2025',
       requirement:
-        'Cryptographic inventory required (Req. 12.3.3). Quantum risk assessment expected in future versions.',
+        'PCI DSS v4.0.1 is the only active version since v4.0 retired on 31 December 2024; the public PCI SSC pages state no PQC algorithm, parameter set or deadline.',
     },
     {
       framework: 'DORA (EU)',
