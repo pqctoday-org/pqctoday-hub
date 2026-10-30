@@ -136,13 +136,13 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     tier: 'enterprise',
     pqcReadiness: 'beta',
     tlsInspectionPQC: false,
-    mlKemSupport: true,
+    mlKemSupport: false,
     mlDsaSupport: false,
-    hybridSupport: true,
+    hybridSupport: false,
     roadmapYear: 2026,
     hardwareOffload: false,
     notes:
-      'Junos 24.x introduces hybrid X25519+ML-KEM-768 for IPsec and SSL proxy. SRX5000 line planned for hardware offload in 2026. ML-DSA certificate inspection on roadmap for Junos 24.2R1.',
+      'Junos OS 25.4R1 adds ML-DSA-87 signatures for software images. Juniper documents post-quantum pre-shared keys (RFC 8784) for IPsec; the product catalog records no ML-KEM hybrid IKEv2 key exchange in Junos OS as of release 26.2R1.',
   },
   {
     id: 'check-point',
@@ -202,7 +202,7 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     roadmapYear: 2025,
     hardwareOffload: false,
     notes:
-      'pfSense CE has no PQC roadmap. OPNsense 24.7+ includes experimental hybrid ML-KEM IKEv2 support via strongSwan plugin. OPNsense Suricata IDS/IPS supports PQC protocol detection.',
+      'pfSense CE has no PQC roadmap. OPNsense 26.7.4 and later offers hybrid IKEv2 key exchanges that pair X25519 or P-256 with ML-KEM-768, or P-384 with ML-KEM-1024, through strongSwan.',
   },
 ]
 

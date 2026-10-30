@@ -156,7 +156,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
   {
     id: 'juniper-srx',
     vendor: 'Juniper Networks',
-    product: 'SRX Series (Junos 24.x / 25.4R1)',
+    product: 'SRX Series (Junos OS 25.4R1)',
     tier: 'enterprise',
     catalogName: 'Juniper SRX Series Firewalls',
     tlsInspectionPQC: 'roadmap',
@@ -169,9 +169,9 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     fipsCompliant: true,
     upgradeRequired: true,
     upgradeDetails:
-      'Junos 24.1R1+ for hybrid ML-KEM IPsec/IKEv2 support. SRX5000 hardware offload for PQC targeted Junos 24.2R1. SSL proxy PQC inspection requires Junos 25.x (2026). Advanced Threat Prevention (ATP) Cloud updated for PQC traffic classification.',
+      'Junos OS 25.4R1 adds ML-DSA-87 post-quantum signatures for software images on SRX Series and other platforms, validated off-box. For IPsec, Juniper documents quantum-safe VPNs with post-quantum pre-shared keys (RFC 8784), not an ML-KEM key exchange.',
     notes:
-      'Juniper updated IPsec implementation to RFC 9370 (hybrid KEM for IKEv2) in Junos 24.1. AppSecure SSL proxy engine requires 24.2R1+ for PQC cert inspection. Security Director Cloud policy for PQC migration automation in preview. No hardware crypto offload for ML-KEM on current SRX hardware.',
+      'The product catalog records no ML-KEM hybrid IKEv2 key exchange in Junos OS as of release 26.2R1. A post-quantum pre-shared key (RFC 8784) is an out-of-band secret added at both peers, used alongside the IKEv2 authentication method; it is not a KEM.',
   },
   {
     id: 'check-point',
@@ -236,7 +236,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
   {
     id: 'opnsense',
     vendor: 'Deciso',
-    product: 'OPNsense 24.7+',
+    product: 'OPNsense 26.7.4+',
     tier: 'open-source',
     catalogName: 'OPNsense',
     tlsInspectionPQC: 'not-supported',
@@ -249,9 +249,9 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     fipsCompliant: false,
     upgradeRequired: false,
     upgradeDetails:
-      'OPNsense 24.7+ ships a strongSwan plugin with hybrid ML-KEM IKEv2 key exchange (IKEv2 KE method per RFC 9370) and inherits PQC TLS from its OpenSSL/LibreSSL base. Enable the post-quantum proposals in the IPsec connection settings.',
+      'OPNsense 26.7.4 (15 September 2026) updated strongSwan to 6.1.0 and added hybrid post-quantum variants as an additional key exchange in its IPsec settings: X25519 or P-256 with ML-KEM-768, or P-384 with ML-KEM-1024.',
     notes:
-      'Split from the former combined pfSense/OPNsense row (2026-06-19): OPNsense is the one with a PQC path (strongSwan hybrid ML-KEM), so the catalog tracks it as partial. Suricata IDS/IPS additionally classifies PQC traffic.',
+      'Split from the former combined pfSense/OPNsense row (2026-06-19): OPNsense is the one with a PQC path, so the catalog tracks it as partial. OPNsense offers ML-KEM only as an additional key exchange next to a classical one, not as the primary key exchange.',
   },
   {
     id: 'pfsense',
