@@ -111,7 +111,8 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                   they could decrypt command sequences and forge authenticated commands &mdash;
                   potentially taking control of communications satellites, GPS constellations, or
                   military reconnaissance platforms. A GEO satellite launched in 2028 with RSA-2048
-                  key exchange will still be operating in 2043, well past credible CRQC timelines.
+                  key exchange will still be operating in 2043, which may be after a
+                  cryptographically relevant quantum computer exists.
                 </p>
               </div>
             </div>
@@ -525,8 +526,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             The fundamental crypto challenge: aerospace equipment service lives (20&ndash;55 years)
-            span the entire quantum transition. A Boeing 737 MAX delivered in 2025 with RSA-2048
-            will still be flying in 2055 &mdash; long past any credible CRQC timeline.
+            span the entire quantum transition. An aircraft delivered in 2025 with RSA-2048 may
+            still be flying in 2055, which may be after a cryptographically relevant quantum
+            computer exists.
           </p>
 
           <div className="overflow-x-auto">
