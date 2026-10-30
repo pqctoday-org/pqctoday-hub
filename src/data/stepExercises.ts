@@ -1331,7 +1331,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'The duty from eIDAS (910/2014 as amended by 2024/1183); the requirements from Protection Profiles such as EN 419221-5, evaluated under a CC-based scheme',
     ],
     answer: 2,
-    why: 'eIDAS is law: it defines QSCDs and requires their certification. It is not a Protection Profile. The evaluable requirements are in the PPs (EN 419221-5, EN 419241-2), and EUCC is the scheme that runs the evaluation.',
+    why: 'eIDAS is law: it defines QSCDs and requires their certification (Art 30). It is not a Protection Profile. The evaluable requirements are in PPs such as EN 419221-5 and EN 419241-2, which EUCC Annex II lists for remote QSCDs; Art 30(3) also provides for another notified process.',
   },
 
   // ── crypto-product-certification (Shared author: core + shared steps) ──
