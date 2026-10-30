@@ -55,17 +55,16 @@ export const MediaDrmIntroduction: React.FC<Props> = ({ onNavigateToWorkshop }) 
         defaultOpen
       >
         <p className="text-muted-foreground">
-          In consumer content protection a compromised device is part
-          of the threat model, so &ldquo;is it quantum-safe?&rdquo; has to be asked link by link:
-          which secret does the system rely on, and which signature does it rely on.
+          In consumer content protection a compromised device is part of the threat model, so
+          &ldquo;is it quantum-safe?&rdquo; has to be asked link by link: which secret does the
+          system rely on, and which signature does it rely on.
         </p>
         <p className="text-muted-foreground">
-          This section draws on the {ECP_EDITION} ({ECP_DATE}),
-          ECP for short. {ECP_STATUS_NOTE} ECP describes the problem this way: breaking protection
-          on one device can break it on a wide class of devices, and the availability of release-day
-          copies is the most challenging threat to prevent because it only takes a single skilled
-          adversary with a single compromised platform to post a single copy to a file-sharing
-          network.
+          This section draws on the {ECP_EDITION} ({ECP_DATE}), ECP for short. {ECP_STATUS_NOTE} ECP
+          describes the problem this way: breaking protection on one device can break it on a wide
+          class of devices, and the availability of release-day copies is the most challenging
+          threat to prevent because it only takes a single skilled adversary with a single
+          compromised platform to post a single copy to a file-sharing network.
         </p>
 
         {ECP_GROUPS.map((g) => (
