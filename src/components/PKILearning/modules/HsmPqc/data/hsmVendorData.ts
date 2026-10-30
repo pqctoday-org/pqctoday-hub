@@ -302,7 +302,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     description:
       'Decapsulate to recover the same 32-byte shared secret (usable as AES-256 key material).',
     detail:
-      'PKCS#11 v3.2 C_DecapsulateKey takes the KEM ciphertext, runs ML-KEM decapsulation inside the HSM boundary using the non-extractable private key, and materialises the recovered shared secret as a new key object. The decapsulation happens entirely within the HSM — the shared secret is never exposed.',
+      'PKCS#11 v3.2 C_DecapsulateKey takes the KEM ciphertext, runs ML-KEM decapsulation inside the HSM boundary using the non-extractable private key, and materialises the recovered shared secret as a new key object. The decapsulation happens inside the HSM; whether the recovered key can be extracted follows the CKA_EXTRACTABLE value in the input template (true if not provided), so set CKA_EXTRACTABLE to false to keep the shared secret inside the HSM.',
     output: `CKR_OK
   Recovered Key Handle: 0x00000044
   Key Type:            CKK_GENERIC_SECRET (use as AES-256 key material)
@@ -366,7 +366,7 @@ C_VerifyMessage(
 C_MessageVerifyFinal(hSession)`,
     description: 'Verify the ML-DSA-65 signature against the original data.',
     detail:
-      'Verification can be performed with the public key outside the HSM, but using the HSM ensures the operation uses validated, certified code. Verification is faster than signing for ML-DSA. The operation returns CKR_OK for valid signatures or CKR_SIGNATURE_INVALID.',
+      'Verification can be performed with the public key outside the HSM, but using the HSM gives validated code only when the algorithm is on the module’s certificate and the module runs in its approved mode; check the certificate and Security Policy. The operation returns CKR_OK for valid signatures or CKR_SIGNATURE_INVALID.',
     output: `CKR_OK
   Verification:    VALID
   Algorithm:       ML-DSA-65
@@ -425,7 +425,7 @@ C_GetAttributeValue(
 // CRITICAL: State must persist to NVRAM after every sign`,
     description: 'Check remaining one-time signatures for an LMS/HSS stateful key.',
     detail:
-      'LMS/HSS and XMSS are stateful hash-based schemes: each leaf can only sign ONCE. The HSM must atomically update NVRAM state after every signing operation. Power failure during state update can brick the key. HSMs are the ONLY safe place for stateful signatures — CNSA 2.0 requires LMS/HSS for firmware/software signing. CKA_LMS_REMAINING_SIGNATURES is a vendor-specific attribute (not yet in PKCS#11 v3.2).',
+      'LMS/HSS and XMSS are stateful hash-based schemes: each leaf can only sign ONCE. The HSM must atomically update NVRAM state after every signing operation. Power failure during state update can brick the key. HSMs are the ONLY safe place for stateful signatures — NSA’s CNSA 2.0 FAQ approves only LMS and XMSS for use in NSS; the multi-tree HSS and XMSSMT are not allowed. PKCS#11 v3.2 defines CKA_HSS_KEYS_REMAINING for HSS private keys.',
     output: `CKR_OK
   Key Type:              CKK_LMS
   Tree Height:           H=20 (1,048,576 total signatures)

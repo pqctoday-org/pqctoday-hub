@@ -19,7 +19,7 @@ _Payment HSM evidence review_: review a payment HSM's evidence — PTS listing, 
 
 ## Source Currency
 
-PCI-licence-gated documents (PTS HSM v5.0 requirements, Program Guide v2.3, KMO v1.0, P2PE v3.2) are cited by title, version and date only; their requirement text is not taught. The public PCI PTS Program Guide v1.9 (June 2020) is superseded by Program Guide v2.3 (May 2026) and is used only to explain the historical delta-change concept. The P2PE v3.1 text is superseded by v3.2 (June 2025).
+PCI-licence-gated documents (PTS HSM v5.0 requirements, the Device Testing and Approval Program Guide, KMO v1.0, P2PE v3.2) are cited by title, version and date only; their requirement text is not taught. The public PCI PTS Program Guide v1.9 (June 2020) is superseded by the Device Testing and Approval Program Guide listed in the Document Library on 18 May 2026 (the public listing gives no version number) and is used only to explain the historical delta-change concept. The P2PE v3.1 text is superseded by v3.2 (released 30 June 2025); from 1 January 2026, new P2PE submissions must comply with P2PE v3.2.
 
 ## Related Standards
 

@@ -158,7 +158,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     name: 'CKM_PKCS5_PBKD2',
     type: 'classical',
     mechanismCode: '0x000003b0',
-    description: 'PBKDF2 key derivation (BIP39 seed generation, PKCS#11 v3.2 §5.7.3.1)',
+    description: 'PBKDF2 key derivation (BIP39 seed generation, PKCS#11 v3.2 §6.37.4)',
     keySize: 'Variable (1–512 bytes)',
     pkcs11Version: 'v3.2',
   },

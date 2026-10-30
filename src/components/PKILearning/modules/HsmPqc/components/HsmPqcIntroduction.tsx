@@ -436,8 +436,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <p>
                     <strong>Upgrade Path:</strong> Through PKCS#11 the PostQuantum feature must be
                     enabled and the firmware must be v13.8 or later (v13.8.3 or later for ML-KEM).
-                    1&ndash;2 hours per HSM. An nShield 5s module is on the CMVP Modules in Process
-                    list &mdash; a queue position, not evidence of the outcome.
+                    The 1&ndash;2 hours per HSM figure is this module&apos;s own planning estimate;
+                    Entrust states no duration. An nShield 5s module is on the CMVP Modules in
+                    Process list &mdash; a queue position, not evidence of the outcome.
                   </p>
                   <p>
                     <strong>Interfaces:</strong> The PKCS#11 interface gained the PQC algorithms one
@@ -671,7 +672,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS
                   from 7.8.9. Customers administer the firmware themselves, after consulting Thales
                   Support, and Azure does not say whether the service offers firmware 7.9. Azure
-                  Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.
+                  Managed HSM uses Marvell LiquidSecurity HSM adapters.
                 </p>
                 <p>
                   <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers

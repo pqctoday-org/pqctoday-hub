@@ -502,7 +502,7 @@ export const ROUTE_DECISION_AID: RouteAid[] = [
       },
     ],
     caveat:
-      'The delta concept is taught from Program Guide v1.9 (public, June 2020). Program Guide v2.3 (May 2026) is the authority, and current v5 routing is an open question for this v1 — check the current document.',
+      'The delta concept is taught from Program Guide v1.9 (public, June 2020). The Device Testing and Approval Program Guide (listed in the Document Library on 18 May 2026) is the authority, and current v5 routing is an open question for this v1 — check the current document.',
   },
 ]
 

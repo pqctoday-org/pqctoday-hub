@@ -1306,9 +1306,11 @@ export const ChangeRoutesDetail = () => (
     </ol>
     <Callout tone="warning" title="Open question — check the current document">
       <p>
-        Program Guide v2.3 (May 2026) is the authority for current routing, and it is licence-gated
-        (not read for this v1). How PTS HSM v5.0 changes are routed today is unverified here. No
-        public source shows a machine-readable evidence exchange with PCI SSC; do not assume one.
+        The Device Testing and Approval Program Guide (listed in the Document Library on 18 May
+        2026, with no version number in the public listing) is the authority for current routing,
+        and it is licence-gated (not read for this v1). How PTS HSM v5.0 changes are routed today is
+        unverified here. No public source shows a machine-readable evidence exchange with PCI SSC;
+        do not assume one.
       </p>
     </Callout>
 
