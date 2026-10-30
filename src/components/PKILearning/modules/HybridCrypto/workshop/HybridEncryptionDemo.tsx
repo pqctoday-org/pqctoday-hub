@@ -225,7 +225,7 @@ const STEPS: Step[] = [
         label: 'Info',
         value: '"hybrid-kem-x25519-mlkem768-v1"',
         description:
-          'Domain-separation string prevents hybrid key material from being reused in other contexts',
+          'Domain-separation string identifies the composite scheme in use (SP 800-227 §4.6.3)',
       },
       {
         label: 'Output',
@@ -623,9 +623,9 @@ const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
         <div className="glass-panel p-4 text-sm text-muted-foreground space-y-2">
           <p className="font-semibold text-foreground">Why combine ECDH and ML-KEM?</p>
           <p>
-            A Key Encapsulation Mechanism (KEM) is a one-sided primitive: the sender encapsulates a
-            random shared secret for the receiver. Unlike ECDH, the sender cannot inject a chosen
-            value.
+            A Key Encapsulation Mechanism (KEM) is a one-sided primitive: the sender gives Encaps
+            the receiver&apos;s public key and gets back a shared secret and a ciphertext, rather
+            than supplying a key of its own choosing.
           </p>
           <p>
             Combining X25519 ECDH with ML-KEM-768 via HKDF provides{' '}
