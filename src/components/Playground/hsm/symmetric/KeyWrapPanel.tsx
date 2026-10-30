@@ -38,7 +38,6 @@ import {
   hsm_generateRSAWrapKeyPair,
   hsm_generateAESKey,
   hsm_generateMLKEMKeyPair,
-  hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
   hsm_ecdhDerive,
   hsm_extractECPoint,
@@ -55,13 +54,13 @@ import {
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from '../shared'
 import { downloadCsv } from '@/utils/csvExport'
+import { ProtectedBackupPanel } from './ProtectedBackupPanel'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type WrapMode = 'direct' | 'indirect' | 'pqc'
 type DirectMech = 'aes-kw' | 'aes-kwp' | 'aes-gcm'
 type HybridCombiner = 'p256-mlkem' | 'x25519-mlkem'
-type PqcWrapRepr = 'expanded' | 'seed'
 
 interface WrapResult {
   mode: WrapMode
@@ -90,10 +89,6 @@ const UNWRAP_TEMPLATE = (bits: 128 | 192 | 256): AttrDef[] => [
   { type: CKA_EXTRACTABLE, boolVal: true },
   { type: CKA_VALUE_LEN, ulongVal: bits / 8 },
 ]
-
-// Seed lengths per FIPS 203 / FIPS 204
-const ML_KEM_SEED_LEN = 64 // d || z (FIPS 203 §3.3)
-const ML_DSA_SEED_LEN = 32 // ξ (FIPS 204 §6.1)
 
 const FIPS_REFS: Record<WrapMode, string> = {
   direct: 'NIST SP 800-38F / FIPS 140-3 L3',
@@ -459,7 +454,6 @@ export const KeyWrapPanel = ({
 
   // Target key + seed/expanded
   const [targetKeyHandle, setTargetKeyHandle] = useState<number | null>(null)
-  const [pqcWrapRepr, setPqcWrapRepr] = useState<PqcWrapRepr>('expanded')
   const [wrapResult, setWrapResult] = useState<WrapResult | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
 
@@ -484,15 +478,9 @@ export const KeyWrapPanel = ({
   const aesKeys = hsmKeys.filter((k) => k.family === 'aes' && k.role === 'secret')
   const anyLoading = loadingOp !== null
 
-  // All wrappable keys: AES + any extractable private key (ML-KEM, ML-DSA, RSA, ECDSA, EdDSA)
-  const wrappableKeys = [
-    ...aesKeys,
-    ...hsmKeys.filter((k) => k.role === 'private' && k.label.includes('(extractable)')),
-  ]
-
-  const targetKeyInfo =
-    targetKeyHandle !== null ? hsmKeys.find((k) => k.handle === targetKeyHandle) : null
-  const isPqcTarget = targetKeyInfo?.family === 'ml-kem' || targetKeyInfo?.family === 'ml-dsa'
+  // These exercises restore AES secret keys. Protected private-key backup
+  // uses the separately labelled enrolled workflow and its actual key types.
+  const wrappableKeys = aesKeys
 
   const keyLabel = (handle: number | null): string => {
     if (handle === null) return 'unknown'
@@ -555,17 +543,6 @@ export const KeyWrapPanel = ({
     setTimeout(() => setCopied(null), 2000)
   }
 
-  // ── Helper: resolve target handle for seed mode ────────────────────────────
-
-  const resolveTargetHandle = (M: SoftHSMModule, hSession: number): number => {
-    if (!isPqcTarget || pqcWrapRepr === 'expanded') return targetKeyHandle!
-    // Seed mode: extract full key, truncate to seed, import as generic secret
-    const fullBytes = hsm_extractKeyValue(M, hSession, targetKeyHandle!)
-    const seedLen = targetKeyInfo!.family === 'ml-kem' ? ML_KEM_SEED_LEN : ML_DSA_SEED_LEN
-    const seedBytes = fullBytes.slice(0, seedLen)
-    return hsm_importGenericSecret(M, hSession, seedBytes)
-  }
-
   // ── Helper: derive hybrid KEK from classical + PQC shared secrets ──────────
 
   const deriveHybridKEK = (
@@ -598,7 +575,12 @@ export const KeyWrapPanel = ({
     withLoading('wrap', async () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const effTarget = resolveTargetHandle(M, hSession)
+      if (!aesKeys.some((k) => k.handle === targetKeyHandle)) {
+        throw new Error(
+          'These wrapping exercises restore AES keys. Use Protected PQC backup for private keys.'
+        )
+      }
+      const effTarget = targetKeyHandle!
       let wrappedBytes: Uint8Array
       let auxHex: string | undefined
       let auxLabel: string | undefined
@@ -618,10 +600,7 @@ export const KeyWrapPanel = ({
         mechanism = 'AES-GCM (SP 800-38D)'
       }
 
-      const targetLabel =
-        isPqcTarget && pqcWrapRepr === 'seed'
-          ? `${keyLabel(targetKeyHandle)} [seed]`
-          : keyLabel(targetKeyHandle)
+      const targetLabel = keyLabel(targetKeyHandle)
 
       const result: WrapResult = {
         mode: 'direct',
@@ -641,7 +620,12 @@ export const KeyWrapPanel = ({
     withLoading('wrap', async () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const effTarget = resolveTargetHandle(M, hSession)
+      if (!aesKeys.some((k) => k.handle === targetKeyHandle)) {
+        throw new Error(
+          'These wrapping exercises restore AES keys. Use Protected PQC backup for private keys.'
+        )
+      }
+      const effTarget = targetKeyHandle!
 
       const tempKEKHandle = hsm_generateAESKey(M, hSession, 256)
       const wrappedTarget = hsm_wrapKeyMech(
@@ -659,10 +643,7 @@ export const KeyWrapPanel = ({
         rsaHashAlgo
       )
 
-      const targetLabel =
-        isPqcTarget && pqcWrapRepr === 'seed'
-          ? `${keyLabel(targetKeyHandle)} [seed]`
-          : keyLabel(targetKeyHandle)
+      const targetLabel = keyLabel(targetKeyHandle)
 
       const result: WrapResult = {
         mode: 'indirect',
@@ -682,7 +663,12 @@ export const KeyWrapPanel = ({
     withLoading('wrap', async () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const effTarget = resolveTargetHandle(M, hSession)
+      if (!aesKeys.some((k) => k.handle === targetKeyHandle)) {
+        throw new Error(
+          'These wrapping exercises restore AES keys. Use Protected PQC backup for private keys.'
+        )
+      }
+      const effTarget = targetKeyHandle!
 
       // 1. ML-KEM encapsulate → PQC shared secret
       const { ciphertextBytes, secretHandle: pqcSecretHandle } = hsm_encapsulate(
@@ -732,10 +718,7 @@ export const KeyWrapPanel = ({
       const kekHandle = deriveHybridKEK(M, hSession, classicalSS, pqcSS)
       const wrappedTarget = hsm_wrapKeyMech(M, hSession, CKM_AES_KEY_WRAP_KWP, kekHandle, effTarget)
 
-      const targetLabel =
-        isPqcTarget && pqcWrapRepr === 'seed'
-          ? `${keyLabel(targetKeyHandle)} [seed]`
-          : keyLabel(targetKeyHandle)
+      const targetLabel = keyLabel(targetKeyHandle)
 
       const result: WrapResult = {
         mode: 'pqc',
@@ -961,6 +944,15 @@ export const KeyWrapPanel = ({
         const auxCol = get('aux_hex') || get('aux data') || ''
         const aux2Col = get('aux2_hex') || get('eph_pubkey') || ''
         const bitsStr = get('key_bits') || get('key size (bits)') || '256'
+        if (
+          /ml[- ]?(kem|dsa)|\[seed\]/i.test(
+            get('target key') || get('target_key') || get('targetkeylabel')
+          )
+        ) {
+          throw new Error(
+            'Legacy private-key/Seed wrapping files cannot be restored as AES. Use a protected replication package.'
+          )
+        }
         if (!wrappedCol) throw new Error('CSV missing wrapped_hex column')
         setPastedWrappedHex(wrappedCol)
         if (auxCol) setPastedAuxHex(auxCol)
@@ -1024,7 +1016,7 @@ export const KeyWrapPanel = ({
   })()
 
   const canWrap = (() => {
-    if (!targetKeyHandle) return false
+    if (!targetKeyHandle || !aesKeys.some((k) => k.handle === targetKeyHandle)) return false
     if (wrapMode === 'direct') return !!wrapKeyHandle
     if (wrapMode === 'indirect') return !!rsaPubHandle
     if (wrapMode === 'pqc') {
@@ -1130,55 +1122,6 @@ export const KeyWrapPanel = ({
       }
     })
 
-  const genWrappableMLKEM = () =>
-    withLoading('gen-wkem', async () => {
-      const M = moduleRef.current!
-      const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, mlkemVariant, true)
-      const ts = new Date().toLocaleTimeString([], { hour12: false })
-      registerKey(M, hSession, {
-        handle: pubHandle,
-        family: 'ml-kem',
-        role: 'public',
-        label: `ML-KEM-${mlkemVariant} Pub (extractable)`,
-        variant: String(mlkemVariant),
-        generatedAt: ts,
-      })
-      registerKey(M, hSession, {
-        handle: privHandle,
-        family: 'ml-kem',
-        role: 'private',
-        label: `ML-KEM-${mlkemVariant} Priv (extractable)`,
-        variant: String(mlkemVariant),
-        generatedAt: ts,
-      })
-    })
-
-  const genWrappableMLDSA = () =>
-    withLoading('gen-wdsa', async () => {
-      const M = moduleRef.current!
-      const hSession = hSessionRef.current
-      const variant = 65 as const // default to ML-DSA-65 (NIST L3)
-      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, variant, true)
-      const ts = new Date().toLocaleTimeString([], { hour12: false })
-      registerKey(M, hSession, {
-        handle: pubHandle,
-        family: 'ml-dsa',
-        role: 'public',
-        label: `ML-DSA-${variant} Pub (extractable)`,
-        variant: String(variant),
-        generatedAt: ts,
-      })
-      registerKey(M, hSession, {
-        handle: privHandle,
-        family: 'ml-dsa',
-        role: 'private',
-        label: `ML-DSA-${variant} Priv (extractable)`,
-        variant: String(variant),
-        generatedAt: ts,
-      })
-    })
-
   // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
@@ -1187,6 +1130,12 @@ export const KeyWrapPanel = ({
 
       <HsmReadyGuard isReady={isReady}>
         <div className="space-y-4">
+          <ProtectedBackupPanel />
+          <p className="text-xs text-muted-foreground">
+            The wrapping exercises below wrap and restore AES secret keys. PQC private-key
+            Seed/Expanded recovery uses Protected PQC backup above. Legacy prefix-based Seed exports
+            are not genuine seed backups.
+          </p>
           {/* ── Mode selector ─────────────────────────────────────────────────── */}
           <div className="glass-panel p-4 space-y-3">
             <div className="flex items-center justify-between">
@@ -1471,42 +1420,12 @@ export const KeyWrapPanel = ({
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
                 Target Key
               </p>
-              <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 px-2 text-xs"
-                  onClick={genWrappableMLKEM}
-                  disabled={anyLoading}
-                >
-                  {loadingOp === 'gen-wkem' ? (
-                    <Loader2 size={10} className="animate-spin mr-1" />
-                  ) : (
-                    <Zap size={10} className="mr-1" />
-                  )}
-                  Gen ML-KEM
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 px-2 text-xs"
-                  onClick={genWrappableMLDSA}
-                  disabled={anyLoading}
-                >
-                  {loadingOp === 'gen-wdsa' ? (
-                    <Loader2 size={10} className="animate-spin mr-1" />
-                  ) : (
-                    <Key size={10} className="mr-1" />
-                  )}
-                  Gen ML-DSA
-                </Button>
-              </div>
             </div>
 
             {wrappableKeys.length === 0 ? (
               <p className="text-xs text-muted-foreground">
-                No wrappable keys found. Generate AES keys or use buttons above to generate
-                wrappable PQC keys.
+                No AES target keys found. Generate an AES key first. For private-key backup, use the
+                protected workflow above.
               </p>
             ) : (
               <div className="flex items-center gap-2 flex-wrap">
@@ -1524,32 +1443,6 @@ export const KeyWrapPanel = ({
                   defaultLabel="Select target key…"
                   noContainer
                 />
-              </div>
-            )}
-
-            {/* Seed / Expanded toggle for PQC targets */}
-            {isPqcTarget && (
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-muted-foreground">Representation:</span>
-                {(['expanded', 'seed'] as const).map((r) => (
-                  <Button
-                    variant="ghost"
-                    key={r}
-                    onClick={() => setPqcWrapRepr(r)}
-                    className={`text-xs px-2 py-1 rounded border transition-colors ${
-                      pqcWrapRepr === r
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border text-muted-foreground hover:border-primary/50'
-                    }`}
-                  >
-                    {r === 'expanded' ? 'Expanded' : 'Seed'}
-                  </Button>
-                ))}
-                <span className="text-[10px] text-muted-foreground">
-                  {pqcWrapRepr === 'seed'
-                    ? `${targetKeyInfo?.family === 'ml-kem' ? ML_KEM_SEED_LEN : ML_DSA_SEED_LEN} B seed`
-                    : 'Full key material'}
-                </span>
               </div>
             )}
 

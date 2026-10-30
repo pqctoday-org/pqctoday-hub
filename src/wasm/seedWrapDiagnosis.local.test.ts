@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Diagnostic reproducer: mirrors KeyWrapPanel's current seed extraction and
-// AES-256 unwrap template. Does not change production behavior or print keys.
+// Legacy-file diagnostic: reproduces the retired prefix extraction and
+// AES restore bug. These files cannot prove original-key recovery.
 import { it, expect } from 'vitest'
 import * as S from './softhsm'
 
-it('measures the current seed wrap path on the shipped Rust engine', async () => {
+it('documents why legacy prefix-based Seed backups do not recover the original key', async () => {
   const M = (await S.getSoftHSMRustModule()) as S.SoftHSMModule
   S.hsm_initialize(M)
   const slot = S.hsm_initToken(M, S.hsm_getFirstFreeSlot(M), '1234', 'seed-diagnostic')
@@ -35,7 +35,7 @@ it('measures the current seed wrap path on the shipped Rust engine', async () =>
       expect(actualSeed).not.toEqual(candidate)
       const target = S.hsm_importGenericSecret(M, session, candidate)
       const wrapped = S.hsm_wrapKeyMech(M, session, S.CKM_AES_KEY_WRAP_KWP, kek, target)
-      // Exact AES-256 template from the current panel, including omitted CKA_SENSITIVE.
+      // Legacy AES-256 restore template, including omitted CKA_SENSITIVE.
       const panelTemplate: S.AttrDef[] = [
         { type: S.CKA_CLASS, ulongVal: S.CKO_SECRET_KEY },
         { type: S.CKA_KEY_TYPE, ulongVal: S.CKK_AES },
