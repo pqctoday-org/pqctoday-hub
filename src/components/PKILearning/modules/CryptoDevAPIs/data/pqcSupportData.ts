@@ -261,7 +261,7 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     status: 'stable',
     minVersion: 'Windows 11 24H2 / Windows Server 2025 (GA November 2025)',
     backend:
-      'Default CNG provider (SymCrypt). ML-KEM-512/768/1024 via BCRYPT_PARAMETER_SET_NAME. Composite ML-KEM is Windows Insider only.',
+      'Default CNG provider (SymCrypt). ML-KEM-512/768/1024 via BCRYPT_PARAMETER_SET_NAME. For composite formats see KB5099536 (14 July 2026).',
     protocolNote:
       'A CNG primitive does not by itself mean Schannel negotiates ML-KEM in TLS; check the Schannel documentation for your Windows build.',
     evidenceUrl: CNG_IDS,
@@ -276,7 +276,7 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     status: 'stable',
     minVersion: 'Windows 11 24H2 / Windows Server 2025 (GA November 2025)',
     backend:
-      'Default CNG provider (SymCrypt). ML-DSA-44/65/87 via BCRYPT_PARAMETER_SET_NAME. Composite ML-DSA is Windows Insider only.',
+      'Default CNG provider (SymCrypt). ML-DSA-44/65/87 via BCRYPT_PARAMETER_SET_NAME. For composite formats see KB5099536 (14 July 2026).',
     protocolNote: 'Certificate and Schannel use of ML-DSA depend on the Windows build.',
     evidenceUrl: CNG_IDS,
     checkedDate: CHECKED,

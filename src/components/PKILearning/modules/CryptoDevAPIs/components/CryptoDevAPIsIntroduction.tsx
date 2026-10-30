@@ -242,7 +242,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             mode. ML-KEM and ML-DSA became generally available in November 2025 on Windows 11 24H2+
             and Windows Server 2025 (and .NET 10 uses them). SLH-DSA has an identifier
             (BCRYPT_SLHDSA_ALGORITHM) but is not currently implemented by the default CNG provider,
-            and the composite ML-DSA/ML-KEM identifiers are Windows Insider only.
+            and Microsoft KB5099536 (14 July 2026) adds support for composite cryptographic formats
+            that combine traditional and post-quantum algorithms.
           </p>
         </LearnSection>
       </div>

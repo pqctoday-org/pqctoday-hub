@@ -99,8 +99,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           <p>
             The IETF draft <strong>draft-ietf-ipsecme-ikev2-mlkem</strong> defines how to integrate
             ML-KEM (<InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>) into IKEv2 using the{' '}
-            <strong>Additional Key Exchange (AKE)</strong> framework (RFC 9370). This enables hybrid
-            key exchange without modifying the core IKEv2 state machine.
+            <strong>multiple key exchanges</strong> framework (RFC 9370). This enables hybrid key
+            exchange without modifying the core IKEv2 state machine.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -121,7 +121,9 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-primary mb-1">Additional KE (AKE)</div>
+              <div className="text-xs font-bold text-primary mb-1">
+                Additional key exchange (RFC 9370)
+              </div>
               <p className="text-xs text-muted-foreground">
                 ML-KEM-768 encapsulation key (1,184 B) in IKE_INTERMEDIATE. Adds one round trip.
               </p>
@@ -443,8 +445,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">IKEv2 (IKE_AUTH)</div>
               <p className="text-xs text-muted-foreground">
-                In addition to the AKE payloads, draft-ietf-ipsecme-ikev2-pqc-auth updates the
-                IKE_AUTH phase to support{' '}
+                In addition to the additional key exchanges, draft-ietf-ipsecme-ikev2-pqc-auth
+                updates the IKE_AUTH phase to support{' '}
                 <InlineTooltip term="ML-DSA">
                   <strong>ML-DSA</strong>
                 </InlineTooltip>{' '}
