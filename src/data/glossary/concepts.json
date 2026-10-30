@@ -896,8 +896,8 @@
   {
     "term": "Person Identification Data",
     "acronym": "PID",
-    "definition": "The foundational digital identity credential in the EUDI Wallet ecosystem, containing core attributes like name, date of birth, and nationality issued by a national authority.",
-    "technicalNote": "PID is the prerequisite for all other attestations (diplomas, driving licenses). Must be cryptographically bound to the wallet holder's key to prevent transfer.",
+    "definition": "The digital identity credential in the EUDI Wallet ecosystem, containing core attributes like name, date of birth, and nationality issued by a national authority.",
+    "technicalNote": "PID is the identity credential issued by a PID Provider; a Wallet Unit without a PID stays Operational and can still receive other attestations, but cannot present a PID. Must be cryptographically bound to the wallet holder's key to prevent transfer.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
     "category": "concept"
