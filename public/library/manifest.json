@@ -15068,7 +15068,12 @@
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:07:00.080299+00:00"
+      "stampedAt": "2026-09-17T13:07:00.080299+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10302026/library/PCI-3DS-Core-v1-0-ROC-Reporting-Template.pdf",
+      "supersededAt": "2026-10-30T13:53:03.064512+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "re-source to the public PCI SSC page for the PCI 3DS Core Security Standard — replaced by PCI-3DS-Core-v1-0-ROC-Reporting-Template.html"
     },
     {
       "refId": "PCI-P2PE-Security-Requirements-v3-1",
@@ -24444,6 +24449,24 @@
       "replacedAt": "2026-10-30T11:37:22.000036+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "PCI rows: public SSC pages only"
+    },
+    {
+      "refId": "PCI-3DS-Core-v1-0-ROC-Reporting-Template",
+      "filename": "PCI-3DS-Core-v1-0-ROC-Reporting-Template.html",
+      "sizeBytes": 724506,
+      "contentType": "text/html",
+      "url": "https://www.pcisecuritystandards.org/standards/pci-3ds-core/",
+      "sha256": "3423177ea9a43e6dbc1f2c2067f42f665cd5eb1218d9ee915099523c01b02b56",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T13:53:03.285839+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/PCI-3DS-Core-v1-0-ROC-Reporting-Template.html",
+      "status": "downloaded",
+      "replacedAt": "2026-10-30T13:53:03.064512+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "re-source to the public PCI SSC page for the PCI 3DS Core Security Standard"
     }
   ],
   "archivedEntries": [
@@ -37883,7 +37906,12 @@
       "identity": "UNCONFIRMED",
       "unified": "current",
       "admittedAt": "2026-09-17T13:07:00.080299+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "ok": false,
+      "superseded_file": "_superseded-10302026/library/PCI-3DS-Core-v1-0-ROC-Reporting-Template.pdf",
+      "supersededAt": "2026-10-30T13:53:03.064512+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "re-source to the public PCI SSC page for the PCI 3DS Core Security Standard — replaced by PCI-3DS-Core-v1-0-ROC-Reporting-Template.html"
     },
     {
       "refId": "PCI-P2PE-Security-Requirements-v3-1",
