@@ -350,7 +350,8 @@ export const FIRMWARE_SIGNING_ALGORITHMS: FirmwareSigningAlgorithm[] = [
     publicKeySize: 1952,
     stateful: false,
     stateRequirement: 'None — fully stateless. No counter, no state management overhead.',
-    cnsa2Status: 'Not mandated by CNSA 2.0 for firmware (general-purpose PQC)',
+    cnsa2Status:
+      'Not a CNSA 2.0 parameter set — CNSA 2.0 approves only ML-DSA-87 (and prefers LMS/XMSS for firmware)',
     bestFor: 'General code signing, environments where state management is impractical',
     signingSpeed: '~0.3 ms',
     verificationSpeed: '~0.2 ms',
