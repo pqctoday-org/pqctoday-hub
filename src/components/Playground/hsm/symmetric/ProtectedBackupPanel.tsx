@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '../../../ui/button'
 import { ErrorAlert } from '../../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { EducationNotice } from '@/components/shared/EducationNotice'
 import { useHsmContext, type HsmKey } from '../HsmContext'
 import {
   decodeProtectedBackup,
@@ -115,6 +116,7 @@ export function ProtectedBackupPanel() {
 
   return (
     <section aria-label="Protected PQC backup" className="glass-panel p-4 space-y-3">
+      <EducationNotice className="mb-3" />
       <h3 className="font-semibold text-sm">Protected PQC backup</h3>
       <p className="text-xs text-muted-foreground">
         Supported here: Rust ML-KEM-768 and ML-DSA-65. Other parameter sets and engine modes are
