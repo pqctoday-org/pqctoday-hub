@@ -254,23 +254,24 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         </summary>
         <div className="mt-3 text-sm text-muted-foreground space-y-2">
           <p>
-            <strong>Budget band:</strong> a base range keyed to your assessment risk level — Low/
-            Moderate: $0.5M-$1.5M over 18-24 months; High: $1M-$3M over 24 months; Critical: $2M-$6M
-            over 24-36 months.
+            <strong>Programme budget:</strong> enter reviewed estimates for the named systems and
+            services, planning horizon, dependencies and uncertainty. Catalogue coverage does not
+            establish your organisation’s estate size or migration cost.
           </p>
           <p>
-            <strong>Scale multiplier:</strong> the band is then scaled by products in scope — ×1.5
-            at 200+ products, ×1.2 at 50+, ×0.7 under 10, ×1 otherwise.
+            <strong>Funding request:</strong> distinguish the total programme envelope, existing
+            commitments, additional funding, annual allocations and the conditions for releasing
+            each tranche.
           </p>
           <p>
-            <strong>Cost-of-inaction multiplier:</strong> the Cost-Benefit section frames inaction
-            (penalties, breach response, contract loss, reputational damage) as an illustrative 3-5×
-            the migration investment for critical/high risk, or 2-3× for moderate/low risk.
+            <strong>Benefits and avoided costs:</strong> enter documented scenario assumptions and
+            their sources. The template does not infer a benefit multiple from the assessment risk
+            level. Saved calculator outputs remain conditional on their inputs.
           </p>
           <p className="text-xs italic mt-2">
-            Both figures are starting points for board discussion, not a quote — run the ROI
-            Calculator (Step 2 of this workshop) for organization-specific numbers before committing
-            to a budget ask.
+            Reconcile the proposal with the cost model and charter before submission. Your
+            organisation’s governance determines approval authority; a completed template is not
+            spending approval.
           </p>
         </div>
       </details>
