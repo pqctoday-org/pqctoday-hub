@@ -113,10 +113,6 @@ export const PLAYGROUND_INCIDENTAL_ALGORITHM_MENTIONS: Record<string, Incidental
       coverage: 'models',
       reason: 'Future wallet migration scenario, not the modelled current credential operation.',
     },
-    'hd-wallet:ML-DSA': {
-      coverage: 'teaches',
-      reason: 'Migration comparison; wallet derivation remains BIP39/BIP32.',
-    },
     'openssl-studio:LMS': {
       coverage: 'teaches',
       reason: 'Reference/help material; LMS is not advertised as a runnable Studio algorithm.',
