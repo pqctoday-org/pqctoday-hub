@@ -2,6 +2,9 @@
 /**
  * Render and registration checks for the Media, Entertainment & DRM module.
  */
+/* eslint-disable security/detect-non-literal-fs-filename -- checks one fixed repo path */
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
@@ -66,5 +69,11 @@ describe('MediaDrmPQC', () => {
     render(<CuriousSummaryBanner moduleId="media-drm-pqc" isFullPage />)
     expect(screen.queryByText('No visual summary yet')).not.toBeInTheDocument()
     expect(screen.getAllByText('What This Is About').length).toBeGreaterThan(0)
+  })
+
+  it('ships its infographic for the Visual tab', () => {
+    expect(
+      existsSync(resolve(process.cwd(), 'public/images/infographics/pqcstd_media-drm-pqc.png'))
+    ).toBe(true)
   })
 })
