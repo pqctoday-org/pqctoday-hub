@@ -126,7 +126,7 @@ export const RAD_HARD_PROCESSORS: RadHardProcessor[] = [
       xmss: true,
     },
     notes:
-      'ESA-selected processor for European missions (JUICE, ExoMars). 128 MB RAM limits ML-DSA-65 key generation under concurrent workloads. LEON4 SPARC core is well-supported by RTEMS.',
+      "Fault-tolerant quad-core LEON4 SPARC V8 system-on-chip; the manufacturer lists RTEMS for LEON SPARC. The RAM size and the PQC capability flags in this entry are the module's planning assumptions: with 128 MB assumed, ML-DSA-65 key generation under concurrent workloads is treated as constrained.",
   },
   {
     id: 'va416x0',
@@ -168,7 +168,7 @@ export const RAD_HARD_PROCESSORS: RadHardProcessor[] = [
       xmss: true,
     },
     notes:
-      'Space-grade Cortex-M7 with hardware FPU. 1 MB RAM sufficient for ML-KEM-512 and ML-DSA-44 but not the larger variants. Good fit for LEO smallsats.',
+      "Space-grade Arm Cortex-M7. The RAM size and the fit statements in this entry are the module's planning assumptions: with about 1 MB RAM assumed, ML-KEM-512 and ML-DSA-44 are treated as fitting and the larger variants as not.",
   },
 ]
 

@@ -111,7 +111,8 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                   they could decrypt command sequences and forge authenticated commands &mdash;
                   potentially taking control of communications satellites, GPS constellations, or
                   military reconnaissance platforms. A GEO satellite launched in 2028 with RSA-2048
-                  key exchange will still be operating in 2043, well past credible CRQC timelines.
+                  key exchange will still be operating in 2043, which may be after a
+                  cryptographically relevant quantum computer exists.
                 </p>
               </div>
             </div>
@@ -456,17 +457,14 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             ED-204 / DO-355 (Information Security Guidance for Continuing Airworthiness, which
             covers security after the product enters service). Compliance with the AMC is not
             mandatory: an applicant may use an alternative means of compliance that EASA accepts.
-            The assessment it describes applies to new products and to changes to a product.{' '}
-            <InlineTooltip term="ARINC 653">ARINC 653</InlineTooltip> partitioned RTOS constraints
-            mean PQC libraries must fit within 1&ndash;4 MB memory budgets and complete all
-            operations within deterministic time windows.
+            The assessment it describes applies to new products and to changes to a product.
           </p>
 
           <p>
-            <strong>Clean-sheet vs. retrofit:</strong> Designing PQC into a new aircraft program
-            from day one costs 40&ndash;60% less than retrofitting PQC into existing certified
-            software. This makes new-build aircraft like the Boeing NMA or Airbus A350 variants the
-            optimal first targets for native PQC integration.
+            <strong>Clean-sheet vs. retrofit:</strong> A new aircraft program can design PQC in
+            before its product is assessed. PQC added to a product already in service is a change to
+            that product, and the AMC 20-42 assessment above applies to changes as well as to new
+            products. This module gives no cost comparison of the two routes.
           </p>
         </div>
       </LearnSection>
@@ -528,8 +526,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             The fundamental crypto challenge: aerospace equipment service lives (20&ndash;55 years)
-            span the entire quantum transition. A Boeing 737 MAX delivered in 2025 with RSA-2048
-            will still be flying in 2055 &mdash; long past any credible CRQC timeline.
+            span the entire quantum transition. An aircraft delivered in 2025 with RSA-2048 may
+            still be flying in 2055, which may be after a cryptographically relevant quantum
+            computer exists.
           </p>
 
           <div className="overflow-x-auto">
@@ -629,11 +628,13 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
           </div>
 
           <p>
-            <strong>HNDL timeline pressure:</strong> A satellite launching in 2028 must use PQC for
-            its key exchange from day one, because adversaries are already harvesting encrypted
-            command uplinks. The 3&ndash;5 year satellite development cycle means PQC algorithm
-            selection must happen in <strong>2025&ndash;2026</strong> &mdash; during the current
-            standardization window.
+            <strong>HNDL timeline pressure (planning example):</strong> A satellite&rsquo;s key
+            exchange is chosen before launch, so the key exchange of a satellite launched in 2028 is
+            fixed during its development. If its command uplinks are recorded now and must stay
+            confidential until a cryptographically relevant quantum computer exists, a
+            classical-only key exchange would not protect them. This module gives no figure for the
+            length of a satellite development cycle; when algorithm selection has to happen depends
+            on the mission.
           </p>
 
           <p>
