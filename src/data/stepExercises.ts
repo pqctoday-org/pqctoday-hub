@@ -728,7 +728,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'In Step 3 (Encapsulate: Derive Session Key), the detail contrasts the new v3.2 encapsulate call with the classic wrap-key call. After the call returns, what leaves the HSM and what stays inside?',
     options: [
       'The derived AES key is exported so the peer can use it; the ciphertext stays inside',
-      'Only the 1,088-byte KEM ciphertext leaves; the derived AES session key stays inside the HSM as a new key object',
+      'Only the 1,088-byte KEM ciphertext leaves; the derived AES session key is created as a new key object on the token (CKA_EXTRACTABLE follows the template)',
       'Both the ciphertext and the AES key are returned, like a classic RSA-OAEP wrap',
     ],
     answer: 1,

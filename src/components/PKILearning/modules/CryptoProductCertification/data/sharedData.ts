@@ -502,7 +502,7 @@ export const ROUTE_DECISION_AID: RouteAid[] = [
       },
     ],
     caveat:
-      'The delta concept is taught from Program Guide v1.9 (public, June 2020). Program Guide v2.3 (May 2026) is the authority, and current v5 routing is an open question for this v1 — check the current document.',
+      'The delta concept is taught from Program Guide v1.9 (public, June 2020). The Device Testing and Approval Program Guide (listed in the Document Library on 18 May 2026) is the authority, and current v5 routing is an open question for this v1 — check the current document.',
   },
 ]
 
@@ -729,7 +729,7 @@ export const CHANGE_CASES: ChangeCase[] = [
       affected:
         'Firmware version on the listing; Security Policy algorithm tables; the PQC notation.',
       candidates:
-        'Lab scoping for a delta or fuller evaluation under the current Program Guide (v2.3 decides).',
+        'Lab scoping for a delta or fuller evaluation under the current Program Guide (the current Program Guide decides).',
     },
     ask: 'Do the change ratios stay within the Manual’s 30% limits in a way the CMVP will accept? Will the certification body treat the new claims as a major change?',
   },

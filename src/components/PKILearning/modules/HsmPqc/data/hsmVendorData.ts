@@ -270,14 +270,14 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   &hSharedSecretKey   // Output: handle to new secret key object holding the shared secret
 )`,
     description:
-      'Use ML-KEM encapsulation to derive a 32-byte shared secret, kept as a secret key object inside the HSM.',
+      'Use ML-KEM encapsulation to derive a 32-byte shared secret, created as a secret key object on the token.',
     detail:
-      'PKCS#11 v3.2 adds C_EncapsulateKey specifically for KEM operations. Unlike C_WrapKey (which wraps an existing key), C_EncapsulateKey derives a NEW key object from the KEM shared secret and simultaneously outputs the KEM ciphertext. The 1,088-byte ciphertext is sent to the private key holder; the derived 32-byte secret stays inside the HSM as a generic secret key, which an application then uses as AES-256 key material (for example through a key-derivation step).',
+      'PKCS#11 v3.2 adds C_EncapsulateKey specifically for KEM operations. Unlike C_WrapKey (which wraps an existing key), C_EncapsulateKey derives a NEW key object from the KEM shared secret and simultaneously outputs the KEM ciphertext. The 1,088-byte ciphertext is sent to the private key holder; the derived 32-byte secret is created as a generic secret key on the token (CKA_EXTRACTABLE follows the template and defaults to CK_TRUE), which an application then uses as AES-256 key material (for example through a key-derivation step).',
     output: `CKR_OK
   Derived Key Handle: 0x00000044 (CKK_GENERIC_SECRET)
   Mechanism:          CKM_ML_KEM
   KEM Ciphertext:     1,088 bytes
-  Shared Secret:      32 bytes (derived key object, stays in HSM)`,
+  Shared Secret:      32 bytes (derived key object)`,
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP → 256-byte ciphertext (direct encryption)',
     vendorNotes: {
       onPrem:
@@ -293,7 +293,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   hSession,
   &mechanism,         // CKM_ML_KEM
   hPrivateKey,        // ML-KEM private key (decapsulation key)
-  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=CKK_GENERIC_SECRET, CKA_VALUE_LEN=32
+  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=CKK_GENERIC_SECRET, CKA_VALUE_LEN=32, CKA_EXTRACTABLE=FALSE
   ulAttributeCount,
   ciphertext,         // Input: KEM ciphertext from step 3
   ciphertextLen,
@@ -302,12 +302,13 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
     description:
       'Decapsulate to recover the same 32-byte shared secret (usable as AES-256 key material).',
     detail:
-      'PKCS#11 v3.2 C_DecapsulateKey takes the KEM ciphertext, runs ML-KEM decapsulation inside the HSM boundary using the non-extractable private key, and materialises the recovered shared secret as a new key object. The decapsulation happens entirely within the HSM — the shared secret is never exposed.',
+      'PKCS#11 v3.2 C_DecapsulateKey takes the KEM ciphertext, performs ML-KEM decapsulation with the private key (its CKA_DECAPSULATE attribute must be CK_TRUE) and creates the recovered shared secret as a new key object. The spec sets CKA_EXTRACTABLE on the new key to the value in the input template, with a default of CK_TRUE if not provided, so set CKA_EXTRACTABLE to CK_FALSE in the template if the shared secret must not leave the token.',
     output: `CKR_OK
   Recovered Key Handle: 0x00000044
   Key Type:            CKK_GENERIC_SECRET (use as AES-256 key material)
   Key Size:            256 bits
-  CKA_SENSITIVE:       TRUE`,
+  CKA_SENSITIVE:       TRUE
+  CKA_EXTRACTABLE:     FALSE (as set in the template)`,
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP decrypt → recovers plaintext DEK directly',
     vendorNotes: {
       onPrem:
@@ -366,7 +367,7 @@ C_VerifyMessage(
 C_MessageVerifyFinal(hSession)`,
     description: 'Verify the ML-DSA-65 signature against the original data.',
     detail:
-      'Verification can be performed with the public key outside the HSM, but using the HSM ensures the operation uses validated, certified code. Verification is faster than signing for ML-DSA. The operation returns CKR_OK for valid signatures or CKR_SIGNATURE_INVALID.',
+      'Verification can be performed with the public key outside the HSM, but using the HSM gives validated code only when the algorithm is CAVP-tested (or vendor-affirmed where an IG permits it) and the module runs in its approved mode; check the Security Policy, which lists any untested algorithm as non-approved. The operation returns CKR_OK for valid signatures or CKR_SIGNATURE_INVALID.',
     output: `CKR_OK
   Verification:    VALID
   Algorithm:       ML-DSA-65
@@ -375,7 +376,8 @@ C_MessageVerifyFinal(hSession)`,
     classicalEquivalent: 'CKM_ECDSA verify — same API, 64-byte signature input',
     vendorNotes: {
       onPrem: 'All vendors: native verification. Public key can also verify outside HSM',
-      cloud: 'Verification is typically done in software for performance',
+      cloud:
+        'Public-key verification does not need the private key, so it can run outside the HSM; check each service’s documentation for HSM-side verification',
     },
   },
   {
@@ -418,16 +420,16 @@ C_GenerateKeyPair(hSession,
 C_GetAttributeValue(
   hSession,
   hLmsKey,           // LMS signing key handle
-  stateTemplate,     // CKA_LMS_REMAINING_SIGNATURES
+  stateTemplate,     // CKA_HSS_KEYS_REMAINING
   1
 )
 
 // CRITICAL: State must persist to NVRAM after every sign`,
     description: 'Check remaining one-time signatures for an LMS/HSS stateful key.',
     detail:
-      'LMS/HSS and XMSS are stateful hash-based schemes: each leaf can only sign ONCE. The HSM must atomically update NVRAM state after every signing operation. Power failure during state update can brick the key. HSMs are the ONLY safe place for stateful signatures — CNSA 2.0 requires LMS/HSS for firmware/software signing. CKA_LMS_REMAINING_SIGNATURES is a vendor-specific attribute (not yet in PKCS#11 v3.2).',
+      'LMS/HSS and XMSS are stateful hash-based schemes: each leaf can only sign ONCE. The HSM must atomically update NVRAM state after every signing operation. Power failure during state update can brick the key. NSA’s CNSA 2.0 FAQ says to implement signing and state management in hardware, such as an HSM, approves only LMS and XMSS for use in NSS, and does not allow the multi-tree HSS and XMSSMT; NIST SP 800-208 requires key and signature generation in hardware cryptographic modules that do not allow secret keying material to be exported. PKCS#11 v3.2 defines CKA_HSS_KEYS_REMAINING for HSS private keys.',
     output: `CKR_OK
-  Key Type:              CKK_LMS
+  Key Type:              CKK_HSS
   Tree Height:           H=20 (1,048,576 total signatures)
   Signatures Used:       12,847
   Remaining:             1,035,729

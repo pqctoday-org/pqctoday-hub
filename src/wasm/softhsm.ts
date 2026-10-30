@@ -2647,7 +2647,7 @@ export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 export const CKM_EDDSA_PH = 0x80001057
 
-// PBKDF2 (PKCS#11 v3.2 §5.7.3.1)
+// PBKDF2 (PKCS#11 v3.2 §6.37.3–§6.37.4)
 export const CKM_PKCS5_PBKD2 = 0x3b0
 export const CKP_PKCS5_PBKD2_HMAC_SHA1 = 0x01
 export const CKP_PKCS5_PBKD2_HMAC_SHA224 = 0x03
@@ -3678,7 +3678,7 @@ export const hsm_ecdhCofactorDerive = (
 // ── PBKDF2 helpers ────────────────────────────────────────────────────────────
 
 /**
- * PBKDF2 key derivation via C_DeriveKey(CKM_PKCS5_PBKD2) (PKCS#11 v3.2 §5.7.3.1).
+ * PBKDF2 key derivation via C_DeriveKey(CKM_PKCS5_PBKD2) (PKCS#11 v3.2 §6.37.4).
  * prf defaults to CKP_PKCS5_PBKD2_HMAC_SHA512 (BIP39 / SLIP-0010 standard).
  * Returns a Uint8Array of the derived key bytes.
  */

@@ -148,7 +148,7 @@ const runStep = async (
         '  Mechanism:          CKM_ML_KEM (0x00000017)',
         `  KEM Ciphertext:     ${ciphertextBytes.length} bytes  ← FIPS 203 ML-KEM-768 ciphertext`,
         `  CT bytes:           ${ctHex} … (truncated)`,
-        '  Shared Secret:      32 bytes (derived key inside HSM)',
+        '  Shared Secret:      32 bytes (derived key object)',
       ].join('\n')
     }
 
