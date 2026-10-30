@@ -978,13 +978,13 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               title: 'Build-Time Code Signing',
               icon: Lock,
               description:
-                'ML-DSA private keys used for firmware signing should be stored in FIPS 140-3 Level 3 HSMs within air-gapped signing infrastructure (best practice); LMS/XMSS signing keys must be, per NIST SP 800-208 §8.1. Key ceremony procedures must be updated for ML-DSA-65 key generation.',
+                'ML-DSA private keys used for firmware signing should be stored in FIPS 140-3 Level 3 HSMs (best practice). For LMS and XMSS, NIST SP 800-208 §8.1 says the key generation and signature algorithms "shall only be validated for use within hardware cryptographic modules". Key ceremony procedures must be updated for ML-DSA-65 key generation.',
             },
             {
               title: 'Supply Chain Verification',
               icon: Shield,
               description:
-                'NIST SP 800-161r1 requires cryptographic verification of supplier firmware. ML-DSA signatures in firmware manifests (SWID tags, SBOM attestations) ensure vendor integrity.',
+                'NIST SP 800-161r1 says the enterprise should ensure that code authentication mechanisms, such as digital signatures, are implemented to ensure the integrity of software, firmware, and information. Signing firmware manifests (SWID tags, SBOM attestations) with ML-DSA is one way to carry this out.',
             },
             {
               title: 'Firmware Update Pipeline',
