@@ -63,6 +63,7 @@ export const content: ModuleContent = {
     getStandard('Announcing-NET-10'), // m-crypto-dev-apis: November 2025
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('Download-Bouncy-Castle-Java'), // m-crypto-dev-apis: wave 4c
+    getStandard('BouncyCastle-Releases-Java-1-81-and-CSharp-2-6-1'),
   ],
 
   algorithms: [
