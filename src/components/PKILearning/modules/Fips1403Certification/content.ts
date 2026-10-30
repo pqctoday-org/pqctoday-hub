@@ -64,10 +64,8 @@ export const content: ModuleContent = {
     getStandard('NCCoE-Automation-of-the-CMVP'),
     // Algorithm standards the shared PQC section cites (sharedData.ts SHARED_SOURCES)
 
-    // PCI documents the FIPS Level 3 callout cites (FipsSections.tsx): PIN v3.1
-    // Req 1-3 and P2PE v3.1 4A-1.1 accept FIPS Level 3+ or PCI-approved HSMs
-    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-    getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
+    // PCI page the FIPS Level 3 callout cites (FipsSections.tsx): PTS approval is assigned and listed by PCI SSC
+    getStandard('PCI-PTS-Listing-Field-Definitions'),
     getStandard('NIST-CMVP-FIPS-140-3-Standards-page'), // second source for claim:5be7a52c8654adee
     getStandard('ISO-IEC-19790-2025'), // second source for claim:e462fd5c6b804f37
     // Side-channel and fault attacks section (fips-attack-evidence)

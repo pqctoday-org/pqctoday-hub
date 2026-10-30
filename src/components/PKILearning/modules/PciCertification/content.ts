@@ -26,23 +26,17 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pci-certification',
-  lastReviewed: '2026-10-25',
   version: '0.1.0',
-  // lastReviewed is the owner's sign-off of 25 October 2026 (moduleReviewHonesty.test.ts), not a
-  // lab or certification-body review: v1 ships as "practitioner orientation". Remove it when a
-  // fact is corrected, until the owner renews the sign-off; the on-page notice follows it
-  // (common/moduleReviewStatus.ts).
-  lastEdited: '2026-10-25',
+  // lastReviewed (the owner's sign-off of 25 October 2026, moduleReviewHonesty.test.ts) is removed:
+  // the lesson wording changed on 30 October 2026, after that sign-off. Put it back when the owner
+  // renews the sign-off; the on-page notice follows it (common/moduleReviewStatus.ts). It was
+  // never a lab or certification-body review: v1 ships as "practitioner orientation".
+  lastEdited: '2026-10-30',
 
   standards: [
-    // ── PCI (public documents only, plan r2 D4) ──
+    // ── PCI (public PCI SSC pages only, plan r2 D4; Document Library PDFs are not declared) ──
     getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
-    getStandard('PCI-SSC-Bulletin-PTS-HSM-v4-Extension'),
-    getStandard('PCI-PTS-HSM-Modular-Security-Requirements-v4-0'),
-    getStandard('PCI-PTS-Program-Guide-v1-9'),
     getStandard('PCI-PTS-Listing-Field-Definitions'),
-    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-    getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
     getStandard('PCI-SSC-P2PE-Program-Page'),
     getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
     getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),
@@ -50,6 +44,9 @@ export const content: ModuleContent = {
     // FIPS 140-2 → 140-3 transition dates the PCI data cites (pciData.ts)
     getStandard('NIST-CMVP-140-2-to-140-3-Transition-Timeline'),
     getStandard('Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard'), // second source for claim:2ea3a54da34ed289
+    getStandard('PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management'),
+    getStandard('PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry'),
+    getStandard('PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2'),
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

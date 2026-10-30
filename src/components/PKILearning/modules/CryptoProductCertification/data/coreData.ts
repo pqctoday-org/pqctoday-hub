@@ -33,8 +33,6 @@ export const CORE_SOURCES = {
   securityIc: getStandard('BSI-CC-PP-0084-V2-2026'),
   ptsV5: getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
   ptsListing: getStandard('PCI-PTS-Listing-Field-Definitions'),
-  pinV31: getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-  p2peV31: getStandard('PCI-P2PE-Security-Requirements-v3-1'),
   kmo: getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
   p2peProgram: getStandard('PCI-SSC-P2PE-Program-Page'),
 } satisfies Record<string, StandardRef>
@@ -103,7 +101,7 @@ export const FOUR_QUESTIONS: SchemeQuestion[] = [
     object:
       'Two different objects: the device (model, hardware and firmware version, "up to the point of initial deployment") and, separately, an entity’s operations',
     tester:
-      'A PCI-recognized laboratory evaluates the device; qualified assessors assess entities (for PIN Security, a QPA)',
+      'A PCI-recognized laboratory evaluates the device; in this module’s reading, an entity’s operations are assessed separately (for PIN Security, by a QPA)',
     decider: 'PCI SSC reviews and lists approved devices; entity assessments produce reports',
     record:
       'The approved-device listing and the device Security Policy; for entities, the assessment report',
@@ -131,8 +129,8 @@ export interface TableTerm {
  * "Words used in this table": plain definitions for the terms the "One question per scheme" table
  * uses before the module defines them, in the order they first appear when the table is read row
  * by row. Wording from the owner-approved 24 October 2026 draft. The PCI entries rest only on
- * PCI SSC's public overview pages and glossary: the licensed requirement documents were not read,
- * so no entry cites them.
+ * PCI SSC's public overview pages and glossary; no entry cites a document that is not a public
+ * PCI SSC page.
  */
 export const TABLE_TERM_KEY: TableTerm[] = [
   {
@@ -228,7 +226,7 @@ export const TABLE_TERM_KEY: TableTerm[] = [
     sources: [
       {
         kind: 'text',
-        text: 'PCI SSC, PIN Security standards page; PCI SSC, Qualified PIN Assessors page; PCI SSC glossary',
+        text: 'PCI SSC, PIN Security standards page; PCI SSC glossary',
       },
     ],
   },
@@ -495,7 +493,7 @@ export const SELECTOR_CLAIMS: SelectorClaim[] = [
     claim:
       'Show that the PIN-processing environment we run on this HSM meets the PIN security requirements.',
     answer: 'pci-entity',
-    why: 'PIN Security assesses the entity’s operations, not the device. Its HSM requirement (Req 1-3) accepts HSMs that are FIPS 140-2 or 140-3 Level 3 or higher, or PCI-approved — but the assessment is of the processor.',
+    why: 'In this module’s reading, PIN Security looks at the entity’s operations, not the device. The device is one component of the processor’s environment, and the assessment is of the processor.',
     timed: true,
   },
   {
@@ -656,7 +654,7 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
       {
         scheme: 'FIPS 140-3 (CMVP)',
         status: 'may-apply',
-        note: 'PIN v3.1 Req 1-3 and P2PE v3.1 4A-1.1 accept HSMs that are FIPS Level 3 or higher, or PCI-approved, for their purposes (P2PE excludes certificates listed as historical or revoked). That never turns a FIPS validation into PTS approval.',
+        note: 'Whether a PCI operational standard accepts a FIPS certificate in place of a PTS approval is set in that standard’s own requirement text, which this module does not state. A FIPS validation never turns into PTS approval.',
       },
       {
         scheme: 'Common Criteria / EUCC',
@@ -668,7 +666,7 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
       'Which payment brand requires which assessment for this processor?',
       'The listing’s PQC flag means only that PQC support exists. Which algorithms are in the Security Policy?',
       'For the cloud offering: PTS HSM v5.0 adds Remote Administration and HSM Solution Security modules — is the service evaluated against them?',
-      'Does PCI KMO v1.0 replace PIN Annex B or P2PE Domain 5 for this processor? Open question — check the current documents.',
+      'Does PCI KMO v1.0 replace the PIN Security and P2PE key-management requirements for this processor, or sit beside them? Open question — check the current documents.',
     ],
     cloudNote:
       'Device approval stops at initial deployment. The cloud operation of the HSM is assessed separately — and PTS HSM v5.0 adds multi-tenant isolation and tenant key-erasure requirements.',
@@ -826,7 +824,7 @@ export function evaluateBoundary(
       out.push({
         severity: 'info',
         component: 'tenant-partition',
-        text: 'PTS HSM v5.0 adds multi-tenant isolation and tenant key-erasure requirements (public v5.0 announcement; the requirement text is licence-gated).',
+        text: 'PTS HSM v5.0 adds multi-tenant isolation and tenant key-erasure requirements (public v5.0 announcement; the requirement text is not a public PCI SSC page).',
       })
   }
 
@@ -842,7 +840,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Open the scheme selector for the payment processor and answer its two claims — one about the device, one about the processor’s PIN environment.',
     observe:
-      'Device approval (PTS HSM) and entity assessment (PIN Security) are different objects. A FIPS Level 3 validation never becomes PTS approval, yet PIN v3.1 Req 1-3 accepts a FIPS Level 3 HSM for the entity’s purposes.',
+      'In this module’s reading, device approval (PTS HSM) and an assessment of the entity’s PIN operations are different objects. A FIPS Level 3 validation never becomes PTS approval.',
     stepId: 'scheme-selector',
     config: { customer: 'payment-processor' },
   },

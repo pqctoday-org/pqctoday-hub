@@ -323,17 +323,8 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <strong className="text-foreground">3-D Secure 2.0</strong>
           </InlineTooltip>{' '}
           (Visa Secure, Mastercard Identity Check) adds cardholder authentication using ECDSA
-          challenge signing and device binding. The 3DS core components (ACS, DS and 3DS server)
-          fall under the PCI 3DS Core Security Standard, which requires strong cryptography to
-          safeguard 3DS data in transmission and a trusted certificate authority to issue all
-          digital certificates used between those components (
-          <Link
-            to="/library?ref=PCI-3DS-Core-v1-0-ROC-Reporting-Template"
-            className="text-primary hover:underline"
-          >
-            ROC Reporting Template v1.0
-          </Link>
-          , December 2017, requirements 5.2.1 and 6.1.8).
+          challenge signing and device binding. PCI SSC lists a separate PCI 3DS Core standard among
+          its standards; this module does not state what it covers or requires.
         </p>
 
         <div className="glass-panel p-4 space-y-2">
@@ -407,17 +398,18 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
         </div>
 
         <p className="text-sm text-muted-foreground">
-          <strong className="text-foreground">What certifies the device.</strong> Under the{' '}
+          <strong className="text-foreground">What certifies the device.</strong> PCI SSC assigns
+          and lists PTS approvals for HSMs and for POI devices (
           <Link
-            to="/library?ref=PCI-PIN-v3-1-ROC-Reporting-Template"
+            to="/library?ref=PCI-PTS-Listing-Field-Definitions"
             className="text-primary hover:underline"
           >
-            PCI PIN Security Requirements v3.1
+            PTS listing definitions
           </Link>
-          , every HSM must be either FIPS 140-2 or 140-3 Level 3 (or higher) certified or
-          PCI-approved (PTS HSM), and POI devices are evidenced by PCI PTS approval. Check any
-          post-quantum change to key transport or terminal firmware against these approval regimes,
-          not only against the algorithm.
+          ). Whether a PCI operational standard accepts a FIPS certificate in place of a PTS HSM
+          approval is set in that standard&apos;s own requirement text, which this module does not
+          state. Check any post-quantum change to key transport or terminal firmware against these
+          approval regimes, not only against the algorithm.
         </p>
 
         <Link
@@ -806,27 +798,26 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               >
                 PCI SSC announcement
               </Link>
-              ). Separately, PCI SSC keeps PTS HSM v4 open for new device approvals until 30 June
-              2027 (
+              ). Separately, the PTS listing&apos;s expiry table gives HSM v4.x &ldquo;Expiration of
+              Requirements Approval&rdquo; June 2027 and &ldquo;Expiration of Device Models&rdquo;
+              April 2033 (
               <Link
-                to="/library?ref=PCI-SSC-Bulletin-PTS-HSM-v4-Extension"
+                to="/library?ref=PCI-PTS-Listing-Field-Definitions"
                 className="text-primary hover:underline"
               >
-                bulletin
+                PTS listing definitions
               </Link>
-              ): that is a certification cut-off for v4, not a post-quantum deadline
+              ): those are approval-expiry dates, not post-quantum deadlines
             </li>
             <li>
-              <strong className="text-foreground">PCI P2PE and PKCS#11:</strong> PCI P2PE v3.1
-              (September 2021; a later version exists and was not reviewed here) approves key
-              establishment under NIST SP 800-56A and SP 800-56B and itself flags those families as
-              vulnerable to large-scale quantum computers, advising only that entities become aware
-              of the threat and its mitigations (
+              <strong className="text-foreground">PCI P2PE and PKCS#11:</strong> The public P2PE
+              pages (the program page and the P2PE v3.2 announcement) do not mention post-quantum
+              cryptography, so this module states no P2PE algorithm requirement or deadline (
               <Link
-                to="/library?ref=PCI-P2PE-Security-Requirements-v3-1"
+                to="/library?ref=PCI-SSC-P2PE-Program-Page"
                 className="text-primary hover:underline"
               >
-                P2PE v3.1
+                P2PE program page
               </Link>
               ). On the interface side, PKCS#11 v3.2 (OASIS Standard, 3 June 2026) now defines
               ML-KEM key-encapsulation mechanisms (

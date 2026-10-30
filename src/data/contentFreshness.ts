@@ -361,7 +361,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cert-shared-pts-hsm-v4-transition',
     claim:
-      'Crypto Product Certification: PTS HSM v4 new approvals until 30 June 2027; v4 device approvals expire April 2033; v3 expiry April 2028',
+      'Crypto Product Certification: the PTS listing’s expiry table gives HSM v4.x requirements approval June 2027 and device models April 2033, and v3.x device models April 2028',
     source: 'src/components/PKILearning/modules/CryptoProductCertification/data/sharedData.ts',
     asOf: '2026-09-24',
     recheck:
@@ -436,7 +436,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'cert-core-pci-fips-l3-nuance',
     claim:
-      'Crypto Product Certification: PIN v3.1 Req 1-3 and P2PE v3.1 4A-1.1 accept FIPS 140 Level 3+ or PCI-approved HSMs (P2PE excludes historical/revoked certificates); P2PE v3.2 is current',
+      'Crypto Product Certification: whether a PCI operational standard accepts a FIPS 140 certificate in place of a PTS approval is set in its own requirement text and is not stated; P2PE v3.2 is current',
     source: 'src/components/PKILearning/modules/CryptoProductCertification/data/coreData.ts',
     asOf: '2026-09-24',
     recheck: 'https://www.pcisecuritystandards.org/standards/point-to-point-encryption-p2pe/',

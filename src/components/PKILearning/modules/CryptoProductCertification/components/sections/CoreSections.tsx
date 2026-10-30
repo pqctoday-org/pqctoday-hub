@@ -268,14 +268,13 @@ export const FourQuestions = () => (
 
     <Callout tone="info" title="The nuance that stops learners over-correcting">
       <p>
-        A FIPS 140-3 Level 3 HSM does <strong>not</strong> obtain PTS HSM approval. But PCI PIN
-        Security v3.1 Requirement 1-3 accepts HSMs that are “FIPS140-2 or FIPS 140-3 Level 3 or
-        higher certified, or PCI approved” (<SourceLink source={CORE_SOURCES.pinV31} />
-        ), and P2PE v3.1 4A-1.1 sets a similar bar (
-        <SourceLink source={CORE_SOURCES.p2peV31} label="P2PE v3.1" />, which adds that the FIPS
-        certificate “must not be listed as historical or revoked”; v3.2 of June 2025 is current —
-        check it). So for the <em>entity’s</em> requirement, a FIPS Level 3 validation may be
-        enough; for the <em>device approval</em>, it never is.
+        A FIPS 140-3 Level 3 HSM does <strong>not</strong> obtain PTS HSM approval: that is a
+        separate device approval by a PCI-recognized lab, assigned and listed by PCI SSC (
+        <SourceLink source={CORE_SOURCES.ptsListing} />
+        ). Whether a PCI operational standard (PIN Security, P2PE) accepts a FIPS certificate in
+        place of a PTS approval is set in that standard’s own requirement text, which this module
+        does not state — read the current standard. For the <em>device approval</em>, a FIPS
+        validation never is enough.
       </p>
     </Callout>
 

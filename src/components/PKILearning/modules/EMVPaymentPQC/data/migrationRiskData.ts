@@ -8,7 +8,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     componentLabel: 'Payment HSM Key Wrapping',
     currentCrypto: ['RSA-2048 key transport', 'ECDH P-256 key agreement'],
     vulnerability:
-      'HSMs use RSA-2048 to wrap and transport master keys between HSM clusters and to downstream systems. Quantum computers can recover wrapped keys, exposing the entire key hierarchy. PCI P2PE v3.1 (September 2021) approves key establishment under NIST SP 800-56A and SP 800-56B and itself flags those families as vulnerable to large-scale quantum computers, advising only awareness of the threat and its mitigations.',
+      'HSMs use RSA-2048 to wrap and transport master keys between HSM clusters and to downstream systems. Quantum computers can recover wrapped keys, exposing the entire key hierarchy.',
     severity: 'critical',
     hndlExposure: true,
     affectedScale: 'All payment HSMs globally (~100,000+ devices)',
@@ -131,7 +131,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     migrationEffort: 4,
     migrationTimeline: '2026-2030',
     pqcSolution: [
-      'Classical modernisation alongside the PQC work: complete 3DES \u2192 AES DUKPT migration (industry direction, not yet a PCI mandate: PCI PIN Security v3.1 still allows TDEA and AES for online PIN, and since 1 Jan 2023 disallows fixed-key TDEA PIN encryption; PTS POI v5+ devices doing online PIN and HSM v4+ devices doing PIN processing must support AES ISO PIN block format 4)',
+      'Classical modernisation alongside the PQC work: complete 3DES \u2192 AES DUKPT migration (industry direction; the PCI PIN Security v3.1 announcement (March 2021) says the effective dates for ISO Format 4 PIN blocks are suspended and are being reevaluated for the TDEA-to-AES migration, and the PTS listing definitions say POI v5 and higher devices supporting online PIN and HSM v4 and higher devices supporting PIN processing are required to support ISO PIN Block Format 4)',
       'AES-256 is allowed for contingency, but EMVCo sees no need for it on quantum grounds',
       'ML-KEM-768 for BDK key transport at KIFs',
     ],
