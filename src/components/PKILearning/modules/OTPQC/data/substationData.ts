@@ -54,15 +54,17 @@ export const SUBSTATION_TYPE_LABELS: Record<SubstationType, string> = {
 }
 
 /**
- * IEC 61850-5:2013+AMD1:2022 §11.3.1.2 gives GOOSE type 1A trip messages two performance
- * classes: P1, transfer-time class TT6 (3 ms or less), and P2, TT5 (10 ms or less). The
- * standard does not assign them by substation type; this model assumes the demanding P1
- * class for transmission, sub-transmission and generation, and P2 for distribution.
+ * IEC 61850-5 puts GOOSE type 1A trip messages in transfer-time class TT6 (3 ms or less;
+ * Torres et al., ICREPQ 2024, Table I; arXiv 2511.18748 also gives 3 ms for type 1A GOOSE).
+ * This model, not the standard, assigns budgets by substation type: it plans on TT6 for
+ * transmission, sub-transmission and generation, and on a 10 ms budget for distribution as a
+ * planning assumption (Torres Table I gives 10 ms to class TT5, which covers releases and
+ * status changes, not trips).
  */
 export function tripTimeClass(type: SubstationType): { perfClass: string; budgetMs: number } {
   return type === 'distribution'
-    ? { perfClass: 'P2 · TT5 ≤10 ms (assumed for distribution)', budgetMs: 10 }
-    : { perfClass: 'P1 · TT6 ≤3 ms', budgetMs: 3 }
+    ? { perfClass: '10 ms (planning assumption for distribution)', budgetMs: 10 }
+    : { perfClass: 'TT6 ≤3 ms (IEC 61850-5)', budgetMs: 3 }
 }
 
 export const IMPACT_WEIGHT: Record<NERCCIPImpact, number> = {

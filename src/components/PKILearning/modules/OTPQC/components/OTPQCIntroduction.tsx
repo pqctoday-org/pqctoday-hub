@@ -233,8 +233,8 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </li>
           </ul>
           <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/20 text-xs">
-            <strong className="text-foreground">No PQC wording yet.</strong> SR 4.3 (IEC 62443-3-3)
-            and CR 4.3 (
+            <strong className="text-foreground">No PQC wording in the documents we hold.</strong> SR
+            4.3 (IEC 62443-3-3) and CR 4.3 (
             <LibLink id="IEC-62443-4-2-2019-Security-for-industrial-automation-and-co">
               IEC 62443-4-2
             </LibLink>
@@ -377,10 +377,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             >
               <p>
                 Sometimes called close access: someone on site or nearby, on a field network, serial
-                link or wireless segment. Only a small minority of installed field-level traffic is
-                authenticated or encrypted. CISA found that &ldquo;many OT systems built in 2026
-                still rely on protocol implementations designed decades ago, leaving their networks
-                fully trusting anyone with access&rdquo; (
+                link or wireless segment. CISA concludes that secure versions of industrial
+                protocols remain underutilized in OT environments, and found that &ldquo;many OT
+                systems built in 2026 still rely on protocol implementations designed decades ago,
+                leaving their networks fully trusting anyone with access&rdquo; (
                 <LibLink id="Barriers-to-Secure-OT-Communication-Why-Johnny-Can-t-Authent">
                   CISA, 2026
                 </LibLink>
@@ -529,10 +529,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            IEC 61850-5 gives GOOSE type 1A trip messages two performance classes: P1, transfer-time
-            class <strong>TT6, 3 ms or less</strong>, and P2, TT5, 10 ms or less (
-            <LibLink id="Torres-ICREPQ-2024-341">Torres et al., ICREPQ 2024</LibLink>, which
-            tabulates the classes). IEC 61869-9 defines Sampled Value rates including{' '}
+            IEC 61850-5 puts GOOSE type 1A trip messages in transfer-time class{' '}
+            <strong>TT6, 3 ms or less</strong> (
+            <LibLink id="Torres-ICREPQ-2024-341">Torres et al., ICREPQ 2024</LibLink>, Table I,
+            which tabulates the classes). IEC 61869-9 defines Sampled Value rates including{' '}
             <strong>4,000, 4,800 and 14,400 samples per second</strong> — a frame every {sv(4000)},{' '}
             {sv(4800)} and {sv(14400)} µs (
             <LibLink id="Chen-Sensors-2020-20-7345">Chen et al., Sensors 2020</LibLink>).
@@ -750,8 +750,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               BACnet/SC brings TLS 1.3 and X.509 to HVAC, lighting and access control (
               <LibLink id="ASHRAE-BACnet-SC-Whitepaper-2019">ASHRAE BACnet/SC white paper</LibLink>
               ). Because it already uses TLS 1.3, adding a hybrid ML-KEM group is a stack update;
-              its elliptic-curve certificates are the forgery exposure. Most installed BACnet/IP and
-              MS/TP has no security at all.
+              its elliptic-curve certificates are the forgery exposure. BACnet/SC is the TLS-based
+              BACnet datalink (ASHRAE Addendum bj: it is based on TLS-secured WebSocket
+              connections); BACnet/IP and MS/TP do not use it, and we have no figure for how much
+              equipment still runs on them.
             </p>
           </Card>
         </div>
@@ -804,7 +806,7 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
                 <LibLink id="IEC 62443">IEC 62443</LibLink>
               </strong>{' '}
               — the cross-sector OT security series; crypto requirements (SR/CR 4.3) do not mention
-              PQC yet.
+              PQC in the documents we hold.
             </li>
             <li>
               <strong>

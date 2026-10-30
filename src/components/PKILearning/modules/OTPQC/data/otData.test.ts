@@ -93,12 +93,18 @@ describe('OT protocol facts', () => {
     )
   })
 
-  it('E4: GOOSE type 1A trips are P1 = TT6 (3 ms) or P2 = TT5 (10 ms)', () => {
+  it('E4: GOOSE trip messages are transfer-time class TT6 (3 ms or less)', () => {
     expect(proto('iec61850-goose').timingRequirement).toMatch(
-      /P1 = TT6 \(3 ms or less\); class P2 = TT5 \(10 ms or less\)/
+      /transfer-time class TT6 \(3 ms or less\)/
     )
-    expect(tripTimeClass('transmission')).toEqual({ perfClass: 'P1 · TT6 ≤3 ms', budgetMs: 3 })
-    expect(tripTimeClass('distribution').budgetMs).toBe(10)
+    expect(tripTimeClass('transmission')).toEqual({
+      perfClass: 'TT6 ≤3 ms (IEC 61850-5)',
+      budgetMs: 3,
+    })
+    expect(tripTimeClass('distribution')).toEqual({
+      perfClass: '10 ms (planning assumption for distribution)',
+      budgetMs: 10,
+    })
   })
 
   it('every public-key size delta comes from the algorithm registry', () => {

@@ -386,7 +386,7 @@ export function scoreScenario(
     )
   if (inputs.safetyLayer === 'networked')
     actions.push(
-      'IEC 61511 Ed.2 §8.2.4: include the SIS in the security risk assessment and sign safety-logic changes with a PQC scheme.'
+      "IEC 61511 Ed.2 §8.2.4 requires a security risk assessment that includes the SIS (Derbyshire, p.4). This module's own advice, not a requirement of the standard: sign safety-logic changes with a PQC scheme."
     )
   if (inputs.safetyLayer === 'none' && riskLevelFor(compound) !== 'low')
     actions.push(
