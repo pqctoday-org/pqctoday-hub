@@ -8,7 +8,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Git repositories hold the root of all software. Signing commits, webhook secrets, and deploy keys are the first cryptographic layer an attacker targets.',
     tools: ['GitHub', 'GitLab', 'Bitbucket', 'Gitea'],
-    hndlExposure: 'medium',
+    hndlExposure: 'none',
     migrationPriority: 'high',
     cryptoAssets: [
       {
@@ -18,7 +18,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-44 or SLH-DSA-SHAKE-128s',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10–30 years (repo history must stay authentic)',
@@ -46,7 +46,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'rsa',
         keySize: 'RSA-3072 / ECDSA P-256',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
+        hndlRisk: 'none',
         pqcReplacement:
           'ML-DSA-44 (pending IETF PQ SSH draft; OpenSSH 9.x has PQ key exchange only)',
         pqcAlgorithm: 'ml-dsa',
@@ -116,7 +116,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Container images, SBOMs, and build attestations are signed before publication. These signatures must remain trustworthy for the lifetime of the software.',
     tools: ['cosign', 'Notation', 'Sigstore', 'GPG', 'in-toto'],
-    hndlExposure: 'high',
+    hndlExposure: 'none',
     migrationPriority: 'critical',
     cryptoAssets: [
       {
@@ -126,7 +126,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-65 (once the signing tool supports it)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow:
@@ -141,7 +141,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 (DSSE envelope)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'SLH-DSA-SHAKE-128f (stateless, long signature lifetime)',
         pqcAlgorithm: 'slh-dsa',
         exposureWindow: '20+ years (SBOMs are used for compliance audits years after release)',
@@ -155,7 +155,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-44 (SLSA provenance envelope)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10–20 years (provenance used in supply chain audits)',
@@ -194,7 +194,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 (OCI referrers API)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-65 (once the signing tool supports it)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10+ years (images remain in use post-deployment)',
@@ -247,7 +247,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'rsa',
         keySize: 'RSA-4096 (GPG keyring)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-87 (Helm v4 PQC signing backend)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10+ years (chart provenance must remain verifiable for audit)',

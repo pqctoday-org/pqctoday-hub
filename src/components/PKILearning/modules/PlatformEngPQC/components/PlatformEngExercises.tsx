@@ -46,7 +46,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Timeline',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'Under a 2030 CRQC scenario, all 14 quantum-vulnerable assets are at risk because their exposure windows extend beyond 2030. Under 2035, the same 14 assets remain at risk — signature and certificate lifetimes are measured in decades, not years. This demonstrates why HNDL is independent of CRQC timeline: the exposure window starts today, not when the CRQC arrives.',
+        'Under a 2030 CRQC scenario, all 14 quantum-vulnerable assets are at risk because their exposure windows extend beyond 2030. Under 2035, the same 14 assets remain at risk — signature and certificate lifetimes are measured in decades, not years. For encrypted data this is the harvest-now-decrypt-later threat, which is independent of CRQC timeline because the exposure window starts when the data is captured (NIST IR 8547); for signatures the concern is forgery once a CRQC exists, which is not HNDL.',
       config: { step: 1 },
     },
     {

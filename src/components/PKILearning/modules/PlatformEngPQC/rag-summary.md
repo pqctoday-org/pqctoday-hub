@@ -25,13 +25,13 @@
 
 - 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh
 - 16 crypto assets across stages with HNDL exposure ratings and PQC replacements
-- HNDL: High assets: Vault mTLS (→ X25519MLKEM768), Container Image Signing Key (→ ML-DSA-65), SBOM Attestation (→ SLH-DSA-SHAKE-128f), kube-apiserver TLS (→ ML-DSA-65 hybrid), Helm Chart Signing (→ ML-DSA-87), Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512)
+- HNDL: High assets include Vault mTLS (→ X25519MLKEM768), kube-apiserver TLS (→ ML-DSA-65 hybrid) and Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512); the signing keys (container image, SBOM attestation, build provenance, image manifest, Helm chart, Git commit and deploy keys) are quantum-vulnerable but rated no HNDL risk, because NIST IR 8547 ties harvest now, decrypt later to encrypted data and says the authentication algorithm may be transitioned at a different time
 
 ### Step 2: Quantum Threat Timeline
 
 - CRQC scenario selector: 2030, 2033, 2035, 2040
 - Data expiry year calculated from exposure window text
-- Assets with 10+ year exposure windows remain HNDL-exposed regardless of CRQC timeline
+- Encrypted data with a 10+ year exposure window remains HNDL-exposed regardless of CRQC timeline; a signing key with a long verification window is a forgery risk, not an HNDL risk
 - Key insight: HNDL exposure window starts at time of data capture, not at CRQC arrival
 
 ### Step 3: Container Signing Migration
