@@ -508,7 +508,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     },
     'hybrid-composite.pem': {
       title: 'Composite signature (draft-ietf-lamps-pq-composite-sigs-19)',
-      note: 'One certificate whose key and signature each concatenate an ML-DSA component and a classical component under a single composite OID. BOTH signatures must verify, and a stripped ML-DSA signature fails because it was signed with the composite Label as context (draft §9.2.3). The draft is in the RFC Editor queue with no RFC number yet. OpenSSL 3.6.3 has no composite algorithms, so it shows the key and signature as an unknown algorithm.',
+      note: 'One certificate whose key and signature each concatenate an ML-DSA component and a classical component under a single composite OID. BOTH signatures must verify, and a split-off ML-DSA signature fails when verified on its own as plain ML-DSA over M’ with an empty context, because it was signed with the composite Label as context, while the traditional signature still verifies (draft §9.2.3). The draft is in the RFC Editor queue with no RFC number yet. OpenSSL 3.6.3 has no composite algorithms, so it shows the key and signature as an unknown algorithm.',
     },
     'hybrid-alt-sig.pem': {
       title: 'Alternative Signature (Alt-Sig) — ITU-T X.509 (2019) §7.2.2, §9.8',

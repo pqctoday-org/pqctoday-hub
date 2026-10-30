@@ -1170,7 +1170,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          'RFC Editor queue: the IESG approved draft-ietf-lamps-pq-composite-kem; the datatracker shows IESG state "RFC Ed Queue" (changed 2026-10-12), current revision -23 (2026-10-14). Not yet published as an RFC. Re-verified live 2026-10-22.',
+          'RFC Editor queue: the IESG approved draft-ietf-lamps-pq-composite-kem; the datatracker shows IESG state "RFC Ed Queue" (changed 2026-10-12), current revision -23 (2026-10-14). Not yet published as an RFC. Datatracker history checked 2026-10-30.',
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1918,7 +1918,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          'Inherits draft-ietf-lamps-pq-composite-kem (see X.509 row): IESG state "RFC Ed Queue" since 2026-10-12, current revision -23 (2026-10-14); not yet published as an RFC. Re-verified live 2026-10-22.',
+          'Inherits draft-ietf-lamps-pq-composite-kem (see X.509 row): IESG state "RFC Ed Queue" since 2026-10-12, current revision -23 (2026-10-14); not yet published as an RFC. Datatracker history checked 2026-10-30.',
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
