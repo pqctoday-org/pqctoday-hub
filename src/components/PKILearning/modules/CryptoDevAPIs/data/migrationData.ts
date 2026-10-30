@@ -342,7 +342,7 @@ export const MIGRATION_PATHS: MigrationPath[] = [
     description:
       'You are already using the best-positioned Java library for PQC. Simply update the BC version and start using ML-KEM/ML-DSA APIs.',
     steps: [
-      'Update Bouncy Castle to 1.78+ (Maven/Gradle dependency)',
+      'Update Bouncy Castle to 1.79+ (Maven/Gradle dependency)',
       'Add ML-DSA signing alongside existing ECDSA/RSA signatures',
       'Add ML-KEM key encapsulation for key exchange',
       'Test hybrid signatures (ECDSA + ML-DSA) for transition period',
