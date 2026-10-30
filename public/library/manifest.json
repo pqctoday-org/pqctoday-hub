@@ -24324,6 +24324,36 @@
       "replacedAt": "2026-10-30T04:50:06.530141+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "T-C1: the saved file is the 3GPP landing page; the row now points at the ETSI PDF of TS 35.206 V19.0.0"
+    },
+    {
+      "refId": "NIST-CMVP-Programmatic-Transitions",
+      "title": "NIST CMVP: Programmatic Transitions",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/programmatic-transitions",
+      "status": "downloaded",
+      "filename": "NIST-CMVP-Programmatic-Transitions.html",
+      "sizeBytes": 115319,
+      "contentType": "text/html",
+      "sha256": "b5f85826646cae7478e9a0dc751a36f264b80527b7fe77d6a2f9e659efb25339",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T05:28:15.276614+00:00",
+      "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "BouncyCastle-Releases-Java-1-81-and-CSharp-2-6-1",
+      "title": "Bouncy Castle Releases Java 1.81 and C# .NET 2.6.1",
+      "url": "https://www.bouncycastle.org/resources/bouncy-castle-releases-java-1-81-and-c-net-2-6-1/",
+      "status": "downloaded",
+      "filename": "BouncyCastle-Releases-Java-1-81-and-CSharp-2-6-1.html",
+      "sizeBytes": 277054,
+      "contentType": "text/html",
+      "sha256": "a263d9f45722308079043e0d89185f0411aa7bbd22c41cef0a9f7a3987e210ff",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T05:28:35.448514+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
