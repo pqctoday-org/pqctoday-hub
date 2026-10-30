@@ -339,7 +339,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     situation:
       'Google needed a crypto library optimized for their specific use cases (Chrome, Android, Google Cloud) with faster release cycles than OpenSSL and no backward compatibility constraints.',
     decision:
-      'Forked OpenSSL in 2014, stripped unused code, added their own optimizations, and deployed ML-KEM (Kyber) for TLS in Chrome years before any other browser.',
+      'Forked OpenSSL in 2014, stripped unused code, added their own optimizations, and deployed a Kyber hybrid for TLS in Chrome, then ML-KEM from Chrome 131.',
     outcome:
       'BoringSSL powers billions of daily TLS connections. BoringCrypto holds FIPS 140-3 certificate #5244 (no PQC algorithm approved). However, it requires a dedicated crypto engineering team.',
     libraryUsed: 'BoringSSL (fork of OpenSSL)',
@@ -361,7 +361,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     decision:
       'Forked BoringSSL, added FIPS 140-3 validation process, integrated ML-KEM into the FIPS boundary, and created Rust bindings (aws-lc-rs) for memory safety.',
     outcome:
-      'AWS-LC 3 certificates #5298 and #5314 (June 2026) approve ML-KEM. Powers S2N-TLS across all AWS services. aws-lc-rs enables Rust developers to use FIPS-validated crypto. Cost: dedicated team of ~20 engineers.',
+      'AWS-LC 3 certificates #5298 and #5314 (June 2026) approve ML-KEM. Powers S2N-TLS across all AWS services. aws-lc-rs enables Rust developers to use FIPS-validated crypto. Cost: a dedicated team.',
     libraryUsed: 'AWS-LC (fork of BoringSSL)',
     lessonsLearned: [
       'FIPS validation with PQC is possible but requires dedicated effort',
