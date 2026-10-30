@@ -106,8 +106,9 @@ const TLSPanel: React.FC = () => {
         <div className="bg-success/5 border border-success/20 rounded p-3">
           <div className="font-bold text-success mb-1">③ TLS 1.3 Handshake</div>
           <div className="text-muted-foreground">
-            PSK binder replaces or augments ECDH-derived Early Secret in the key schedule (RFC 9846
-            §7.1)
+            The QKD key is the PSK: it is the input of the Early Secret; an (EC)DHE shared secret,
+            if used as well, is the input of the Handshake Secret, and binder_key is derived from
+            the Early Secret (RFC 9846 §7.1)
           </div>
         </div>
       </div>
@@ -118,13 +119,19 @@ const TLSPanel: React.FC = () => {
         </div>
         <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
           <li>
-            <strong>Without QKD</strong>: Early Secret = HKDF-Extract(0, DHE shared secret)
+            <strong>Without a PSK</strong>: Early Secret = HKDF-Extract(0, 0); the (EC)DHE shared
+            secret enters at the Handshake Secret
           </li>
           <li>
-            <strong>With QKD (RFC 9258)</strong>: Early Secret = HKDF-Extract(PSK=QKD key, 0) —
-            information-theoretically secure PSK replaces the computational DHE secret
+            <strong>With the QKD key as PSK (RFC 9258)</strong>: Early Secret = HKDF-Extract(PSK=QKD
+            key, 0); with psk_ke no (EC)DHE secret is used, with psk_dhe_ke it still enters at the
+            Handshake Secret
           </li>
-          <li>No protocol modifications required — RFC 9258 is an extension to existing TLS 1.3</li>
+          <li>
+            RFC 9258 is an interface for importing external PSKs into TLS 1.3: imported PSKs use the
+            binder label &quot;imp binder&quot;, so a client and server negotiate the PSK if and
+            only if both endpoints import it or neither does
+          </li>
         </ul>
       </div>
 
