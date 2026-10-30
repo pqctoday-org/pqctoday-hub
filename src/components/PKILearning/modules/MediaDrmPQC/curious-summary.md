@@ -2,7 +2,7 @@
 
 ## What This Is About
 
-Films and shows are protected by systems that decide which devices may play them. When the device in your living room is the thing an attacker holds, the usual idea of "protect the data in transit" is not enough. This module reads the actual specifications behind some of those systems — the AACS system, whose specification covers keys held on media and the exchange between a drive and a host, the CI Plus system, which protects content where it leaves a conditional-access module and re-enters the host device, the MovieLabs ECP specification, and the C2PA standard that attaches signed "content credentials" to media — and asks one precise question of each: where does it use public-key cryptography, the kind that a large quantum computer would break?
+A content-protection system can bind its keys to a particular device and revoke devices that have been compromised. In consumer content protection a compromised device is part of the threat model, so asking whether the system is quantum-safe has to be done link by link. This module reads the actual specifications behind some of those systems — the AACS system, whose specification covers keys held on media and the exchange between a drive and a host, the CI Plus system, which protects content where it leaves a conditional-access module and re-enters the host device, the MovieLabs ECP specification, and the C2PA standard that attaches signed "content credentials" to media — and asks one precise question of each: where does it use public-key cryptography, the kind that a large quantum computer would break?
 
 ## Why It Matters
 

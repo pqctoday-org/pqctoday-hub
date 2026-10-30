@@ -29,7 +29,7 @@ export const CLOUDFLARE_REPORT = {
 export const SURVEY = {
   title: 'A First Look at Digital Rights Management Systems for Secure Mobile Content Delivery',
   authors: 'Rafi, Shepherd and Markantonakis',
-  when: 'a 2023 paper, held here as the arXiv preprint submitted on 1 August 2023',
+  when: 'a 2023 paper, held here as the arXiv preprint (version 3, 3 August 2023)',
   abstract:
     'The authors analyse Widevine, FairPlay and PlayReady and identify design-level shortcomings, including micro-architectural side-channel vulnerabilities and an absence of post-quantum security.',
   mitigation:

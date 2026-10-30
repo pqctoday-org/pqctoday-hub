@@ -55,13 +55,12 @@ export const MediaDrmIntroduction: React.FC<Props> = ({ onNavigateToWorkshop }) 
         defaultOpen
       >
         <p className="text-muted-foreground">
-          In most of this course the attacker sits on a network and the question is whether the
-          traffic can be read or forged. In consumer content protection a compromised device is part
+          In consumer content protection a compromised device is part
           of the threat model, so &ldquo;is it quantum-safe?&rdquo; has to be asked link by link:
           which secret does the system rely on, and which signature does it rely on.
         </p>
         <p className="text-muted-foreground">
-          The clearest public statement of what studios ask for is the {ECP_EDITION} ({ECP_DATE}),
+          This section draws on the {ECP_EDITION} ({ECP_DATE}),
           ECP for short. {ECP_STATUS_NOTE} ECP describes the problem this way: breaking protection
           on one device can break it on a wide class of devices, and the availability of release-day
           copies is the most challenging threat to prevent because it only takes a single skilled
