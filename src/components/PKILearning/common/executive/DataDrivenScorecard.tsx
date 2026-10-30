@@ -71,7 +71,7 @@ interface DataDrivenScorecardProps {
   /** Restore previously-saved scores / weight overrides on mount (e.g. from a persisted artifact). */
   initialScores?: Record<string, number>
   initialWeights?: Record<string, number>
-  /** Hide the composite until this share of the weight of unlocked KPIs has evidence. */
+  /** Hide the composite until this share of the weight of the KPIs that can be scored has evidence. */
   minimumCoverageForOverall?: number
   /** Structured evidence fields shared by screen, saved artifacts and exports. */
   observations?: Record<string, ScorecardObservation>
@@ -340,8 +340,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
           <p className="text-xl md:text-2xl font-bold text-muted-foreground">Not yet available</p>
         )}
         <p className="text-sm text-muted-foreground mt-2">
-          Evidence coverage: {Math.round(evidenceCoverage * 100)}% of the weight of KPIs that are
-          not locked
+          Evidence coverage: {Math.round(evidenceCoverage * 100)}% of the weight of the KPIs that
+          can be scored
           {!overallAvailable &&
             ` — enter organization-specific evidence before interpreting a combined score.`}
         </p>

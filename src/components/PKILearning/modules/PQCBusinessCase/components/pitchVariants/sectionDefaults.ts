@@ -245,9 +245,12 @@ export function buildCostBenefitDefault(data: Data): string {
 export const NO_COST_ESTIMATE_NOTE =
   'No reviewed estate cost estimate is attached. Catalogue size is not an organisation inventory.'
 
-/** Replaces the line above when the funding amount is filled from an ROI model output. */
-export const MODELLED_COST_NOTE =
-  'The programme total above comes from the ROI model, an illustrative scenario and not a reviewed estate cost estimate. Catalogue size is not an organisation inventory.'
+/** Says where the funding amount comes from when it is filled from an ROI model output. */
+export const MODELLED_TOTAL_SENTENCE =
+  'The programme total above comes from the ROI model, which is an illustrative scenario, not a reviewed estate cost estimate.'
+
+/** Replaces the no-estimate line when the funding amount is filled from an ROI model output. */
+export const MODELLED_COST_NOTE = `${MODELLED_TOTAL_SENTENCE} Catalogue size is not an organisation inventory.`
 
 export function buildBudgetDefault(data: Data): { amount: string; breakdown: string } {
   const scopeNote =

@@ -10,7 +10,11 @@ import { PersonaPitchBanner } from './PersonaPitchBanner'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { getPitchVariant } from './pitchVariants'
-import { MODELLED_COST_NOTE, NO_COST_ESTIMATE_NOTE } from './pitchVariants/sectionDefaults'
+import {
+  MODELLED_COST_NOTE,
+  MODELLED_TOTAL_SENTENCE,
+  NO_COST_ESTIMATE_NOTE,
+} from './pitchVariants/sectionDefaults'
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
 import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
@@ -112,7 +116,11 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         ) {
           return {
             ...f,
-            defaultValue: f.defaultValue.replace(NO_COST_ESTIMATE_NOTE, MODELLED_COST_NOTE),
+            // With products selected the first line is a different note, so the
+            // modelled-total sentence goes in front of it instead.
+            defaultValue: f.defaultValue.includes(NO_COST_ESTIMATE_NOTE)
+              ? f.defaultValue.replace(NO_COST_ESTIMATE_NOTE, MODELLED_COST_NOTE)
+              : `${MODELLED_TOTAL_SENTENCE} ${f.defaultValue}`,
           }
         }
         return f

@@ -528,16 +528,16 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       <p className="text-xs text-muted-foreground leading-relaxed">
         <strong className="text-foreground/80">How this is scored:</strong> each KPI&apos;s 0–100
         value is multiplied by its weight, summed, and divided by the total weight of the KPIs
-        included — a weighted average. KPIs that are locked (no data available) or not yet scored
-        are left out of both halves of that division rather than counted as zero, so an unscored KPI
-        does not drag the headline down. It also means the score describes only the KPIs you have
-        actually scored:{' '}
+        included — a weighted average. KPIs marked data unavailable or not yet scored are left out
+        of both halves of that division rather than counted as zero, so an unscored KPI does not
+        drag the headline down. It also means the score describes only the KPIs you have actually
+        scored:{' '}
         <strong>
           {scoredCount} of {dimensions.length}
         </strong>{' '}
-        here. The combined score is withheld below 70% of the weight of unlocked KPIs having values.
-        That coverage threshold is a display rule, not proof of readiness. Weights are the
-        per-persona defaults unless you have edited them.
+        here. The combined score is withheld until at least 70% of the weight of the KPIs that can
+        be scored has values. That coverage threshold is a display rule, not proof of readiness.
+        Weights are the per-persona defaults unless you have edited them.
       </p>
 
       <ExportableArtifact

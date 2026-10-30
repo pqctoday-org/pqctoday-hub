@@ -106,6 +106,24 @@ describe('BoardPitchBuilder — cross-tool output chaining', () => {
     expect(screen.getByDisplayValue(/comes from the ROI model/)).toBeInTheDocument()
   })
 
+  it('says the total is modelled when products are selected and the amount comes from the ROI model', () => {
+    const original = baseMockData.myProducts
+    baseMockData.myProducts = [{ productName: 'Example HSM' } as never]
+    try {
+      renderPitch({
+        roiOutput: { totalCostUSD: 999, roiPercent: 10, paybackMonths: 1, breachCostSavingsUSD: 1 },
+      })
+      expect(
+        screen.getByDisplayValue(/comes from the ROI model, which is an illustrative/)
+      ).toBeInTheDocument()
+      expect(
+        screen.getByDisplayValue(/1 selected product types provide dependency context/)
+      ).toBeInTheDocument()
+    } finally {
+      baseMockData.myProducts = original
+    }
+  })
+
   it('falls back to the last saved ROI Calculator artifact when no prop is passed', () => {
     mockExecutiveDocuments = [
       {

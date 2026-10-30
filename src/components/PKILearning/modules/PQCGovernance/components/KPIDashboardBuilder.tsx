@@ -36,8 +36,8 @@ const METHODOLOGY_MD = `## How this score is computed
 The **Overall Score** is the weighted average of the KPI sliders below, using the
 per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
 measure; the weighted average is rounded to a whole number. A combined score is
-withheld until at least 70% of the weight of unlocked KPIs has organization-specific
-evidence. Missing rows remain visible and never improve the result by disappearing.
+withheld until at least 70% of the weight of the KPIs that can be scored has
+organization-specific evidence; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing.
 
 The KPI set follows the Applied Quantum framework's Board-Level KPI Pack —
 Coverage, Trust, Inventory, Vendors, and Agility, each with year-1/2/3 targets
