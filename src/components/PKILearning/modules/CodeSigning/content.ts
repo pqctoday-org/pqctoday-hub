@@ -20,6 +20,9 @@ export const content: ModuleContent = {
     // and Xtended Merkle Signature Scheme (XMSS) as the "Asymmetric algorithm for
     // digitally signing firmware and software" per NIST SP 800-208, and the timing
     // section gives software and firmware signing as exclusively CNSA 2.0 by 2030.
+    // Reworded 2026-10-30: the module now says CNSA 2.0 lists LMS and XMSS and NSA wants them
+    // used whenever possible, because the FAQ (version 2.2) answers "Can I use ML-DSA for
+    // firmware or software signing? A: Yes" and says HSS and XMSSMT are not allowed.
     // Declared FIRST so the four-document stride opens it.
     getStandard('NSA CNSA 2.0'),
     getStandard('FIPS 204'),

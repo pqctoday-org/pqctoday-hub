@@ -320,7 +320,8 @@ export const FIRMWARE_SIGNING_ALGORITHMS: FirmwareSigningAlgorithm[] = [
     stateful: true,
     stateRequirement:
       'Monotonic counter in TPM or secure element. Must never be cloned, rolled back, or reset.',
-    cnsa2Status: 'Required for NSS firmware/software by 2025 (prefer) / 2030 (mandate)',
+    cnsa2Status:
+      'Listed for software and firmware signing in NSS (advisory Table I), single-tree LMS only (the FAQ says HSS is not allowed); NSA wants LMS and XMSS used whenever possible; exclusive CNSA 2.0 use expected by 2030',
     bestFor: 'Firmware signing, secure boot (controlled environments with HSM)',
     signingSpeed: '~0.5 ms',
     verificationSpeed: '~0.1 ms',

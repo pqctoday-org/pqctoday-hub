@@ -569,14 +569,14 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
 
           {/* CNSA 2.0 Callout */}
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <div className="text-xs font-bold text-primary mb-2">CNSA 2.0 Mandate</div>
+            <div className="text-xs font-bold text-primary mb-2">CNSA 2.0 guidance</div>
             <p className="text-xs text-muted-foreground mb-2">
-              The NSA&apos;s <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> guidance
-              mandates stateful hash-based signatures (
-              <InlineTooltip term="LMS/HSS">LMS/HSS</InlineTooltip> or{' '}
+              The NSA&apos;s <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> guidance lists
+              stateful hash-based signatures (<InlineTooltip term="LMS/HSS">LMS</InlineTooltip> or{' '}
               <InlineTooltip term="XMSS">XMSS</InlineTooltip>) for firmware and software signing in
-              National Security Systems &mdash; ahead of{' '}
-              <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> for general use.
+              National Security Systems, and its FAQ says NSA wants them used whenever possible
+              rather than waiting for <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>, which is
+              also approved for all signing use cases.
             </p>
             <div className="space-y-1">
               {[

@@ -232,8 +232,8 @@ export const SecureBootChain: React.FC = () => {
           Explore the boot trust chain and compare firmware signing algorithms. Step through each
           stage to understand how <InlineTooltip term="Secure Boot">Secure Boot</InlineTooltip>{' '}
           verifies integrity from hardware root of trust to runtime firmware, and why{' '}
-          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> mandates stateful hash-based
-          signatures for this use case.
+          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> lists stateful hash-based
+          signatures for this use case and NSA wants them used whenever possible.
         </p>
       </div>
 
@@ -653,11 +653,17 @@ export const SecureBootChain: React.FC = () => {
                   </td>
                   <td className="p-2 text-xs text-muted-foreground">
                     {alg.id === 'lms' ? (
-                      <span className="text-success font-bold">Mandated</span>
+                      <span className="text-success font-bold">
+                        Listed (NSA prefers SHA-256/192)
+                      </span>
                     ) : alg.id === 'xmss' ? (
-                      <span className="text-warning">Accepted</span>
+                      <span className="text-success font-bold">Listed</span>
+                    ) : alg.id === 'ml-dsa' ? (
+                      <span className="text-muted-foreground">
+                        ML-DSA-87 approved (FAQ); not this ML-DSA-65 set
+                      </span>
                     ) : (
-                      <span className="text-muted-foreground">Not required</span>
+                      <span className="text-muted-foreground">Not listed</span>
                     )}
                   </td>
                   <td className="p-2 text-xs text-muted-foreground hidden sm:table-cell">
