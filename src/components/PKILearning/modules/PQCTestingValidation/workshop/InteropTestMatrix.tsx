@@ -202,10 +202,11 @@ export const InteropTestMatrix: React.FC = () => {
         <p className="font-semibold text-foreground">Oversized ClientHello risk:</p>
         <p>
           Pure PQC clients send ClientHello messages up to 1,536 bytes. When a server&apos;s TCP MSS
-          is 1,460 bytes (standard Ethernet, the MSS RFC 6928 assumes), the ClientHello spans 2 TCP
-          segments — some older load balancers and firewalls drop fragmented ClientHellos, causing
-          silent failures. Use <span className="font-mono">pqcscan</span> to probe affected
-          endpoints and verify they handle oversized ClientHellos correctly.
+          is 1,460 bytes (standard Ethernet), the ClientHello spans 2 TCP segments, which is inside
+          the initial window of up to 10 segments that RFC 6928 applies. Cloudflare reported that
+          some middleboxes assume the ClientHello fits in one packet, which can cause silent
+          failures. Use <span className="font-mono">pqcscan</span> to probe affected endpoints and
+          verify they handle oversized ClientHellos correctly.
         </p>
       </div>
     </div>

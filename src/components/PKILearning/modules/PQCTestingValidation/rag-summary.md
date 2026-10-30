@@ -63,7 +63,7 @@ The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN ga
 
 **ClientHello size**: a hybrid ClientHello adds about 1.2 KB (the X25519MLKEM768 client key share is 1,216 bytes against 32 bytes for X25519 alone: a 1,184-byte ML-KEM-768 encapsulation key plus 32 bytes of X25519, RFC 10024 §4.1; the 1,120-byte figure is the server share). The ClientHello row above is the module's modeled baseline plus that increase, not a capture.
 
-**TCP fragmentation threshold**: ClientHello >~1,400 bytes triggers TCP fragmentation, adding exactly 1 RTT per connection. Hybrid (~1,504B) and pure PQC (1,536B) both exceed the standard Ethernet MSS.
+**ClientHello size and TCP segments**: A ClientHello of about 1,500 B spans two TCP segments at a 1,460-byte MSS, which is inside the initial window of up to 10 segments (14,600 B) that RFC 6928 applies in the first round-trip time. A flight larger than that window, such as a 17 KB composite certificate chain, takes more than one round trip. Some middleboxes assume the ClientHello fits in one packet, so measure with your own load balancers. Hybrid (~1,504B) and pure PQC (1,536B) ClientHellos both exceed one 1,460-byte segment.
 
 **Tools**: VIAVI TeraVM (commercial, VPN benchmarking), PQC-LEO (open source, all NIST algorithms, x86+ARM), Keysight CyPerf (freemium, TLS, Community Edition free).
 

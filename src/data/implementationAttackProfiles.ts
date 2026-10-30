@@ -439,7 +439,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         status: 'yes',
         severity: 'critical',
         detail:
-          'Rowhammer bit flips forge signatures without the private key; remotely triggerable. Earlier fault attacks on SPHINCS are cited in FIPS 205 §3.2.',
+          'Rowhammer bit flips can forge signatures without the private key; the published attack is software-only (no physical access) but needs the attacker’s code to run on the same machine as the signer. Earlier fault attacks on SPHINCS are cited in FIPS 205 §3.2.',
       },
       {
         category: 'rng-failure',
