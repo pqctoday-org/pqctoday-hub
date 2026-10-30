@@ -89,6 +89,8 @@ function buildReadme(profile: BoardPackProfile, appVersion?: string): string {
     '',
     "## What's inside",
     '',
+    'This is an assessment report pack. Saved programme charters, board proposals and delivery roadmaps are separate Command Center documents; review and export them individually for a programme funding submission.',
+    '',
     '- `executive-summary.md` — educational priority index, model band, and top-3 prompts in one page.',
     '- `key-findings.md` — the 3-5 most material insights from the assessment.',
     '- `recommended-actions.md` — every recommendation grouped by category and priority.',

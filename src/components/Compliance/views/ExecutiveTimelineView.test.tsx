@@ -120,20 +120,18 @@ function renderView() {
 }
 
 describe('ExecutiveTimelineView', () => {
-  it('renders the regulatory clock with cutover countdown', () => {
+  it('renders source-listed milestone years without a fabricated countdown', () => {
     renderView()
-    // Two countdown lines (planning + cutover) — both end with "days"
-    expect(screen.getAllByText(/days/i).length).toBeGreaterThanOrEqual(2)
-    expect(screen.getByText(/ASD ISM cutover/)).toBeInTheDocument()
+    expect(screen.getByText('Upcoming reference milestones')).toBeInTheDocument()
+    expect(screen.queryByText(/ASD ISM cutover/)).not.toBeInTheDocument()
   })
 
-  it('renders the planning milestone line when notes mention an earlier year', () => {
+  it('does not turn an earlier year mentioned in notes into a planning obligation', () => {
     renderView()
-    // ASD-ISM notes mention "end-2026 transition plan deadline" — clock should
-    // surface the 2026 milestone above the 2030 cutover. Both clock + card
-    // body may contain "end-2026" so allow ≥1.
-    expect(screen.getAllByText(/end-2026/).length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText(/Transition plan due/)).toBeInTheDocument()
+    // Narrative year mentions must not become a source-listed clock entry.
+    const clock = screen.getByText('Upcoming reference milestones').parentElement
+    expect(clock).not.toHaveTextContent('end-2026')
+    expect(screen.queryByText(/Transition plan due/)).not.toBeInTheDocument()
   })
 
   it('renders Binding section with ASD-ISM and embedded card', () => {

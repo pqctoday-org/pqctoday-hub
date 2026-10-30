@@ -99,6 +99,11 @@ export const BoardPackExport: React.FC<Props> = ({
       disabled={status === 'busy'}
       className="gap-1.5"
       aria-label={grc ? 'Generate Compliance Pack ZIP' : 'Generate Board Pack ZIP'}
+      title={
+        grc
+          ? 'Assessment compliance reference pack'
+          : 'Assessment report pack. Programme charters, proposals and roadmaps are separate Command Center documents.'
+      }
     >
       {status === 'busy' ? (
         <Loader2 size={14} className="animate-spin" aria-hidden="true" />
