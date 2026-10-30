@@ -10,7 +10,7 @@
  *  - experimental: the document marks the post-quantum entries it lists as experimental
  *  - requirement: the document sets a requirement on keys or key protection
  *  - recommended: a standards body recommends the mechanism
- *  - silent: the held text of this edition contains no post-quantum term
+ *  - silent: the held text of this edition contains none of the post-quantum terms listed in the note under the map
  */
 import type { SourceClaimId } from './sourceClaims'
 

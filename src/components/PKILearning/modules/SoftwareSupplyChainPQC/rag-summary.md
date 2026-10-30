@@ -13,7 +13,7 @@ The Software Supply Chain PQC module (40 minutes, intermediate, Industries track
 
 ### Status map
 
-Labels describe what a document says about its own form (specified in an RFC, a draft, experimental, a requirement, recommended, or silent). Silent means the held text of one edition contains no post-quantum term; it does not say what anyone plans.
+Labels describe what a document says about its own form (specified in an RFC, a draft, experimental, a requirement, recommended, or silent). Silent means the held text of one edition contains none of these terms: post-quantum, quantum, PQC, ML-DSA, SLH-DSA, Dilithium, SPHINCS, LMS, XMSS, hash-based signature, Kyber, ML-KEM; it does not say what anyone plans.
 
 - The Sigstore algorithm registry lists ECDSA (P-256, P-384, P-521) and Ed25519 as sign/verify, lists RSA as sign/verify only at 3072 and 4096 bits (the 2048-bit RSA entries are verify only and not recommended), and lists ML-DSA-44, ML-DSA-65 and ML-DSA-87 as experimental ('Pure variant. Not yet fully functional.'), with the warning that they are currently not operational within Sigstore.
 - The CA/Browser Forum Baseline Requirements for Code Signing Certificates v3.11 set root and subordinate CA keys at an RSA modulus of at least 4096 bits, ECDSA on NIST P-256, P-384 or P-521, or DSA with a 2048-bit key length (L) and a 224- or 256-bit modulus length (N), and subscriber code-signing and timestamp authority keys at an RSA modulus of at least 3072 bits, ECDSA on the same curves, or the same DSA options.
