@@ -329,8 +329,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </div>
             <p className="text-xs text-muted-foreground">
               Customer generates keys in on-prem HSM, uploads to cloud KMS. Can enforce ML-KEM-1024
-              wrapping for CMK import on customer&apos;s own schedule. Cloud KMS must support ML-KEM
-              import format (AWS KMS offers no ML-KEM keys; Azure: planned 2026).
+              wrapping for CMK import on customer&apos;s own schedule. Cloud KMS must support an
+              ML-KEM import-wrapping format (AWS KMS offers ML-KEM key specs, but its import
+              wrapping keys are RSA only; check Azure and Google Cloud per service).
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -339,9 +340,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </div>
             <p className="text-xs text-muted-foreground">
               Customer key never leaves on-prem infrastructure. Cloud receives only encrypted{' '}
-              <InlineTooltip term="DEK">DEKs</InlineTooltip>. HYOK with Thales CipherTrust or
-              Utimaco HSM supporting PKCS#11 v3.2 is already PQC-ready today &mdash; firmware
-              upgrade to enable ML-KEM-1024 mechanism.
+              <InlineTooltip term="DEK">DEKs</InlineTooltip>. HYOK with a Thales Luna HSM (firmware
+              7.9 or later) or a Utimaco u.trust Se-Series HSM with the Quantum Protect package can
+              host ML-KEM keys after a firmware or package upgrade; confirm the parameter set
+              (ML-KEM-1024), PKCS#11 v3.2 support and FIPS 140-3 validation status with the vendor.
             </p>
           </div>
         </div>
@@ -540,10 +542,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               with Enclaves
             </div>
             <p className="text-xs text-muted-foreground">
-              Secure enclaves (VBS/SGX) execute queries on plaintext decrypted inside the enclave.
-              The database engine never sees plaintext outside the enclave boundary. Range queries,
-              pattern matching, and aggregations are all possible. The enclave attestation uses
-              RSA-2048 certificates &mdash; a PQC upgrade point.
+              Secure enclaves (VBS/SGX) execute a defined set of operations on plaintext decrypted
+              inside the enclave: comparisons, range queries, LIKE pattern matching, DISTINCT, joins
+              and, in SQL Server 2022 and Azure SQL, ORDER BY and GROUP BY on randomized-encryption
+              columns. The database engine never sees plaintext outside the enclave boundary.
             </p>
           </div>
 
@@ -625,12 +627,15 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             HNDL Risk Window for Databases
           </div>
           <p className="text-xs text-muted-foreground">
-            A database with RSA-2048 wrapped DEKs and customer records retained for 15 years has a
-            HNDL exposure window of up to 15 years from first collection. If a CRQC arrives in 2030,
-            data collected today could be decrypted by 2030 via harvested ciphertext. Using{' '}
+            Exposure depends on how long the data must stay confidential, not on how long it is
+            retained: a database with RSA-2048 wrapped DEKs and records that must stay confidential
+            for 15 years has up to 15 years of exposure. If a CRQC arrives in 2030, data collected
+            today could be decrypted by 2030 via harvested ciphertext. Using{' '}
             <InlineTooltip term="BYOK">BYOK</InlineTooltip> or{' '}
-            <InlineTooltip term="HYOK">HYOK</InlineTooltip> with ML-KEM wrapping eliminates this
-            risk for new data immediately; historical records require re-encryption.
+            <InlineTooltip term="HYOK">HYOK</InlineTooltip> with ML-KEM wrapping protects keys
+            wrapped from now on; ciphertext and old key envelopes that an adversary has already
+            taken remain exposed, and re-encrypting the data protects only the copies the adversary
+            has not yet taken.
           </p>
         </div>
       </LearnSection>

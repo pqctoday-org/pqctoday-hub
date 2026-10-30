@@ -120,7 +120,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism: 'AES-256 (database encryption key wrapped by service master key)',
     columnEncryption: 'Always Encrypted with secure enclaves (VBS/SGX), RSA-OAEP CMK wrapping',
     catalogName: 'SQL Server TDE/Always Encrypted',
-    pqcTimeline: 'Azure KV ML-KEM support planned 2026; on-prem TDE PQC in SQL Server vNext',
+    pqcTimeline: 'On-prem TDE PQC in SQL Server vNext',
     keyManagement: ['provider-managed', 'byok', 'hyok'],
     hsmIntegration: true,
     fipsValidated: true,
@@ -260,11 +260,11 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     step: 2,
     title: 'PQC-Capable External KMS Setup',
     description:
-      'Configure a PQC-capable KMS (for example Thales CipherTrust or Azure Key Vault; AWS KMS offers no ML-KEM keys) to generate ML-KEM-1024 key wrapping keys. Establish KMIP v2 connectivity from the database server.',
+      'Configure a PQC-capable KMS (for example Thales CipherTrust; AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only) to generate ML-KEM-1024 key wrapping keys. Establish KMIP v2 connectivity from the database server.',
     classicalApproach:
       'External KMS with RSA-2048/4096 TLS-wrapped KMIP connection. Key wrapping via RSA-OAEP or AES-WRAP.',
     pqcApproach:
-      'Thales CipherTrust (roadmap version) with ML-KEM-1024 key wrapping algorithm. AWS KMS offers ML-DSA signing keys (GA June 2025) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but no ML-KEM KMS keys. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
+      'Thales CipherTrust (roadmap version) with ML-KEM-1024 key wrapping algorithm. AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but its import wrapping keys are RSA only. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
     downtime: 'None',
     risk: 'medium',
     tooling: [
@@ -283,7 +283,7 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     classicalApproach:
       'ALTER MASTER KEY REGENERATE / Oracle okvutil rekey — RSA-2048 TDE master key wrapped in external KMS using RSA-OAEP.',
     pqcApproach:
-      'Generate ML-KEM-1024 key pair in Thales HSM. Use ML-KEM.Encaps to wrap new 256-bit DEK. Store KEM ciphertext (1,568 bytes) + wrapped DEK alongside old RSA entry during transition.',
+      'Generate ML-KEM-1024 key pair in Thales HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside old RSA entry during transition.',
     downtime: '< 1 min (key metadata update only)',
     risk: 'medium',
     tooling: [
@@ -335,7 +335,7 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     classicalApproach:
       'DROP MASTER KEY / Oracle key archive. Retain 90-day archive window per audit requirements. KMS policy updated to disallow RSA key creation.',
     pqcApproach:
-      'Mark RSA keys as DEACTIVATED in KMS (not deleted — needed for decrypting old backups). Set key state = COMPROMISED after 1-year retention window. Enforce ML-KEM-only policy for new key wrapping.',
+      'Mark RSA keys as DEACTIVATED in KMS (not deleted — needed for decrypting old backups). Destroy the keys (KMIP Destroy: Deactivated → Destroyed) after the 1-year retention window. Enforce ML-KEM-only policy for new key wrapping.',
     downtime: 'None',
     risk: 'low',
     tooling: [
@@ -389,7 +389,7 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
     wrappingAlgorithm: 'RSA-OAEP import wrapping (customer wraps key before upload)',
     dataKey: '256-bit AES-GCM DEK, wrapped by imported CMK in cloud KMS',
     pqcUpgrade:
-      'Download ML-KEM-1024 public wrapping key from Cloud KMS. Generate new CMK on-prem. Run ML-KEM.Encaps to derive a shared secret and ciphertext. Wrap the CMK with the shared secret (AES-KWP) and upload to Cloud KMS.',
+      'Design target (AWS KMS import wrapping keys are RSA only): download an ML-KEM-1024 public wrapping key from the Cloud KMS, generate the new CMK on-prem, run ML-KEM.Encaps to derive a shared secret and ciphertext, wrap the CMK with the shared secret (AES-KWP), and upload the ciphertext and wrapped CMK.',
     diagram: [
       'Cloud KMS (provides ML-KEM public key)',
       '         ↓ download ek',
@@ -480,7 +480,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     limitations:
       'Without enclaves: equality queries only, no joins on encrypted columns. With enclaves: range queries supported but SGX deprecation concerns. CMK rotation requires re-encryption of all CEKs.',
     pqcRoadmap:
-      'Azure Key Vault ML-KEM support planned 2026 — CMK stored in AKV would use ML-KEM-1024 wrapping. On-prem CMK in SQL Server vNext. Enclave-based range queries unaffected (symmetric crypto).',
+      'On-prem CMK in SQL Server vNext. Enclave-based range queries unaffected (symmetric crypto).',
   },
   {
     id: 'oracle-csqe',
@@ -529,7 +529,8 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     id: 'hipaa-312',
     framework: 'HIPAA § 164.312(a)(2)(iv)',
     requirement: 'Addressable safeguard: encryption and decryption of ePHI at rest and in transit.',
-    cryptoStandard: 'AES-128 minimum (NIST SP 800-111); AES-256 recommended for new deployments.',
+    cryptoStandard:
+      'Use AES (NIST SP 800-111); AES-256 is common for new deployments and long confidentiality horizons.',
     deadlineNote:
       'HHS has not issued PQC-specific HIPAA guidance; NSM-10 applies to federal healthcare systems.',
     pqcImplication:
@@ -563,12 +564,13 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     id: 'nsm8-cnsa20',
     framework: 'NSM-8 / CNSA 2.0',
     requirement:
-      'US federal systems and NSS must transition to CNSA 2.0 algorithms: ML-KEM-1024 for key establishment.',
-    cryptoStandard: 'ML-KEM-1024 (FIPS 203), ML-DSA-87 (FIPS 204) — exclusive by 2033.',
+      'National Security Systems must transition to CNSA 2.0 algorithms: ML-KEM-1024 for key establishment.',
+    cryptoStandard:
+      'ML-KEM-1024 (FIPS 203) and ML-DSA-87 (FIPS 204), with LMS/XMSS for software and firmware signing; SLH-DSA is not part of CNSA and is not approved for any use in NSS.',
     deadlineNote:
-      'New capabilities: ML-KEM by 2027. Legacy systems: ML-KEM exclusively by 2033. NSM-8 issued Jan 2022.',
+      'New NSS acquisitions: CNSA 2.0 required from 1 Jan 2027 (CNSSP 15). Fielded equipment transitions: by 31 Dec 2030. CNSA 2.0 mandated for use in NSS by 31 Dec 2031. NSM-8 issued Jan 2022.',
     pqcImplication:
-      'Federal databases (DoD, IC, civilian agencies) must use ML-KEM-1024 for all DEK wrapping by 2033. HYOK with FIPS 140-3 Level 3+ HSM mandatory. Classical RSA/ECC key wrapping prohibited after 2033.',
+      'NSS databases (DoD, IC) must use CNSA 2.0 algorithms, with ML-KEM-1024 for key establishment, on the dates above (NSA CNSA 2.0 FAQ, CNSSP 15).',
   },
 ]
 
