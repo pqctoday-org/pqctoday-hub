@@ -1,8 +1,8 @@
 Third-party notices for the softhsmrustv3-engine engine bundle
 ============================================================
 
-Built from https://github.com/pqctoday-org/pqctoday-hsm at commit d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0
-(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0).
+Built from https://github.com/pqctoday-org/pqctoday-hsm at commit 5443f045961e32ced16fdecc48b2700a4a1bc015
+(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/5443f045961e32ced16fdecc48b2700a4a1bc015).
 Code written by PQC Today, LLC is under the licence in that repository.
 This file lists the third-party code compiled into the bundle, its
 licence and where its full licence text is (LICENSES/ next to this file).
@@ -15,7 +15,7 @@ Code written by PQC Today, LLC (Rust PKCS#11 engine, KMIP server and policy engi
   Licence:   AGPL-3.0-only
   Copyright: Copyright (c) 2024-2026 PQC Today, LLC
   Source:    this repository (see COPYRIGHT.md)
-  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0. It stays available there, and on request from PQC Today, LLC (pqctoday@proton.me), for at least three years after this bundle is published.
+  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/5443f045961e32ced16fdecc48b2700a4a1bc015. It stays available there, and on request from PQC Today, LLC (pqctoday@proton.me), for at least three years after this bundle is published.
   Text:      LICENSES/pqctoday-rust/AGPL-3.0-only.txt
 
 Rust crates (159, from rust/Cargo.lock, target wasm32-unknown-unknown)

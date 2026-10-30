@@ -167,24 +167,76 @@
       }
     },
     "softhsmrustv3-engine": {
-      "hsmCommit": "d1f62a418ce02d6d4aa90fc32674b7aad1a5f2a0",
+      "hsmCommit": "5443f045961e32ced16fdecc48b2700a4a1bc015",
       "release": {
-        "tag": "engines-5",
-        "asset": "softhsmrustv3-engine-d1f62a41.tar.gz",
-        "tarballSha256": "80988c3a06073125e86007a40ba044d230ef2de4416a1d26fd014d9e5d96a804"
+        "tag": "engines-6",
+        "asset": "softhsmrustv3-engine-5443f045.tar.gz",
+        "tarballSha256": "1973135e2a105707fdc139dc35a2293f09eea6aedad25e53155e4a7d73cbe975"
       },
       "files": {
+        "public/wasm/rust/build-profile.json": {
+          "sha256": "a01d4624281554b5b5e7601387b3fff5f2f445bc71120e167ec74ef13c47d744",
+          "bytes": 190
+        },
+        "public/wasm/rust/softhsmrustv3.d.ts": {
+          "sha256": "c1813dbe762f85073a0615085f72d9edffaf8336b49a7161d26ed52c926cc0ca",
+          "bytes": 19944
+        },
+        "public/wasm/rust/softhsmrustv3.js": {
+          "sha256": "3806f56f68d7a474fbed60590cf53d09416f2939236f52bc817a4d236ffc497e",
+          "bytes": 2445
+        },
+        "public/wasm/rust/softhsmrustv3_bg.js": {
+          "sha256": "1e4692718112fdceeb7373ab3d8eab348b5b067fc2fb996bbe05cb8bb2342d88",
+          "bytes": 61467
+        },
         "public/wasm/rust/softhsmrustv3_bg.wasm": {
-          "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
-          "bytes": 3309158
+          "sha256": "fbabbc6880500e78f7f410088c4c05ac773513f285f1c6db8606cf8f8ce08ef0",
+          "bytes": 4136081
+        },
+        "public/wasm/rust/softhsmrustv3_bg.wasm.d.ts": {
+          "sha256": "e81dc63eb9171067cd3cb9e519d840bb70331e5af9feaddde41be2b2617286c2",
+          "bytes": 11918
+        },
+        "src/vendor/softhsm-wasm/wasm/softhsmrustv3.d.ts": {
+          "sha256": "c1813dbe762f85073a0615085f72d9edffaf8336b49a7161d26ed52c926cc0ca",
+          "bytes": 19944
+        },
+        "src/vendor/softhsm-wasm/wasm/softhsmrustv3.js": {
+          "sha256": "3806f56f68d7a474fbed60590cf53d09416f2939236f52bc817a4d236ffc497e",
+          "bytes": 2445
+        },
+        "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.js": {
+          "sha256": "1e4692718112fdceeb7373ab3d8eab348b5b067fc2fb996bbe05cb8bb2342d88",
+          "bytes": 61467
         },
         "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
-          "bytes": 3309158
+          "sha256": "fbabbc6880500e78f7f410088c4c05ac773513f285f1c6db8606cf8f8ce08ef0",
+          "bytes": 4136081
+        },
+        "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm.d.ts": {
+          "sha256": "e81dc63eb9171067cd3cb9e519d840bb70331e5af9feaddde41be2b2617286c2",
+          "bytes": 11918
+        },
+        "src/wasm/softhsmrustv3.d.ts": {
+          "sha256": "c1813dbe762f85073a0615085f72d9edffaf8336b49a7161d26ed52c926cc0ca",
+          "bytes": 19944
+        },
+        "src/wasm/softhsmrustv3.js": {
+          "sha256": "3806f56f68d7a474fbed60590cf53d09416f2939236f52bc817a4d236ffc497e",
+          "bytes": 2445
+        },
+        "src/wasm/softhsmrustv3_bg.js": {
+          "sha256": "1e4692718112fdceeb7373ab3d8eab348b5b067fc2fb996bbe05cb8bb2342d88",
+          "bytes": 61467
         },
         "src/wasm/softhsmrustv3_bg.wasm": {
-          "sha256": "a332562c43c1f3f1b124b556747d9efa6a6449d7a0c8c9334c86d4fa5f7d9789",
-          "bytes": 3309158
+          "sha256": "fbabbc6880500e78f7f410088c4c05ac773513f285f1c6db8606cf8f8ce08ef0",
+          "bytes": 4136081
+        },
+        "src/wasm/softhsmrustv3_bg.wasm.d.ts": {
+          "sha256": "e81dc63eb9171067cd3cb9e519d840bb70331e5af9feaddde41be2b2617286c2",
+          "bytes": 11918
         }
       }
     },
