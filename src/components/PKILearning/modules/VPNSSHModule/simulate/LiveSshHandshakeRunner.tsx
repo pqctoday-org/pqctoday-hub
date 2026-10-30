@@ -31,6 +31,14 @@ function algoToMode(algo: SSHKexAlgorithm): 'classical' | 'pqc' | 'spec-only' {
   return 'spec-only'
 }
 
+/** Share names as each spec writes them: RFC 8731 uses Q_C / Q_S, the ML-KEM
+ *  hybrid draft (draft-ietf-sshm-mlkem-hybrid-kex) uses C_INIT / S_REPLY. */
+function shareLabels(mode: 'classical' | 'pqc'): { client: string; server: string } {
+  return mode === 'pqc'
+    ? { client: 'Client share (C_INIT)', server: 'Server share (S_REPLY)' }
+    : { client: 'Client share (Q_C)', server: 'Server share (Q_S)' }
+}
+
 function CompareCell({
   label,
   spec,
@@ -151,6 +159,7 @@ function RunnerInner({ algorithm }: Props) {
   }
 
   const isRunning = phase === 'initializing' || phase === 'running'
+  const labels = shareLabels(mode)
   const runLabel =
     phase === 'initializing'
       ? 'Initializing softhsmv3…'
@@ -209,12 +218,12 @@ function RunnerInner({ algorithm }: Props) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <CompareCell
-          label="Client share (Q_C)"
+          label={labels.client}
           spec={sizes.publicKeyBytes}
           live={result?.kex_share_bytes ?? null}
         />
         <CompareCell
-          label="Server share (Q_S)"
+          label={labels.server}
           spec={sizes.ciphertextOrShareBytes}
           live={result?.kex_reply_share_bytes ?? null}
         />
