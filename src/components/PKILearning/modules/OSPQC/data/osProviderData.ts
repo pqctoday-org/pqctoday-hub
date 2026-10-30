@@ -130,10 +130,11 @@ export const OS_VENDORS: OSVendorStatus[] = [
     pkgSigningPqc: 'Windows Update uses RSA-4096; ML-DSA code signing in Windows roadmap 2027',
     roadmapYear: '2025-11 (Nov 2025 Update)',
     mlKemSupport:
-      'ML-KEM GA in CNG APIs (Nov 2025); Schannel TLS 1.3 X25519MLKEM768 is preview (Insider builds), disabled by default',
-    mlDsaSupport: 'ML-DSA (and SLH-DSA) GA in CNG APIs since November 2025',
+      'ML-KEM GA in CNG APIs (Nov 2025); Schannel TLS 1.3 hybrid groups (x25519_mlkem768 etc.) shipped 14 Jul 2026 (KB5099536 / KB5089573), disabled by default',
+    mlDsaSupport:
+      'ML-DSA GA in CNG APIs since November 2025; SLH-DSA not implemented by the default CNG provider',
     notes:
-      'The November 2025 GA covers the CNG APIs (ML-KEM, ML-DSA, SLH-DSA) on Windows 11 24H2+ and Windows Server 2025. Schannel TLS hybrid key exchange (X25519MLKEM768) remains preview via Windows Insider builds and is disabled by default — enable it via Group Policy or TLS cmdlets. SymCrypt (the underlying crypto library) fully supports ML-KEM and ML-DSA. FIPS 140-3 certificate covers SymCrypt 103.4.0+.',
+      'The November 2025 GA covers the CNG APIs for ML-KEM and ML-DSA on Windows 11 24H2+ and Windows Server 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS hybrid key exchange (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) shipped in the 14 July 2026 updates (KB5089573 for Windows 11 24H2 and 25H2, KB5099536 for Windows Server 2025) and is disabled by default — enable it via Group Policy or TLS cmdlets. SymCrypt (the underlying crypto library) fully supports ML-KEM and ML-DSA. The SymCrypt FIPS 140-3 certificate (CMVP #5313) lists no ML-KEM or ML-DSA in the Hub CMVP snapshot.',
   },
   {
     id: 'debian',

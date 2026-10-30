@@ -261,7 +261,7 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     direction: 'north-south',
     description: 'Site-to-site VPN using IKEv2 with PQC KEM (RFC 9370 hybrid KEM for IKEv2).',
     pqcImpact:
-      'IKEv2 ADDITIONAL_KEY_EXCHANGE (AKE) payload adds ML-KEM overhead. Impact concentrated in tunnel setup, not data transfer.',
+      'Each extra IKEv2 key exchange (an additional key exchange transform, RFC 9370) adds a KE payload carrying an ML-KEM key in an IKE_INTERMEDIATE exchange. Impact concentrated in tunnel setup, not data transfer.',
     certSizeImpact: 'IKEv2 KE payload: +1,184-1,568 bytes for ML-KEM-768/1024 public keys',
     latencyImpact: '+10-30ms tunnel establishment; session rekey overhead is minimal',
     inspectionComplexity: 'medium',
@@ -480,10 +480,10 @@ export const IDS_RULE_CATEGORIES: IDSRuleCategory[] = [
     id: 'ipsec-pqc-ike',
     name: 'IPsec IKEv2 PQC Key Exchange',
     description:
-      'Detect and log IKEv2 ADDITIONAL_KEY_EXCHANGE (AKE) payloads containing ML-KEM KEMs per RFC 9370. Enables inventory of PQC-protected VPN tunnels and detection of non-PQC IPsec.',
+      'Detect and log IKEv2 IKE_INTERMEDIATE exchanges whose KE payloads carry ML-KEM keys (additional key exchange transforms, RFC 9370). Enables inventory of PQC-protected VPN tunnels and detection of non-PQC IPsec.',
     examplePatterns: [
       'IKEv2 SA proposal with ML-KEM-768 transform (Transform Type 4)',
-      'IKEv2 ADDITIONAL_KEY_EXCHANGE payload present',
+      'IKEv2 IKE_INTERMEDIATE exchange with an ML-KEM KE payload',
       'IKEv2 proposal without PQC KEM (HNDL risk for site-to-site VPN)',
     ],
     falsePositiveRisk: 'low',

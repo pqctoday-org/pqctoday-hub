@@ -32,8 +32,8 @@ Module covering PQC migration for network security infrastructure including NGFW
 
 ## Standards References
 
-- NIST SP 800-227: Key Encapsulation Mechanisms (ML-KEM in TLS)
-- NIST SP 800-207A: Zero Trust Architecture and PQC
+- NIST SP 800-227: Recommendations for Key-Encapsulation Mechanisms (KEMs in general, not specific to TLS)
+- NIST SP 800-207A: access-control model for cloud-native, multi-location zero trust (no post-quantum content)
 - RFC 9370: Multiple Key Exchanges in IKEv2 (hybrid KEM for IPsec)
 - CNSA 2.0 FAQ version 2.2: new NSS acquisitions from 2027, unsupported equipment and services phased out by 2030, algorithms mandated by 2031 unless otherwise noted. The separate 2035 date is the broader NSM-10 objective. CNSA 2.0 does not generally require hybrid constructions.
 - NIST IR 8547 (final, October 2026; systems that follow NIST standards): quantum-vulnerable public-key algorithms at 112-bit security and up deprecated after 2030 and disallowed after 2035

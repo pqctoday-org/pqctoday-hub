@@ -98,17 +98,18 @@ sudo apt install openssl-oqsprovider
   {
     id: 'windows-fips',
     os: 'Windows Server 2025',
-    fipsModule: 'SymCrypt 103.4.0 (CNG FIPS 140-3 module)',
+    fipsModule: 'SymCrypt (CNG FIPS 140-3 module, CMVP #5313)',
     fipsStatus: 'fips-140-3',
-    mlKemInFips: 'yes',
-    mlDsaInFips: 'pending',
-    fipsCertDate: 'Windows Server 2025: SymCrypt FIPS 140-3 validated (see CMVP for current cert)',
+    mlKemInFips: 'no',
+    mlDsaInFips: 'no',
+    fipsCertDate:
+      'SymCrypt: CMVP certificate #5313 (FIPS 140-3, Level 1, Active, validated 5 June 2026)',
     pqcFipsCertTarget:
-      'ML-KEM-768 included in SymCrypt FIPS cert. ML-DSA FIPS validation for SymCrypt 104.x target 2026.',
+      'Certificate #5313 lists no ML-KEM or ML-DSA (the CMVP snapshot shows No PQC Mechanisms Detected); check the CMVP listing for a later certificate.',
     hybridStrategy:
-      'Windows Server 2025 is the most advanced — ML-KEM is in the FIPS-validated SymCrypt module. Enable FIPS compliance mode via Group Policy; ML-KEM TLS 1.3 hybrid (X25519MLKEM768) works in FIPS mode.',
+      'ML-KEM and ML-DSA ship in the SymCrypt / CNG stack since November 2025, but the validated SymCrypt certificate lists no PQC mechanisms, and the Microsoft TLS Supported Groups page shows the hybrid groups (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) as not available in FIPS mode (legacy). Check both before enabling them where FIPS mode is required.',
     notes:
-      'Windows Server 2025 with KB5068861 (November 2025) adds ML-KEM and ML-DSA API support (FIPS 203/204) to the SymCrypt / CNG cryptographic stack. ML-DSA signing is implemented but the SymCrypt FIPS 140-3 certificate update covering the PQC algorithms is expected in 2026.',
+      'Windows Server 2025 with KB5068861 (November 2025) adds ML-KEM and ML-DSA API support (FIPS 203/204) to the SymCrypt / CNG cryptographic stack. ML-DSA signing is implemented. The CMVP snapshot shows no ML-KEM or ML-DSA on SymCrypt certificate #5313 (Active); check the CMVP listing for updates.',
     commands: `# Enable FIPS compliance mode (Group Policy):
 # Computer Configuration → Windows Settings → Security Settings →
 # Local Policies → Security Options:
@@ -280,10 +281,12 @@ export const FIPSCompatibilityChecker: React.FC = () => {
         </div>
         <div className="mt-3 p-3 bg-status-info/5 rounded border border-status-info/20">
           <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Key insight:</strong> Windows Server 2025 (SymCrypt
-            103.4.0) was the first major OS platform to ship ML-KEM inside a FIPS 140-3 validated
-            module, and it is no longer alone — our own CMVP snapshot also lists Apple corecrypto
-            and the Go cryptographic modules that Linux-based platforms build on. Check the
+            <strong className="text-foreground">Key insight:</strong> Shipping ML-KEM in an
+            operating system library is not the same as having it inside a FIPS 140-3 validated
+            module. The Windows SymCrypt certificate (#5313) lists no PQC mechanisms in our CMVP
+            snapshot; the Go cryptographic modules that Linux-based platforms build on have FIPS
+            140-3 certificates that list ML-KEM (for example #5247), and Apple corecrypto appears
+            only at the algorithm-validation (ACVP) level for ML-KEM and ML-DSA. Check the
             validated-module list for your exact platform and version rather than assuming your
             distribution is covered: a distribution shipping an ML-KEM implementation is not the
             same as that implementation being inside a validated module boundary.
