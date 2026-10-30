@@ -97,8 +97,14 @@ describe('OT protocol facts', () => {
     expect(proto('iec61850-goose').timingRequirement).toMatch(
       /transfer-time class TT6 \(3 ms or less\)/
     )
-    expect(tripTimeClass('transmission')).toEqual({ perfClass: 'TT6 ≤3 ms', budgetMs: 3 })
-    expect(tripTimeClass('distribution').budgetMs).toBe(10)
+    expect(tripTimeClass('transmission')).toEqual({
+      perfClass: 'TT6 ≤3 ms (IEC 61850-5)',
+      budgetMs: 3,
+    })
+    expect(tripTimeClass('distribution')).toEqual({
+      perfClass: '10 ms (planning assumption for distribution)',
+      budgetMs: 10,
+    })
   })
 
   it('every public-key size delta comes from the algorithm registry', () => {

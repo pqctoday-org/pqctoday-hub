@@ -194,10 +194,8 @@ export const SubstationMigrationPlanner: React.FC<SubstationMigrationPlannerProp
         <div className="mt-4 flex items-start gap-2 bg-status-info/10 rounded-lg p-3 border border-status-info/20 text-xs">
           <Timer size={14} className="text-status-info shrink-0 mt-0.5" />
           <span className="text-muted-foreground">
-            <strong className="text-foreground">
-              Trip-message budget: {trip.budgetMs} ms ({trip.perfClass}, IEC 61850-5)
-            </strong>{' '}
-            — the GOOSE trip path keeps its symmetric MAC. No PQC operation goes inside this budget.
+            <strong className="text-foreground">Trip-message budget: {trip.perfClass}</strong> — the
+            GOOSE trip path keeps its symmetric MAC. No PQC operation goes inside this budget.
           </span>
         </div>
       </div>
