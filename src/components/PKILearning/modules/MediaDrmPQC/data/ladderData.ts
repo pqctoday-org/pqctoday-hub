@@ -176,5 +176,5 @@ export const NIST_TRANSITION = {
   table3:
     'Table 3 lists the post-quantum signature families ML-DSA (FIPS 204), SLH-DSA (FIPS 205), LMS and HSS, and XMSS and XMSS^MT (SP 800-208).',
   scope:
-    'These dates are NIST’s schedule for NIST standards and guidelines. They are not a deadline set by any media licensing body or studio.',
+    'These dates are NIST’s schedule for NIST standards and guidelines. The media documents read for this lesson (ECP, AACS, CI Plus and C2PA) state no deadline of their own.',
 }

@@ -343,10 +343,11 @@ export const MediaDrmIntroduction: React.FC<Props> = ({ onNavigateToWorkshop }) 
         </div>
 
         <p className="text-muted-foreground">
-          The editions this lesson reads do not mention quantum computing, so none of them states a
-          post-quantum migration timeline, and this lesson gives none. What it gives is the map: for
-          each link, which primitive is in play, which NIST table lists that kind of primitive, and
-          who the documents say can change or revoke something.
+          The ECP, AACS, CI Plus and C2PA editions this lesson reads do not mention quantum
+          computing, so none of them states a post-quantum migration timeline, and this lesson gives
+          none for them. What it gives is the map: for each link, which primitive is in play, which
+          NIST table lists that kind of primitive, and who the documents say can change or revoke
+          something.
         </p>
         <Button variant="outline" onClick={onNavigateToWorkshop} className="text-sm">
           Compare the editions in the Workshop <ArrowRight size={14} className="ml-1" />
