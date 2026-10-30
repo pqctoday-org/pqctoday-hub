@@ -367,7 +367,7 @@ export const ZTNA_COMPONENTS: ZeroTrustComponent[] = [
     migrationComplexity: 'medium',
     keyAlgorithm: 'ML-DSA-44 (device attestation signatures)',
     notes:
-      'Device certificates presented to policy engine must be quantum-safe. Agent-to-controller channels migrate to TLS with ML-KEM-768 hybrid. Lower security level (ML-DSA-44) acceptable for device certs vs ML-DSA-65 for users.',
+      'Device certificates presented to policy engine must be quantum-safe. Agent-to-controller channels migrate to TLS with ML-KEM-768 hybrid. For commercial ZTNA, a lower security level (ML-DSA-44) may suffice for device certificates vs ML-DSA-65 for users; National Security Systems must use the CNSA 2.0 parameters (ML-DSA-87, ML-KEM-1024).',
   },
   {
     id: 'policy-engine',
