@@ -805,7 +805,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     explanation:
       'The most-restrictive-wins rule applies: CNSA 2.0 prescribes High for this key because it protects firmware used in federal systems. Even though the firmware is open-source and the key is "only" signing public releases, the downstream impact on national security systems elevates the classification. A compromised signing key could inject malicious firmware into critical infrastructure.',
     pqcImplication:
-      'ML-DSA-87 (FIPS 204) for code signing — CNSA 2.0 specifies ML-DSA-87 for all classification levels, so ML-DSA-65 does not meet it. Hybrid with ECDSA P-256 during transition.',
+      'ML-DSA-87 (FIPS 204) for code signing — CNSA 2.0 specifies ML-DSA-87 for all classification levels, so ML-DSA-65 does not meet it. Hybrid with ECDSA P-384 if a classical signature is kept during transition (NSA does not require hybrid).',
   },
   {
     id: 'con-05',
