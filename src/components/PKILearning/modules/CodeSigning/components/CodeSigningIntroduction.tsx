@@ -115,7 +115,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             {[
               {
                 t: 'Dependency Sprawl',
-                d: 'The average enterprise application pulls in 200\u2013500 transitive dependencies. Each dependency is a link in the trust chain \u2014 and each link is only as strong as its maintainer\u2019s signing practices.',
+                d: 'Applications pull in many transitive dependencies. Each dependency is a link in the trust chain \u2014 and each link is only as strong as its maintainer\u2019s signing practices.',
               },
               {
                 t: 'The Transitive Trust Problem',

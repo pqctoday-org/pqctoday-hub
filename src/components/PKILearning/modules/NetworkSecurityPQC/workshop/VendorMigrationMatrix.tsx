@@ -191,7 +191,7 @@ export const VendorMigrationMatrix: React.FC = () => {
                         )}
                       </td>
                       <td className="py-3 px-2 text-center font-mono text-muted-foreground">
-                        {vendor.roadmapYear}
+                        {vendor.roadmapYear ?? 'Not stated'}
                       </td>
                       <td className="py-3 px-2 text-center">
                         <Button
@@ -242,10 +242,18 @@ export const VendorMigrationMatrix: React.FC = () => {
                               Hybrid mode:{' '}
                               <strong
                                 className={
-                                  vendor.hybridMode ? 'text-status-success' : 'text-status-error'
+                                  vendor.hybridMode === undefined
+                                    ? 'text-muted-foreground'
+                                    : vendor.hybridMode
+                                      ? 'text-status-success'
+                                      : 'text-status-error'
                                 }
                               >
-                                {vendor.hybridMode ? 'Supported' : 'Not supported'}
+                                {vendor.hybridMode === undefined
+                                  ? 'Not stated'
+                                  : vendor.hybridMode
+                                    ? 'Supported'
+                                    : 'Not supported'}
                               </strong>
                             </span>
                           </div>

@@ -18,9 +18,11 @@ export interface VendorMigrationStatus {
   tlsInspectionPQC: 'supported' | 'partial' | 'roadmap' | 'not-supported'
   mlKemStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported'
   mlDsaStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported'
-  hybridMode: boolean
+  /** Omitted when the vendor's own pages do not say. */
+  hybridMode?: boolean
   certSizeLimit: string
-  roadmapYear: number
+  /** Omitted when the vendor's own pages do not say. */
+  roadmapYear?: number
   hardwareOffload: boolean
   fipsCompliant: boolean
   upgradeRequired: boolean
@@ -162,8 +164,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     tlsInspectionPQC: 'roadmap',
     mlKemStatus: 'roadmap',
     mlDsaStatus: 'ga',
-    hybridMode: true,
-    certSizeLimit: '4KB (Junos 24.x)',
+    certSizeLimit: 'Not stated by Juniper',
     roadmapYear: 2026,
     hardwareOffload: false,
     fipsCompliant: true,
@@ -171,7 +172,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     upgradeDetails:
       'Junos OS 25.4R1 adds ML-DSA-87 post-quantum signatures for software images on SRX Series and other platforms, validated off-box. For IPsec, Juniper documents quantum-safe VPNs with post-quantum pre-shared keys (RFC 8784), not an ML-KEM key exchange.',
     notes:
-      'The product catalog records no ML-KEM hybrid IKEv2 key exchange in Junos OS as of release 26.2R1. A post-quantum pre-shared key (RFC 8784) is an out-of-band secret added at both peers, used alongside the IKEv2 authentication method; it is not a KEM.',
+      'The product catalog says an ML-KEM hybrid IKEv2 key exchange is not yet shipping in Junos OS as of release 26.2R1. A post-quantum pre-shared key (RFC 8784) is an out-of-band secret added at both peers, used alongside the IKEv2 authentication method; it is not a KEM.',
   },
   {
     id: 'check-point',
@@ -240,11 +241,10 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     tier: 'open-source',
     catalogName: 'OPNsense',
     tlsInspectionPQC: 'not-supported',
-    mlKemStatus: 'beta',
+    mlKemStatus: 'ga',
     mlDsaStatus: 'not-supported',
     hybridMode: true,
     certSizeLimit: 'No limit (OS-level, no appliance buffer)',
-    roadmapYear: 2025,
     hardwareOffload: false,
     fipsCompliant: false,
     upgradeRequired: false,

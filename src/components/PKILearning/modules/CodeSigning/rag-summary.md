@@ -1,6 +1,6 @@
 # Code Signing & Supply Chain Security Module
 
-This module teaches post-quantum code signing and software supply chain security. Code signing is the cryptographic mechanism that guarantees software integrity and publisher authenticity. Every operating system, package manager, and app store relies on digital signatures to verify that binaries have not been tampered with after publication. The module covers supply chain attack case studies (SolarWinds, 3CX, Codecov), the quantum threat amplifier for supply chains, PQC signing algorithms (ML-DSA, SLH-DSA, LMS), certificate chain architecture, package manager signing status, Sigstore keyless signing, and secure boot/firmware signing with CNSA 2.0 timelines.
+This module teaches post-quantum code signing and software supply chain security. Code signing is the cryptographic mechanism that guarantees software integrity and publisher authenticity. Every operating system, package manager, and app store relies on digital signatures to verify that binaries have not been tampered with after publication. The module covers supply chain attack case studies (SolarWinds, Codecov), the quantum threat amplifier for supply chains, PQC signing algorithms (ML-DSA, SLH-DSA, LMS), certificate chain architecture, package manager signing status, Sigstore keyless signing, and secure boot/firmware signing with CNSA 2.0 timelines.
 
 ## Key Concepts
 
