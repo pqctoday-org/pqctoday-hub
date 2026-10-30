@@ -635,6 +635,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    moduleId: 'media-drm-pqc',
+    competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'security-developer'],
+    isCommonGround: false,
+  },
+  {
     moduleId: 'government-defense-pqc',
     // Supply Chain Security: CISA product categories, CMMC 2.0, and SP 800-171
     // Rev.3 govern what federal contractors may procure and how they must

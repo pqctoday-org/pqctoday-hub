@@ -94,6 +94,8 @@ export const QUIZ_CATEGORIES = [
   'acvp-lab-workflow',
   // 10-01: LM-073, the Curious role guide for non-technical roles.
   'talking-about-pqc',
+  // 10-29: LM-077, Media, Entertainment & DRM PQC.
+  'media-drm-pqc',
 ] as const
 
 export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]

@@ -415,6 +415,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Avionics protocol constraints, satellite link budgets, DO-178C certification, export controls, and multi-decade fleet crypto interoperability.',
       icon: 'Rocket',
     },
+    'media-drm-pqc': {
+      label: 'Media, Entertainment & DRM PQC',
+      description:
+        'Reading content-protection and provenance specifications precisely: the AACS key ladder, CI Plus, the MovieLabs ECP specification, streaming licenses, C2PA Content Credentials and NIST IR 8547.',
+      icon: 'Shield',
+    },
     'automotive-pqc': {
       label: 'Automotive PQC',
       description:
