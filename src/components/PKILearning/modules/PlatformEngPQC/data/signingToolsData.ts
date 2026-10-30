@@ -67,7 +67,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: false,
     pqcReadiness: 'roadmap',
     pqcNotes:
-      'RFC 9980 (Standards Track, June 2026, the former draft-ietf-openpgp-pqc) adds post-quantum OpenPGP: for signatures the composite schemes ML-DSA-65+Ed25519 (MUST) and ML-DSA-87+Ed448 (SHOULD), and standalone SLH-DSA (MAY). Note: GnuPG is pursuing the LibrePGP format (diverging from RFC 9580); Sequoia-PGP implements RFC 9580 (OpenPGP v6). Whether each implements RFC 9980 is not stated in the held documents. Migration requires re-signing all artifacts with new PQC keys.',
+      'RFC 9980 (Standards Track, June 2026, the former draft-ietf-openpgp-pqc) adds post-quantum OpenPGP: for signatures a conformant implementation MUST implement the composite scheme ML-DSA-65+Ed25519 and SHOULD also implement ML-DSA-87+Ed448; standalone SLH-DSA is optional (MAY). Note: GnuPG is pursuing the LibrePGP format (diverging from RFC 9580); Sequoia-PGP implements RFC 9580 (OpenPGP v6). Whether each implements RFC 9980 is not stated in the held documents. Migration requires re-signing all artifacts with new PQC keys.',
     pqcAlgorithm: 'ml-dsa',
     estimatedPqcYear: '2026',
     strengths: [
