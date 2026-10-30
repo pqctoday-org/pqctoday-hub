@@ -1038,15 +1038,18 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             The <strong>NFC APDU fragmentation problem</strong> is the most acute PQC challenge for
-            digital car keys. NFC ISO 14443-4 limits Application Protocol Data Units to 256 bytes.
+            digital car keys. Short APDUs (Application Protocol Data Units) carry about 256 bytes.
             An <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-768 public key is 1,184 bytes,
-            and the resulting ciphertext requires another 1,088 bytes. Exchanging just the KEM
-            material requires at least 9 APDU exchanges. Each exchange adds ~50 ms of round-trip
-            latency, potentially pushing the total NFC transaction time beyond the 500 ms user
-            experience threshold that CCC requires for &ldquo;tap and go&rdquo; unlock. Solutions
-            under investigation include extended-length APDUs (supported by some NFC controllers but
-            not all smartphones), pre-cached key material, and hybrid protocols where NFC bootstraps
-            a BLE connection for the PQC handshake.
+            and the resulting ciphertext requires another 1,088 bytes. A car and phone that support
+            only short APDUs need at least 5 exchanges for the key alone and at least 9 for the key
+            and ciphertext together; APDUs with extended length fields (which ICAO Doc 9303-11
+            requires for large cryptographic objects) avoid the split where both sides support them.
+            Each exchange adds ~50 ms of round-trip latency, potentially pushing the total NFC
+            transaction time beyond the 500 ms user experience threshold that CCC requires for
+            &ldquo;tap and go&rdquo; unlock. Solutions under investigation include extended-length
+            APDUs (supported by some NFC controllers but not all smartphones), pre-cached key
+            material, and hybrid protocols where NFC bootstraps a BLE connection for the PQC
+            handshake.
           </p>
 
           <h3 className="text-sm font-bold text-foreground">Owner-to-Friend Key Sharing Flow</h3>
@@ -1117,13 +1120,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           <p>
-            The mandatory regulatory backdrop is <strong>UNECE WP.29 R155 / R156</strong>: since
-            July 2024 all new vehicle type approvals in the EU, Japan, and Korea require a certified
-            Cyber Security Management System (CSMS) under R155 and a Software Update Management
-            System (SUMS) under R156. R155 explicitly requires cryptographic controls throughout the
-            supply chain, and national type-approval authorities are beginning to interpret
-            &ldquo;adequate cryptographic protection&rdquo; to include post-quantum readiness for
-            systems with multi-decade operating lives.
+            The regulatory backdrop is <strong>UNECE WP.29 R155 / R156</strong>: since July 2024
+            vehicle types need a valid Cyber Security Management System (CSMS) certificate under
+            R155 (and a Software Update Management System certificate under R156). R155 section
+            7.3.8 requires cryptographic modules to follow consensus standards; it does not mention
+            post-quantum cryptography.
           </p>
 
           <p>
