@@ -73,7 +73,7 @@ const TRANSITION_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'FIPS 204': 'final',
   'FIPS 205': 'final',
   'SP 800-208': 'final',
-  'ISO 18033-2 Amd2': 'final', // FrodoKEM — ISO/IEC 18033-2:2006/Amd 2 published June 2026
+  'ISO 18033-2 Amd2': 'final', // ISO/IEC 18033-2:2006/Amd 2 (published June 2026) covers Classic McEliece (BSI note); FrodoKEM and ML-KEM not confirmed against the amendment's scope text
   'ETSI TS 104 015': 'final', // Covercrypt
   'BSI TR-02102-1': 'regional', // Classic McEliece
   'KpqC Round 2': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — final KpqC winners (Jan 2025)
