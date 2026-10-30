@@ -39,7 +39,7 @@
 - 5 signing tools: cosign (roadmap/2026), Notation (beta/2025), GPG/OpenPGP (roadmap/2026), Sigstore Bundle (roadmap/2027), Docker Content Trust (not-planned)
 - ML-DSA-65 signature size: 3,309B vs ECDSA P-256: 64B (52× larger)
 - Notation + AWS Crypto plugin: best option for ML-DSA today
-- Docker Content Trust: migrate immediately — Notary v1 maintenance mode, no PQC roadmap
+- Docker Content Trust: being fully retired with the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained); Docker names Sigstore/Cosign and Notation as the alternatives and says nothing about post-quantum signatures (Docker, 16 June 2026)
 - SLH-DSA preferred for SBOMs (stateless, long signature lifetime, 20+ year validity)
 
 ### Step 4: Policy-as-Code Enforcer
