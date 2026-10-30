@@ -232,8 +232,8 @@ export const SecureBootChain: React.FC = () => {
           Explore the boot trust chain and compare firmware signing algorithms. Step through each
           stage to understand how <InlineTooltip term="Secure Boot">Secure Boot</InlineTooltip>{' '}
           verifies integrity from hardware root of trust to runtime firmware, and why{' '}
-          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> mandates stateful hash-based
-          signatures for this use case.
+          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> lists stateful hash-based
+          signatures for this use case and NSA wants them used whenever possible.
         </p>
       </div>
 
