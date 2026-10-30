@@ -154,13 +154,13 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
             Authorities do not agree on hybrid deployment, and the answer depends on which systems
             are in scope. ANSSI makes hybrid mandatory inside the French regulated perimeter and
             recommends it everywhere else, except for hash-based signatures (SLH-DSA, XMSS, LMS),
-            which may be used alone. BSI&apos;s TR-02102-1 currently recommends PQC only in hybrid
-            use. ETSI TS 119 312 specifies hybrid signatures for trust services. NSA does not
-            require hybrids for National Security Systems: CNSA 2.0 sets pure ML-KEM-1024 and
-            ML-DSA-87 as the end state, and allows hybrids as an interim step where a protocol needs
-            them. Many programs therefore deploy <strong>hybrid</strong> now and plan{' '}
-            <strong>pure PQC</strong> later, but that is a common migration pattern, not a rule
-            every framework imposes.
+            which may be used alone. BSI&apos;s TR-02102-1 currently recommends PQC in hybrid form,
+            except that hash-based signatures may in principle be used alone. ETSI TS 119 312
+            specifies hybrid signatures for trust services. NSA does not require hybrids for
+            National Security Systems: CNSA 2.0 sets pure ML-KEM-1024 and ML-DSA-87 as the end
+            state, and allows hybrids as an interim step where a protocol needs them. Many programs
+            therefore deploy <strong>hybrid</strong> now and plan <strong>pure PQC</strong> later,
+            but that is a common migration pattern, not a rule every framework imposes.
           </p>
           <p className="text-xs text-muted-foreground">
             <strong>Planning rule of thumb:</strong> Start hybrid deployments now. Plan your

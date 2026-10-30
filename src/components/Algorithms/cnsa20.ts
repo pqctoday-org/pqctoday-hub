@@ -304,7 +304,7 @@ export function jurisdictionStanceForRegion(region: string): JurisdictionPositio
       return {
         body: 'BSI / ANSSI',
         stance: 'recommend',
-        note: 'German BSI (TR-02102-1) recommends PQC only in hybrid use; French ANSSI goes further and makes hybrid mandatory in its regulated perimeter (hash-based signatures excepted). The two positions differ — check which applies.',
+        note: 'German BSI (TR-02102-1) recommends PQC in hybrid form, except that hash-based signatures may in principle be used alone; French ANSSI recommends hybrid generally (hash-based signatures excepted) and makes it mandatory in its regulated perimeter. The two positions differ — check which applies.',
       }
     case 'NIST':
       return {
