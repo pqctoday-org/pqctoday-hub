@@ -555,7 +555,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
           label: 'K_enc',
           value: 'block1 (32 bytes) → AES-256-CTR',
           description:
-            'Profile C upgrades from AES-128 (Profiles A/B) to AES-256 to match the 128-bit post-quantum security level of ML-KEM-768 (FIPS 203).',
+            'Profile C upgrades from AES-128 (Profiles A/B) to AES-256; its KEM, ML-KEM-768, is in NIST security category 3 (FIPS 203).',
         },
         {
           label: 'K_mac',

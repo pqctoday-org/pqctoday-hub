@@ -248,7 +248,7 @@ export const PQCLiveComparisonFlow: React.FC<PQCLiveComparisonFlowProps> = ({
 ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.GEN_KEY(filenames.ecPriv)}
 ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.EXTRACT_PUB(filenames.ecPriv, filenames.ecPub)}
 
-# Quantum-Safe — ML-DSA-65 (FIPS 204, 128-bit post-quantum security)
+# Quantum-Safe — ML-DSA-65 (FIPS 204, security category 3)
 ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.GEN_KEY(filenames.mlPriv)}
 ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.EXTRACT_PUB(filenames.mlPriv, filenames.mlPub)}`,
       language: 'bash' as const,

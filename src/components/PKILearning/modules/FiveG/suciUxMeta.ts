@@ -168,7 +168,7 @@ const PE_PROFILE_C_OVERRIDES: Record<string, string[]> = {
   ],
   derive_keys: [
     'Z was expanded using SHA3-256 (instead of SHA-256) for post-quantum KDF security.',
-    'K_enc is now 256 bits (AES-256) to match ML-KEM-768’s 128-bit PQ security level.',
+    'K_enc is now 256 bits (AES-256); ML-KEM-768 is in NIST security category 3 (FIPS 203).',
     'K_mac uses HMAC-SHA3-256 — the full 32-byte output; only 8 bytes go on air.',
   ],
   encrypt_msin: [
