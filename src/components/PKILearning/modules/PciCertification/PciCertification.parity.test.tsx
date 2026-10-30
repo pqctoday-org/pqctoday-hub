@@ -77,10 +77,11 @@ describe('PciCertification render parity', () => {
     const notes = screen.getAllByTestId('cert-practitioner-disclaimer')
     expect(notes).toHaveLength(1)
     expect(notes[0]).toHaveTextContent(PRACTITIONER_DISCLAIMER)
-    // The owner's sign-off and the absence of a laboratory or certification-body review are both
-    // stated, in the words every certification module uses (common/moduleReviewStatus.ts).
+    // The wording changed after the owner's sign-off, so the notice says it awaits re-sign-off,
+    // and the absence of a laboratory or certification-body review is stated, in the words every
+    // certification module uses (common/moduleReviewStatus.ts).
     expect(notes[0]).toHaveTextContent(
-      'Reviewed and signed off by the PQC Today owner on 25 October 2026.'
+      "Corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off."
     )
     expect(notes[0]).toHaveTextContent(NOT_LAB_REVIEWED)
   })
