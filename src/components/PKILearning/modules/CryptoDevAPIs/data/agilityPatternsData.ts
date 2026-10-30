@@ -129,8 +129,8 @@ let signature = signer.sign(&message)?;`,
         con: 'Performance overhead from running two algorithms',
       },
       {
-        pro: 'Recommended by NIST, BSI, ANSSI, CNSA 2.0',
-        con: 'Combiner construction must be done correctly (RFC 9763)',
+        pro: 'Recommended by BSI and ANSSI; NIST SP 800-227 describes approved approaches for multi-algorithm KEMs; NSA states it "will not require NSS developers to use hybrid certified products for security purposes" (CNSA 2.0 FAQ)',
+        con: 'Combiner construction must be done correctly (NIST SP 800-227 Sect. 4.6.2, approved key combiners)',
       },
     ],
     codeExamples: [

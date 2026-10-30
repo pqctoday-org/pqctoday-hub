@@ -564,6 +564,6 @@ export const INTEROP_PATTERNS: InteropPattern[] = [
     description:
       'The open-source PQC supply chain for OpenSSL before 3.5, or for algorithms that are not standardised: PQClean provides reference C code, liboqs wraps it with a unified API, oqsprovider exposes it as an OpenSSL provider.',
     example:
-      'ML-KEM implementation: PQClean C code → compiled into liboqs → loaded by oqsprovider → used via EVP_PKEY_encapsulate().',
+      'ML-KEM implementation: mlkem-native (from the PQ Code Package) → compiled into liboqs → loaded by oqsprovider → used via EVP_PKEY_encapsulate().',
   },
 ]
