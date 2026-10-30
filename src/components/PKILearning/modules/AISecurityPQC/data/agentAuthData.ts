@@ -13,7 +13,7 @@ export const AGENT_IDENTITY_PROFILES: AgentIdentityProfile[] = [
     typicalCredentialLifetimeHours: 8760, // 1 year
     renewalStrategy: 'Certificate rotation via ACME/EST with 90-day renewal cycle',
     hndlExposureNotes:
-      "Long-lived credentials are prime HNDL targets. A CRQC could forge the agent's identity and impersonate it indefinitely. High priority for PQC migration.",
+      "Long-lived credentials are exposed once a CRQC exists: it could forge the agent's identity and impersonate it. That is a forgery risk, not harvest-now-decrypt-later, which concerns encrypted data (NIST IR 8547). High priority for PQC migration.",
   },
   {
     id: 'human-delegated',
@@ -25,7 +25,7 @@ export const AGENT_IDENTITY_PROFILES: AgentIdentityProfile[] = [
     renewalStrategy:
       'Per-session delegation token issued by identity provider. Short-lived by design. Refreshed via OAuth2 DPoP with proof-of-possession.',
     hndlExposureNotes:
-      "Short credential lifetime reduces HNDL risk, but the delegation signing key (human's private key) is the critical target. If the human's key is compromised via CRQC, all delegation tokens can be forged.",
+      "A short credential lifetime shortens the window for a forged token, but the delegation signing key (human's private key) is the critical target. If the human's key is compromised via CRQC, all delegation tokens can be forged.",
   },
   {
     id: 'multi-coordinator',
@@ -37,7 +37,7 @@ export const AGENT_IDENTITY_PROFILES: AgentIdentityProfile[] = [
     renewalStrategy:
       'Rolling credential with cascading delegation. Coordinator cert renewed daily; sub-agent tokens derived with reduced scope and shorter lifetime.',
     hndlExposureNotes:
-      'Coordinator credentials unlock access to all downstream agents. Highest-value HNDL target in the delegation chain. Must use PQC signing to prevent chain-wide impersonation.',
+      'Coordinator credentials unlock access to all downstream agents. Highest-value forgery target in the delegation chain. Must use PQC signing to prevent chain-wide impersonation.',
   },
 ]
 

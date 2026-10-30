@@ -125,10 +125,10 @@ export const PRIVACY_TECH_PROFILES: PrivacyTechProfile[] = [
     id: 'fhe',
     name: 'Fully Homomorphic Encryption (FHE)',
     description:
-      'Perform computations directly on encrypted data without decryption. Lattice-based FHE schemes (BGV, BFV, CKKS) are inherently resistant to quantum attacks because they rely on the hardness of lattice problems.',
+      'Perform computations directly on encrypted data without decryption. Lattice-based FHE schemes (BGV, BFV, CKKS) are believed to resist quantum attacks because they rely on the hardness of lattice problems (FIPS 203 says this of ML-KEM).',
     performanceOverhead: '1,000–10,000x slowdown vs plaintext computation',
     pqcRelevance:
-      'FHE is inherently quantum-safe — lattice-based security assumptions are the same ones underlying ML-KEM and ML-DSA. No migration needed for FHE itself.',
+      'FHE schemes rest on lattice problems of the kind ML-KEM and ML-DSA also use, and lattice-based schemes are believed to resist quantum attacks (FIPS 203 says this of ML-KEM). No migration needed for FHE itself.',
     quantumSafe: true,
     maturity: 'emerging',
     useCases: [
