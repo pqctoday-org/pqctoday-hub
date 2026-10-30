@@ -36,7 +36,7 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     stage: 'finalists',
     role: 'National PQC standardisation competition run by KISA + Korean Cryptography Forum.',
     detail:
-      "Launched in 2022 as Korea's own PQC competition, modelled on the NIST process. Round 2 concluded in 2024 with KEM finalists (NTRU+, SMAUG, REDOG, PALOMA, Layered ROLLO-I, NCC-SIGN-style) and signature finalists. KpqC explicitly aims for algorithm independence from US standards in case of cryptopolitical fragmentation. Several KpqC submissions are also NIST on-ramp candidates (e.g., HAETAE), creating a deliberate two-track validation path.",
+      "Launched in 2022 as Korea's own PQC competition, modelled on the NIST process. The final results were announced on 16 January 2025: NTRU+ and SMAUG-T (KEMs) and AIMer and HAETAE (signatures). KpqC explicitly aims for algorithm independence from US standards in case of cryptopolitical fragmentation. Several KpqC submissions are also NIST on-ramp candidates (e.g., HAETAE), creating a deliberate two-track validation path.",
     url: 'https://www.kpqc.or.kr/',
     nistRelation: 'parallel',
   },

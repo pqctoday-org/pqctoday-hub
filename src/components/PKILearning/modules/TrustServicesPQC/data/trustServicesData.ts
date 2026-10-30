@@ -32,7 +32,7 @@ export const SUPERSESSION_PAIRS: SupersessionPair[] = [
     older: {
       label: 'V1.5.1',
       date: 'December 2024',
-      algorithms: 'RSA, ECDSA — classical only',
+      algorithms: 'RSA, DSA, EC-DSA, EC-SDSA-opt — classical only',
     },
     newer: {
       label: 'V2.1.1',

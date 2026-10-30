@@ -58,7 +58,7 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
     kind: 'selection',
     title: 'NIST selects ML-KEM, ML-DSA, FN-DSA, SLH-DSA',
     detail:
-      'Kyber → ML-KEM, CRYSTALS-Dilithium → ML-DSA, Falcon → FN-DSA, SPHINCS+ → SLH-DSA. The first four PQC standards.',
+      'Kyber, CRYSTALS-Dilithium, Falcon and SPHINCS+ were selected for standardization. They became ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) in August 2024; Falcon is to be published as FN-DSA in FIPS 206 (in development).',
   },
   {
     id: 'sig-on-ramp-call-2022',

@@ -15,7 +15,7 @@ Candidates enter a round, get benchmarked against NIST evaluation criteria (secu
 
 ## Worldwide parallel processes
 
-- **KpqC (Korea)** — competition selected SMAUG-T, NTRU+, PALOMA, REDOG, Layered ROLLO-I (KEMs); HAETAE, AIMer, SOLMAE (signatures). Target standardisation by 2029, migration by 2035.
+- **KpqC (Korea)** — the competition concluded in January 2025, selecting NTRU+ and SMAUG-T (KEMs) and AIMer and HAETAE (signatures).
 - **CACR (China)** — national competition selected LAC (lattice KEM, withdrew from NIST), AIGIS (signature), AIGIS-Enc (KEM), SCloud. OSCCA expected to publish PQC-extended SM-series specifications.
 - **CRYPTREC (Japan)** — monitors NIST output; expected to adopt FIPS 203/204/205 in the e-Government Recommended Ciphers List.
 - **ISO/IEC SC 27** — adopts NIST PQC algorithms as ISO/IEC 14888 (signatures) and 18033 (encryption / KEM) standards. The gating step for jurisdictions pinned to ISO rather than FIPS.
