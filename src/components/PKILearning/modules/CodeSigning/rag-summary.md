@@ -18,7 +18,7 @@ This module teaches post-quantum code signing and software supply chain security
 
 1. **Binary Signing**: Sign a file hash with ML-DSA and verify the signature interactively
 2. **Certificate Chain Builder**: Build a complete PQC code signing certificate chain (Root CA, Intermediate CA, end-entity)
-3. **Package Signing**: Simulate RPM-style hybrid ML-DSA-87+Ed448 hybrid package signing
+3. **Package Signing**: Simulate RPM-style ML-DSA-87+Ed448 hybrid package signing
 4. **Sigstore Flow**: Walk through keyless signing workflow including OIDC authentication, Fulcio certificate issuance, and Rekor transparency log recording
 5. **Secure Boot Chain**: Explore firmware signing trust chain with LMS, XMSS, and ML-DSA across boot stages
 
