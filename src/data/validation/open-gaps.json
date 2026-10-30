@@ -207,7 +207,7 @@
       "planItem": "E",
       "owner": "unassigned",
       "status": "accepted-limitation",
-      "scope": "Rust (wasm) — CKM_ECDH1_DERIVE X25519/X448"
+      "scope": "C++ and Rust (wasm) — CKM_ECDH1_DERIVE X25519/X448"
     },
     {
       "id": "both-engines-compute-with-twist-points",
