@@ -41,7 +41,7 @@ type AlgorithmView = 'ecdsa' | 'ml-dsa'
 
 const SIGNING_STEPS: {
   id: SigningStep
-  label: string
+  label: string | Record<AlgorithmView, string>
   description: string | Record<AlgorithmView, string>
 }[] = [
   {
@@ -51,7 +51,7 @@ const SIGNING_STEPS: {
   },
   {
     id: 'hash',
-    label: '2. Hash',
+    label: { ecdsa: '2. Hash', 'ml-dsa': '2. Prepare input' },
     description: {
       ecdsa:
         'The message digest of the complete DER encoding of the signed attributes is computed (SHA-256 here).',
@@ -77,10 +77,8 @@ const SIGNING_STEPS: {
   },
 ]
 
-const describeStep = (
-  description: string | Record<AlgorithmView, string> | undefined,
-  view: AlgorithmView
-) => (typeof description === 'object' ? description[view] : description)
+const forView = (value: string | Record<AlgorithmView, string> | undefined, view: AlgorithmView) =>
+  typeof value === 'object' ? value[view] : value
 
 const ASN1TreeNode: React.FC<{
   node: ASN1Node
@@ -178,7 +176,7 @@ export const CMSSigningDemo: React.FC = () => {
             {step.id === 'hash' && <Hash size={14} />}
             {step.id === 'sign' && <PenLine size={14} />}
             {step.id === 'wrap' && <Package size={14} />}
-            {step.label}
+            {forView(step.label, algorithmView)}
           </Button>
         ))}
       </div>
@@ -186,7 +184,7 @@ export const CMSSigningDemo: React.FC = () => {
       {/* Step Description */}
       <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
         <p className="text-sm text-foreground">
-          {describeStep(SIGNING_STEPS.find((s) => s.id === activeStep)?.description, algorithmView)}
+          {forView(SIGNING_STEPS.find((s) => s.id === activeStep)?.description, algorithmView)}
         </p>
       </div>
 
@@ -214,7 +212,7 @@ export const CMSSigningDemo: React.FC = () => {
                   }
                 }}
               >
-                <div className="text-xs font-bold">{step.label}</div>
+                <div className="text-xs font-bold">{forView(step.label, algorithmView)}</div>
               </div>
               {idx < SIGNING_STEPS.length - 1 && (
                 <span className="text-muted-foreground mx-1 hidden sm:block">&rarr;</span>
