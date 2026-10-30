@@ -164,9 +164,10 @@ export const SMIME_CERT_EXTENSIONS: CertExtension[] = [
     oid: '2.5.29.15',
     critical: true,
     signingValue: 'digitalSignature, nonRepudiation',
-    encryptionValue: 'keyEncipherment (RSA) / keyAgreement (ECDH). KEM keyUsage is TBD by LAMPS WG',
+    encryptionValue:
+      'keyEncipherment (RSA) / keyAgreement (ECDH); keyEncipherment only for ML-KEM (RFC 9935 §5)',
     description:
-      'Defines permitted key operations for the certificate. No existing keyUsage bit maps cleanly to KEMs.',
+      'Defines permitted key operations for the certificate. RFC 9935 §5: for ML-KEM certificates keyEncipherment is the only key usage set.',
   },
   {
     name: 'extKeyUsage',
