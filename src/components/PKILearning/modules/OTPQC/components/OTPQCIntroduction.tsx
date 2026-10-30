@@ -529,8 +529,8 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            IEC 61850-5 gives GOOSE type 1A trip messages two performance classes: P1, transfer-time
-            class <strong>TT6, 3 ms or less</strong>, and P2, TT5, 10 ms or less (
+            IEC 61850-5 puts GOOSE trip messages in transfer-time class{' '}
+            <strong>TT6, 3 ms or less</strong> (
             <LibLink id="Torres-ICREPQ-2024-341">Torres et al., ICREPQ 2024</LibLink>, which
             tabulates the classes). IEC 61869-9 defines Sampled Value rates including{' '}
             <strong>4,000, 4,800 and 14,400 samples per second</strong> — a frame every {sv(4000)},{' '}

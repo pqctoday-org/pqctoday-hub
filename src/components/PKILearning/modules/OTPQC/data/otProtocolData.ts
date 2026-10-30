@@ -82,8 +82,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     standard: 'IEC 61850-8-1 · security: IEC 62351-6 (2020), keys: IEC 62351-9 / RFC 8052',
     sectors: ['energy'],
     transport: 'Layer 2 multicast',
-    timingRequirement:
-      'Type 1A trip: class P1 = TT6 (3 ms or less); class P2 = TT5 (10 ms or less)',
+    timingRequirement: 'Trip messages: transfer-time class TT6 (3 ms or less)',
     description:
       'Generic Object Oriented Substation Event — Layer 2 multicast for protection trips, interlocks and status. Repeats on change, so it cannot wait for a handshake.',
     standardStatus:
