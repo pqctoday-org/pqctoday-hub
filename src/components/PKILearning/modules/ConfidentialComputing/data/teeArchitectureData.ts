@@ -58,7 +58,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'emerging',
     pqcReadiness: 'planned',
     pqcNotes:
-      "Shares DCAP attestation infrastructure with SGX — The module's own estimate puts its PQC migration around 2027, aligned with SGX; no Intel date is published. TME-MK uses AES-128 (Grover concern). Future CPUs expected to support AES-256. Combines with ML-KEM encrypted memory sealing on roadmap.",
+      "Shares DCAP attestation infrastructure with SGX — The module's own estimate puts its PQC migration around 2027, aligned with SGX; no Intel date is published. TME-MK uses AES-128 (Grover concern). The module expects future CPUs to support AES-256 and ML-KEM-based memory sealing; we found no published Intel plan for either.",
     strengths: [
       'Full VM isolation — run unmodified OS and applications',
       'No EPC size limitation — full VM memory encrypted',
@@ -173,7 +173,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'mature',
     pqcReadiness: 'planned',
     pqcNotes:
-      'AMD VCEK uses ECDSA P-384 (quantum-vulnerable). AMD has indicated PQC attestation signing (ML-DSA) on roadmap for future EPYC generations. SEV memory encryption uses AES-128 (Grover concern).',
+      'AMD VCEK uses ECDSA P-384 (quantum-vulnerable). We found no published AMD date or plan for PQC attestation signing (ML-DSA). SEV memory encryption uses AES-128 (Grover concern).',
     strengths: [
       'No application changes needed — encrypts full VM transparently',
       'Strong memory integrity via RMP (prevents hypervisor remapping)',
