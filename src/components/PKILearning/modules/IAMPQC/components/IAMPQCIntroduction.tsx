@@ -75,10 +75,10 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
             Adversaries are recording encrypted network traffic today. When a Cryptographically
             Relevant Quantum Computer (CRQC) becomes available, they can decrypt captured Kerberos
             PKINIT exchanges and the TLS sessions that carry identity traffic. Signed tokens (JWT,
-            SAML, OIDC) are different: they protect no secret, so recording them gains nothing
-            later. The risk is that a broken signing key lets an attacker forge tokens. NIST IR 8547
-            ties harvest now, decrypt later to encrypted data and says the authentication algorithm
-            may be transitioned at a different time.
+            SAML, OIDC) are signed, not encrypted: breaking a signing key later reveals nothing that
+            was hidden. The risk is that a broken signing key lets an attacker forge tokens. NIST IR
+            8547 ties harvest now, decrypt later to encrypted data and says the authentication
+            algorithm may be transitioned at a different time.
           </p>
         </div>
 
@@ -260,20 +260,20 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
         <div className="space-y-3">
           {DIRECTORY_SERVICES.map((service) => {
             const hndlColor =
-              service.hndlScore >= 8
+              service.quantumScore >= 8
                 ? 'text-status-error'
-                : service.hndlScore >= 6
+                : service.quantumScore >= 6
                   ? 'text-warning'
                   : 'text-primary'
             const hndlLabel =
-              service.hndlScore >= 8 ? 'Critical' : service.hndlScore >= 6 ? 'High' : 'Medium'
+              service.quantumScore >= 8 ? 'Critical' : service.quantumScore >= 6 ? 'High' : 'Medium'
 
             return (
               <div key={service.id} className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <span className="text-sm font-bold text-foreground">{service.name}</span>
                   <span className={`text-[10px] font-bold ${hndlColor}`}>
-                    HNDL Score: {service.hndlScore}/10 ({hndlLabel})
+                    Quantum Risk Score: {service.quantumScore}/10 ({hndlLabel})
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1 mb-2">

@@ -36,7 +36,7 @@ export interface DirectoryService {
   protocols: string[]
   keyExchangeAlgorithm: string
   authAlgorithm: string
-  hndlScore: number // 1-10
+  quantumScore: number // 1-10
   vulnerabilities: string[]
   migrationPath: string
   vendorTimeline: string
@@ -219,11 +219,11 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     protocols: ['Kerberos v5', 'LDAP', 'NTLM', 'LDAPS', 'PKINIT'],
     keyExchangeAlgorithm: 'RSA-2048 (PKINIT), DH (Kerberos pre-auth)',
     authAlgorithm: 'AES-256-CTS-HMAC-SHA384, RC4-HMAC (legacy)',
-    hndlScore: 9,
+    quantumScore: 9,
     vulnerabilities: [
       'PKINIT uses RSA-2048 — quantum-vulnerable key exchange',
       'Kerberos TGTs (10h) and service tickets (10h) are long-lived HNDL targets',
-      'NTLM uses MD4 hashing — no forward secrecy, HNDL captures expose credentials',
+      'NTLM uses MD4 hashing and has no forward secrecy; captured challenge-responses are a classical weakness, not a quantum one',
       'LDAP bind over plaintext leaks credentials; LDAPS needs PQC TLS update',
       'AS-REP roasting targets pre-authentication bypasses, exposing RSA-encrypted tickets',
     ],
@@ -237,7 +237,7 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     protocols: ['LDAP', 'LDAPS', 'StartTLS', 'SASL/GSSAPI'],
     keyExchangeAlgorithm: 'TLS with RSA-2048 / ECDSA P-256',
     authAlgorithm: 'SASL/GSSAPI (delegates to Kerberos), simple bind (LDAP password)',
-    hndlScore: 7,
+    quantumScore: 7,
     vulnerabilities: [
       'TLS channel uses RSA/ECDH key exchange — HNDL captures expose all LDAP traffic',
       'Simple bind passwords transmitted over TLS; quantum-broken TLS exposes them',
@@ -253,7 +253,7 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     protocols: ['OIDC', 'SAML 2.0', 'OAuth 2.0', 'WS-Federation', 'LDAPS (Entra DS)'],
     keyExchangeAlgorithm: 'RSA-2048 / ECDSA P-256 for token signing',
     authAlgorithm: 'RS256 / ES256 JWT signing; ECDH for MSAL TLS',
-    hndlScore: 8,
+    quantumScore: 8,
     vulnerabilities: [
       'JWT ID tokens signed with RSA-2048 — a quantum computer that breaks the signing key can forge them (a forgery risk, not harvest-now-decrypt-later)',
       'SAML assertions are long-lived signed federation tokens — a forged assertion is accepted while the verifier trusts the signing key',
