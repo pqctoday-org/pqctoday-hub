@@ -13,7 +13,7 @@ export const AGENT_IDENTITY_PROFILES: AgentIdentityProfile[] = [
     typicalCredentialLifetimeHours: 8760, // 1 year
     renewalStrategy: 'Certificate rotation via ACME/EST with 90-day renewal cycle',
     hndlExposureNotes:
-      "Long-lived credentials are prime HNDL targets. A CRQC could forge the agent's identity and impersonate it indefinitely. High priority for PQC migration.",
+      "Long-lived credentials are exposed once a CRQC exists: it could forge the agent's identity and impersonate it. That is a forgery risk, not harvest-now-decrypt-later, which concerns encrypted data (NIST IR 8547). High priority for PQC migration.",
   },
   {
     id: 'human-delegated',
