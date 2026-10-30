@@ -55,27 +55,19 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             after publication.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;A compromised signing key is a skeleton key to every machine that trusts
-              it.&rdquo;
-            </blockquote>
-            <p className="text-xs text-muted-foreground mt-2">
-              &mdash; Lessons from the SolarWinds supply chain attack (2020)
+            <p className="text-sm font-medium text-foreground/90">
+              A compromised signing key is a skeleton key to every machine that trusts it.
             </p>
           </div>
           <div className="space-y-2">
             {[
               {
                 t: 'SolarWinds (2020)',
-                d: 'Attackers injected malicious code into the Orion build pipeline. The trojanized update was signed with a legitimate certificate and deployed to ~18,000 organizations.',
-              },
-              {
-                t: '3CX Supply Chain (2023)',
-                d: 'A cascading supply chain attack: a compromised upstream dependency led to trojanized 3CX desktop clients signed with valid certificates.',
+                d: 'Attackers compromised the Orion software build system, so a vulnerability shipped inside Orion updates released between March and June 2020; it was not present in the source code repository. SolarWinds believed fewer than 18,000 customers may have had an installation of the affected Orion products.',
               },
               {
                 t: 'Codecov Bash Uploader (2021)',
-                d: 'Attackers modified a CI/CD script without signature verification, exfiltrating environment variables from thousands of CI pipelines.',
+                d: 'A malicious party gained access to Codecov’s Bash Uploader script and modified it without authorization, so it exported CI-related information to a third-party server. That information could include API keys, deploy keys, passwords and authentication tokens.',
               },
             ].map((attack) => (
               <div key={attack.t} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
@@ -127,11 +119,11 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               },
               {
                 t: 'The Transitive Trust Problem',
-                d: 'You audit your direct dependencies, but do you audit their dependencies? A malicious package five levels deep in the dependency tree can execute arbitrary code in your application. The 3CX attack exploited exactly this pattern.',
+                d: 'You audit your direct dependencies, but do you audit their dependencies? A malicious package five levels deep in the dependency tree can execute arbitrary code in your application.',
               },
               {
                 t: 'CI/CD Pipeline as Attack Surface',
-                d: 'Build systems, artifact registries, and deployment pipelines are high-value targets. The Codecov bash uploader attack demonstrates that unsigned CI scripts can be silently replaced. Every step from source code to deployed binary is an attack surface.',
+                d: 'Build systems, artifact registries, and deployment pipelines are high-value targets. The Codecov Bash Uploader attack shows that a script a pipeline downloads and runs can be modified at its source, and the modified script then runs in the CI systems that fetch it. The SolarWinds compromise shows that checking only the source repository is not enough, because the vulnerability came from the build system. Every step from source code to deployed binary is an attack surface.',
               },
               {
                 t: 'Build Provenance & SBOM',
