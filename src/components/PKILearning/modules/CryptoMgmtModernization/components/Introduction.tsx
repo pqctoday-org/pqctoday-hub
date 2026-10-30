@@ -390,11 +390,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </tbody>
             </table>
           </div>
-          <Quote cite="David Mahdi & Brian Lowans, Gartner (2023–2025)">
-            By 2028, organizations that stand up a Cryptographic Center of Excellence and a formal
-            posture management program will achieve approximately 50% lower total PQC transition
-            cost than organizations that treat migration as a one-off project.
-          </Quote>
+          <p className="text-sm text-foreground/80 mt-4">
+            This module&apos;s view: an organization that stands up a Cryptographic Center of
+            Excellence and a formal posture management program is in a better position to run PQC
+            migration as a managed program than one that treats it as a one-off project. The module
+            gives no cost figure for this.
+          </p>
         </div>
       </section>
 
@@ -756,7 +757,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <div className="text-sm font-bold text-status-success">Outage avoidance</div>
               <p className="text-[11px] text-muted-foreground mt-1">
                 an illustrative assumption of ~$11M per cert-expiry event &times; 86% annual
-                incidence (after Entrust/Ponemon 2024 PKI &amp; PQC Trends Study).
+                incidence (this module&apos;s assumption, not a sourced figure).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
