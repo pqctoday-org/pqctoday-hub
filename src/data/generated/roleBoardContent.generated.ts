@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10302026.csv
+ * Source: src/data/role_board_content_10302026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -48,7 +48,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the midpoint, rounded down, of the published CRQC expert forecast, 2030–2041 (one expert survey); migration deadlines set by regulators are not forecasts and are not part of it.",
         },
         gridTitle: 'What you walk out with',
-        gridSub: 'Your own answers, not a sample estate',
+        gridSub: 'Built from the inputs you enter, with sample cases to start from',
         gridCards: [
           {
             title: 'Not sure this is the board you need?',
@@ -82,7 +82,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       id: 'deadlines',
       order: 2,
       chipLabel: 'Know your deadlines',
-      chipDescription: 'The mandates that already bind you, and the year that ends RSA.',
+      chipDescription:
+        'Source-linked mandates and milestones to check against your organisation, and the NIST IR 8547 dates for retiring RSA.',
       phaseId: 'p3',
       cswp39Zone: 'risk-management',
       moduleIds: ['compliance-strategy', 'pqc-risk-management', 'government-defense-pqc'],
@@ -150,7 +151,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       id: 'risk',
       order: 3,
       chipLabel: 'Know your exposure',
-      chipDescription: 'A defensible risk position and the dates that already bind you.',
+      chipDescription: 'A sample risk position and the evidence behind it.',
       phaseId: 'p3',
       cswp39Zone: 'risk-management',
       moduleIds: ['pqc-risk-management', 'data-asset-sensitivity'],
@@ -217,7 +218,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       id: 'roadmap',
       order: 4,
       chipLabel: 'Show a credible plan',
-      chipDescription: 'The roadmap, policy and KPIs a regulator will accept.',
+      chipDescription: 'A sample roadmap, policy and KPIs to review and challenge.',
       phaseId: 'p4',
       cswp39Zone: 'governance',
       moduleIds: [
