@@ -408,7 +408,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">v13.8.0+</span>
+                    <span className="font-mono text-foreground">v13.8+ (ML-KEM: v13.8.3+)</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
