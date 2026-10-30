@@ -239,10 +239,15 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'kpi-tracker': [
     {
-      prompt: 'Set the program start year and switch View as. What becomes a real number?',
-      options: ['Pace-to-Deadline', 'Budget per FTE', 'The number of vendors'],
+      prompt:
+        'Select your products in Migrate, then open the KPI Tracker. Which measures can it prefill from the catalogue?',
+      options: [
+        'Vendor and FIPS measures for the products you selected',
+        'Compliance gaps closed',
+        'Pace-to-Deadline',
+      ],
       answer: 0,
-      why: 'Pace needs a start date and a deadline; the vendor, FIPS, threat and compliance KPIs then auto-score from the Migrate catalogue and the assessment.',
+      why: 'Only vendor and FIPS measures use the catalogue, and only for products you select. Progress, compliance closure and pace are values you enter, and missing values stay unscored. A start year is planning context, not a measurement.',
     },
   ],
   'deployment-playbook': [

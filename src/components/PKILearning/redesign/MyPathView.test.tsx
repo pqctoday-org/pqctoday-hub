@@ -8,7 +8,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { PERSONAS } from '@/data/learningPersonas'
 
 const renderMyPath = (
-  personaId: 'developer' | 'architect' | 'researcher' | 'cert-engineer' = 'developer'
+  personaId: 'developer' | 'architect' | 'researcher' | 'cert-engineer' | 'executive' = 'developer'
 ) =>
   render(
     <MemoryRouter initialEntries={['/learn']}>
@@ -27,6 +27,33 @@ describe('MyPathView — Essentials tier (A1)', () => {
   beforeEach(() => {
     useModuleStore.setState({ modules: {} })
     localStorage.clear()
+  })
+
+  it('offers Start to a new executive without suggesting previous progress', () => {
+    renderMyPath('executive')
+    expect(screen.getByRole('button', { name: /^Start: / })).toBeEnabled()
+    expect(screen.getByText('Start your next module')).toBeInTheDocument()
+    expect(screen.queryByText('Continue where you left off')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Resume: / })).not.toBeInTheDocument()
+  })
+
+  it('resumes a started module even before its first completed step', () => {
+    useModuleStore.getState().updateModuleProgress(PERSONAS.executive.essentials[0], {
+      status: 'in-progress',
+      completedSteps: [],
+    })
+    renderMyPath('executive')
+    expect(screen.getByRole('button', { name: /^Resume: / })).toBeEnabled()
+    expect(screen.getByText('Continue where you left off')).toBeInTheDocument()
+  })
+
+  it('offers Start for the next unstarted module after an essential is completed', () => {
+    markComplete([PERSONAS.executive.essentials[0]])
+    renderMyPath('executive')
+    expect(screen.getByRole('button', { name: /^Start: / })).toBeEnabled()
+    expect(screen.queryByRole('button', { name: /^Resume: / })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: /Full track/i }))
+    expect(screen.getByRole('button', { name: /^Start: / })).toBeEnabled()
   })
 
   it('defaults to the Essentials view with the capstone locked', () => {
@@ -86,8 +113,12 @@ describe('MyPathView — Essentials tier (A1)', () => {
     const card = screen.getByTestId('first-step-card')
     expect(card).toHaveTextContent(/Run the validation tests/)
     expect(within(card).getByRole('button', { name: /Start/ })).toBeInTheDocument()
-    // The Resume card still follows it.
-    expect(screen.getByText('Continue where you left off')).toBeInTheDocument()
+    // A fresh learning path remains available after the validation-first action.
+    expect(screen.getByText('Start your next module')).toBeInTheDocument()
+    // Both actions read "Start", so each carries its own target in its accessible name.
+    const starts = screen.getAllByRole('button', { name: /^Start: / })
+    expect(starts).toHaveLength(2)
+    expect(new Set(starts.map((b) => b.getAttribute('aria-label'))).size).toBe(2)
   })
 
   it('the first step goes away once a lesson on the path is under way', () => {

@@ -262,7 +262,7 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
             {
               n: 3,
               t: 'KPI Tracker Template',
-              d: 'Design a scorecard with weighted dimensions (systems inventoried, algorithms migrated, vendor readiness, compliance, budget, risk trend) auto-scored from live data.',
+              d: 'Build a planning scorecard from reviewed organizational values. Vendor measures use explicitly selected products; compliance closure and pace need your input. Missing values remain unscored.',
               icon: Target,
             },
           ].map((step) => {

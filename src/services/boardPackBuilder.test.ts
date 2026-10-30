@@ -149,6 +149,14 @@ describe('buildBoardPackBlob', () => {
     expect(parsed.profile.industry).toBe('Finance & Banking')
   })
 
+  it('labels a fictional pack in its readme and machine-readable profile', async () => {
+    const files = await extract(
+      await buildBoardPackBlob({ result: baseResult, profile: { ...baseProfile, sample: true } })
+    )
+    expect(files['board-pack/README.md']).toContain('Fictional worked example')
+    expect(JSON.parse(files['board-pack/profile.json']).profile.sample).toBe(true)
+  })
+
   it('includes program ownership in the README when provided', async () => {
     const blob = await buildBoardPackBlob({
       result: baseResult,

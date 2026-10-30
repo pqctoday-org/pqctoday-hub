@@ -8,9 +8,12 @@ import {
   NO_PUBLISHED_SOURCE,
 } from './figureSources'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
+import { computeAssessment } from '@/hooks/assessment/orchestrator'
+import { EXAMPLE_REPORT_SHARE_PAYLOAD } from '@/data/exampleReport'
 
 const result: AssessmentResult = {
   riskScore: 71,
+  preBoostScore: 69,
   riskLevel: 'high',
   algorithmMigrations: [],
   complianceImpacts: [
@@ -94,6 +97,15 @@ describe('buildFigureSources', () => {
     expect(risk.kind).toBe('estimate')
     expect(risk.method).toMatch(/Weighted composite of four category scores/)
     expect(risk.caveat).toContain(NO_PUBLISHED_SOURCE)
+  })
+
+  it('exports the actual quick-example additive calculation rather than the contextual weights', () => {
+    const quick = computeAssessment(EXAMPLE_REPORT_SHARE_PAYLOAD)
+    const exported = buildFigureSources({ result: quick, profile })[0]
+    expect(exported.value).toContain('65 / 100')
+    expect(exported.method).toContain('Quick-assessment additive points')
+    expect(exported.method).toContain('= 65')
+    expect(exported.method).not.toContain('base 53.7')
   })
 
   it('makes a sourced framework a fact carrying its binding status, basis and check date', () => {

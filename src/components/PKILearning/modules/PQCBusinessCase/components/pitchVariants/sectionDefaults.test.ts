@@ -328,7 +328,7 @@ describe('buildTimelineDefault', () => {
 })
 
 describe('buildCostBenefitDefault and buildBudgetDefault', () => {
-  it('cost-benefit tier scales with risk level', () => {
+  it('does not invent benefit multiples or a budget from a risk level', () => {
     const low = makeData({
       assessmentResult: {
         riskScore: 30,
@@ -351,9 +351,18 @@ describe('buildCostBenefitDefault and buildBudgetDefault', () => {
         generatedAt: '',
       },
     })
-    expect(buildCostBenefitDefault(low)).toContain('moderate')
-    expect(buildCostBenefitDefault(critical)).toContain('major')
-    expect(buildBudgetDefault(low).amount).not.toBe(buildBudgetDefault(critical).amount)
+    expect(buildCostBenefitDefault(low)).not.toMatch(/2-3×|3-5×/)
+    expect(buildCostBenefitDefault(critical)).toContain('no default benefit multiple')
+    expect(buildBudgetDefault(low).amount).toBe(buildBudgetDefault(critical).amount)
+    expect(buildBudgetDefault(low).amount).toContain('Not estimated')
+  })
+
+  it('never substitutes catalogue size for the organisation inventory', () => {
+    const small = buildBudgetDefault(makeData({ totalProducts: 1 }))
+    const wholeCatalogue = buildBudgetDefault(makeData({ totalProducts: 897 }))
+    expect(wholeCatalogue).toEqual(small)
+    expect(wholeCatalogue.breakdown).toContain('Catalogue size is not an organisation inventory')
+    expect(wholeCatalogue.breakdown).toContain('Funding tranches')
   })
 })
 
@@ -372,7 +381,7 @@ describe('buildGovernanceDefault', () => {
     expect(out).toMatch(/Signatories/)
     expect(out).toMatch(/Scope/)
     expect(out).toMatch(/Authority/)
-    expect(out).toMatch(/Budget line/)
+    expect(out).toMatch(/releases each tranche/)
     expect(out).toMatch(/Timeline/)
   })
 })

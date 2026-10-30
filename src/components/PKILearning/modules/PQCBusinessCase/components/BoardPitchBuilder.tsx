@@ -10,6 +10,11 @@ import { PersonaPitchBanner } from './PersonaPitchBanner'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { getPitchVariant } from './pitchVariants'
+import {
+  MODELLED_COST_NOTE,
+  MODELLED_TOTAL_SENTENCE,
+  NO_COST_ESTIMATE_NOTE,
+} from './pitchVariants/sectionDefaults'
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
 import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
@@ -101,6 +106,23 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
             defaultValue: formatCurrency(effectiveRoiOutput.totalCostUSD),
           }
         }
+        // The amount now comes from the ROI model, so the breakdown must not
+        // go on saying that no cost estimate is attached.
+        if (
+          effectiveRoiOutput &&
+          s.id === 'budget' &&
+          f.id === 'breakdown' &&
+          typeof f.defaultValue === 'string'
+        ) {
+          return {
+            ...f,
+            // With products selected the first line is a different note, so the
+            // modelled-total sentence goes in front of it instead.
+            defaultValue: f.defaultValue.includes(NO_COST_ESTIMATE_NOTE)
+              ? f.defaultValue.replace(NO_COST_ESTIMATE_NOTE, MODELLED_COST_NOTE)
+              : `${MODELLED_TOTAL_SENTENCE} ${f.defaultValue}`,
+          }
+        }
         return f
       }),
     }))
@@ -150,12 +172,13 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     '',
     '## Basis of figures',
     '',
-    `- **Breach cost baselines** — IBM Cost of a Data Breach, per-sector averages. Sectors without a dedicated IBM figure use a labelled proxy. ${IBM_BASELINE_UNVERIFIED_NOTE}`,
-    '- **Annual breach probability** — Cyentia Institute, *Information Risk Insights Study (IRIS) 2025*, Figures 6 and 7, read from the report itself for the three organisation-size tiers (the report states them in charts, so they are not reproduced here). The tiers sit close together because IRIS 2025 finds they have converged.',
-    '- **CRQC arrival probability** — Global Risk Institute, Quantum Threat Timeline Report 2025: a CRQC is judged ~49% likely within a decade on averaged expert estimates, with half of the 26 experts surveyed putting it at 50% or more (2025 Quantum Threat Timeline Report).',
-    '- **Migration cost, delay premium, and staffing** — analyst estimates for this organization, not cited figures.',
+    '- **Proposal figures** — entered estimates require a scope, model or quotation reference, reporting date and accountable owner. Catalogue coverage does not establish an estate cost.',
+    effectiveRoiOutput || effectiveBreachOutput || effectiveInactionOutput
+      ? `- **Imported financial scenarios** — inspect the saved model inputs and their baseline sources before adapting them. ${IBM_BASELINE_UNVERIFIED_NOTE}`
+      : '- **Financial models** — no ROI, breach or delay-model output is attached; figures entered in this proposal have not been checked by a model.',
+    '- **Funding** — distinguish total programme cost, existing commitments, the incremental request and gate-linked release conditions.',
     '',
-    '*Probability-weighted figures blend a "CRQC exists" and "no CRQC" outcome across the planning horizon; they are structured arguments, not measurements. Confirm every figure against your own finance function before it reaches a board paper.*',
+    '*This is an educational proposal template, not an approved budget. Any loss probability or avoided-loss benefit remains a stated scenario assumption, not a measured outcome. Have the accountable finance and programme owners review the figures and decision rights.*',
     '',
   ].join('\n')
 
@@ -178,7 +201,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         createdAt: Date.now(),
       })
     },
-    [variant, data, selectedPersona, addExecutiveDocument]
+    [variant, data, selectedPersona, addExecutiveDocument, BASIS_OF_FIGURES]
   )
 
   return (
@@ -253,23 +276,24 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         </summary>
         <div className="mt-3 text-sm text-muted-foreground space-y-2">
           <p>
-            <strong>Budget band:</strong> a base range keyed to your assessment risk level — Low/
-            Moderate: $0.5M-$1.5M over 18-24 months; High: $1M-$3M over 24 months; Critical: $2M-$6M
-            over 24-36 months.
+            <strong>Programme budget:</strong> enter reviewed estimates for the named systems and
+            services, planning horizon, dependencies and uncertainty. Catalogue coverage does not
+            establish your organisation’s estate size or migration cost.
           </p>
           <p>
-            <strong>Scale multiplier:</strong> the band is then scaled by products in scope — ×1.5
-            at 200+ products, ×1.2 at 50+, ×0.7 under 10, ×1 otherwise.
+            <strong>Funding request:</strong> distinguish the total programme envelope, existing
+            commitments, additional funding, annual allocations and the conditions for releasing
+            each tranche.
           </p>
           <p>
-            <strong>Cost-of-inaction multiplier:</strong> the Cost-Benefit section frames inaction
-            (penalties, breach response, contract loss, reputational damage) as an illustrative 3-5×
-            the migration investment for critical/high risk, or 2-3× for moderate/low risk.
+            <strong>Benefits and avoided costs:</strong> enter documented scenario assumptions and
+            their sources. The template does not infer a benefit multiple from the assessment risk
+            level. Saved calculator outputs remain conditional on their inputs.
           </p>
           <p className="text-xs italic mt-2">
-            Both figures are starting points for board discussion, not a quote — run the ROI
-            Calculator (Step 2 of this workshop) for organization-specific numbers before committing
-            to a budget ask.
+            Reconcile the proposal with the cost model and charter before submission. Your
+            organisation’s governance determines approval authority; a completed template is not
+            spending approval.
           </p>
         </div>
       </details>

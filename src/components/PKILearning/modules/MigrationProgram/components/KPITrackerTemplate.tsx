@@ -15,6 +15,11 @@ import type { KpiDefinition, KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_CATALOG, KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { useHasUserInteracted } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import type { ScorecardObservation } from '@/components/PKILearning/common/executive/DataDrivenScorecard'
+import {
+  OVERALL_SCORE_MIN_COVERAGE,
+  scoredWeightShare,
+} from '@/components/PKILearning/common/executive/scorecardCoverage'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -70,6 +75,7 @@ export interface KpiTrackerMarkdownInput {
   userScores: Record<string, number>
   userWeights: Record<string, number>
   touchedIds: Set<string>
+  observations?: Record<string, ScorecardObservation>
 }
 
 export function buildKpiTrackerMarkdown({
@@ -79,6 +85,7 @@ export function buildKpiTrackerMarkdown({
   userScores,
   userWeights,
   touchedIds,
+  observations = {},
 }: KpiTrackerMarkdownInput): string {
   const scores = userScores
   let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
@@ -104,7 +111,12 @@ export function buildKpiTrackerMarkdown({
   const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
 
   md += `**Persona Lens:** ${activePersona}\n`
-  md += `**Overall Migration Progress: ${overall}/100**\n\n`
+  const coverage = scoredWeightShare(dimensions, ew, (d) => !isPending(d))
+  md +=
+    coverage >= OVERALL_SCORE_MIN_COVERAGE
+      ? `**Overall Score: ${overall}/100**\n\n`
+      : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
+  md += `Educational planning worksheet; entered values and catalogue status are not verified migration progress.\n\n`
   md += '## KPI Dimensions\n\n'
   md += '| KPI | Score | Weight | Target | Framework Mappings | Description |\n'
   md += '|-----|-------|--------|--------|---------------------|-------------|\n'
@@ -116,9 +128,21 @@ export function buildKpiTrackerMarkdown({
     const scoreCell = isPending(d) ? '_not yet scored_' : `${scores[d.id] ?? d.autoScore ?? 0}/100`
     md += `| ${d.label} | ${scoreCell} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'} | ${formatMappings(mappingsFor(d.id))} | ${d.description} |\n`
   }
+  md += '\n## Measurement Evidence\n\n'
+  md +=
+    '| KPI | Numerator | Denominator | Unit | Period | As of | Owner | Evidence | Verification |\n'
+  md +=
+    '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|\n'
+  const cell = (value: string | undefined) =>
+    (value || 'not provided').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')
+  for (const dimension of dimensions) {
+    const observation = observations[dimension.id]
+    if (!observation) continue
+    md += `| ${cell(dimension.label)} | ${cell(observation.numerator)} | ${cell(observation.denominator)} | ${cell(observation.unit)} | ${cell(observation.reportingPeriod)} | ${cell(observation.asOfDate)} | ${cell(observation.owner)} | ${cell(observation.evidenceReference)} | ${observation.verificationState} |\n`
+  }
   md += '\n## Data Sources\n\n'
-  md += `- Vendor / FIPS / threat / compliance KPIs auto-scored from your catalog, threats data, and assessment selections.\n`
-  md += `- Risk Posture trend: ${trendSummary(riskHistory)}\n`
+  md += `- Vendor and FIPS measures use only products explicitly selected in Migrate; catalogue status does not verify deployment. Compliance closure, exposure coverage and pace require organization-entered values.\n`
+  md += `- Assessment planning-index history: ${trendSummary(riskHistory)} (self-reported inputs, not measured migration progress)\n`
   md += `- All other dimensions accept manual input.\n`
 
   md += '\n---\n\n'
@@ -138,6 +162,18 @@ interface SavedKpiTrackerInputs {
   userScores: Record<string, number>
   userWeights: Record<string, number>
   touchedIds: string[]
+  observations?: Record<string, ScorecardObservation>
+}
+
+/**
+ * Scores the person actually set. An untouched KPI follows its live auto score,
+ * so a value saved for it earlier must not outrank the one on screen.
+ */
+function touchedScoresOf(saved: SavedKpiTrackerInputs | null | undefined): Record<string, number> {
+  const touched = new Set(saved?.touchedIds ?? [])
+  return Object.fromEntries(
+    Object.entries(saved?.userScores ?? {}).filter(([id]) => touched.has(id))
+  )
 }
 
 export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapOutput }) => {
@@ -155,6 +191,12 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     savedInputs?.personaOverride ?? null
   )
   const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
+  const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
+    savedInputs?.observations ?? {}
+  )
+  const handleObservationChange = useCallback((id: string, observation: ScorecardObservation) => {
+    setObservations((previous) => ({ ...previous, [id]: observation }))
+  }, [])
 
   // roadmapOutput only arrives as a live prop inside the linear
   // `/learn/migration-program` wizard. Reached any other way — the
@@ -188,8 +230,8 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   // The scorecard manages its own internal scores. We mirror them into local
   // state ONLY when they actually differ — blindly forwarding every sync feeds
   // back into the scorecard's auto-sync effect and causes an update storm.
-  const [userScores, setUserScores] = useState<Record<string, number>>(
-    savedInputs?.userScores ?? {}
+  const [userScores, setUserScores] = useState<Record<string, number>>(() =>
+    touchedScoresOf(savedInputs)
   )
   const lastSyncedRef = useRef<string>('')
   const handleScoreSnapshot = useCallback((scores: Record<string, number>) => {
@@ -236,8 +278,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         userScores,
         userWeights,
         touchedIds,
+        observations,
       }),
-    [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds]
+    [dimensions, activePersona, riskHistory, userScores, userWeights, touchedIds, observations]
   )
 
   // Structured CSV (one row per KPI) built from the live dimensions — not the
@@ -253,6 +296,14 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       'Framework Mappings',
       'Description',
       'Persona',
+      'Numerator',
+      'Denominator',
+      'Unit',
+      'Period',
+      'As of',
+      'Owner',
+      'Evidence',
+      'Verification',
     ]
     const rows = dimensions.map((d) => {
       const pending = d.notYetScored === true && !touchedIds.has(d.id)
@@ -269,10 +320,18 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         formatMappings(mappingsFor(d.id)),
         d.description,
         activePersona,
+        observations[d.id]?.numerator ?? '',
+        observations[d.id]?.denominator ?? '',
+        observations[d.id]?.unit ?? '',
+        observations[d.id]?.reportingPeriod ?? '',
+        observations[d.id]?.asOfDate ?? '',
+        observations[d.id]?.owner ?? '',
+        observations[d.id]?.evidenceReference ?? '',
+        observations[d.id]?.verificationState ?? 'not-verified',
       ]
     })
     return rowsToCsv([header, ...rows])
-  }, [dimensions, activePersona, userScores, userWeights, touchedIds])
+  }, [dimensions, activePersona, userScores, userWeights, touchedIds, observations])
 
   // Everything that round-trips through `inputs`. Watched by the autosave
   // below instead of the markdown, because a value can change here without
@@ -287,8 +346,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         userScores,
         userWeights,
         touchedIds: Array.from(touchedIds),
+        observations,
       }) satisfies SavedKpiTrackerInputs,
-    [personaOverride, startYear, userScores, userWeights, touchedIds]
+    [personaOverride, startYear, userScores, userWeights, touchedIds, observations]
   )
   const inputsSignature = useMemo(() => JSON.stringify(savedInputsSnapshot), [savedInputsSnapshot])
 
@@ -359,7 +419,6 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
 
   const seedSources: string[] = []
   if (execData.riskScore !== null) seedSources.push('assessment risk score')
-  if (execData.totalProducts > 0) seedSources.push(`${execData.totalProducts} catalog products`)
   if (execData.myFrameworks.length > 0)
     seedSources.push(
       `${execData.myFrameworks.length} framework${execData.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
@@ -377,7 +436,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         <PreFilledBanner summary="Restored your last saved scores, weights, and start year." />
       )}
       {seedSources.length > 0 && (
-        <PreFilledBanner summary={`Tracker auto-scored from ${seedSources.join(' + ')}.`} />
+        <PreFilledBanner
+          summary={`Planning context: ${seedSources.join(' + ')}. Verify its scope before interpreting scores.`}
+        />
       )}
       {effectiveRoadmapOutput?.earliestYear != null && (
         <PreFilledBanner
@@ -387,30 +448,29 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       <div className="glass-panel p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">Live Data Integration</p>
+            <p className="text-sm font-medium text-foreground">Planning inputs and scope</p>
             <p className="text-xs text-muted-foreground">
-              KPIs with data dependencies are auto-scored from your Migrate catalog, threats data,
-              assessment, and compliance selections. Locked rows require assessment or compliance
-              data to unlock.
+              Selected Migrate products can prefill catalogue-based vendor measures. Enter your
+              organization's progress, compliance closure and pace values yourself. Catalogue status
+              is not proof that a product has been deployed or a gap closed.
             </p>
           </div>
           <KpiPersonaSelector value={activePersona} onChange={setPersonaOverride} />
         </div>
         <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
           <span>
-            PQC-Ready Vendors:{' '}
-            <span className="font-mono text-primary">
-              {execData.pqcReadyCount}/{execData.totalProducts}
-            </span>
+            Products selected in Migrate:{' '}
+            <span className="font-mono text-primary">{execData.myProducts.length}</span>
           </span>
           <span>
-            Risk Score:{' '}
+            Assessment planning index:{' '}
             <span className="font-mono text-primary">
               {execData.riskScore !== null ? execData.riskScore : 'N/A'}
             </span>
           </span>
           <span>
-            Trend: <span className="font-mono text-primary">{trendSummary(riskHistory)}</span>
+            Assessment index history:{' '}
+            <span className="font-mono text-primary">{trendSummary(riskHistory)}</span>
           </span>
         </div>
       </div>
@@ -420,10 +480,10 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
           Program start year
         </label>
         <p className="text-xs text-muted-foreground mt-1 mb-2">
-          Set this to compute a real <span className="font-medium">Pace-to-Deadline</span> score —
-          your PQC-readiness progress vs. the straight-line pace expected between the start year and
-          your {execData.migrationDeadlineYear ?? 'target'} deadline (50 = on track, &gt;50 =
-          ahead). Until set, Pace-to-Deadline stays a manual slider.
+          Use this as planning context for a dated baseline. Setting a start year does not calculate
+          migration progress or establish which milestone applies. Enter Pace-to-Deadline from your
+          own reviewed measures; the deadline year shown is an example target, not a compliance
+          result.
         </p>
         <input
           id="kpi-start-year"
@@ -440,12 +500,15 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
 
       <DataDrivenScorecard
         title="PQC Migration KPI Tracker"
-        description={`Migration progress — ${activePersona} lens.`}
+        description={`Educational planning worksheet — ${activePersona} lens; values are not independently verified.`}
+        minimumCoverageForOverall={OVERALL_SCORE_MIN_COVERAGE}
         dimensions={dimensions}
         colorScale="readiness"
         onScoreChange={handleScoreSnapshot}
         onTouchedChange={handleTouchedChange}
         onWeightChange={handleWeightSnapshot}
+        observations={observations}
+        onObservationChange={handleObservationChange}
         allowWeightEditing={true}
         showExport={false}
         exportFilename={`pqc-kpi-tracker-${activePersona}`}
@@ -453,7 +516,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         // nothing read them back into the scorecard itself — it initialized
         // every slider from d.autoScore regardless of a restored save, so a
         // saved score looked reset on reload even though the write succeeded.
-        initialScores={savedInputs?.userScores}
+        initialScores={savedInputs ? touchedScoresOf(savedInputs) : undefined}
         initialWeights={savedInputs?.userWeights}
       />
 
@@ -465,14 +528,16 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       <p className="text-xs text-muted-foreground leading-relaxed">
         <strong className="text-foreground/80">How this is scored:</strong> each KPI&apos;s 0–100
         value is multiplied by its weight, summed, and divided by the total weight of the KPIs
-        included — a weighted average. KPIs that are locked (no data available) or not yet scored
-        are left out of both halves of that division rather than counted as zero, so an unscored KPI
-        does not drag the headline down. It also means the score describes only the KPIs you have
-        actually scored:{' '}
+        included — a weighted average. KPIs marked data unavailable or not yet scored are left out
+        of both halves of that division rather than counted as zero, so an unscored KPI does not
+        drag the headline down. It also means the score describes only the KPIs you have actually
+        scored:{' '}
         <strong>
           {scoredCount} of {dimensions.length}
         </strong>{' '}
-        here. Weights are the per-persona defaults unless you have edited them.
+        here. The combined score is withheld until at least 70% of the weight of the KPIs that can
+        be scored has values. That coverage threshold is a display rule, not proof of readiness.
+        Weights are the per-persona defaults unless you have edited them.
       </p>
 
       <ExportableArtifact

@@ -334,7 +334,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     workedExample:
-      'Choose the Executive lens, enter Systems Inventoried from your estate and select the products your organization uses in Migrate. Vendor Readiness then derives only from that scope; the combined score stays unavailable until at least 70% of intended KPI weight has evidence.',
+      'Choose the Executive lens, enter Systems Inventoried from your estate and select the products your organization uses in Migrate. Vendor Readiness then derives only from that scope; the combined score stays unavailable until at least 70% of the weight of the KPIs that can be scored has evidence; KPIs marked data unavailable are left out of that total.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',
@@ -457,7 +457,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     workedExample:
-      'Set the program start year and switch the "View as" role: the vendor, FIPS, threat and compliance KPIs auto-score from your Migrate catalog and assessment, Pace-to-Deadline becomes a real number, and the trend fills in as later assessments add snapshots.',
+      'Choose the Executive lens and a reporting baseline. Select your products in Migrate for catalogue-based vendor measures; enter reviewed progress, compliance closure and pace values yourself. Missing values stay unscored, and the combined score is withheld until at least 70% of the weight of the KPIs that can be scored has values; KPIs marked data unavailable are left out of that total.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',

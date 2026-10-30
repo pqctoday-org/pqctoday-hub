@@ -16,6 +16,10 @@ import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
+import {
+  OVERALL_SCORE_MIN_COVERAGE,
+  scoredWeightShare,
+} from '@/components/PKILearning/common/executive/scorecardCoverage'
 import type { PolicyOutput } from '../types'
 
 const SURFACE = 'governance' as const
@@ -32,8 +36,8 @@ const METHODOLOGY_MD = `## How this score is computed
 The **Overall Score** is the weighted average of the KPI sliders below, using the
 per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
 measure; the weighted average is rounded to a whole number. A combined score is
-withheld until at least 70% of intended KPI weight has organization-specific
-evidence. Missing rows remain visible and never improve the result by disappearing.
+withheld until at least 70% of the weight of the KPIs that can be scored has
+organization-specific evidence; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing.
 
 The KPI set follows the Applied Quantum framework's Board-Level KPI Pack —
 Coverage, Trust, Inventory, Vendors, and Agility, each with year-1/2/3 targets
@@ -66,27 +70,35 @@ export function buildKpiDashboardMarkdown(
   activePersona: KpiPersonaId,
   scores: Record<string, number>,
   weights: Record<string, number>,
-  observations: Record<string, ScorecardObservation> = {}
+  observations: Record<string, ScorecardObservation> = {},
+  /** The KPIs the person has set. A manual KPI with no baseline stays "not yet
+   *  scored" until it is in this set, as on the scorecard. Omit it to treat every
+   *  score passed in as entered (the simulation's generated documents do). */
+  touchedIds?: ReadonlySet<string>
 ): string {
   const ew = (d: (typeof dimensions)[number]) => (d.id in weights ? (weights[d.id] ?? 0) : d.weight)
+  const isPending = (d: (typeof dimensions)[number]) =>
+    touchedIds !== undefined && d.notYetScored === true && !touchedIds.has(d.id)
 
   let weightedSum = 0
   let totalWeight = 0
-  let intendedWeight = 0
   for (const d of dimensions) {
-    intendedWeight += ew(d)
     const value = scores[d.id] ?? d.autoScore
-    if (d.disabled || value === undefined) continue
+    if (d.disabled || isPending(d) || value === undefined) continue
     weightedSum += value * ew(d)
     totalWeight += ew(d)
   }
   const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
-  const coverage = intendedWeight > 0 ? totalWeight / intendedWeight : 0
+  const coverage = scoredWeightShare(
+    dimensions,
+    ew,
+    (d) => !isPending(d) && (scores[d.id] ?? d.autoScore) !== undefined
+  )
 
   let md = '# PQC Governance KPI Dashboard\n\n'
   md += `**Persona Lens:** ${activePersona}\n`
   md +=
-    coverage >= 0.7
+    coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
       : `**Overall Score: not available — evidence coverage ${Math.round(coverage * 100)}%**\n\n`
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
@@ -100,7 +112,7 @@ export function buildKpiDashboardMarkdown(
       continue
     }
     const value = scores[d.id] ?? d.autoScore
-    md += `| ${d.label} | ${value === undefined ? '_not yet scored_' : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
+    md += `| ${d.label} | ${value === undefined || isPending(d) ? '_not yet scored_' : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
     md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
   }
 
@@ -129,6 +141,9 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const scoresRef = useRef<Record<string, number>>(savedInputs?.scores ?? {})
+  // The scorecard reports which KPIs the person has set; the saved Markdown reads
+  // the same set so it agrees with the screen about what is still "not yet scored".
+  const touchedRef = useRef<ReadonlySet<string>>(new Set(Object.keys(savedInputs?.scores ?? {})))
   const weightsRef = useRef<Record<string, number>>(savedInputs?.weights ?? {})
   const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
     () => savedInputs?.observations ?? {}
@@ -174,7 +189,8 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       activePersona,
       scoresRef.current,
       weightsRef.current,
-      observationsRef.current
+      observationsRef.current,
+      touchedRef.current
     )
 
     addExecutiveDocument({
@@ -250,6 +266,10 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
     },
     [scheduleSave]
   )
+
+  const handleTouchedChange = useCallback((ids: Set<string>) => {
+    touchedRef.current = ids
+  }, [])
 
   // Weight edits must also re-persist (with the latest scores) so saved == on-screen.
   const handleWeightChange = useCallback(
@@ -377,6 +397,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         dimensions={dimensions}
         colorScale="readiness"
         onScoreChange={handleScoreChange}
+        onTouchedChange={handleTouchedChange}
         onWeightChange={handleWeightChange}
         initialScores={savedInputs?.scores}
         initialWeights={savedInputs?.weights}
@@ -385,7 +406,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         exportFilename={`pqc-governance-kpi-${activePersona}`}
         exportFormats={['markdown', 'csv', 'pdf']}
         includeTargetsInExport={true}
-        minimumCoverageForOverall={0.7}
+        minimumCoverageForOverall={OVERALL_SCORE_MIN_COVERAGE}
         observations={observations}
         onObservationChange={handleObservationChange}
       />

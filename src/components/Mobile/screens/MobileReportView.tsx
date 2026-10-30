@@ -12,6 +12,7 @@ import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectio
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { riskConfig as RISK_TIER } from '@/data/riskConfig'
 import type { SharedReportView } from '@/hooks/useResolvedSharedReport'
+import { BoardPackExport } from '@/components/common/BoardPackExport'
 
 interface MobileReportViewProps {
   /** Resolved once in `ReportView.tsx` (via `useResolvedSharedReport`) and
@@ -152,6 +153,25 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
         </div>
       )}
 
+      {!['developer', 'ops', 'researcher'].includes(selectedPersona ?? '') && (
+        <section className="mb-3 rounded-xl border border-border p-3">
+          <h2 className="text-sm font-semibold">Inspect the report&apos;s figures</h2>
+          <p className="my-2 text-xs text-muted-foreground">
+            {sharedView?.sample
+              ? 'Download this fictional worked example'
+              : 'Download this learning report, built from the answers entered,'}{' '}
+            with its figure sources, methods and caveats. The pack does not establish organizational
+            readiness or compliance.
+          </p>
+          <BoardPackExport
+            result={result}
+            variant="outline"
+            persona={selectedPersona}
+            shared={Boolean(sharedView)}
+            sample={sharedView?.sample}
+          />
+        </section>
+      )}
       <div className={cn('rounded-2xl border p-4 text-center', tier.border, tier.bg)}>
         <p className={cn('text-[38px] font-extrabold leading-none', tier.color)}>
           {result.riskScore}
