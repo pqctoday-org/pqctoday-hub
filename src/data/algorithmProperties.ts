@@ -9,7 +9,7 @@
  * AUTO-GENERATED — do not edit by hand.
  *
  * Data sourced from:
- *   - src/data/pqc_complete_algorithm_reference_10292026_r5.csv (latest reference snapshot)
+ *   - src/data/pqc_complete_algorithm_reference_10292026_r6.csv (latest reference snapshot)
  *   - HAND_CURATED blocks in scripts/generate-algorithm-properties.ts
  *     (algorithm selection, fips_standard normalization, per-algorithm overrides)
  *
