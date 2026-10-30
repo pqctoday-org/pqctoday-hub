@@ -75,7 +75,8 @@ const MESSAGES = [
   },
   {
     label: '{CertificateVerify}',
-    sublabel: 'Signature proof (ML-DSA / ECDSA / RSA-PSS / Ed25519)',
+    sublabel:
+      'Signature proof (ECDSA / RSA-PSS / Ed25519; ML-DSA is not defined in RFC 9846, see draft-ietf-tls-mldsa)',
     rfcRef: 'RFC 9846 §4.5.2',
     direction: 'left' as const,
     encrypted: true,

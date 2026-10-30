@@ -357,7 +357,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             secure. The trade-off is significantly larger signatures (~7.9 KB (7,856 B) for
             SLH-DSA-SHA2-128s vs 2,420 B, about 2.4 KB, for ML-DSA-44). The simulator&apos;s
             signature options offer ML-DSA only: no IETF working-group draft yet specifies SLH-DSA
-            for TLS 1.3 (only an individual draft, draft-reddy-tls-slhdsa, exists).
+            for TLS 1.3 (only an individual Internet-Draft, draft-reddy-tls-slhdsa, exists, and it
+            has expired).
           </p>
         </div>
         <Button

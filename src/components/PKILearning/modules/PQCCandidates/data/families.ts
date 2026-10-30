@@ -120,7 +120,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
     hardness:
       'Search Module Lattice Isomorphism Problem (smLIP) and One-More-Shortest-Vector Problem (omSVP). Newer than the standard SVP/LWE/SIS family but related.',
     whyKept:
-      "HAWK eliminates Falcon's floating-point Gaussian-sampling pain — pure integer arithmetic on a rank-2 module lattice. Compact 555 B signatures at Category 1, smaller than both ML-DSA and FN-DSA, and easier to implement in constant time on constrained hardware.",
+      "HAWK eliminates Falcon's floating-point Gaussian-sampling pain — pure integer arithmetic on a rank-2 module lattice. Compact 555 B signatures at Category 1, smaller than both ML-DSA and FN-DSA, and, per NIST IR 8610, HAWK's primary advantage over Falcon is its reliance on integer-only arithmetic.",
     openConcerns:
       "omSVP definition discrepancy required refinement during Round 2. Advances in solving smLIP variants exist but do not currently apply to HAWK's cyclotomic number fields — flagged for further community analysis.",
     candidateIds: ['hawk'],

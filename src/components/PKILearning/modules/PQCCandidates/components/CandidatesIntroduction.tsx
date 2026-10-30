@@ -309,11 +309,11 @@ export const CandidatesIntroduction: React.FC<CandidatesIntroductionProps> = ({
           <Compass size={20} /> What's coming next
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          NIST expects the third round, announced on 14 May 2026, to last approximately two years,
-          and names no standardisation year for any candidate. It signals a longer expected timeline
-          for multivariate schemes, which are unlikely to be standardised without a further round.
-          HAWK, the only lattice candidate, was withdrawn in July 2026. Korea targets 2029. ISO
-          adoption will follow.
+          NIST announced the third round on 14 May 2026 and names no standardisation year for any
+          candidate. It signals a longer expected timeline for multivariate schemes, which are
+          unlikely to be standardised without a further round. HAWK, the only lattice candidate, was
+          withdrawn in July 2026. KpqC concluded its competition on 16 January 2025; we found no
+          later Korean standardisation date in the documents we hold.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="rounded-lg border border-status-success/30 bg-status-success/5 p-4">

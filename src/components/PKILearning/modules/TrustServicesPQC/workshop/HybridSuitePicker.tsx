@@ -111,7 +111,7 @@ export const HybridSuitePicker = () => {
       </section>
 
       <section className="glass-panel p-6">
-        <h4 className="font-semibold">Two authorities, opposite defaults</h4>
+        <h4 className="font-semibold">Two authorities, different defaults</h4>
         <p className="mt-2 text-sm text-muted-foreground">{HYBRID_RULE.contrast}</p>
       </section>
     </div>

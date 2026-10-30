@@ -14,4 +14,4 @@ The deadline that matters is not the day quantum computers arrive. It is the day
 
 ## What's Happening
 
-Europe's rulebook has already moved. The ETSI cryptographic suites standard was updated in June 2026 to add the new quantum-safe signature algorithms and, importantly, hybrid modes where a classical and a quantum-safe signature must _both_ be valid. That is the opposite of the American position for national security systems, where hybrids are not required. Same algorithms, two authorities, opposite defaults — which one applies to you depends on where you operate, not on the mathematics.
+Europe's rulebook has already moved. The ETSI cryptographic suites standard was updated in June 2026 to add the new quantum-safe signature algorithms and, importantly, hybrid modes where a classical and a quantum-safe signature must _both_ be valid. That differs from the American position for national security systems, where hybrids are not required. Same algorithms, two authorities, different defaults — which one applies to you depends on where you operate, not on the mathematics.

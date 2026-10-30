@@ -156,7 +156,7 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     EncryptedExtensions:
       'First encrypted message — server sends negotiated extensions (ALPN, SNI response, etc.) under the handshake_key. §4.4.1',
     Certificate:
-      "Server's X.509 certificate chain. The end-entity cert carries the authentication key (ML-DSA or ECDSA). §4.5.1",
+      "Server's X.509 certificate chain. The end-entity cert carries the authentication key (ECDSA, RSA or Ed25519; ML-DSA is not defined in RFC 9846, see draft-ietf-tls-mldsa). §4.5.1",
     CertificateVerify:
       'Server signs the entire handshake transcript so far with its private key, proving it owns the cert. §4.5.2',
     Finished:

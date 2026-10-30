@@ -19,7 +19,7 @@ const PHASES = [
   {
     id: 'mid',
     label: 'Mid (2029–2030)',
-    body: 'KpqC winners (SMAUG-T, NTRU+, HAETAE, AIMer — selected January 2025) roll out across Korean government systems. ISO/IEC adoption of NIST on-ramp winners completes. CACR / OSCCA publishes PQC-extended SM-series specifications.',
+    body: 'KpqC winners (SMAUG-T, NTRU+, HAETAE, AIMer) were selected in January 2025; we found no Korean deployment or standardisation date in the documents we hold. ISO/IEC adoption of NIST on-ramp winners completes. CACR / OSCCA publishes PQC-extended SM-series specifications.',
   },
   {
     id: 'long',
@@ -51,11 +51,10 @@ export const FutureRoundsForecaster: React.FC = () => {
         <div className="flex items-start gap-2">
           <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
           <p className="text-xs text-foreground/85 leading-relaxed">
-            <strong className="text-status-warning">Forecast, not commitment.</strong> NIST expects
-            Round 3 (from 14 May 2026) to last approximately two years and has named no
-            standardisation year. The numbers below are illustrative — actual standardisation
-            cadence depends on Round 3 cryptanalysis, reparameterisation outcomes, and international
-            body alignment.
+            <strong className="text-status-warning">Forecast, not commitment.</strong> Round 3
+            started on 14 May 2026 and NIST has named no standardisation year. The numbers below are
+            illustrative — actual standardisation cadence depends on Round 3 cryptanalysis,
+            reparameterisation outcomes, and international body alignment.
           </p>
         </div>
       </div>

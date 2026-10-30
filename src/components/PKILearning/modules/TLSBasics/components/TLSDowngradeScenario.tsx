@@ -260,9 +260,10 @@ export function TLSDowngradeScenario() {
             that this server supports PQC; future classical-only negotiations are rejected.{' '}
             <span className="font-semibold">PQC Continuity</span> (
             <code>draft-sheffer-tls-pqc-continuity</code>, an individual Internet-Draft by Sheffer
-            et al., not adopted by the TLS working group): server signs a "downgrade limit" duration
-            that the client caches across restarts, for TLS clients other than browsers too. Both
-            need one earlier successful PQC connection; neither protects the first visit.
+            et al., not adopted by the TLS working group): a TLS extension that allows a TLS client
+            to cache a server&apos;s declared commitment to present PQC or composite certificates
+            for a specified duration, for TLS clients other than browsers too. Both need one earlier
+            successful PQC connection; neither protects the first visit.
           </p>
         </div>
       )}
@@ -313,9 +314,11 @@ export function TLSDowngradeScenario() {
               </tr>
               <tr>
                 <td className="py-2 pr-4 font-medium text-foreground">
-                  PQC Continuity (downgrade limit)
+                  PQC Continuity (cached commitment)
                 </td>
-                <td className="py-2 pr-4 text-muted-foreground">TLS extension (server-signed)</td>
+                <td className="py-2 pr-4 text-muted-foreground">
+                  TLS extension (cached server commitment)
+                </td>
                 <td className="py-2 pr-4 text-status-warning">⚠ Only after first success</td>
                 <td className="py-2 text-muted-foreground">
                   Individual Internet-Draft (Sheffer et al.; not WG-adopted)
