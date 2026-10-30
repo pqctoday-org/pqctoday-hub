@@ -160,6 +160,19 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     oids: ['1.2.840.10045.3.1.7', '1.3.132.0.34', '1.3.132.0.35'],
   },
   {
+    // Added 2026-10-29. Finite-field (prime-field group) Diffie-Hellman, for example the MODP
+    // groups of RFC 3526 and the FFDHE groups of RFC 7919. ECDH is elliptic-curve only, so
+    // folding DH into it would pair the wrong primitive with ML-KEM. Members and sizes come
+    // from RFC 3526 (modulus-sized public value and shared secret). CycloneDX 1.7 lists the
+    // family under the same name.
+    family: 'FFDH',
+    classical: true,
+    kinds: ['key-exchange'],
+    registryMembers: ['FFDH MODP-2048', 'FFDH MODP-3072', 'FFDH MODP-4096'],
+    cycloneDxFamilies: ['FFDH'],
+    oids: [],
+  },
+  {
     family: 'X25519',
     classical: true,
     kinds: ['key-exchange'],
@@ -298,7 +311,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     registryMembers: ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'],
     cycloneDxFamilies: ['ML-KEM'],
     oids: ['2.16.840.1.101.3.4.4.1', '2.16.840.1.101.3.4.4.2', '2.16.840.1.101.3.4.4.3'],
-    replaces: ['ECDH', 'X25519', 'RSA-kex'],
+    replaces: ['ECDH', 'X25519', 'FFDH', 'RSA-kex'],
   },
   {
     family: 'ML-DSA',

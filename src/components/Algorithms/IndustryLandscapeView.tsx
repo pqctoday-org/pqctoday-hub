@@ -849,14 +849,28 @@ function IndustryCrossRefs({
         count={stdGroups.reduce((n, g) => n + g.standards.length, 0)}
       >
         {stdGroups.length > 0 ? (
-          stdGroups.map((g) => (
-            <span key={g.body} className="inline-flex flex-wrap items-center gap-1">
-              <span className="text-[11px] text-muted-foreground">{g.body}</span>
-              {g.standards.map((s) => (
-                <AddressableStandardChip key={s.standardId} std={s} />
-              ))}
-            </span>
-          ))
+          <>
+            {stdGroups.map((g) => (
+              <span key={g.body} className="inline-flex flex-wrap items-center gap-1">
+                <span className="text-[11px] text-muted-foreground">{g.body}</span>
+                {g.standards.map((s) => (
+                  <AddressableStandardChip key={s.standardId} std={s} />
+                ))}
+              </span>
+            ))}
+            {/* What the green PQC mark on a chip means, and what a missing mark does not
+                mean. Wording checked against every row of the standards table (a "none" row
+                can still discuss the threat or say a mechanism is planned), so it defines
+                the mark only and makes no claim about unmarked rows. */}
+            <p
+              data-testid="standards-pqc-legend"
+              className="basis-full text-[11px] text-muted-foreground"
+            >
+              PQC mark: the document names a post-quantum mechanism. No mark does not mean no
+              quantum content: the document may discuss the threat, say a mechanism is planned, or
+              name one only in a draft or recommendation.
+            </p>
+          </>
         ) : (
           // 10 of 22 industries have no rows. Decision 2026-08-13: do NOT
           // inherit the cross-industry set — an empty block is the honest
