@@ -162,9 +162,9 @@ export const SSH_KEX_OPTIONS: ReadonlyArray<{
   id: SshKexAlg
   label: string
   family: 'classical' | 'hybrid' | 'pure'
-  /** Public-share bytes shipped by the client in KEX_ECDH_INIT (Q_C). */
+  /** Public-share bytes shipped by the client in KEX_ECDH_INIT (Q_C in RFC 8731, C_INIT in the ML-KEM hybrid draft). */
   clientShareBytes: number
-  /** Reply share bytes shipped by the server in KEX_ECDH_REPLY (Q_S). */
+  /** Reply share bytes shipped by the server in KEX_ECDH_REPLY (Q_S in RFC 8731, S_REPLY in the ML-KEM hybrid draft). */
   serverShareBytes: number
 }> = [
   {
