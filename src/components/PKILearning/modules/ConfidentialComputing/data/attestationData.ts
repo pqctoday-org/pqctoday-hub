@@ -418,9 +418,9 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
   },
   {
     id: 'tdx-marvell-kmip',
-    name: 'TDX Trust Domain ↔ Azure Dedicated HSM (Marvell LiquidSecurity)',
+    name: 'TDX Trust Domain ↔ Marvell LiquidSecurity HSM',
     teeVendor: 'intel-tdx',
-    hsmVendor: 'Azure Dedicated HSM (Marvell LiquidSecurity)',
+    hsmVendor: 'Marvell LiquidSecurity HSM',
     channelType: 'kmip',
     mutualAttestation: true,
     tlsChannelBinding: true,
@@ -432,7 +432,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'TD sends attestation quote to KMIP server → KMIP server verifies via Intel PCS → TLS 1.3 channel with KMIP key management → HSM provisions wrapped keys to TD',
     migrationComplexity: 'medium',
     notes:
-      'KMIP 2.1+ supports PQC key types. Azure Dedicated HSM (Marvell LiquidSecurity) has ML-KEM and ML-DSA support (preview). TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled. GCP C3 TDX instances went GA in 2025.',
+      'KMIP 2.1+ supports PQC key types. The product catalog lists ML-KEM and ML-DSA for Marvell LiquidSecurity 2 in a non-FIPS operating mode (CMVP certificate 4703). TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled. GCP C3 TDX instances went GA in 2025.',
   },
 ]
 
