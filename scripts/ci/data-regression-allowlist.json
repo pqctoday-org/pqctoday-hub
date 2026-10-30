@@ -23,7 +23,7 @@
       },
       "pci_certification": {
         "expectedEmptied": 8,
-        "reason": "Eight Payment Card Industry, retail and finance rows no longer assert a PCI certification requirement: the documents that were cited for it are not public PCI SSC pages, and the public pages leave it to the payment brands. The verdict is shown as not assessed.",
+        "reason": "Eight Payment Card Industry, retail and finance rows no longer assert a PCI certification requirement: the documents that were cited for it are not public PCI SSC pages, and the public pages leave it to the payment brands. The verdict is left blank, so the page shows no PCI certification tile for these rows.",
         "until": "2026-11-13"
       },
       "pci_certification_program": {
