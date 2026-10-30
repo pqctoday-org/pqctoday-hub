@@ -8,7 +8,7 @@ Module covering PQC migration for network security infrastructure including NGFW
 - NGFW cipher policy migration to ML-KEM/ML-DSA hybrid and pure-PQC modes
 - TLS intercept proxy behavior with PQC certificate chains (ML-DSA-65, hybrid ECDSA+ML-DSA)
 - IDS/IPS signature updates for PQC traffic detection (hybrid KEM handshakes, cert size anomalies, downgrade attacks)
-- Vendor roadmaps: Cisco (FTD 7.4+), Palo Alto (PAN-OS 11.x), Fortinet (FortiOS 7.6), Juniper (Junos 24.x), Check Point (R82), Sophos, SonicWall, pfSense/OPNsense
+- Vendor roadmaps: Cisco (FTD 7.4+), Palo Alto (PAN-OS 11.x), Fortinet (FortiOS 7.6), Juniper (Junos OS 25.4R1), Check Point (R82), Sophos, SonicWall, pfSense/OPNsense
 - Zero trust network access (ZTNA) PQC migration priorities: IdP → Policy Engine → Application Gateway → Micro-Segmentation
 - TCP Initial Congestion Window (`initcwnd`) starvation: PQC TLS handshakes (which can exceed 25 KB) require multiple TCP flights because they surpass the standard 10-segment `initcwnd` limit, adding significant latency (RTT penalties) and increasing fragmentation risks at middleboxes.
 

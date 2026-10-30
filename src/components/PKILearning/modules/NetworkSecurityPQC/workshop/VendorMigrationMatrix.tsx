@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react'
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  ChevronDown,
+  ChevronRight,
+  HelpCircle,
+} from 'lucide-react'
 import {
   VENDOR_MIGRATION_DATA,
   PQC_STATUS_LABELS,
@@ -14,7 +22,9 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
 
-function StatusIcon({ status }: { status: PQCStatusKey | 'not-supported' }) {
+function StatusIcon({ status }: { status: PQCStatusKey | 'not-supported' | 'not-stated' }) {
+  if (status === 'not-stated')
+    return <HelpCircle size={12} className="text-muted-foreground inline" />
   if (status === 'ga') return <CheckCircle size={12} className="text-status-success inline" />
   if (status === 'beta') return <Clock size={12} className="text-primary inline" />
   if (status === 'roadmap')
@@ -191,7 +201,7 @@ export const VendorMigrationMatrix: React.FC = () => {
                         )}
                       </td>
                       <td className="py-3 px-2 text-center font-mono text-muted-foreground">
-                        {vendor.roadmapYear}
+                        {vendor.roadmapYear ?? 'Not stated'}
                       </td>
                       <td className="py-3 px-2 text-center">
                         <Button
@@ -242,10 +252,18 @@ export const VendorMigrationMatrix: React.FC = () => {
                               Hybrid mode:{' '}
                               <strong
                                 className={
-                                  vendor.hybridMode ? 'text-status-success' : 'text-status-error'
+                                  vendor.hybridMode === undefined
+                                    ? 'text-muted-foreground'
+                                    : vendor.hybridMode
+                                      ? 'text-status-success'
+                                      : 'text-status-error'
                                 }
                               >
-                                {vendor.hybridMode ? 'Supported' : 'Not supported'}
+                                {vendor.hybridMode === undefined
+                                  ? 'Not stated'
+                                  : vendor.hybridMode
+                                    ? 'Supported'
+                                    : 'Not supported'}
                               </strong>
                             </span>
                           </div>

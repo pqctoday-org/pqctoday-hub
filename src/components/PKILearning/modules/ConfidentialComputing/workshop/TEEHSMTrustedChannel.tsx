@@ -792,9 +792,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   hsm: 'Entrust nShield',
                 },
                 {
-                  label: 'Intel TDX + Azure Dedicated HSM',
+                  label: 'Intel TDX + Marvell LiquidSecurity',
                   tee: 'intel-tdx',
-                  hsm: 'Azure Dedicated HSM (Marvell LiquidSecurity)',
+                  hsm: 'Marvell LiquidSecurity HSM',
                 },
               ].map((preset) => (
                 <Button
