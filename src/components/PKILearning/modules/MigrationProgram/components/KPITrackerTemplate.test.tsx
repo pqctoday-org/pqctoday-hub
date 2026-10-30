@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { KPITrackerTemplate } from './KPITrackerTemplate'
+import { KPITrackerTemplate, buildKpiTrackerMarkdown } from './KPITrackerTemplate'
+import { buildDimensions } from '@/data/kpiCatalog'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { ExecutiveDocument } from '@/services/storage/types'
 
@@ -100,6 +101,68 @@ describe('KPITrackerTemplate', () => {
     render(<KPITrackerTemplate />)
     expect(screen.getByTestId('kpi-dim-change-failure-rate')).toBeInTheDocument()
     expect(screen.getByTestId('kpi-dim-canary-coverage')).toBeInTheDocument()
+  })
+
+  it('withholds an empty executive score on screen and in the saved report', () => {
+    mockPersona = 'executive'
+    render(<KPITrackerTemplate />)
+    expect(
+      screen.getByText(/enter organization-specific evidence before interpreting/i)
+    ).toBeInTheDocument()
+    const markdown = buildKpiTrackerMarkdown({
+      dimensions: buildDimensions('executive', 'migration', mockData),
+      activePersona: 'executive',
+      riskHistory: [],
+      userScores: {},
+      userWeights: {},
+      touchedIds: new Set(),
+    })
+    expect(markdown).toContain('Overall Score: not available — evidence coverage 0%')
+    expect(markdown).not.toContain('Overall Migration Progress: 0/100')
+    expect(screen.queryByText(/Tracker auto-scored from/)).not.toBeInTheDocument()
+  })
+
+  it('does not turn one entered KPI into a complete migration score', () => {
+    const dimensions = buildDimensions('executive', 'migration', mockData)
+    const buildReport = (touched: Set<string>) =>
+      buildKpiTrackerMarkdown({
+        dimensions,
+        activePersona: 'executive',
+        riskHistory: [],
+        userScores: Object.fromEntries(dimensions.map((d) => [d.id, 0])),
+        userWeights: {},
+        touchedIds: touched,
+      })
+    expect(buildReport(new Set([dimensions[0].id]))).toContain('Overall Score: not available')
+    // A real entered zero counts as a value; it is different from missing input.
+    const complete = buildReport(new Set(dimensions.filter((d) => !d.disabled).map((d) => d.id)))
+    expect(complete).toContain('Overall Score: 0/100')
+    expect(complete).toContain('not verified migration progress')
+  })
+
+  it('restores a saved empty scorecard without treating mirrored zeros as entered evidence', () => {
+    mockPersona = 'executive'
+    const dimensions = buildDimensions('executive', 'migration', mockData)
+    mockStoreState.artifacts.executiveDocuments = [
+      {
+        id: 'kpi-tracker-empty',
+        moduleId: 'migration-program',
+        type: 'kpi-tracker',
+        title: 'Empty planning worksheet',
+        data: '',
+        createdAt: Date.now(),
+        inputs: {
+          personaOverride: 'executive',
+          startYear: null,
+          userScores: Object.fromEntries(dimensions.map((d) => [d.id, 0])),
+          userWeights: {},
+          touchedIds: [],
+        },
+      },
+    ]
+    render(<KPITrackerTemplate />)
+    expect(screen.getByText(/Evidence coverage: 0%/)).toBeInTheDocument()
+    expect(screen.getByText(/Not yet available/)).toBeInTheDocument()
   })
 
   it('disables risk-posture when no assessment is complete', () => {

@@ -457,7 +457,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     workedExample:
-      'Set the program start year and switch the "View as" role: the vendor, FIPS, threat and compliance KPIs auto-score from your Migrate catalog and assessment, Pace-to-Deadline becomes a real number, and the trend fills in as later assessments add snapshots.',
+      'Choose the Executive lens and a reporting baseline. Select your products in Migrate for catalogue-based vendor measures; enter reviewed progress, compliance closure and pace values yourself. Missing values stay unscored, and the combined score is withheld below 70% evidence coverage.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',

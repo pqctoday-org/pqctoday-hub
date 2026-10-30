@@ -6,8 +6,8 @@
  * step and ONE "after that" link; everything else on the board folds under
  * "More for this question". This table is the whole of that choice.
  *
- * Owner decision 3: the Evidence board's next step is the Revisions page until
- * the board pack ships with its claim ledger.
+ * Owner decision 3: once the board pack includes figure sources, the Evidence
+ * board opens that worked example. Content revisions remain one step away.
  *
  * Every href is checked against the app's real routes and Command Center tool
  * ids in executiveDecisionMode.test.ts.
@@ -49,10 +49,10 @@ export const EXECUTIVE_DECISION_STEPS: Readonly<Record<string, ExecutiveDecision
     afterHref: '/compliance',
   },
   evidence: {
-    nextLabel: 'See what changed and why',
-    nextHref: '/revisions',
-    afterLabel: 'Find planning guidance in the library',
-    afterHref: '/library?purpose=planning',
+    nextLabel: 'Inspect a sample board pack',
+    nextHref: '/report?example=1',
+    afterLabel: 'See what changed and why',
+    afterHref: '/revisions',
   },
   verify: {
     nextLabel: 'Draft your board pitch',

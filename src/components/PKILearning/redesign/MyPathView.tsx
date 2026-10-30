@@ -105,6 +105,11 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
   if (!summary) return null
 
   const resumeModule = resumeId ? MODULE_CATALOG[resumeId] : undefined
+  const resumeStarted = Boolean(
+    resumeId &&
+    (modules[resumeId]?.status === 'in-progress' ||
+      (modules[resumeId]?.completedSteps.length ?? 0) > 0)
+  )
   const resumePct = resumeId
     ? Math.min(
         100,
@@ -229,7 +234,9 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
             <div className="min-w-0">
               <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">
                 {resumeModule
-                  ? 'Continue where you left off'
+                  ? resumeStarted
+                    ? 'Continue where you left off'
+                    : 'Start your next module'
                   : tier === 'essentials'
                     ? 'Your Essentials are complete'
                     : 'Your path is complete'}
@@ -260,7 +267,7 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
               onClick={() => navigate(`/learn/${resumeModule.id}`)}
               className="shrink-0 gap-1.5"
             >
-              Resume
+              {resumeStarted ? 'Resume' : 'Start'}
               <ArrowRight size={14} />
             </Button>
           )}

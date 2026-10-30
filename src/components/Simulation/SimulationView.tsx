@@ -2197,9 +2197,9 @@ export function SimulationView() {
               Practise on a sample organization, or run it on your own
             </h1>
             <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
-              See how much of your business is exposed to the quantum threat today — and the cost
-              and sequence of closing it. Start immediately on a sample organization, or run it on
-              your own: with an assessment, the sector, size and jurisdiction come from yours.
+              Explore migration priorities and delivery choices using a fictional organization, or
+              the sector, size and jurisdiction you entered in an assessment. The simulation is a
+              planning exercise; it does not scan your business or verify its exposure or costs.
             </p>
             <div className="mt-6 flex flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center">
               <Link
@@ -2259,12 +2259,13 @@ export function SimulationView() {
               >
                 The Executive Overview takes {fmtMinutes(getLandingMinutes().walkthrough)}, or start
                 with the {fmtMinuteAdj(getLandingMinutes().intro)} intro. At the end you get a
-                program maturity score, a run grade and a migration roadmap you can save.
+                simulation maturity score, a run grade and a sample migration roadmap you can save.
+                These describe the exercise, not verified organizational readiness.
               </p>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
                 “Watch the full migration” loads a sample Finance &amp; Banking · US run — pick how
-                you'd like to play it. Run your own assessment anytime to replace it with your real
-                numbers.
+                you'd like to play it. Run your own assessment anytime to use your self-reported
+                planning inputs instead.
               </p>
             </div>
           </div>

@@ -415,7 +415,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/kpi-tracker': {
     executive:
-      'Set the programme start year and switch View as to Executive: Pace-to-Deadline becomes a real number and the vendor, FIPS, threat and compliance KPIs score from your Migrate catalogue and assessment.',
+      'Choose the Executive lens, select your products in Migrate and enter your own reviewed progress and compliance measures. A start year provides planning context; it does not measure progress. Missing values remain visible and the combined score requires sufficient evidence coverage.',
     grc: 'Enter the scores you can evidence, note which KPIs are auto-scored from live data and which need input, and export the .csv each period: the trend fills in as later assessments add snapshots.',
   },
   '/business/tools/deployment-playbook': {
