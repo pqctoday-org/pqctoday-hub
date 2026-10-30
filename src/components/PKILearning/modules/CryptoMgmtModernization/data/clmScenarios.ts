@@ -66,7 +66,7 @@ export const CLM_SCENARIOS: CLMScenario[] = [
   },
   {
     id: 'pqc-size-growth',
-    title: 'PQC-era certificate size growth',
+    title: 'PQC-era handshake size growth',
     description:
       'Hybrid post-quantum key agreement (ECDH + ML-KEM) adds approximately 1600 bytes to the TLS handshake (AWS).',
     triggerStage: 'classify',
