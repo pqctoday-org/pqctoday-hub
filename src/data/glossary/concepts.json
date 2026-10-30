@@ -1349,7 +1349,7 @@
   },
   {
     "term": "Notation",
-    "definition": "A CNCF OCI artifact signing tool that supports any OCI artifact (images, Helm charts, SBOMs) using X.509 certificate-backed signatures. Notation v1.3+ supports ML-DSA-65 via the AWS Crypto Tools plugin, making it the first production-grade PQC container signing solution.",
+    "definition": "A CNCF OCI artifact signing tool that supports any OCI artifact (images, Helm charts, SBOMs) using X.509 certificate-backed signatures. We found no vendor documentation stating that Notation, or its AWS Signer plugin, supports ML-DSA, so any post-quantum support is unconfirmed.",
     "relatedModule": "/learn/platform-eng-pqc",
     "complexity": "intermediate",
     "category": "concept"
