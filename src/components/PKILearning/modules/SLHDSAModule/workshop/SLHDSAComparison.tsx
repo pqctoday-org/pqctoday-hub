@@ -80,9 +80,10 @@ const ROWS = [
 export const SLHDSAComparison: React.FC = () => (
   <div className="space-y-6">
     <p className="text-sm text-muted-foreground leading-relaxed">
-      All three schemes are hash-based and provide quantum-safe security with no new hardness
-      assumptions. The choice comes down to state management requirements, signature size
-      constraints, and signing frequency.
+      All three schemes are hash-based: their security rests only on hash-function properties (BSI
+      TR-02102-1 section 5.3.4), which are believed to withstand large-scale quantum computers (SP
+      800-208). The choice comes down to state management requirements, signature size constraints,
+      and signing frequency.
     </p>
 
     <div className="overflow-x-auto">

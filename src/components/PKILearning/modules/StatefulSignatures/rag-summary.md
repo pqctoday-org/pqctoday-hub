@@ -39,6 +39,6 @@ A FIPS 140-3 certificate for a module that signs with LMS or XMSS rests on four 
 - NIST SP 800-208 (Recommendation for Stateful Hash-Based Signature Schemes, October 2020)
 - RFC 8554 (LMS -- Leighton-Micali Signature), RFC 8391 (XMSS -- eXtended Merkle Signature Scheme)
 - FIPS 140-3 (HSM validation for state management enforcement; Implementation Guidance 10.3.A self-tests, C.N and C.O for SP 800-208), FIPS 205 (SLH-DSA stateless alternative)
-- CNSA 2.0 (permits LMS/XMSS for firmware/software signing; 2025 preference and 2030 exclusive-use milestone for that category; FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 2031 unless otherwise noted); verify-only products need CAVP testing only, while signers that are NSS need CMVP-validated hardware (see What the lab tests)
+- CNSA 2.0 (permits LMS/XMSS for firmware/software signing; 2025 preference and 2030 exclusive-use milestone for that category; FAQ version 2.2 mandates CNSA 2.0 algorithms for NSS by 2031 unless otherwise noted); verify-only products need CAVP testing only, while signers that are NSS need hardware validated by CMVP or, in the FAQ's words, "via other NSA guidance", and waivers are not granted (see What the lab tests)
 - RFC 10033, formerly draft-ietf-pquip-hbs-state (practical guidance on state, backup, and recovery for LMS/XMSS deployments)
 - BSI Technical Guideline TR-02102-1 (recommends all SP 800-208 parameter sets of LMS/HSS and XMSS/XMSS^MT)

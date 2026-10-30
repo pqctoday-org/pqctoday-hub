@@ -1271,7 +1271,7 @@ export function StatefulSignaturesDemo() {
                           [
                             'Signature size',
                             '1.3–1.9 KB (LMS_SHA256_M32, W8, H5–H25; RFC 8554 Table 1 and section 5.4) · 2,500 B (XMSS-SHA2_10_256, RFC 8391)',
-                            '8–50 KB depending on parameter set',
+                            '7,856 to 49,856 B depending on parameter set (FIPS 205 Table 2)',
                           ],
                           [
                             'State management',

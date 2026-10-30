@@ -765,8 +765,8 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
             <span className="font-semibold">{hashFamily}</span>
             <span className="text-muted-foreground text-[10px] block mt-0.5 leading-snug">
               {hashFamily === 'SHA-2'
-                ? 'Faster without SHA-3 hardware'
-                : 'Preferred with SHA-3 / SHAKE acceleration'}
+                ? 'Built from SHA-256 and SHA-512 (FIPS 205 §11.2)'
+                : 'Built from SHAKE256 (FIPS 205 §11.1)'}
             </span>
           </div>
         </div>
