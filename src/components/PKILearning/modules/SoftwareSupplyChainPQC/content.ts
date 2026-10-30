@@ -49,7 +49,7 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-208'),
     getStandard('RFC 8554'),
     getStandard('RFC 8391'),
-    getStandard('FIPS-140-3'),
+    getStandard('FIPS-140-3-STANDARD'),
   ],
 
   algorithms: [

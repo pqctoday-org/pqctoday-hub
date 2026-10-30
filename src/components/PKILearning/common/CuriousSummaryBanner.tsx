@@ -90,6 +90,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   PQCBusinessCase: 'pqc-business-case',
   PQCGovernance: 'pqc-governance',
   CodeSigning: 'code-signing',
+  SoftwareSupplyChainPQC: 'software-supply-chain-pqc',
   APISecurityJWT: 'api-security-jwt',
   IoTPQC: 'iot-pqc',
   ConfidentialComputing: 'confidential-computing',
