@@ -71,7 +71,7 @@ export const MediaDrmExercises: React.FC<ExercisesProps> = ({
       badge: 'C2PA',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'The specification makes the time-stamp optional, names a signer Trust List and a separate time-stamp authority Trust List, and has validation check the signer credential’s revocation information. It states no certificate validity period, and this exercise supplies none: any lifetime you assume is yours. For long-term signatures and revocation evidence, see Trust Services & Long-Term Signatures.',
+        'The specification makes the time-stamp optional, names a signer Trust List and a separate time-stamp authority Trust List, and has validation check the signer credential’s revocation information. It sets no required length for a signing certificate’s validity, and this exercise supplies none: any lifetime you assume is yours. For long-term signatures and revocation evidence, see Trust Services & Long-Term Signatures.',
       config: { step: 2 },
     },
   ]
