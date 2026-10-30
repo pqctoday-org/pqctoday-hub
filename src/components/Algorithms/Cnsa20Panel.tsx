@@ -38,10 +38,11 @@ export function Cnsa20Panel() {
             <strong className="text-status-success">ML-KEM-1024</strong> (key establishment) and{' '}
             <strong className="text-status-success">ML-DSA-87</strong> (signatures) are{' '}
             <strong>required</strong>; stateful{' '}
-            <strong className="text-status-info">LMS / XMSS</strong> are approved for
-            software/firmware signing only; and <strong>SLH-DSA is not selected</strong>. Lower
-            parameter sets (ML-KEM-512/768, ML-DSA-44/65) sit below the CNSA 2.0 floor. AES-256 and
-            SHA-384/512 cover symmetric encryption and hashing.
+            <strong className="text-status-info">LMS / XMSS</strong> are approved (NSA wants them
+            used for software/firmware signing whenever possible); and{' '}
+            <strong>SLH-DSA is not selected</strong>. Lower parameter sets (ML-KEM-512/768,
+            ML-DSA-44/65) sit below the CNSA 2.0 floor. AES-256 and SHA-384/512 cover symmetric
+            encryption and hashing.
           </p>
         </div>
       </div>

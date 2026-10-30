@@ -18,7 +18,7 @@
 // CNSA 2.0 algorithm selections:
 //  - ML-KEM-1024 ......... REQUIRED (asymmetric key establishment)
 //  - ML-DSA-87 ........... REQUIRED (general-purpose digital signatures)
-//  - LMS / XMSS (SP 800-208, SHA-256/192) .. APPROVED for software/firmware signing only
+//  - LMS / XMSS (SP 800-208, SHA-256/192) .. APPROVED (FAQ Ver. 2.2: NSA wants them used for software/firmware signing whenever possible; validated ML-DSA is approved for all signing use cases)
 //  - HSS / XMSS^MT (multi-tree SP 800-208 variants) .. NOT allowed (FAQ Ver. 2.2)
 //  - AES-256 ............. REQUIRED (symmetric)
 //  - SHA-384 / SHA-512 ... REQUIRED (hashing)
@@ -112,15 +112,15 @@ export function classifyCnsa20(algo: Pick<AlgorithmDetail, 'name' | 'family'>): 
       status: 'excluded',
       label: 'Not in CNSA 2.0',
       rationale:
-        'HSS and XMSS^MT (multi-tree variants in SP 800-208) are not allowed under CNSA 2.0; only single-tree LMS and XMSS are allowed, for software/firmware signing.',
+        'HSS and XMSS^MT (multi-tree variants in SP 800-208) are not allowed under CNSA 2.0; NSA has only approved LMS and XMSS (CNSA 2.0 FAQ Ver. 2.2).',
     }
   }
   if (/^(LMS|XMSS)(?![A-Z^])/i.test(name)) {
     return {
       status: 'approved-limited',
-      label: 'CNSA 2.0 (firmware only)',
+      label: 'CNSA 2.0 (LMS/XMSS approved)',
       rationale:
-        'Single-tree stateful hash-based signatures (LMS/XMSS, SP 800-208) are allowed by CNSA 2.0 for software/firmware signing only, not general use. State management is mandatory.',
+        'Single-tree stateful hash-based signatures (LMS/XMSS, SP 800-208) are the stateful schemes NSA has approved for NSS; the CNSA 2.0 FAQ (Ver. 2.2) says NSA wants them used for software/firmware signing whenever possible, and that validated ML-DSA is approved for all signing use cases. State management is mandatory.',
     }
   }
 
@@ -146,7 +146,7 @@ export function classifyCnsa20(algo: Pick<AlgorithmDetail, 'name' | 'family'>): 
       status: 'excluded',
       label: 'Not in CNSA 2.0',
       rationale:
-        'SLH-DSA (FIPS 205) is NIST-standardized but was NOT selected by CNSA 2.0; CNSA 2.0 names ML-DSA-87 for general signatures and stateful LMS/XMSS for firmware.',
+        'SLH-DSA (FIPS 205) is NIST-standardized but is not part of CNSA and is not approved for any use in NSS (CNSA 2.0 FAQ Ver. 2.2); CNSA 2.0 names ML-DSA-87 for signatures and LMS/XMSS for firmware and software signing.',
     }
   }
 
