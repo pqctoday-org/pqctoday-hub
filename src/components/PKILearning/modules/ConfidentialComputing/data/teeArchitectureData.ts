@@ -254,7 +254,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'mature',
     pqcReadiness: 'preview',
     pqcNotes:
-      'AWS KMS offers ML-DSA signing keys (GA June 2025) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints; it does not offer ML-KEM KMS keys. Nitro attestation documents still use ECDSA P-384, and the attestation key migration timeline is not public.',
+      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints. Nitro attestation documents still use ECDSA P-384, and the attestation key migration timeline is not public.',
     strengths: [
       'Extremely simple trust model — no OS, no network, no storage in enclave',
       'Tight KMS integration for attestation-based key access',

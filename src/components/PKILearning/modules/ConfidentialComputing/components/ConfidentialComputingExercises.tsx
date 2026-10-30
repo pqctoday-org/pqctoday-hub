@@ -94,7 +94,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Assessment',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). AWS documents ML-DSA key generation and signing inside CloudHSM, in FIPS mode on hsm2m.medium clusters from 1 September 2026, but no ML-KEM, and the HSM\u2019s CMVP certificate does not list ML-DSA yet (checked October 2026). These details move faster than any catalogue, so confirm them in AWS documentation before you design around them. AES-256 memory encryption is Grover-resilient. Patient records have long retention (HIPAA: 6+ years) making HNDL exposure critical. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
+        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). AWS documents ML-DSA key generation and signing inside CloudHSM, in FIPS mode on hsm2m.medium clusters from 1 September 2026, but no ML-KEM, and the HSM\u2019s CMVP certificate does not list ML-DSA yet (checked October 2026). These details move faster than any catalogue, so confirm them in AWS documentation before you design around them. AES-256 memory encryption is Grover-resilient. Patient records can have long retention: state law generally governs how long medical records are retained (the HIPAA Privacy Rule has no medical-record retention requirement), while HIPAA requires covered entities to retain required compliance documentation for 6 years, making HNDL exposure critical for long-lived records. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
       config: { step: 4 },
     },
   ]
