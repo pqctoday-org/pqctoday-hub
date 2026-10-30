@@ -14372,7 +14372,12 @@
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T13:06:41.093704+00:00"
+      "stampedAt": "2026-09-17T13:06:41.093704+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-10292026/library/A-First-Look-at-Digital-Rights-Management-Systems-for-Secure.html",
+      "supersededAt": "2026-10-30T00:30:15.747598+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "D3: the paper, not its abstract page — replaced by A-First-Look-at-Digital-Rights-Management-Systems-for-Secure.pdf"
     },
     {
       "refId": "Ethereum-Foundation-Roadmap-Account-Abstraction",
@@ -24094,6 +24099,24 @@
       "replacedAt": "2026-10-29T11:45:39.153002+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "Admit the saved arXiv copy the Industry Landscape energy-scada sentences were checked against; the live fetch is refused only because the paper's template leaves a placeholder title"
+    },
+    {
+      "refId": "A-First-Look-at-Digital-Rights-Management-Systems-for-Secure",
+      "filename": "A-First-Look-at-Digital-Rights-Management-Systems-for-Secure.pdf",
+      "sizeBytes": 844782,
+      "contentType": "application/pdf",
+      "url": "https://arxiv.org/abs/2308.00437",
+      "sha256": "ff79a35587224f79bc430ff63678904de233335aee34e5af5710cf3cb01356ef",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-30T00:30:17.633033+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/A-First-Look-at-Digital-Rights-Management-Systems-for-Secure.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-10-30T00:30:15.747598+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "D3: the paper, not its abstract page"
     }
   ],
   "archivedEntries": [
@@ -36928,7 +36951,12 @@
       "identity": "MATCH",
       "unified": "current",
       "admittedAt": "2026-09-17T13:06:41.093704+00:00",
-      "admittedBy": "admit.py --stamp-existing"
+      "admittedBy": "admit.py --stamp-existing",
+      "ok": false,
+      "superseded_file": "_superseded-10292026/library/A-First-Look-at-Digital-Rights-Management-Systems-for-Secure.html",
+      "supersededAt": "2026-10-30T00:30:15.747598+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "D3: the paper, not its abstract page — replaced by A-First-Look-at-Digital-Rights-Management-Systems-for-Secure.pdf"
     },
     {
       "refId": "RFC-9019-A-Firmware-Update-Architecture-for-Internet-of-Thin",
