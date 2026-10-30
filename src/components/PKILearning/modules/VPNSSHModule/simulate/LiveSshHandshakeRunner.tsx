@@ -38,7 +38,8 @@ function CompareCell({
   unit = 'B',
 }: {
   label: string
-  spec: number
+  /** Omitted for measurements the spec has no value for (wall-time). */
+  spec?: number
   live: number | null
   unit?: string
 }) {
@@ -46,18 +47,26 @@ function CompareCell({
   return (
     <div className="rounded border border-border/60 bg-muted/20 p-2.5 space-y-0.5">
       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>
-      <p className="text-sm font-mono text-foreground">
-        {spec.toLocaleString()} {unit}
-        <span className="text-[10px] text-muted-foreground"> spec</span>
-      </p>
-      {live !== null && (
-        <p
-          className={`text-xs font-mono ${matches ? 'text-status-success' : 'text-status-warning'}`}
-        >
-          {matches ? '✓' : '≠'} {live.toLocaleString()} {unit}
-          <span className="text-[10px]"> live</span>
+      {spec !== undefined && (
+        <p className="text-sm font-mono text-foreground">
+          {spec.toLocaleString()} {unit}
+          <span className="text-[10px] text-muted-foreground"> spec</span>
         </p>
       )}
+      {live !== null &&
+        (spec === undefined ? (
+          <p className="text-sm font-mono text-foreground">
+            {live.toLocaleString()} {unit}
+            <span className="text-[10px] text-muted-foreground"> live</span>
+          </p>
+        ) : (
+          <p
+            className={`text-xs font-mono ${matches ? 'text-status-success' : 'text-status-warning'}`}
+          >
+            {matches ? '✓' : '≠'} {live.toLocaleString()} {unit}
+            <span className="text-[10px]"> live</span>
+          </p>
+        ))}
     </div>
   )
 }
@@ -95,6 +104,8 @@ function RunnerInner({ algorithm }: Props) {
       sshEngine.bindHsm({ module: moduleRef.current, hSession: hSessionRef.current })
       setPhase('running')
       const r = await sshEngine.runHandshake(mode)
+      // The engine reports a failed handshake in the result, not by throwing.
+      if (!r.connection_ok) throw new Error(r.error ?? 'SSH handshake failed')
       setResult(r)
       setPhase('done')
     } catch (err) {
@@ -196,27 +207,19 @@ function RunnerInner({ algorithm }: Props) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <CompareCell
-          label="KEX init share"
-          spec={sizes.clientKexDHInitBytes}
+          label="Client share (Q_C)"
+          spec={sizes.publicKeyBytes}
           live={result?.kex_share_bytes ?? null}
         />
         <CompareCell
-          label="KEX reply share"
-          spec={sizes.serverKexDHReplyBytes}
+          label="Server share (Q_S)"
+          spec={sizes.ciphertextOrShareBytes}
           live={result?.kex_reply_share_bytes ?? null}
         />
         <CompareCell
-          label="Pub component"
-          spec={sizes.publicKeyBytes}
-          live={
-            result ? (mode === 'pqc' ? result.kex_share_bytes - 32 : result.kex_share_bytes) : null
-          }
-        />
-        <CompareCell
           label="Wall-time (live only)"
-          spec={0}
           live={result ? Math.round(result.auth_ms) : null}
           unit="ms"
         />

@@ -506,8 +506,10 @@ async function runClassical(
 
   // Wire packets
   const host_pubkey_bytes = 4 + config.hostKey.length + 4 + 32
-  const kex_share_bytes = 36 // sshString(32B X25519 pub)
-  const kex_reply_share_bytes = 36
+  // Raw Q_C / Q_S, as in the hybrid path — the 4-byte string length is
+  // added where the packet sizes are built.
+  const kex_share_bytes = 32
+  const kex_reply_share_bytes = 32
   const host_sig_bytes = hostSig.length
   const client_sig_bytes = clientSig.length
   const client_pubkey_bytes = host_pubkey_bytes
