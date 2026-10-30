@@ -67,6 +67,7 @@ const GOLDEN_ROUTE_PATHS = [
   'merkle-tree-certs',
   'migration-program',
   'mls',
+  'media-drm-pqc',
   'mls-group-messaging',
   'network-security-pqc',
   'ops-quantum-impact',

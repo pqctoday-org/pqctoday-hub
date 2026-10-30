@@ -759,6 +759,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/government-defense-pqc`,
     structuredData: buildModuleSchema('Government & Defense PQC', 'PT60M', 'Advanced'),
   },
+  '/learn/media-drm-pqc': {
+    title: 'Media, Entertainment & DRM PQC — AACS, CI Plus, ECP & C2PA | PQC Today',
+    description:
+      'Content protection and content provenance read from the editions themselves: the AACS key ladder, CI Plus conditional access, the MovieLabs ECP specification, streaming licenses and C2PA Content Credentials, set against NIST IR 8547.',
+    canonical: `${BASE_URL}/learn/media-drm-pqc`,
+    structuredData: buildModuleSchema('Media, Entertainment & DRM PQC', 'PT60M', 'Intermediate'),
+  },
   '/learn/trust-services-pqc': {
     title: 'Trust Services & Long-Term Signatures — Timestamping, LTV & PQC | PQC Today',
     description:

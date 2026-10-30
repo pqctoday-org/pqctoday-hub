@@ -451,6 +451,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'confidential-computing',
       'homomorphic-encryption',
       'ai-security-pqc',
+      'media-drm-pqc',
       'quiz',
     ],
     pathItems: [
@@ -547,6 +548,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'confidential-computing' },
       { type: 'module', moduleId: 'homomorphic-encryption' },
       { type: 'module', moduleId: 'ai-security-pqc' },
+      { type: 'module', moduleId: 'media-drm-pqc' },
       {
         type: 'checkpoint',
         id: 'dev-cp-6',
@@ -559,11 +561,12 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'confidential-computing',
           'homomorphic-encryption',
           'ai-security-pqc',
+          'media-drm-pqc',
         ],
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2165,
+    estimatedMinutes: 2225,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -666,6 +669,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'iot-pqc',
       'ot-pqc',
       'automotive-pqc',
+      'media-drm-pqc',
       'quiz',
     ],
     pathItems: [
@@ -778,15 +782,22 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'iot-pqc' },
       { type: 'module', moduleId: 'ot-pqc' },
       { type: 'module', moduleId: 'automotive-pqc' },
+      { type: 'module', moduleId: 'media-drm-pqc' },
       {
         type: 'checkpoint',
         id: 'arch-cp-5',
         label: 'API, Supply Chain & IoT',
-        categories: ['api-security-jwt', 'code-signing', 'iot-pqc', 'automotive-pqc'],
+        categories: [
+          'api-security-jwt',
+          'code-signing',
+          'iot-pqc',
+          'automotive-pqc',
+          'media-drm-pqc',
+        ],
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2535,
+    estimatedMinutes: 2595,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -899,6 +910,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'automotive-pqc',
       'aerospace-pqc',
       'government-defense-pqc',
+      'media-drm-pqc',
       'pqc-risk-management',
       'pqc-business-case',
       'pqc-governance',
@@ -1033,6 +1045,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'automotive-pqc' },
       { type: 'module', moduleId: 'aerospace-pqc' },
       { type: 'module', moduleId: 'government-defense-pqc' },
+      { type: 'module', moduleId: 'media-drm-pqc' },
       {
         type: 'checkpoint',
         id: 'res-cp-6',
@@ -1044,6 +1057,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
           'healthcare-pqc',
           'automotive-pqc',
           'aerospace-pqc',
+          'media-drm-pqc',
           'industry-threats',
         ],
       },
@@ -1073,7 +1087,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // comment's claim was wrong (the persona test only sums a persona's own
     // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
     // researcher's path omits 13 real modules not part of its curriculum.
-    estimatedMinutes: 3210,
+    estimatedMinutes: 3270,
     essentials: [
       'pqc-101',
       'research-quantum-impact',

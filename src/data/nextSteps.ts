@@ -189,6 +189,11 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     why: '5G SUCI Construction is the hands-on version of this module: the same ideas, run in your browser.',
   },
   // ── module→business ──
+  '/learn/media-drm-pqc': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
   '/learn/government-defense-pqc': {
     to: '/business/tools/mti-negotiator',
     label: 'Produce the artifact: MTI Negotiator',

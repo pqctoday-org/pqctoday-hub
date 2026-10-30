@@ -334,6 +334,15 @@
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
     },
+    "media-drm-pqc": {
+      "id": "media-drm-pqc",
+      "lm_id": "LM-077",
+      "title": "Media, Entertainment & DRM PQC",
+      "description": "How content protection and content provenance use public-key cryptography, read from the editions themselves: the AACS key ladder, CI Plus broadcast conditional access, the MovieLabs ECP specification, streaming licenses and transport, and C2PA Content Credentials, set against what NIST IR 8547 says about the primitives they use.",
+      "duration": "60 min",
+      "difficulty": "intermediate",
+      "frameworkPhase": "p5"
+    },
     "merkle-tree-certs": {
       "id": "merkle-tree-certs",
       "lm_id": "LM-025",
@@ -704,6 +713,7 @@
     "iot-pqc": 6,
     "kms-pqc": 6,
     "mls-group-messaging": 2,
+    "media-drm-pqc": 3,
     "merkle-tree-certs": 5,
     "migration-program": 4,
     "pqc-101": 4,
@@ -1694,6 +1704,32 @@
       {
         "id": "pq-mls",
         "label": "PQ Ciphersuites & Crypto"
+      }
+    ],
+    "media-drm-pqc": [
+      {
+        "id": "threat-model",
+        "label": "Why Content Protection Differs"
+      },
+      {
+        "id": "disc-keys",
+        "label": "The AACS Key Ladder"
+      },
+      {
+        "id": "broadcast-ci-plus",
+        "label": "Broadcast: CI Plus"
+      },
+      {
+        "id": "streaming-transport",
+        "label": "Streaming: Transport and Licenses"
+      },
+      {
+        "id": "provenance",
+        "label": "Provenance: C2PA Content Credentials"
+      },
+      {
+        "id": "migration-surface",
+        "label": "What a Migration Would Touch"
       }
     ],
     "merkle-tree-certs": [
@@ -3234,6 +3270,20 @@
         "label": "OpenMLS ↔ PKCS#11 Provider Architecture"
       }
     ],
+    "media-drm-pqc": [
+      {
+        "id": "key-ladder-explorer",
+        "label": "Key Ladder Explorer"
+      },
+      {
+        "id": "spec-vs-quantum",
+        "label": "Spec vs Quantum"
+      },
+      {
+        "id": "provenance-algorithm-check",
+        "label": "Provenance Algorithm Check"
+      }
+    ],
     "merkle-tree-certs": [
       {
         "id": "build-tree",
@@ -4651,6 +4701,15 @@
           "duration": "60 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"
+        },
+        {
+          "id": "media-drm-pqc",
+          "lm_id": "LM-077",
+          "title": "Media, Entertainment & DRM PQC",
+          "description": "How content protection and content provenance use public-key cryptography, read from the editions themselves: the AACS key ladder, CI Plus broadcast conditional access, the MovieLabs ECP specification, streaming licenses and transport, and C2PA Content Credentials, set against what NIST IR 8547 says about the primitives they use.",
+          "duration": "60 min",
+          "difficulty": "intermediate",
+          "frameworkPhase": "p5"
         }
       ]
     }
@@ -4829,6 +4888,18 @@
     "mls-group-messaging": {
       "algorithms": ["ML-KEM", "ML-DSA"],
       "standards": ["JOSE"]
+    },
+    "media-drm-pqc": {
+      "algorithms": ["ML-KEM", "ML-DSA", "SLH-DSA", "ECDSA", "ECDH", "RSA"],
+      "standards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST IR 8547",
+        "NIST SP 800-57",
+        "RFC 10024",
+        "RFC 3161"
+      ]
     },
     "merkle-tree-certs": {
       "algorithms": ["LMS/XMSS"],
