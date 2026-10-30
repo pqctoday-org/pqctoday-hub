@@ -131,7 +131,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
     migrationEffort: 4,
     migrationTimeline: '2026-2030',
     pqcSolution: [
-      'Classical modernisation alongside the PQC work: complete 3DES \u2192 AES DUKPT migration (industry direction; the PCI PIN Security v3.1 announcement of March 2021 suspended the effective dates for ISO Format 4 PIN blocks while the TDEA-to-AES migration was reevaluated, and the PTS listing definitions say POI v5 and higher devices supporting online PIN and HSM v4 and higher devices supporting PIN processing are required to support ISO PIN Block Format 4)',
+      'Classical modernisation alongside the PQC work: complete 3DES \u2192 AES DUKPT migration (industry direction; the PCI PIN Security v3.1 announcement (March 2021) says the effective dates for ISO Format 4 PIN blocks are suspended and are being reevaluated for the TDEA-to-AES migration, and the PTS listing definitions say POI v5 and higher devices supporting online PIN and HSM v4 and higher devices supporting PIN processing are required to support ISO PIN Block Format 4)',
       'AES-256 is allowed for contingency, but EMVCo sees no need for it on quantum grounds',
       'ML-KEM-768 for BDK key transport at KIFs',
     ],

@@ -1299,8 +1299,8 @@ export const ChangeRoutesDetail = () => (
     </p>
     <Callout tone="warning" title="Open question — check the current document">
       <p>
-        How PTS HSM v5.0 changes are routed today is unverified here. No public source shows a
-        machine-readable evidence exchange with PCI SSC; do not assume one.
+        How PTS HSM v5.0 changes are routed today is unverified here. No source this module reads
+        shows a machine-readable evidence exchange with PCI SSC; do not assume one.
       </p>
     </Callout>
 

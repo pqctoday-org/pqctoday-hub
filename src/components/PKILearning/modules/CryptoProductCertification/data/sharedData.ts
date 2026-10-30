@@ -291,7 +291,7 @@ export const PQC_SCHEME_TABLE: SchemePqcRow[] = [
   {
     scheme: 'PCI',
     current:
-      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. The public PCI pages used here name no PQC algorithm, parameter set or deadline.',
+      'PTS HSM v5.0 adds PQC definitions and “support for post-quantum cryptography considerations”. The listing’s PQC notation “is for the existence of PQC support”. The v5.0 announcement and the listing definitions name no PQC algorithm, parameter set or deadline.',
     currentSources: [SHARED_SOURCES.ptsV5, SHARED_SOURCES.ptsListing],
     planning:
       'KMO v1.0 (14 September 2026) and its evolution. The Cryptography Guidance (August 2025) is non-mandatory; its PQC content is an open question for this v1 (the guidance document is not used here, and the blog announcing it does not mention quantum).',
@@ -492,7 +492,7 @@ export const ROUTE_DECISION_AID: RouteAid[] = [
     steps: [
       {
         ask: 'Does the change touch the approved device’s hardware, firmware or security functions?',
-        then: 'Ask a PCI-recognized lab how the change is scoped; PCI’s current Device Testing and Approval Program Guide governs this.',
+        then: 'Ask a PCI-recognized lab how the change is scoped; read PCI’s current Device Testing and Approval Program Guide.',
       },
     ],
     caveat:

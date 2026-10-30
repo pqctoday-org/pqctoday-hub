@@ -82,6 +82,12 @@ const EXTRA_PLAIN_SOURCES = {
     date: 'read 30 October 2026',
     url: 'https://listings.pcisecuritystandards.org/popups/pts_device.php?appnum=4-70041',
   },
+  ptsListing40069: {
+    title: 'Approved PTS Devices listing 4-40069 (payShield 9000)',
+    publisher: 'PCI SSC',
+    date: 'read 30 October 2026',
+    url: 'https://listings.pcisecuritystandards.org/popups/pts_device.php?appnum=4-40069',
+  },
 } satisfies Record<string, PlainSource>
 
 type CiteSourceKey = PlainSourceKey | keyof typeof EXTRA_PLAIN_SOURCES
@@ -427,11 +433,12 @@ export const PciPqcTruth = () => (
   <Prose>
     <p>
       Vendors, buyers and assessors all ask the same question:{' '}
-      <em>what does PCI require for post-quantum cryptography?</em> The honest answer from the
-      public pages used for this module, <AsOf />, is short:{' '}
+      <em>what does PCI require for post-quantum cryptography?</em> The honest answer from PCI SSC’s
+      standard announcements and listing definitions used for this module, <AsOf />, is short:{' '}
       <strong>they name no PQC algorithm, no parameter set and no PQC deadline.</strong> What exists
-      there is a listing notation, post-quantum wording in the v5.0 announcement, and awareness
-      material. Each is read below, with what it does <em>not</em> say.
+      there is a listing notation and post-quantum wording in the v5.0 announcement. PCI SSC’s
+      Quantum Leap interviews are awareness material in which the interviewees, not PCI SSC, name
+      algorithms such as ML-KEM and ML-DSA. Each is read below, with what it does <em>not</em> say.
     </p>
 
     <ResponsiveTable
@@ -486,8 +493,10 @@ export const PciPqcTruth = () => (
     <p>
       The absence of a notation is just as narrow. None of the three real HSM listings read for the
       workshop shows one on 30 October 2026 (4-40266, 4-70041 and 4-40069).{' '}
-      <PciPlainCite sourceKey="ptsListing40266" /> <PciPlainCite sourceKey="ptsListing70041" /> That
-      describes the listed firmware, not the vendor’s roadmap.
+      <PciPlainCite sourceKey="ptsListing40266" /> <PciPlainCite sourceKey="ptsListing70041" />{' '}
+      <PciPlainCite sourceKey="ptsListing40069" /> The 4-40069 listing is v1.x, which the PQC
+      field’s “v3 and higher” scope does not cover. That describes the listed firmware, not the
+      vendor’s roadmap.
     </p>
 
     <h3 className="text-base font-bold text-foreground">
@@ -512,8 +521,9 @@ export const PciPqcTruth = () => (
       <li>
         <strong>Firmware and certificate signatures</strong> inside the device and the vendor PKI.
         The v5.0 announcement says device-security keys such as firmware authentication keys need an
-        effective strength of at least 128 bits; it does not discuss signatures.{' '}
-        <PciCite refKey="v5Blog" label="v5.0 blog" />
+        effective strength of at least 128 bits and prohibits weak methods such as CBC-MAC for
+        firmware or application authentication; it names EC-SDSA for certain use cases and no
+        post-quantum signature algorithm. <PciCite refKey="v5Blog" label="v5.0 blog" />
       </li>
     </ul>
     <p>
@@ -604,8 +614,8 @@ export const PciOperatingStack = () => (
       module does not state it. Read it in the current standard, and check which version applies.
     </p>
     <p>
-      One fact that is not PCI’s may matter when you do: all FIPS 140-2 certificates moved to the
-      CMVP Historical list on 21/22 September 2026.{' '}
+      One fact that is not PCI’s may matter when you do: NIST’s CMVP schedule moves all FIPS 140-2
+      certificates to the Historical List on 21/22 September 2026.{' '}
       <PciCite refKey="fips140Historical" label="NIST CMVP transition" />
     </p>
     <p>
@@ -634,10 +644,11 @@ export const PciOperatingStack = () => (
       icon={<Lightbulb size={16} className="text-status-success" aria-hidden="true" />}
     >
       <p>
-        “{ANCHOR_SCENARIO.name} is PTS HSM approved (device, listed versions, up to deployment); a
-        P2PE solution is assessed by P2PE Assessors and listed; an HSM-as-a-service operator’s key
-        management is an entity matter that KMO’s audience names, assessed by KMO Assessors.”
-        Payment brands decide who must validate.
+        In this module’s reading: “{ANCHOR_SCENARIO.name} is PTS HSM approved (device, listed
+        versions, up to deployment); a P2PE solution is assessed by P2PE Assessors and listed; an
+        HSM-as-a-service operator’s key management is an entity matter that KMO’s audience names,
+        and KMO Assessors assess environments where cryptographic keys are managed.” Payment brands
+        decide who must validate.
       </p>
     </Panel>
   </Prose>

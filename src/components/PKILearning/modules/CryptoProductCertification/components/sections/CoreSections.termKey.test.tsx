@@ -95,7 +95,7 @@ describe('term key above the scheme table', () => {
     expect(screen.getByTestId('cert-table-term-key')).not.toHaveTextContent('ALC_FLR')
   })
 
-  it('cites library rows through links and the rest in plain text, never a licensed PCI document', () => {
+  it('cites library rows through links and the rest in plain text, never a document that is not a public PCI SSC page', () => {
     renderSection()
     const hrefs = keyBlock()
       .getAllByRole('link')
@@ -116,7 +116,7 @@ describe('term key above the scheme table', () => {
       'PCI SSC, PTS Hardware Security Module (HSM) standards page'
     )
     expect(entryFor('QPA').definition).toHaveTextContent(
-      'PCI SSC, PIN Security standards page; PCI SSC, Qualified PIN Assessors page; PCI SSC glossary'
+      'PCI SSC, PIN Security standards page; PCI SSC glossary'
     )
     expect(entryFor('KMO').definition).toHaveTextContent(
       'PCI SSC, Key Management and Operations (KMO) standards page'

@@ -323,10 +323,8 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <strong className="text-foreground">3-D Secure 2.0</strong>
           </InlineTooltip>{' '}
           (Visa Secure, Mastercard Identity Check) adds cardholder authentication using ECDSA
-          challenge signing and device binding. The 3DS core components (ACS, DS and 3DS server) are
-          the subject of a separate PCI 3DS Core standard that PCI SSC lists among its standards;
-          its requirement text is not a public PCI SSC page, so this module does not state its
-          requirements.
+          challenge signing and device binding. PCI SSC lists a separate PCI 3DS Core standard among
+          its standards; this module does not state what it covers or requires.
         </p>
 
         <div className="glass-panel p-4 space-y-2">
