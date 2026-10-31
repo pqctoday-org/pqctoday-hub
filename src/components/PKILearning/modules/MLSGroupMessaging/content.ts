@@ -56,7 +56,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     id: 'what-is-mls',
     title: 'What MLS solves',
     body: [
-      "Messaging Layer Security (RFC 9420, July 2023) is the IETF's answer to a question Signal's Double Ratchet can't scale to: how do you give a group of thousands of participants forward secrecy AND post-compromise security AND asynchronous key agreement, all at once, with sub-second key updates?",
+      "Messaging Layer Security (RFC 9420, July 2023) is the IETF's protocol for efficient asynchronous group key establishment, giving groups from two to thousands of participants forward secrecy AND post-compromise security.",
       'RFC 9420 describes the Double Ratchet as the common solution for two parties and sender keys as the common strategy for larger groups, where post-compromise security is difficult to achieve. MLS replaces both with a tree-based key encapsulation scheme — TreeKEM — that provides forward secrecy and post-compromise security for groups from two to thousands.',
       '',
     ],
@@ -74,7 +74,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     id: 'key-schedule',
     title: 'Key schedule — from group secret to keys',
     body: [
-      "The MLS key schedule (RFC 9420 §8.1) takes the new epoch's commit secret + transcript hash and runs them through a chain of HKDF-Extract / HKDF-Expand steps to derive: a join secret, encryption secret, authentication secret, exporter secret, and confirmation key.",
+      "The MLS key schedule (RFC 9420) takes, among its inputs, the previous epoch's init secret, the current epoch's commit secret, and the current epoch's GroupContext object and runs them through a chain of HKDF-Extract / HKDF-Expand steps to derive the encryption secret, exporter secret, and confirmation key.",
       'Each AEAD application message uses a per-member, per-generation key derived from the encryption secret via a per-leaf hash ratchet. Lose any one message key, and the rest are still safe.',
       'Cryptographically the schedule is RFC 9180-style HPKE labelled extract/expand. Every Extract is one HMAC; every Expand is iterated HMAC. In our PKCS#11 provider those HMACs all run inside the HSM.',
     ],

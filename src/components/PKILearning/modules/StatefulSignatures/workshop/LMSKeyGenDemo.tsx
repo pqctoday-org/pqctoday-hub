@@ -181,8 +181,8 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         <p className="text-xs text-status-warning mt-2 flex items-center gap-1.5">
           <span className="font-bold">NSA CNSA 2.0:</span> single-tree LMS and XMSS are approved for
           firmware and software signing (ML-DSA-87 is also allowed), and LMS with SHA-256/192 is
-          recommended. Exclusive use of CNSA 2.0 algorithms for that category is due by{' '}
-          {CNSA_2_0.softwareExclusive}.
+          recommended (not sourced in the Library). Exclusive use of CNSA 2.0 algorithms for that
+          category is due by {CNSA_2_0.softwareExclusive}.
         </p>
       </div>
 

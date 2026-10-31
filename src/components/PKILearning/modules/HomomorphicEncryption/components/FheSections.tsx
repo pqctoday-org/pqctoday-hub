@@ -126,8 +126,7 @@ const THRESHOLD_VALUE_LIMITS: { topic: string; value: string; limit: string }[] 
   {
     topic: 'Key generation',
     value: 'Each party can produce its share of every evaluation key',
-    limit:
-      'Shares must be combined: measured 4.10 GB uploaded per party for the CKKS set (3.94 GB from one token), plus a 157 MB download, because relinearization keys need two rounds; protocol rounds must not be retried',
+    limit: 'Shares must be combined',
   },
   {
     topic: 'Operations',
@@ -739,11 +738,8 @@ export const FheKeysOperationsSection: React.FC = () => (
         ))}
       </div>
       <p className="text-xs text-muted-foreground">
-        This keeps uploads at plaintext size instead of FHE size, which can be 10³ times larger or
-        more. TFHE-rs implements it (apps/trivium, TransCiphering trait), and the WAHC 2023 paper
-        reports under 300 ms per 64-bit block. Use Kreyvium&apos;s 128-bit key: Trivium&apos;s
-        80-bit key is already below the 112-bit minimum, before Grover. Research pushes homomorphic
-        AES further (IACR ePrint 2025/075 over TFHE and 2026/1209 over CKKS).
+        This keeps uploads at plaintext size instead of FHE size. Use Kreyvium&apos;s 128-bit key:
+        Trivium&apos;s 80-bit key is already below the 112-bit minimum, before Grover.
       </p>
     </div>
   </div>

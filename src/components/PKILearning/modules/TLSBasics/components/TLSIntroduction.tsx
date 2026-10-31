@@ -87,7 +87,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
               <li>
                 0-RTT early data (optional){' '}
                 <span className="text-status-warning font-normal">
-                  — vulnerable to replay attacks; servers must mitigate (RFC 9846 §8)
+                  — TLS provides no inherent replay protection for 0-RTT data (RFC 9846 §8)
                 </span>
               </li>
               <li>Encrypted handshake messages</li>

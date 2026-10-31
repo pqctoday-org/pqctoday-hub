@@ -512,8 +512,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     correctTier: 'critical',
     explanation:
       'EHR data combines ePHI (HIPAA), long retention (10+ years), and irreplaceable personal health details. HNDL risk is immediate: data intercepted today may be decrypted after CRQC arrival (est. 2034) well within the retention window. HIPAA + HITECH mandate the highest protection level.',
-    hndlImplication:
-      'HNDL risk year ≈ 2024 (2034 − 10 years). Data already in the HNDL window — adversaries intercepting today can decrypt after 2034.',
+    hndlImplication: 'Data already in the HNDL window.',
     commonMistake:
       'Many classify as High (HIPAA ePHI default). The 10-year retention pushes this into Critical because the HNDL window has already opened.',
     relevantFrameworks: ['HIPAA', 'HITECH', 'NIST-SP-800-66'],
@@ -543,7 +542,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Finance sector; stored offline in an air-gapped HSM; access requires dual-control ceremony.',
     correctTier: 'critical',
     explanation:
-      'Root CA keys are irreplaceable cryptographic anchors. If compromised, all certificates in the trust chain must be revoked and reissued. With a 25-year expected lifetime, the HNDL window is deep into the past — any captured ceremony traffic is at risk once CRQC arrives. CNSA 2.0 mandates PQC for all key material by 2030.',
+      'Root CA keys are irreplaceable cryptographic anchors. If compromised, all certificates in the trust chain must be revoked and reissued. With a 25-year expected lifetime, the HNDL window is deep into the past — any captured ceremony traffic is at risk once CRQC arrives. Under CNSA 2.0, NSA expects the QR-algorithm transition for NSS to finish by 2035, consistent with NSM-10.',
     hndlImplication:
       'HNDL risk year ≈ 2009 (2034 − 25 years). Any recorded key-generation or signing ceremony from the past 15 years is exposed.',
     commonMistake:
@@ -579,7 +578,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     hndlImplication:
       'HNDL risk year ≈ 2027 (2034 − 7 years). Records encrypted today will be at risk from CRQC within 8 years.',
     commonMistake:
-      'Classifying as Critical because "financial data." No full PAN or CVV stored reduces impact. The 7-year retention and PCI DSS requirements land this firmly at High.',
+      'Classifying as Critical because "financial data." No full PAN or CVV stored reduces impact. The 7-year retention lands this firmly at High.',
     relevantFrameworks: ['PCI-DSS', 'GDPR'],
   },
   {
@@ -591,7 +590,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Government/Defense sector; encrypted with AES-256 and RSA-4096; indefinite retention; NSA-classified.',
     correctTier: 'critical',
     explanation:
-      'Classified national security data with indefinite retention is the canonical Critical case. Even if encrypted today, adversaries recording this traffic will decrypt it post-CRQC. Operational intelligence from decades ago can still compromise ongoing missions, personnel, and national security. CNSA 2.0 mandates immediate PQC migration for this class.',
+      'Classified national security data with indefinite retention is the canonical Critical case. Even if encrypted today, adversaries recording this traffic will decrypt it post-CRQC. Operational intelligence from decades ago can still compromise ongoing missions, personnel, and national security. CNSA 2.0 expects the transition to QR algorithms for NSS to be complete by 2035 in line with NSM-10, and NSA urges NSS owners and operators to make every effort to meet that deadline.',
     hndlImplication: 'All historical intercepts are at risk the moment CRQC arrives.',
     commonMistake:
       'No common mistake — this is unambiguously Critical. The exercise point is understanding why indefinite retention triggers the worst HNDL exposure.',
@@ -757,7 +756,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'FedRAMP High',
         prescribedTier: 'high',
         reason:
-          'FedRAMP High impact systems require FIPS 140-2+ validated cryptography and NIST SP 800-53 High controls.',
+          'FedRAMP High impact systems require FIPS 140-2+ validated cryptography and NIST SP 800-53 High controls (not sourced in the Library).',
       },
       {
         framework: 'CMVP / FIPS 140-3',
@@ -850,7 +849,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'GDPR (EU)',
         prescribedTier: 'high',
         reason:
-          'Personal data including behavioral profiling requires lawful basis, data minimization, and state-of-the-art encryption. Violation fines up to 4% of global revenue.',
+          'Personal data including behavioral profiling requires lawful basis, data minimization, and state-of-the-art encryption. Violations of the basic processing principles and conditions for consent (Articles 5, 6, 7, and 9) carry fines up to 4% of global revenue.',
       },
       {
         framework: 'CCPA / CPRA (California)',

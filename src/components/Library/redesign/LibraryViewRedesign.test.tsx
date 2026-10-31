@@ -7,6 +7,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { libraryData } from '@/data/libraryData'
 import type { LifecycleLabel } from '@/utils/libraryLifecycle'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
+import { logLibrarySearch } from '@/utils/analytics'
 
 function renderView(initial = '/library') {
   return render(
@@ -17,6 +18,11 @@ function renderView(initial = '/library') {
 }
 
 beforeEach(() => usePersonaStore.getState().setPersona(null))
+
+vi.mock('@/utils/analytics', async (orig) => ({
+  ...(await orig<typeof import('@/utils/analytics')>()),
+  logLibrarySearch: vi.fn(),
+}))
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -37,6 +43,20 @@ describe('LibraryViewRedesign', { timeout: 60_000 }, () => {
     expect(
       screen.queryByRole('radiogroup', { name: /viewing the library as/i })
     ).not.toBeInTheDocument()
+  })
+
+  it('logs one search event after the search text settles, and none for a short one', async () => {
+    vi.mocked(logLibrarySearch).mockClear()
+    const { unmount } = renderView('/library?q=ab')
+    await new Promise((r) => setTimeout(r, 800))
+    expect(logLibrarySearch).not.toHaveBeenCalled()
+    unmount()
+
+    renderView('/library?q=kyber')
+    await vi.waitFor(() => expect(logLibrarySearch).toHaveBeenCalledWith('kyber'), {
+      timeout: 5000,
+    })
+    expect(logLibrarySearch).toHaveBeenCalledTimes(1)
   })
 
   it('registers a citation export (Cite) next to the CSV export in the top bar', () => {

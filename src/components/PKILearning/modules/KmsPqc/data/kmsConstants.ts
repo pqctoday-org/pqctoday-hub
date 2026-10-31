@@ -56,8 +56,7 @@ export const KEY_HIERARCHY_LEVELS: KeyHierarchyLevel[] = [
   {
     id: 'root-kek',
     name: 'Root Key Encryption Key (Root KEK)',
-    description:
-      'Top-level master key stored in HSM. Wraps zone KEKs. Rotated infrequently (5-15 years). Must be the most secure key in the hierarchy.',
+    description: 'Top-level master key stored in HSM. Wraps zone KEKs. Rotated infrequently.',
     classicalAlgorithm: 'RSA-4096 or AES-256-KW',
     pqcAlgorithm: 'ML-KEM-1024 + HKDF-SHA-256',
     hybridAlgorithm: 'RSA-4096 + ML-KEM-1024 → HKDF combiner',
@@ -363,7 +362,7 @@ export const ENTERPRISE_SCENARIO = {
       framework: 'NIST IR 8547',
       deadline: '2030 / 2035',
       requirement:
-        'Deprecate quantum-vulnerable public-key crypto (RSA, ECDSA, EdDSA, DH, ECDH) at 112 bits of security or more after 2030. Disallow it under NIST standards and guidelines after 2035.',
+        'Deprecate quantum-vulnerable digital signature algorithms (RSA, ECDSA, EdDSA) after 2030. Disallow them under NIST standards and guidelines after 2035.',
     },
     {
       framework: 'ANSSI & BSI (EU)',
@@ -563,8 +562,7 @@ curl -X POST https://ciphertrust/api/v1/vault/keys2 \\
   {
     id: 'get',
     name: 'Get',
-    description:
-      'Retrieve key metadata and attributes. KMIP Get returns the key object with all attributes including PQC-specific sizes.',
+    description: 'Retrieve key metadata and attributes.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>

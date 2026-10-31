@@ -132,9 +132,10 @@ export const MandateExplorer = () => {
             obligations are the instruments listed above: for federal civilian systems, inventory,
             reporting and migration planning plus the Executive Order 14412 deadlines for high value
             assets and high impact systems; for nonfederal systems, NIST SP 800-171 Rev. 3, with
-            Executive Order 14412 only directing a proposed rule. Programmes in this category often
-            adopt the CNSA 2.0 dates voluntarily as a planning anchor — which is reasonable, as long
-            as it is not described to auditors as a requirement.
+            Executive Order 14412 only directing a proposed rule (not sourced in the Library).
+            Programmes in this category often adopt the CNSA 2.0 dates voluntarily as a planning
+            anchor — which is reasonable, as long as it is not described to auditors as a
+            requirement.
           </p>
         </section>
       )}

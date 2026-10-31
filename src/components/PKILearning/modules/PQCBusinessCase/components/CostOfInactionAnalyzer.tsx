@@ -1032,7 +1032,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
                 : 'no framework or country mandate applies to this industry'}{' '}
             — {mandate.deadlineYear}{' '}
             {mandate.driverSource === 'planning-anchor'
-              ? 'is a NIST IR 8547 planning anchor (final NIST guidance), not a deadline you can be penalized against.'
+              ? 'is a NIST IR 8547 planning anchor (final NIST guidance).'
               : 'is derived from the cited compliance/timeline record, but its applicability and effective date still require review.'}{' '}
             No dollar consequence is inferred from that record. If you enter a verified consequence,
             it applies only while migration remains incomplete after the effective year you

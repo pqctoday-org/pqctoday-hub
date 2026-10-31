@@ -79,7 +79,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      "No Se-Series entry is on the CMVP Modules-in-Process list (checked 2026-09-24). Utimaco's newer u.trust Anchor holds a FIPS 140-3 L3 certificate (NIST CMVP Certificate #5223, 1 Apr 2026) with no PQC algorithm approved, and a 'u.trust Anchor CSe' entry is on the MIP list (Comment Resolution - Lab), which is not evidence of the outcome. ESV: E108 Utimaco Entropy Source. Non-FIPS path usable today with customer risk-acceptance.",
+      "No Se-Series entry is on the CMVP Modules-in-Process list (checked 2026-09-24). Utimaco's newer u.trust Anchor holds a FIPS 140-3 L3 certificate (NIST CMVP Certificate #5223, 1 Apr 2026).",
   },
   {
     id: 'crypto4a-qxhsm',

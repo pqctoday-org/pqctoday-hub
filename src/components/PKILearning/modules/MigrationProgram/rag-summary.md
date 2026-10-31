@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Migration Program Management module teaches executives how to plan, execute, and track a PQC migration program at enterprise scale. It covers roadmap building with milestone planning overlaid on real country and compliance deadlines, stakeholder communication planning with audience-specific messaging frameworks, and KPI tracking for measuring migration progress. The module aligns with a phased migration model (per CISA / NIST NCCoE guidance) — NIST IR 8547 itself is the algorithm deprecation/disallow timeline, not a migration framework — and integrates live timeline data from the app's country deadline database.
+The Migration Program Management module teaches executives how to plan, execute, and track a PQC migration program at enterprise scale. It covers roadmap building with milestone planning overlaid on real country and compliance deadlines, stakeholder communication planning with audience-specific messaging frameworks, and KPI tracking for measuring migration progress. The module aligns with a phased migration model (per CISA / NIST NCCoE guidance) (not sourced in the Library) — NIST IR 8547 itself is the algorithm deprecation/disallow timeline, not a migration framework — and integrates live timeline data from the app's country deadline database.
 
 ## Key Concepts
 

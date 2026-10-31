@@ -61,7 +61,7 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       badge: 'Multi-Tree',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'XMSS^MT-SHA2_60/6 provides 2^60 signatures (over 10^18) by chaining 6 layers of 10-level trees. Keygen still finishes in seconds — the same as the 20/2 set — because only one tree per layer is built up front, not a single tree of height 60. That is the whole point of multi-tree, and it is suitable for long-lived timestamping authorities that sign millions of times per year.',
+        'XMSS^MT-SHA2_60/6 provides 2^60 signatures (over 10^18) by chaining 6 layers of 10-level trees. Increasing the number of layers reduces key generation time exponentially and signing time linearly, at the cost of a linear increase in signature size.',
       config: { step: 1, paramId: 'xmssmt-sha2-60-6' },
     },
     {
@@ -83,7 +83,7 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       badge: 'Attack',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'The HSM engine refuses all three attempts (counter write, state read-out, key copy), so the counter does not move and the next signature uses the next leaf. This is how this emulator answers, not proof that any certified module does. A signer that keeps its state in an ordinary file would reuse the rolled-back leaves, and two signatures on different messages from one one-time key make forgery computationally feasible (SP 800-208 §1.2). That is why §8.1 keeps the key inside the module and why VM snapshots and key cloning are forbidden for stateful schemes.',
+        'The HSM engine refuses all three attempts (counter write, state read-out, key copy), so the counter does not move and the next signature uses the next leaf. This is how this emulator answers, not proof that any certified module does. A signer that keeps its state in an ordinary file would reuse the rolled-back leaves, and two signatures on different messages from one one-time key make forgery computationally feasible (SP 800-208 §1.2). That is why §8.1 requires that the cryptographic module not allow private keying material to be exported.',
       config: { step: 2 },
     },
   ]

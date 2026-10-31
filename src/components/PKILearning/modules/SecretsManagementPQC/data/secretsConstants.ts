@@ -291,7 +291,7 @@ vault write transit/sign/mldsa-key \\
     keySize: '256-bit HMAC key (unchanged)',
     ciphertextExpansion: '0 bytes additional (HMAC already quantum-safe)',
     description:
-      "HMAC-SHA256 is based on symmetric cryptography and is not broken by Shor's algorithm. Grover's algorithm reduces effective security from 256 to 128 bits — still within acceptable margins. No algorithm change is needed, only ensuring the HMAC key is protected by PQC wrapping in the vault.",
+      "HMAC-SHA256 is based on symmetric cryptography and is not broken by Shor's algorithm.",
     apiExample: `# HMAC-SHA256 — no algorithm change needed
 vault write transit/keys/hmac-key type=hmac
 vault write transit/hmac/hmac-key \\

@@ -681,7 +681,10 @@ describe('analytics', () => {
       const { ga, initGA } = await load()
       initGA()
       expect(ga.initialize).toHaveBeenCalled()
-      expect(setCalls(ga)).toEqual([{ page_location: 'https://example.com/leaders' }])
+      expect(setCalls(ga)).toEqual([
+        { page_location: 'https://example.com/leaders' },
+        { persona: 'none', experience_level: 'unknown' },
+      ])
     })
 
     it('a page view with no path falls back to the path alone, without the query', async () => {

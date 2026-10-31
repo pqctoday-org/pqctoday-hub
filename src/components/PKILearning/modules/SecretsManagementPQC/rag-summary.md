@@ -44,8 +44,4 @@ Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secr
 
 ## Cloud Provider PQC Status (March 2026)
 
-- HashiCorp Vault Enterprise: PQC planned 2026 (transit engine ML-KEM/ML-DSA)
-- AWS Secrets Manager: PQC via KMS hybrid ML-KEM TLS (data in transit); no ML-KEM at-rest CMK key spec
-- Azure Key Vault (Managed HSM): PQC planned 2026 (SymCrypt backend ready)
-- GCP Secret Manager: PQC via Cloud KMS CMEK (ML-KEM/ML-DSA/X-Wing preview)
-- Delinea Secret Server: PQC planned 2027
+- AWS Secrets Manager: PQC via KMS hybrid ML-KEM TLS (data in transit)

@@ -559,7 +559,7 @@ x509_extensions = v3_ca
               `  subjectKeyIdentifier = hash\n` +
               `    A hash of this CA's public key, used by issued certs as authorityKeyIdentifier (AKI) to chain back to this CA.\n\n` +
               `  authorityKeyIdentifier = keyid:always\n` +
-              `    For self-signed roots, AKI points to the root's own SKI. Required by RFC 5280 §4.2.1.1 and expected by many validators.\n\n`
+              `    For self-signed roots, AKI points to the root's own SKI; RFC 5280 §4.2.1.1 permits omitting the authority key identifier when a CA distributes its public key using a self-signed certificate.\n\n`
             : '')
       )
 

@@ -26,8 +26,8 @@ sudo ssh-keygen -t mldsa65 -f /etc/ssh/ssh_host_mldsa65_key -N ""
 # Verify the key was created:
 sudo ls -la /etc/ssh/ssh_host_mldsa65_key*
 # Expected output:
-# /etc/ssh/ssh_host_mldsa65_key       (private key, 4,032 bytes)
-# /etc/ssh/ssh_host_mldsa65_key.pub   (public key, 1,952 bytes)
+# /etc/ssh/ssh_host_mldsa65_key       (ML-DSA-65 private key is 4,032 bytes)
+# /etc/ssh/ssh_host_mldsa65_key.pub   (ML-DSA-65 public key is 1,952 bytes)
 
 # View the public key fingerprint:
 sudo ssh-keygen -lf /etc/ssh/ssh_host_mldsa65_key.pub`,

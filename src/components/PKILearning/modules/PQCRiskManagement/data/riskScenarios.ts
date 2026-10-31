@@ -97,7 +97,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 3,
         impact: 5,
         mitigation:
-          'Migrate to SLH-DSA for stateless signing; 15-year device lifecycle requires quantum-safe signing now',
+          "This module's advice: Migrate to SLH-DSA for stateless signing; 15-year device lifecycle requires quantum-safe signing now",
       },
       {
         id: 'hc-003',
@@ -135,8 +135,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'hndl',
         likelihood: 5,
         impact: 5,
-        mitigation:
-          'Immediate re-encryption of Tier 1 archives with AES-256; CNSA 2.0 software exclusive deadline 2030',
+        mitigation: 'Immediate re-encryption of Tier 1 archives with AES-256',
       },
       {
         id: 'gov-003',

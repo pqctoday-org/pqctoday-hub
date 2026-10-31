@@ -384,13 +384,12 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
 
           <p className="text-xs text-muted-foreground">
             <strong>Deployment guidance:</strong> Pure PQC (ML-DSA) is ready today (RFC 9881; the
-            workshop is tested with OpenSSL 3.6.3). Pure SLH-DSA is also ready (RFC 9909) and
-            ANSSI-approved as standalone. Composite requires both parties to support the draft spec
-            &mdash; best suited to closed PKI. Alt-Sig works with legacy verifiers via extensions.
-            Related Certs (RFC 9763) keeps the classical certificate fully usable on its own.
-            Watchlist: FN-DSA (planned FIPS 206, not yet final) has an IETF certificate draft whose
-            OIDs are still TBD; composite KEM will enable hybrid key encapsulation in S/MIME once
-            published.
+            workshop is tested with OpenSSL 3.6.3). Pure SLH-DSA is also ready (RFC 9909). Composite
+            requires both parties to support the draft spec &mdash; best suited to closed PKI.
+            Alt-Sig works with legacy verifiers via extensions. Related Certs (RFC 9763) keeps the
+            classical certificate fully usable on its own. Watchlist: FN-DSA (planned FIPS 206, not
+            yet final) has an IETF certificate draft whose OIDs are still TBD; composite KEM will
+            enable hybrid key encapsulation in S/MIME once published.
           </p>
         </div>
       </section>
@@ -1138,8 +1137,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground italic">
-            In short: hybrid gets you algorithmic safety (dual-PRF), but SP 800-227 §§3–4 are what
-            get you <em>deployment</em> safety. Both are required.
+            In short: SP 800-227 sets out certain requirements and recommendations for KEM
+            implementation and use in FIPS 140-validated modules, and gives guidance to vendors that
+            choose to combine keying material securely.
           </p>
         </div>
       </section>
@@ -1414,11 +1414,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </div>
             {[
               ['1', 'EC commitment', 'k ← DRBG(sk_ec, msg),  R = k·G  (secp256k1 base point)'],
-              [
-                '2',
-                'Shared challenge',
-                'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)  expanded to 64 bytes  (approx.: full paper also binds ML-DSA commitment w1)',
-              ],
+              ['2', 'Shared challenge', 'μ = H(tr ‖ R ‖ M), the input to ML-DSA.Sign_mu(sk_ml, μ)'],
               ['3', 'EC response', 's = (k + e·sk_ec) mod n   where e = μ[:32] as bigint'],
               [
                 '4',

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'trust-services-pqc',
-  contentVersion: 11,
+  contentVersion: 12,
   lm_id: 'LM-070',
   title: 'Trust Services & Long-Term Signatures',
   description:

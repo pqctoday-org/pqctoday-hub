@@ -48,7 +48,7 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     stage: 'finalists',
     role: 'Chinese Association for Cryptologic Research national PQC contest, complemented by OSCCA standards work.',
     detail:
-      "CACR ran a national PQC competition starting 2018, with multiple algorithm tracks (PKE/KEM, signature). National winners include LAC (lattice KEM, withdrew from NIST after Round 2), AIGIS (signature), and several lattice + multivariate finalists. The State Cryptography Administration (OSCCA) operates a separate standards track for SM-series cryptography (SM2/SM3/SM4/SM9) and is expected to publish PQC-extended SM specs. China's position is publicly independent of NIST — domestic deployments are mandated to use SAC/GB national standards rather than FIPS.",
+      'CACR, a research organisation rather than a standardisation body, ran a PQC competition starting 2018 across PKE/KEM and signature tracks to encourage new designs rather than to standardise new schemes.',
     url: 'https://www.cacrnet.org.cn/',
     nistRelation: 'parallel',
   },
@@ -98,7 +98,7 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     stage: 'evaluation',
     role: 'European telecom-focused technical reports and migration guidance.',
     detail:
-      "ETSI TC CYBER's Quantum-Safe Cryptography WG publishes technical reports on PQC migration patterns for telco operators, ETSI QKD interoperability profiles, and crypto-agility frameworks (e.g., TS 119 312). Closely tracks NIST output and adds operator-grade deployment context.",
+      "ETSI TC CYBER's Quantum-Safe Cryptography WG publishes technical reports on PQC migration, while ETSI TS 119 312 specifies cryptographic suites for creating and validating digital signatures, electronic timestamps, and related certificates.",
     url: 'https://www.etsi.org/technologies/quantum-safe-cryptography',
     nistRelation: 'overlay',
   },

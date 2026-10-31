@@ -28,6 +28,7 @@ import {
   type DecisionTopic,
 } from '@/services/architectureArtifacts'
 import type { ExecutiveDocument } from '@/services/storage/types'
+import { logBusinessToolExport } from '@/utils/analytics'
 import { ScopeEditor } from './architecturePack/ScopeEditor'
 import { DecisionEditor } from './architecturePack/DecisionEditor'
 import { TestPlanEditor } from './architecturePack/TestPlanEditor'
@@ -110,6 +111,7 @@ export function ArchitecturePackPanel() {
         const filename = bundleFilename('architecture-pack', 'pdf').replace(/\.pdf$/, '')
         await markdownToPdf(markdown, filename, ARCHITECTURE_PACK_TITLE, { wideTable: true })
       }
+      logBusinessToolExport('architecture-pack', kind)
     } catch (e) {
       setError(`Download failed: ${e instanceof Error ? e.message : String(e)}`)
     } finally {

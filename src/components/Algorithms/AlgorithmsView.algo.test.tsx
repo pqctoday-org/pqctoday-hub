@@ -11,6 +11,7 @@ import '@testing-library/jest-dom'
 import { AlgorithmsView } from './AlgorithmsView'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { logAlgorithmView } from '@/utils/analytics'
 
 const { algo, mobile } = vi.hoisted(() => ({
   mobile: { value: false },
@@ -42,6 +43,10 @@ const { algo, mobile } = vi.hoisted(() => ({
 }))
 
 vi.mock('@/hooks/useIsMobileShell', () => ({ useIsMobileShell: () => mobile.value }))
+vi.mock('@/utils/analytics', async (orig) => ({
+  ...(await orig<typeof import('@/utils/analytics')>()),
+  logAlgorithmView: vi.fn(),
+}))
 vi.mock('@/services/search/useSemanticSearch', () => ({
   useSemanticSearch: () => ({ hits: [], mode: 'idle' as const, loading: false }),
 }))
@@ -141,6 +146,14 @@ describe('AlgorithmsView — ?algo detail drawer', () => {
     expect(drawer).toHaveTextContent('FIPS 203')
     expect(drawer).toHaveTextContent('Recommended general use')
     expect(screen.getByTestId('detailed-body')).toBeInTheDocument()
+  })
+
+  it('logs one view when an algorithm detail opens, and not again on re-render', async () => {
+    vi.mocked(logAlgorithmView).mockClear()
+    renderAt('/algorithms?algo=ml-kem-768')
+    await screen.findByRole('dialog', { name: 'ML-KEM-768' })
+    expect(logAlgorithmView).toHaveBeenCalledTimes(1)
+    expect(logAlgorithmView).toHaveBeenCalledWith('ML-KEM-768')
   })
 
   it('accepts an exact, case-insensitive algorithm name from older links', async () => {

@@ -63,6 +63,7 @@ import {
 } from './LibraryCitationExport'
 import { resolveLibraryDeepLink, libraryWideningFor } from './libraryDeepLink'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { logLibrarySearch } from '@/utils/analytics'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { EvidenceBundlePanel } from '@/components/shared/EvidenceBundlePanel'
@@ -265,6 +266,13 @@ export function LibraryViewRedesign({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // One search event per pause in typing, not one per keystroke.
+  useEffect(() => {
+    if (filterText.trim().length < 3) return
+    const t = window.setTimeout(() => logLibrarySearch(filterText), 600)
+    return () => window.clearTimeout(t)
+  }, [filterText])
 
   // ── Quick-view → pipeline flag mapping ─────────────────────────────────────
   const certRelevantOnly = quickView === 'cert'

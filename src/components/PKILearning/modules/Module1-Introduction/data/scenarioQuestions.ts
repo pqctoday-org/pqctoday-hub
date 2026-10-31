@@ -41,7 +41,7 @@ export const SCENARIO_QUESTIONS: ScenarioQuestion[] = [
     question:
       'Which PQC signing algorithm should the manufacturer adopt for new firmware releases, and why?',
     answer:
-      'SLH-DSA (FIPS 205) is the safest choice for firmware signing due to its minimal and conservative security assumptions — security relies only on hash function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1), not on lattice problems. ML-DSA (FIPS 204) is also acceptable and produces smaller signatures. FN-DSA is not recommended due to its complex constant-time implementation requirements on embedded hardware. Since sensors cannot update their key-exchange mechanism, the HNFL threat (forge firmware signatures post-quantum) is the primary concern — making signing algorithm choice the critical decision.',
+      'SLH-DSA (FIPS 205) is the safest choice for firmware signing due to its minimal and conservative security assumptions — security relies only on hash function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1), not on lattice problems. ML-DSA (FIPS 204) is also acceptable and produces smaller signatures. Floating-point arithmetic in FN-DSA is a challenge: it is hard to make constant-time and resistant to power analysis, as side-channel attacks on existing implementations illustrate. Since sensors cannot update their key-exchange mechanism, the HNFL threat (forge firmware signatures post-quantum) is the primary concern — making signing algorithm choice the critical decision.',
     urgency: 'high',
     industry: 'IoT & Automotive',
   },

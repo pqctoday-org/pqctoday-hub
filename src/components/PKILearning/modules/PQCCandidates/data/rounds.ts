@@ -115,7 +115,7 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
     kind: 'standardisation',
     title: 'HQC selected as KEM alternate',
     detail:
-      'NIST announces HQC (code-based KEM) as the second KEM standard alongside ML-KEM — diversification against an unforeseen lattice break.',
+      'NIST announces it will create a draft standard based on HQC for public comment, with a final version expected in approximately two years after the comments are adjudicated.',
   },
   {
     id: 'snova-reparam-2025',

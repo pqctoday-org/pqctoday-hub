@@ -103,8 +103,8 @@ az keyvault key create \\
   --kty oct-HSM \\
   --size 256
 # AES-256 is quantum-resistant for symmetric wrapping`,
-    hybrid: `// Azure Key Vault — Hybrid (planned)
-// Microsoft targets CNSA 2.0 early adoption by 2029, complete transition by 2033
+    hybrid: `// Azure Key Vault
+// Microsoft aims for early adoption of quantum-safe capabilities by 2029 and a complete transition of its services and products by 2033
 // Current approach: RSA + AES-256 dual wrapping
 az keyvault key create \\
   --vault-name my-vault \\
@@ -225,9 +225,10 @@ export const HybridKeyWrapping: React.FC = () => {
             <div className="flex items-start gap-2">
               <Info size={14} className="text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-foreground/80">
-                PQC-only wrapping relies entirely on ML-KEM security assumptions (Module-LWE
-                hardness). During the transition period, some organizations may prefer hybrid mode
-                for defense-in-depth until PQC algorithms have more years of cryptanalysis.
+                In this module's reading, PQC-only wrapping relies entirely on ML-KEM security
+                assumptions (Module-LWE hardness). During the transition period, some organizations
+                may prefer hybrid mode for defense-in-depth until PQC algorithms have more years of
+                cryptanalysis.
               </p>
             </div>
           </div>

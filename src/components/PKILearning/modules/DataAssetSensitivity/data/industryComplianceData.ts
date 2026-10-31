@@ -37,7 +37,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     region: 'US Federal',
     scope: 'US National Security Systems',
     pqcRequirement:
-      'Current FAQ version 2.2 requires compliant new NSS acquisitions from 1 January 2027, phase-out of equipment and services that cannot support CNSA 2.0 by 31 December 2030 unless excepted, and CNSA 2.0 algorithms by 31 December 2031 unless otherwise noted. Earlier category guidance places exclusive use for software/firmware signing and traditional networking at 2030. NSM-10 separately sets a broader 2035 quantum-risk objective. Required algorithms include ML-KEM-1024 for key establishment and ML-DSA-87 for digital signatures.',
+      'Current FAQ version 2.2 requires compliant new NSS acquisitions from 1 January 2027, phase-out of equipment and services that cannot support CNSA 2.0 by 31 December 2030 unless excepted, and CNSA 2.0 algorithms by 31 December 2031 unless otherwise noted. NSM-10 separately sets a 2035 quantum-risk objective. Required algorithms include ML-KEM-1024 for key establishment and ML-DSA-87 for digital signatures.',
     hardDeadline: '2030',
     deadlineYear: 2030,
     pqcMandatoryNow: true,

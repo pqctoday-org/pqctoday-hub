@@ -77,7 +77,7 @@ const ALGORITHMS: AlgorithmImpact[] = [
     breakYear: null,
     replacement: 'AES-256 (recommended)',
     notes:
-      'Grover\u2019s algorithm gives only a quadratic speedup (~2\u2076\u2074 sequential work), whose circuit depth is impractical, so AES-128 retains substantial security and NIST still treats it as acceptable. AES-256 recommended for long-term / CNSA 2.0 assurance.',
+      'Broad expert consensus holds that AES-128 stays practically secure and key sizes do not necessarily have to be doubled.',
   },
   {
     name: 'AES-256',

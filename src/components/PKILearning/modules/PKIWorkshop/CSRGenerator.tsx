@@ -960,8 +960,8 @@ distinguished_name = dn
             <code className="font-mono text-xs bg-muted px-1 rounded">subjectAltName</code> (SAN)
             extension per CAB Forum Baseline Requirements. The{' '}
             <code className="font-mono text-xs bg-muted px-1 rounded">CN</code> alone has been
-            deprecated for TLS hostname validation since 2017. Select a profile above to load SAN
-            and other required extensions automatically.
+            deprecated for TLS hostname validation. Select a profile above to load SAN and other
+            required extensions automatically.
           </span>
         </div>
       )}

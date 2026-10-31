@@ -957,7 +957,7 @@ export const RandomGenerationDemo: React.FC = () => {
               },
               {
                 name: 'QuintessenceLabs qStream',
-                desc: 'CMVP entropy certificate E145 (SP 800-90B) · qStream 100 v1.5 only',
+                desc: 'CMVP entropy certificate E145 (SP 800-90B) · qStream 100 v1.5',
               },
               {
                 name: 'Qrypt BLAST SDK',

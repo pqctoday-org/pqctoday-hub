@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-grc',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-31',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Governance, risk and compliance: the transition report, the NSS timeline and the

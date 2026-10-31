@@ -626,10 +626,9 @@ const Step4AppPagesGuide: React.FC = () => (
             </div>
             <p className="text-xs text-muted-foreground">
               The product has a CMVP certificate. FIPS 140-3 certificates are the current ones: FIPS
-              140-2 certificates moved to the CMVP Historical list on 21/22 September 2026; NIST
-              says agencies should not include historical modules in new systems, although they can
-              be procured for legacy systems. Check the certificate status on the official NIST CMVP
-              database. CMVP is the certification body; NIST/CSE administers it.
+              140-2 certificates moved to the CMVP Historical list on 21/22 September 2026; CMVP
+              supports the purchase and use of historical-list modules for existing systems. Check
+              the certificate status on the official NIST CMVP database.
             </p>
           </div>
           <div className="bg-status-warning/5 rounded-lg p-3 border border-status-warning/20">

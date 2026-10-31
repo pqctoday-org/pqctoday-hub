@@ -88,7 +88,7 @@ const ROLE_COPY: Record<PersonaId, RoleCopy> = {
     track: 'essentials',
   },
   researcher: {
-    urgency: 'FIPS 203/204/205 are out and ACVP vectors are live. Trace it end to end.',
+    urgency: 'FIPS 203/204/205 are out. Trace it end to end.',
     firstWin: 'No funnel — open the evidence workspace',
     track: 'fullCorpus',
   },

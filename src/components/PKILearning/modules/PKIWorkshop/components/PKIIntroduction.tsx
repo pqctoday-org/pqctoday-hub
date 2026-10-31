@@ -40,7 +40,8 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           <InlineTooltip term="X.509">X.509</InlineTooltip> and profiled for the internet in RFC
           5280, PKI enables entities to establish trust through a hierarchy of{' '}
           <InlineTooltip term="Certificate Authority">Certificate Authorities</InlineTooltip> (CAs)
-          that vouch for the binding between a public key and an identity.
+          that vouch for the binding between a public key and an identity (not sourced in the
+          Library).
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -80,8 +81,8 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Every X.509 certificate follows a defined lifecycle from key generation through
-          revocation. RFC 5280 Section 3 describes the certificate path processing model, while RFC
-          6960 (<InlineTooltip term="OCSP">OCSP</InlineTooltip>) and RFC 5280 Section 5 (
+          revocation. RFC 5280 Section 3 presents an architectural model, while RFC 6960 (
+          <InlineTooltip term="OCSP">OCSP</InlineTooltip>) and RFC 5280 Section 5 (
           <InlineTooltip term="Certificate Revocation List">CRL</InlineTooltip>s) define the
           revocation checking mechanisms that relying parties use to verify certificate validity in
           real time.

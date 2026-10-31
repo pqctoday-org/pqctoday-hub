@@ -355,7 +355,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               `    digitalSignature: required for TLS 1.3 (server signs the handshake transcript with its private key).\n` +
               `    keyEncipherment: required only for TLS 1.2 RSA key exchange (client encrypts pre-master secret with server pubkey).\n` +
               `    Note: TLS 1.3 (RFC 9846) removed RSA key exchange — keyEncipherment is a legacy value for TLS 1.2 backward compat only.\n` +
-              `    Note: RSA-PSS (RFC 8017) also uses only digitalSignature — keyEncipherment is an RSA PKCS#1 v1.5 concept.\n\n`
+              `\n`
             : `  keyUsage = digitalSignature\n` +
               `    ECDSA and PQC algorithms authenticate via signature only — key exchange uses ephemeral ECDH or KEM.\n` +
               `    keyEncipherment is not applicable: it applies only to RSA TLS 1.2 key transport, which was removed in TLS 1.3.\n\n`)
@@ -385,7 +385,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
             prev +
             `  No profile selected — applying default TLS extensions:\n` +
             `    subjectAltName = DNS:example.com\n` +
-            `      Required by CAB Forum BR since 2017. The CN alone is no longer accepted for TLS hostname validation.\n` +
+            `      Required by the CAB Forum BR: Subscriber Certificates must include a Subject Alternative Name with at least one dNSName or iPAddress.\n` +
             `    extendedKeyUsage = serverAuth\n` +
             `      Restricts this cert to TLS server authentication (OID 1.3.6.1.5.5.7.3.1).\n` +
             `    subjectKeyIdentifier = hash\n` +
