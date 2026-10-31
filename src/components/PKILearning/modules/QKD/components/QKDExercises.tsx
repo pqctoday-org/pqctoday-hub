@@ -101,7 +101,7 @@ const scenarios: Scenario[] = [
     id: 'hsm-derivation',
     title: '6. HSM Key Derivation from QKD Secret',
     description:
-      'Follow the ETSI GS QKD 014 → PKCS#11 → NIST SP 800-108 pipeline. Both Alice and Bob derive the same 256-bit session key inside their HSMs without transmitting the secret.',
+      'Follow the workshop’s pipeline: ETSI GS QKD 014 key delivery, PKCS#11 and a NIST SP 800-108 key derivation. Both Alice and Bob derive the same 256-bit session key inside their HSMs without transmitting the secret.',
     badge: 'Infrastructure',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:
