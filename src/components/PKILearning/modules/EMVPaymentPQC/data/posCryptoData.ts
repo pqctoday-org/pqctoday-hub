@@ -104,7 +104,7 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
       'Contactless card offline authentication (RSA)',
     ],
     pqcConstraints: [
-      '256 KB RAM supports FN-DSA-512 but tight for ML-KEM-768',
+      "In this module's reading, 256 KB RAM supports FN-DSA-512 but tight for ML-KEM-768",
       'Often in remote locations \u2014 firmware updates are complex',
       'Long deployment lifecycle with 7-12 year physical terminal replacement cycle',
       'Network connectivity may be intermittent \u2014 offline operation critical',
