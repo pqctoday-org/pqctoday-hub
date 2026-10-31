@@ -370,7 +370,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     name: 'CNSA 2.0',
                     region: 'US NSS',
                     scope: 'National Security Systems',
-                    req: 'ML-KEM-1024 + ML-DSA-87 mandatory; hard deadlines 2027–2033',
+                    req: 'Transition to QR algorithms for NSS expected to be complete by 2035 in line with NSM-10',
                     deadline: '2030',
                   },
                 ].map(({ name, region, scope, req, deadline }) => (
