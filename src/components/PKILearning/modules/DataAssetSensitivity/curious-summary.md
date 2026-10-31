@@ -4,7 +4,7 @@ The Harvest Now, Decrypt Later (HNDL) threat means adversaries are actively coll
 
 ### Why It Matters
 
-Your PQC migration urgency is directly tied to data retention. If a CRQC arrives in 2030, any data that must remain confidential beyond 2030 is already at risk today. Without a structured 4-Tier classification model (Low, Medium, High, Critical), organizations face an impossible blanket migration requirement. Furthermore, regulations like DORA, HIPAA, and GDPR Art. 32 demand "state of the art" cryptographic controls for highly sensitive PII and financial records.
+Your PQC migration urgency is directly tied to data retention. If a CRQC arrives in 2030, any data that must remain confidential beyond 2030 is already at risk today. Without a structured 4-Tier classification model (Low, Medium, High, Critical), organizations face an impossible blanket migration requirement. Furthermore, GDPR Art. 32 implies using cryptography with consideration for the state of the art, but does not specify algorithms.
 
 ### The Key Takeaway
 

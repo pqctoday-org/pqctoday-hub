@@ -667,7 +667,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
     },
     'certification-body': {
       orgs: ['CMVP (NIST/CSE)', 'CAVP (NIST/CSE)', 'NIAP (Common Criteria)'],
-      note: 'CMVP validation required for US federal procurement (FISMA)',
+      note: 'Federal agencies must use validated cryptographic modules where cryptography is required (FISMA)',
     },
     'compliance-framework': {
       orgs: ['FIPS 140-3', 'CNSA 2.0', 'FedRAMP', 'CMMC', 'FISMA'],

@@ -511,7 +511,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Healthcare sector; accessed by clinical staff and billing; stored in an on-premises database encrypted with RSA-2048 envelope keys.',
     correctTier: 'critical',
     explanation:
-      'EHR data combines ePHI (HIPAA), long retention (10+ years), and irreplaceable personal health details. HNDL risk is immediate: data intercepted today may be decrypted after CRQC arrival (est. 2034) well within the retention window. HIPAA + HITECH mandate the highest protection level.',
+      'EHR data combines ePHI (HIPAA), long retention (10+ years), and irreplaceable personal health details. HNDL risk is immediate: data intercepted today may be decrypted after CRQC arrival (est. 2034) well within the retention window. The HIPAA Security Rule requires ePHI to be protected from reasonably anticipated threats and impermissible uses or disclosures, while allowing flexible, scalable compliance approaches.',
     hndlImplication: 'Data already in the HNDL window.',
     commonMistake:
       'Many classify as High (HIPAA ePHI default). The 10-year retention pushes this into Critical because the HNDL window has already opened.',
@@ -735,14 +735,14 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'DORA (EU)',
         prescribedTier: 'critical',
         reason:
-          'Critical ICT services require operational resilience, crypto-agility, and ENISA-aligned PQC readiness by 2026.',
+          'ICT systems supporting critical or important functions call for security policies, procedures and tools that aim to keep them resilient, continuous and available.',
       },
     ],
     resolutionRule: 'jurisdiction-priority',
     correctTier: 'critical',
     governingFramework: 'DORA (EU)',
     explanation:
-      "DORA elevates this to Critical because it classifies the entire payment gateway as a critical ICT service — not just the cardholder data. DORA's ICT operational resilience requirements are more stringent and broader in scope than PCI DSS for this asset type. When a jurisdiction-specific regulation explicitly designates a system as critical infrastructure, that designation overrides a narrower data-centric classification.",
+      "In this module's reading, the whole payment gateway, not just the cardholder data, is Critical. DORA provides for the designation of third-party ICT providers critical to financial entities after an assessment that takes the specified criteria into account.",
     pqcImplication:
       'ML-KEM-1024 (FIPS 203) and ML-DSA-87 (FIPS 204) are NIST security category 5 parameter sets. This module recommends them for critical ICT services under DORA; we found no parameter set named in the DORA text. Hybrid with X25519+ML-KEM-1024 for transition.',
   },

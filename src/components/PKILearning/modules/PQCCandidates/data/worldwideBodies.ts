@@ -60,7 +60,7 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     stage: 'standardised',
     role: 'International standards body adopting NIST PQC outputs as ISO/IEC standards.',
     detail:
-      'SC 27 / WG 2 is integrating NIST PQC algorithms into the ISO/IEC 18033 (encryption) and ISO/IEC 14888 (digital signatures) families. Active drafts: ISO/IEC 14888-4 (ML-DSA), ISO/IEC 18033-7 (ML-KEM), with SLH-DSA and FN-DSA in evaluation. ISO adoption is the gating step for many jurisdictions that pin national procurement to ISO references rather than US FIPS — making this the workhorse track for global PQC propagation.',
+      'SC 27 / WG 2 is integrating NIST PQC algorithms into the ISO/IEC 18033 (encryption) and ISO/IEC 14888 (digital signatures) families. ISO/IEC 14888-4 was published in June 2024 and covers stateful signature mechanisms with appendix whose security rests on the properties of the hash function beneath them.',
     url: 'https://www.iso.org/committee/45306.html',
     nistRelation: 'aligned',
   },

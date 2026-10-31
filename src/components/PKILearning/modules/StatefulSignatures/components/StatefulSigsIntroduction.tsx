@@ -93,7 +93,7 @@ const Step1WhyAndMerkle: React.FC = () => (
               </li>
               <li>
                 &bull; <strong>{CNSA_2_0.softwareExclusive}:</strong> Software and firmware signing
-                must use CNSA 2.0 exclusively
+                is anticipated by NSA to use CNSA 2.0 exclusively
               </li>
               <li>
                 &bull; <strong>{CNSA_2_0.fullEnforcement}:</strong> CNSA 2.0 algorithms mandated for

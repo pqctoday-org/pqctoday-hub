@@ -204,7 +204,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               {
                 tier: 'FIPS 140-2 Validated',
                 color: 'text-status-warning',
-                desc: 'Legacy validation. FIPS 140-2 certificates moved to the CMVP Historical list in September 2026: NIST still supports buying and using them for existing systems, and says Federal Agencies should not include them in new systems.',
+                desc: 'Legacy validation. FIPS 140-2 certificates moved to the CMVP Historical list in September 2026: NIST still supports buying and using them for existing systems, and Federal Agencies decide when to use only FIPS 140-3 modules.',
               },
               {
                 tier: 'FIPS Mode / Self-Claim',
