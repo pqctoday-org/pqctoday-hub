@@ -18,7 +18,7 @@ export const MIGRATION_VECTORS: PaymentMigrationVector[] = [
       'ML-KEM-768 key encapsulation',
       'Hybrid RSA + ML-KEM during transition',
       'PKCS#11 v3.2 (OASIS Standard, 3 June 2026) defines ML-KEM key-encapsulation mechanisms; confirm how a given payment HSM exposes them',
-      'Futurex says its PCI HSM-approved HSMs support PQC (press release, 11 Jun 2025). A PCI listing PQC flag records only that PQC support exists; algorithms are in the device PCI HSM Security Policy',
+      'A PCI listing PQC flag records only that PQC support exists; algorithms are in the device PCI HSM Security Policy',
     ],
     dependencies: [],
     networkSpecific: [],
