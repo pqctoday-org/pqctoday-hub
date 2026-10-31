@@ -28,7 +28,7 @@ schedule or never?"
 
 ## Five pillars of CPM
 
-This is this module's own five-pillar model; no external standard defines these pillars.
+This is this module's own five-pillar model.
 
 1. **Inventory** — unified CBOM across four asset classes (certificates, libraries, software,
    keys). Continuously refreshed, not point-in-time.

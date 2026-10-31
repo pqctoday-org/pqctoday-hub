@@ -87,7 +87,7 @@ export const SAMPLE_SBOMS: SampleSBOM[] = [
     format: 'CycloneDX',
     filename: 'edge-gateway-1.9.0.cdx.json',
     description:
-      'A modern edge service. OpenSSL 3.5 LTS, BoringSSL snapshot, liboqs, aws-lc, Mbed TLS. CBOM should flag liboqs + Mbed TLS as not inside a FIPS boundary.',
+      'A modern edge service. OpenSSL 3.5, BoringSSL snapshot, liboqs, aws-lc, Mbed TLS. CBOM should flag liboqs + Mbed TLS as not inside a FIPS boundary.',
     content: JSON.stringify(cyclonedxEdge, null, 2),
   },
 ]

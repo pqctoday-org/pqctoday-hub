@@ -154,7 +154,8 @@ export const SAMPLE_INVENTORY: InventoryAsset[] = [
     quantumVulnerable: true,
     tags: ['FIPS-required', 'HNDL'],
     riskScore: 5,
-    remediation: 'Migrate to OpenSSL 3.5 LTS with FIPS provider; validate against CMVP #4985',
+    remediation:
+      'Migrate to OpenSSL 3.5 (native ML-KEM, ML-DSA and SLH-DSA); none of these algorithms is in the approved-algorithm list of CMVP #4985, so check FIPS validation status separately',
     initialStage: 'score',
     layer: 'binary',
     discoverableBy: ['sbom', 'cbomkit-theia'],

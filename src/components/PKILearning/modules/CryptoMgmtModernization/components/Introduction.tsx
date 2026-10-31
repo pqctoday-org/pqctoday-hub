@@ -996,9 +996,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <div className="font-bold text-foreground text-sm mb-2">Software stack</div>
                 <ul className="text-xs space-y-1.5 text-muted-foreground list-disc list-inside">
                   <li>
-                    <strong>FIPS-validated library build</strong> — OpenSSL 3.5 FIPS provider or
-                    wolfCrypt FIPS, compiled and installed in a clean isolated test environment
-                    (separate from the OS package manager&apos;s OpenSSL).
+                    <strong>FIPS-validated library build</strong> — a validated OpenSSL FIPS
+                    provider or wolfCrypt FIPS, compiled and installed in a clean isolated test
+                    environment (separate from the OS package manager&apos;s OpenSSL).
                   </li>
                   <li>
                     <strong>ACVP client + NIST ACVTS Demo</strong> — with Demo access from NIST, run
