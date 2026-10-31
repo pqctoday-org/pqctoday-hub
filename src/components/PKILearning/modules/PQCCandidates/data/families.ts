@@ -110,7 +110,7 @@ export const FAMILIES: Record<FamilyId, MathFamily> = {
       whatsDifferent:
         "The signature plus the public key combined is smaller than any other PQC candidate — small enough to fit in a single network packet. That's transformative for use cases where every byte matters: digital certificates, firmware updates, billions of IoT devices, smart cards that have to phone home over slow radio links.",
       catch:
-        "The math is new and only a few hundred people on Earth fully understand it. A cousin scheme called SIKE was spectacularly broken in 2022 by an unexpected attack — recovered private keys in under an hour. SQIsign uses a different design that doesn't have that specific weakness, but the whole field is still earning the cryptographic community's trust.",
+        "A cousin scheme called SIKE was spectacularly broken in 2022 by an unexpected attack — recovered private keys in under an hour. SQIsign uses a different design that doesn't have that specific weakness, but the whole field is still earning the cryptographic community's trust.",
     },
   },
   lattice: {
