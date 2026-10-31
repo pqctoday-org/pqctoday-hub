@@ -81,8 +81,9 @@ export const ForgeryRiskPanel: React.FC = () => {
         </div>
       </div>
       <p className="text-xs text-muted-foreground">
-        This split is exactly what the US federal PQC executive order encodes: key-establishment
-        migration by 2030, digital-signature migration by 2031 (
+        This split is what the US federal PQC executive order sets for federal high value assets and
+        high-impact systems (national security systems are excluded): post-quantum key establishment
+        by 31 December 2030, post-quantum digital signatures by 31 December 2031 (
         <a
           href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/"
           target="_blank"
