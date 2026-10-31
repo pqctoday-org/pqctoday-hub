@@ -114,8 +114,7 @@ export function CoveragePlanner() {
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
           ≈ <strong>{perWave.toLocaleString()}</strong> sampled verifications per wave. Any sampled
-          failure → verify 100% of that wave. Control basis: NIST CSWP 48 (draft) → CSF 2.0 / SP
-          800-53.
+          failure → verify 100% of that wave.
         </p>
       </div>
     </div>
