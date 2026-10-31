@@ -72,7 +72,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'PQC impact on TLS inspection and DPI (certificate buffer overflows, latency overhead, hardware offload gaps). NGFW cipher policy migration to ML-KEM/ML-DSA hybrid and pure-PQC modes. TLS intercept proxy behavior with PQC certificate chains (ML-DSA-65, hybrid ECDSA+ML-DSA). IDS/IPS signature updates for PQC traffic detection (hybrid KEM handshakes, cert size anomalies, downgrade attacks).',
+      'PQC impact on TLS inspection and DPI (certificate buffer and parsing limits, latency overhead, hardware offload gaps). NGFW cipher policy migration to ML-KEM/ML-DSA hybrid and pure-PQC modes. TLS intercept proxy behavior with PQC certificate chains (ML-DSA-65, hybrid ECDSA+ML-DSA). IDS/IPS signature updates for PQC traffic detection (hybrid KEM handshakes, cert size anomalies, downgrade attacks).',
     workshopSummary:
       'NGFW Cipher Analyzer — cipher policy comparison (classical/hybrid/pure PQC), hardware tier impact, cert size and latency metrics. TLS Inspection Lab — pass-through vs full inspection simulation, PQC cert chain sizes, inspection feasibility matrix. IDS Signature Updater — PQC-aware rule categories, false positive rate analysis, detection coverage balancing. Vendor Migration Matrix — interactive filtering by ML-KEM/ML-DSA support, TLS inspection, hardware offload, readiness status.',
     relatedStandards:

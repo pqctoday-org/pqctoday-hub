@@ -205,10 +205,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     options: [
       'ML-DSA signatures cannot be re-signed by a TLS proxy at all',
       'Hybrid certificates force TLS 1.2, which NGFWs no longer inspect',
-      'Its 8.5 KB certificate chain exceeds the ~4 KB buffer limit of classical NGFW inspection engines',
+      'Its certificate chain (at least about 11.9 KB in the lab) is far larger than a classical chain and may exceed the buffer sizes or parsing limits of the devices that inspect TLS chains',
     ],
     answer: 2,
-    why: 'Intercepting proxies must parse and re-sign the full certificate chain, and classical NGFW buffers were sized for chains of a few kilobytes; the hybrid chain is more than double that, so inspection needs a firmware update that expands the buffer.',
+    why: 'Intercepting proxies must parse and re-sign the full certificate chain. The lab flags every PQC certificate type because the chain is much larger than a classical one and, as the Applied Quantum PQC Migration Framework notes, larger certificates may exceed the buffer sizes or parsing limits of the devices that inspect them.',
   },
   'network-security-pqc/ids-signature-updater': {
     prompt:

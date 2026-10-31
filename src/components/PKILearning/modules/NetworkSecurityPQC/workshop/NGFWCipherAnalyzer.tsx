@@ -283,7 +283,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
             <div className="space-y-4">
               <BarMeter
                 value={primarySuite.certSizeKB * 1000}
-                max={5200}
+                max={7300}
                 label="Certificate Size (bytes)"
                 colorClass={MODE_LABELS[selectedMode].colorClass}
               />
@@ -309,7 +309,8 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                     <span className="font-bold text-status-warning">
                       +{analysis.certOverheadPct}% cert size increase
                     </span>{' '}
-                    vs classical baseline. Ensure NGFW buffer sizes are updated.
+                    vs the classical baseline. ML-DSA certificate sizes here are minimums from FIPS
+                    204 Table 2; test inspection devices with PQC-sized certificates.
                   </div>
                 </div>
               )}
@@ -442,6 +443,12 @@ export const NGFWCipherAnalyzer: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <p className="text-[10px] text-muted-foreground mt-2">
+          Cert (KB): classical values are this module&apos;s illustrative figures. ML-DSA values are
+          minimums (public key plus signature, FIPS 204 Table 2), and hybrid suites are at least
+          that size. Latency and throughput values are illustrative simulation settings, not
+          measurements.
+        </p>
       </div>
 
       <KatValidationPanel

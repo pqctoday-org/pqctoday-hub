@@ -40,7 +40,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'Cipher Policy',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'On entry-level hardware without hardware offload, switching to Hybrid mode reduces effective connections/sec by ~28% due to software ML-KEM computation. High-end platforms with ASIC offload maintain 90% of classical throughput. Certificate size increases from 1.0KB to 3.8KB (+280%) for hybrid.',
+        'In the simulator, switching to Hybrid mode on entry-level hardware without hardware offload reduces effective connections/sec by ~28%, while high-end platforms with offload keep 90% of classical throughput; these are illustrative simulation settings, not measurements. Certificate size rises from 1.0KB to at least 5.3KB for hybrid (the ML-DSA-65 public key plus signature alone, FIPS 204 Table 2).',
       config: { step: 0 },
     },
     {
@@ -51,7 +51,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'TLS Inspection',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Hybrid ECDSA+ML-DSA-65 chains (~8.5KB) can exceed the small certificate buffers in many current NGFW firmware builds, causing silent inspection bypass. The simulator projects full-inspection latency rising several-fold (roughly 9ms to 28ms in this model) — significant for real-time applications. Pass-through mode adds zero latency but loses Layer 7 visibility.',
+        'Hybrid ECDSA+ML-DSA-65 chains are at least about 11.9KB in the simulator (an IETF C509 draft example puts a two-certificate ML-DSA-65 chain at 11,869 bytes), and larger certificates may exceed the buffer sizes or parsing limits of devices that inspect TLS chains. The simulator projects full-inspection latency rising several-fold (roughly 9ms to 28ms; illustrative settings, not measurements) — significant for real-time applications. Pass-through mode adds no inspection latency but loses Layer 7 visibility.',
       config: { step: 1 },
     },
     {
@@ -73,7 +73,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'Vendor Matrix',
       badgeColor: 'bg-destructive/20 text-status-error border-destructive/50',
       observe:
-        'Vendor support varies widely and moves fast: as of mid-2026 Palo Alto (PAN-OS 11.x) leads with partial PQC TLS inspection, while Cisco and Fortinet are earlier-stage and several others are on later roadmaps. Open-source OPNsense offers hybrid ML-KEM IPsec key exchanges from release 26.7.4. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
+        'Vendor support varies widely and moves fast. The Cisco Secure Firewall roadmap blog (13 April 2026) targets ML-KEM support for late 2026 and ML-DSA for the second half of 2027, Sophos SFOS 22.0 MR2 detects and controls ML-KEM key exchange, and the OPNsense 26.7.4 release notes (15 September 2026) add some hybrid post-quantum variants as additional IPsec key exchange. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
       config: { step: 3 },
     },
     {

@@ -88,17 +88,17 @@ export const NGFW_VENDORS: NGFWVendor[] = [
   {
     id: 'cisco-firepower',
     name: 'Cisco',
-    product: 'ASA / Firepower Threat Defense (FTD 7.4+)',
+    product: 'ASA / Secure Firewall Threat Defense (FTD)',
     tier: 'enterprise',
     pqcReadiness: 'roadmap',
     tlsInspectionPQC: false,
     mlKemSupport: false,
     mlDsaSupport: false,
     hybridSupport: false,
-    roadmapYear: 2027,
+    roadmapYear: 2026,
     hardwareOffload: true,
     notes:
-      'Cisco quantum-safe roadmap targets ML-KEM hybrid IKEv2 VPN for 2027 as part of CNSA 2.0 compliance. Current ASA 9.x does not support PQC key exchange.',
+      'The Cisco Secure Firewall roadmap blog (13 April 2026) says ML-KEM support, which lets VPN tunnels gain post-quantum resilience, arrives in FTD 10.5 and ASA 9.25, targeted for General Availability in late 2026. ML-DSA and SLH-DSA support is planned for FTD/ASA 11.0, in the second half of calendar year 2027. Cisco says delivery timelines are subject to change.',
   },
   {
     id: 'palo-alto-ngfw',
@@ -120,15 +120,14 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     name: 'Fortinet',
     product: 'FortiGate (FortiOS)',
     tier: 'enterprise',
-    pqcReadiness: 'beta',
-    tlsInspectionPQC: false,
+    pqcReadiness: 'ga',
+    tlsInspectionPQC: true,
     mlKemSupport: true,
-    mlDsaSupport: true,
+    mlDsaSupport: false, // no ML-DSA support level is recorded for this entry
     hybridSupport: true,
-    roadmapYear: 2026,
     hardwareOffload: true,
     notes:
-      'FortiOS 7.6 ships ML-KEM-768 and ML-DSA-65 in beta. FortiGate 1000F+ series have NP7 processors with crypto acceleration. TLS inspection with PQC certificates requires firmware 7.6.2+.',
+      'Fortinet documentation for FortiOS 7.6 lists post-quantum key exchange for IPsec from 7.6.1 (hybrid key exchange per RFC 9370, with ML-KEM-512, ML-KEM-768 and ML-KEM-1024 as the FIPS 203 groups) and hybrid post-quantum cryptography in SSL deep inspection in flow mode from 7.6.5. This entry records no ML-DSA support level.',
   },
   {
     id: 'juniper-srx',
@@ -165,30 +164,28 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     name: 'Sophos',
     product: 'XGS Series Firewall',
     tier: 'mid-market',
-    pqcReadiness: 'roadmap',
+    pqcReadiness: 'not-planned',
     tlsInspectionPQC: false,
     mlKemSupport: false,
     mlDsaSupport: false,
     hybridSupport: false,
-    roadmapYear: 2026,
-    hardwareOffload: false,
+    hardwareOffload: true,
     notes:
-      'SFOS v21 roadmap includes PQC TLS support via OpenSSL 3.x backend. Mid-market positioning means hardware offload is limited. PQC feature availability expected Q3 2026 pending SFOS 21.5 release.',
+      'SFOS 21.5 (GA, 2 June 2025) mentions post-quantum cryptography only as a DPI-mode Path MTU fix for the ML-KEM (Kyber) key exchange supported in browsers. SFOS 22.0 MR2 (Build 546, 14 July 2026) adds detection and control of PQC: intrusion prevention can detect and block pure and hybrid PQC key exchange algorithms based on ML-KEM, and Web Protection prevents web sessions from negotiating unsupported PQC algorithms. The Sophos XGS datasheet says every XGS model has a dedicated Xstream Flow Processor and that Xstream offloads crypto operations; it does not say whether that covers post-quantum algorithms.',
   },
   {
     id: 'sonicwall',
     name: 'SonicWall',
     product: 'NSa / TZ Series',
     tier: 'mid-market',
-    pqcReadiness: 'roadmap',
+    pqcReadiness: 'not-planned',
     tlsInspectionPQC: false,
     mlKemSupport: false,
     mlDsaSupport: false,
     hybridSupport: false,
-    roadmapYear: 2027,
     hardwareOffload: false,
     notes:
-      'SonicOS 7.1 uses OpenSSL 3.x enabling future PQC support. NSa 9700 hardware has dedicated crypto engine. PQC integration roadmap announced for 2027. Current firmware lacks ML-KEM/ML-DSA support.',
+      'The product catalog on this site (last verified 18 August 2026; latest SonicOS 8.2.2) says SonicOS firewall cryptography contains no post-quantum support today, and that the IPsec VPN documentation for SonicOS 7.0, 7.1 and 8.0 lists only classical algorithms.',
   },
   {
     id: 'pfsense-opnsense',
@@ -215,8 +212,9 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     direction: 'north-south',
     description: 'Client-to-server HTTPS traffic crossing perimeter. Primary inspection target.',
     pqcImpact:
-      'Hybrid TLS handshakes are 1.5-2x larger. PQC certificates add 1-3KB overhead per chain.',
-    certSizeImpact: 'ML-DSA-65 cert: ~2.5KB vs RSA-2048: ~1.2KB (+108%)',
+      'Hybrid TLS handshakes are larger than classical ones: one published estimate says a hybrid TLS 1.3 handshake using X25519+ML-KEM-768 and ECDSA+ML-DSA-65 may exceed 15 KB, against about 4 KB for classical-only handshakes (Campbell, Computers 2026, citing IETF draft measurements).',
+    certSizeImpact:
+      'ML-DSA-65 certificate: at least 5.3KB (FIPS 204 Table 2: 1,952-byte public key plus 3,309-byte signature). Two-certificate TLS 1.3 chain in an IETF C509 draft example: 11,869 bytes for ML-DSA-65 vs 2,656 bytes for RSA',
     latencyImpact: '+5-15ms on software-only firewalls; hardware offload reduces to +1-3ms',
     inspectionComplexity: 'high',
   },
@@ -227,7 +225,8 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     description: 'Microservice-to-microservice mutual TLS inside the data center.',
     pqcImpact:
       'mTLS doubles the certificate overhead (both parties present certs). High-volume east-west traffic amplifies PQC size penalty.',
-    certSizeImpact: 'Hybrid mTLS chain: ~7KB vs classical mTLS: ~3.5KB per connection (+100%)',
+    certSizeImpact:
+      'Both parties send certificate chains, so the chain-size growth shown for north-south TLS applies in each direction',
     latencyImpact: '+3-8ms per new connection; session resumption unaffected',
     inspectionComplexity: 'very-high',
   },
@@ -238,9 +237,10 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     description: 'Layer 7 inspection of encrypted traffic via TLS interception proxy.',
     pqcImpact:
       'NGFW must re-encrypt with PQC certs, doubling the key exchange cost. Inline inspection adds latency from PQC key derivation.',
-    certSizeImpact: 'Re-signed PQC cert chain: 5-8KB vs classical 2-3KB',
+    certSizeImpact:
+      'Re-signed PQC cert chain: the chain sizes shown for north-south TLS apply to the certificates the NGFW presents',
     latencyImpact:
-      'Classical (9 ms) vs Hybrid (28 ms) vs Pure PQC (35 ms) overhead; ASIC offload critical',
+      'Illustrative simulation values, not measurements: inspected handshake of about 9 ms (classical ECDSA), 28 ms (hybrid) and 35 ms (pure PQC) in the TLS Inspection Lab',
     inspectionComplexity: 'very-high',
   },
   {
@@ -273,7 +273,8 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     description: 'SD-WAN control plane and data plane encryption migration to PQC.',
     pqcImpact:
       'SD-WAN orchestrator certificates must be PQC-signed. DTLS-based data planes need updated IANA codepoints for ML-KEM.',
-    certSizeImpact: 'Orchestrator cert bundle: +3-5KB for PQC hybrid chain',
+    certSizeImpact:
+      'Each ML-DSA-65 certificate in the orchestrator chain carries a 3,309-byte signature (FIPS 204 Table 2)',
     latencyImpact: 'Negligible on data plane; control plane re-authentication adds +50-100ms',
     inspectionComplexity: 'high',
   },
@@ -284,12 +285,12 @@ export const TRAFFIC_TYPES: TrafficType[] = [
 export const INSPECTION_CHALLENGES: InspectionChallenge[] = [
   {
     id: 'cert-size-buffer',
-    title: 'Certificate Size Buffer Overflow',
+    title: 'Certificate Size and Middlebox Buffers',
     severity: 'critical',
     description:
-      'Many NGFW TLS inspection engines allocate fixed-size buffers for TLS certificates based on classical RSA sizes (1-2KB). ML-DSA-65 certificates are ~2.5KB; hybrid chains can reach 5-8KB, causing buffer overflows or silent inspection bypass.',
+      'Many network devices (firewalls, IDS/IPS, WAFs, DLP) inspect TLS certificate chains, and larger certificates may exceed buffer sizes or parsing limits (Applied Quantum PQC Migration Framework v2.1, Activity 6.1). The framework adds that many middleboxes have hardcoded buffer sizes or parsing assumptions that break with PQC-sized handshakes and certificates. An ML-DSA-65 certificate holds a 1,952-byte public key and a 3,309-byte signature (FIPS 204 Table 2), at least 5.3KB together; in an IETF C509 draft example, a two-certificate ML-DSA-65 TLS chain is 11,869 bytes against 2,656 bytes for an RSA chain.',
     mitigation:
-      'Update NGFW firmware to support dynamic certificate buffer allocation. Set minimum buffer size to 16KB for PQC-aware inspection. Audit all inspection policies for buffer size limits.',
+      'Test every middlebox on every production network path (Applied Quantum PQC Migration Framework v2.1, Phase 6). This module also suggests updating NGFW firmware to support dynamic certificate buffer allocation and auditing all inspection policies for buffer size limits. A minimum buffer size of 16KB is this module’s own engineering figure, not a vendor or standards value.',
     affectedVendors: ['cisco-firepower', 'check-point', 'sonicwall', 'sophos-xgs'],
   },
   {
@@ -297,9 +298,9 @@ export const INSPECTION_CHALLENGES: InspectionChallenge[] = [
     title: 'TLS Handshake Latency Increase',
     severity: 'high',
     description:
-      'Software-based TLS inspection on NGFWs processes ML-KEM key encapsulation/decapsulation in software, adding 20-50ms per new connection. For high-frequency trading, API gateways, or real-time applications, this degradation can be unacceptable.',
+      'Software-based TLS inspection on NGFWs processes ML-KEM key encapsulation/decapsulation in software, which adds handshake latency; the latencies in the TLS Inspection Lab are illustrative simulation values, not measurements. For high-frequency trading, API gateways, or real-time applications, added latency can be unacceptable.',
     mitigation:
-      'Prioritize hardware offload-capable platforms (Cisco Firepower 4100, PA-5400, FortiGate 1000F+). Enable session resumption and TLS 1.3 session tickets to minimize full handshake frequency. Consider PQC bypass policies for latency-sensitive applications.',
+      'Prioritize platforms with hardware offload for the algorithms you deploy, and ask each vendor whether your model and firmware offload ML-KEM. Enable session resumption and TLS 1.3 session tickets to minimize full handshake frequency. Consider PQC bypass policies for latency-sensitive applications.',
     affectedVendors: ['sophos-xgs', 'sonicwall', 'pfsense-opnsense', 'juniper-srx'],
   },
   {
@@ -319,7 +320,7 @@ export const INSPECTION_CHALLENGES: InspectionChallenge[] = [
     description:
       'Even NGFWs with dedicated crypto ASICs may not yet support ML-KEM/ML-DSA in hardware. Offloading to software fallback for PQC operations on high-throughput appliances causes CPU saturation and connection drops at sustained load.',
     mitigation:
-      'Verify vendor roadmap for hardware crypto offload support. Plan for 30-50% throughput reduction during PQC transition on software-offload devices. Consider dedicated TLS inspection appliances (F5, A10) with proven PQC hardware acceleration.',
+      'Verify vendor roadmap for hardware crypto offload support. Measure throughput on your own platform with PQC enabled; the throughput factors in the NGFW Cipher Analyzer are illustrative simulation settings, not measurements. If you consider dedicated TLS inspection appliances, ask the vendor to show PQC hardware acceleration before you rely on it.',
     affectedVendors: ['check-point', 'sophos-xgs', 'sonicwall', 'juniper-srx'],
   },
   {
@@ -424,10 +425,10 @@ export const IDS_RULE_CATEGORIES: IDSRuleCategory[] = [
     id: 'cert-size-anomaly',
     name: 'Certificate Size Threshold Anomalies',
     description:
-      'Alert on TLS Certificate messages where the certificate chain exceeds classical size norms (>4KB for a full chain). Identifies PQC certs, certificate stuffing attacks, and misconfigured chains.',
+      'Alert on TLS Certificate messages where the certificate chain exceeds a size threshold that you set above your classical chains; the example thresholds below (4096 and 8192 bytes) are illustrations, not standard values. Identifies PQC certs, certificate stuffing attacks, and misconfigured chains.',
     examplePatterns: [
-      'TLS Certificate record size > 4096 bytes (classical threshold)',
-      'TLS Certificate record size > 8192 bytes (PQC hybrid threshold)',
+      'TLS Certificate record size > 4096 bytes (example threshold)',
+      'TLS Certificate record size > 8192 bytes (example threshold)',
       'Certificate chain depth > 3 with total size > 6KB',
     ],
     falsePositiveRisk: 'medium',
@@ -493,6 +494,12 @@ export const IDS_RULE_CATEGORIES: IDSRuleCategory[] = [
 ]
 
 // ── Cipher Suites ─────────────────────────────────────────────────────────────
+// certSizeKB for the classical suites is this module's illustrative value. For the
+// ML-DSA suites it is the minimum a certificate holding the public key and a signature
+// of the same parameter set can have, from FIPS 204 Table 2 (bytes): ML-DSA-65 1,952 +
+// 3,309 = 5,261 (5.3KB); ML-DSA-87 2,592 + 4,627 = 7,219 (7.2KB). Hybrid certificates
+// also carry the classical key and signature, so they are at least this size.
+// handshakeMs is an illustrative simulation setting, not a measurement.
 
 export const CIPHER_SUITES: CipherSuite[] = [
   {
@@ -526,7 +533,7 @@ export const CIPHER_SUITES: CipherSuite[] = [
     keyExchange: 'X25519+ML-KEM-768',
     authentication: 'ECDSA P-256 + ML-DSA-65 (hybrid cert)',
     encryption: 'AES-256-GCM',
-    certSizeKB: 3.8,
+    certSizeKB: 5.3,
     handshakeMs: 12,
     hardwareOffloadRequired: false,
     quantumSafe: true,
@@ -538,7 +545,7 @@ export const CIPHER_SUITES: CipherSuite[] = [
     keyExchange: 'X25519+ML-KEM-1024',
     authentication: 'ECDSA P-384 + ML-DSA-87 (hybrid cert)',
     encryption: 'AES-256-GCM',
-    certSizeKB: 5.2,
+    certSizeKB: 7.2,
     handshakeMs: 18,
     hardwareOffloadRequired: true,
     quantumSafe: true,
@@ -550,7 +557,7 @@ export const CIPHER_SUITES: CipherSuite[] = [
     keyExchange: 'ML-KEM-768',
     authentication: 'ML-DSA-65',
     encryption: 'AES-256-GCM',
-    certSizeKB: 2.5,
+    certSizeKB: 5.3,
     handshakeMs: 15,
     hardwareOffloadRequired: true,
     quantumSafe: true,
@@ -562,7 +569,7 @@ export const CIPHER_SUITES: CipherSuite[] = [
     keyExchange: 'ML-KEM-1024',
     authentication: 'ML-DSA-87',
     encryption: 'AES-256-GCM',
-    certSizeKB: 3.5,
+    certSizeKB: 7.2,
     handshakeMs: 22,
     hardwareOffloadRequired: true,
     quantumSafe: true,
@@ -588,7 +595,7 @@ export const HARDWARE_TIERS: HardwareTier[] = [
     maxConnectionsSec: 50000,
     supportsHardwareOffload: false,
     pqcRecommendation:
-      'Hybrid TLS passthrough safe. Software DPI for PQC certs will reduce throughput by 30-40%. Hardware offload for ML-KEM requires firmware 2026+. Plan TLS inspection bypass policies for PQC traffic.',
+      'Pass-through (no decryption) loses Layer 7 visibility. In this module’s simulation, software handling of PQC cipher suites lowers effective connections per second on this tier; treat the simulated factors as illustrations, not measurements. Ask each vendor whether your model and firmware offload ML-KEM. Plan TLS inspection bypass policies for PQC traffic.',
   },
   {
     id: 'high-end',
@@ -598,6 +605,6 @@ export const HARDWARE_TIERS: HardwareTier[] = [
     maxConnectionsSec: 500000,
     supportsHardwareOffload: true,
     pqcRecommendation:
-      'Full PQC TLS inspection feasible with firmware update. Hardware offload for ML-KEM-768 available on Cisco 9300/Firepower 9300, PA-7000, FortiGate 3000F+. Target hybrid inspection in 2026, full PQC by 2028.',
+      'This module’s guidance: dedicated crypto hardware may need a firmware update before it can offload ML-KEM or ML-DSA, so check the vendor documentation for the exact models and firmware you run before planning full PQC TLS inspection.',
   },
 ]

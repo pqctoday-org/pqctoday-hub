@@ -4,13 +4,13 @@ Module covering PQC migration for network security infrastructure including NGFW
 
 ## Key Topics
 
-- PQC impact on TLS inspection and DPI (certificate buffer overflows, latency overhead, hardware offload gaps)
+- PQC impact on TLS inspection and DPI (certificate buffer and parsing limits, latency overhead, hardware offload gaps)
 - NGFW cipher policy migration to ML-KEM/ML-DSA hybrid and pure-PQC modes
 - TLS intercept proxy behavior with PQC certificate chains (ML-DSA-65, hybrid ECDSA+ML-DSA)
 - IDS/IPS signature updates for PQC traffic detection (hybrid KEM handshakes, cert size anomalies, downgrade attacks)
-- Vendor roadmaps: Cisco (FTD 7.4+), Palo Alto (PAN-OS 11.x), Fortinet (FortiOS 7.6), Juniper (Junos OS 25.4R1), Check Point (R82), Sophos, SonicWall, pfSense/OPNsense
-- Zero trust network access (ZTNA) PQC migration priorities: IdP → Policy Engine → Application Gateway → Micro-Segmentation
-- TCP Initial Congestion Window (`initcwnd`) starvation: PQC TLS handshakes (which can exceed 25 KB) require multiple TCP flights because they surpass the standard 10-segment `initcwnd` limit, adding significant latency (RTT penalties) and increasing fragmentation risks at middleboxes.
+- Vendor roadmaps: Cisco (ML-KEM in FTD 10.5 and ASA 9.25, targeted for late 2026), Palo Alto (PAN-OS 12.1), Fortinet (FortiOS 7.6), Juniper (Junos OS 25.4R1), Check Point (R82), Sophos (SFOS 22.0 MR2), SonicWall, pfSense/OPNsense
+- Zero trust network access (ZTNA) PQC migration priorities, in this module's suggested order: IdP → Policy Engine → Application Gateway → Micro-Segmentation
+- TCP Initial Congestion Window (`initcwnd`) starvation: a PQC TLS handshake (one published estimate says a hybrid TLS 1.3 handshake using X25519+ML-KEM-768 and ECDSA+ML-DSA-65 may exceed 15 KB) can need more than one TCP flight when it exceeds the 10-segment initial window described in RFC 6928, which adds round trips. The Network Telemetry Analyzer uses illustrative payload profiles, not measurements.
 
 ## Workshop Steps
 
@@ -23,12 +23,10 @@ Module covering PQC migration for network security infrastructure including NGFW
 
 ## Key Data Points
 
-- ML-DSA-65 certificate: ~2.5KB vs RSA-2048: ~1.2KB (+108%)
-- Hybrid ECDSA+ML-DSA-65 chain: ~8.5KB — exceeds most 2025 NGFW inspection buffers (4KB limit)
-- TLS inspection latency: classical ~9ms, hybrid ~28ms, pure PQC ~35ms (software-only DPI)
-- Hardware offload reduces PQC inspection overhead by 60-70%
-- IDS hybrid KEM detection: 92% coverage, low false positive risk
-- Downgrade attack detection: 65% coverage, high false positive risk (requires tuning)
+- ML-DSA-65 certificate: at least 5,261 bytes (FIPS 204 Table 2: 1,952-byte public key plus 3,309-byte signature)
+- Two-certificate TLS 1.3 chain in an IETF C509 draft example: ML-DSA-65 11,869 bytes, RSA 2,656 bytes, ECDSA 1,651 bytes
+- Middleboxes: the Applied Quantum PQC Migration Framework v2.1 says many have hardcoded buffer sizes or parsing assumptions that break with PQC-sized handshakes and certificates, and advises testing every middlebox on every production network path
+- Simulator default values (illustrative, not measurements): TLS Inspection Lab inspected handshake classical ~9ms, hybrid ~28ms, pure PQC ~35ms; NGFW Cipher Analyzer throughput factors; IDS Signature Updater hybrid KEM detection coverage 92% and downgrade attack detection coverage 65% (high false positive risk, requires tuning)
 
 ## Standards References
 

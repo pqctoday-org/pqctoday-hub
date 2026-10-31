@@ -15,13 +15,22 @@ interface TLSAlgorithm {
   inspectedHandshakeMs: number
 }
 
+// Sizes. ML-DSA certificates are shown at their minimum: the public key plus a signature
+// of the same parameter set, from FIPS 204 Table 2 (bytes): ML-DSA-65 1,952 + 3,309 =
+// 5,261 (5.3 KB); ML-DSA-87 2,592 + 4,627 = 7,219 (7.2 KB). Hybrid certificates also carry
+// the classical key and signature, so they are at least this size. Chain sizes are for
+// two certificates: the RSA (2,656 B), ECDSA (1,651 B) and ML-DSA-65 (11,869 B) values are
+// the TLS 1.3 Certificate message examples in the IETF C509 draft; the hybrid ML-DSA-65
+// chain reuses the ML-DSA-65 example as its minimum, and the ML-DSA-87 chain is two
+// times its certificate minimum. Handshake and inspected-handshake times are illustrative
+// simulation settings of this module, not measurements.
 const TLS_ALGORITHMS: TLSAlgorithm[] = [
   {
     id: 'rsa2048',
     name: 'RSA-2048 (classical)',
     certSizeKB: 1.2,
     signatureSizeKB: 0.25,
-    chainSizeKB: 3.2,
+    chainSizeKB: 2.7,
     inspectionFriendly: true,
     inspectionNotes:
       'Universally supported by all TLS inspection engines. No buffer size concerns. Hardware offload widely available.',
@@ -33,7 +42,7 @@ const TLS_ALGORITHMS: TLSAlgorithm[] = [
     name: 'ECDSA P-256 (classical)',
     certSizeKB: 0.9,
     signatureSizeKB: 0.07,
-    chainSizeKB: 2.4,
+    chainSizeKB: 1.7,
     inspectionFriendly: true,
     inspectionNotes:
       'Small certs and signatures. Most NGFW TLS inspection engines handle P-256 natively. No size concerns.',
@@ -43,36 +52,36 @@ const TLS_ALGORITHMS: TLSAlgorithm[] = [
   {
     id: 'hybrid-mldsa65',
     name: 'Hybrid ECDSA+ML-DSA-65',
-    certSizeKB: 3.8,
+    certSizeKB: 5.3,
     signatureSizeKB: 3.4,
-    chainSizeKB: 8.5,
+    chainSizeKB: 11.9,
     inspectionFriendly: false,
     inspectionNotes:
-      'Certificate chain exceeds classical NGFW buffer limits (typically 4KB). Requires firmware update for buffer expansion. Inspection feasible on updated Palo Alto PAN-OS 11.1+ and Cisco FTD 7.4+.',
+      'A hybrid chain carries at least the ML-DSA-65 public key and signature of each certificate, so it may exceed buffer sizes or parsing limits in network devices that inspect TLS certificate chains (Applied Quantum PQC Migration Framework v2.1, Activity 6.1).',
     handshakeMs: 12,
     inspectedHandshakeMs: 28,
   },
   {
     id: 'pure-mldsa65',
     name: 'ML-DSA-65 (pure PQC)',
-    certSizeKB: 2.5,
+    certSizeKB: 5.3,
     signatureSizeKB: 3.3,
-    chainSizeKB: 6.5,
+    chainSizeKB: 11.9,
     inspectionFriendly: false,
     inspectionNotes:
-      'Pure PQC certs require NGFW support for ML-DSA OIDs and larger signature buffers. Currently limited to research/preview on most commercial NGFWs. Chain inspection fails on most 2024 firmware.',
+      'A pure ML-DSA-65 certificate holds a 1,952-byte public key and a 3,309-byte signature (FIPS 204), so inspecting one means handling an ML-DSA key and signature of these sizes. Test each inspection device with PQC-sized certificates before relying on it; the Applied Quantum framework advises testing every middlebox on every production network path.',
     handshakeMs: 15,
     inspectedHandshakeMs: 35,
   },
   {
     id: 'hybrid-mldsa87',
     name: 'Hybrid ECDSA+ML-DSA-87',
-    certSizeKB: 5.2,
+    certSizeKB: 7.2,
     signatureSizeKB: 4.6,
-    chainSizeKB: 12.0,
+    chainSizeKB: 14.4,
     inspectionFriendly: false,
     inspectionNotes:
-      'Maximum security hybrid. Certificate chain can exceed 12KB — beyond even updated NGFW inspection buffers on many platforms. Pass-through with logging recommended over active inspection.',
+      'Uses ML-DSA-87, the largest ML-DSA parameter set. FIPS 204 lists a 2,592-byte public key and a 4,627-byte signature, about 7.2 KB per certificate, so a chain of two such certificates is at least about 14.4 KB and may exceed inspection buffers and parsing limits. This lab suggests pass-through with logging rather than active inspection for chains this large.',
     handshakeMs: 18,
     inspectedHandshakeMs: 45,
   },
@@ -377,8 +386,11 @@ export const TLSInspectionLab: React.FC = () => {
           </table>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
-          Latency values are for a mid-range NGFW appliance with software TLS inspection. Hardware
-          offload reduces inspection latency by 60-70%.
+          ML-DSA certificate sizes are minimums: the public key plus signature from FIPS 204 Table 2
+          (hybrid rows also carry classical parts). Chain sizes are two-certificate examples: RSA,
+          ECDSA and ML-DSA-65 from an IETF C509 draft (2,656, 1,651 and 11,869 bytes), and ML-DSA-87
+          as two times its certificate minimum. Latency values and the inspection overhead are
+          illustrative simulation settings of this module, not measurements.
         </p>
       </div>
     </div>
