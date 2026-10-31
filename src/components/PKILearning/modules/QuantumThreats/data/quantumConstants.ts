@@ -420,7 +420,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2031,
     confidence: 'Mandate',
     notes:
-      'Migration MANDATE dates, not a CRQC-arrival prediction. NSA FAQ version 2.2 states that new National Security System acquisitions must be CNSA 2.0-compliant from 1 January 2027, equipment and services that cannot support CNSA 2.0 must be phased out by 31 December 2030, and CNSA 2.0 algorithms are mandated by 31 December 2031, unless otherwise noted. The separate 2035 NSM-10 goal must not be presented as a CNSA 2.0 mandate.',
+      'Migration MANDATE dates, not a CRQC-arrival prediction. NSA FAQ version 2.2 states that new National Security System acquisitions must be CNSA 2.0-compliant from 1 January 2027, equipment and services that cannot support CNSA 2.0 must be phased out by 31 December 2030 unless an exception is granted, and CNSA 2.0 algorithms are mandated by 31 December 2031, unless otherwise noted. The separate 2035 NSM-10 goal must not be presented as a CNSA 2.0 mandate.',
     url: 'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF',
     lastReviewed: '2026-10-17',
   },
@@ -596,8 +596,7 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     physicalQubits: 56,
     estimatedLogicalQubits: 10,
     qubitType: 'Trapped ion',
-    notes:
-      'Best physical/logical ratio of its day (~99.9% two-qubit gate fidelity). Superseded by Helios (2025).',
+    notes: 'Superseded by Helios (2025).',
   },
   {
     name: 'Nighthawk',
@@ -937,7 +936,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'Quantinuum, IonQ',
     bestLogical: 48,
     bestPhysical: 98,
-    note: 'Highest gate fidelities (>99.9%) and all-to-all connectivity via ion shuttling (QCCD). Fewer physical qubits and slower clock speeds, but very clean operations — Quantinuum Helios reached 48 error-corrected logical qubits (Nov 2025), then 94 error-detected logical qubits using Iceberg codes (Mar 2026) — a different, weaker fault-tolerance class, not a straight replacement of the 48 figure. A Jun 2026 Nature paper independently validated an 800x logical-error-rate improvement on the same hardware.',
+    note: 'Highest gate fidelities (>99.9%) and all-to-all connectivity via ion shuttling (QCCD). Fewer physical qubits and slower clock speeds, but very clean operations — Quantinuum Helios reached 48 error-corrected logical qubits (Nov 2025).',
     recentProgress:
       'Quantinuum’s new Helios machine hit record accuracy and turned its 98 atoms into 48 dependable “logical” qubits, then months later ran a separate 94-qubit error-detected demonstration.',
     scaleChallenge:
@@ -948,7 +947,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'IBM, Google',
     bestLogical: 1,
     bestPhysical: 1121,
-    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits per IBM’s post “IBM Quantum System Two: the era of quantum utility is here” — but Condor demonstrated zero logical qubits); Google Willow showed the first below-threshold error correction, a single distance-7 logical qubit; IBM’s modular + qLDPC roadmap targets 200 logical qubits (Starling) by 2029, with 1,080 connected qubits via l-couplers planned for 2027. Requires deep cryogenics.',
+    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits per IBM’s post “IBM Quantum System Two: the era of quantum utility is here”). Requires deep cryogenics.',
     recentProgress:
       'Google proved that making the chip bigger actually lowers errors; IBM shipped new 120-qubit processors and a test chip with the parts for error correction.',
     scaleChallenge:
@@ -959,7 +958,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'PsiQuantum, Xanadu',
     bestLogical: 12,
     bestPhysical: 12,
-    note: 'Room-temperature operation and chips manufacturable in a standard fab (PsiQuantum at GlobalFoundries); fusion-based measurement architecture. Xanadu’s Aurora (Jan 2025) demonstrated 12 real-time error-corrected GKP logical qubits on a 12-qubit modular/networkable chip (roadmap: up to 500 logical qubits by 2029-30) — PsiQuantum specifically has not yet shown a working logical qubit on its own architecture.',
+    note: 'Room-temperature operation and chips manufacturable in a standard fab; fusion-based measurement architecture — PsiQuantum specifically has not yet shown a working logical qubit on its own architecture.',
     recentProgress:
       'Xanadu ran 12 error-corrected “logical” qubits on a small modular chip designed to be networked into bigger machines; PsiQuantum, on a different architecture, is still making its light-based chips in an ordinary semiconductor factory, betting on mass production.',
     scaleChallenge:
