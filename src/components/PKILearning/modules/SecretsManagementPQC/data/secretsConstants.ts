@@ -210,7 +210,7 @@ export const SECRET_CATEGORIES: SecretCategory[] = [
     atRestRisk:
       'BIP-39 seed phrases encrypted with AES-256 but derived from an ECDH/RSA key exchange are vulnerable. Hardware wallet storage is essential; seed backup encryption must use ML-KEM-1024.',
     mitigationStrategy:
-      'Store seed phrases in FIPS 140-3 Level 3 HSMs with ML-KEM-1024 wrapping for backup. Consider MPC/TSS wallets that eliminate single-point seed phrase exposure. Monitor BIP-360 (proposed PQC wallet standard, not yet formally published) progress.',
+      "This module's advice: Store seed phrases in FIPS 140-3 Level 3 HSMs with ML-KEM-1024 wrapping for backup. Consider MPC/TSS wallets that eliminate single-point seed phrase exposure. Monitor BIP-360 (proposed PQC wallet standard, not yet formally published) progress.",
     exampleProducts: ['Fireblocks', 'Anchorage Digital', 'Ledger Enterprise', 'Copper ClearLoop'],
   },
 ]
@@ -412,7 +412,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'Secrets Store CSI Driver + AWS provider / External Secrets Operator',
     fipsMode: true,
     roadmapNote:
-      'No native dynamic secrets. PQC comes via the KMS endpoint hybrid ML-KEM TLS (data in transit); there is no ML-KEM CMK key type for at-rest encryption. Secrets Manager itself adds no PQC beyond what KMS provides. SDK-level TLS uses hybrid ML-KEM since 2025.',
+      'No native dynamic secrets. PQC comes via the KMS endpoint hybrid ML-KEM TLS (data in transit); there is no ML-KEM CMK key type for at-rest encryption. Secrets Manager endpoints themselves support hybrid ML-KEM key agreement in non-FIPS endpoints.',
   },
   {
     id: 'azure-key-vault',
@@ -447,7 +447,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'External Secrets Operator + GCP provider / Config Connector',
     fipsMode: false,
     roadmapNote:
-      'Secret Manager encrypts with AES-256, optionally under a symmetric Cloud KMS CMEK; PQC keys cannot serve as CMEK. Cloud KMS PQC keys (ML-DSA/SLH-DSA signing GA since 16 Jul 2026; ML-KEM/X-Wing in Preview) are for your own signing and key-encapsulation use. FIPS mode not available for Secret Manager directly.',
+      'Cloud KMS PQC keys (ML-KEM/X-Wing in Preview) are for your own signing and key-encapsulation use.',
   },
   {
     id: 'delinea-secret-server',
