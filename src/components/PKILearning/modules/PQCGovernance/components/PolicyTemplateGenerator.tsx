@@ -263,7 +263,7 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
     },
     {
       value: 'SLH-DSA-SHA2-256s',
-      label: 'Hash-based signature — conservative option (FIPS 205, SLH-DSA-256s)',
+      label: 'Hash-based signature — conservative option (FIPS 205, SHA2 hash family)',
     },
   ]
 
