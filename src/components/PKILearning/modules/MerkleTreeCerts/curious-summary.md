@@ -1,6 +1,6 @@
 ### What This Is About
 
-Post-quantum digital signatures are enormously bloated. While an older ECDSA signature is just 64 bytes, a quantum-safe ML-DSA-44 signature is 2,420 bytes. Merkle Tree Certificates (MTCs) solve this "certificate bloat" problem by replacing heavy, per-certificate signatures with a single, highly efficient batch-signing architecture. But MTCs do more than save bandwidth — they also create a public audit trail that makes quantum downgrade rollback attacks detectable.
+Post-quantum digital signatures are enormously bloated. While an older ECDSA signature is just 64 bytes, a quantum-safe ML-DSA-44 signature is 2,420 bytes. Merkle Tree Certificates (MTCs) solve this "certificate bloat" problem by replacing heavy, per-certificate signatures with a single, highly efficient batch-signing architecture.
 
 ### Why It Matters
 
