@@ -14,4 +14,4 @@ Despite its immense security, QKD has severe physical limitations. Standard fibe
 
 ## What's Happening
 
-Governments are aggressively investing in QKD, with China maintaining a 2,000 km backbone and Micius satellite link. However, NIST remains highly skeptical of its real-world viability, officially recommending mathematical PQC (like FIPS 203) over QKD for almost all enterprise use cases.
+
