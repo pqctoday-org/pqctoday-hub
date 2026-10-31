@@ -87,7 +87,7 @@ const ATTACK_SCENARIOS: Record<
       description:
         'Microsoft Entra ID signs JWT access tokens and ID tokens with RSA-2048 keys published at the JWKS endpoint. A CRQC can recover the private signing key from collected public key material, enabling forgery of any identity token.',
       mitigation:
-        'Monitor Microsoft Entra PQC hybrid token signing preview. Enforce short token lifetimes (15-minute access tokens) to limit replay window. Enable Continuous Access Evaluation (CAE).',
+        'Watch for a Microsoft announcement of post-quantum Entra token signing (we found none). Enforce short token lifetimes (15-minute access tokens) to limit replay window. Enable Continuous Access Evaluation (CAE).',
     },
     {
       title: 'Refresh Token Interception',

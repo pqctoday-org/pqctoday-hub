@@ -228,8 +228,9 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
       'AS-REP roasting targets pre-authentication bypasses, exposing RSA-encrypted tickets',
     ],
     migrationPath:
-      'Upgrade to Windows Server 2025 with PKINIT PQC support; deploy hybrid Kerberos with ML-KEM PKINIT; disable NTLM; enforce LDAPS with hybrid TLS 1.3',
-    vendorTimeline: 'Microsoft Entra / Windows Server PQC: 2026-2027',
+      "This module's target design: hybrid Kerberos with ML-KEM PKINIT once Microsoft ships it (we found no published Microsoft date for PKINIT PQC); disable NTLM; enforce LDAPS with hybrid TLS 1.3",
+    vendorTimeline:
+      'Microsoft Entra / Windows Server PQC: no published date found (this module assumes 2026-2027)',
   },
   {
     id: 'openldap',
@@ -261,8 +262,8 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
       'Entra DS LDAPS uses TLS with classical ciphers',
     ],
     migrationPath:
-      'Microsoft Entra PQC hybrid mode (preview 2025); migrate to ML-DSA token signing via Conditional Access PQC policy; enable hybrid TLS for MSAL SDK connections',
-    vendorTimeline: 'Microsoft Entra PQC: Preview 2025, GA target 2026-2027',
+      "This module's target design: ML-DSA token signing for Entra ID once Microsoft offers it (we found no published Microsoft Entra PQC date or Conditional Access PQC policy); enable hybrid TLS for MSAL SDK connections",
+    vendorTimeline: 'Microsoft Entra PQC: no published date found (this module assumes 2026-2027)',
   },
 ]
 
