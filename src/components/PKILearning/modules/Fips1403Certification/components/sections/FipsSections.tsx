@@ -529,12 +529,16 @@ export const FipsRequirementAreas = () => (
     </p>
     <Callout title="Why this matters for PQC">
       <p>
-        Adding ML-KEM or ML-DSA is not “one more algorithm”. It touches the module specification
-        (new approved functions), SSP management (new key types and seeds), services (new approved
-        services and their indicator) and self-tests (the IG 10.3.A tests for each PQC algorithm).
-        Those are four of the five categories the Manual uses to size a change — so expect a PQC
-        addition to be treated as a significant change: the lab assesses it and proposes the
-        submission route, and the CMVP may require a full submission (see the optional route table).
+        Adding ML-KEM or ML-DSA is not “one more algorithm”. It touches the approved security
+        functions (new approved algorithms), SSP management (new key types and seeds), services (new
+        approved services and their indicator) and self-tests (the IG 10.3.A tests for each PQC
+        algorithm). Those are four of the five categories the Manual lists for an Update (UPDT),{' '}
+        <Cite std={MGMT_MANUAL}>§7.1.10</Cite>: “approved / allowed security functions/algorithms,
+        SSPs, approved security services, self-tests, and security states within the FSM”, each of
+        which may not exceed 30% of changes. The Manual does not say how a PQC addition is treated;
+        that part is our reasoning: expect it to be treated as a significant change, with the lab
+        assessing it and proposing the submission route, and the CMVP free to decide that the
+        changes exceed 30% and require a full submission (see the optional route table).
       </p>
     </Callout>
   </Body>
@@ -1377,11 +1381,10 @@ const VerifiedCertTable = ({ hub }: { hub: HubState }) => {
 
 /** Learn section `fips-landscape` */
 // ── fips-automation ─────────────────────────────────────────────────────────
-// Every claim is from the verified register (priv nextfeature
-// fips-automation-facts-09272026.md; antigravity-88 + Codex gpt-5.6-terra,
-// each row re-checked against its source). Deliberately NOT stated, because
-// no official source states them: a CAVS retirement date, and any date for
-// accepting automated (AMVP) module submissions in production.
+// Every claim comes from the NIST pages and publications cited in this
+// section. Deliberately NOT stated, because those documents do not state
+// them: a CAVS retirement date, and any date for accepting automated (AMVP)
+// module submissions in production.
 
 const AUTOMATION_LAYERS: readonly {
   layer: string
@@ -1524,8 +1527,10 @@ export const FipsAutomation = () => (
         required for ACMVP”; no source says Web Cryptik is being replaced.
       </p>
       <p>
-        No official source gives a date when automated module submissions will be accepted in
-        production, so treat any dated claim about an “automated CMVP” as unsupported.
+        NIST’s documents on this project (SP 1800-40B, CSWP 37A and CSWP 37B) give no date when
+        automated module submissions will be accepted in production; SP 1800-40B says the
+        capabilities are “actively being integrated into the production CMVP environment in 2026”.
+        Treat any dated claim about an “automated CMVP” as unsupported by them.
       </p>
     </Callout>
   </Body>

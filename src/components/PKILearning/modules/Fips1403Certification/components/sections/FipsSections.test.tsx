@@ -68,8 +68,12 @@ describe('FIPS sections render', () => {
     ).toBeInTheDocument()
     expect(screen.getByText(/it does not establish FIPS validation/)).toBeInTheDocument()
     expect(
-      screen.getByText(/so expect a PQC addition to be treated as a significant change/)
-    ).toHaveTextContent('the CMVP may require a full submission')
+      screen.getByText(
+        /that part is our reasoning: expect it to be treated as a significant change/
+      )
+    ).toHaveTextContent('the CMVP free to decide that the changes exceed 30% and require a full')
+    expect(screen.getByText(/It touches the approved security functions/)).toBeInTheDocument()
+    expect(screen.queryByText(/It touches the module specification/)).not.toBeInTheDocument()
     expect(screen.queryByText(/is a security-relevant revalidation/)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Open the PKCS#11 Learn exercises' })).toHaveAttribute(
       'href',
