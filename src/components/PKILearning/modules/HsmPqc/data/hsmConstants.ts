@@ -844,12 +844,11 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     vendorId: 'thales-luna',
     vendorName: 'Thales Luna 7',
     currentFirmware: '7.8.x or earlier',
-    targetFirmware: '7.9.2+',
+    targetFirmware: '7.9.0 or newer',
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM',
-    notes:
-      'PQC integrated into core firmware. Luna Client must also be upgraded to 10.9.2+. Existing keys are preserved during upgrade. CBOM REST API available after upgrade. FIPS 140-3 CMVP resubmission required for v7.9.2 — all vendors adding PQC to existing certified modules must resubmit.',
+    notes: 'PQC integrated into core firmware.',
   },
   {
     vendorId: 'entrust-nshield',

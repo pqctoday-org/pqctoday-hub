@@ -369,7 +369,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">v7.9.2+</span>
+                    <span className="font-mono text-foreground">7.9.0 or newer</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
@@ -536,8 +536,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
                 <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) ship
-                PQC firmware, with different algorithm sets (Thales and Utimaco do not yet offer
-                SLH-DSA) and different FIPS 140 coverage: some module certificates list PQC
+                PQC firmware, with different algorithm sets (Thales&apos;s Luna Post Quantum
+                Algorithms page lists ML-KEM, ML-DSA and LMS-HSS, and that page and its v7.9 release
+                post do not list SLH-DSA; Utimaco&apos;s Quantum Protect page shows SLH-DSA as in
+                progress) and different FIPS 140 coverage: some module certificates list PQC
                 algorithms (Crypto4A #5497, Thales Luna T7 #5450), others do not (Entrust nShield 5s
                 #5329 and #4745, Thales Luna K7 #4684). Cloud HSMs are uneven: AWS CloudHSM
                 generates and uses ML-DSA keys inside the HSM through vendor-defined PKCS#11
