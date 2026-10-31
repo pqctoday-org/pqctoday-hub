@@ -419,7 +419,8 @@ export const HANDSHAKE_MITIGATIONS: HandshakeMitigation[] = [
     name: 'Session Resumption (PSK)',
     reductionPercent: 90,
     description: 'Reuse prior session keys; eliminates certificate exchange on reconnect.',
-    applicability: 'Returning clients only (60\u201380% of traffic at typical gateways)',
+    applicability:
+      'Returning clients only (Cloudflare measured 27% of its QUIC connections with an HTTP request as resumptions)',
   },
   {
     id: 'compression',

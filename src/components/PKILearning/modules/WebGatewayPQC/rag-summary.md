@@ -9,7 +9,7 @@ Learn how to deploy post-quantum cryptography at the web infrastructure edge: re
 - Web gateway architecture: reverse proxies, load balancers, WAFs, CDN positioning as TLS termination points
 - Four TLS termination patterns: terminate-and-inspect, passthrough, re-encrypt-backend, split TLS
 - Certificate lifecycle at edge scale: ACME automation, CT log impact, rotation across hundreds of PoPs
-- PQC handshake performance: classical ~5KB vs hybrid ~15KB vs pure PQC ~25KB
+- PQC handshake performance: classical TLS 1.3 ~1–2 KB vs hybrid TLS 1.3 (X25519 + ML-KEM-768) ~2–3 KB; a three-certificate ML-DSA chain can be more than 10 KB
 - Mitigations: session resumption (PSK), certificate compression (RFC 8879), Merkle Tree Certificates, HTTP/3 QUIC, connection coalescing
 - WAF/IDS inspection challenges when gateways cannot terminate PQC TLS
 - CDN edge deployment: origin shielding, key distribution across edge PoPs

@@ -136,7 +136,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             {[
               {
                 t: 'ACME Automation',
-                d: "Automated Certificate Management Environment (RFC 8555) is essential at scale. CAs must support PQC issuance for automated rotation to work. Let's Encrypt and Google Trust Services are evaluating PQC certificate support.",
+                d: "Automated Certificate Management Environment (RFC 8555) is essential at scale. CAs must support PQC issuance for automated rotation to work. Let's Encrypt plans Merkle Tree Certificate support, with staging targeted for late 2026 and production readiness for 2027.",
               },
               {
                 t: 'Certificate Transparency Impact',
