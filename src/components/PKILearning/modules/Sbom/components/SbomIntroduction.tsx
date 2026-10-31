@@ -215,7 +215,7 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
         <p>
           <Badge kind="std" />
           US <strong>Executive Order 14028</strong> (May 2021) requires software vendors selling to
-          the federal government to provide an SBOM — the requirement that produced NTIA&apos;s
+          the federal government to provide an SBOM (not sourced in the Library) — the requirement that produced NTIA&apos;s
           minimum-elements work above. The <strong>EU Cyber Resilience Act</strong> (Regulation EU
           2024/2847) requires manufacturers of products with digital elements to maintain an SBOM
           covering top-level dependencies, with the main obligations applying from{' '}
