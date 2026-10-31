@@ -304,7 +304,7 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
       id: 'qw-cert-size',
       label: 'Calculate your PQC certificate chain size',
       description:
-        'Multiply your chain depth by ~4KB for ML-DSA-65 certs. Does it fit your budget?',
+        'Multiply your chain depth by the 1952-byte public key plus the 3309-byte signature of each ML-DSA-65 cert. Does it fit your budget?',
     },
   ],
 
