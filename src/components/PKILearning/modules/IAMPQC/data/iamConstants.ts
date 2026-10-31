@@ -245,7 +245,7 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
       'SASL/GSSAPI security depends on Kerberos channel security',
     ],
     migrationPath:
-      'Update OpenSSL 3.x TLS to hybrid ML-KEM-768+X25519 for LDAPS; use OpenSSL 3.x with oqsprovider; verify GnuTLS or NSS backend supports PQC if not using OpenSSL',
+      'Update OpenSSL 3.x TLS to hybrid ML-KEM-768+X25519 for LDAPS; verify GnuTLS or NSS backend supports PQC if not using OpenSSL',
     vendorTimeline: 'OpenLDAP + OpenSSL 3.x oqsprovider: Available now (experimental)',
   },
   {
