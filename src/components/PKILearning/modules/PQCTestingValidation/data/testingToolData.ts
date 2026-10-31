@@ -261,7 +261,7 @@ export const TESTING_TOOLS: TestingTool[] = [
     pqcSupport: 'ML-KEM (FIPS 203) — 78 tests; ML-DSA (FIPS 204) — 51 tests',
     strengths: [
       'Language-agnostic JSON line protocol — harness any implementation',
-      'Catches bugs that NIST KAT and formal verification miss',
+      'Crucible claims to catch bugs that fall between NIST KAT final-output checks and formal verification of abstract models',
       '15 production harnesses (CIRCL, liboqs, AWS-LC, Go stdlib, Bouncy Castle)',
       '78 ML-KEM + 51 ML-DSA targeted conformance tests',
       'Apache 2.0 — free and open source',
