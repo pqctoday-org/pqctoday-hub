@@ -1,6 +1,6 @@
 ### What This Is About
 
-DNSSEC signs DNS answers so resolvers can prove they weren't forged. IANA has assigned DNSSEC algorithm number 18 to ML-DSA-44, the smallest post-quantum signature in FIPS 204, and on 2026-09-10 Cloudflare's 1.1.1.1 resolver started validating it by default against a real signed test zone, dnstest.dev.
+DNSSEC signs DNS answers so resolvers can prove they weren't forged. IANA has assigned DNSSEC algorithm number 18 to ML-DSA-44, with resolver validation of ML-DSA-44 serving as one of the first deployment steps.
 
 ### Why It Matters
 
