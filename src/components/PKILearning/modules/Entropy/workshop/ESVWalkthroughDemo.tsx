@@ -392,7 +392,7 @@ export const ESVWalkthroughDemo: React.FC = () => {
           Validations page names IG D.T for them; D.T is not in the 19 August 2026 edition of the
           Implementation Guidance), which lead to a separate{' '}
           <strong>Random Bit Generator Validation Certificate</strong>. Neither certificate is a
-          FIPS 140-3 module certificate. NIST states no fixed review time.
+          FIPS 140-3 module certificate.
         </p>
 
         {/* Flow diagram */}

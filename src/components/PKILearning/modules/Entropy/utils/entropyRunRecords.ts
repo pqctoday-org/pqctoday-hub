@@ -297,7 +297,7 @@ export function sourceCombiningRunManifest(
 
 export const EVIDENCE_LAB_LIMITATIONS = [
   'Estimator output for this dataset under its recorded conditions only.',
-  'Not an ESV submission, lab analysis, CMVP review or certificate. The tool output is NIST SP800-90B_EntropyAssessment JSON, not an ESV format.',
+  'Not an ESV submission, lab analysis, CMVP review or certificate.',
 ]
 
 export interface EvidenceLabRunInput {

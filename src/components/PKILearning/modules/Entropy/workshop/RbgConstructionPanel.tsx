@@ -83,10 +83,7 @@ export const RbgConstructionPanel = () => {
             an SP 800-90A DRBG for pseudorandom bit generation.
           </p>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            SP 800-90A Rev. 1 is the current final DRBG recommendation. NIST&apos;s SP 800-90A Rev.
-            2 page is a pre-draft call for comments (published 2025-09-04, comments closed
-            2025-11-04) announcing a planned SHAKE/XOF-based DRBG; no draft text exists, so no such
-            mechanism is specified yet (status checked 2026-09-24).
+            SP 800-90A Rev. 1 is the current final DRBG recommendation.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {RBG_TYPES.map((rbg) => (
