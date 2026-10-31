@@ -67,9 +67,9 @@ aws kms sign \\
     catalogName: 'Google Cloud KMS',
     pqcAlgorithms: {
       kem: [
-        { name: 'ML-KEM-768', status: 'Preview' },
-        { name: 'ML-KEM-1024', status: 'Preview' },
-        { name: 'X-Wing', status: 'Preview — X25519+ML-KEM-768 hybrid' },
+        { name: 'ML-KEM-768', status: 'Software protection level' },
+        { name: 'ML-KEM-1024', status: 'Software protection level' },
+        { name: 'X-Wing', status: 'Software protection level — X25519+ML-KEM-768 hybrid' },
       ],
       sign: [
         { name: 'ML-DSA-44/65/87', status: 'GA (16 Jul 2026), incl. external-μ' },
@@ -83,7 +83,7 @@ aws kms sign \\
     fipsLevel:
       'FIPS 140-2 Level 1 (software) — PQC keys; Level 3 applies to classical Cloud HSM keys only',
     hybridSupport: true,
-    apiPattern: `# Google Cloud KMS — ML-KEM key (Preview, SOFTWARE protection level)
+    apiPattern: `# Google Cloud KMS — ML-KEM key (SOFTWARE protection level)
 gcloud kms keys create my-pqc-kem-key \\
   --keyring=my-ring \\
   --location=global \\
@@ -218,7 +218,7 @@ POST /v1/cckm/aws/upload-key
       ],
     },
     envelopeEncryptionModel:
-      'Runtime Encryption with Intel SGX. Multicloud key management with Confidential Computing. ML-KEM for key operations with CNSA 2.0 compliance roadmap.',
+      'Runtime Encryption with Intel SGX. Multicloud key management with Confidential Computing.',
     autoRotation: true,
     kmipSupport: true,
     fipsLevel: 'FIPS 140-2 Level 2 (planned FIPS 140-3)',
@@ -237,7 +237,7 @@ GET /pqc-central/v1/inventory
 # Returns: crypto assets, quantum risk scores,
 # readiness roadmap per application`,
     notes:
-      'Unique PQC Central feature: cryptographic discovery, quantum risk assessment, and readiness roadmap. Dual-stack rollout (classical + PQC) with policy enforcement. Confidential Computing via Intel SGX provides hardware-level isolation. Full CNSA 2.0 suite planned.',
+      'Unique PQC Central feature: cryptographic discovery, quantum risk assessment, and readiness roadmap. Dual-stack rollout (classical + PQC) with policy enforcement. Confidential Computing via Intel SGX provides hardware-level isolation.',
   },
 ]
 

@@ -755,7 +755,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'It also lets administrators create ML-KEM keys, because KEY_AGREEMENT is implied by SIGN_VERIFY',
     ],
     answer: 0,
-    why: 'A key policy cannot govern the creation of a key that does not exist yet, so kms:CreateKey belongs in an IAM policy. AWS has no condition key for TLS cipher suites: hybrid post-quantum TLS to KMS is enabled in the client (for example the AWS CRT HTTP client with postQuantumTlsEnabled) and verified in CloudTrail (tlsDetails.keyExchange). AWS KMS has no ML-KEM keys at all.',
+    why: 'A key policy cannot govern the creation of a key that does not exist yet, so kms:CreateKey belongs in an IAM policy. AWS has no condition key for TLS cipher suites: hybrid post-quantum TLS to KMS is enabled in the client (for example the AWS CRT HTTP client with postQuantumTlsEnabled) and verified in CloudTrail (tlsDetails.keyExchange). AWS KMS also offers ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024).',
   },
   // stateful-signatures
   'stateful-signatures/state-management': {

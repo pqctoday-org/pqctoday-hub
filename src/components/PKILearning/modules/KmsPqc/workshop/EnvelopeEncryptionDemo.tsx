@@ -295,8 +295,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         // Step 1: Generate AES-256 DEK
         // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=true
         // NOTE: extractable=true here is intentional for this educational demo so we can
-        // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (C_UnwrapKey
-        // gap in SoftHSMv3). In production, DEKs would be extractable=false, sensitive=true;
+        // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (the engine
+        // returned none after C_UnwrapKey). In production, DEKs would be extractable=false, sensitive=true;
         // KCV would be the only integrity verification method.
         setProgressLabel('Generating key pair...')
         const dekHandle = hsm_generateAESKey(
@@ -406,8 +406,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         // Step 1: Generate AES-256 DEK
         // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=true
         // NOTE: extractable=true here is intentional for this educational demo so we can
-        // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (C_UnwrapKey
-        // gap in SoftHSMv3). In production, DEKs would be extractable=false, sensitive=true;
+        // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (the engine
+        // returned none after C_UnwrapKey). In production, DEKs would be extractable=false, sensitive=true;
         // KCV would be the only integrity verification method.
         setProgressLabel('Generating key pair...')
         const dekHandle = hsm_generateAESKey(
@@ -661,7 +661,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         })
 
         // KCV comparison — fall back to direct byte comparison if CKA_CHECK_VALUE not populated
-        // (SoftHSM3 computes CKA_CHECK_VALUE for C_GenerateKey but not C_UnwrapKey)
+        // (used when the engine returns no CKA_CHECK_VALUE for the unwrapped key)
         const kcvAfter = fmtKcv(hsm_getKeyCheckValue(M, hSession, recoveredDekHandle))
         const dekBytesRecov = hsm_extractKeyValue(M, hSession, recoveredDekHandle)
         const useRaw = kcvBefore === '—' || kcvAfter === '—'
@@ -730,8 +730,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
   const mlKemSizes = !isRSA ? ML_KEM_SIZES[kekAlgo] : null
   // When RSA is selected for the live demo the PQC column shows ML-KEM-768 reference values
   const pqcRefSizes = mlKemSizes ?? ML_KEM_SIZES['ml-kem-768']
-  // AES-KW: 40 B · AES-KWP: 48 B (RFC 5649 §4.2 AIV, softhsmv3 aes_kw crate) · AES-GCM: 60 B (48 B ct + 12 B nonce)
-  const wrapOverheadBytes = wrapMech === 'aes-gcm' ? 60 : wrapMech === 'aes-kwp' ? 48 : 40
+  // AES-KW: 40 B · AES-KWP: 40 B for a 32-byte key (RFC 5649 §3, n+1 64-bit blocks) · AES-GCM: 60 B (48 B ct + 12 B nonce)
+  const wrapOverheadBytes = wrapMech === 'aes-gcm' ? 60 : 40
   const pqcPkStr = `${pqcRefSizes.pk.toLocaleString()} B`
   const pqcCtStr = `${pqcRefSizes.ct.toLocaleString()} + 32 B`
   const totalPqcStr = `${pqcRefSizes.ct.toLocaleString()} + ${wrapOverheadBytes} B`
@@ -976,7 +976,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               <p className="text-[10px] text-muted-foreground mt-1.5">
                 {kcvResult.method === 'kcv'
                   ? 'CKA_CHECK_VALUE = first 3 bytes of AES-ECB(key, 0x00…) — PKCS#11 §9'
-                  : 'SoftHSMv3 implementation note: C_GenerateKey populates CKA_CHECK_VALUE but C_UnwrapKey does not (this is an implementation gap, not a PKCS#11 requirement). Falling back to first 3 bytes of CKA_VALUE for comparison. In production HSMs, CKA_CHECK_VALUE is the correct verification method.'}
+                  : 'The unwrapped key object did not return CKA_CHECK_VALUE in this build, so the demo compares the first 3 bytes of CKA_VALUE instead. PKCS#11 v3.2 makes the attribute optional but, where it is supported, always supplied, however the key object is created.'}
               </p>
             </div>
           )}
@@ -1135,21 +1135,21 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                   (step1ComparisonNote ??
                     'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
                 {displayStep.step === 2 &&
-                  'RSA-OAEP directly encrypts the DEK in one operation. ML-KEM produces a random shared secret that must be derived into a wrapping key — a fundamental paradigm difference. ' +
+                  'RSA-OAEP transports a key chosen by the sender. ML-KEM Encaps outputs a shared secret key that is ready to use; a key-derivation method may be applied if the keying material needed differs from the KEM output (SP 800-227 Sec. 4.3). ' +
                     'OAEP (RFC 8017 §7.1) uses randomized padding to achieve IND-CCA2 security (indistinguishable under adaptive chosen-ciphertext attack — an attacker who can get arbitrary ciphertexts decrypted still cannot distinguish which of two chosen plaintexts a given ciphertext encrypts): every encryption produces a different ciphertext, preventing chosen-ciphertext attacks. ' +
                     'Never use PKCS#1 v1.5 for key transport — it is broken by the 1998 Bleichenbacher padding oracle attack, which lets an adaptive attacker decrypt RSA ciphertexts without the private key using ~1 million queries to a validating server.'}
                 {displayStep.step === 3 &&
                   (isRSA
                     ? 'RSA-OAEP is a direct encryption scheme — the decrypted output IS the DEK. No KDF step is needed. This step is skipped in the classical path.'
-                    : 'This KDF step is unique to KEMs. The shared secret from ML-KEM.Encaps() is a random 32-byte value — not directly usable as a wrapping key without domain separation. ' +
+                    : 'The shared secret from ML-KEM.Encaps() is a 256-bit value that can be used directly as a shared secret key for symmetric cryptography. This demo applies HKDF with info="kms-envelope-v1" to bind the wrapping key to this protocol and version. ' +
                       'HKDF binds it to a context string (info="kms-envelope-v1") so the derived key is isolated to this protocol and version, preventing cross-protocol key reuse (RFC 5869 §3.2).')}
                 {displayStep.step === 4 &&
                   `AES-KW (RFC 3394), AES-KWP (RFC 5649), or AES-GCM (SP 800-38D) wraps the 32-byte DEK. ` +
                     `AES-KW: 40 B output — 8-byte A value (ICV, RFC 3394 §2.2.3, not a nonce) + 32 B; deterministic, no nonce management required; SP 800-38F §6.2 purpose-built for key wrapping. ` +
-                    `AES-KWP: 48 B — 8-byte AIV (RFC 5649 §4.2: fixed constant 0xA65959A6 + 4-byte plaintext length) + padded plaintext; handles non-block-aligned key lengths. ` +
+                    `AES-KWP: 40 B for the 32-byte DEK — 8-byte AIV (RFC 5649 §3: constant 0xA65959A6 + 32-bit length) + plaintext padded with zero octets to a multiple of 8; handles key lengths that are not multiples of 8 octets. ` +
                     `AES-GCM: 48 B output (32 B plaintext + 16 B auth tag embedded at the end) plus a 12-byte nonce stored separately (visible in the hex blobs above). ` +
                     `The 12-byte nonce is the SP 800-38D §5.2.1.1 recommended IV length for GCM. The 16-byte tag provides authenticated integrity — the ciphertext blob already contains it. ` +
-                    `IV uniqueness is mandatory in GCM: reusing the same (key, IV) pair lets an attacker XOR two ciphertexts to cancel the keystream and recover both plaintexts, and to forge authentication tags (SP 800-38D §8). Prefer AES-KW when nonce management is operationally risky. ` +
+                    `IV uniqueness is a requirement in GCM (SP 800-38D §8): if even one IV is ever repeated under a key, the implementation may be vulnerable to forgery attacks. Prefer AES-KW when nonce management is operationally risky. ` +
                     `Store the KEM ciphertext alongside the wrapped DEK. ` +
                     `Note: C_EncapsulateKey and C_DecapsulateKey are new in PKCS#11 v3.2 (ratified as an OASIS Standard on 3 June 2026) — classic PKCS#11 had no native KEM primitives.`}
                 {displayStep.step === 5 &&
@@ -1408,11 +1408,12 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               Migration Path: Use Hybrid (Classical + PQC)
             </p>
             <p className="text-xs text-muted-foreground">
-              This demo shows a binary choice — RSA-OAEP <em>or</em> ML-KEM. NIST SP 800-227 and
-              current migration guidance recommend running <strong>both simultaneously</strong>{' '}
-              during the transition period: combine classical ECDH or RSA with ML-KEM so that
-              security holds even if one scheme is broken. A combined shared secret is derived via
-              HKDF from both outputs (e.g. P-256 ECDH ‖ ML-KEM-768 → HKDF → AES-256 KEK). This
+              This demo shows a binary choice — RSA-OAEP <em>or</em> ML-KEM. NIST SP 800-227
+              describes hybrid (PQ/T) key establishment, in which the shared secrets of all
+              components are combined with an approved key combiner so that the scheme is secure
+              if at least one component is secure; whether to deploy it is left to each
+              application. In this module&apos;s illustration, a combined shared secret is derived
+              via HKDF from both outputs (e.g. P-256 ECDH ‖ ML-KEM-768 → HKDF → AES-256 KEK). This
               hybrid approach is available in the{' '}
               <span className="font-mono text-primary">HSM / PKCS#11 → Key Wrapping</span> tool
               which supports P-256+ML-KEM and X25519+ML-KEM combiner modes per SP 800-227.

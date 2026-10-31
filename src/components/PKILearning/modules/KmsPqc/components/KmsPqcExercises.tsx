@@ -47,7 +47,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       id: 'envelope-encryption',
       title: '2. Envelope Encryption Walkthrough',
       description:
-        'Step through the 5-step ML-KEM envelope encryption flow side-by-side with classical RSA-OAEP. Observe the extra KDF step that PQC requires and compare artifact sizes at each stage.',
+        'Step through the 5-step ML-KEM envelope encryption flow side-by-side with classical RSA-OAEP. Observe the HKDF step this demo adds and compare artifact sizes at each stage.',
       badge: 'Encryption',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
@@ -73,7 +73,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Multi-Cloud',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'As of mid-2026: AWS KMS has GA ML-DSA signing (ML-DSA-44/65/87, since 2025) in FIPS 140-3 Level 3 HSMs; Google Cloud KMS has ML-DSA and SLH-DSA signing generally available (since 16 Jul 2026) and ML-KEM-768/1024 and X-Wing in Preview, all at the software protection level; Azure Key Vault is rolling out ML-KEM/ML-DSA key types via SymCrypt (2026-2027, tier/region dependent). Verify each provider current docs for the latest.',
+        'As of mid-2026: AWS KMS has GA ML-DSA signing (ML-DSA-44/65/87, since 2025) in FIPS 140-3 Level 3 HSMs; Google Cloud KMS has ML-DSA and SLH-DSA signing generally available (since 16 Jul 2026) and ML-KEM-768/1024 and X-Wing at the software protection level (the 28 July 2026 Google post announces general availability; its release notes list Preview from 23 September 2025; checked 30 October 2026); Azure Key Vault is rolling out ML-KEM/ML-DSA key types via SymCrypt (2026-2027, tier/region dependent). Verify each provider current docs for the latest.',
       config: { step: 2 },
     },
     {

@@ -105,12 +105,12 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
 
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;A KEM can only establish a shared secret, not directly encrypt arbitrary data.
-              Applications that relied on RSA PKCS#1 v1.5 or RSA-OAEP for direct encryption must
-              adopt an envelope encryption pattern when migrating to ML-KEM.&rdquo;
+              &ldquo;A KEM can be combined with a symmetric-key encryption scheme to yield very efficient
+              public-key encryption. This is sometimes referred to as the KEM-DEM paradigm for
+              PKE&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NIST SP 800-227, Recommendations for Key-Encapsulation Mechanisms
+              &mdash; NIST SP 800-227, Recommendations for Key-Encapsulation Mechanisms, Sec. 5.2.1
             </p>
           </div>
 
@@ -227,9 +227,11 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             <strong>
               <InlineTooltip term="Envelope Encryption">envelope encryption</InlineTooltip>
             </strong>{' '}
-            requires an extra KDF step compared to RSA-OAEP. RSA directly wraps the DEK in one step;
-            ML-KEM encapsulates &rarr; derives a wrapping key via HKDF &rarr; wraps the DEK with
-            AES-KW.
+            uses a different pattern from RSA-OAEP, which wraps the DEK in one step. In this module&apos;s
+            design, ML-KEM encapsulates &rarr; derives a wrapping key via HKDF &rarr; wraps the
+            DEK with AES-KW. The shared secret key from ML-KEM does not itself require further key
+            derivation (NIST PQC FAQ); the HKDF step binds the wrapping key to this protocol and
+            version.
           </p>
 
           <div className="space-y-3">
@@ -572,17 +574,19 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">KMIP Interoperability</div>
               <p className="text-xs text-muted-foreground">
-                KMIP 3.0+ supports PQC key types. Use KMIP as the abstraction layer for
-                cross-provider key operations: create, wrap, unwrap, rotate, destroy. Thales
-                CipherTrust and HashiCorp Vault both support KMIP server mode.
+                KMIP 3.0 (Committee Specification Draft 02 in the held copy) adds ML-KEM,
+                ML-DSA and SLH-DSA algorithms and Encapsulate and Decapsulate operations. Use KMIP
+                as the abstraction layer for cross-provider key operations: create, wrap, unwrap,
+                rotate, destroy.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">Key Backup Strategy</div>
               <p className="text-xs text-muted-foreground">
-                PQC key backup requires quantum-safe wrapping for the backup envelope. Use ML-KEM to
-                wrap backup keys, with M-of-N key splitting for disaster recovery. Ensure backup
-                HSMs support PQC firmware.
+                In this module&apos;s design, PQC key backup uses quantum-safe wrapping for the backup
+                envelope: ML-KEM wraps the backup keys, with M-of-N key splitting for disaster
+                recovery, and backup HSMs run PQC-capable firmware. The Applied Quantum framework
+                describes PQC key-wrapping around classical HSM operations as interim protection.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

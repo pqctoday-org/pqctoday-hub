@@ -118,7 +118,7 @@ export const ENVELOPE_ENCRYPTION_STEPS: EnvelopeEncryptionStep[] = [
     classicalDescription:
       'Not needed — RSA-OAEP directly encrypts the DEK. The decrypted output IS the DEK.',
     pqcDescription:
-      'Run HKDF-SHA-256(shared_secret, info="kms-envelope-v1") → 256-bit wrapping key. This extra KDF step is required because KEMs produce a random shared secret, not a direct encryption.',
+      'The shared secret key from ML-KEM Encaps does not require further key derivation; this demo runs HKDF-SHA-256(shared_secret, info="kms-envelope-v1") → 256-bit wrapping key to bind it to this protocol and version.',
     classicalArtifact: '(skipped)',
     pqcArtifact: '256-bit AES Wrapping Key',
     classicalSize: 'N/A',
@@ -396,7 +396,7 @@ export const ENTERPRISE_SCENARIO = {
       name: 'Google Cloud KMS',
       rotationFeature: 'Key versioning with scheduled rotation',
       pqcCapability:
-        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing in Preview; software protection level only',
+        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing offered; software protection level only (launch stage: Google\'s 28 Jul 2026 post announces general availability, its release notes list Preview from 23 Sep 2025; checked 30 Oct 2026)',
     },
     {
       id: 'azure-kv',
@@ -964,7 +964,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 3,
     providerSupport: {
       'aws-kms': 'Hybrid TLS (GA)',
-      'gcp-kms': 'Preview (software)',
+      'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'TLS Preview',
       'fortanix-dsm': 'Available',
@@ -982,7 +982,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     securityLevel: 5,
     providerSupport: {
       'aws-kms': 'Hybrid TLS only',
-      'gcp-kms': 'Preview (software)',
+      'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Available',
@@ -1214,7 +1214,7 @@ export const KMIP_READINESS_CHECKLIST: KmipReadinessItem[] = [
     category: 'Configuration',
     title: 'Buffer Size Configuration',
     description:
-      'PQC key material is 4-20x larger than classical. Verify KMIP message buffers, TLS record sizes, and database column widths accommodate ML-KEM-1024 (3,168 B secret key).',
+      'PQC keys and ciphertexts are many times larger than ECDH or ECDSA ones. Verify KMIP message buffers, TLS record sizes, and database column widths accommodate ML-KEM-1024 (3,168 B expanded decapsulation key; 1,568 B encapsulation key and ciphertext).',
     critical: false,
   },
   {
