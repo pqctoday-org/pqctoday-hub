@@ -643,7 +643,7 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
           </p>
           <MathModel
             formula={`cves_per_year × hours_saved_per_cve × loaded_hourly_rate\n  + reduced_breach_exposure\n= ${cveP.cvesPerYear} × ${cveP.hoursSavedPerCve} × ${fmt$(cveP.loadedHourlyRate)}\n  + ${fmt$(cveP.reducedBreachExposure)}\n= ${fmt$(cve)}/yr`}
-            explanation="Domain model anchored to OpenSSL 1.1.1 EoL (September 2023) and the Bouncy Castle high-severity CVE cadence already documented in the module narrative. CBOM-driven discovery shortens the detect → patch → attest cycle, reducing both engineering effort and the window during which a vulnerable library is reachable from production traffic."
+            explanation="Domain model anchored to the OpenSSL 1.1.1 end of life (11 September 2023); the CVE count, hours and rate are illustrative inputs of this model, not measured figures. CBOM-driven discovery shortens the detect → patch → attest cycle, reducing both engineering effort and the window during which a vulnerable library is reachable from production traffic."
           >
             <ParamSlider
               label="High-severity CVEs per year"

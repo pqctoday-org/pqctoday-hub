@@ -23,11 +23,12 @@ schedule or never?"
    key-generation tests check against the private key only. The CMVP
    Modules-in-Process list gives each module's status and status date, not a completion date. Tracking this is a continuous monthly monitor,
    not an annual audit.
-3. **Library EoL and CVE cadence**. OpenSSL 1.1.1 EoL (September 2023). Bouncy Castle
-   high-severity CVEs per release. OMB M-23-02 annual cryptographic inventory mandate for US
+3. **Library end of life**. OpenSSL 1.1.1 reached end of life on 11 September 2023. OMB M-23-02 annual cryptographic inventory mandate for US
    federal agencies through 2035. CNSA 2.0 National Security Systems: CNSSP 15 requires new acquisitions to be compliant from 1 Jan 2027, phases out non-supporting equipment and services by 31 Dec 2030 and mandates the algorithms by 31 Dec 2031 unless otherwise noted (FAQ Ver. 2.2, Aug 2026). Earlier category dates remain historical context; use the current FAQ for planning.
 
 ## Five pillars of CPM
+
+This is this module's own five-pillar model; no external standard defines these pillars.
 
 1. **Inventory** — unified CBOM across four asset classes (certificates, libraries, software,
    keys). Continuously refreshed, not point-in-time.

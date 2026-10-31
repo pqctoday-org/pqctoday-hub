@@ -152,13 +152,13 @@ const LANGUAGE_CHECKLISTS: Record<string, string[]> = {
   C: [
     'Replace deprecated `RSA_sign` / `EC_KEY_*` direct calls with `EVP_DigestSign` + `EVP_PKEY_CTX_set_signature_md`',
     'Use `EVP_PKEY_id()` at run-time to branch on algorithm rather than baking the algorithm into the call site',
-    'OpenSSL 3.5+ LTS ships native FIPS 203 / 204 (ML-KEM, ML-DSA) support today via the FIPS provider (SLH-DSA / FIPS 205 still pending); for older OpenSSL 3.x, load the oqs-provider at run-time: `OSSL_PROVIDER_load(NULL, "oqsprovider")`',
+    'OpenSSL 3.5 (April 2025) natively supports ML-KEM, ML-DSA and SLH-DSA (FIPS 203 / 204 / 205); check FIPS validation status separately; for older OpenSSL versions, load the external Open Quantum Safe provider (oqs-provider) at run-time: `OSSL_PROVIDER_load(NULL, "oqsprovider")`',
     'Audit every `EVP_sha256()` literal - the hash should be a parameter, not a baked-in constant',
   ],
   'C++': [
     'Replace deprecated `RSA_sign` / `EC_KEY_*` direct calls with `EVP_DigestSign` + `EVP_PKEY_CTX_set_signature_md`',
     'Wrap the EVP handles in a RAII `CryptoFacade` class; the rest of the codebase never touches `EVP_PKEY*` directly',
-    'OpenSSL 3.5+ LTS ships native FIPS 203 / 204 (ML-KEM, ML-DSA) support today via the FIPS provider (SLH-DSA / FIPS 205 still pending); for older OpenSSL 3.x, load the oqs-provider at run-time: `OSSL_PROVIDER_load(NULL, "oqsprovider")`',
+    'OpenSSL 3.5 (April 2025) natively supports ML-KEM, ML-DSA and SLH-DSA (FIPS 203 / 204 / 205); check FIPS validation status separately; for older OpenSSL versions, load the external Open Quantum Safe provider (oqs-provider) at run-time: `OSSL_PROVIDER_load(NULL, "oqsprovider")`',
     'Audit every `EVP_sha256()` literal - the hash should be a parameter, not a baked-in constant',
   ],
   'JavaScript (browser)': [
@@ -224,7 +224,7 @@ function pickFacadePattern(language: string): string {
 
 const PROVIDER_NOTES: Record<string, string> = {
   software:
-    'Software providers: OpenSSL 3.5+ LTS ships native FIPS 203 / 204 (ML-KEM, ML-DSA) support today via its FIPS provider (SLH-DSA / FIPS 205 still pending); older OpenSSL 3.x needs the oqs-provider. BouncyCastle PQC `org.bouncycastle.pqc.crypto.*`; .NET 10+ adds native `MLDsa` / `MLKem` types.',
+    'Software providers: OpenSSL 3.5 (April 2025) natively supports ML-KEM, ML-DSA and SLH-DSA; earlier versions needed the external Open Quantum Safe provider (oqs-provider); check FIPS validation status separately. Other examples, from the notes of this module: BouncyCastle PQC `org.bouncycastle.pqc.crypto.*`; .NET 10+ `MLDsa` / `MLKem` types.',
   // Re-stated 2026-08-12 against the proof-gated migrate catalog rather than
   // from vendor advisories. The previous text was stale in the direction that
   // costs a reader most — it steered them AWAY from the vendors that ship:
@@ -238,7 +238,7 @@ const PROVIDER_NOTES: Record<string, string> = {
   tpm: 'TPM providers: TCG\'s news of 22 March 2026 announces its Trusted Platform Module 2.0 v185 specification, which includes support for ML-KEM (including Endorsement Keys) and ML-DSA (including Attestation Keys). TCG says full industry migration to post quantum "will take some time".',
   kms: "KMS-backed providers: AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM keys (ML_KEM_512, ML_KEM_768, ML_KEM_1024, from 23 October 2026) and hybrid post-quantum TLS on its endpoints. Google Cloud KMS release notes of 16 July 2026 list ML-DSA and SLH-DSA signing in General Availability, and its algorithm tables list the software protection level for the PQC signing and KEM algorithms. Check Azure Key Vault's own documentation. Verify region availability and pricing before pinning.",
   accelerator:
-    'Hardware accelerators (Intel QAT, AWS Nitro): no vendor page held for this module states PQC acceleration, so check each vendor\'s documentation. Fall back to software for PQC paths.',
+    "Hardware accelerators (Intel QAT, AWS Nitro): no vendor page held for this module states PQC acceleration, so check each vendor's documentation. Fall back to software for PQC paths.",
   browser:
     'Browser TPM / secure element providers: WebAuthn / Passkey ecosystem is RSA / ECDSA only; PQC for WebAuthn is in IETF draft. No native PQC in browsers today - WASM bridge required.',
 }
