@@ -56,7 +56,8 @@ export const KEY_HIERARCHY_LEVELS: KeyHierarchyLevel[] = [
   {
     id: 'root-kek',
     name: 'Root Key Encryption Key (Root KEK)',
-    description: 'Top-level master key stored in HSM. Wraps zone KEKs.',
+    description:
+      'Top-level master key stored in HSM. Wraps zone KEKs. Rotated infrequently (5-15 years). Must be the most secure key in the hierarchy.',
     classicalAlgorithm: 'RSA-4096 or AES-256-KW',
     pqcAlgorithm: 'ML-KEM-1024 + HKDF-SHA-256',
     hybridAlgorithm: 'RSA-4096 + ML-KEM-1024 → HKDF combiner',

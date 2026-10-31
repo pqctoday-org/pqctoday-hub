@@ -420,7 +420,8 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
         },
       },
     },
-    notes: 'Stateful like LMS.',
+    notes:
+      'Stateful like LMS. The RFC 8391 (robust) reference verifier is ~4.9× slower than LMS in this benchmark; an unstandardised "simple" variant narrows that to 1.3–1.6×. The private-key size shown is the compact form; working state is larger.',
   },
   {
     id: 'fn-dsa-512',

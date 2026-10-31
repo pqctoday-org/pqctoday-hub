@@ -60,7 +60,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'TPM',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The EK, SRK and AIK show "Defined in TPM 2.0 v185"; the Device Identity key shows "Roadmap". Expanding the Hybrid Approach section shows the interim two-signature pattern for a TPM built to an earlier library version: an RSA TPM quote proves hardware binding and an ML-DSA software co-signature provides quantum safety.',
+        'The EK, SRK and AIK show "Defined in TPM 2.0 v185"; the Device Identity key shows "Roadmap". Expanding the Hybrid Approach section shows the interim two-signature pattern for a TPM built to an earlier library version: an RSA TPM quote proves hardware binding and an ML-DSA software co-signature provides quantum safety. The timeline lists the March 2026 specification and the dated vendor statements on shipping silicon and TCG certification.',
       config: { step: 2 },
     },
     {
@@ -71,7 +71,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'Vendors',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'Firmware-vendor PQC support is early and moves fast. Use the Firmware Vendor Matrix and its source links for the detail.',
+        "Firmware-vendor PQC support is early and moves fast. As of the matrix check on 24 October 2026, Insyde, Dell and HPE state in their own documents that PQC firmware signing is available (ML-DSA for Insyde, LMS for Dell and HPE), AMI has announced a working PQC implementation without naming an algorithm, Intel's Boot Guard white paper documents LMS, and open-source EDK2 work is in progress. Use the Firmware Vendor Matrix and its source links for the detail.",
       config: { step: 3 },
     },
     {

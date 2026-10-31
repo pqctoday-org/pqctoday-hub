@@ -109,7 +109,7 @@ gcloud kms decapsulate --version=1 --key=my-pqc-kem-key \\
   --keyring=my-ring --location=global \\
   --ciphertext-file=ct.bin --shared-secret-file=ss.bin`,
     notes:
-      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768.',
+      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing (draft-connolly-cfrg-xwing-kem) is a community/IETF-CFRG design by Barbosa, Connolly, Schwabe, Westerbaan et al. — not a Google design, and distinct from the TLS group X25519MLKEM768. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. The signing algorithms (ML-DSA-44/65/87, their external-mu variants, and SLH-DSA-SHA2-128S) have been generally available since 16 July 2026; ML-KEM-768/1024 and X-Wing KEMs have been in Preview since 23 September 2025, and HPKE key import with them since 6 August 2026. Google\u2019s algorithm table lists all of them at the SOFTWARE protection level only, not Cloud HSM (Cloud KMS release notes and algorithms page, checked 15 Oct 2026).',
   },
   {
     id: 'azure-kv',
@@ -138,7 +138,7 @@ az keyvault key create \\
 // Microsoft targets CNSA 2.0 early adoption by 2029, complete transition by 2033
 // SymCrypt library supports ML-KEM/ML-DSA internally`,
     notes:
-      'PQC APIs available on Windows Server 2025, Windows 11, and .NET 10 via SymCrypt. Microsoft targets early quantum-safe adoption by 2029 and complete transition by 2033. OCT-HSM 256-bit AES keys are quantum-resistant for symmetric operations.',
+      'PQC APIs available on Windows Server 2025, Windows 11, and .NET 10 via SymCrypt. Key Vault native PQC key types not yet exposed. Microsoft targets early quantum-safe adoption by 2029 and complete transition by 2033. OCT-HSM 256-bit AES keys are quantum-resistant for symmetric operations.',
   },
   {
     id: 'hashicorp-vault',
@@ -243,7 +243,7 @@ GET /pqc-central/v1/inventory
 # Returns: crypto assets, quantum risk scores,
 # readiness roadmap per application`,
     notes:
-      
+      'Unique PQC Central feature: cryptographic discovery, quantum risk assessment, and readiness roadmap. Dual-stack rollout (classical + PQC) with policy enforcement. Confidential Computing via Intel SGX provides hardware-level isolation.',
   },
 ]
 

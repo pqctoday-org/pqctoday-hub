@@ -1244,10 +1244,9 @@ export function StatefulSignaturesDemo() {
                     LMS and XMSS are <strong>stateful</strong> — each key can sign a bounded number
                     of messages (2<sup>H</sup>). Once exhausted, the key is retired.{' '}
                     <strong>SLH-DSA</strong> (FIPS 205 / SPHINCS+) is <strong>stateless</strong> —
-                    no persistent leaf counter, and FIPS 205 designs its parameter sets to meet
-                    their security categories when each key pair signs at most 2^64 messages — at
-                    the cost of significantly larger signatures. Use this tab&apos;s Workshop Step 4
-                    to generate and compare real SLH-DSA keys.
+                    no persistent leaf counter, but the FIPS 205 §11 security analysis assumes at
+                    most 2^64 messages per key — at the cost of significantly larger signatures. Use
+                    this tab&apos;s Workshop Step 4 to generate and compare real SLH-DSA keys.
                   </p>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs border-collapse">
@@ -1273,7 +1272,7 @@ export function StatefulSignaturesDemo() {
                           ],
                           [
                             'Signature size',
-                            '2,500 B (XMSS-SHA2_10_256, RFC 8391)',
+                            '1.3–1.9 KB (LMS_SHA256_M32, W8, H5–H25; RFC 8554 Table 1 and section 5.4) · 2,500 B (XMSS-SHA2_10_256, RFC 8391)',
                             '7,856 to 49,856 B depending on parameter set (FIPS 205 Table 2)',
                           ],
                           [

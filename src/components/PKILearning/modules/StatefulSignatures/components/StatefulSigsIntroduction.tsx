@@ -67,7 +67,7 @@ const Step1WhyAndMerkle: React.FC = () => (
             <div className="text-xs font-bold text-primary mb-1">Minimal Assumptions</div>
             <p className="text-xs text-muted-foreground">
               Security relies only on hash function properties &mdash; no lattices, no codes, no
-              isogenies.
+              isogenies. Decades of cryptanalysis on SHA-256.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -271,13 +271,9 @@ const Step2LmsXmss: React.FC = () => (
               <li>&bull; Max signatures = 2^H (32 to 33M)</li>
               <li>
                 &bull; Small public key: 24 bytes plus the hash output length &ndash; 48 bytes for
-                the SHA-256/192 sets, 56 bytes for the SHA-256 sets (RFC 8554, SP 800-208) (not
-                sourced in the Library)
+                the SHA-256/192 sets, 56 bytes for the SHA-256 sets (RFC 8554, SP 800-208)
               </li>
-              <li>
-                &bull; Signature size: 1.3 &ndash; 9.3 KB depending on H, W (RFC 8554) (not sourced
-                in the Library)
-              </li>
+              <li>&bull; Signature size: 1.3 &ndash; 9.3 KB depending on H, W (RFC 8554)</li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -408,7 +404,11 @@ const Step2LmsXmss: React.FC = () => (
                     <InlineTooltip term="Forward Secrecy">Forward Security</InlineTooltip>
                   </td>
                   <td className="py-2 pr-4 text-muted-foreground">No</td>
-                  <td className="py-2 text-muted-foreground"></td>
+                  <td className="py-2 text-muted-foreground">
+                    No, as standardised (SP 800-208, RFC 8391): every one-time key is derived from
+                    one fixed secret seed, so a stolen seed exposes all of them. Forward-secure XMSS
+                    exists only as a research variant.
+                  </td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4 font-medium text-foreground">Adoption</td>
@@ -547,8 +547,7 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
                   <td className="py-2 pr-4 font-medium text-foreground">Max signatures</td>
                   <td className="py-2 pr-4">Bounded by 2^H (plan ahead)</td>
                   <td className="py-2 text-success font-medium">
-                    FIPS 205 parameter sets meet their security categories when each key pair signs
-                    at most 2^64 messages; no leaf counter
+                    At most 2^64 messages/key in the FIPS 205 §11 security analysis; no leaf counter
                   </td>
                 </tr>
                 <tr className="border-b border-border/50">

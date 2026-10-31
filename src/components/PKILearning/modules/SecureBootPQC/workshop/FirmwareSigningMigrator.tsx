@@ -1340,10 +1340,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               </li>
               <li>
                 <span className="font-mono font-semibold text-foreground">SLH-DSA-SHA2-128S</span> —
-                NIST Level 1 · smallest pubkey (32 B) but very large signature (7,856 B) · In this
-                module's reading, suited for root-of-trust and infrequent signing only (e.g. UEFI
-                PK/KEK), not per-image signing. Not part of CNSA and not approved for any use in NSS
-                (NSA CNSA 2.0 FAQ v2.2, p. 11)
+                NIST Level 1 · smallest pubkey (32 B) but very large signature (7,856 B) · suited
+                for root-of-trust and infrequent signing only (e.g. UEFI PK/KEK), not per-image
+                signing. Not part of CNSA and not approved for any use in NSS (NSA CNSA 2.0 FAQ
+                v2.2, p. 11)
               </li>
             </ul>
           </div>
@@ -1486,7 +1486,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               Each UEFI db entry stores an EFI_CERT_X509 containing the full public key.
               {pqcAlgo === 'SLH-DSA-SHA2-128S'
                 ? ` SLH-DSA-SHA2-128S has the smallest PQC public key (${SLHDSA_PUBKEY_BYTES} B) but the largest signature (${SLHDSA_SIG_BYTES.toLocaleString()} B).`
-                : ``}{' '}
+                : ` As a certificate carries it (SubjectPublicKeyInfo), the ML-DSA-65 public key is ${(MLDSA65_SPKI_BYTES / RSA2048_SPKI_BYTES).toFixed(1)}× larger than RSA-2048 (${MLDSA65_SPKI_BYTES.toLocaleString()} B vs ${RSA2048_SPKI_BYTES} B). ${KEY_RATIO_NOTE}`}{' '}
               Secure Boot variable storage is platform-specific; firmware reports it through
               QueryVariableInfo() (UEFI 2.11 section 8.2.4), so check your platform before planning.
             </p>
@@ -1748,7 +1748,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               OTA firmware update packages carry the signature in their manifest.
               {pqcAlgo === 'SLH-DSA-SHA2-128S'
                 ? ' SLH-DSA-SHA2-128S has very large signatures (7,856 B) — suitable for low-frequency root key signing, not per-image signing.'
-                : ''}
+                : ' What db holds is the certificate: a minimal self-signed ML-DSA-65 certificate is about 5.5 KB against about 0.8 KB for RSA-2048 (measured with OpenSSL 3.6.3; real certificates are larger).'}
             </p>
           </div>
         </div>

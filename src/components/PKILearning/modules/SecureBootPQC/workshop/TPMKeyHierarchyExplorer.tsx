@@ -169,6 +169,7 @@ const HYBRID_APPROACH: HybridApproach = {
     'The RSA AIK is the hardware proof and stays quantum-vulnerable: once a CRQC exists, a quote could be forged, leaving the software ML-DSA signature as the only quantum-safe evidence (a forgery risk, not harvest-now-decrypt-later)',
     'Extra complexity: verifiers must validate two signatures',
     'Certificate management: need PKI for ML-DSA binding certs',
+    'Full quantum safety requires a TPM that implements library v185 or later with an ML-DSA attestation key (specification published March 2026; product availability depends on the TPM vendor)',
   ],
 }
 
@@ -208,7 +209,11 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
             <p className="text-xs text-foreground/80">
               The Trusted Computing Group (TCG) published TPM 2.0 Library v185 on 12 March 2026. Its
               change history states: &ldquo;Introduced support for ML-DSA, HashML-DSA, and
-              ML-KEM.&rdquo;
+              ML-KEM.&rdquo; A TPM offers them only if its vendor built it to v185 or later; a
+              TPM2_GetCapability query for TPM_PT_REVISION and TPM_PT_ML_PARAMETER_SETS shows what a
+              given part supports. The ISO/IEC 11889:2015 edition dates from before ML-KEM and
+              ML-DSA were standardized (FIPS 203 and FIPS 204). Product availability follows the
+              specification and depends on each TPM vendor.
             </p>
           </div>
         </div>

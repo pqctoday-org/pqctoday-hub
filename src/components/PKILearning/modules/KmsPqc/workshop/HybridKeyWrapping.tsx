@@ -225,10 +225,9 @@ export const HybridKeyWrapping: React.FC = () => {
             <div className="flex items-start gap-2">
               <Info size={14} className="text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-foreground/80">
-                In this module's reading, PQC-only wrapping relies entirely on ML-KEM security
-                assumptions (Module-LWE hardness). During the transition period, some organizations
-                may prefer hybrid mode for defense-in-depth until PQC algorithms have more years of
-                cryptanalysis.
+                PQC-only wrapping relies entirely on ML-KEM security assumptions (Module-LWE
+                hardness). During the transition period, some organizations may prefer hybrid mode
+                for defense-in-depth until PQC algorithms have more years of cryptanalysis.
               </p>
             </div>
           </div>

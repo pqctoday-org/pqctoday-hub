@@ -611,7 +611,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5450',
-    note: 'Hardware module. Sunset date 7/28/2031.',
+    note: 'Hardware module. Sunset date 7/28/2031. The approved-algorithm list includes ML-KEM, ML-DSA and LMS.',
   },
   {
     vendorId: 'thales-luna',
@@ -740,7 +740,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4250',
-    note: '',
+    note: 'A FIPS 140-2 certificate, moved to the Historical list at sunset. The current FIPS 140-3 certificate for the QASM module is #5497.',
   },
   {
     vendorId: 'kryptus',
@@ -859,7 +859,7 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     upgradeComplexity: 'low',
     estimatedDowntime: '1-2 hours per HSM (planning estimate)',
     notes:
-      'ML-DSA and SLH-DSA need firmware v13.8 or later and ML-KEM needs v13.8.3 or later, with the PostQuantum feature enabled in each case (release notes). CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
+      'ML-DSA and SLH-DSA need firmware v13.8 or later and ML-KEM needs v13.8.3 or later, with the PostQuantum feature enabled in each case (release notes). The PKCS#11 API gained the algorithms one release at a time: ML-DSA in Security World v13.9.0 (standard CKM_ML_DSA mechanisms), ML-KEM in v13.9.3 (CKM_ML_KEM; firmware v13.8.3 or later) and SLH-DSA in v13.9.5 (12 parameter sets). In v13.9.0 ML-KEM and SLH-DSA were available only through the native nCore API (release notes sections 3.4 and 3.5). The Entrust pages checked do not describe LMS or XMSS support. Entrust states the post-quantum implementation is CAVP-validated. CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
   },
   {
     vendorId: 'utimaco',

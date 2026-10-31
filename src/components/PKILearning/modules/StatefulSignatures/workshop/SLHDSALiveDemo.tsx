@@ -639,8 +639,10 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
                   {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
                     <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
                       ⚠ FIPS 205 section 10.2.2 lists OIDs for SHA-256, SHA-512, SHAKE128 and
-                      SHAKE256 and allows other approved hash functions or XOFs. SHA-256 and
-                      SHAKE128 are only appropriate for category 1 parameter sets.
+                      SHAKE256 and allows other approved hash functions or XOFs. Section 10.2 says
+                      the digest needs at least 8n bits of classical security strength against both
+                      collision and second-preimage attacks (n = 16, 24 or 32, by parameter set).
+                      SHA-256 and SHAKE128 are only appropriate for category 1 parameter sets.
                     </p>
                   )}
                   {(preHash === 'sha256' || preHash === 'shake128') &&
@@ -998,8 +1000,14 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
           testId="slh-dsa-comparison"
         />
         <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed">
-          An HSS key with one level, which is what the PKCS#11 engine signs with, adds 4 bytes to
-          the public key and to each signature.
+          The size rows compare named parameter sets of a similar size class, not equal security: SP
+          800-208 assigns no NIST security category to LMS. LMS sizes follow the RFC 8554 layouts
+          (public key 4 + 4 + 16 + m bytes; signature 12 + n(p + 1) + m·h bytes) with the SP 800-208
+          SHA-256/192 parameters n = m = {COMPARED_LMS.n}, p = {COMPARED_LMS.p}, h ={' '}
+          {COMPARED_LMS.h}. An HSS key with one level, which is what the PKCS#11 engine signs with,
+          adds 4 bytes to the public key and to each signature. SLH-DSA sizes are FIPS 205 Table 2
+          and ML-DSA sizes are FIPS 204 Table 2. CNSA 2.0 row: NSA CNSA 2.0 FAQ, version 2.2
+          (October 2026).
         </p>
       </div>
 

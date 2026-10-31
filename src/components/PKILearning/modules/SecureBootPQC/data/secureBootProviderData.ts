@@ -162,7 +162,8 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     statementDate: '2025-08-18',
     products: ['ProLiant Gen12 servers (iLO 7)'],
     pqcAlgorithm: 'LMS',
-    notes: '',
+    notes:
+      'HPE\'s iLO QuickSpecs (version 39, 18 August 2025) lists, under "What\'s New in HPE iLO 7", a "CNSA 2.0-aligned NIST-approved LMS algorithm ensuring PQC-ready firmware updates (iLO, BIOS and CPLD)". On the iLO 7 secure enclave\'s FIPS 140-3 Level 3 target, the same page says "The certification is not obtained yet but we are intending to."',
     sources: [
       {
         label: 'HPE iLO QuickSpecs (c04154343, version 39)',

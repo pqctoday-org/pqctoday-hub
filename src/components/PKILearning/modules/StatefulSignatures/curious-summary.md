@@ -12,7 +12,7 @@ Stateful signatures are among the most conservative post-quantum designs: NIST s
 
 ### What's Happening
 
-LMS and XMSS are already standardized under NIST SP 800-208 and approved by NSA CNSA 2.0 for firmware and software signing in national security systems (ML-DSA-87 is also allowed for that use).
+LMS and XMSS are the first PQC algorithms to see real-world deployment, already standardized under NIST SP 800-208 and approved by NSA CNSA 2.0 for firmware and software signing in national security systems (ML-DSA-87 is also allowed for that use).
 
 ### How It Is Tested
 

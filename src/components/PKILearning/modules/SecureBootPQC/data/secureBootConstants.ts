@@ -346,7 +346,8 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
       "Layered identity derived from immutable hardware secrets. Each software layer derives its identity from the previous layer's measurement. Used in IoT and constrained devices as a TPM alternative.",
     currentCrypto: 'ECDSA P-256 or Ed25519 (layer-derived keys)',
     forgeryUrgency: 'high',
-    pqcMigrationPath: '',
+    pqcMigrationPath:
+      'DICE + RIoT profile extended for PQC in DICE specification update (2025). ML-DSA-44 recommended for constrained devices. Key derivation uses HKDF (quantum-safe) already.',
     tpmNative: false,
     standardsBody: 'TCG DICE Working Group / IETF RATS',
   },

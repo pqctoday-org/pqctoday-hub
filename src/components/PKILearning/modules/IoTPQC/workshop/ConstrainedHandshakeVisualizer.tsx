@@ -141,8 +141,8 @@ export const ConstrainedHandshakeVisualizer: React.FC<{ initial?: HandshakeConfi
           <p className="text-[10px] text-muted-foreground">
             Model estimate (±10–20%), not a packet capture. Datagrams use the IPv6 minimum MTU
             (1,280 B); radio frames assume 6LoWPAN header compression and ~{IEEE802154_PAYLOAD} B of
-            payload per IEEE 802.15.4 frame. PQ EDHOC follows draft-ietf-lake-pqsuites (KEM key in
-            message_1, ciphertext in message_2).
+            payload per IEEE 802.15.4 frame (draft-ietf-iotops-7228bis, size class S1). PQ EDHOC
+            follows draft-ietf-lake-pqsuites (KEM key in message_1, ciphertext in message_2).
           </p>
         </>
       ) : (

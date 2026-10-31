@@ -55,7 +55,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
     algorithm: 'ML-KEM / Kyber',
     family: 'Lattice-based KEM',
     summary:
-      'Attacks remain effective against masked and shuffled countermeasures. Profiled deep-learning power analysis recovers shared and secret keys from first-, second- and third-order masked Kyber-768 implementations running on an ARM Cortex-M4. A practical backdoor in Kyber key generation, inserted through kleptography, has been demonstrated at the protocol level on TLS 1.3.',
+      'Attacks remain effective against masked and shuffled countermeasures. Corrupting the random-seed pointer used in polynomial sampling, with laser fault injection on an STM32H7, can give full key and message recovery for ML-KEM, with reported success rates up to 100%. A Rowhammer-based attack on the Fujisaki-Okamoto transform recovers the long-term secret key of Kyber and Saber. Profiled deep-learning power analysis recovers shared and secret keys from first-, second- and third-order masked Kyber-768 implementations running on an ARM Cortex-M4. A practical backdoor in Kyber key generation, inserted through kleptography, has been demonstrated at the protocol level on TLS 1.3.',
     attacks: [
       {
         category: 'side-channel',
@@ -660,7 +660,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Follow OWASP Cryptographic Failures guidance for integration patterns',
       "In X25519 and X448, a public key that is a point of small order removes the other party's private key from the result, so the result is the all-zero value; RFC 7748 says both sides may check for an all-zero shared secret and abort if so, for example by combining all of its bytes with OR.",
       'RFC 9180 (HPKE), section 7.1.4, goes further for X25519 and X448: recipients must check whether the Diffie-Hellman shared secret is the all-zero value and abort if so.',
-      '',
+      "Project Wycheproof's X448 file marks 11 cases as expecting an all-zero shared secret, all graded “acceptable”: refusing them and computing them are both defensible, and rejecting low-order public keys is not a strict requirement of RFC 7748. With the engine build the Hub ships today, its tests show both the Rust and the C++ engine refusing all 42 such cases across the X25519 and X448 files, including X448 cases 70 and 71, whose public keys are the non-canonical values u = p and u = p + 1 (read as 0 and 1); of the 45 low-order public keys in those files, both engines refuse 42 and compute with the same 3.",
     ],
     references: [
       {

@@ -116,7 +116,9 @@ export const SLHDSAComparison: React.FC = () => (
       &sect;5.3 and &sect;5.4, with the SP 800-208 SHA-256/192 parameters n = m = {COMPARED_LMS.n},
       p = {COMPARED_LMS.p}, h = {COMPARED_LMS.h}); XMSS public key 4 + 2n bytes and signature 4 + n
       + len·n + h·n bytes (RFC 8391 &sect;4.1.7 and &sect;4.1.8, len = {COMPARED_XMSS.len}); SLH-DSA
-      from FIPS 205 Table 2.
+      from FIPS 205 Table 2. An HSS key with one level adds 4 bytes to the LMS public key and to
+      each signature. SP 800-208 assigns no NIST security category to LMS or XMSS, so these rows
+      compare size classes, not equal security.
     </p>
 
     <div className="bg-muted/40 rounded-lg px-4 py-3 text-xs text-muted-foreground leading-relaxed">

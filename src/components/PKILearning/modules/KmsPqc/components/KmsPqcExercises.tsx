@@ -50,7 +50,8 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
         'Step through the 5-step ML-KEM envelope encryption flow side-by-side with classical RSA-OAEP. Observe the HKDF step this demo adds and compare artifact sizes at each stage.',
       badge: 'Encryption',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
-      observe: '',
+      observe:
+        'RSA-OAEP wraps the DEK in one step (256 bytes). ML-KEM requires encapsulate → KDF → AES-KW wrap, producing 1,128 bytes total — a 4.4x increase. The extra complexity is inherent to the KEM paradigm.',
       config: { step: 1 },
     },
     {
