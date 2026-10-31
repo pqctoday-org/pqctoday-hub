@@ -107,7 +107,7 @@ export const TIMESTAMP_FACTS = {
   whyItMatters:
     'A timestamp is a proof of existence: a TSA signs a hash of your data plus a time. It is what lets a signature made with a certificate that has since been revoked — or with an algorithm since broken — still be evaluated against the moment it was made.',
   agilityPoint:
-    'Because RFC 3161 carries the algorithm in the TSA certificate rather than in the protocol, a TSA can migrate to ML-DSA without a protocol change. The layer that has to move is the trust list and the validation policy, not the wire format.',
+    "In this module's reading, because RFC 3161 carries the algorithm in the TSA certificate rather than in the protocol, a TSA can migrate to ML-DSA without a protocol change. The layer that has to move is the trust list and the validation policy, not the wire format.",
   updateDue:
     'Implementing Regulation (EU) 2025/1929 (September 2025) applies V1.1.1 to qualified time-stamps, and TS 119 312 V2.1.1 (June 2026) still cites that 2016 edition. For qualified time-stamps the Regulation’s version of the profile replaces its algorithm clauses with clauses under which hash and time-stamp signature algorithms shall be compliant with the Agreed Cryptographic Mechanisms endorsed by the European Cybersecurity Certification Group, rather than the TS 119 312 clauses the profile points to.',
 }
