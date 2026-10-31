@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'pki-enrollment-protocols',
   version: '0.1.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('IETF-RFC-7030-EST'),

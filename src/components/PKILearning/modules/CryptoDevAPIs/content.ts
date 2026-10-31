@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-dev-apis',
   version: '1.0.4',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 203'),

@@ -9,7 +9,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-31',
 
   standards: [
     // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.

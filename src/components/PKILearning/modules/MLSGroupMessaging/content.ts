@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'mls-group-messaging',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('RFC 9420'),

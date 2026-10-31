@@ -31,7 +31,7 @@ export const content: ModuleContent = {
   // the lesson wording changed on 30 October 2026, after that sign-off. Put it back when the owner
   // renews the sign-off; the on-page notice follows it (common/moduleReviewStatus.ts). It was
   // never a lab or certification-body review: v1 ships as "practitioner orientation".
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   standards: [
     // ── PCI (public PCI SSC pages only, plan r2 D4; Document Library PDFs are not declared) ──

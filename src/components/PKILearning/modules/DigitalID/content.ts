@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'digital-id',
   version: '1.0.2',
   lastReviewed: '2026-08-23',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('eIDAS-2-Regulation'),

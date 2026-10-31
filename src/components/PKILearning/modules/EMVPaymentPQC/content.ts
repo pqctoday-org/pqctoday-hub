@@ -13,7 +13,7 @@ export const content: ModuleContent = {
   // The latest recorded claim review is 24 Aug. This release changes content,
   // so it updates lastEdited without presenting the edit as an evidence review.
   lastReviewed: '2026-08-24',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 186-5'),

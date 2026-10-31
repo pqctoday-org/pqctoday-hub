@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'ops-quantum-impact',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. RFC 4253 leads because SSH host-key

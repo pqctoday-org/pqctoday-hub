@@ -16,7 +16,7 @@ export const content: ModuleContent = {
   moduleId: 'ot-pqc',
   lastReviewed: '2026-10-01',
   version: '2.1.0',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-31',
 
   standards: [
     // PQC algorithms and stateful hash-based signatures

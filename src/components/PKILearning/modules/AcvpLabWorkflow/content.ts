@@ -21,7 +21,7 @@ export const content: ModuleContent = {
   // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The
   // on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('NIST-ACVP'),
