@@ -524,8 +524,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </table>
             </div>
             <p className="text-[10px] text-muted-foreground italic">
-              HNDL risk + data-retention window should drive the choice: if harvested ciphertext
-              must remain secret past ~2035, prefer Cat 3 or Cat 5 over Cat 1.
+              This module&apos;s rule of thumb, not from a standard: HNDL risk + data-retention
+              window should drive the choice. If harvested ciphertext must remain secret past ~2035,
+              prefer Cat 3 or Cat 5 over Cat 1.
             </p>
           </div>
 
