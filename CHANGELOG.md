@@ -31,12 +31,14 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.190.0] - 2026-10-31
 
-The next part of the line-by-line reading that could be finished safely: 25 more lesson sentences and 47 quiz questions follow their documents.
+The next part of the line-by-line reading that could be finished safely: 25 more lesson sentences, 47 quiz questions and 18 HSM comparison notes follow their documents.
 
 ### Changed
 
 - **More Learn lesson sentences keep to what their documents say** [view:/learn] [persona:researcher] [persona:architect] [persona:grc] [persona:developer] [persona:cert-engineer]: across 19 lessons, including the Secrets Management, Key Management, Standards Bodies, Secure Boot, Healthcare and Entropy lessons, a further 25 sentences that no cited document supports were removed, rewritten to say what the source says, or marked as the lesson's own reading or assumption.
 - **More quiz questions stay within their sources** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect]: 47 quiz questions were corrected. In 45 of them the explanation lost a claim that no document supports, says what the source says, or is marked as this lesson's own reading. The IBM Kookaburra question no longer states a qubit count that no document gives, and the intrusion-detection question's answer option names the ML-KEM-768 group code the source gives (0x0201) and no longer lists browser versions that no document supports.
+
+- **HSM comparison notes keep to their sources** [view:/learn/hsm-pqc] [view:/learn/crypto-mgmt-modernization] [persona:architect] [persona:ops] [persona:cert-engineer]: 18 evidence notes in the HSM comparison table (Futurex, Utimaco, Entrust nShield, Thales Luna, Marvell LiquidSecurity 2 and Crypto4A) now keep only what the vendor pages, release notes, NIST certificate pages and security policies say; statements no document supports were taken out and two dates were corrected.
 
 ### Fixed
 
