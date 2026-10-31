@@ -394,7 +394,6 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               status: 'Planned 2026',
               statusCls: 'text-status-warning bg-status-warning/10 border-status-warning/30',
               details: [
-                'ML-KEM-768/1024 and ML-DSA-44/65/87 key types — planned 2026',
                 'SymCrypt (underlying crypto library) already supports ML-KEM/ML-DSA internally',
                 'Key Vault API exposure is the remaining gap',
                 'Managed HSM HSM SKU required for PQC (Standard tier HSMs excluded)',

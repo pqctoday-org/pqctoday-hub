@@ -269,7 +269,7 @@ vault write transit/encrypt/ml-kem-key \\
     ciphertextExpansion: '3,309 bytes (ML-DSA-65 signature) vs 64 bytes (ECDSA signature)',
     description:
       'ML-DSA-65 signatures are 51.7x larger than ECDSA P-256 signatures. This has significant impact on JWTs, code signing payloads, TLS certificate sizes, and API response headers. Applications that embed signatures in URLs or HTTP headers require protocol changes.',
-    apiExample: `# Classical: ECDSA P-256 signing
+    apiExample: `# In this module's illustration, Classical: ECDSA P-256 signing
 vault write transit/keys/ecdsa-key type=ecdsa-p256
 vault write transit/sign/ecdsa-key \\
   input=$(base64 <<< "artifact hash") \\
@@ -291,7 +291,7 @@ vault write transit/sign/mldsa-key \\
     keySize: '256-bit HMAC key (unchanged)',
     ciphertextExpansion: '0 bytes additional (HMAC already quantum-safe)',
     description:
-      "HMAC-SHA256 is based on symmetric cryptography and is not broken by Shor's algorithm. Grover's algorithm reduces effective security from 256 to 128 bits — still within acceptable margins. No algorithm change is needed, only ensuring the HMAC key is protected by PQC wrapping in the vault.",
+      "HMAC-SHA256 is based on symmetric cryptography and is not broken by Shor's algorithm.",
     apiExample: `# HMAC-SHA256 — no algorithm change needed
 vault write transit/keys/hmac-key type=hmac
 vault write transit/hmac/hmac-key \\
@@ -313,7 +313,7 @@ export const ROTATION_POLICIES: RotationPolicy[] = [
     maxTTL: '180 days',
     renewalWindow: '14 days before expiry',
     pqcConsideration:
-      'API keys with TTL > 10 years have high HNDL risk. Post-2026, reduce to 30 days as CRQC timelines compress. Ensure vault KEK uses ML-KEM-768.',
+      '',
     complianceFramework: 'PCI DSS v4.0.1 Req. 8.6.3',
     automationTool: 'Vault Dynamic Secrets + Vault Agent',
   },
@@ -421,7 +421,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'cloud',
     catalogName: 'Azure Managed HSM',
     pqcAlgorithms: ['None — RSA-HSM / EC-HSM / oct-HSM key types only (no NIST PQC)'],
-    encryptionAtRest: 'AES-256-CBC/GCM, RSA-OAEP-256 for key wrapping (FIPS 140-3 Level 3)',
+    encryptionAtRest: '',
     encryptionInTransit: 'TLS 1.3',
     envelopeEncryption: true,
     dynamicSecrets: false,
@@ -429,7 +429,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
       'Azure Key Vault Provider for Secrets Store CSI Driver / External Secrets Operator',
     fipsMode: true,
     roadmapNote:
-      "Verified 2026-06-19: Managed HSM exposes only classical HSM key types (RSA-HSM/EC-HSM/oct-HSM) — no ML-KEM/ML-DSA key support and none announced. Microsoft's SymCrypt/CNG PQC lives at the OS/PKI layer (Windows Server 2025 AD CS), not in the Managed HSM crypto module. Catalog: none.",
+      "",
   },
   {
     id: 'gcp-secret-manager',
@@ -447,7 +447,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'External Secrets Operator + GCP provider / Config Connector',
     fipsMode: false,
     roadmapNote:
-      'Secret Manager encrypts with AES-256, optionally under a symmetric Cloud KMS CMEK; PQC keys cannot serve as CMEK. Cloud KMS PQC keys (ML-DSA/SLH-DSA signing GA since 16 Jul 2026; ML-KEM/X-Wing in Preview) are for your own signing and key-encapsulation use. FIPS mode not available for Secret Manager directly.',
+      
   },
   {
     id: 'delinea-secret-server',
