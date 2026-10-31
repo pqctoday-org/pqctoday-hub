@@ -366,7 +366,7 @@
       "claim": "ANSSI's current FAQ on post-quantum cryptography says it will not be reasonable to buy products that do not include post-quantum cryptography after 2030, and strongly insists on hybrid protection wherever post-quantum protection is needed.",
       "madeBy": "ANSSI (France), FAQ on post-quantum cryptography (a page that refers to events of early October 2025, so it is from October 2025 or later)",
       "state": "Settled",
-      "reason": "What the FAQ says is checked against the FAQ itself. It is a purchasing recommendation (the FAQ says there is no regulatory obligation), not a prediction of when a quantum computer will exist. It is newer than ANSSI's 2022 position paper.",
+      "reason": "What the FAQ says is checked against the FAQ itself. It is a purchasing recommendation (for organisations not covered by the two cases it lists, those holding classified or Diffusion Restreinte information and vital operators, the FAQ says there is no regulatory obligation), not a prediction of when a quantum computer will exist. It is newer than ANSSI's 2022 position paper.",
       "lastChecked": "2026-10-03",
       "sources": [
         {
