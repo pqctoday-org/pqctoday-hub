@@ -2487,7 +2487,7 @@
     ]
   },
   "reviews": {
-    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state owner-signed-off) additionally needs a validation-lab practitioner (plan WS-I).",
+    "rule": "Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state unknown) additionally needs a validation-lab practitioner (plan WS-I).",
     "validRecords": 96,
     "statusCounts": {
       "source-verified": 94,

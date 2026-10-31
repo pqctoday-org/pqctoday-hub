@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:cc903bbb-c9ca-4f1c-b1ac-a4d0eae7630e",
+  "serialNumber": "urn:uuid:3fea1beb-7803-425b-a088-63af71a91e7d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-29T00:00:00.000Z",
+    "timestamp": "2026-10-30T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -3744,7 +3744,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No (CC EAL6+ — highest in industry; PQC certification details pending)"
+          "value": "No (Common Criteria certified by ANSSI: certificate ANSSI-CC-2024/26 for S3SSE2A_20240430, 22 Jul 2024, EAL6 augmented; certificate ANSSI-CC-2024/26-R01 for S3SSE2A_20250522, 1 Oct 2025, EAL5 augmented overall with EAL6 augmented for four sub-parts; its published Security Target Lite (ST_LITE_Ver1.1, 28 Jul 2025) lists an optional ACT1 Secure ML-DSA library (v1.15), built on the chip's PQC coprocessor, among the functions included in the TOE, and names no ML-KEM; no FIPS validation recorded)"
         },
         {
           "name": "pqctoday:algorithm_source",

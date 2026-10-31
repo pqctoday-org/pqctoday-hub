@@ -282,7 +282,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Awaiting two-person review (plan J-5)
 
-Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state owner-signed-off) additionally needs a validation-lab practitioner (plan WS-I).
+Plan J-5: a trusted vector source, a coverage waiver or a public coverage claim counts as reviewed only with a record in src/data/validation/reviews/ naming two distinct people (source verification and claim review), bound to the subject's current SHA-256. The draft Learn module LM-066 (acvp-lab-workflow, state unknown) additionally needs a validation-lab practitioner (plan WS-I).
 
 Valid review records: 96.
 
