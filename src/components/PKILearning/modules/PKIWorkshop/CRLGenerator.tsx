@@ -305,7 +305,7 @@ authorityKeyIdentifier = keyid:always
             `    extension (OID 2.5.29.31) that holds one or more URLs where the current CRL is hosted.\n` +
             `    Example CDP URL: http://pki.example.com/crl/root.crl\n` +
             `    Browsers and TLS stacks download the CRL from this URL to check revocation.\n\n` +
-            `    OCSP (Online Certificate Status Protocol, RFC 6960) is the modern alternative:\n` +
+            `    OCSP (Online Certificate Status Protocol, RFC 6960) can provide revocation status instead of, or alongside, periodic CRL checks:\n` +
             `    instead of downloading a full CRL, the client queries an OCSP responder for a\n` +
             `    single certificate's status. The certificate's Authority Information Access (AIA)\n` +
             `    extension (OID 1.3.6.1.5.5.7.48.1) contains the OCSP responder URL.\n` +

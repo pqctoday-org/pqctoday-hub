@@ -48,7 +48,7 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
       badge: 'PQC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'ML-DSA-87 signatures are ~4,627 bytes vs ~512 bytes for RSA-4096. Public keys are ~2,592 bytes. Check the OID values in the parsed output — you will see ml-dsa-87 instead of rsaEncryption.',
+        'ML-DSA-87 signatures are ~4,627 bytes vs ~512 bytes for RSA-4096. Public keys are ~2,592 bytes. Check the OID values in the parsed output — you will see ml-dsa-87 instead of rsaEncryption (not sourced in the Library).',
       workshopStep: 0,
     },
     {
