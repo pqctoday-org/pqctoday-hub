@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent, act } from '@testing-library/react'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ComplianceView } from './ComplianceView'
 import '@testing-library/jest-dom'
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
-import { logComplianceFilter } from '@/utils/analytics'
+import { logComplianceFilter, logComplianceSearch } from '@/utils/analytics'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -110,6 +110,7 @@ vi.mock('./MobileComplianceView', () => ({
 // names it in the stack and you add it here.
 vi.mock('../../utils/analytics', () => ({
   logComplianceFilter: vi.fn(),
+  logComplianceSearch: vi.fn(),
   logPreviewBannerShown: vi.fn(),
   logPreviewBannerDismissed: vi.fn(),
 }))
@@ -136,6 +137,7 @@ describe('ComplianceView', () => {
   beforeEach(() => {
     window.localStorage.clear()
     vi.mocked(logComplianceFilter).mockClear()
+    vi.mocked(logComplianceSearch).mockClear()
     usePersonaStore.setState({
       selectedPersona: null,
       selectedIndustries: [],
@@ -287,6 +289,37 @@ describe('ComplianceView', () => {
     const aids = screen.getByTestId('records-reading-aids')
     expect(table.compareDocumentPosition(aids) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(aids).toContainElement(screen.getByTestId('pqc-trend-chart-stub'))
+  }, 15000)
+
+  it('logs one search event after the search text settles, and none for a short one', async () => {
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/compliance?lq=ab']}>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    await new Promise((r) => setTimeout(r, 800))
+    expect(logComplianceSearch).not.toHaveBeenCalled()
+    unmount()
+
+    render(
+      <MemoryRouter initialEntries={['/compliance?lq=kyber']}>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    await waitFor(() => expect(logComplianceSearch).toHaveBeenCalledWith('kyber'), {
+      timeout: 5000,
+    })
+    expect(logComplianceSearch).toHaveBeenCalledTimes(1)
+  }, 15000)
+
+  it('logs the Product Records search the same way', async () => {
+    render(
+      <MemoryRouter initialEntries={['/compliance?tab=records&q=hsm']}>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    await waitFor(() => expect(logComplianceSearch).toHaveBeenCalledWith('hsm'), { timeout: 5000 })
+    expect(logComplianceSearch).toHaveBeenCalledTimes(1)
   }, 15000)
 
   it('shows executive in-body CSV export when persona is executive', () => {

@@ -54,7 +54,7 @@ import type { ThreatData } from '@/data/threatsData'
 import type { TimelineEvent } from '@/types/timeline'
 import type { ComplianceFramework } from '@/data/complianceData'
 import { useApplicability } from '@/hooks/useApplicability'
-import { logComplianceFilter } from '../../utils/analytics'
+import { logComplianceFilter, logComplianceSearch } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -642,6 +642,18 @@ export const ComplianceView = ({
     },
     [setActiveTab, syncFiltersToUrl]
   )
+
+  // One search event per pause in typing, for either the landscape or the records search.
+  useEffect(() => {
+    if (lsSearch.trim().length < 3) return
+    const t = window.setTimeout(() => logComplianceSearch(lsSearch), 600)
+    return () => window.clearTimeout(t)
+  }, [lsSearch])
+  useEffect(() => {
+    if (recSearch.trim().length < 3) return
+    const t = window.setTimeout(() => logComplianceSearch(recSearch), 600)
+    return () => window.clearTimeout(t)
+  }, [recSearch])
 
   const handleCswp39Jump = useCallback(
     (targetTab: MobileSection, searchQuery: string) => {

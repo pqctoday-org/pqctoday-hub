@@ -27,6 +27,7 @@ import { getAlgorithmDefaults } from '../../data/personaConfig'
 import type { PersonaId } from '../../data/learningPersonas'
 import { useAlgorithmExplorer, MAX_COMPARE } from './useAlgorithmExplorer'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { logAlgorithmView } from '@/utils/analytics'
 import { MobileAlgorithmsView } from '@/components/Mobile/screens/MobileAlgorithmsView'
 import { MobileProtocolMatrixView } from '@/components/Mobile/screens/MobileProtocolMatrixView'
 import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATValidationView'
@@ -443,6 +444,12 @@ export function AlgorithmsView() {
   // usePersonaStore itself (not read anywhere else) rather than removed —
   // pruning a field from that widely-shared, version-9 persisted store is a
   // separate, higher-risk cleanup than this fix calls for.
+
+  // One view event each time an algorithm's detail opens (by click or by deep link).
+  const selectedAlgoName = selectedAlgo?.name
+  useEffect(() => {
+    if (selectedAlgoName) logAlgorithmView(selectedAlgoName)
+  }, [selectedAlgoName])
 
   // Register this page's actions with the global top bar (page-action-strip
   // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as

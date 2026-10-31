@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { markdownToPdf } from '@/services/export/pdfExport'
+import { logBusinessToolExport } from '@/utils/analytics'
 import { useModuleStore } from '@/store/useModuleStore'
 import type {
   ExecutiveDocument,
@@ -110,6 +111,7 @@ export function ArtifactDrawer({
     anchor.download = `${document.title.replace(/[^a-zA-Z0-9-_ ]/g, '')}.md`
     anchor.click()
     URL.revokeObjectURL(url)
+    logBusinessToolExport(ARTIFACT_TYPE_TO_TOOL_ID[document.type] ?? document.type, 'md')
   }, [document])
 
   // PDF is generated directly from the artifact's markdown source via the
@@ -124,6 +126,7 @@ export function ArtifactDrawer({
     try {
       const wideTable = WIDE_TABLE_TYPES.has(document.type)
       await markdownToPdf(document.data, document.title, document.title, { wideTable })
+      logBusinessToolExport(ARTIFACT_TYPE_TO_TOOL_ID[document.type] ?? document.type, 'pdf')
     } finally {
       setIsExportingPdf(false)
     }

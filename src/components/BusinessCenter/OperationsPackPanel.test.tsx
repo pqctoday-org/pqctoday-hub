@@ -1,12 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { beforeEach, describe, expect, it } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { useModuleStore } from '@/store/useModuleStore'
 import { OPERATIONS_PACK_SECTIONS } from '@/services/operationsPack'
 import { checklistFor } from '@/data/migrationTestChecklist'
+import { logBusinessToolExport } from '@/utils/analytics'
 import { OperationsPackPanel } from './OperationsPackPanel'
+
+vi.mock('@/utils/analytics', async (orig) => ({
+  ...(await orig<typeof import('@/utils/analytics')>()),
+  logBusinessToolExport: vi.fn(),
+}))
+vi.mock('@/services/exportBundle', async (orig) => ({
+  ...(await orig<typeof import('@/services/exportBundle')>()),
+  downloadBlob: vi.fn(),
+}))
 
 const renderPanel = () =>
   render(
@@ -24,6 +34,14 @@ describe('OperationsPackPanel', () => {
   beforeEach(() => {
     const s = useModuleStore.getState()
     useModuleStore.setState({ artifacts: { ...s.artifacts, executiveDocuments: [] } })
+  })
+
+  it('logs one export event when the Markdown pack is downloaded', async () => {
+    vi.mocked(logBusinessToolExport).mockClear()
+    renderPanel()
+    fireEvent.click(screen.getByTestId('operations-pack-md'))
+    await waitFor(() => expect(logBusinessToolExport).toHaveBeenCalledTimes(1))
+    expect(logBusinessToolExport).toHaveBeenCalledWith('operations-pack', 'md')
   })
 
   it('shows every section as missing when nothing is saved', () => {

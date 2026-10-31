@@ -31,6 +31,7 @@ import {
 } from '@/services/operationsPack'
 import { opsScopeSummary, type OpsScopeInputs } from '@/services/opsArtifacts'
 import type { ExecutiveDocument } from '@/services/storage/types'
+import { logBusinessToolExport } from '@/utils/analytics'
 import { OpsScopeEditor } from './operationsPack/OpsScopeEditor'
 import { TestPlanEditor } from './architecturePack/TestPlanEditor'
 
@@ -102,6 +103,7 @@ export function OperationsPackPanel() {
         const filename = bundleFilename('operations-pack', 'pdf').replace(/\.pdf$/, '')
         await markdownToPdf(markdown, filename, OPERATIONS_PACK_TITLE, { wideTable: true })
       }
+      logBusinessToolExport('operations-pack', kind)
     } catch (e) {
       setError(`Download failed: ${e instanceof Error ? e.message : String(e)}`)
     } finally {

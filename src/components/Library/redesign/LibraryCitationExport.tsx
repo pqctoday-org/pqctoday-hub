@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom'
 import { Quote } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { bundleFilename, downloadBlob } from '@/services/exportBundle'
+import { logLibraryDownload } from '@/utils/analytics'
 import { toBibtex, toCslJson, type CitableItem } from '@/utils/citationExport'
 import type { LibraryItem } from '@/data/libraryData'
 
@@ -110,6 +111,7 @@ export const LibraryCitationExport: FC<LibraryCitationExportProps> = ({
 
   const run = (scope: CitationScope, format: CitationFormat) => {
     downloadCitations(getItems(scope), scope, format)
+    logLibraryDownload(`citations-${scope}-${format}`)
     setOpen(false)
   }
 
