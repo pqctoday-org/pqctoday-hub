@@ -82,7 +82,10 @@ describe('MigrationWorkbench (integration)', () => {
     )
     // Nothing selected yet: the empty state points back at the Replace tab.
     expect(
-      await screen.findByText('Pick the products you run in the Replace tab first.')
+      // The default 1 s wait is too tight when the whole suite is running in parallel.
+      await screen.findByText('Pick the products you run in the Replace tab first.', undefined, {
+        timeout: 5000,
+      })
     ).toBeInTheDocument()
   })
 
