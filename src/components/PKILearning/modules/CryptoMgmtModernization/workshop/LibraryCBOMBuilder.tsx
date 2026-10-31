@@ -19,6 +19,7 @@ import {
   downloadCbomJson,
   type CbomComponentInput,
 } from '@/services/cbom/cycloneDx'
+import { buildAssessmentCbom } from '@/services/cbom/assessmentCbom'
 import { summarizeCbom, type CbomReportSummary } from '@/services/cbom/reportSummary'
 import {
   cbomRowToCbomInput,
@@ -181,7 +182,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         return HSM_VENDORS.map(hsmToCbomInput)
       case 'files':
         return FILE_ARTIFACTS.map(fileArtifactToCbomInput)
-      // 'libs' and 'assessment' both export the library posture inventory.
+      case 'assessment':
+        return [] // handled as self-reported algorithm records below
+      // Library mode exports the catalogue posture inventory.
       default:
         return CRYPTO_LIBRARIES.map(libraryToCbomInput)
     }
@@ -190,12 +193,17 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
   /** A schema-valid CycloneDX 1.7 CBOM for the current mode's inventory. Unlike
    *  the Markdown export, this is a real machine-readable artifact downstream
    *  tooling (Dependency-Track, scanners, auditors) can ingest. */
+  const assessmentCbom = useMemo(
+    () => buildAssessmentCbom(assessmentTransitions),
+    [assessmentTransitions]
+  )
   const cycloneDxJson = useMemo(() => {
+    if (mode === 'assessment') return assessmentCbom.json
     return buildCbomDocument(cbomInputs, {
       toolName: 'PQC Today CBOM Builder',
       properties: [{ name: 'pqctoday:mode', value: mode }],
     }).json
-  }, [cbomInputs, mode])
+  }, [cbomInputs, mode, assessmentCbom])
 
   const handleDownloadCycloneDx = useCallback(() => {
     downloadCbomJson(cycloneDxJson, 'crypto-bom-cyclonedx')
@@ -203,7 +211,10 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
 
   /** Compact structured summary persisted alongside the save so /report can
    *  render real numbers without re-parsing the CycloneDX JSON. */
-  const reportSummary = useMemo(() => summarizeCbom(cbomInputs, mode), [cbomInputs, mode])
+  const reportSummary = useMemo(
+    () => (mode === 'assessment' ? assessmentCbom.summary : summarizeCbom(cbomInputs, mode)),
+    [cbomInputs, mode, assessmentCbom]
+  )
 
   /** Markdown serialization of the current CBOM slice + library posture +
    *  HSM coverage for Command Center export. The format mirrors a CycloneDX
@@ -324,7 +335,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       lines.push('')
     }
     return lines.join('\n')
-  }, [mode, cbomSlice])
+  }, [mode, cbomSlice, assessmentTransitions, myProducts])
 
   return (
     <div className="space-y-6">
