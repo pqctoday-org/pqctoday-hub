@@ -52,7 +52,7 @@ export const SCENARIO_QUESTIONS: ScenarioQuestion[] = [
     question:
       'Which component — the CA root certificate, intermediate CA certificates, or end-entity certificates — is most urgent to migrate to PQC signing, and why?',
     answer:
-      "The CA root certificate is most urgent. It has a 20-year validity window, meaning a root signed today with classical ECDSA could be forged post-quantum before it expires. Intermediate CAs (typically 5–10 years) are next. End-entity leaf certificates with 2-year validity are least urgent by timeline alone. However, all three should be on the migration roadmap: the root and intermediates to ML-DSA (FIPS 204) immediately, and end-entity certificates as part of the rollout. The CA's key-encapsulation (TLS handshake) should also migrate to ML-KEM (FIPS 203) for forward secrecy.",
+      "The CA root certificate is most urgent. It has a 20-year validity window, meaning a root signed today with classical ECDSA could be forged post-quantum before it expires. This module's advice: Intermediate CAs (typically 5–10 years) are next. End-entity leaf certificates with 2-year validity are least urgent by timeline alone. However, all three should be on the migration roadmap: the root and intermediates to ML-DSA (FIPS 204) immediately, and end-entity certificates as part of the rollout. The CA's key-encapsulation (TLS handshake) should also migrate to ML-KEM (FIPS 203) for forward secrecy.",
     urgency: 'critical',
     industry: 'Finance & Banking',
   },
