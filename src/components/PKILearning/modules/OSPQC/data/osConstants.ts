@@ -186,14 +186,14 @@ export const PACKAGE_FORMATS: PackageFormat[] = [
     pqcMigrationPath: 'OSTree summary signature migration to ML-DSA when libgpgme supports PQC',
     status: 'planned',
     notes:
-      'Flathub repository signing depends on OSTree GPG implementation. ML-DSA support requires upstream libgpgme + OSTree changes. Timeline: 2027-2028.',
+      'Flathub repository signing depends on OSTree GPG implementation. ML-DSA support requires upstream libgpgme + OSTree changes.',
   },
   {
     id: 'snap',
     name: 'Snap (Canonical)',
     tool: 'snapcraft, snap-store',
     currentSigningAlgo: 'RSA-4096 (Snap Store authority)',
-    pqcMigrationPath: 'Snap Store backend migration to ML-DSA (Canonical roadmap 2027)',
+    pqcMigrationPath: 'Snap Store backend migration to ML-DSA',
     status: 'planned',
     notes:
       'Snap packages are signed by the Snap Store. Client-side verification requires snapd update. Canonical has indicated PQC signing in Ubuntu 26.04 LTS timeframe.',
@@ -252,10 +252,10 @@ export const SSH_HOST_KEY_TYPES: SSHKeyType[] = [
     publicKeyBytes: 1952,
     signatureBytes: 3309,
     quantumSafe: true,
-    opensshSupport: 'OpenSSH 10.0+ (draft RFC)',
-    rfcStatus: 'draft-ietf-sshm-mldsa (active WG draft)',
+    opensshSupport: 'Not named in the OpenSSH 10.0, 10.4 or 10.6 release notes',
+    rfcStatus: 'draft-sfluhrer-ssh-mldsa-06 (Internet-Draft, not a standard)',
     notes:
-      'IETF SSHM WG draft for ssh-mldsa44/65/87 key types. OpenSSH experimental branch available. Hybrid ssh-ecdsa-nistp256-mldsa65 also drafted. Not yet in any production OpenSSH release.',
+      'The Internet-Draft draft-sfluhrer-ssh-mldsa-06 (7 April 2026, Intended Status: Informational, expires 9 October 2026) names the key types ssh-mldsa-44, ssh-mldsa-65 and ssh-mldsa-87, written with hyphens. Composite ML-DSA signatures for SSH are in draft-ietf-sshm-composite-sigs-00 (SSHM working group, 21 August 2026, Intended Status: Standards Track), which specifies ssh-mldsa44-ed25519 and ssh-mldsa87-p384; OpenSSH 10.6 (6 October 2026) enables ssh-mldsa44-ed25519. Another Internet-Draft, draft-sun-ssh-composite-sigs-03, describes further composite types such as ssh-mldsa65-es256. An Internet-Draft is a work in progress, not a standard.',
   },
 ]
 

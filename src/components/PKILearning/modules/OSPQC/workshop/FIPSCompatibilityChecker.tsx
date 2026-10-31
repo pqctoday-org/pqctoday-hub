@@ -27,11 +27,12 @@ const FIPS_PLATFORMS: FIPSPlatform[] = [
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
     fipsCertDate: 'RHEL 9: FIPS 140-3 validated (OpenSSL 3.0.7, see CMVP for current cert)',
-    pqcFipsCertTarget: 'RHEL 10: OpenSSL 3.4+ PQC FIPS module — validation target 2026',
+    pqcFipsCertTarget:
+      'RHEL 10: a FIPS module that includes ML-KEM and ML-DSA is an expectation in this lesson; no validation date is cited',
     hybridStrategy:
       'Run two OpenSSL providers in parallel: fips (for FIPS workloads) + default (for PQC). Use environment variables or application config to route traffic.',
     notes:
-      'RHEL 9 FIPS mode restricts OpenSSL to only FIPS-approved algorithms. ML-KEM and ML-DSA are not in the FIPS 140-3 certificate for RHEL 9. When FIPS mode is enabled (fips=1 kernel param), PQC algorithms are unavailable. RHEL 10 targets a new FIPS module including ML-KEM and ML-DSA pending NIST validation.',
+      'CMVP certificate #4857 (Red Hat Enterprise Linux 9 - OpenSSL FIPS Provider, FIPS 140-3, Level 1) lists no ML-KEM or ML-DSA among its Approved Algorithms. Whether PQC algorithms are available when FIPS mode is enabled (fips=1 kernel parameter) is not settled by that certificate, so test it on your build. A new RHEL 10 FIPS module that includes ML-KEM and ML-DSA is an expectation in this lesson, not a cited plan or date.',
     commands: `# Check FIPS mode status:
 fips-mode-setup --check
 # Output: FIPS mode is enabled.
@@ -44,7 +45,7 @@ sudo reboot
 openssl list -providers
 # fips (version: 3.0.7)
 
-# Attempt ML-KEM in FIPS mode — will fail:
+# Attempt ML-KEM in FIPS mode (illustrative output; confirm on your build):
 openssl speed ml-kem-768
 # openssl: Error loading provider: fips
 # ml-kem-768 not in FIPS module
@@ -66,11 +67,12 @@ openssl speed ml-kem-768
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
     fipsCertDate: 'Ubuntu 22.04: FIPS 140-3 validated (OpenSSL 3.0.2, see CMVP for current cert)',
-    pqcFipsCertTarget: 'Ubuntu 26.04 LTS: PQC FIPS module planned (2028 target)',
+    pqcFipsCertTarget:
+      'Ubuntu 26.04 LTS: a FIPS module that includes PQC is an expectation in this lesson; no validation date is cited',
     hybridStrategy:
       'Use Ubuntu Pro FIPS mode for regulated workloads. Run oqsprovider alongside FIPS provider for new PQC services. Separate network segments or containers may be required by compliance auditors.',
     notes:
-      'Ubuntu FIPS mode requires Ubuntu Pro subscription. The FIPS 140-3 module (OpenSSL 3.0.x) does not include PQC algorithms. Ubuntu Pro FIPS updates are conservative — PQC will not be added to the 22.04 or 24.04 FIPS modules. New PQC FIPS module planned for Ubuntu 26.04 LTS timeline.',
+      'Ubuntu FIPS mode requires Ubuntu Pro subscription. The FIPS 140-3 module (OpenSSL 3.0.x) does not include PQC algorithms. Ubuntu Pro FIPS updates are conservative — PQC will not be added to the 22.04 or 24.04 FIPS modules. A new Ubuntu FIPS module that includes PQC is an expectation in this lesson, not a cited plan or date.',
     commands: `# Ubuntu Pro FIPS setup:
 sudo ua attach <Ubuntu Pro token>
 sudo ua enable fips
@@ -133,16 +135,17 @@ Get-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion" 
   {
     id: 'freebsd-fips',
     os: 'FreeBSD 14.x',
-    fipsModule: 'No official FIPS module (ports: openssl-fips)',
+    fipsModule: 'No FreeBSD FIPS module is cited in this lesson',
     fipsStatus: 'not-supported',
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
-    fipsCertDate: 'No FIPS 140-3 certification for FreeBSD base system',
-    pqcFipsCertTarget: 'No FIPS certification roadmap; community ports only',
+    fipsCertDate:
+      'This lesson cites no FIPS 140-3 certificate for the FreeBSD base system; check the CMVP validated modules list',
+    pqcFipsCertTarget: 'This lesson cites no FIPS certification roadmap for FreeBSD',
     hybridStrategy:
-      'FreeBSD has no FIPS constraint. Use security/oqsprovider port for ML-KEM and ML-DSA. No hybrid strategy needed — PQC and classical algorithms can coexist freely.',
+      'This lesson cites no FreeBSD FIPS module, so it treats FIPS as not constraining here. Use security/oqsprovider port for ML-KEM and ML-DSA. No hybrid strategy needed — PQC and classical algorithms can coexist freely.',
     notes:
-      'FreeBSD does not maintain a FIPS 140-3 certified crypto module. Organizations requiring FIPS on FreeBSD typically use third-party validated modules. For PQC, this is an advantage — no FIPS compatibility constraint blocks ML-KEM/ML-DSA deployment. Install security/oqsprovider from ports for full PQC support.',
+      'This lesson cites no CMVP certificate for a FreeBSD crypto module, so it assumes no FIPS compatibility constraint on ML-KEM/ML-DSA deployment here; check the CMVP validated modules list for the current position. Install security/oqsprovider from ports for full PQC support.',
     commands: `# Install PQC support on FreeBSD:
 pkg install openssl-quic oqsprovider
 
@@ -203,7 +206,7 @@ const FIPS_STATUS_BADGE: Record<FIPSPlatform['fipsStatus'], { label: string; cla
       className: 'text-status-info bg-status-info/10 border-status-info/30',
     },
     'not-supported': {
-      label: 'No FIPS',
+      label: 'No FIPS cited',
       className: 'text-muted-foreground bg-muted border-border',
     },
   }
@@ -395,9 +398,9 @@ export const FIPSCompatibilityChecker: React.FC = () => {
               status: 'near',
             },
             {
-              phase: 'Phase 3 (2027-2028)',
+              phase: 'Phase 3 (no date cited)',
               description:
-                'RHEL 10 and Ubuntu 26.04 LTS ship new FIPS modules including ML-KEM and ML-DSA. Upgrade regulated systems to new OS versions. Full FIPS + PQC without dual-provider workaround.',
+                'This module’s projection, not a vendor statement: RHEL 10 and Ubuntu 26.04 LTS ship new FIPS modules including ML-KEM and ML-DSA. Upgrade regulated systems to new OS versions. Full FIPS + PQC without dual-provider workaround.',
               status: 'future',
             },
           ].map((phase) => (

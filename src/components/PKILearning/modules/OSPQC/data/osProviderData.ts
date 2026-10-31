@@ -80,7 +80,7 @@ export const FIPS_STATUS_LABELS: Record<OSVendorStatus['fipsMode'], PqcStatusLab
     className: 'text-status-info bg-status-info/10 border-status-info/30',
   },
   'not-supported': {
-    label: 'No FIPS',
+    label: 'No FIPS cited',
     className: 'text-muted-foreground bg-muted border-border',
   },
 }
@@ -127,7 +127,8 @@ export const OS_VENDORS: OSVendorStatus[] = [
     catalogName: 'Windows Server 2025',
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'Win32-OpenSSH tracking upstream OpenSSH experimental PQC branch',
-    pkgSigningPqc: 'Windows Update uses RSA-4096; ML-DSA code signing in Windows roadmap 2027',
+    pkgSigningPqc:
+      'This lesson cites no Microsoft statement on the Windows Update signing algorithm or on an ML-DSA code signing date',
     roadmapYear: '2025-11 (Nov 2025 Update)',
     mlKemSupport:
       'ML-KEM GA in CNG APIs (Nov 2025); Schannel TLS 1.3 hybrid groups (x25519_mlkem768 etc.) available from KB5089573 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026), disabled by default',
@@ -175,11 +176,12 @@ export const OS_VENDORS: OSVendorStatus[] = [
     fipsMode: 'not-supported',
     sshPqcStatus:
       'FreeBSD 14.4 base OpenSSH 10.0p2 uses hybrid mlkem768x25519-sha256 (NIST ML-KEM) by DEFAULT',
-    pkgSigningPqc: 'pkg uses RSA-4096 repository signing; ML-DSA on 2026+ roadmap',
+    pkgSigningPqc:
+      'pkg uses RSA/ECDSA signatures to verify manifests and binaries (Mapping Quantum Threats, arXiv:2509.24623v2, March 2026)',
     roadmapYear: '2026-03 (FreeBSD 14.4)',
     mlKemSupport:
       'ML-KEM default-on in base OpenSSH 10.0 (SSH KEX); TLS PQC still needs OpenSSL 3.5 from ports',
-    mlDsaSupport: 'Via security/oqsprovider port; pkg signing RSA only currently',
+    mlDsaSupport: 'Via security/oqsprovider port; pkg signing uses RSA/ECDSA signatures',
     notes:
       'Verified 2026-06-19: catalog status partial. FreeBSD 14.4 (Mar 2026) base OpenSSH 10.0p2 enables the hybrid mlkem768x25519-sha256 SSH key exchange by default (NIST ML-KEM). But base TLS is still OpenSSL 3.0 (no PQC) — PQC TLS requires OpenSSL 3.5 from ports. So PQC is default-on for SSH but not TLS: inherited and partial, not a native OS feature.',
   },
@@ -207,12 +209,14 @@ export const OS_VENDORS: OSVendorStatus[] = [
     catalogName: 'Android 16',
     fipsMode: 'partial',
     sshPqcStatus: 'N/A — Android does not run sshd in standard configurations',
-    pkgSigningPqc: 'APK signing uses ECDSA P-256 / RSA-4096; ML-DSA on Android roadmap',
+    pkgSigningPqc:
+      'Android 17 introduces APK Signature Scheme v3.2, a hybrid scheme that signs an APK with both a classical algorithm (such as RSA or ECDSA) and a PQC algorithm',
     roadmapYear: '2025-06',
     mlKemSupport:
-      'Android 16: ML-KEM only at the app/Chrome layer (Chrome/WebView X25519MLKEM768 via BoringSSL); platform-level Keystore/Conscrypt PQC is Android 17',
-    mlDsaSupport: 'Platform ML-DSA targeted for Android 17; APK signing migration post-2026',
+      'The Google Security Blog post cited here describes Android 17 ML-DSA work; it does not mention ML-KEM or Android 16',
+    mlDsaSupport:
+      'Android 17: ML-DSA in Android Verified Boot and Android Keystore (ML-DSA-65 and ML-DSA-87), per the Google Security Blog, 25 March 2026',
     notes:
-      'Verified 2026-06-19: catalog status is roadmap for Android 16. PQC reaches Android 16 only at the app layer (Chrome/WebView negotiate X25519MLKEM768 via their bundled BoringSSL); platform-level Keystore (TEE/StrongBox) and Conscrypt ML-DSA/ML-KEM are announced for Android 17, not shipping in 16. APK signing with ML-DSA pending a Conscrypt KeyStore API extension.',
+      'The Google Security Blog post "Security for the Quantum Era: Implementing Post-Quantum Cryptography in Android" (25 March 2026) describes Android 17 upgrades: ML-DSA in Android Verified Boot, ML-DSA support in Android Keystore (the SDK exposes ML-DSA-65 and ML-DSA-87), and hybrid signatures for APKs. The Android Open Source Project documentation says Android 17 introduces APK Signature Scheme v3.2, a hybrid scheme that requires signing an APK with both a classical algorithm, like RSA or ECDSA, and a PQC algorithm. The same documentation says that on Android 16 (API level 36) and lower platform releases the platform does not process this hybrid signature block; the blog post does not mention Android 16.',
   },
 ]

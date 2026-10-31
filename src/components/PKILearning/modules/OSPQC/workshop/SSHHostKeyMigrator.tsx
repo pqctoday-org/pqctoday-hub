@@ -19,8 +19,8 @@ const MIGRATION_STEPS: MigrationStep[] = [
     id: 1,
     title: 'Generate ML-DSA-65 Host Key',
     description:
-      'Generate a new ML-DSA-65 (ssh-mldsa65) host key. This requires an experimental PQC build of OpenSSH — ssh-mldsa65 is an IETF draft and not yet in a production OpenSSH release (OpenSSH 10.0, released April 2025, already defaults to ML-KEM hybrid key exchange but not ML-DSA host keys).',
-    command: `# On the SSH server (requires an experimental OpenSSH PQC build):
+      'Generate a new ML-DSA-65 (ssh-mldsa65) host key. ssh-mldsa65 is the shorthand this lesson uses for the key type that the Internet-Draft draft-sfluhrer-ssh-mldsa-06 names ssh-mldsa-65; an Internet-Draft is not a standard. The OpenSSH 10.4 and 10.6 release notes mention the composite ssh-mldsa44-ed25519 key type and do not mention a pure ML-DSA-65 host key, so treat the commands below as an illustration of the workflow (OpenSSH 10.0, released April 2025, already defaults to ML-KEM hybrid key exchange, and its release notes do not mention ML-DSA host keys).',
+    command: `# On the SSH server (illustrative command):
 sudo ssh-keygen -t mldsa65 -f /etc/ssh/ssh_host_mldsa65_key -N ""
 
 # Verify the key was created:
@@ -35,7 +35,7 @@ sudo ssh-keygen -lf /etc/ssh/ssh_host_mldsa65_key.pub`,
 256 SHA256:AbCdEfGhIjKlMnOpQrStUvWxYz0123456789= root@server (MLDSA65)
 # Note: bit count shown is nominal — ML-DSA-65 is NIST Level 3`,
     warning:
-      'ML-DSA-65 host keys are not yet in any production OpenSSH release (as of March 2026) — only experimental PQC builds support them. Note that OpenSSH 10.0 itself shipped in April 2025 and uses the mlkem768x25519-sha256 hybrid key exchange by default; it is host-key signatures that still await ML-DSA.',
+      'The OpenSSH 10.4 and 10.6 release notes mention the composite ssh-mldsa44-ed25519 host key type and do not mention a pure ML-DSA-65 host key. OpenSSH 10.0 shipped in April 2025 and uses the mlkem768x25519-sha256 hybrid key exchange by default; its release notes do not mention ML-DSA host keys.',
   },
   {
     id: 2,
@@ -95,7 +95,7 @@ server.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... (32 bytes)`,
       'Test which SSH clients can connect with the ML-DSA-65 host key. Maintain Ed25519 fallback until all clients are upgraded.',
     command: `# Test connection from different clients:
 
-# OpenSSH 10.0+ (PQC-capable):
+# A client that supports the key type (illustrative output):
 ssh -v admin@server.example.com 2>&1 | grep "host key algorithm"
 # debug1: host key algorithm: ssh-mldsa65
 
@@ -111,9 +111,9 @@ ssh -o "HostKeyAlgorithms=ssh-mldsa65,ssh-ed25519" admin@server.example.com`,
     output: `# Connection summary:
 # PQC hybrid KEX: mlkem768x25519-sha256 (standard since OpenSSH 9.9, DEFAULT since 10.0)
 # or legacy: sntrup761x25519-sha512@openssh.com (OpenSSH 8.5+, default in 9.0-9.8)
-# Host auth: ssh-mldsa65 (experimental builds) or ssh-ed25519 (fallback)`,
+# Host auth: ssh-mldsa65 (illustrative) or ssh-ed25519 (fallback)`,
     warning:
-      'As of March 2026, no production SSH client supports ssh-mldsa65 host keys. Only OpenSSH experimental branch has this support. Plan for 2026-2027 production availability.',
+      'ssh-mldsa65 is shorthand for a key type named in an Internet-Draft, not a standard. OpenSSH 10.6 (6 October 2026) enables the composite ssh-mldsa44-ed25519 algorithm; check each client against its own release notes before relying on any ML-DSA host key type.',
   },
 ]
 
@@ -222,11 +222,16 @@ export const SSHHostKeyMigrator: React.FC = () => {
         </div>
         <div className="mt-3 p-3 bg-status-info/5 rounded border border-status-info/20">
           <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Draft RFC status:</strong> The IETF SSHM Working
-            Group is actively developing{' '}
-            <span className="font-mono text-primary">draft-ietf-sshm-mldsa</span> for ssh-mldsa44,
-            ssh-mldsa65, and ssh-mldsa87 key types. Hybrid ssh-ecdsa-nistp256-mldsa65 also in draft.
-            Expected standardization: 2026.
+            <strong className="text-foreground">Draft status:</strong> The Internet-Draft{' '}
+            <span className="font-mono text-primary">draft-sfluhrer-ssh-mldsa-06</span> (7 April
+            2026) names the key types ssh-mldsa-44, ssh-mldsa-65 and ssh-mldsa-87. The SSHM working
+            group draft{' '}
+            <span className="font-mono text-primary">draft-ietf-sshm-composite-sigs-00</span> (21
+            August 2026, Intended Status: Standards Track) specifies the composite types
+            ssh-mldsa44-ed25519 and ssh-mldsa87-p384, and OpenSSH 10.6 enables ssh-mldsa44-ed25519.
+            Another Internet-Draft, draft-sun-ssh-composite-sigs-03, describes further composite
+            types such as ssh-mldsa65-es256. An Internet-Draft is a work in progress, not a
+            standard.
           </p>
         </div>
       </div>
@@ -365,8 +370,9 @@ export const SSHHostKeyMigrator: React.FC = () => {
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
           <Clock size={10} className="inline mr-1" />
-          ML-DSA host key support is still experimental (March 2026). Maintain Ed25519 fallback keys
-          until all clients in your environment support PQC key types.
+          The SSH ML-DSA host key types named in this lesson come from Internet-Drafts, which are
+          not standards. Keeping Ed25519 fallback keys until your clients support the PQC key type
+          you choose is this lesson&apos;s advice, not a requirement of any standard.
         </p>
       </div>
     </div>
