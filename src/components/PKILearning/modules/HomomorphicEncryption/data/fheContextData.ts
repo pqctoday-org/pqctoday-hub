@@ -354,7 +354,7 @@ export const FHE_STANDARDS: FheStandardRow[] = [
     body: 'ISO/IEC 28033 (fully homomorphic encryption), parts 1–4',
     coversFhe: 'Yes',
     status:
-      'Not published. Part 1 (general) and part 2 (exact arithmetic: BGV/BFV) at DIS, votes closed; part 3 (approximate numbers: CKKS) and part 4 (look-up-table evaluation) at FDIS, final ballots started 23 September (part 3) and 8 September 2026 (part 4)',
+      'The EPC cryptography guidelines (v16.0.1) name ISO/IEC 28033 as an active FHE standardisation effort. The part structure and stages below are as this module records them from the ISO project pages, which are not held in the Library; check the ISO pages for the current stage. Not published. Part 1 (general) and part 2 (exact arithmetic: BGV/BFV) at DIS, votes closed; part 3 (approximate numbers: CKKS) and part 4 (look-up-table evaluation) at FDIS, final ballots started 23 September (part 3) and 8 September 2026 (part 4)',
     source: 'ISO project pages for ISO/IEC 28033-1 to -4',
   },
   {
@@ -1266,7 +1266,7 @@ export const FHE_PET_MARKET: FhePetMarketRow[] = [
       'Analyst estimate: Fortune Business Insights (updated Sep 2026) USD 212.77M (2025). Precedence Research instead puts HE at 34% of its USD 4.40B privacy-enhancing computation market (2024): the firms define the market differently',
     forecast: 'Fortune Business Insights: USD 470.20M by 2034, 9.21% CAGR (2026–2034)',
     maturity:
-      'Royal Society (2023): “PHE / SHE / FHE in use (FHE on a smaller scale)”. OECD (Mar 2023): “For now, most applications are done at a small scale”. ENISA (Aug 2024): moving to “the first emerging industrial applications”',
+      'Royal Society (2023): “PHE / SHE / FHE in use (FHE on a smaller scale)”. ENISA (Aug 2024): “FE, FHE and MPC are moving from research prototypes to the first emerging industrial applications”',
     industries: 'BFSI (Fortune Business Insights: about 30%); healthcare; finance and AML pilots',
   },
   {

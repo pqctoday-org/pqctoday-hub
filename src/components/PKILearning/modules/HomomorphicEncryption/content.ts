@@ -22,6 +22,7 @@ export const content: ModuleContent = {
     getStandard('lattigo-v6.2.0'),
     getStandard('fhe-rs-v0.1.1'),
     getStandard('IACR-ePrint-2025-075'),
+    getStandard('EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
   ],
