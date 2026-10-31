@@ -93,11 +93,13 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           <div className="p-4 rounded-lg bg-status-warning/10 border border-status-warning/30">
             <p className="font-semibold text-status-warning mb-1">Performance Cliffs</p>
             <p className="text-xs">
-              IKEv2 SA establishment can grow from tens of milliseconds to several seconds with the
-              largest PQC configurations (Classic McEliece key sizes). A pure PQC certificate CHAIN
-              reaches ~17KB — forcing 2 TCP round-trips instead of 1. (One ML-DSA-65 certificate is
-              ~5-6KB: a 1,952-byte public key plus a 3,309-byte signature plus X.509 overhead. It is
-              the chain that breaks the budget.)
+              In GSMA PQ.06 (27 May 2026), enabling hybrid key negotiation with seven additional
+              ML-KEM-1024 exchanges raised the average time to establish one IKE SA from 140 ms to
+              335 ms. Certificates add a second kind of cost: a pure PQC certificate CHAIN reaches
+              ~17KB by this module&apos;s arithmetic, more than the 14,600-byte initial window of 10
+              segments (RFC 6928), so that flight takes more than one round trip. (One ML-DSA-65
+              certificate is ~5-6KB: a 1,952-byte public key plus a 3,309-byte signature plus X.509
+              overhead. It is the chain that breaks the budget.)
             </p>
           </div>
           <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30">
@@ -135,8 +137,14 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           <p className="text-xs">
             A TCP connection costs one round trip before application data can flow (RFC 9293 section
             3.5), and a TLS 1.3 handshake costs one more (RFC 8446 section 2). On high-latency links
-            (satellite, WAN), PQC&apos;s larger key sizes matter more because they force extra
-            round-trips — not because the math is slower. This changes where you need to optimize.
+            (satellite, WAN) every round trip costs more. NIST SP 1800-38C&apos;s TLS 1.3 tests, at
+            a simulated 133 ms round-trip time with an ECDSA P256 server certificate, found
+            &ldquo;essentially minimal impact on the handshake time&rdquo;: the hybrid key exchange
+            even with Kyber-1024 was &ldquo;just a few milliseconds slower&rdquo; than P256. The
+            extra round trips NIST reported came from other causes: a 3% loss probability led to
+            &ldquo;almost an extra round-trip&rsquo;s delay&rdquo;, and in the QUIC tests Dilithium
+            authentication data from the server above the initial congestion window (~14 KB) or the
+            amplification window (~3.6 KB) can add one. This changes where you need to optimize.
           </p>
         </div>
 
@@ -702,7 +710,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
                 {
                   dim: 'TLS handshake bytes on the wire',
                   base: '~0.3–1 KB ClientHello',
-                  pqc: 'adds about 1.2 KB with hybrid (1,216-byte X25519MLKEM768 key share = 1,184-byte ML-KEM-768 encapsulation key, FIPS 203, + 32-byte X25519 share) — can force a second TCP round-trip',
+                  pqc: 'adds about 1.2 KB with hybrid (1,216-byte X25519MLKEM768 key share = 1,184-byte ML-KEM-768 encapsulation key, FIPS 203, + 32-byte X25519 share); a ClientHello of about 1.5 KB is still inside the 10-segment initial window (RFC 6928)',
                 },
                 {
                   dim: 'Certificate / chain size',

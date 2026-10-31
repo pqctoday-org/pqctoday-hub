@@ -123,7 +123,9 @@ export const TestStrategyBuilder: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">Strategy Builder:</span> Configure your
           migration phase, environment type, and compliance deadline. The builder generates a
-          prioritized test sequence with recommended tools and go/no-go gates.
+          prioritized test sequence with example tools and go/no-go gates. The durations, tool
+          choices and gates are an illustration from this module, not sourced figures or
+          recommendations.
         </p>
       </div>
 

@@ -108,7 +108,7 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badge: 'Strategy Builder',
       badgeColor: 'bg-accent/20 text-accent border-accent/50',
       observe:
-        'For enterprise IT in inventory phase against the EU 2026 milestone: priority steps are passive network discovery (1-2 weeks), active endpoint scanning (1 week), and certificate inventory via CLM platform (2-3 days). Tool recommendations: CryptoNext COMPASS for passive discovery (NIST NCCoE recommended), pqcscan for active scanning, Keyfactor AgileSec for certificate inventory. CBOM generation from COBOL systems requires manual code review — flag as high-effort item requiring specialist engagement.',
+        'For enterprise IT in inventory phase against the EU 2026 milestone, one workable order is passive network discovery, then active endpoint scanning, then certificate inventory via a CLM platform. The durations (about 1-2 weeks, 1 week and 2-3 days) and the example tools (CryptoNext COMPASS for passive discovery, pqcscan for active scanning, Keyfactor AgileSec for certificate inventory) are an illustration from this module, not sourced figures or recommendations. CryptoNext Security is listed as a technology collaborator in the NCCoE Migration to Post-Quantum Cryptography project, and NIST SP 1800-38B states that naming a product is not intended to imply recommendation or endorsement by NIST or NCCoE. For the COBOL systems, SP 1800-38B describes IBM Application Discovery and Delivery Intelligence (ADDI) as a static analysis tool that analyzes COBOL application source files; scope the COBOL systems as their own work item.',
       config: { step: 5 },
       paths: [NETWORK_PATH],
     },
