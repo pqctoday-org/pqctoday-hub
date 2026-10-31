@@ -4,7 +4,7 @@ Your organization's quantum timeline is limited by your slowest vendor. Third-pa
 
 ### Why It Matters
 
-A single vendor dependency relying purely on classical encryption can completely block your organization's compliance with upcoming mandates (like NSA CNSA 2.0 or FIPS 140-3) and create a permanent security blind spot.
+A vendor product that does not support CNSA 2.0 may not be appropriate for National Security Systems once CNSA 2.0 algorithms are required in all new NSS acquisitions (1 January 2027, per CNSSP 15). The NSA's FAQ says NIAP validation is required for commercial products used in NSS and "will generally require CNSA 2.0 compliance"; a deployment may be accepted on a vendor's contractual commitment to provide a CNSA 2.0 update.
 
 ### The Key Takeaway
 
