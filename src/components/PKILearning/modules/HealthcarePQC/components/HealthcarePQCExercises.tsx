@@ -83,7 +83,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        'Patient Portal and Research/Genomics are internet-facing and highest priority. Medical Devices layer has 2000 endpoints at $500 each but vendor readiness is "none" \u2014 hybrid mode is more realistic until vendors ship PQC firmware.',
+        'Patient Portal and Research/Genomics are internet-facing and highest priority. Medical Devices layer has 2000 endpoints at $500 each (this module's planning assumption, not a measurement) but vendor readiness is "none" \u2014 hybrid mode is more realistic until vendors ship PQC firmware.',
       config: { step: 4 },
     },
     {
