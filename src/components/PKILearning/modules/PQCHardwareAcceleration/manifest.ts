@@ -9,7 +9,7 @@ const manifest: ModuleManifest = {
   description:
     'How post-quantum signatures are accelerated — scalar, SIMD, crypto instructions, GPU, FPGA, ASIC and NPU — explained in plain English and backed by PQC Today’s seven-platform CPU measurements, hybrid PKCS#11 v3.3 results, AMD64 instruction-set tests on AI X1 Pro, and focused Arm/KV260 FPGA experiments.',
   whyThisMatters:
-    'ML-DSA and SLH-DSA spend their time in completely different places, so the same accelerator can give +29% on one and more than 40× on the other. Choosing hardware, parameter sets and hash variants for a device — or judging a vendor’s acceleration claim — needs an honest picture of where the time goes and what moving it costs.',
+    'ML-DSA and SLH-DSA spend their time in completely different places, so on our KV260 board the FPGA gave +29% on ML-DSA signing and about 28× more SLH-DSA-SHAKE-128s signatures per second (13.0 against 0.46). Choosing hardware, parameter sets and hash variants for a device — or judging a vendor’s acceleration claim — needs an honest picture of where the time goes and what moving it costs.',
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
