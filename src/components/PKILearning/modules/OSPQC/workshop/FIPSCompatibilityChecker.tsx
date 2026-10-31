@@ -67,11 +67,12 @@ openssl speed ml-kem-768
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
     fipsCertDate: 'Ubuntu 22.04: FIPS 140-3 validated (OpenSSL 3.0.2, see CMVP for current cert)',
-    pqcFipsCertTarget: 'Ubuntu 26.04 LTS: PQC FIPS module planned (2028 target)',
+    pqcFipsCertTarget:
+      'Ubuntu 26.04 LTS: a FIPS module that includes PQC is an expectation in this lesson; no validation date is cited',
     hybridStrategy:
       'Use Ubuntu Pro FIPS mode for regulated workloads. Run oqsprovider alongside FIPS provider for new PQC services. Separate network segments or containers may be required by compliance auditors.',
     notes:
-      'Ubuntu FIPS mode requires Ubuntu Pro subscription. The FIPS 140-3 module (OpenSSL 3.0.x) does not include PQC algorithms. Ubuntu Pro FIPS updates are conservative — PQC will not be added to the 22.04 or 24.04 FIPS modules. New PQC FIPS module planned for Ubuntu 26.04 LTS timeline.',
+      'Ubuntu FIPS mode requires Ubuntu Pro subscription. The FIPS 140-3 module (OpenSSL 3.0.x) does not include PQC algorithms. Ubuntu Pro FIPS updates are conservative — PQC will not be added to the 22.04 or 24.04 FIPS modules. A new Ubuntu FIPS module that includes PQC is an expectation in this lesson, not a cited plan or date.',
     commands: `# Ubuntu Pro FIPS setup:
 sudo ua attach <Ubuntu Pro token>
 sudo ua enable fips
@@ -397,9 +398,9 @@ export const FIPSCompatibilityChecker: React.FC = () => {
               status: 'near',
             },
             {
-              phase: 'Phase 3 (2027-2028)',
+              phase: 'Phase 3 (no date cited)',
               description:
-                'RHEL 10 and Ubuntu 26.04 LTS ship new FIPS modules including ML-KEM and ML-DSA. Upgrade regulated systems to new OS versions. Full FIPS + PQC without dual-provider workaround.',
+                'This module’s projection, not a vendor statement: RHEL 10 and Ubuntu 26.04 LTS ship new FIPS modules including ML-KEM and ML-DSA. Upgrade regulated systems to new OS versions. Full FIPS + PQC without dual-provider workaround.',
               status: 'future',
             },
           ].map((phase) => (

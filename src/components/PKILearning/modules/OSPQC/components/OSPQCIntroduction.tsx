@@ -334,7 +334,6 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
               <li>&bull; rpm-sign: embeds GPG sig in RPM header</li>
               <li>&bull; dnf: verifies sig using imported GPG keys</li>
               <li>&bull; PQC path: pluggable backend in RPM v4.19+</li>
-              <li>&bull; Timeline: RHEL 11 (2028) experimental ML-DSA</li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

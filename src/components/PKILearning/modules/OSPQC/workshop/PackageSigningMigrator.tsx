@@ -146,7 +146,7 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
       {
         level: 'Package Signing Key',
         component: 'Repository Signing Certificate',
-        algorithm: 'GPG RSA-4096 (current) → ML-DSA-65 (2027+)',
+        algorithm: 'GPG RSA-4096 (current) → ML-DSA-65',
         notes: 'Signs all packages in the repository. Monthly rotation recommended.',
       },
       {

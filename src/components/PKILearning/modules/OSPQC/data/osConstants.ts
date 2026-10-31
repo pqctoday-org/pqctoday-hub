@@ -186,14 +186,14 @@ export const PACKAGE_FORMATS: PackageFormat[] = [
     pqcMigrationPath: 'OSTree summary signature migration to ML-DSA when libgpgme supports PQC',
     status: 'planned',
     notes:
-      'Flathub repository signing depends on OSTree GPG implementation. ML-DSA support requires upstream libgpgme + OSTree changes. Timeline: 2027-2028.',
+      'Flathub repository signing depends on OSTree GPG implementation. ML-DSA support requires upstream libgpgme + OSTree changes.',
   },
   {
     id: 'snap',
     name: 'Snap (Canonical)',
     tool: 'snapcraft, snap-store',
     currentSigningAlgo: 'RSA-4096 (Snap Store authority)',
-    pqcMigrationPath: 'Snap Store backend migration to ML-DSA (Canonical roadmap 2027)',
+    pqcMigrationPath: 'Snap Store backend migration to ML-DSA',
     status: 'planned',
     notes:
       'Snap packages are signed by the Snap Store. Client-side verification requires snapd update. Canonical has indicated PQC signing in Ubuntu 26.04 LTS timeframe.',

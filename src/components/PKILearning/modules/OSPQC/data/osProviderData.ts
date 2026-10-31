@@ -80,7 +80,7 @@ export const FIPS_STATUS_LABELS: Record<OSVendorStatus['fipsMode'], PqcStatusLab
     className: 'text-status-info bg-status-info/10 border-status-info/30',
   },
   'not-supported': {
-    label: 'No FIPS',
+    label: 'No FIPS cited',
     className: 'text-muted-foreground bg-muted border-border',
   },
 }

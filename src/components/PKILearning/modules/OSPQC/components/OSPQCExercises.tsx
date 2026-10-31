@@ -82,7 +82,7 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       badge: 'FIPS',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'As of mid-2026, FIPS 140-3 validated ML-KEM in an OS module is still rare (Windows Server 2025 / SymCrypt is among the first). On RHEL, FIPS mode exposes only the FIPS-curve ML-KEM hybrids (e.g. SecP256r1MLKEM768, added in RHEL 9.7) — standalone PQC is not yet in the validated FIPS provider, so it remains a FIPS-vs-PQC trade-off. Verify each platform against current CMVP listings. The recommended approach: keep FIPS for regulated workloads, use dual-provider config for new PQC services, then consolidate when RHEL 10/Ubuntu 26.04 FIPS PQC modules are certified.',
+        'Shipping ML-KEM in an operating system is a separate step from having it on a FIPS 140-3 certificate, so check each platform against the CMVP listings. The recommended approach: keep FIPS for regulated workloads, use dual-provider config for new PQC services, then consolidate when RHEL 10/Ubuntu 26.04 FIPS PQC modules are certified.',
       config: { step: 4 },
     },
   ]
