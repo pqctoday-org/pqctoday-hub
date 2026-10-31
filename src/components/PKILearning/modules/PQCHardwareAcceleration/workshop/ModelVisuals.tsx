@@ -224,7 +224,7 @@ const IsaVisual: React.FC = () => {
         </text>
         <line x1={20} y1={105} x2={580} y2={105} className="stroke-border" />
         <text x={20} y={125} className="fill-foreground text-[10px] font-bold">
-          Measured on our Cortex-A5x boards (16 KiB digests):
+          Measured on our Cortex-A5x boards (16 KiB digests, 2026-09-26 run):
         </text>
         <rect x={20} y={135} width={470} height={18} rx={3} className="fill-secondary/40" />
         <text x={26} y={148} className="fill-foreground text-[10px]">

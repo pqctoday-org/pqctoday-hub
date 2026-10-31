@@ -4,7 +4,7 @@ Post-quantum signatures can be made faster in several ways — wider CPU instruc
 
 ### Why It Matters
 
-The two main post-quantum signatures spend their time in completely different places. ML-DSA is mostly arithmetic and is already fast; SLH-DSA is mostly hashing and can take seconds on a small chip. So on our KV260 board the FPGA gave only +29% on ML-DSA, but took an SLH-DSA signature from 2.12 seconds on the board's own CPU to 69 milliseconds.
+The two main post-quantum signatures spend their time in completely different places. ML-DSA is mostly arithmetic and is already fast; SLH-DSA is mostly hashing and can take seconds on a small chip. So on our KV260 board the FPGA gave only +29% on ML-DSA, but took an SLH-DSA-SHAKE-128s signature from 2.12 seconds on the board's own CPU to 69 milliseconds.
 
 ### The Key Takeaway
 
