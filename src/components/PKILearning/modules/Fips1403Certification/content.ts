@@ -26,12 +26,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'fips-140-3-certification',
-  lastReviewed: '2026-10-27',
-  // No lastReviewed: facts were corrected after the owner's 24 October 2026 sign-off, so the
-  // sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The on-page notice
-  // follows it (common/moduleReviewStatus.ts).
+  // lastReviewed removed: facts in this module were corrected in release 4.187.0 after the owner's
+  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The
+  // on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-27',
+  lastEdited: '2026-10-30',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
