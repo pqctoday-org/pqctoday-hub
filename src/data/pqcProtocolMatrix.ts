@@ -1170,7 +1170,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          'RFC Editor queue: the IESG approved draft-ietf-lamps-pq-composite-kem; the datatracker shows IESG state "RFC Ed Queue" (changed 2026-10-21), current revision -23 (2026-10-14). Not yet published as an RFC. Re-verified live 2026-10-22.',
+          'RFC Editor queue: the IESG approved draft-ietf-lamps-pq-composite-kem; the datatracker shows IESG state "RFC Ed Queue" (changed 2026-10-12), current revision -23 (2026-10-14). Not yet published as an RFC. Datatracker history checked 2026-10-30.',
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1918,7 +1918,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          'Inherits draft-ietf-lamps-pq-composite-kem (see X.509 row): IESG state "RFC Ed Queue" since 2026-10-21, current revision -23 (2026-10-14); not yet published as an RFC. Re-verified live 2026-10-22.',
+          'Inherits draft-ietf-lamps-pq-composite-kem (see X.509 row): IESG state "RFC Ed Queue" since 2026-10-12, current revision -23 (2026-10-14); not yet published as an RFC. Datatracker history checked 2026-10-30.',
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -2086,7 +2086,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'individual-draft',
         stageNote:
           "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — the protocol-matrix refresh's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-02 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
-        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, approved at the X.509 layer and in the RFC Editor queue since 2026-10-21 (see X.509 row). The Kerberos-side mechanism itself remains an individual draft.',
+        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, approved at the X.509 layer and in the RFC Editor queue since 2026-10-12 (see X.509 row). The Kerberos-side mechanism itself remains an individual draft.',
         refs: [
           {
             kind: 'draft',
@@ -2280,7 +2280,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'openpgp',
     name: 'OpenPGP',
     description:
-      'OpenPGP message format — composite ML-KEM+ECDH encryption and ML-DSA+ECDSA signatures, plus standalone SLH-DSA.',
+      'OpenPGP message format — composite ML-KEM+X25519/X448 encryption and ML-DSA+Ed25519/Ed448 signatures, plus standalone SLH-DSA.',
     latestRelease: [
       {
         id: 'RFC-9580',
@@ -2323,7 +2323,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-published',
         stageNote:
           'RFC 9980 published Jun 2026 (formerly the OpenPGP-PQC draft) — covers Hybrid KEM + Pure/Hybrid Sig',
-        note: 'Composite mode pairs ML-KEM-768/1024 with ECDH P-256 / P-384 / X25519 / X448. RFC 9980 covers Pure Sig and Hybrid Sig in the same document.',
+        note: 'Composite mode pairs ML-KEM-768 with X25519 (MUST) and ML-KEM-1024 with X448 (SHOULD). RFC 9980 covers Pure Sig and Hybrid Sig in the same document; NIST and Brainpool curve composites are in draft-ietf-openpgp-nist-bp-comp.',
         refs: [
           {
             kind: 'rfc',
@@ -2352,7 +2352,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote: 'RFC 9980 published Jun 2026 — same document as Hybrid KEM',
-        note: 'Composite mode pairs ML-DSA with ECDSA / EdDSA classical signatures.',
+        note: 'Composite mode pairs ML-DSA-65 with Ed25519 (MUST) and ML-DSA-87 with Ed448 (SHOULD).',
         refs: [
           {
             kind: 'rfc',

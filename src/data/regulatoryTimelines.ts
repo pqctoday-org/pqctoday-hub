@@ -360,12 +360,6 @@ export const SQUEEZE_2026_2030: ReadonlyArray<SqueezeEvent> = [
     track: 'cab-forum',
   },
   {
-    date: '2026-06',
-    label: "Let's Encrypt MTC",
-    detail: "Let's Encrypt begins issuing Merkle Tree Certificates (June 2026)",
-    track: 'standards',
-  },
-  {
     date: '2026-09',
     label: 'FIPS 140-2 sunset',
     detail: 'FIPS 140-2 validated modules retired; FIPS 140-3 required',
@@ -376,6 +370,13 @@ export const SQUEEZE_2026_2030: ReadonlyArray<SqueezeEvent> = [
     label: 'CMMC Level 2',
     detail: 'CMMC Level 2 enforcement — FIPS 140-3 required for CUI',
     track: 'regulation',
+  },
+  {
+    date: '2026-12',
+    label: "Let's Encrypt MTC (late 2026)",
+    detail:
+      "Let's Encrypt targets late 2026 for a staging environment that issues Merkle Tree Certificates",
+    track: 'standards',
   },
   {
     date: '2027-01',
@@ -507,7 +508,7 @@ export interface SatisfiesItEntry {
 
 export const PHASE_REGULATION_SATISFIES: ReadonlyArray<SatisfiesItEntry> = [
   {
-    regulation: 'PCI DSS 12.3.3',
+    regulation: 'PCI DSS v4.0.1',
     satisfiedBy: 'Cryptographic inventory (CBOM) + QRA',
     phase: 'p3',
   },

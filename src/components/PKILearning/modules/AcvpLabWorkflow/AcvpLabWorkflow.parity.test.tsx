@@ -48,7 +48,7 @@ describe('AcvpLabWorkflowModule render parity', () => {
     fireEvent.mouseDown(tab)
     fireEvent.click(tab)
     expect(screen.getByTestId('tools-intro')).toHaveTextContent(
-      'These products hold NIST CAVP algorithm validation certificates for algorithms such as ML-KEM and ML-DSA. They are products that were tested, not tools for running ACVP tests.'
+      "Many of these products hold NIST CAVP algorithm validation certificates for algorithms such as ML-KEM and ML-DSA; each product's entry says whether a CAVP certificate is linked. They are products that were tested, not tools for running ACVP tests."
     )
     // the shell writes the open tab to the URL; leave a clean address for the next test
     window.history.replaceState(null, '', '/')
@@ -64,9 +64,8 @@ describe('AcvpLabWorkflowModule render parity', () => {
     )
     const notice = screen.getByTestId('acvp-lab-status-notice')
     expect(notice).toHaveTextContent(
-      'Reviewed and signed off by the PQC Today owner on 25 October 2026'
+      "Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off"
     )
-    expect(notice).not.toHaveTextContent('awaiting re-sign-off')
     expect(notice).not.toHaveTextContent(/draft/i)
     // the same lab-review sentence the other four certification modules show
     expect(notice).toHaveTextContent(NOT_LAB_REVIEWED)

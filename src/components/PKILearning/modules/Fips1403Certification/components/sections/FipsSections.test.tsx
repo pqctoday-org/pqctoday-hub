@@ -68,8 +68,12 @@ describe('FIPS sections render', () => {
     ).toBeInTheDocument()
     expect(screen.getByText(/it does not establish FIPS validation/)).toBeInTheDocument()
     expect(
-      screen.getByText(/so expect a PQC addition to be treated as a significant change/)
-    ).toHaveTextContent('the CMVP may require a full submission')
+      screen.getByText(
+        /that part is our reasoning: expect it to be treated as a significant change/
+      )
+    ).toHaveTextContent('the CMVP free to decide that the changes exceed 30% and require a full')
+    expect(screen.getByText(/It touches the approved security functions/)).toBeInTheDocument()
+    expect(screen.queryByText(/It touches the module specification/)).not.toBeInTheDocument()
     expect(screen.queryByText(/is a security-relevant revalidation/)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Open the PKCS#11 Learn exercises' })).toHaveAttribute(
       'href',
@@ -107,7 +111,9 @@ describe('FIPS sections render', () => {
     const para = screen.getByText(/Two kinds of validation exist today/)
     expect(para).toHaveTextContent('before 1 January 2024')
     expect(para).toHaveTextContent('before 1 October 2024')
-    expect(para).toHaveTextContent('Both dates have passed, so the route is closed to new cases.')
+    expect(para).toHaveTextContent(
+      'Both dates have passed, so new cases can no longer use this route (our reading of those dates).'
+    )
   })
 
   it('lifecycle: Historical modules are “not in new systems” by NIST’s words, not a ban on buying', () => {

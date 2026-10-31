@@ -557,10 +557,11 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
             its TEGRION SLC27 security controller is Common Criteria EAL6+ certified and includes a
             cryptographic library with ML-KEM and ML-DSA, and that in January 2025 it received the
             first Common Criteria EAL6+ certificate for a security controller comprising a
-            post-quantum algorithm (ML-KEM); Samsung&apos;s S3SSE2A was among the first products to
-            receive an ANSSI PQC security certification (2025); STMicroelectronics has announced PQC
-            for its ST54M secure element. Check each certificate&apos;s scope — it covers one target
-            of evaluation, not &quot;PQC&quot; in general.
+            post-quantum algorithm (ML-KEM); Samsung&apos;s S3SSE2A received an ANSSI Common
+            Criteria certificate in 2025 (its published Security Target Lite lists an optional
+            ML-DSA library among the functions included in the TOE); STMicroelectronics has
+            announced PQC for its ST54M secure element. Check each certificate&apos;s scope — it
+            covers one target of evaluation, not &quot;PQC&quot; in general.
           </li>
           <li>
             <strong>Hash-based firmware protection is also in hardware.</strong> Infineon says two

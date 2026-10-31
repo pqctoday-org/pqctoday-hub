@@ -28,7 +28,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'directory-services',
     title: 'Step 3: Directory Services',
-    description: 'Analyze AD, OpenLDAP, and Azure AD quantum vulnerabilities and HNDL risk scores.',
+    description:
+      'Analyze AD, OpenLDAP, and Azure AD quantum vulnerabilities and quantum risk scores.',
     icon: Database,
   },
   {

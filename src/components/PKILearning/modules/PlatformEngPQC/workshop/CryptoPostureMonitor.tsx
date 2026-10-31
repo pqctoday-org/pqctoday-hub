@@ -456,7 +456,7 @@ const ACMETab: React.FC = () => {
       <p className="text-sm text-muted-foreground">
         The ACME certificate lifecycle with PQC overlay. Each step shows the current state
         (classical / hybrid / PQC-ready / algorithm-agnostic) and what changes are needed for a
-        quantum-safe issuance pipeline via cert-manager v1.17+.
+        quantum-safe issuance pipeline via cert-manager with an ML-DSA-capable issuer.
       </p>
 
       {/* Step rail */}
@@ -570,7 +570,7 @@ export const CryptoPostureMonitor: React.FC = () => {
         <p className="text-sm text-muted-foreground">
           Four-panel monitoring dashboard covering Prometheus metrics, SIEM integration, capacity
           planning for PQC size overhead, and ACME certificate lifecycle automation with
-          cert-manager v1.17+.
+          cert-manager.
         </p>
       </div>
 

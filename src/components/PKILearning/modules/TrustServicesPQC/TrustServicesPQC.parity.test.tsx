@@ -39,8 +39,9 @@ describe('TrustServicesPQC', () => {
   })
 
   it('every supersession pair moves from classical-only to a PQC-bearing edition', () => {
-    // Verified 2026-07-30 by extracting both PDFs: TS 119 312 V1.5.1 names
-    // only RSA and ECDSA; V2.1.1 adds ML-DSA, SLH-DSA, LMS and XMSS.
+    // TS 119 312 V1.5.1 Table 2 names only classical signature algorithms
+    // (RSA-PKCS#1v1_5, RSA-PSS, DSA, EC-DSA, EC-SDSA-opt); V2.1.1 adds
+    // ML-DSA, SLH-DSA, LMS and XMSS.
     for (const p of SUPERSESSION_PAIRS) {
       expect(p.older.algorithms, p.family).not.toMatch(/ML-DSA|SLH-DSA/)
       expect(p.newer.date, p.family).toBeTruthy()

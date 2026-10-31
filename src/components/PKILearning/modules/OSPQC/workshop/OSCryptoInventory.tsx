@@ -37,7 +37,7 @@ const CRYPTO_COMPONENTS: CryptoComponent[] = [
     quantumRisk: 'critical',
     migrationEffort: 'medium',
     notes:
-      'Host keys exposed to HNDL attacks. New ssh-mldsa65 host key type in draft RFC. Key exchange uses the mlkem768x25519-sha256 hybrid — standard since OpenSSH 9.9 and the default since OpenSSH 10.0.',
+      'Host keys exposed to HNDL attacks. ML-DSA-65 host keys are named ssh-mldsa-65 in the Internet-Draft draft-sfluhrer-ssh-mldsa-06 (this lesson writes ssh-mldsa65 for short); an Internet-Draft is not a standard. Key exchange uses the mlkem768x25519-sha256 hybrid — standard since OpenSSH 9.9 and the default since OpenSSH 10.0.',
   },
   {
     id: 'package-manager',

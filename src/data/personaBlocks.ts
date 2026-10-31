@@ -415,8 +415,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/kpi-tracker': {
     executive:
-      'Set the programme start year and switch View as to Executive: Pace-to-Deadline becomes a real number and the vendor, FIPS, threat and compliance KPIs score from your Migrate catalogue and assessment.',
-    grc: 'Enter the scores you can evidence, note which KPIs are auto-scored from live data and which need input, and export the .csv each period: the trend fills in as later assessments add snapshots.',
+      'Choose the Executive lens, select your products in Migrate and enter your own reviewed progress and compliance measures. A start year provides planning context; it does not measure progress. Missing values remain visible and the combined score requires sufficient evidence coverage.',
+    grc: 'Enter the scores you can evidence, note which measures use catalogue data for the products you selected and which need your own values, and export the .csv each period. Assessment-index history is context, not measured migration progress.',
   },
   '/business/tools/deployment-playbook': {
     executive:
@@ -705,7 +705,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/learn/exec-quantum-impact': {
     executive:
-      "Score your organisation's quantum exposure across nine criteria in the self-assessment, then build the phased action plan with milestones from this week onward: fiduciary risk and the 2030 and 2035 regulatory dates, in board terms.",
+      "Use the nine-question Organisational Evidence Scope to record Yes, No or Unknown, identify missing evidence and name who should supply it. Then explore the sample action plan; neither the checklist nor the plan measures your organisation's exposure or determines which obligations apply.",
   },
   '/learn/5g-security': {
     developer:

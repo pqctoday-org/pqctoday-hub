@@ -13,7 +13,7 @@ export const content: ModuleContent = {
   // The latest recorded claim review is 24 Aug. This release changes content,
   // so it updates lastEdited without presenting the edit as an evidence review.
   lastReviewed: '2026-08-24',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 186-5'),
@@ -98,12 +98,10 @@ export const content: ModuleContent = {
     getStandard('EMVCo-Quantum-Position-Statement'),
     getStandard('Post-Quantum-Protocols-for-Banking-Applications'),
     getStandard('Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape'),
-    getStandard('PCI-3DS-Core-v1-0-ROC-Reporting-Template'),
-    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-    getStandard('PCI-P2PE-Security-Requirements-v3-1'),
     getStandard('PKCS11-V32-OS-OASIS'),
     getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
-    getStandard('PCI-SSC-Bulletin-PTS-HSM-v4-Extension'),
+    getStandard('PCI-PTS-Listing-Field-Definitions'),
+    getStandard('PCI-SSC-P2PE-Program-Page'),
     getStandard('NIST IR 8547'),
     getStandard('FRB-FEDS-2025093-Blockchain-PQC'),
   ],

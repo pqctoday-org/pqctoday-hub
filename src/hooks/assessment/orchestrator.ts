@@ -127,6 +127,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   let executiveSummary: string | undefined
   let preBoostScore: number | undefined
   let boosts: AssessmentResult['boosts'] | undefined
+  let additiveScore: AssessmentResult['additiveScore']
   if (hasExtendedInput) {
     // ── Compound scoring path ──
     const qe = computeQuantumExposure(input, vulnerableCount)
@@ -159,15 +160,19 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   } else {
     // ── Legacy additive scoring path ──
     let score = INDUSTRY_THREAT[input.industry] ?? 10
+    const rows = [{ label: 'Industry context', points: score }]
 
     if (input.currentCryptoUnknown) {
       // Conservative default: equivalent to RSA-2048 + ECDH (~18 pts)
       score += 18
+      rows.push({ label: 'Algorithms unknown — cautious default', points: 18 })
     } else {
       const vulnerableAlgos = algorithmMigrations.filter((a) => a.quantumVulnerable)
       vulnerableAlgos.forEach((algo, i) => {
         const weight = ALGORITHM_WEIGHTS[algo.classical] ?? DEFAULT_ALGORITHM_WEIGHT
-        score += i < 3 ? weight : Math.round(weight * 0.5)
+        const points = i < 3 ? weight : Math.round(weight * 0.5)
+        score += points
+        rows.push({ label: algo.classical, points })
       })
     }
 
@@ -175,17 +180,35 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     const legacySensitivity = input.sensitivityUnknown
       ? 'high'
       : getMaxSensitivity(input.dataSensitivity)
-    score += DATA_SENSITIVITY_SCORES[legacySensitivity] ?? 0 // eslint-disable-line security/detect-object-injection
+    // The sensitivity key comes from the assessed vocabulary above.
+    // eslint-disable-next-line security/detect-object-injection
+    const sensitivityPoints = DATA_SENSITIVITY_SCORES[legacySensitivity] ?? 0
+    score += sensitivityPoints
+    rows.push({
+      label: input.sensitivityUnknown
+        ? 'Sensitivity unknown — cautious default'
+        : 'Data sensitivity',
+      points: sensitivityPoints,
+    })
 
     complianceImpacts.forEach((ci) => {
-      if (ci.requiresPQC) score += 8
+      if (ci.requiresPQC) {
+        score += 8
+        rows.push({ label: `Selected framework: ${ci.framework}`, points: 8 })
+      }
     })
 
     score += MIGRATION_STATUS_SCORES[input.migrationStatus] ?? 0
+    rows.push({
+      label: 'Migration status',
+      points: MIGRATION_STATUS_SCORES[input.migrationStatus] ?? 0,
+    })
 
     // Country-specific regulatory boost (scaled for additive scoring, max +5)
     const countryBoost = COUNTRY_REGULATORY_URGENCY[input.country ?? ''] ?? 0
     score += Math.round(Math.min(5, countryBoost * 0.4))
+    rows.push({ label: 'Country context', points: Math.round(Math.min(5, countryBoost * 0.4)) })
+    additiveScore = { rows, total: score }
 
     riskScore = Math.max(0, Math.min(100, score))
 
@@ -375,6 +398,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     assessmentProfile,
     keyFindings,
     preBoostScore,
+    additiveScore,
     boosts,
   }
 }

@@ -60,7 +60,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Which signature scheme in the demo is hash-based, with tiny keys but large signatures?',
     options: ['SLH-DSA-SHA2-128s', 'ML-DSA-65', 'ED25519'],
     answer: 0,
-    why: 'SLH-DSA rests on hash functions alone and pays for that conservative assumption with signature size; ML-DSA is lattice-based, and ED25519 is classical elliptic-curve.',
+    why: 'SLH-DSA security rests only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1) and pays for that conservative assumption with signature size; ML-DSA is lattice-based, and ED25519 is classical elliptic-curve.',
   },
   // ── Quantum Threats ──
   'quantum-threats/security-levels': {
@@ -205,10 +205,10 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
     options: [
       'ML-DSA signatures cannot be re-signed by a TLS proxy at all',
       'Hybrid certificates force TLS 1.2, which NGFWs no longer inspect',
-      'Its 8.5 KB certificate chain exceeds the ~4 KB buffer limit of classical NGFW inspection engines',
+      'Its certificate chain (at least about 11.9 KB in the lab) is far larger than a classical chain and may exceed the buffer sizes or parsing limits of the devices that inspect TLS chains',
     ],
     answer: 2,
-    why: 'Intercepting proxies must parse and re-sign the full certificate chain, and classical NGFW buffers were sized for chains of a few kilobytes; the hybrid chain is more than double that, so inspection needs a firmware update that expands the buffer.',
+    why: 'Intercepting proxies must parse and re-sign the full certificate chain. The lab flags every PQC certificate type because the chain is much larger than a classical one and, as the Applied Quantum PQC Migration Framework notes, larger certificates may exceed the buffer sizes or parsing limits of the devices that inspect them.',
   },
   'network-security-pqc/ids-signature-updater': {
     prompt:
@@ -728,7 +728,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'In Step 3 (Encapsulate: Derive Session Key), the detail contrasts the new v3.2 encapsulate call with the classic wrap-key call. After the call returns, what leaves the HSM and what stays inside?',
     options: [
       'The derived AES key is exported so the peer can use it; the ciphertext stays inside',
-      'Only the 1,088-byte KEM ciphertext leaves; the derived AES session key stays inside the HSM as a new key object',
+      'Only the 1,088-byte KEM ciphertext leaves; the derived AES session key is created as a new key object on the token (CKA_EXTRACTABLE follows the template)',
       'Both the ciphertext and the AES key are returned, like a classic RSA-OAEP wrap',
     ],
     answer: 1,
@@ -755,7 +755,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'It also lets administrators create ML-KEM keys, because KEY_AGREEMENT is implied by SIGN_VERIFY',
     ],
     answer: 0,
-    why: 'A key policy cannot govern the creation of a key that does not exist yet, so kms:CreateKey belongs in an IAM policy. AWS has no condition key for TLS cipher suites: hybrid post-quantum TLS to KMS is enabled in the client (for example the AWS CRT HTTP client with postQuantumTlsEnabled) and verified in CloudTrail (tlsDetails.keyExchange). AWS KMS has no ML-KEM keys at all.',
+    why: 'A key policy cannot govern the creation of a key that does not exist yet, so kms:CreateKey belongs in an IAM policy. AWS has no condition key for TLS cipher suites: hybrid post-quantum TLS to KMS is enabled in the client (for example the AWS CRT HTTP client with postQuantumTlsEnabled) and verified in CloudTrail (tlsDetails.keyExchange). AWS KMS also offers ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024).',
   },
   // stateful-signatures
   'stateful-signatures/state-management': {
@@ -1281,7 +1281,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'That the device’s FIPS 140-3 certificate also covers its PQC algorithms',
     ],
     answer: 0,
-    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. Public PCI material names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
+    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. The v5.0 announcement names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
   },
 
   // ── crypto-product-certification — FIPS author (2026-09-24) ──
@@ -1331,7 +1331,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'The duty from eIDAS (910/2014 as amended by 2024/1183); the requirements from Protection Profiles such as EN 419221-5, evaluated under a CC-based scheme',
     ],
     answer: 2,
-    why: 'eIDAS is law: it defines QSCDs and requires their certification. It is not a Protection Profile. The evaluable requirements are in the PPs (EN 419221-5, EN 419241-2), and EUCC is the scheme that runs the evaluation.',
+    why: 'eIDAS is law: it defines QSCDs and requires their certification (Art 30). It is not a Protection Profile. The evaluable requirements are in PPs such as EN 419221-5 and EN 419241-2, which EUCC Annex II lists for remote QSCDs; Art 30(3) also provides for another notified process.',
   },
 
   // ── crypto-product-certification (Shared author: core + shared steps) ──

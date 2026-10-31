@@ -15,11 +15,11 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       id: 'cert-rotation',
       title: 'Certificate Rotation at Scale',
       description:
-        'PQC certificates are several times larger than typical ECDSA certificates: in the example below, an ML-DSA-65 certificate is about 5.5 KB against about 1.4 KB for ECDSA, roughly 4x. Chains, extensions and SLH-DSA change the ratio. Automated certificate management (ACME, cert-manager) needs testing with new sizes.',
+        'PQC signatures and public keys are much larger than ECDSA ones: GSMA PQ.04 (Table 5) lists an ML-DSA-65 signature of 3,309 bytes and a public key of 1,952 bytes, against 64 bytes for both an ECDSA-256 signature and public key. The key and signature in one ML-DSA-65 certificate therefore add up to 5,261 bytes, against 128 bytes for ECDSA-256, before any other fields. The whole-certificate sizes in the example below (about 5.5 KB for ML-DSA-65, about 1.4 KB for ECDSA) are illustrative figures for that example. Chains, extensions and SLH-DSA change the sizes. Automated certificate management (ACME, cert-manager) needs testing with new sizes.',
       severity: 'critical',
       timeframe: 'Planning window 2025-2028 (editorial estimate, not a regulatory date)',
       exampleScenario:
-        'Your Kubernetes cluster uses cert-manager to auto-rotate 500 TLS certificates. ML-DSA-65 certificates run about 5.5KB each vs. roughly 1.4KB for a typical ECDSA certificate. The cert-manager CRD size limits are exceeded, and certificate renewal starts failing silently across the cluster.',
+        'Your Kubernetes cluster uses cert-manager to auto-rotate 500 TLS certificates. In this illustration, ML-DSA-65 certificates run about 5.5KB each vs. about 1.4KB for a typical ECDSA certificate, the cert-manager CRD size limits are exceeded, and certificate renewal starts failing silently across the cluster.',
     },
     {
       id: 'vpn-ssh-upgrade',

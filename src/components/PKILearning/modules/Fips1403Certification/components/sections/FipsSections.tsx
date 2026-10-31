@@ -52,6 +52,7 @@ const IG = getStandard('NIST-FIPS140-3-IG-PQC')
 const MIP_LIST = getStandard('NIST-CMVP-MIP-List')
 const VALIDATED_MODULES = getStandard('NIST-CMVP-Validated-Modules')
 const TRANSITION = getStandard('NIST-CMVP-140-2-to-140-3-Transition-Timeline')
+const PROGRAMMATIC_TRANSITIONS = getStandard('NIST-CMVP-Programmatic-Transitions')
 const EO_14412 = getStandard('EO-2026-06-22-Securing-the-Nation')
 const SP_800_140 = getStandard('NIST-SP-800-140')
 const SP_800_140A = getStandard('NIST-SP-800-140A')
@@ -72,8 +73,7 @@ const ESV_ANNOUNCEMENTS = getStandard('NIST-CMVP-ESV-Announcements')
 const MIS = getStandard('NIST-CMVP-MIS-SP800-140B')
 const AMVP = getStandard('NIST-ACMVP-Protocol-Workstream')
 const NCCOE_CMVP = getStandard('NCCoE-Automation-of-the-CMVP')
-const PCI_PIN = getStandard('PCI-PIN-v3-1-ROC-Reporting-Template')
-const PCI_P2PE = getStandard('PCI-P2PE-Security-Requirements-v3-1')
+const PCI_LISTING = getStandard('PCI-PTS-Listing-Field-Definitions')
 const CMVP_STANDARDS_PAGE = getStandard('NIST-CMVP-FIPS-140-3-Standards-page')
 const ISO_19790_2025 = getStandard('ISO-IEC-19790-2025')
 const ISO_24759_2025 = getStandard('ISO-IEC-24759-2025-Test-requirements-for-cryptographic-modul')
@@ -529,12 +529,16 @@ export const FipsRequirementAreas = () => (
     </p>
     <Callout title="Why this matters for PQC">
       <p>
-        Adding ML-KEM or ML-DSA is not “one more algorithm”. It touches the module specification
-        (new approved functions), SSP management (new key types and seeds), services (new approved
-        services and their indicator) and self-tests (the IG 10.3.A tests for each PQC algorithm).
-        Those are four of the five categories the Manual uses to size a change — so expect a PQC
-        addition to be treated as a significant change: the lab assesses it and proposes the
-        submission route, and the CMVP may require a full submission (see the optional route table).
+        Adding ML-KEM or ML-DSA is not “one more algorithm”. It touches the approved security
+        functions (new approved algorithms), SSP management (new key types and seeds), services (new
+        approved services and their indicator) and self-tests (the IG 10.3.A tests for each PQC
+        algorithm). Those are four of the five categories the Manual lists for an Update (UPDT),{' '}
+        <Cite std={MGMT_MANUAL}>§7.1.10</Cite>: “approved / allowed security functions/algorithms,
+        SSPs, approved security services, self-tests, and security states within the FSM”, each of
+        which may not exceed 30% of changes. The Manual does not say how a PQC addition is treated;
+        that part is our reasoning: expect it to be treated as a significant change, with the lab
+        assessing it and proposing the submission route, and the CMVP free to decide that the
+        changes exceed 30% and require a full submission (see the optional route table).
       </p>
     </Callout>
   </Body>
@@ -556,7 +560,7 @@ const PLANNING_CASES: readonly { level: string; case: string; why: string }[] = 
   {
     level: 'Level 4',
     case: 'An offline root-key HSM at an unattended site, with physical attack in the threat model',
-    why: 'Planning target from a stated physical threat, not prestige. Confirm every applicable area against ISO/IEC 19790 as modified by SP 800-140 with the laboratory.',
+    why: 'Planning target from a stated physical threat, not prestige. Confirm every applicable area against ISO/IEC 19790 as modified by the SP 800-140 series with the laboratory.',
   },
 ]
 
@@ -653,11 +657,10 @@ export const FipsLevels = () => (
     <Callout tone="warning" title="FIPS Level 3 and PCI: don’t over-correct">
       <p>
         A FIPS 140-3 Level 3 HSM does <strong>not</strong> thereby have PCI PTS HSM approval — that
-        is a separate device approval by a PCI-recognised lab. But PCI PIN Security v3.1 (Req 1-3)
-        accepts HSMs that are “FIPS140-2 or FIPS 140-3 Level 3 or higher certified, or PCI
-        approved”, and P2PE v3.1 (4A-1.1) sets a similar bar (<Cite std={PCI_PIN}>PIN v3.1</Cite>,{' '}
-        <Cite std={PCI_P2PE}>P2PE v3.1</Cite> — superseded by P2PE v3.2 in June 2025; check it for
-        changes).
+        is a separate device approval by a PCI-recognised lab, assigned and listed by PCI SSC (
+        <Cite std={PCI_LISTING}>PTS listing definitions</Cite>). Whether a PCI operational standard
+        accepts a FIPS certificate in place of a PTS approval is set in that standard’s own
+        requirement text, which this module does not state — read the current standard.
       </p>
       <p>
         And a FIPS level is not an EAL: “FIPS Level 4 = EAL4+” compares two different schemes’
@@ -931,8 +934,9 @@ const LIFECYCLE_STEPS: readonly { title: string; body: ReactNode }[] = [
     title: 'Get algorithm and entropy validations',
     body: (
       <>
-        Each approved algorithm needs CAVP validation (tested through <Cite std={ACVP}>ACVP</Cite>);
-        entropy sources go through ESV. The Manual expects these done before submission.
+        Each approved algorithm needs CAVP validation (tested through <Cite std={ACVP}>ACVP</Cite>),
+        or vendor affirmation where the IG permits it; entropy sources go through ESV. The Manual
+        expects these done before submission.
       </>
     ),
   },
@@ -1024,12 +1028,13 @@ export const FipsLifecycle = () => (
     <p>
       Two kinds of validation exist today. A full validation lasts five years. An{' '}
       <strong>interim</strong> validation is “a temporary measure to shorten the queue”, is “valid
-      for two years only”, and relies “more on the CSTL submission with less CMVP oversight”. NIST’s{' '}
-      <Cite std={TRANSITION}>transition page</Cite> required the original submission to reach the
-      CMVP before 1 January 2024 and the lab to notify the CMVP of the vendor’s intent before 1
-      October 2024. Both dates have passed, so the route is closed to new cases. An existing interim
-      validation can be converted to a five-year validation (the INTU route) before it expires.
-      Check the sunset date on any certificate you rely on.
+      for two years only”, and relies “more on the CSTL submission with less CMVP oversight”.{' '}
+      <Cite std={PROGRAMMATIC_TRANSITIONS}>NIST’s CMVP Programmatic Transitions page</Cite> requires
+      the original submission to have reached the CMVP before 1 January 2024 and the lab to notify
+      the CMVP of the vendor’s intent before 1 October 2024. Both dates have passed, so new cases
+      can no longer use this route (our reading of those dates). An existing interim validation can
+      be converted to a five-year validation (the INTU route) before it expires. Check the sunset
+      date on any certificate you rely on.
     </p>
 
     <Callout tone="warning" title="Pipeline, not proof">
@@ -1376,11 +1381,10 @@ const VerifiedCertTable = ({ hub }: { hub: HubState }) => {
 
 /** Learn section `fips-landscape` */
 // ── fips-automation ─────────────────────────────────────────────────────────
-// Every claim is from the verified register (priv nextfeature
-// fips-automation-facts-09272026.md; antigravity-88 + Codex gpt-5.6-terra,
-// each row re-checked against its source). Deliberately NOT stated, because
-// no official source states them: a CAVS retirement date, and any date for
-// accepting automated (AMVP) module submissions in production.
+// Every claim comes from the NIST pages and publications cited in this
+// section. Deliberately NOT stated, because those documents do not state
+// them: a CAVS retirement date, and any date for accepting automated (AMVP)
+// module submissions in production.
 
 const AUTOMATION_LAYERS: readonly {
   layer: string
@@ -1523,8 +1527,10 @@ export const FipsAutomation = () => (
         required for ACMVP”; no source says Web Cryptik is being replaced.
       </p>
       <p>
-        No official source gives a date when automated module submissions will be accepted in
-        production, so treat any dated claim about an “automated CMVP” as unsupported.
+        NIST’s documents on this project (SP 1800-40B, CSWP 37A and CSWP 37B) give no date when
+        automated module submissions will be accepted in production; SP 1800-40B says the
+        capabilities are “actively being integrated into the production CMVP environment in 2026”.
+        Treat any dated claim about an “automated CMVP” as unsupported by them.
       </p>
     </Callout>
   </Body>

@@ -68,8 +68,12 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-primary mb-1">Industry Standards</div>
             <p className="text-xs text-muted-foreground">
-              PCI DSS, HIPAA, FedRAMP, and CMMC are incorporating quantum-safe requirements into
-              their compliance frameworks.
+              Some sector frameworks now mention quantum computing. The 2025 HHS proposal to update
+              the HIPAA Security Rule would expect a regulated entity, as part of its risk analysis,
+              to consider whether quantum computing poses a reasonably anticipated threat to the
+              confidentiality, integrity, or availability of its ePHI, and PCI SSC&apos;s May 2026
+              announcement of PTS HSM v5.0 says that update addresses emerging threats such as
+              post-quantum risks.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -140,9 +144,11 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
               cryptography combining classical and PQC algorithms, and makes it mandatory inside the
               French regulated perimeter (classified and Diffusion Restreinte data, vital
               information systems, ANSSI-certified or qualified products). BSI&apos;s TR-02102-1
-              currently recommends PQC only in hybrid use and endorses ML-KEM (FIPS&nbsp;203) and
-              ML-DSA (FIPS&nbsp;204) with specific parameter recommendations. ETSI provides
-              interoperability guidance for hybrid key exchanges.
+              currently recommends PQC in hybrid form, except that hash-based signatures may in
+              principle be used alone, provided their implementation security is carefully
+              considered, and endorses ML-KEM (FIPS&nbsp;203) and ML-DSA (FIPS&nbsp;204) with
+              specific parameter recommendations. ETSI provides interoperability guidance for hybrid
+              key exchanges.
             </p>
           </div>
         </div>
@@ -153,14 +159,15 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
           <p className="text-xs text-muted-foreground mb-2">
             Authorities do not agree on hybrid deployment, and the answer depends on which systems
             are in scope. ANSSI makes hybrid mandatory inside the French regulated perimeter and
-            recommends it everywhere else, except for hash-based signatures (SLH-DSA, XMSS, LMS),
-            which may be used alone. BSI&apos;s TR-02102-1 currently recommends PQC only in hybrid
-            use. ETSI TS 119 312 specifies hybrid signatures for trust services. NSA does not
-            require hybrids for National Security Systems: CNSA 2.0 sets pure ML-KEM-1024 and
-            ML-DSA-87 as the end state, and allows hybrids as an interim step where a protocol needs
-            them. Many programs therefore deploy <strong>hybrid</strong> now and plan{' '}
-            <strong>pure PQC</strong> later, but that is a common migration pattern, not a rule
-            every framework imposes.
+            recommends it everywhere else, except that it does not recommend systematic
+            hybridisation for hash-based signatures (SLH-DSA, XMSS, LMS). BSI&apos;s TR-02102-1
+            currently recommends PQC in hybrid form, except that hash-based signatures may in
+            principle be used alone, provided their implementation security is carefully considered.
+            ETSI TS 119 312 specifies hybrid signatures for trust services. NSA does not require
+            hybrids for National Security Systems: CNSA 2.0 sets pure ML-KEM-1024 and ML-DSA-87 as
+            the end state, and counts only the hybrids it has specifically identified. Many programs
+            therefore deploy <strong>hybrid</strong> now and plan <strong>pure PQC</strong> later,
+            but that is a common migration pattern, not a rule every framework imposes.
           </p>
           <p className="text-xs text-muted-foreground">
             <strong>Planning rule of thumb:</strong> Start hybrid deployments now. Plan your
@@ -270,7 +277,7 @@ const Step2ApproachAndDeadlines: React.FC = () => (
             {
               year: '2030',
               event:
-                'EO 14412 — federal civilian HVAs, high-impact systems and covered contractors on PQC for key establishment (ML-KEM)',
+                'EO 14412 — federal civilian HVAs and high-impact systems on PQC for key establishment (ML-KEM); a directed FAR rule would require covered contractors to comply with NIST’s FIPS by 31 Dec 2030',
               source: 'EO 14412',
             },
             {
@@ -341,10 +348,12 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2">EOP / OMB / NSA</td>
                 <td className="py-2 px-2 font-mono text-primary">2030</td>
                 <td className="py-2 px-2">
-                  Two parallel clocks. <strong>Federal civilian</strong>: EO 14412 (22 June 2026)
-                  requires High Value Assets, high-impact systems and covered contractors to use PQC
-                  for key establishment by 31 December 2030 and for digital signatures by 31
-                  December 2031, implemented by OMB M-26-15.{' '}
+                  Two parallel clocks.{' '}
+                  <strong>Federal agencies, excluding National Security Systems</strong>: EO 14412
+                  (22 June 2026) requires High Value Assets and high-impact systems to use PQC for
+                  key establishment by 31 December 2030 and for digital signatures by 31 December
+                  2031, implemented by OMB M-26-15; it also directs a proposed FAR rule that would
+                  require covered contractors to comply with NIST&rsquo;s FIPS by 31 December 2030.{' '}
                   <strong>National security systems</strong>: CNSA 2.0 — software/firmware signing
                   and traditional networking exclusive by 2030; web browsers/servers, cloud and
                   operating systems by 2033; NSS transition complete by 2035 per NSM-10.
@@ -355,10 +364,12 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2">ASD</td>
                 <td className="py-2 px-2 font-mono text-primary">2030</td>
                 <td className="py-2 px-2">
-                  Cease use of traditional asymmetric cryptography (RSA, DH, ECDH, ECDSA) in
-                  government and critical infrastructure systems; algorithms &ldquo;will not be
-                  approved for use beyond 2030&rdquo; (ASD). Phased: transition plans required by
-                  end of 2026, implementation begins 2028, full completion by 2030.
+                  ASD recommends ceasing the use of traditional asymmetric cryptography (RSA, DH,
+                  ECDH, ECDSA) by the end of 2030; the ISM states these algorithms &ldquo;will not
+                  be approved beyond 2030&rdquo;. ASD&apos;s milestones: by end of 2026
+                  organisations should have a refined transition plan; by end of 2028 they should
+                  have commenced the transition, starting with critical systems and data; by end of
+                  2030 they should have completed it.
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -400,9 +411,10 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-medium text-foreground">Israel</td>
                 <td className="py-2 px-2">INCD</td>
-                <td className="py-2 px-2 font-mono text-primary">2025</td>
+                <td className="py-2 px-2 font-mono text-primary">&mdash;</td>
                 <td className="py-2 px-2">
-                  Quantum threat assessments completed by end of 2025; PQC required in new contracts
+                  No PQC deadline found: the INCD cybersecurity strategy document we hold does not
+                  mention quantum
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -436,10 +448,12 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               <tr>
                 <td className="py-2 px-2 font-medium text-foreground">G7</td>
                 <td className="py-2 px-2">CEG</td>
-                <td className="py-2 px-2 font-mono text-primary">2034</td>
+                <td className="py-2 px-2 font-mono text-primary">2035</td>
                 <td className="py-2 px-2">
-                  Cyber Expert Group (January 2026): financial sector PQC migration by 2034 with
-                  phased preparation from 2025
+                  Cyber Expert Group (January 2026): a roadmap for the financial sector that does
+                  not prescribe fixed timelines; guidance from several jurisdictions often points to
+                  2035 as an overall target date, and the period 2030&ndash;32 reflects the
+                  approaches G7 jurisdictions envisage for migrating critical systems
                 </td>
               </tr>
             </tbody>
@@ -448,9 +462,12 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
         <div className="bg-muted/50 rounded-lg p-3 border border-border">
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Key takeaway:</strong> Organizations must meet the{' '}
-            <em>earliest</em> deadline across all jurisdictions where they operate. A company in
-            Australia and the EU faces a 2030 hard deadline, not the EU&apos;s 2035 full transition
-            target.
+            <em>earliest</em> deadline across all jurisdictions where they operate. A
+            multi-jurisdiction organisation can plan to the earliest date that applies to it. ASD
+            recommends ceasing the use of traditional asymmetric cryptography by the end of 2030;
+            the EU roadmap recommends that high-risk use cases be transitioned as soon as possible
+            and no later than the end of 2030, and that the transition be completed for as many
+            systems as practically feasible by 2035.
           </p>
         </div>
       </div>
@@ -522,16 +539,19 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
             <p className="text-xs text-muted-foreground">
               EO 14412 (signed June 22, 2026) &mdash; &ldquo;Securing the Nation Against Advanced
               Cryptographic Attacks&rdquo; &mdash; is the order that actually sets dates. Federal
-              High Value Assets, high-impact systems and covered contractors must use PQC for{' '}
-              <strong>key establishment by December 31, 2030</strong> and for{' '}
-              <strong>digital signatures by December 31, 2031</strong>. The function split is
+              agencies&rsquo; High Value Assets and high-impact systems (National Security Systems
+              excluded) must use PQC for <strong>key establishment by December 31, 2030</strong> and
+              for <strong>digital signatures by December 31, 2031</strong>. The function split is
               deliberate: key establishment carries harvest-now-decrypt-later exposure, so it moves
-              first. It further directs a FAR Council proposed rule on contractor FIPS/PQC
-              compliance (due 19 December 2026, 180 days after EO 14412) and CISA guidance on
-              minimum <InlineTooltip term="CBOM">CBOM</InlineTooltip> elements (due 19 March 2027,
-              270 days after EO 14412). OMB Memorandum M-26-15 (June 24, 2026) is the implementing
-              guidance: a five-phase agency schedule and PQC migration plans filed with OMB.
-              National security systems are out of scope &mdash; they remain under CNSA 2.0.
+              first. It further directs the FAR Council to publish a proposed rule (due 19 December
+              2026, 180 days after EO 14412) that would require covered contractors to comply by 31
+              December 2030 with NIST&rsquo;s FIPS, including all applicable FIPS incorporating
+              PQC-compliant algorithms; the order directs that proposed rule, it is not itself the
+              rule. It also directs CISA guidance on minimum{' '}
+              <InlineTooltip term="CBOM">CBOM</InlineTooltip> elements (due 19 March 2027, 270 days
+              after EO 14412). OMB Memorandum M-26-15 (June 24, 2026) is the implementing guidance:
+              a five-phase agency schedule and PQC migration plans filed with OMB. National security
+              systems are out of scope &mdash; they remain under CNSA 2.0.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

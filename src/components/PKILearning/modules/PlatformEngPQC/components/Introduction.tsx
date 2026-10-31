@@ -264,15 +264,20 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="flex items-start gap-2">
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
-                <strong className="text-foreground">Notation + AWS Crypto plugin</strong> — supports
-                ML-DSA-65 today (beta). Best option for new deployments.
+                <strong className="text-foreground">Notation</strong> — we found no vendor
+                documentation that Notation or its AWS Signer plugin supports ML-DSA, so treat any
+                ML-DSA support as unconfirmed.
               </span>
             </div>
             <div className="flex items-start gap-2">
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
-                <strong className="text-foreground">cosign v2.x</strong> — ML-DSA support on roadmap
-                for 2026. Rekor transparency log must also be migrated.
+                <strong className="text-foreground">cosign / Sigstore</strong> — Sigstore says (June
+                2025) it wants to enable post-quantum signing as soon as possible and has added
+                ML-DSA to its protocol specification for client experiments; its services will adopt
+                post-quantum algorithms once vetted implementations are in the Go ecosystem. No date
+                is given, the post does not mention cosign, and the Rekor transparency log must also
+                be migrated.
               </span>
             </div>
             <div className="flex items-start gap-2">
@@ -320,7 +325,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 tool: 'cert-manager ClusterIssuer',
                 problem:
                   'Default key type is RSA-2048. Every cert issued from this root is quantum-vulnerable.',
-                fix: 'Set algorithm: MLDSA44 in Certificate.spec.privateKey (cert-manager v1.17+).',
+                fix: 'The cert-manager Certificate privateKey.algorithm field accepts RSA, ECDSA or Ed25519 only; obtain ML-DSA certificates from an issuer that supports them, for example Vault PKI or EJBCA.',
               },
               {
                 tool: 'HashiCorp Vault PKI role',
@@ -342,8 +347,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               {
                 tool: 'kubeconfig client certs',
                 problem:
-                  'CI/CD deploy certs are ECDSA P-256. All kubectl sessions are HNDL targets.',
-                fix: 'Rotate to ML-DSA-44 via cert-manager Certificate (usages: client auth).',
+                  'CI/CD deploy certs are ECDSA P-256 (a forgery risk). The ECDHE key exchange in kubectl sessions is the harvest-now-decrypt-later target.',
+                fix: 'Rotate to an ML-DSA-44 client certificate from an ML-DSA-capable issuer (for example Vault PKI or EJBCA).',
               },
             ].map((item) => (
               <div

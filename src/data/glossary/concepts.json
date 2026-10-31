@@ -896,8 +896,8 @@
   {
     "term": "Person Identification Data",
     "acronym": "PID",
-    "definition": "The foundational digital identity credential in the EUDI Wallet ecosystem, containing core attributes like name, date of birth, and nationality issued by a national authority.",
-    "technicalNote": "PID is the prerequisite for all other attestations (diplomas, driving licenses). Must be cryptographically bound to the wallet holder's key to prevent transfer.",
+    "definition": "The digital identity credential in the EUDI Wallet ecosystem, containing core attributes like name, date of birth, and nationality issued by a national authority.",
+    "technicalNote": "PID is the identity credential issued by a PID Provider; a Wallet Unit without a PID stays Operational and can still receive other attestations, but cannot present a PID. Must be cryptographically bound to the wallet holder's key to prevent transfer.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
     "category": "concept"
@@ -1349,7 +1349,7 @@
   },
   {
     "term": "Notation",
-    "definition": "A CNCF OCI artifact signing tool that supports any OCI artifact (images, Helm charts, SBOMs) using X.509 certificate-backed signatures. Notation v1.3+ supports ML-DSA-65 via the AWS Crypto Tools plugin, making it the first production-grade PQC container signing solution.",
+    "definition": "A CNCF OCI artifact signing tool that supports any OCI artifact (images, Helm charts, SBOMs) using X.509 certificate-backed signatures. We found no vendor documentation stating that Notation, or its AWS Signer plugin, supports ML-DSA, so any post-quantum support is unconfirmed.",
     "relatedModule": "/learn/platform-eng-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1402,7 +1402,7 @@
     "term": "Edge PoP",
     "acronym": "PoP",
     "definition": "A Point of Presence — a physical data center location at the network edge where CDN or cloud providers deploy servers to cache content and terminate TLS connections close to end users.",
-    "technicalNote": "Major CDNs operate 200-300+ PoPs globally. PQC deployment at edge PoPs requires coordinated key material distribution and certificate rotation across all locations simultaneously.",
+    "technicalNote": "PQC deployment at edge PoPs requires coordinated key material distribution and certificate rotation across all locations simultaneously.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
     "category": "concept"
@@ -1650,7 +1650,7 @@
   {
     "term": "Bouncy Castle",
     "definition": "Open-source cryptography library available for Java and .NET. Plays a dual role: as a JCA provider and as a standalone lightweight API. Has the widest PQC algorithm coverage of any open-source library.",
-    "technicalNote": "Since BC 1.79 (November 2024), Bouncy Castle supports the finalized NIST PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Also supports LMS/XMSS (SP 800-208), HQC, and Classic McEliece. The BC C# port provides equivalent coverage for .NET environments.",
+    "technicalNote": "Since BC 1.79 (October 2024), Bouncy Castle supports the finalized NIST PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Also supports LMS/XMSS (SP 800-208), HQC, and Classic McEliece. Bouncy Castle announced on 9 June 2025 that its C# .NET edition (2.6.1) supports the finalized PKCS#8 private key formats for these NIST PQC algorithms, ML-DSA and SLH-DSA signatures in CMS SignedData, and ML-KEM-only TLS; check the C# release notes for the version you use.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
     "category": "concept"
@@ -2363,7 +2363,7 @@
     "term": "CryptoCOE",
     "acronym": "Cryptographic Center of Excellence",
     "definition": "An organisational operating model that centralises ownership of cryptography across an enterprise — answering 'who owns it?' for crypto-agility (capability) and CPM (program).",
-    "technicalNote": "Gartner (Mahdi / Lowans) reported ~50% lower PQC transition cost for organisations with a CryptoCOE in place before 2028. The CryptoCOE typically owns standards, exception handling, KMS / HSM platform decisions, and library / vendor approvals.",
+    "technicalNote": "This module's ROI model assumes about 50% lower PQC transition cost for organisations with a CryptoCOE in place before 2028; it is an illustrative assumption, not a sourced figure. The CryptoCOE typically owns standards, exception handling, KMS / HSM platform decisions, and library / vendor approvals.",
     "relatedModule": "/learn/crypto-mgmt-modernization",
     "complexity": "intermediate",
     "category": "concept"

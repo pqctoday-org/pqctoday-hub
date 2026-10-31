@@ -50,7 +50,7 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       badge: 'Satellite',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'GEO RTT of 600 ms means a 3-round PQC handshake takes 1.8 seconds minimum. At solar maximum, SEU rate increases 10x, requiring key refresh every 4-8 hours instead of every 24 hours. This doubles the handshake overhead budget.',
+        'This tool sets the GEO round trip to 600 ms (GSMA PQ.07 gives about 500 ms for GEO round-trip latency), so a 3-round PQC handshake takes 1.8 seconds minimum. The tool assumes the SEU rate increases 10x at solar maximum, requiring key refresh every 4-8 hours instead of every 24 hours, which means 3-6x more handshakes per day, not a doubling.',
       config: { step: 1 },
     },
     {

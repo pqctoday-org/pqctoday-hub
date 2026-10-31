@@ -4,7 +4,7 @@ Confidential Computing uses hardware-based Trusted Execution Environments (TEEs)
 
 ### Why It Matters
 
-Shor's and Grover's algorithms severely threaten the TEE trust model. Grover's algorithm halves symmetric security margins, downgrading current TEE memory encryption engines (AES-128-XTS) to an effective 64 bits. More critically, Shor's algorithm completely breaks Remote Attestation. Every major attestation quote today (Intel SGX/TDX, AMD SEV-SNP, ARM CCA) is signed using classical ECDSA (P-256/P-384). If an adversary forges these signatures via a quantum computer, they can easily impersonate an enclave and steal provisioned secrets from an HSM.
+Quantum computers threaten the TEE trust model in two ways. Grover's algorithm roughly halves the effective strength of symmetric keys (a crude figure): memory encryption with 128-bit AES keys drops to about 64 bits. Shor's algorithm, run on a cryptographically relevant quantum computer, could break the public-key signatures that remote attestation relies on: an attestation report is signed by the TEE's attestation key, and Intel documents ECDSA-based attestation for its SGX processors. An attacker who could forge those signatures could impersonate an enclave and receive secrets provisioned from an HSM.
 
 ### The Key Takeaway
 

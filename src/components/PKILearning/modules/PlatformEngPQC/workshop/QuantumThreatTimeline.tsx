@@ -228,7 +228,7 @@ export const QuantumThreatTimeline: React.FC = () => {
           <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-bold text-foreground mb-1">
-              Why Short-Lived Certs Don't Eliminate HNDL Risk
+              Why Short-Lived Certificates Don't Protect a Recorded TLS Session
             </h4>
             <p className="text-xs text-muted-foreground">
               A Vault mTLS session using ECDH with a 1-hour certificate is still an HNDL target. The

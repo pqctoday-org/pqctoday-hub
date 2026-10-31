@@ -158,7 +158,7 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     name: 'CKM_PKCS5_PBKD2',
     type: 'classical',
     mechanismCode: '0x000003b0',
-    description: 'PBKDF2 key derivation (BIP39 seed generation, PKCS#11 v3.2 §5.7.3.1)',
+    description: 'PBKDF2 key derivation (BIP39 seed generation, PKCS#11 v3.2 §6.37.4)',
     keySize: 'Variable (1–512 bytes)',
     pkcs11Version: 'v3.2',
   },
@@ -701,7 +701,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4703',
-    note: 'Powers Azure Managed HSM backend. No PQC algorithm in the approved list.',
+    note: 'Marvell LiquidSecurity family; Microsoft says Managed HSMs use Marvell LiquidSecurity HSM adapters but does not name this certificate. No PQC algorithm in the approved list.',
   },
   {
     vendorId: 'futurex-cryptohub',
@@ -844,23 +844,22 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     vendorId: 'thales-luna',
     vendorName: 'Thales Luna 7',
     currentFirmware: '7.8.x or earlier',
-    targetFirmware: '7.9.2+',
+    targetFirmware: '7.9.0 or newer',
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM',
-    notes:
-      'PQC integrated into core firmware. Luna Client must also be upgraded to 10.9.2+. Existing keys are preserved during upgrade. CBOM REST API available after upgrade. FIPS 140-3 CMVP resubmission required for v7.9.2 — all vendors adding PQC to existing certified modules must resubmit.',
+    notes: 'PQC integrated into core firmware.',
   },
   {
     vendorId: 'entrust-nshield',
     vendorName: 'Entrust nShield 5',
     currentFirmware: '13.6.x or earlier',
-    targetFirmware: '13.8.0+',
+    targetFirmware: '13.8+ (ML-KEM: 13.8.3+)',
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
     upgradeComplexity: 'low',
-    estimatedDowntime: '1-2 hours per HSM',
+    estimatedDowntime: '1-2 hours per HSM (planning estimate)',
     notes:
-      'ML-KEM, ML-DSA and SLH-DSA are native in firmware v13.8.0 with the PostQuantum feature enabled. The PKCS#11 API gained the algorithms one release at a time: ML-DSA in Security World v13.9.0 (standard CKM_ML_DSA mechanisms), ML-KEM in v13.9.3 (CKM_ML_KEM; firmware v13.8.3 or later) and SLH-DSA in v13.9.5 (12 parameter sets). In v13.9.0 ML-KEM and SLH-DSA were available only through the native nCore API (release notes sections 3.4 and 3.5). The Entrust pages checked do not describe LMS or XMSS support. Entrust states the post-quantum implementation is CAVP-validated. CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
+      'ML-DSA and SLH-DSA need firmware v13.8 or later and ML-KEM needs v13.8.3 or later, with the PostQuantum feature enabled in each case (release notes). The PKCS#11 API gained the algorithms one release at a time: ML-DSA in Security World v13.9.0 (standard CKM_ML_DSA mechanisms), ML-KEM in v13.9.3 (CKM_ML_KEM; firmware v13.8.3 or later) and SLH-DSA in v13.9.5 (12 parameter sets). In v13.9.0 ML-KEM and SLH-DSA were available only through the native nCore API (release notes sections 3.4 and 3.5). The Entrust pages checked do not describe LMS or XMSS support. Entrust states the post-quantum implementation is CAVP-validated. CMVP certificate 4745 (nShield 5s, FIPS 140-3 level 3) lists no post-quantum algorithm; an nShield 5s module is on the CMVP Modules in Process list (Review, 30 Jul 2026), which is a queue position, not an outcome. nShield as a Service receives automatic updates.',
   },
   {
     vendorId: 'utimaco',

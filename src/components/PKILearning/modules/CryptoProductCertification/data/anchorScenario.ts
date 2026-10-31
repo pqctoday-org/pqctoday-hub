@@ -167,7 +167,7 @@ export const ANCHOR_CUSTOMER_PROFILES: Record<AnchorCustomerId, AnchorCustomerPr
     asks: 'Is this HSM an approved PCI PTS HSM, and will it let our PIN, P2PE and key-management operations pass their assessments?',
     timelineMarkets: [],
     deadlineNote:
-      'No jurisdiction deadline: payment requirements come from PCI SSC and the payment brands, and no public PCI material names a PQC deadline (as of 24 September 2026).',
+      'No jurisdiction deadline: payment requirements come from PCI SSC and the payment brands, and the v5.0 announcement and the listing definitions name no PQC deadline (as of 24 September 2026).',
   },
 }
 

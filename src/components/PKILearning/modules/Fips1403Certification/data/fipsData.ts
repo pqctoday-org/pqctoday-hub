@@ -610,7 +610,7 @@ export const PLANNER_SCENARIOS: readonly PlannerScenario[] = [
       '3':
         'Defensible only if stated environmental controls reduce the physical-attack exposure and the applicable requirement-area analysis supports Level 3. External site controls are assumptions; they do not become properties of the module. ' +
         RAISE_LATER,
-      '4': 'Defensible as a planning target because physical attack at an unattended site is explicit. Confirm every applicable requirement-area target against ISO/IEC 19790 as modified by SP 800-140 with the laboratory; the scenario alone does not prove the module can satisfy Level 4.',
+      '4': 'Defensible as a planning target because physical attack at an unattended site is explicit. Confirm every applicable requirement-area target against ISO/IEC 19790 as modified by the SP 800-140 series with the laboratory; the scenario alone does not prove the module can satisfy Level 4.',
       inherit:
         'No: this appliance IS the HSM module, and its level is the decision you are making.',
     },

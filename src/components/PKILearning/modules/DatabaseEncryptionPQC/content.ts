@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'database-encryption-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -68,6 +68,6 @@ export const content: ModuleContent = {
     overview:
       'ID: database-encryption-pqc. Track: Infrastructure. Level: Intermediate. Duration: 75 min. Workshop Steps: 5. This module covers quantum-safe migration for database encryption layers, TDE key management, BYOK/HYOK architecture, queryable encryption compatibility, and regulatory compliance for enterprise database fleets. ---',
     keyConcepts:
-      "AES-256 is quantum-safe: Grover's algorithm reduces effective bits from 256 to 128, but AES-256 still meets NIST PQC Category 5 — the highest (AES-128 = Cat 1, AES-192 = Cat 3, AES-256 = Cat 5). Those categories already assume Grover's speedup — AES-128 still meets Category 1 and AES-192 still meets Category 3; AES-256 simply offers the largest security margin. No data file re-encryption needed. DEK wrapping is the PQC target: RSA-OAEP and ECDH used to wrap DEKs must be replaced with ML-KEM-1024. ML-KEM-1024 key sizes: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.",
+      "AES-256 is quantum-safe: Grover's algorithm reduces effective bits from 256 to 128, but AES-256 still meets NIST PQC Category 5 — the highest (AES-128 = Cat 1, AES-192 = Cat 3, AES-256 = Cat 5). Those categories already assume Grover's speedup — AES-128 still meets Category 1 and AES-192 still meets Category 3; AES-256 simply offers the largest security margin. No data file re-encryption needed. DEK wrapping is the PQC target: RSA-OAEP and ECDH used to wrap DEKs must be replaced with a standardized KEM: ML-KEM-768 is the FIPS 203 default; ML-KEM-1024 where a policy such as CNSA 2.0 requires it. ML-KEM-1024 key sizes: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.",
   },
 }

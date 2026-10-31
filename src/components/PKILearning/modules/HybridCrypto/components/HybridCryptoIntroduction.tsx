@@ -204,9 +204,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <p className="text-xs text-muted-foreground">
                   A single composite OID identifies the algorithm pair. Both signatures must verify.
                   Defined in <strong>draft-ietf-lamps-pq-composite-sigs-19</strong>, approved and in
-                  the RFC Editor queue (no RFC number yet). Strongest binding &mdash; neither
-                  signature can be stripped and reused alone. Not backward-compatible with legacy
-                  validators.
+                  the RFC Editor queue (no RFC number yet). Strongest binding &mdash; the signatures
+                  are tied to the composite algorithm: a split-off ML-DSA signature fails on its
+                  own, but the traditional signature still verifies (draft §9.2.3). Not
+                  backward-compatible with legacy validators.
                 </p>
               </div>
             </div>
@@ -523,8 +524,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </table>
             </div>
             <p className="text-[10px] text-muted-foreground italic">
-              HNDL risk + data-retention window should drive the choice: if harvested ciphertext
-              must remain secret past ~2035, prefer Cat 3 or Cat 5 over Cat 1.
+              This module&apos;s rule of thumb, not from a standard: HNDL risk + data-retention
+              window should drive the choice. If harvested ciphertext must remain secret past ~2035,
+              prefer Cat 3 or Cat 5 over Cat 1.
             </p>
           </div>
 
@@ -576,9 +578,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </li>
               <li>
                 <strong>Domain separation is strongly recommended.</strong> SP 800-227 §4.6.3 says a
-                domain separator should uniquely identify the composite scheme; each context (TLS
-                handshake, KEMTLS, S/MIME, IKE) should feed a unique label/context string into the
-                KDF so shared secrets cannot be replayed across protocols.
+                domain separator should be used to uniquely identify the composite scheme in use
+                (for example the component schemes, order of composition, choice of parameter set,
+                key combiner, KDF).
               </li>
             </ul>
             <p className="text-[10px] text-muted-foreground italic">
@@ -770,10 +772,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h3 className="text-sm font-bold text-foreground mb-2">Use cases</h3>
             <p className="mb-2">
-              A KEM has no way for the sender to supply a chosen shared secret (unlike ECDH) — HPKE
-              always encapsulates a fresh, sender-unpredictable one. That property is why it shows
-              up wherever a protocol needs one-shot public-key encryption rather than an interactive
-              handshake:
+              A KEM&rsquo;s Encaps takes the recipient&rsquo;s public key (plus a parameter set) and
+              returns both a shared secret and the ciphertext; the sender does not hand it a key of
+              its own choosing, whereas in key transport (for example RSA-OAEP) one party selects
+              the key and transmits it. HPKE&rsquo;s Encap is a randomized algorithm that generates
+              an ephemeral shared secret and its encapsulation. Needing only the recipient&rsquo;s
+              public key is why it shows up wherever a protocol needs one-shot public-key encryption
+              rather than an interactive handshake:
             </p>
             <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
               <li>
@@ -971,9 +976,12 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="text-xs font-bold text-foreground mb-1">Size Impact</div>
               <p className="text-xs text-muted-foreground">
                 Classical X25519 ClientHello key_share is 32 bytes. X25519MLKEM768 is 1,216 bytes
-                &mdash; a 38&times; increase. This can push the ClientHello beyond a single TCP
-                segment (the 1,460-byte MSS assumed by RFC 6928), requiring an extra round trip on
-                some networks.
+                (1,184 for ML-KEM plus 32 for X25519) &mdash; a 38&times; increase in the key share.
+                Cloudflare notes that the ClientHello used to almost always fit within a single
+                network packet; with a 1,216-byte key share it may now span more than one. RFC 6928
+                (Experimental) proposes an upper bound of 10 segments for TCP&rsquo;s initial window
+                (min (10*MSS, max (2*MSS, 14600))) in the first round-trip time, and a sender MAY
+                start smaller.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -1008,10 +1016,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            SP 800-227 §3 is explicit: a compliant ML-KEM deployment is more than &ldquo;call the
-            library.&rdquo; After the required input checks, decapsulation must conceal the result
-            of its internal ciphertext comparison. Implementations must also address timing and
-            other side-channel leakage.
+            A compliant ML-KEM deployment is more than &ldquo;call the library.&rdquo; SP 800-227
+            §3.2 covers the required input checks, and FIPS 203 specifies implicit rejection: if the
+            re-encrypted ciphertext does not match the one received, decapsulation returns a key
+            derived from the ciphertext and a secret value stored in the decapsulation key
+            (Algorithm 18) instead of reporting an error. SP 800-227 §3.3 says KEM modules should be
+            designed with appropriate countermeasures against side-channel attacks, including
+            constant-time implementations and protecting memory from leakage.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border md:col-span-2">

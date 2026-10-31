@@ -19,7 +19,7 @@ export const MONITORING_TOOLS: MonitoringTool[] = [
       {
         name: 'LongLivedCertExpiresAfterCRQCWindow',
         expression: '(certmanager_certificate_expiration_timestamp_seconds - time()) / 86400 > 730',
-        threshold: '> 730 days remaining (potential HNDL exposure)',
+        threshold: '> 730 days remaining (long forgery window)',
         severity: 'warning',
       },
       {
@@ -113,7 +113,7 @@ export const MONITORING_TOOLS: MonitoringTool[] = [
       {
         name: 'LongLivedCertInCluster',
         expression: '(x509_cert_not_after - time()) / 86400 > 730',
-        threshold: 'Certificate with > 2 years validity (HNDL window risk)',
+        threshold: 'Certificate with > 2 years validity (forgery window)',
         severity: 'warning',
       },
       {
@@ -302,7 +302,7 @@ export const SIZE_COMPARISONS: PQCSizeComparison[] = [
     hybridSize: 17344,
     unit: 'bytes',
     notes:
-      'SLH-DSA-128f preferred for SBOMs (stateless, long-lived). Signature is 67× larger than ECDSA. Acceptable since SBOMs are read rarely.',
+      'SLH-DSA-128f preferred for SBOMs (stateless, long-lived). Signature is 267× larger than ECDSA P-256. Acceptable since SBOMs are read rarely.',
   },
 ]
 
@@ -364,7 +364,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'cert-manager generates a private key for the Certificate resource. Key type is specified in spec.privateKey.algorithm.',
     pqcNote:
-      'Set algorithm: MLDSA44 in cert-manager v1.17+ to generate an ML-DSA-44 key. Until CA ACME supports PQC, use hybrid: set algorithm: MLDSA44 + hybridAlgorithm: ECDSA-P256.',
+      'The cert-manager Certificate privateKey.algorithm field accepts RSA, ECDSA or Ed25519 only and has no hybridAlgorithm field, so ML-DSA keys come from an issuer that supports them, for example Vault PKI or EJBCA.',
     status: 'pqc',
   },
   {
@@ -384,7 +384,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       "cert-manager places an ACME order with the CA (e.g., Let's Encrypt). The CA returns authorization challenges (HTTP-01 or DNS-01).",
     pqcNote:
-      "Let's Encrypt ACME PQC support is planned for 2026 (Staging) → 2027 (Production). Until then, ACME orders with ML-DSA keys are rejected by production CAs. Use internal CAs (Vault PKI, EJBCA) for ML-DSA certificates in the interim.",
+      "Let's Encrypt is targeting late 2026 for a staging environment that issues Merkle Tree Certificates (MTCs) and 2027 for a production-ready environment; its post says it is tracking the standards for ML-DSA signatures in X.509 and gives no ML-DSA issuance dates. In the interim, use internal CAs (Vault PKI, EJBCA) for ML-DSA certificates.",
     status: 'classical',
   },
   {
@@ -404,7 +404,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'The CA signs the CSR with its own signing key and returns the DER-encoded X.509 certificate.',
     pqcNote:
-      "For end-to-end PQC: both the subscriber cert (ML-DSA leaf) AND the CA signing key must be ML-DSA. Let's Encrypt staging will use ML-DSA-65 for its ACME CA signing key in 2026.",
+      "For end-to-end PQC: both the subscriber cert (ML-DSA leaf) AND the CA signing key must be ML-DSA. Let's Encrypt's announced plan is a staging environment that issues Merkle Tree Certificates (late 2026); its post does not give a date for ML-DSA-signed X.509 certificates.",
     status: 'hybrid',
   },
   {
@@ -414,7 +414,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'cert-manager renews certificates at 2/3 of the certificate lifetime (e.g., 60 days into a 90-day cert).',
     pqcNote:
-      'ML-DSA certificates have the same rotation logic. Shorter TTLs (30 days) are recommended for PQC transition to reduce HNDL exposure window. cert-manager renewBefore: 20d achieves this.',
+      'ML-DSA certificates have the same rotation logic. Shorter TTLs (30 days) are recommended for PQC transition to shorten the window in which a forged certificate would be accepted. cert-manager renewBefore: 20d achieves this.',
     status: 'pqc',
   },
   {

@@ -26,7 +26,7 @@ export interface IAMProtocol {
   signingAlgorithm: string
   pqcReplacement: string
   signatureSize: { classical: number; pqc: number }
-  hndlRisk: HNDLRisk
+  quantumRisk: HNDLRisk
   notes: string
 }
 
@@ -36,7 +36,7 @@ export interface DirectoryService {
   protocols: string[]
   keyExchangeAlgorithm: string
   authAlgorithm: string
-  hndlScore: number // 1-10
+  quantumScore: number // 1-10
   vulnerabilities: string[]
   migrationPath: string
   vendorTimeline: string
@@ -55,7 +55,7 @@ export interface ZeroTrustLayer {
 
 export interface CryptoRisk {
   tokenType: TokenType
-  hndlRisk: HNDLRisk
+  quantumRisk: HNDLRisk
   rationale: string
   typicalLifetime: string
 }
@@ -71,7 +71,8 @@ export const IAM_COMPONENTS: IAMComponent[] = [
     quantumRisk: 'high',
     migrationPriority: 'high',
     pqcReplacement: 'ML-DSA-65',
-    notes: 'SSO tokens are long-lived; HNDL captures expose all downstream sessions',
+    notes:
+      'SSO tokens are long-lived signed assertions; a quantum computer that breaks the signing key could forge tokens for all downstream sessions',
   },
   {
     id: 'mfa',
@@ -91,7 +92,8 @@ export const IAM_COMPONENTS: IAMComponent[] = [
     quantumRisk: 'high',
     migrationPriority: 'immediate',
     pqcReplacement: 'ML-DSA-65 (FIPS 204)',
-    notes: 'Access tokens often cached; long-lived refresh tokens are HNDL-critical',
+    notes:
+      'Access tokens are often cached and reused until they expire; a token forged with a broken signing key is accepted while the verifier trusts that key',
   },
   {
     id: 'saml-idp',
@@ -101,7 +103,8 @@ export const IAM_COMPONENTS: IAMComponent[] = [
     quantumRisk: 'critical',
     migrationPriority: 'immediate',
     pqcReplacement: 'ML-DSA-65 via XML-DSig profile update',
-    notes: 'SAML assertions can be replayed; long-lived assertions expose HNDL attack window',
+    notes:
+      'SAML assertions are signed; a quantum computer that breaks the signing key could forge assertions, and long-lived assertions and keys lengthen the window',
   },
   {
     id: 'oauth-as',
@@ -153,7 +156,7 @@ export const IAM_PROTOCOLS: IAMProtocol[] = [
     signingAlgorithm: 'RSA-PKCS1v15 SHA-256 (RSA-2048)',
     pqcReplacement: 'ML-DSA-65',
     signatureSize: { classical: 256, pqc: 3309 },
-    hndlRisk: 'high',
+    quantumRisk: 'high',
     notes: 'Most common; JWK Set must include PQC public key for validation',
   },
   {
@@ -163,7 +166,7 @@ export const IAM_PROTOCOLS: IAMProtocol[] = [
     signingAlgorithm: 'ECDSA P-256 SHA-256',
     pqcReplacement: 'ML-DSA-44',
     signatureSize: { classical: 64, pqc: 2420 },
-    hndlRisk: 'high',
+    quantumRisk: 'high',
     notes: 'Compact signature; PQC increases by ~38x — affects token transport overhead',
   },
   {
@@ -173,7 +176,7 @@ export const IAM_PROTOCOLS: IAMProtocol[] = [
     signingAlgorithm: 'RSA-SHA256',
     pqcReplacement: 'ML-DSA-65 via XML-DSig v2.0 profile',
     signatureSize: { classical: 256, pqc: 3309 },
-    hndlRisk: 'critical',
+    quantumRisk: 'critical',
     notes: 'SAML assertions are XML; base64-encoded PQC signatures increase payload significantly',
   },
   {
@@ -183,7 +186,7 @@ export const IAM_PROTOCOLS: IAMProtocol[] = [
     signingAlgorithm: 'RS256 or ES256',
     pqcReplacement: 'ML-DSA-65 (algorithm: "ML-DSA-65" in JOSE header)',
     signatureSize: { classical: 256, pqc: 3309 },
-    hndlRisk: 'high',
+    quantumRisk: 'high',
     notes: 'OIDC discovery doc (/.well-known/openid-configuration) must expose PQC JWKS',
   },
   {
@@ -193,7 +196,7 @@ export const IAM_PROTOCOLS: IAMProtocol[] = [
     signingAlgorithm: 'AES-256-CTS-HMAC-SHA384 (session key wrapped via RSA PKINIT)',
     pqcReplacement: 'AES-256 retained; ML-KEM-768 for PKINIT encapsulation',
     signatureSize: { classical: 256, pqc: 1088 },
-    hndlRisk: 'critical',
+    quantumRisk: 'critical',
     notes: 'Long-lived tickets (10h default) present HNDL attack surface; PKINIT is the RSA vector',
   },
   {
@@ -201,10 +204,11 @@ export const IAM_PROTOCOLS: IAMProtocol[] = [
     name: 'OAuth 2.0 Access Token (JWT)',
     tokenType: 'OAuth2',
     signingAlgorithm: 'RS256 / ES256',
-    pqcReplacement: 'ML-DSA-44 (shorter lifetime tokens tolerate medium HNDL)',
+    pqcReplacement: 'ML-DSA-44 (shorter lifetime tokens tolerate a medium quantum risk)',
     signatureSize: { classical: 256, pqc: 2420 },
-    hndlRisk: 'medium',
-    notes: 'Short-lived (1h) reduces HNDL risk; refresh tokens need higher priority migration',
+    quantumRisk: 'medium',
+    notes:
+      'Short-lived (1h) shortens the window in which a forged token is useful; refresh tokens need higher priority migration',
   },
 ]
 
@@ -215,17 +219,18 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     protocols: ['Kerberos v5', 'LDAP', 'NTLM', 'LDAPS', 'PKINIT'],
     keyExchangeAlgorithm: 'RSA-2048 (PKINIT), DH (Kerberos pre-auth)',
     authAlgorithm: 'AES-256-CTS-HMAC-SHA384, RC4-HMAC (legacy)',
-    hndlScore: 9,
+    quantumScore: 9,
     vulnerabilities: [
       'PKINIT uses RSA-2048 — quantum-vulnerable key exchange',
       'Kerberos TGTs (10h) and service tickets (10h) are long-lived HNDL targets',
-      'NTLM uses MD4 hashing — no forward secrecy, HNDL captures expose credentials',
+      'NTLM uses MD4 hashing and has no forward secrecy; captured challenge-responses are a classical weakness, not a quantum one',
       'LDAP bind over plaintext leaks credentials; LDAPS needs PQC TLS update',
       'AS-REP roasting targets pre-authentication bypasses, exposing RSA-encrypted tickets',
     ],
     migrationPath:
-      'Upgrade to Windows Server 2025 with PKINIT PQC support; deploy hybrid Kerberos with ML-KEM PKINIT; disable NTLM; enforce LDAPS with hybrid TLS 1.3',
-    vendorTimeline: 'Microsoft Entra / Windows Server PQC: 2026-2027',
+      "This module's target design: hybrid Kerberos with ML-KEM PKINIT once Microsoft ships it (we found no published Microsoft date for PKINIT PQC); disable NTLM; enforce LDAPS with hybrid TLS 1.3",
+    vendorTimeline:
+      'Microsoft Entra / Windows Server PQC: no published date found (this module assumes 2026-2027)',
   },
   {
     id: 'openldap',
@@ -233,14 +238,14 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     protocols: ['LDAP', 'LDAPS', 'StartTLS', 'SASL/GSSAPI'],
     keyExchangeAlgorithm: 'TLS with RSA-2048 / ECDSA P-256',
     authAlgorithm: 'SASL/GSSAPI (delegates to Kerberos), simple bind (LDAP password)',
-    hndlScore: 7,
+    quantumScore: 7,
     vulnerabilities: [
       'TLS channel uses RSA/ECDH key exchange — HNDL captures expose all LDAP traffic',
       'Simple bind passwords transmitted over TLS; quantum-broken TLS exposes them',
       'SASL/GSSAPI security depends on Kerberos channel security',
     ],
     migrationPath:
-      'Update OpenSSL 3.x TLS to hybrid ML-KEM-768+X25519 for LDAPS; use OpenSSL 3.x with oqsprovider; verify GnuTLS or NSS backend supports PQC if not using OpenSSL',
+      'Update OpenSSL 3.x TLS to hybrid ML-KEM-768+X25519 for LDAPS; verify GnuTLS or NSS backend supports PQC if not using OpenSSL',
     vendorTimeline: 'OpenLDAP + OpenSSL 3.x oqsprovider: Available now (experimental)',
   },
   {
@@ -249,16 +254,16 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     protocols: ['OIDC', 'SAML 2.0', 'OAuth 2.0', 'WS-Federation', 'LDAPS (Entra DS)'],
     keyExchangeAlgorithm: 'RSA-2048 / ECDSA P-256 for token signing',
     authAlgorithm: 'RS256 / ES256 JWT signing; ECDH for MSAL TLS',
-    hndlScore: 8,
+    quantumScore: 8,
     vulnerabilities: [
-      'JWT ID tokens signed with RSA-2048 — HNDL captures allow future forgery',
-      'SAML assertions are long-lived federation tokens — high HNDL risk',
-      'Refresh tokens are opaque encrypted blobs (not RSA-signed JWTs); HNDL exposure concentrates in RSA-signed access and ID tokens',
+      'JWT ID tokens signed with RSA-2048 — a quantum computer that breaks the signing key can forge them (a forgery risk, not harvest-now-decrypt-later)',
+      'SAML assertions are long-lived signed federation tokens — a forged assertion is accepted while the verifier trusts the signing key',
+      'Refresh tokens are opaque encrypted blobs (not RSA-signed JWTs); the quantum-exposed parts are the RSA-signed access and ID tokens (forgery) and the TLS key exchange that carries them (HNDL)',
       'Entra DS LDAPS uses TLS with classical ciphers',
     ],
     migrationPath:
-      'Microsoft Entra PQC hybrid mode (preview 2025); migrate to ML-DSA token signing via Conditional Access PQC policy; enable hybrid TLS for MSAL SDK connections',
-    vendorTimeline: 'Microsoft Entra PQC: Preview 2025, GA target 2026-2027',
+      "This module's target design: ML-DSA token signing for Entra ID once Microsoft offers it (we found no published Microsoft Entra PQC date or Conditional Access PQC policy); enable hybrid TLS for MSAL SDK connections",
+    vendorTimeline: 'Microsoft Entra PQC: no published date found (this module assumes 2026-2027)',
   },
 ]
 
@@ -328,37 +333,37 @@ export const ZERO_TRUST_LAYERS: ZeroTrustLayer[] = [
 export const CRYPTO_RISKS: CryptoRisk[] = [
   {
     tokenType: 'Kerberos',
-    hndlRisk: 'critical',
+    quantumRisk: 'critical',
     rationale:
       'Kerberos TGTs (10h) and service tickets (10h) encrypted with RSA PKINIT session keys. A quantum computer decrypting captured traffic could forge arbitrary tickets, breaking the entire domain.',
     typicalLifetime: '10 hours (AD default)',
   },
   {
     tokenType: 'SAML',
-    hndlRisk: 'critical',
+    quantumRisk: 'critical',
     rationale:
-      'SAML assertions can be replayed. Long-lived assertions (hours to days) are high-value HNDL targets. Forged SAML can grant federated access to all relying parties.',
+      'SAML assertions are signed. A quantum computer that breaks the signing key could forge assertions that grant federated access to all relying parties; long-lived assertions (hours to days) lengthen the window. This is a forgery risk, not harvest-now-decrypt-later.',
     typicalLifetime: '1-8 hours (configurable)',
   },
   {
     tokenType: 'JWT',
-    hndlRisk: 'high',
+    quantumRisk: 'high',
     rationale:
-      'JWTs are commonly cached and reused for their full validity period. Refresh tokens (weeks/months) are the highest HNDL risk; access tokens (1h) are lower but still significant.',
+      'JWTs are signed and commonly cached and reused for their full validity period. A forged JWT is accepted while the verifier trusts the signing key, so the risk is forgery, not harvest-now-decrypt-later. Refresh tokens (weeks/months) give the longest window; access tokens (1h) a shorter but still significant one.',
     typicalLifetime: 'Access: 1h; Refresh: 7-90 days',
   },
   {
     tokenType: 'OIDC',
-    hndlRisk: 'high',
+    quantumRisk: 'high',
     rationale:
-      'OIDC ID tokens carry identity claims. If an attacker captures and later decrypts an ID token, they can forge identity assertions to all OIDC relying parties that trust the issuer.',
+      'OIDC ID tokens carry identity claims and are signed, not encrypted. A quantum computer that breaks the issuer signing key could forge identity assertions to all OIDC relying parties that trust the issuer. This is a forgery risk, not harvest-now-decrypt-later.',
     typicalLifetime: '1-24 hours',
   },
   {
     tokenType: 'OAuth2',
-    hndlRisk: 'medium',
+    quantumRisk: 'medium',
     rationale:
-      'Short-lived access tokens (1h) reduce HNDL risk but long-lived refresh tokens are critical. Client credentials and device flow tokens may have longer lifetimes requiring priority migration.',
+      'Short-lived access tokens (1h) shorten the window in which a forged token is useful, but long-lived refresh tokens are critical. Client credentials and device flow tokens may have longer lifetimes requiring priority migration.',
     typicalLifetime: 'Access: 1h; Refresh: 14-90 days',
   },
 ]

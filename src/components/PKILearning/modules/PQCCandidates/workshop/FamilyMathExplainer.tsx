@@ -1068,8 +1068,9 @@ const LatticeVisual: React.FC = () => {
           of the message. Falcon (FN-DSA) samples from a continuous Gaussian distribution and rounds
           to the lattice, which needs floating-point arithmetic that's notoriously hard to make
           constant-time. HAWK reformulates the problem on a rank-2 module lattice with a Gram matrix
-          as the public key, and uses integer-only Babai-style rounding — the same security level at
-          555 B with a much friendlier implementation profile for constrained hardware.
+          as the public key, and uses integer-only Babai-style rounding — 555 B signatures at
+          security category 1, and, per NIST IR 8610, a primary advantage over Falcon in its
+          reliance on integer-only arithmetic.
         </p>
       </div>
     </MotionConfig>

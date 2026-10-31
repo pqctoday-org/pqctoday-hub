@@ -39,8 +39,9 @@ spec:
     - http01:
         ingress:
           class: nginx
-# ✅ Hybrid key: ML-DSA-44 + ECDSA P-256 (dual-algorithm)
-# cert-manager v1.17+ with OpenSSL 3.5 provider
+# ⚠️  PROJECTED EXAMPLE ONLY: cert-manager's Certificate privateKey.algorithm accepts
+# RSA, ECDSA or Ed25519 today, with no ML-DSA value and no hybridAlgorithm field.
+# For ML-DSA certificates use an issuer that supports them (for example Vault PKI or EJBCA).
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -49,8 +50,8 @@ metadata:
 spec:
   secretName: ingress-tls-secret
   privateKey:
-    algorithm: MLDSA44          # ML-DSA-44 (FIPS 204 Level 2)
-    hybridAlgorithm: ECDSA-P256 # Hybrid: classical fallback
+    algorithm: MLDSA44          # projected: not an allowed value today
+    hybridAlgorithm: ECDSA-P256 # projected: no such field today
   dnsNames:
   - example.com`,
   },
@@ -63,7 +64,7 @@ spec:
     algorithm: 'rsa',
     pqcAlgorithm: 'ml-dsa',
     impact:
-      'CI/CD pipelines authenticate to Vault via TLS client certs. If these certs use RSA/ECDSA, the authentication sessions are HNDL targets — a future CRQC can replay recorded auth traffic.',
+      'CI/CD pipelines authenticate to Vault via TLS client certs. If these certs use RSA/ECDSA, a future CRQC can forge a client certificate and authenticate to Vault as the pipeline: a forgery risk. The recorded session is an HNDL target only through its key exchange.',
     vulnerableConfig: `# Vault PKI role — defaults to RSA-2048
 vault write pki/roles/pipeline-role \\
   allowed_domains="pipeline.internal" \\
@@ -72,16 +73,16 @@ vault write pki/roles/pipeline-role \\
   key_type="rsa" \\
   key_bits=2048
 # ⚠️  RSA-2048: broken by Shor's algorithm`,
-    pqcConfig: `# Vault PKI role — ML-DSA-44 (planned, requires future Vault PQC support)
-# Vault CLI parameters for PQC are not yet finalized.
-# The following is a projected example:
+    pqcConfig: `# Vault PKI role — ML-DSA-44
+# The Vault PKI API documentation lists ml-dsa as a role key type, with a parameter_set
+# of ml-dsa-44, ml-dsa-65 or ml-dsa-87.
 vault write pki/roles/pipeline-role-pqc \\
   allowed_domains="pipeline.internal" \\
   allow_subdomains=true \\
   max_ttl="720h" \\
-  key_type="ml-dsa-44"
-# ✅ ML-DSA-44 (NIST FIPS 204 Level 2)
-# Monitor Vault changelog for PQC PKI role support`,
+  key_type="ml-dsa" \\
+  parameter_set="ml-dsa-44"
+# ML-DSA-44 (FIPS 204 security category 2)`,
   },
   {
     id: 'helm-tls-values',
@@ -144,7 +145,7 @@ controller:
     tool: 'kubernetes',
     title: 'kubeconfig: Client Certificate Key Type',
     vulnerability:
-      'kubeconfig client certificates (used by CI/CD tools like kubectl, Argo) use ECDSA P-256 or RSA-2048. These authenticate high-privilege cluster operations — HNDL targets.',
+      'kubeconfig client certificates (used by CI/CD tools like kubectl, Argo) use ECDSA P-256 or RSA-2048. These authenticate high-privilege cluster operations; with RSA or ECDSA a future quantum computer could forge them: a forgery risk, not harvest-now-decrypt-later.',
     algorithm: 'ecdsa',
     pqcAlgorithm: 'ml-dsa',
     impact:
@@ -156,7 +157,8 @@ users:
     client-certificate: /etc/ci/client.crt  # ECDSA P-256
     client-key: /etc/ci/client.key
 # ⚠️  All API server communication is HNDL-exposed`,
-    pqcConfig: `# Rotate CI client cert to ML-DSA-44 via cert-manager
+    pqcConfig: `# PROJECTED EXAMPLE: rotate CI client cert to ML-DSA-44 via cert-manager
+# (MLDSA44 is not an allowed privateKey.algorithm value in cert-manager today)
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -171,7 +173,7 @@ spec:
   issuerRef:
     name: cluster-ca-pqc
     kind: ClusterIssuer
-# ✅ ML-DSA-44 client cert for CI/CD pipeline auth`,
+# projected: ML-DSA-44 client cert for CI/CD pipeline auth`,
   },
   {
     id: 'vault-transit-key',
@@ -187,11 +189,13 @@ spec:
 vault write transit/keys/pipeline-signer \\
   type=ecdsa-p256
 # ⚠️  ECDSA P-256: broken by Shor's algorithm`,
-    pqcConfig: `# Vault Transit — ML-DSA-44 signing key (planned)
-# Vault Transit PQC key types are on the roadmap
+    pqcConfig: `# Vault Transit — ML-DSA-44 signing key
+# The Vault Transit documentation lists ml-dsa as an Enterprise key type; parameter_set
+# is required (44, 65 or 87).
 vault write transit/keys/pipeline-signer-pqc \\
-  type=ml-dsa-44
-# ✅ ML-DSA-44: quantum-safe (NIST FIPS 204 Level 2) — when available
+  type=ml-dsa \\
+  parameter_set=44
+# ML-DSA-44 (FIPS 204 security category 2)
 
 # Verify new key is active
 vault read transit/keys/pipeline-signer-pqc`,

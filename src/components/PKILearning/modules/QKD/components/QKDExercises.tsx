@@ -93,7 +93,7 @@ const scenarios: Scenario[] = [
     badge: 'Protocol',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The QKD secret is used directly as the PSK — it replaces the ECDH-derived Early Secret in the TLS 1.3 key schedule without any protocol modifications.',
+      'The QKD secret is imported as the PSK (RFC 9258) and is the input of the Early Secret in the TLS 1.3 key schedule (RFC 9846 §7.1); both endpoints must import it.',
     config: { part: 3, protocol: 'tls' },
     icon: Network,
   },
@@ -101,7 +101,7 @@ const scenarios: Scenario[] = [
     id: 'hsm-derivation',
     title: '6. HSM Key Derivation from QKD Secret',
     description:
-      'Follow the ETSI GS QKD 014 → PKCS#11 → NIST SP 800-108 pipeline. Both Alice and Bob derive the same 256-bit session key inside their HSMs without transmitting the secret.',
+      'Follow the workshop’s pipeline: ETSI GS QKD 014 key delivery, PKCS#11 and a NIST SP 800-108 key derivation. Both Alice and Bob derive the same 256-bit session key inside their HSMs without transmitting the secret.',
     badge: 'Infrastructure',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:

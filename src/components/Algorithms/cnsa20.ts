@@ -18,7 +18,7 @@
 // CNSA 2.0 algorithm selections:
 //  - ML-KEM-1024 ......... REQUIRED (asymmetric key establishment)
 //  - ML-DSA-87 ........... REQUIRED (general-purpose digital signatures)
-//  - LMS / XMSS (SP 800-208, SHA-256/192) .. APPROVED for software/firmware signing only
+//  - LMS / XMSS (SP 800-208, SHA-256/192) .. APPROVED (FAQ Ver. 2.2: NSA wants them used for software/firmware signing whenever possible; validated ML-DSA is approved for all signing use cases)
 //  - HSS / XMSS^MT (multi-tree SP 800-208 variants) .. NOT allowed (FAQ Ver. 2.2)
 //  - AES-256 ............. REQUIRED (symmetric)
 //  - SHA-384 / SHA-512 ... REQUIRED (hashing)
@@ -112,15 +112,15 @@ export function classifyCnsa20(algo: Pick<AlgorithmDetail, 'name' | 'family'>): 
       status: 'excluded',
       label: 'Not in CNSA 2.0',
       rationale:
-        'HSS and XMSS^MT (multi-tree variants in SP 800-208) are not allowed under CNSA 2.0; only single-tree LMS and XMSS are allowed, for software/firmware signing.',
+        'HSS and XMSS^MT (multi-tree variants in SP 800-208) are not allowed under CNSA 2.0; NSA has only approved LMS and XMSS (CNSA 2.0 FAQ Ver. 2.2).',
     }
   }
   if (/^(LMS|XMSS)(?![A-Z^])/i.test(name)) {
     return {
       status: 'approved-limited',
-      label: 'CNSA 2.0 (firmware only)',
+      label: 'CNSA 2.0 (LMS/XMSS approved)',
       rationale:
-        'Single-tree stateful hash-based signatures (LMS/XMSS, SP 800-208) are allowed by CNSA 2.0 for software/firmware signing only, not general use. State management is mandatory.',
+        'Single-tree stateful hash-based signatures (LMS/XMSS, SP 800-208) are the stateful schemes NSA has approved for NSS; the CNSA 2.0 FAQ (Ver. 2.2) says NSA wants them used for software/firmware signing whenever possible, and that validated ML-DSA is approved for all signing use cases. State management is mandatory.',
     }
   }
 
@@ -146,7 +146,7 @@ export function classifyCnsa20(algo: Pick<AlgorithmDetail, 'name' | 'family'>): 
       status: 'excluded',
       label: 'Not in CNSA 2.0',
       rationale:
-        'SLH-DSA (FIPS 205) is NIST-standardized but was NOT selected by CNSA 2.0; CNSA 2.0 names ML-DSA-87 for general signatures and stateful LMS/XMSS for firmware.',
+        'SLH-DSA (FIPS 205) is NIST-standardized but is not part of CNSA and is not approved for any use in NSS (CNSA 2.0 FAQ Ver. 2.2); CNSA 2.0 names ML-DSA-87 for signatures and LMS/XMSS for firmware and software signing.',
     }
   }
 
@@ -280,9 +280,9 @@ export const CNSA20_ADVISORY_URL =
 
 export const HYBRID_COMPOSITE_GUIDANCE = {
   whenComposite:
-    'Outside US National Security Systems, a composite (PQC + classical, e.g. X25519+ML-KEM-768 or RSA-PSS+ML-DSA) is a common transition choice where defense-in-depth is wanted or a regulator recommends or requires hybrid (BSI, ANSSI). The classical half guards against an undiscovered flaw in the new scheme, at the cost of extra protocol and implementation complexity.',
+    'Outside US National Security Systems, a composite (PQC + classical, e.g. X25519+ML-KEM-768 or RSA-PSS+ML-DSA) is a common transition choice where defense-in-depth is wanted or a regulator recommends or requires hybrid (BSI recommends it; ANSSI requires it in its regulated perimeter). The classical half guards against an undiscovered flaw in the new scheme, at the cost of extra protocol and implementation complexity.',
   whenPure:
-    'Pure ML-KEM / ML-DSA is simpler and is what CNSA 2.0 requires for NSS (ML-KEM-1024 / ML-DSA-87; NSA does not require hybrids and counts only hybrids it has specifically identified). Where a jurisdiction recommends hybrid (BSI) or requires it (ANSSI), pure use may not fit that context.',
+    'Pure ML-KEM / ML-DSA is simpler and is what CNSA 2.0 requires for NSS (ML-KEM-1024 / ML-DSA-87; NSA does not require hybrids and counts only hybrids it has specifically identified). Where a jurisdiction recommends hybrid (BSI) or requires it in its regulated perimeter (ANSSI), pure use may not fit that context.',
 } as const
 
 export type JurisdictionStance = 'require' | 'recommend' | 'prefer-pure' | 'interim' | 'permit'
@@ -304,7 +304,7 @@ export function jurisdictionStanceForRegion(region: string): JurisdictionPositio
       return {
         body: 'BSI / ANSSI',
         stance: 'recommend',
-        note: 'German BSI (TR-02102-1) recommends PQC only in hybrid use; French ANSSI goes further and makes hybrid mandatory in its regulated perimeter (hash-based signatures excepted). The two positions differ — check which applies.',
+        note: 'German BSI (TR-02102-1) recommends PQC in hybrid form, except that hash-based signatures may in principle be used alone, provided their implementation security is carefully considered; French ANSSI recommends hybrid generally (hash-based signatures excepted) and makes it mandatory in its regulated perimeter. The two positions differ — check which applies.',
       }
     case 'NIST':
       return {

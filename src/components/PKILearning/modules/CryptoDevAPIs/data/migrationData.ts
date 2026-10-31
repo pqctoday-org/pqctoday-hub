@@ -342,7 +342,7 @@ export const MIGRATION_PATHS: MigrationPath[] = [
     description:
       'You are already using the best-positioned Java library for PQC. Simply update the BC version and start using ML-KEM/ML-DSA APIs.',
     steps: [
-      'Update Bouncy Castle to 1.78+ (Maven/Gradle dependency)',
+      'Update Bouncy Castle to 1.79+ (Maven/Gradle dependency)',
       'Add ML-DSA signing alongside existing ECDSA/RSA signatures',
       'Add ML-KEM key encapsulation for key exchange',
       'Test hybrid signatures (ECDSA + ML-DSA) for transition period',
@@ -564,6 +564,6 @@ export const INTEROP_PATTERNS: InteropPattern[] = [
     description:
       'The open-source PQC supply chain for OpenSSL before 3.5, or for algorithms that are not standardised: PQClean provides reference C code, liboqs wraps it with a unified API, oqsprovider exposes it as an OpenSSL provider.',
     example:
-      'ML-KEM implementation: PQClean C code → compiled into liboqs → loaded by oqsprovider → used via EVP_PKEY_encapsulate().',
+      'ML-KEM implementation: mlkem-native (from the PQ Code Package) → compiled into liboqs → loaded by oqsprovider → used via EVP_PKEY_encapsulate().',
   },
 ]

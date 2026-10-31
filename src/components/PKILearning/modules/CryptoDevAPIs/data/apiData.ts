@@ -286,7 +286,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'NTSTATUS return codes (STATUS_SUCCESS, STATUS_INVALID_PARAMETER, STATUS_NOT_SUPPORTED). HRESULT wrappers in .NET. Error codes documented but not always descriptive.',
     providerPattern:
       'BCryptOpenAlgorithmProvider(&hAlg, BCRYPT_RSA_ALGORITHM, NULL, 0); NCryptOpenStorageProvider(&hProv, MS_KEY_STORAGE_PROVIDER, 0);',
-    pqcStatus: `${describeRuntimeSupport('windows-cng')}. ML-KEM and ML-DSA are generally available since November 2025 on Windows 11 24H2+ and Windows Server 2025. BCRYPT_SLHDSA_ALGORITHM is defined but not currently implemented by the default CNG provider; composite ML-DSA/ML-KEM identifiers are Windows Insider only. Primitive availability in CNG is separate from what Schannel negotiates in TLS.`,
+    pqcStatus: `${describeRuntimeSupport('windows-cng')}. ML-KEM and ML-DSA are generally available since November 2025 on Windows 11 24H2+ and Windows Server 2025. BCRYPT_SLHDSA_ALGORITHM is defined but not currently implemented by the default CNG provider; for composite formats see KB5095093 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026). Primitive availability in CNG is separate from what Schannel negotiates in TLS.`,
     strengths: [
       'Deep Windows OS integration — certificate store, smart card, TPM 2.0',
       'Key isolation — keys can be non-exportable and process-isolated',

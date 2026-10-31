@@ -62,7 +62,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      'OpenSSL 3.5 LTS is the recommended production target. Its PQC algorithms are not yet inside a validated boundary: another OpenSSL FIPS Provider entry is on the NIST CMVP Modules In Process (MIP) List (Comment Resolution - Lab, 21 Sep 2026), which is not evidence of the outcome. No ESV certificate is held by the OpenSSL project itself; several distributions hold ESV certificates for their own OpenSSL jitter entropy sources.',
+      'OpenSSL 3.5 is the recommended production target in this module. Its PQC algorithms are not yet inside a validated boundary: another OpenSSL FIPS Provider entry is on the NIST CMVP Modules In Process (MIP) List (Comment Resolution - Lab, 21 Sep 2026), which is not evidence of the outcome. No ESV certificate is held by the OpenSSL project itself; several distributions hold ESV certificates for their own OpenSSL jitter entropy sources.',
   },
   {
     id: 'openssl-1.1.1',

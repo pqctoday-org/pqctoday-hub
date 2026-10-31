@@ -155,8 +155,9 @@ export const AwsKmsPolicyLab: React.FC = () => {
           hybrid group such as <code>X25519MLKEM768</code>.
         </p>
         <p>
-          AWS KMS has no ML-KEM keys. ML-KEM appears only in the TLS key exchange that protects
-          calls in transit; data encrypted under KMS keys uses AES-256-GCM.
+          AWS KMS offers ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid
+          post-quantum TLS on its endpoints; data encrypted under KMS symmetric keys uses
+          AES-256-GCM.
         </p>
       </div>
     </div>

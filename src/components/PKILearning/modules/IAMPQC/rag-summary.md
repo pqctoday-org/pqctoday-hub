@@ -5,17 +5,17 @@ Module covering PQC migration for enterprise IAM systems including JWT/SAML toke
 ## Key Topics
 
 - JWT, SAML, OIDC token signing migration to ML-DSA (FIPS 204)
-- Active Directory, LDAP, Kerberos quantum vulnerabilities and HNDL risk scores
+- Active Directory, LDAP, Kerberos quantum vulnerabilities and quantum risk scores
 - IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak
 - Zero trust identity architecture with PQC across five pillars
-- Harvest Now, Decrypt Later (HNDL) risk for Kerberos tickets, SAML assertions, and JWT refresh tokens
+- Harvest Now, Decrypt Later (HNDL) risk for Kerberos PKINIT exchanges and the TLS channels that carry identity traffic; signed JWT, SAML and OIDC tokens carry a forgery risk, not an HNDL risk (NIST IR 8547)
 - **Identity Proxy Architecture**: Bridging PQC-migrated Identity Providers (IdP) with classical Service Providers (SP) by translating SAML signatures (ML-DSA to RSA).
 
 ## Workshop Steps
 
 1. IAM Crypto Inventory — audit 8 components by quantum risk level and migration priority
 2. Token Migration Lab — compare RS256/ES256 vs ML-DSA-44/65/87 signature sizes and header changes
-3. Directory Services Analyzer — AD/LDAP/Azure AD HNDL risk scoring and attack scenario analysis
+3. Directory Services Analyzer — AD/LDAP/Azure AD quantum risk scoring and attack scenario analysis
 4. Vendor Readiness Scorer — score IAM vendors across token signing, MFA, API security, roadmap dimensions
 5. Zero Trust Identity Architect — assign migration years to 5 identity pillars and generate a phased roadmap
 6. Identity Proxy Simulator — test authentication flows by translating ML-DSA SAML assertions into classical RSA assertions for legacy downstream apps.
@@ -30,7 +30,7 @@ Module covering PQC migration for enterprise IAM systems including JWT/SAML toke
 
 ## Regulatory Context
 
-- CNSA 2.0: NSS must use ML-DSA-87 by 2027
+- CNSA 2.0: the NSA FAQ (v2.2, October 2026) quotes CNSSP 15 as requiring CNSA 2.0 algorithms in all new NSS acquisitions by 1 January 2027 and mandating their use by 31 December 2031, unless otherwise noted; ML-DSA-87 is the signature algorithm for general signing, with LMS or XMSS for software and firmware signing
 - NIST IR 8547 (final, October 2026; systems that follow NIST standards): deprecates quantum-vulnerable RSA/ECDSA/EdDSA signatures at every key size of 112-bit security and up (RSA-2048 and RSA-3072, used to sign many IAM tokens, included) after 2030 and disallows them after 2035
 - PCI DSS v4.0.1: cryptographic inventory required (Req. 12.3.3)
 - DORA (EU): ICT risk management including IAM cryptographic risk

@@ -204,7 +204,7 @@ const Step1WhyRaciPolicy: React.FC = () => (
           {[
             {
               n: '1. Signatories',
-              d: 'Who signs determines who the charter can compel. CISO-only approval is advisory. CEO + CFO + CISO creates financial obligation and the authority to compel cross-BU cooperation.',
+              d: "Signatories should follow the organisation's delegations. A charter signed only by the security function may be advisory; signatures from the executives who hold budget and cross-unit authority (for example CEO, CFO and CISO) are what let it commit funds and ask other units to cooperate.",
               warn: 'Weak: "CISO approved."',
               good: 'Strong: "Signed by CEO, CFO, and CISO."',
             },
@@ -222,7 +222,7 @@ const Step1WhyRaciPolicy: React.FC = () => (
             },
             {
               n: '4. Budget line',
-              d: 'A named, ring-fenced program budget in the operating plan. Project-by-project approval forces re-justification at every phase gate and creates the risk of mid-program defunding.',
+              d: 'A named programme budget line in the operating plan, rather than project-by-project approval at each gate, lowers the risk of mid-programme defunding.',
               warn: 'Weak: "Funding will be allocated as needed."',
               good: 'Strong: "Program budget of [$X] committed for [period], line item: PQC Migration Program, in the [Year] operating plan."',
             },

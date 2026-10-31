@@ -48,7 +48,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
     howItWorks: [
       'Terminal sends a random unpredictable number (UN) to the card as a challenge',
       'Card signs the UN plus card-specific data using its ICC RSA private key',
-      'Terminal recovers the ICC public key from the certificate chain (Root CA \u2192 Network CA \u2192 Issuer CA \u2192 ICC cert)',
+      'Terminal recovers the ICC public key from the certificate chain (payment-system CA public key held by the terminal \u2192 Issuer certificate \u2192 ICC certificate)',
       'Terminal verifies the dynamic signature against the recovered ICC public key',
       'A unique signature per transaction proves the card has the private key (anti-cloning)',
     ],
@@ -198,15 +198,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
     levels: [
       {
         level: 'root',
-        label: 'EMVCo Root CA',
-        algorithm: 'RSA-2048',
-        publicKeyBytes: 256,
-        signatureBytes: 256,
-        certificateBytes: 384,
-      },
-      {
-        level: 'network',
-        label: 'Network CA (e.g., Visa CA)',
+        label: 'Payment-system (scheme) CA — public key held by the terminal',
         algorithm: 'RSA-2048',
         publicKeyBytes: 256,
         signatureBytes: 256,
@@ -229,26 +221,18 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
         certificateBytes: 384,
       },
     ],
-    totalChainBytes: 1536,
+    totalChainBytes: 1152,
   },
   {
     algorithm: 'ml-dsa-44',
     label: 'ML-DSA-44 (FIPS 204)',
     description:
-      'NIST FIPS 204 standard. Provides NIST Level 2 post-quantum security. Larger keys and signatures than RSA, but proven security.',
+      'NIST FIPS 204 standard. Provides NIST Level 2 post-quantum security. Larger keys and signatures than RSA, but a standardised design based on the Module Learning With Errors problem and believed to be secure even against quantum adversaries (FIPS 204), with a claimed category-2 security strength.',
     fipsStatus: 'FIPS 204 (approved August 2024)',
     levels: [
       {
         level: 'root',
-        label: 'EMVCo Root CA',
-        algorithm: 'ML-DSA-44',
-        publicKeyBytes: 1312,
-        signatureBytes: 2420,
-        certificateBytes: 3832,
-      },
-      {
-        level: 'network',
-        label: 'Network CA',
+        label: 'Payment-system (scheme) CA — public key held by the terminal',
         algorithm: 'ML-DSA-44',
         publicKeyBytes: 1312,
         signatureBytes: 2420,
@@ -271,7 +255,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
         certificateBytes: 3832,
       },
     ],
-    totalChainBytes: 15328,
+    totalChainBytes: 11496,
   },
   {
     algorithm: 'fn-dsa-512',
@@ -282,15 +266,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
     levels: [
       {
         level: 'root',
-        label: 'EMVCo Root CA',
-        algorithm: 'FN-DSA-512',
-        publicKeyBytes: 897,
-        signatureBytes: 666,
-        certificateBytes: 1687,
-      },
-      {
-        level: 'network',
-        label: 'Network CA',
+        label: 'Payment-system (scheme) CA — public key held by the terminal',
         algorithm: 'FN-DSA-512',
         publicKeyBytes: 897,
         signatureBytes: 666,
@@ -313,7 +289,7 @@ export const CERT_CHAIN_COMPARISONS: CertChainComparison[] = [
         certificateBytes: 1687,
       },
     ],
-    totalChainBytes: 6748,
+    totalChainBytes: 5061,
   },
 ]
 

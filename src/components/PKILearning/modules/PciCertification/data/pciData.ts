@@ -5,41 +5,36 @@
  * table, open questions, the evidence-review workshop packet, exercises and the
  * step question (build spec §4 contract).
  *
- * Every fact here comes from a PUBLIC PCI source read on 24 September 2026
- * (plan r2 D4 — no licence-gated PCI document is used):
- *  - PCI Perspectives blogs: PTS HSM v5.0 published (18 May 2026), v5.0 RFC
- *    (30 Oct 2025), KMO v1.0 published (14 Sep 2026), KMO RFC (16 Jun 2025),
- *    Authentication/Cryptography Guidance (26 Aug 2025), PIN v3.1 released
- *    (12 Mar 2021), The Quantum Leap — Futurex (9 Sep 2026);
- *  - bulletin "Extension of PCI PTS HSM v4 … and PCI PTS HSM v3 Device Approval
- *    Expiration Dates" (2 Mar 2026);
- *  - program pages (PTS HSM, PIN Security, P2PE, KMO) and the Document Library
- *    feed (titles and dates only);
- *  - PTS listing field definitions (listing popups);
- *  - PTS Program Guide v1.9 (June 2020, public), PTS HSM v4.0 (December 2021,
- *    public PDF), PIN v3.1 ROC Reporting Template (requirement text), P2PE v3.1
- *    (September 2021), PCI DSS v4.0.1.
+ * Every statement here comes from a PUBLIC PCI SSC page; no document that is
+ * not a public page is used or reproduced:
+ *  - PCI Perspectives blogs: PCI DSS v4.0.1 (11 Jun 2024), PTS HSM v5.0
+ *    published (18 May 2026), KMO v1.0 published (14 Sep 2026),
+ *    Authentication and Cryptography Guidance (26 Aug 2025), PIN v3.1
+ *    released (12 Mar 2021), Key Blocks 101 (9 Jul 2019), P2PE v3.2 released
+ *    (30 Jun 2025), The Quantum Leap — Futurex (9 Sep 2026);
+ *  - the P2PE program page and the PTS listing field definitions (listing
+ *    popup).
+ * A statement is one of the facts those pages give, a plain pointer without a
+ * requirement number, or it is labelled as this module’s own scenario or
+ * reasoning. A vendor’s statement is attributed to the vendor.
  *
  * Reference ids are library `reference_id`s; PciSections/PciEvidenceReview
- * resolve them through getStandard() (throws on an unknown id).
+ * resolve them through getStandard() (throws on an unknown id). Documents that
+ * are not public pages are neither cited nor declared here; this module states
+ * nothing about their content.
  */
 import type { StepExercise } from '@/data/stepExercises'
 import type { ExerciseItem } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
 
 /** Date every version-sensitive PCI claim was verified (contentFreshness.ts). */
-export const PCI_AS_OF = '2026-09-24'
-export const PCI_AS_OF_LABEL = '24 September 2026'
+export const PCI_AS_OF = '2026-10-30'
+export const PCI_AS_OF_LABEL = '30 October 2026'
 
 /** Library rows the PCI path cites (src/data/library_09242026_r1.csv). */
 export const PCI_REF = {
   v5Blog: 'PCI-SSC-Blog-Publishes-PTS-HSM-v5-0',
-  v4Bulletin: 'PCI-SSC-Bulletin-PTS-HSM-v4-Extension',
-  hsmV4: 'PCI-PTS-HSM-Modular-Security-Requirements-v4-0',
-  programGuide19: 'PCI-PTS-Program-Guide-v1-9',
   listingFields: 'PCI-PTS-Listing-Field-Definitions',
-  pinRoc: 'PCI-PIN-v3-1-ROC-Reporting-Template',
-  p2pe31: 'PCI-P2PE-Security-Requirements-v3-1',
   p2peProgram: 'PCI-SSC-P2PE-Program-Page',
   kmoBlog: 'PCI-SSC-Blog-KMO-v1-0-Published',
   cryptoGuidanceBlog: 'PCI-SSC-Blog-Authentication-Cryptography-Guidance',
@@ -61,39 +56,14 @@ export const PCI_PLAIN_SOURCES = {
   htsmProgramPage: {
     title: 'PTS Hardware Security Module (HSM) — standard page',
     publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
+    date: 'read 30 October 2026',
     url: 'https://www.pcisecuritystandards.org/standards/pts-hardware-security-module-hsm/',
-  },
-  pinProgramPage: {
-    title: 'PIN Security — standard page',
-    publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
-    url: 'https://www.pcisecuritystandards.org/standards/pin-security/',
   },
   kmoProgramPage: {
     title: 'Key Management and Operations (KMO) — standard page',
     publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
+    date: 'read 30 October 2026',
     url: 'https://www.pcisecuritystandards.org/standards/key-management-and-operations-kmo/',
-  },
-  v5Rfc: {
-    title: 'Request for Comments: PCI PTS HSM v5.0 (PCI Perspectives blog)',
-    publisher: 'PCI SSC',
-    date: '30 October 2025',
-    url: 'https://blog.pcisecuritystandards.org/request-for-comments-pci-pts-hsm-v5.0',
-  },
-  kmoRfc: {
-    title: 'Request for Comments: PCI Key Management Operations (KMO) v1.0 Standard',
-    publisher: 'PCI SSC',
-    date: '16 June 2025',
-    url: 'https://blog.pcisecuritystandards.org/request-for-comments-pci-key-management-operations-kmo-v1.0-standard',
-  },
-  v4PressRelease: {
-    title:
-      'PCI Security Standards Council Updates Hardware Security Module Standard (press release)',
-    publisher: 'PCI SSC',
-    date: '17 December 2021',
-    url: 'https://www.pcisecuritystandards.org/about_us/press_releases/pci-security-standards-council-updates-hardware-security-module-standard/',
   },
   pin31Blog: {
     title: 'Just Released: Version 3.1 of the PCI PIN Security Standard (PCI Perspectives blog)',
@@ -111,7 +81,7 @@ export const PCI_PLAIN_SOURCES = {
   documentLibrary: {
     title: 'PCI SSC Document Library (titles and publication dates only)',
     publisher: 'PCI SSC',
-    date: 'read 24 September 2026',
+    date: 'read 30 October 2026',
     url: 'https://www.pcisecuritystandards.org/document_library/',
   },
   p2pe32Blog: {
@@ -120,13 +90,6 @@ export const PCI_PLAIN_SOURCES = {
     publisher: 'PCI SSC',
     date: '30 June 2025',
     url: 'https://blog.pcisecuritystandards.org/pci-ssc-releases-version-3-2-of-the-pci-point-to-point-encryption-p2pe-standard',
-  },
-  fsisacAtmPos: {
-    title:
-      'Post Quantum PCI Use Cases: ATM and POS Card Capture; ATM and POS Setup with Backend Acquiring Systems (industry source)',
-    publisher: 'FS-ISAC PQC Working Group',
-    date: '2025',
-    url: 'https://fsisac.com/hubfs/Knowledge/PQC/PCIUseCases-ATM&POSCardCapture_ATM&POSSetupWithBackendAcquiringSystems.pdf',
   },
 } satisfies Record<string, PlainSource>
 
@@ -142,38 +105,32 @@ export interface PciClock {
 
 export const PCI_SCHEME_CLOCKS: PciClock[] = [
   {
-    when: '17 Dec 2021',
+    when: '1 Jan 2026',
     event:
-      'PTS HSM v4.0 published. It added an evaluation module and approval class for cloud-based HSMs used in an HSM-as-a-service offering.',
-    source: { plain: 'v4PressRelease' },
-  },
-  {
-    when: '2 Mar 2026',
-    event:
-      'Bulletin: v4 stays usable for NEW device approvals until 30 June 2027 (it was due to retire on 31 December 2025). v4 device approvals now expire April 2033 (was April 2032). v3 device approvals now expire April 2028 (was April 2026).',
-    source: { ref: 'v4Bulletin' },
+      'P2PE: from this date all new P2PE submissions, including reassessments, must comply with P2PE v3.2 (announced 30 June 2025 as a minor revision). Validations already done to P2PE v3.0 or v3.1 are not affected by the release of v3.2.',
+    source: { plain: 'p2pe32Blog' },
   },
   {
     when: '18 May 2026',
     event:
-      'PTS HSM v5.0 published, with its Derived Test Requirements and an updated Device Testing and Approval Program Guide. No separate v5.0 "effective date" appears in the public material.',
+      'PCI SSC published the PTS HSM Modular Security Requirements v5.0, a major revision from v4.0. The v5.0 announcement says the Document Library lists the v5.0 Modular Security Requirements, the v5.0 Modular Derived Test Requirements and the PCI PTS Device Testing and Approval Program Guide (no version number given).',
     source: { ref: 'v5Blog' },
   },
   {
     when: 'Listing table',
     event:
-      'The listing’s expiry schedule: HSM v5.x — requirements expire May 2030, device approvals April 2036; v4.x — June 2027 / April 2033; v3.x — December 2022 / April 2028. Approvals "expire six years past the effective date of a subsequent major … update".',
+      'The listing’s expiry table gives, per HSM requirements version, when the requirements approval and the device models expire: v5.x May 2030 and April 2036; v4.x June 2027 and April 2033; v3.x December 2022 and April 2028. Device approvals "expire six years past the effective date of a subsequent major … update" of the Security Requirements. These are approval expiry dates, not post-quantum deadlines.',
     source: { ref: 'listingFields' },
   },
   {
     when: '14 Sep 2026',
     event:
-      'PCI KMO Standard v1.0 and the KMO Program Guide published. KMO listings: "Coming Soon" on the program page.',
+      'PCI Key Management and Operations (KMO) Standard v1.0 published. The Document Library lists the Key Management and Operations Standard and the KMO Program Guide on 14 September 2026 and the KMO Assessor Qualification Requirements on 21 September 2026 (titles and dates only).',
     source: { ref: 'kmoBlog' },
   },
 ]
 
-// ── What v5.0 changed (announcement blog only — the standard is licence-gated) ──
+// ── What v5.0 changed (the announcement blog only) ──
 
 export interface V5Change {
   area: string
@@ -187,59 +144,53 @@ export const PCI_V5_CHANGES: V5Change[] = [
     blogSays:
       'Device-security keys (e.g. firmware authentication, tamper/storage keys) "must now use cryptography with an effective key strength of at least 128 bits, and TDES is no longer permitted for device security purposes."',
     forTheAnchor:
-      'Any Orrin N7 key that protects the device itself — firmware signing, storage wrapping — needs ≥128-bit strength. Payment keys the device processes are a separate question.',
+      'In this module’s scenario, any Orrin N7 key that protects the device itself — firmware signing, storage wrapping — needs at least 128-bit strength. Payment keys the device processes are a separate question.',
   },
   {
     area: 'Modern cryptography',
     blogSays:
       '"support for post-quantum cryptography considerations and new requirements such as Elliptic Curve Schnorr Digital Signature Algorithm (EC-SDSA) for certain use cases."',
     forTheAnchor:
-      'The blog names no PQC algorithm, parameter set or deadline. ML-KEM/ML-DSA in the N7 are a product decision, not a v5.0 requirement the public text states.',
+      'The v5.0 announcement names no PQC algorithm, parameter set or deadline. In this module’s scenario, ML-KEM and ML-DSA in the N7 are a product decision, not a v5.0 requirement the announcement states.',
   },
   {
     area: 'New evaluation modules',
     blogSays:
-      'New modules "for Key-Transfer Functionality, Remote Administration, and HSM Solution Security".',
+      'New modules "have been added for Key-Transfer Functionality, Remote Administration, and HSM Solution Security".',
     forTheAnchor:
-      'The N7’s remote-administration path and its as-a-service offering map onto modules of their own under v5.0.',
+      'In this module’s scenario, the N7’s remote-administration path is the kind of function one of the new modules is about.',
   },
   {
     area: 'Multi-tenant / HSM-as-a-Service',
     blogSays:
-      'Requirements "consolidated and expanded to address multi-tenant HSM architectures, including new controls such as tenant key erasure and strict isolation between tenants."',
+      'Requirements "have been consolidated and expanded to address multi-tenant HSM architectures, including new controls such as tenant key erasure and strict isolation between tenants."',
     forTheAnchor:
-      'The tenant partition is inside the evaluation scope, not an afterthought: erasure and isolation are named controls.',
-  },
-  {
-    area: 'Lifecycle and vulnerabilities',
-    blogSays:
-      'Vulnerability-management requirements "strengthened and moved into lifecycle security modules".',
-    forTheAnchor: 'Patch and disclosure processes become part of what the lab evaluates.',
+      'In this module’s reading, tenant key erasure and strict isolation are named controls, so the tenant partition is something the evaluation looks at.',
   },
   {
     area: 'Restructuring',
     blogSays:
-      'Legacy sections "(e.g., key-loading devices, logical security, and specific functionality-based sections) have been removed or restructured", with responsibilities redistributed to new modules "or aligned with the PCI Key Management and Operations (KMO) framework."',
+      'Several legacy sections have been removed or restructured, with responsibilities moved to new modules "or aligned with the PCI Key Management and Operations (KMO) framework."',
     forTheAnchor:
-      'Some controls the N7 team used to show the lab may now sit with the operator’s KMO assessment. Which ones is an open question until you can read v5.0 and KMO.',
+      'In this module’s scenario, some controls the N7 team used to show the lab may now sit with the operator’s KMO assessment. Which ones is an open question until you can read v5.0 and KMO.',
   },
   {
     area: 'Lab testing depth',
     blogSays:
-      'Labs must do "source code review for certain requirements" and document "vulnerability sources and testing methodologies" more explicitly.',
-    forTheAnchor: 'Budget for source-code access by the lab and a longer evaluation.',
+      'Test laboratories "are now required to perform deeper validation activities, including source code review for certain requirements".',
+    forTheAnchor: 'In this module’s scenario, budget for source-code access by the lab.',
   },
   {
     area: 'Authentication controls',
     blogSays:
-      'Stronger authentication, "prohibiting weak methods such as CBC-MAC for firmware or application authentication"; secure states and secure connections enforced.',
+      'Stronger authentication, "prohibiting weak methods such as CBC-MAC for firmware or application authentication".',
     forTheAnchor:
-      'If N7 firmware is authenticated with a CBC-MAC, that mechanism has to change for a v5.0 evaluation.',
+      'In this module’s scenario, if N7 firmware is authenticated with a CBC-MAC, that mechanism has to change for a v5.0 evaluation.',
   },
   {
     area: 'Terminology and definitions',
     blogSays:
-      'Alignment "with modern standards (e.g., ANSI X9.143)" and new definitions for "HSM clusters, partitioned HSMs, secure channels, and post-quantum cryptography."',
+      'Alignment "with modern standards (e.g., ANSI X9.143)" and new definitions "covering concepts such as HSM clusters, partitioned HSMs, secure channels, and post-quantum cryptography."',
     forTheAnchor:
       'A definition of PQC is not a requirement to implement it — read the definition as vocabulary.',
   },
@@ -251,55 +202,77 @@ export interface PqcFinding {
   source: string
   says: string
   doesNotSay: string
-  status: 'read' | 'open'
+  status: 'read' | 'open' | 'not used'
 }
+
+const NOT_USED_SAYS =
+  'Not used: this document is not a public PCI SSC page, so this module states nothing about its content.'
 
 export const PCI_PQC_FINDINGS: PqcFinding[] = [
   {
     source: 'PTS listing — field definitions',
-    says: 'For v3-and-higher HSMs (and v5-and-higher POI devices) the device "has been evaluated to determine if it supports PQC". Details are in the Security Policy. "This notation is for the existence of PQC support."',
+    says: 'The listing has a Post Quantum Cryptography (PQC) field: "for v3 and higher HSM devices, the HSM has been evaluated to determine if it supports PQC." "This notation is for the existence of PQC support." "The details of the PQC implementation are stated in the security policy".',
     doesNotSay:
-      'Which algorithms are approved for which payment function. "Details of the degree of post-quantum readiness can be obtained from the device vendor."',
+      'How ready the device is: "Details of the degree of post-quantum readiness can be obtained from the device vendor."',
     status: 'read',
   },
   {
-    source: 'PTS HSM v5.0 announcement',
-    says: '"support for post-quantum cryptography considerations" and a definition of post-quantum cryptography.',
-    doesNotSay: 'Any PQC algorithm, parameter set or deadline.',
+    source: 'PTS HSM v5.0 announcement (18 May 2026)',
+    says: 'The update addresses "emerging threats such as post-quantum risks" and includes "support for post-quantum cryptography considerations"; its new definitions cover post-quantum cryptography.',
+    doesNotSay: 'Any PQC algorithm or deadline: the v5.0 announcement names none.',
     status: 'read',
   },
   {
-    source: 'PTS HSM v4.0 requirements (public PDF, December 2021)',
-    says: 'Nothing: the text does not mention quantum computing.',
+    source: 'PTS HSM v4.0 requirements (document)',
+    says: NOT_USED_SAYS,
     doesNotSay: '—',
+    status: 'not used',
+  },
+  {
+    source: 'PIN Security v3.1 (announcement, 12 March 2021)',
+    says: 'A minor revision. It incorporated revised effective dates for key block implementations (Requirement 18-3), deferred the dates for encrypted key injection (Requirement 32-9) by three years, and rewrote Normative Annex C, "Minimum and Equivalent Key Sizes and Strengths for Approved Algorithms", for clarity and to align with NIST nomenclature.',
+    doesNotSay: 'What Annex C contains: the announcement states nothing else about its content.',
     status: 'read',
   },
   {
-    source: 'PIN Security v3.1 (requirement text in the ROC template)',
-    says: 'The requirements text has no PQC content; its algorithm appendix (Normative Annex C) was not checked. Annex A covers symmetric key distribution using asymmetric (RSA-era) techniques.',
-    doesNotSay: 'Any quantum-safe replacement for that asymmetric key distribution.',
-    status: 'read',
+    source: 'PIN Security v3.1 ROC template (document)',
+    says: NOT_USED_SAYS,
+    doesNotSay: '—',
+    status: 'not used',
   },
   {
-    source: 'P2PE v3.1 (September 2021)',
-    says: 'Normative Annex C lists classical algorithms only. It carries an advisory note that RSA, DH and ECC keys are vulnerable to large-scale quantum computers, but names no post-quantum algorithm and sets no requirement or deadline. A footnote lets RSA-2048 keys transport AES-128 keys in remote key distribution.',
+    source: 'P2PE v3.2 (announcement, 30 June 2025)',
+    says: 'v3.2 "is a minor revision of the standard"; the Council is developing P2PE v4.0. From 1 January 2026 all new P2PE submissions, including reassessments, must comply with v3.2, and validations to v3.0 or v3.1 are not affected by its release.',
     doesNotSay:
-      'What v3.2 changed. v3.2 replaced v3.1 for new submissions and reassessments on 1 January 2026 (existing v3.1 validations are unaffected); v3.2 is licence-gated and was not read.',
+      'What changed in v3.2 in detail: the announcement names areas (POI device testing and sampling, and the management of whitelists, non-payment software and P2PE Applications) and points to a Summary of Changes document; this module does not read that document.',
     status: 'read',
   },
   {
-    source: 'PCI DSS v4.0.1, Requirement 12.3.3',
-    says: 'Document and review, at least every 12 months, an inventory of cipher suites and protocols, "active monitoring of industry trends", and a plan "to respond to anticipated changes in cryptographic vulnerabilities". Its guidance calls this cryptographic agility.',
+    source: 'P2PE v3.1 requirements (document)',
+    says: NOT_USED_SAYS,
+    doesNotSay: '—',
+    status: 'not used',
+  },
+  {
+    source: 'PCI DSS v4.0.1 (PCI SSC announcement, 11 June 2024)',
+    says: 'PCI DSS v4.0.1 is the only active version of the standard (v4.0 retired on 31 December 2024); the new requirements of v4.0 have been effective since 31 March 2025; v4.0.1 adds or deletes no requirements.',
     doesNotSay:
-      'Anything about quantum computing — the DSS text does not mention it. 12.3.3 is an agility requirement, not a PQC mandate.',
+      'Anything about quantum computing: the announcement page states no PQC algorithm, parameter set or deadline. The requirement text of the standard is not reproduced in this module.',
     status: 'read',
   },
   {
-    source: 'PCI Cryptography Guidance (August 2025)',
-    says: 'Per the announcement blog: guidance only, "not to be considered mandatory requirements"; the standards take precedence.',
+    source: 'PCI Cryptography Guidance (announcement, 26 August 2025)',
+    says: 'The guidance explains how to implement strong cryptography that meets requirements in the various PCI SSC standards. It is not mandatory: "When there are differences between the guidance and official PCI standards, the PCI standards always take precedence."',
     doesNotSay:
-      'Its PQC content could not be read without the licence click-through — open question.',
+      'Whether it says anything about PQC: this module reads only the announcement — open question.',
     status: 'open',
+  },
+  {
+    source: 'Futurex interview in a PCI SSC blog (9 September 2026)',
+    says: 'Futurex says it first released PQC-enabled firmware, "general availability, not just a beta program", in August 2024. Futurex advises building "an inventory of cryptographic objects throughout your enterprise that could be vulnerable".',
+    doesNotSay:
+      'A PCI requirement: these are one vendor’s statements in a PCI SSC blog interview, not PCI SSC’s.',
+    status: 'read',
   },
 ]
 
@@ -320,9 +293,11 @@ export const PCI_STACK: StackLayer[] = [
     id: 'pts-hsm',
     name: 'PTS HSM approval',
     whatIsAssessed:
-      'A device model at listed hardware/firmware versions, "up to the point of initial deployment"',
-    whoAssesses: 'PCI-recognized laboratory; PCI SSC reviews the report and approves',
-    artifact: 'Approval letter and listing entry; the device’s PCI HSM Security Policy',
+      'Guidance for designing HSMs for the financial payments industry and for protecting them "up to the point of initial deployment"; other security requirements apply at deployment, for the management of HSMs. HSM approvals are marked restricted (valid only in a Controlled Environment) or unrestricted (valid in any operational environment).',
+    whoAssesses:
+      'Independent PCI-recognized laboratories evaluate HSMs; PCI SSC reviews the evaluation reports, approves PTS HSM devices and provides a listing of approved devices',
+    artifact:
+      'Listing entry in Approved PTS Devices; the device’s security policy, which states the PQC implementation details',
     listing: 'Approved PTS Devices',
     anchorRole: 'Orrin N7 as a product the vendor has had evaluated',
   },
@@ -330,19 +305,23 @@ export const PCI_STACK: StackLayer[] = [
     id: 'pin',
     name: 'PIN Security assessment',
     whatIsAssessed:
-      'An acquirer’s or agent’s PIN processing and key management — including the HSMs it runs',
-    whoAssesses: 'Qualified PIN Assessor (QPA)',
-    artifact: 'Report on Compliance and Attestation of Compliance',
-    listing: 'None — "There are no product listings for PIN Security Standard."',
+      'The PIN Security Standard gives "requirements and testing procedures for the secure management, processing, and transmission of PIN data at ATMs and attended and unattended point-of-sale (POS) terminals". In this module’s scenario: an acquirer’s or agent’s PIN processing, including the HSMs it runs.',
+    whoAssesses:
+      'In this module’s reading, an assessment of the entity’s PIN operations rather than of the device; compliance programs for PCI SSC standards are managed by the payment brands, and which entities must validate is for them',
+    artifact:
+      'Not read here: compliance programs for PCI SSC standards are managed by the payment brands',
+    listing: 'None described in the sources this module reads',
     anchorRole: 'Orrin N7 appliances inside a payment processor’s PIN-translation environment',
   },
   {
     id: 'p2pe',
     name: 'P2PE assessment',
     whatIsAssessed:
-      'A solution/component provider’s encryption-to-decryption chain, decryption environment and key management (including KIFs)',
-    whoAssesses: 'P2PE Assessor',
-    artifact: 'P-ROV and AOV',
+      'A P2PE solution "cryptographically protects account data from the point where a merchant accepts the payment card to the secure point of decryption"',
+    whoAssesses:
+      'An assessment under the P2PE standard; compliance programs for PCI SSC standards are managed by the payment brands',
+    artifact:
+      'A PCI-listed P2PE solution; merchants using one "have fewer applicable PCI Data Security Standard (PCI DSS) requirements"',
     listing: 'P2PE Solutions, Components and Applications',
     anchorRole: 'Orrin N7 as the decryption HSM of a P2PE solution provider',
   },
@@ -350,10 +329,11 @@ export const PCI_STACK: StackLayer[] = [
     id: 'kmo',
     name: 'KMO assessment (new, v1.0)',
     whatIsAssessed:
-      'An entity’s key-management operations for PIN and P2PE keys — including "entities operating HSM-as-a-Service systems"',
-    whoAssesses: 'KMO Assessor',
-    artifact: 'Per the KMO documents (licence-gated — not read)',
-    listing: '"Listings Coming Soon" (program page, 24 September 2026)',
+      'Requirements for the secure management and operation of key management systems across the key lifecycle, which "includes the validation of remote and as-a-service based HSM implementations"; the initial focus is "cryptographic keys used for securing PIN and P2PE data"',
+    whoAssesses:
+      'KMO Assessors, "qualified and trained by PCI SSC to perform independent assessments of environments where cryptographic keys are managed"',
+    artifact: 'Not read here: this module reads only the KMO announcement and the KMO page',
+    listing: '"Listings Coming Soon" (KMO page)',
     anchorRole: 'The operator of Orrin Cloud, the multi-tenant service',
   },
   {
@@ -365,11 +345,11 @@ export const PCI_STACK: StackLayer[] = [
     artifact: 'CMVP certificate and Security Policy',
     listing: 'CMVP validated-modules list',
     anchorRole:
-      'Accepted as HSM evidence by PIN v3.1 Req 1-3 and P2PE v3.1 4A-1.1 at Level 3 or higher (v3.2 replaced v3.1 for new submissions and reassessments on 1 January 2026 (existing v3.1 validations are unaffected)) — but it is not PTS approval',
+      'Separate evidence under a separate scheme: a FIPS 140-3 certificate is not a PTS approval. Which HSM evidence a PCI standard accepts is set out in that standard, which this module does not read',
   },
 ]
 
-// ── Open questions (plan r2 D4: licence-gated → "check the current document") ──
+// ── Open questions (read the current documents; this module reads public pages only) ──
 
 export interface OpenQuestion {
   id: string
@@ -382,39 +362,39 @@ export const PCI_OPEN_QUESTIONS: OpenQuestion[] = [
   {
     id: 'kmo-vs-annex-b',
     question:
-      'Does PCI KMO v1.0 replace the key-injection and key-management requirements in PIN v3.1 Annex B and P2PE Domain 5, or sit beside them — and from when?',
+      'Does PCI KMO v1.0 replace the PIN and P2PE key-management requirements, or sit beside them — and from when?',
     whyOpen:
-      'The KMO blog says it consolidates, aligns and updates the PIN and P2PE key-management requirements and that a KMO listing can be referenced by a P2PE implementation "where appropriate". The KMO standard itself was not read (licence click-through).',
+      'The KMO announcement says KMO consolidates, aligns and updates the key-management requirements for PIN and P2PE keys. This module reads only the announcement and the KMO page, so it does not say whether KMO replaces those requirements or sits beside them.',
     checkIn:
-      'KMO Requirements and Test Procedures v1.0 and KMO Program Guide (14 September 2026); your acquirer or payment brand.',
+      'The KMO Standard and KMO Program Guide (14 September 2026); your acquirer or payment brand.',
   },
   {
     id: 'v5-delta-routing',
     question:
-      'How does PCI route a change to an approved HSM today — no-impact letter, delta, or new evaluation — and what does v5.0 change about that?',
+      'How does PCI route a change to an approved HSM today — and what does v5.0 change about that?',
     whyOpen:
-      'Program Guide v1.9 (June 2020) is public and teaches the delta concept. The current Device Testing and Approval Program Guide (the plan records v2.3, May 2026) is licence-gated and decides.',
-    checkIn: 'Current Device Testing and Approval Program Guide; your PCI-recognized laboratory.',
+      'The v5.0 announcement says the Document Library lists the PCI PTS Device Testing and Approval Program Guide (no version number given). This module does not read it.',
+    checkIn: 'Current Device Testing and Approval Program Guide; your test laboratory.',
   },
   {
     id: 'crypto-guidance-pqc',
     question: 'What does the PCI Cryptography Guidance (August 2025) say about PQC?',
-    whyOpen:
-      'Only its announcement blog was read. The document is behind the licence click-through.',
+    whyOpen: 'This module reads only its announcement; the guidance document itself is not read.',
     checkIn: 'PCI Cryptography Guidance (Document Library).',
   },
   {
     id: 'pin-historical-fips',
     question:
-      'Does an HSM whose FIPS 140-2 certificate moved to the CMVP Historical list (21/22 September 2026) still satisfy PIN v3.1 Req 1-3?',
+      'Does an HSM whose FIPS 140-2 certificate moved to the CMVP Historical list (21/22 September 2026) still count as HSM evidence under the PCI standard your assessment uses?',
     whyOpen:
-      'PIN v3.1 says "FIPS140-2 or FIPS 140-3 Level 3 or higher certified" and tests for "a valid listing number". Unlike P2PE v3.1 4A-1.1, the PIN text read here has no note on historical certificates.',
-    checkIn: 'PIN Security v3.1 and its Technical FAQs; your QPA and acquirer.',
+      'The move to the Historical list is a CMVP (NIST) fact. This module does not read what the current PCI standards say about historical certificates.',
+    checkIn: 'The current PCI standard your assessment uses; your assessor and acquirer.',
   },
   {
     id: 'p2pe-v32-delta',
-    question: 'What changed between P2PE v3.1 and v3.2 (published 30 June 2025)?',
-    whyOpen: 'v3.2 and its Summary of Changes are licence-gated; this module teaches v3.1.',
+    question: 'What changed between P2PE v3.1 and v3.2 (announced 30 June 2025)?',
+    whyOpen:
+      'The announcement calls v3.2 a minor revision and says from 1 January 2026 all new P2PE submissions must comply with it. This module does not read the v3.2 standard or its Summary of Changes.',
     checkIn: 'P2PE Standard v3.2 and the P2PE Summary of Changes (Document Library).',
   },
 ]
@@ -480,35 +460,27 @@ export const EVIDENCE_DOCS: EvidenceDoc[] = [
   },
   {
     id: 'entity-assessment',
-    title: 'PIN Security AOC — scope summary (fictional)',
+    title: 'PIN Security assessment — scope summary (fictional)',
     fields: [
       ['Entity', 'Northgate Payments (fictional payment processor)'],
-      ['Standard', 'PCI PIN Security v3.1, assessed by a QPA'],
+      ['Standard', 'PCI PIN Security v3.1 (this module’s fictional example)'],
       ['In scope', 'PIN translation in two company data centres'],
       ['HSMs in scope', 'Orrin N7 appliances, firmware 3.2.1, approval FICT-0007'],
-      ['Not tested', 'Annex B (key-injection facility); Orrin Cloud tenant partitions'],
+      ['Not tested', 'Key-injection facility; Orrin Cloud tenant partitions'],
     ],
-    note: 'An assessment of an entity’s operations — not of the device.',
+    note: 'In this module’s reading: an assessment of an entity’s operations, not of the device.',
   },
   {
     id: 'program-guide',
-    title: 'PTS Program Guide — change concept (v1.9, public, June 2020)',
+    title: 'Device Testing and Approval Program Guide — not read here',
     fields: [
+      ['In this module', 'Not read: this module does not state what the guide contains.'],
       [
-        'Initial evaluation',
-        '"All initial evaluations under a major version … shall constitute a new evaluation and shall receive a new approval number."',
+        'Where it is listed',
+        'The v5.0 announcement says the Document Library lists the PCI PTS Device Testing and Approval Program Guide (no version number given).',
       ],
-      [
-        'Firmware change',
-        '"Any firmware changes to an approved device must result in a new firmware version."',
-      ],
-      [
-        'Delta limits',
-        '"Delta evaluations are not permitted to take a product previously approved under an earlier major version … to an approval under another major version"',
-      ],
-      ['No-impact change', 'Lab letter to PCI SSC stating the change does not impact compliance'],
     ],
-    note: 'Concept only: the current Program Guide (licence-gated) decides today’s routing.',
+    note: 'The packet cannot settle how a change to an approved device is routed: read the current guide with your test laboratory.',
   },
 ]
 
@@ -547,7 +519,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
         claim: 'The PTS approval covers firmware 3.2.1, the version Northgate runs.',
         verdict: 'supported',
         doc: 'listing',
-        why: 'The listing’s Firmware # field names 3.2.1. PIN v3.1 Req 1-4 and P2PE v3.1 4A-1.1.1 require the deployed vendor, model, hardware and firmware versions to match the listing, so this is the field to check.',
+        why: 'In this module’s fictional listing, the Firmware # field names 3.2.1. In this module’s reading, the deployed firmware should match a listed version, so this is the field to check.',
       },
       {
         id: 'a-pqc-flag',
@@ -555,7 +527,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
           'The listing’s PQC notation means ML-KEM-768 is a PCI-approved algorithm for PIN processing.',
         verdict: 'not-supported',
         doc: 'listing',
-        why: 'The field definition says the notation "is for the existence of PQC support". The algorithms are named in the Security Policy, and no public PCI material approves a PQC algorithm for any payment function.',
+        why: 'The field definition says the notation "is for the existence of PQC support" and that the details of the PQC implementation are stated in the security policy. The v5.0 announcement names no PQC algorithm.',
       },
       {
         id: 'a-mldsa-api',
@@ -569,15 +541,14 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
         claim: 'Northgate’s PIN environment is PCI compliant because the HSM is PCI approved.',
         verdict: 'not-supported',
         doc: 'entity-assessment',
-        why: 'PTS approval covers the device "up to the point of initial deployment". Whether Northgate’s operations comply is a PIN Security assessment by a QPA, reported in its ROC/AOC — and payment brands decide who must validate.',
+        why: 'A device approval is listed for a device model. In this module’s reading, whether Northgate’s operations comply is a question for an assessment of the entity, not for the device listing; which entities must validate is for the payment brands.',
       },
       {
         id: 'a-fips-version',
-        claim:
-          'For Northgate’s PIN assessment, the FIPS 140-3 Level 3 certificate alone could satisfy Req 1-3 for the HSMs it runs.',
+        claim: 'The FIPS 140-3 certificate in the packet covers the firmware Northgate runs.',
         verdict: 'not-supported',
         doc: 'fips-certificate',
-        why: 'Req 1-3 does accept FIPS 140-2/140-3 Level 3-or-higher HSMs — the nuance to remember. But Req 1-4 requires the approval listing to match the deployed firmware, and this certificate covers 3.1.0, not 3.2.1. The PTS listing is the evidence that matches.',
+        why: 'This certificate covers firmware 3.1.0, not 3.2.1, and a FIPS certificate is a different scheme from the PTS listing: the PTS listing is the evidence that names 3.2.1. Which HSM evidence a PCI standard accepts is set out in that standard, which this module does not read.',
       },
     ],
   },
@@ -593,28 +564,28 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
           'Firmware 4.0.0 is already covered by the approval because the hardware is unchanged.',
         verdict: 'not-supported',
         doc: 'listing',
-        why: 'Approval is tied to the listed firmware versions; 4.0.0 is not listed. Program Guide v1.9 says any firmware change produces a new firmware version that must be assessed by a PCI-recognized lab before it is listed.',
+        why: 'In this module’s fictional listing only firmware 3.2.0 and 3.2.1 are listed; 4.0.0 is not. In this module’s reading, an approval listing covers the firmware versions it lists, so the packet gives no support for the claim that 4.0.0 is covered. How a new firmware version gets listed is for the current program documents and a test laboratory.',
       },
       {
         id: 'f-cross-major',
-        claim: 'A delta can take the v4 approval to a v5.0 approval while adding PQC.',
-        verdict: 'not-supported',
+        claim: 'A change can take the v4 approval to a v5.0 approval while adding PQC.',
+        verdict: 'needs-more',
         doc: 'program-guide',
-        why: 'In Program Guide v1.9, a delta never crosses major versions: an initial evaluation under a new major version is a new evaluation with a new approval number. Confirm current routing in today’s Program Guide.',
+        why: 'The packet cannot settle this. The listing records the requirements version an approval was evaluated against, and approval numbers "remain the same for the life of the device’s approval". Whether a change can carry a device from one major version to another is for the current Device Testing and Approval Program Guide and a test laboratory; this module does not read the guide.',
       },
       {
         id: 'f-keep-running',
         claim: 'Customers can keep running listed firmware 3.2.1 while 4.0.0 is evaluated.',
         verdict: 'supported',
         doc: 'listing',
-        why: 'The approval of the listed versions stands until its expiry date (30 Apr 2033 on this fictional v4 listing, matching the listing table’s v4 row). This is the two-lane release: the certified lane stays valid while the PQC lane goes through the route.',
+        why: 'In this module’s fictional listing, 3.2.1 is listed and the expiry date is 30 Apr 2033, matching the listing table’s v4.x row (device models expire April 2033). Nothing in the packet takes 3.2.1 off the listing while 4.0.0 is evaluated. This is the module’s two-lane reading: the listed lane stays in use while the PQC lane goes through the route.',
       },
       {
         id: 'f-deadline',
-        claim: 'Because a market PQC deadline applies, PCI can list 4.0.0 without a lab report.',
+        claim: 'Because a PQC deadline applies, PCI can list 4.0.0 without a lab evaluation.',
         verdict: 'not-supported',
-        doc: 'program-guide',
-        why: 'A market deadline creates urgency, not a shortcut. Every change route in the Program Guide runs through a PCI-recognized lab — at minimum a lab letter stating the change has no security impact — and v1.9’s delta tables list "amendments to cryptographic functions" and "new key types" as changes the lab must assess.',
+        doc: 'listing',
+        why: 'The v5.0 announcement names no PQC deadline, and the dates in the listing table are approval expiry dates. In this module’s reading, urgency from a customer or market is not a route to a listing; how a new version is listed is for the current program documents and a test laboratory.',
       },
     ],
   },
@@ -629,7 +600,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
         claim: 'The listing shows the device was evaluated with remote administration.',
         verdict: 'supported',
         doc: 'listing',
-        why: 'Functions Provided lists Remote Administration. The field definitions say that for v4 HSMs this means evaluation with a remote-administration solution, and that the HSM meets the Remote-Managed HSM requirements.',
+        why: 'In this module’s fictional listing, Functions Provided lists Remote Administration. For remote-managed HSM devices the field definitions add a requirement: they must support key blocks using the ANSI X9.143 key-derivation methodology for TDES keys, and for AES keys either X9.143 or the ISO 20038 methodology.',
       },
       {
         id: 'c-multi-tenant-class',
@@ -637,22 +608,14 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
           'This listing is evidence that the tenant partitions meet PCI’s multi-tenant HSM requirements.',
         verdict: 'not-supported',
         doc: 'listing',
-        why: 'v4.0 added a separate approval class for cloud/multi-tenant HSMs (the listing definitions name a "Multi-tenant HSM (v4 only)" type). This listing’s type is HSM, and "Partitioned HSM" as a function is not that class.',
+        why: 'The listing’s function types include "Multi-tenant HSM (v4 only)"; this fictional listing’s type is HSM, and "Partitioned HSM" as a function is not that type. The PTS HSM standard page says the standard "has been expanded to include Multi-tenant HSMs" and the v5.0 announcement adds controls such as tenant key erasure and strict isolation between tenants; nothing in the packet shows those were evaluated for the tenant partitions.',
       },
       {
         id: 'c-operator',
         claim: 'Orrin Cloud’s key ceremonies and tenant onboarding have been assessed.',
         verdict: 'needs-more',
         doc: 'entity-assessment',
-        why: 'The only entity assessment in the packet (Northgate’s) marks the Orrin Cloud partitions "Not tested". Operator processes need an entity assessment of the operator. KMO explicitly covers HSM-as-a-Service operators; which assessment the brands or acquirer accept is for you to confirm.',
-      },
-      {
-        id: 'c-historical-fips',
-        claim:
-          'Under P2PE v3.1, an HSM whose FIPS 140-2 certificate is now on the Historical list still qualifies for decryption.',
-        verdict: 'not-supported',
-        doc: 'fips-certificate',
-        why: 'P2PE v3.1 4A-1.1 accepts FIPS 140-2/140-3 Level 3+ or PTS-approved HSMs, but its note says FIPS certificates "must not be listed as historical or revoked". FIPS 140-2 certificates moved to Historical on 21/22 September 2026. v3.2 replaced v3.1 for new submissions and reassessments on 1 January 2026 (existing v3.1 validations are unaffected); check whether v3.2 keeps the note.',
+        why: 'The only entity assessment in the packet (Northgate’s) marks the Orrin Cloud partitions "Not tested". Operator processes need an assessment of the operator. The KMO page says KMO includes "the validation of remote and as-a-service based HSM implementations"; whether an entity must validate to a PCI SSC standard is at the discretion of the organizations that manage compliance programs, such as a payment brand or acquirer.',
       },
     ],
   },
@@ -753,7 +716,7 @@ export function readListing(fields: Record<string, string>, asOf: string): Listi
 
   out.push({
     label: 'Requirements version',
-    text: `Evaluated against PTS HSM ${version || '(blank)'} requirements. A new major version means a new evaluation and a new approval number, not an update of this one.`,
+    text: `Evaluated against PTS HSM ${version || '(blank)'} requirements: the listing’s Version is the version of the security requirements the device was evaluated against, and each approval class may follow its own version release schedule.`,
     tone: 'info',
   })
 
@@ -762,7 +725,7 @@ export function readListing(fields: Record<string, string>, asOf: string): Listi
     out.push({
       label: 'Expiry',
       text: expired
-        ? `Expired ${expiry}, before this listing was read (${asOf}). For decryption HSMs in a P2PE solution the standard itself requires a current approval (P2PE v3.1 4A-1.1); elsewhere, continued use of expired devices is up to the payment brands.`
+        ? `Expired ${expiry}, before this listing was read (${asOf}). The pages this module reads do not say whether an expired device may stay in service; compliance programs for PCI SSC standards are managed by the payment brands.`
         : `Approval runs until ${expiry}. That date comes from the version’s row in the listing’s expiry table, not from this device.`,
       tone: expired ? 'warn' : 'ok',
     })
@@ -771,7 +734,7 @@ export function readListing(fields: Record<string, string>, asOf: string): Listi
   if (/Approved usage:\s*Restricted/.test(extra)) {
     out.push({
       label: 'Deployment environment',
-      text: 'Restricted: valid only when deployed in at least a Controlled Environment, as the definitions and the device’s PCI HSM Security Policy describe. An assessor checks where it is installed.',
+      text: 'Restricted: the approval is valid only when deployed in an environment meeting at least the security requirements of a Controlled Environment (listing definitions). Check where the device is installed.',
       tone: 'warn',
     })
   } else if (/Approved usage:\s*Unrestricted/.test(extra)) {
@@ -799,7 +762,7 @@ export function readListing(fields: Record<string, string>, asOf: string): Listi
   if (/Remote Administration/.test(functions)) {
     out.push({
       label: 'Remote administration',
-      text: 'Evaluated with a remote-administration solution (for v3/v4 HSMs, against the "Remote Administration" column of the requirements’ applicability appendix).',
+      text: 'Remote Administration is listed among the functions provided.',
       tone: 'info',
     })
   }
@@ -816,17 +779,17 @@ export const exercises: ExerciseItem[] = [
     description:
       'Open the appliance scenario and judge the claim that the listing’s PQC notation makes ML-KEM-768 a PCI-approved algorithm for PIN processing.',
     observe:
-      'The notation records that PQC support exists. Algorithms live in the Security Policy; public PCI material approves no PQC algorithm and sets no PQC deadline.',
+      'The notation records that PQC support exists. The PQC implementation details are in the security policy; the v5.0 announcement names no PQC algorithm and no deadline.',
     stepId: 'pci-evidence-review',
     config: { scenario: 'appliance' },
   },
   {
     id: 'pci-fips-l3-accepted-not-approved',
-    title: 'FIPS Level 3 counts for PIN — but only if it matches',
+    title: 'A FIPS certificate must match the firmware you run',
     description:
-      'In the appliance scenario, decide whether the FIPS 140-3 Level 3 certificate alone satisfies PIN Req 1-3 for the firmware Northgate runs.',
+      'In the appliance scenario, decide whether the FIPS 140-3 certificate in the packet covers the firmware Northgate runs.',
     observe:
-      'Two rules at once: a FIPS L3 HSM is not PTS-approved, yet PIN Req 1-3 accepts it; and Req 1-4 still demands a version match with whichever listing you rely on.',
+      'A FIPS certificate and a PTS listing are separate evidence under separate schemes, each tied to versions: this certificate covers 3.1.0, not the 3.2.1 Northgate runs.',
     stepId: 'pci-evidence-review',
     config: { scenario: 'appliance' },
   },
@@ -836,7 +799,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Review the firmware 4.0.0 scenario: which claims about coverage, major versions and deadlines survive the packet?',
     observe:
-      'A firmware change needs a new version and a lab route; deltas do not cross major versions (v1.9 concept); a market deadline is urgency, not a shortcut.',
+      'A firmware version that is not listed is not covered by the listing; how a change is routed is for the current program documents and a test laboratory; a market deadline is urgency, not a shortcut.',
     stepId: 'pci-evidence-review',
     config: { scenario: 'firmware-4' },
   },
@@ -846,7 +809,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'In the multi-tenant scenario, separate what the device listing shows from what only an assessment of the operator can show.',
     observe:
-      'Remote administration and partitioning are device properties on the listing. Key ceremonies and tenant onboarding are operations — an entity assessment (PIN/P2PE today, KMO for HSM-as-a-Service operators).',
+      'Remote administration and partitioning are device properties on the listing. Key ceremonies and tenant onboarding are operations. In this module’s reading, those are what an assessment of the operator looks at; the KMO page says KMO includes “the validation of remote and as-a-service based HSM implementations”.',
     stepId: 'pci-evidence-review',
     config: { scenario: 'cloud' },
   },
@@ -856,7 +819,7 @@ export const exercises: ExerciseItem[] = [
     description:
       'Open the real listing 4-40069 (payShield 9000, captured 24 September 2026) and read its version and expiry against the read date.',
     observe:
-      'An approval is tied to a requirements version and expires on that version’s schedule. P2PE decryption HSMs must hold a current approval under the P2PE standard; elsewhere, whether expired devices may stay in service is up to the payment brands.',
+      'An approval is tied to a requirements version and expires on that version’s schedule (the listing’s expiry table). The pages this module reads do not say whether an expired device may stay in service; compliance programs for PCI SSC standards are managed by the payment brands.',
     stepId: 'pci-evidence-review',
     config: { listing: '4-40069' },
   },
@@ -875,6 +838,6 @@ export const stepExercises: Record<string, StepExercise> = {
       'That the device’s FIPS 140-3 certificate also covers its PQC algorithms',
     ],
     answer: 0,
-    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. Public PCI material names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
+    why: 'The listing field definition says the notation "is for the existence of PQC support": algorithm details sit in the Security Policy and readiness details come from the vendor. The v5.0 announcement names no PQC algorithm, parameter set or deadline, and a FIPS certificate is separate evidence under a separate scheme.',
   },
 }

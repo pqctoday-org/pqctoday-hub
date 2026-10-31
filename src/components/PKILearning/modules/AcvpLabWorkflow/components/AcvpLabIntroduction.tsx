@@ -604,7 +604,9 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             [
               <>ML-KEM key checks (VAL)</>,
               <>
-                None: FIPS 203 §7.2/§7.3 checks are not a PKCS#11 operation{' '}
+                None: in the PKCS#11 v3.2 text read for this module the ML-KEM mechanism covers
+                ML-KEM.Encaps and ML-KEM.Decaps <Cite s="pkcs11" at="§6.68" />, and the FIPS 203
+                §7.2/§7.3 input checks have no operation of their own{' '}
                 <Cite s="fips203" at="§7.2, §7.3" />
               </>,
               <>

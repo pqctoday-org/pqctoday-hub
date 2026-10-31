@@ -39,7 +39,11 @@ const EMAIL_KAT_SPECS: KatTestSpec[] = [
 type SigningStep = 'content' | 'hash' | 'sign' | 'wrap'
 type AlgorithmView = 'ecdsa' | 'ml-dsa'
 
-const SIGNING_STEPS: { id: SigningStep; label: string; description: string }[] = [
+const SIGNING_STEPS: {
+  id: SigningStep
+  label: string | Record<AlgorithmView, string>
+  description: string | Record<AlgorithmView, string>
+}[] = [
   {
     id: 'content',
     label: '1. Content',
@@ -47,15 +51,23 @@ const SIGNING_STEPS: { id: SigningStep; label: string; description: string }[] =
   },
   {
     id: 'hash',
-    label: '2. Hash',
-    description:
-      'SHA-256 digest is computed over the signed attributes (content type, message digest, signing time).',
+    label: { ecdsa: '2. Hash', 'ml-dsa': '2. Prepare input' },
+    description: {
+      ecdsa:
+        'The message digest of the complete DER encoding of the signed attributes is computed (SHA-256 here).',
+      'ml-dsa':
+        'ML-DSA is used in pure mode (RFC 9882), so no digest of the signed attributes is computed; the DER encoding of the signed attributes is the input.',
+    },
   },
   {
     id: 'sign',
     label: '3. Sign',
-    description:
-      "The digest is signed using the sender's private key (ECDSA or ML-DSA) to produce the signature value.",
+    description: {
+      ecdsa:
+        "ECDSA signs that digest with the sender's private key to produce the signature value.",
+      'ml-dsa':
+        "ML-DSA signs the DER encoding of the signed attributes directly with the sender's private key to produce the signature value.",
+    },
   },
   {
     id: 'wrap',
@@ -64,6 +76,9 @@ const SIGNING_STEPS: { id: SigningStep; label: string; description: string }[] =
       'Everything is assembled into a CMS SignedData structure: version, digest algorithms, content, certificates, and signer infos.',
   },
 ]
+
+const forView = (value: string | Record<AlgorithmView, string> | undefined, view: AlgorithmView) =>
+  typeof value === 'object' ? value[view] : value
 
 const ASN1TreeNode: React.FC<{
   node: ASN1Node
@@ -161,7 +176,7 @@ export const CMSSigningDemo: React.FC = () => {
             {step.id === 'hash' && <Hash size={14} />}
             {step.id === 'sign' && <PenLine size={14} />}
             {step.id === 'wrap' && <Package size={14} />}
-            {step.label}
+            {forView(step.label, algorithmView)}
           </Button>
         ))}
       </div>
@@ -169,7 +184,7 @@ export const CMSSigningDemo: React.FC = () => {
       {/* Step Description */}
       <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
         <p className="text-sm text-foreground">
-          {SIGNING_STEPS.find((s) => s.id === activeStep)?.description}
+          {forView(SIGNING_STEPS.find((s) => s.id === activeStep)?.description, algorithmView)}
         </p>
       </div>
 
@@ -197,7 +212,7 @@ export const CMSSigningDemo: React.FC = () => {
                   }
                 }}
               >
-                <div className="text-xs font-bold">{step.label}</div>
+                <div className="text-xs font-bold">{forView(step.label, algorithmView)}</div>
               </div>
               {idx < SIGNING_STEPS.length - 1 && (
                 <span className="text-muted-foreground mx-1 hidden sm:block">&rarr;</span>

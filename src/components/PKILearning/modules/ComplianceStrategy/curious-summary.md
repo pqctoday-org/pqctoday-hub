@@ -4,7 +4,7 @@ Global governments and standards bodies—including NIST, NSA, ETSI, ANSSI, and 
 
 ### Why It Matters
 
-Failure to map compliance correctly means missing the dates that actually bind you — for example CNSA 2.0 acquisition milestones from 2027 for U.S. National Security Systems. Organizations cannot simply migrate unilaterally; they are gated by external dependencies such as FIPS 140-3 Cryptographic Module Validation Program (CMVP) queues and sector frameworks such as eIDAS 2.0 and DORA, which do not name PQC but require state-of-the-art cryptography and cryptographic agility. Furthermore, the June 2026 PQC Executive Order (EO 14412) introduces Cryptographic Bill of Materials (CBOM) requirements that affect vendor contracts (EO 14306 had earlier removed EO 14144's binding procurement trigger).
+Failure to map compliance correctly means missing the dates that actually bind you — for example CNSA 2.0 acquisition milestones from 2027 for U.S. National Security Systems. Organizations cannot simply migrate unilaterally; they are gated by external dependencies such as FIPS 140-3 Cryptographic Module Validation Program (CMVP) queues and sector frameworks such as eIDAS 2.0 and DORA, which do not name PQC but require state-of-the-art cryptography and cryptographic agility. Furthermore, the June 2026 PQC Executive Order (EO 14412) directs CISA to publish guidance on the minimum elements of a Cryptographic Bill of Materials (CBOM), due 19 March 2027 (EO 14306 had earlier removed EO 14144's binding procurement trigger).
 
 ### The Key Takeaway
 

@@ -34,8 +34,9 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
               Group messaging at scale, with PQC custody
             </h2>
             <p className="mt-2 text-muted-foreground">
-              The Messaging Layer Security protocol (RFC 9420) gives groups of thousands the same
-              forward secrecy and post-compromise guarantees Signal offers pairs. Our
+              The Messaging Layer Security protocol (RFC 9420) provides asynchronous group key
+              establishment with forward secrecy and post-compromise security for groups from two to
+              thousands. Our
               <span className="text-primary"> openmls_pqctoday_crypto</span> Rust provider wires the
               OpenMLS reference implementation to PKCS#11 v3.2 so signature keys live in an HSM and
               HPKE runs end-to-end inside the token.
@@ -57,9 +58,10 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
           <GitBranch size={20} className="text-primary mb-2" />
           <h3 className="font-semibold">PQ ciphersuites</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            <span className="text-foreground">draft-ietf-mls-pq-ciphersuites-06</span> registers
-            ML-KEM-768 + ML-DSA-65 suites. WG state: waiting for WG chair go-ahead, revised I-D
-            needed (2026-07-21) — past WG Last Call, not through it.
+            <span className="text-foreground">draft-ietf-mls-pq-ciphersuites-06</span> (21 July
+            2026) registers eleven ML-KEM cipher suites, hybrid and pure. On 30 October 2026 its
+            datatracker page shows WG state &ldquo;Submitted to IESG for Publication&rdquo; and IESG
+            state &ldquo;Publication Requested&rdquo;.
           </p>
         </div>
         <div className="glass-panel p-4">

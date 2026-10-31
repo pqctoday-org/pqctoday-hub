@@ -18,7 +18,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-256',
     pqcMigrationStatus: 'planned',
     pqcMigrationNotes:
-      'Intel has committed to PQC attestation key migration for DCAP. Estimated timeline: 2027. Will require PCK certificate chain re-issuance with ML-DSA keys.',
+      "We found no published Intel date or plan for moving DCAP attestation, which Intel documents as ECDSA based, to post-quantum algorithms. The module's own estimate is 2027, which would require PCK certificate chain re-issuance with ML-DSA keys.",
     steps: [
       {
         id: 'dcap-1',
@@ -94,7 +94,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-384',
     pqcMigrationStatus: 'planned',
     pqcMigrationNotes:
-      'ARM has indicated PQC support for CCA attestation tokens on the roadmap. Initial implementations use ECDSA P-384 per PSA Attestation Token specification. Estimated PQC timeline (ML-DSA): 2028.',
+      "We found no published Arm roadmap or date for PQC support in CCA attestation tokens. The module's own estimate is ML-DSA around 2028, and it assumes initial implementations use ECDSA P-384.",
     steps: [
       {
         id: 'cca-1',
@@ -221,7 +221,7 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     hashAlgorithm: 'SHA-384',
     pqcMigrationStatus: 'preview',
     pqcMigrationNotes:
-      'AWS KMS offers ML-DSA signing keys (GA June 2025) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints; it does not offer ML-KEM KMS keys. Nitro attestation documents still use ECDSA P-384, and the attestation document PQC migration timeline is not yet public.',
+      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints. Nitro attestation documents still use ECDSA P-384, and the attestation document PQC migration timeline is not yet public.',
     steps: [
       {
         id: 'nitro-1',
@@ -378,7 +378,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'HSM generates PQC keypair → Wrapped export via TLS 1.3 channel → Enclave receives wrapped key → Unsealed with EGETKEY-derived wrapping key → Key loaded into enclave memory',
     migrationComplexity: 'high',
     notes:
-      'Requires both Intel DCAP attestation key migration (ECDSA → ML-DSA) and Luna firmware upgrade (v7.9+ for ML-KEM/ML-DSA preview). PKCS#11 v3.2 mechanisms required on both sides. Thales Luna Partition Owner role must configure PQC-enabled partition. Note: Intel SGX SDK EOL (2024) for consumer platforms — this integration applies to Xeon data center deployments.',
+      'Luna HSM firmware v7.9 has ML-KEM (FIPS 203) and ML-DSA (FIPS 204) in the core firmware (Thales). The module assumes this integration also needs the Intel DCAP attestation keys to move from ECDSA to ML-DSA, PKCS#11 v3.2 mechanisms on both sides, and a PQC-enabled Luna partition configured by the Partition Owner. The module applies it to Xeon data center deployments.',
   },
   {
     id: 'sev-snp-nshield',
@@ -414,7 +414,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'Nitro Enclave connects to CloudHSM via vsock proxy → KMS attestation policy gates access → CloudHSM provisions key via PKCS#11 → Key material decrypted inside enclave',
     migrationComplexity: 'medium',
     notes:
-      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS offers ML-DSA signing keys and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but no ML-KEM KMS keys — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
+      'CloudHSM generates and uses ML-DSA keys inside the HSM (FIPS mode on hsm2m.medium from 1 Sep 2026); no ML-KEM. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS offers ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
   },
   {
     id: 'tdx-marvell-pkcs11',
@@ -432,7 +432,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'TD sends attestation quote to a key broker → broker verifies via Intel PCS → TLS 1.3 channel → broker calls the HSM through PKCS#11 → wrapped keys are provisioned to the TD',
     migrationComplexity: 'medium',
     notes:
-      "Marvell's LiquidSecurity 2 product brief lists PKCS#11, Java JCA/JCE, Microsoft CNG/KSP and an OpenSSL engine as client APIs, and says the adapter supports post-quantum algorithms in non-FIPS mode. The security policy of CMVP certificate 4703 lists ML-KEM and ML-DSA as non-compliant services. TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled. GCP C3 TDX instances went GA in 2025.",
+      "Marvell's LiquidSecurity 2 product brief lists PKCS#11, Java JCA/JCE, Microsoft CNG/KSP and an OpenSSL engine as client APIs, and says the adapter supports post-quantum algorithms in non-FIPS mode. The security policy of CMVP certificate 4703 lists ML-KEM and ML-DSA as non-compliant services. TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled. GCP C3 instances with Intel TDX went generally available in September 2024.",
   },
 ]
 
@@ -451,7 +451,7 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     pqcSolution:
       'ML-DSA-65/87 for attestation key signing. Hybrid ECDSA+ML-DSA during transition period. Certificate chain re-issuance from vendor root CAs.',
     vendorTimeline: 'Intel: 2027, ARM: 2028, AMD: 2028, AWS: TBD',
-    hndlExposure: true,
+    hndlExposure: false,
     migrationEffort: 4,
   },
   {
@@ -465,7 +465,8 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     migrationPriority: 2,
     pqcSolution:
       'Upgrade sealing key derivation to AES-256 (128-bit post-quantum security). Add PQC KDF (HKDF-SHA3-256) for key derivation chain.',
-    vendorTimeline: 'Requires next-gen CPU silicon: Intel 2027+, AMD 2028+',
+    vendorTimeline:
+      "Requires next-generation CPU silicon; no Intel or AMD dates are published in the sources we hold (the module's own estimate is Intel 2027+, AMD 2028+)",
     hndlExposure: false,
     migrationEffort: 5,
   },
@@ -512,7 +513,7 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     pqcSolution:
       'ML-DSA-65/87 or SLH-DSA for firmware signing. Dual-signature (classical + PQC) during transition. Hardware root of trust must support PQC verification.',
     vendorTimeline:
-      'Requires silicon refresh: Intel (2027+), AMD (2028+), ARM (SoC vendor dependent)',
+      "Requires a silicon refresh; no vendor dates are published in the sources we hold (the module's own estimate is Intel 2027+, AMD 2028+; Arm depends on the SoC vendor)",
     hndlExposure: false,
     migrationEffort: 4,
   },

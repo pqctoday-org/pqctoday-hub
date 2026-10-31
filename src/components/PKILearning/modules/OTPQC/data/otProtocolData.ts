@@ -82,8 +82,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     standard: 'IEC 61850-8-1 · security: IEC 62351-6 (2020), keys: IEC 62351-9 / RFC 8052',
     sectors: ['energy'],
     transport: 'Layer 2 multicast',
-    timingRequirement:
-      'Type 1A trip: class P1 = TT6 (3 ms or less); class P2 = TT5 (10 ms or less)',
+    timingRequirement: 'Trip messages: transfer-time class TT6 (3 ms or less)',
     description:
       'Generic Object Oriented Substation Event — Layer 2 multicast for protection trips, interlocks and status. Repeats on change, so it cannot wait for a handshake.',
     standardStatus:
@@ -183,7 +182,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'The dominant North American SCADA protocol for RTUs and outstations, over serial or TCP. SAv5 authenticates critical requests with a challenge-response MAC.',
     standardStatus:
-      'IEEE moved 1815-2012 to inactive status in 2023; the P1815 revision runs to 2027. "SAv6" has not been published.',
+      'IEEE SA lists IEEE 1815-2012 as an Inactive-Reserved standard (inactivated 30 March 2023) and lists a P1815 project that would supersede it. The documents we hold describe no revision named "SAv6".',
     cryptoLayers: [
       {
         layerName: 'Challenge-response authentication',
@@ -218,7 +217,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
         pqcBytes: ML_KEM_768_CT,
         sizeBasis: 'key transport (RSA-2048 → ML-KEM-768 ciphertext)',
         notes:
-          'Only deployments that chose the optional asymmetric method are exposed. No published DNP3 revision defines a PQC replacement yet.',
+          'Only deployments that chose the optional asymmetric method are exposed. We found no post-quantum option for DNP3 in the documents we hold.',
       },
     ],
   },
@@ -231,7 +230,8 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     timingRequirement: null,
     description:
       'Telecontrol over TCP/IP, widely used in European grids between control centres and substations.',
-    standardStatus: 'Inherits IEC 62351-3 TLS and IEC 62351-5 authentication; no PQC profile yet.',
+    standardStatus:
+      'Inherits IEC 62351-3 TLS and IEC 62351-5 authentication; no post-quantum option in the documents we hold.',
     cryptoLayers: [
       {
         layerName: 'TLS (IEC 62351-3)',
@@ -298,7 +298,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'Platform-neutral client/server and pub/sub protocol used from PLCs to MES. Security is negotiated per SecureChannel through SecurityPolicies.',
     standardStatus:
-      'SecurityPolicies use RSA (e.g. Basic256Sha256, Aes256_Sha256_RsaPss) or ECC (nistP256, nistP384, brainpool, curve25519). No PQC policy is published; one would arrive through the Part 7 profiles.',
+      'SecurityPolicies use RSA (e.g. Basic256Sha256, Aes256_Sha256_RsaPss) or ECC (nistP256, nistP384, brainpool, curve25519). No post-quantum option in the documents we hold; one would arrive through the Part 7 profiles.',
     cryptoLayers: [
       {
         layerName: 'SecureChannel key establishment',
@@ -341,7 +341,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'Security extension for EtherNet/IP: TLS for explicit messaging and DTLS for implicit (I/O) messaging, with X.509 certificates or pre-shared keys.',
     standardStatus:
-      'Five profiles (EtherNet/IP Confidentiality, CIP User Authentication, Resource-Constrained, Pull Model, Device-Based Firewall). No PQC profile yet.',
+      'Five profiles (EtherNet/IP Confidentiality, CIP User Authentication, Resource-Constrained, Pull Model, Device-Based Firewall). No post-quantum option in the documents we hold.',
     cryptoLayers: [
       {
         layerName: 'TLS/DTLS handshake with certificates',
@@ -415,7 +415,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     timingRequirement: null,
     description:
       'Wraps Modbus in mutually authenticated TLS, with the user role carried in an X.509 extension. Plain Modbus (port 502) has no security at all.',
-    standardStatus: 'TLS 1.2 or later with X.509; no PQC profile.',
+    standardStatus: 'TLS 1.2 or later with X.509; no post-quantum option in the documents we hold.',
     cryptoLayers: [
       {
         layerName: 'Mutual TLS',
@@ -447,7 +447,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'Building-automation datalink over TLS 1.3 WebSockets in a hub-and-spoke topology; every node holds a CA-signed operational certificate.',
     standardStatus:
-      'TLS 1.3 with elliptic-curve cryptography only (128- or 256-bit security). No PQC option yet.',
+      'TLS 1.3 with elliptic-curve cryptography only (128- or 256-bit security). No post-quantum option in the documents we hold.',
     cryptoLayers: [
       {
         layerName: 'TLS 1.3 key exchange',
@@ -481,7 +481,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     timingRequirement: null,
     description:
       'Metering application protocol. Suite 0: AES-GCM-128 only. Suite 1: ECDH/ECDSA P-256 + AES-GCM-128 + AES key wrap. Suite 2: P-384 + AES-GCM-256. None of the suites uses RSA. Fleet-scale meter key management is taught in the IoT module.',
-    standardStatus: 'No PQC suite defined.',
+    standardStatus: 'No post-quantum option in the documents we hold.',
     cryptoLayers: [
       {
         layerName: 'Data protection (all suites)',

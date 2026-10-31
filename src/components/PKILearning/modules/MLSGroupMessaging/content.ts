@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'mls-group-messaging',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('RFC 9420'),
@@ -39,7 +39,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      "MLS (RFC 9420) replaces Signal-style pairwise ratchets — which hit an O(N²) ceiling around 100 members — with TreeKEM: every member is a leaf of a binary tree, and a Commit refreshes the sender's direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. That gives forward secrecy and post-compromise security at group sizes pairwise ratchets can't reach. `draft-ietf-mls-pq-ciphersuites` (at -06; WG state: waiting for WG chair go-ahead, revised I-D needed) registers ML-KEM-768 + ML-DSA-65/87 ciphersuites that replace the DH-based KEM and signature scheme atomically; `draft-ietf-mls-combiner-02` specifies a hybrid path — run a traditional and a PQ MLS session in parallel and combine them by importing a secret exported from the PQ session as a Pre-Shared Key (PSK) into the traditional session.",
+      'MLS (RFC 9420) provides asynchronous group key establishment with forward secrecy and post-compromise security for groups from two to thousands, using TreeKEM: every member is a leaf of a binary tree, and a Commit refreshes the sender\'s direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. `draft-ietf-mls-pq-ciphersuites` (-06, 21 July 2026; datatracker on 30 October 2026: WG state "Submitted to IESG for Publication", IESG state "Publication Requested") registers eleven ML-KEM cipher suites, hybrid and pure, the first eight with traditional signatures and the last three with ML-DSA-44, ML-DSA-65 and ML-DSA-87; `draft-ietf-mls-combiner-02` specifies a hybrid path — run a traditional and a PQ MLS session in parallel and combine them by importing a secret exported from the PQ session as a Pre-Shared Key (PSK) into the traditional session.',
     workshopSummary:
       "TreeKEM Ratchet Tree Visualizer: watch a Commit refresh a sender's direct path and advance the group epoch secret. OpenMLS ↔ PKCS#11 Provider Architecture: see how `openmls_pqctoday_crypto` routes OpenMLS's ~15-function `OpenMlsCrypto` trait through PKCS#11 v3.2 against softhsmv3, with signature keys generated as non-extractable HSM token objects.",
   },
@@ -57,7 +57,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     title: 'What MLS solves',
     body: [
       "Messaging Layer Security (RFC 9420, July 2023) is the IETF's answer to a question Signal's Double Ratchet can't scale to: how do you give a group of thousands of participants forward secrecy AND post-compromise security AND asynchronous key agreement, all at once, with sub-second key updates?",
-      "Signal's pairwise ratchet hits an O(N²) ceiling around 100 members. MLS replaces that with a tree-based key encapsulation scheme — TreeKEM — that scales to thousands while keeping the same forward-secrecy guarantees.",
+      'RFC 9420 describes the Double Ratchet as the common solution for two parties and sender keys as the common strategy for larger groups, where post-compromise security is difficult to achieve. MLS replaces both with a tree-based key encapsulation scheme — TreeKEM — that provides forward secrecy and post-compromise security for groups from two to thousands.',
       'In practice: WhatsApp, Webex, AWS Wickr, and Cisco MLS-over-Webex all deploy or pilot MLS for federated group messaging. The protocol is also the foundation for upcoming PQ secure-messaging standards (draft-ietf-mls-pq-ciphersuites).',
     ],
   },
@@ -83,8 +83,8 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     id: 'ciphersuites',
     title: 'Ciphersuites — baseline, PQ, hybrid',
     body: [
-      'MLS RFC 9420 defines seven baseline ciphersuites combining one of {DHKEM(X25519), DHKEM(P-256), DHKEM(X448), DHKEM(P-384), DHKEM(P-521)} × one of {HKDF-SHA256, HKDF-SHA384, HKDF-SHA512} × one of {AES-128-GCM, AES-256-GCM, ChaCha20-Poly1305} × Ed25519 / ECDSA-P-* / Ed448.',
-      '`draft-ietf-mls-pq-ciphersuites-06` (July 2026; WG state "Waiting for WG Chair Go-Ahead, Revised I-D Needed") registers PQ ciphersuites using ML-KEM-768 + ML-DSA-65 (and 87 for higher security levels) — replacing the DH-based KEM and the signature scheme atomically.',
+      'MLS RFC 9420 registers seven fixed cipher suites (0x0001 to 0x0007), each pairing a specific DHKEM, KDF, AEAD, hash and signature scheme; MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 is the mandatory-to-implement suite.',
+      '`draft-ietf-mls-pq-ciphersuites-06` (21 July 2026) registers eleven ML-KEM cipher suites: hybrid (ML-KEM with X25519, P-256 or P-384) and pure ML-KEM. The first eight combine the KEM with a traditional signature algorithm; the last three also use post-quantum signatures (ML-DSA-44, ML-DSA-65 and ML-DSA-87).',
       '`draft-ietf-mls-combiner-02` (expired, WGLC revival pending) specifies a hybrid combiner: run two MLS sessions in parallel (one traditional, one PQ) and combine them by exporting a secret from the PQ session and importing it as a Pre-Shared Key (PSK) into the traditional session, to achieve amortized PQ confidentiality and authenticity.',
     ],
   },
@@ -103,7 +103,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     body: [
       'Two things have to converge for production PQ MLS: (1) the upstream OpenMLS workspace registers `draft-ietf-mls-pq-ciphersuites` in `openmls_traits::types::Ciphersuite`, and (2) our provider wires `CKM_ML_KEM_*` and `CKM_ML_DSA` through. softhsmv3 already implements both (FIPS 203 + FIPS 204), so the provider side is one match-arm extension once upstream lands the registry.',
       'A parallel path is the hybrid combiner: a traditional and a PQ MLS session run in parallel and combined through a PSK exported from the PQ session. This is the path most enterprise messaging vendors are watching, because it lets them ship MLS today and turn on PQ when their HSM fleet is ready, without re-keying.',
-      'Status snapshot (July 2026, from the draft\'s own datatracker page): the PQ ciphersuite draft is at -06, last updated 2026-07-21, and its WG state is "Waiting for WG Chair Go-Ahead — Revised I-D Needed, Issue raised by WG" — past WG Last Call and back with the authors, not through it. The combiner draft expired and awaits revival. Treat any stabilisation date as unforecastable while a revised I-D is outstanding.',
+      'Status snapshot (30 October 2026, from the drafts\' datatracker pages): the PQ ciphersuite draft is an Active Internet-Draft at -06 (21 July 2026; last updated 2026-10-19); its WG state is "Submitted to IESG for Publication" and its IESG state is "Publication Requested". The combiner draft (-02, 22 October 2025) is expired; its WG state is "Waiting for WG Chair Go-Ahead, Revised I-D Needed - Issue raised by WGLC". Check the datatracker pages for the current state.',
     ],
   },
 ]

@@ -83,6 +83,19 @@ export function decodeShareToken(token: string): ReportShareSchema | null {
     if (parsed.v === 2) {
       const v2 = parsed as ReportShareSchemaV2
       if (!v2.result || typeof v2.result !== 'object') return null
+      const additive = v2.result.additiveScore
+      if (
+        additive !== undefined &&
+        (!additive ||
+          !Array.isArray(additive.rows) ||
+          !Number.isFinite(additive.total) ||
+          !additive.rows.every(
+            (row) => row && typeof row.label === 'string' && Number.isFinite(row.points)
+          ) ||
+          additive.rows.reduce((sum, row) => sum + row.points, 0) !== additive.total ||
+          Math.max(0, Math.min(100, additive.total)) !== v2.result.riskScore)
+      )
+        return null
       return v2
     }
     return null

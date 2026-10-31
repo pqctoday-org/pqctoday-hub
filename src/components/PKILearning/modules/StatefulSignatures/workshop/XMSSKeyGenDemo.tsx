@@ -588,7 +588,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 value: xmssHash,
                 body:
                   xmssHash === 'SHA-256'
-                    ? 'SHA-256 relies on collision resistance. Standard choice; NIST FIPS 180-4 compliant. The XMSS-SHA2_h_256 sets are approved in SP 800-208.'
+                    ? 'SHA-256: RFC 8391 says XMSS does not rely on the collision resistance of the hash functions it uses. Standard choice; NIST FIPS 180-4 compliant. The XMSS-SHA2_h_256 sets are approved in SP 800-208.'
                     : 'SHAKE128 XOF per the RFC 8391 XMSS-SHAKE_h_256 sets — same sizes as SHA-256. Note: SP 800-208’s SHAKE sets are the separate XMSS-SHAKE256_h_192/256 sets, which use SHAKE256.',
               },
               {

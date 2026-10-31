@@ -362,14 +362,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            ISO 26262 defines the Automotive Safety Integrity Levels (ASIL) that govern all
-            safety-related electronic systems. When cryptographic verification becomes part of a
-            safety function &mdash; for example, authenticating a steering command or verifying a{' '}
+            ISO 26262 (Road vehicles &mdash; Functional safety) uses the Automotive Safety Integrity
+            Levels (ASIL), and its Part 9 covers ASIL-oriented and safety-oriented analyses. In this
+            module&rsquo;s design reading, when cryptographic verification becomes part of a safety
+            function &mdash; for example, authenticating a steering command or verifying a{' '}
             <InlineTooltip term="Secure Boot">secure boot</InlineTooltip> chain &mdash; the crypto
-            library inherits the ASIL classification of that function. PQC algorithms have
-            fundamentally different timing characteristics than classical ECDSA, and these
-            differences directly impact whether a system can meet its ASIL-mandated response
-            deadlines.
+            library is treated as carrying the ASIL of that function. PQC algorithms have different
+            timing characteristics than classical ECDSA, and these differences can affect whether a
+            system meets the response deadlines of its safety function.
           </p>
 
           <p>
@@ -970,9 +970,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             The Car Connectivity Consortium (CCC) Digital Key 3.0 specification enables smartphones
             and wearables to unlock and start vehicles using NFC, BLE, and UWB (Ultra-Wideband)
             transports. The protocol uses ECDH P-256 for key agreement and ECDSA P-256 for
-            authentication &mdash; both quantum-vulnerable. With over 200 million vehicles expected
-            to support <InlineTooltip term="CCC Digital Key">CCC Digital Key</InlineTooltip> by
-            2030, the PQC migration of this standard affects a massive installed base.
+            authentication &mdash; both quantum-vulnerable. A PQC migration of{' '}
+            <InlineTooltip term="CCC Digital Key">CCC Digital Key</InlineTooltip> would reach every
+            vehicle, phone and wearable that implements the standard.
           </p>
 
           <h3 className="text-sm font-bold text-foreground">Transport Comparison</h3>
@@ -1028,8 +1028,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                     <span className="text-status-warning font-medium">Marginal</span>
                   </td>
                   <td className="py-2 px-3 text-muted-foreground">
-                    Base PSDU is ~127 B, so ML-KEM-768 requires fragmentation; ranging itself uses
-                    quantum-safe AES-128 STS
+                    The 127 B payload is this table&rsquo;s planning value. An ML-KEM-768
+                    encapsulation key (1,184 B) or ciphertext (1,088 B; FIPS 203 Table 3) is larger,
+                    so an exchange would have to be fragmented
                   </td>
                 </tr>
               </tbody>
@@ -1038,15 +1039,18 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             The <strong>NFC APDU fragmentation problem</strong> is the most acute PQC challenge for
-            digital car keys. NFC ISO 14443-4 limits Application Protocol Data Units to 256 bytes.
+            digital car keys. Short APDUs (Application Protocol Data Units) carry about 256 bytes.
             An <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-768 public key is 1,184 bytes,
-            and the resulting ciphertext requires another 1,088 bytes. Exchanging just the KEM
-            material requires at least 9 APDU exchanges. Each exchange adds ~50 ms of round-trip
-            latency, potentially pushing the total NFC transaction time beyond the 500 ms user
-            experience threshold that CCC requires for &ldquo;tap and go&rdquo; unlock. Solutions
-            under investigation include extended-length APDUs (supported by some NFC controllers but
-            not all smartphones), pre-cached key material, and hybrid protocols where NFC bootstraps
-            a BLE connection for the PQC handshake.
+            and the resulting ciphertext requires another 1,088 bytes. A car and phone that support
+            only short APDUs need at least 5 exchanges for the key alone and at least 9 for the key
+            and ciphertext together; APDUs with extended length fields (which ICAO Doc 9303-11
+            requires for large cryptographic objects) avoid the split where both sides support them.
+            Each exchange adds ~50 ms of round-trip latency, potentially pushing the total NFC
+            transaction time beyond the 500 ms user experience threshold that CCC requires for
+            &ldquo;tap and go&rdquo; unlock. Solutions under investigation include extended-length
+            APDUs (supported by some NFC controllers but not all smartphones), pre-cached key
+            material, and hybrid protocols where NFC bootstraps a BLE connection for the PQC
+            handshake.
           </p>
 
           <h3 className="text-sm font-bold text-foreground">Owner-to-Friend Key Sharing Flow</h3>
@@ -1117,13 +1121,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           <p>
-            The mandatory regulatory backdrop is <strong>UNECE WP.29 R155 / R156</strong>: since
-            July 2024 all new vehicle type approvals in the EU, Japan, and Korea require a certified
-            Cyber Security Management System (CSMS) under R155 and a Software Update Management
-            System (SUMS) under R156. R155 explicitly requires cryptographic controls throughout the
-            supply chain, and national type-approval authorities are beginning to interpret
-            &ldquo;adequate cryptographic protection&rdquo; to include post-quantum readiness for
-            systems with multi-decade operating lives.
+            The regulatory backdrop is <strong>UNECE WP.29 R155 / R156</strong>: since July 2024
+            vehicle types need a valid Cyber Security Management System (CSMS) certificate under
+            R155 (and a Software Update Management System certificate under R156). R155 section
+            7.3.8 requires cryptographic modules to follow consensus standards; it does not mention
+            post-quantum cryptography.
           </p>
 
           <p>

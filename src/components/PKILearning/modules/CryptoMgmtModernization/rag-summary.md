@@ -23,11 +23,12 @@ schedule or never?"
    key-generation tests check against the private key only. The CMVP
    Modules-in-Process list gives each module's status and status date, not a completion date. Tracking this is a continuous monthly monitor,
    not an annual audit.
-3. **Library EoL and CVE cadence**. OpenSSL 1.1.1 EoL (September 2023). Bouncy Castle
-   high-severity CVEs per release. OMB M-23-02 annual cryptographic inventory mandate for US
+3. **Library end of life**. OpenSSL 1.1.1 reached end of life on 11 September 2023. OMB M-23-02 annual cryptographic inventory mandate for US
    federal agencies through 2035. CNSA 2.0 National Security Systems: CNSSP 15 requires new acquisitions to be compliant from 1 Jan 2027, phases out non-supporting equipment and services by 31 Dec 2030 and mandates the algorithms by 31 Dec 2031 unless otherwise noted (FAQ Ver. 2.2, Aug 2026). Earlier category dates remain historical context; use the current FAQ for planning.
 
 ## Five pillars of CPM
+
+This is this module's own five-pillar model.
 
 1. **Inventory** — unified CBOM across four asset classes (certificates, libraries, software,
    keys). Continuously refreshed, not point-in-time.
@@ -47,12 +48,12 @@ schedule or never?"
 
 ## No-regret ROI streams
 
-1. Cert-outage avoidance (~$11M/event × 86% annual incidence — Entrust/Ponemon 2024 PKI & PQC Trends Study).
+1. Cert-outage avoidance (illustrative assumption of this module: ~$11M/event × 86% annual incidence; not sourced figures).
 2. CLM automation (312% ROI, $10.1M NPV over 3 years — Forrester TEI of DigiCert ONE, July 2025; vendor-commissioned, treat as upper-bound benchmark).
 3. FIPS 140-3 drift remediation avoided.
 4. Library CVE response acceleration.
-5. Time-to-market and M&A readiness (~50% lower PQC transition cost for orgs with a CryptoCOE
-   before 2028 — Gartner: Mahdi/Lowans).
+5. Time-to-market and M&A readiness (illustrative assumption of this module: ~50% lower PQC
+   transition cost for orgs with a CryptoCOE before 2028; not a sourced figure).
 
 Quantum-dependent benefits are additive, never load-bearing.
 
@@ -71,8 +72,8 @@ Quantum-dependent benefits are additive, never load-bearing.
 
 CA/B Forum SC-081v3 · NIST FIPS 140-3 IG (last updated 19 Aug 2026) · SP 800-140B · CMVP Validated Modules + MIP
 · OMB M-23-02 · NSA CNSA 2.0 · ENISA PQC Integration Study · BSI/ANSSI joint 2025 · OWASP
-CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI of DigiCert ONE (2025) · Entrust/Ponemon 2024 Global PKI & PQC Trends Study · NIST IR 8547 (HNDL) · Microsoft
-CPM (2026-04) · Keyfactor/EJBCA CPM · Gartner (Mahdi, Lowans).
+CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI of DigiCert ONE (2025) · NIST IR 8547 (HNDL) · Microsoft
+CPM (2026-04) · Keyfactor/EJBCA CPM.
 
 ## Pairs with
 

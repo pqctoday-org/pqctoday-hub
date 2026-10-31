@@ -201,7 +201,8 @@ export const CmpKemKeyUpdate: React.FC = () => {
         <Info size={16} className="mt-0.5 shrink-0 text-primary" />
         <div>
           <div className="font-medium text-foreground">
-            RFC 9810 — CMP Updates for KEM (encrCert POP)
+            RFC 9810 — Certificate Management Protocol (adds support for KEM keys, including
+            encrCert proof-of-possession)
           </div>
           <p className="mt-1 text-muted-foreground">
             ML-KEM keys can't sign, so signature-POP doesn't apply. The CA{' '}
@@ -301,7 +302,7 @@ export const CmpKemKeyUpdate: React.FC = () => {
                       RFC 9810 <ExternalLink size={10} />
                     </a>
                   </td>
-                  <td className="py-1">CMP Updates for KEM (2025-07)</td>
+                  <td className="py-1">Certificate Management Protocol (2025-07)</td>
                 </tr>
                 <tr>
                   <td className="py-1 pr-2">Downstream: same cert in S/MIME</td>

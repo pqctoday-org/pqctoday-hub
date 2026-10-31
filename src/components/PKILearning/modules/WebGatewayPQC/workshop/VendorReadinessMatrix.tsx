@@ -203,7 +203,11 @@ export const VendorReadinessMatrix: React.FC = () => {
                         <StatusIcon size={10} className={statusInfo.color} />
                         <span className={statusInfo.color}>{statusInfo.label}</span>
                         {vendor.pqcVersion !== 'TBD' && (
-                          <span className="text-muted-foreground ml-1">v{vendor.pqcVersion}</span>
+                          <span className="text-muted-foreground ml-1">
+                            {/^\d/.test(vendor.pqcVersion)
+                              ? `v${vendor.pqcVersion}`
+                              : vendor.pqcVersion}
+                          </span>
                         )}
                       </div>
                     </div>

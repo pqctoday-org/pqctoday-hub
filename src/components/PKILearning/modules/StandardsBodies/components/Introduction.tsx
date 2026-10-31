@@ -446,7 +446,7 @@ const Step3GlobalRegional: React.FC = () => (
             flag: '🇺🇸',
             region: 'United States',
             bodies: [
-              'NIST — FIPS 203/204/205 algorithm standards (globally followed)',
+              "NIST — FIPS 203/204/205 algorithm standards (referenced by BSI TR-02102-1 and the ECCG Agreed Cryptographic Mechanisms; NSA's CNSA 2.0 names FIPS 203 and 204)",
               'NSA — CNSA 2.0 mandate for National Security Systems',
               'CISA — federal procurement guidance',
               'CMVP/CAVP — module & algorithm validation',
@@ -709,7 +709,7 @@ const Step4AppPagesGuide: React.FC = () => (
             n: 4,
             title: 'CNSA 2.0 mandate activates',
             body: 'Regulatory agency (NSA)',
-            desc: 'NSA CNSA 2.0 requires National Security Systems to use ML-KEM-1024 (from FIPS 203) for key establishment, with exclusive use phased in by 2030 (signing, networking) and 2033 (web/cloud, OS).',
+            desc: "NSA CNSA 2.0 requires National Security Systems to use ML-KEM-1024 (from FIPS 203) for key establishment. NSA's CNSA 2.0 FAQ (v2.2, October 2026) quotes CNSSP 15 as requiring CNSA 2.0 algorithms in all new NSS acquisitions by 1 January 2027, says that by 31 December 2030 NSS equipment and services that cannot support CNSA 2.0 must be phased out unless otherwise granted an exception, and that by 31 December 2031 CNSA 2.0 algorithms are mandated for use, unless otherwise noted.",
           },
           {
             n: 5,
@@ -825,7 +825,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {
             when: 'You see "RFC 9629"',
             meaning:
-              'IETF LAMPS WG published it (global SDO); defines KEM use in CMS — a protocol standard built on FIPS 203.',
+              'IETF LAMPS WG published it (global SDO); defines how a KEM algorithm, including a quantum-secure one, is used to encrypt and decrypt CMS content.',
           },
           {
             when: 'You see "ETSI TS 103 744"',
@@ -840,7 +840,7 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {
             when: 'You see "CNSA 2.0"',
             meaning:
-              'NSA published it (US governmental); binding mandate for National Security Systems. References FIPS 203/204/205.',
+              'NSA published it (US governmental); binding mandate for National Security Systems. It names ML-KEM (FIPS 203) and ML-DSA (FIPS 204); SLH-DSA (FIPS 205) is not part of CNSA and is not approved for any use in NSS.',
           },
           {
             when: 'You see "EUCC"',

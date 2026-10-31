@@ -484,7 +484,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
       {
         name: 'Bouncy Castle C#',
-        description: 'Full port of Java Bouncy Castle — comprehensive PQC',
+        description:
+          'C# edition of Bouncy Castle with ML-KEM, ML-DSA and SLH-DSA support (Bouncy Castle announcement, 9 June 2025)',
         pqcSupport: true,
       },
       {
@@ -513,7 +514,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'CNG integration gives hardware key isolation on Windows',
       'Span<T> and stackalloc enable secure memory management for crypto',
       'Cross-platform via .NET 6+ (Windows, Linux, macOS)',
-      '.NET 10 adds MLKem, MLDsa and SlhDsa; Bouncy Castle C# remains a comprehensive alternative',
+      '.NET 10 adds MLKem, MLDsa and SlhDsa; Bouncy Castle C# remains an alternative',
       'Strong typing with nullable reference types',
       'NativeAOT for high-performance crypto services',
     ],

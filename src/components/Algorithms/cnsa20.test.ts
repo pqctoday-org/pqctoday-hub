@@ -33,7 +33,7 @@ describe('classifyCnsa20', () => {
     expect(classifyCnsa20(a('SLH-DSA-SHAKE-256f')).status).toBe('excluded')
   })
 
-  it('approves stateful hash-based sigs for firmware only', () => {
+  it('approves single-tree stateful hash-based sigs (LMS, XMSS)', () => {
     expect(classifyCnsa20(a('LMS-SHA256 (H20/W8)')).status).toBe('approved-limited')
     expect(classifyCnsa20(a('XMSS-SHA2_20')).status).toBe('approved-limited')
     expect(classifyCnsa20(a('LMS_SHA256_M24_H20')).status).toBe('approved-limited')
@@ -130,7 +130,7 @@ describe('CNSA 2.0 timeline and hybrid wording', () => {
 
   it('keeps BSI (recommends hybrid) distinct from ANSSI (requires hybrid)', () => {
     const note = jurisdictionStanceForRegion('BSI/ANSSI')?.note ?? ''
-    expect(note).toMatch(/BSI .*recommends PQC only in hybrid use/)
+    expect(note).toMatch(/BSI .*recommends PQC in hybrid form, except that hash-based signatures/)
     expect(note).toMatch(/ANSSI .*mandatory/)
   })
 })

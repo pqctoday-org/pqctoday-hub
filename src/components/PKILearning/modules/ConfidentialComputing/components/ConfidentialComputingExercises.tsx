@@ -39,7 +39,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'SGX has a smaller TCB (CPU + enclave only); legacy client SGX was capped at ~256 MB EPC (too small for large ML models without partitioning), though recent Xeon server parts raise this to hundreds of GB. SEV-SNP encrypts the full VM including guest OS, which results in a larger TCB. Both are available on Azure and have distinct PQC attestation roadmaps.',
+        'SGX has a smaller TCB (CPU + enclave only); legacy client SGX was capped at ~256 MB EPC (too small for large ML models without partitioning), though recent Xeon server parts raise this to hundreds of GB. SEV-SNP encrypts the full VM including guest OS, which results in a larger TCB. Both are available on Azure; we found no published PQC attestation roadmap for either.',
       config: { step: 0 },
     },
     {
@@ -83,7 +83,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Two vectors are critical with HNDL exposure: ECDSA attestation chain forgery and TLS channel key exchange compromise. These must be migrated first. Memory encryption (medium severity) is lower priority because Grover only halves key strength and real-time quantum attack on AES-128 is unlikely. Sealing key and firmware vectors require silicon refresh (highest effort).',
+        'Two vectors are critical: ECDSA attestation chain forgery and TLS channel key exchange compromise. Only the TLS channel has HNDL exposure (recorded data at risk); attestation forgery is a signature risk, and NIST IR 8547 says the authentication algorithm "may be transitioned at a different time". Both are migrated first because of their severity. Memory encryption (medium severity) is lower priority because Grover only halves key strength and real-time quantum attack on AES-128 is unlikely. Sealing key and firmware vectors require silicon refresh (highest effort).',
       config: { step: 4 },
     },
     {
@@ -94,7 +94,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Assessment',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). AWS documents ML-DSA key generation and signing inside CloudHSM, in FIPS mode on hsm2m.medium clusters from 1 September 2026, but no ML-KEM, and the HSM\u2019s CMVP certificate does not list ML-DSA yet (checked October 2026). These details move faster than any catalogue, so confirm them in AWS documentation before you design around them. AES-256 memory encryption is Grover-resilient. Patient records have long retention (HIPAA: 6+ years) making HNDL exposure critical. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
+        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). AWS documents ML-DSA key generation and signing inside CloudHSM, in FIPS mode on hsm2m.medium clusters from 1 September 2026, but no ML-KEM, and the HSM\u2019s CMVP certificate does not list ML-DSA yet (checked October 2026). These details move faster than any catalogue, so confirm them in AWS documentation before you design around them. AES-256 memory encryption is Grover-resilient. Patient records can have long retention: state law generally governs how long medical records are retained (the HIPAA Privacy Rule has no medical-record retention requirement), while HIPAA requires covered entities to retain required compliance documentation for 6 years, making HNDL exposure critical for long-lived records. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
       config: { step: 4 },
     },
   ]

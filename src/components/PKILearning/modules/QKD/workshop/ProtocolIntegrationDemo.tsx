@@ -106,8 +106,9 @@ const TLSPanel: React.FC = () => {
         <div className="bg-success/5 border border-success/20 rounded p-3">
           <div className="font-bold text-success mb-1">③ TLS 1.3 Handshake</div>
           <div className="text-muted-foreground">
-            PSK binder replaces or augments ECDH-derived Early Secret in the key schedule (RFC 9846
-            §7.1)
+            The QKD key is the PSK: it is the input of the Early Secret; an (EC)DHE shared secret,
+            if used as well, is the input of the Handshake Secret, and binder_key is derived from
+            the Early Secret (RFC 9846 §7.1)
           </div>
         </div>
       </div>
@@ -118,13 +119,19 @@ const TLSPanel: React.FC = () => {
         </div>
         <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
           <li>
-            <strong>Without QKD</strong>: Early Secret = HKDF-Extract(0, DHE shared secret)
+            <strong>Without a PSK</strong>: Early Secret = HKDF-Extract(0, 0); the (EC)DHE shared
+            secret enters at the Handshake Secret
           </li>
           <li>
-            <strong>With QKD (RFC 9258)</strong>: Early Secret = HKDF-Extract(PSK=QKD key, 0) —
-            information-theoretically secure PSK replaces the computational DHE secret
+            <strong>With the QKD key as PSK (RFC 9258)</strong>: Early Secret = HKDF-Extract(PSK=QKD
+            key, 0); with psk_ke no (EC)DHE secret is used, with psk_dhe_ke it still enters at the
+            Handshake Secret
           </li>
-          <li>No protocol modifications required — RFC 9258 is an extension to existing TLS 1.3</li>
+          <li>
+            RFC 9258 is an interface for importing external PSKs into TLS 1.3: imported PSKs use the
+            binder label &quot;imp binder&quot;, so a client and server negotiate the PSK if and
+            only if both endpoints import it or neither does
+          </li>
         </ul>
       </div>
 
@@ -334,9 +341,12 @@ const MACsecPanel: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           MACsec (IEEE 802.1AE) encrypts Ethernet frames with AES-GCM using a{' '}
           <strong>Secure Association Key (SAK)</strong>. Normally the SAK is negotiated via MACsec
-          Key Agreement (MKA). With QKD on fiber links, the SAK can be derived directly from the
-          QKD-shared secret via ETSI GS QKD 014 — eliminating the MKA negotiation round-trip and
-          providing information-theoretic key material at the link layer.
+          Key Agreement (MKA). ETSI GS QKD 002 says QKD &quot;may also be used to provide keys for
+          the IEEE 802.1 MACsec layer 2 protocol&quot;; this workshop&apos;s design derives the SAK
+          from key material delivered through ETSI GS QKD 014. The same document says the overall
+          security level of a QKD link encryptor &quot;is determined by both the QKD component, and
+          the link encryptor component&quot;, so the link is not information-theoretically secure
+          end to end.
         </p>
       </div>
 
@@ -371,7 +381,8 @@ const MACsecPanel: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           MACsec supports GCM-AES-128, GCM-AES-256, and XPN variants for high-speed links. The SAK
           is a 128- or 256-bit AES key — exactly the output size produced by HKDF from a 256-bit QKD
-          secret. No protocol changes required; QKD replaces the MKA-negotiated CAK/SAK.
+          secret. In this workshop&apos;s design, the QKD-derived key stands in for the
+          MKA-negotiated SAK.
         </p>
       </div>
 

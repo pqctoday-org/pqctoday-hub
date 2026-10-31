@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Lock, Target } from 'lucide-react'
 import { ExportableArtifact } from './ExportableArtifact'
 import { rowsToCsv } from '@/services/export/csvExport'
 import { Button } from '@/components/ui/button'
+import { scoredWeightShare } from './scorecardCoverage'
 
 export interface ScorecardDimension {
   id: string
@@ -70,7 +71,7 @@ interface DataDrivenScorecardProps {
   /** Restore previously-saved scores / weight overrides on mount (e.g. from a persisted artifact). */
   initialScores?: Record<string, number>
   initialWeights?: Record<string, number>
-  /** Hide the composite until this share of intended KPI weight has evidence. */
+  /** Hide the composite until this share of the weight of the KPIs that can be scored has evidence. */
   minimumCoverageForOverall?: number
   /** Structured evidence fields shared by screen, saved artifacts and exports. */
   observations?: Record<string, ScorecardObservation>
@@ -221,20 +222,14 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     return totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
   }, [scores, dimensions, effectiveWeight, isPending])
 
-  const weightSum = useMemo(() => {
-    let s = 0
-    for (const d of dimensions) {
-      if (d.disabled || isPending(d)) continue
-      s += effectiveWeight(d)
-    }
-    return s
-  }, [dimensions, effectiveWeight, isPending])
-
   const intendedWeight = useMemo(
     () => dimensions.reduce((sum, dimension) => sum + effectiveWeight(dimension), 0),
     [dimensions, effectiveWeight]
   )
-  const evidenceCoverage = intendedWeight > 0 ? Math.min(1, weightSum / intendedWeight) : 0
+  const evidenceCoverage = useMemo(
+    () => scoredWeightShare(dimensions, effectiveWeight, (d) => !isPending(d)),
+    [dimensions, effectiveWeight, isPending]
+  )
   const overallAvailable = evidenceCoverage >= minimumCoverageForOverall
 
   const exportMarkdown = useMemo(() => {
@@ -345,14 +340,16 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
           <p className="text-xl md:text-2xl font-bold text-muted-foreground">Not yet available</p>
         )}
         <p className="text-sm text-muted-foreground mt-2">
-          Evidence coverage: {Math.round(evidenceCoverage * 100)}% of intended KPI weight
+          Evidence coverage: {Math.round(evidenceCoverage * 100)}% of the weight of the KPIs that
+          can be scored
           {!overallAvailable &&
             ` — enter organization-specific evidence before interpreting a combined score.`}
         </p>
         {description && <p className="text-sm text-muted-foreground mt-3">{description}</p>}
-        {allowWeightEditing && Math.abs(weightSum - 1) > 0.01 && (
+        {allowWeightEditing && Math.abs(intendedWeight - 1) > 0.01 && (
           <p className="text-xs text-status-warning mt-2">
-            Weights sum to {(weightSum * 100).toFixed(0)}% — overall score auto-normalises.
+            Configured weights sum to {(intendedWeight * 100).toFixed(0)}% — overall score
+            auto-normalises.
           </p>
         )}
       </div>

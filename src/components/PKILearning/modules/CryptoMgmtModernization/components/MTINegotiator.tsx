@@ -89,7 +89,7 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
       mti: 'ML-DSA-65 (FIPS 204, NIST Cat 3)',
       alternates: ['SLH-DSA-SHA2-128s'],
       rationale:
-        'BSI TR-02102-1 recommends ML-DSA-65 (NIST Category 3) standalone, in the "hedged" variant. ANSSI differs and it matters here: PG-083 v3 states that ML-DSA used WITHOUT hybridisation fails RegleSecuAsym at any parameter set, so in France pair it with a classical signature. Cat 3 is acceptable to both as the PQC component; Cat 5 is ANSSI\'s preference. SLH-DSA is the size-tolerant defence-in-depth alternate.',
+        'BSI TR-02102-1 recommends ML-DSA-65 and ML-DSA-87 in the "hedged" variant and "a quantum-safe signature scheme only in combination with a classic signature scheme", with one exception: hash-based signatures such as SLH-DSA can in principle also be used alone if implementation security is carefully considered. ANSSI PG-083 v3 states that ML-DSA used without hybridisation does not satisfy RègleSécuAsym at any parameter set, so in France pair it with a classical signature. SLH-DSA is the size-tolerant defence-in-depth alternate.',
     }
   }
 
@@ -134,9 +134,9 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
   if (interopProfile.includes('non-pqc-peers')) {
     return {
       mti: 'X25519MLKEM768 (RFC 10024)',
-      alternates: ['ML-KEM-768 (FIPS 203, pure-PQC fallback)'],
+      alternates: ['ML-KEM-768 (FIPS 203, pure PQC)'],
       rationale:
-        'Hybrid KEM keeps the X25519 half for legacy interop while ML-KEM-768 provides the PQC half; pure ML-KEM-768 is the post-transition alternate.',
+        'For deployments that must interoperate with non-PQC peers this module recommends the hybrid X25519MLKEM768 (RFC 10024): it combines X25519 with ML-KEM-768 so that security holds if either component is unbroken (defense-in-depth, as draft-ietf-uta-pqc-app puts it). Pure ML-KEM-768 is an option for deployments that require exclusively post-quantum key exchange.',
     }
   }
 
@@ -169,7 +169,7 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
       mti: 'ML-KEM-768 (FIPS 203, NIST Cat 3)',
       alternates: ['ML-KEM-1024 (Cat 5 step-up)'],
       rationale:
-        'Pure-PQC greenfield deployments pick ML-KEM-768 as MTI; ML-KEM-1024 is the Cat 5 alternate.',
+        'This module suggests ML-KEM-768 as the default for pure-PQC greenfield deployments, with ML-KEM-1024 as the step-up; CNSA 2.0 (national security systems) specifies ML-KEM-1024 for all classification levels.',
     }
   }
 

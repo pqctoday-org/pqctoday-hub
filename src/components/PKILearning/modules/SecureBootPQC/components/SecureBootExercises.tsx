@@ -49,7 +49,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'Signing',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Step 3 shows the most dramatic difference: ML-DSA-65 signatures are 3,309 bytes vs 256 bytes for RSA-2048 — a 12.9× increase. Step 2 shows the key size delta: public key grows from 256B to 1,952B (7.6×). The certificate chain in Step 3 uses ML-DSA-87 for intermediate and root CAs.',
+        'Step 3 shows the most dramatic difference: ML-DSA-65 signatures are 3,309 bytes vs 256 bytes for RSA-2048 — a 12.9× increase. Step 2 shows the key size delta: public key grows from 256B to 1,952B (7.6×). The demo builds its CMS SignedData with a stub SignerInfo (issuer "demo", serial 1) and no certificate chain.',
       config: { step: 1 },
     },
     {

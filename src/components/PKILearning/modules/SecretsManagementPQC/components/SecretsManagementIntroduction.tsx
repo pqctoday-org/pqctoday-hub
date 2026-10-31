@@ -329,13 +329,13 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             <p className="text-xs text-muted-foreground">
               Vault Transit Engine performs crypto operations server-side. Migrating key types from{' '}
               <code className="bg-muted px-1 rounded border border-border">rsa-4096</code> to{' '}
-              <code className="bg-muted px-1 rounded border border-border">ml-dsa-65</code>{' '}
-              (experimental, Vault Enterprise 1.19) — with{' '}
-              <code className="bg-muted px-1 rounded border border-border">ml-kem-768</code> still
-              on the roadmap — changes the internal transit key store without breaking the API
-              surface. Applications simply update the <code>key_type</code> parameter during key
-              creation, and Vault mechanically handles the larger PQC ciphertexts and nested
-              encapsulation transparency.
+              <code className="bg-muted px-1 rounded border border-border">ml-dsa-65</code> (an
+              Enterprise-only transit key type in the Vault documentation) — with{' '}
+              <code className="bg-muted px-1 rounded border border-border">ml-kem-768</code> not
+              among the documented transit key types — changes the internal transit key store
+              without breaking the API surface. Applications simply update the <code>key_type</code>{' '}
+              parameter during key creation, and Vault mechanically handles the larger PQC
+              ciphertexts and nested encapsulation transparency.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -368,12 +368,11 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           {[
             {
               provider: 'HashiCorp Vault (Enterprise)',
-              status: 'Experimental (1.19)',
+              status: 'Enterprise (documented key types)',
               statusCls: 'text-status-warning bg-status-warning/10 border-status-warning/30',
               details: [
-                'Transit ML-DSA and SLH-DSA sign/verify — experimental in Vault Enterprise 1.19',
-                'ML-KEM transit key types and PQC seal/unseal — roadmap, not yet announced',
-                'FIPS 140-3 validation for PQC algorithms — 2027 target',
+                'Transit ml-dsa, slh-dsa and hybrid sign/verify key types — Enterprise only, per the Vault transit documentation',
+                'ML-KEM transit key types and PQC seal/unseal — not documented; we found none announced',
                 'Hybrid TLS (X25519+ML-KEM) for Vault API — via HPKE RFC 9180',
               ],
               note: 'On-premises deployment gives full control over upgrade timing. Dynamic secrets are available now and eliminate many HNDL risks without waiting for PQC algorithms.',

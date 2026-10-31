@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.2',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -24,7 +24,7 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-227'), // KEM recommendations
     getStandard('NIST-FIPS140-3-IG-PQC'), // CMVP IG D.S: when a hybrid KEM is an approved service (Hybrid KEM Construction callout)
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
-    getStandard('draft-ietf-lamps-pq-composite-kem-23'), // Composite ML-KEM (draft -23, RFC Editor queue since 2026-10-21; supersedes -21 — editorial: OIDs and test vectors unchanged)
+    getStandard('draft-ietf-lamps-pq-composite-kem-23'), // Composite ML-KEM (draft -23, RFC Editor queue since 2026-10-12; supersedes -22)
     getStandard('RFC-9763'), // Related Certificates
     getStandard('RFC 9629'), // CMS KEMRecipientInfo — how a KEM certificate key is used
     getStandard('RFC-9936'), // ML-KEM in CMS
@@ -126,7 +126,7 @@ export const content: ModuleContent = {
     hpkeDefinition:
       "HPKE (RFC 9180) is a public-key encryption scheme built from three swappable components — a KEM, a KDF, and an AEAD — combined through a standard KeySchedule so any KEM/KDF/AEAD triple, plus one of four modes (Base, PSK, Auth, AuthPSK), yields an interoperable construction. It is not itself a hybrid-vs-classical choice: RFC 9180's own KEM registry is all-classical (DHKEM over P-256/P-384/P-521/X25519/X448). The PQC angle comes from draft-ietf-hpke-pq, which registers PQ and PQ/T hybrid KEM IDs (pure ML-KEM, and MLKEM768-X25519 / MLKEM768-P256 / MLKEM1024-P384 hybrids) that plug into the exact same KeySchedule and Seal/Open — still an Internet-Draft, not yet an RFC.",
     hpkeUseCases:
-      'MLS (RFC 9420) uses HPKE for its TreeKEM path updates. TLS 1.3 Encrypted Client Hello (ECH) uses it to encrypt the ClientHello. draft-ietf-jose-hpke-encrypt and draft-ietf-cose-hpke extend it to JOSE/COSE, so it can wrap a JWT or CWT payload the same way. All four share one property: a KEM has no way for the sender to supply a chosen shared secret (unlike ECDH) — HPKE always encapsulates a fresh, sender-unpredictable one.',
+      'MLS (RFC 9420) uses HPKE for its TreeKEM path updates. TLS 1.3 Encrypted Client Hello (ECH) uses it to encrypt the ClientHello. draft-ietf-jose-hpke-encrypt and draft-ietf-cose-hpke extend it to JOSE/COSE, so it can wrap a JWT or CWT payload the same way. All four share one property: a KEM’s Encaps takes the recipient’s public key (plus a parameter set) and returns both a shared secret and the ciphertext; the sender does not hand it a key of its own choosing, whereas in key transport (for example RSA-OAEP) one party selects the key and transmits it. HPKE’s Encap is a randomized algorithm that generates an ephemeral shared secret and its encapsulation.',
     hpkeAuthLimitation:
       'RFC 9180\'s Auth and AuthPSK modes require the KEM to expose AuthEncap/AuthDecap. Every classical DHKEM in RFC 9180 supports this; draft-ietf-hpke-pq\'s ML-KEM and PQ/T hybrid KEM entries mark the Auth column "no" — so Auth/AuthPSK stay classical-only until a future KEM adds it.',
     hpkeNoNativeMechanism:

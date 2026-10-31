@@ -211,7 +211,7 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   // ── Round 9, wave 2 (2026-09-19): the sixteen routed pages the round-8 strip did not reach; each line written against the page's rendered controls and sections ──
   '/report': {
     executive:
-      'Your view opens "Recommended Actions (Top 5)" first; at the foot of the report, "Print Executive Brief" and "Board Pack ZIP" produce the version you hand to the board.',
+      'Your view opens "Recommended Actions (Top 5)" first. "Print Executive Brief" and "Board Pack ZIP" export a learning report built from the answers you entered, with sources and limits; review the inputs and evidence before using it in a real board discussion.',
     grc: '"Compliance Impact" marks each framework "PQC Required" or "No PQC mandate yet" with its deadline; your view also opens Assessment Profile, Discovery, CBOM and Vendor risk, and "Compliance Pack ZIP" adds an applicability register: each framework in scope, why it applies, its binding status and source.',
     developer:
       'Your view opens "Cryptographic Bill of Materials (CBOM)" and "Cryptographic Discovery" first; "Algorithm Migration Priority" names each replacement with a "Try in Playground" link, and "Export CSV" downloads that table.',

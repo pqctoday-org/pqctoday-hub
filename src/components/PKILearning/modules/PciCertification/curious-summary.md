@@ -12,4 +12,4 @@ A PCI listing's post-quantum flag only says that support exists — it does not 
 
 ### What's Happening
 
-As of 24 September 2026, PCI's newest HSM standard adds post-quantum definitions without naming a required algorithm or deadline.
+As of 30 October 2026, PCI's newest HSM standard adds post-quantum definitions without naming a required algorithm or deadline.

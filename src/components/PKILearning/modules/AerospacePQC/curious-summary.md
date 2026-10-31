@@ -4,7 +4,7 @@ The aerospace sector manages communications across three totally distinct domain
 
 ### Why It Matters
 
-Because an aircraft or satellite deployed today will still be operational in 2055, their classical cryptography (RSA-2048, ECDSA P-256) spans entirely across the quantum transition window. Satellites launched in 2028 are severely exposed to "Harvest Now, Decrypt Later" threats on their command and telemetry uplinks, yet their hardware cannot be physically upgraded post-launch. Furthermore, the massive size of PQC signatures (ML-DSA) completely breaks legacy aviation protocols like ACARS and ADS-B, and space electronics face cosmic radiation where a single bit-flip (SEU) in a lattice-based private key can corrupt all subsequent operations.
+Aircraft and satellites stay in service for decades, so the classical cryptography they carry (RSA-2048, ECDSA P-256) can span the quantum transition window. The command and telemetry uplinks of a satellite launched around 2028 can be recorded for later decryption ("Harvest Now, Decrypt Later"), and in this module's planning assumptions its hardware cannot be physically upgraded after launch. PQC signatures are also much larger than the messages of legacy aviation links: in the example of IACR ePrint 2024/046 an ECDSA signature of 448 bits is already four times an ADS-B message (112 bits), so a larger PQC signature cannot fit either. Space electronics also face radiation, and the module's single-event-upset (SEU) calculator treats a bit-flip in stored key material as a risk to key refresh intervals.
 
 ### The Key Takeaway
 

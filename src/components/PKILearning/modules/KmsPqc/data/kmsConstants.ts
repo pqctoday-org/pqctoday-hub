@@ -118,7 +118,7 @@ export const ENVELOPE_ENCRYPTION_STEPS: EnvelopeEncryptionStep[] = [
     classicalDescription:
       'Not needed — RSA-OAEP directly encrypts the DEK. The decrypted output IS the DEK.',
     pqcDescription:
-      'Run HKDF-SHA-256(shared_secret, info="kms-envelope-v1") → 256-bit wrapping key. This extra KDF step is required because KEMs produce a random shared secret, not a direct encryption.',
+      'The shared secret key from ML-KEM Encaps does not require further key derivation; this demo runs HKDF-SHA-256(shared_secret, info="kms-envelope-v1") → 256-bit wrapping key to bind it to this protocol and version.',
     classicalArtifact: '(skipped)',
     pqcArtifact: '256-bit AES Wrapping Key',
     classicalSize: 'N/A',
@@ -375,7 +375,7 @@ export const ENTERPRISE_SCENARIO = {
       framework: 'PCI DSS v4.0.1',
       deadline: '2025',
       requirement:
-        'Cryptographic inventory required (Req. 12.3.3). Quantum risk assessment expected in future versions.',
+        'PCI DSS v4.0.1 is the only active version since v4.0 retired on 31 December 2024; the public PCI SSC pages state no PQC algorithm, parameter set or deadline.',
     },
     {
       framework: 'DORA (EU)',
@@ -389,14 +389,14 @@ export const ENTERPRISE_SCENARIO = {
       id: 'aws-kms',
       name: 'AWS KMS',
       rotationFeature: 'Automatic annual rotation with CreateKey API',
-      pqcCapability: 'ML-DSA signing GA, ML-KEM hybrid TLS for API transit',
+      pqcCapability: 'ML-DSA signing GA, ML-KEM key specs, ML-KEM hybrid TLS for API transit',
     },
     {
       id: 'gcp-kms',
       name: 'Google Cloud KMS',
       rotationFeature: 'Key versioning with scheduled rotation',
       pqcCapability:
-        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing in Preview; software protection level only',
+        "ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing offered; software protection level only (launch stage: Google's 28 Jul 2026 post announces general availability of ML-KEM key encapsulation and does not name X-Wing; Google's release notes list the KEMs, X-Wing included, as Preview from 23 Sep 2025; checked 30 Oct 2026)",
     },
     {
       id: 'azure-kv',
@@ -945,7 +945,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     artifactLabel: 'Ciphertext',
     securityLevel: 1,
     providerSupport: {
-      'aws-kms': 'Hybrid TLS only',
+      'aws-kms': 'KMS key spec (ML_KEM_512)',
       'gcp-kms': 'N/A',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'Via Luna HSM',
@@ -963,8 +963,8 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     artifactLabel: 'Ciphertext',
     securityLevel: 3,
     providerSupport: {
-      'aws-kms': 'Hybrid TLS (GA)',
-      'gcp-kms': 'Preview (software)',
+      'aws-kms': 'KMS key spec (ML_KEM_768)',
+      'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'TLS Preview',
       'fortanix-dsm': 'Available',
@@ -981,8 +981,8 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     artifactLabel: 'Ciphertext',
     securityLevel: 5,
     providerSupport: {
-      'aws-kms': 'Hybrid TLS only',
-      'gcp-kms': 'Preview (software)',
+      'aws-kms': 'KMS key spec (ML_KEM_1024)',
+      'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Available',
@@ -1214,7 +1214,7 @@ export const KMIP_READINESS_CHECKLIST: KmipReadinessItem[] = [
     category: 'Configuration',
     title: 'Buffer Size Configuration',
     description:
-      'PQC key material is 4-20x larger than classical. Verify KMIP message buffers, TLS record sizes, and database column widths accommodate ML-KEM-1024 (3,168 B secret key).',
+      'PQC keys and ciphertexts are many times larger than ECDH or ECDSA ones. Verify KMIP message buffers, TLS record sizes, and database column widths accommodate ML-KEM-1024 (3,168 B expanded decapsulation key; 1,568 B encapsulation key and ciphertext).',
     critical: false,
   },
   {

@@ -272,7 +272,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <code className="text-xs bg-muted px-1 rounded">key_share</code> for it, the server
           responds with a <strong>HelloRetryRequest</strong> instead of a ServerHello, naming the
           group it wants. The client resends its ClientHello with a key share for that group, making
-          a 2-RTT handshake instead of the standard 1-RTT (RFC 9846 §4.1.1, §4.1.4). If client and
+          a 2-RTT handshake instead of the standard 1-RTT (RFC 9846 §4.2.1, §4.2.4). If client and
           server have no supported group in common, no retry can help: the server aborts the
           handshake with a <code className="text-xs bg-muted px-1 rounded">handshake_failure</code>{' '}
           alert.
@@ -357,7 +357,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             secure. The trade-off is significantly larger signatures (~7.9 KB (7,856 B) for
             SLH-DSA-SHA2-128s vs 2,420 B, about 2.4 KB, for ML-DSA-44). The simulator&apos;s
             signature options offer ML-DSA only: no IETF working-group draft yet specifies SLH-DSA
-            for TLS 1.3 (only an individual draft, draft-reddy-tls-slhdsa, exists).
+            for TLS 1.3 (only an individual Internet-Draft, draft-reddy-tls-slhdsa, exists, and it
+            has expired).
           </p>
         </div>
         <Button
@@ -387,10 +388,11 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             <Minimize2 size={12} /> TLS Certificate Compression (RFC 8879)
           </h3>
           <p className="text-xs text-muted-foreground">
-            Already supported by major browsers, TLS certificate compression can reduce PQC
-            certificate overhead by 30-60% (our estimate). Certificates are compressed with Zlib or
-            Brotli before transmission and decompressed by the peer. This is a practical short-term
-            mitigation available today while more advanced solutions are being built.
+            TLS certificate compression is available, and certificates are compressed before
+            transmission and decompressed by the peer. The IETF UTA working-group draft on PQC
+            recommendations for TLS-based applications states that its impact on PQ and PQ/T hybrid
+            certificates is limited, because the larger public keys and signatures are high-entropy
+            fields that constrain compression effectiveness.
           </p>
         </div>
 

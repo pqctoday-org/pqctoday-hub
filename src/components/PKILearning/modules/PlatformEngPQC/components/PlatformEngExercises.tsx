@@ -46,18 +46,18 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Timeline',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'Under a 2030 CRQC scenario, all 14 quantum-vulnerable assets are at risk because their exposure windows extend beyond 2030. Under 2035, the same 14 assets remain at risk — signature and certificate lifetimes are measured in decades, not years. This demonstrates why HNDL is independent of CRQC timeline: the exposure window starts today, not when the CRQC arrives.',
+        'Under a 2030 CRQC scenario, all 14 quantum-vulnerable assets are at risk because their exposure windows extend beyond 2030. Under 2035, the same 14 assets remain at risk — signature and certificate lifetimes are measured in decades, not years. For encrypted data this is the harvest-now-decrypt-later threat, which is independent of CRQC timeline because the exposure window starts when the data is captured (NIST IR 8547); for signatures the concern is forgery once a CRQC exists, which is not HNDL.',
       config: { step: 1 },
     },
     {
       id: 'signing-tool-comparison',
       title: '3. Signing Tool Comparison — Choose the right migration path for container signing',
       description:
-        'In the Container Signing Migration (Step 3), enter Compare mode and select Notation and cosign. Compare their PQC Readiness status and estimated PQC year. Which tool should you use for new deployments that need ML-DSA today?',
+        "In the Container Signing Migration (Step 3), enter Compare mode and select Notation and cosign. Compare their PQC Readiness status and estimated PQC year. What does each tool's documentation let you conclude about ML-DSA support?",
       badge: 'Signing',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Notation has early PQC readiness via the AWS Crypto Tools plugin (ML-DSA-65 composite certificates); cosign has PQC on its roadmap. Vendor timelines move quickly, so confirm current status. For new deployments requiring ML-DSA today, Notation + AWS Crypto plugin is the correct choice. Docker Content Trust (DCT) should be migrated immediately — Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026), and the upstream Notary v1 codebase is no longer maintained.',
+        'We found no vendor documentation that confirms ML-DSA support in Notation, and the Sigstore post (June 2025) does not mention cosign, so both are shown as unconfirmed; the post says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments, and gives no production date. Vendor timelines move quickly, so confirm current status before choosing a tool. Docker Content Trust (DCT) should be migrated immediately — Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026), and the upstream Notary v1 codebase is no longer maintained.',
       config: { step: 2 },
     },
     {

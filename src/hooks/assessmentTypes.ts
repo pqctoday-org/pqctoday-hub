@@ -254,6 +254,8 @@ export interface AssessmentResult {
   /** Composite score before situational boosts were applied. Surfaced so the
    *  user can see how much of the score came from base weighting vs boosts. */
   preBoostScore?: number
+  /** Additive quick-assessment arithmetic; category scores are contextual on this path. */
+  additiveScore?: { rows: { label: string; points: number }[]; total: number }
   /** Situational boosts that fired during scoring, if any. */
   boosts?: ScoreBoost[]
 }

@@ -329,8 +329,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </div>
             <p className="text-xs text-muted-foreground">
               Customer generates keys in on-prem HSM, uploads to cloud KMS. Can enforce ML-KEM-1024
-              wrapping for CMK import on customer&apos;s own schedule. Cloud KMS must support ML-KEM
-              import format (AWS KMS offers no ML-KEM keys; Azure: planned 2026).
+              wrapping for CMK import on customer&apos;s own schedule. Cloud KMS must support an
+              ML-KEM import-wrapping format (AWS KMS offers ML-KEM key specs, but its import
+              wrapping keys are RSA only; check Azure and Google Cloud per service).
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -339,9 +340,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </div>
             <p className="text-xs text-muted-foreground">
               Customer key never leaves on-prem infrastructure. Cloud receives only encrypted{' '}
-              <InlineTooltip term="DEK">DEKs</InlineTooltip>. HYOK with Thales CipherTrust or
-              Utimaco HSM supporting PKCS#11 v3.2 is already PQC-ready today &mdash; firmware
-              upgrade to enable ML-KEM-1024 mechanism.
+              <InlineTooltip term="DEK">DEKs</InlineTooltip>. HYOK with a Thales Luna HSM (firmware
+              7.9 or later) or a Utimaco u.trust Se-Series HSM with the Quantum Protect package can
+              host ML-KEM keys after a firmware or package upgrade; confirm the parameter set
+              (ML-KEM-1024), PKCS#11 v3.2 support and FIPS 140-3 validation status with the vendor.
             </p>
           </div>
         </div>
@@ -368,11 +370,16 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
         </div>
 
         <p>
-          For regulated industries (financial services under DORA, defense under NSM-8), HYOK with
-          on-prem <InlineTooltip term="CMK">CMK</InlineTooltip> custody is the required
-          architecture. The key lifetime of RSA-2048 wrapped CMKs is approximately 7&ndash;10 years
-          before harvest-now-decrypt-later attacks become practical. Databases with HYOK
-          architecture can upgrade immediately by rotating to ML-KEM-1024 master keys.
+          HYOK with on-prem <InlineTooltip term="CMK">CMK</InlineTooltip> custody is one design for
+          keeping key custody under your own control; it is not named as a requirement. DORA&apos;s
+          ICT risk-management technical standard (Commission Delegated Regulation (EU) 2024/1774)
+          requires financial entities to have a policy on encryption and cryptographic controls that
+          covers &ldquo;the cryptographic key management referred to in Article 7, laying down rules
+          on the correct use, protection, and lifecycle of cryptographic keys&rdquo;, and Article 7
+          requires controls to protect keys through their whole lifecycle. How long RSA-2048 wrapped
+          CMKs stay exposed to harvest-now-decrypt-later depends on how long the wrapped data must
+          stay confidential; this module gives no figure. A database whose HYOK HSM supports
+          ML-KEM-1024 can move its key wrapping to ML-KEM once that HSM is upgraded.
         </p>
       </LearnSection>
 
@@ -529,8 +536,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </p>
             <div className="mt-2 text-[10px] bg-background rounded p-2 border border-border font-mono text-muted-foreground">
               PQC Impact: HMAC-SHA-256 is quantum-safe. Range indexes use symmetric primitives
-              (quantum-safe). DEK wrapping upgrade path: RSA-OAEP → ML-KEM-1024 (MongoDB 8.x
-              roadmap).
+              (quantum-safe). DEK wrapping upgrade path: RSA-OAEP → ML-KEM-1024 (this module&apos;s
+              projection, not a MongoDB statement).
             </div>
           </div>
 
@@ -540,10 +547,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               with Enclaves
             </div>
             <p className="text-xs text-muted-foreground">
-              Secure enclaves (VBS/SGX) execute queries on plaintext decrypted inside the enclave.
-              The database engine never sees plaintext outside the enclave boundary. Range queries,
-              pattern matching, and aggregations are all possible. The enclave attestation uses
-              RSA-2048 certificates &mdash; a PQC upgrade point.
+              Secure enclaves (VBS/SGX) execute a defined set of operations on plaintext decrypted
+              inside the enclave: comparisons, range queries, LIKE pattern matching, DISTINCT, joins
+              and, in SQL Server 2022 and Azure SQL, ORDER BY and GROUP BY on randomized-encryption
+              columns. The database engine never sees plaintext outside the enclave boundary.
             </p>
           </div>
 
@@ -556,8 +563,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               Equality queries are straightforward to make PQC-safe: HMAC-SHA-256 tokens are
               quantum-safe, and DEK wrapping upgrades are independent. Range query encryption is
               harder: structured encryption range schemes (MongoDB uses fully randomized ciphertext,
-              not order-preserving encryption) are not yet standardized for PQC. Expect formal
-              standards from NIST by 2028 for PQC-compatible queryable encryption.
+              not order-preserving encryption) are not yet standardized for PQC; this module cites
+              no standard or date for PQC-compatible queryable encryption.
             </p>
           </div>
         </div>
@@ -570,9 +577,12 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
         title="GDPR, HIPAA, and Regulatory Requirements"
       >
         <p>
-          Multiple regulatory frameworks mandate encryption of sensitive data at rest. The PQC
-          transition introduces a &ldquo;state of the art&rdquo; obligation &mdash; as PQC matures,
-          failing to adopt it may constitute a regulatory violation.
+          Several regulatory frameworks require protection of sensitive data. GDPR Article 32(1)
+          lists &ldquo;the state of the art&rdquo; among the factors for choosing appropriate
+          technical and organisational measures, and DORA&apos;s technical standard requires
+          provisions for &ldquo;updating or changing, where necessary, the cryptographic technology
+          on the basis of developments in cryptanalysis&rdquo;; neither names a post-quantum
+          algorithm or a date.
         </p>
 
         <div className="space-y-3">
@@ -581,7 +591,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               framework: 'GDPR Art. 32',
               requirement: '"State of the art" technical measures for personal data.',
               pqcNote:
-                'ENISA recommendations will make PQC mandatory for long-lived personal data by 2026. HYOK architecture keeps customer keys on-prem, ensuring the cloud provider cannot access plaintext data. Databases retaining PII beyond 2030 should prioritize ML-KEM DEK wrapping.',
+                'GDPR Article 32(1) names the state of the art among the factors and prescribes no algorithm or date. HYOK architecture keeps customer keys on-prem, so the cloud provider does not hold the key. This module advises that databases retaining PII beyond 2030 prioritize ML-KEM DEK wrapping.',
               color: 'border-primary/30 bg-primary/5',
               labelColor: 'text-primary',
             },
@@ -596,9 +606,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             {
               framework: 'DORA Art. 9',
               requirement:
-                'ICT risk: state-of-the-art cryptographic controls for financial entities.',
+                'Policy on encryption and cryptographic controls, including key management (RTS 2024/1774 Articles 6 and 7).',
               pqcNote:
-                'DORA applies from Jan 2025. EBA/ESMA/EIOPA guidelines expected 2026 will specify PQC timelines. Financial databases require HYOK with PQC-capable HSM to satisfy "state of the art" obligations under DORA.',
+                'DORA applies from 17 January 2025. Its technical standard (2024/1774) requires a policy on encryption and cryptographic controls, with provisions for updating or changing, where necessary, the cryptographic technology on the basis of developments in cryptanalysis (Article 6), and key-lifecycle controls (Article 7). It names no algorithm and does not name HYOK; this module advises a PQC-capable HSM for financial databases as its own recommendation.',
               color: 'border-status-warning/30 bg-status-warning/5',
               labelColor: 'text-status-warning',
             },
@@ -625,12 +635,15 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             HNDL Risk Window for Databases
           </div>
           <p className="text-xs text-muted-foreground">
-            A database with RSA-2048 wrapped DEKs and customer records retained for 15 years has a
-            HNDL exposure window of up to 15 years from first collection. If a CRQC arrives in 2030,
-            data collected today could be decrypted by 2030 via harvested ciphertext. Using{' '}
+            Exposure depends on how long the data must stay confidential, not on how long it is
+            retained: a database with RSA-2048 wrapped DEKs and records that must stay confidential
+            for 15 years has up to 15 years of exposure. If a CRQC arrives in 2030, data collected
+            today could be decrypted by 2030 via harvested ciphertext. Using{' '}
             <InlineTooltip term="BYOK">BYOK</InlineTooltip> or{' '}
-            <InlineTooltip term="HYOK">HYOK</InlineTooltip> with ML-KEM wrapping eliminates this
-            risk for new data immediately; historical records require re-encryption.
+            <InlineTooltip term="HYOK">HYOK</InlineTooltip> with ML-KEM wrapping protects keys
+            wrapped from now on; ciphertext and old key envelopes that an adversary has already
+            taken remain exposed, and re-encrypting the data protects only the copies the adversary
+            has not yet taken.
           </p>
         </div>
       </LearnSection>

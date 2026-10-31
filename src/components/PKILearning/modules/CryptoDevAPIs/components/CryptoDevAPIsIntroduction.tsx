@@ -138,7 +138,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             registered via{' '}
             <code className="text-primary font-mono text-sm">Security.addProvider()</code>), and as
             a standalone lightweight API for environments where JCA overhead is undesirable. BC has
-            had full ML-KEM, ML-DSA, SLH-DSA, and FN-DSA support since version 1.78.
+            offered ML-KEM, ML-DSA and SLH-DSA (FIPS 203, 204, 205) since release 1.79 (October
+            2024).
           </p>
           <p className="text-muted-foreground">
             <InlineTooltip term="JCProv">SafeNet/Thales Java PKCS#11 wrapper</InlineTooltip> bridges
@@ -241,8 +242,11 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             CNG integrates with the Windows certificate store and is the foundation for Windows FIPS
             mode. ML-KEM and ML-DSA became generally available in November 2025 on Windows 11 24H2+
             and Windows Server 2025 (and .NET 10 uses them). SLH-DSA has an identifier
-            (BCRYPT_SLHDSA_ALGORITHM) but is not currently implemented by the default CNG provider,
-            and the composite ML-DSA/ML-KEM identifiers are Windows Insider only.
+            (BCRYPT_SLHDSA_ALGORITHM) but is not currently implemented by the default CNG provider.
+            Microsoft&rsquo;s CNG identifiers page (updated 30 May 2026) still marks the composite
+            identifiers as Insider Preview, while Microsoft&rsquo;s blog (14 July 2026 update) says
+            composite algorithms are available in Windows 11 update KB5095093 and Windows Server
+            2025 update KB5099536; confirm on your build.
           </p>
         </LearnSection>
       </div>
@@ -368,7 +372,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                   {
                     name: 'PQClean',
                     lang: 'C',
-                    use: 'Audited reference, feeds other libs',
+                    use: 'Clean reference implementations (no longer under active maintenance), feeds other libs',
                     fips: 'Reference',
                   },
                   {
@@ -421,7 +425,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 lang: 'Java / Kotlin',
                 libs: ['JCA/JCE', 'Bouncy Castle', 'JCProv'],
-                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13 / 17.0.21); BC 1.78+ adds SLH-DSA and more',
+                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13 / 17.0.21); BC 1.79+ adds SLH-DSA and more',
                 note: 'Oracle backported ML-KEM/ML-DSA to JDK 21 and 17 in October 2026; JCProv bridges to HSM',
               },
               {
@@ -480,7 +484,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 api: 'Bouncy Castle (Java/.NET)',
                 status: 'production',
-                note: `${describeRuntimeSupport('bouncy-castle')}; FN-DSA and LMS/XMSS too`,
+                note: `${describeRuntimeSupport('bouncy-castle')}; Falcon (the basis of FN-DSA) and LMS/XMSS too`,
               },
               {
                 api: 'OpenSSL (native)',

@@ -10,7 +10,7 @@ TLS 1.3 signs and MACs the whole handshake, so an attacker who deletes the post-
 
 ### The Key Takeaway
 
-The industry is already deploying "Hybrid" key exchange (X25519MLKEM768) to protect traffic from Harvest-Now-Decrypt-Later attacks. To stop deliberate fallbacks from being abused, clients can remember that a server supported PQC on a previous visit. Browsers do this locally ("PQ Lock"), and PQC Continuity is an individual Internet-Draft (one proposal, not adopted by the TLS working group) for a server-signed promise with a duration. Neither can protect the very first visit.
+The industry is already deploying "Hybrid" key exchange (X25519MLKEM768) to protect traffic from Harvest-Now-Decrypt-Later attacks. To stop deliberate fallbacks from being abused, clients can remember that a server supported PQC on a previous visit. Browsers do this locally ("PQ Lock"), and PQC Continuity is an individual Internet-Draft (one proposal, not adopted by the TLS working group) for a TLS extension that lets a client cache a server's declared commitment to present PQC or composite certificates for a specified duration. Neither can protect the very first visit.
 
 ### What's Happening
 

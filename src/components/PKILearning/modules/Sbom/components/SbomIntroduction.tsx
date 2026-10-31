@@ -138,18 +138,19 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
         <p>
           <Badge kind="std" />
           The seven elements above went unchanged for four years while SBOM tooling matured well
-          past what they were designed for. The 2026 update is a strict superset — nothing from 2021
-          was removed or redefined — adding <strong>ten new required elements</strong>: seven at the
-          document level (<strong>SBOM Author Signature</strong>,{' '}
-          <strong>SBOM Data Format Name</strong>, <strong>SBOM Data Format Version</strong>,{' '}
-          <strong>SBOM Tool Name</strong>, <strong>SBOM Tool Version</strong>,{' '}
-          <strong>SBOM Version</strong>, and <strong>SBOM Generation Context</strong>) and three per
-          component (<strong>Component Hash Algorithm</strong>,{' '}
-          <strong>Component Hash Value</strong>, and <strong>Component License</strong>). Eight more
-          existing elements — including <strong>SBOM Author</strong>,{' '}
-          <strong>Component Producer</strong>, <strong>Component Identifiers</strong>, and{' '}
-          <strong>Component Version</strong> — gained clarified scope without changing what they
-          require.
+          past what they were designed for. The 2026 update adds{' '}
+          <strong>ten new required elements</strong>: seven at the document level (
+          <strong>SBOM Author Signature</strong>, <strong>SBOM Data Format Name</strong>,{' '}
+          <strong>SBOM Data Format Version</strong>, <strong>SBOM Tool Name</strong>,{' '}
+          <strong>SBOM Tool Version</strong>, <strong>SBOM Version</strong>, and{' '}
+          <strong>SBOM Generation Context</strong>) and three per component (
+          <strong>Component Hash Algorithm</strong>, <strong>Component Hash Value</strong>, and{' '}
+          <strong>Component License</strong>). Existing elements are revised rather than carried
+          over unchanged: Appendix B replaces Supplier Name with <strong>Component Producer</strong>
+          , Other Unique Identifiers with <strong>Component Identifiers</strong>, Author of SBOM
+          Data with <strong>SBOM Author</strong>, and Version of the Component with{' '}
+          <strong>Component Version</strong>, and removes the Access Control element. Check anything
+          built against the 2021 baseline against Appendix B.
         </p>
         <p>
           <Badge kind="view" />

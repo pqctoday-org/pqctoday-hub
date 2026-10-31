@@ -74,7 +74,7 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
     id: 'fips-mandate',
     title: 'FIPS Validation Mandate',
     description:
-      'Require FIPS 140-3 validated cryptographic modules for all vendor products. FIPS validation gives auditable proof that a vendor’s PQC implementation meets a recognized security baseline rather than a marketing claim (NIST CSWP 39 §5.3).',
+      'Where your policy or contract requires validated cryptographic modules, require FIPS 140-3 validation (CMVP) for the modules that cover the PQC operations in scope. This is a procurement control of this module, not a CSWP 39 requirement; NIST CSWP 39 §5.3 notes that the supply chains depend on the maturity of standards, protocols, and the cryptographic validation program.',
     fields: [
       {
         id: 'validation-level',

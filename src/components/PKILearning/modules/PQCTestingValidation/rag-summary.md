@@ -63,7 +63,7 @@ The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN ga
 
 **ClientHello size**: a hybrid ClientHello adds about 1.2 KB (the X25519MLKEM768 client key share is 1,216 bytes against 32 bytes for X25519 alone: a 1,184-byte ML-KEM-768 encapsulation key plus 32 bytes of X25519, RFC 10024 §4.1; the 1,120-byte figure is the server share). The ClientHello row above is the module's modeled baseline plus that increase, not a capture.
 
-**TCP fragmentation threshold**: ClientHello >~1,400 bytes triggers TCP fragmentation, adding exactly 1 RTT per connection. Hybrid (~1,504B) and pure PQC (1,536B) both exceed the standard Ethernet MSS.
+**ClientHello size and TCP segments**: A ClientHello of about 1,500 B spans two TCP segments at a 1,460-byte MSS, which is inside the initial window of up to 10 segments (14,600 B) that RFC 6928 applies in the first round-trip time. A flight larger than that window, such as a 17 KB composite certificate chain, takes more than one round trip. Some middleboxes assume the ClientHello fits in one packet, so measure with your own load balancers. Hybrid (~1,504B) and pure PQC (1,536B) ClientHellos both exceed one 1,460-byte segment.
 
 **Tools**: VIAVI TeraVM (commercial, VPN benchmarking), PQC-LEO (open source, all NIST algorithms, x86+ARM), Keysight CyPerf (freemium, TLS, Community Edition free).
 
@@ -160,7 +160,7 @@ First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication 
 
 **ISO/IEC 17825 and FIPS 140-3**: ISO/IEC 17825 sets non-invasive attack mitigation test metrics for conformance with ISO/IEC 19790 at Security Levels 3 and 4. ISO lists the 2016 edition as withdrawn on 19 January 2024; ISO/IEC 17825:2024 is the current edition. NIST SP 800-140F (March 2020) §6.2 "Approved non-invasive attack mitigation test metrics" reads "No additional requirements at this time"; ISO/IEC 17825 (with ISO/IEC 20085-1 and -2) is named only in the August 2021 draft of SP 800-140F Rev. 1, still a draft. CMVP IG 12.A: "Until requirements of SP 800-140F are defined, non-invasive mechanisms fall under ISO/IEC 19790:2012 Section 7.12 Mitigation of other attacks." No CMVP statement was found saying ISO/IEC 17825 testing is required or accepted for a certificate; SP 800-140F defines no approved metric, so a TVLA result is not an approved CMVP test metric.
 
-**Tools**: Keysight Inspector Crypto 3 (commercial, Dilithium TVLA generator (ML-DSA, FIPS 204), Known Key Analysis; CMVP has no approved non-invasive test metrics yet, SP 800-140F), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
+**Tools**: Keysight Inspector (commercial; Keysight says it supports PQC validation through side-channel analysis and fault injection workflows, with ML-DSA supported as a ready-to-use module and a Crypto 3 framework of modular, reusable workflows; CMVP has no approved non-invasive test metrics yet, SP 800-140F section 6.2: "No additional requirements at this time"), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
 
 ---
 

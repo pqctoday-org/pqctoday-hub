@@ -110,6 +110,12 @@ export function crqcHorizonYear(result: AssessmentResult): number | undefined {
 }
 
 function riskScoreMethod(result: AssessmentResult, industry: string): string {
+  if (result.preBoostScore === undefined) {
+    if (!result.additiveScore)
+      return 'Calculation breakdown was not stored with this saved result; contextual category scores do not reconstruct its headline.'
+    const { rows, total } = result.additiveScore
+    return `Quick-assessment additive points: ${rows.map((row) => `${row.label} ${row.points}`).join(' + ')} = ${total}; limited to 0–100 gives ${result.riskScore}. Contextual category scores are not the quick-assessment formula.`
+  }
   const working = riskScoreWorking(result, industry)
   const boosts = (result.boosts ?? [])
     .map((b) => `${b.label} (+${Math.round(b.delta * 100)}%)`)

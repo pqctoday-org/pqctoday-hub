@@ -488,7 +488,7 @@ class Session:
 
     def pbkdf2_params(self, password, salt, iterations, prf=None):
         """Builds CK_PKCS5_PBKD2_PARAMS2 for derive_key(CKM_PKCS5_PBKD2, ...)
-        (PKCS#11 v3.2 §5.7.3.1). WASM32 layout (36 bytes): saltSource u32(=CKZ_SALT_SPECIFIED)
+        (PKCS#11 v3.2 §6.37.3 for the parameters, §6.37.4 for the mechanism). WASM32 layout (36 bytes): saltSource u32(=CKZ_SALT_SPECIFIED)
         + pSaltSourceData ptr32 + ulSaltSourceDataLen u32 + iterations u32 + prf u32
         + pPrfData ptr32(=0) + ulPrfDataLen u32(=0) + pPassword ptr32 + ulPasswordLen u32.
         prf defaults to CKP_PKCS5_PBKD2_HMAC_SHA512. Pass base_handle=0 to derive_key —

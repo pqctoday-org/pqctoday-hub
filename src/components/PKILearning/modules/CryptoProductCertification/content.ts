@@ -25,12 +25,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-product-certification',
-  lastReviewed: '2026-10-27',
-  // No lastReviewed: facts were corrected after the owner's 24 October 2026 sign-off, so the
-  // sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The on-page notice
-  // follows it (common/moduleReviewStatus.ts).
+  // lastReviewed removed: facts in this module were corrected in release 4.187.0 after the owner's
+  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The
+  // on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-31',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
@@ -75,11 +74,7 @@ export const content: ModuleContent = {
 
     // ── PCI (Path D; public documents only, plan r2 D4) ──
     getStandard('PCI-SSC-Blog-Publishes-PTS-HSM-v5-0'),
-    getStandard('PCI-SSC-Bulletin-PTS-HSM-v4-Extension'),
-    getStandard('PCI-PTS-Program-Guide-v1-9'),
     getStandard('PCI-PTS-Listing-Field-Definitions'),
-    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-    getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
     getStandard('PCI-SSC-Blog-KMO-v1-0-Published'),
     getStandard('PCI-SSC-P2PE-Program-Page'), // term key above the scheme table (P2PE)
     getStandard('PCI-SSC-Blog-Authentication-Cryptography-Guidance'),

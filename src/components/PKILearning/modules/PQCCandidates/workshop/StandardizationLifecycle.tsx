@@ -32,7 +32,7 @@ const ROUNDS = [
     id: 'round-3',
     label: 'Round 3 — Down-selection',
     description:
-      'Nine schemes advance (14 May 2026): FAEST, MQOM, SDitH, UOV, MAYO, QR-UOV, SNOVA, SQIsign, HAWK. HAWK is withdrawn in July 2026, leaving eight. NIST expects this round to last approximately two years.',
+      'Nine schemes advance (14 May 2026): FAEST, MQOM, SDitH, UOV, MAYO, QR-UOV, SNOVA, SQIsign, HAWK. HAWK is withdrawn in July 2026, leaving eight. NIST has set no end date for this round; the bar assumes about two years, an illustrative figure.',
     rangeStart: '2026-05-14',
     rangeEnd: '2028-05-14',
   },
@@ -40,7 +40,7 @@ const ROUNDS = [
     id: 'standardisation',
     label: 'Standardisation — Draft FIPS',
     description:
-      'Selected schemes move to draft FIPS publications, on dates NIST has not set. Public comment period. Errata cycle. ISO/IEC SC 27 begins adoption. KpqC and CACR finalise their parallel selections.',
+      'Selected schemes move to draft FIPS publications, on dates NIST has not set. Public comment period. Errata cycle. ISO/IEC SC 27 begins adoption. KpqC concluded its competition on 16 January 2025; we found no later Korean standardisation date in the documents we hold.',
     rangeStart: '2028-05-14',
     rangeEnd: '2029-12-31',
   },

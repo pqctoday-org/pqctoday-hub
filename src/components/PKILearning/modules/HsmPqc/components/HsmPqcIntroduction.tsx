@@ -369,7 +369,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">v7.9.2+</span>
+                    <span className="font-mono text-foreground">7.9.0 or newer</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
@@ -408,7 +408,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">v13.8.0+</span>
+                    <span className="font-mono text-foreground">v13.8+ (ML-KEM: v13.8.3+)</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
@@ -436,8 +436,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <p>
                     <strong>Upgrade Path:</strong> Through PKCS#11 the PostQuantum feature must be
                     enabled and the firmware must be v13.8 or later (v13.8.3 or later for ML-KEM).
-                    1&ndash;2 hours per HSM. An nShield 5s module is on the CMVP Modules in Process
-                    list &mdash; a queue position, not evidence of the outcome.
+                    The 1&ndash;2 hours per HSM figure is this module&apos;s own planning estimate;
+                    the Entrust release notes and product pages we hold give no duration. An nShield
+                    5s module is on the CMVP Modules in Process list &mdash; a queue position, not
+                    evidence of the outcome.
                   </p>
                   <p>
                     <strong>Interfaces:</strong> The PKCS#11 interface gained the PQC algorithms one
@@ -534,8 +536,10 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
                 <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) ship
-                PQC firmware, with different algorithm sets (Thales and Utimaco do not yet offer
-                SLH-DSA) and different FIPS 140 coverage: some module certificates list PQC
+                PQC firmware, with different algorithm sets (Thales&apos;s Luna Post Quantum
+                Algorithms page lists ML-KEM, ML-DSA and LMS-HSS, and that page and its v7.9 release
+                post do not list SLH-DSA; Utimaco&apos;s Quantum Protect page shows SLH-DSA as in
+                progress) and different FIPS 140 coverage: some module certificates list PQC
                 algorithms (Crypto4A #5497, Thales Luna T7 #5450), others do not (Entrust nShield 5s
                 #5329 and #4745, Thales Luna K7 #4684). Cloud HSMs are uneven: AWS CloudHSM
                 generates and uses ML-DSA keys inside the HSM through vendor-defined PKCS#11
@@ -671,7 +675,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   algorithm. Thales documents ML-KEM and ML-DSA from Luna firmware 7.9.0 and LMS-HSS
                   from 7.8.9. Customers administer the firmware themselves, after consulting Thales
                   Support, and Azure does not say whether the service offers firmware 7.9. Azure
-                  Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.
+                  Managed HSM uses Marvell LiquidSecurity HSM adapters.
                 </p>
                 <p>
                   <strong>⚠ Retiring:</strong> No new customer onboardings; existing customers

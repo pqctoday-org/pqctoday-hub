@@ -97,7 +97,11 @@ export function ExecutiveTimelineView({
       </div>
 
       <div data-section-id="regulatory-clock" className="scroll-mt-20">
-        <RegulatoryClock mandatoryFrameworks={mandatory} recognizedFrameworks={recognized} />
+        <RegulatoryClock
+          mandatoryFrameworks={mandatory}
+          recognizedFrameworks={recognized}
+          onSelectFramework={onSelectFramework}
+        />
       </div>
 
       <div

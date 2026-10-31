@@ -66,9 +66,9 @@ export const CLM_SCENARIOS: CLMScenario[] = [
   },
   {
     id: 'pqc-size-growth',
-    title: 'PQC-era certificate size growth',
+    title: 'PQC-era handshake size growth',
     description:
-      'Hybrid X25519+ML-KEM-768 cert chains inflate TLS handshake from ~4 KB to ~9–12 KB. Middleboxes and embedded stacks hit MTU/memory limits.',
+      'Hybrid post-quantum key agreement (ECDH + ML-KEM) adds approximately 1600 bytes to the TLS handshake (AWS).',
     triggerStage: 'classify',
     kpiImpact: 'CBOM now tracks cert-size-percentile; SLO adjusted for hybrid handshakes',
     canonicalFailure:

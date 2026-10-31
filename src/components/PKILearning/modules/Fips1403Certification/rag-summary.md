@@ -2,7 +2,7 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-067) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_. It covers FIPS 140-3 and the CMVP: what a certificate proves, how to read one, and what adding post-quantum cryptography means for a validated module. PCI PTS HSM and the payment operating stack are covered in LM-071 _PCI Certification_. Version 1 is labelled "Practitioner orientation — not laboratory training." It was reviewed and signed off by the PQC Today owner on 27 October 2026; it has not been reviewed by an accredited laboratory or certification body. Facts are as of 24 September 2026, except items that give their own later dates (such as the algorithm records, read on 23 and 24 October 2026).
+This advanced Hardware Infrastructure module (LM-067) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_. It covers FIPS 140-3 and the CMVP: what a certificate proves, how to read one, and what adding post-quantum cryptography means for a validated module. PCI PTS HSM and the payment operating stack are covered in LM-071 _PCI Certification_. Version 1 is labelled "Practitioner orientation — not laboratory training." Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. Facts are as of 24 September 2026, except items that give their own later dates (such as the algorithm records, read on 23 and 24 October 2026).
 
 One timed ~80-minute route. Deeper material is kept as optional reference sections.
 
@@ -16,7 +16,7 @@ One timed ~80-minute route. Deeper material is kept as optional reference sectio
 - **Vendor-affirmed is not an algorithm test certificate** — vendor-affirmed means the vendor states that an algorithm meets the standard without an algorithm test certificate; NIST's FIPS 140-3 Implementation Guidance allows it only where a specific IG section permits it, for example IG C.O for HSS signatures.
 - **Modules in Process is a queue, not an outcome** — a CMVP MIP entry is not evidence of validation.
 - **FIPS 140-3 is unchanged** — no 2025–2026 draft revises FIPS 140-3 or Level 3. Executive Order 14412 §6(b) directs NIST to revise CMVP processes to accelerate validations, with a deadline of about 19 December 2026. FIPS 140-2 certificates moved to the Historical list on 21/22 September 2026.
-- **FIPS Level 3 is not a PCI approval** — a FIPS 140-3 Level 3 HSM does not thereby hold PCI PTS HSM approval, though PCI PIN Security v3.1 and P2PE v3.1 accept FIPS Level 3+ HSMs.
+- **FIPS Level 3 is not a PCI approval** — a FIPS 140-3 Level 3 HSM does not thereby hold PCI PTS HSM approval; whether a PCI operational standard accepts a FIPS certificate in place of a PTS approval is set in that standard’s own requirement text, which this module does not state.
 
 ## Workshop / Interactive Activities
 

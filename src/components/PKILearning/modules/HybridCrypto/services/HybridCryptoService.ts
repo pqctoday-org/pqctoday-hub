@@ -776,7 +776,9 @@ export class HybridCryptoService {
     if (onKey) onKey(privHandle, 'eddsa', 'Ed25519 (Cert Gen)', 'private')
     if (onKey) onKey(pubHandle, 'eddsa', 'Ed25519 Public (Cert Gen)', 'public')
     // Unlike an EC point, softhsm returns the Ed25519 public key as the bare
-    // 32 raw bytes RFC 8410 specifies — no OCTET STRING wrapper to strip.
+    // 32 raw bytes (the RFC 8032 public key; RFC 8410's subjectPublicKey
+    // contains the byte stream of the public key) — no OCTET STRING wrapper
+    // to strip.
     const publicKeyRaw = hsm_extractECPoint(M, hSession, pubHandle)
     const signerFn: SignerFn = async (mprime: Uint8Array) =>
       hsm_signBytesEdDSA(M, hSession, privHandle, mprime)

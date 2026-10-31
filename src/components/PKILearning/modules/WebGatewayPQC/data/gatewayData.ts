@@ -545,17 +545,19 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     pqcVersion: 'Current',
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'Edge platform',
-    notes: 'ML-KEM enabled by default since 2024. 20%+ of TLS connections use hybrid PQC.',
+    notes:
+      'Cloudflare says it enabled post-quantum encryption for all websites and APIs in 2022 (its post names no algorithm), and that over 65% of human traffic to Cloudflare is post-quantum encrypted (Cloudflare blog, 7 April 2026).',
   },
   {
     id: 'aws-cloudfront',
     name: 'AWS CloudFront',
     category: 'cdn',
-    pqcStatus: 'planned',
-    pqcVersion: 'Preview',
+    pqcStatus: 'production',
+    pqcVersion: 'All existing security policies (AWS, 5 September 2025)',
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'TBD',
-    notes: 'Managed CDN offering hybrid PQC TLS in preview. No application code changes needed.',
+    notes:
+      'AWS announced on 5 September 2025 that CloudFront supports hybrid post-quantum key establishment for client-to-edge connections across all existing TLS security policies, enabled by default with no customer configuration (AWS).',
   },
   {
     id: 'aws-alb',
@@ -571,11 +573,12 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     id: 'imperva-waf',
     name: 'Imperva WAF',
     category: 'waf',
-    pqcStatus: 'planned',
-    pqcVersion: 'TBD (Thales integration)',
-    algorithms: [],
-    fipsStatus: 'Pending',
-    notes: 'Enterprise WAF under Thales portfolio. PQC roadmap pending ML-KEM hybrid adoption.',
+    pqcStatus: 'production',
+    pqcVersion: 'GA from early 2026',
+    algorithms: ['X25519MLKEM768'],
+    fipsStatus: 'Not stated',
+    notes:
+      'Enterprise WAF under Thales portfolio. Hybrid TLS with X25519 plus ML-KEM-768 for client-to-Imperva connections reached general availability at the start of 2026 (Imperva).',
   },
   {
     id: 'cloudflare-zt',
@@ -591,11 +594,12 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     id: 'zscaler',
     name: 'Zscaler ZTE',
     category: 'sase',
-    pqcStatus: 'planned',
-    pqcVersion: 'TBD',
-    algorithms: [],
+    pqcStatus: 'production',
+    pqcVersion: 'Inline inspection, announced Feb 2026',
+    algorithms: ['Hybrid PQC key exchange'],
     fipsStatus: 'No',
-    notes: 'Cloud SASE. TLS interception requires ML-KEM upgrade. No GA date published.',
+    notes:
+      'Cloud SASE. ZIA inline inspection supports hybrid PQC key exchange (Zscaler, 17 February 2026); the Hub catalogue rates the product partial.',
   },
   {
     id: 'palo-alto',
@@ -622,12 +626,12 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     id: 'broadcom-avi',
     name: 'Broadcom Avi / NSX ALB',
     category: 'load-balancer',
-    pqcStatus: 'planned',
-    pqcVersion: 'TBD',
-    algorithms: [],
+    pqcStatus: 'production',
+    pqcVersion: '31.2.1 (introduced)',
+    algorithms: ['ML-KEM (pure and hybrid)', 'ML-DSA'],
     fipsStatus: 'FIPS 140-2',
     notes:
-      'VMware NSX Advanced Load Balancer (formerly Avi Networks). PQC roadmap pending Broadcom integration.',
+      'VMware NSX Advanced Load Balancer (formerly Avi Networks). Avi 31.2.1 introduced PQC support: pure ML-KEM, hybrid KEMs and the ML-DSA signature algorithm (Broadcom documentation). The Avi documentation says PQC is not supported when FIPS mode is enabled or on Intel QAT hosts.',
   },
 ]
 

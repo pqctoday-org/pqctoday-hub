@@ -57,6 +57,9 @@ export const NetworkTelemetryAnalyzer: React.FC = () => {
                 </Button>
               ))}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-2">
+              Payload sizes are illustrative profiles of this module, not measurements.
+            </p>
           </div>
 
           <div className="bg-muted/30 p-4 rounded-lg border border-border">

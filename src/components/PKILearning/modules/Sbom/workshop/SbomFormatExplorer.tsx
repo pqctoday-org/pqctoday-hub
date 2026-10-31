@@ -149,9 +149,11 @@ export function SbomFormatExplorer() {
           </code>
           . The two <span className="text-status-info">2026</span>-tagged rows show fields the 2026
           update newly requires — both formats already carried them, which is why they show up as
-          real fields above rather than gaps. Even with those, neither format has a place for
-          algorithm, key size, or quantum-vulnerability status, which is why a crypto inventory
-          needs the separate CBOM extension. <X size={12} className="inline text-status-error" />
+          real fields above rather than gaps. The general SBOM fields shown here do not describe
+          cryptographic assets such as algorithms, key sizes or quantum-vulnerability status;
+          CycloneDX covers cryptographic assets such as algorithms and key lengths through its
+          cryptographic-asset model (CBOM), which is why a crypto inventory uses that extension.{' '}
+          <X size={12} className="inline text-status-error" />
         </p>
       </div>
     </div>

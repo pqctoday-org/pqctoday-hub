@@ -366,10 +366,11 @@ export const PackageSigning: React.FC = () => {
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong> This simulation demonstrates the RPM package signing workflow with
-          realistic signature sizes. Red Hat has implemented hybrid ML-DSA-87+Ed448 composite
-          signatures in RHEL 10, making it the first major Linux distribution to ship PQC package
-          signing. The composite approach ensures backward compatibility &mdash; older RPM tools can
-          still verify the Ed448 component.
+          realistic signature sizes. Red Hat signs RPM packages in RHEL 10.1 with a hybrid
+          ML-DSA-87+Ed448 key and keeps the RSA signature in the package: systems that understand
+          the RPM 6 header format verify both, and older systems validate only the RSA signature.
+          Red Hat describes RHEL as the first and currently only major Linux distribution to achieve
+          this.
         </p>
       </div>
     </div>

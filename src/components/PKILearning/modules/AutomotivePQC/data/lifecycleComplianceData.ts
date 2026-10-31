@@ -193,7 +193,7 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     standard: 'TCG TPM 2.0 / ISO/IEC 11889',
     fipsLevel: 'Level 1-2 (varies)',
     pqcSupport:
-      'TCG PQC profile draft (2025) — ML-DSA + ML-KEM support planned. Vendor-stated: Infineon OPTIGA TPM SLB 9672 and SLB 9673 use XMSS for firmware updates',
+      'TCG TPM 2.0 v185 (March 2026) includes ML-KEM (including endorsement keys) and ML-DSA (including attestation keys). Vendor-stated: Infineon OPTIGA TPM SLB 9672 and SLB 9673 use XMSS for firmware updates',
     typicalVendors: ['Infineon OPTIGA TPM', 'STMicro ST33', 'Nuvoton NPCT75x'],
     keyTypes: [
       'Platform identity key',
@@ -274,7 +274,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     year: 2021,
     quarter: 'Q3',
     description:
-      'Cybersecurity engineering standard for road-vehicle E/E systems, from concept and development to production, operation, maintenance and decommissioning. ISO describes it as technology-agnostic (processes and risk management, not specific tools) and, while not legally mandatory, increasingly a de facto requirement. It was published in 2021, before FIPS 203 and FIPS 204.',
+      'Cybersecurity engineering standard for road-vehicle E/E systems, from concept and development to production, operation, maintenance and decommissioning. It was published in 2021, before FIPS 203 and FIPS 204.',
     pqcRelevance: 'indirect',
     confidence: 'published',
     affectedSystems: ['All ECUs', 'Supply chain', 'Key management'],
@@ -362,7 +362,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     year: 2027,
     quarter: 'Q1',
     description:
-      'Automotive supply chain assessment anticipated to add PQC readiness criteria. VDA has not published a v7 roadmap; current version is TISAX v6 (2023).',
+      'VDA published the next ISA catalogue, ISA2027, on 1 July 2026; it applies to TISAX assessments ordered from 1 January 2027, and ISA 6 (2023) remains current until then. PQC readiness criteria are not part of the announcement.',
     pqcRelevance: 'direct',
     confidence: 'projected',
     affectedSystems: ['Tier-1/Tier-2 supplier crypto', 'Key management', 'Code signing'],

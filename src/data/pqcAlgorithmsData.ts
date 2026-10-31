@@ -440,7 +440,7 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'ISO 18033-2 Amd2|||Not listed in BSI TR-02102-1 (BSI lists mceliece460896, 6688128 and 8192128); NOT in NIST FIPS':
     'final', // Classic-McEliece-6960119
   'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); ISO 18033-2 Amd2; ANSSI: acceptable in hybrid; not listed by BSI (BSI lists FrodoKEM-976/1344)':
-    'final', // FrodoKEM-640
+    'final', // FrodoKEM-640: ISO/IEC 18033-2:2006/Amd 2 (published June 2026) covers Classic McEliece (BSI note); FrodoKEM not confirmed against the amendment's scope text
   // sr25519 (2026-08-16): a Web3 Foundation (Schnorrkel) implementation, not
   // an IETF/NIST/regional standards-track document at all — 'non-standardized'
   // (not 'unverified', whose tooltip claims the status wasn't fact-checked;

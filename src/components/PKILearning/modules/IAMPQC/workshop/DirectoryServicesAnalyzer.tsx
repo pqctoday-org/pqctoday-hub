@@ -87,7 +87,7 @@ const ATTACK_SCENARIOS: Record<
       description:
         'Microsoft Entra ID signs JWT access tokens and ID tokens with RSA-2048 keys published at the JWKS endpoint. A CRQC can recover the private signing key from collected public key material, enabling forgery of any identity token.',
       mitigation:
-        'Monitor Microsoft Entra PQC hybrid token signing preview. Enforce short token lifetimes (15-minute access tokens) to limit replay window. Enable Continuous Access Evaluation (CAE).',
+        'Watch for a Microsoft announcement of post-quantum Entra token signing (we found none). Enforce short token lifetimes (15-minute access tokens) to limit replay window. Enable Continuous Access Evaluation (CAE).',
     },
     {
       title: 'Refresh Token Interception',
@@ -111,7 +111,7 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
   const [showScenarios, setShowScenarios] = useState(false)
 
   const service = DIRECTORY_SERVICES.find((d) => d.id === activeTab)!
-  const hndlStyle = HNDL_RISK_LABEL(service.hndlScore)
+  const hndlStyle = HNDL_RISK_LABEL(service.quantumScore)
   const scenarios = ATTACK_SCENARIOS[activeTab]
 
   return (
@@ -120,7 +120,7 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">Directory Services Analyzer</h3>
         <p className="text-sm text-muted-foreground">
           Analyze quantum vulnerabilities in Active Directory, OpenLDAP, and Azure AD / Entra ID.
-          Understand HNDL risk scores and migration paths for each service.
+          Understand quantum risk scores and migration paths for each service.
         </p>
       </div>
 
@@ -145,7 +145,7 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
         ))}
       </div>
 
-      {/* HNDL Risk Score */}
+      {/* Quantum Risk Score */}
       <div className={`glass-panel p-5 border ${hndlStyle.bg}`}>
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex items-center gap-3 flex-1">
@@ -156,16 +156,16 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
                 <span
                   className={`text-[10px] px-2 py-0.5 rounded border font-bold ${hndlStyle.bg}`}
                 >
-                  HNDL Risk: {service.hndlScore}/10 — {hndlStyle.label}
+                  Quantum Risk: {service.quantumScore}/10 — {hndlStyle.label}
                 </span>
               </div>
             </div>
           </div>
           <div className="text-right">
             <div className={`text-2xl sm:text-4xl font-bold ${hndlStyle.color}`}>
-              {service.hndlScore}
+              {service.quantumScore}
             </div>
-            <div className="text-[10px] text-muted-foreground">/ 10 HNDL score</div>
+            <div className="text-[10px] text-muted-foreground">/ 10 quantum risk score</div>
           </div>
         </div>
 
@@ -173,13 +173,13 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
         <div className="mt-3 bg-muted/50 rounded-full h-3 overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${
-              service.hndlScore >= 8
+              service.quantumScore >= 8
                 ? 'bg-status-error'
-                : service.hndlScore >= 6
+                : service.quantumScore >= 6
                   ? 'bg-warning'
                   : 'bg-primary'
             }`}
-            style={{ width: `${service.hndlScore * 10}%` }}
+            style={{ width: `${service.quantumScore * 10}%` }}
           />
         </div>
       </div>

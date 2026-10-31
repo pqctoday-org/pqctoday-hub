@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'dev-quantum-impact',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,5: RFC 8446 (TLS 1.3 handshake growth), FIPS 203 (key and
@@ -51,7 +51,7 @@ export const content: ModuleContent = {
     overview:
       'The Developer Quantum Impact module provides software engineers with a concrete, code-level understanding of how post-quantum cryptography migration affects their day-to-day work. It covers the six most impactful technical disruptions — library API transitions, signature and key size explosions, TLS handshake growth, CI/CD signing pipeline changes, hybrid algorithm complexity, and testing gaps — alongside a hands-on self-assessment of which code paths need remediation and a structured skill g...',
     keyConcepts:
-      'Library API Transitions — OpenSSL EVP API (PQC native since OpenSSL 3.5; oqsprovider only for 3.2-3.4), Bouncy Castle 1.80+ PQC provider, liboqs C/Python/Go/Rust bindings, and @oqs/liboqs-js for browser WASM; migration from RSA_generate_key / EC_KEY_new_by_curve_name patterns to EVP_PKEY_CTX_new_from_name(ctx, "ML-DSA-65", NULL) and equivalent provider-aware calls.',
+      'Library API Transitions — OpenSSL EVP API (PQC native since OpenSSL 3.5; oqsprovider only for 3.2-3.4), Bouncy Castle 1.79+ PQC provider, liboqs C/Python/Go/Rust bindings, and @oqs/liboqs-js for browser WASM; migration from RSA_generate_key / EC_KEY_new_by_curve_name patterns to EVP_PKEY_CTX_new_from_name(ctx, "ML-DSA-65", NULL) and equivalent provider-aware calls.',
     workshopSummary:
       'The workshop has 3 interactive steps: Threat Impact Explorer — six-panel technical briefing: library migration API diff (before/after code snippets), signature size impact calculator (input: algorithm + payload size → output: JWT size, HTTP header usage, storage overhead), TLS handshake size estimator with per-protocol comparison, code signing tool migration matrix (cosign/Notation/GPG timelines), hybrid KDF combiner walkthrough, and ACVP test vector gap analysis by algorithm category.',
     relatedStandards:

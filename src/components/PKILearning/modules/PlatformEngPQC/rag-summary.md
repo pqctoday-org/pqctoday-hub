@@ -25,20 +25,20 @@
 
 - 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh
 - 16 crypto assets across stages with HNDL exposure ratings and PQC replacements
-- HNDL: High assets: Vault mTLS (→ X25519MLKEM768), Container Image Signing Key (→ ML-DSA-65), SBOM Attestation (→ SLH-DSA-SHAKE-128f), kube-apiserver TLS (→ ML-DSA-65 hybrid), Helm Chart Signing (→ ML-DSA-87), Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512)
+- HNDL: High assets are the TLS key exchanges of Vault mTLS (→ X25519MLKEM768) and Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512); certificates such as the kube-apiserver certificate (→ ML-DSA-65 certificate), the registry certificate and the cert-manager certificates are authentication, so their quantum risk is forgery and they are rated no HNDL risk; the signing keys (container image, SBOM attestation, build provenance, image manifest, Helm chart, Git commit and deploy keys) are quantum-vulnerable but rated no HNDL risk, because NIST IR 8547 ties harvest now, decrypt later to encrypted data and says the authentication algorithm may be transitioned at a different time
 
 ### Step 2: Quantum Threat Timeline
 
 - CRQC scenario selector: 2030, 2033, 2035, 2040
 - Data expiry year calculated from exposure window text
-- Assets with 10+ year exposure windows remain HNDL-exposed regardless of CRQC timeline
+- Encrypted data with a 10+ year exposure window remains HNDL-exposed regardless of CRQC timeline; a signing key with a long verification window is a forgery risk, not an HNDL risk
 - Key insight: HNDL exposure window starts at time of data capture, not at CRQC arrival
 
 ### Step 3: Container Signing Migration
 
-- 5 signing tools: cosign (roadmap/2026), Notation (beta/2025), GPG/OpenPGP (roadmap/2026), Sigstore Bundle (roadmap/2027), Docker Content Trust (not-planned)
+- 5 signing tools: cosign (post-quantum status unconfirmed), Notation (ML-DSA support unconfirmed), GPG/OpenPGP (post-quantum signatures defined in RFC 9980; GnuPG and Sequoia support not stated), Sigstore Bundle (on roadmap, no date stated), Docker Content Trust (being retired)
 - ML-DSA-65 signature size: 3,309B vs ECDSA P-256: 64B (52× larger)
-- Notation + AWS Crypto plugin: best option for ML-DSA today
+- Notation: the Library holds no vendor documentation that states ML-DSA support, so treat it as unconfirmed; Sigstore (June 2025) says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments and gives no production date
 - Docker Content Trust: being fully retired with the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained); Docker names Sigstore/Cosign and Notation as the alternatives and says nothing about post-quantum signatures (Docker, 16 June 2026)
 - SLH-DSA preferred for SBOMs (stateless, long signature lifetime, 20+ year validity)
 
@@ -54,7 +54,7 @@
 **Metrics & Alerts**: 4 Prometheus exporters (cert-manager, Vault audit log, Istio/Envoy, x509-certificate-exporter)
 **SIEM Integration**: 4 queries (Splunk, Elastic, Datadog, Microsoft Sentinel)
 **Capacity Planner**: ML-DSA-65 sig 3,309B vs ECDSA 64B (52×); TLS cert chain 2.4KB → 17.4KB (7.25×); TLS handshake 4KB → 18KB (4.5×); etcd growth: 3MB → 14MB per 1000 certs
-**ACME Lifecycle**: 7 steps; Let's Encrypt PQC ACME: 2026 staging → 2027 production; cert-manager v1.17+ supports ML-DSA key generation; internal CAs (Vault PKI, EJBCA) required for ML-DSA certs until ACME supports PQC
+**ACME Lifecycle**: 7 steps; Let's Encrypt is targeting late 2026 for a staging environment that issues MTCs and 2027 for a production-ready environment (its post gives no ML-DSA issuance dates); cert-manager's Certificate privateKey.algorithm accepts RSA, ECDSA or Ed25519 (no ML-DSA value); internal CAs (Vault PKI, EJBCA) required for ML-DSA certs until ACME supports PQC
 
 ### Step 6: Platform Migration Planner
 
@@ -69,7 +69,7 @@
 - ECDSA P-256 signature: 64 bytes
 - ML-DSA-44 signature: 2,420 bytes (38×)
 - ML-DSA-65 signature: 3,309 bytes (52×)
-- SLH-DSA-128f signature: 17,088 bytes (67×)
+- SLH-DSA-128f signature: 17,088 bytes (267×)
 - ECDSA P-256 X.509 cert: 800 bytes
 - ML-DSA-65 X.509 cert: 5,800 bytes (7.25×)
 - TLS 1.3 handshake (classical): 4,096 bytes
@@ -78,17 +78,16 @@
 
 ### IaC Quantum-Vulnerable Defaults
 
-- cert-manager: RSA-2048 default → set algorithm: MLDSA44 in Certificate.spec.privateKey
-- Vault PKI role: key_type=rsa → key_type=ml-dsa, key_bits=44
+- cert-manager: RSA-2048 default; Certificate.spec.privateKey.algorithm accepts RSA, ECDSA or Ed25519 only, so ML-DSA certificates come from an issuer that supports them (Vault PKI, EJBCA)
+- Vault PKI role: key_type=rsa → key_type=ml-dsa with parameter_set=ml-dsa-44
 - nginx-ingress: ECDHE → ssl-ecdh-curve: X25519MLKEM768:X25519:P-256
 - Terraform ACM: RSA_2048 → ML-DSA-44 when supported (AWS roadmap 2026)
-- kubeconfig certs: ECDSA P-256 → MLDSA44 via cert-manager Certificate usages: client auth
+- kubeconfig certs: ECDSA P-256 → ML-DSA-44 client certificate from an ML-DSA-capable issuer
 
 ### ACME + PQC Timeline
 
-- cert-manager v1.17+: supports ML-DSA key generation (algorithm: MLDSA44)
-- Let's Encrypt staging: PQC ACME support planned 2026
-- Let's Encrypt production: PQC ACME support planned 2027
+- cert-manager: Certificate privateKey.algorithm accepts RSA, ECDSA or Ed25519; ML-DSA certificates come from issuers such as Vault PKI or EJBCA
+- Let's Encrypt is targeting late 2026 for a staging environment that issues Merkle Tree Certificates (MTCs) and 2027 for a production-ready environment; its post says it is tracking the standards for ML-DSA signatures in X.509 and gives no ML-DSA issuance dates
 - Until ACME supports PQC: use Vault PKI or EJBCA as internal CAs for ML-DSA certificates
 
 ## Cross-References

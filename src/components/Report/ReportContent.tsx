@@ -115,7 +115,7 @@ interface AssessReportProps {
    * the recipient accidentally edit/reset/complete their own assessment
    * while looking at someone else's.
    */
-  sharedView?: { persona: PersonaId | null }
+  sharedView?: { persona: PersonaId | null; sample?: boolean }
 }
 
 export const ReportContent: React.FC<AssessReportProps> = ({
@@ -908,7 +908,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                                 Print Executive Brief
                               </Button>
                             )}
-                            <BoardPackExport result={result} variant="outline" />
+                            <BoardPackExport
+                              result={result}
+                              variant="outline"
+                              persona={selectedPersona}
+                              shared={shared}
+                              sample={sharedView?.sample}
+                            />
                           </>
                         )}
                         {showEngineeringPlan && <EngineeringPlanExport result={result} />}

@@ -184,7 +184,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
       'Wraps C code — not pure Rust (uses cc crate for compilation)',
       'No FIPS certification path',
       'Smaller community than liboqs',
-      'Crate names pqcrypto-kyber and pqcrypto-dilithium predate NIST standardisation — they wrap ML-KEM (FIPS 203) and ML-DSA (FIPS 204) but the ml-kem / ml-dsa crate names are not yet published',
+      'Crate names pqcrypto-kyber and pqcrypto-dilithium predate FIPS 203/204 final; the ml-kem and ml-dsa crates are published on crates.io (RustCrypto), as are pqcrypto-mlkem and pqcrypto-mldsa; the pqcrypto README says the project is unmaintained',
       'Build requires C compiler toolchain',
     ],
     radar: {
@@ -366,7 +366,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
       },
     ],
     keyDifferentiator:
-      'First FIPS 140-3 validated library with PQC (ML-KEM) — the choice for regulated AWS workloads',
+      'FIPS 140-3 validated library with ML-KEM listed as approved on its AWS-LC 3 certificates (#5298, #5314) — the choice for regulated AWS workloads',
     strengths: [
       'FIPS 140-3 validated with ML-KEM in FIPS boundary',
       'Highly optimized for server-scale performance',
@@ -458,10 +458,10 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     maintainer: 'wolfSSL Inc. (commercial + open source)',
     language: 'C',
     category: 'standalone',
-    license: 'GPLv2 (open source) / Commercial',
+    license: 'GPLv3 (open source) / Commercial',
     yearStarted: 2006,
     description:
-      'Lightweight embedded TLS and crypto library optimized for constrained devices. Dual-licensed (GPLv2 + commercial). FIPS 140-2/3 validated wolfCrypt module. PQC support via liboqs integration and native implementations.',
+      'Lightweight embedded TLS and crypto library optimized for constrained devices. Dual-licensed (GPLv3 + commercial). FIPS 140-2/3 validated wolfCrypt module. PQC support through native wolfCrypt implementations (wolfSSL 5.9.4 removed the liboqs dependency).',
     algorithmSupport: {
       mlKem: true,
       mlDsa: true,
@@ -506,7 +506,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
       'Dual-licensed — open source + commercial',
     ],
     limitations: [
-      'GPLv2 open-source license — viral clause for linked software',
+      'GPLv3 open-source license — viral clause for linked software',
       'PQC support narrower than liboqs or Bouncy Castle',
       'Commercial license required for many use cases',
       'Smaller community than OpenSSL',

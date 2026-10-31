@@ -107,12 +107,13 @@ const Step1Overview: React.FC = () => (
         </p>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        The tradeoff: SLH-DSA signatures are significantly larger (8–50 KB vs LMS ~1–4 KB) and
-        signing is slower due to the hypertree traversal. Whether the stateless design is worth that
-        cost depends on the deployment: a signing key that is used from several places, or restored
-        from a backup, makes a leaf counter hard to keep safe. The three lists below are planning
-        heuristics drawn from the sizes and speeds above, not requirements of FIPS 205 or of any
-        policy.
+        The tradeoff: SLH-DSA signatures are significantly larger (7,856 to 49,856 bytes, FIPS 205
+        Table 2, against about 0.8 to 9 KB for LMS across the SP 800-208 parameter sets, by the RFC
+        8554 byte layout) and signing is slower due to the hypertree traversal. Whether the
+        stateless design is worth that cost depends on the deployment: a signing key that is used
+        from several places, or restored from a backup, makes a leaf counter hard to keep safe. The
+        three lists below are planning heuristics drawn from the sizes and speeds above, not
+        requirements of FIPS 205 or of any policy.
       </p>
     </section>
 
@@ -446,8 +447,10 @@ const Step3Parameters: React.FC = () => (
         <div className="bg-muted/40 rounded-lg p-4 space-y-2">
           <div className="font-semibold text-foreground">SHA-2 variants (SHA2-*)</div>
           <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside leading-relaxed">
-            <li>Use SHA-256 / SHA-512 as tree hash function</li>
-            <li>Faster on hardware without SHA-3 / SHAKE acceleration</li>
+            <li>
+              Built from SHA-256, with SHA-512 added for security categories 3 and 5 (FIPS 205
+              section 11.2)
+            </li>
             <li>Widest hardware support (existing HSMs, Intel SHA-NI)</li>
             <li>Good default for most deployments today</li>
           </ul>
@@ -455,10 +458,9 @@ const Step3Parameters: React.FC = () => (
         <div className="bg-muted/40 rounded-lg p-4 space-y-2">
           <div className="font-semibold text-foreground">SHAKE variants (SHAKE-*)</div>
           <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside leading-relaxed">
-            <li>Use SHAKE-256 (XOF) as tree hash function</li>
-            <li>Faster on hardware with SHA-3 / Keccak acceleration</li>
+            <li>Every function is instantiated with SHAKE256 (FIPS 205 section 11.1)</li>
             <li>Preferred where SHA-3 is the primary hash primitive</li>
-            <li>Identical security level — purely a performance choice</li>
+            <li>Same security category as the matching SHA2 parameter set (FIPS 205 Table 2)</li>
           </ul>
         </div>
       </div>

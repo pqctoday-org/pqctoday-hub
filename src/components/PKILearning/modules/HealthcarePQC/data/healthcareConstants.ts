@@ -545,19 +545,19 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-DSA-44',
         feasible: false,
         rationale:
-          'Signature verification exceeds available RAM on Cortex-M0+. Key size (1.3 KB public key) also strains flash.',
+          "This module's model assumes ML-DSA-44 signature verification needs more RAM than the 32 KB available on this Cortex-M0+ (a planning assumption, not a measurement).",
       },
       {
         algorithm: 'LMS (H5/W8)',
         feasible: true,
         rationale:
-          'Hash-based signature verification needs only ~4 KB RAM. Suitable for firmware signing with limited update count.',
+          "This module's model assumes hash-based signature verification needs only a few KB of RAM (a planning assumption, not a measurement). Suitable for firmware signing with limited update count.",
       },
       {
         algorithm: 'XMSS (H10)',
         feasible: true,
         rationale:
-          'Similar to LMS with ~5 KB RAM for verification. State management is handled by the signing server, not the device.',
+          "This module's model assumes verification needs a few KB of RAM, similar to LMS (a planning assumption, not a measurement). State management is handled by the signing server, not the device.",
       },
       {
         algorithm: 'FN-DSA',
@@ -611,7 +611,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-DSA-44',
         feasible: true,
         rationale:
-          'Cortex-M4 with 256 KB RAM can handle ML-DSA-44 signature verification for firmware updates.',
+          "This module's model assumes a Cortex-M4 with 256 KB RAM can handle ML-DSA-44 signature verification for firmware updates.",
       },
     ],
   },
@@ -653,7 +653,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-KEM-768',
         feasible: true,
         rationale:
-          'Cortex-A7 with 512 MB RAM can easily handle ML-KEM-768 TLS handshake. No resource constraints.',
+          "This module's model assumes a Cortex-A7 with 512 MB RAM has ample memory for an ML-KEM-768 TLS handshake (an estimate, not a benchmark).",
       },
       {
         algorithm: 'ML-DSA-65',
@@ -699,7 +699,8 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
       {
         algorithm: 'ML-KEM-768',
         feasible: true,
-        rationale: 'No resource constraints on Cortex-A53. Full ML-KEM-768 + ML-DSA-65 supported.',
+        rationale:
+          "This module's model assumes no resource constraints on Cortex-A53, so full ML-KEM-768 + ML-DSA-65 is supported (an estimate, not a benchmark).",
       },
       {
         algorithm: 'ML-DSA-65',
@@ -753,7 +754,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-DSA-87',
         feasible: true,
         rationale:
-          'Highest security parameters recommended due to life-critical nature. No resource constraints.',
+          "Highest security parameters recommended due to life-critical nature; this module's model assumes no resource constraints.",
       },
     ],
   },

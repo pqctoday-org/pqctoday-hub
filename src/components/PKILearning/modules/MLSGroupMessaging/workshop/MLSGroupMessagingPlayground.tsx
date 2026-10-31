@@ -29,7 +29,7 @@ export const MLSGroupMessagingPlayground: React.FC = () => (
       </p>
       <p>
         On a <strong>Commit</strong> operation, the committer generates a fresh leaf key pair, then
-        re-encrypts path secrets up to the root — updating every ancestor node on the direct path.
+        re-encrypts path secrets up to the root — updating the nodes in the filtered direct path.
         Only group members who are co-path children receive the new secrets. Members who were
         compromised before the Commit lose access to all future epochs: this is group PCS.
       </p>

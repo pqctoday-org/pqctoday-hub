@@ -540,7 +540,7 @@ function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
   const isFedrampHigh = inputs.regulatoryOverlay.some((r) => /FedRAMP High|IL5|IL6/i.test(r))
   if (isFedrampHigh) {
     out.push(
-      'FedRAMP High / IL5+: ML-KEM-768 and ML-DSA-65 must wait for FIPS 140-3 module re-validation per provider — the module counts only once its CMVP certificate is issued and lists the algorithm as approved, and no standard lag after algorithm GA is published. Plan procurement around the issued certificate, not the algorithm GA date.'
+      "FedRAMP High / IL5+ (this module's planning guidance, not a FedRAMP rule): ML-KEM-768 and ML-DSA-65 count in a FIPS 140-3 module only once its CMVP certificate is issued and lists the algorithm as approved. Plan procurement around the issued certificate, not the algorithm GA date."
     )
   }
 
@@ -605,7 +605,7 @@ function computeRecommendations(inputs: CloudMatrixInputs): string[] {
 
   if (inputs.assetClasses.includes('Code-signing in CI')) {
     out.push(
-      'Migrate code-signing keys to ML-DSA-65 or SLH-DSA-128s ahead of the cloud KMS rollout — code-signing is customer-controlled regardless of service model, so it can lead the PQC timeline.'
+      'This module\u2019s advice: consider migrating code-signing keys to ML-DSA-65 or SLH-DSA-128s ahead of the cloud KMS rollout, since they can lead the PQC timeline. Who controls them depends on the service model (NIST CSWP 39: the shared responsibilities vary by service model).'
     )
   }
 
@@ -1063,10 +1063,14 @@ export const CloudResponsibilityMatrix: React.FC = () => {
         <div className="glass-panel p-3 flex items-start gap-2">
           <ArrowRight size={16} className="text-status-info shrink-0 mt-0.5" />
           <div>
-            <p className="font-medium text-foreground">FedRAMP follows the module, not the algo</p>
+            <p className="font-medium text-foreground">
+              Procure from the CMVP validated modules list
+            </p>
             <p className="text-muted-foreground">
-              FIPS 140-3 re-validation follows algorithm GA by no fixed interval. Procurement
-              deadlines should reference the validated-module list.
+              FIPS 140-3 says agencies may purchase any of the products on the CMVP validated
+              modules list, and that the CMVP Historical list should not be used for procurement
+              decisions. In this module&apos;s reading, a module&apos;s validation is a separate
+              event from the algorithm becoming available.
             </p>
           </div>
         </div>

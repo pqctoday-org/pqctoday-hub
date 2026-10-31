@@ -72,7 +72,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Device Safety',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'ML-DSA-44 requires ~90 KB RAM \u2014 exceeding the 32 KB available. LMS (H5/W8) and XMSS (H10) are feasible for firmware signing with only ~4\u20135 KB RAM for verification.',
+        "In this exercise's model, ML-DSA-44 needs more RAM than the 32 KB available, while LMS (H5/W8) and XMSS (H10) verification is assumed to fit, so they are feasible for firmware signing. The RAM figures are this module's planning assumptions, not measurements.",
       config: { step: 3 },
     },
     {

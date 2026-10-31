@@ -35043,5 +35043,79 @@
    "31 Dec 2033: Regular Enterprises Full PQC Adoption"
   ],
   "successorDependencies": "Requires harmonization with global standards (NIST, IETF, ETSI); Enables indigenous PQC product development and certification; Depends on vendor ecosystem readiness and supply chain compliance."
+ },
+ "United States:NIST — NIST IR 8547 Final Published": {
+  "mainTopic": "NIST’s approach to transitioning from quantum-vulnerable cryptographic algorithms to post-quantum digital signature algorithms and key-establishment schemes.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [
+   "quantum-vulnerable cryptographic algorithms"
+  ],
+  "migrationTimeline": null,
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "NIST",
+    "OMB"
+   ]
+  },
+  "leadersContributions": [
+   "Dustin Moody (NIST)",
+   "Ray Perlner (NIST)",
+   "Andrew Regenscheid (NIST)",
+   "Angela Robinson (NIST)",
+   "David Cooper (NIST)"
+  ],
+  "pqcProducts": [],
+  "protocols": [],
+  "infrastructureLayers": [],
+  "standardizationBodies": [
+   "NIST"
+  ],
+  "complianceFrameworks": [
+   "Executive Order 14412",
+   "OMB Memorandum M-26-15"
+  ],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "NIST has published a final report detailing the transition from quantum-vulnerable to post-quantum cryptographic standards",
+   "The report identifies existing quantum-vulnerable standards and the quantum-resistant standards to which IT products and services must transition",
+   "The report supports the implementation of Executive Order 14412 and OMB Memorandum M-26-15",
+   "Federal agencies are directed to prioritize the migration of their most sensitive systems to post-quantum cryptography"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Policy Maker",
+   "Compliance Officer",
+   "Security Architect"
+  ],
+  "implementationPrereqs": [],
+  "relevantFeatures": [
+   "Migrate",
+   "Compliance",
+   "Timeline",
+   "pqc-governance"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [],
+  "deploymentComplexity": [],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [],
+  "phaseClassification": "The document is a final published report (NIST IR 8547) that describes NIST's approach to transitioning to post-quantum cryptography, serving as a strategic guide rather than a specific implementation phase event.",
+  "mandateLevel": "Mandatory",
+  "sectorApplicability": [
+   "Government"
+  ],
+  "migrationUrgency": "Near-Term",
+  "phaseTransition": "Moves from policy directive (Executive Order 14412) to technical implementation guidance, enabling federal agencies to begin prioritizing and executing the migration of sensitive systems.",
+  "historicalSignificance": "This is the final publication of NIST IR 8547, providing the definitive technical roadmap for the US federal government's transition to post-quantum cryptography in response to Executive Order 14412.",
+  "implementationDates": [],
+  "successorDependencies": "Requires implementation of Executive Order 14412 and OMB Memorandum M-26-15; Enables migration of federal agency sensitive systems to post-quantum cryptography."
  }
 }

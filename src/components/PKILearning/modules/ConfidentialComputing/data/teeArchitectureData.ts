@@ -22,7 +22,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'mature',
     pqcReadiness: 'planned',
     pqcNotes:
-      'Intel has announced PQC attestation key migration for DCAP targeting 2027 (Xeon data center only). Current ECDSA P-256 attestation chains are quantum-vulnerable. SGX sealing uses AES-128 (Grover-halved to 64-bit effective). Note: SGX SDK reached EOL in 2024 for consumer platforms — PQC roadmap applies to data center Xeon deployments only.',
+      "We found no published Intel date for PQC attestation key migration in DCAP; the module's own estimate is 2027, for Xeon data center deployments only. Intel documents ECDSA-based DCAP attestation, which is quantum-vulnerable. The module assumes SGX sealing uses AES-128 (Grover-halved to 64-bit effective).",
     strengths: [
       'Smallest TCB of any TEE (CPU + enclave code only)',
       'Process-level isolation — no hypervisor in trust boundary',
@@ -32,7 +32,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     limitations: [
       'Limited EPC size (256 MB) — performance cliff on large workloads',
       'History of side-channel vulnerabilities (Foreshadow, Plundervolt, ÆPIC)',
-      'Intel SGX SDK reached EOL (2024) — consumer CPU support discontinued; Xeon data center still active',
+      'This module covers Xeon data center deployments only; consumer CPU support is not covered',
       'Complex programming model (must partition code into enclave/non-enclave)',
     ],
     radarScores: { isolation: 5, encryption: 4, attestation: 5, cloud: 4, pqc: 2, maturity: 5 },
@@ -58,7 +58,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'emerging',
     pqcReadiness: 'planned',
     pqcNotes:
-      'Shares DCAP attestation infrastructure with SGX — PQC migration timeline aligned at 2027. TME-MK uses AES-128 (Grover concern). Future CPUs expected to support AES-256. Combines with ML-KEM encrypted memory sealing on roadmap.',
+      "Shares DCAP attestation infrastructure with SGX — The module's own estimate puts its PQC migration around 2027, aligned with SGX; no Intel date is published. TME-MK uses AES-128 (Grover concern). The module expects future CPUs to support AES-256 and ML-KEM-based memory sealing; we found no published Intel plan for either.",
     strengths: [
       'Full VM isolation — run unmodified OS and applications',
       'No EPC size limitation — full VM memory encrypted',
@@ -128,12 +128,12 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     sideChannelProtection: ['RME hardware isolation', 'Speculation barriers', 'GPT access control'],
     deploymentModel: 'cloud',
     cloudProviders: [
-      'Emerging availability Q2 2026 (ARM CCA silicon in select cloud providers; broad GA expected 2027)',
+      "Emerging availability: no cloud-provider dates are published in the sources we hold (the module's own estimate is ARM CCA silicon in select cloud providers from Q2 2026 and broad GA in 2027)",
     ],
     maturityLevel: 'emerging',
     pqcReadiness: 'planned',
     pqcNotes:
-      'ARM has indicated PQC support in CCA attestation tokens on the roadmap. Initial CCA implementations use ECDSA P-384. Timeline for PQC attestation (ML-DSA): estimated 2028.',
+      "We found no published Arm roadmap for PQC support in CCA attestation tokens. The module's own estimate is ML-DSA attestation around 2028, and it assumes initial CCA implementations use ECDSA P-384.",
     strengths: [
       'Designed from scratch for cloud confidential computing',
       'Hypervisor removed from TCB (smaller trust boundary than TrustZone)',
@@ -173,7 +173,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'mature',
     pqcReadiness: 'planned',
     pqcNotes:
-      'AMD VCEK uses ECDSA P-384 (quantum-vulnerable). AMD has indicated PQC attestation signing (ML-DSA) on roadmap for future EPYC generations. SEV memory encryption uses AES-128 (Grover concern).',
+      'AMD VCEK uses ECDSA P-384 (quantum-vulnerable). We found no published AMD date or plan for PQC attestation signing (ML-DSA). SEV memory encryption uses AES-128 (Grover concern).',
     strengths: [
       'No application changes needed — encrypts full VM transparently',
       'Strong memory integrity via RMP (prevents hypervisor remapping)',
@@ -254,7 +254,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'mature',
     pqcReadiness: 'preview',
     pqcNotes:
-      'AWS KMS offers ML-DSA signing keys (GA June 2025) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints; it does not offer ML-KEM KMS keys. Nitro attestation documents still use ECDSA P-384, and the attestation key migration timeline is not public.',
+      'AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints. Nitro attestation documents still use ECDSA P-384, and the attestation key migration timeline is not public.',
     strengths: [
       'Extremely simple trust model — no OS, no network, no storage in enclave',
       'Tight KMS integration for attestation-based key access',

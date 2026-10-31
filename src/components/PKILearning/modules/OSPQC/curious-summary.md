@@ -14,4 +14,4 @@ While upgrading a system's TLS is as simple as a configuration change (like enab
 
 ## What's Happening
 
-Major OS vendors are moving at different speeds. Microsoft has enabled ML-KEM by default within TLS 1.3 on Windows Server 2025, while major Linux distributions are targeting full PQC FIPS certification between 2026 and 2028.
+Operating system vendors are adding post-quantum support in stages. Microsoft's November 2025 Windows update added API support for the ML-KEM and ML-DSA algorithms (FIPS 203 and FIPS 204), and its July 14, 2026 update for Windows Server 2025 (KB5099536) added hybrid post-quantum key exchange to TLS 1.3. Microsoft's documentation lists the new key exchange groups as disabled by default, so an administrator turns them on, for example with Group Policy.

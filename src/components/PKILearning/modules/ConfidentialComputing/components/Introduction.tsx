@@ -580,9 +580,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   Mutual Attestation
                 </h3>
                 <p className="text-xs text-muted-foreground mb-2">
-                  The TEE presents its attestation report (e.g., SGX Quote, SEV-SNP Report) to the
-                  HSM. The HSM verifies the report against the vendor&apos;s root CA, checks the
-                  code measurement, and validates the TCB level before releasing any key material.
+                  The TEE presents its attestation report (e.g., SGX Quote, SEV-SNP Report) as
+                  evidence. NIST IR 8320E (initial public draft) has the evidence go to a key
+                  management or attestation service, which compares it against predefined trust
+                  policies set by the data owner or a relying party. In this workshop&apos;s
+                  modelled design the HSM plays that role: it verifies the report against the
+                  vendor&apos;s root CA, checks the code measurement, and validates the TCB level
+                  before releasing any key material.
                 </p>
                 <p className="text-xs text-muted-foreground">
                   In reverse, the TEE verifies the HSM&apos;s PKCS#11 or KMIP endpoint certificate
@@ -592,7 +596,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                   <Server size={14} className="text-primary" />
-                  Key Provisioning Flow
+                  Key Provisioning Flow (as modelled in this workshop)
                 </h3>
                 <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
                   <li>TEE generates attestation report with nonce</li>
@@ -691,7 +695,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
                 <Cpu size={16} className="text-primary" />
-                Vendor PQC Attestation Timeline
+                Vendor PQC Attestation Timeline (the module's expectation; no vendor has published
+                these dates)
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[

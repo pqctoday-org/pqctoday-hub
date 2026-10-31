@@ -131,7 +131,7 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     pqcStatus: 'supported',
     version: 'Windows 11 24H2+ / Server 2025 (Nov 2025)',
     notes:
-      'ML-KEM, ML-DSA, and SLH-DSA APIs GA in CNG since November 2025 on Windows 11 24H2+ and Windows Server 2025. Schannel TLS 1.3 hybrid key exchange (X25519MLKEM768) is in preview via Windows Insider builds and disabled by default — it must be enabled via Group Policy or TLS cmdlets.',
+      'ML-KEM and ML-DSA APIs GA in CNG since November 2025 on Windows 11 24H2+ and Windows Server 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768, secp256r1_mlkem768, secp384r1_mlkem1024) is available from Windows 11 update KB5089573 (24H2 and 25H2) and, with the 14 July 2026 update KB5099536, on Windows Server 2025. Microsoft documents the groups as disabled by default, so enable them explicitly via Group Policy (ECC Curve Order) or TLS cmdlets; the Microsoft TLS Supported Groups page still mentions Insider builds, so confirm the behaviour on your build.',
   },
   {
     id: 'gnutls',
@@ -151,7 +151,7 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     pqcStatus: 'supported',
     version: 'NSS 3.101+',
     notes:
-      'ML-KEM-768 hybrid TLS 1.3 (X25519MLKEM768) enabled by default in Firefox 132+. Chrome 131+ uses X25519MLKEM768 by default. ML-DSA support in NSS is not yet available; PQC signature algorithm integration is on the roadmap.',
+      'ML-KEM-768 hybrid TLS 1.3 (X25519MLKEM768) enabled by default in Firefox 132+. Chrome 131+ uses X25519MLKEM768 by default.',
   },
 ]
 
@@ -186,14 +186,14 @@ export const PACKAGE_FORMATS: PackageFormat[] = [
     pqcMigrationPath: 'OSTree summary signature migration to ML-DSA when libgpgme supports PQC',
     status: 'planned',
     notes:
-      'Flathub repository signing depends on OSTree GPG implementation. ML-DSA support requires upstream libgpgme + OSTree changes. Timeline: 2027-2028.',
+      'Flathub repository signing depends on OSTree GPG implementation. ML-DSA support requires upstream libgpgme + OSTree changes.',
   },
   {
     id: 'snap',
     name: 'Snap (Canonical)',
     tool: 'snapcraft, snap-store',
     currentSigningAlgo: 'RSA-4096 (Snap Store authority)',
-    pqcMigrationPath: 'Snap Store backend migration to ML-DSA (Canonical roadmap 2027)',
+    pqcMigrationPath: 'Snap Store backend migration to ML-DSA',
     status: 'planned',
     notes:
       'Snap packages are signed by the Snap Store. Client-side verification requires snapd update. Canonical has indicated PQC signing in Ubuntu 26.04 LTS timeframe.',
@@ -252,10 +252,10 @@ export const SSH_HOST_KEY_TYPES: SSHKeyType[] = [
     publicKeyBytes: 1952,
     signatureBytes: 3309,
     quantumSafe: true,
-    opensshSupport: 'OpenSSH 10.0+ (draft RFC)',
-    rfcStatus: 'draft-ietf-sshm-mldsa (active WG draft)',
+    opensshSupport: 'Not named in the OpenSSH 10.0, 10.4 or 10.6 release notes',
+    rfcStatus: 'draft-sfluhrer-ssh-mldsa-06 (Internet-Draft, not a standard)',
     notes:
-      'IETF SSHM WG draft for ssh-mldsa44/65/87 key types. OpenSSH experimental branch available. Hybrid ssh-ecdsa-nistp256-mldsa65 also drafted. Not yet in any production OpenSSH release.',
+      'The Internet-Draft draft-sfluhrer-ssh-mldsa-06 (7 April 2026, Intended Status: Informational, expires 9 October 2026) names the key types ssh-mldsa-44, ssh-mldsa-65 and ssh-mldsa-87, written with hyphens. Composite ML-DSA signatures for SSH are in draft-ietf-sshm-composite-sigs-00 (SSHM working group, 21 August 2026, Intended Status: Standards Track), which specifies ssh-mldsa44-ed25519 and ssh-mldsa87-p384; OpenSSH 10.6 (6 October 2026) enables ssh-mldsa44-ed25519. Another Internet-Draft, draft-sun-ssh-composite-sigs-03, describes further composite types such as ssh-mldsa65-es256. An Internet-Draft is a work in progress, not a standard.',
   },
 ]
 
@@ -286,10 +286,10 @@ export const SYSTEM_TLS_POLICIES: SystemTLSPolicy[] = [
     policyMechanism: 'Schannel Group Policy + PowerShell TLS cmdlets',
     defaultPolicy: 'TLS 1.3 with classical groups; PQC hybrid disabled by default',
     pqcPolicy:
-      'X25519MLKEM768 preview via Windows Insider builds — disabled by default, must be enabled via Group Policy or TLS cmdlets',
+      'x25519_mlkem768 is available from KB5089573 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026): disabled by default, enable via Group Policy or TLS cmdlets',
     command:
       'Enable-TlsEccCurve / Group Policy: SSL Configuration Settings → ECC Curve Order (add X25519MLKEM768)',
     notes:
-      'CNG PQC APIs (ML-KEM, ML-DSA, SLH-DSA) are GA since November 2025, but Schannel TLS 1.3 hybrid key exchange (X25519MLKEM768) is preview-only on Windows Insider builds and disabled by default. Enable it explicitly via Group Policy or TLS cmdlets; group priority is managed via registry HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Cryptography\\Configuration\\Local\\SSL.',
+      'CNG PQC APIs (ML-KEM and ML-DSA) are GA since November 2025; SLH-DSA is not implemented by the default CNG provider. Schannel TLS 1.3 hybrid key exchange (x25519_mlkem768) is available from Windows 11 update KB5089573 (24H2 and 25H2) and, with the 14 July 2026 update KB5099536, on Windows Server 2025. Microsoft documents the groups as disabled by default, so enable them explicitly via Group Policy (ECC Curve Order) or TLS cmdlets; the Microsoft TLS Supported Groups page still mentions Insider builds, so confirm the behaviour on your build.',
   },
 ]

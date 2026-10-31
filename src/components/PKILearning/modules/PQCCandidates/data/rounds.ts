@@ -56,9 +56,9 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
     id: 'first-pqc-winners-2022',
     date: '2022-07-05',
     kind: 'selection',
-    title: 'NIST selects ML-KEM, ML-DSA, FN-DSA, SLH-DSA',
+    title: 'NIST selects Kyber, CRYSTALS-Dilithium, Falcon and SPHINCS+ for standardization',
     detail:
-      'Kyber → ML-KEM, CRYSTALS-Dilithium → ML-DSA, Falcon → FN-DSA, SPHINCS+ → SLH-DSA. The first four PQC standards.',
+      'Kyber, CRYSTALS-Dilithium, Falcon and SPHINCS+ were selected for standardization. ML-KEM (FIPS 203) is derived from CRYSTALS-Kyber, ML-DSA (FIPS 204) from CRYSTALS-Dilithium, and SLH-DSA (FIPS 205) is a variant of SPHINCS+; Falcon is to be published in FIPS 206 (in development).',
   },
   {
     id: 'sig-on-ramp-call-2022',
@@ -149,7 +149,7 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
     kind: 'selection',
     title: 'HAWK withdrawn',
     detail:
-      'The HAWK submission team withdraws it from the additional signatures process after a new attack roughly halves the lattice-reduction block size needed for key recovery. Eight third-round candidates remain. NIST expects Round 3 to last approximately two years and has set no standardisation year.',
+      'The HAWK submission team withdraws it from the additional signatures process after a new attack roughly halves the lattice-reduction block size needed for key recovery. Eight third-round candidates remain. NIST has set no standardisation year.',
     affects: ['hawk'],
   },
 ]

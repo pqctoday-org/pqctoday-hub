@@ -67,7 +67,7 @@ These URLs returned 403, 404, or timeouts. Each needs a working authoritative re
 
 | Framework     | Proposed `reference_id`  | Failed URL                                                                                        | Status        | Suggested alternative to verify                                                                                                              |
 | ------------- | ------------------------ | ------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| PCI-DSS       | `PCI-DSS-4.0`            | https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4_0.pdf                              | 403 Forbidden | PCI SSC document library requires site registration; the full spec is paywall-gated even after registration. See PCI SSC Document Library.   |
+| PCI-DSS       | `PCI-DSS-4.0`            | https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4_0.pdf                              | 403 Forbidden | Document Library PDF, not a public PCI SSC page: not downloaded and not used. See PCI SSC Document Library.                                  |
 | SWIFT-CSP     | `SWIFT-CSP-CSCF`         | https://www.swift.com/myswift/customer-security-programme-csp/security-controls                   | timeout       | Requires SWIFT member login; try https://www.swift.com/our-solutions/compliance-and-shared-services/customer-security-programme-csp          |
 | DISA-STIG     | `DISA-STIG-APP-SEC`      | https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_ASD_V5R3_SRG.zip                          | 404 Not Found | Try https://public.cyber.mil/stigs/downloads/ and pick _Application Security and Development STIG_                                           |
 | UN-ECE-WP29   | `UNECE-WP29-R155`        | https://unece.org/sites/default/files/2021-03/R155e.pdf                                           | 403 Forbidden | https://unece.org/transport/documents/2021/03/standards/un-regulation-no-155-cyber-security-and-cyber-security (find R155 PDF from doc list) |
@@ -84,12 +84,12 @@ These URLs returned 403, 404, or timeouts. Each needs a working authoritative re
 
 Out of scope for automated pipeline. Optional manual purchase / licensing:
 
-| Framework | Proposed `reference_id` | Source     | Notes                                                                     |
-| --------- | ----------------------- | ---------- | ------------------------------------------------------------------------- |
-| PCI-DSS   | `PCI-DSS-4.0`           | PCI SSC    | Member or individual registration required. Also listed in Group 4 above. |
-| SOC-2     | `SOC2-AICPA`            | AICPA      | Commercial publication.                                                   |
-| ISO-27001 | `ISO-IEC-27001-2022`    | ISO        | ~CHF 124.                                                                 |
-| TISAX     | (various)               | ENX Portal | Member login required.                                                    |
+| Framework | Proposed `reference_id` | Source     | Notes                                                                                    |
+| --------- | ----------------------- | ---------- | ---------------------------------------------------------------------------------------- |
+| PCI-DSS   | `PCI-DSS-4.0`           | PCI SSC    | Document Library PDF, not a public PCI SSC page: not used. Also listed in Group 4 above. |
+| SOC-2     | `SOC2-AICPA`            | AICPA      | Commercial publication.                                                                  |
+| ISO-27001 | `ISO-IEC-27001-2022`    | ISO        | ~CHF 124.                                                                                |
+| TISAX     | (various)               | ENX Portal | Member login required.                                                                   |
 
 ---
 

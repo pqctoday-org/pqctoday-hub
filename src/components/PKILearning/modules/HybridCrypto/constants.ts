@@ -296,7 +296,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     quantumSafe: true,
     legacyCompat: false,
     description:
-      'X.509 using SLH-DSA-128s — a hash-based signature whose security rests only on hash-function properties, which diversifies away from lattice assumptions.',
+      'X.509 using SLH-DSA-128s — a hash-based signature whose security rests only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1), which diversifies away from lattice assumptions.',
     structureLines: [
       { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
       { text: 'tbsCertificate {', color: 'muted', indent: 1 },
@@ -389,7 +389,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '// at the ML-DSA fixed length (FIPS 204).', color: 'muted', indent: 0 },
     ],
     educationalNote:
-      "Composite certificates bind both algorithms under a single OID (1.3.6.1.5.5.7.6.45) and require both signatures to verify — if either fails, the certificate is rejected. Both the public key and the signature are RAW CONCATENATIONS with the ML-DSA component first (§4.1, §4.3); there is no ASN.1 wrapper, so a verifier splits at ML-DSA's fixed length. Both components sign a shared message representative M' = Prefix || Label || len(ctx) || ctx || PH(TBS), and ML-DSA takes the signature label as its FIPS 204 context — this is what prevents either half being stripped and reused. Legacy validators cannot process composite OIDs at all: composite is NOT backward compatible.",
+      "Composite certificates bind both algorithms under a single OID (1.3.6.1.5.5.7.6.45) and require both signatures to verify — if either fails, the certificate is rejected. Both the public key and the signature are RAW CONCATENATIONS with the ML-DSA component first (§4.1, §4.3); there is no ASN.1 wrapper, so a verifier splits at ML-DSA's fixed length. Both components sign a shared message representative M' = Prefix || Label || len(ctx) || ctx || PH(TBS), and ML-DSA takes the signature label as its FIPS 204 context — a stripped ML-DSA signature fails verification with an empty context, because it was signed with the composite Label as context; a stripped traditional signature still verifies over M', with the static Prefix remaining as evidence of the original composite (draft §9.2.3). Legacy validators cannot process composite OIDs at all: composite is NOT backward compatible.",
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },

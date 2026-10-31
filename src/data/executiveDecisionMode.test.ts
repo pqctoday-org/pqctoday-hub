@@ -80,8 +80,9 @@ describe('executive decision mode', () => {
     assertKnownRoute(FULL_PATH_HREF)
   })
 
-  it('Evidence goes to the Revisions page for now (owner decision 3)', () => {
-    expect(EXECUTIVE_DECISION_STEPS.evidence.nextHref).toBe('/revisions')
+  it('Evidence opens the sample board pack and keeps content revisions reachable', () => {
+    expect(EXECUTIVE_DECISION_STEPS.evidence.nextHref).toBe('/report?example=1')
+    expect(EXECUTIVE_DECISION_STEPS.evidence.afterHref).toBe('/revisions')
   })
 
   it('applies to executive only, and only when the flag is on', () => {

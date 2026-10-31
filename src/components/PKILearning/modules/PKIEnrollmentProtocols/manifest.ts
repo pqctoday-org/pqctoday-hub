@@ -3,11 +3,11 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-enrollment-protocols',
-  contentVersion: 7,
+  contentVersion: 8,
   lm_id: 'LM-055',
   title: 'PKI Enrollment Protocols (EST & CMP)',
   description:
-    'RFC 7030 EST and RFC 9810 CMP (KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.',
+    'RFC 7030 EST and RFC 9810 CMP (which adds support for KEM keys) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.',
   whyThisMatters:
     'EST and CMP are how certificates actually get issued at scale in the real world — a PQC algorithm with no working enrollment protocol is a lab demo, not a deployable migration.',
   duration: '50 min',

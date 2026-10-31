@@ -153,10 +153,12 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
                 carry credentials, topology and settings worth recording now.
               </p>
             </Card>
-            <Card title="20–50-year assets">
+            <Card title="Long-lived assets">
               <p>
-                A relay or PLC installed today may still run in the 2040s; substation primary plant
-                lasts longer still (see the table below).
+                <LibLink id="NIST SP 800-82 Rev. 3">NIST SP 800-82 Rev. 3</LibLink> says the
+                lifespan of an OT system can exceed 20 years. On the typical lives in the table
+                below, a relay or PLC installed today may still run in the 2040s; substation primary
+                plant lasts longer still.
               </p>
             </Card>
             <Card title="Recertification cost">
@@ -196,6 +198,11 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
+            The typical lives above are this module&apos;s illustrative figures, not values from a
+            standard. For comparison, the Applied Quantum PQC Migration Framework (version 2.1, June
+            2026) says OT systems (SCADA, PLCs, RTUs) often have 15&ndash;25 year lifecycles.
+          </p>
+          <p className="text-xs text-muted-foreground">
             Smart meters, AMI head-ends and RF-mesh networks are covered in{' '}
             <Link to="/learn/iot-pqc" className="text-primary hover:underline">
               IoT &amp; Embedded Device PQC
@@ -233,15 +240,18 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             </li>
           </ul>
           <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/20 text-xs">
-            <strong className="text-foreground">No PQC wording yet.</strong> SR 4.3 (IEC 62443-3-3)
-            and CR 4.3 (
+            <strong className="text-foreground">No PQC wording in the documents we hold.</strong> CR
+            4.3 (
             <LibLink id="IEC-62443-4-2-2019-Security-for-industrial-automation-and-co">
               IEC 62443-4-2
             </LibLink>
-            ), both titled &lsquo;Use of cryptography&rsquo; and applying from SL 1, ask for
-            cryptography that follows commonly accepted (SR 4.3) or internationally recognized and
-            proven (CR 4.3) security practice; neither names an algorithm or PQC. So PQC enters
-            through risk assessment and procurement, not through the standard&rsquo;s text.
+            ), &lsquo;Use of cryptography&rsquo;, is quoted by Siemens (Fries, ITU-T X.509 Day,
+            September 2025) as: &ldquo;If cryptography is required, the component shall use
+            cryptographic security mechanisms according to internationally recognized and proven
+            security practices and recommendations.&rdquo; That wording names no algorithm or PQC.
+            IEC 62443-3-3 (SR 4.3) is not among the documents we hold, so its wording is not
+            described here. On the CR 4.3 wording, PQC enters through risk assessment and
+            procurement rather than through the requirement text.
           </div>
           <div
             className="overflow-x-auto"
@@ -377,10 +387,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
             >
               <p>
                 Sometimes called close access: someone on site or nearby, on a field network, serial
-                link or wireless segment. Only a small minority of installed field-level traffic is
-                authenticated or encrypted. CISA found that &ldquo;many OT systems built in 2026
-                still rely on protocol implementations designed decades ago, leaving their networks
-                fully trusting anyone with access&rdquo; (
+                link or wireless segment. CISA concludes that secure versions of industrial
+                protocols remain underutilized in OT environments, and found that &ldquo;many OT
+                systems built in 2026 still rely on protocol implementations designed decades ago,
+                leaving their networks fully trusting anyone with access&rdquo; (
                 <LibLink id="Barriers-to-Secure-OT-Communication-Why-Johnny-Can-t-Authent">
                   CISA, 2026
                 </LibLink>
@@ -438,10 +448,12 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               <p>
                 DNP3 Secure Authentication v5 uses an HMAC challenge-response and wraps session keys
                 with AES key wrap. Update keys are pre-shared by default; where they are changed
-                remotely, the <strong>default</strong> method is symmetric (AES-256 key wrap plus
-                HMAC-SHA-256) and the RSA/DSA methods are optional. IEEE moved 1815-2012 to inactive
-                status in 2023, the P1815 revision runs to 2027, and &ldquo;SAv6&rdquo; is
-                unpublished. IEC 104 uses IEC 62351-3 TLS and IEC 62351-5 authentication.
+                remotely, the 2011 IEEE 1815 working draft makes the symmetric method (AES-256 key
+                wrap plus HMAC-SHA-256) the <strong>default</strong> and the asymmetric methods,
+                which use RSA and DSA, optional. IEEE SA lists IEEE 1815-2012 as an
+                Inactive-Reserved standard (inactivated 30 March 2023) and lists a P1815 project
+                that would supersede it; the documents we hold describe no revision named
+                &ldquo;SAv6&rdquo;. IEC 104 uses IEC 62351-3 TLS and IEC 62351-5 authentication.
               </p>
             </Card>
             <Card title="OPC UA">
@@ -529,10 +541,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
       >
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            IEC 61850-5 gives GOOSE type 1A trip messages two performance classes: P1, transfer-time
-            class <strong>TT6, 3 ms or less</strong>, and P2, TT5, 10 ms or less (
-            <LibLink id="Torres-ICREPQ-2024-341">Torres et al., ICREPQ 2024</LibLink>, which
-            tabulates the classes). IEC 61869-9 defines Sampled Value rates including{' '}
+            IEC 61850-5 puts GOOSE type 1A trip messages in transfer-time class{' '}
+            <strong>TT6, 3 ms or less</strong> (
+            <LibLink id="Torres-ICREPQ-2024-341">Torres et al., ICREPQ 2024</LibLink>, Table I,
+            which tabulates the classes). IEC 61869-9 defines Sampled Value rates including{' '}
             <strong>4,000, 4,800 and 14,400 samples per second</strong> — a frame every {sv(4000)},{' '}
             {sv(4800)} and {sv(14400)} µs (
             <LibLink id="Chen-Sensors-2020-20-7345">Chen et al., Sensors 2020</LibLink>).
@@ -717,8 +729,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
           </Card>
           <Card title="Rail and transit">
             <p>
-              Signalling has a 25–40-year life and a safety case behind every change. ERTMS/ETCS
-              distributes keys through a Key Management Centre specified in{' '}
+              In this module&apos;s typical figures, signalling has a 25–40-year life. The Applied
+              Quantum PQC Migration Framework says any change to OT cryptography must go through
+              safety case recertification in many jurisdictions. ERTMS/ETCS distributes keys through
+              a Key Management Centre specified in{' '}
               <LibLink id="UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS">
                 UNISIG SUBSET-137
               </LibLink>
@@ -750,8 +764,10 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               BACnet/SC brings TLS 1.3 and X.509 to HVAC, lighting and access control (
               <LibLink id="ASHRAE-BACnet-SC-Whitepaper-2019">ASHRAE BACnet/SC white paper</LibLink>
               ). Because it already uses TLS 1.3, adding a hybrid ML-KEM group is a stack update;
-              its elliptic-curve certificates are the forgery exposure. Most installed BACnet/IP and
-              MS/TP has no security at all.
+              its elliptic-curve certificates are the forgery exposure. BACnet/SC is the TLS-based
+              BACnet datalink (ASHRAE Addendum bj: it is based on TLS-secured WebSocket
+              connections); BACnet/IP and MS/TP do not use it, and we have no figure for how much
+              equipment still runs on them.
             </p>
           </Card>
         </div>
@@ -803,8 +819,8 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               <strong>
                 <LibLink id="IEC 62443">IEC 62443</LibLink>
               </strong>{' '}
-              — the cross-sector OT security series; crypto requirements (SR/CR 4.3) do not mention
-              PQC yet.
+              — the cross-sector OT security series; the crypto requirement CR 4.3 does not mention
+              PQC in the documents we hold.
             </li>
             <li>
               <strong>

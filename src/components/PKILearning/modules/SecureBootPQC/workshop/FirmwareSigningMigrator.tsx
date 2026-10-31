@@ -1138,11 +1138,11 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 Why HashML-DSA is not used in CMS (RFC 9882 §3.1)
               </p>
               <blockquote className="border-l-2 border-border pl-2 italic text-muted-foreground">
-                &ldquo;CMS signatures are computed over a set of signed attributes that contain a
-                hash of the content, rather than being computed over the message content itself.
-                Since signed attributes are typically small, use of pre-hash modes in the CMS
-                wouldn&apos;t significantly reduce the size of the data to be signed, and hence
-                offers no benefit.&rdquo;
+                &ldquo;&hellip; in most situations, CMS signatures are computed over a set of signed
+                attributes that contain a hash of the content, rather than being computed over the
+                message content itself. Since signed attributes are typically small, use of pre-hash
+                modes in the CMS wouldn&apos;t significantly reduce the size of the data to be
+                signed, and hence offers no benefit.&rdquo;
               </blockquote>
               <ul className="text-muted-foreground space-y-0.5 list-disc list-inside">
                 <li>
@@ -1988,9 +1988,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               >
                 → View requirements
               </a>{' '}
-              · RFC 9019 (SUIT) defines firmware update manifest format for IoT devices — SUIT
-              manifests are COSE-signed (CBOR), a distinct format from the CMS (RFC 5652) SignedData
-              this demo generates.
+              · RFC 9019 (SUIT) defines a firmware update architecture for IoT devices and provides
+              the motivation for a manifest format; the manifest format itself is in the separate
+              draft-ietf-suit-manifest. SUIT manifests are COSE-signed (CBOR), a distinct format
+              from the CMS (RFC 5652) SignedData this demo generates.
             </p>
           </div>
 

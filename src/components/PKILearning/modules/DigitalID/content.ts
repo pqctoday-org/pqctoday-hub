@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'digital-id',
   version: '1.0.2',
   lastReviewed: '2026-08-23',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('eIDAS-2-Regulation'),
@@ -86,7 +86,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'eIDAS 2.0 (Regulation EU 2024/1183) mandates every EU member state issue an EUDI Wallet. Person Identification Data (PID) is the foundational credential a national PID Issuer grants after citizen authentication; every other attestation builds on it. Two credential formats carry that data: mso_mdoc (ISO 18013-5, CBOR, proximity via NFC/BLE) and SD-JWT VC (RFC 9901 base SD-JWT, JSON, built for remote/online verification). Selective disclosure lets a holder reveal only the requested attributes — e.g. proving age without revealing a birthplace — enforcing GDPR data-minimization by construction, not policy. Qualified Electronic Attestations (QEAA) and Qualified Electronic Signatures (QES) are issued by QTSPs listed on National Trusted Lists, giving them the same legal weight as a handwritten signature across all 27 member states via the eIDAS trust-framework bridge. The OpenID4VP and OpenID4VCI specifications use classical ECDSA P-256 in most of their examples, which a large-scale quantum computer running Shor’s algorithm could forge.',
+      'eIDAS 2.0 (Regulation EU 2024/1183) mandates every EU member state issue an EUDI Wallet. Person Identification Data (PID) is the credential a national PID Provider issues after identity verification; other attestations do not require it. Two credential formats carry that data: mso_mdoc (ISO 18013-5, CBOR, proximity via NFC/BLE) and SD-JWT VC (RFC 9901 base SD-JWT, JSON, built for remote/online verification). Selective disclosure lets a holder reveal only the requested attributes — e.g. proving age without revealing a birthplace — enforcing GDPR data-minimization by construction, not policy. Qualified Electronic Attestations (QEAA) and Qualified Electronic Signatures (QES) are issued by QTSPs listed on National Trusted Lists; a QES has the legal effect of a handwritten signature across all 27 member states via the eIDAS trust-framework bridge. The OpenID4VP and OpenID4VCI specifications use classical ECDSA P-256 in most of their examples, which a large-scale quantum computer running Shor’s algorithm could forge.',
     workshopSummary:
       'EUDI Wallet: inspect a holder’s stored credentials, keys, and activity history. PID Issuer: authenticate as a citizen and receive an mso_mdoc PID credential. University Attestation: obtain an SD-JWT diploma attestation, gated on already holding a valid PID. Relying Party: present selective attributes to a bank to open an account, without the bank ever contacting the issuer. QES: sign a document through a QTSP via the CSC API, producing a legally binding qualified signature.',
   },

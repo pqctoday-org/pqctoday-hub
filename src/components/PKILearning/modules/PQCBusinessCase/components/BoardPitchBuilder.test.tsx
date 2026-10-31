@@ -98,6 +98,32 @@ describe('BoardPitchBuilder — cross-tool output chaining', () => {
     expect(screen.getByDisplayValue(/Migration investment: \$999/)).toBeInTheDocument()
   })
 
+  it('does not say no cost estimate is attached once the amount comes from the ROI model', () => {
+    renderPitch({
+      roiOutput: { totalCostUSD: 999, roiPercent: 10, paybackMonths: 1, breachCostSavingsUSD: 1 },
+    })
+    expect(screen.queryByDisplayValue(/No reviewed estate cost estimate is attached/)).toBeNull()
+    expect(screen.getByDisplayValue(/comes from the ROI model/)).toBeInTheDocument()
+  })
+
+  it('says the total is modelled when products are selected and the amount comes from the ROI model', () => {
+    const original = baseMockData.myProducts
+    baseMockData.myProducts = [{ productName: 'Example HSM' } as never]
+    try {
+      renderPitch({
+        roiOutput: { totalCostUSD: 999, roiPercent: 10, paybackMonths: 1, breachCostSavingsUSD: 1 },
+      })
+      expect(
+        screen.getByDisplayValue(/comes from the ROI model, which is an illustrative/)
+      ).toBeInTheDocument()
+      expect(
+        screen.getByDisplayValue(/1 selected product types provide dependency context/)
+      ).toBeInTheDocument()
+    } finally {
+      baseMockData.myProducts = original
+    }
+  })
+
   it('falls back to the last saved ROI Calculator artifact when no prop is passed', () => {
     mockExecutiveDocuments = [
       {

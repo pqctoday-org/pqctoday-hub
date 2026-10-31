@@ -219,7 +219,7 @@ export const SEGMENT_CADENCES: SegmentUpgradeCadence[] = [
     name: 'Space Segment',
     typicalCycleMonths: 0,
     constraintDescription:
-      'Satellites cannot be physically accessed post-launch. Crypto must be provisioned pre-launch. Software-defined radios allow limited firmware updates but hardware crypto is fixed. Note: 2027 reflects ground-segment infrastructure readiness (PQC-secured uplinks, ground key management) for newly launched satellites — not a retrofit of existing satellite hardware.',
+      "Module planning assumptions, not figures from a standard: satellites are not physically accessible after launch, so cryptography is provisioned before launch; software-defined radios allow limited firmware updates, while hardware cryptography stays fixed. 2027 is this module's estimate of ground-segment readiness (PQC-secured uplinks, ground key management) for newly launched satellites, not a retrofit of existing satellite hardware.",
     pqcReadinessYear: 2027,
   },
 ]

@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'quantum-threats',
   version: '1.0.2',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-31',
 
   standards: [
     // Resource-estimate papers first — every qubit figure in this module comes
@@ -19,6 +19,7 @@ export const content: ModuleContent = {
     // The accuracy spot-check samples this list by even stride, so relevance
     // order is what decides which documents the numbers get checked against.
     getStandard('ref-gidney-factor-rsa'),
+    getStandard('ref-gidney-factor-rsa-8h'), // DH-2048 row: finite-field discrete-log Tables 4 and 5
     getStandard('Google-QuantumAI-EC-Crypto-Quantum-2026'),
     getStandard('FIPS 203'),
     getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Factoring'),

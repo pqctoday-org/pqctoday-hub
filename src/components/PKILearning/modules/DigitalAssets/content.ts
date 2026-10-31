@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'digital-assets',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-30',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('RFC-8032'),
@@ -74,6 +74,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Bitcoin Flow: Generate a secp256k1 key pair inside SoftHSMv3 via PKCS#11 C_GenerateKeyPair, derive a Bitcoin address through the SHA-256/RIPEMD-160/Base58Check pipeline, format a transaction, sign it with CKM_ECDSA (raw ECDSA via C_Sign), and verify the signature. Ethereum Flow: Generate secp256k1 keys, derive an Ethereum address via Keccak-256 with EIP-55 checksumming, create and sign a transaction with recovery parameter, and verify. HD Wallet Flow (5-step): Generate a 24-word BIP39 mnemonic, derive the 512-bit PBKDF2 seed, demonstrate hardened vs non-hardened BIP32 derivation with a live KAT (including Ed25519 hardened-only enforcement), derive Bitcoin/Ethereum/Solana addresses with an inline BIP44 derivation tree visualization, and assess the quantum threat surface of the HD wallet stack.',
     relatedStandards:
-      'SEC 2 (secp256k1 curve specification), RFC 8032 (Ed25519/EdDSA), BIP-32 (HD wallet derivation), BIP-39 (mnemonic seed phrases), BIP-44 (multi-account hierarchy), SLIP-0010 (Ed25519 HD derivation), BIP-141 (Segregated Witness — P2WPKH/P2WSH, bech32 addresses), BIP-340 (Schnorr signatures for secp256k1, used by Taproot spends), BIP-341 (Taproot — P2TR spending rules), BIP-350 (bech32m encoding for Taproot/SegWit v1+ addresses). EIP-55 (Ethereum address checksumming), EIP-155 (replay protection with chain ID). RFC 10024 (hybrid key agreement for TLS 1.3, including X25519MLKEM768). FIPS 204 (ML-DSA), FIPS 203 (ML-KEM), and planned FIPS 206 (FN-DSA) are potential PQC replacements for blockchain signature and key exchange schemes. FIPS 206 remains in development with no public draft, so the distinct Falcon v1.2 candidate specification is cited without presenting it as FIPS text. The BIP-39/BIP-44 citations are deprecated pending re-capture of the source page, not because either standard changed.',
+      'SEC 2 (secp256k1 curve specification), RFC 8032 (Ed25519/EdDSA), BIP-32 (HD wallet derivation), BIP-39 (mnemonic seed phrases), BIP-44 (multi-account hierarchy), SLIP-0010 (Ed25519 HD derivation), BIP-141 (Segregated Witness — P2WPKH/P2WSH, bech32 addresses), BIP-340 (Schnorr signatures for secp256k1, used by Taproot spends), BIP-341 (Taproot — P2TR spending rules), BIP-350 (bech32m encoding for Taproot/SegWit v1+ addresses). EIP-55 (Ethereum address checksumming), EIP-155 (replay protection with chain ID). RFC 10024 (hybrid key agreement for TLS 1.3, including X25519MLKEM768). FIPS 204 (ML-DSA), FIPS 203 (ML-KEM), and planned FIPS 206 (FN-DSA) are potential PQC replacements for blockchain signature and key exchange schemes. FIPS 206 remains in development with no public draft, so the distinct Falcon v1.2 candidate specification is cited without presenting it as FIPS text.',
   },
 }

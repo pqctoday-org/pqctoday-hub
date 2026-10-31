@@ -389,16 +389,15 @@ export const FheSchemesSection: React.FC = () => (
 
     <div className="space-y-2">
       <h3 className="text-sm font-bold text-foreground">
-        The four schemes in ISO/IEC 28033 (drafts)
+        The four schemes in ISO/IEC 28033 (under development)
       </h3>
       <p className="text-xs text-muted-foreground">
         Every ciphertext carries a small random error (&ldquo;noise&rdquo;). Additions grow it a
         little and multiplications grow it a lot. Once it is too large, decryption fails.{' '}
         <strong>Bootstrapping</strong> refreshes the noise by running decryption homomorphically
         under an encrypted copy of the key. All four schemes are being standardized in ISO/IEC
-        28033; no part is published yet. Part 2 (BGV/BFV) is at DIS; parts 3 (CKKS) and 4
-        (look-up-table arithmetic, the TFHE family) are at FDIS, with their final ballots started in
-        September 2026 (ISO project pages; section 7).
+        28033, which the Library records as under development; the current stage of each part is not
+        sourced in the Library (see section 7).
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">

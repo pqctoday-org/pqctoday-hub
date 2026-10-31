@@ -47,7 +47,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 8194,
     status: 'broken',
     notes:
-      'Even 4096-bit RSA provides zero post-quantum security. Still the older 2016-era (2n+2) estimate — no revised resource estimate has been published for this key size, unlike RSA-2048 and RSA-3072. On the n/2 + o(n) scaling of the revised circuits the real figure would be far lower; treat the 2n+2 figure, which gives 8,194 (Häner–Roetteler–Svore 2016, arXiv:1611.07995), as an upper bound, not a target.',
+      'Even 4096-bit RSA provides zero post-quantum security. Gidney 2025 (Table 5) gives a revised estimate for this key size: 2,692 logical qubits and 4.0e+10 Toffoli gates, far below the older 2016-era 2n+2 figure of 8,194 (Häner–Roetteler–Svore 2016, arXiv:1611.07995).',
   },
   {
     name: 'ECDSA P-256',
@@ -59,7 +59,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "Revised per Google Quantum AI (Mar 2026): improved Shor's circuits break 256-bit ECC with \u22641,200 logical qubits — roughly half prior estimates. Fewer qubits needed than RSA at equivalent security. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits (Roetteler et al. 2017, arXiv:1706.06752).",
+      'Google Quantum AI (Mar 2026) gives \u22641,200 logical qubits (or \u22641,450) for the 256-bit ECDLP on secp256k1; its paper gives no estimate for P-256, and this module applies the secp256k1 figure to P-256 as its own approximation. Fewer qubits needed than RSA at equivalent security. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits (Roetteler et al. 2017, arXiv:1706.06752).',
   },
   {
     name: 'ECDSA P-384',
@@ -70,7 +70,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'shor',
     estimatedQubits: 3484,
     status: 'broken',
-    notes: 'All ECC variants are equally broken by quantum — curve size is irrelevant.',
+    notes:
+      'Shor’s algorithm applies to elliptic-curve cryptography at every curve size; a larger curve needs more logical qubits (Roetteler et al. 2017: 3,484 for a 384-bit curve).',
   },
   {
     name: 'X25519',
@@ -82,7 +83,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "Curve25519 ECDH falls to Shor's just like NIST curves. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
+      "Curve25519 ECDH falls to Shor's just like NIST curves. This module applies Google Quantum AI’s Mar 2026 secp256k1 estimate (\u22641,200 logical qubits) to Curve25519 as its own approximation; the paper gives no estimate for it. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
   },
   {
     name: 'Ed25519',
@@ -94,7 +95,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "EdDSA signatures rely on discrete log — vulnerable to Shor's. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
+      "EdDSA signatures rely on discrete log — vulnerable to Shor's. This module applies Google Quantum AI’s Mar 2026 secp256k1 estimate (\u22641,200 logical qubits) to Ed25519 as its own approximation; the paper gives no estimate for it. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
   },
   {
     name: 'ECDSA secp256k1',
@@ -431,7 +432,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2030,
     confidence: 'Purchasing recommendation and milestones, not a CRQC forecast',
     notes:
-      "ANSSI gives no CRQC arrival date. Its current FAQ on post-quantum cryptography states: « L'ANSSI indique qu'il ne sera pas raisonnable d'acheter des produits qui n'intègrent pas de la PQC après 2030 » (it will not be reasonable to buy products that do not include post-quantum cryptography after 2030). ANSSI aims to introduce post-quantum obligations for product qualification from 2027, and its post-quantum recommendations, including hybridisation, are not a regulatory obligation today. It strongly insists on hybrid protection wherever post-quantum protection is needed. The FAQ updates ANSSI's 2022 position paper (updated 2023), which still stands: a three-phase roadmap in which standalone post-quantum cryptography becomes an option \"probably not earlier than 2030\". FAQ read 3 October 2026; it refers to events of early October 2025.",
+      "ANSSI gives no CRQC arrival date. Its current FAQ on post-quantum cryptography states: « L'ANSSI indique qu'il ne sera pas raisonnable d'acheter des produits qui n'intègrent pas de la PQC après 2030 » (it will not be reasonable to buy products that do not include post-quantum cryptography after 2030). ANSSI aims to introduce post-quantum obligations for product qualification from 2027. The FAQ says ANSSI's post-quantum recommendations, including hybridisation, are not a regulatory obligation today (« n'ont pas à ce jour de caractère d'obligation réglementaire »), but that for the regulated perimeter hybridisation is mandatory (« l'hybridation est obligatoire »); it describes that perimeter as defence-classified data and data marked Diffusion Restreinte, vital information systems (SAIV) and ANSSI product certifications and qualifications. It strongly insists on hybrid protection wherever post-quantum protection is needed. The FAQ updates ANSSI's 2022 position paper (updated 2023), which still stands: a three-phase roadmap in which standalone post-quantum cryptography becomes an option \"probably not earlier than 2030\". FAQ read 3 October 2026; it refers to events of early October 2025.",
     url: 'https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/faq-pqc/',
     lastReviewed: '2026-10-03',
   },
@@ -443,7 +444,7 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2035,
     confidence: 'Migration recommendations, not a forecast',
     notes:
-      'Source: BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026). Classical key agreement alone is recommended only until the end of 2031. For applications with very high protection requirements, the transition to quantum-safe mechanisms should already take place by the end of 2030. Classical signature mechanisms are recommended only until the end of 2035. BSI recommends using quantum-safe mechanisms in hybrid form, combined with a classical method. These are BSI migration recommendations, not a prediction of when a quantum computer will exist. Separately, BSI\'s 2021 brochure "Quantum-safe cryptography – fundamentals, current developments and recommendations" says BSI works under the hypothesis that cryptographically relevant quantum computers will be available in the early 2030s, and describes this as a timeline for risk assessment, not a forecast of availability.',
+      'Source: BSI Technical Guideline TR-02102-1, version 2026-01 (23 January 2026). Classical key agreement alone is recommended only until the end of 2031. For applications with very high protection requirements, the transition to quantum-safe mechanisms should already take place by the end of 2030. Classical signature mechanisms are recommended only until the end of 2035. BSI recommends using quantum-safe mechanisms in hybrid form, combined with a classical method; hash-based signatures may in principle be used alone, provided their implementation security is carefully considered (BSI limits stateful schemes such as LMS and XMSS to special scenarios where error-free state management can be guaranteed). These are BSI migration recommendations, not a prediction of when a quantum computer will exist. Separately, BSI\'s 2021 brochure "Quantum-safe cryptography – fundamentals, current developments and recommendations" says BSI works under the hypothesis that cryptographically relevant quantum computers will be available in the early 2030s, and describes this as a timeline for risk assessment, not a forecast of availability.',
     url: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile',
     lastReviewed: '2026-10-03',
   },
@@ -627,26 +628,6 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     qubitType: 'Neutral atom',
     notes:
       'Nov 2025 (Nature; arXiv:2506.20661): ran algorithms with up to 96 logical qubits on 448 atoms with below-threshold error suppression (Λ=2.14) — the most verified logical qubits of any platform — plus the first logical magic-state distillation. A separate array was run continuously for over 2 hours; Caltech separately demonstrated a 6,100-atom tweezer array (arXiv:2403.12021, 99.98% single-qubit accuracy). Demonstrated logical qubits are lower-distance than the ~1,200 fault-tolerant qubits a Shor attack needs.',
-  },
-  {
-    name: 'Helios (Iceberg codes)',
-    vendor: 'Quantinuum',
-    year: 2026,
-    physicalQubits: 98,
-    estimatedLogicalQubits: 94,
-    qubitType: 'Trapped ion',
-    notes:
-      'Mar 2026: same Helios hardware ran a separate demonstration using Iceberg error-DETECTION codes (a different, weaker fault-tolerance class than the Nov 2025 48 error-CORRECTED logical qubits above) to reach 94 logical qubits. A Jun 2026 Nature paper independently validated an 800× logical-error-rate improvement on this hardware.',
-  },
-  {
-    name: 'Helium',
-    vendor: 'Alice & Bob',
-    year: 2026,
-    physicalQubits: 18,
-    estimatedLogicalQubits: 1,
-    qubitType: 'Cat qubit (bosonic)',
-    notes:
-      'Jun 2026: first cat-qubit system to encode a working logical qubit, using 18 physical cat qubits — a fifth modality (bosonic/cat-code encoding) pursuing intrinsic bit-flip suppression rather than surface-code-style error correction.',
   },
 ]
 
@@ -986,13 +967,13 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
   },
   {
     technology: 'Topological',
-    vendors: 'Microsoft, Alice & Bob',
+    vendors: 'Microsoft',
     bestLogical: 0,
     bestPhysical: 8,
-    note: 'Majorana-based qubits are designed to be intrinsically error-resistant, needing far fewer physical qubits per logical qubit than other modalities if the physics holds up. Microsoft’s Majorana 2 (Build, Jun 2026) claims an accelerated path to fault tolerance by 2029 — a contested claim following a disputed 2025 topological-qubit announcement from the same team; treat the 2029 date skeptically pending independent replication. Alice & Bob’s Helium (Jun 2026) took a different cat-qubit approach to the same error-resistance goal, encoding one logical qubit across 18 cat qubits.',
+    note: 'Cloudflare writes that topological qubits would in theory be mostly unaffected by noise and, if they can be built in a scalable way, would be far superior to superconducting qubits. Cloudflare writes that they have not been fully realized in hardware; Microsoft announced the Majorana 1 chip in early 2025, which Cloudflare says is far from a full demonstrator and does not support any computation.',
     recentProgress:
-      'Microsoft says its second-generation Majorana chip is progressing toward fault tolerance faster than expected; a French startup, Alice & Bob, separately built a small working logical qubit from a different “naturally error-resistant” qubit design.',
+      'Microsoft announced its Majorana 1 chip in early 2025 and lists it among its quantum advances; Cloudflare describes the chip as far from a full demonstrator.',
     scaleChallenge:
-      'The core physics claim (that Majorana quasiparticles behave as predicted) is still disputed by parts of the research community — this modality has to first settle that debate before its qubit-efficiency advantage can be trusted at scale.',
+      'Topological qubits have not been fully realized in hardware, and Cloudflare writes that it is not known whether they can be built to begin with.',
   },
 ]

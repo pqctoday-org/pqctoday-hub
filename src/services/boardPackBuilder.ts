@@ -51,6 +51,8 @@ export interface BoardPackProfile {
   region?: string
   generatedAt: string
   persona?: string | null
+  /** Explicitly distinguish a fictional worked example from self-reported inputs. */
+  sample?: boolean
   /** Program-level accountability (useReportOwnershipStore) — optional,
    *  since a user may not have filled these in yet. */
   programOwner?: string
@@ -81,8 +83,13 @@ function buildReadme(profile: BoardPackProfile, appVersion?: string): string {
     '# PQC Board Pack',
     '',
     `Generated ${profile.generatedAt} from the PQC Today Risk Assessment.`,
+    profile.sample
+      ? "Fictional worked example — this pack does not describe the viewer's organization."
+      : 'Planning inputs are self-reported and are not independently verified.',
     '',
     "## What's inside",
+    '',
+    'This is an assessment report pack. Saved programme charters, board proposals and delivery roadmaps are separate Command Center documents; review and export them individually for a programme funding submission.',
     '',
     '- `executive-summary.md` — educational priority index, model band, and top-3 prompts in one page.',
     '- `key-findings.md` — the 3-5 most material insights from the assessment.',

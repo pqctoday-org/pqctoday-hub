@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-dev-apis',
   version: '1.0.4',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-28',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -63,6 +63,7 @@ export const content: ModuleContent = {
     getStandard('Announcing-NET-10'), // m-crypto-dev-apis: November 2025
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('Download-Bouncy-Castle-Java'), // m-crypto-dev-apis: wave 4c
+    getStandard('BouncyCastle-Releases-Java-1-81-and-CSharp-2-6-1'),
   ],
 
   algorithms: [
@@ -91,7 +92,7 @@ export const content: ModuleContent = {
     overview:
       'Intermediate-level module (120 min, 8 workshop steps) covering post-quantum cryptography integration across the major cryptographic APIs and programming language ecosystems — JCA/JCE, OpenSSL EVP, PKCS#11 v3.2, Windows CNG, and language-specific PQC libraries. Teaches developers how to migrate production cryptographic code to PQC without vendor lock-in, using crypto agility patterns.',
     keyConcepts:
-      'JCA/JCE (Java Cryptography Architecture / Extension): Provider-based architecture — Security.addProvider() inserts pluggable crypto backends. JDK 24+ includes ML-KEM (JEP 496, javax.crypto.KEM) and ML-DSA (JEP 497, Signature "ML-DSA") in the default providers; Oracle JDK 25 has them, and Oracle backported them to JDK 21.0.13 and 17.0.21 in October 2026 (JDK 11 and 8 planned for the second half of 2027). On a JDK without them, or for SLH-DSA, register BouncyCastle 1.78+ as a JCA provider (BC or BCFIPS). Algorithm strings: "ML-KEM" / "ML-DSA" families with parameter sets such as "ML-KEM-768", "ML-DSA-65".',
+      'JCA/JCE (Java Cryptography Architecture / Extension): Provider-based architecture — Security.addProvider() inserts pluggable crypto backends. JDK 24+ includes ML-KEM (JEP 496, javax.crypto.KEM) and ML-DSA (JEP 497, Signature "ML-DSA") in the default providers; Oracle JDK 25 has them, and Oracle backported them to JDK 21.0.13 and 17.0.21 in October 2026 (JDK 11 and 8 planned for the second half of 2027). On a JDK without them, or for SLH-DSA, register BouncyCastle 1.79+ as a JCA provider (BC or BCFIPS). Algorithm strings: "ML-KEM" / "ML-DSA" families with parameter sets such as "ML-KEM-768", "ML-DSA-65".',
     workshopSummary:
       'APIArchitectureExplorer — Visualize the provider/plugin architecture of each API; compare abstraction layers; identify where PQC plugs in and what still changes around it (algorithm names, sizes, encodings, negotiation). LanguageEcosystemComparator — Side-by-side code comparison for ML-KEM-768 key generation and ML-DSA-65 signing across C++, Rust, Zig, Java, Python, Go, and .NET; highlight import paths and API ergonomics differences.',
   },

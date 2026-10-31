@@ -14,4 +14,4 @@ All enterprise token signing will soon migrate to the new ML-DSA (FIPS 204) stan
 
 ## What's Happening
 
-Identity providers are beginning to prototype ML-DSA token signing across SAML, JWT, and Kerberos flows, while Active Directory teams prepare for the critical Kerberos PKINIT upgrade to prevent the catastrophic "Quantum Golden Ticket" scenario.
+Our product catalogue records no post-quantum token signing for most of the identity providers this module lists, so Active Directory teams should plan the Kerberos PKINIT upgrade that prevents the catastrophic "Quantum Golden Ticket" scenario before vendors deliver it.

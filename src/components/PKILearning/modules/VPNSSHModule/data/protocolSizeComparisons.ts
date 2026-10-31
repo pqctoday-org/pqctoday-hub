@@ -215,7 +215,7 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
   },
   {
     feature: 'PQC Integration Method',
-    ikev2: 'Additional Key Exchange (AKE) payload',
+    ikev2: 'Additional key exchange (RFC 9370 KE payload in IKE_INTERMEDIATE)',
     ssh: 'Concatenated hybrid KEX',
     wireguard: 'Separate Rosenpass handshake',
     tls13: 'Named group in key_share extension',

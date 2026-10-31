@@ -140,13 +140,12 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
         level: 'Root CA',
         component: 'OS Vendor Root Key',
         algorithm: 'RSA-4096 (current) → ML-DSA-87 (future)',
-        notes:
-          'Red Hat signs intermediate signing keys with root. Migration to ML-DSA-87 in RHEL 11 roadmap.',
+        notes: 'Red Hat signs intermediate signing keys with root.',
       },
       {
         level: 'Package Signing Key',
         component: 'Repository Signing Certificate',
-        algorithm: 'GPG RSA-4096 (current) → ML-DSA-65 (2027+)',
+        algorithm: 'GPG RSA-4096 (current) → ML-DSA-65',
         notes: 'Signs all packages in the repository. Monthly rotation recommended.',
       },
       {
@@ -288,7 +287,7 @@ const SIGNING_WORKFLOWS: Record<PackageType, SigningWorkflow> = {
       {
         tool: 'apt-ftparchive',
         currentSupport: true,
-        pqcStatus: 'GPG only; PQC in Ubuntu 26.04 roadmap',
+        pqcStatus: 'GPG only',
       },
     ],
   },

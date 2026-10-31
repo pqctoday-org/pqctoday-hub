@@ -130,12 +130,12 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     region: 'Industry-Specific',
     scope: 'Any entity that stores, processes, or transmits cardholder data',
     pqcRequirement:
-      'Requirement 12.3.3 mandates cryptographic inventory and algorithm review. Req 4.2.1 targets strong cryptography. PQC explicitly planned for future versions.',
+      'PCI DSS v4.0.1 is the only active version of the standard (v4.0 retired on 31 December 2024) and the new requirements of v4.0 have been effective since 31 March 2025 (PCI SSC announcement, 11 June 2024). The public PCI SSC pages used for this module state no PQC algorithm, parameter set or deadline.',
     // v4.0 became mandatory March 31 2025 — that date is now past; no forward deadline yet
     hardDeadline: null,
     deadlineYear: null,
     pqcMandatoryNow: false,
-    relevantArticles: ['Req 4.2.1', 'Req 12.3.3'],
+    relevantArticles: ['PCI DSS v4.0.1'],
     url: 'https://www.pcisecuritystandards.org/',
   },
   {

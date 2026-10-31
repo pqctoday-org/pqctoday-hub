@@ -302,7 +302,8 @@ async function verifyClassical(
        * algorithm that the draft does not specify for these profiles.
        *
        * Both the key and the signature are fixed-length raw byte strings
-       * (RFC 8410), so unlike ECDSA and RSA the lengths are fully checkable.
+       * (RFC 8032: 32-octet public keys, 64-octet signatures), so unlike ECDSA
+       * and RSA the lengths are fully checkable.
        */
       case 'ed25519': {
         const algorithm = 'Ed25519'
@@ -311,7 +312,7 @@ async function verifyClassical(
             ...base,
             algorithm,
             verified: false,
-            detail: `Ed25519 public key is ${pub.length} B; RFC 8410 requires exactly ${spec.pubKeyBytes} B.`,
+            detail: `Ed25519 public key is ${pub.length} B; RFC 8032 public keys are ${spec.pubKeyBytes} B.`,
           }
         }
         if (sig.length !== spec.sigBytes) {
@@ -319,7 +320,7 @@ async function verifyClassical(
             ...base,
             algorithm,
             verified: false,
-            detail: `Ed25519 signature is ${sig.length} B; RFC 8032 requires exactly ${spec.sigBytes} B.`,
+            detail: `Ed25519 signature is ${sig.length} B; RFC 8032 signatures are ${spec.sigBytes} B.`,
           }
         }
         // @noble's default verification follows ZIP-215 rules, which are more

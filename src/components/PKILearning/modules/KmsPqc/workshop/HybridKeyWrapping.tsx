@@ -53,7 +53,7 @@ gcloud kms keys create wrapping-key \\
   --location=global \\
   --purpose=asymmetric-encryption \\
   --default-algorithm=rsa-decrypt-oaep-3072-sha256`,
-    pqc: `// Google Cloud KMS — ML-KEM key encapsulation (Preview, SOFTWARE level)
+    pqc: `// Google Cloud KMS — ML-KEM key encapsulation (SOFTWARE level)
 gcloud kms keys create pqc-kem-key \\
   --keyring=my-ring \\
   --location=global \\
@@ -67,7 +67,7 @@ gcloud kms keys create pqc-kem-key \\
 gcloud kms decapsulate --version=1 --key=pqc-kem-key \\
   --keyring=my-ring --location=global \\
   --ciphertext-file=ct.bin --shared-secret-file=ss.bin`,
-    hybrid: `// Google Cloud KMS — X-Wing hybrid KEM (Preview, SOFTWARE level)
+    hybrid: `// Google Cloud KMS — X-Wing hybrid KEM (SOFTWARE level)
 gcloud kms keys create xwing-key \\
   --keyring=my-ring \\
   --location=global \\

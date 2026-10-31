@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'automotive-pqc',
   version: '1.1.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -99,7 +99,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Advanced-level module (120 min, 6 workshop steps) covering post-quantum cryptography migration for the automotive industry — an ecosystem with stringent functional safety requirements (ISO 26262), 15-year vehicle lifetimes that exceed the projected quantum threat window, complex in-vehicle network topologies, and a global OTA update infrastructure that is itself a primary attack surface.',
+      'Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptography migration for the automotive industry — an ecosystem with stringent functional safety requirements (ISO 26262), 15-year vehicle lifetimes that exceed the projected quantum threat window, complex in-vehicle network topologies, and a global OTA update infrastructure that is itself a primary attack surface.',
     keyConcepts:
       'Vehicle electrical architecture evolution: Domain-based architecture (separate ECUs per domain: powertrain, chassis, ADAS, body, infotainment, connectivity, each with domain controller) vs. zonal architecture (physical zones with high-performance central compute nodes — HPCs — aggregating control from multiple domains). ADAS zone is the most security-critical domain in both architectures; zonal HPCs introduce new PQC upgrade points at zone boundaries.',
     workshopSummary:

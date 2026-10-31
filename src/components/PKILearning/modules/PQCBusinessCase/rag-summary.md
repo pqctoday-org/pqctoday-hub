@@ -28,3 +28,7 @@ The workshop has 5 interactive steps:
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
 - Ponemon Institute Cost of a Data Breach methodology
 - FAIR (Factor Analysis of Information Risk)
+
+## Proposal scope and funding safeguards
+
+Board Pitch leaves the budget unestimated until reviewed programme costs are entered. Catalogue product counts are reference coverage, not the organisation’s inventory, and selected product types do not establish a system count. The proposal separates total programme cost, existing funding, the incremental request, annual allocations and gate-linked tranches. Cost-benefit text asks for scoped sources and uncertainty instead of default avoided-loss multiples. Charter signatories and decision rights follow the organisation’s actual delegations. Existing form, preview, save and export interfaces are reused.

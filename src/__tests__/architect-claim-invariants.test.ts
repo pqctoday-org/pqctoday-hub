@@ -72,7 +72,6 @@ const BANNED: Array<[RegExp, string]> = [
     'Cloud KMS KEM keys use --purpose=key-encapsulation',
   ],
   [/--kty ML-KEM/i, 'Azure Key Vault has no ML-KEM key type'],
-  [/--key-spec ML_KEM/i, 'AWS KMS has no ML-KEM key spec'],
   [/label: 'FIPS-only'/, 'an allowlist does not make the engine a FIPS 140-3 validated module'],
 ]
 

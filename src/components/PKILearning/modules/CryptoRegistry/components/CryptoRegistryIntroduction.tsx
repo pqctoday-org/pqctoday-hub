@@ -101,8 +101,9 @@ export const CryptoRegistryIntroduction: FC<Props> = ({ onNavigateToWorkshop }) 
             {totalCurveCount} elliptic curves across {CURVE_CATEGORIES.length} standardization
             categories
           </strong>{' '}
-          (NIST, SECG, Brainpool, ANSSI, BLS, GOST, X9.62/X9.63 and more) — each entry carries its
-          OID, algebraic form (Weierstrass, Edwards, Montgomery), and cross-referenced aliases, so{' '}
+          (NIST, SECG, Brainpool, ANSSI, BLS, GOST, X9.62/X9.63 and more) — each entry records its
+          OID where the registry lists one (about half of the 246 curves have none), its algebraic
+          form (Weierstrass, Twisted Edwards, Edwards, Montgomery) and cross-referenced aliases, so{' '}
           <code>P-256</code>, <code>secp256r1</code> and <code>prime256v1</code> are recorded as the
           same curve.
         </p>

@@ -35,7 +35,7 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
     quantumBestAttack: "Shor's O(n³)",
     quantumComplexity:
-      '~8,194 logical qubits (2016-era 2n+2 estimate; no revised figure published)',
+      '~2,692 logical qubits (Gidney 2025, Table 5; the 2016-era 2n+2 estimate was ~8,194)',
     recommendation: 'Replace with ML-KEM / ML-DSA',
   },
   {
@@ -44,7 +44,8 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'Pollard rho O(2^{128})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~1,200 logical qubits (revised, Google Quantum AI 2026)',
+    quantumComplexity:
+      '~1,200 logical qubits (the module applies Google Quantum AI’s Mar 2026 secp256k1 estimate; the paper gives none for this curve)',
     recommendation: 'Replace with ML-DSA',
   },
   {
@@ -71,7 +72,8 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'Pollard rho O(2^{128})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~1,200 logical qubits (revised, Google Quantum AI 2026)',
+    quantumComplexity:
+      '~1,200 logical qubits (the module applies Google Quantum AI’s Mar 2026 secp256k1 estimate; the paper gives none for this curve)',
     recommendation: 'Replace with ML-KEM / ML-DSA',
   },
   {
@@ -81,7 +83,7 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
     quantumBestAttack: "Shor's O(n³)",
     quantumComplexity:
-      '~4,098 logical qubits (2016-era 2n+2 estimate; no revised figure published)',
+      '~4,098 logical qubits (2016-era 2n+2 count from a factoring paper; Gidney and Ekerå (Quantum, 2021) give revised finite-field discrete-log estimates, Tables 4 and 5)',
     recommendation: 'Replace with ML-KEM',
   },
   {

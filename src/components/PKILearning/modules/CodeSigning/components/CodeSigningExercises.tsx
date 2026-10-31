@@ -56,11 +56,11 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       id: 'rpm-size-compare',
       title: '3. Compare signature sizes: ECDSA vs ML-DSA-87 for RPM packages',
       description:
-        'In the Package Signing workshop, toggle between Classical (RSA-4096), PQC (ML-DSA-87), and Hybrid (ML-DSA-87+Ed448) modes. Compare the RPM signature header sizes and observe how hybrid signing provides backward compatibility.',
+        'In the Package Signing workshop, toggle between Classical (RSA-4096), PQC (ML-DSA-87), and Hybrid (ML-DSA-87+Ed448) modes. Compare the RPM signature header sizes and observe the size of the hybrid signature that RPM 6 adds alongside the RSA signature.',
       badge: 'Packages',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Hybrid mode produces a signature of ~4,741 bytes (4,627 B ML-DSA-87 + 114 B Ed448 = 4,741 B), but older RPM tools can still verify using just the Ed448 portion. Dual-signature schemes like this are being explored as a backward-compatible path for Linux package signing.',
+        'Hybrid mode produces a signature of ~4,741 bytes (4,627 B ML-DSA-87 + 114 B Ed448 = 4,741 B). Red Hat keeps the RSA signature in the package as well: systems that understand the RPM 6 header format verify both signatures, and older systems validate only the RSA signature.',
       config: { step: 2 },
     },
     {

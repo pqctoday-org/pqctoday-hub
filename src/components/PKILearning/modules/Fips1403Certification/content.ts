@@ -26,12 +26,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'fips-140-3-certification',
-  lastReviewed: '2026-10-27',
-  // No lastReviewed: facts were corrected after the owner's 24 October 2026 sign-off, so the
-  // sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The on-page notice
-  // follows it (common/moduleReviewStatus.ts).
+  // lastReviewed removed: facts in this module were corrected in release 4.187.0 after the owner's
+  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The
+  // on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-27',
+  lastEdited: '2026-10-31',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
@@ -64,10 +63,8 @@ export const content: ModuleContent = {
     getStandard('NCCoE-Automation-of-the-CMVP'),
     // Algorithm standards the shared PQC section cites (sharedData.ts SHARED_SOURCES)
 
-    // PCI documents the FIPS Level 3 callout cites (FipsSections.tsx): PIN v3.1
-    // Req 1-3 and P2PE v3.1 4A-1.1 accept FIPS Level 3+ or PCI-approved HSMs
-    getStandard('PCI-PIN-v3-1-ROC-Reporting-Template'),
-    getStandard('PCI-P2PE-Security-Requirements-v3-1'), // superseded by v3.2 (June 2025)
+    // PCI page the FIPS Level 3 callout cites (FipsSections.tsx): PTS approval is assigned and listed by PCI SSC
+    getStandard('PCI-PTS-Listing-Field-Definitions'),
     getStandard('NIST-CMVP-FIPS-140-3-Standards-page'), // second source for claim:5be7a52c8654adee
     getStandard('ISO-IEC-19790-2025'), // second source for claim:e462fd5c6b804f37
     // Side-channel and fault attacks section (fips-attack-evidence)
@@ -76,6 +73,7 @@ export const content: ModuleContent = {
     getStandard('PROACT-2025-SCA-Lattice-PQC'),
     getStandard('ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation'),
     getStandard('ENISA-EUCC-Assurance-Continuity-Change-Scenarios'),
+    getStandard('NIST-CMVP-Programmatic-Transitions'),
   ],
 
   // The anchor product's change (build spec §5): adding ML-KEM and ML-DSA. The

@@ -75,7 +75,7 @@ describe('CSWP39AgilityExplorer URL state', () => {
 
   it('opens a linked dossier; opening pushes, closing replaces', () => {
     const spy = mountExplorer({ dossier: 'pci' })
-    const pci = screen.getByRole('button', { name: /PCI DSS 4.0/ })
+    const pci = screen.getByRole('button', { name: /PCI DSS v4.0.1/ })
     expect(pci).toHaveAttribute('aria-expanded', 'true')
     fireEvent.click(pci)
     expect(spy).toHaveBeenLastCalledWith({ dossier: null }, { push: false })

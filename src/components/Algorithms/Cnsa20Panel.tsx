@@ -38,10 +38,11 @@ export function Cnsa20Panel() {
             <strong className="text-status-success">ML-KEM-1024</strong> (key establishment) and{' '}
             <strong className="text-status-success">ML-DSA-87</strong> (signatures) are{' '}
             <strong>required</strong>; stateful{' '}
-            <strong className="text-status-info">LMS / XMSS</strong> are approved for
-            software/firmware signing only; and <strong>SLH-DSA is not selected</strong>. Lower
-            parameter sets (ML-KEM-512/768, ML-DSA-44/65) sit below the CNSA 2.0 floor. AES-256 and
-            SHA-384/512 cover symmetric encryption and hashing.
+            <strong className="text-status-info">LMS / XMSS</strong> are approved (NSA wants them
+            used for software/firmware signing whenever possible); and{' '}
+            <strong>SLH-DSA is not selected</strong>. Lower parameter sets (ML-KEM-512/768,
+            ML-DSA-44/65) sit below the CNSA 2.0 floor. AES-256 and SHA-384/512 cover symmetric
+            encryption and hashing.
           </p>
         </div>
       </div>
@@ -100,12 +101,13 @@ export function Cnsa20Panel() {
           <li>
             <strong className="text-foreground">BSI (Germany):</strong> recommends ML-KEM-768/1024,
             FrodoKEM-976/1344 and ML-DSA-65/87 only in combination with a classical scheme (hybrid);
-            stateful hash-based signatures may be used alone (TR-02102-1, 2026-01).
+            hash-based signatures may in principle be used alone, provided their implementation
+            security is carefully considered (TR-02102-1, 2026-01).
           </li>
           <li>
             <strong className="text-foreground">ANSSI (France):</strong> requires hybridization of
-            ML-KEM and ML-DSA in its regulated perimeter during the transition; hash-based
-            signatures such as SLH-DSA may be used alone.
+            ML-KEM and ML-DSA in its regulated perimeter during the transition; it does not
+            recommend systematic hybridisation for hash-based signatures such as SLH-DSA.
           </li>
           <li>
             <strong className="text-foreground">NSA / CNSA 2.0 (US NSS):</strong> requires

@@ -123,7 +123,7 @@ export const KEY_INJECTION_CEREMONY: KeyInjectionCeremony = {
       order: 1,
       label: 'BDK Generation in Payment HSM',
       description:
-        'The Base Derivation Key (BDK) is generated inside a payment HSM that is either FIPS 140-2 or 140-3 Level 3 (or higher) certified or PCI-approved (PTS HSM), as the PCI PIN Security Requirements v3.1 allow. The BDK never leaves the HSM in cleartext. Dual custody is required (two key custodians each contribute key components).',
+        'The Base Derivation Key (BDK) is generated inside a payment HSM (for example a PCI-approved PTS HSM). The BDK never leaves the HSM in cleartext. Dual custody is required (two key custodians each contribute key components).',
       cryptoUsed: 'AES-256 key generation (HSM internal)',
       quantumVulnerable: false,
       pqcReplacement: 'No change needed \u2014 symmetric key generation is quantum-safe',
@@ -150,7 +150,7 @@ export const KEY_INJECTION_CEREMONY: KeyInjectionCeremony = {
       order: 4,
       label: 'Terminal Key Injection & Derivation',
       description:
-        'The BDK is loaded into the terminal\u2019s tamper-resistant security module. The terminal derives an Initial PIN Encryption Key (IPEK) from the BDK using the terminal\u2019s unique Key Serial Number (KSN). All subsequent per-transaction keys are derived from the IPEK using symmetric DUKPT derivation.',
+        'The injection facility derives the Initial PIN Encryption Key (IPEK) from the BDK using the terminal\u2019s unique Key Serial Number (KSN), and only the derived key is loaded into the terminal\u2019s tamper-resistant security module; the BDK itself stays with the injection facility. All subsequent per-transaction keys are derived from the IPEK using symmetric DUKPT derivation.',
       cryptoUsed: '3DES/AES DUKPT key derivation (symmetric)',
       quantumVulnerable: false,
       pqcReplacement: 'No change needed \u2014 symmetric DUKPT derivation is quantum-safe',

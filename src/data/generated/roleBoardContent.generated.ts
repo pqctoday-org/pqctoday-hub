@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_10292026.csv
+ * Source: src/data/role_board_content_10302026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -23,15 +23,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive · the decision that unlocks budget and names an owner',
 
-        headline: 'Answer the board in an afternoon, not a quarter.',
-        sub: 'Six questions about your estate. You get a defensible risk position, the regulatory dates that already bind you, and a board pack you can present on Thursday.',
+        headline: 'Practise the decisions behind a funded mandate.',
+        sub: "Practise setting a mandate and naming an owner. Use sample cases to explore priorities, scoped milestones and evidence questions; the worksheets do not establish your organisation's risk or obligations.",
         ctaPrimary: 'Start — 6 questions, about 3 minutes',
         ctaPrimaryHref: '/assess',
         ctaSecondary: 'Draft the program charter',
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1366 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Regulatory data verified 27 Oct 2026',
         ],
         sideCard: {
@@ -48,7 +48,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             "Mosca's inequality: Z 2035 − X 12 yrs − Y 5 yrs = 2018. A 5-year migration had to finish by 2023, because 12-year secrets encrypted after that are still confidential when the machine arrives — finishing as it arrives protects nothing already sent. Z 2035 is the midpoint, rounded down, of the published CRQC expert forecast, 2030–2041 (one expert survey); migration deadlines set by regulators are not forecasts and are not part of it.",
         },
         gridTitle: 'What you walk out with',
-        gridSub: 'Your own answers, not a sample estate',
+        gridSub: 'Built from the inputs you enter, with sample cases to start from',
         gridCards: [
           {
             title: 'Not sure this is the board you need?',
@@ -82,7 +82,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       id: 'deadlines',
       order: 2,
       chipLabel: 'Know your deadlines',
-      chipDescription: 'The mandates that already bind you, and the year that ends RSA.',
+      chipDescription:
+        'Source-linked mandates and milestones to check against your organisation, and the NIST IR 8547 dates for retiring RSA.',
       phaseId: 'p3',
       cswp39Zone: 'risk-management',
       moduleIds: ['compliance-strategy', 'pqc-risk-management', 'government-defense-pqc'],
@@ -92,7 +93,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Executive · the dates you did not choose',
 
         headline: 'The dates were set without you.',
-        sub: 'CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems, though not PQC-specific ones. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
+        sub: 'Compare source-linked milestones and learn which systems and sectors they cover. A published target is not automatically an obligation for your organisation; confirm applicability with the accountable owners.',
         ctaPrimary: 'See the mandate timeline',
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Read the threat economics',
@@ -125,8 +126,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/algorithms?tab=transition',
           },
           {
-            title: 'The zones a regulator will ask about',
-            body: 'Your obligations grouped the way NIST CSWP.39 groups them, so the gaps map onto the questions.',
+            title: 'The zones to map your evidence to',
+            body: 'Reference frameworks grouped the way NIST CSWP.39 groups them, so gaps map onto the same questions; confirm which apply to your organisation.',
             href: '/compliance?tab=cswp39',
           },
           {
@@ -150,23 +151,23 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       id: 'risk',
       order: 3,
       chipLabel: 'Know your exposure',
-      chipDescription: 'A defensible risk position and the dates that already bind you.',
+      chipDescription: 'A sample risk position and the evidence behind it.',
       phaseId: 'p3',
       cswp39Zone: 'risk-management',
       moduleIds: ['pqc-risk-management', 'data-asset-sensitivity'],
       workshopIds: [],
       businessToolIds: ['risk-register'],
       board: {
-        heroEyebrow: 'Executive · risk position · the dates that already bind you',
+        heroEyebrow: 'Executive · sample risk position · source-linked dates',
 
-        headline: 'Know what you are actually exposed to.',
-        sub: 'The same six questions, scored. You get a risk position you can defend line by line, with each regulatory deadline attached to the finding it threatens rather than filed in an appendix.',
+        headline: 'Explore exposure and the evidence you need.',
+        sub: 'Use a sample risk register and assessment to explore how inputs and assumptions affect priorities. Inspect the calculation and sources; the result is not measured risk or a determination of applicable obligations.',
         ctaPrimary: 'See a finished example report',
         ctaPrimaryHref: '/report?example=1',
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1366 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Regulatory data verified 27 Oct 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -179,7 +180,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             { label: 'Report sections generated', value: '16' },
             { label: 'Governance artifacts attached', value: 'four' },
           ],
-          punchline: 'A number you can put in front of an auditor.',
+          punchline: 'A planning index whose working you can inspect.',
           footnote:
             'Illustrative until you answer the six questions — the score, the sections and the artifacts are generated from your own answers, not from a sample estate.',
         },
@@ -193,7 +194,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'A register with owners on it',
-            body: 'The Risk Register Builder turns the score into named risks with impact, likelihood, an owner and a mitigation each — the form a risk committee accepts.',
+            body: 'The Risk Register Builder turns the score into named risks with impact, likelihood, an owner and a mitigation each — a form a risk committee can review and challenge.',
             href: '/business/tools/risk-register',
           },
           {
@@ -217,7 +218,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       id: 'roadmap',
       order: 4,
       chipLabel: 'Show a credible plan',
-      chipDescription: 'The roadmap, policy and KPIs a regulator will accept.',
+      chipDescription: 'A sample roadmap, policy and KPIs to review and challenge.',
       phaseId: 'p4',
       cswp39Zone: 'governance',
       moduleIds: [
@@ -231,11 +232,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive · sequenced plan · owners · KPIs',
 
-        headline: 'Show a plan your regulator will accept.',
-        sub: 'A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same six answers, so your plan and your risk position cannot quietly disagree.',
+        headline: 'Build a roadmap to review and challenge.',
+        sub: 'Practise sequencing work, assigning owners and defining review evidence. A sample roadmap is a planning worksheet; confirm dependencies, scope and milestones before adapting it.',
         ctaPrimary: 'Build the roadmap',
         ctaPrimaryHref: '/business/tools/roadmap-builder',
-        ctaSecondary: 'Check what already binds you',
+        ctaSecondary: 'Check which milestones may apply',
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
@@ -264,8 +265,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business/tools/roadmap-builder',
           },
           {
-            title: 'What already binds you',
-            body: 'The compliance view lists the standardization and certification frameworks in force and what each one already requires of you.',
+            title: 'Which milestones may apply',
+            body: 'The compliance view lists source-linked standardization and certification frameworks and what each one says; confirm which apply to your organisation.',
             href: '/compliance',
           },
           {
@@ -299,13 +300,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Executive · the question your CFO will ask',
 
         headline: 'Where did these numbers come from?',
-        sub: 'Every figure in your board pack traces to a dated, tiered source. The corrections are public, the people behind the standards are named, and the patent filings show who is actually building this rather than announcing it.',
+        sub: "Inspect the sample board pack's figure sources, methods and caveats. Distinguish published facts, estimates, scenarios and recommendations; content revisions show what changed and why.",
         ctaPrimary: 'Open the evidence corpus',
         ctaPrimaryHref: '/library?purpose=planning',
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1366 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -320,20 +321,20 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             },
             {
               label: 'Verification date',
-              value: 'on every timeline row, and on 9 of 10 library records',
+              value: 'on every timeline row, and on most library records',
             },
             { label: 'Superseded records', value: 'kept, marked deprecated, never deleted' },
           ],
           punchline: 'A claim without a date is an opinion.',
           footnote:
-            'Tiers and verification dates come from the trusted-sources registry; every timeline record and 87% of library records are joined to it.',
+            'Tiers and verification dates come from the trusted-sources registry; every timeline record and nearly every library record is joined to it.',
         },
         gridTitle: 'Where to check us',
-        gridSub: 'Provenance you can hand to an auditor',
+        gridSub: 'Provenance you can inspect',
         gridCards: [
           {
             title: 'Everything we have corrected',
-            body: 'What changed, when, and which record it touched — 96% of entries carry no PR link, so treat this as an edit log, not a review trail.',
+            body: 'What changed, when, and which record it touched. Not every entry links to a pull request, so treat this as an edit log, not a complete review trail.',
             href: '/revisions',
           },
           {
@@ -343,7 +344,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'A claim you cannot date is not evidence',
-            body: 'Anyone can publish a number. The tier, the date and the correction history are what let you put it in front of an auditor.',
+            body: 'Anyone can publish a number. The tier, the date and the correction history are what let you check it.',
             href: '/migrate?tab=vendorrisk',
           },
         ] as [
@@ -373,7 +374,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Executive · due diligence · nothing taken on trust',
 
         headline: 'See the whole programme before you fund it.',
-        sub: 'Nine phases played through end to end — discovery, CBOM, risk scoring, roadmap, pilots, closure. One sitting to know what you are being asked to sign off on.',
+        sub: "Follow a sample programme from discovery to closure. The walkthrough illustrates gates and evidence questions; completing it does not establish your organisation's migration readiness.",
         ctaPrimary: 'Play the executive walkthrough',
         ctaPrimaryHref: '/simulation?run=exec',
         ctaSecondary: 'Open the Command Center',
@@ -447,7 +448,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1366 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
+        proofChips: ['1380 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -519,7 +520,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1366 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1380 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -663,7 +664,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1366 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1380 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -733,7 +734,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1366 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
+        proofChips: ['1380 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -2508,7 +2509,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1366 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {

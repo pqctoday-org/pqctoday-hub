@@ -73,29 +73,32 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           </div>
           <p className="text-xs text-muted-foreground">
             Adversaries are recording encrypted network traffic today. When a Cryptographically
-            Relevant Quantum Computer (CRQC) becomes available, they will decrypt all captured
-            Kerberos ticket exchanges, SAML assertions, and JWT signing key exchanges &mdash;
-            granting retroactive access to every identity token ever issued.
+            Relevant Quantum Computer (CRQC) becomes available, they can decrypt captured Kerberos
+            PKINIT exchanges and the TLS sessions that carry identity traffic. Signed tokens (JWT,
+            SAML, OIDC) are signed, not encrypted: breaking a signing key later reveals nothing that
+            was hidden. The risk is that a broken signing key lets an attacker forge tokens. NIST IR
+            8547 ties harvest now, decrypt later to encrypted data and says the authentication
+            algorithm may be transitioned at a different time.
           </p>
         </div>
 
         <div className="space-y-2">
-          <div className="text-sm font-bold text-foreground">HNDL Risk by Token Type</div>
+          <div className="text-sm font-bold text-foreground">Quantum Risk by Token Type</div>
           {CRYPTO_RISKS.map((risk) => {
             const riskColor =
-              risk.hndlRisk === 'critical'
+              risk.quantumRisk === 'critical'
                 ? 'border-status-error/30 bg-status-error/5'
-                : risk.hndlRisk === 'high'
+                : risk.quantumRisk === 'high'
                   ? 'border-warning/30 bg-warning/5'
-                  : risk.hndlRisk === 'medium'
+                  : risk.quantumRisk === 'medium'
                     ? 'border-primary/30 bg-primary/5'
                     : 'border-status-success/30 bg-status-success/5'
             const riskLabelColor =
-              risk.hndlRisk === 'critical'
+              risk.quantumRisk === 'critical'
                 ? 'text-status-error'
-                : risk.hndlRisk === 'high'
+                : risk.quantumRisk === 'high'
                   ? 'text-warning'
-                  : risk.hndlRisk === 'medium'
+                  : risk.quantumRisk === 'medium'
                     ? 'text-primary'
                     : 'text-status-success'
             return (
@@ -103,7 +106,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-xs font-bold text-foreground">{risk.tokenType}</span>
                   <span className={`text-[10px] font-bold ${riskLabelColor} uppercase`}>
-                    {risk.hndlRisk} risk
+                    {risk.quantumRisk} risk
                   </span>
                   <span className="text-[10px] text-muted-foreground">
                     Lifetime: {risk.typicalLifetime}
@@ -257,20 +260,20 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
         <div className="space-y-3">
           {DIRECTORY_SERVICES.map((service) => {
             const hndlColor =
-              service.hndlScore >= 8
+              service.quantumScore >= 8
                 ? 'text-status-error'
-                : service.hndlScore >= 6
+                : service.quantumScore >= 6
                   ? 'text-warning'
                   : 'text-primary'
             const hndlLabel =
-              service.hndlScore >= 8 ? 'Critical' : service.hndlScore >= 6 ? 'High' : 'Medium'
+              service.quantumScore >= 8 ? 'Critical' : service.quantumScore >= 6 ? 'High' : 'Medium'
 
             return (
               <div key={service.id} className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <span className="text-sm font-bold text-foreground">{service.name}</span>
                   <span className={`text-[10px] font-bold ${hndlColor}`}>
-                    HNDL Score: {service.hndlScore}/10 ({hndlLabel})
+                    Quantum Risk Score: {service.quantumScore}/10 ({hndlLabel})
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1 mb-2">
@@ -306,7 +309,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
               Ticket equivalent)
             </li>
             <li>
-              &bull; Windows Server 2025 experimental PKINIT PQC available; GA expected 2026-2027
+              &bull; We found no published Microsoft date for post-quantum PKINIT in Windows Server
             </li>
           </ul>
         </div>

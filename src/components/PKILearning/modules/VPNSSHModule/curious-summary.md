@@ -8,7 +8,7 @@ PQC keys are vastly larger than classical ones. Integrating ML-KEM-768 adds over
 
 ### The Key Takeaway
 
-This complex migration strictly targets the "Control Plane" (Key Exchange and Authentication). The "Data Plane" (the actual encrypted tunnel) already uses symmetric ciphers like AES-GCM or ChaCha20, which are natively quantum-resistant at 256-bit strengths.
+This complex migration strictly targets the "Control Plane" (Key Exchange and Authentication). The "Data Plane" (the actual encrypted tunnel) uses symmetric ciphers like AES-GCM or ChaCha20, which are affected by Grover's algorithm rather than Shor's; per NIST, AES with a minimum key length of 128 bits can continue to be used, and a longer key can be considered for data that must remain secure for many years.
 
 ### What's Happening
 

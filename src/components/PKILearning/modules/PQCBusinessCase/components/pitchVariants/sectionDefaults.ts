@@ -50,15 +50,15 @@ export function buildRiskOverviewDefault(data: Data): string {
     `${data.criticalThreatCount} critical or high-severity quantum threats identified in the industry threat landscape.`
   )
   parts.push(
-    `${data.totalProducts} products in the infrastructure require PQC evaluation (${data.pqcReadyCount} have a PQC-ready roadmap, ${data.fipsValidatedCount} FIPS-validated).`
+    `The reference catalogue contains ${data.totalProducts} products. Catalogue coverage is not an inventory of this organisation; identify the products and systems actually in scope.`
   )
   if (data.industry && data.frameworksByIndustry.length > 0) {
     parts.push(
-      `${data.frameworksByIndustry.length} compliance frameworks apply to ${data.industry}; several carry emerging PQC mandates.`
+      `${data.frameworksByIndustry.length} reference frameworks are associated with ${data.industry}; confirm the specific entity, service and source scope before treating any provision as applicable.`
     )
   } else if (data.frameworksByIndustry.length > 0) {
     parts.push(
-      'Multiple compliance frameworks apply to our sector; several carry emerging PQC mandates.'
+      'Review the associated reference frameworks and confirm applicability with the accountable owners.'
     )
   }
   if (parts.length === 0) {
@@ -232,71 +232,44 @@ export function buildTimelineDefault(data: Data, persona: PersonaId): string {
 }
 
 export function buildCostBenefitDefault(data: Data): string {
-  const level = data.assessmentResult?.riskLevel
-  const tier = level === 'critical' || level === 'high' ? 'major' : 'moderate'
-  const multiplier = tier === 'major' ? '3-5×' : '2-3×'
-  const parts: string[] = []
-  parts.push(
-    `Cost of inaction (${tier}): regulatory penalties, breach response, contract loss, and reputational damage are illustrative and typically fall in the ${multiplier} range of the migration investment - this varies widely by organization, so treat it as a starting estimate and use the ROI Calculator (Step 2 of this workshop) for organization-specific figures.`
-  )
-  if (data.migrationDeadlineYear) {
-    parts.push(
-      `Deadline-driven urgency: the ${data.migrationDeadlineYear} compliance window compresses procurement and training lead times - late-start projects often run over (industry estimates put schedule/cost slippage around 40-60%; illustrative, not a guarantee).`
-    )
-  }
-  if (data.hndlRiskWindow?.isAtRisk) {
-    parts.push(
-      `HNDL-specific cost: every year of delay adds ~${data.hndlRiskWindow.riskWindowYears} years of retroactive breach liability on data already captured.`
-    )
-  }
-  parts.push(
-    `Benefit categories: (1) breach avoidance, (2) compliance penalty avoidance, (3) contract eligibility (CNSA 2.0, NIS2, PCI-DSS 4.x), (4) early-mover competitive positioning.`
-  )
-  return parts.join('\n\n')
+  return [
+    'Compare phased migration, replacement during planned refreshes and any justified deferral. State the scope, time horizon, dependencies and cost assumptions for each option.',
+    'Keep programme costs separate from avoided-loss scenarios. Any probability, penalty, saving or commercial benefit needs its own source, applicability and uncertainty; there is no default benefit multiple.',
+    data.hndlRiskWindow?.isAtRisk
+      ? 'Long-lived information raises an exposure-window question. It does not establish that information was captured or quantify financial liability.'
+      : 'Record which evidence would change the preferred option and when the assumptions will be reviewed.',
+  ].join('\n\n')
 }
 
+/** First line of the budget breakdown when no products are selected. */
+export const NO_COST_ESTIMATE_NOTE =
+  'No reviewed estate cost estimate is attached. Catalogue size is not an organisation inventory.'
+
+/** Says where the funding amount comes from when it is filled from an ROI model output. */
+export const MODELLED_TOTAL_SENTENCE =
+  'The programme total above comes from the ROI model, which is an illustrative scenario, not a reviewed estate cost estimate.'
+
+/** Replaces the no-estimate line when the funding amount is filled from an ROI model output. */
+export const MODELLED_COST_NOTE = `${MODELLED_TOTAL_SENTENCE} Catalogue size is not an organisation inventory.`
+
 export function buildBudgetDefault(data: Data): { amount: string; breakdown: string } {
-  const level = data.assessmentResult?.riskLevel
-  // Risk level sets the base band; estate size (product count in scope) shifts
-  // it. Both are ILLUSTRATIVE starting points - the ROI Calculator computes the
-  // real figure per org. Labelled illustrative in the output so a reader doesn't
-  // mistake it for a quote.
-  let lo = 0.5
-  let hi = 1.5
-  let months = '18-24 months'
-  if (level === 'high') {
-    lo = 1
-    hi = 3
-    months = '24 months'
+  const scopeNote =
+    data.myProducts.length > 0
+      ? `${data.myProducts.length} selected product types provide dependency context, not a system count or cost estimate.`
+      : NO_COST_ESTIMATE_NOTE
+  return {
+    amount:
+      'Not estimated — enter the reviewed total programme budget and incremental funding request.',
+    breakdown: [
+      scopeNote,
+      '- Programme horizon and currency:',
+      '- Total programme cost and cost-model reference:',
+      '- Existing committed funding:',
+      '- Additional funding requested:',
+      '- Annual allocations and contingency assumptions:',
+      '- Funding tranches, review gates and release conditions:',
+    ].join('\n'),
   }
-  if (level === 'critical') {
-    lo = 2
-    hi = 6
-    months = '24-36 months'
-  }
-  const n = data.totalProducts
-  if (typeof n === 'number' && n > 0) {
-    const factor = n >= 200 ? 1.5 : n >= 50 ? 1.2 : n < 10 ? 0.7 : 1
-    lo *= factor
-    hi *= factor
-  }
-  const fmtM = (m: number) =>
-    m >= 1 ? `$${Number.isInteger(m) ? m : m.toFixed(1)}M` : `$${Math.round(m * 1000)}K`
-  const scaleNote =
-    typeof n === 'number' && n > 0
-      ? ` (illustrative, scaled to ~${n} products in scope; refine in the ROI Calculator)`
-      : ' (illustrative; refine in the ROI Calculator)'
-  const amount = `${fmtM(lo)} - ${fmtM(hi)} over ${months}${scaleNote}`
-
-  const breakdown =
-    '- Software (PQC-enabled libraries, HSM/KMS upgrades): 30%\n' +
-    '- Hardware (FIPS-140-3 modules, TPM refreshes): 15%\n' +
-    '- Consulting / SI partner (CBOM + migration): 25%\n' +
-    '- Training & certification: 10%\n' +
-    '- Testing, interop, and regression: 15%\n' +
-    '- Contingency / multi-year support: 5%'
-
-  return { amount, breakdown }
 }
 
 export function buildGovernanceDefault(data: Data, persona: PersonaId): string {
@@ -316,12 +289,12 @@ export function buildGovernanceDefault(data: Data, persona: PersonaId): string {
         '- Consulted: Legal (compliance), Enterprise Architecture, Procurement.',
         '- Informed: Board (quarterly), Audit Committee (milestones).',
         '',
-        'Migration Charter - five required elements:',
-        '1. Signatories: CEO + CFO + CISO. CISO-only approval is advisory and cannot compel cross-BU cooperation or financial commitment.',
+        'Migration Charter - proposed elements to review:',
+        '1. Signatories: name the roles authorised under the organisation’s delegations; approval powers are not established by this template.',
         '2. Scope: named systems, subsidiaries, and geographies covered - plus explicit exclusions for this phase (systems retiring before [date], etc.).',
-        '3. Authority: QRPM has documented power to require remediation plans and, with CISO approval, delay launches introducing non-PQC-ready cryptographic dependencies.',
-        '4. Budget line: named, ring-fenced program budget in the operating plan - not project-by-project re-approval at each phase gate.',
-        '5. Timeline: Gate G1 review date + program completion horizon aligned to the binding regulatory deadline.',
+        '3. Authority: document the programme owner’s agreed decision rights and escalation route, including who may approve exceptions or delay a launch.',
+        '4. Budget: state the total programme envelope, committed versus incremental funds, review gates and the authority that releases each tranche.',
+        '5. Timeline: set the next gate and programme horizon; confirm the scope of any external milestone separately.',
       ]
         .filter(Boolean)
         .join('\n')

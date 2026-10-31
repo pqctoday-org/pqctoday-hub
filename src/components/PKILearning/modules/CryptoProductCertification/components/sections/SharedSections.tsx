@@ -189,8 +189,8 @@ export const PqcImpact = () => (
       ). Third, <strong>PCI names no PQC algorithm or date</strong> in its standards: the listing
       notation says only that PQC support exists (
       <SourceLink source={SHARED_SOURCES.ptsListing} />
-      ), and PCI DSS v4.0.1 Requirement 12.3.3 — a cipher inventory, monitoring and a response plan
-      — supports crypto-agility but is not a PQC mandate (
+      ), and the public PCI DSS v4.0.1 announcement states no PQC algorithm, parameter set or
+      deadline for the standard (
       <SourceLink source={SHARED_SOURCES.dss} label="PCI DSS v4.0.1" />
       ). PCI SSC&rsquo;s blog does host guest posts in which HSM vendors discuss ML-KEM and ML-DSA (
       <SourceLink source={SHARED_SOURCES.pciQuantumLeapFuturex} label="Futurex" />,{' '}
@@ -1067,8 +1067,8 @@ export const TransitionDeadlines = () => {
       </div>
       <p className="text-xs text-muted-foreground">
         The payment processor and the secure-element manufacturer have no row of their own: payment
-        requirements come from PCI SSC and the brands (no public PCI material names a PQC deadline,{' '}
-        <AsOf />
+        requirements come from PCI SSC and the brands (the v5.0 announcement and the listing
+        definitions name no PQC deadline, <AsOf />
         ), and the chip maker inherits the deadlines of the programmes it sells into.
       </p>
 
@@ -1147,10 +1147,12 @@ export const TransitionDeadlines = () => {
           as upside.
         </li>
         <li>
-          <strong>PTS HSM v4 new approvals end 30 June 2027:</strong> a new approval after that date
-          uses v5.0, with its multi-tenant, remote-administration and PQC-definition changes. How a
-          change to a v4-approved device is handled is for the current Program Guide (v2.3) — an
-          open question in this v1.
+          <strong>PTS HSM v4.x requirements approval, June 2027 (listing table):</strong> the
+          listing’s expiry table gives HSM v4.x “Expiration of Requirements Approval” June 2027 and
+          “Expiration of Device Models” April 2033. The v5.0 announcement lists multi-tenant,
+          remote-administration and post-quantum-definition changes. How a change to an approved
+          device is handled is for PCI’s current Device Testing and Approval Program Guide — an open
+          question in this v1.
         </li>
         <li>
           <strong>EUCC transitional issuance rules, through 31 December 2027:</strong> Article 3(2)
@@ -1274,8 +1276,8 @@ export const ChangeRoutesDetail = () => (
         ;
       </li>
       <li>
-        the product-series methodology, v1 of 9 July 2025{' '}
-        <PlainSource>ENISA, EUCC product-series methodology v1, 9 July 2025</PlainSource>;
+        the product-series methodology, v1 of July 2025{' '}
+        <PlainSource>ENISA, EUCC product-series methodology v1, July 2025</PlainSource>;
       </li>
       <li>
         the vulnerability-management guideline, v1.1 of January 2025{' '}
@@ -1288,27 +1290,17 @@ export const ChangeRoutesDetail = () => (
       different PQC implementation minor by definition.
     </p>
 
-    <H3>PCI PTS HSM — the delta concept</H3>
+    <H3>PCI PTS HSM — changes to an approved device</H3>
     <p>
-      PCI’s incremental route is a <strong>delta evaluation</strong> of an approved device: the
-      vendor presents the exact hardware, firmware, functional and documentation differences to a
-      PCI-recognized lab, which scopes the affected requirements and submits the evaluation. The
-      concept is taught here from the public Program Guide v1.9, Appendix B (
-      <SourceLink source={SHARED_SOURCES.ptsGuide19} />, June 2020), as a four-way triage:
+      How PCI routes a change to an approved device — what a PCI-recognized lab scopes and what PCI
+      SSC lists — is for the Device Testing and Approval Program Guide. The Document Library lists
+      it on 18 May 2026; the feed gives its title and date and no version number. This module does
+      not use that document’s content, so it does not teach PCI’s change categories.
     </p>
-    <ol className="list-decimal space-y-1 pl-5">
-      <li>administrative or listing correction with no device-security impact;</li>
-      <li>limited firmware or component delta with scoped regression and evidence;</li>
-      <li>
-        a new function or evaluation module, or a material security change — broader assessment;
-      </li>
-      <li>a sufficiently changed or new device — full evaluation and a new approval.</li>
-    </ol>
     <Callout tone="warning" title="Open question — check the current document">
       <p>
-        Program Guide v2.3 (May 2026) is the authority for current routing, and it is licence-gated
-        (not read for this v1). How PTS HSM v5.0 changes are routed today is unverified here. No
-        public source shows a machine-readable evidence exchange with PCI SSC; do not assume one.
+        How PTS HSM v5.0 changes are routed today is unverified here. No source this module reads
+        shows a machine-readable evidence exchange with PCI SSC; do not assume one.
       </p>
     </Callout>
 

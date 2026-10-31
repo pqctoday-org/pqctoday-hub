@@ -169,7 +169,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'Certificate fingerprint pinning in legacy app',
     quantumStatus: 'weakened',
     recommendation:
-      'Upgrade to SHA-256 — SHA-1 has known collision attacks and only ~80-bit post-quantum preimage resistance',
+      'Upgrade to SHA-256 — SHA-1 has known collision attacks (collision strength below 80 bits, IR 8547 Table 8) and is deprecated',
     infrastructureLayer: 'SecSoftware',
   },
   // Cloud layer
@@ -218,7 +218,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'User identity certificates for machine authentication and code trust',
     quantumStatus: 'vulnerable',
     recommendation:
-      'Plan ML-DSA-44 migration for user certs; composite root trust needed for backward compatibility',
+      'Plan ML-DSA-44 migration for user certs; weigh a composite root against separate traditional and PQC roots (CSWP 39 Sect. 3.2)',
     infrastructureLayer: 'OS',
   },
   // Hardware layer

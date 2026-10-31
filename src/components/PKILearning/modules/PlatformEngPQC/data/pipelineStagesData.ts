@@ -8,7 +8,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Git repositories hold the root of all software. Signing commits, webhook secrets, and deploy keys are the first cryptographic layer an attacker targets.',
     tools: ['GitHub', 'GitLab', 'Bitbucket', 'Gitea'],
-    hndlExposure: 'medium',
+    hndlExposure: 'none',
     migrationPriority: 'high',
     cryptoAssets: [
       {
@@ -18,7 +18,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-44 or SLH-DSA-SHAKE-128s',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10–30 years (repo history must stay authentic)',
@@ -46,7 +46,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'rsa',
         keySize: 'RSA-3072 / ECDSA P-256',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
+        hndlRisk: 'none',
         pqcReplacement:
           'ML-DSA-44 (pending IETF PQ SSH draft; OpenSSH 9.x has PQ key exchange only)',
         pqcAlgorithm: 'ml-dsa',
@@ -72,7 +72,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'ES256 (P-256)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-65 JWT signing (JOSE draft)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow:
@@ -116,7 +116,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Container images, SBOMs, and build attestations are signed before publication. These signatures must remain trustworthy for the lifetime of the software.',
     tools: ['cosign', 'Notation', 'Sigstore', 'GPG', 'in-toto'],
-    hndlExposure: 'high',
+    hndlExposure: 'none',
     migrationPriority: 'critical',
     cryptoAssets: [
       {
@@ -126,8 +126,8 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'high',
-        pqcReplacement: 'ML-DSA-65 (cosign v2.x with PQC support)',
+        hndlRisk: 'none',
+        pqcReplacement: 'ML-DSA-65 (once the signing tool supports it)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow:
           '10–25 years (images remain in production and must be verifiable for compliance)',
@@ -141,7 +141,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 (DSSE envelope)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'SLH-DSA-SHAKE-128f (stateless, long signature lifetime)',
         pqcAlgorithm: 'slh-dsa',
         exposureWindow: '20+ years (SBOMs are used for compliance audits years after release)',
@@ -155,7 +155,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-44 (SLSA provenance envelope)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10–20 years (provenance used in supply chain audits)',
@@ -170,7 +170,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Registries store signed images. TLS sessions for pushes and pulls, image manifest signatures, and registry certificates are all quantum-vulnerable.',
     tools: ['Docker Hub', 'Amazon ECR', 'Google Artifact Registry', 'Harbor', 'Quay.io'],
-    hndlExposure: 'medium',
+    hndlExposure: 'none',
     migrationPriority: 'high',
     cryptoAssets: [
       {
@@ -180,12 +180,14 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: "P-256 / Let's Encrypt",
         quantumVulnerable: true,
-        hndlRisk: 'medium',
-        pqcReplacement: 'ML-DSA-65 hybrid cert (dual-algorithm X.509)',
+        hndlRisk: 'none',
+        pqcReplacement:
+          'ML-DSA-65 certificate from an issuer that supports ML-DSA (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
-        exposureWindow: '1–2 years (short-lived, but TLS sessions recorded during lifetime)',
+        exposureWindow:
+          '1–2 years (certificate lifetime: the window in which a forged signature would be accepted)',
         notes:
-          'Even short-lived certs create HNDL risk because adversaries can record the TLS session and decrypt it later. Hybrid certificates maintain backward compatibility during migration.',
+          'A short-lived certificate limits how long a forged signature would stay useful; it does not protect a recorded TLS session, whose confidentiality depends on the key exchange (NIST IR 8547: harvest-now-decrypt-later concerns encrypted data, and authentication may be transitioned at a different time).',
       },
       {
         id: 'reg-manifest-sig',
@@ -194,8 +196,8 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 (OCI referrers API)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
-        pqcReplacement: 'ML-DSA-65 via Notation or cosign v2.x',
+        hndlRisk: 'none',
+        pqcReplacement: 'ML-DSA-65 (once the signing tool supports it)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10+ years (images remain in use post-deployment)',
         notes:
@@ -209,7 +211,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     description:
       'Kubernetes API server, admission webhooks, kubeconfig TLS, and Helm chart signatures all use classical cryptography that must be migrated.',
     tools: ['kubectl', 'Helm', 'ArgoCD', 'Flux', 'Kustomize'],
-    hndlExposure: 'high',
+    hndlExposure: 'none',
     migrationPriority: 'critical',
     cryptoAssets: [
       {
@@ -219,12 +221,14 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 / RSA-2048',
         quantumVulnerable: true,
-        hndlRisk: 'high',
-        pqcReplacement: 'ML-DSA-65 hybrid cert (cert-manager v1.17+ PQC issuer)',
+        hndlRisk: 'none',
+        pqcReplacement:
+          'ML-DSA-65 certificate from an issuer that supports ML-DSA (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
-        exposureWindow: '1 year (rotated annually, but control plane TLS is high-value target)',
+        exposureWindow:
+          '1 year (rotated annually: the window in which a forged signature would be accepted; the control plane is a high-value target)',
         notes:
-          'The kube-apiserver certificate is the master key to the entire cluster. All kubectl and controller traffic is encrypted with this cert. A HNDL adversary recording this traffic gains access to every resource operation.',
+          'The kube-apiserver certificate authenticates the control plane to every kubectl and controller connection. With an RSA or ECDSA key, a future quantum computer could forge it and impersonate the API server: a forgery risk, not harvest-now-decrypt-later. The confidentiality of recorded kubectl and controller traffic depends on the TLS key exchange (NIST IR 8547).',
       },
       {
         id: 'deploy-webhook-tls',
@@ -233,8 +237,9 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
-        pqcReplacement: 'ML-DSA-65 via cert-manager',
+        hndlRisk: 'none',
+        pqcReplacement:
+          'ML-DSA-65 certificate from an ML-DSA-capable issuer, delivered through cert-manager',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '1 year',
         notes:
@@ -247,7 +252,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'rsa',
         keySize: 'RSA-4096 (GPG keyring)',
         quantumVulnerable: true,
-        hndlRisk: 'high',
+        hndlRisk: 'none',
         pqcReplacement: 'ML-DSA-87 (Helm v4 PQC signing backend)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '10+ years (chart provenance must remain verifiable for audit)',
@@ -267,8 +272,8 @@ export const PIPELINE_STAGES: PipelineStage[] = [
     cryptoAssets: [
       {
         id: 'run-mesh-mtls',
-        name: 'Service Mesh mTLS (SPIFFE SVIDs)',
-        type: 'certificate',
+        name: 'Service Mesh mTLS (key exchange and SPIFFE SVIDs)',
+        type: 'tls-session',
         algorithm: 'ecdsa',
         keySize: 'P-256 (SPIFFE SVID, 1-hour TTL)',
         quantumVulnerable: true,
@@ -278,7 +283,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         exposureWindow:
           '1 hour (short-lived certs, but encrypted payloads may be sensitive for 10+ years)',
         notes:
-          'SPIFFE SVIDs are short-lived, but the data they protect (API calls, internal service responses) may remain sensitive for years. HNDL adversaries record the traffic and decrypt post-CRQC.',
+          'A forged SPIFFE SVID is an authentication risk, and SVIDs are short-lived. The harvest-now-decrypt-later exposure is the mTLS key exchange: the data it protects (API calls, internal service responses) may remain sensitive for years, and an adversary who records the traffic can decrypt it once the key exchange can be broken.',
       },
       {
         id: 'run-certmanager-certs',
@@ -287,12 +292,12 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         algorithm: 'ecdsa',
         keySize: 'P-256 (configurable)',
         quantumVulnerable: true,
-        hndlRisk: 'medium',
-        pqcReplacement: 'ML-DSA-44 via cert-manager PQC issuer (v1.17+)',
+        hndlRisk: 'none',
+        pqcReplacement: 'ML-DSA-44 from an ML-DSA-capable issuer (for example Vault PKI or EJBCA)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '90 days – 1 year',
         notes:
-          'cert-manager v1.17+ supports PQC algorithms via OpenSSL 3.5 integration. Change CertificateRequest.spec.privateKey.algorithm to ML-DSA-44.',
+          'The cert-manager Certificate privateKey.algorithm field accepts RSA, ECDSA or Ed25519; request ML-DSA-44 certificates from an issuer that supports them.',
       },
     ],
   },

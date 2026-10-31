@@ -18,11 +18,14 @@ export function NextDecisionCard() {
           Decision this quarter
         </span>
       </div>
-      <p className="text-sm font-medium text-foreground">Approve 2026 transition plan target</p>
+      <p className="text-sm font-medium text-foreground">
+        Confirm scope, ownership and the next review gate
+      </p>
       <p className="text-xs text-muted-foreground">
-        Without an executive-approved plan target by end-2026, the 2030 cutover deadline becomes
-        mathematically unreachable for most PKI / TLS estates. Use the assessment to size the
-        program and produce a board-ready risk paper.
+        Ask the accountable teams which sources and affected services support each milestone. Agree
+        the evidence, dependencies and decision needed at the next gate. The assessment is a
+        learning exercise; it does not establish an organisation's obligations or approve a
+        programme.
       </p>
       <Link
         to="/assess"

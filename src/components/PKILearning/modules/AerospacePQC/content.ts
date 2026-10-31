@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'aerospace-pqc',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-29',
+  lastEdited: '2026-10-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -67,7 +67,7 @@ export const content: ModuleContent = {
     overview:
       'Advanced-level module (120 min, 6 workshop steps) covering post-quantum cryptography migration for the aerospace and space industries — environments with extreme bandwidth constraints, multi-decade asset lifetimes, re-certification requirements, and export-control implications for cryptographic algorithm changes.',
     keyConcepts:
-      'Avionics protocols and crypto constraints: ARINC 429 (12–14.5 kbit/s low speed or 100 kbit/s high speed, 1960s legacy, 32-bit/4-byte data word — PQC signatures physically impossible on-wire), ARINC 664/AFDX (100 Mbps Ethernet, ML-DSA overhead manageable with proper framing), MIL-STD-1553 (1 Mbps, strict deterministic latency, real-time command/response), EFB (Electronic Flight Bag) TLS connections, ACARS (very limited bandwidth, 2400 bps VHF — PQC handshake infeasible).',
+      'Avionics protocols and crypto constraints: ARINC 429 (12–14.5 kbit/s low speed or 100 kbit/s high speed, late-1970s legacy, 32-bit/4-byte data word — PQC signatures not practical on a 32-bit word without fragmentation), ARINC 664/AFDX (100 Mbps Ethernet, ML-DSA overhead manageable with proper framing), MIL-STD-1553 (1 Mbps, strict deterministic latency, real-time command/response), EFB (Electronic Flight Bag) TLS connections, ACARS (very limited bandwidth, 2400 bps VHF — PQC handshake infeasible).',
     workshopSummary:
       'AvionicsProtocolAnalyzer — Compare ARINC 429, ARINC 664/AFDX, MIL-STD-1553, ACARS, and EFB by bandwidth, latency budget, message size limit, and PQC feasibility; visualize where each algorithm fits or fails. SatelliteLinkBudgetCalculator — Compute PQC handshake overhead as percentage of link budget across LEO/MEO/GEO/HEO orbits; model key refresh intervals vs pass duration for LEO.',
     relatedStandards:

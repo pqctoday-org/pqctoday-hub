@@ -179,7 +179,7 @@ describe('board-facing claim invariants', () => {
   })
 
   it('does not put a 2027 standardisation year on the signature on-ramp', () => {
-    // NIST expects Round 3 (from 14 May 2026) to last about two years and names no
+    // NIST names no
     // standardisation year; HAWK was withdrawn on 29 July 2026 (NIST Round 3 page).
     expect(
       offenders(

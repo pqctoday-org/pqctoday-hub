@@ -9,7 +9,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-31',
 
   standards: [
     // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.
@@ -78,13 +78,13 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'PQC standardisation is a continuous, multi-track process — not a single 2024 event. NIST has finalised one KEM (ML-KEM / FIPS 203) and two signatures (ML-DSA / FIPS 204, SLH-DSA / FIPS 205), with a third signature (FN-DSA / FIPS 206) still in development — no public draft has been released yet, so this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text. HQC was selected as the alternate KEM in March 2025, and a signature on-ramp is mid-flight — NIST IR 8610 (May 2026) closed Round 2 and advanced nine third-round candidates across four mathematical families; HAWK was withdrawn in July 2026, leaving eight, and NIST expects the round to last about two years with no standardisation year set. Parallel national processes in Korea (KpqC), China (CACR / OSCCA), and Japan (CRYPTREC) plus international tracks at ISO/IEC, IETF, and ETSI shape what actually ships in different jurisdictions.',
+      'PQC standardisation is a continuous, multi-track process — not a single 2024 event. NIST has finalised one KEM (ML-KEM / FIPS 203) and two signatures (ML-DSA / FIPS 204, SLH-DSA / FIPS 205), with a third signature (FN-DSA / FIPS 206) still in development — no public draft has been released yet, so this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text. HQC was selected as the alternate KEM in March 2025, and a signature on-ramp is mid-flight — NIST IR 8610 (May 2026) closed Round 2 and advanced nine third-round candidates across four mathematical families; HAWK was withdrawn in July 2026, leaving eight, and NIST has set no standardisation year. Parallel national processes in Korea (KpqC), China (CACR / OSCCA), and Japan (CRYPTREC) plus international tracks at ISO/IEC, IETF, and ETSI shape what actually ships in different jurisdictions.',
     keyConcepts:
       'Four mathematical families on the table: MPC-in-the-Head (FAEST, MQOM, SDitH) — symmetric-primitive trust, large signatures, small keys. Multivariate (UOV, MAYO, QR-UOV, SNOVA) — tiny signatures, big keys, recovering from the 2025 wedge attack. Isogeny (SQIsign) — smallest combined size of any PQC candidate but young assumptions and slow signing. Lattice (HAWK) — integer-only sampling alternative to FN-DSA; withdrawn from the process in July 2026 after a key-recovery attack.',
     validationProcess:
       'A candidate enters a round, gets benchmarked against NIST evaluation criteria (security, performance, implementation characteristics, IP), and is subjected to public cryptanalysis. Attacks like the 2022 SIKE break and the 2025 Ran wedge attack cull candidates or force reparameterisation. NIST publishes a status report (IR series) at the end of each round summarising what advanced and why.',
     worldwideProcess:
-      'KpqC (Korea) concluded its competition in January 2025, selecting SMAUG-T and NTRU+ (KEMs) plus HAETAE and AIMer (signatures), with deployment rolling out through the decade. CACR (China) selected LAC, AIGIS, and others; OSCCA is expected to publish PQC-extended SM-series specifications. ISO/IEC SC 27 adopts NIST PQC outputs as ISO/IEC 14888 and ISO/IEC 18033 standards — the gating step for jurisdictions that pin procurement to ISO rather than FIPS. ETSI, IETF, BSI, ANSSI, and CRYPTREC overlay regional or protocol-specific guidance.',
+      'KpqC (Korea) concluded its competition in January 2025, selecting SMAUG-T and NTRU+ (KEMs) plus HAETAE and AIMer (signatures); we found no later Korean standardisation date in the documents we hold. CACR (China) selected LAC, AIGIS, and others; OSCCA is expected to publish PQC-extended SM-series specifications. ISO/IEC SC 27 is where adoption of PQC algorithms into ISO/IEC 14888 and ISO/IEC 18033 would happen (we found no document confirming which it has adopted) — the gating step for jurisdictions that pin procurement to ISO rather than FIPS. ETSI, IETF, BSI, ANSSI, and CRYPTREC overlay regional or protocol-specific guidance.',
     workshopSummary:
       'Six interactive steps: (1) Lifecycle simulator — advance a candidate through rounds and watch real cryptanalysis events fire. (2) Family math — animated visualisers for MPCitH, multivariate, isogeny, lattice. (3) Candidate comparator — sort/filter the 9 by use case. (4) Cryptanalysis timeline — SIKE break, Rainbow break, wedge attack, parameter pivots. (5) Future rounds forecaster — projected KEM diversification and post-2030 review cycles. (6) Worldwide standardisation map — NIST + KpqC + CACR + ISO/IEC + ETSI + IETF + CRYPTREC parallel tracks.',
     relatedStandards:

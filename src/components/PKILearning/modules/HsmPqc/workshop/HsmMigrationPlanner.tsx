@@ -172,8 +172,10 @@ export const HsmMigrationPlanner: React.FC = () => {
     // Extract numbers from downtime string (e.g. "30-60 minutes" or "Zero")
     const numbers = downtimeStr.match(/\d+/g)
     if (!numbers || numbers.length === 0) return 'N/A'
-    const minMinutes = parseInt(numbers[0], 10)
-    const maxMinutes = numbers.length > 1 ? parseInt(numbers[1], 10) : minMinutes
+    const unit = /hour/i.test(downtimeStr) ? 60 : 1
+    const minMinutes = parseInt(numbers[0], 10) * unit
+    const maxMinutes =
+      (numbers.length > 1 ? parseInt(numbers[1], 10) : parseInt(numbers[0], 10)) * unit
     // Rolling upgrade: one HSM at a time
     const totalMin = minMinutes * hsmCount
     const totalMax = maxMinutes * hsmCount
@@ -336,7 +338,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">Downtime per HSM:</span>{' '}
+                <span className="text-muted-foreground">Estimated downtime per HSM:</span>{' '}
                 <span className="text-foreground">{selectedPath.estimatedDowntime}</span>
               </div>
               <div>

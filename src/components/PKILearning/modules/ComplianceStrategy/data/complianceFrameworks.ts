@@ -64,7 +64,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'us-alg-2',
         category: 'Algorithm',
         requirement:
-          'Deploy ML-DSA or SLH-DSA for all digital signature applications; retire RSA and ECDSA',
+          'Use ML-DSA-87 for digital signatures (and LMS/XMSS for software and firmware signing); SLH-DSA is not part of CNSA and is not approved for any use in NSS',
         framework: 'CNSA 2.0',
         csvId: 'CNSA-2',
         commonGap: true,
@@ -75,7 +75,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'us-cert-1',
         category: 'Certification',
         requirement:
-          'Use only FIPS 140-3 validated cryptographic modules for classified or sensitive federal systems',
+          'Use FIPS 140-3 validated cryptographic modules for sensitive (unclassified) federal systems; modules approved for classified use may be used in lieu of them',
         framework: 'FIPS 140-3',
         csvId: 'FIPS-140-3',
         commonGap: false,
