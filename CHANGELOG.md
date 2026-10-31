@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.189.0] - 2026-10-31
+
+The rest of the line-by-line reading that could be finished safely: 48 more lessons and 8 quiz explanations follow their documents, and usage analytics now cover search, algorithm views and exports.
+
+### Changed
+
+- **More Learn lessons keep to what their documents say** [view:/learn] [persona:researcher] [persona:architect] [persona:grc] [persona:developer] [persona:cert-engineer] [persona:ops]: across 48 more lessons, including the HSM, Secure Boot, IoT, Stateful Signatures, KMS, Secrets Management, Hybrid Cryptography, Healthcare and Standards Bodies lessons, figures, dates, version claims and vendor or standards statements that no cited document supports were removed, and judgements, advice and modelled inputs are marked as the lesson's own reading or assumption.
+- **Quiz explanations stay within their sources** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect]: eight quiz explanations lost claims that no document supports or are now marked as this lesson's own reading. The RSA-2048 question no longer says how many physical qubits are needed and keeps its 4,000 logical qubits statement.
+- **Usage analytics cover search, algorithm views and exports** [view:/about] [persona:curious] [persona:grc] [persona:developer]: searches in the Library and Compliance pages, algorithm views, Library downloads and Business tool exports are now counted, together with the role and experience level a visitor has chosen. Page views on Library, Compliance, Algorithms and Timeline are counted once per page visit, not once per search or filter change, so their totals read lower than before. The About page now says that exported files are recorded by the tool that made them and their file type, never their contents.
+
+### Fixed
+
+- **CNSA 2.0 deadlines in two lesson summaries match their notes** [view:/learn/crypto-mgmt-modernization] [view:/learn/data-asset-sensitivity] [persona:architect] [persona:grc] [persona:executive]: the Crypto Management lesson shows 2030 and 2031 as the NSS equipment and algorithm dates its note cites, and the Data Asset Sensitivity lesson shows 2035 for the National Security Memorandum 10 transition.
+- **Leftover gaps from removed statements are closed** [view:/learn] [persona:researcher] [persona:architect]: empty table cells, a sentence that began in lower case, a stray space and an empty summary field in several lessons now read correctly.
+
 ## [4.188.0] - 2026-10-31
 
 The next part of the line-by-line reading of the Learn lessons against the documents they cite: 32 lessons drop statements that no document backs, or label them as this site's own assumption or reading.
