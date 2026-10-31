@@ -126,11 +126,10 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            CDN and load balancer operators manage certificates at enormous scale. Cloudflare
-            manages over 50 million certificates across 300+ edge PoPs. AWS ALB handles per-listener
-            certificate binding. Migrating these certificates from classical algorithms (RSA-2048,
-            ECDSA P-256) to <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> requires careful
-            operational planning.
+            CDN and load balancer operators manage certificates at enormous scale. Migrating these
+            certificates from classical algorithms (RSA-2048, ECDSA P-256) to{' '}
+            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> requires careful operational
+            planning.
           </p>
 
           <div className="space-y-2">
@@ -342,7 +341,11 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               defaults, not to Cloudflare. So the deployment is stated without a date rather than
               with one the proof does not carry. Dropping a supportable claim is the same class
               of error as keeping an unsupportable one — check the catalogue by row, not by
-              vendor name. */}
+              vendor name.
+
+              UPDATED 2026-10-30: the gatewayData.ts `cloudflare-edge` note now quotes
+              Cloudflare's own April 2026 post (post-quantum encryption for all websites and
+              APIs in 2022; over 65% of human traffic), which names no algorithm. */}
           <p>
             Content Delivery Networks deploy PQC at{' '}
             <InlineTooltip term="Edge PoP">edge Points of Presence (PoPs)</InlineTooltip>{' '}
@@ -367,7 +370,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               },
               {
                 t: 'Key Distribution',
-                d: 'CDNs must distribute TLS private keys or certificate issuance authority across 300+ PoPs. With PQC, larger key material increases distribution bandwidth. Some CDNs use keyless SSL architectures where private keys never leave a central HSM.',
+                d: 'CDNs must distribute TLS private keys or certificate issuance authority across their edge PoPs. With PQC, larger key material increases distribution bandwidth. Some CDNs use keyless SSL architectures where private keys never leave a central HSM.',
               },
               {
                 t: 'Last Mile Problem',

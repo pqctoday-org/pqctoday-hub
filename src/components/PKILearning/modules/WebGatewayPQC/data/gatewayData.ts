@@ -545,7 +545,8 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     pqcVersion: 'Current',
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'Edge platform',
-    notes: 'ML-KEM enabled by default since 2024. 20%+ of TLS connections use hybrid PQC.',
+    notes:
+      'Cloudflare says it enabled post-quantum encryption for all websites and APIs in 2022 (its post names no algorithm), and that over 65% of human traffic to Cloudflare is post-quantum encrypted (Cloudflare blog, 7 April 2026).',
   },
   {
     id: 'aws-cloudfront',
