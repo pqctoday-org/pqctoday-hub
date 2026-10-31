@@ -67,7 +67,7 @@ const Step1WhyAndMerkle: React.FC = () => (
             <div className="text-xs font-bold text-primary mb-1">Minimal Assumptions</div>
             <p className="text-xs text-muted-foreground">
               Security relies only on hash function properties &mdash; no lattices, no codes, no
-              isogenies. Decades of cryptanalysis on SHA-256.
+              isogenies.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -271,9 +271,9 @@ const Step2LmsXmss: React.FC = () => (
               <li>&bull; Max signatures = 2^H (32 to 33M)</li>
               <li>
                 &bull; Small public key: 24 bytes plus the hash output length &ndash; 48 bytes for
-                the SHA-256/192 sets, 56 bytes for the SHA-256 sets (RFC 8554, SP 800-208)
+                the SHA-256/192 sets, 56 bytes for the SHA-256 sets (RFC 8554, SP 800-208) (not sourced in the Library)
               </li>
-              <li>&bull; Signature size: 1.3 &ndash; 9.3 KB depending on H, W (RFC 8554)</li>
+              <li>&bull; Signature size: 1.3 &ndash; 9.3 KB depending on H, W (RFC 8554) (not sourced in the Library)</li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -405,9 +405,7 @@ const Step2LmsXmss: React.FC = () => (
                   </td>
                   <td className="py-2 pr-4 text-muted-foreground">No</td>
                   <td className="py-2 text-muted-foreground">
-                    No, as standardised (SP 800-208, RFC 8391): every one-time key is derived from
-                    one fixed secret seed, so a stolen seed exposes all of them. Forward-secure XMSS
-                    exists only as a research variant.
+                    
                   </td>
                 </tr>
                 <tr>
