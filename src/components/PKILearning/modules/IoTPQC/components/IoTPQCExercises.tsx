@@ -84,7 +84,7 @@ export const SCENARIOS: Scenario[] = [
       'Constrained Handshake opens on the BLE Mesh & Matter provisioning view with ML-KEM-768 and ML-DSA-44. Compare with X25519 + ECDSA P-256, and try the X25519MLKEM768 hybrid.',
     badge: 'BLE Mesh · Matter',
     observe:
-      'Today a P-256 provisioning key is 3 PB-ADV segments. An ML-KEM-768 public key would take 52 segments and its ciphertext 48 (the hybrid: 54 and 49), close to the 64-segment, 1,469-byte transaction limit — and no PQC provisioning algorithm is defined in Mesh Protocol 1.1. For Matter, an ML-DSA-44 DAC + PAI chain is 8,064 B (about 7 IPv6-MTU messages) versus 856 B with ECDSA. Out-of-band bootstrap (NFC, QR) or a larger GATT MTU is the practical path.',
+      '',
     config: { step: 2, view: 'provisioning', kemId: 'ml-kem-768', sigId: 'ml-dsa-44' },
   },
   {

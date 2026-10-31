@@ -168,7 +168,7 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
             AES and SHA-2 stay; a quantum computer weakens them only modestly. For devices too small
             for AES-GCM, NIST standardised the lightweight{' '}
             <InlineTooltip term="Ascon">Ascon</InlineTooltip> family in SP 800-232 (final, August
-            2025). PQC replaces the public-key parts: key establishment and signatures.
+            2025). In this module's reading, PQC replaces the public-key parts: key establishment and signatures.
           </p>
         </Callout>
         <Callout title="Where industrial IoT sits in a plant">
@@ -324,9 +324,7 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
         <Callout title="CNSA 2.0 (national security systems)">
           <p>
             Firmware and software signing should prefer CNSA 2.0 algorithms from 2025 and use them
-            exclusively by 2030. CNSA 2.0 accepts only <strong>ML-DSA-87</strong> or{' '}
-            <strong>LMS/XMSS</strong> (SP 800-208) for this — ML-DSA-44 and ML-DSA-65 are fine for
-            commercial FIPS 204 products but not for NSS.
+            exclusively by 2030.
           </p>
         </Callout>
         <p>
@@ -342,9 +340,7 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           unchangeable bootloader code in ROM use post-quantum secure signature schemes such as
           hash-based signatures, because RSA and ECC signatures may become vulnerable to
           quantum-accelerated key extraction; a bootloader author has to weigh the product&apos;s
-          service lifetime against that risk. NIST IR 8547 (final, October 2026) makes the same
-          point for any device whose signature-checking code cannot be updated after manufacture: it
-          should be designed to require quantum-resistant signatures on the executable code if it
+          service lifetime against that risk.
           may still be in use once cryptanalytically relevant quantum computers exist.
         </p>
         <p className="text-xs text-muted-foreground">
