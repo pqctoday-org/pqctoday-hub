@@ -341,9 +341,12 @@ const MACsecPanel: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           MACsec (IEEE 802.1AE) encrypts Ethernet frames with AES-GCM using a{' '}
           <strong>Secure Association Key (SAK)</strong>. Normally the SAK is negotiated via MACsec
-          Key Agreement (MKA). With QKD on fiber links, the SAK can be derived directly from the
-          QKD-shared secret via ETSI GS QKD 014 — eliminating the MKA negotiation round-trip and
-          providing information-theoretic key material at the link layer.
+          Key Agreement (MKA). ETSI GS QKD 002 says QKD &quot;may also be used to provide keys for
+          the IEEE 802.1 MACsec layer 2 protocol&quot;; this workshop&apos;s design derives the SAK
+          from key material delivered through ETSI GS QKD 014. The same document says the overall
+          security level of a QKD link encryptor &quot;is determined by both the QKD component, and
+          the link encryptor component&quot;, so the link is not information-theoretically secure
+          end to end.
         </p>
       </div>
 
@@ -378,7 +381,8 @@ const MACsecPanel: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           MACsec supports GCM-AES-128, GCM-AES-256, and XPN variants for high-speed links. The SAK
           is a 128- or 256-bit AES key — exactly the output size produced by HKDF from a 256-bit QKD
-          secret. No protocol changes required; QKD replaces the MKA-negotiated CAK/SAK.
+          secret. In this workshop&apos;s design, the QKD-derived key stands in for the
+          MKA-negotiated SAK.
         </p>
       </div>
 
