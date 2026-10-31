@@ -16,7 +16,7 @@ workshop_steps: 5
 - HNDL (Harvest Now, Decrypt Later) risk windows — formula: CRQC arrival − retention years
 - Global data protection regulations: GDPR, HIPAA, PCI DSS, CCPA/CPRA, NIS2, DORA, FIPS 140-3, CNSA 2.0, NIST IR 8547, ISO 27001
 - Industry-specific compliance obligation mapping across 16 sectors
-- NIST Risk Management Framework (RMF) SP 800-37 — 6-step process: Prepare → Categorize → Select → Implement → Assess → Monitor
+- NIST Risk Management Framework (RMF) SP 800-37 — 7-step process: Prepare → Categorize → Select → Implement → Assess → Authorize → Monitor
 - ISO 27005 risk assessment — threat scenario modeling, 5×5 likelihood × consequence matrix, treatment options
 - FAIR model (Factor Analysis of Information Risk) — TEF, vulnerability, loss event frequency, annualized loss expectancy in USD
 - DORA/NIS2 operational resilience pillars — 5 ICT risk management pillars with gap scoring
