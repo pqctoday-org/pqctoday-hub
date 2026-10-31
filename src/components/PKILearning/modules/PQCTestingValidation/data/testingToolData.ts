@@ -274,7 +274,7 @@ export const TESTING_TOOLS: TestingTool[] = [
     repositoryUrl: 'https://github.com/symbolicsoft/crucible',
     productUrl: 'https://github.com/symbolicsoft/crucible',
     bestFor:
-      'Cryptographic library developers and CMVP labs validating ML-KEM/ML-DSA implementation correctness beyond Known Answer Test coverage',
+      'Cryptographic library developers validating ML-KEM/ML-DSA implementation correctness beyond Known Answer Test coverage',
   },
 
   // Side-Channel
