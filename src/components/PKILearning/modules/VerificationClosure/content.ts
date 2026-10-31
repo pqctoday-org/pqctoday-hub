@@ -70,7 +70,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'The end of a PQC migration is two distinct jobs that are routinely neglected: decommissioning the classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, final October 2026: deprecate quantum-vulnerable public-key at 112-bit security and up after 2030, disallow after 2035; NCSC-UK targets of 2028 discovery+plan / 2031 high-priority / 2035 complete), executed via an inventory→plan→execute lifecycle drawn from ETSI TR 103 619 and TR 104 016 (ETSI TC CYBER) and the separate AIVD/CWI/TNO PQC Migration Handbook (2nd ed., 2024).',
+      'The end of a PQC migration is two distinct jobs that are routinely neglected: decommissioning the classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, final October 2026: deprecate quantum-vulnerable public-key at 112-bit security and up after 2030, disallow after 2035), executed via an inventory→plan→execute lifecycle drawn from ETSI TR 103 619 and TR 104 016 (ETSI TC CYBER) and the separate AIVD/CWI/TNO PQC Migration Handbook (2nd ed., 2024).',
     verification:
       'A system is "migrated" when its behaviour shows it — the handshake negotiates ML-KEM/ML-DSA — not when a change ticket says so. This evidence-by-observed-behaviour standard and the estate-scale sampling approach are the framework author\'s practitioner guidance; the control basis (mapping migration capabilities to risk frameworks) is NIST CSWP 48 (draft) onto CSF 2.0 and SP 800-53.',
     closure:
