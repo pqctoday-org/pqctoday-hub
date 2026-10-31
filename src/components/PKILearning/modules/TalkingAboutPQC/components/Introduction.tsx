@@ -77,8 +77,7 @@ const WORDS: { phrase: string; problem: string; instead: string }[] = [
   },
   {
     phrase: '“Quantum-safe”, “quantum-resistant”',
-    problem:
-      'Widely used — ETSI’s standards use “quantum-safe”, NIST uses “quantum-resistant”. Both mean designed to resist known quantum attacks, not guaranteed.',
+    problem: 'Widely used — both mean designed to resist known quantum attacks, not guaranteed.',
     instead: 'Fine, as long as you say what is inside and from which version.',
   },
   {
