@@ -47,7 +47,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **NSA** (US) — Governmental regulatory agency. CNSA 2.0 (September 2022) mandates ML-KEM-1024 and ML-DSA-87 for National Security Systems (NSS). Binding for US government and DoD contractors.
 
-**NCSC** (UK) — Governmental regulatory agency (part of GCHQ). Three-phase roadmap: Discovery (2025–2028), Priority Migration (2028–2031), Full Migration (2031–2035). Aligned with NIST FIPS 203/204/205.
+**NCSC** (UK) — Governmental regulatory agency (part of GCHQ). Milestones: discovery, inventories and migration plans by 2028; priority upgrades by 2031; full PQC deployment by 2035.
 
 **ENISA** (EU) — EU Agency for Cybersecurity, a governmental agency under the Cybersecurity Act; it is not a certification body. Supports the EU cybersecurity certification framework, including EUCC (the European Common Criteria-based cybersecurity certification scheme, set up by Commission Implementing Regulation (EU) 2024/482), and publishes the EUCC certificates, certification reports and supporting documents (Art. 42). EUCC certificates are issued by certification bodies (Art. 4), not by ENISA; national cybersecurity certification authorities supervise. The Agreed Cryptographic Mechanisms (ACM) are agreed by the ECCG Sub-group on Cryptography (ENISA supports the ECCG); ACM v2 is a cryptography guideline for developers and evaluators, not a legal list of approved algorithms. It lists ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS and FrodoKEM, and says lattice-based schemes should be combined with a classical mechanism. Together with the Commission, ENISA links the EU coordinated PQC migration roadmap (drawn up in the NIS Cooperation Group) to the ECCG work on recommendations for PQC mechanisms and their evaluation.
 
@@ -67,7 +67,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **EU Government IT Procurement Chain**: ISO/IEC 14888-4:2024 (ISO/IEC JTC 1/SC 27) → CC evaluation (CCRA/BSI/ANSSI) → NIS2 (Directive (EU) 2022/2555: Member States may require certified ICT products under Art. 24; it does not itself require them)
 
-**US Cloud Services Chain**: NIST IR 8547 (NIST) → CAVP algorithm validation (tested via ACVP) → FedRAMP PQC requirement (GSA/CISA)
+**US Cloud Services Chain**: NIST IR 8547 (NIST) → CAVP algorithm validation (tested via ACVP) → FedRAMP PQC migration (led by CISA and DOW, in coordination with GSA)
 
 **EU legal instruments**: the European Parliament and the Council legislate (NIS2 Directive, eIDAS 2.0, DORA, Cyber Resilience Act); the Commission proposes the acts and adopts implementing acts such as EUCC (Regulation (EU) 2024/482). NIS2 is a Directive that Member States transpose into national law; its Art. 24 lets Member States require essential and important entities to use ICT products certified under a European cybersecurity certification scheme.
 
