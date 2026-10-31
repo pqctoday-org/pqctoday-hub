@@ -827,10 +827,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           <p className="text-xs text-foreground/80">
             The <strong>Trusted Computing Group (TCG)</strong> published the TPM 2.0 Library
             Specification v185 on 12 March 2026. Its change history (Part 0) states:
-            &ldquo;Introduced support for ML-DSA, HashML-DSA, and ML-KEM.&rdquo; TCG&rsquo;s
-            announcement of 22 March 2026 names ML-KEM for Endorsement Keys and ML-DSA for
-            Attestation Keys, and the PC Client Platform TPM Profile (PTP) 1.07 adds larger data
-            transport and defines which ML-KEM Endorsement Key certificates are required. The
+            &ldquo;Introduced support for ML-DSA, HashML-DSA, and ML-KEM.&rdquo; The
             ISO/IEC 11889:2015 edition dates from before ML-KEM and ML-DSA were standardized (FIPS
             203 and FIPS 204).
           </p>

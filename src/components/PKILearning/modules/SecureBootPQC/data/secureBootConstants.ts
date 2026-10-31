@@ -347,7 +347,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     currentCrypto: 'ECDSA P-256 or Ed25519 (layer-derived keys)',
     forgeryUrgency: 'high',
     pqcMigrationPath:
-      'DICE + RIoT profile extended for PQC in DICE specification update (2025). ML-DSA-44 recommended for constrained devices. Key derivation uses HKDF (quantum-safe) already.',
+      '',
     tpmNative: false,
     standardsBody: 'TCG DICE Working Group / IETF RATS',
   },
