@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.190.0] - 2026-10-31
+
+The next part of the line-by-line reading that could be finished safely: 25 more lesson sentences and 47 quiz questions follow their documents.
+
+### Changed
+
+- **More Learn lesson sentences keep to what their documents say** [view:/learn] [persona:researcher] [persona:architect] [persona:grc] [persona:developer] [persona:cert-engineer]: across 19 lessons, including the Secrets Management, Key Management, Standards Bodies, Secure Boot, Healthcare and Entropy lessons, a further 25 sentences that no cited document supports were removed, rewritten to say what the source says, or marked as the lesson's own reading or assumption.
+- **More quiz questions stay within their sources** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect]: 47 quiz questions were corrected. In 45 of them the explanation lost a claim that no document supports, says what the source says, or is marked as this lesson's own reading. The IBM Kookaburra question no longer states a qubit count that no document gives, and the intrusion-detection question's answer option names the ML-KEM-768 group code the source gives (0x0201) and no longer lists browser versions that no document supports.
+
 ## [4.189.0] - 2026-10-31
 
 The rest of the line-by-line reading that could be finished safely: 48 more lessons and 8 quiz explanations follow their documents, and usage analytics now cover search, algorithm views and exports.
