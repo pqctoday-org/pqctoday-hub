@@ -1340,10 +1340,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               </li>
               <li>
                 <span className="font-mono font-semibold text-foreground">SLH-DSA-SHA2-128S</span> —
-                NIST Level 1 · smallest pubkey (32 B) but very large signature (7,856 B) · suited
-                for root-of-trust and infrequent signing only (e.g. UEFI PK/KEK), not per-image
-                signing. Not part of CNSA and not approved for any use in NSS (NSA CNSA 2.0 FAQ
-                v2.2, p. 11)
+                NIST Level 1 · smallest pubkey (32 B) but very large signature (7,856 B) · This
+                module's advice: suited for root-of-trust and infrequent signing only (e.g. UEFI
+                PK/KEK), not per-image signing. Not part of CNSA and not approved for any use in NSS
+                (NSA CNSA 2.0 FAQ v2.2, p. 11)
               </li>
             </ul>
           </div>
