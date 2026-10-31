@@ -1381,11 +1381,10 @@ const VerifiedCertTable = ({ hub }: { hub: HubState }) => {
 
 /** Learn section `fips-landscape` */
 // ── fips-automation ─────────────────────────────────────────────────────────
-// Every claim is from the verified register (priv nextfeature
-// fips-automation-facts-09272026.md; antigravity-88 + Codex gpt-5.6-terra,
-// each row re-checked against its source). Deliberately NOT stated, because
-// no official source states them: a CAVS retirement date, and any date for
-// accepting automated (AMVP) module submissions in production.
+// Every claim comes from the NIST pages and publications cited in this
+// section. Deliberately NOT stated, because those documents do not state
+// them: a CAVS retirement date, and any date for accepting automated (AMVP)
+// module submissions in production.
 
 const AUTOMATION_LAYERS: readonly {
   layer: string
