@@ -25,7 +25,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       id: 'key-size-impact',
       title: 'Larger Keys & Signatures Break Assumptions',
       description:
-        'ML-KEM public keys are 800-1568 bytes (vs 32-133 for ECC). ML-DSA signatures are 2420-4627 bytes (vs 64-72 for ECDSA).',
+        'ML-KEM public (encapsulation) keys are 800-1568 bytes (vs 32 bytes for an X25519 public value). ML-DSA signatures are 2420-4627 bytes (vs 64 bytes for an ECDSA P-256 signature in the JWT format).',
       severity: 'critical',
       timeframe: 'Immediate design impact',
       exampleScenario:

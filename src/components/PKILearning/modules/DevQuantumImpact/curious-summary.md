@@ -4,7 +4,7 @@ Cryptography is no longer a set-and-forget implementation detail. Every line of 
 
 ### Why It Matters
 
-PQC algorithms are not drop-in replacements. ML-KEM public keys are massive (up to 1568 bytes compared to ECC's 32 bytes), and ML-DSA signatures are enormous (up to 4627 bytes compared to ECDSA's 64). These size increases can break assumptions baked into your application: HTTP headers will overflow, browser URL limits will be exceeded, TLS client hello messages will fragment and timeout, and your CI/CD pipelines will fail verification.
+PQC algorithms are not drop-in replacements. ML-KEM public keys are massive (up to 1568 bytes, compared to 32 bytes for an X25519 public value), and ML-DSA signatures are enormous (up to 4627 bytes, compared to 64 bytes for an ECDSA P-256 signature in the JWT format). These size increases can break assumptions baked into your application: HTTP headers will overflow, browser URL limits will be exceeded, TLS client hello messages will fragment and timeout, and your CI/CD pipelines will fail verification.
 
 ### The Key Takeaway
 
