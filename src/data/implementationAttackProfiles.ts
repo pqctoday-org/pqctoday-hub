@@ -660,7 +660,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
       'Follow OWASP Cryptographic Failures guidance for integration patterns',
       "In X25519 and X448, a public key that is a point of small order removes the other party's private key from the result, so the result is the all-zero value; RFC 7748 says both sides may check for an all-zero shared secret and abort if so, for example by combining all of its bytes with OR.",
       'RFC 9180 (HPKE), section 7.1.4, goes further for X25519 and X448: recipients must check whether the Diffie-Hellman shared secret is the all-zero value and abort if so.',
-      "",
+      '',
     ],
     references: [
       {

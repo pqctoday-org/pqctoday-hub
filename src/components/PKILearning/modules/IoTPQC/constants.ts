@@ -420,8 +420,7 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
         },
       },
     },
-    notes:
-      'Stateful like LMS.',
+    notes: 'Stateful like LMS.',
   },
   {
     id: 'fn-dsa-512',

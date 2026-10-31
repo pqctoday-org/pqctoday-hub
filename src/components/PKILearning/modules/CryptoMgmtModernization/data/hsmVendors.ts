@@ -95,8 +95,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
     platformBinding: 'QxBMC-1/3/12 chassis (desktop/1U/4U); FPGA-based QASM core',
     lastVerified: '2026-09-24',
     posture: 'green',
-    notes:
-      "CMVP certificate #5497 lists ML-KEM, ML-DSA, SLH-DSA and LMS as approved.",
+    notes: 'CMVP certificate #5497 lists ML-KEM, ML-DSA, SLH-DSA and LMS as approved.',
   },
   {
     id: 'fortanix-dsm',

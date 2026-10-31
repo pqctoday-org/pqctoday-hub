@@ -162,8 +162,7 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     statementDate: '2025-08-18',
     products: ['ProLiant Gen12 servers (iLO 7)'],
     pqcAlgorithm: 'LMS',
-    notes:
-      '',
+    notes: '',
     sources: [
       {
         label: 'HPE iLO QuickSpecs (c04154343, version 39)',

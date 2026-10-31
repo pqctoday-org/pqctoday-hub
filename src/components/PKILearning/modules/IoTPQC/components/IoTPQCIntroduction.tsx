@@ -168,7 +168,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
             AES and SHA-2 stay; a quantum computer weakens them only modestly. For devices too small
             for AES-GCM, NIST standardised the lightweight{' '}
             <InlineTooltip term="Ascon">Ascon</InlineTooltip> family in SP 800-232 (final, August
-            2025). In this module's reading, PQC replaces the public-key parts: key establishment and signatures.
+            2025). In this module's reading, PQC replaces the public-key parts: key establishment
+            and signatures.
           </p>
         </Callout>
         <Callout title="Where industrial IoT sits in a plant">
@@ -340,8 +341,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           unchangeable bootloader code in ROM use post-quantum secure signature schemes such as
           hash-based signatures, because RSA and ECC signatures may become vulnerable to
           quantum-accelerated key extraction; a bootloader author has to weigh the product&apos;s
-          service lifetime against that risk.
-          may still be in use once cryptanalytically relevant quantum computers exist.
+          service lifetime against that risk. may still be in use once cryptanalytically relevant
+          quantum computers exist.
         </p>
         <p className="text-xs text-muted-foreground">
           The boot-time side — verifying the image before it runs — is in{' '}

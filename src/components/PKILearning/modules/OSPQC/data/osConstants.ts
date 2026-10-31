@@ -121,7 +121,7 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     pqcStatus: 'supported',
     version: 'OpenSSL 3.3+',
     notes:
-      'ML-KEM (FIPS 203) and ML-DSA (FIPS 204) available as built-in EVP algorithms in OpenSSL 3.4+. Older 3.x distro packages require oqsprovider plugin. System-wide configuration via openssl.cnf groups directive.',
+      'ML-KEM (FIPS 203) and ML-DSA (FIPS 204) available as built-in EVP algorithms in OpenSSL 3.5.0 and later. Older 3.x distro packages require oqsprovider plugin. System-wide configuration via openssl.cnf groups directive.',
   },
   {
     id: 'windows-cng',
@@ -185,8 +185,7 @@ export const PACKAGE_FORMATS: PackageFormat[] = [
     currentSigningAlgo: 'GPG Ed25519 / RSA-4096',
     pqcMigrationPath: 'OSTree summary signature migration to ML-DSA when libgpgme supports PQC',
     status: 'planned',
-    notes:
-      'Flathub repository signing depends on OSTree GPG implementation.',
+    notes: 'Flathub repository signing depends on OSTree GPG implementation.',
   },
   {
     id: 'snap',

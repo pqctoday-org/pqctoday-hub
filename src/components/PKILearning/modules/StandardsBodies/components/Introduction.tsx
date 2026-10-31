@@ -333,7 +333,6 @@ const Step2GovVsNonGov: React.FC = () => (
             <p className="text-xs text-muted-foreground">
               China&apos;s Office of State Commercial Cryptography Administration (OSCCA) mandates
               SM2 (asymmetric), SM3 (hash), and SM4 (symmetric) algorithms for regulated sectors.
-             
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -733,8 +732,7 @@ const Step4AppPagesGuide: React.FC = () => (
             <AlertTriangle size={12} className="inline text-status-warning mr-1" />
             <strong className="text-foreground">CMVP backlog warning:</strong> FIPS 140-3 validation
             can take a long time, and a place in the Modules in Process queue is not evidence of the
-            outcome. Plan procurement timelines around this
-            certification lag.
+            outcome. Plan procurement timelines around this certification lag.
           </p>
         </div>
       </div>

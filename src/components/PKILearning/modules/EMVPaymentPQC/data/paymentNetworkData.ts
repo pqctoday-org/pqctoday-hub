@@ -20,8 +20,7 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
     },
     pqcPosture: 'published-guidance',
-    pqcStance:
-      '',
+    pqcStance: '',
     pqcInitiatives: [
       'Visa Research lists quantum-safe payments as a Quantum Security focus area',
       'The guidance calls for cryptographic inventory, algorithm evaluation, agile key management, standards coordination and non-production testing',

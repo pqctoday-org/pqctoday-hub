@@ -247,9 +247,9 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Key migration challenges include certificate size growth (ML-DSA-87 public keys are ~2,592
-          bytes), constrained device support, and maintaining
-          cross-signed trust chains during the transition period. NIST SP 800-131A Rev 2 provides
-          guidance on algorithm deprecation timelines.
+          bytes), constrained device support, and maintaining cross-signed trust chains during the
+          transition period. NIST SP 800-131A Rev 2 provides guidance on algorithm deprecation
+          timelines.
         </p>
         <Button
           variant="ghost"

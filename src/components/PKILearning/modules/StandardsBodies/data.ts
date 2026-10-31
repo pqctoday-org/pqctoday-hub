@@ -584,8 +584,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         role: 'certification',
         label: 'Common Criteria Evaluation',
         body: 'CCRA / BSI / ANSSI',
-        description:
-          '',
+        description: '',
       },
       {
         id: 'eu-procurement',

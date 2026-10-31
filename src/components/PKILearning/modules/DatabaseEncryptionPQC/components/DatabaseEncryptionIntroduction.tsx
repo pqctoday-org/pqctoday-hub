@@ -293,7 +293,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
           <p className="text-xs text-muted-foreground">
             AES-256 symmetric encryption used at every layer is already quantum-safe (Grover&apos;s
             algorithm reduces effective security to 128 bits &mdash; still above the 112-bit
-            minimum). 
+            minimum).
           </p>
         </div>
       </LearnSection>

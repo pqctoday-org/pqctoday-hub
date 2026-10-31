@@ -71,7 +71,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'Vendors',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        "Firmware-vendor PQC support is early and moves fast. Use the Firmware Vendor Matrix and its source links for the detail.",
+        'Firmware-vendor PQC support is early and moves fast. Use the Firmware Vendor Matrix and its source links for the detail.',
       config: { step: 3 },
     },
     {

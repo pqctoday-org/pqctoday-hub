@@ -639,8 +639,8 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
                   {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
                     <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
                       ⚠ FIPS 205 section 10.2.2 lists OIDs for SHA-256, SHA-512, SHAKE128 and
-                      SHAKE256 and allows other approved hash functions or XOFs.
-                      SHA-256 and SHAKE128 are only appropriate for category 1 parameter sets.
+                      SHAKE256 and allows other approved hash functions or XOFs. SHA-256 and
+                      SHAKE128 are only appropriate for category 1 parameter sets.
                     </p>
                   )}
                   {(preHash === 'sha256' || preHash === 'shake128') &&
@@ -998,8 +998,8 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
           testId="slh-dsa-comparison"
         />
         <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed">
-          An HSS key with one level, which is what the PKCS#11 engine signs with,
-          adds 4 bytes to the public key and to each signature.
+          An HSS key with one level, which is what the PKCS#11 engine signs with, adds 4 bytes to
+          the public key and to each signature.
         </p>
       </div>
 

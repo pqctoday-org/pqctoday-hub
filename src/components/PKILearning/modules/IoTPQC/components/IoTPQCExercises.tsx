@@ -83,8 +83,7 @@ export const SCENARIOS: Scenario[] = [
     description:
       'Constrained Handshake opens on the BLE Mesh & Matter provisioning view with ML-KEM-768 and ML-DSA-44. Compare with X25519 + ECDSA P-256, and try the X25519MLKEM768 hybrid.',
     badge: 'BLE Mesh · Matter',
-    observe:
-      '',
+    observe: '',
     config: { step: 2, view: 'provisioning', kemId: 'ml-kem-768', sigId: 'ml-dsa-44' },
   },
   {

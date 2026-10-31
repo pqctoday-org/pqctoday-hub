@@ -93,16 +93,14 @@ export const OS_VENDORS: OSVendorStatus[] = [
     opensslVersion: 'OpenSSL 3.5 (RHEL 10) / 3.0.7 (RHEL 9)',
     catalogName: 'Red Hat Enterprise Linux 10.2',
     fipsMode: 'fips-140-3',
-    sshPqcStatus:
-      '',
+    sshPqcStatus: '',
     pkgSigningPqc:
       'RHEL 10.2 podman-sequoia composite PQC signatures; Red Hat Certificate System 11.0 integrates ML-DSA',
     roadmapYear: '2025 (RHEL 10.1 GA)',
     mlKemSupport:
       'ML-KEM GA in RHEL 10.1+ via OpenSSL 3.5 / GnuTLS / NSS; preferred by the default crypto policy',
     mlDsaSupport: 'ML-DSA GA in RHEL 10.1+ (OpenSSL/GnuTLS/NSS); ML-DSA TLS certificates supported',
-    notes:
-      'Verified 2026-06-19: catalog status available.',
+    notes: 'Verified 2026-06-19: catalog status available.',
   },
   {
     id: 'ubuntu',
@@ -149,8 +147,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     roadmapYear: '2026 (Trixie release)',
     mlKemSupport: 'ML-KEM in experimental repository; OpenSSL 3.3 baseline with oqsprovider',
     mlDsaSupport: 'ML-DSA in experimental; native OpenSSL 3.5+ planned for Debian 14 (Forky)',
-    notes:
-      'Verified 2026-06-19: catalog status partial.',
+    notes: 'Verified 2026-06-19: catalog status partial.',
   },
   {
     id: 'alpine',
@@ -198,8 +195,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     mlKemSupport:
       'ML-KEM-768 in Security.framework (macOS 26+); Network.framework X25519MLKEM768 TLS 1.3',
     mlDsaSupport: 'ML-DSA in Security.framework (macOS 26+); CryptoKit API planned for Swift 6.x',
-    notes:
-      '',
+    notes: '',
   },
   {
     id: 'android',

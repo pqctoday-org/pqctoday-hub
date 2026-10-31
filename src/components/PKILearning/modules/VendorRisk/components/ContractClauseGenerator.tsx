@@ -35,8 +35,7 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
           },
           {
             value: '2030',
-            label:
-              '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive',
+            label: '2030 — CNSA 2.0 software/firmware signing & traditional networking exclusive',
           },
           {
             value: '2031',

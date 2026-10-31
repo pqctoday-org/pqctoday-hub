@@ -265,8 +265,7 @@ export const SIZE_COMPARISONS: PQCSizeComparison[] = [
     pqcSize: 5800,
     hybridSize: 6600,
     unit: 'bytes',
-    notes:
-      'Full DER-encoded X.509 cert with SAN, AKI, SKI extensions.',
+    notes: 'Full DER-encoded X.509 cert with SAN, AKI, SKI extensions.',
   },
   {
     id: 'tls-handshake',

@@ -175,8 +175,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     fullName: 'ISO/IEC 27001 Information Security Management',
     region: 'Global',
     scope: 'Organizations voluntarily seeking ISMS certification',
-    pqcRequirement:
-      '',
+    pqcRequirement: '',
     hardDeadline: null,
     deadlineYear: null,
     pqcMandatoryNow: false,

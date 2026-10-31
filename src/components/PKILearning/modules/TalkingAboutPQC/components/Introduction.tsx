@@ -181,8 +181,8 @@ export const Introduction: FC<Props> = ({ onNavigateToWorkshop }) => {
 
       <Section id="certificates" icon={BadgeCheck} title="What a certificate proves">
         <p>
-          In this module's reading, “Certified” is the word most often stretched. In the US and Canada, the FIPS 140-3
-          programme has three stages that are easy to confuse:
+          In this module's reading, “Certified” is the word most often stretched. In the US and
+          Canada, the FIPS 140-3 programme has three stages that are easy to confuse:
         </p>
         <ul className="list-disc pl-5 space-y-2">
           <li>

@@ -51,7 +51,6 @@ The known-answer area compares the engine with answers NIST published (rows tagg
 5. Attestation Flow Designer
 6. Boot Verify Latency — splits boot signature cost into SPI flash read time (signature + public key) and software verify time on a Cortex-M4-class MCU; adjustable SPI speed (1–20 MB/s) and clock (48–408 MHz). Outputs are model estimates.
 
-
 - At 2 MB/s SPI and 120 MHz: ECDSA ~8.2 ms, ML-DSA-44 ~13.7 ms, LMS ~23.4 ms, RSA-3072 ~211 ms total. Flash read is under 2 ms for every algorithm; verify time dominates.
 - RSA-3072 software verify is the slowest of the four — larger PQC signatures do not make boot verify slow on an MCU.
 - The 100 ms boot budget is an illustrative teaching value, not a standard; real budgets are product-specific.

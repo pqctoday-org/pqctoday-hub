@@ -451,8 +451,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           </table>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          A
-          certificate covers the implementation and versions it lists, not a vendor&apos;s whole
+          A certificate covers the implementation and versions it lists, not a vendor&apos;s whole
           product line.
         </p>
       </section>

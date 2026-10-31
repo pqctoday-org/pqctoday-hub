@@ -1338,8 +1338,7 @@ export const ALGORITHM_RECORD_ITEMS: readonly AlgorithmRecordItem[] = [
       hint: 'Read the ML-DSA SigGen row in Table 4 or Table 5. It prints one option only, "Deterministic - No, Yes". Neither the interface nor mu appears anywhere in the document.',
     },
     label: 'Listed on the validations only. The Policy does not mention it.',
-    explanation:
-      '',
+    explanation: '',
     feedbackRight:
       'Correct. The validations list the internal interface and External Mu. The Policy does not mention either.',
   },
