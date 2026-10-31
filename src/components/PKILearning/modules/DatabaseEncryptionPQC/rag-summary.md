@@ -22,7 +22,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
 
-3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to wrap 256-bit DEK. Store KEM ciphertext (1,568 bytes) + wrapped DEK alongside old RSA entry during transition.
+3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
 
 4. **Online Re-Encryption** — Oracle: `ALTER TABLESPACE REKEY`. SQL Server: `ALTER DATABASE ENCRYPTION KEY REGENERATE WITH ALGORITHM = AES_256`. MongoDB: `db.adminCommand({ rotateMasterKey: 1 })`. All support online migration with zero application downtime.
 
@@ -40,7 +40,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 - Cloud provider generates and stores all key material
 - No customer control over PQC migration timeline
-- Not compliant with DORA, ENISA, or NSM-8 for regulated workloads
+- Key custody sits with the provider; regulated entities rely on provider controls for key-lifecycle requirements (for example DORA RTS 2024/1774 Article 7)
 
 ### BYOK — Bring Your Own Key (65% PQC Readiness)
 
@@ -56,7 +56,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 - On-prem HSM: Thales CipherTrust, Entrust DataControl, Utimaco
 - ML-KEM-1024 PKCS#11 v3.2 mechanisms: `CKM_ML_KEM_KEY_PAIR_GEN`, `CKM_ML_KEM`
 - Key flow: ML-KEM-1024.Encaps(ek) → KEM ciphertext (1,568 B) + shared_secret → HKDF-SHA-256 → 256-bit wrapping key → AES-256-KW(DEK)
-- Required for: NSM-8 classified systems, DORA Art. 9 financial entities, ENISA HYOK guidelines
+- A design for keeping key custody with the customer; no regulation named in this module requires HYOK (DORA RTS 2024/1774 Articles 6 and 7 require a key-management policy and key-lifecycle controls)
 
 ---
 
@@ -73,7 +73,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 **SQL Server Always Encrypted** with secure enclaves (VBS/SGX) supports range queries inside the enclave. CMK wrapping uses RSA-OAEP (RSA-2048/4096).
 
-**PQC challenge**: Range-query encryption (structured encryption range schemes; MongoDB uses fully randomized ciphertext, not order-preserving encryption) is not yet standardized for PQC. Equality tokens (HMAC-SHA-256) are already quantum-safe. Expect formal NIST standards for PQC-compatible queryable encryption by 2028.
+**PQC challenge**: Range-query encryption (structured encryption range schemes; MongoDB uses fully randomized ciphertext, not order-preserving encryption) is not yet standardized for PQC. Equality tokens (HMAC-SHA-256) are already quantum-safe.
 
 ---
 
@@ -81,10 +81,9 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 ### GDPR Art. 32
 
-- "State of the art" technical measures for personal data
-- ENISA recommendations will require PQC for long-lived personal data by 2026
-- HYOK architecture strongly preferred for GDPR compliance
-- Databases retaining PII beyond 2030 should prioritize ML-KEM DEK wrapping
+- GDPR Article 32(1) names "the state of the art" among the factors for appropriate technical and organisational measures; it prescribes no algorithm and no date
+- HYOK keeps key custody with the controller; this module does not present it as required
+- This module advises that databases retaining PII beyond 2030 prioritize ML-KEM DEK wrapping
 
 ### HIPAA § 164.312(a)(2)(iv)
 
@@ -94,10 +93,9 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 ### DORA Art. 9 (Digital Operational Resilience Act)
 
-- Applies from January 2025 to EU financial entities
-- "State of the art" cryptographic controls required
-- EBA/ESMA/EIOPA guidelines expected 2026 will specify PQC timelines
-- HYOK with PQC-capable HSM needed for compliance
+- Applies from 17 January 2025 to EU financial entities
+- RTS 2024/1774 Article 6: a policy on encryption and cryptographic controls, with provisions for updating or changing the cryptographic technology on the basis of developments in cryptanalysis; Article 7: key-lifecycle controls
+- The RTS names no algorithm and does not name HYOK; a PQC-capable HSM for financial databases is this module's recommendation
 
 ### PCI DSS v4 Req. 3.5
 
@@ -117,14 +115,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 ## Vendor Timelines
 
-| Vendor               | Product                   | PQC Status | Timeline                                 |
-| -------------------- | ------------------------- | ---------- | ---------------------------------------- |
-| Oracle               | Database 23ai + Key Vault | Planned    | 2026 (OKV 22.0, ML-KEM-1024 HYOK)        |
-| Microsoft            | SQL Server / Azure SQL    | Planned    | 2026 (Azure KV ML-KEM-768/1024)          |
-| PostgreSQL / Percona | pg_tde                    | Planned    | 2026 (pg_tde 2.0, KMIP 2.1)              |
-| MongoDB              | Enterprise 7.x / Atlas    | Planned    | 2026 (MongoDB 8.x, FLE 2.0 DEK wrapping) |
-| MySQL / MariaDB      | 8.x / 11.x                | None       | No roadmap announced                     |
-| Cockroach Labs       | CockroachDB 23.x          | None       | KMIP v2 integration only                 |
+No vendor PQC dates for databases are cited in this module; any vendor date or roadmap shown elsewhere in it is this module's projection. Oracle states that Oracle AI Database 26ai supports ML-KEM and an ML-KEM and ECDHE based hybrid for key-exchange secrets for TLS sessions.
 
 ---
 
