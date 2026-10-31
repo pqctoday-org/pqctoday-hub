@@ -87,7 +87,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 5,
         impact: 5,
         mitigation:
-          'Critical — 50-year retention; re-encrypt archived records with AES-256 + migrate key exchange to ML-KEM',
+          'Critical — re-encrypt archived records with AES-256 + migrate key exchange to ML-KEM',
       },
       {
         id: 'hc-002',
