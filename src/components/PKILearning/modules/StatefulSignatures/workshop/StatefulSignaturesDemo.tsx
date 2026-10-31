@@ -1072,10 +1072,12 @@ export function StatefulSignaturesDemo() {
                     Stateful Signature Architectures
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Both LMS (RFC 8554) and XMSS (RFC 8391) are stateful hash-based signature
-                    schemes approved by NIST (SP 800-208). While they share the identical underlying
-                    concept of Winternitz One-Time Signatures (WOTS) layered into Merkle Trees,
-                    their mathematical foundations and execution structures differ significantly.
+                    LMS (RFC 8554) and XMSS (RFC 8391) are stateful hash-based signature schemes; SP
+                    800-208 &quot;approves the use of some but not all of the parameter sets&quot;
+                    defined for them. Both build Merkle trees over one-time signatures of the
+                    Winternitz type: LMS uses the Leighton-Micali one-time signature (LM-OTS), and
+                    XMSS uses WOTS+ (&quot;Both XMSS and XMSS^MT use WOTS+ as a main building
+                    block&quot;).
                   </p>
                 </div>
 
