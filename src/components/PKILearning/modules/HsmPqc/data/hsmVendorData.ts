@@ -249,7 +249,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   Length:       1,184 bytes
   Key Type:     CKK_ML_KEM
   Exportable:   YES (public key)`,
-    classicalEquivalent: 'Same API call — but RSA-2048 public key is only 256 bytes',
+    classicalEquivalent: 'Same API call — but RSA-2048 public key modulus is 256 bytes',
     vendorNotes: {
       onPrem: 'All vendors: standard PKCS#11 call, no vendor-specific extensions needed',
       cloud: 'Cloud HSMs may return via vendor SDK wrapper rather than raw PKCS#11',
@@ -334,8 +334,7 @@ C_SignMessage(
 )
 C_MessageSignFinal(hSession)`,
     description: 'Create a digital signature using ML-DSA-65.',
-    detail:
-      'ML-DSA-65 produces 3,309-byte signatures (vs 64 bytes for ECDSA P-256). The signing key must have been generated with CKM_ML_DSA_KEY_PAIR_GEN. Signing is performed inside the HSM; only the signature is returned. ML-DSA is a stateless scheme, unlike LMS/XMSS which require the HSM to track per-signature state.',
+    detail: 'ML-DSA-65 produces 3,309-byte signatures (vs 64 bytes for ECDSA P-256).',
     output: `CKR_OK
   Signature Length: 3,309 bytes
   Algorithm:       ML-DSA-65
