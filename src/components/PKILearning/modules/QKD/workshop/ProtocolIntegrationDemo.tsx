@@ -85,7 +85,8 @@ const TLSPanel: React.FC = () => {
           RFC 9846 (TLS 1.3) derives session keys from a shared secret produced by the key exchange
           (e.g., ECDH or ML-KEM). RFC 9258 adds an <strong>external PSK importer</strong>: a QKD key
           delivered via the ETSI GS QKD 014 REST API can be bound to a specific KDF hash and
-          imported as a pre-shared key, replacing or augmenting the key-exchange-derived secret.
+          imported as a pre-shared key, replacing or augmenting the key-exchange-derived secret (not
+          sourced in the Library).
         </p>
       </div>
 
