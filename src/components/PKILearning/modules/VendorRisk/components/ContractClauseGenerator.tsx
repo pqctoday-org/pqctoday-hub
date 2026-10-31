@@ -44,8 +44,7 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
           },
           {
             value: '2035',
-            label:
-              '2035 — NSM-10 quantum-risk objective; NIST IR 8547 RSA/ECC disallowed (final, October 2026)',
+            label: '2035 — NSM-10 quantum-risk objective',
           },
         ],
       },
