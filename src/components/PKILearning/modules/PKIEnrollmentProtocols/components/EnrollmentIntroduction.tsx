@@ -47,9 +47,8 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
           <p className="text-sm text-muted-foreground">
             <em>Certificate Management Protocol</em> — richer state machine, supports initial
             request (<code>ir</code>), cert request (<code>cr</code>), key update (<code>kur</code>
-            ), revocation (<code>rr</code>), and more. RFC 9810 added KEM-specific
-            proof-of-possession (<code>encrCert</code> POP) so ML-KEM keys can be enrolled even
-            though they can't sign.
+            ), revocation (<code>rr</code>), and more. RFC 9810 added support for KEM keys for
+            proof-of-possession (POP) and message protection.
           </p>
           <ul className="text-xs text-muted-foreground space-y-1 list-disc ml-4">
             <li>Transport: HTTP (application/pkixcmp, RFC 9811, obsoletes RFC 6712)</li>
