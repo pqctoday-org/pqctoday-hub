@@ -151,7 +151,7 @@ export const CRYPTO_SUBSYSTEMS: CryptoSubsystem[] = [
     pqcStatus: 'supported',
     version: 'NSS 3.101+',
     notes:
-      'ML-KEM-768 hybrid TLS 1.3 (X25519MLKEM768) enabled by default in Firefox 132+. Chrome 131+ uses X25519MLKEM768 by default. ML-DSA support in NSS is not yet available; PQC signature algorithm integration is on the roadmap.',
+      'ML-KEM-768 hybrid TLS 1.3 (X25519MLKEM768) enabled by default in Firefox 132+. Chrome 131+ uses X25519MLKEM768 by default.',
   },
 ]
 
