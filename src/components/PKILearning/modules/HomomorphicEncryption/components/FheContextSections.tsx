@@ -661,7 +661,7 @@ export const FheStandardsSection: React.FC = () => (
         </li>
         <li>
           <strong>Cannot yet:</strong> conformance to a published ISO/IEC FHE standard; ISO/IEC
-          28033 is still at DIS and FDIS. The HomomorphicEncryption.org Security Standard v1.1
+          28033 is still under development. The HomomorphicEncryption.org Security Standard v1.1
           (2018) is a community standard for parameter selection.
         </li>
         <li>

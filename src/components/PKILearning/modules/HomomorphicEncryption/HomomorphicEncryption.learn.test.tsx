@@ -73,11 +73,11 @@ describe('HomomorphicEncryption Learn tab', () => {
     expect(screen.getByText('What you can and cannot claim')).toBeInTheDocument()
   })
 
-  it('lists the ISO/IEC 28033 parts at their current stages', () => {
+  it('lists the ISO/IEC 28033 parts', () => {
     const byId = Object.fromEntries(FHE_SCHEMES.map((s) => [s.id, s.isoPart]))
-    expect(byId.bgv).toBe('ISO/IEC DIS 28033-2')
-    expect(byId.ckks).toBe('ISO/IEC FDIS 28033-3')
-    expect(byId.tfhe).toBe('ISO/IEC FDIS 28033-4')
+    expect(byId.bgv).toBe('ISO/IEC 28033-2')
+    expect(byId.ckks).toBe('ISO/IEC 28033-3')
+    expect(byId.tfhe).toBe('ISO/IEC 28033-4')
   })
 })
 

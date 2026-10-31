@@ -22,6 +22,7 @@ export const content: ModuleContent = {
     getStandard('lattigo-v6.2.0'),
     getStandard('fhe-rs-v0.1.1'),
     getStandard('IACR-ePrint-2025-075'),
+    getStandard('EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
   ],
@@ -38,6 +39,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'The core concepts lab covers noise, bootstrapping, encoding, rounding and data-oblivious circuits. The advanced HSM custody lab then groups the existing single-custodian, threshold, transciphering, rotation and shared-decryption scenarios and shows what measured evidence supports.',
     relatedStandards:
-      'ISO/IEC 28033 (fully homomorphic encryption; parts 1 and 2 at DIS, parts 3 and 4 at FDIS, not yet published). TFHE-rs, OpenFHE, Lattigo and fhe.rs as the open-source implementations the scenarios follow. IACR ePrint 2025/075 (AES execution over TFHE). FIPS 203 (ML-KEM-768) and FIPS 204 (ML-DSA-65) for the post-quantum signing and sealing of the key set and the seed backup.',
+      'ISO/IEC 28033 (fully homomorphic encryption; under development, not yet published). TFHE-rs, OpenFHE, Lattigo and fhe.rs as the open-source implementations the scenarios follow. IACR ePrint 2025/075 (AES execution over TFHE). FIPS 203 (ML-KEM-768) and FIPS 204 (ML-DSA-65) for the post-quantum signing and sealing of the key set and the seed backup.',
   },
 }

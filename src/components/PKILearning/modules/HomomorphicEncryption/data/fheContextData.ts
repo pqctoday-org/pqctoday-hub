@@ -354,8 +354,8 @@ export const FHE_STANDARDS: FheStandardRow[] = [
     body: 'ISO/IEC 28033 (fully homomorphic encryption), parts 1–4',
     coversFhe: 'Yes',
     status:
-      'Not published. Part 1 (general) and part 2 (exact arithmetic: BGV/BFV) at DIS, votes closed; part 3 (approximate numbers: CKKS) and part 4 (look-up-table evaluation) at FDIS, final ballots started 23 September (part 3) and 8 September 2026 (part 4)',
-    source: 'ISO project pages for ISO/IEC 28033-1 to -4',
+      'The Library records ISO/IEC 28033 as under development (Part 1, general, at Draft International Standard) and lists its other parts as the BGV/BFV, CKKS and look-up-table (TFHE) schemes. The EPC cryptography guidelines (v16.0.1) say that standardisation of FHE is very active, naming ISO/IEC 28033 as an example. The current stage of each part is not sourced in the Library; check the ISO project pages.',
+    source: 'Library: ISO-IEC-28033; EPC 342-08 v16.0.1 section 5.7',
   },
   {
     body: 'ISO/IEC 18033-6:2019',
@@ -672,7 +672,7 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
     topic: 'Standards and compliance',
     refs: [
       {
-        text: 'ISO/IEC DIS 28033-1, -2 and FDIS 28033-3, -4, Information security — Fully homomorphic encryption (project pages).',
+        text: 'ISO/IEC 28033-1 to -4, Information security — Fully homomorphic encryption (project pages).',
         url: 'https://www.iso.org/standard/87640.html',
       },
       {
@@ -843,9 +843,6 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
       {
         text: 'The Royal Society. From privacy to partnership: the role of privacy enhancing technologies in data governance and collaborative analysis. January 2023.',
         url: 'https://royalsociety.org/-/media/policy/projects/privacy-enhancing-technologies/from-privacy-to-partnership.pdf',
-      },
-      {
-        text: 'OECD. Emerging privacy-enhancing technologies: current regulatory and policy approaches. OECD Digital Economy Papers No. 351, March 2023.',
       },
       {
         text: 'ENISA. Cryptographic Products and Services Market Analysis. August 2024.',
@@ -1250,8 +1247,7 @@ export const FHE_PET_MARKET: FhePetMarketRow[] = [
     forecast: 'Grand View: USD 1,718.1M by 2030, 11.7% CAGR. Mordor: USD 1.62B by 2030, 11.6%',
     maturity:
       'Royal Society (2023): “PSI / PIR / Product, Proof of concept–Pilot”. ENISA (Aug 2024): FE, FHE and MPC “are moving from research prototypes to the first emerging industrial applications”',
-    industries:
-      'Finance; advertising (OECD: ad conversion measurement with private set intersection)',
+    industries: 'Finance; advertising',
   },
   {
     technology: 'Synthetic data',
@@ -1266,7 +1262,7 @@ export const FHE_PET_MARKET: FhePetMarketRow[] = [
       'Analyst estimate: Fortune Business Insights (updated Sep 2026) USD 212.77M (2025). Precedence Research instead puts HE at 34% of its USD 4.40B privacy-enhancing computation market (2024): the firms define the market differently',
     forecast: 'Fortune Business Insights: USD 470.20M by 2034, 9.21% CAGR (2026–2034)',
     maturity:
-      'Royal Society (2023): “PHE / SHE / FHE in use (FHE on a smaller scale)”. OECD (Mar 2023): “For now, most applications are done at a small scale”. ENISA (Aug 2024): moving to “the first emerging industrial applications”',
+      'Royal Society (2023): “PHE / SHE / FHE in use (FHE on a smaller scale)”. ENISA (Aug 2024): “FE, FHE and MPC are moving from research prototypes to the first emerging industrial applications”',
     industries: 'BFSI (Fortune Business Insights: about 30%); healthcare; finance and AML pilots',
   },
   {
@@ -1275,8 +1271,7 @@ export const FHE_PET_MARKET: FhePetMarketRow[] = [
       'Analyst estimates: Grand View Research (Apr 2025) USD 138.6M (2024); MarketsandMarkets (updated Sep 2026) USD 127M (2023)',
     forecast:
       'Grand View: USD 297.5M by 2030, 14.4% CAGR. MarketsandMarkets: USD 210M by 2028, 10.6%',
-    maturity:
-      'Royal Society (2023): “Product, in use”. OECD (2023): “deployed at scale, for instance, in predictive text”',
+    maturity: 'Royal Society (2023): “Product, in use”',
     industries: 'Healthcare (MarketsandMarkets: largest segment); mobile predictive text',
   },
   {
