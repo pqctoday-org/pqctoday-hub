@@ -378,12 +378,11 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
               <p className="text-xs text-muted-foreground leading-relaxed">
                 An SP 800-90B entropy estimate needs at least{' '}
                 {SP800_90B_MIN_SEQUENTIAL_SAMPLES.toLocaleString('en-US')} sequential raw
-                noise-source samples plus a 1,000 &times; 1,000 restart dataset (&sect;3.1.1), and
-                takes the lowest result of the full estimator set. One estimator on a{' '}
-                {sampleData?.length ?? 0}-byte buffer would be a fake result, so this step does not
-                compute one. Run the estimators with the NIST SP 800-90B Entropy Assessment tool
-                (link below) on real raw data; the module&rsquo;s entropy-evidence workshop is where
-                that belongs.
+                noise-source samples taken directly from the noise source (&sect;3.1.1). One
+                estimator on a {sampleData?.length ?? 0}-byte buffer would be a fake result, so this
+                step does not compute one. Run the estimators with the NIST SP 800-90B Entropy
+                Assessment tool (link below) on real raw data; the module&rsquo;s entropy-evidence
+                workshop is where that belongs.
               </p>
             </div>
             <div className="glass-panel p-4 space-y-1">
