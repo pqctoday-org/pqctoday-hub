@@ -24,7 +24,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Exact integers mod t, SIMD-packed',
     bestFor: 'Exact batched arithmetic (counts, matching)',
     bootstrapping: 'Possible but slow — usually run leveled',
-    isoPart: 'ISO/IEC DIS 28033-2',
+    isoPart: 'ISO/IEC 28033-2',
   },
   {
     id: 'bfv',
@@ -33,7 +33,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Exact integers mod t, SIMD-packed',
     bestFor: 'Same as BGV, scale-invariant variant',
     bootstrapping: 'Possible but slow — usually run leveled',
-    isoPart: 'ISO/IEC DIS 28033-2',
+    isoPart: 'ISO/IEC 28033-2',
   },
   {
     id: 'ckks',
@@ -42,7 +42,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     dataType: 'Approximate real / complex vectors',
     bestFor: 'Machine learning, statistics, signal processing',
     bootstrapping: 'Yes (approximate)',
-    isoPart: 'ISO/IEC FDIS 28033-3',
+    isoPart: 'ISO/IEC 28033-3',
   },
   {
     id: 'tfhe',
@@ -52,7 +52,7 @@ export const FHE_SCHEMES: FheScheme[] = [
     bestFor: 'Arbitrary functions via lookup tables, comparisons, branching logic',
     bootstrapping:
       'Programmable bootstrapping after every gate (boolean API) or nonlinear operation (integer API)',
-    isoPart: 'ISO/IEC FDIS 28033-4',
+    isoPart: 'ISO/IEC 28033-4',
   },
 ]
 
