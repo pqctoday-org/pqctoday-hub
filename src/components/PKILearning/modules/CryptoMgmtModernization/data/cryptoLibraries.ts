@@ -195,6 +195,6 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      'AWS support-backed library based on BoringSSL and OpenSSL code. Earlier AWS-LC certificates (#4631, #4816) list no PQC algorithm. AWS-LC 4 entries are on the CMVP Modules-in-Process list, which is not evidence of the outcome. ESV: E77 and E280 AWS-LC CPU Jitter entropy sources.',
+      'AWS-LC 4 entries are on the CMVP Modules-in-Process list, which is not evidence of the outcome.',
   },
 ]

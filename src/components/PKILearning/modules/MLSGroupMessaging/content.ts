@@ -58,7 +58,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     body: [
       "Messaging Layer Security (RFC 9420, July 2023) is the IETF's answer to a question Signal's Double Ratchet can't scale to: how do you give a group of thousands of participants forward secrecy AND post-compromise security AND asynchronous key agreement, all at once, with sub-second key updates?",
       'RFC 9420 describes the Double Ratchet as the common solution for two parties and sender keys as the common strategy for larger groups, where post-compromise security is difficult to achieve. MLS replaces both with a tree-based key encapsulation scheme — TreeKEM — that provides forward secrecy and post-compromise security for groups from two to thousands.',
-      'In practice: WhatsApp, Webex, AWS Wickr, and Cisco MLS-over-Webex all deploy or pilot MLS for federated group messaging. The protocol is also the foundation for upcoming PQ secure-messaging standards (draft-ietf-mls-pq-ciphersuites).',
+      '',
     ],
   },
   {
@@ -101,7 +101,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     id: 'pq-roadmap',
     title: 'The road to PQ MLS',
     body: [
-      'Two things have to converge for production PQ MLS: (1) the upstream OpenMLS workspace registers `draft-ietf-mls-pq-ciphersuites` in `openmls_traits::types::Ciphersuite`, and (2) our provider wires `CKM_ML_KEM_*` and `CKM_ML_DSA` through. softhsmv3 already implements both (FIPS 203 + FIPS 204), so the provider side is one match-arm extension once upstream lands the registry.',
+      'Two things have to converge for production PQ MLS: (1) the upstream OpenMLS workspace registers `draft-ietf-mls-pq-ciphersuites` in `openmls_traits::types::Ciphersuite`, and (2) our provider wires `CKM_ML_KEM_*` and `CKM_ML_DSA` through.',
       'A parallel path is the hybrid combiner: a traditional and a PQ MLS session run in parallel and combined through a PSK exported from the PQ session. This is the path most enterprise messaging vendors are watching, because it lets them ship MLS today and turn on PQ when their HSM fleet is ready, without re-keying.',
       'Status snapshot (30 October 2026, from the drafts\' datatracker pages): the PQ ciphersuite draft is an Active Internet-Draft at -06 (21 July 2026; last updated 2026-10-19); its WG state is "Submitted to IESG for Publication" and its IESG state is "Publication Requested". The combiner draft (-02, 22 October 2025) is expired; its WG state is "Waiting for WG Chair Go-Ahead, Revised I-D Needed - Issue raised by WGLC". Check the datatracker pages for the current state.',
     ],

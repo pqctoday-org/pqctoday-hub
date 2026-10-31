@@ -55,7 +55,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **CMVP** — Joint NIST/CSE (Canada) program. Validates cryptographic module implementations against FIPS 140-3. Required for US federal procurement under FISMA. Validation time varies by module and queue (the public Modules in Process list shows each submission's status; a queue position is not evidence of the outcome). The CAVP validates the individual algorithm implementations (FIPS 203/204/205); that testing runs through NIST's ACVTS over the ACVP protocol. An algorithm certificate is not a module certificate.
 
-**Common Criteria / CCRA** — Mutual recognition arrangement for IT security evaluations (ISO/IEC 15408). 36 countries take part: 18 authorise (issue) certificates and 18 only recognise them (CC portal members list). Recognition covers only certificates that claim a collaborative Protection Profile or assurance up to EAL2 with ALC_FLR (CCRA Art. 2). A Management Committee administers the arrangement (Art. 10); international Technical Communities write the collaborative Protection Profiles. Products evaluated by accredited labs; certificates issued by national Certification Bodies (BSI, ANSSI, NIAP; the UK is a recognising member only). EUCC is a separate EU scheme that applies Common Criteria under Regulation (EU) 2024/482.
+**Common Criteria / CCRA** — Mutual recognition arrangement for IT security evaluations (ISO/IEC 15408). EUCC is a separate EU scheme that applies Common Criteria under Regulation (EU) 2024/482.
 
 ---
 
@@ -63,13 +63,13 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 **US NSS Chain**: FIPS 203 (NIST) → CMVP validation (NIST/CSE) → CNSA 2.0 mandate (NSA)
 
-**EU Digital Services Chain**: ETSI TS 103 744 hybrid key establishment (ETSI TC CYBER) → EUCC certification (certification bodies issue; national cybersecurity certification authorities supervise; ENISA publishes) → eIDAS 2.0 (Regulation 910/2014 as amended by 2024/1183: QSCD certification under Art. 30, EUDI Wallets under Art. 5a; EUCC is one possible route, not required in every case; ECCG ACM v2 is guidance, not mandated by eIDAS)
+**EU Digital Services Chain**: ETSI TS 103 744 hybrid key establishment (ETSI TC CYBER) → EUCC certification (certification bodies issue; national cybersecurity certification authorities supervise; ENISA publishes) → eIDAS 2.0
 
 **EU Government IT Procurement Chain**: ISO/IEC 14888-4:2024 (ISO/IEC JTC 1/SC 27) → CC evaluation (CCRA/BSI/ANSSI) → NIS2 (Directive (EU) 2022/2555: Member States may require certified ICT products under Art. 24; it does not itself require them)
 
 **US Cloud Services Chain**: NIST IR 8547 (NIST) → CAVP algorithm validation (tested via ACVP) → FedRAMP PQC requirement (GSA/CISA)
 
-**EU legal instruments**: the European Parliament and the Council legislate (NIS2 Directive, eIDAS 2.0, DORA, Cyber Resilience Act); the Commission proposes the acts and adopts implementing acts such as EUCC (Regulation (EU) 2024/482). NIS2 is a Directive that Member States transpose into national law; its Art. 24 lets Member States require essential and important entities to use ICT products certified under a European cybersecurity certification scheme. Certification under the Cybersecurity Act is voluntary unless Union or Member State law says otherwise (Art. 56(2)), and a European cybersecurity certificate is recognised in all Member States (Art. 56(10)).
+**EU legal instruments**: the European Parliament and the Council legislate (NIS2 Directive, eIDAS 2.0, DORA, Cyber Resilience Act); the Commission proposes the acts and adopts implementing acts such as EUCC (Regulation (EU) 2024/482). NIS2 is a Directive that Member States transpose into national law; its Art. 24 lets Member States require essential and important entities to use ICT products certified under a European cybersecurity certification scheme.
 
 ---
 
@@ -77,7 +77,7 @@ This module teaches learners how to distinguish between standards bodies (which 
 
 | Region       | Standards                 | Certification             | Compliance                           | Regulatory                   |
 | ------------ | ------------------------- | ------------------------- | ------------------------------------ | ---------------------------- |
-| Global       | ISO/IEC JTC 1/SC 27, IETF | CCRA (36 countries)       | No global binding framework          | ITU-T (recommendations only) |
+| Global       | ISO/IEC JTC 1/SC 27, IETF | CCRA                      | No global binding framework          | ITU-T (recommendations only) |
 | US           | NIST                      | CMVP, CAVP, NIAP          | FIPS 140-3, CNSA 2.0, FedRAMP, CMMC  | NSA, CISA                    |
 | EU           | ETSI TC CYBER             | EUCC certification bodies | NIS2, eIDAS 2.0, DORA, CRA           | Commission, ENISA            |
 | UK           | BSI (British Standards)   | NCSC (CAPS)               | UK PQC Roadmap (3 phases)            | NCSC, DSIT                   |

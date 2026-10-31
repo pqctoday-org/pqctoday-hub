@@ -508,17 +508,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   FIPS 140-3 Level 3 tracking is a continuous program, not an audit
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Every library (OpenSSL FIPS provider, WolfCrypt FIPS, BC FIPS, BoringCrypto) and
-                  every HSM (Thales Luna, Entrust nShield, Utimaco, Fortanix, YubiHSM, AWS CloudHSM)
-                  carries a CMVP certificate that is bound to a specific version, firmware, and
-                  platform. The FIPS 140-3 Implementation Guidance added self-test requirements for
-                  FIPS 203/204/205 in August 2024 and, in September 2025, let their key-generation
-                  tests check against the private key only. When a validated module is revalidated,
-                  the CMVP Management Manual (section 7.1.14) marks, route by route, whether the
-                  submission must meet all the latest guidance or only the requirements of the
-                  original validation (apart from exceptions its table lists). The Assurance pillar
-                  subscribes to CMVP change notices and flags drift within the same loop as CVE
-                  triage.
+                  When a validated module is revalidated, the CMVP Management Manual (section
+                  7.1.14) marks, route by route, whether the submission must meet all the latest
+                  guidance or only the requirements of the original validation (apart from
+                  exceptions its table lists). The Assurance pillar subscribes to CMVP change
+                  notices and flags drift within the same loop as CVE triage.
                 </p>
               </div>
             </div>
@@ -534,30 +528,24 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   A FIPS 140-3 algorithm certificate and an SP 800-90B Entropy Source Validation
                   (ESV) certificate are two separate CMVP submissions. A library or HSM can hold a
                   valid FIPS 140-3 certificate while its entropy source has never been independently
-                  validated. PQC migration is the natural moment to close this gap: PQC algorithms
-                  (ML-KEM, ML-DSA) require higher-quality randomness and demand an auditable chain
-                  from validated entropy source through conditioning to the approved DRBG.
-                  Infrastructure migrations &mdash; cloud lift-and-shift, containerization, VM
-                  consolidation &mdash; are also ESV re-evaluation triggers, since they alter the
-                  entropy pool available to the OS and can silently degrade seed quality. The
-                  Assurance pillar CBOM should carry an ESV status field alongside the FIPS 140-3
-                  validation field, and the remediation workflow must distinguish algorithm
-                  re-validation from entropy source re-validation, as timelines and responsible
-                  vendors differ.
+                  validated. In this module's reading, PQC migration is the natural moment to close
+                  this gap: PQC algorithms (ML-KEM, ML-DSA) require higher-quality randomness and
+                  demand an auditable chain from validated entropy source through conditioning to
+                  the approved DRBG. Infrastructure migrations &mdash; cloud lift-and-shift,
+                  containerization, VM consolidation &mdash; are also ESV re-evaluation triggers,
+                  since they alter the entropy pool available to the OS and can silently degrade
+                  seed quality. The Assurance pillar CBOM should carry an ESV status field alongside
+                  the FIPS 140-3 validation field, and the remediation workflow must distinguish
+                  algorithm re-validation from entropy source re-validation, as timelines and
+                  responsible vendors differ.
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  The SP 800-90 suite itself is a living document: NIST revises SP 800-90A (DRBG
-                  constructions), SP 800-90B (entropy source requirements), and SP 800-90C (RBG
-                  construction) independently and on different schedules. Each revision can retire
-                  approved mechanisms, tighten minimum-entropy thresholds, or impose new health-test
-                  requirements. An ESV certificate bound to an earlier revision of SP 800-90B is not
-                  automatically compliant with a subsequent one. The same CMVP change-notice
-                  subscription that tracks FIPS 140-3 Implementation Guidance updates must also
-                  track SP 800-90A/B/C revision publications and their effective dates. When a
-                  revision is issued, the CBOM workflow should trigger an impact assessment: which
-                  validated entropy sources are bound to the superseded revision, which require
-                  re-testing under the new thresholds, and which vendor roadmaps commit to updated
-                  ESV submissions.
+                  The same CMVP change-notice subscription that tracks FIPS 140-3 Implementation
+                  Guidance updates must also track SP 800-90A/B/C revision publications and their
+                  effective dates. When a revision is issued, the CBOM workflow should trigger an
+                  impact assessment: which validated entropy sources are bound to the superseded
+                  revision, which require re-testing under the new thresholds, and which vendor
+                  roadmaps commit to updated ESV submissions.
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
                   {' '}
@@ -1163,15 +1151,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 CSWP.39 uses 4 tiers — this module&apos;s native scale. Meta and CMMI use 5 levels.
                 CSWP.39 Tier 1 spans two Meta levels (PQ-Unaware and PQ-Aware) because the spec
                 treats both as &ldquo;Partial&rdquo; practice.
-              </p>
-            </div>
-            <div className="bg-muted/40 rounded-lg p-3 border border-border">
-              <div className="font-bold text-foreground mb-1">Focus difference</div>
-              <p className="text-muted-foreground">
-                Meta&apos;s model is outcome-focused (is PQC actually running?). CSWP.39 is
-                process-maturity focused (are practices repeatable?). CMMI is process-capability
-                focused. ENISA and NCCoE describe PQC migration stages (lifecycle phases), not
-                maturity levels, so they are deliberately omitted from this cross-walk.
               </p>
             </div>
           </div>

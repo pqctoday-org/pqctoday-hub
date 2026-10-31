@@ -20,11 +20,9 @@ export const PAYMENT_NETWORKS: PaymentNetwork[] = [
       ecommerce: ['TLS 1.2/1.3 RSA/ECDSA', '3-D Secure 2.x ECDSA'],
     },
     pqcPosture: 'published-guidance',
-    pqcStance:
-      'Visa says quantum readiness requires proactive planning now. Its February 2026 publication is scoped to stablecoins and blockchain-based payment infrastructure, not an announced migration of the Visa card network.',
+    pqcStance: '',
     pqcInitiatives: [
       'Visa Research lists quantum-safe payments as a Quantum Security focus area',
-      'Visa Research and Visa Crypto published 2026 guidance for stablecoins and digital payments',
       'The guidance calls for cryptographic inventory, algorithm evaluation, agile key management, standards coordination and non-production testing',
       'Visa is an equal owner of EMVCo, whose Security Working Group is assessing quantum risk to EMV Chip',
     ],

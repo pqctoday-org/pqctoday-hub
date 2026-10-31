@@ -293,7 +293,7 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
     name: 'Contactless (NFC)',
     mode: 'contactless',
     description:
-      'Tap-to-pay using NFC (ISO 14443). Uses a fast path with abbreviated offline authentication and online authorization. Transaction must complete within 500ms for good user experience.',
+      'Tap-to-pay using NFC (ISO 14443). Uses a fast path with abbreviated offline authentication and online authorization.',
     totalLatencyMs: 500,
     quantumVulnerableSteps: 2,
     steps: [

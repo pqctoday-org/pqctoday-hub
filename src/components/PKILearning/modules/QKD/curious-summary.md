@@ -11,7 +11,3 @@ Standard Post-Quantum Cryptography relies on math problems that we _hope_ quantu
 ## The Key Takeaway
 
 Despite its immense security, QKD has severe physical limitations. Standard fiber optic cables max out at roughly 100 kilometers for QKD transmission. Extending this distance requires "trusted nodes" to relay the signal, but compromising any single node exposes all the keys.
-
-## What's Happening
-
-Governments are aggressively investing in QKD, with China maintaining a 2,000 km backbone and Micius satellite link. However, NIST remains highly skeptical of its real-world viability, officially recommending mathematical PQC (like FIPS 203) over QKD for almost all enterprise use cases.

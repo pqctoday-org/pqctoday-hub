@@ -282,7 +282,7 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
     {
       value: 'rsa-lt-3072',
       label:
-        'RSA < 3072 bits (classically secure today, but deprecated after 2030 per NIST SP 800-131A and quantum-vulnerable)',
+        'RSA < 3072 bits (classically secure today; the NIST draft SP 800-131A Rev 3 deprecates signature generation with these keys after 2030; quantum-vulnerable)',
     },
   ]
 

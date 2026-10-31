@@ -645,7 +645,7 @@ export const MASKING_COSTS: MaskingCost[] = [
   {
     impl: 'OpenTitan KMAC (Keccak)',
     protection: 'First-order domain-oriented masking',
-    cost: 'Keccak round logic “more than twice” the area; SHA3-224 throughput 3.43 → 1.26 bytes/cycle',
+    cost: 'SHA3-224 throughput 3.43 → 1.26 bytes/cycle',
     platform: 'ASIC',
     url: 'https://opentitan.org/book/hw/ip/kmac/doc/theory_of_operation.html',
   },

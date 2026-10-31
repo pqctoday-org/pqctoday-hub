@@ -232,7 +232,7 @@ const NOISE_BY_SCHEME: { scheme: string; returns: string; noiseSetting: string }
     returns:
       'The exact message. The message sits in the most significant bits and the noise in the least significant bits; “if too many computations are performed, the noise will eventually overflow into the message bits and lead to an incorrect result” (TFHE-rs documentation). Otherwise decryption is exact.',
     noiseSetting:
-      'None: the decryption-failure probability is fixed by the parameter set. TFHE-rs default parameters use p_error ≤ 2^-128, which “ensures that our implementation is resilient against attacks in the IND-CPA-D model”; parameters with p_error ≤ 2^-64 exist when only the IND-CPA model is considered. Added noise matters for TFHE only in threshold decryption, where partial decryptions are flooded and TFHE needs “a more subtle technique” because its parameters are small (Bootland et al. 2025, preprint); Checri et al. 2024 show threshold BFV, BGV and CKKS would be insecure without such noise.',
+      'None: the decryption-failure probability is fixed by the parameter set. Added noise matters for TFHE only in threshold decryption, where partial decryptions are flooded and TFHE needs “a more subtle technique” because its parameters are small (Bootland et al. 2025, preprint); Checri et al. 2024 show threshold BFV, BGV and CKKS would be insecure without such noise.',
   },
 ]
 

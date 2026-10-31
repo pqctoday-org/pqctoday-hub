@@ -145,8 +145,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     timingRequirement: null,
     description:
       'Client/server protocol for SCADA polling, control and configuration of IEDs over the station bus.',
-    standardStatus:
-      'IEC 62351-3:2023 adds a TLS 1.3 profile and now lists the mandatory TLS 1.2 cipher suites itself; it profiles conventional TLS cipher suites and does not specify PQC key-exchange or signature algorithms.',
+    standardStatus: '',
     cryptoLayers: [
       {
         layerName: 'TLS key exchange',

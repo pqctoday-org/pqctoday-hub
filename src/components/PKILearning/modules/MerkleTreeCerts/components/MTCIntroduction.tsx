@@ -338,8 +338,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                   The TLS server presents its certificate (including its 1,312 B public key) with a
                   23-hash inclusion proof (736 B), then signs the handshake (2,420 B
                   CertificateVerify). The client verifies the proof against its cached landmark
-                  root. Total for ML-DSA-44: <strong>~4,668 bytes</strong> with metadata, against
-                  ~10,522 for a leaf-plus-intermediate chain.
+                  root.
                 </p>
               </div>
             </div>
@@ -438,7 +437,6 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-primary mb-1">Timeline</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; March 2023: Initial draft published (draft-00)</li>
               <li>&bull; October 2025: Cloudflare + Chrome experiment announced</li>
               <li>
                 &bull; 2026: <code>draft-davidben-tls-merkle-tree-certs-10</code> submitted; adopted

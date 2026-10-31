@@ -265,8 +265,7 @@ export const SIZE_COMPARISONS: PQCSizeComparison[] = [
     pqcSize: 5800,
     hybridSize: 6600,
     unit: 'bytes',
-    notes:
-      'Full DER-encoded X.509 cert with SAN, AKI, SKI extensions. TLS certificate chain (3 certs) grows from ~2.4KB to ~17.4KB.',
+    notes: 'Full DER-encoded X.509 cert with SAN, AKI, SKI extensions.',
   },
   {
     id: 'tls-handshake',

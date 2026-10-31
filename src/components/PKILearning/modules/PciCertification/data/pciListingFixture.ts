@@ -67,7 +67,7 @@ export const pciListingFixture: PciListingFixture = {
     {
       approvalNumber: '4-40266',
       sourceUrl: popup('4-40266'),
-      foundVia: 'Linked as "PCI HSM" from the vendor’s own payShield 10K product page',
+      foundVia: '',
       fields: {
         Company: 'Thales DIS CPL USA, Inc.',
         Product: 'payShield 10K, PS10-S, PS10-D, PS10-F',

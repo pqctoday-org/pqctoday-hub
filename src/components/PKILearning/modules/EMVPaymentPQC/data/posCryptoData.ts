@@ -39,7 +39,6 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
       'TLS to payment processor via phone tethering',
     ],
     pqcConstraints: [
-      '128 KB RAM is tight for ML-KEM-768 (needs ~50 KB working memory)',
       'ML-DSA-44 signature verification feasible but slow (~500ms)',
       'FN-DSA-512 produces smaller signatures (666 bytes vs ~2,420 for ML-DSA-44), reducing memory requirements on constrained devices',
       'Battery-powered: PQC computation cost affects battery life',

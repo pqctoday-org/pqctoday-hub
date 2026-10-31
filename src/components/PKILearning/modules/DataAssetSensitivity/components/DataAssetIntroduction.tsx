@@ -441,7 +441,6 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     origin: 'NIST / US Federal',
                     output: 'FIPS 199 impact level + SP 800-53 control gaps + risk score (1–25)',
                     audience: 'US federal agencies, government contractors, DoD',
-                    pqc: 'Set by NIST IR 8547 (final guidance) and, for national security systems, mandated by CNSA 2.0',
                   },
                   {
                     name: 'ISO 27005',
@@ -450,7 +449,6 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     output:
                       'Risk level (Low–Critical) + risk treatment (Accept/Mitigate/Transfer/Avoid)',
                     audience: 'ISO 27001 certified orgs, international enterprises',
-                    pqc: 'Feeds cryptographic risk treatment into ISO 27001 Annex A.8.24',
                   },
                   {
                     name: 'FAIR',

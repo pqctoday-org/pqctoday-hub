@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.188.0] - 2026-10-31
+
+The next part of the line-by-line reading of the Learn lessons against the documents they cite: 32 lessons drop statements that no document backs, or label them as this site's own assumption or reading.
+
+### Changed
+
+- **Learn lessons keep to what their documents say** [view:/learn] [persona:researcher] [persona:architect] [persona:grc]: across 32 lessons, figures, dates, version claims and vendor or standards statements that no cited document supports were removed, and judgements, advice and modelled inputs are now marked as the lesson's own reading or assumption.
+- **OpenSSL's post-quantum start version is corrected** [view:/learn/os-pqc] [persona:developer] [persona:architect]: the OS lesson now says post-quantum algorithms are built into OpenSSL from 3.5.0, as OpenSSL's own release notes state, not from 3.4.
+
+### Fixed
+
+- **The RSA key-size label in the governance policy generator names its source** [view:/learn/pqc-governance] [persona:grc] [persona:executive]: it now says NIST's draft SP 800-131A Revision 3 deprecates signature generation with these keys after 2030, instead of presenting a draft rule as a final one for all smaller RSA keys.
+- **The FIPS 205 signing limit is stated as a design condition** [view:/learn/stateful-signatures] [persona:researcher] [persona:developer]: the Stateful Signatures lesson now says the SLH-DSA parameter sets meet their security categories when each key signs at most 2^64 messages, rather than pointing to a section that does not say so.
+
 ## [4.187.0] - 2026-10-31
 
 A line-by-line reading of the Learn lessons against the documents they cite: 62 lessons now say what their sources say (or label a statement as this site's own estimate), the PCI lessons follow PCI SSC's public pages, 14 documents join the Library, and 90 quiz questions and 19 lesson answers were rechecked. This is the first part of that reading; the remaining lessons and questions follow in a later release.

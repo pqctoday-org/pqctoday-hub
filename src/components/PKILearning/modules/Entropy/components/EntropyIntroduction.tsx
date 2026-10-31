@@ -191,8 +191,6 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
-            On {SP800_90A_REV2_STATUS.published} NIST published a pre-draft call for comments on SP
-            800-90A (comments closed {SP800_90A_REV2_STATUS.commentsClosed}).{' '}
             {SP800_90A_REV2_STATUS.note}{' '}
             <a
               href={SP800_90A_REV2_STATUS.url}
@@ -453,8 +451,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           </table>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          Certificate numbers from the CMVP entropy-validation search, checked 2026-09-24. A
-          certificate covers the implementation and versions it lists, not a vendor&apos;s whole
+          A certificate covers the implementation and versions it lists, not a vendor&apos;s whole
           product line.
         </p>
       </section>

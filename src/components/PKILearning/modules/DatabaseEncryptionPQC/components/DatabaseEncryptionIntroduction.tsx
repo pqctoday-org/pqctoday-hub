@@ -293,9 +293,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
           <p className="text-xs text-muted-foreground">
             AES-256 symmetric encryption used at every layer is already quantum-safe (Grover&apos;s
             algorithm reduces effective security to 128 bits &mdash; still above the 112-bit
-            minimum). The quantum vulnerability lies entirely in the <strong>key wrapping</strong>{' '}
-            layer: RSA-OAEP and ECDH used to protect CMKs, CEKs, and DEKs. Migrating those wrapping
-            algorithms to ML-KEM-1024 is the scope of PQC database migration.
+            minimum).
           </p>
         </div>
       </LearnSection>

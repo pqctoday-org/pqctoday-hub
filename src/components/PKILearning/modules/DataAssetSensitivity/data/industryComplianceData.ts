@@ -175,8 +175,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     fullName: 'ISO/IEC 27001 Information Security Management',
     region: 'Global',
     scope: 'Organizations voluntarily seeking ISMS certification',
-    pqcRequirement:
-      'Annex A control A.8.24 "Use of cryptography" requires policies on algorithm lifecycle. PQC planning required as part of cryptographic risk management per ISO 27005.',
+    pqcRequirement: '',
     hardDeadline: null,
     deadlineYear: null,
     pqcMandatoryNow: false,

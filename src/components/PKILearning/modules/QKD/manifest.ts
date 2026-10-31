@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'qkd',
-  contentVersion: 10,
+  contentVersion: 11,
   lm_id: 'LM-017',
   title: 'Quantum Key Distribution',
   description:

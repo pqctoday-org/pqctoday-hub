@@ -132,8 +132,7 @@ export const Introduction: FC<Props> = ({ onNavigateToWorkshop }) => {
         <p>
           The replacements already exist. NIST published three post-quantum standards in{' '}
           {formatMonthYear(NIST_DEPRECATION.fipsFinalized)}: ML-KEM (FIPS 203) for setting up secure
-          connections, and ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) for digital signatures. The slow
-          part now is fitting them into every product and system.
+          connections, and ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) for digital signatures.
         </p>
         <p className="text-muted-foreground">
           That is the whole story in three sentences: a real risk, a published fix, and years of
@@ -182,8 +181,8 @@ export const Introduction: FC<Props> = ({ onNavigateToWorkshop }) => {
 
       <Section id="certificates" icon={BadgeCheck} title="What a certificate proves">
         <p>
-          “Certified” is the word most often stretched. In the US and Canada, the FIPS 140-3
-          programme has three stages that are easy to confuse:
+          In this module's reading, “Certified” is the word most often stretched. In the US and
+          Canada, the FIPS 140-3 programme has three stages that are easy to confuse:
         </p>
         <ul className="list-disc pl-5 space-y-2">
           <li>

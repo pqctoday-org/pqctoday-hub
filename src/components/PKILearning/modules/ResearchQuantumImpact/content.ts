@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'research-quantum-impact',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-10-16',
+  lastEdited: '2026-10-31',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,4: SP 800-208 (stateful hash-based signatures) and SP 800-90A
@@ -71,7 +71,7 @@ export const content: ModuleContent = {
     overview:
       'The Researcher Quantum Impact module addresses the unique cryptographic challenges faced by academic researchers, data scientists, and interdisciplinary scientists whose work involves long-lived sensitive datasets, collaborative data sharing, federated infrastructure, and emerging PQC research directions.',
     keyConcepts:
-      'Long-Lived Research Data Exposure (HNDL) — participant-linked genomic and biomedical data can need confidentiality for decades. For clinical trial records, FDA 21 CFR Part 11 governs electronic records and electronic signatures; the retention period comes from the applicable predicate rule (for IND investigators, 21 CFR 312.62(c): 2 years after the marketing application is approved, or 2 years after the investigation is discontinued and FDA is notified), plus sponsor, jurisdiction and contract terms; EU Regulation 536/2014 (Art. 58) requires the clinical trial master file to be archived for at least 25 years. Determine the period before sizing HNDL exposure. On CRQC timing, the Global Risk Institute\'s Quantum Threat Timeline Report 2025 (a survey of 26 experts) finds a "very significant chance" of a CRQC within 10 years, with the experts divided, and within 15 years "a clear majority considers a CRQC at least as likely as not". Long-term signatures need a lifecycle (trusted timestamps, evidence records, certificate and revocation preservation, re-timestamping), not a single algorithm choice...',
+      'Long-Lived Research Data Exposure (HNDL) — participant-linked genomic and biomedical data can need confidentiality for decades. On CRQC timing, the Global Risk Institute\'s Quantum Threat Timeline Report 2025 (a survey of 26 experts) finds a "very significant chance" of a CRQC within 10 years, with the experts divided, and within 15 years "a clear majority considers a CRQC at least as likely as not". Long-term signatures need a lifecycle (trusted timestamps, evidence records, certificate and revocation preservation, re-timestamping), not a single algorithm choice...',
     workshopSummary:
       'The workshop has 4 steps: Why It Matters (six research threat areas, each with a severity, timeframe and example scenario), What to Learn (eight skill gaps linked to related modules, grouped into four knowledge domains), How to Act (a phased immediate / 30-day / 90-day / 6-month action plan with quick wins and KPI targets), and a nine-item Research Readiness self-assessment that produces a weighted exposure score.',
     relatedStandards:

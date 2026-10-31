@@ -50,7 +50,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Privacy by Design',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:
-      'age_over_18 is disclosed and its digest is checked against the issuer-signed Mobile Security Object, while birth_date is absent from the payload entirely — not hidden from view, never transmitted. That is ISO 18013-5 selective disclosure: the issuer signs the digests, so withholding an element costs nothing cryptographically, and the bank learns you are eligible without learning when you were born. GDPR Article 5(1)(c) enforced by construction rather than by policy. Untick age_over_18 and the bank refuses — the proof stays cryptographically valid, it simply no longer answers the question asked, which is the honest cost of withholding. The key binding proof is still ECDSA, though: a CRQC could forge it and impersonate you. ML-DSA-65 would fix that.',
+      'age_over_18 is disclosed and its digest is checked against the issuer-signed Mobile Security Object, while birth_date is absent from the payload entirely — not hidden from view, never transmitted. That is ISO 18013-5 selective disclosure: the issuer signs the digests, so withholding an element costs nothing cryptographically, and the bank learns you are eligible without learning when you were born. Untick age_over_18 and the bank refuses — the proof stays cryptographically valid, it simply no longer answers the question asked, which is the honest cost of withholding. The key binding proof is still ECDSA, though: a CRQC could forge it and impersonate you. ML-DSA-65 would fix that.',
     stepIndex: 3,
   },
   {

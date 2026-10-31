@@ -682,9 +682,8 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             <div className="text-xs font-bold text-muted-foreground mb-1">Key rotation</div>
             <p className="text-xs text-muted-foreground">
               QKD continuously generates fresh key material. The HSM can be programmed to rotate
-              session keys on a schedule (e.g., every 1 hour or every 1 GB of data) by fetching a
-              new key_ID from the QKD key manager and repeating the SP 800-108 derivation with an
-              incremented context counter. See{' '}
+              session keys on a schedule by fetching a new key_ID from the QKD key manager and
+              repeating the SP 800-108 derivation with an incremented context counter. See{' '}
               <a
                 href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-108r1.pdf"
                 target="_blank"

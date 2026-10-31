@@ -93,16 +93,14 @@ export const OS_VENDORS: OSVendorStatus[] = [
     opensslVersion: 'OpenSSL 3.5 (RHEL 10) / 3.0.7 (RHEL 9)',
     catalogName: 'Red Hat Enterprise Linux 10.2',
     fipsMode: 'fips-140-3',
-    sshPqcStatus:
-      'RHEL 10.2: OpenSSH ML-KEM SSH key exchange (mlkem768nistp256) default-on in all crypto policies',
+    sshPqcStatus: '',
     pkgSigningPqc:
       'RHEL 10.2 podman-sequoia composite PQC signatures; Red Hat Certificate System 11.0 integrates ML-DSA',
     roadmapYear: '2025 (RHEL 10.1 GA)',
     mlKemSupport:
       'ML-KEM GA in RHEL 10.1+ via OpenSSL 3.5 / GnuTLS / NSS; preferred by the default crypto policy',
     mlDsaSupport: 'ML-DSA GA in RHEL 10.1+ (OpenSSL/GnuTLS/NSS); ML-DSA TLS certificates supported',
-    notes:
-      'Verified 2026-06-19: catalog status available. RHEL 10.1+ ships GA NIST PQC across OpenSSL 3.5, GnuTLS, NSS and (10.2) OpenSSH — the default system-wide crypto policy enables and PREFERS hybrid ML-KEM key exchange, so TLS/SSH to/from RHEL 10.1+ use PQC by default. RHEL 10.0 was tech-preview; RHEL 9 (OpenSSL 3.0.7) has no PQC. CNSA 2.0 path via RHEL 10.',
+    notes: 'Verified 2026-06-19: catalog status available.',
   },
   {
     id: 'ubuntu',
@@ -117,7 +115,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     mlKemSupport: 'ML-KEM hybrid TLS in OpenSSL 3.0.x via oqsprovider or OpenSSL 3.5 native',
     mlDsaSupport: 'ML-DSA available via oqsprovider; native OpenSSL 3.5+ in Ubuntu 25.10+',
     notes:
-      'Verified 2026-06-19: Canonical ships GA PQC in current releases (catalog tracks Ubuntu 26.04 LTS = available). Ubuntu 25.10 (OpenSSL 3.5.3, OpenSSH 10.0) and 26.04 LTS (OpenSSH 10.2p1) enable hybrid ML-KEM in TLS and SSH by default. The widely-deployed Ubuntu 24.04 LTS ships OpenSSL 3.0 and has NO native PQC — it is not backported (catalog: Ubuntu 24.04 LTS = none); PQC on 24.04 requires a manual oqsprovider build.',
+      'Verified 2026-06-19: Canonical ships GA PQC in current releases (catalog tracks Ubuntu 26.04 LTS = available).',
   },
   {
     id: 'windows-server',
@@ -149,8 +147,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     roadmapYear: '2026 (Trixie release)',
     mlKemSupport: 'ML-KEM in experimental repository; OpenSSL 3.3 baseline with oqsprovider',
     mlDsaSupport: 'ML-DSA in experimental; native OpenSSL 3.5+ planned for Debian 14 (Forky)',
-    notes:
-      'Verified 2026-06-19: catalog status partial. Debian 13 (Trixie, Aug 2025) ships OpenSSL 3.5.6, so TLS 1.3 negotiates the hybrid X25519MLKEM768 group by DEFAULT (inherited from OpenSSL, no config). Debian has no native PQC primitive of its own and no FIPS-certified crypto module. Debian 12 (Bookworm, OpenSSL 3.0) has no PQC (catalog: none).',
+    notes: 'Verified 2026-06-19: catalog status partial.',
   },
   {
     id: 'alpine',
@@ -165,7 +162,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     mlKemSupport: 'ML-KEM via liboqs-provider package on OpenSSL 3.3.x',
     mlDsaSupport: 'ML-DSA via liboqs-provider package on OpenSSL 3.3.x',
     notes:
-      'Verified 2026-06-19: catalog status available. Alpine 3.22 ships OpenSSL 3.5, providing built-in ML-KEM/ML-DSA/SLH-DSA and hybrid X25519MLKEM768 TLS with no external plugin. Alpine uses musl libc and is the default base image for millions of Docker containers, so this makes a large container fleet quantum-safe in transit by default. (Alpine 3.20/3.21 on OpenSSL 3.3 needed the liboqs-provider package.)',
+      'Verified 2026-06-19: catalog status available. Alpine 3.22 ships OpenSSL 3.5, providing built-in ML-KEM/ML-DSA/SLH-DSA and hybrid X25519MLKEM768 TLS with no external plugin. (Alpine 3.20/3.21 on OpenSSL 3.3 needed the liboqs-provider package.)',
   },
   {
     id: 'freebsd',
@@ -198,8 +195,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     mlKemSupport:
       'ML-KEM-768 in Security.framework (macOS 26+); Network.framework X25519MLKEM768 TLS 1.3',
     mlDsaSupport: 'ML-DSA in Security.framework (macOS 26+); CryptoKit API planned for Swift 6.x',
-    notes:
-      'Apple has implemented ML-KEM and ML-DSA in their proprietary Security.framework in macOS 26 and iOS 26. Network.framework uses X25519MLKEM768 for TLS 1.3 by default. No FIPS 140-3 certification for macOS — enterprises requiring FIPS must use Homebrew OpenSSL with separate FIPS module. iMessage uses ML-KEM for PQ3 protection (deployed March 2024, iOS 17.4).',
+    notes: '',
   },
   {
     id: 'android',

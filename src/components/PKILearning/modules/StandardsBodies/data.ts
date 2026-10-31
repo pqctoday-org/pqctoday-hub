@@ -258,9 +258,9 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'Global',
     founded: '1994',
     mission:
-      'Mutual recognition arrangement for IT security evaluations based on ISO/IEC 15408. 36 countries take part: 18 authorise (issue) certificates and 18 only recognise them (CC portal members list). Recognition covers only certificates that claim a collaborative Protection Profile (cPP) or assurance up to EAL2 with ALC_FLR (CCRA Art. 2). Products are evaluated by accredited labs; certificates are issued by national Certification Bodies (e.g., BSI, ANSSI, NIAP).',
+      'Mutual recognition arrangement for IT security evaluations based on ISO/IEC 15408. Products are evaluated by accredited labs; certificates are issued by national Certification Bodies (e.g., BSI, ANSSI, NIAP).',
     decisionMaking:
-      'Protection Profiles (PP) define security requirements for product categories (e.g., "PKI digital signatures"). Independent labs test products against PPs. A Management Committee on which every participant sits administers the arrangement (CCRA Art. 10); international Technical Communities (iTCs) develop the collaborative Protection Profiles. EUCC is a separate EU scheme, set up by Commission Implementing Regulation (EU) 2024/482, that applies Common Criteria and the Common Evaluation Methodology under EU rules.',
+      'Protection Profiles (PP) define security requirements for product categories (e.g., "PKI digital signatures"). Independent labs test products against PPs. EUCC is a separate EU scheme, set up by Commission Implementing Regulation (EU) 2024/482, that applies Common Criteria and the Common Evaluation Methodology under EU rules.',
     keyPqcOutputs: [
       'ISO/IEC 15408 (CC standard for evaluation methodology)',
       'PQC Protection Profiles (in development for HSMs, certificates, firewalls)',
@@ -347,7 +347,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       "Research group set up in 2021 by the National Security Research Institute (NSR) and the National Intelligence Service (NIS), with experts from industry, academia, government and research institutes. It ran the KpqC national PQC competition (first round from November 2022; final algorithms announced 16 January 2025): HAETAE and AIMer (signatures), SMAUG-T and NTRU+ (KEMs). KISA, the Korea Internet & Security Agency, sits on its advisory committees. The July 2023 master plan of NIS and the Ministry of Science and ICT sets 2035 as the target for spreading post-quantum cryptography through Korea's cryptographic systems. In April 2026 the group reported that Korean Standard (KS) proposals for the two KEMs had been submitted and the two signature algorithms were under review; no standardization date is published.",
     decisionMaking:
-      'National competition with public review of the candidates and an evaluation committee. Parallel to NIST — Korean algorithms are not the same as FIPS 203/204/205. Multinational organizations in Korea may need to support both Korean and NIST-standardized algorithms.',
+      'Parallel to NIST — Korean algorithms are not the same as FIPS 203/204/205. Multinational organizations in Korea may need to support both Korean and NIST-standardized algorithms.',
     keyPqcOutputs: [
       'KpqC Competition (2022–2025)',
       'HAETAE (lattice signature) – competition winner',
@@ -577,15 +577,14 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'ISO/IEC 14888-4:2024',
         body: 'ISO/IEC JTC 1/SC 27',
         description:
-          'ISO/IEC 14888-4:2024 (Hash-based Digital Signatures) is the international standard for XMSS and LMS. As an IS (International Standard), it provides the global normative reference for hash-based PQC signature schemes; each country decides whether to adopt it nationally.',
+          'ISO/IEC 14888-4:2024 (Hash-based Digital Signatures) is the international standard for XMSS and LMS.',
       },
       {
         id: 'cc-pp',
         role: 'certification',
         label: 'Common Criteria Evaluation',
         body: 'CCRA / BSI / ANSSI',
-        description:
-          'The product is evaluated against a CC Protection Profile (PP) that references ISO/IEC 14888-4 for signature verification. BSI (Germany) or ANSSI (France) acts as the Certification Body; an accredited IT Security Evaluation Facility (ITSEF) performs the testing.',
+        description: '',
       },
       {
         id: 'eu-procurement',
@@ -698,7 +697,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
     },
     'regulatory-agency': {
       orgs: ['European Commission (EC)', 'ENISA (dual role)'],
-      note: 'The European Parliament and the Council legislate (NIS2, eIDAS 2.0, DORA, CRA); the Commission proposes the acts and adopts implementing acts such as EUCC; ENISA supports the certification framework, but does not issue EUCC certificates',
+      note: 'The Commission adopts implementing acts such as EUCC; ENISA does not issue EUCC certificates',
     },
   },
   uk: {
