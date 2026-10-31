@@ -491,7 +491,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'Attestation Report Signed (ML-DSA)',
           pkcs11Call: `C_MessageSignInit(CKM_ML_DSA) + C_SignMessage("${teeReport.slice(0, 40)}…")`,
           detail: `message = "${teeReport.slice(0, 50)}…" · signature = ${sigBytes.length} B`,
-          note: 'Simplified attestation payload — real SGX/TDX/CCA tokens use CBOR-encoded COSE_Sign1 structures (RFC 9052). The HSM signs the report; the enclave verifies before unsealing.',
+          note: 'Simplified attestation payload — real SGX/TDX quotes are binary structures with an ECDSA signature (Intel TDX DCAP Quoting Library guide). The HSM signs the report; the enclave verifies before unsealing.',
         })
 
         // Step 5: Receiver side — verify signature, decapsulate, re-derive KEK, unwrap provisioning key
@@ -671,7 +671,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'Attestation Report Signed (ECDSA)',
           pkcs11Call: `C_MessageSignInit(CKM_ECDSA) + C_SignMessage("${teeReport.slice(0, 35)}…")`,
           detail: `message = "${teeReport.slice(0, 50)}…" · signature ≈ ${sigBytes.length} B`,
-          note: 'Simplified attestation payload — real SGX/TDX tokens use CBOR-encoded COSE_Sign1 structures. ECDSA signature on the attestation report. In PQC mode this uses ML-DSA (3,309 B FIPS 204 signature, about 3.3 KB, vs ~72 B here).',
+          note: 'Simplified attestation payload — real SGX/TDX quotes are binary structures with an ECDSA signature (r and s, 2 x 32 bytes). ECDSA signature on the attestation report. In PQC mode this uses ML-DSA-65 (3,309 B signature per FIPS 204 Table 2, about 3.3 KB, vs ~72 B here).',
         })
 
         // Step 5: Receiver side — verify signature + unwrap provisioning key
