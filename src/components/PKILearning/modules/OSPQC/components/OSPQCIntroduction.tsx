@@ -111,12 +111,10 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-            <div className="text-xs font-bold text-primary mb-2">OS Vendor Roadmaps</div>
+            <div className="text-xs font-bold text-primary mb-2">OS Vendor Status</div>
             <p className="text-xs text-muted-foreground">
-              RHEL, Ubuntu, Windows Server, and macOS all have active PQC roadmaps. The migration
-              timeline differs significantly. Shipping ML-KEM and ML-DSA in an operating system is a
-              separate step from having them listed on a FIPS 140-3 certificate, so check each
-              platform against the CMVP listings.
+              Shipping ML-KEM and ML-DSA in an operating system is a separate step from having them
+              listed on a FIPS 140-3 certificate, so check each platform against the CMVP listings.
             </p>
           </div>
         </div>

@@ -160,7 +160,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     catalogName: 'Alpine Linux',
     fipsMode: 'not-supported',
     sshPqcStatus: 'No production PQC SSH; OpenSSH experimental branch required',
-    pkgSigningPqc: 'APK signing uses RSA-4096 GPG; PQC not on near-term roadmap',
+    pkgSigningPqc: 'APK signing uses RSA-4096 GPG',
     roadmapYear: '2024-11 (Alpine 3.21)',
     mlKemSupport: 'ML-KEM via liboqs-provider package on OpenSSL 3.3.x',
     mlDsaSupport: 'ML-DSA via liboqs-provider package on OpenSSL 3.3.x',
