@@ -103,11 +103,12 @@ const Step1SmimeCmsKem: React.FC = () => (
           PQC algorithms integrate with existing S/MIME infrastructure.
         </p>
         <p>
-          Together, these RFCs provide a complete PQC story for CMS: ML-DSA for signing (RFC 9882),
-          KEM-based encryption via KEMRecipientInfo (RFC 9629), RSA-KEM as a transitional KEM option
-          (RFC 9690), and <InlineTooltip term="LMS/HSS">HSS/LMS</InlineTooltip> for hash-based
-          firmware and long-lived signatures (RFC 9708). See the <strong>References</strong> tab for
-          full details on each standard.
+          In this module's reading, together, these RFCs provide a complete PQC story for CMS:
+          ML-DSA for signing (RFC 9882), KEM-based encryption via KEMRecipientInfo (RFC 9629),
+          RSA-KEM as a transitional KEM option (RFC 9690), and{' '}
+          <InlineTooltip term="LMS/HSS">HSS/LMS</InlineTooltip> for hash-based firmware and
+          long-lived signatures (RFC 9708). See the <strong>References</strong> tab for full details
+          on each standard.
         </p>
       </div>
     </section>
