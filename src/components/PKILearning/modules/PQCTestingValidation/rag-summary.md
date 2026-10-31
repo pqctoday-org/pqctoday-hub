@@ -160,7 +160,7 @@ First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication 
 
 **ISO/IEC 17825 and FIPS 140-3**: ISO/IEC 17825 sets non-invasive attack mitigation test metrics for conformance with ISO/IEC 19790 at Security Levels 3 and 4. ISO lists the 2016 edition as withdrawn on 19 January 2024; ISO/IEC 17825:2024 is the current edition. NIST SP 800-140F (March 2020) §6.2 "Approved non-invasive attack mitigation test metrics" reads "No additional requirements at this time"; ISO/IEC 17825 (with ISO/IEC 20085-1 and -2) is named only in the August 2021 draft of SP 800-140F Rev. 1, still a draft. CMVP IG 12.A: "Until requirements of SP 800-140F are defined, non-invasive mechanisms fall under ISO/IEC 19790:2012 Section 7.12 Mitigation of other attacks." No CMVP statement was found saying ISO/IEC 17825 testing is required or accepted for a certificate; SP 800-140F defines no approved metric, so a TVLA result is not an approved CMVP test metric.
 
-**Tools**: Keysight Inspector Crypto 3 (commercial, Dilithium TVLA generator (ML-DSA, FIPS 204), Known Key Analysis; CMVP has no approved non-invasive test metrics yet, SP 800-140F), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
+**Tools**: Keysight Inspector (commercial; Keysight says it supports PQC validation through side-channel analysis and fault injection workflows, with ML-DSA supported as a ready-to-use module and a Crypto 3 framework of modular, reusable workflows; CMVP has no approved non-invasive test metrics yet, SP 800-140F section 6.2: "No additional requirements at this time"), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
 
 ---
 

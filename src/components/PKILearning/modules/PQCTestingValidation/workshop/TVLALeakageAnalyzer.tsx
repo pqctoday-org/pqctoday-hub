@@ -246,8 +246,9 @@ export const TVLALeakageAnalyzer: React.FC = () => {
           4.5 at every stage, yet first-order masking can still leak at higher orders. Add specific
           tests on intermediate values in the stages that handle secrets: NTT/INTT (dominant
           leakage), polynomial multiplication (nonce leakage in ML-DSA), and modular reduction
-          (q=3329 conditional subtraction). Keysight Inspector&apos;s Dilithium TVLA generator
-          (ML-DSA, FIPS 204) targets these operations directly.
+          (q=3329 conditional subtraction). Keysight says its Inspector software supports PQC
+          validation through side-channel analysis and fault injection workflows, with ML-DSA
+          supported as a ready-to-use module.
         </p>
       </div>
     </div>

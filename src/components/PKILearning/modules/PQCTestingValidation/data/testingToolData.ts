@@ -285,10 +285,10 @@ export const TESTING_TOOLS: TestingTool[] = [
     category: 'side-channel',
     license: 'commercial',
     description:
-      'Device security testing platform with Crypto 3 framework for PQC side-channel analysis (TVLA) and fault injection testing. Dilithium TVLA generator (ML-DSA, FIPS 204) and Known Key Analysis for ML-DSA.',
+      'Device security testing platform. Keysight says Inspector supports PQC validation through side-channel analysis and fault injection workflows, supports ML-DSA as a ready-to-use module for pre-silicon and post-silicon testing, and offers a Crypto 3 framework of modular, reusable workflows.',
     pqcSupport: 'ML-DSA (production), ML-KEM (pre-release), SLH-DSA (pre-release)',
     strengths: [
-      'Purpose-built TVLA for ML-DSA/ML-KEM',
+      'Side-channel analysis workflows for ML-DSA and ML-KEM',
       'Captures millions of traces/second',
       'Fault injection testing',
       'Leakage testing in the TVLA style (CMVP has no approved non-invasive test metrics yet, SP 800-140F)',
