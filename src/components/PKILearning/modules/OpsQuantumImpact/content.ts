@@ -53,6 +53,7 @@ export const content: ModuleContent = {
     getStandard('IETF RFC 8555'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
     getStandard('CAB-Forum-SC-081v3'), // m-ops-quantum-impact: March 2026, 2029
+    getStandard('GSMA-PQ-04-Post-Quantum-Cryptography-in-the-IoT-Ecosystem'), // ML-DSA-65 and ECDSA-256 signature and key sizes (Table 5)
   ],
 
   algorithms: [getAlgorithm('ML-DSA-65'), getAlgorithm('ML-KEM-768')],

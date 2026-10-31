@@ -8,7 +8,7 @@ export const OPS_QUANTUM_EXERCISES: OpsExercise[] = [
   {
     title: 'Scenario: Kubernetes Certificate Migration',
     prompt:
-      'Your Kubernetes cluster uses cert-manager with Let\u2019s Encrypt for 500 TLS certificates. ML-DSA certificates are 10x larger. Walk through the impact on: CRD storage, etcd size limits, cert-manager renewal performance, and ingress controller memory. Use the workshop tools to plan the migration.',
+      'Your Kubernetes cluster uses cert-manager with Let\u2019s Encrypt for 500 TLS certificates. ML-DSA signatures and public keys are far larger than ECDSA ones (in GSMA PQ.04 Table 5, an ML-DSA-65 signature is 3,309 bytes against 64 bytes for ECDSA-256). Walk through the impact on: CRD storage, etcd size limits, cert-manager renewal performance, and ingress controller memory. Use the workshop tools to plan the migration.',
   },
   {
     title: 'Scenario: VPN Fleet Upgrade',
