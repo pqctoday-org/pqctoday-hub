@@ -70,7 +70,8 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumAttack: 'shor',
     estimatedQubits: 3484,
     status: 'broken',
-    notes: 'All ECC variants are equally broken by quantum — curve size is irrelevant.',
+    notes:
+      'Shor’s algorithm applies to elliptic-curve cryptography at every curve size; a larger curve needs more logical qubits (Roetteler et al. 2017: 3,484 for a 384-bit curve).',
   },
   {
     name: 'X25519',
@@ -969,7 +970,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'Microsoft',
     bestLogical: 0,
     bestPhysical: 8,
-    note: 'Topological qubits would in theory be mostly unaffected by noise, needing far fewer physical qubits per logical qubit than other modalities if they can be built. Cloudflare writes that they have not been fully realized in hardware; Microsoft announced the Majorana 1 chip in early 2025, which Cloudflare says is far from a full demonstrator and does not support any computation.',
+    note: 'Cloudflare writes that topological qubits would in theory be mostly unaffected by noise and, if they can be built in a scalable way, would be far superior to superconducting qubits. Cloudflare writes that they have not been fully realized in hardware; Microsoft announced the Majorana 1 chip in early 2025, which Cloudflare says is far from a full demonstrator and does not support any computation.',
     recentProgress:
       'Microsoft announced its Majorana 1 chip in early 2025 and lists it among its quantum advances; Cloudflare describes the chip as far from a full demonstrator.',
     scaleChallenge:
