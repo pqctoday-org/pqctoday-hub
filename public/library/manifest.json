@@ -24467,6 +24467,24 @@
       "replacedAt": "2026-10-30T13:53:03.064512+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "re-source to the public PCI SSC page for the PCI 3DS Core Security Standard"
+    },
+    {
+      "refId": "CIR-EU-2024-2977-PID-and-EAA-Formats",
+      "title": "Commission Implementing Regulation (EU) 2024/2977 of 28 November 2024 laying down rules for the application of Regulation (EU) No 910/2014 of the European Parliament and of the Council as regards person identification data and electronic attestations of attributes issued to European Digital Identity Wallets",
+      "url": "https://eur-lex.europa.eu/eli/reg_impl/2024/2977/oj/eng",
+      "status": "downloaded",
+      "filename": "CIR-EU-2024-2977-PID-and-EAA-Formats.html",
+      "sizeBytes": 88195,
+      "contentType": "text/html",
+      "sha256": "f83b32736ced75e7341bf14b40d58cabbb8642c68e29407319dbf66d999a6633",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-10-31T01:46:40.065367+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "UNCONFIRMED",
+      "file": "library/CIR-EU-2024-2977-PID-and-EAA-Formats.html",
+      "acquisition": "manual",
+      "acquiredAt": "2026-10-31"
     }
   ],
   "archivedEntries": [
