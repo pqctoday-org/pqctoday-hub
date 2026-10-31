@@ -360,9 +360,10 @@ export const SQUEEZE_2026_2030: ReadonlyArray<SqueezeEvent> = [
     track: 'cab-forum',
   },
   {
-    date: '2026-06',
+    date: '2026-12',
     label: "Let's Encrypt MTC",
-    detail: "Let's Encrypt begins issuing Merkle Tree Certificates (June 2026)",
+    detail:
+      "Let's Encrypt targets late 2026 for a staging environment that issues Merkle Tree Certificates",
     track: 'standards',
   },
   {

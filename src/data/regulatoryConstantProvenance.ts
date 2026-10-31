@@ -155,7 +155,9 @@ export const REGULATORY_CONSTANT_PROVENANCE: Readonly<Record<string, ConstantPro
   },
   "SQUEEZE_2026_2030[Let's Encrypt MTC]": {
     kind: 'policy_constant',
-    evidence: "Let's Encrypt announcement (a CA, outside the timeline's scope)",
+    evidence:
+      'Let\'s Encrypt blog, A Post-Quantum Future for Let\'s Encrypt (library "A-Post-Quantum-Future-for-Let-s-Encrypt")',
+    note: 'The ribbon shows month precision (-12) for "late 2026"; the source supports late 2026 for a staging environment that issues MTCs, and 2027 for production-ready.',
   },
   'SQUEEZE_2026_2030[FIPS 140-2 sunset]': {
     kind: 'policy_constant',

@@ -112,7 +112,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
     phase: 4,
     title: 'Source Control & CI Identity',
     description:
-      'Rotate Git commit signing keys to ML-DSA-44. Migrate CI/CD OIDC token signing to ML-DSA-65 JWT profile. Update deploy keys to ML-DSA SSH extensions.',
+      'Rotate Git commit signing keys to post-quantum OpenPGP keys (composite ML-DSA-65+Ed25519 per RFC 9980) where your OpenPGP tool supports it. Migrate CI/CD OIDC token signing to ML-DSA-65 JWT profile. Update deploy keys once a post-quantum SSH specification is standardised.',
     durationWeeks: 4,
     dependencies: ['phase-1'],
     stageIds: ['source', 'build'],

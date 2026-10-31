@@ -384,7 +384,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       "cert-manager places an ACME order with the CA (e.g., Let's Encrypt). The CA returns authorization challenges (HTTP-01 or DNS-01).",
     pqcNote:
-      "Let's Encrypt ACME PQC support is planned for 2026 (Staging) → 2027 (Production). Until then, ACME orders with ML-DSA keys are rejected by production CAs. Use internal CAs (Vault PKI, EJBCA) for ML-DSA certificates in the interim.",
+      "Let's Encrypt is targeting late 2026 for a staging environment that issues Merkle Tree Certificates (MTCs) and 2027 for a production-ready environment; it is tracking ML-DSA in X.509 (RFC 9881) and gives no ML-DSA issuance dates. In the interim, use internal CAs (Vault PKI, EJBCA) for ML-DSA certificates.",
     status: 'classical',
   },
   {
@@ -404,7 +404,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     description:
       'The CA signs the CSR with its own signing key and returns the DER-encoded X.509 certificate.',
     pqcNote:
-      "For end-to-end PQC: both the subscriber cert (ML-DSA leaf) AND the CA signing key must be ML-DSA. Let's Encrypt staging will use ML-DSA-65 for its ACME CA signing key in 2026.",
+      "For end-to-end PQC: both the subscriber cert (ML-DSA leaf) AND the CA signing key must be ML-DSA. Let's Encrypt's own plan is Merkle Tree Certificates (staging late 2026), not an ML-DSA-signed ACME CA.",
     status: 'hybrid',
   },
   {
