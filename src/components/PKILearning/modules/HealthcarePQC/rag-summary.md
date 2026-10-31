@@ -35,7 +35,7 @@ Intermediate-level module (60 min, 5 workshop steps) covering post-quantum crypt
 - HIPAA PHI breach cost: average $9.77M per healthcare breach (IBM Cost of a Data Breach Report 2024) — quantum-enabled mass decryption of archived RSA-encrypted PHI would be catastrophic
 - DICOM image study size: 50 MB–500 MB per study; ML-DSA-65 signature (3,309 bytes) adds negligible overhead (<0.01%) to study payload
 - HL7 FHIR API token: JWT signed with RS256 (RSA-2048) — replace with ES384 (ECDSA P-384) now, migrate to ML-DSA-44 (ML-DSA-44, ML-DSA-65 and ML-DSA-87 are registered for JOSE and COSE in RFC 9964, May 2026)
-- Implantable device power budget: pacemaker crypto coprocessor ~50 µW — ML-KEM constrained variants (ML-KEM-512) and AES-128-CCM are feasible; full ML-DSA-44 verification (~1 ms compute) within acceptable range for infrequent pairing operations
+- Implantable device power budget (a planning assumption, not a measurement): a pacemaker-class device has a very small power budget, and this module treats ML-KEM-512 and AES-128-CCM as feasible there
 - PHI re-encryption scope (assuming about 7 years of retained records; state medical-record rules vary): 7 years × average hospital 10M records × 256-byte AES key blob = ~17 GB of key material to be re-wrapped with ML-KEM-768; operational planning required for batch re-encryption
 - GDPR Article 83 fine for special category data breach: up to 4% of global annual turnover or €20M — EU enforcement of quantum-vulnerable genomic data protection expected post-2030
 - Genomic HNDL window: 75-year retention starting 2026 = data exposed through 2101 — far beyond any CRQC projection; absolute priority for immediate ML-KEM migration
