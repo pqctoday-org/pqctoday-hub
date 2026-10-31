@@ -1153,10 +1153,6 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 treats both as &ldquo;Partial&rdquo; practice.
               </p>
             </div>
-            <div className="bg-muted/40 rounded-lg p-3 border border-border">
-              <div className="font-bold text-foreground mb-1">Focus difference</div>
-              <p className="text-muted-foreground"></p>
-            </div>
           </div>
         </div>
       </section>
