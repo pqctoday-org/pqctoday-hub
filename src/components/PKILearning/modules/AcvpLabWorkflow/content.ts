@@ -13,17 +13,15 @@
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
-import { longDate } from '@/components/PKILearning/common/moduleReviewStatus'
+import { OWNER_SIGNOFF_DATE_LABEL } from '@/components/PKILearning/common/moduleReviewStatus'
 
 export const content: ModuleContent = {
   moduleId: 'acvp-lab-workflow',
-  lastReviewed: '2026-10-25',
-  // lastReviewed is the owner's sign-off of 25 October 2026 (moduleReviewHonesty.test.ts), which
-  // renewed the 24 October one after the 23 October corrections to the ACVP revision-history
-  // statements, the Step 3 change (every test of both samples answered) and the answer-count
-  // and wording changes of release 4.179.0.
+  // lastReviewed removed: facts in this module were corrected in release 4.187.0 after the owner's
+  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The
+  // on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-25',
+  lastEdited: '2026-10-30',
 
   standards: [
     getStandard('NIST-ACVP'),
@@ -57,7 +55,7 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    reviewStatus: `Reviewed and signed off by the PQC Today owner on ${longDate('2026-10-25')}`,
+    reviewStatus: `Corrected since the PQC Today owner's sign-off on ${OWNER_SIGNOFF_DATE_LABEL}; awaiting re-sign-off`,
     acvpSpecRevision:
       'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',

@@ -10,12 +10,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { MODULE_LAST_REVIEWED } from '@/data/moduleContentRegistry'
-import {
-  AWAITING_RESIGNOFF_LABEL,
-  NOT_LAB_REVIEWED,
-  longDate,
-  ownerReviewStatusText,
-} from './moduleReviewStatus'
+import { NOT_LAB_REVIEWED, longDate, ownerReviewStatusText } from './moduleReviewStatus'
 import { REVIEW_STATUS } from '../modules/AcvpLabWorkflow/data/reviewStatus'
 
 const MODULES: ReadonlyArray<{ id: string; dir: string }> = [
@@ -96,12 +91,11 @@ describe('the five certification modules show one review status', () => {
     })
   }
 
-  it('ACVP, signed off again on 25 October 2026, shows the signed-off state with the shared words', () => {
-    expect(MODULE_LAST_REVIEWED['acvp-lab-workflow']).toBe('2026-10-25')
+  it('ACVP, corrected in release 4.187.0 after its sign-off, shows the awaiting re-sign-off state with the shared words', () => {
+    expect(MODULE_LAST_REVIEWED['acvp-lab-workflow']).toBeUndefined()
     expect(REVIEW_STATUS.label).toBe(
-      'Reviewed and signed off by the PQC Today owner on 25 October 2026'
+      "Corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off"
     )
-    expect(REVIEW_STATUS.label).not.toBe(AWAITING_RESIGNOFF_LABEL)
     expect(REVIEW_STATUS.detail).toContain(NOT_LAB_REVIEWED)
   })
 })
