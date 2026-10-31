@@ -1142,7 +1142,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                   (isRSA
                     ? 'RSA-OAEP is a direct encryption scheme — the decrypted output IS the DEK. No KDF step is needed. This step is skipped in the classical path.'
                     : 'The shared secret from ML-KEM.Encaps() is a 256-bit value that can be used directly as a shared secret key for symmetric cryptography. This demo applies HKDF with info="kms-envelope-v1" to bind the wrapping key to this protocol and version. ' +
-                      'HKDF binds it to a context string (info="kms-envelope-v1") so the derived key is isolated to this protocol and version, preventing cross-protocol key reuse (RFC 5869 §3.2).')}
+                      'HKDF binds it to a context string (info="kms-envelope-v1") so the derived key is bound to that context, which may prevent the same keying material from being derived for other contexts (RFC 5869 §3.2).')}
                 {displayStep.step === 4 &&
                   `AES-KW (RFC 3394), AES-KWP (RFC 5649), or AES-GCM (SP 800-38D) wraps the 32-byte DEK. ` +
                     `AES-KW: 40 B output — 8-byte A value (ICV, RFC 3394 §2.2.3, not a nonce) + 32 B; deterministic, no nonce management required; SP 800-38F §6.2 purpose-built for key wrapping. ` +
