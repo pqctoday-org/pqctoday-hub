@@ -26,8 +26,6 @@ The workshop has 5 interactive steps:
 ## Related Standards
 
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
-- Ponemon Institute Cost of a Data Breach methodology
-- FAIR (Factor Analysis of Information Risk)
 
 ## Proposal scope and funding safeguards
 
