@@ -67,7 +67,7 @@ describe('OT protocol facts', () => {
   it('E11: nothing claims SAv6 exists or is KAT-tested', () => {
     const all = JSON.stringify(OT_PROTOCOLS) + JSON.stringify(OT_PROTOCOL_KAT_SPECS)
     expect(all).not.toMatch(/SAv6 (KAT|frame|auth)/)
-    expect(proto('dnp3-sav5').standardStatus).toContain('"SAv6" has not been published')
+    expect(proto('dnp3-sav5').standardStatus).toContain('describe no revision named "SAv6"')
   })
 
   it('E21: PTP security is IEEE 1588-2019 Annex P, not NTS', () => {
