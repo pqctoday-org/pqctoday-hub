@@ -8,7 +8,7 @@ Confusing these roles is a common source of compliance failure. For example, pur
 
 ### The Key Takeaway
 
-You comply with a framework, get certified against a standard, and the standard is written by the standard body. Multinational teams must track NIST globally, ETSI in the EU, and specific national mandates (like BSI in Germany or OSCCA in China).
+You comply with a framework, get certified against a standard, and the standard is written by the standard body.
 
 ### What's Happening
 
