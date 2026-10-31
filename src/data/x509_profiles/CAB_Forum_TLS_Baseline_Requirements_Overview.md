@@ -30,7 +30,7 @@ The **Baseline Requirements for the Issuance and Management of Publicly-Trusted 
 
 - **Version:** X.509 v3
 - **Serial Number:** Minimum 64 bits of entropy from a CSPRNG
-- **Validity Period:** Maximum 398 days (reducing to 47 days by 2029 per SC-081v3)
+- **Validity Period:** Maximum by issue date (TLS BR section 6.3.2, ballot SC-081v3): 398 days before 2026-03-15, 200 days from 2026-03-15, 100 days from 2027-03-15, 47 days from 2029-03-15
 - **Key Size Minimums:**
   - RSA: 2048 bits (3072+ recommended)
   - ECDSA: P-256, P-384, or P-521

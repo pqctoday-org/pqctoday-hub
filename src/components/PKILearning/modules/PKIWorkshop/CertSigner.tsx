@@ -432,8 +432,9 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
           `  -CAcreateserial: creates/updates a .srl file alongside the CA cert, which tracks the\n` +
           `  next serial number to assign. Each signed certificate gets a unique, monotonically\n` +
           `  increasing serial within this CA's namespace — serials are what CRL entries reference.\n\n` +
-          `  CAB Forum BR (since 2023): maximum validity is 398 days for publicly-trusted TLS certs.\n` +
-          `  This workshop uses ${validityDays} days. Internal/private PKI certs have no mandated limit.\n\n`
+          `  CAB Forum TLS Baseline Requirements, section 6.3.2, cap the validity of Subscriber Certificates by issue date:\n` +
+          `  398 days before 2026-03-15, 200 days from 2026-03-15, 100 days from 2027-03-15, 47 days from 2029-03-15.\n` +
+          `  This workshop uses ${validityDays} days. The Baseline Requirements do not cover a PKI that an enterprise runs for internal purposes only, with a root not distributed by any application software supplier.\n\n`
       )
 
       // Note for PQC algorithms: -sha256 is ignored
