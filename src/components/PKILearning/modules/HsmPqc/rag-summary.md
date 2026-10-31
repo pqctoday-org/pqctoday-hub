@@ -13,7 +13,7 @@ workshop_steps: 4
 
 - HSM architecture for PQC (FIPS 140-3 levels, on-prem vs cloud side-by-side)
 - PKCS#11 v3.2 PQC mechanisms (CKM*ML_KEM*_, CKM*ML_DSA*_, CKK\_\* key types)
-- On-prem HSM deep dive (Thales Luna v7.9.2, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Quantum Protect)
+- On-prem HSM deep dive (Thales Luna 7.9.0 or newer, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Quantum Protect)
 - Cloud HSM deep dive (AWS CloudHSM, Azure Dedicated HSM, Google Cloud HSM)
 - Side-channel attack surfaces (NTT power analysis, EM emanation, fault injection, ML-DSA hedged signing)
 - HSM firmware migration (upgrade paths, dual-partition strategy, FIPS re-validation)

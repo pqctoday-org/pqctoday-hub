@@ -369,7 +369,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <span className="text-muted-foreground">Firmware:</span>{' '}
-                    <span className="font-mono text-foreground">v7.9.2+</span>
+                    <span className="font-mono text-foreground">7.9.0 or newer</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">FIPS Status:</span>{' '}
@@ -536,23 +536,23 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
                 <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) ship
-                PQC firmware, with different algorithm sets (Thales&apos;s Luna documentation lists
-                ML-KEM, ML-DSA and LMS/HSS and does not list SLH-DSA; Utimaco&apos;s Quantum Protect
-                page shows SLH-DSA as in progress) and different FIPS 140 coverage: some module
-                certificates list PQC algorithms (Crypto4A #5497, Thales Luna T7 #5450), others do
-                not (Entrust nShield 5s #5329 and #4745, Thales Luna K7 #4684). Cloud HSMs are
-                uneven: AWS CloudHSM generates and uses ML-DSA keys inside the HSM through
-                vendor-defined PKCS#11 mechanisms. AWS documents ML-DSA as available in FIPS mode on
-                hsm2m.medium clusters from 1 September 2026, while the NIST Security Policy for the
-                same module (CMVP #4703) lists ML-DSA and ML-KEM as non-approved services and the
-                certificate lists no PQC algorithm among its approved ones; we have not found a
-                document that reconciles the two (see the AWS CloudHSM card). Azure Dedicated HSM is
-                a Thales Luna 7 appliance: Azure lists no PQC algorithm, and ML-KEM and ML-DSA come
-                with Luna firmware 7.9 if the customer upgrades, after consulting Thales Support
-                (the service is retiring &mdash; no new customer onboardings); Google Cloud KMS
-                lists its PQC algorithms at the software protection level only, with none for HSM
-                keys (AWS and Google statements checked 23 Oct 2026; the Azure statements checked 29
-                Oct 2026).
+                PQC firmware, with different algorithm sets (Thales&apos;s Luna Post Quantum
+                Algorithms page lists ML-KEM, ML-DSA and LMS-HSS, and that page and its v7.9 release
+                post do not list SLH-DSA; Utimaco&apos;s Quantum Protect page shows SLH-DSA as in
+                progress) and different FIPS 140 coverage: some module certificates list PQC
+                algorithms (Crypto4A #5497, Thales Luna T7 #5450), others do not (Entrust nShield 5s
+                #5329 and #4745, Thales Luna K7 #4684). Cloud HSMs are uneven: AWS CloudHSM
+                generates and uses ML-DSA keys inside the HSM through vendor-defined PKCS#11
+                mechanisms. AWS documents ML-DSA as available in FIPS mode on hsm2m.medium clusters
+                from 1 September 2026, while the NIST Security Policy for the same module (CMVP
+                #4703) lists ML-DSA and ML-KEM as non-approved services and the certificate lists no
+                PQC algorithm among its approved ones; we have not found a document that reconciles
+                the two (see the AWS CloudHSM card). Azure Dedicated HSM is a Thales Luna 7
+                appliance: Azure lists no PQC algorithm, and ML-KEM and ML-DSA come with Luna
+                firmware 7.9 if the customer upgrades, after consulting Thales Support (the service
+                is retiring &mdash; no new customer onboardings); Google Cloud KMS lists its PQC
+                algorithms at the software protection level only, with none for HSM keys (AWS and
+                Google statements checked 23 Oct 2026; the Azure statements checked 29 Oct 2026).
               </p>
             </div>
           </div>
