@@ -108,9 +108,9 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     region: 'European Union',
     depth: 'survey',
     stage: 'evaluation',
-    role: 'Horizon Europe-funded research projects on PQC migration (PQ-REACT, QSAFE, PQ-CAR, etc.).',
+    role: 'Horizon Europe funding for research on the transition to quantum-resistant cryptography.',
     detail:
-      'EU-funded multi-year research projects produce open implementations, side-channel testbeds, and migration case studies. Output feeds ETSI and national-CSIRT guidance. Not a standards body but a major source of public cryptanalysis.',
+      'The European Commission designs supportive measures on PQC with actions under the Digital Europe Programme and the Horizon Europe Programme (EU NIS Cooperation Group roadmap, June 2025). Horizon Europe included a call, “Transition towards Quantum-Resistant Cryptography” (HORIZON-CL3-2022-CS-01), which closed on 16 November 2022 (GSMA PQ.01, February 2023). Not a standards body.',
     url: 'https://cordis.europa.eu/',
     nistRelation: 'aligned',
   },
