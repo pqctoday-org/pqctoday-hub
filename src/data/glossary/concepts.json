@@ -1402,7 +1402,7 @@
     "term": "Edge PoP",
     "acronym": "PoP",
     "definition": "A Point of Presence — a physical data center location at the network edge where CDN or cloud providers deploy servers to cache content and terminate TLS connections close to end users.",
-    "technicalNote": "Major CDNs operate 200-300+ PoPs globally. PQC deployment at edge PoPs requires coordinated key material distribution and certificate rotation across all locations simultaneously.",
+    "technicalNote": "PQC deployment at edge PoPs requires coordinated key material distribution and certificate rotation across all locations simultaneously.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
     "category": "concept"
