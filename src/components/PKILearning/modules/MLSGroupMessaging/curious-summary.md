@@ -11,7 +11,6 @@ as leaves of a binary tree. Each branch holds a shared secret derived
 from its children. When you add a friend, or rotate a key, only the
 nodes on your tree path change — that's an O(log N) update, not O(N).
 
-It's already shipping: WhatsApp, Cisco Webex, AWS Wickr, Google Messages.
 The next chapter is post-quantum: ML-KEM and ML-DSA suites are in IETF
 at draft -06 (July 2026), now submitted to the IESG for publication.
 
