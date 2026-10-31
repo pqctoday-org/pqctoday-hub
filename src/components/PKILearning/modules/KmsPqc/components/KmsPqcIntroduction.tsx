@@ -574,8 +574,9 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">KMIP Interoperability</div>
               <p className="text-xs text-muted-foreground">
-                KMIP 3.0 (Committee Specification Draft 02 in the held copy) adds ML-KEM,
-                ML-DSA and SLH-DSA algorithms and Encapsulate and Decapsulate operations. Use KMIP
+                KMIP 3.0 (Committee Specification Draft 02, 7 May 2026) adds the FIPS 203, 204 and
+                205 algorithms (ML-KEM, ML-DSA, SLH-DSA) and includes Encapsulate and Decapsulate
+                operations. Use KMIP
                 as the abstraction layer for cross-provider key operations: create, wrap, unwrap,
                 rotate, destroy.
               </p>

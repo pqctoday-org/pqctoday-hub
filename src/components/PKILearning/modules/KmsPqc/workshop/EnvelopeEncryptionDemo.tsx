@@ -1410,9 +1410,10 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
             <p className="text-xs text-muted-foreground">
               This demo shows a binary choice — RSA-OAEP <em>or</em> ML-KEM. NIST SP 800-227
               describes hybrid (PQ/T) key establishment, in which the shared secrets of all
-              components are combined with an approved key combiner so that the scheme is secure
-              if at least one component is secure; whether to deploy it is left to each
-              application. In this module&apos;s illustration, a combined shared secret is derived
+              components are combined with an approved key combiner so that a well-designed scheme
+              is secure if at least one component is secure; the document says combining schemes
+              can be advantageous for some applications, for example during the migration to
+              post-quantum cryptography. In this module&apos;s illustration, a combined shared secret is derived
               via HKDF from both outputs (e.g. P-256 ECDH ‖ ML-KEM-768 → HKDF → AES-256 KEK). This
               hybrid approach is available in the{' '}
               <span className="font-mono text-primary">HSM / PKCS#11 → Key Wrapping</span> tool

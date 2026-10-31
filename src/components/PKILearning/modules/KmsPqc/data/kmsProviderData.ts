@@ -33,7 +33,10 @@ export const KMS_PROVIDERS: KMSProvider[] = [
     type: 'cloud',
     catalogName: 'AWS KMS',
     pqcAlgorithms: {
-      kem: [{ name: 'ML-KEM (hybrid TLS)', status: 'GA — all KMS endpoints' }],
+      kem: [
+        { name: 'ML-KEM-512, ML-KEM-768, ML-KEM-1024 (key specs)', status: 'Listed in the AWS KMS key spec reference' },
+        { name: 'ML-KEM (hybrid TLS)', status: 'GA — all KMS endpoints' },
+      ],
       sign: [
         { name: 'ML-DSA-44', status: 'GA — CreateKey/Sign/Verify' },
         { name: 'ML-DSA-65', status: 'GA — CreateKey/Sign/Verify' },

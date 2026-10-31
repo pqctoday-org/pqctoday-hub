@@ -389,14 +389,14 @@ export const ENTERPRISE_SCENARIO = {
       id: 'aws-kms',
       name: 'AWS KMS',
       rotationFeature: 'Automatic annual rotation with CreateKey API',
-      pqcCapability: 'ML-DSA signing GA, ML-KEM hybrid TLS for API transit',
+      pqcCapability: 'ML-DSA signing GA, ML-KEM key specs, ML-KEM hybrid TLS for API transit',
     },
     {
       id: 'gcp-kms',
       name: 'Google Cloud KMS',
       rotationFeature: 'Key versioning with scheduled rotation',
       pqcCapability:
-        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing offered; software protection level only (launch stage: Google\'s 28 Jul 2026 post announces general availability, its release notes list Preview from 23 Sep 2025; checked 30 Oct 2026)',
+        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing offered; software protection level only (launch stage: Google\'s 28 Jul 2026 post announces general availability of ML-KEM key encapsulation and does not name X-Wing; Google\'s release notes list the KEMs, X-Wing included, as Preview from 23 Sep 2025; checked 30 Oct 2026)',
     },
     {
       id: 'azure-kv',
@@ -945,7 +945,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     artifactLabel: 'Ciphertext',
     securityLevel: 1,
     providerSupport: {
-      'aws-kms': 'Hybrid TLS only',
+      'aws-kms': 'KMS key spec (ML_KEM_512)',
       'gcp-kms': 'N/A',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'Via Luna HSM',
@@ -963,7 +963,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     artifactLabel: 'Ciphertext',
     securityLevel: 3,
     providerSupport: {
-      'aws-kms': 'Hybrid TLS (GA)',
+      'aws-kms': 'KMS key spec (ML_KEM_768)',
       'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'TLS Preview',
@@ -981,7 +981,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     artifactLabel: 'Ciphertext',
     securityLevel: 5,
     providerSupport: {
-      'aws-kms': 'Hybrid TLS only',
+      'aws-kms': 'KMS key spec (ML_KEM_1024)',
       'gcp-kms': 'Software protection level',
       'hashicorp-vault': 'N/A',
       'thales-ciphertrust': 'Via Luna HSM',
