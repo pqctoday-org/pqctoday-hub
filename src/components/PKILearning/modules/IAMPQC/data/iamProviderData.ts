@@ -115,6 +115,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     apiSecurity: 'We found no published Ping Identity date for post-quantum TLS in PingAccess.',
     roadmapYear: null,
     certifications: ['FIPS 140-2 (select modules)', 'SOC 2 Type II', 'ISO 27001'],
+    notes: '',
   },
   {
     id: 'forgerock',

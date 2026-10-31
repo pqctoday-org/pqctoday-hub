@@ -26,6 +26,7 @@ const FIPS_PLATFORMS: FIPSPlatform[] = [
     fipsStatus: 'fips-140-3',
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
+    fipsCertDate: '',
     pqcFipsCertTarget:
       'RHEL 10: a FIPS module that includes ML-KEM and ML-DSA is an expectation in this lesson; no validation date is cited',
     hybridStrategy:
