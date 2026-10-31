@@ -176,14 +176,15 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Secrets Management / IAM',
     catalogName: 'HashiCorp Vault',
     tokenSigning:
-      'Vault ML-DSA token signing for Vault-issued tokens (planned); Transit Secrets Engine PQC signing (roadmap)',
-    mfaPqc: 'Vault MFA (TOTP/TOTP-backed) — TOTP quantum-safe; OIDC provider PQC planned 2026',
+      'Our product catalogue records experimental ML-DSA and SLH-DSA signature support in the Transit secrets engine of Vault Enterprise 2.0.0+ (ML-DSA sign/verify since 1.19); the Community edition has no PQC.',
+    mfaPqc:
+      'Vault MFA (TOTP/TOTP-backed) — TOTP uses HMAC, a symmetric construction; we found no published HashiCorp date for a post-quantum OIDC provider.',
     apiSecurity:
-      'Vault TLS — experimental hybrid ML-KEM via OpenSSL 3.x; Vault Agent TLS PQC in 1.17 target',
-    roadmapYear: 2026,
+      'We found no published HashiCorp statement of hybrid ML-KEM for Vault TLS or Vault Agent.',
+    roadmapYear: null,
     certifications: ['FIPS 140-2 (Vault FIPS edition)', 'SOC 2 Type II', 'FedRAMP Moderate'],
     notes:
-      'HashiCorp Vault Transit Secrets Engine ML-DSA signing planned (roadmap). PKI Secrets Engine PQC certificates planned. Vault OIDC provider (identity broker) PQC migration tracked in GitHub.',
+      'Our product catalogue records ML-DSA signing in the Transit secrets engine of Vault Enterprise as experimental. We found no published HashiCorp date for PQC certificates in the PKI secrets engine or for a post-quantum OIDC provider.',
   },
   {
     id: 'keycloak',
@@ -192,14 +193,14 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Open-Source IAM',
     catalogName: 'Keycloak',
     tokenSigning:
-      'Keycloak 25.x+ ML-DSA JWT signing via OpenSSL 3.x oqsprovider (experimental, community work); OIDC and SAML assertion PQC',
+      'Our product catalogue records Keycloak PQC readiness as planned (feature issue #43690, milestone 27.0); we found no released post-quantum JWT signing.',
     mfaPqc:
-      'FIDO2 WebAuthn PQC authenticator support via Keycloak SPI; TOTP quantum-safe as standard',
+      'TOTP uses HMAC, a symmetric construction; we found no published Keycloak statement of post-quantum FIDO2/WebAuthn authenticator support.',
     apiSecurity:
       "Undertow (WildFly) TLS — hybrid ML-KEM via the JDK's own TLS stack (JDK 27, Oracle JDK 25.0.5) or the BouncyCastle JSSE extension",
-    roadmapYear: 2025,
+    roadmapYear: null,
     certifications: ['Common Criteria (RHSSO)', 'FIPS 140-2 (RHSSO with NSS)'],
     notes:
-      'Keycloak is open source; PQC integration available via oqsprovider for OpenSSL and BouncyCastle Java. Community PQC SPI for token signing already available. Red Hat SSO (RHSSO) enterprise version targets 2026 GA.',
+      "Keycloak is open source. Our product catalogue records PQC readiness as planned (feature issue #43690, milestone 27.0): the issue aims to review Keycloak's cryptography and provide PQC-safe algorithms where applicable, and PQC is not intended to be the default.",
   },
 ]
