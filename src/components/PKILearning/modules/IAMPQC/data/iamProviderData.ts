@@ -71,13 +71,13 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Cloud IAM',
     catalogName: 'Okta Workforce Identity',
     tokenSigning:
-      'ML-DSA token signing pilot launched 2025; opt-in preview for JWT and SAML assertions',
-    mfaPqc: 'FIDO2/WebAuthn attestation PQC roadmap 2026; TOTP/HOTP (HMAC) already quantum-safe',
-    apiSecurity: 'TLS 1.3 with hybrid ML-KEM planned for 2026 across all API endpoints',
-    roadmapYear: 2026,
+      'Our product catalogue records no post-quantum token signing for Okta Workforce Identity; we found no published Okta date or pilot.',
+    mfaPqc:
+      'TOTP/HOTP use HMAC, a symmetric construction; we found no published Okta date for post-quantum FIDO2/WebAuthn attestation.',
+    apiSecurity: 'We found no published Okta date for hybrid ML-KEM on its API endpoints.',
+    roadmapYear: null,
     certifications: ['FIPS 140-2 validated (crypto modules)', 'SOC 2 Type II', 'ISO 27001'],
-    notes:
-      'Okta partnered with NIST NCCoE for PQC migration guidance. Preview available in Okta Preview (sandbox) orgs as of Q2 2025.',
+    notes: 'Our product catalogue records no post-quantum support for Okta Workforce Identity.',
   },
   {
     id: 'microsoft-entra',
@@ -88,10 +88,10 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     tokenSigning:
       "We found no published Microsoft date or design for post-quantum Entra ID token signing. Microsoft's quantum safe program roadmap names Microsoft Entra authentication among the first services to be protected.",
     mfaPqc:
-      'Windows Hello PQC attestation planned for TPM 2.0+ devices; FIDO2 PQC authenticator support 2026',
+      'We found no published Microsoft date for post-quantum Windows Hello attestation or FIDO2 authenticators.',
     apiSecurity:
-      'MSAL SDK supports hybrid TLS; Azure AD B2C PQC endpoints planned; Graph API TLS upgrade in progress',
-    roadmapYear: 2026,
+      'We found no published Microsoft statement of post-quantum TLS for the MSAL SDK, Azure AD B2C or Microsoft Graph.',
+    roadmapYear: null,
     certifications: [
       'FIPS 140-3 (SymCrypt)',
       'FedRAMP High',
@@ -109,15 +109,13 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Enterprise IAM / Federation',
     catalogName: 'Ping Identity PingFederate',
     tokenSigning:
-      'PingOne Advanced Services PQC JWT signing on roadmap for 2026; PingFederate 12.x evaluation underway',
+      'Our product catalogue records no post-quantum support for PingFederate; we found no published Ping Identity date for post-quantum JWT signing.',
     mfaPqc:
-      'PingID MFA — TOTP is quantum-safe; FIDO2 PQC attestation roadmap aligned with FIDO Alliance 2026',
-    apiSecurity:
-      'PingAccess API gateway PQC TLS planned; PingIntelligence AI anomaly detection upgrade roadmap',
-    roadmapYear: 2026,
+      'PingID MFA — TOTP uses HMAC, a symmetric construction; we found no published Ping Identity date for post-quantum FIDO2 attestation.',
+    apiSecurity: 'We found no published Ping Identity date for post-quantum TLS in PingAccess.',
+    roadmapYear: null,
     certifications: ['FIPS 140-2 (select modules)', 'SOC 2 Type II', 'ISO 27001'],
-    notes:
-      'Ping Identity (acquired by Thoma Bravo in 2022) merged with ForgeRock in 2023. Combined roadmap consolidating PQC plans across PingFederate, PingOne, and ForgeRock AM. Joint PQC advisory published 2025.',
+    notes: 'Ping Identity (acquired by Thoma Bravo in 2022) merged with ForgeRock in 2023.',
   },
   {
     id: 'forgerock',
@@ -126,14 +124,14 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Enterprise IAM',
     catalogName: 'ForgeRock Access Management (AM)',
     tokenSigning:
-      'AM 7.x PQC integration via OpenSSL 3.x Java provider; ML-DSA for OAuth2/OIDC tokens under evaluation',
-    mfaPqc: 'ForgeRock MFA — TOTP quantum-safe; push notification channel PQC TLS planned',
+      'Our product catalogue records no post-quantum support for ForgeRock Access Management (now PingAM); we found no published date for ML-DSA OAuth2/OIDC token signing.',
+    mfaPqc:
+      'ForgeRock MFA — TOTP uses HMAC, a symmetric construction; we found no published date for post-quantum push notification channels.',
     apiSecurity:
-      'IG (Identity Gateway) PQC TLS via Bouncy Castle PQC; ForgeRock SDK hybrid TLS update planned',
-    roadmapYear: 2026,
+      'We found no published date for post-quantum TLS in Identity Gateway or the ForgeRock SDK.',
+    roadmapYear: null,
     certifications: ['FIPS 140-2 (Bouncy Castle FIPS)', 'ISO 27001', 'SOC 2 Type II'],
-    notes:
-      'ForgeRock now part of Ping Identity. Bouncy Castle FIPS (BC-FJA) includes ML-DSA and ML-KEM. AM 7.x can use BC as crypto provider enabling PQC.',
+    notes: 'ForgeRock is now part of Ping Identity.',
   },
   {
     id: 'sailpoint',
@@ -142,11 +140,11 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Identity Governance',
     catalogName: 'SailPoint Identity Security Cloud',
     tokenSigning:
-      'IGA workflow tokens — PQC awareness roadmap in 2026; token signing via cloud IdP delegation',
+      'IGA workflow tokens — token signing via cloud IdP delegation; we found no published SailPoint PQC date.',
     mfaPqc:
       'Delegated to integrated IdP (Okta/Entra); SailPoint-native MFA uses TOTP (quantum-safe)',
     apiSecurity: 'REST API TLS — vendor-managed infrastructure upgrade; no direct PQC timeline',
-    roadmapYear: 2027,
+    roadmapYear: null,
     certifications: ['SOC 2 Type II', 'ISO 27001', 'FedRAMP Moderate'],
     notes:
       'SailPoint focuses on identity governance (IGA) and delegates cryptographic operations to integrated IdPs. PQC impact is primarily on API TLS and workflow integrity.',
@@ -160,17 +158,16 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     tokenSigning:
       'PAM session recording tokens — tamper-evidence signing; we found no published CyberArk date for ML-DSA signing',
     mfaPqc:
-      'CyberArk Identity MFA — FIDO2 PQC attestation planned; TOTP quantum-safe; PIV card support',
+      'CyberArk Identity MFA — TOTP uses HMAC, a symmetric construction; PIV card support; we found no published CyberArk date for post-quantum FIDO2 attestation.',
     apiSecurity:
-      'Vault TLS — hybrid ML-KEM-768 for API channels in 2025; CyberArk Conjur PQC secrets delivery planned',
-    roadmapYear: 2025,
+      'We found no published CyberArk date for hybrid ML-KEM on Vault API channels or for post-quantum Conjur secrets delivery.',
+    roadmapYear: null,
     certifications: [
       'FIPS 140-3 Level 1: CyberArk Cryptographic Module #5205 and CyberArk Cryptographic Module for Java #5122 (software modules; earlier certificates #4949, #4693, #4377 are Historical; CMVP, checked 2026-09-24)',
       'Common Criteria: PAM v14 components certified against the NIAP Application Software PP v1.4 (NSCIB, 2024; PP-based, no EAL)',
       'SOC 2 Type II',
     ],
-    notes:
-      'PAM vaults holding privileged credentials are critical HNDL targets. CyberArk is developing PQC transit encryption for vault-to-agent channels. Conjur (secrets manager) PQC transit encryption under active development.',
+    notes: 'PAM vaults holding privileged credentials are critical HNDL targets.',
   },
   {
     id: 'hashicorp-vault',
