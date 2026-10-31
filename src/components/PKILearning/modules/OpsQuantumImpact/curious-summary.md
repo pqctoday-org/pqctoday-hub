@@ -4,7 +4,7 @@ IT Operations and DevOps teams deploy, monitor, and maintain the cryptography th
 
 ### Why It Matters
 
-Because PQC certificates typically run several times larger than today's certificates (and can be much larger still for some algorithm choices), automated lifecycle management tools (like cert-manager or ACME) configured for tiny ECDSA certificates often exceed their size limits and fail silently. Furthermore, the different performance profiles of PQC algorithms will trigger thousands of false-positive latency alerts if monitoring baselines and SLAs are not properly recalibrated.
+Because PQC signatures and public keys are much larger than today's (GSMA PQ.04 lists an ML-DSA-65 signature of 3,309 bytes against 64 bytes for ECDSA-256), certificates grow too, and automated lifecycle management tools (like cert-manager or ACME) configured for small ECDSA certificates can exceed their size limits and fail silently. Furthermore, the different performance profiles of PQC algorithms will trigger thousands of false-positive latency alerts if monitoring baselines and SLAs are not properly recalibrated.
 
 ### The Key Takeaway
 
