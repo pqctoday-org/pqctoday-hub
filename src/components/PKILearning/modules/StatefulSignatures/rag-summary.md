@@ -1,6 +1,6 @@
 # Stateful Hash-Based Signatures Module (LMS/XMSS)
 
-The Stateful Hash-Based Signatures module covers LMS (Leighton-Micali Signature) and XMSS (eXtended Merkle Signature Scheme), the most conservative post-quantum signature schemes standardized in NIST SP 800-208. These schemes derive security solely from hash function properties, requiring no new cryptographic hardness assumptions. The module explains Merkle tree signature construction, Winternitz one-time signatures (OTS), the critical state management problem, and the trade-offs between stateful schemes (LMS/XMSS) and stateless alternatives (SLH-DSA). CNSA 2.0 approves single-tree LMS and XMSS for firmware and software signing in national security systems (ML-DSA-87 is also allowed for that use) and prefers LMS with SHA-256/192.
+The Stateful Hash-Based Signatures module covers LMS (Leighton-Micali Signature) and XMSS (eXtended Merkle Signature Scheme), the most conservative post-quantum signature schemes standardized in NIST SP 800-208. These schemes derive security solely from hash function properties, requiring no new cryptographic hardness assumptions. The module explains Merkle tree signature construction, Winternitz one-time signatures (OTS), the critical state management problem, and the trade-offs between stateful schemes (LMS/XMSS) and stateless alternatives (SLH-DSA). CNSA 2.0 approves all parameters of LMS and XMSS (NIST SP 800-208) for digitally signing firmware and software in national security systems and recommends LMS SHA-256/192.
 
 ## Key Concepts
 

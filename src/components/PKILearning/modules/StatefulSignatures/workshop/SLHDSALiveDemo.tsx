@@ -1005,9 +1005,7 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
           (public key 4 + 4 + 16 + m bytes; signature 12 + n(p + 1) + m·h bytes) with the SP 800-208
           SHA-256/192 parameters n = m = {COMPARED_LMS.n}, p = {COMPARED_LMS.p}, h ={' '}
           {COMPARED_LMS.h}. An HSS key with one level, which is what the PKCS#11 engine signs with,
-          adds 4 bytes to the public key and to each signature. SLH-DSA sizes are FIPS 205 Table 2
-          and ML-DSA sizes are FIPS 204 Table 2. CNSA 2.0 row: NSA CNSA 2.0 FAQ, version 2.2
-          (October 2026).
+          adds 4 bytes to the public key and to each signature.
         </p>
       </div>
 

@@ -9,7 +9,7 @@ const manifest: ModuleManifest = {
   description:
     'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter trade-offs, and critical state management.',
   whyThisMatters:
-    "LMS/XMSS require tracking signing state correctly, forever — reuse a one-time key by accident and the scheme's entire security guarantee is gone, exactly the operational risk SLH-DSA was designed to eliminate.",
+    'LMS/XMSS require tracking signing state correctly, forever — reuse a one-time key by accident and the private key is immediately compromised.',
   duration: '40 min',
   difficulty: 'advanced',
   frameworkPhase: 'foundations',
