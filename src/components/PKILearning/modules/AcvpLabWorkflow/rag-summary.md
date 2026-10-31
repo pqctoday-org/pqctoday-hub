@@ -1,6 +1,6 @@
 # ACVP Lab Workflow: From Vector Set to Evidence
 
-**Status: corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off. Not yet reviewed by an accredited laboratory or certification body. Not a lab training resource.**
+**Status: corrected since the PQC Today owner's last sign-off; awaiting re-sign-off. Not yet reviewed by an accredited laboratory or certification body. Not a lab training resource.**
 
 ## Overview
 

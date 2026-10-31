@@ -12,8 +12,9 @@
  * re-sign-off", so the notice cannot outlive the sign-off it describes.
  */
 
-/** The owner's first sign-off of these modules (owner decision, 22 October 2026). */
-export const OWNER_SIGNOFF_DATE_LABEL = '22 October 2026'
+/** What a module says when facts were corrected after the owner's last sign-off. */
+export const AWAITING_RESIGNOFF_NOTICE =
+  "Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off"
 
 /** What no one has done yet; the same words on every one of the five modules. */
 export const NOT_LAB_REVIEWED =
@@ -52,6 +53,6 @@ export function longDate(iso: string): string {
 export function ownerReviewStatusText(lastReviewed: string | undefined): string {
   const sentence = lastReviewed
     ? `Reviewed and signed off by the PQC Today owner on ${longDate(lastReviewed)}.`
-    : `Corrected since the PQC Today owner's sign-off on ${OWNER_SIGNOFF_DATE_LABEL}; awaiting re-sign-off.`
+    : `${AWAITING_RESIGNOFF_NOTICE}.`
   return `${sentence} ${NOT_LAB_REVIEWED}`
 }

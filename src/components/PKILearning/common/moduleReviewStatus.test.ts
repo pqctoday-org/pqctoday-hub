@@ -33,9 +33,9 @@ describe('ownerReviewStatusText', () => {
 
   it('says awaiting re-sign-off when the module has no review date', () => {
     const text = ownerReviewStatusText(undefined)
-    expect(text).toContain("Corrected since the PQC Today owner's sign-off")
+    expect(text).toContain("Corrected since the PQC Today owner's last sign-off")
     expect(text).toContain('awaiting re-sign-off')
-    expect(text).toContain('22 October 2026')
+    expect(text).not.toContain('22 October 2026')
     expect(text).toContain(NOT_LAB_REVIEWED)
   })
 
@@ -94,7 +94,7 @@ describe('the five certification modules show one review status', () => {
   it('ACVP, corrected in release 4.187.0 after its sign-off, shows the awaiting re-sign-off state with the shared words', () => {
     expect(MODULE_LAST_REVIEWED['acvp-lab-workflow']).toBeUndefined()
     expect(REVIEW_STATUS.label).toBe(
-      "Corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off"
+      "Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off"
     )
     expect(REVIEW_STATUS.detail).toContain(NOT_LAB_REVIEWED)
   })

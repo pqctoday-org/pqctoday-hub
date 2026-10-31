@@ -2,7 +2,7 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-067) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_. It covers FIPS 140-3 and the CMVP: what a certificate proves, how to read one, and what adding post-quantum cryptography means for a validated module. PCI PTS HSM and the payment operating stack are covered in LM-071 _PCI Certification_. Version 1 is labelled "Practitioner orientation — not laboratory training." Corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. Facts are as of 24 September 2026, except items that give their own later dates (such as the algorithm records, read on 23 and 24 October 2026).
+This advanced Hardware Infrastructure module (LM-067) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_. It covers FIPS 140-3 and the CMVP: what a certificate proves, how to read one, and what adding post-quantum cryptography means for a validated module. PCI PTS HSM and the payment operating stack are covered in LM-071 _PCI Certification_. Version 1 is labelled "Practitioner orientation — not laboratory training." Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. Facts are as of 24 September 2026, except items that give their own later dates (such as the algorithm records, read on 23 and 24 October 2026).
 
 One timed ~80-minute route. Deeper material is kept as optional reference sections.
 
