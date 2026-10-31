@@ -341,7 +341,11 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               defaults, not to Cloudflare. So the deployment is stated without a date rather than
               with one the proof does not carry. Dropping a supportable claim is the same class
               of error as keeping an unsupportable one — check the catalogue by row, not by
-              vendor name. */}
+              vendor name.
+
+              UPDATED 2026-10-30: the gatewayData.ts `cloudflare-edge` note now quotes
+              Cloudflare's own April 2026 post (post-quantum encryption for all websites and
+              APIs in 2022; over 65% of human traffic), which names no algorithm. */}
           <p>
             Content Delivery Networks deploy PQC at{' '}
             <InlineTooltip term="Edge PoP">edge Points of Presence (PoPs)</InlineTooltip>{' '}

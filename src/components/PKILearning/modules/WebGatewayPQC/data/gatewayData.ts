@@ -546,7 +546,7 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'Edge platform',
     notes:
-      'Cloudflare says it enabled post-quantum encryption for all websites and APIs in 2022, and that over 65% of human traffic to Cloudflare is post-quantum encrypted (Cloudflare blog, 7 April 2026).',
+      'Cloudflare says it enabled post-quantum encryption for all websites and APIs in 2022 (its post names no algorithm), and that over 65% of human traffic to Cloudflare is post-quantum encrypted (Cloudflare blog, 7 April 2026).',
   },
   {
     id: 'aws-cloudfront',
