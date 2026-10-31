@@ -304,7 +304,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     mission:
       'UK national cybersecurity authority (part of GCHQ), providing guidance on PQC migration via a three-phase roadmap: Discovery (2025–2028), Priority Migration (2028–2031), Full Migration (2031–2035). Works with Five Eyes partners on classified PQC guidance.',
     decisionMaking:
-      'Government agency publishes whitepapers and migration timelines. Coordinates with DSIT (Dept. for Science, Innovation & Technology) and industry through the NCSC Industry 100 program. Aligned with NIST algorithm recommendations (FIPS 203/204/205).',
+      'Government agency publishes whitepapers and migration timelines. Aligned with NIST algorithm recommendations.',
     keyPqcOutputs: [
       'UK PQC Migration Timelines (2025)',
       'Three-phase roadmap: Discovery (2025–2028), Priority (2028–2031), Full (2031–2035)',
