@@ -1291,7 +1291,6 @@ export const ALGORITHM_RECORD_ITEMS: readonly AlgorithmRecordItem[] = [
     functionTable: {
       listed: false,
       where: 'Table 7: Security Function Implementations, the ML-DSA signing functions.',
-      note: 'The ML-DSA signing rows show no properties, so the function table shows no Deterministic setting.',
       quotes: [
         policyQuote(
           '5450',
@@ -1340,7 +1339,7 @@ export const ALGORITHM_RECORD_ITEMS: readonly AlgorithmRecordItem[] = [
     },
     label: 'Listed on the validations only. The Policy does not mention it.',
     explanation:
-      'The ML-DSA SigGen rows on A7879 and A7880 list "Signature Interfaces: external, internal" and "External Mu: Yes, No". The Policy\'s ML-DSA SigGen row prints only "Deterministic - No, Yes", and a text search of all 89 pages finds no mention of an interface or of mu. The Policy is silent rather than negative, so the records do not show whether an operator can use this option. Ask the vendor or the laboratory before you rely on it.',
+      '',
     feedbackRight:
       'Correct. The validations list the internal interface and External Mu. The Policy does not mention either.',
   },
