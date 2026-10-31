@@ -324,9 +324,9 @@ const Step1WhyConceptsCosts: React.FC = () => (
               Combine independently justified investments — PKI automation for short certificate
               lifetimes, FIPS 140-3 upgrades for the FIPS 140-2 sunset, HSM refresh for end-of-life
               hardware, library upgrades for CVEs — into a single &ldquo;cryptographic
-              infrastructure modernization&rdquo; program. Positioning PQC as the organizing wrapper
-              for overdue security modernization avoids a big-bang budget spike and aligns spend to
-              already-funded refresh cycles.
+              infrastructure modernization&rdquo; program. In this module&apos;s reading,
+              positioning PQC as the organizing wrapper for overdue security modernization avoids a
+              big-bang budget spike and aligns spend to already-funded refresh cycles.
             </p>
           </div>
         </div>

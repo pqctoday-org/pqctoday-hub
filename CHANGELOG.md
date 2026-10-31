@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.190.0] - 2026-10-31
+
+The next part of the line-by-line reading that could be finished safely: 25 more lesson sentences, 47 quiz questions and 19 HSM comparison notes follow their documents.
+
+### Changed
+
+- **More Learn lesson sentences keep to what their documents say** [view:/learn] [persona:researcher] [persona:architect] [persona:grc] [persona:developer] [persona:cert-engineer]: across 19 lessons, including the Secrets Management, Key Management, Standards Bodies, Secure Boot, Healthcare and Entropy lessons, a further 25 sentences that no cited document supports were removed, rewritten to say what the source says, or marked as the lesson's own reading or assumption.
+- **More quiz questions stay within their sources** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect]: 47 quiz questions were corrected. In 45 of them the explanation lost a claim that no document supports, says what the source says, or is marked as this lesson's own reading. The IBM Kookaburra question no longer states a qubit count that no document gives, and the intrusion-detection question's answer option names the ML-KEM-768 group code the source gives (0x0201) and no longer lists browser versions that no document supports.
+
+- **HSM comparison notes keep to their sources** [view:/learn/hsm-pqc] [view:/learn/crypto-mgmt-modernization] [persona:architect] [persona:ops] [persona:cert-engineer]: 19 evidence notes in the HSM comparison table (Futurex, Utimaco, Entrust nShield, Thales Luna, Marvell LiquidSecurity 2, Crypto4A and Google Cloud HSM) now keep only what the vendor pages, release notes, NIST certificate pages and security policies say; statements no document supports were taken out and two dates were corrected.
+
+### Fixed
+
+- **Usage analytics record the visitor's chosen role and experience level** [view:/about] [persona:curious] [persona:grc] [persona:developer]: since 4.189.0 these two details were set in a way the analytics service ignores, so reports could not split visits by role or level; they are now sent with each event, and the internal-traffic flag for test browsers takes effect.
+
 ## [4.189.0] - 2026-10-31
 
 The rest of the line-by-line reading that could be finished safely: 48 more lessons and 8 quiz explanations follow their documents, and usage analytics now cover search, algorithm views and exports.

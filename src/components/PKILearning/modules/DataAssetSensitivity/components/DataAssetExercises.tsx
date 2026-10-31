@@ -73,7 +73,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Workshop',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        "The highest-urgency asset will typically be a Critical-sensitivity, 25+ year retention asset under CNSA 2.0 or NIS2 scope (composite score ≥ 85). Assets scoring below 33 (Low urgency) are typically short-lived communication channels with no active compliance mandate. For US Government & Defense organizations, CNSA 2.0's 2030 deadline is most constraining; for EU financial institutions, DORA's January 2025 enforcement date drives immediate crypto risk management documentation. Export your Priority Map as Markdown to share with your security team.",
+        "The highest-urgency asset will typically be a Critical-sensitivity, 25+ year retention asset under CNSA 2.0 or NIS2 scope (composite score ≥ 85). Assets scoring below 33 (Low urgency) are typically short-lived communication channels with no active compliance mandate. For US Government & Defense organizations, This module's reading is that CNSA 2.0's 2030 deadline for transitioning deployed software and firmware to CNSA 2.0-compliant signatures is most constraining; for EU financial institutions, DORA's January 2025 enforcement date drives immediate crypto risk management documentation. Export your Priority Map as Markdown to share with your security team.",
       config: { step: 0 },
     },
   ]

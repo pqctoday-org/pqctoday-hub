@@ -13,6 +13,12 @@ describe('analytics event parameters', () => {
     const analytics = await import('./analytics')
     const { usePersonaStore } = await import('@/store/usePersonaStore')
     const ga = (await import('react-ga4')).default
+    // react-ga4 is one shared instance that remembers it has started; forget that so every
+    // test sees the start-up commands it sends.
+    Object.assign(ga as unknown as Record<string, unknown>, {
+      isInitialized: false,
+      _hasLoadedGA: false,
+    })
     return { ga, usePersonaStore, ...analytics }
   }
 
@@ -142,43 +148,93 @@ describe('analytics event parameters', () => {
     expect(events()[0][0]).toBe('Library Download')
   })
 
-  describe('persona dimensions', () => {
-    const personaSets = () =>
-      calls
-        .filter((c) => c[0] === 'set' && typeof c[1] === 'object' && c[1] && 'persona' in c[1])
-        .map((c) => c[1] as Record<string, unknown>)
+  describe('persona parameters', () => {
+    const pageViews = () => calls.filter((c) => c[0] === 'event' && c[1] === 'page_view')
 
-    it('are set at start-up, with placeholders when no persona is chosen', async () => {
+    it('are left off until the visitor has picked a persona', async () => {
       const m = await load()
       m.initGA()
-      expect(personaSets()).toEqual([{ persona: 'none', experience_level: 'unknown' }])
+      calls.length = 0
+      m.logEvent('Library', 'Search', 'kyber')
+      m.logPageView('/library')
+      expect(events()[0][1]).not.toHaveProperty('persona')
+      expect(events()[0][1]).not.toHaveProperty('experience_level')
+      expect(pageViews()[0][2]).not.toHaveProperty('persona')
     })
 
-    it('follow the visitor when the persona changes, and only then', async () => {
+    it('ride on every event once a persona is chosen, without changing event names', async () => {
       const m = await load()
       m.initGA()
       m.usePersonaStore.setState({ selectedPersona: 'developer', experienceLevel: 'expert' })
-      m.usePersonaStore.setState({ hasSeenPersonaPicker: true }) // unrelated change
-      expect(personaSets()).toEqual([
-        { persona: 'none', experience_level: 'unknown' },
-        { persona: 'developer', experience_level: 'expert' },
+      calls.length = 0
+      m.logEvent('Library', 'Search', 'kyber')
+      m.logModuleStart('pqc-101')
+      expect(events()).toEqual([
+        [
+          'Search',
+          {
+            event_category: 'Library',
+            event_label: 'Kyber',
+            persona: 'developer',
+            experience_level: 'expert',
+          },
+        ],
+        [
+          'Module Start',
+          expect.objectContaining({
+            persona: 'developer',
+            experience_level: 'expert',
+            module_id: 'pqc-101',
+          }),
+        ],
       ])
     })
 
-    it('are not duplicated when initGA runs twice', async () => {
+    it('ride on page views too', async () => {
       const m = await load()
       m.initGA()
-      m.initGA()
       m.usePersonaStore.setState({ selectedPersona: 'executive', experienceLevel: 'curious' })
-      expect(personaSets().filter((s) => s.persona === 'executive')).toHaveLength(1)
+      calls.length = 0
+      m.logPageView('/library')
+      expect(pageViews()[0][2]).toMatchObject({
+        persona: 'executive',
+        experience_level: 'curious',
+        page_path: '/library',
+      })
+    })
+
+    it('say unknown when a persona is chosen but no experience level is', async () => {
+      const m = await load()
+      m.initGA()
+      m.usePersonaStore.setState({ selectedPersona: 'researcher', experienceLevel: null })
+      calls.length = 0
+      m.logEvent('Library', 'Search', 'kyber')
+      expect(events()[0][1]).toMatchObject({ persona: 'researcher', experience_level: 'unknown' })
+    })
+
+    it('follow a change of persona in the middle of a visit', async () => {
+      const m = await load()
+      m.initGA()
+      m.usePersonaStore.setState({ selectedPersona: 'developer', experienceLevel: 'basics' })
+      calls.length = 0
+      m.logEvent('Library', 'Search', 'a')
+      m.usePersonaStore.setState({ selectedPersona: 'executive' })
+      m.logEvent('Library', 'Search', 'b')
+      expect(events().map(([, p]) => p.persona)).toEqual(['developer', 'executive'])
+    })
+
+    it('are not sent through gtag set, which GA4 does not attach to events', async () => {
+      const m = await load()
+      m.initGA()
+      m.usePersonaStore.setState({ selectedPersona: 'developer', experienceLevel: 'expert' })
+      expect(
+        calls.filter((c) => c[0] === 'set' && typeof c[1] === 'object' && c[1] && 'persona' in c[1])
+      ).toEqual([])
     })
   })
 
   describe('internal traffic flag', () => {
-    const trafficSets = () =>
-      calls.filter(
-        (c) => c[0] === 'set' && typeof c[1] === 'object' && c[1] && 'traffic_type' in c[1]
-      )
+    const tagConfig = () => calls.find((c) => c[0] === 'config')?.[2] as Record<string, unknown>
     const stubSearch = (search: string) =>
       Object.defineProperty(window, 'location', {
         value: {
@@ -199,26 +255,26 @@ describe('analytics event parameters', () => {
     it('tags nothing for an ordinary visitor', async () => {
       const m = await load()
       m.initGA()
-      expect(trafficSets()).toEqual([])
+      expect(tagConfig()).toEqual({ send_page_view: false })
     })
 
-    it('?internal_traffic=on tags this and later visits until switched off', async () => {
+    it('?internal_traffic=on puts traffic_type in the tag configuration, for this and later visits, until off', async () => {
       stubSearch('?internal_traffic=on')
       let m = await load()
       m.initGA()
-      expect(trafficSets().map((c) => c[1])).toEqual([{ traffic_type: 'internal' }])
+      expect(tagConfig()).toMatchObject({ traffic_type: 'internal' })
 
       calls.length = 0
       stubSearch('')
       m = await load()
       m.initGA()
-      expect(trafficSets().map((c) => c[1])).toEqual([{ traffic_type: 'internal' }])
+      expect(tagConfig()).toMatchObject({ traffic_type: 'internal' })
 
       calls.length = 0
       stubSearch('?internal_traffic=off')
       m = await load()
       m.initGA()
-      expect(trafficSets()).toEqual([])
+      expect(tagConfig()).toEqual({ send_page_view: false })
     })
 
     it('never sends the flag in the page address', async () => {
@@ -226,7 +282,8 @@ describe('analytics event parameters', () => {
       const m = await load()
       m.initGA()
       m.logPageView('/')
-      expect(JSON.stringify(calls)).not.toContain('internal_traffic')
+      const sent = JSON.stringify(calls.filter((c) => c[0] === 'set'))
+      expect(sent).not.toContain('internal_traffic')
     })
   })
 

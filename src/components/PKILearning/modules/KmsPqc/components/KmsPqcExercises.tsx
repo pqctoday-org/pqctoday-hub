@@ -51,7 +51,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Encryption',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'RSA-OAEP wraps the DEK in one step (256 bytes). ML-KEM requires encapsulate → KDF → AES-KW wrap, producing 1,128 bytes total — a 4.4x increase. The extra complexity is inherent to the KEM paradigm.',
+        'RSA-OAEP wraps the DEK in one step. ML-KEM requires encapsulate → KDF → AES-KW wrap.',
       config: { step: 1 },
     },
     {

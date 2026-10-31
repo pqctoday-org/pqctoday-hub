@@ -192,7 +192,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
       },
       {
         layerName: 'Session key distribution',
-        mechanism: 'Session keys wrapped with AES Key Wrap (RFC 3394) under the Update Key',
+        mechanism: 'Session keys wrapped under the Update Key',
         threat: 'none',
         pqcPath: 'Prefer AES-256 key wrap for Grover margin',
         notes: 'Symmetric. The KAT panel below checks the RFC 3394 AES-256 wrap vector.',

@@ -20,7 +20,7 @@ The PQC Governance & Policy module teaches executives how to establish organizat
 The workshop has 3 interactive steps:
 
 1. **RACI Matrix Builder** — interactive 10×6 matrix with color-coded click-to-cycle cells (click cycles: empty → R → A → C → I → empty); includes validation warning for missing Accountable assignments, legend, export to Markdown, and save to learning portfolio as an executive document
-2. **Policy Template Generator** — select from 4 policy types, fill in organization-specific details, and generate compliance-aligned policy drafts; auto-populates applicable frameworks and deadlines from assessment data; includes FIPS 203/204/205/206 algorithms plus draft standards (HQC, FN-DSA)
+2. **Policy Template Generator** — select from 4 policy types, fill in organization-specific details, and generate compliance-aligned policy drafts; auto-populates applicable frameworks and deadlines from assessment data; includes FIPS 203/204/205 algorithms plus FN-DSA (FIPS 206, under development with no published draft) and HQC
 3. **KPI Dashboard Builder** — interactive scorecard with 6 weighted KPI dimensions; vendor readiness auto-scored from migration catalog data; exports as Markdown with data source documentation
 
 ## Related Standards

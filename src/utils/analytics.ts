@@ -45,62 +45,46 @@ function syncSafeLocation() {
   lastSafeLocation = location
 }
 
-// --- Persona dimensions ---
+// --- Cohort parameters ---
 //
-// persona and experience_level ride on every event (and page view) as their own GA4
-// parameters, so GA4 can split any report by cohort. They are set once and refreshed
-// when the visitor changes persona, instead of being repeated on each call site. Register
-// both as event-scoped custom dimensions in GA4 to report on them.
+// persona and experience_level go on every event and page view as their own GA4 parameters,
+// so GA4 can split any report by cohort (register both as event-scoped custom dimensions).
+// They are read when the event is sent, so a mid-visit persona change is picked up at once,
+// and they are left off until the visitor has picked a persona. They must travel with each
+// event: parameters given to gtag('set') or a later gtag('config') are not attached to events.
 
-let lastPersonaKey = ''
-
-function syncPersonaDimensions() {
+function personaParams(): EventParams {
   try {
     const { selectedPersona, experienceLevel } = usePersonaStore.getState()
-    const persona = selectedPersona ?? 'none'
-    const experience = experienceLevel ?? 'unknown'
-    const key = `${persona}|${experience}`
-    if (key === lastPersonaKey) return
-    lastPersonaKey = key
-    ReactGA.set({ persona, experience_level: experience })
+    return selectedPersona
+      ? { persona: selectedPersona, experience_level: experienceLevel ?? 'unknown' }
+      : {}
   } catch {
-    // Store may not be initialized yet — dimensions are simply absent until it is
+    // Store may not be initialized yet — the parameters are simply absent
+    return {}
   }
 }
 
 // --- Internal traffic ---
 //
 // The maintainer's own visits would otherwise count as audience. Opening the site once with
-// ?internal_traffic=on tags that browser's hits traffic_type=internal until ?internal_traffic=off;
-// GA4's internal-traffic data filter then keeps them out of reports. The query is only read
-// here, never sent (page addresses are sent without their query).
+// ?internal_traffic=on tags that browser traffic_type=internal until ?internal_traffic=off;
+// GA4's internal-traffic data filter then keeps it out of reports. The flag is given to GA at
+// start-up, as part of the tag's configuration, so it also covers the events GA4 sends by
+// itself (scroll, session start). The query is only read here, never sent (page addresses are
+// sent without their query).
 
 const INTERNAL_TRAFFIC_KEY = 'pqc-internal-traffic'
 
-function applyInternalTraffic() {
+function isInternalTraffic(): boolean {
   try {
     const flag = new URLSearchParams(window.location.search).get('internal_traffic')
     if (flag === 'on') window.localStorage.setItem(INTERNAL_TRAFFIC_KEY, '1')
     if (flag === 'off') window.localStorage.removeItem(INTERNAL_TRAFFIC_KEY)
-    if (window.localStorage.getItem(INTERNAL_TRAFFIC_KEY) === '1') {
-      ReactGA.set({ traffic_type: 'internal' })
-    }
+    return window.localStorage.getItem(INTERNAL_TRAFFIC_KEY) === '1'
   } catch {
     // Storage blocked (private mode) — the visit is simply counted
-  }
-}
-
-let stopPersonaDimensions: (() => void) | null = null
-
-function startPersonaDimensions() {
-  stopPersonaDimensions?.()
-  stopPersonaDimensions = null
-  lastPersonaKey = ''
-  syncPersonaDimensions()
-  try {
-    stopPersonaDimensions = usePersonaStore.subscribe(syncPersonaDimensions)
-  } catch {
-    // Store unavailable (tests, SSR) — nothing to follow
+    return false
   }
 }
 
@@ -113,10 +97,13 @@ export const initGA = () => {
     // Disable GA4's automatic page_view on init — AnalyticsTracker fires the
     // first (and every) pageview on route change, so letting GA4 also auto-send
     // one double-counts the landing page.
-    ReactGA.initialize(measurementId, { gtagOptions: { send_page_view: false } })
+    ReactGA.initialize(measurementId, {
+      gtagOptions: {
+        send_page_view: false,
+        ...(isInternalTraffic() ? { traffic_type: 'internal' } : {}),
+      },
+    })
     syncSafeLocation()
-    applyInternalTraffic()
-    startPersonaDimensions()
   } else {
     console.warn('[Analytics] Google Analytics Measurement ID is missing.')
   }
@@ -132,6 +119,7 @@ export const logPageView = (path?: string) => {
     ReactGA.send({
       hitType: 'pageview',
       page,
+      ...personaParams(),
     })
   }
 }
@@ -146,7 +134,9 @@ export type EventParams = Record<string, string | number | boolean | undefined>
  * keep the event, category and label names identical to the ones already in GA4.
  */
 function sendEvent(category: string, action: string, label?: string, params?: EventParams) {
-  const extra = Object.fromEntries(Object.entries(params ?? {}).filter(([, v]) => v !== undefined))
+  const extra = Object.fromEntries(
+    Object.entries({ ...personaParams(), ...params }).filter(([, v]) => v !== undefined)
+  )
   if (Object.keys(extra).length === 0) {
     ReactGA.event({ category, action, label })
     return

@@ -407,7 +407,7 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
     publicKeyBytes: 68,
     secretKeyBytes: 132,
     outputBytes: 2500,
-    sizeSource: 'RFC 8391 §4 (XMSS-SHA2_10_256: 68 B public key, 2,500 B signature)',
+    sizeSource: 'RFC 8391 (XMSS-SHA2_10_256: 2,500 B signature)',
     stateful: true,
     builds: {
       stack: {

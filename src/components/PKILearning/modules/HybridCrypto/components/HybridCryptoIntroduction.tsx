@@ -964,8 +964,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <span className="text-foreground font-bold shrink-0 w-20">Both</span>
                 <span className="text-muted-foreground">&rarr;</span>
                 <span>
-                  <strong>HKDF</strong>(ML-KEM_ss || X25519_ss) &rarr; handshake keys (RFC 10024
-                  §4.3)
+                  <strong>Shared secret</strong> = ML-KEM_ss || X25519_ss &rarr; 64 bytes (32 bytes
+                  each) (RFC 10024 §4.3)
                 </span>
               </div>
             </div>

@@ -586,7 +586,7 @@ const Step2ModelsEscalationKpis: React.FC = () => (
               },
               {
                 k: 'TNFL',
-                v: 'All production software/firmware signing uses NIST-approved quantum-resistant signatures by end of 2027; all CA signing keys PQC-capable by end of 2029.',
+                v: "This module's advice: All production software/firmware signing uses NIST-approved quantum-resistant signatures by end of 2027; all CA signing keys PQC-capable by end of 2029.",
               },
               {
                 k: 'Regulatory',

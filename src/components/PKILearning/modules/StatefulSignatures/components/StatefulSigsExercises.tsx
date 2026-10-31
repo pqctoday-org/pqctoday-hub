@@ -50,7 +50,7 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       badge: 'XMSS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'At the same tree height (H=10), XMSS and LMS produce comparably-sized signatures (the exact order depends on the Winternitz parameter). XMSS uses keyed hashing with per-node bitmasks, which gives it a stronger security proof against multi-target attacks.',
+        'At the same tree height (H=10), XMSS and LMS produce comparably-sized signatures (the exact order depends on the Winternitz parameter). In the current version of XMSS, the security analysis uses the random oracle only for randomized hashing and bitmasks, while LMS uses it to a greater degree.',
       config: { step: 1, paramId: 'xmss-sha2-10' },
     },
     {

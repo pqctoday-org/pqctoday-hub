@@ -142,18 +142,18 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
             All UEFI Signing Keys Are Quantum-Vulnerable
           </div>
           <p className="text-xs text-foreground/80">
-            Every RSA-2048 and ECDSA key in the UEFI Secure Boot hierarchy can be broken by a
-            Cryptographically Relevant Quantum Computer (CRQC) via Shor&apos;s algorithm. This is a
-            forgery risk (&ldquo;trust now, forge later&rdquo;), not a harvest-now-decrypt-later
-            one: a signature protects no secret, so nothing recorded today is exposed later. Once a
-            CRQC exists, anyone who holds a public key (the verifying keys are stored on every
-            device) could derive its private key and sign firmware that existing devices accept —
-            enabling undetectable firmware rootkits. How urgent that is depends on how long the
-            device and its trust anchors stay in the field. NSA&apos;s CNSA 2.0 FAQ (v2.2, p.13)
-            notes that in many firmware-signing cases the validation algorithm is not easily
-            updated, so firmware-signing algorithms are &ldquo;frequently locked in for the life of
-            a system&rdquo;. Harvest-now-decrypt-later applies to confidentiality, such as the TLS
-            key exchange that carries remote attestation, not to signatures.
+            In this module&apos;s reading, every RSA-2048 and ECDSA key in the UEFI Secure Boot
+            hierarchy can be broken by a Cryptographically Relevant Quantum Computer (CRQC) via
+            Shor&apos;s algorithm. This is a forgery risk (&ldquo;trust now, forge later&rdquo;),
+            not a harvest-now-decrypt-later one: a signature protects no secret, so nothing recorded
+            today is exposed later. Once a CRQC exists, anyone who holds a public key (the verifying
+            keys are stored on every device) could derive its private key and sign firmware that
+            existing devices accept — enabling undetectable firmware rootkits. How urgent that is
+            depends on how long the device and its trust anchors stay in the field. NSA&apos;s CNSA
+            2.0 FAQ (v2.2, p.13) notes that in many firmware-signing cases the validation algorithm
+            is not easily updated, so firmware-signing algorithms are &ldquo;frequently locked in
+            for the life of a system&rdquo;. Harvest-now-decrypt-later applies to confidentiality,
+            such as the TLS key exchange that carries remote attestation, not to signatures.
           </p>
         </div>
 
