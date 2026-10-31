@@ -162,7 +162,7 @@ export const RNG_COMPARISON = [
   {
     property: 'Validation criteria (FIPS 140-3)',
     trng: 'SP 800-90B: noise-source model, entropy estimate from raw data, health tests',
-    qrng: 'The same SP 800-90B requirements — no separate track for quantum sources',
+    qrng: 'The same SP 800-90B requirements',
   },
   {
     property: 'Example Entropy Validation Certificates',
