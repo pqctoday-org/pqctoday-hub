@@ -9,6 +9,7 @@ import {
   LOCAL_DATA_LEAVES_STATEMENT,
   PAGE_ADDRESS_STATEMENT,
   SEARCH_SCRUB_CLAUSE,
+  EXPORT_EVENTS_CLAUSE,
 } from '../analyticsStatement'
 
 export function DataPrivacySection() {
@@ -118,7 +119,7 @@ export function DataPrivacySection() {
                   <li>
                     <strong className="text-foreground">Feature interactions</strong> &mdash;
                     searches performed ({SEARCH_SCRUB_CLAUSE}), filters applied, algorithms and
-                    compliance items viewed.
+                    compliance items viewed, and files exported ({EXPORT_EVENTS_CLAUSE}).
                   </li>
                   <li>
                     <strong className="text-foreground">Your choices</strong> &mdash; the role,

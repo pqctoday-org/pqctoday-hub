@@ -15,6 +15,7 @@ import { MobileAboutView } from '@/components/Mobile/screens/MobileAboutView'
 import {
   ANALYTICS_DISCLOSURE,
   LOCAL_DATA_LEAVES_STATEMENT,
+  EXPORT_EVENTS_CLAUSE,
   PAGE_ADDRESS_STATEMENT,
   SEARCH_SCRUB_CLAUSE,
 } from './analyticsStatement'
@@ -26,6 +27,7 @@ const SHARED = {
   'the analytics disclosure': ANALYTICS_DISCLOSURE,
   'the page address statement': PAGE_ADDRESS_STATEMENT,
   'the search scrubbing clause': SEARCH_SCRUB_CLAUSE,
+  'the exported-files clause': EXPORT_EVENTS_CLAUSE,
   'the statement of when local data leaves the device': LOCAL_DATA_LEAVES_STATEMENT,
 }
 
