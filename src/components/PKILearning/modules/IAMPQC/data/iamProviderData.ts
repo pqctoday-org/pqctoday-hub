@@ -86,7 +86,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Cloud IAM / Directory',
     catalogName: 'Microsoft Entra ID',
     tokenSigning:
-      'Entra ID PQC hybrid token signing in preview 2025; ML-DSA-65 for ID tokens and access tokens',
+      "We found no published Microsoft date or design for post-quantum Entra ID token signing. Microsoft's quantum safe program roadmap names Microsoft Entra authentication among the first services to be protected.",
     mfaPqc:
       'Windows Hello PQC attestation planned for TPM 2.0+ devices; FIDO2 PQC authenticator support 2026',
     apiSecurity:
@@ -100,7 +100,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
       'DoD IL4/5',
     ],
     notes:
-      'SymCrypt (Microsoft crypto library) has full ML-KEM and ML-DSA support. Windows Server 2025 includes experimental PKINIT PQC. Entra conditional access PQC policies in public preview.',
+      "SymCrypt, Microsoft's primary cryptographic library across Windows, Azure and Microsoft 365, has integrated ML-KEM and ML-DSA. Microsoft's roadmap says they are available through CNG to Windows Insiders and Linux customers, with additional capabilities coming over the next five years.",
   },
   {
     id: 'ping-federate',
@@ -158,7 +158,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     category: 'Privileged Access Management',
     catalogName: 'CyberArk Conjur',
     tokenSigning:
-      'PAM session recording tokens — ML-DSA signing for tamper evidence in 2025 preview',
+      'PAM session recording tokens — tamper-evidence signing; we found no published CyberArk date for ML-DSA signing',
     mfaPqc:
       'CyberArk Identity MFA — FIDO2 PQC attestation planned; TOTP quantum-safe; PIV card support',
     apiSecurity:

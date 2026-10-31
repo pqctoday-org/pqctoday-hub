@@ -309,7 +309,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
               Ticket equivalent)
             </li>
             <li>
-              &bull; Windows Server 2025 experimental PKINIT PQC available; GA expected 2026-2027
+              &bull; We found no published Microsoft date for post-quantum PKINIT in Windows Server
             </li>
           </ul>
         </div>
