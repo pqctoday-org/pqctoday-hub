@@ -115,7 +115,6 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     apiSecurity: 'We found no published Ping Identity date for post-quantum TLS in PingAccess.',
     roadmapYear: null,
     certifications: ['FIPS 140-2 (select modules)', 'SOC 2 Type II', 'ISO 27001'],
-    notes: 'Ping Identity (acquired by Thoma Bravo in 2022) merged with ForgeRock in 2023.',
   },
   {
     id: 'forgerock',
@@ -164,7 +163,6 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     roadmapYear: null,
     certifications: [
       'FIPS 140-3 Level 1: CyberArk Cryptographic Module #5205 and CyberArk Cryptographic Module for Java #5122 (software modules; earlier certificates #4949, #4693, #4377 are Historical; CMVP, checked 2026-09-24)',
-      'Common Criteria: PAM v14 components certified against the NIAP Application Software PP v1.4 (NSCIB, 2024; PP-based, no EAL)',
       'SOC 2 Type II',
     ],
     notes: 'PAM vaults holding privileged credentials are critical HNDL targets.',
