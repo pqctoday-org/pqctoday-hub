@@ -649,7 +649,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
     },
     'certification-body': {
       orgs: ['CCRA (Common Criteria)'],
-      note: 'recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates',
+      note: 'Recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates',
     },
     'compliance-framework': {
       orgs: ['—'],

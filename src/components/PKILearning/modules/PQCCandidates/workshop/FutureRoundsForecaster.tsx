@@ -116,7 +116,7 @@ export const FutureRoundsForecaster: React.FC = () => {
           The KEM standardisation already shows the pattern: a primary winner (ML-KEM, lattice), an
           alternate added years later (HQC, code-based, March 2025), schemes kept in monitoring
           (Classic McEliece, FrodoKEM), and casualties of cryptanalysis (SIKE). Our expectation:
-          Expect the same shape for signatures.
+          signatures will show the same shape.
         </p>
         <div className="space-y-2">
           {KEM_HISTORY.map((entry) => (

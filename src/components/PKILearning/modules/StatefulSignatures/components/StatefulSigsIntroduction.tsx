@@ -407,7 +407,7 @@ const Step2LmsXmss: React.FC = () => (
                     <InlineTooltip term="Forward Secrecy">Forward Security</InlineTooltip>
                   </td>
                   <td className="py-2 pr-4 text-muted-foreground">No</td>
-                  <td className="py-2 text-muted-foreground"></td>
+                  <td className="py-2 text-muted-foreground">Not sourced in the Library</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4 font-medium text-foreground">Adoption</td>

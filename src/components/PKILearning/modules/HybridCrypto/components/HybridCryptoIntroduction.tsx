@@ -1414,11 +1414,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </div>
             {[
               ['1', 'EC commitment', 'k ← DRBG(sk_ec, msg),  R = k·G  (secp256k1 base point)'],
-              [
-                '2',
-                'Shared challenge',
-                'μ = H(tr ‖ R ‖ M)  then ML-DSA.Sign_mu(sk_ml, μ) yields (z, c̃, h)',
-              ],
+              ['2', 'Shared challenge', 'μ = H(tr ‖ R ‖ M), the input to ML-DSA.Sign_mu(sk_ml, μ)'],
               ['3', 'EC response', 's = (k + e·sk_ec) mod n   where e = μ[:32] as bigint'],
               [
                 '4',

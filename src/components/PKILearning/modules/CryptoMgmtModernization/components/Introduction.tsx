@@ -85,7 +85,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             />
             <StatCard
               label="Key Material — CNSA 2.0 deadlines"
-              value="2030 / 2033"
+              value="2030 / 2031"
               note="CNSSP 15 requires new NSS acquisitions to be CNSA 2.0-compliant from 1 Jan 2027, phases out equipment and services that cannot support CNSA 2.0 by 31 Dec 2030 unless excepted, and mandates CNSA 2.0 algorithms by 31 Dec 2031 unless otherwise noted (NSA CNSA 2.0 FAQ Ver. 2.2, October 2026). Earlier category dates remain historical context; use the current FAQ for planning."
             />
           </div>

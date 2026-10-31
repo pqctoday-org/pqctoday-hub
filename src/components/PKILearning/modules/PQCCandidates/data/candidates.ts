@@ -183,7 +183,7 @@ export const CANDIDATES: Candidate[] = [
       'Compact lattice signatures with integer-only arithmetic — eliminates the floating-point side-channel hazard that makes FN-DSA hard to deploy on constrained hardware.',
     status: 'withdrawn',
     caveats:
-      'Withdrawn by its submission team on 29 July 2026, after a new attack roughly halved the lattice-reduction block size needed to recover an equivalent private key .',
+      'Withdrawn by its submission team on 29 July 2026, after a new attack roughly halved the lattice-reduction block size needed to recover an equivalent private key.',
     referenceUrl: 'https://csrc.nist.gov/projects/pqc-dig-sig/round-3-additional-signatures',
   },
 ]
