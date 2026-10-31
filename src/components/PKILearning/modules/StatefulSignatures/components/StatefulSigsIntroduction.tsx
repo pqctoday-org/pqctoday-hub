@@ -547,7 +547,8 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
                   <td className="py-2 pr-4 font-medium text-foreground">Max signatures</td>
                   <td className="py-2 pr-4">Bounded by 2^H (plan ahead)</td>
                   <td className="py-2 text-success font-medium">
-                    At most 2^64 messages/key in the FIPS 205 §11 security analysis; no leaf counter
+                    FIPS 205 parameter sets meet their security categories when each key pair signs
+                    at most 2^64 messages; no leaf counter
                   </td>
                 </tr>
                 <tr className="border-b border-border/50">
