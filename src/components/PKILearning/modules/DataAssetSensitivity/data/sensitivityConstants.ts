@@ -704,7 +704,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'GDPR Art. 9',
         prescribedTier: 'high',
         reason:
-          'Health data is "special category" requiring explicit consent and state-of-the-art encryption.',
+          'Health data is a "special category" (Art. 9): processing is prohibited unless an exception such as explicit consent applies. Art. 32 separately requires security appropriate to the risk, "taking into account the state of the art", and names the encryption of personal data as an example.',
       },
       {
         framework: 'NIST SP 800-66',
@@ -804,7 +804,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     correctTier: 'high',
     governingFramework: 'CNSA 2.0',
     explanation:
-      'The most-restrictive-wins rule applies: CNSA 2.0 prescribes High for this key because, in this scenario, the firmware is used in National Security Systems, where CNSA 2.0 applies. Even though the firmware is open-source and the key is "only" signing public releases, the downstream impact on national security systems elevates the classification. A compromised signing key could inject malicious firmware into critical infrastructure.',
+      'The most-restrictive-wins rule applies: This module classes this key High because, in this scenario, the firmware is used in National Security Systems, where CNSA 2.0 applies. Even though the firmware is open-source and the key is "only" signing public releases, the downstream impact on national security systems elevates the classification. A compromised signing key could inject malicious firmware into critical infrastructure.',
     pqcImplication:
       'ML-DSA-87 (FIPS 204) for code signing — CNSA 2.0 specifies ML-DSA-87 for all classification levels, so ML-DSA-65 does not meet it. Hybrid with ECDSA P-384 if a classical signature is kept during transition (NSA does not require hybrid).',
   },
