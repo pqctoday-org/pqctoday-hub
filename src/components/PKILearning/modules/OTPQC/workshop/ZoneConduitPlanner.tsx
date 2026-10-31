@@ -321,10 +321,10 @@ export const ZoneConduitPlanner: React.FC<ZoneConduitPlannerProps> = ({
             authentication or an authenticating gateway, not with PQC.
           </p>
           <p>
-            SR 4.3 (IEC 62443-3-3) and CR 4.3 (IEC 62443-4-2), both titled &lsquo;Use of
-            cryptography&rsquo; and applying from SL 1, ask for cryptography that follows commonly
-            accepted (SR 4.3) or internationally recognized and proven (CR 4.3) security practice;
-            neither names an algorithm or PQC.
+            CR 4.3 (IEC 62443-4-2), &lsquo;Use of cryptography&rsquo;, asks for cryptographic
+            security mechanisms &ldquo;according to internationally recognized and proven security
+            practices and recommendations&rdquo; (as quoted by Siemens, September 2025); that
+            wording names no algorithm or PQC.
           </p>
         </div>
       </div>

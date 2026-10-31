@@ -182,7 +182,7 @@ export const OT_PROTOCOLS: OTProtocol[] = [
     description:
       'The dominant North American SCADA protocol for RTUs and outstations, over serial or TCP. SAv5 authenticates critical requests with a challenge-response MAC.',
     standardStatus:
-      'IEEE moved 1815-2012 to inactive status in 2023; the P1815 revision runs to 2027. "SAv6" has not been published.',
+      'IEEE SA lists IEEE 1815-2012 as an Inactive-Reserved standard (inactivated 30 March 2023) and lists a P1815 project that would supersede it. The documents we hold describe no revision named "SAv6".',
     cryptoLayers: [
       {
         layerName: 'Challenge-response authentication',

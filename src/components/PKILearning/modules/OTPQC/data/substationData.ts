@@ -259,7 +259,11 @@ export function planSubstation(profile: SubstationProfile): ZoneResult[] {
 
 // ---------------------------------------------------------------------------
 // Equipment lifecycles — single source for every lifecycle figure in the
-// module (E26).
+// module (E26). The lives below are this module's illustrative typical figures,
+// not values taken from a standard. For comparison, NIST SP 800-82 Rev. 3 says
+// the lifespan of an OT system can exceed 20 years, and the Applied Quantum PQC
+// Migration Framework (v2.1, June 2026) says OT systems (SCADA, PLCs, RTUs) often
+// have 15–25 year lifecycles.
 // ---------------------------------------------------------------------------
 
 export interface EquipmentLifecycle {
@@ -304,7 +308,7 @@ export const EQUIPMENT_LIFECYCLES: EquipmentLifecycle[] = [
     id: 'rail-signalling',
     name: 'Rail signalling / interlocking',
     typicalLifeYears: [25, 40],
-    note: 'Every crypto change touches a safety case.',
+    note: 'In many jurisdictions a crypto change goes through safety case recertification.',
   },
   {
     id: 'scada-server',
