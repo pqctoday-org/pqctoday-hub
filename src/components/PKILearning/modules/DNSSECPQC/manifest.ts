@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'dnssec-pqc',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-064',
   title: 'DNSSEC & Post-Quantum Signatures',
   description:
