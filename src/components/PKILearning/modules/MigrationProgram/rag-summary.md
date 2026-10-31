@@ -6,7 +6,7 @@ The Migration Program Management module teaches executives how to plan, execute,
 
 ## Key Concepts
 
-- **Phased Migration Model** — Discovery, Inventory, Prioritization, Planning, Pilot, Migration, Validation; a recommended phased approach to PQC transition (CISA / NIST NCCoE guidance)
+- **Phased Migration Model** — Discovery, Inventory, Prioritization, Planning, Pilot, Migration, Validation
 - **Migration Roadmap** — Gantt-style timeline with organizational milestones overlaid on external compliance deadlines (CNSA 2.0, NIST, EU/ANSSI); enables gap analysis between planned milestones and regulatory requirements
 - **Stakeholder Communication** — structured framework covering stakeholder mapping, audience-specific messaging (board/C-suite, technical leadership, development teams, external partners), reporting cadence, and escalation criteria
 - **KPI Tracking** — role-specific planning measures, with catalogue-derived vendor measures restricted to selected products. Progress, compliance closure and pace require organization-entered values. Missing values stay unscored; the combined worksheet score requires at least 70% of the weight of the KPIs that can be scored to have values; KPIs marked data unavailable are left out of that total. That display rule does not establish organizational readiness.
