@@ -439,15 +439,16 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <p className="text-xs text-muted-foreground mb-2">
               Many implantable and wearable medical devices operate on severely resource-constrained
               processors. A typical cardiac pacemaker uses an <strong>ARM Cortex-M0+</strong> with
-              only <strong>32 KB of RAM</strong> and a 48 MHz clock. ML-DSA-44, the smallest NIST
-              PQC signature algorithm, requires approximately 90 KB of RAM for signing &mdash;
-              nearly 3x the total available memory.
+              only <strong>32 KB of RAM</strong> and a 48 MHz clock. This module assumes that
+              ML-DSA-44, the smallest ML-DSA parameter set, needs more RAM than the whole 32 KB (a
+              planning assumption, not a measurement).
             </p>
             <p className="text-xs text-muted-foreground">
               For these constrained devices, <strong>hash-based signatures</strong> like LMS (H5/W8)
-              and XMSS (H10) are the only feasible PQC options, requiring only 4&ndash;5 KB of RAM
-              for verification. However, they are stateful &mdash; the device must track which
-              one-time keys have been used, adding complexity to firmware update mechanisms.
+              and XMSS (H10) are assumed here to be the only feasible PQC options, with verification
+              fitting in a few KB of RAM (also a planning assumption). However, they are stateful
+              &mdash; the device must track which one-time keys have been used, adding complexity to
+              firmware update mechanisms.
             </p>
           </div>
 
