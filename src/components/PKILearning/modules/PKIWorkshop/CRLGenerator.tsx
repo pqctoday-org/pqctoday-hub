@@ -243,7 +243,7 @@ authorityKeyIdentifier = keyid:always
           `                    requires GeneralizedTime (YYYYMMDDHHMMSSZ, 15 chars). This workshop\n` +
           `                    uses UTCTime with dates well within the 2049 boundary.\n\n` +
           `  crlnumber: ${crlNumberHex} (${crlNumberBase} decimal)\n` +
-          `    RFC 5280 §5.2.3: crlnumber (OID 2.5.29.20) must be monotonically increasing per issuance.\n` +
+          `    RFC 5280 §5.2.3: crlnumber is a non-critical CRL extension giving a monotonically increasing sequence number for a given CRL scope and CRL issuer.\n` +
           `    This workshop uses a random base — a real CA persists and increments this counter.\n\n`
       )
 
