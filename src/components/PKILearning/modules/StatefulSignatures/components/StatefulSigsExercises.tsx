@@ -61,7 +61,7 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       badge: 'Multi-Tree',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'XMSS^MT-SHA2_60/6 provides 2^60 signatures (over 10^18) by chaining 6 layers of 10-level trees. Keygen still finishes in seconds — the same as the 20/2 set — because only one tree per layer is built up front, not a single tree of height 60. That is the whole point of multi-tree, and it is suitable for long-lived timestamping authorities that sign millions of times per year.',
+        'XMSS^MT-SHA2_60/6 provides 2^60 signatures (over 10^18) by chaining 6 layers of 10-level trees. Increasing the number of layers reduces key generation time exponentially and signing time linearly, at the cost of a linear increase in signature size.',
       config: { step: 1, paramId: 'xmssmt-sha2-60-6' },
     },
     {
