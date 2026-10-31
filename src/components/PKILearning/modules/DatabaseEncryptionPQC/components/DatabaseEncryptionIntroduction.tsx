@@ -536,8 +536,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </p>
             <div className="mt-2 text-[10px] bg-background rounded p-2 border border-border font-mono text-muted-foreground">
               PQC Impact: HMAC-SHA-256 is quantum-safe. Range indexes use symmetric primitives
-              (quantum-safe). DEK wrapping upgrade path: RSA-OAEP → ML-KEM-1024 (MongoDB 8.x
-              roadmap).
+              (quantum-safe). DEK wrapping upgrade path: RSA-OAEP → ML-KEM-1024 (this module&apos;s
+              projection, not a MongoDB statement).
             </div>
           </div>
 
@@ -579,9 +579,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
         <p>
           Several regulatory frameworks require protection of sensitive data. GDPR Article 32(1)
           lists &ldquo;the state of the art&rdquo; among the factors for choosing appropriate
-          technical and organisational measures, and DORA&apos;s technical standard asks financial
-          entities to update cryptographic technology &ldquo;on the basis of developments in
-          cryptanalysis&rdquo;; neither names a post-quantum algorithm or a date.
+          technical and organisational measures, and DORA&apos;s technical standard requires
+          provisions for &ldquo;updating or changing, where necessary, the cryptographic technology
+          on the basis of developments in cryptanalysis&rdquo;; neither names a post-quantum
+          algorithm or a date.
         </p>
 
         <div className="space-y-3">
@@ -607,7 +608,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               requirement:
                 'Policy on encryption and cryptographic controls, including key management (RTS 2024/1774 Articles 6 and 7).',
               pqcNote:
-                'DORA applies from 17 January 2025. Its technical standard (2024/1774) requires a policy on encryption and cryptographic controls, with provisions for updating or changing the cryptographic technology on the basis of developments in cryptanalysis (Article 6), and key-lifecycle controls (Article 7). It names no algorithm and does not name HYOK; this module advises a PQC-capable HSM for financial databases as its own recommendation.',
+                'DORA applies from 17 January 2025. Its technical standard (2024/1774) requires a policy on encryption and cryptographic controls, with provisions for updating or changing, where necessary, the cryptographic technology on the basis of developments in cryptanalysis (Article 6), and key-lifecycle controls (Article 7). It names no algorithm and does not name HYOK; this module advises a PQC-capable HSM for financial databases as its own recommendation.',
               color: 'border-status-warning/30 bg-status-warning/5',
               labelColor: 'text-status-warning',
             },

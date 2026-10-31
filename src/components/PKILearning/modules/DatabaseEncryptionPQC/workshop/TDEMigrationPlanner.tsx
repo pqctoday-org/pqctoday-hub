@@ -30,9 +30,9 @@ const DB_NOTES: Record<string, { commandNote: string; reencrNote: string }> = {
       'SQL Server TDE re-encryption runs in background. Monitor progress via sys.dm_database_encryption_keys. EKM provider must support ML-KEM-1024 import.',
   },
   postgresql: {
-    commandNote: 'pg_tde REKEY (pg_tde 2.0+)',
+    commandNote: 'pg_tde REKEY',
     reencrNote:
-      'pg_tde 2.0 (Percona) will support KMIP key provider for ML-KEM master keys. Upstream PostgreSQL does not have native TDE — requires Percona build.',
+      'This module’s projection, not a Percona statement: a KMIP key provider for ML-KEM master keys. Upstream PostgreSQL does not have native TDE — requires Percona build.',
   },
   mongodb: {
     commandNote: 'db.adminCommand({ rotateMasterKey: 1 })',

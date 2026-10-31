@@ -127,7 +127,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     fipsValidated: true,
     migrationComplexity: 'high',
     notes:
-      'ALTER DATABASE ENCRYPTION KEY WITH ALGORITHM = AES_256 supports online rotation. Always Encrypted CMK uses RSA-2048/4096 — Azure KV ML-KEM upgrade path via key rotation.',
+      'ALTER DATABASE ENCRYPTION KEY WITH ALGORITHM = AES_256 supports online rotation. Always Encrypted CMK uses RSA-2048/4096. This module’s projection, not a Microsoft statement: an ML-KEM wrapper for the CMK via key rotation.',
   },
   {
     id: 'postgresql',
@@ -163,7 +163,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     fipsValidated: true,
     migrationComplexity: 'medium',
     notes:
-      'FLE 2.0 supports equality and range queries on encrypted fields. DEK wrapping uses RSA-OAEP — ML-KEM upgrade planned for key management endpoint. Atlas provides BYOK via AWS/Azure/GCP KMS.',
+      'FLE 2.0 supports equality and range queries on encrypted fields. DEK wrapping uses RSA-OAEP; ML-KEM wrapping for the key management endpoint is this module’s projection. Atlas provides BYOK via AWS/Azure/GCP KMS.',
   },
   {
     id: 'redis',
@@ -221,12 +221,13 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
   },
   {
     id: 'oracle-ai',
-    dbName: 'Oracle Database (projected future release)',
+    dbName: 'Oracle AI Database 26ai',
     vendor: 'Oracle',
     dbType: 'relational',
     encryptionLayers: ['tde', 'column', 'field', 'application'],
-    tdeMechanism: 'AES-256-GCM + ML-native encryption (experimental) — vector embedding protection',
-    columnEncryption: 'ML-native column encryption for AI vector data; TCE for standard columns',
+    tdeMechanism: 'In this module’s reading: AES-256-GCM TDE plus protection of vector embeddings',
+    columnEncryption:
+      'In this module’s reading: column encryption for AI vector data, TCE for standard columns',
     catalogName: 'Oracle AI Database 26ai',
     pqcTimeline:
       'Oracle AI Database 26ai supports ML-KEM and an ML-KEM and ECDHE hybrid for key-exchange secrets for TLS sessions (Oracle); ML-KEM-1024 wrapping of AI vector DEKs through Oracle Key Vault is this module’s projection, not an Oracle statement.',
@@ -235,7 +236,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     fipsValidated: false,
     migrationComplexity: 'very-high',
     notes:
-      'Vector/AI workload encryption on Oracle AI Database 26ai; the ML-native encryption of embedding data is this module’s description, and PQC integration of vector DEK wrapping through Oracle Key Vault HYOK is this module’s projection.',
+      'In this module’s reading, vector/AI workload data is encrypted like other workloads and belongs in the key-wrapping migration. This module’s projection, not an Oracle statement: ML-KEM-1024 wrapping of vector DEKs through Oracle Key Vault HYOK.',
   },
 ]
 
@@ -512,7 +513,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     limitations:
       'No queryable encryption. Not in upstream PostgreSQL (requires Percona or custom build). No HSM integration yet. Key provider API supports custom providers (KMIP planned).',
     pqcRoadmap:
-      'This module’s projection, not a Percona statement: a KMIP 3.0 key provider with ML-KEM support via Thales or AWS. The TDE layer (AES-256-XTS) is unchanged by it. No date is cited.',
+      'This module’s projection, not a Percona statement: a KMIP 3.0 key provider with ML-KEM support via Thales or AWS. In this module’s reading, the TDE layer is unchanged by it. No date is cited.',
   },
 ]
 
@@ -524,7 +525,7 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     framework: 'GDPR Art. 32',
     requirement:
       'Appropriate technical measures including encryption for personal data at rest and in transit.',
-    cryptoStandard: 'AES-256, TLS 1.3 (currently).',
+    cryptoStandard: 'Article 32 names no algorithm.',
     deadlineNote:
       'Ongoing — GDPR Article 32(1) lists “the state of the art” among the factors for appropriate measures; it names no algorithm and no date.',
     pqcImplication:
@@ -547,7 +548,7 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     requirement:
       'Financial entities must have a policy on encryption and cryptographic controls, including cryptographic key management (RTS 2024/1774 Articles 6 and 7).',
     cryptoStandard:
-      'The RTS names no algorithm; it requires provisions for updating or changing the cryptographic technology on the basis of developments in cryptanalysis.',
+      'The RTS names no algorithm; its Article 6 requires the policy to include provisions for updating or changing, where necessary, the cryptographic technology on the basis of developments in cryptanalysis.',
     deadlineNote: 'DORA applies from 17 January 2025.',
     pqcImplication:
       'The RTS does not name HYOK. This module advises a PQC-capable HSM for financial databases holding customer PII and transaction records, as its own recommendation.',

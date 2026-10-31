@@ -22,7 +22,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
 
-3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
+3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF; this is this module's design, since FIPS 203 says the shared secret can be used directly as a key in symmetric-key cryptography), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
 
 4. **Online Re-Encryption** — Oracle: `ALTER TABLESPACE REKEY`. SQL Server: `ALTER DATABASE ENCRYPTION KEY REGENERATE WITH ALGORITHM = AES_256`. MongoDB: `db.adminCommand({ rotateMasterKey: 1 })`. All support online migration with zero application downtime.
 
@@ -64,12 +64,12 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 | Scheme                      | Equality | Range   | Prefix | PQC Ready                 |
 | --------------------------- | -------- | ------- | ------ | ------------------------- |
-| MongoDB FLE 2.0             | ✓        | ✓       | ✓      | Planned 2026              |
-| SQL Server Always Encrypted | ✓        | Enclave | ✗      | Planned 2026              |
-| Oracle CSQE                 | ✓        | ✗       | ✗      | Planned                   |
+| MongoDB FLE 2.0             | ✓        | ✓       | ✓      | No date cited             |
+| SQL Server Always Encrypted | ✓        | Enclave | ✗      | No date cited             |
+| Oracle CSQE                 | ✓        | ✗       | ✗      | No date cited             |
 | pg_tde (Percona)            | ✗        | ✗       | ✗      | Not applicable (TDE only) |
 
-**MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries. DEK wrapping uses RSA-OAEP — ML-KEM-1024 upgrade planned in MongoDB 8.x (2026).
+**MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries. DEK wrapping uses RSA-OAEP — ML-KEM-1024 wrapping is this module's projection, not a MongoDB statement.
 
 **SQL Server Always Encrypted** with secure enclaves (VBS/SGX) supports range queries inside the enclave. CMK wrapping uses RSA-OAEP (RSA-2048/4096).
 
@@ -94,7 +94,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 ### DORA Art. 9 (Digital Operational Resilience Act)
 
 - Applies from 17 January 2025 to EU financial entities
-- RTS 2024/1774 Article 6: a policy on encryption and cryptographic controls, with provisions for updating or changing the cryptographic technology on the basis of developments in cryptanalysis; Article 7: key-lifecycle controls
+- RTS 2024/1774 Article 6: a policy on encryption and cryptographic controls, with provisions for updating or changing, where necessary, the cryptographic technology on the basis of developments in cryptanalysis; Article 7: key-lifecycle controls
 - The RTS names no algorithm and does not name HYOK; a PQC-capable HSM for financial databases is this module's recommendation
 
 ### PCI DSS v4 Req. 3.5
