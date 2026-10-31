@@ -12,4 +12,4 @@ A listing on the Modules In Process list (voluntary, and not every module in rev
 
 ### What's Happening
 
-As of 24 September 2026, the FIPS 140-3 standard itself is unchanged, while a US executive order directs NIST to speed up its validation process by about 19 December 2026.
+A US executive order directs the Secretary of Commerce, through NIST's Director, to revise the module validation program's processes within 180 days of the order's date, insofar as appropriate and consistent with applicable law, so that validations of cryptographic modules are accelerated.
