@@ -593,7 +593,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     explanation:
       'Classified national security data with indefinite retention is the canonical Critical case. Even if encrypted today, adversaries recording this traffic will decrypt it post-CRQC. Operational intelligence from decades ago can still compromise ongoing missions, personnel, and national security. CNSA 2.0 mandates immediate PQC migration for this class.',
     hndlImplication:
-      'HNDL risk year ≈ 1984 (indefinite retention). All historical intercepts are at risk the moment CRQC arrives.',
+      'All historical intercepts are at risk the moment CRQC arrives.',
     commonMistake:
       'No common mistake — this is unambiguously Critical. The exercise point is understanding why indefinite retention triggers the worst HNDL exposure.',
     relevantFrameworks: ['CNSA-2.0', 'NIST-SP-800-53', 'FIPS-140-3'],
