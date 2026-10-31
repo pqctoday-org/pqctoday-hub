@@ -23,7 +23,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     ],
     limitations: [
       "Current ECDSA P-256 signature vulnerable to Shor's algorithm",
-      'PQC ML-DSA signatures ~52× larger than ECDSA (3.3KB vs 64B)',
+      'PQC ML-DSA signatures are much larger than ECDSA P-256 (2,420 B for ML-DSA-44, 3,309 B for ML-DSA-65, 4,627 B for ML-DSA-87, vs 64 B)',
       'Rekor log must be migrated to ML-DSA before keyless signing is quantum-safe',
       'Verification tooling must be updated to handle larger signature blobs',
     ],
