@@ -49,7 +49,7 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       badge: 'TLS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'RHEL requires update-crypto-policies --set FUTURE (experimental, disables TLS 1.2). Ubuntu only needs a Groups= line in openssl.cnf — no TLS 1.2 disruption. Windows Server 2025 has begun shipping X25519MLKEM768 support through its 2025-2026 servicing updates (verify the exact build/KB and whether it is on by default in your image).',
+        'Windows Server 2025 has begun shipping X25519MLKEM768 support through its 2025-2026 servicing updates (verify the exact build/KB and whether it is on by default in your image).',
       config: { step: 1 },
     },
     {

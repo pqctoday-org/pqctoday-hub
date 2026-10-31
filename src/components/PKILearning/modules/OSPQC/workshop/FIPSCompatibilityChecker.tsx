@@ -26,7 +26,6 @@ const FIPS_PLATFORMS: FIPSPlatform[] = [
     fipsStatus: 'fips-140-3',
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
-    fipsCertDate: 'RHEL 9: FIPS 140-3 validated (OpenSSL 3.0.7, see CMVP for current cert)',
     pqcFipsCertTarget:
       'RHEL 10: a FIPS module that includes ML-KEM and ML-DSA is an expectation in this lesson; no validation date is cited',
     hybridStrategy:
@@ -66,7 +65,7 @@ openssl speed ml-kem-768
     fipsStatus: 'fips-140-3',
     mlKemInFips: 'no',
     mlDsaInFips: 'no',
-    fipsCertDate: 'Ubuntu 22.04: FIPS 140-3 validated (OpenSSL 3.0.2, see CMVP for current cert)',
+    fipsCertDate: '',
     pqcFipsCertTarget:
       'Ubuntu 26.04 LTS: a FIPS module that includes PQC is an expectation in this lesson; no validation date is cited',
     hybridStrategy:
@@ -145,7 +144,7 @@ Get-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion" 
     hybridStrategy:
       'This lesson cites no FreeBSD FIPS module, so it treats FIPS as not constraining here. Use security/oqsprovider port for ML-KEM and ML-DSA. No hybrid strategy needed — PQC and classical algorithms can coexist freely.',
     notes:
-      'This lesson cites no CMVP certificate for a FreeBSD crypto module, so it assumes no FIPS compatibility constraint on ML-KEM/ML-DSA deployment here; check the CMVP validated modules list for the current position. Install security/oqsprovider from ports for full PQC support.',
+      'This lesson cites no CMVP certificate for a FreeBSD crypto module, so it assumes no FIPS compatibility constraint on ML-KEM/ML-DSA deployment here; check the CMVP validated modules list for the current position.',
     commands: `# Install PQC support on FreeBSD:
 pkg install openssl-quic oqsprovider
 
