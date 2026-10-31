@@ -223,9 +223,9 @@ export const MLDSA44_BOARD_COMPARE = {
 // ── Dataset 3: ISA effects measured on our boards ───────────────────────────
 export const ISA_EFFECTS = {
   sha256VsSha512: {
-    note: 'Digest throughput at 16 KiB through the PKCS#11 engine on the boards, 2026-09-26. Cortex-A5x has SHA-256 instructions but not SHA-512 ones, so the usual software ordering inverts.',
-    sha256MBps: '396–470',
-    sha512MBps: '136–143',
+    note: 'Digest throughput at 16 KiB through the PKCS#11 engine on the i.MX 95, i.MX 95 Pro and KV260 boards, 2026-09-26. Cortex-A5x has SHA-256 instructions but not SHA-512 ones, so the usual software ordering inverts.',
+    sha256MBps: '357.5–470.1',
+    sha512MBps: '121.6–142.7',
   },
   shakeVsSha256OnA55: {
     note: 'Direct probe on the i.MX 95 Cortex-A55, 2026-09-15. No SHA-3 instructions => all Keccak is software.',

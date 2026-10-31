@@ -76,8 +76,9 @@ const ScalarVisual: React.FC = () => (
       </text>
     </svg>
     <Caption>
-      The reference code in FIPS 204/205 is written this way: portable, correct, and the baseline
-      every other model is compared with.
+      The pseudocode in FIPS 204/205 is written this way, one step after another. Both standards
+      permit any mathematically equivalent procedure, so implementations can compute the same result
+      differently.
     </Caption>
   </div>
 )
@@ -227,11 +228,11 @@ const IsaVisual: React.FC = () => {
         </text>
         <rect x={20} y={135} width={470} height={18} rx={3} className="fill-secondary/40" />
         <text x={26} y={148} className="fill-foreground text-[10px]">
-          SHA-256 — core HAS the instruction — 396–470 MB/s
+          SHA-256 — core HAS the instruction — 357.5–470.1 MB/s
         </text>
         <rect x={20} y={160} width={150} height={18} rx={3} className="fill-muted-foreground/30" />
         <text x={176} y={173} className="fill-foreground text-[10px]">
-          SHA-512 — no instruction on A53/A55 — 136–143 MB/s
+          SHA-512 — no instruction on A53/A55 — 121.6–142.7 MB/s
         </text>
         <text x={20} y={198} className="fill-muted-foreground text-[9px]">
           In pure software SHA-512 is usually the faster of the two on a 64-bit core; the dedicated

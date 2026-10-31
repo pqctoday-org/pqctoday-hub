@@ -40,7 +40,7 @@ export const MODELS: AccelModel[] = [
       analogy:
         'One cook, one pan. Every onion is chopped one at a time, by hand, in order. It always works and it runs on any kitchen, but the speed is set by how fast one pair of hands can go.',
       whatsDifferent:
-        'This is what every other model is measured against. Every PQC algorithm runs this way first — the reference implementations in the NIST standards are scalar code.',
+        'This is what this module measures every other model against. The pseudocode in FIPS 204 and FIPS 205 is written as one step after another, and both standards permit any mathematically equivalent procedure.',
       catch:
         'A post-quantum signature is thousands to millions of small, repetitive steps. Doing them one at a time wastes most of what a modern chip can do in parallel.',
     },
@@ -134,7 +134,8 @@ export const MODELS: AccelModel[] = [
         'The truck ride (moving data between CPU and fabric) is often longer than the work itself. If the CPU still has to do half of each operation, the gain is capped — which is what happened with our ML-DSA.',
     },
     fit: { mldsa: 'weak', slhdsa: 'strong', singleOp: 'partial', batch: 'strong' },
-    ourEvidence: 'KV260: ML-DSA-65 +29% only; SLH-DSA-SHAKE-128s sign 12.3 s → 69 ms.',
+    ourEvidence:
+      'KV260: ML-DSA-65 +29% only; SLH-DSA-SHAKE-128s sign 2.12 s on the CPU → 69 ms on the FPGA.',
     colorClass: 'text-status-success',
     borderClass: 'border-success/40',
     bgClass: 'bg-success/10',

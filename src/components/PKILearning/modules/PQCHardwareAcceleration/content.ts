@@ -48,7 +48,7 @@ export const content: ModuleContent = {
     sha3_256RateCapacity: '1,088 / 512 bits',
     shake128RateCapacity: '1,344 / 256 bits',
     kv260MldsaFpgaGain: '+29.2% (404.45 → 522.50 sign/s, ML-DSA-65)',
-    kv260SlhShake128sSign: '12.3 s shipped software → 69.0 ms FPGA',
+    kv260SlhShake128sSign: '2.12 s on the KV260 CPU (new engine) → 69.0 ms on the FPGA',
     kv260Luts: '117,120',
     hashsigClock: '240 MHz (250 MHz missed by 0.010 ns)',
     cupqcHardware:
