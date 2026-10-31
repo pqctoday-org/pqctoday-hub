@@ -261,7 +261,7 @@ function TreeKEMNodeStep({ hsm }: { hsm: UseHSMResult }) {
     <StepCard
       index={2}
       title="TreeKEM node update — ML-KEM-768 HPKE"
-      subtitle="When a member commits, they HPKE-encapsulate a fresh path_secret for every ancestor node. Receivers recover the shared secret via decapsulation. Wrong keys get a distinct implicit-rejection value (RFC 9180 §6.1)."
+      subtitle="When a member commits, it sends an UpdatePath with encrypted path secrets for the nodes in the filtered direct path of its leaf. ML-KEM decapsulation with a wrong key returns an implicit-rejection value (FIPS 203)."
       result={result}
       onRun={handleRun}
     />
