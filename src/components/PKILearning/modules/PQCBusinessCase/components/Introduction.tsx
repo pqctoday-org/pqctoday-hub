@@ -234,7 +234,10 @@ const Step1WhyConceptsCosts: React.FC = () => (
             <ul className="text-xs text-muted-foreground space-y-1 flex-grow">
               <li>&bull; Regulatory fines (GDPR, HIPAA, PCI DSS)</li>
               <li>&bull; Government contract eligibility (CMMC, FedRAMP)</li>
-              <li>&bull; Industry mandate deadlines (CNSA 2.0, ANSSI)</li>
+              <li>
+                &bull; Mandate dates (CNSA 2.0, ANSSI), whose legal status and applicability vary by
+                jurisdiction and sector
+              </li>
               <li>&bull; Audit and remediation costs</li>
             </ul>
           </div>
