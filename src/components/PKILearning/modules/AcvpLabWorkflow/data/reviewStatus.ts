@@ -2,7 +2,7 @@
 import { MODULE_LAST_REVIEWED } from '@/data/moduleContentRegistry'
 import {
   NOT_LAB_REVIEWED,
-  OWNER_SIGNOFF_DATE_LABEL,
+  AWAITING_RESIGNOFF_NOTICE,
   longDate,
 } from '@/components/PKILearning/common/moduleReviewStatus'
 
@@ -25,6 +25,6 @@ export const REVIEW_STATUS = {
   state: reviewed ? 'owner-signed-off' : 'awaiting-re-sign-off',
   label: reviewed
     ? `Reviewed and signed off by the PQC Today owner on ${longDate(reviewed)}`
-    : `Corrected since the PQC Today owner's sign-off on ${OWNER_SIGNOFF_DATE_LABEL}; awaiting re-sign-off`,
+    : AWAITING_RESIGNOFF_NOTICE,
   detail: `${NOT_LAB_REVIEWED} It is not a laboratory training resource and not a substitute for an accredited testing laboratory. Every factual statement cites its primary source; where the Hub Library does not carry a source yet, the citation links the source directly.`,
 } as const

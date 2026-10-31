@@ -2,7 +2,7 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-071) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_ (via LM-067). It covers PCI PTS HSM with the payment operating stack (PIN Security, P2PE, KMO): what a device approval proves, how to read one, and what adding post-quantum cryptography means for a payment HSM. FIPS 140-3 and the CMVP are covered in LM-067 _FIPS 140-3 Certification_. Version 1 is labelled "Practitioner orientation — not laboratory training." Corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. Facts are as of 30 October 2026.
+This advanced Hardware Infrastructure module (LM-071) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_ (via LM-067). It covers PCI PTS HSM with the payment operating stack (PIN Security, P2PE, KMO): what a device approval proves, how to read one, and what adding post-quantum cryptography means for a payment HSM. FIPS 140-3 and the CMVP are covered in LM-067 _FIPS 140-3 Certification_. Version 1 is labelled "Practitioner orientation — not laboratory training." Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. Facts are as of 30 October 2026.
 
 This lesson covers four PCI programmes: PTS HSM, PIN Security, P2PE and key management operations. It does not cover PTS POI, card production and provisioning, 3-D Secure, or MPoC and CPoC.
 

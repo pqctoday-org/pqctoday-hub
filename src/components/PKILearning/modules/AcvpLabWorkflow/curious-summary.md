@@ -12,4 +12,4 @@ Every test result is evidence only for the exact test, settings, software build 
 
 ### What's Happening
 
-Facts in this module were corrected after the PQC Today owner's sign-off on 22 October 2026, and it awaits re-sign-off. No accredited laboratory or certification body has reviewed it. It explains how laboratory testing works; it is not laboratory training material.
+Facts in this module were corrected after the PQC Today owner's last sign-off, and it awaits re-sign-off. No accredited laboratory or certification body has reviewed it. It explains how laboratory testing works; it is not laboratory training material.

@@ -81,7 +81,7 @@ describe('CryptoProductCertification render parity', () => {
     // The owner's sign-off and the absence of a laboratory or certification-body review are both
     // stated, in the words every certification module uses (common/moduleReviewStatus.ts).
     expect(notes[0]).toHaveTextContent(
-      "Corrected since the PQC Today owner's sign-off on 22 October 2026; awaiting re-sign-off."
+      "Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off."
     )
     expect(notes[0]).toHaveTextContent(NOT_LAB_REVIEWED)
   })

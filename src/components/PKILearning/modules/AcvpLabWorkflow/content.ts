@@ -13,7 +13,7 @@
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
-import { OWNER_SIGNOFF_DATE_LABEL } from '@/components/PKILearning/common/moduleReviewStatus'
+import { AWAITING_RESIGNOFF_NOTICE } from '@/components/PKILearning/common/moduleReviewStatus'
 
 export const content: ModuleContent = {
   moduleId: 'acvp-lab-workflow',
@@ -55,7 +55,7 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    reviewStatus: `Corrected since the PQC Today owner's sign-off on ${OWNER_SIGNOFF_DATE_LABEL}; awaiting re-sign-off`,
+    reviewStatus: AWAITING_RESIGNOFF_NOTICE,
     acvpSpecRevision:
       'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',
