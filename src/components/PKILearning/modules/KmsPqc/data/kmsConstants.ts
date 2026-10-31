@@ -396,7 +396,7 @@ export const ENTERPRISE_SCENARIO = {
       name: 'Google Cloud KMS',
       rotationFeature: 'Key versioning with scheduled rotation',
       pqcCapability:
-        'ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing offered; software protection level only (launch stage: Google\'s 28 Jul 2026 post announces general availability of ML-KEM key encapsulation and does not name X-Wing; Google\'s release notes list the KEMs, X-Wing included, as Preview from 23 Sep 2025; checked 30 Oct 2026)',
+        "ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing offered; software protection level only (launch stage: Google's 28 Jul 2026 post announces general availability of ML-KEM key encapsulation and does not name X-Wing; Google's release notes list the KEMs, X-Wing included, as Preview from 23 Sep 2025; checked 30 Oct 2026)",
     },
     {
       id: 'azure-kv',

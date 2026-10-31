@@ -35,8 +35,8 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
             </h2>
             <p className="mt-2 text-muted-foreground">
               The Messaging Layer Security protocol (RFC 9420) provides asynchronous group key
-              establishment with forward secrecy and post-compromise security for groups from two
-              to thousands. Our
+              establishment with forward secrecy and post-compromise security for groups from two to
+              thousands. Our
               <span className="text-primary"> openmls_pqctoday_crypto</span> Rust provider wires the
               OpenMLS reference implementation to PKCS#11 v3.2 so signature keys live in an HSM and
               HPKE runs end-to-end inside the token.
