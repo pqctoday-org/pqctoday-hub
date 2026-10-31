@@ -114,7 +114,7 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
               </p>
             </div>
             <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-              <div className="text-xs font-bold text-primary mb-2">DPI Complexity</div>
+              <div className="text-xs font-bold text-primary mb-2">Chain size vs RSA</div>
               <div className="text-2xl font-bold text-primary mb-1">4.5x</div>
               <p className="text-xs text-muted-foreground">
                 In an IETF C509 draft example, a two-certificate ML-DSA-65 TLS chain is 11,869 bytes
@@ -360,7 +360,9 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
                         ? 'GA'
                         : vendor.pqcReadiness === 'beta'
                           ? 'Beta'
-                          : 'Roadmap'}
+                          : vendor.pqcReadiness === 'not-planned'
+                            ? 'None today'
+                            : 'Roadmap'}
                     </span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded border font-bold bg-muted text-muted-foreground border-border">
                       {vendor.roadmapYear ?? 'Not stated'}

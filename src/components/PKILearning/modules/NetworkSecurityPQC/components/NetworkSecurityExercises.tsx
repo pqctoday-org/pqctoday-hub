@@ -73,7 +73,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badge: 'Vendor Matrix',
       badgeColor: 'bg-destructive/20 text-status-error border-destructive/50',
       observe:
-        'Vendor support varies widely and moves fast. The Cisco Secure Firewall roadmap blog (13 April 2026) targets ML-KEM support for late 2026 and ML-DSA for the second half of 2027, Sophos SFOS 22.0 MR2 detects and controls ML-KEM key exchange, and open-source OPNsense offers hybrid ML-KEM IPsec key exchanges from release 26.7.4. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
+        'Vendor support varies widely and moves fast. The Cisco Secure Firewall roadmap blog (13 April 2026) targets ML-KEM support for late 2026 and ML-DSA for the second half of 2027, Sophos SFOS 22.0 MR2 detects and controls ML-KEM key exchange, and the OPNsense 26.7.4 release notes (15 September 2026) add some hybrid post-quantum variants as additional IPsec key exchange. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
       config: { step: 3 },
     },
     {

@@ -185,7 +185,7 @@ export const NGFW_VENDORS: NGFWVendor[] = [
     hybridSupport: false,
     hardwareOffload: false,
     notes:
-      'The product catalog on this site (last verified 18 August 2026; latest SonicOS 8.2.2) says SonicOS firewall cryptography contains no post-quantum support today, and that the IPsec VPN documentation for SonicOS 7.0, 7.1 and 8.0 lists only classical algorithms. Current SonicOS firmware lacks ML-KEM/ML-DSA support.',
+      'The product catalog on this site (last verified 18 August 2026; latest SonicOS 8.2.2) says SonicOS firewall cryptography contains no post-quantum support today, and that the IPsec VPN documentation for SonicOS 7.0, 7.1 and 8.0 lists only classical algorithms.',
   },
   {
     id: 'pfsense-opnsense',

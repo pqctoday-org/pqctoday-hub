@@ -63,7 +63,7 @@ export const PQC_STATUS_LABELS: Record<PQCStatusKey | 'not-supported' | 'not-sta
       color: 'text-status-warning',
     },
     'not-planned': {
-      label: 'Not Planned',
+      label: 'None today',
       className: 'bg-destructive/10 text-status-error border-destructive/30',
       color: 'text-status-error',
     },
