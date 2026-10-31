@@ -94,7 +94,7 @@ export const content: ModuleContent = {
     {
       // Matches ENTERPRISE_SCENARIO.complianceDeadlines' "CNSA 2.0 (NSA)" row,
       // rendered in both KmsPqcIntroduction and KmsRotationPlanner.
-      label: 'CNSA 2.0 new NSS acquisitions & OS support required',
+      label: 'CNSA 2.0 required in new NSS acquisitions',
       year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0',
     },

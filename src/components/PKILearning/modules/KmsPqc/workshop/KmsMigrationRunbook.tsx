@@ -38,8 +38,8 @@ function generateConfig(selections: Record<string, string>): string {
     if (operation === 'create-key') {
       return [
         '# AWS KMS — Create an ML-DSA signing key (GA since June 2025)',
-        '# AWS KMS has no ML-KEM keys; ML-KEM is used only in hybrid TLS to the endpoint,',
-        '# which you enable in the client (e.g. AWS CRT HTTP client, postQuantumTlsEnabled).',
+        '# AWS KMS also offers ML-KEM key specs (ML_KEM_512, ML_KEM_768, ML_KEM_1024) and hybrid TLS',
+        '# to the endpoint, which you enable in the client (e.g. AWS CRT HTTP client, postQuantumTlsEnabled).',
         'aws kms create-key \\',
         '  --key-spec ML_DSA_65 \\',
         '  --key-usage SIGN_VERIFY',
@@ -109,7 +109,7 @@ function generateConfig(selections: Record<string, string>): string {
         '  --purpose=asymmetric-signing \\',
         '  --default-algorithm=pq-sign-ml-dsa-65',
         '',
-        '# ML-KEM key for key encapsulation (Preview; SOFTWARE protection level)',
+        '# ML-KEM key for key encapsulation (SOFTWARE protection level)',
         'gcloud kms keys create <kem-key-name> \\',
         '  --keyring=<ring> \\',
         '  --location=global \\',

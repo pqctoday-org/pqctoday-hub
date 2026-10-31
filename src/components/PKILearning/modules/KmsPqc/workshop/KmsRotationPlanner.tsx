@@ -95,7 +95,7 @@ export const KmsRotationPlanner: React.FC = () => {
           },
           { name: 'Identify 400 quantum-vulnerable certificates (RSA + ECDSA)', status: 'done' },
           {
-            name: 'Map KMS provider PQC capabilities (AWS: ML-DSA GA; GCP: signing GA, KEMs Preview; Azure: planned)',
+            name: 'Map KMS provider PQC capabilities (AWS: ML-DSA GA; GCP: signing GA, KEMs at the software level; Azure: planned)',
             status: 'in-progress',
           },
           { name: 'Map compliance deadlines (CNSA 2.0: 2027, NIST: 2030)', status: 'in-progress' },
@@ -111,7 +111,7 @@ export const KmsRotationPlanner: React.FC = () => {
           { name: 'Issue hybrid TLS certificates (300 servers)', status: 'pending' },
           { name: 'Enable ML-KEM hybrid TLS for AWS KMS API transit', status: 'pending' },
           {
-            name: 'Configure GCP Cloud KMS X-Wing key-encapsulation keys (Preview)',
+            name: 'Configure GCP Cloud KMS X-Wing key-encapsulation keys (software level)',
             status: 'pending',
           },
           { name: 'Generate ML-DSA-65 code signing keys (50 keys)', status: 'pending' },
@@ -431,9 +431,7 @@ export const KmsRotationPlanner: React.FC = () => {
             <p className="text-xs text-foreground/80">
               <strong>KMIP Cross-Provider Rotation:</strong> For enterprises using multiple KMS
               providers, KMIP (Key Management Interoperability Protocol) enables centralized
-              rotation scheduling. Thales CipherTrust and HashiCorp Vault both support KMIP server
-              mode, allowing a single rotation policy to propagate across AWS, GCP, and Azure
-              through a unified control plane.
+              rotation scheduling.
             </p>
           </div>
         </div>
