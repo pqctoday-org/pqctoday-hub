@@ -126,11 +126,10 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            CDN and load balancer operators manage certificates at enormous scale. Cloudflare
-            manages over 50 million certificates across 300+ edge PoPs. AWS ALB handles per-listener
-            certificate binding. Migrating these certificates from classical algorithms (RSA-2048,
-            ECDSA P-256) to <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> requires careful
-            operational planning.
+            CDN and load balancer operators manage certificates at enormous scale. Migrating these
+            certificates from classical algorithms (RSA-2048, ECDSA P-256) to{' '}
+            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> requires careful operational
+            planning.
           </p>
 
           <div className="space-y-2">
@@ -367,7 +366,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               },
               {
                 t: 'Key Distribution',
-                d: 'CDNs must distribute TLS private keys or certificate issuance authority across 300+ PoPs. With PQC, larger key material increases distribution bandwidth. Some CDNs use keyless SSL architectures where private keys never leave a central HSM.',
+                d: 'CDNs must distribute TLS private keys or certificate issuance authority across their edge PoPs. With PQC, larger key material increases distribution bandwidth. Some CDNs use keyless SSL architectures where private keys never leave a central HSM.',
               },
               {
                 t: 'Last Mile Problem',

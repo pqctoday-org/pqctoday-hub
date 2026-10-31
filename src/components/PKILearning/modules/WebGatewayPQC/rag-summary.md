@@ -12,7 +12,7 @@ Learn how to deploy post-quantum cryptography at the web infrastructure edge: re
 - PQC handshake performance: classical ~5KB vs hybrid ~15KB vs pure PQC ~25KB
 - Mitigations: session resumption (PSK), certificate compression (RFC 8879), Merkle Tree Certificates, HTTP/3 QUIC, connection coalescing
 - WAF/IDS inspection challenges when gateways cannot terminate PQC TLS
-- CDN edge deployment: origin shielding, key distribution across 300+ PoPs
+- CDN edge deployment: origin shielding, key distribution across edge PoPs
 - Vendor readiness: F5 BIG-IP, NGINX, HAProxy, Envoy, Kong, Traefik, Cloudflare, AWS ALB, Imperva, Palo Alto, Broadcom Avi
 
 ## Workshop Steps
