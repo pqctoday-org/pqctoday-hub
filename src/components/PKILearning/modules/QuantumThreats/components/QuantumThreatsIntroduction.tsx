@@ -285,7 +285,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             {
               org: 'ANSSI France',
               timeline:
-                'Recommends hybrid now; no regulatory obligation today; obligations for product qualification targeted from 2027',
+                'Recommends hybrid now; its recommendations are not a regulatory obligation today, but hybridisation is mandatory in the regulated perimeter; obligations for product qualification targeted from 2027',
               color: 'secondary',
             },
           ].map((entry) => (

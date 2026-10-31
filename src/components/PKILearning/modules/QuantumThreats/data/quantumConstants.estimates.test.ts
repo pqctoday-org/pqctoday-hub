@@ -56,6 +56,7 @@ describe('CRQC_ESTIMATES (the Threats sources list)', () => {
     expect([a.yearLow, a.yearHigh]).toEqual([2030, 2030])
     expect(a.notes).toMatch(/2022 position paper .* still stands/)
     expect(a.notes).toMatch(/not a regulatory obligation today/)
+    expect(a.notes).toMatch(/regulated perimeter hybridisation is mandatory/)
     expect(a.kind).toBe('migration-deadline')
   })
 })
