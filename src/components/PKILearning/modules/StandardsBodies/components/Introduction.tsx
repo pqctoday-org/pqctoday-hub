@@ -765,9 +765,9 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           {[
             {
               wg: 'PQUIP (Post-Quantum Use in Protocols)',
-              role: 'Coordination WG',
+              role: 'PQC transition guidance WG',
               output:
-                'draft-ietf-pquip-pqc-engineers — comprehensive PQC guide for protocol designers. Not a protocol itself — coordinates across all other WGs.',
+                'RFC 9958 (formerly draft-ietf-pquip-pqc-engineers), an Informational document on PQC for engineers. The WG does not specify new protocols; its output is meant to inform protocol work and guidance developed by other WGs.',
             },
             {
               wg: 'LAMPS (Limited Additional Mechanisms for PKIX and SMIME)',

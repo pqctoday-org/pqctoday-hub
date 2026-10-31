@@ -790,7 +790,7 @@ export const SIDE_CHANNEL_VECTORS: SideChannelVector[] = [
     description:
       'Polynomial multiplication in lattice operations generates electromagnetic emanations that correlate with secret data. Near-field EM probes can extract information even through shielding.',
     countermeasure:
-      'EM shielding in HSM enclosure, randomized operation scheduling, hardware masking. FIPS 140-3 Level 3+ requires physical tamper evidence and environmental protection.',
+      'EM shielding in HSM enclosure, randomized operation scheduling, hardware masking. FIPS 140-3 Level 3 requires tamper detection and response and environmental failure protection (EFP).',
     hsmRelevance: 'high',
   },
   {

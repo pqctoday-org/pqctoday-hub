@@ -1261,11 +1261,12 @@ export const ChangeRoutesDetail = () => (
       EUCC uses CC evaluation evidence but sets its own continuity rules in EU law. Under CIR
       2025/2462 (
       <SourceLink source={SHARED_SOURCES.eucc2462} />
-      ), a minor change leads to a maintenance report, and “no new certificate shall be issued”; a
-      subset evaluation or partial ETR is optional. After a successful re-assessment, the
-      certification body confirms the certificate or issues one with an extended expiry. Three ENISA
-      aids help classify changes — and all three are <strong>guidelines</strong>, not
-      state-of-the-art documents or law:
+      ), a minor change leads to a maintenance report, and “no new certificate shall be issued”;
+      when the assurance measures of the development environment change, the certification body may
+      request a subset evaluation and a partial ETR. After a successful re-assessment, the
+      certification body should confirm the certificate or issue a new certificate with an extended
+      expiry date. Three ENISA aids help classify changes — and all three are{' '}
+      <strong>guidelines</strong>, not state-of-the-art documents or law:
     </p>
     <ul className="list-disc space-y-1 pl-5">
       <li>
@@ -1356,7 +1357,7 @@ export const ElectronicExchange = () => (
       </li>
       <li>
         <strong>Structured submission record.</strong> The CMVP “uses JSON as the submission format”
-        for the Module Information Structure, to automate verification and consistency checks and to
+        for the Module Information Structure, to automate verification and processing and to
         populate parts of the Security Policy from one source.
       </li>
       <li>

@@ -29,7 +29,7 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
       severity: 'critical',
       timeframe: 'Immediate design impact',
       exampleScenario:
-        'Your IoT architecture uses mutual TLS with 3-level certificate chains. Each ML-DSA-65 certificate is ~4KB vs ~500 bytes for ECDSA. The full chain goes from 1.5KB to 12KB \u2014 exceeding the memory budget on constrained devices.',
+        "Your IoT architecture uses mutual TLS with certificate chains. In a published comparison of two-certificate HTTPS chains (IETF C509 draft, Figure 4), an ECDSA chain takes 1,644 bytes and an ML-DSA-65 chain 11,862 bytes, about seven times larger. In this module's illustration, growth of that size can exceed the memory budget on constrained devices.",
     },
     {
       id: 'hybrid-architecture',
