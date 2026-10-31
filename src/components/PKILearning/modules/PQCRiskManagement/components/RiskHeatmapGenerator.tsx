@@ -84,7 +84,7 @@ const TREATMENT_OPTIONS: {
     color: 'text-success',
     bg: 'bg-success/10 border-success/20',
     guidance:
-      "Risk is within tolerance. Example: AES-256 with Grover's reduces effective security to 128-bit, which NIST considers quantum-safe per IR 8547.",
+      'Risk is within tolerance. Example: NIST IR 8547 states that NIST-approved symmetric primitives with 128 or more bits of classical security are believed to satisfy no less than Category 1 security requirements.',
   },
   {
     value: 'transfer',
