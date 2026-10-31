@@ -71,7 +71,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Vendor PQC',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        "Microsoft Entra ID relies on SymCrypt, which has added ML-KEM and ML-DSA support (a separate matter from its FedRAMP High authorization). Keycloak (open-source) can be integrated with oqsprovider for PQC signing in self-hosted deployments. Roadmap timelines vary by vendor — check each vendor's public announcements for GA dates.",
+        "Microsoft Entra ID relies on SymCrypt, which has added ML-KEM and ML-DSA support (a separate matter from its FedRAMP High authorization). Roadmap timelines vary by vendor — check each vendor's public announcements for GA dates.",
       config: { step: 3 },
     },
     {
