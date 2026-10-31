@@ -28,7 +28,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Key Management',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Under a CRQC threat, harvested presentations could be used to forge proofs. ML-DSA-65 (FIPS 204) is the parameter set this module standardises on for wallet device keys: BSI TR-02102-1 recommends ML-DSA/SLH-DSA at NIST security categories 3 and 5, and ML-DSA-44 (category 2) sits below that floor.',
+      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Under a CRQC threat, harvested presentations could be used to forge proofs. ML-DSA-65 (FIPS 204) is the parameter set this module standardises on for wallet device keys: BSI TR-02102-1 recommends the hedged variant of ML-DSA with all parameter sets at NIST security categories 3 and 5.',
     stepIndex: 0,
   },
   {
