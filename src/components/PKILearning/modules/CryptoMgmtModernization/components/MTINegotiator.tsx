@@ -68,18 +68,14 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
 
   // US federal + ≤ 2030 deadline -> ML-DSA-87 (CNSA 2.0, Cat 5)
   if (audience === 'us-federal' && isImmediateDeadline(complianceDeadline)) {
-    const alts = [
-      'ML-DSA-65 (FIPS 204, Cat 3 — non-NSS / NIST-track federal alternate)',
-      'SLH-DSA-SHA2-128s (defence-in-depth)',
-    ]
+    const alts = ['ML-DSA-65 (FIPS 204, Cat 3)', 'SLH-DSA-SHA2-128s (defence-in-depth)']
     if (interopProfile.includes('non-pqc-peers')) {
       alts.unshift('RSA-PSS-3072 + ML-DSA-87 (LAMPS composite, transition period)')
     }
     return {
       mti: 'ML-DSA-87 (FIPS 204, NIST Cat 5)',
       alternates: alts,
-      rationale:
-        'CNSA 2.0 mandates ML-DSA-87 for US National Security Systems; ML-DSA-65 (Cat 3) is the alternate for non-NSS / NIST-track federal use.',
+      rationale: 'CNSA 2.0 mandates ML-DSA-87 for US National Security Systems.',
     }
   }
 
@@ -99,7 +95,7 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
       mti: 'SLH-DSA-SHAKE-128s (FIPS 205, stateless)',
       alternates: ['ML-DSA-44'],
       rationale:
-        'Stateless hash-based signatures avoid PRG-state management on constrained devices; ML-DSA-44 (Cat 2) is the lattice fallback.',
+        'Stateless hash-based signatures eliminate state management and avoid the risk of key reuse from improper state handling on constrained devices; ML-DSA-44 (Cat 2) is the lattice fallback.',
     }
   }
 
@@ -194,7 +190,7 @@ function recommendHash(inputs: MTIInputs): {
       mti: 'SHA-384 (FIPS 180-4)',
       alternates: ['SHA-512 (FIPS 180-4)'],
       rationale:
-        'CNSA 2.0 mandates SHA-384 for US National Security Systems; SHA-512 is the higher-strength alternate.',
+        'CNSA 2.0 specifies SHA-384 or SHA-512 for US National Security Systems across all classification levels.',
     }
   }
   if (audience === 'eu-regulated') {
@@ -356,7 +352,8 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
  */
 export const NATIONAL_GUIDANCE_SOURCES = {
   bsi: 'BSI TR-02102-1, Table 5.3 and section 5.7 (ML-DSA-65 / ML-DSA-87, hedged)',
-  anssiRule: 'ANSSI PG-083 v3 (2026), RegleSecuAsym — ML-DSA requires hybridisation',
+  anssiRule:
+    'ANSSI PG-083 v3 (2026), RegleSecuAsym & ReglePQSecuAsym — a product aiming at post-quantum security must satisfy both rules to ensure no security regression',
   anssiLevel: 'ANSSI PQC position paper — prefer NIST level 5, level 3 acceptable',
 } as const
 
