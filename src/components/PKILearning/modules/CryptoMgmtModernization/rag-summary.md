@@ -12,7 +12,7 @@ schedule or never?"
 
 ## Why now — three forcing functions independent of quantum arrival
 
-1. **47-day TLS certificate cadence** by March 2029 (CA/B Forum Ballot SC-081v3, April 2025).
+1. **47-day TLS certificate cadence** by March 2029 .
    Validity reduces from 398d → 200d (from 2026-03-15) → 100d (from 2027-03-15) → 47d (from 2029-03-15), per TLS BR §6.3.2.
    The schedule applies to publicly trusted TLS server certificates under the Baseline Requirements, not to
    private PKI, device, code-signing or document-signing certificates, which follow their own policies. Manual CLM

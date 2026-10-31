@@ -216,7 +216,7 @@ function recommendHash(inputs: MTIInputs): {
   return {
     mti: 'SHA-256 (FIPS 180-4)',
     alternates: ['SHA-512 (FIPS 180-4)'],
-    rationale: 'SHA-256 has the broadest interop; SHA-512 is the higher-strength alternate.',
+    rationale: '',
   }
 }
 

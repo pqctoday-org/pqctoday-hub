@@ -96,7 +96,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      "CMVP certificate #5497 lists ML-KEM, ML-DSA, SLH-DSA and LMS as approved. FPGA-based QASM core enables in-field firmware upgrades without hardware swap. CAVP A5631 (ML-KEM, ML-DSA, SLH-DSA, LMS) and A4204 (LMS — world's first PQC CAVP cert) validated. QxOS 5. Classic McEliece on roadmap. Integrations: EJBCA v9.3+, DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
+      "CMVP certificate #5497 lists ML-KEM, ML-DSA, SLH-DSA and LMS as approved.",
   },
   {
     id: 'fortanix-dsm',
