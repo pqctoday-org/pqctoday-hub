@@ -1,6 +1,6 @@
 ### What This Is About
 
-A closer look at FIPS 140-3, the US and Canadian standard for cryptographic modules — usually the first certificate a hardware security module (HSM) meets. It builds on the certification fundamentals module; payment approval (PCI) has its own module. A hands-on step reads the real algorithm and Security Policy records of two modules, side by side.
+A closer look at FIPS 140-3, the US and Canadian standard for cryptographic modules; the validation program behind it, the CMVP, is a joint effort of NIST and the Canadian Centre for Cyber Security. It builds on the certification fundamentals module; payment approval (PCI) has its own module. A hands-on step reads the real algorithm and Security Policy records of two modules, side by side.
 
 ### Why It Matters
 
