@@ -153,7 +153,7 @@ export const REGULATORY_CONSTANT_PROVENANCE: Readonly<Record<string, ConstantPro
     kind: 'policy_constant',
     evidence: 'CA/Browser Forum Ballot SC-081v3 (library "CAB-Forum-SC-081v3")',
   },
-  "SQUEEZE_2026_2030[Let's Encrypt MTC]": {
+  "SQUEEZE_2026_2030[Let's Encrypt MTC (late 2026)]": {
     kind: 'policy_constant',
     evidence:
       'Let\'s Encrypt blog, A Post-Quantum Future for Let\'s Encrypt (library "A-Post-Quantum-Future-for-Let-s-Encrypt")',

@@ -360,13 +360,6 @@ export const SQUEEZE_2026_2030: ReadonlyArray<SqueezeEvent> = [
     track: 'cab-forum',
   },
   {
-    date: '2026-12',
-    label: "Let's Encrypt MTC",
-    detail:
-      "Let's Encrypt targets late 2026 for a staging environment that issues Merkle Tree Certificates",
-    track: 'standards',
-  },
-  {
     date: '2026-09',
     label: 'FIPS 140-2 sunset',
     detail: 'FIPS 140-2 validated modules retired; FIPS 140-3 required',
@@ -377,6 +370,13 @@ export const SQUEEZE_2026_2030: ReadonlyArray<SqueezeEvent> = [
     label: 'CMMC Level 2',
     detail: 'CMMC Level 2 enforcement — FIPS 140-3 required for CUI',
     track: 'regulation',
+  },
+  {
+    date: '2026-12',
+    label: "Let's Encrypt MTC (late 2026)",
+    detail:
+      "Let's Encrypt targets late 2026 for a staging environment that issues Merkle Tree Certificates",
+    track: 'standards',
   },
   {
     date: '2027-01',
