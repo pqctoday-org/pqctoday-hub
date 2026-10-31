@@ -31,7 +31,7 @@ an opaque `HsmKeyHandle` blob (PQTH magic + CKA_ID), never raw bytes.
 - RFC 9180 — HPKE (used inside MLS for path updates)
 - draft-ietf-mls-pq-ciphersuites-06 — ML-KEM + ML-DSA ciphersuites
 - draft-ietf-mls-combiner-02 — classical + PQ hybrid combiner
-- draft-ietf-mls-extensions-09 — MLS extensions framework
+- draft-ietf-mls-extensions-10 — MLS extensions framework
 
 ## Status
 
