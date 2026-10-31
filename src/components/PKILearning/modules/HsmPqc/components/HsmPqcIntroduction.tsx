@@ -603,10 +603,6 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     We show both statements and prefer neither.
                   </p>
                   <p className="font-medium text-foreground">AWS documentation says:</p>
-                  <LabQuote source="AWS CloudHSM User Guide, CloudHSM CLI, key generate-asymmetric-pair ml-dsa; read 23 Oct 2026">
-                    Starting September 1, 2026, ML-DSA is available in FIPS mode for hsm2m.medium
-                    clusters.
-                  </LabQuote>
                   <LabQuote source="AWS CloudHSM User Guide, cluster modes; read 23 Oct 2026">
                     In FIPS mode, only Federal Information Processing Standard (FIPS) validated keys
                     and algorithms can be used.

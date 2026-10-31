@@ -335,7 +335,7 @@ C_SignMessage(
 C_MessageSignFinal(hSession)`,
     description: 'Create a digital signature using ML-DSA-65.',
     detail:
-      'ML-DSA-65 produces 3,309-byte signatures (vs 64 bytes for ECDSA P-256). The signing key must have been generated with CKM_ML_DSA_KEY_PAIR_GEN. Signing is performed inside the HSM; only the signature is returned. ML-DSA is a stateless scheme, unlike LMS/XMSS which require the HSM to track per-signature state.',
+      'ML-DSA-65 produces 3,309-byte signatures (vs 64 bytes for ECDSA P-256).',
     output: `CKR_OK
   Signature Length: 3,309 bytes
   Algorithm:       ML-DSA-65
