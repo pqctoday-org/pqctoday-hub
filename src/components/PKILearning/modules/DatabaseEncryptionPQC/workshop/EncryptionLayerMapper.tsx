@@ -60,7 +60,7 @@ const LAYER_INFO: LayerInfo[] = [
     classicalAlgorithm:
       'AES-256-CBC or AES-256-GCM for data; RSA-2048/4096 OAEP for CMK wrapping. SQL Server Always Encrypted, Oracle TCE.',
     pqcUpgradePath:
-      'CMK wrapping algorithm: RSA-OAEP → ML-KEM-1024. Requires CMK rotation which triggers CEK re-wrapping. Data encryption (AES-256) unchanged. Timeline: 2026 (cloud KMS providers).',
+      'CMK wrapping algorithm: RSA-OAEP → ML-KEM-1024. Requires CMK rotation which triggers CEK re-wrapping. Data encryption (AES-256) unchanged.',
     depth: 'Middle',
   },
   {
@@ -74,7 +74,7 @@ const LAYER_INFO: LayerInfo[] = [
     classicalAlgorithm:
       'AES-256-CBC (deterministic) or AES-256-AEAD (random). DEK wrapped by Customer Master Key using RSA-OAEP.',
     pqcUpgradePath:
-      'CMK/DEK wrapping: migrate to ML-KEM-1024. Client encryption library must support PQC wrapping. MongoDB driver PQC support expected with MongoDB 8.x drivers.',
+      'CMK/DEK wrapping: migrate to ML-KEM-1024. Client encryption library must support PQC wrapping.',
     depth: 'Inner',
   },
   {

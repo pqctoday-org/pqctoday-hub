@@ -103,7 +103,8 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism: 'AES-256-GCM (tablespace-level), keystore in wallet or external KMS',
     columnEncryption: 'Oracle Transparent Column Encryption (TCE) — RSA-wrapped CEK',
     catalogName: 'Oracle Key Vault',
-    pqcTimeline: 'Oracle 23ai roadmap 2026 — ML-KEM-1024 HYOK via OCI KMS',
+    pqcTimeline:
+      'No Oracle date is cited in this module; Oracle AI Database 26ai supports ML-KEM and an ML-KEM and ECDHE hybrid for key-exchange secrets for TLS sessions (Oracle).',
     keyManagement: ['provider-managed', 'byok', 'hyok'],
     hsmIntegration: true,
     fipsValidated: true,
@@ -120,13 +121,13 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism: 'AES-256 (database encryption key wrapped by service master key)',
     columnEncryption: 'Always Encrypted with secure enclaves (VBS/SGX), RSA-OAEP CMK wrapping',
     catalogName: 'SQL Server TDE/Always Encrypted',
-    pqcTimeline: 'On-prem TDE PQC in SQL Server vNext',
+    pqcTimeline: 'No Microsoft date is cited in this module.',
     keyManagement: ['provider-managed', 'byok', 'hyok'],
     hsmIntegration: true,
     fipsValidated: true,
     migrationComplexity: 'high',
     notes:
-      'ALTER DATABASE ENCRYPTION KEY WITH ALGORITHM = AES_256 supports online rotation. Always Encrypted CMK uses RSA-2048/4096 — Azure KV ML-KEM upgrade path via key rotation.',
+      'ALTER DATABASE ENCRYPTION KEY WITH ALGORITHM = AES_256 supports online rotation. Always Encrypted CMK uses RSA-2048/4096. This module’s projection, not a Microsoft statement: an ML-KEM wrapper for the CMK via key rotation.',
   },
   {
     id: 'postgresql',
@@ -137,7 +138,8 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism: 'pg_tde extension (Percona) — AES-256-XTS at tablespace level',
     columnEncryption: 'pgcrypto extension — pgp_sym_encrypt / pgp_pub_encrypt (no native CLE)',
     catalogName: 'PostgreSQL',
-    pqcTimeline: 'Percona pg_tde ML-KEM key provider under development (2026)',
+    pqcTimeline:
+      'No Percona date is cited in this module; an ML-KEM key provider is this module’s projection.',
     keyManagement: ['byok', 'hyok'],
     hsmIntegration: false,
     fipsValidated: false,
@@ -154,13 +156,14 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism: 'WiredTiger encrypted storage engine — AES-256-CBC at file level',
     columnEncryption: 'Client-Side Field Level Encryption (FLE 2.0) — Queryable Encryption indexes',
     catalogName: 'MongoDB Queryable Encryption',
-    pqcTimeline: 'MongoDB 8.x roadmap: ML-KEM key wrapping for FLE 2.0 DEKs (2026)',
+    pqcTimeline:
+      'No MongoDB date is cited in this module; ML-KEM wrapping of FLE 2.0 DEKs is this module’s projection.',
     keyManagement: ['provider-managed', 'byok'],
     hsmIntegration: true,
     fipsValidated: true,
     migrationComplexity: 'medium',
     notes:
-      'FLE 2.0 supports equality and range queries on encrypted fields. DEK wrapping uses RSA-OAEP — ML-KEM upgrade planned for key management endpoint. Atlas provides BYOK via AWS/Azure/GCP KMS.',
+      'FLE 2.0 supports equality and range queries on encrypted fields. DEK wrapping uses RSA-OAEP; ML-KEM wrapping for the key management endpoint is this module’s projection. Atlas provides BYOK via AWS/Azure/GCP KMS.',
   },
   {
     id: 'redis',
@@ -171,7 +174,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism: 'No native TDE — data-at-rest requires OS/disk encryption or application-layer',
     columnEncryption: 'No column encryption — field-level via application pattern only',
     catalogName: 'Redis',
-    pqcTimeline: 'No PQC roadmap announced; TLS 1.3 transport uses ECDHE (no ML-KEM yet)',
+    pqcTimeline: 'No Redis PQC date is cited in this module.',
     keyManagement: ['provider-managed', 'byok'],
     hsmIntegration: false,
     fipsValidated: false,
@@ -189,7 +192,8 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
       'InnoDB Tablespace Encryption — AES-256-CBC, key wrapped by master key in keyring',
     columnEncryption: 'No native CLE — AES_ENCRYPT() function (ECB mode by default, insecure)',
     catalogName: 'MySQL Enterprise Encryption',
-    pqcTimeline: 'No PQC roadmap; keyring_hashicorp for HashiCorp Vault integration',
+    pqcTimeline:
+      'No MySQL PQC date is cited in this module; keyring_hashicorp provides HashiCorp Vault integration.',
     keyManagement: ['provider-managed', 'byok'],
     hsmIntegration: false,
     fipsValidated: false,
@@ -206,7 +210,8 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     tdeMechanism: 'Enterprise Encryption at Rest — AES-128/256 store key, rotated via CLI',
     columnEncryption: 'No native CLE — application layer via SQL functions',
     catalogName: 'CockroachDB Encryption',
-    pqcTimeline: 'No PQC roadmap; KMIP v2 integration for external key management',
+    pqcTimeline:
+      'No CockroachDB PQC date is cited in this module; KMIP v2 integration is available for external key management.',
     keyManagement: ['byok'],
     hsmIntegration: false,
     fipsValidated: false,
@@ -216,20 +221,22 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
   },
   {
     id: 'oracle-ai',
-    dbName: 'Oracle Database (projected future release)',
+    dbName: 'Oracle AI Database 26ai',
     vendor: 'Oracle',
     dbType: 'relational',
     encryptionLayers: ['tde', 'column', 'field', 'application'],
-    tdeMechanism: 'AES-256-GCM + ML-native encryption (experimental) — vector embedding protection',
-    columnEncryption: 'ML-native column encryption for AI vector data; TCE for standard columns',
+    tdeMechanism: 'In this module’s reading: AES-256-GCM TDE plus protection of vector embeddings',
+    columnEncryption:
+      'In this module’s reading: column encryption for AI vector data, TCE for standard columns',
     catalogName: 'Oracle AI Database 26ai',
-    pqcTimeline: '2026 release — ML-KEM-1024 for AI vector DEK wrapping via Oracle Key Vault',
+    pqcTimeline:
+      'Oracle AI Database 26ai supports ML-KEM and an ML-KEM and ECDHE hybrid for key-exchange secrets for TLS sessions (Oracle); ML-KEM-1024 wrapping of AI vector DEKs through Oracle Key Vault is this module’s projection, not an Oracle statement.',
     keyManagement: ['provider-managed', 'byok', 'hyok'],
     hsmIntegration: true,
     fipsValidated: false,
     migrationComplexity: 'very-high',
     notes:
-      'Projected future Oracle release with vector/AI workload encryption. ML-native encryption protects embedding data. PQC integration via Oracle Key Vault HYOK planned.',
+      'In this module’s reading, vector/AI workload data is encrypted like other workloads and belongs in the key-wrapping migration. This module’s projection, not an Oracle statement: ML-KEM-1024 wrapping of vector DEKs through Oracle Key Vault HYOK.',
   },
 ]
 
@@ -374,7 +381,7 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
     cons: [
       'Provider can access plaintext keys',
       'No customer control over PQC timeline',
-      'Not compliant with HYOK regulations (DORA, ENISA)',
+      'Key custody sits with the provider, so the entity relies on provider controls for key-lifecycle requirements such as DORA RTS 2024/1774 Article 7',
       'Key escrow risk for regulated industries',
     ],
     pqcReadinessScore: 30,
@@ -439,8 +446,8 @@ export const BYOK_ARCHITECTURES: BYOKArchitecture[] = [
     pros: [
       'Key never leaves customer infrastructure',
       'Full PQC control — upgrade HSM independently',
-      'Satisfies DORA, ENISA, NIS2 HYOK requirements',
-      'NSM-8 compliant for classified workloads',
+      'Keeps key custody inside the customer’s own key-lifecycle controls (cf. DORA RTS 2024/1774 Article 7)',
+      'ML-KEM-1024 is the key-establishment algorithm CNSA 2.0 specifies',
       'Strongest posture against cloud provider compromise',
     ],
     cons: [
@@ -467,7 +474,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     limitations:
       'No text search on FLE 2.0 fields. Aggregate pipelines limited on encrypted fields. Index size overhead ~2-3x. No support for multi-collection transactions on encrypted fields.',
     pqcRoadmap:
-      'MongoDB 8.x (2026): ML-KEM-1024 for DEK wrapping in key management endpoint. Equality token MAC upgrade to HMAC-SHA3-256. Range query encryption scheme under PQC review.',
+      'This module’s projection, not a MongoDB statement: ML-KEM-1024 for DEK wrapping in the key management endpoint. Equality tokens use HMAC-SHA-256, which is symmetric. A range query encryption scheme that is compatible with PQC is an open question.',
   },
   {
     id: 'sqlserver-ae',
@@ -480,7 +487,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     limitations:
       'Without enclaves: equality queries only, no joins on encrypted columns. With enclaves: range queries supported but SGX deprecation concerns. CMK rotation requires re-encryption of all CEKs.',
     pqcRoadmap:
-      'On-prem CMK in SQL Server vNext. Enclave-based range queries unaffected (symmetric crypto).',
+      'No Microsoft roadmap is cited in this module. In this module’s reading, enclave-based range queries are unaffected because they use symmetric crypto; the PQC change is in CMK wrapping.',
   },
   {
     id: 'oracle-csqe',
@@ -493,7 +500,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     limitations:
       'Equality queries only (no range, regex, or aggregation on encrypted columns). No native sorting on encrypted values. Complex key management in client application layer.',
     pqcRoadmap:
-      'Oracle 23ai roadmap: ML-KEM-based key wrapping for client key material via Oracle Key Vault. HMAC-SHA-256 token scheme stays unchanged (quantum-safe). No concrete release date.',
+      'This module’s projection, not an Oracle statement: ML-KEM-based key wrapping for client key material via Oracle Key Vault. The HMAC-SHA-256 token scheme is symmetric. No release date is cited.',
   },
   {
     id: 'pg-tde',
@@ -506,7 +513,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     limitations:
       'No queryable encryption. Not in upstream PostgreSQL (requires Percona or custom build). No HSM integration yet. Key provider API supports custom providers (KMIP planned).',
     pqcRoadmap:
-      'Percona pg_tde 2.0 (2026): KMIP 3.0 key provider with ML-KEM support via Thales/AWS. TDE layer upgrade to AES-256-XTS remains unchanged. Column-level queryable encryption not on roadmap.',
+      'This module’s projection, not a Percona statement: a KMIP 3.0 key provider with ML-KEM support via Thales or AWS. In this module’s reading, the TDE layer is unchanged by it. No date is cited.',
   },
 ]
 
@@ -518,12 +525,11 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     framework: 'GDPR Art. 32',
     requirement:
       'Appropriate technical measures including encryption for personal data at rest and in transit.',
-    cryptoStandard:
-      'AES-256, TLS 1.3 (currently); ENISA recommends PQC for long-lived personal data.',
+    cryptoStandard: 'Article 32 names no algorithm.',
     deadlineNote:
-      'Ongoing — "state of the art" standard means PQC becomes required as it matures (2026+).',
+      'Ongoing — GDPR Article 32(1) lists “the state of the art” among the factors for appropriate measures; it names no algorithm and no date.',
     pqcImplication:
-      'GDPR "state of the art" clause requires tracking ENISA recommendations. Personal data retained beyond 2030 should be protected with PQC DEK wrapping. HYOK preferred for GDPR compliance.',
+      'GDPR Article 32(1) names the state of the art among the factors and prescribes no algorithm or date. This module advises protecting personal data retained beyond 2030 with PQC DEK wrapping; HYOK is one design for keeping key custody with the controller.',
   },
   {
     id: 'hipaa-312',
@@ -540,13 +546,12 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     id: 'dora-9',
     framework: 'DORA Art. 9 (ICT Risk)',
     requirement:
-      'Financial entities must implement state-of-the-art cryptographic controls for ICT risk management.',
+      'Financial entities must have a policy on encryption and cryptographic controls, including cryptographic key management (RTS 2024/1774 Articles 6 and 7).',
     cryptoStandard:
-      'ENISA recommendations apply; hybrid PQC for critical financial infrastructure.',
-    deadlineNote:
-      'DORA applies from Jan 2025; EBA/ESMA/EIOPA guidelines will specify PQC timelines (expected 2026).',
+      'The RTS names no algorithm; its Article 6 requires the policy to include provisions for updating or changing, where necessary, the cryptographic technology on the basis of developments in cryptanalysis.',
+    deadlineNote: 'DORA applies from 17 January 2025.',
     pqcImplication:
-      'Financial databases holding customer PII and transaction records require HYOK with PQC-capable HSM. DORA Art. 9 "state of the art" provision requires monitoring ENISA PQC migration guidance.',
+      'The RTS does not name HYOK. This module advises a PQC-capable HSM for financial databases holding customer PII and transaction records, as its own recommendation.',
   },
   {
     id: 'pcidss-3-5',
