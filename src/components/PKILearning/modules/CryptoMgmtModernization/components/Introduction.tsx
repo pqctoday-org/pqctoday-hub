@@ -76,7 +76,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <StatCard
               label="Crypto Libraries — FIPS 140-3 CMVP queue"
               value="No ETA"
-              note="The NIST CMVP Modules-in-Process list (checked 24 Sep 2026) gives each module's current status and the date it entered it, not an expected completion date. Plan around an issued certificate. OpenSSL 1.1.1 EoL Sept 2023; Bouncy Castle high-severity CVEs each release cycle."
+              note="The NIST CMVP Modules-in-Process list (checked 24 Sep 2026) lists, for each submission, the status and the date it went into that state, not an expected completion date. Plan around an issued certificate. OpenSSL 1.1.1 reached end of life on 11 September 2023."
             />
             <StatCard
               label="Application Software — OMB M-23-02 inventory"
@@ -117,8 +117,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               list has a status, not a completion date, and the FIPS 140-3 Implementation Guidance
               added self-test requirements for FIPS 203/204/205 in August 2024 and, in September
               2025, let their key-generation tests check against the private key only. You cannot
-              &ldquo;audit once&rdquo; and walk away while OpenSSL and Bouncy Castle ship
-              high-severity CVEs each release cycle.
+              &ldquo;audit once&rdquo; and walk away.
             </li>
             <li>
               <strong>Application Software</strong> &mdash; OMB Memorandum M-23-02 mandates{' '}
@@ -627,8 +626,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   does not encounter: <strong>patch-then-revalidate bind.</strong> Patching the
                   library can leave the validated FIPS provider unchanged: the OpenSSL project lists
                   validated provider versions 3.1.2, 3.0.9, 3.0.8 and 3.0.0 and says other OpenSSL
-                  releases &ldquo;MAY use the validated FIPS provider&rdquo;. Which provider build is
-                  in use, and whether it is on the validated list, therefore has to be tracked
+                  releases &ldquo;MAY use the validated FIPS provider&rdquo;. Which provider build
+                  is in use, and whether it is on the validated list, therefore has to be tracked
                   separately from the library version. The remediation workflow must treat the CVE
                   fix and the validation status as two separate work items with separate timelines,
                   and the CBOM must carry a &ldquo;patch applied, revalidation in progress&rdquo;
@@ -997,9 +996,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <div className="font-bold text-foreground text-sm mb-2">Software stack</div>
                 <ul className="text-xs space-y-1.5 text-muted-foreground list-disc list-inside">
                   <li>
-                    <strong>FIPS-validated library build</strong> — OpenSSL 3.5 FIPS provider or
-                    wolfCrypt FIPS, compiled and installed in a clean isolated test environment
-                    (separate from the OS package manager&apos;s OpenSSL).
+                    <strong>FIPS-validated library build</strong> — a validated OpenSSL FIPS
+                    provider or wolfCrypt FIPS, compiled and installed in a clean isolated test
+                    environment (separate from the OS package manager&apos;s OpenSSL).
                   </li>
                   <li>
                     <strong>ACVP client + NIST ACVTS Demo</strong> — with Demo access from NIST, run
