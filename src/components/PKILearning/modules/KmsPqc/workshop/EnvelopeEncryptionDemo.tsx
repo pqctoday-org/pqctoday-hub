@@ -504,7 +504,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           generatedAt: ts(),
         })
         addLine(
-          `HKDF-SHA256 (SP 800-56C §4.1): derived ${wrapKeyBytes.length} B wrapping key — salt=kms-envelope-salt-v1 info="kms-envelope-v1"`
+          `HKDF-SHA256 (SP 800-56C / RFC 5869): derived ${wrapKeyBytes.length} B wrapping key — salt=kms-envelope-salt-v1 info="kms-envelope-v1"`
         )
         hsm.addStepLog('── Step 4: Derive Wrapping Key (CKM_HKDF_DERIVE / SP 800-56C + RFC 5869) ─')
 
@@ -751,7 +751,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
     const { pk } = ML_KEM_SIZES[kekAlgo] ?? { pk: 1184 }
     const rsaRef = 256 // RSA-2048 public key baseline
     const ratio = (pk / rsaRef).toFixed(1)
-    return `${kekAlgo.toUpperCase()} encapsulation keys are ${ratio}x larger than RSA-2048 public keys (${pk.toLocaleString()} B vs 256 B). This impacts certificate sizes and key distribution bandwidth.`
+    return `${kekAlgo.toUpperCase()} encapsulation keys are ${ratio}x larger than RSA-2048 public keys (${pk.toLocaleString()} B vs 256 B). In this module's reading, this impacts certificate sizes and key distribution bandwidth.`
   })()
 
   // Dynamic overrides for the step card side-by-side panel — reflect kekAlgo + wrapMech selection.
@@ -994,7 +994,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               </div>
               <p className="text-xs text-muted-foreground">
                 {envelopeBlob.kemCt
-                  ? 'Raw bytes that would be stored alongside the encrypted data. The recipient decapsulates the KEM ciphertext, re-derives the HKDF wrapping key (SP\u00a0800-56C), then unwraps the DEK.'
+                  ? "Raw bytes that would be stored alongside the encrypted data. In this module's illustration, the recipient decapsulates the KEM ciphertext, re-derives the HKDF wrapping key (SP\u00a0800-56C), then unwraps the DEK."
                   : 'Raw RSA-OAEP ciphertext stored alongside encrypted data. The recipient decrypts with their RSA private key to recover the DEK.'}
               </p>
               {envelopeBlob.kemCt && (
@@ -1136,7 +1136,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                     'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
                 {displayStep.step === 2 &&
                   'RSA-OAEP transports a key chosen by the sender. ML-KEM Encaps outputs a shared secret key that is ready to use; a key-derivation method may be applied if the keying material needed differs from the KEM output (SP 800-227 Sec. 4.3). ' +
-                    'OAEP (RFC 8017 §7.1) uses randomized padding to achieve IND-CCA2 security (indistinguishable under adaptive chosen-ciphertext attack — an attacker who can get arbitrary ciphertexts decrypted still cannot distinguish which of two chosen plaintexts a given ciphertext encrypts): every encryption produces a different ciphertext, preventing chosen-ciphertext attacks. ' +
+                    'OAEP (RFC 8017 §7.1) is not proven secure against adaptive chosen-ciphertext attack (CCA2), and Victor Shoup showed that no such proof exists in the general case. ' +
                     'Never use PKCS#1 v1.5 for key transport — it is broken by the 1998 Bleichenbacher padding oracle attack, which lets an adaptive attacker decrypt RSA ciphertexts without the private key using ~1 million queries to a validating server.'}
                 {displayStep.step === 3 &&
                   (isRSA
@@ -1150,8 +1150,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                     `AES-GCM: 48 B output (32 B plaintext + 16 B auth tag embedded at the end) plus a 12-byte nonce stored separately (visible in the hex blobs above). ` +
                     `The 12-byte nonce is the SP 800-38D §5.2.1.1 recommended IV length for GCM. The 16-byte tag provides authenticated integrity — the ciphertext blob already contains it. ` +
                     `IV uniqueness is a requirement in GCM (SP 800-38D §8): if even one IV is ever repeated under a key, the implementation may be vulnerable to forgery attacks. Prefer AES-KW when nonce management is operationally risky. ` +
-                    `Store the KEM ciphertext alongside the wrapped DEK. ` +
-                    `Note: C_EncapsulateKey and C_DecapsulateKey are new in PKCS#11 v3.2 (ratified as an OASIS Standard on 3 June 2026) — classic PKCS#11 had no native KEM primitives.`}
+                    `Store the KEM ciphertext alongside the wrapped DEK.`}
                 {displayStep.step === 5 &&
                   'Both paths recover the same 32-byte DEK. The KCV (CKA_CHECK_VALUE) confirms key integrity across the wrap/unwrap cycle. ' +
                     'Envelope encryption enables DEK rotation without re-encrypting any data — just generate a new DEK and re-wrap it with the same or new KEK. ' +
@@ -1417,7 +1416,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               secret is derived via HKDF from both outputs (e.g. P-256 ECDH ‖ ML-KEM-768 → HKDF →
               AES-256 KEK). This hybrid approach is available in the{' '}
               <span className="font-mono text-primary">HSM / PKCS#11 → Key Wrapping</span> tool
-              which supports P-256+ML-KEM and X25519+ML-KEM combiner modes per SP 800-227.
+              which supports P-256+ML-KEM and X25519+ML-KEM multi-algorithm key-establishment
+              combiner modes.
             </p>
           </div>
         </div>

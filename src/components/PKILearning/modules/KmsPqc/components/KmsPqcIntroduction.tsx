@@ -451,8 +451,9 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             </div>
             <p className="text-xs text-muted-foreground">
               Rotating 300 TLS certificates from RSA-2048 (256 B pub key) to hybrid ML-DSA-65 +
-              ECDSA (2,017 B) increases per-rotation bandwidth by approximately 528 KB for public
-              keys alone. Certificate chains with larger signatures add more overhead.
+              ECDSA (2,017 B) increases per-rotation bandwidth by approximately 528 KB (this
+              module's planning assumption, not a measurement) for public keys alone. Certificate
+              chains with larger signatures add more overhead.
             </p>
           </div>
 
