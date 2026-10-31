@@ -704,12 +704,13 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'GDPR Art. 9',
         prescribedTier: 'high',
         reason:
-          'Health data is "special category" requiring explicit consent and state-of-the-art encryption.',
+          'Health data is a "special category" (Art. 9): processing is prohibited unless an exception such as explicit consent applies. Art. 32 separately requires security appropriate to the risk, "taking into account the state of the art", and names the encryption of personal data as an example.',
       },
       {
         framework: 'NIST SP 800-66',
         prescribedTier: 'high',
-        reason: 'HIPAA implementation guide recommends NIST Level 3+ controls for ePHI.',
+        reason:
+          "This module's assessment: ePHI warrants NIST security category 3 or higher parameter sets.",
       },
     ],
     resolutionRule: 'most-restrictive',
@@ -718,7 +719,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     explanation:
       "Both HIPAA and GDPR land this at High. The resolution rule here is not about escalating the tier — both agree. However, GDPR adds additional obligations: right to erasure, data portability, and explicit consent for each use. The governing classification is High, but operational requirements follow GDPR's stricter obligations. When frameworks agree on tier but disagree on operational requirements, apply the most restrictive operational requirements from each.",
     pqcImplication:
-      'ML-KEM-768 (FIPS 203) for key encapsulation, ML-DSA-65 (FIPS 204) for signatures. Both NIST Level 3 — satisfies HIPAA, GDPR "state of the art," and NIST SP 800-66 guidance.',
+      'ML-KEM-768 (FIPS 203) for key encapsulation and ML-DSA-65 (FIPS 204) for signatures are the NIST security category 3 parameter sets. That they fit HIPAA, GDPR "state of the art" and NIST SP 800-66 guidance is this module\'s assessment, not a determination by those frameworks.',
   },
   {
     id: 'con-02',
@@ -745,7 +746,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     explanation:
       "DORA elevates this to Critical because it classifies the entire payment gateway as a critical ICT service — not just the cardholder data. DORA's ICT operational resilience requirements are more stringent and broader in scope than PCI DSS for this asset type. When a jurisdiction-specific regulation explicitly designates a system as critical infrastructure, that designation overrides a narrower data-centric classification.",
     pqcImplication:
-      "ML-KEM-1024 (FIPS 203) and ML-DSA-87 (FIPS 204) — NIST Level 5 to satisfy DORA's critical ICT requirements. Hybrid with X25519+ML-KEM-1024 for transition.",
+      'ML-KEM-1024 (FIPS 203) and ML-DSA-87 (FIPS 204) are NIST security category 5 parameter sets. This module recommends them for critical ICT services under DORA; we found no parameter set named in the DORA text. Hybrid with X25519+ML-KEM-1024 for transition.',
   },
   {
     id: 'con-03',
@@ -796,14 +797,14 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'CNSA 2.0 (Supply Chain)',
         prescribedTier: 'high',
         reason:
-          'When firmware is used in NSS or federal products, signing keys must meet CNSA 2.0 requirements — including PQC migration by 2030.',
+          "When firmware is used in National Security Systems (NSS), signing keys fall under CNSA 2.0, and NSA's CNSA 2.0 advisory (September 2022) anticipates that software and firmware signing will exclusively use CNSA 2.0 by 2030.",
       },
     ],
     resolutionRule: 'most-restrictive',
     correctTier: 'high',
     governingFramework: 'CNSA 2.0',
     explanation:
-      'The most-restrictive-wins rule applies: CNSA 2.0 prescribes High for this key because it protects firmware used in federal systems. Even though the firmware is open-source and the key is "only" signing public releases, the downstream impact on national security systems elevates the classification. A compromised signing key could inject malicious firmware into critical infrastructure.',
+      'The most-restrictive-wins rule applies: This module classes this key High because, in this scenario, the firmware is used in National Security Systems, where CNSA 2.0 applies. Even though the firmware is open-source and the key is "only" signing public releases, the downstream impact on national security systems elevates the classification. A compromised signing key could inject malicious firmware into critical infrastructure.',
     pqcImplication:
       'ML-DSA-87 (FIPS 204) for code signing — CNSA 2.0 specifies ML-DSA-87 for all classification levels, so ML-DSA-65 does not meet it. Hybrid with ECDSA P-384 if a classical signature is kept during transition (NSA does not require hybrid).',
   },
@@ -871,7 +872,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
     explanation:
       "The data-subject-location rule applies: you must comply with the requirements applicable to each data subject based on where they are located — even if you process data in a single jurisdiction. Since the dataset contains EU and Brazilian residents, both GDPR and LGPD apply (both prescribe High). CCPA prescribes Medium but doesn't override the stricter obligations for EU/BR data subjects in the same dataset. The entire dataset must meet the High standard to protect all subjects.",
     pqcImplication:
-      'ML-KEM-768 (FIPS 203) + ML-DSA-65 (FIPS 204) — NIST Level 3 satisfies GDPR and LGPD "state of the art" requirements. Encryption at rest and in transit must cover all copies of the training dataset.',
+      'ML-KEM-768 (FIPS 203) + ML-DSA-65 (FIPS 204) are NIST security category 3 parameter sets; this module assesses them as fitting the GDPR and LGPD "state of the art" wording, which is not a determination by those laws. Encryption at rest and in transit must cover all copies of the training dataset.',
   },
 ]
 
