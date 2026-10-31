@@ -438,10 +438,10 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             </h3>
             <p className="text-xs text-muted-foreground mb-2">
               Many implantable and wearable medical devices operate on severely resource-constrained
-              processors. A typical cardiac pacemaker uses an <strong>ARM Cortex-M0+</strong> with
-              only <strong>32 KB of RAM</strong> and a 48 MHz clock. This module assumes that
-              ML-DSA-44, the smallest ML-DSA parameter set, needs more RAM than the whole 32 KB (a
-              planning assumption, not a measurement).
+              processors. For illustration, this module models a pacemaker-class device as an{' '}
+              <strong>ARM Cortex-M0+</strong> with only <strong>32 KB of RAM</strong> and a 48 MHz
+              clock. This module assumes that ML-DSA-44, the smallest ML-DSA parameter set, needs
+              more RAM than the whole 32 KB (a planning assumption, not a measurement).
             </p>
             <p className="text-xs text-muted-foreground">
               For these constrained devices, <strong>hash-based signatures</strong> like LMS (H5/W8)

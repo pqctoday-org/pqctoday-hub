@@ -545,7 +545,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-DSA-44',
         feasible: false,
         rationale:
-          'Signature verification exceeds available RAM on Cortex-M0+. Key size (1.3 KB public key) also strains flash.',
+          "This module's model assumes ML-DSA-44 signature verification needs more RAM than the 32 KB available on this Cortex-M0+ (a planning assumption, not a measurement).",
       },
       {
         algorithm: 'LMS (H5/W8)',
@@ -557,7 +557,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'XMSS (H10)',
         feasible: true,
         rationale:
-          'Similar to LMS with ~5 KB RAM for verification. State management is handled by the signing server, not the device.',
+          "This module's model assumes verification needs a few KB of RAM, similar to LMS (a planning assumption, not a measurement). State management is handled by the signing server, not the device.",
       },
       {
         algorithm: 'FN-DSA',
