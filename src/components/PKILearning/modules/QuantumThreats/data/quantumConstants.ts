@@ -59,7 +59,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "Revised per Google Quantum AI (Mar 2026): improved Shor's circuits break 256-bit ECC with \u22641,200 logical qubits — roughly half prior estimates. Fewer qubits needed than RSA at equivalent security. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits (Roetteler et al. 2017, arXiv:1706.06752).",
+      'Google Quantum AI (Mar 2026) gives \u22641,200 logical qubits (or \u22641,450) for the 256-bit ECDLP on secp256k1; its paper gives no estimate for P-256, and this module applies the secp256k1 figure to P-256 as its own approximation. Fewer qubits needed than RSA at equivalent security. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits (Roetteler et al. 2017, arXiv:1706.06752).',
   },
   {
     name: 'ECDSA P-384',
@@ -82,7 +82,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "Curve25519 ECDH falls to Shor's just like NIST curves. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
+      "Curve25519 ECDH falls to Shor's just like NIST curves. This module applies Google Quantum AI’s Mar 2026 secp256k1 estimate (\u22641,200 logical qubits) to Curve25519 as its own approximation; the paper gives no estimate for it. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
   },
   {
     name: 'Ed25519',
@@ -94,7 +94,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1200,
     status: 'broken',
     notes:
-      "EdDSA signatures rely on discrete log — vulnerable to Shor's. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
+      "EdDSA signatures rely on discrete log — vulnerable to Shor's. This module applies Google Quantum AI’s Mar 2026 secp256k1 estimate (\u22641,200 logical qubits) to Ed25519 as its own approximation; the paper gives no estimate for it. Low-end estimate; other published work puts 256-bit ECC at ~2,330+ logical qubits.",
   },
   {
     name: 'ECDSA secp256k1',
@@ -628,26 +628,6 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     notes:
       'Nov 2025 (Nature; arXiv:2506.20661): ran algorithms with up to 96 logical qubits on 448 atoms with below-threshold error suppression (Λ=2.14) — the most verified logical qubits of any platform — plus the first logical magic-state distillation. A separate array was run continuously for over 2 hours; Caltech separately demonstrated a 6,100-atom tweezer array (arXiv:2403.12021, 99.98% single-qubit accuracy). Demonstrated logical qubits are lower-distance than the ~1,200 fault-tolerant qubits a Shor attack needs.',
   },
-  {
-    name: 'Helios (Iceberg codes)',
-    vendor: 'Quantinuum',
-    year: 2026,
-    physicalQubits: 98,
-    estimatedLogicalQubits: 94,
-    qubitType: 'Trapped ion',
-    notes:
-      'Mar 2026: same Helios hardware ran a separate demonstration using Iceberg error-DETECTION codes (a different, weaker fault-tolerance class than the Nov 2025 48 error-CORRECTED logical qubits above) to reach 94 logical qubits. A Jun 2026 Nature paper independently validated an 800× logical-error-rate improvement on this hardware.',
-  },
-  {
-    name: 'Helium',
-    vendor: 'Alice & Bob',
-    year: 2026,
-    physicalQubits: 18,
-    estimatedLogicalQubits: 1,
-    qubitType: 'Cat qubit (bosonic)',
-    notes:
-      'Jun 2026: first cat-qubit system to encode a working logical qubit, using 18 physical cat qubits — a fifth modality (bosonic/cat-code encoding) pursuing intrinsic bit-flip suppression rather than surface-code-style error correction.',
-  },
 ]
 
 export interface CrqcDriver {
@@ -986,13 +966,13 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
   },
   {
     technology: 'Topological',
-    vendors: 'Microsoft, Alice & Bob',
+    vendors: 'Microsoft',
     bestLogical: 0,
     bestPhysical: 8,
-    note: 'Majorana-based qubits are designed to be intrinsically error-resistant, needing far fewer physical qubits per logical qubit than other modalities if the physics holds up. Microsoft’s Majorana 2 (Build, Jun 2026) claims an accelerated path to fault tolerance by 2029 — a contested claim following a disputed 2025 topological-qubit announcement from the same team; treat the 2029 date skeptically pending independent replication. Alice & Bob’s Helium (Jun 2026) took a different cat-qubit approach to the same error-resistance goal, encoding one logical qubit across 18 cat qubits.',
+    note: 'Topological qubits would in theory be mostly unaffected by noise, needing far fewer physical qubits per logical qubit than other modalities if they can be built. Cloudflare writes that they have not been fully realized in hardware; Microsoft announced the Majorana 1 chip in early 2025, which Cloudflare says is far from a full demonstrator and does not support any computation.',
     recentProgress:
-      'Microsoft says its second-generation Majorana chip is progressing toward fault tolerance faster than expected; a French startup, Alice & Bob, separately built a small working logical qubit from a different “naturally error-resistant” qubit design.',
+      'Microsoft announced its Majorana 1 chip in early 2025 and lists it among its quantum advances; Cloudflare describes the chip as far from a full demonstrator.',
     scaleChallenge:
-      'The core physics claim (that Majorana quasiparticles behave as predicted) is still disputed by parts of the research community — this modality has to first settle that debate before its qubit-efficiency advantage can be trusted at scale.',
+      'Topological qubits have not been fully realized in hardware, and Cloudflare writes that it is not known whether they can be built to begin with.',
   },
 ]

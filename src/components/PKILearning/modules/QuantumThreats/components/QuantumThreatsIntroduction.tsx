@@ -147,9 +147,13 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 </div>
               </div>
               <p>
-                P-256 requires ~1,200 logical qubits (revised per Google Quantum AI, March 2026).
-                All ECC variants (P-256, P-384, <InlineTooltip term="X25519">X25519</InlineTooltip>,{' '}
-                <InlineTooltip term="Ed25519">Ed25519</InlineTooltip>) are equally broken.
+                Google Quantum AI (30 March 2026) gives, for the 256-bit elliptic-curve discrete
+                logarithm on secp256k1, at most 1,200 logical qubits with at most 90 million Toffoli
+                gates, or at most 1,450 logical qubits with at most 70 million Toffoli gates; its
+                paper gives no estimate for P-256. All ECC variants (P-256, P-384,{' '}
+                <InlineTooltip term="X25519">X25519</InlineTooltip>,{' '}
+                <InlineTooltip term="Ed25519">Ed25519</InlineTooltip>) are vulnerable to Shor&apos;s
+                algorithm.
               </p>
             </div>
           </div>

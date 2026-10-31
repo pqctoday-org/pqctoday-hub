@@ -44,7 +44,8 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'Pollard rho O(2^{128})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~1,200 logical qubits (revised, Google Quantum AI 2026)',
+    quantumComplexity:
+      '~1,200 logical qubits (the module applies Google Quantum AI’s Mar 2026 secp256k1 estimate; the paper gives none for this curve)',
     recommendation: 'Replace with ML-DSA',
   },
   {
@@ -71,7 +72,8 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'Pollard rho O(2^{128})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~1,200 logical qubits (revised, Google Quantum AI 2026)',
+    quantumComplexity:
+      '~1,200 logical qubits (the module applies Google Quantum AI’s Mar 2026 secp256k1 estimate; the paper gives none for this curve)',
     recommendation: 'Replace with ML-KEM / ML-DSA',
   },
   {
