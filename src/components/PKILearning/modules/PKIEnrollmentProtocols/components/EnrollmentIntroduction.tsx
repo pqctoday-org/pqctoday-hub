@@ -69,8 +69,7 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
         <ol className="text-sm text-muted-foreground space-y-2 list-decimal ml-5">
           <li>
             <strong>ML-DSA support.</strong> The CSR / CRMF must carry the new ML-DSA OIDs (RFC
-            9881) and the request must be signed under the new algorithm. EST handles this
-            transparently via PKCS#10; CMP needs no protocol changes for pure-sig flows.
+            9881) and the request must be signed under the new algorithm.
           </li>
           <li>
             <strong>ML-KEM enrollment.</strong> KEM keys can't sign the request, so signature-POP
