@@ -18,7 +18,8 @@ export interface VendorMigrationStatus {
   tlsInspectionPQC: 'supported' | 'partial' | 'roadmap' | 'not-supported'
   /** 'not-stated' when the vendor's own pages name no maturity for the capability. */
   mlKemStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported' | 'not-stated'
-  mlDsaStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported'
+  /** 'not-stated' when the vendor's own pages name no maturity for the capability. */
+  mlDsaStatus: 'ga' | 'beta' | 'roadmap' | 'not-supported' | 'not-stated'
   /** Omitted when the vendor's own pages do not say. */
   hybridMode?: boolean
   certSizeLimit: string
@@ -105,22 +106,22 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
   {
     id: 'cisco-firepower',
     vendor: 'Cisco',
-    product: 'ASA / Firepower Threat Defense (FTD 7.4+)',
+    product: 'ASA / Secure Firewall Threat Defense (FTD)',
     tier: 'enterprise',
     catalogName: 'Cisco ASA (Adaptive Security Appliance)',
     tlsInspectionPQC: 'roadmap',
     mlKemStatus: 'roadmap',
     mlDsaStatus: 'roadmap',
     hybridMode: false,
-    certSizeLimit: '8KB (post FTD 7.4)',
-    roadmapYear: 2027,
+    certSizeLimit: 'Not stated by Cisco',
+    roadmapYear: 2026,
     hardwareOffload: true,
     fipsCompliant: true,
     upgradeRequired: true,
     upgradeDetails:
-      'Cisco quantum-safe roadmap targets ML-KEM hybrid IKEv2 VPN for 2027 as part of CNSA 2.0 compliance.',
+      'The Cisco Secure Firewall roadmap blog (13 April 2026) says ML-KEM support arrives in FTD 10.5 and ASA 9.25, targeted for General Availability in late 2026, and that ML-DSA and SLH-DSA support is planned for FTD/ASA 11.0, in the second half of calendar year 2027. Cisco says delivery timelines are subject to change.',
     notes:
-      'Current ASA 9.x does not support PQC key exchange. FTD 7.4+ has hybrid X25519+ML-KEM-768 preview, but full migration targets 2027.',
+      'Before ML-KEM arrives, the blog lists RFC 8784 (a post-quantum pre-shared key mixed into IKEv2, available on ASA since 9.18) and the RFC 9370 hybrid key exchange framework (available on ASA since 9.19). It plans visibility into PQC-negotiated sessions and QUIC decryption with PQC support for FTD 11.0.',
   },
   {
     id: 'palo-alto-ngfw',
@@ -132,7 +133,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     mlKemStatus: 'ga',
     mlDsaStatus: 'ga',
     hybridMode: true,
-    certSizeLimit: '16KB (PAN-OS 11.1+)',
+    certSizeLimit: 'Not stated by Palo Alto Networks',
     roadmapYear: 2025,
     hardwareOffload: true,
     fipsCompliant: true,
@@ -150,17 +151,16 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     catalogName: 'Fortinet FortiGate (FortiOS)',
     tlsInspectionPQC: 'partial',
     mlKemStatus: 'ga',
-    mlDsaStatus: 'ga',
+    mlDsaStatus: 'not-stated',
     hybridMode: true,
-    certSizeLimit: '4KB (current); 16KB planned FortiOS 7.6.2',
-    roadmapYear: 2026,
+    certSizeLimit: 'Not stated by Fortinet',
     hardwareOffload: true,
     fipsCompliant: true,
     upgradeRequired: true,
     upgradeDetails:
-      'FortiOS 7.6 required for ML-KEM/ML-DSA beta. FortiGate 1000F+ with NP7 ASIC for hardware offload. FortiManager 7.6 for policy management. TLS inspection with PQC certs requires 7.6.2+ (Q3 2026).',
+      'Fortinet documentation lists post-quantum key exchange for IPsec from FortiOS 7.6.1 (hybrid key exchange per RFC 9370, with ML-KEM-512, ML-KEM-768 and ML-KEM-1024 as the FIPS 203 groups) and hybrid post-quantum cryptography in SSL deep inspection in flow mode from FortiOS 7.6.5.',
     notes:
-      'Fortinet Security Fabric integration extends PQC visibility to FortiProxy, FortiWeb, and FortiADC. FortiOS 7.6 ships OpenSSL 3.3 backend enabling FIPS 203/204 algorithm support. Current 4KB cert size limit in TLS inspection profiles is a known limitation being addressed in 7.6.2.',
+      'FortiOS 7.6.5 also lists enhanced HTTPS management security with post-quantum TLS algorithms. This entry records no ML-DSA support level, certificate size limit or roadmap year.',
   },
   {
     id: 'juniper-srx',
@@ -191,7 +191,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     mlKemStatus: 'ga',
     mlDsaStatus: 'roadmap',
     hybridMode: true,
-    certSizeLimit: '2KB (current TLS inspection limit)',
+    certSizeLimit: 'Not stated by Check Point',
     roadmapYear: 2026,
     hardwareOffload: true,
     fipsCompliant: true,
@@ -208,18 +208,17 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     tier: 'mid-market',
     catalogName: 'Sophos XGS',
     tlsInspectionPQC: 'not-supported',
-    mlKemStatus: 'not-supported',
-    mlDsaStatus: 'not-supported',
+    mlKemStatus: 'not-stated',
+    mlDsaStatus: 'not-stated',
     hybridMode: false,
-    certSizeLimit: '3KB (SFOS current)',
-    roadmapYear: 0,
-    hardwareOffload: false,
+    certSizeLimit: 'Not stated by Sophos',
+    hardwareOffload: true,
     fipsCompliant: false,
     upgradeRequired: true,
     upgradeDetails:
-      'No committed native PQC roadmap. The only PQC-related change in SFOS 21.5 (GA 2025) is a DPI Path-MTU fix so the firewall correctly passes through clients negotiating ML-KEM (Kyber) TLS — the firewall itself does not implement ML-KEM/ML-DSA. XGS hardware lacks a dedicated crypto ASIC.',
+      'SFOS 21.5 (GA, 2 June 2025) mentions post-quantum cryptography only as a DPI-mode Path MTU fix for connections that use the ML-KEM (Kyber) key exchange supported in browsers. SFOS 22.0 MR2 (Build 546, 14 July 2026) adds detection and control of PQC: intrusion prevention can detect and block pure and hybrid PQC key exchange algorithms based on ML-KEM, and Web Protection prevents web sessions from negotiating unsupported PQC algorithms. The new IPS patterns are disabled by default.',
     notes:
-      'Verified 2026-06-19 against the official SFOS 21.5 release notes: no native NIST PQC (ML-KEM/ML-DSA) in the firewall data or management plane — only transparent pass-through of client ML-KEM TLS. Catalog status: none.',
+      'The 22.0 MR2 release notes describe detecting and controlling ML-KEM-based key exchange (intrusion prevention and Web Protection); they do not describe ML-KEM or ML-DSA in the firewall’s own services. The Sophos XGS datasheet says every XGS model has a dedicated Xstream Flow Processor and that Xstream offloads crypto operations; it does not say whether that covers post-quantum algorithms. Catalog status: none.',
   },
   {
     id: 'sonicwall',
@@ -231,15 +230,13 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
     mlKemStatus: 'not-supported',
     mlDsaStatus: 'not-supported',
     hybridMode: false,
-    certSizeLimit: '2KB (SonicOS current)',
-    roadmapYear: 0,
+    certSizeLimit: 'Not stated by SonicWall',
     hardwareOffload: false,
     fipsCompliant: false,
     upgradeRequired: true,
     upgradeDetails:
-      'No committed native PQC roadmap. SonicOS 7.0/7.1/8.0 IPsec & SSL VPN cryptography documents only classical algorithms (AES, 3DES, ECDH/DH, ECDSA, SHA-2, Suite B). PQC feasibility on the NSa 9700 Cavium OCTEON engine remains under evaluation with no public commitment.',
-    notes:
-      'Verified 2026-06-19 against SonicOS VPN crypto docs: no ML-KEM/ML-DSA in the TLS-inspection or VPN pipeline. Catalog status: none.',
+      'The product catalog on this site (last verified 18 August 2026; latest SonicOS 8.2.2) says SonicOS firewall cryptography contains no post-quantum support today, and that the IPsec VPN documentation for SonicOS 7.0, 7.1 and 8.0 lists only classical algorithms.',
+    notes: 'Catalog status: none.',
   },
   {
     id: 'opnsense',

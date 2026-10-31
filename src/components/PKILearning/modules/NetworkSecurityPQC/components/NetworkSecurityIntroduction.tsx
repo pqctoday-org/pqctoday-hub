@@ -87,18 +87,20 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
           <p>
             Post-quantum cryptography introduces fundamental changes to network security operations
             that go beyond algorithm upgrades. Larger{' '}
-            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> certificates (2.5-5KB vs RSA 1KB),
-            heavier <InlineTooltip term="TLS">TLS</InlineTooltip> handshakes, and new key exchange
-            patterns challenge every component of a modern network security stack — from perimeter
-            firewalls to inline DPI appliances.
+            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> certificates (at ML-DSA-65, FIPS 204
+            lists a 1,952-byte public key and a 3,309-byte signature), heavier{' '}
+            <InlineTooltip term="TLS">TLS</InlineTooltip> handshakes, and new key exchange patterns
+            challenge every component of a modern network security stack — from perimeter firewalls
+            to inline DPI appliances.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
               <div className="text-xs font-bold text-status-error mb-2">Certificate Size</div>
-              <div className="text-2xl font-bold text-status-error mb-1">+108%</div>
+              <div className="text-2xl font-bold text-status-error mb-1">5.3 KB+</div>
               <p className="text-xs text-muted-foreground">
-                ML-DSA-65 cert: ~2.5KB vs RSA-2048: ~1.2KB. Full hybrid chain: 5-8KB.
+                One ML-DSA-65 certificate holds a 1,952-byte public key and a 3,309-byte signature
+                (FIPS 204 Table 2), before any other certificate field.
               </p>
             </div>
             <div className="bg-warning/5 rounded-lg p-4 border border-warning/20">
@@ -107,14 +109,16 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
               </div>
               <div className="text-2xl font-bold text-status-warning mb-1">35 ms</div>
               <p className="text-xs text-muted-foreground">
-                Classical (9 ms), Hybrid (28 ms), and Pure PQC (35 ms) overhead across boundaries.
+                Illustrative values from this module&apos;s TLS Inspection Lab, not measurements:
+                classical (9 ms), hybrid (28 ms), and pure PQC (35 ms) inspected handshake.
               </p>
             </div>
             <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
               <div className="text-xs font-bold text-primary mb-2">DPI Complexity</div>
-              <div className="text-2xl font-bold text-primary mb-1">4-8x</div>
+              <div className="text-2xl font-bold text-primary mb-1">4.5x</div>
               <p className="text-xs text-muted-foreground">
-                TLS inspection certificate buffer requirements increase 4-8x for hybrid chains.
+                In an IETF C509 draft example, a two-certificate ML-DSA-65 TLS chain is 11,869 bytes
+                against 2,656 bytes for an RSA chain.
               </p>
             </div>
           </div>
@@ -124,9 +128,9 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
             <div className="space-y-2 text-xs text-muted-foreground">
               {[
                 {
-                  impact: 'NGFW Buffer Overflows',
+                  impact: 'Hardcoded Buffer Sizes',
                   detail:
-                    'Fixed-size TLS certificate buffers in older firmware fail silently when receiving PQC chains exceeding 4KB.',
+                    'Many middleboxes have hardcoded buffer sizes or parsing assumptions that break with PQC-sized handshakes and certificates, so every middlebox on a production network path should be tested (Applied Quantum PQC Migration Framework v2.1, Phase 6).',
                 },
                 {
                   impact: 'CPU Saturation on Software DPI',
