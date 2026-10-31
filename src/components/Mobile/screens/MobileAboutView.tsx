@@ -37,6 +37,7 @@ import {
   LOCAL_DATA_LEAVES_STATEMENT,
   PAGE_ADDRESS_STATEMENT,
   SEARCH_SCRUB_CLAUSE,
+  EXPORT_EVENTS_CLAUSE,
 } from '@/components/About/analyticsStatement'
 
 declare const __BUILD_TIMESTAMP__: string
@@ -230,8 +231,9 @@ export function MobileAboutView() {
                         <span className="font-semibold text-foreground">Google Analytics 4</span>{' '}
                         runs on <span className="font-semibold text-foreground">every visit</span>.{' '}
                         {ANALYTICS_DISCLOSURE} It counts the pages visited and what you do on them,
-                        including searches performed ({SEARCH_SCRUB_CLAUSE}).{' '}
-                        {PAGE_ADDRESS_STATEMENT} How to stop it is in section 10 of the{' '}
+                        including searches performed ({SEARCH_SCRUB_CLAUSE}) and files exported (
+                        {EXPORT_EVENTS_CLAUSE}). {PAGE_ADDRESS_STATEMENT} How to stop it is in
+                        section 10 of the{' '}
                         <Link to="/terms" className="font-semibold text-primary underline">
                           Terms
                         </Link>

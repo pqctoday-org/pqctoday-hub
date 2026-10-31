@@ -82,6 +82,6 @@ export const content: ModuleContent = {
     keyConcepts:
       'NIST vs CMVP: NIST wrote the standard; CMVP certifies implementations against it. ETSI TS vs ETSI TR: TS = normative ("shall"), TR = informational guidance. ANSSI\'s position: recommends hybrid PQC (classical + PQC) and makes it mandatory in the French regulated perimeter; hash-based signatures (SLH-DSA, XMSS, LMS) are the exception to systematic hybridisation. CCRA vs EUCC: the CCRA is the global arrangement (36 countries: 18 issue certificates, 18 only recognise them; recognition limited to collaborative Protection Profiles or up to EAL2 + ALC_FLR); EUCC is a separate EU scheme set up by Commission Implementing Regulation (EU) 2024/482, which applies Common Criteria under EU rules (certification bodies issue the certificates, national authorities supervise, ENISA publishes). IETF vs NIST: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).',
     relatedStandards:
-      "FIPS 206 (FN-DSA), cited above alongside NIST's other PQC signature standards, is still a draft as of 2026 — this hub cites the Falcon v1.2 specification it standardises until NIST publishes the final text.",
+      "FIPS 206 (FN-DSA), cited above alongside NIST's other PQC signature standards, is under development, with no published draft and no published date; NIST stated on April 2, 2026 that the draft was still in clearance.",
   },
 }

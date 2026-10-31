@@ -374,7 +374,7 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
                 Binary Merkle trees require a power-of-two leaf count. This demo pads by duplicating
                 the last leaf until the count reaches {levels[0].length}. The actual{' '}
                 <span className="font-mono">draft-ietf-plants-merkle-tree-certs</span> spec (and RFC
-                9162 §2.1.2) instead uses an{' '}
+                9162) instead uses an{' '}
                 <strong className="text-foreground">unbalanced binary tree</strong> via a recursive
                 split at <span className="font-mono">k = largest power of 2 &lt; n</span>. For
                 non-power-of-two leaf counts the two approaches produce{' '}

@@ -357,7 +357,7 @@ export const SHORTCUTS: Shortcut[] = [
     wrong:
       'EUCC is simply the EU version of a CCRA certificate, recognized identically everywhere.',
     right:
-      'EUCC is an EU legal scheme with its own rules and levels. EUCC certificates can carry the CCRA mark (CCMC-011, March 2025), but recognition depends on the scheme and the buyer.',
+      'EUCC is an EU legal scheme with its own rules and levels. EUCC certificates may carry the CCRA mark if they also meet the requirements of the CCRA (CCMC-011, March 2025), but recognition depends on the scheme and the buyer.',
   },
   {
     wrong:
@@ -623,7 +623,7 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
       {
         scheme: 'Security IC Platform PP',
         status: 'does-not-answer',
-        note: 'BSI-CC-PP-0084-V2-2026 certifies the manufacturer’s chips — not the HSM.',
+        note: 'BSI-CC-PP-0084-V2-2026 covers IC development and manufacturing (phases 2 and 3 of the Composite Product life cycle).',
       },
       {
         scheme: 'PCI PTS HSM',

@@ -132,7 +132,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           <p className="text-[10px] text-muted-foreground mt-2">
             RFC 7228 defines Classes 0–2 only. Classes 3 and 4 come from draft-ietf-iotops-7228bis,
             which also classifies link-layer frame sizes: an IEEE 802.15.4 frame is 127 bytes, with
-            about {F.radioFramePayload} bytes left for payload once link security is on.
+            about {F.radioFramePayload} bytes left for payload once link security is on (not sourced
+            in the Library).
           </p>
         </div>
         <div className="space-y-2">
@@ -168,7 +169,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
             AES and SHA-2 stay; a quantum computer weakens them only modestly. For devices too small
             for AES-GCM, NIST standardised the lightweight{' '}
             <InlineTooltip term="Ascon">Ascon</InlineTooltip> family in SP 800-232 (final, August
-            2025). PQC replaces the public-key parts: key establishment and signatures.
+            2025). In this module's reading, PQC replaces the public-key parts: key establishment
+            and signatures.
           </p>
         </Callout>
         <Callout title="Where industrial IoT sits in a plant">
@@ -252,9 +254,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           <li>
             <InlineTooltip term="FN-DSA">FN-DSA-512</InlineTooltip> verifies with {n(F.fndsaVerify)}{' '}
             B — but signing needs {n(F.fndsaSign)} B of stack and the full scheme is{' '}
-            {n(F.fndsaCode)} B of code. Verify on the device; sign elsewhere. FIPS 206 is not yet
-            published; sizes here follow the Falcon v1.2 specification ({n(fndsa.outputBytes)} B in
-            its padded, fixed-length format).
+            {n(F.fndsaCode)} B of code. Verify on the device; sign elsewhere. Sizes here follow the
+            Falcon v1.2 specification ({n(fndsa.outputBytes)} B in its padded, fixed-length format).
           </li>
           <li>
             <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> verification is hashing only (
@@ -324,9 +325,7 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
         <Callout title="CNSA 2.0 (national security systems)">
           <p>
             Firmware and software signing should prefer CNSA 2.0 algorithms from 2025 and use them
-            exclusively by 2030. CNSA 2.0 accepts only <strong>ML-DSA-87</strong> or{' '}
-            <strong>LMS/XMSS</strong> (SP 800-208) for this — ML-DSA-44 and ML-DSA-65 are fine for
-            commercial FIPS 204 products but not for NSS.
+            exclusively by 2030.
           </p>
         </Callout>
         <p>
@@ -434,8 +433,9 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
         <p>
           Each certificate holds its subject&apos;s public key and its{' '}
           <strong>issuer&apos;s</strong> signature (RFC 5280). In a TLS or DTLS handshake the server
-          sends its leaf and intermediate and leaves the root out (RFC 8446 §4.4.2), so the chain on
-          the wire carries two public keys and two signatures.
+          sends its leaf and intermediate and may omit the trust-anchor root when peers are known to
+          possess it (RFC 8446 §4.4.2), in which case the chain on the wire carries two public keys
+          and two signatures.
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-xs font-bold text-foreground mb-2">
@@ -511,9 +511,7 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
         </p>
         <p>
           Smart-meter data is a harvest-now-decrypt-later target: interval readings reveal when a
-          home is occupied, and meters stay installed 15 years or more. DLMS/COSEM Suite 1 and 2
-          meters agree keys with ECDH; Suite 0 meters use symmetric key wrap only and have no
-          public-key exchange to break.
+          home is occupied, and meters stay installed.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Callout title="Wi-SUN FAN 1.1">
@@ -559,9 +557,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
             first Common Criteria EAL6+ certificate for a security controller comprising a
             post-quantum algorithm (ML-KEM); Samsung&apos;s S3SSE2A received an ANSSI Common
             Criteria certificate in 2025 (its published Security Target Lite lists an optional
-            ML-DSA library among the functions included in the TOE); STMicroelectronics has
-            announced PQC for its ST54M secure element. Check each certificate&apos;s scope — it
-            covers one target of evaluation, not &quot;PQC&quot; in general.
+            ML-DSA library among the functions included in the TOE). Check each certificate&apos;s
+            scope — it covers one target of evaluation, not &quot;PQC&quot; in general.
           </li>
           <li>
             <strong>Hash-based firmware protection is also in hardware.</strong> Infineon says two
@@ -604,11 +601,11 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
       >
         <p>
           A hybrid key exchange such as X25519MLKEM768 combines a classical and a PQC shared secret;
-          the result stays secret as long as <strong>either</strong> component is unbroken. On a
-          device that already runs ML-KEM-768 the classical half costs little: X25519 adds{' '}
-          {F.hybridExtraBytes} bytes to each direction, and its ECC routine (at most{' '}
-          {n(F.ecdhStack)} B of stack in the benchmark) runs before or after ML-KEM rather than on
-          top of its peak. Hybrid does not double the cost; the PQC half dominates it.
+          the result stays secret as long as <strong>either</strong> component is unbroken. In this
+          module's reading, on a device that already runs ML-KEM-768 the classical half costs
+          little: X25519 adds {F.hybridExtraBytes} bytes to each direction, and its ECC routine (at
+          most {n(F.ecdhStack)} B of stack in the benchmark) runs before or after ML-KEM rather than
+          on top of its peak. Hybrid does not double the cost; the PQC half dominates it.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Callout title="Gateway-mediated (Class 0–1)">
@@ -677,9 +674,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </li>
           <li>
             <strong>NIST IR 8259r1 / 8259A</strong>: foundational activities for manufacturers and
-            the core device-capability baseline. NIST IR 8259r1 (April 2026) superseded NIST IR 8259
-            and names quantum-safe choices as an example of future-proofing, without a deadline;
-            8259A remains the capability baseline.
+            the core device-capability baseline. NIST IR 8259r1 (April 2026) names quantum-safe
+            choices as an example of future-proofing.
           </li>
         </ul>
       </Section>

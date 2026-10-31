@@ -384,7 +384,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               details: [
                 'No secrets-manager-native PQC — inherits AWS KMS ML-DSA-44/65/87 signing key specs (GA June 2025)',
                 'No ML-KEM key spec: AWS ML-KEM is hybrid post-quantum TLS in transit only, not an at-rest key type',
-                'AWS SDK TLS uses hybrid ML-KEM (AWS-LC) since 2025',
+                'AWS SDK for Java 2.x can enable hybrid post-quantum key agreement by calling .postQuantumTlsEnabled(true) when building the AWS Common Runtime HTTP client',
                 'No native dynamic secrets — use Lambda rotation or Vault AWS auth',
               ],
               note: 'The simplest path: AWS KMS offers hybrid post-quantum TLS (ML-KEM in transit) for the KMS / Secrets Manager APIs. There is no ML-KEM CMK key spec, so secrets are not ML-KEM-encrypted at rest (AWS KMS native PQC today is ML-DSA signing key specs, GA June 2025).',
@@ -394,7 +394,6 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               status: 'Planned 2026',
               statusCls: 'text-status-warning bg-status-warning/10 border-status-warning/30',
               details: [
-                'ML-KEM-768/1024 and ML-DSA-44/65/87 key types — planned 2026',
                 'SymCrypt (underlying crypto library) already supports ML-KEM/ML-DSA internally',
                 'Key Vault API exposure is the remaining gap',
                 'Managed HSM HSM SKU required for PQC (Standard tier HSMs excluded)',

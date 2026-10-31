@@ -319,7 +319,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     id: 'measured-boot',
     name: 'Measured Boot',
     description:
-      'TPM PCR banks record measurements of each boot stage. Values are deterministic for identical configurations. No signature operations during boot — measurements are SHA-256 extends into PCRs.',
+      'TPM PCR banks record measurements of each boot stage. Values are deterministic for identical configurations. No signature operations during boot — every measurement digest is extended to a PCR bank using the matching algorithm.',
     currentCrypto: 'SHA-256 hash extends (no signatures in measurement itself)',
     forgeryUrgency: 'low',
     pqcMigrationPath:
@@ -335,7 +335,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     currentCrypto: 'RSA-2048 or ECDSA P-256 (AIK signing key)',
     forgeryUrgency: 'high',
     pqcMigrationPath:
-      'TPM 2.0 Library v185 (TCG, March 2026) adds ML-DSA, and TCG names it for Attestation Keys, so a TPM that implements v185 can sign quotes with ML-DSA. A TPM built to an earlier library version needs the hybrid approach: TPM RSA quote + software ML-DSA binding. Product availability depends on the TPM vendor.',
+      'TPM 2.0 Library v185 (TCG, March 2026) introduces support for ML-DSA, HashML-DSA, and ML-KEM. A TPM built to an earlier library version needs the hybrid approach: TPM RSA quote + software ML-DSA binding. Product availability depends on the TPM vendor.',
     tpmNative: true,
     standardsBody: 'TCG (Trusted Computing Group)',
   },
@@ -347,7 +347,7 @@ export const ATTESTATION_TYPES: AttestationTypeInfo[] = [
     currentCrypto: 'ECDSA P-256 or Ed25519 (layer-derived keys)',
     forgeryUrgency: 'high',
     pqcMigrationPath:
-      'DICE + RIoT profile extended for PQC in DICE specification update (2025). ML-DSA-44 recommended for constrained devices. Key derivation uses HKDF (quantum-safe) already.',
+      'No DICE post-quantum migration path is cited in this module (not sourced in the Library).',
     tpmNative: false,
     standardsBody: 'TCG DICE Working Group / IETF RATS',
   },

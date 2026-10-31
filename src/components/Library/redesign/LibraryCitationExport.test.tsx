@@ -3,11 +3,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { libraryData, type LibraryItem } from '@/data/libraryData'
+import { logLibraryDownload } from '@/utils/analytics'
 
 const downloads: { blob: Blob; name: string }[] = []
 vi.mock('@/services/exportBundle', async (orig) => ({
   ...(await orig<typeof import('@/services/exportBundle')>()),
   downloadBlob: (blob: Blob, name: string) => downloads.push({ blob, name }),
+}))
+
+vi.mock('@/utils/analytics', async (orig) => ({
+  ...(await orig<typeof import('@/utils/analytics')>()),
+  logLibraryDownload: vi.fn(),
 }))
 
 import { LibraryCitationExport, itemsByReferenceIds } from './LibraryCitationExport'
@@ -16,6 +22,7 @@ const two = libraryData.slice(0, 2)
 
 beforeEach(() => {
   downloads.length = 0
+  vi.mocked(logLibraryDownload).mockClear()
 })
 
 describe('LibraryCitationExport', () => {
@@ -38,6 +45,14 @@ describe('LibraryCitationExport', () => {
     const csl = JSON.parse(await downloads[1].blob.text())
     expect(csl).toHaveLength(1)
     expect(csl[0].note).toContain(`PQC Today Library record ${two[0].referenceId}`)
+  })
+
+  it('logs one library download per export, naming the scope and format', () => {
+    render(<LibraryCitationExport getItems={() => two} bookmarkCount={2} filteredCount={2} />)
+    fireEvent.click(screen.getByTestId('library-cite-trigger'))
+    fireEvent.click(screen.getByTestId('library-cite-filtered-bib'))
+    expect(logLibraryDownload).toHaveBeenCalledTimes(1)
+    expect(logLibraryDownload).toHaveBeenCalledWith('citations-filtered-bib')
   })
 
   it('disables a scope with nothing in it', () => {

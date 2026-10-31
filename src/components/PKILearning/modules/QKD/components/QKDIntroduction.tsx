@@ -430,9 +430,8 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
             real-world implementations.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
-            NSA instead recommends post-quantum cryptography (NIST FIPS 203/204/205) as the primary
-            solution for quantum-resistant security, while acknowledging QKD may have niche
-            applications in high-security environments.
+            NSA instead considers mathematically based cryptography a better alternative for
+            protecting National Security Systems from future quantum computing developments.
           </p>
         </div>
       </section>

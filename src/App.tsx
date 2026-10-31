@@ -2,7 +2,8 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router'
 import { CrossOriginIsolationGuard } from './components/CrossOriginIsolationGuard'
 
-import { logPageView, logStreakMilestone } from './utils/analytics'
+import { logStreakMilestone } from './utils/analytics'
+import { AnalyticsTracker } from './components/Router/AnalyticsTracker'
 import { useEffect, useRef } from 'react'
 import { Suspense } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
@@ -194,17 +195,6 @@ const RevisionsView = lazyWithRetry(() =>
     default: module.RevisionsView,
   }))
 )
-
-// Helper component to log page views on route change
-function AnalyticsTracker() {
-  const location = useLocation()
-
-  useEffect(() => {
-    logPageView(location.pathname)
-  }, [location])
-
-  return null
-}
 
 import { ScrollToTop } from './components/Router/ScrollToTop'
 import { SpecDrawerHost } from './components/Library/SpecDrawerHost'

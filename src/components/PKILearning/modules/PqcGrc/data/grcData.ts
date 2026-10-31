@@ -248,9 +248,8 @@ export const RISK_TOLERANCES: RiskTolerance[] = [
     id: 'tnfl',
     dimension: 'TNFL exposure tolerance',
     statement:
-      'All production software and firmware signing will use NIST-approved ' +
-      'quantum-resistant signatures (SP 800-208 hash-based or ML-DSA, dual-signed ' +
-      'with classical) by end of 2027.',
+      'All production software and firmware signing will use ' +
+      'quantum-resistant signatures (SP 800-208 hash-based or ML-DSA).',
     target:
       'All CA signing keys PQC-capable, with hybrid or PQC issuance available, by end of 2029.',
   },

@@ -1438,11 +1438,9 @@ export function StatefulSignaturesDemo() {
                         via known seed → pubkey comparison → C_VerifyInit + C_Verify
                       </p>
                       <p className="text-xs text-status-info mt-1">
-                        Note: RFC 8391 (informational) does not publish KAT vectors. This test
-                        injects a known 96-byte zero seed via the softhsmv3{' '}
+                        Note: This test injects a known seed via the softhsmv3{' '}
                         <code>_set_kat_seed</code> hook, derives the public key deterministically,
-                        and compares it against a pre-computed golden value — proving implementation
-                        correctness via NIST SP 800-208 parameter compliance.
+                        and compares it against a pre-computed golden value.
                       </p>
                     </div>
                     <div className="flex items-center gap-4">

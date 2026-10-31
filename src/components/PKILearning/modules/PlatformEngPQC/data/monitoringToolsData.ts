@@ -410,8 +410,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     id: 'rotation',
     step: 6,
     title: 'Automatic Rotation',
-    description:
-      'cert-manager renews certificates at 2/3 of the certificate lifetime (e.g., 60 days into a 90-day cert).',
+    description: 'cert-manager renews certificates.',
     pqcNote:
       'ML-DSA certificates have the same rotation logic. Shorter TTLs (30 days) are recommended for PQC transition to shorten the window in which a forged certificate would be accepted. cert-manager renewBefore: 20d achieves this.',
     status: 'pqc',

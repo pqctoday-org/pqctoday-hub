@@ -10,7 +10,7 @@ And because every MTC issuance is recorded in a public, append-only transparency
 
 ### The Key Takeaway
 
-Merkle Tree Certificates cut the authentication data in a PQC handshake — about 36% with standalone ML-DSA-44 certificates and about 56% with landmark certificates, compared with a leaf-plus-intermediate chain (the server still sends its own key and handshake signature). By moving to inclusion proofs and hash recomputation, MTCs provide a viable, standardized (IETF PLANTS) path to deploying PQC certificates at internet scale. Chrome's Quantum-Resistant Root Store (CQRS) coexists alongside the existing Web PKI root store, enabling maximum compatibility: PQC for capable browsers, classical fallback for legacy clients, with the MTC log creating the audit trail.
+Merkle Tree Certificates cut the authentication data in a PQC handshake — about 36% with standalone ML-DSA-44 certificates and about 56% with landmark certificates, compared with a leaf-plus-intermediate chain (the server still sends its own key and handshake signature). By moving to inclusion proofs and hash recomputation, MTCs provide a viable path, via an IETF PLANTS Internet-Draft, to deploying PQC certificates at internet scale. Chrome's Quantum-Resistant Root Store (CQRS) coexists alongside the existing Web PKI root store, enabling maximum compatibility: PQC for capable browsers, classical fallback for legacy clients, with the MTC log creating the audit trail.
 
 ### What's Happening
 

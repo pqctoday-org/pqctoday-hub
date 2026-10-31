@@ -116,7 +116,7 @@ export const TwoTrackSequencing: React.FC = () => (
             bullets={[
               'Migrate key establishment first: TLS, VPN/IPsec, stored-data key wrapping.',
               'Prioritise by data secrecy-lifetime — long-lived secrets are already exposed.',
-              'ML-KEM (FIPS 203) is standardised; hybrid (X25519+ML-KEM) is deployable now in TLS 1.3 (RFC 10024) and OpenSSH 9.9+; the IKEv2 drafts are in the RFC Editor queue.',
+              'ML-KEM (FIPS 203) is standardised; hybrid (X25519+ML-KEM) is deployable now in TLS 1.3 (RFC 10024).',
             ]}
           />
           <TrackCard

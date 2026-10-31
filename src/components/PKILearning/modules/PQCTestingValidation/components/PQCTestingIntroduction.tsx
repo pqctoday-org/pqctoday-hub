@@ -672,8 +672,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           which is what lets a test vector fix it <Cite s="fips203" at="§6" />{' '}
           <Cite s="fips204" at="§6" />. ACVP testing does not cover everything: the same
           sub-specifications leave out zeroization of intermediate values, DRBG strength, and
-          incorrect-length keys and signatures, and the CMVP laboratory must confirm the algorithm
-          requirements CAVP testing does not reach <Cite s="cmvpMM" at="§2.6.2" />.
+          incorrect-length keys and signatures.
         </p>
 
         <ReadingCompleteButton />

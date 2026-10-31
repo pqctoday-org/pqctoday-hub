@@ -24,7 +24,7 @@ export const BIOMETRIC_PROFILES: BiometricDataProfile[] = [
     id: 'fingerprint',
     name: 'Fingerprint Template',
     description:
-      'Minutiae-based representation of fingerprint ridge patterns (ISO/IEC 19794-2). Used in hospital staff authentication, patient ID, and national health registries.',
+      'Minutiae-based representation of fingerprint ridge patterns (ISO/IEC 19794-2). Used in hospital staff authentication, patient ID, and national health registries (not sourced in the Library).',
     templateSizeBytes: 512,
     storageLocations: ['Hospital DB', 'National ID Registry', 'Smart Card', 'Cloud IAM'],
     revocability: 'irreplaceable',

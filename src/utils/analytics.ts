@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import ReactGA from 'react-ga4'
+import formatGaText from 'react-ga4/dist/format'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
@@ -44,6 +45,65 @@ function syncSafeLocation() {
   lastSafeLocation = location
 }
 
+// --- Persona dimensions ---
+//
+// persona and experience_level ride on every event (and page view) as their own GA4
+// parameters, so GA4 can split any report by cohort. They are set once and refreshed
+// when the visitor changes persona, instead of being repeated on each call site. Register
+// both as event-scoped custom dimensions in GA4 to report on them.
+
+let lastPersonaKey = ''
+
+function syncPersonaDimensions() {
+  try {
+    const { selectedPersona, experienceLevel } = usePersonaStore.getState()
+    const persona = selectedPersona ?? 'none'
+    const experience = experienceLevel ?? 'unknown'
+    const key = `${persona}|${experience}`
+    if (key === lastPersonaKey) return
+    lastPersonaKey = key
+    ReactGA.set({ persona, experience_level: experience })
+  } catch {
+    // Store may not be initialized yet — dimensions are simply absent until it is
+  }
+}
+
+// --- Internal traffic ---
+//
+// The maintainer's own visits would otherwise count as audience. Opening the site once with
+// ?internal_traffic=on tags that browser's hits traffic_type=internal until ?internal_traffic=off;
+// GA4's internal-traffic data filter then keeps them out of reports. The query is only read
+// here, never sent (page addresses are sent without their query).
+
+const INTERNAL_TRAFFIC_KEY = 'pqc-internal-traffic'
+
+function applyInternalTraffic() {
+  try {
+    const flag = new URLSearchParams(window.location.search).get('internal_traffic')
+    if (flag === 'on') window.localStorage.setItem(INTERNAL_TRAFFIC_KEY, '1')
+    if (flag === 'off') window.localStorage.removeItem(INTERNAL_TRAFFIC_KEY)
+    if (window.localStorage.getItem(INTERNAL_TRAFFIC_KEY) === '1') {
+      ReactGA.set({ traffic_type: 'internal' })
+    }
+  } catch {
+    // Storage blocked (private mode) — the visit is simply counted
+  }
+}
+
+let stopPersonaDimensions: (() => void) | null = null
+
+function startPersonaDimensions() {
+  stopPersonaDimensions?.()
+  stopPersonaDimensions = null
+  lastPersonaKey = ''
+  syncPersonaDimensions()
+  try {
+    stopPersonaDimensions = usePersonaStore.subscribe(syncPersonaDimensions)
+  } catch {
+    // Store unavailable (tests, SSR) — nothing to follow
+  }
+}
+
 export const initGA = () => {
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
 
@@ -55,6 +115,8 @@ export const initGA = () => {
     // one double-counts the landing page.
     ReactGA.initialize(measurementId, { gtagOptions: { send_page_view: false } })
     syncSafeLocation()
+    applyInternalTraffic()
+    startPersonaDimensions()
   } else {
     console.warn('[Analytics] Google Analytics Measurement ID is missing.')
   }
@@ -74,17 +136,43 @@ export const logPageView = (path?: string) => {
   }
 }
 
-export const logEvent = (category: string, action: string, label?: string) => {
+/** Extra GA4 event parameters (e.g. module_id, tool_id). Keep values low-cardinality. */
+export type EventParams = Record<string, string | number | boolean | undefined>
+
+/**
+ * ReactGA.event() drops any field it does not know, so an event that carries extra
+ * parameters goes through ReactGA.send(), which passes them on to GA4. send() skips the
+ * title-casing and email redaction that event() applies, so format() is applied here to
+ * keep the event, category and label names identical to the ones already in GA4.
+ */
+function sendEvent(category: string, action: string, label?: string, params?: EventParams) {
+  const extra = Object.fromEntries(Object.entries(params ?? {}).filter(([, v]) => v !== undefined))
+  if (Object.keys(extra).length === 0) {
+    ReactGA.event({ category, action, label })
+    return
+  }
+  if (!category || !action) return
+  ReactGA.send({
+    hitType: 'event',
+    eventCategory: formatGaText(category),
+    eventAction: formatGaText(action),
+    ...(label ? { eventLabel: formatGaText(label) } : {}),
+    ...extra,
+  })
+}
+
+export const logEvent = (
+  category: string,
+  action: string,
+  label?: string,
+  params?: EventParams
+) => {
   if (isLocalhost()) return
 
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
   if (measurementId) {
     syncSafeLocation()
-    ReactGA.event({
-      category,
-      action,
-      label,
-    })
+    sendEvent(category, action, label, params)
   }
 }
 
@@ -164,7 +252,7 @@ export const logSimRunQuality = (label: string) => {
 // Engagement event helpers for key user journeys
 
 export const logModuleStart = (moduleId: string) => {
-  logEvent('Learning', 'Module Start', personaLabel(moduleId))
+  logEvent('Learning', 'Module Start', personaLabel(moduleId), { module_id: moduleId })
   addHistoryEvent('module_started', `Started ${getModuleTitle(moduleId)}`, {
     moduleId,
     route: `/learn/${moduleId}`,
@@ -172,7 +260,7 @@ export const logModuleStart = (moduleId: string) => {
 }
 
 export const logModuleComplete = (moduleId: string) => {
-  logEvent('Learning', 'Module Complete', personaLabel(moduleId))
+  logEvent('Learning', 'Module Complete', personaLabel(moduleId), { module_id: moduleId })
   addHistoryEvent('module_completed', `Completed ${getModuleTitle(moduleId)}`, {
     moduleId,
     route: `/learn/${moduleId}`,
@@ -180,7 +268,9 @@ export const logModuleComplete = (moduleId: string) => {
 }
 
 export const logStepComplete = (moduleId: string, stepIndex: number, workshopStep?: number) => {
-  logEvent('Learning', 'Step Complete', personaLabel(`${moduleId}:step-${stepIndex}`))
+  logEvent('Learning', 'Step Complete', personaLabel(`${moduleId}:step-${stepIndex}`), {
+    module_id: moduleId,
+  })
   const route =
     workshopStep !== undefined
       ? `/learn/${moduleId}?tab=workshop&step=${workshopStep}`
@@ -193,7 +283,9 @@ export const logStepComplete = (moduleId: string, stepIndex: number, workshopSte
 }
 
 export const logArtifactGenerated = (moduleId: string, artifactType: string) => {
-  logEvent('Learning', 'Artifact Generated', personaLabel(`${moduleId}:${artifactType}`))
+  logEvent('Learning', 'Artifact Generated', personaLabel(`${moduleId}:${artifactType}`), {
+    module_id: moduleId,
+  })
   const typeMap: Record<string, HistoryEventType> = {
     key: 'artifact_key',
     certificate: 'artifact_cert',
@@ -241,7 +333,7 @@ export const logTimelineFilterText = (text: string) => {
 }
 
 export const logLibraryDownload = (fileName: string) => {
-  logEvent('Library', 'Download', fileName)
+  logEvent('Library', 'Library Download', fileName)
 }
 
 export const logExternalLink = (category: string, url: string) => {
@@ -387,23 +479,17 @@ export const logChatOpened = () => {
   logEvent('Chat', 'Opened')
 }
 
-// --- Page accuracy feedback ---
-
-export const logAccuracyFeedback = (vote: 'accurate' | 'inaccurate', pagePath: string) => {
-  logEvent('Accuracy', vote, pagePath)
-}
-
 // --- Command Center tracking ---
 
 export const logBusinessToolOpen = (toolId: string, toolName: string) => {
-  logEvent('Business', 'Tool Open', `${toolId}:${toolName}`)
+  logEvent('Business', 'Tool Open', `${toolId}:${toolName}`, { tool_id: toolId })
   addHistoryEvent('page_view', `Opened ${toolName}`, {
     route: `/business/tools/${toolId}`,
   })
 }
 
 export const logBusinessToolExport = (toolId: string, format: string) => {
-  logEvent('Business', 'Tool Export', `${toolId}:${format}`)
+  logEvent('Business', 'Tool Export', `${toolId}:${format}`, { tool_id: toolId })
 }
 
 // --- Streak tracking ---
@@ -466,6 +552,9 @@ export const logAssessStep = (step: number, label: string) => {
 
 export const logAssessComplete = (personaResult: string) => {
   logEvent('Assessment', 'Complete', personaLabel(personaResult))
+  // 'Complete' is a generic name other sections can share; this one is unique to the
+  // assessment, so GA4 can count it as a key event.
+  logEvent('Assessment', 'Assessment Complete', personaLabel(personaResult))
 }
 
 export const logAssessReset = () => {
@@ -533,7 +622,7 @@ export const logIndustrySelected = (industry: string) => {
 // --- Learning module tab tracking ---
 
 export const logModuleTabSwitch = (moduleId: string, tab: 'learn' | 'workshop' | string) => {
-  logEvent('Learning', 'Tab Switch', personaLabel(`${moduleId}:${tab}`))
+  logEvent('Learning', 'Tab Switch', personaLabel(`${moduleId}:${tab}`), { module_id: moduleId })
 }
 
 // --- Engagement event loggers (UX-GLOBAL-01) ---

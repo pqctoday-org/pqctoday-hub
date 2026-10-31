@@ -59,8 +59,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div className="text-xs text-muted-foreground">
               ML-DSA-44 keys + signatures per handshake
               <span className="block text-[10px] mt-0.5">
-                (2 &times; 1,312 B keys + 3 &times; 2,420 B signatures; SCTs and cert metadata not
-                counted; 13,831 B with ML-DSA-65, 19,065 B with ML-DSA-87)
+                (7,260 B of authentication overhead from two SCTs and a leaf certificate signature
+                with a directly-trusted intermediate; 9,927 B with ML-DSA-65)
               </span>
             </div>
           </div>
@@ -123,10 +123,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               <p className="text-xs text-muted-foreground">
                 Each certificate holder receives a compact <strong>inclusion proof</strong>: the
                 chain of sibling hashes from their leaf up to the root. Its size depends only on how
-                large the subtree is: 384 bytes for a standalone certificate&apos;s ~3,000-entry
-                checkpoint subtree (12 hashes &times; 32 bytes), 736 bytes for a landmark subtree of
-                ~5.4 million (23 hashes &times; 32 bytes) &mdash; both projected in the draft&apos;s
-                own size estimates (section 6.5).
+                large the subtree is: 384 bytes for a standalone certificate&apos;s subtree of
+                around 2,500 certificates (12 hashes &times; 32 bytes).
               </p>
             </div>
           </div>
@@ -453,8 +451,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                 latest version; not yet proposed for publication
               </li>
               <li className="text-warning font-medium pt-1">
-                &bull; Status: Active IETF draft — not yet standardized as an RFC. Not recommended
-                for production deployment without vendor support.
+                &bull; Status: Active IETF draft — not yet standardized as an RFC. This module's
+                advice: Not recommended for production deployment without vendor support.
               </li>
             </ul>
           </div>

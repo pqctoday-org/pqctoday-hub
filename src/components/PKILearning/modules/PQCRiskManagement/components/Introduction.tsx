@@ -189,8 +189,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <strong>ECC-256 is as urgent as RSA-2048.</strong> Classically, a 256-bit elliptic
               curve looks far stronger than a 2048-bit RSA modulus. But Shor solves the
               elliptic-curve discrete-log problem with <em>fewer</em> logical qubits than it needs
-              to factor RSA-2048 &mdash; so a CRQC reaches ECC-256 at least as early. Both belong in
-              the same top-urgency band.
+              to factor RSA-2048 &mdash; so a CRQC reaches ECC-256 at least as early (not sourced in
+              the Library). Both belong in the same top-urgency band.
             </p>
           </div>
           <div className="overflow-x-auto">
@@ -325,9 +325,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   for NSS by 2030&ndash;2035
                 </li>
                 <li>
-                  &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable public-key
-                  algorithms at 112-bit security and up deprecated after 2030, disallowed under NIST
-                  standards after 2035
+                  &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable digital signature
+                  algorithms deprecated after 2030, disallowed under NIST standards and guidelines
+                  after 2035
                 </li>
                 <li>&bull; EU/ANSSI: Active PQC transition guidance</li>
               </ul>

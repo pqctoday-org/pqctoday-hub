@@ -56,8 +56,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     fipsStatus: 'active',
     cmvpCertNumber: '#4985 (OpenSSL FIPS Provider; FIPS 140-3 L1, 11 Mar 2025)',
     esvStatus: 'not-validated',
-    pqcSupport:
-      'ML-KEM, ML-DSA, SLH-DSA in OpenSSL 3.5; none is in the approved-algorithm list of #4985',
+    pqcSupport: 'ML-KEM, ML-DSA, SLH-DSA in OpenSSL 3.5',
     openCveHigh: 1,
     lastVerified: '2026-09-24',
     posture: 'green',

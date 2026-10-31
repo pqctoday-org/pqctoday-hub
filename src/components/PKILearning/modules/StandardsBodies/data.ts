@@ -122,7 +122,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     //   - "ISO/IEC NP 29192-8 (Lightweight PQC)" — 29192-8:2022 is published
     //     "Authenticated encryption", not a PQC work item.
     keyPqcOutputs: [
-      'ISO/IEC 14888-4:2024 (Digital signatures with appendix – Part 4: Stateful hash-based mechanisms, XMSS/LMS)',
+      'ISO/IEC 14888-4:2024 (Digital signatures with appendix – Part 4: Stateful hash-based mechanisms)',
       "ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers amendment; covers Classic McEliece per a BSI note; FrodoKEM and ML-KEM not confirmed against the amendment's scope text)",
       'ISO/IEC 20085 (KEM reference, in development)',
     ],
@@ -280,7 +280,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'US',
     founded: '1995',
     mission:
-      'NIST/CSE (Communications Security Establishment Canada) joint program validating cryptographic module implementations against FIPS 140-3. Required for US federal procurement (FISMA). Module certificates that list ML-KEM or ML-DSA as approved algorithms now exist (for example Level 3 HSM certificates #5282 and #5450, 2026).',
+      'NIST/CSE (Communications Security Establishment Canada) joint program validating cryptographic module implementations against FIPS 140-3. Required for US federal procurement (FISMA). Module certificates that list ML-KEM or ML-DSA as approved algorithms now exist (for example Level 3 HSM certificate #5450, 2026).',
     decisionMaking:
       'NVLAP-accredited testing labs perform validation testing → CMVP issues official certificate. The Cryptographic Algorithm Validation Program (CAVP) validates the individual algorithm implementations (e.g., FIPS 203/204/205), testing them through NIST’s ACVTS over the ACVP protocol. CMVP validation time varies by module and queue; the public Modules in Process list shows the status of each submission, and the wait is a critical-path dependency.',
     keyPqcOutputs: [
@@ -431,7 +431,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'enisa',
     name: 'ENISA',
     acronym: 'EU Agency for Cybersecurity',
-    hint: 'EU agency under the Cybersecurity Act. Supports the EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM), and publishes EUCC certificates. Accredited certification bodies issue them, not ENISA. It is an EU agency that supports and promotes the framework (Cybersecurity Act Art. 8), not a regulator and not a certification body (Art. 56: conformity assessment bodies issue certificates).',
+    hint: 'EU agency under the Cybersecurity Act. Supports the EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM), and publishes EUCC certificates. Accredited certification bodies issue them, not ENISA. It is an EU agency that supports and promotes the framework (Cybersecurity Act Art. 8), not a regulator and not a certification body (Art. 56: conformity assessment bodies issue certificates) (not sourced in the Library).',
     correctType: 'regulatory-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',
@@ -476,7 +476,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'common-criteria',
     name: 'Common Criteria',
     acronym: 'CC / CCRA — based on ISO/IEC 15408',
-    hint: '36-country mutual recognition arrangement for IT product security evaluations (18 issue certificates, 18 only recognise them). Recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates. Its participants are government organisations or government agencies (CCRA Art. 1), so it is governmental.',
+    hint: 'Mutual recognition arrangement for IT product security evaluations. Its participants are government organisations or government agencies, so it is governmental.',
     correctType: 'certification-body',
     correctScope: 'global',
     correctAuthority: 'governmental',
@@ -553,7 +553,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'EUCC Certification',
         body: 'Accredited certification bodies (supervised by national authorities)',
         description:
-          "EUCC, the European Common Criteria-based cybersecurity certification scheme, is established by Commission Implementing Regulation (EU) 2024/482 under the Cybersecurity Act. Products are evaluated against Common Criteria and the Common Evaluation Methodology, and certification bodies issue EUCC certificates at assurance level 'substantial' or 'high' (Art. 4). National cybersecurity certification authorities supervise the certification bodies, evaluation labs and certificate holders; ENISA publishes the certificates, certification reports and supporting documents (Art. 42). The Regulation applies in every Member State and replaces the national schemes it covers (Art. 49).",
+          "EUCC, the European Common Criteria-based cybersecurity certification scheme, is established by Commission Implementing Regulation (EU) 2024/482 under the Cybersecurity Act. Products are evaluated against Common Criteria and the Common Evaluation Methodology, and certification bodies issue EUCC certificates at assurance level 'substantial' or 'high' (Art. 4). National cybersecurity certification authorities supervise the certification bodies, evaluation labs and certificate holders; ENISA publishes the certificates, certification reports and supporting documents. The Regulation applies in every Member State and replaces the national schemes it covers.",
       },
       {
         id: 'eidas-2',
@@ -649,7 +649,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
     },
     'certification-body': {
       orgs: ['CCRA (Common Criteria)'],
-      note: '36 participating countries (18 issue certificates, 18 only recognise them); recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates',
+      note: 'Recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates',
     },
     'compliance-framework': {
       orgs: ['—'],
@@ -663,7 +663,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
   us: {
     'standards-body': {
       orgs: ['NIST'],
-      note: 'FIPS 203/204/205 — globally influential despite being US-origin',
+      note: "In this module's reading, FIPS 203/204/205 — globally influential despite being US-origin",
     },
     'certification-body': {
       orgs: ['CMVP (NIST/CSE)', 'CAVP (NIST/CSE)', 'NIAP (Common Criteria)'],
@@ -703,7 +703,7 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
   uk: {
     'standards-body': {
       orgs: ['BSI (British Standards Institution)'],
-      note: 'Post-Brexit, UK maintains its own standards track aligned with ISO and ETSI',
+      note: 'Post-Brexit, UK maintains its own standards track aligned with ISO and ETSI (not sourced in the Library)',
     },
     'certification-body': {
       orgs: ['NCSC (CAPS — Commercial Product Assurance)', 'UKAS-accredited labs'],

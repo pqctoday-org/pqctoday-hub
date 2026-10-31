@@ -180,7 +180,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
       'ML-KEM default-on in base OpenSSH 10.0 (SSH KEX); TLS PQC still needs OpenSSL 3.5 from ports',
     mlDsaSupport: 'Via security/oqsprovider port; pkg signing uses RSA/ECDSA signatures',
     notes:
-      'Verified 2026-06-19: catalog status partial. FreeBSD 14.4 (Mar 2026) base OpenSSH 10.0p2 enables the hybrid mlkem768x25519-sha256 SSH key exchange by default (NIST ML-KEM). But base TLS is still OpenSSL 3.0 (no PQC) — PQC TLS requires OpenSSL 3.5 from ports. So PQC is default-on for SSH but not TLS: inherited and partial, not a native OS feature.',
+      'Verified 2026-06-19: catalog status partial. FreeBSD 14.4 (Mar 2026) base OpenSSH 10.0p2 enables the hybrid mlkem768x25519-sha256 SSH key exchange by default (NIST ML-KEM). But base TLS is still OpenSSL 3.0 (no PQC) — PQC TLS requires OpenSSL 3.5 from ports (not sourced in the Library). So PQC is default-on for SSH but not TLS: inherited and partial, not a native OS feature.',
   },
   {
     id: 'macos',

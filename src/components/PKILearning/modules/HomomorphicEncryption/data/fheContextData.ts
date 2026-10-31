@@ -396,7 +396,7 @@ export const FHE_STANDARDS: FheStandardRow[] = [
     coversFhe: 'No',
     status:
       'Homomorphic encryption is listed among areas that “have no generally approved solutions”; “Neither NSA nor NIST has produced standards for these areas”; NSS owners should consult NSA',
-    source: 'NSA CNSA 2.0 FAQ, version 2.1, December 2024',
+    source: 'NSA CNSA 2.0 FAQ',
   },
   {
     body: 'Common Criteria',

@@ -60,7 +60,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'TPM',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The EK, SRK and AIK show "Defined in TPM 2.0 v185"; the Device Identity key shows "Roadmap". Expanding the Hybrid Approach section shows the interim two-signature pattern for a TPM built to an earlier library version: an RSA TPM quote proves hardware binding and an ML-DSA software co-signature provides quantum safety. The timeline lists the March 2026 specification and the dated vendor statements on shipping silicon and TCG certification.',
+        'The EK, SRK and AIK show "Defined in TPM 2.0 v185"; the Device Identity key shows "Roadmap". Expanding the Hybrid Approach section shows the interim two-signature pattern for a TPM built to an earlier library version: an RSA TPM quote proves hardware binding and an ML-DSA software co-signature provides quantum safety. The timeline lists the March 2026 specification.',
       config: { step: 2 },
     },
     {
@@ -71,7 +71,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'Vendors',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        "Firmware-vendor PQC support is early and moves fast. As of the matrix check on 24 October 2026, Insyde, Dell and HPE state in their own documents that PQC firmware signing is available (ML-DSA for Insyde, LMS for Dell and HPE), AMI has announced a working PQC implementation without naming an algorithm, Intel's Boot Guard white paper documents LMS, and open-source EDK2 work is in progress. Use the Firmware Vendor Matrix and its source links for the detail.",
+        'Firmware-vendor PQC support is early and moves fast. Use the Firmware Vendor Matrix and its source links for the detail.',
       config: { step: 3 },
     },
     {
@@ -93,7 +93,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'Embedded',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/30',
       observe:
-        'Flash read is never the problem: even the largest PQC payload (ML-DSA-44, 3,732 B) loads in under 2 ms at 2 MB/s. Verify time dominates. ML-DSA-44 (~1.42 M cycles, pqm4) and LMS (~2.66 M, ePrint 2020/470) verify in about 12 ms and 22 ms at 120 MHz — the same league as ECDSA P-256 (~0.98 M, ~8 ms). RSA-3072 in software (~25 M cycles, about 211 ms at 120 MHz) is the one that blows the budget. These are model estimates; the 100 ms budget is illustrative, not a standard.',
+        'Flash read is never the problem. Verify time dominates. ML-DSA-44 and LMS verify in the same league as ECDSA P-256. RSA-3072 in software is the one that blows the budget. These are model estimates; the 100 ms budget is illustrative, not a standard.',
       config: { step: 5 },
     },
   ]

@@ -27,7 +27,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
       severity: 'critical',
       timeframe: 'During migration onward',
       exampleScenario:
-        'A TLS 1.3 session between two systems both listed as hybrid-enabled in the posture registry completes using only ECDH — no ML-KEM key share. SIEM correlation flags it High severity. The hard part: in TLS 1.3 hybrid key exchanges are negotiated by IANA NamedGroup codepoints (ML-KEM-768/1024 and hybrid groups), not X.509 OIDs, so those codepoints must be added to traffic-analysis rules manually. And the most common false positive is your own middleboxes: oversized hybrid ClientHello messages get fragmented or stripped by legacy firewalls and SSL inspection proxies, producing a benign downgrade that looks identical to an attack.',
+        'A TLS 1.3 session between two systems both listed as hybrid-enabled in the posture registry completes using only ECDH — no ML-KEM key share. SIEM correlation flags it High severity. The hard part: in TLS 1.3 hybrid key exchanges are negotiated by IANA NamedGroup codepoints (ML-KEM-768/1024 and hybrid groups), not X.509 OIDs, so those codepoints must be added to traffic-analysis rules manually. And the most common false positive is your own middleboxes: legacy firewalls and SSL inspection proxies may drop or fail to reassemble fragmented oversized hybrid ClientHello messages, so the hybrid handshake fails and a classical-only retry follows, producing a benign downgrade that looks identical to an attack.',
     },
     {
       id: 'crypto-drift',

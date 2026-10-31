@@ -244,10 +244,9 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           </ul>
         </div>
         <p className="text-xs text-muted-foreground">
-          This simulation uses classical algorithms such as ECDSA, which most examples in the
-          OpenID4VP and OpenID4VCI specifications use. The ARF text we checked does not mention
-          quantum computing, and ETSI says its cryptographic suites specification (TS 119 312
-          V2.1.1) is incomplete for the EUDI Wallet, with an update in preparation.
+          This simulation uses classical algorithms such as ECDSA. ETSI says its cryptographic
+          suites specification (TS 119 312 V2.1.1) is incomplete for the EUDI Wallet, with an update
+          in preparation.
         </p>
       </section>
 

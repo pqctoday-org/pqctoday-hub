@@ -287,9 +287,8 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           samples.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          <span className="font-medium text-foreground/70">Errata status:</span> NIST lists two
-          numerical corrections for SP 800-90B: one chi-squared critical value and one worked Most
-          Common Value example. They do not change the requirements taught here.{' '}
+          <span className="font-medium text-foreground/70">Errata status:</span> Two errata for SP
+          800-90B have been identified by NIST.{' '}
           <a
             href="https://csrc.nist.gov/pubs/sp/800/90/b/final"
             className="text-primary underline"

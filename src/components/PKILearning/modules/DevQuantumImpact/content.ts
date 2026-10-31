@@ -55,6 +55,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has 3 interactive steps: Threat Impact Explorer — six-panel technical briefing: library migration API diff (before/after code snippets), signature size impact calculator (input: algorithm + payload size → output: JWT size, HTTP header usage, storage overhead), TLS handshake size estimator with per-protocol comparison, code signing tool migration matrix (cosign/Notation/GPG timelines), hybrid KDF combiner walkthrough, and ACVP test vector gap analysis by algorithm category.',
     relatedStandards:
-      'FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 205 (SLH-DSA, Stateless Hash-Based Digital Signature Standard). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners). RFC 9980 (ML-DSA for OpenPGP). RFC 8446 (TLS 1.3 — key_share extension, hybrid group negotiation). IETF draft-connolly-cfrg-xwing (X-Wing hybrid KEM combiner).',
+      'FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 205 (SLH-DSA, Stateless Hash-Based Digital Signature Standard). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners). RFC 9980 (OpenPGP with ECC-composite ML-KEM and ML-DSA, plus standalone SLH-DSA). RFC 8446 (TLS 1.3 — key_share extension, hybrid group negotiation). IETF draft-connolly-cfrg-xwing (X-Wing hybrid KEM combiner).',
   },
 }

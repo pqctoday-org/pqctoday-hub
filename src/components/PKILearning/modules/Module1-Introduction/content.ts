@@ -137,7 +137,7 @@ export const timelineMilestones = [
   {
     year: '2025',
     event:
-      'NIST selects HQC as a backup KEM (IR 8545) and finalizes SP 800-227, its KEM usage guidance',
+      'NIST selects HQC as a backup KEM (IR 8545) and finalizes SP 800-227, its KEM usage guidance (not sourced in the Library)',
     phase: 'Standardization',
   },
   {

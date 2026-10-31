@@ -483,7 +483,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     queryTypes: ['equality', 'range'],
     pqcCompatible: false,
     encryptionScheme:
-      'Column Master Key (CMK) wraps Column Encryption Key (CEK) using RSA-OAEP. With secure enclaves (VBS/SGX): deterministic encryption allows equality queries; randomized encryption allows range queries inside enclave.',
+      'Column Master Key (CMK) wraps Column Encryption Key (CEK) using RSA-OAEP. With secure enclaves (VBS/SGX): deterministic encryption allows equality queries; randomized encryption allows range queries inside enclave (not sourced in the Library).',
     limitations:
       'Without enclaves: equality queries only, no joins on encrypted columns. With enclaves: range queries supported but SGX deprecation concerns. CMK rotation requires re-encryption of all CEKs.',
     pqcRoadmap:

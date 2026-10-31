@@ -395,7 +395,8 @@ export const ESV_CERTIFICATES: EsvCertificateRef[] = [
     noiseSourceClassification: 'Non-Physical',
     validationDates: ['10/2/2024'],
     lab: 'atsec information security corporation',
-    listedOutput: 'Full entropy, 256-bit output (vetted conditioning SHA3-256, CAVP A5411)',
+    listedOutput:
+      'Full entropy, 256-bit output (vetted conditioning SHA3-256, CAVP A5411) (not sourced in the Library)',
     operatingEnvironments: [
       'SUSE Linux Enterprise Server 15 SP6 on AMD EPYC 7343',
       'SUSE Linux Enterprise Server 15 SP6 on Ampere Altra Q80-30',

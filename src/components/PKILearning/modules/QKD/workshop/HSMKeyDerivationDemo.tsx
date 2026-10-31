@@ -538,7 +538,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               across every session, allowing cross-protocol correlation.
             </p>
             <p>
-              Counter-Mode KDF (SP 800-108 §5.1) solves this:{' '}
+              Counter-Mode KDF (SP 800-108) solves this:{' '}
               <code>K(i) = PRF(KI, [i] ‖ Label ‖ 0x00 ‖ Context ‖ [L])</code>. Different{' '}
               <strong>Label</strong> values (&quot;session-key-v1&quot;, &quot;mac-key-v1&quot;)
               produce cryptographically independent sub-keys from the same master secret. The{' '}

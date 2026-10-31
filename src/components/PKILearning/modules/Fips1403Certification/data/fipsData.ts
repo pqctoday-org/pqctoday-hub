@@ -1305,7 +1305,7 @@ export const ALGORITHM_RECORD_ITEMS: readonly AlgorithmRecordItem[] = [
     label:
       'Listed on the validations and in the Approved Algorithms tables. The function table shows no setting.',
     explanation:
-      'Both validations show "Deterministic: Yes, No" on every ML-DSA SigGen row, and the Policy prints "Deterministic - No, Yes" for ML-DSA SigGen in Table 4 (for A7879) and in Table 5 (for A7880). The function table (Table 7, page 21) names ML-DSA PureSigGen and ML-DSA PreHashSigGen and cites "ML-DSA SigGen: (A7879, A7880)", but it shows no properties for them, so it shows no setting. Compare item 2: there the function table printed one value; here it prints none. The document lists both values in its Approved Algorithms tables but does not say how an operator selects one; that is a question for the vendor.',
+      'Both validations show "Deterministic: Yes, No" on every ML-DSA SigGen row, and the Policy prints "Deterministic - No, Yes" for ML-DSA SigGen in Table 4 (for A7879) and in Table 5 (for A7880) (not sourced in the Library). The function table (Table 7, page 21) names ML-DSA PureSigGen and ML-DSA PreHashSigGen and cites "ML-DSA SigGen: (A7879, A7880)", but it shows no properties for them, so it shows no setting. Compare item 2: there the function table printed one value; here it prints none. The document lists both values in its Approved Algorithms tables but does not say how an operator selects one; that is a question for the vendor.',
     feedbackRight:
       'Correct. Both validations and both Approved Algorithms tables show the setting. The function table shows none.',
   },

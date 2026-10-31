@@ -524,7 +524,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     },
     'hybrid-pure-pqc-kem.pem': {
       title: 'ML-KEM-768 end entity (RFC 9935)',
-      note: 'The subject key is ML-KEM-768 (1,184 bytes); it encapsulates and decapsulates but cannot sign, so the ML-DSA-65 workshop CA signs the certificate. Critical keyUsage keyEncipherment only.',
+      note: 'The subject key is ML-KEM-768 (1,184 bytes); it encapsulates and decapsulates but cannot sign, so the ML-DSA-65 workshop CA signs the certificate. Critical keyUsage keyEncipherment only (not sourced in the Library).',
     },
     'hybrid-composite-kem.pem': {
       title: 'Composite ML-KEM (draft-ietf-lamps-pq-composite-kem-23)',
@@ -532,7 +532,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     },
     'hybrid-chameleon.pem': {
       title: 'Chameleon Certificate — historical (expired draft-bonnell-lamps-chameleon-certs-07)',
-      note: 'Historical design: draft-bonnell-lamps-chameleon-certs-07 is an expired individual draft, never adopted by the LAMPS working group, and is not recommended for new deployments. The primary cert uses ML-DSA-65; a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1) encodes the differences for an ECDSA partner cert. A classical verifier sees only the ML-DSA-65 primary, which it cannot verify; only a chameleon-aware parser can rebuild the ECDSA partner.',
+      note: 'Historical design: draft-bonnell-lamps-chameleon-certs-07 is an expired individual draft; it has neither IETF endorsement nor formal standing in the IETF standards process. The primary cert uses ML-DSA-65; a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1) encodes the differences for an ECDSA partner cert. A classical verifier sees only the ML-DSA-65 primary, which it cannot verify; only a chameleon-aware parser can rebuild the ECDSA partner.',
     },
   }
 

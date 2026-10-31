@@ -21,6 +21,10 @@ export const PAGE_ADDRESS_STATEMENT =
 export const SEARCH_SCRUB_CLAUSE =
   'text you type is scrubbed of email addresses, web addresses, IP addresses, and long key-like strings, and shortened to 80 characters, before it is sent as an event'
 
+/** What is recorded when you export a file, as it reads after "files exported". */
+export const EXPORT_EVENTS_CLAUSE =
+  'which tool made it and the file type, never the contents of the file'
+
 /** When the data kept in your browser leaves your device. */
 export const LOCAL_DATA_LEAVES_STATEMENT =
   'We do not receive this data. It leaves your device only if you share a report link or use the Gemini cloud mode of the PQC Assistant.'

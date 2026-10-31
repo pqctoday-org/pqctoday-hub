@@ -102,7 +102,7 @@ function generateConfig(selections: Record<string, string>): string {
   if (provider === 'gcp') {
     if (operation === 'create-key') {
       return [
-        '# GCP Cloud KMS — ML-DSA signing key (GA since 16 Jul 2026)',
+        '# GCP Cloud KMS — ML-DSA signing key (GA)',
         'gcloud kms keys create <key-name> \\',
         '  --keyring=<ring> \\',
         '  --location=global \\',

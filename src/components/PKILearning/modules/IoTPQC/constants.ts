@@ -126,7 +126,7 @@ export const DEVICE_CLASSES: DeviceClass[] = [
     definedIn: 'draft-ietf-iotops-7228bis',
     example: 'STM32F103RG-class devices',
     description:
-      'Added by the 7228bis draft (RFC 7228 stopped at Class 2). The model uses the lower end of the flash range.',
+      "Added by the 7228bis draft (RFC 7228 stopped at Class 2). The model uses the lower end of the flash range (this module's planning assumption, not a measurement).",
   },
   {
     id: 'class-4',
@@ -340,7 +340,7 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
       },
     },
     notes:
-      'Conservative unstructured-lattice KEM: not selected by NIST, but recommended by BSI and in ISO/IEC standardisation. Its ~10 KB keys and ciphertexts dominate any constrained link.',
+      'Conservative unstructured-lattice KEM: recommended by the German BSI and French ANSSI alongside Classic McEliece in their migration guidance. Its ~10 KB keys and ciphertexts dominate any constrained link.',
   },
   // ── Signatures ──
   {
@@ -420,8 +420,7 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
         },
       },
     },
-    notes:
-      'Stateful like LMS. The RFC 8391 (robust) reference verifier is ~4.9× slower than LMS in this benchmark; an unstandardised "simple" variant narrows that to 1.3–1.6×. The private-key size shown is the compact form; working state is larger.',
+    notes: 'Stateful like LMS.',
   },
   {
     id: 'fn-dsa-512',
@@ -581,8 +580,7 @@ export const IOT_PROTOCOLS: IoTProtocol[] = [
   {
     name: 'CoAP + DTLS 1.3 (RFC 7252, RFC 9147, RFC 7925 profile)',
     layer: 'UDP over 6LoWPAN / IPv6',
-    sizeFact:
-      'IPv6 minimum MTU 1,280 B; an IEEE 802.15.4 frame is 127 B with ~80 B left for payload once link security is on (7228bis S1).',
+    sizeFact: 'IPv6 minimum MTU 1,280 B; an IEEE 802.15.4 frame is 127 B.',
     publicKeyCrypto: 'ECDHE + ECDSA certificates or raw public keys (RFC 7250)',
     pqcPath: 'Hybrid or ML-KEM key share and ML-DSA certificates — every flight fragments.',
     status: 'fragment',

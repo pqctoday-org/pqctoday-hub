@@ -134,7 +134,7 @@ export const QUESTIONS: DrillItem[] = [
     options: [
       { text: 'Yes, we are FIPS.', correct: false },
       {
-        text: 'Our FIPS 140-3 certificate number covers a specific version. Whether that version includes the post-quantum algorithms is on the certificate, so let us check it together.',
+        text: 'Our FIPS 140-3 certificate number covers a specific version. The certificate gives the validated module name and version number, plus its tested operational environment, so let us check it together.',
         correct: true,
       },
       { text: 'FIPS does not apply to post-quantum cryptography.', correct: false },

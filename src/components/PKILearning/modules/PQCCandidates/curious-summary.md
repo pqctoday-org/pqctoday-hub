@@ -1,6 +1,6 @@
 # PQC Candidates — The Curious Take
 
-Think of post-quantum cryptography as an Olympic trial that never stops. NIST selected its first four algorithms in 2022 and published three of them as standards in August 2024 (ML-KEM, ML-DSA, SLH-DSA). The fourth, FN-DSA (FIPS 206), has not been published yet, not even as a draft. And the trials are still running.
+Think of post-quantum cryptography as an Olympic trial that never stops. FN-DSA (FIPS 206) has not been published yet, not even as a draft.
 
 **Why?** Because we don't want all our eggs in one mathematical basket. If clever attackers find a flaw in lattice math (the family most of the first standards use), we need backup algorithms based on completely different math. So NIST opened a second competition just for signatures. In May 2026 it moved nine candidates from four different mathematical worlds to a third round of evaluation (one, HAWK, has since withdrawn). NIST has not said when standards from this round will come.
 

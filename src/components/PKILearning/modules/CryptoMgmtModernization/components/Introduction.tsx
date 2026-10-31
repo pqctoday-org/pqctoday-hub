@@ -81,12 +81,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <StatCard
               label="Application Software — OMB M-23-02 inventory"
               value="Annual"
-              note="US federal agencies must submit a prioritized cryptographic inventory of high-impact systems and HVAs annually through 2035 (M-23-02 §II.A, Nov 2022)."
+              note="US federal agencies must submit a prioritized cryptographic inventory, excluding national security systems, annually until 2035 or as directed by superseding guidance (M-23-02 §II.A, Nov 2022)."
             />
             <StatCard
               label="Key Material — CNSA 2.0 deadlines"
-              value="2030 / 2033"
-              note="CNSSP 15 requires new NSS acquisitions to be CNSA 2.0-compliant from 1 Jan 2027, phases out equipment and services that cannot support CNSA 2.0 by 31 Dec 2030 unless excepted, and mandates CNSA 2.0 algorithms by 31 Dec 2031 unless otherwise noted (NSA CNSA 2.0 FAQ Ver. 2.2, Aug 2026). Earlier category dates remain historical context; use the current FAQ for planning. HSM/KMS rekey lead times are measured in years."
+              value="2030 / 2031"
+              note="CNSSP 15 requires new NSS acquisitions to be CNSA 2.0-compliant from 1 Jan 2027, phases out equipment and services that cannot support CNSA 2.0 by 31 Dec 2030 unless excepted, and mandates CNSA 2.0 algorithms by 31 Dec 2031 unless otherwise noted (NSA CNSA 2.0 FAQ Ver. 2.2, October 2026). Earlier category dates remain historical context; use the current FAQ for planning."
             />
           </div>
           <Quote cite="NIST CSWP.39 (upd1) §5, Considerations for Achieving Crypto Agility (December 2025, updated June 2026)">
@@ -105,10 +105,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </p>
           <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
             <li>
-              <strong>Certificates &amp; PKI</strong> &mdash; the 47-day cadence for publicly
-              trusted TLS server certificates is mathematically incompatible with manual CLM;
-              internal PKI sets its own validity policy, but the same automation serves it.
-              Certificate-related outages are common and costly. Organizations manage an average of
+              <strong>Certificates &amp; PKI</strong> &mdash; Organizations manage an average of
               114,591 internal certificates (Ponemon Institute, Trends in PKI Security: A Global
               Study, sponsored by CyberArk, February 2026).
             </li>
@@ -128,10 +125,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </li>
             <li>
               <strong>Key Material</strong> &mdash; CNSA 2.0 forces HSM and KMS roadmaps now (2030
-              for software/firmware signing, 2033 broadly); NIST SP 800-57 Pt 1 Rev 5 key-validity
-              periods drive rekey cadence (Rev 6 is an initial public draft, not yet final); and
-              orphaned keys, secrets-in-repo, and unrotated service credentials remain a top breach
-              vector.
+              for software/firmware signing); NIST SP 800-57 Pt 1 Rev 5 key-validity periods drive
+              rekey cadence (Rev 6 is an initial public draft, not yet final); and orphaned keys,
+              secrets-in-repo, and unrotated service credentials remain a top breach vector.
             </li>
           </ul>
         </div>
