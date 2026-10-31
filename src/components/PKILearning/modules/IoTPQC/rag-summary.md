@@ -4,7 +4,7 @@
 
 This advanced Applications module (LM-074, 90 minutes) covers post-quantum cryptography for constrained IoT and embedded devices. It was split on 2026-10-01 from the former IoT/OT and Energy & Utilities modules: industrial control systems (SCADA, PLCs, IEC 62443 zones and conduits, sector deep dives) moved to LM-075 _OT & Industrial Control Systems PQC_; vehicle networks to _Automotive PQC_; boot-time verification to _Secure Boot PQC_. Smart-meter key management and RF-mesh airtime moved in from Energy & Utilities and were generalised to device fleets and LPWAN.
 
-Numbers in the module are of three kinds and are labelled that way: exact sizes from the standards (FIPS 203 Table 3, FIPS 204 Table 2, RFC 8554, RFC 8391, Falcon v1.2); Cortex-M4 benchmarks with a named source (pqm4 benchmarks.md at commit 90bfb63 of 2025-05-22, pqm4 at 33de42d of 2021-09-06 for FrodoKEM, Campos et al. IACR ePrint 2020/470 for LMS/XMSS, the Emill P256-Cortex-M4 library for ECDSA/ECDH); and model estimates computed from those.
+Numbers in the module are of three kinds and are labelled that way: exact sizes from the standards (FIPS 203 Table 3, FIPS 204 Table 2, RFC 8554, RFC 8391, Falcon v1.2); Cortex-M4 benchmarks with a named source; and model estimates computed from those.
 
 ## Learn sections
 

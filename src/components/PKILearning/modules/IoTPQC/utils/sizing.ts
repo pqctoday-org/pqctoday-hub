@@ -224,8 +224,7 @@ export function deliveredChainBytes(
       const saved = Math.round(2 * CERT_OVERHEAD_BYTES.x509 * COMPRESSIBLE_FRACTION_OF_OVERHEAD)
       return {
         bytes: x.sent - saved,
-        caveat:
-          'RFC 8879 compresses names, extensions and DER framing; PQC keys and signatures are high-entropy and do not compress, so the saving is a few hundred bytes, not a percentage of the chain.',
+        caveat: 'PQC keys and signatures are high-entropy and do not compress.',
       }
     }
     case 'c509':
