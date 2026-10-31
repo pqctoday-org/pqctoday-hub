@@ -60,7 +60,7 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       badge: 'SSH',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'ML-DSA-65 host keys are 1,952 bytes public / 3,309 bytes signature — vs Ed25519 at 32 bytes / 64 bytes. As of mid-2026, ML-DSA SSH host keys are not yet standardized in mainstream OpenSSH, so clients fall back to Ed25519 host keys. For session encryption a hybrid key exchange has been available longer: sntrup761x25519 (Streamlined NTRU Prime + X25519) since OpenSSH 8.5, and the ML-KEM-based mlkem768x25519-sha256 since OpenSSH 9.9 (the default since OpenSSH 10.0).',
+        'ML-DSA-65 host keys are 1,952 bytes public / 3,309 bytes signature — vs Ed25519 at 32 bytes / 64 bytes. The ML-DSA SSH host key types named in this lesson come from Internet-Drafts, which are not standards, so this lesson keeps Ed25519 host keys as a fallback. For session encryption a hybrid key exchange has been available longer: sntrup761x25519 (Streamlined NTRU Prime + X25519) since OpenSSH 8.5, and the ML-KEM-based mlkem768x25519-sha256 since OpenSSH 9.9 (the default since OpenSSH 10.0).',
       config: { step: 2 },
     },
     {
@@ -71,7 +71,7 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       badge: 'Packages',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'GPG RSA-4096 signatures are 512 bytes; ML-DSA-65 signatures are 3,309 bytes — a 6.5x increase. Package signing requires coordinated infrastructure upgrades (signing server, repo metadata format, package manager client, end-user systems). This is why package signing lags 2-3 years behind system TLS migration.',
+        'GPG RSA-4096 signatures are 512 bytes; ML-DSA-65 signatures are 3,309 bytes — about 6.5 times larger. Package signing involves several parts that have to be upgraded together (signing server, repo metadata format, package manager client, end-user systems). This module expects package signing to trail system TLS migration for that reason; this is an illustration, not a sourced timeline.',
       config: { step: 3 },
     },
     {

@@ -114,9 +114,9 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             <div className="text-xs font-bold text-primary mb-2">OS Vendor Roadmaps</div>
             <p className="text-xs text-muted-foreground">
               RHEL, Ubuntu, Windows Server, and macOS all have active PQC roadmaps. The migration
-              timeline differs significantly — Windows Server 2025 has ML-KEM in a FIPS 140-3
-              validated module today, while Linux distros are still working towards full PQC FIPS
-              module certification.
+              timeline differs significantly. Shipping ML-KEM and ML-DSA in an operating system is a
+              separate step from having them listed on a FIPS 140-3 certificate, so check each
+              platform against the CMVP listings.
             </p>
           </div>
         </div>
@@ -250,7 +250,7 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
                 year: '2026+',
                 keyType: 'ssh-mldsa65 (ML-DSA-65)',
                 status: 'pqc',
-                note: 'Draft RFC; production in OpenSSH 10.0+',
+                note: 'Internet-Draft stage; not a standard',
               },
             ].map((entry) => (
               <div
@@ -296,10 +296,16 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs font-bold text-secondary mb-1">2. Host Authentication</div>
               <p className="text-xs text-muted-foreground">
-                Verifies server identity via host key signature. The new{' '}
-                <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa65</code> host key type
-                (draft-ietf-sshm-mldsa) provides quantum-safe server authentication. Requires
-                OpenSSH 10.0+ on both client and server.
+                Verifies server identity via host key signature. ML-DSA host key types are described
+                in the Internet-Draft draft-sfluhrer-ssh-mldsa-06, which writes the names as{' '}
+                <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa-44</code>,{' '}
+                <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa-65</code> and{' '}
+                <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa-87</code>; this lesson
+                uses <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa65</code> as
+                shorthand. An Internet-Draft is a work in progress, not a standard. The composite{' '}
+                <code className="text-[10px] bg-muted px-1 rounded">ssh-mldsa44-ed25519</code>{' '}
+                algorithm is specified in the SSHM working group draft
+                draft-ietf-sshm-composite-sigs-00, and OpenSSH 10.6 enables it.
               </p>
             </div>
           </div>
