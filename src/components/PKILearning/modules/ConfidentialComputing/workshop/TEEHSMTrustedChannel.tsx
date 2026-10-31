@@ -1135,8 +1135,8 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                 </div>
                 <p className="text-[10px] text-muted-foreground pl-5">
                   The TEE generates a hardware-signed attestation quote (e.g., SGX DCAP Quote,
-                  SEV-SNP Report). The HSM verifies the quote signature against the vendor root CA
-                  to confirm it is talking to a genuine, unmodified enclave.
+                  SEV-SNP Report). In this simulation the HSM verifies the quote signature against
+                  the vendor root CA to confirm it is talking to a genuine, unmodified enclave.
                 </p>
               </div>
 
