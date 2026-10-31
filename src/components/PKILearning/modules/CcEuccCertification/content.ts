@@ -25,14 +25,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'cc-eucc-certification',
-  lastReviewed: '2026-10-24',
-  // lastReviewed is the owner's sign-off of 24 October 2026 (moduleReviewHonesty.test.ts), which
-  // renewed the 23 October one after the Security Target example and the AVA_VAN.5 box; the on-page
-  // notice follows it (common/moduleReviewStatus.ts). Remove it when a fact is corrected, until
-  // the owner renews it. v1 ships as "practitioner orientation", not reviewed by a lab or
-  // certification body.
+  // lastReviewed removed: facts in this module were corrected in release 4.187.0 after the owner's
+  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The
+  // on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-25',
+  lastEdited: '2026-10-30',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
