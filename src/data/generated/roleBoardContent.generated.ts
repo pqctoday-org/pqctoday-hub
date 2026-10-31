@@ -31,7 +31,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1376 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Regulatory data verified 27 Oct 2026',
         ],
         sideCard: {
@@ -167,7 +167,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1376 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Regulatory data verified 27 Oct 2026',
           'Organised around the NIST CSWP.39 zones',
         ],
@@ -306,7 +306,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1376 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / Core / Supporting / Contextual source tiers',
         ],
@@ -448,7 +448,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/compliance?tab=obligations',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1376 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
+        proofChips: ['1380 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
         sideCard: {
           title: 'Where your register stands',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -520,7 +520,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/risk-register',
         ctaSecondary: 'See a finished example report',
         ctaSecondaryHref: '/report?example=1',
-        proofChips: ['1376 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
+        proofChips: ['1380 documents, trust-tiered', 'Organised around the NIST CSWP.39 zones'],
         sideCard: {
           title: 'What the register is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -664,7 +664,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/vendor-scorecard',
         ctaSecondary: 'Browse the migration catalog',
         ctaSecondaryHref: '/migrate',
-        proofChips: ['1376 documents, trust-tiered', 'Six-dimension vendor scorecard'],
+        proofChips: ['1380 documents, trust-tiered', 'Six-dimension vendor scorecard'],
         sideCard: {
           title: 'What the scorecard checks',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
@@ -734,7 +734,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/business/tools/audit-checklist',
         ctaSecondary: 'Run the comprehensive assessment',
         ctaSecondaryHref: '/assess?mode=comprehensive',
-        proofChips: ['1376 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
+        proofChips: ['1380 documents, trust-tiered', 'Regulatory data verified 27 Oct 2026'],
         sideCard: {
           title: "What's already documented",
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
@@ -2509,7 +2509,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / Core / Supporting / Contextual source tiers',
-          '1376 documents, trust-tiered',
+          '1380 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
