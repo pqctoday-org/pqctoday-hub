@@ -426,7 +426,7 @@ export const ScopeBeforeLevel = () => {
         ). For Common Criteria and EUCC, read the certification report and the Security Target
         together: the ST says what was claimed, the report says what was evaluated and under which
         conditions. For PCI, the listing names the device version and its approval class, and the
-        device Security Policy carries the algorithm detail.
+        device Security Policy carries the algorithm detail (not sourced in the Library).
       </p>
 
       <H3>
