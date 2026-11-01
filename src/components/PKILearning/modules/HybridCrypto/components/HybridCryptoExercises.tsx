@@ -88,7 +88,7 @@ export const HybridCryptoExercises: React.FC<HybridCryptoExercisesProps> = ({
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
         'The ML-DSA-65 certificate is significantly larger than ECDSA. The parsed output shows different algorithm OIDs and much larger public key and signature fields embedded in the certificate structure.',
-      config: { step: 2, algorithm: 'all' },
+      config: { step: 4, algorithm: 'all' },
     },
   ]
 

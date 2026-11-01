@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
-  version: '1.0.2',
+  version: '1.2.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-01',
 
   standards: [
     getStandard('FIPS 203'),
@@ -41,7 +41,7 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-56A'),
     getStandard('RFC 5869'),
     getStandard('RFC 8017'),
-    getStandard('RFC 9180'), // HPKE base spec — see the HPKE section + Step 7 workshop
+    getStandard('RFC 9180'), // HPKE base spec — see the HPKE section + Step 3 workshop
     getStandard('draft-ietf-hpke-pq'), // PQ/PQ-T hybrid HPKE KEM IDs (MLKEM768-X25519/P256, MLKEM1024-P384)
     getStandard('draft-ietf-cose-hpke'), // HPKE use case: COSE
     getStandard('draft-ietf-jose-hpke-encrypt'), // HPKE use case: JOSE
@@ -92,6 +92,30 @@ export const content: ModuleContent = {
     getStandard('eprint-2025-2059'), // pt-hybrid-sigs: 2059
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('RFC-6928'), // m-hybrid-crypto: wave 4c
+    // 2026-11-01: "Hybrid or Pure PQC: The Risks" and "Who Recommends Hybrid" sections
+    getStandard('ANSSI-PQC-FAQ-2025'),
+    getStandard('BSI TR-02102-1'),
+    getStandard('BSI-Hinweise-zu-aktuellen-Entwicklungen-um-Classic-McEliece'),
+    getStandard('NL-PQC-Migration-Handbook-2024'),
+    getStandard('https-nukib-gov-cz-download-publications-en-Annex-20to-20the'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('UK-NCSC-PQC-Whitepaper-2024'),
+    getStandard('CA-CCCS-ITSP-40-111'),
+    getStandard('EUCC v2.0 ACM'),
+    getStandard('ECCG-ACM-v3-Draft-2026'), // draft, not yet applicable
+    getStandard('ENISA-Hybridization-Standardisation-Status'),
+    getStandard('ETSI TS 103 744'),
+    getStandard('ETSI-TR-103-966'),
+    getStandard('RFC-10024'),
+    getStandard('draft-ietf-tls-mlkem-07'),
+    getStandard('GSMA PQ.03 PQC Guidelines'),
+    getStandard('Cloudflare-PostQuantum-Roadmap-2026'),
+    getStandard('Bernstein-MLDSA-Bugs-2026'),
+    getStandard('Analysis-of-Hybrid-Key-Establishment-and-Standalone-ML-KEM-i'),
+    // 2026-11-01: "Combiners Compared, and X-Wing" box and the Step 2 combiner panel
+    getStandard('draft-connolly-cfrg-xwing-kem-11'),
+    getStandard('draft-irtf-cfrg-concrete-hybrid-kems-04'),
+    getStandard('Hybrid-PQ-T-Key-Encapsulation-Mechanisms'),
   ],
 
   algorithms: [

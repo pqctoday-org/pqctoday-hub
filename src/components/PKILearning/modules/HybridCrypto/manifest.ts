@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hybrid-crypto',
-  contentVersion: 33,
+  contentVersion: 35,
   lm_id: 'LM-006',
   title: 'Hybrid Cryptography',
   description:
@@ -17,19 +17,23 @@ const manifest: ModuleManifest = {
   trackOrder: 2,
   learnSections: [
     { id: 'why-hybrid', label: 'Why Hybrid Cryptography?' },
-    { id: 'cert-formats', label: 'Hybrid Cert Formats' },
+    { id: 'hybrid-risks', label: 'Hybrid or Pure PQC: The Risks' },
+    { id: 'who-recommends', label: 'Who Recommends Hybrid' },
     { id: 'kem', label: 'Hybrid KEM Construction' },
+    { id: 'kem-tls', label: 'Hybrid KEMs in TLS 1.3' },
+    { id: 'kem-implementation', label: 'Implementation & Validation' },
     { id: 'hpke', label: 'HPKE' },
-    { id: 'composite', label: 'Hybrid Signature Spectrum' },
+    { id: 'composite', label: 'Hybrid Signatures' },
+    { id: 'cert-formats', label: 'Hybrid Cert Formats' },
   ],
   workshopSteps: [
     { id: 'key-generation', label: 'Key Generation' },
     { id: 'encrypt-sign', label: 'Encrypt & Sign' },
+    { id: 'hpke', label: 'HPKE' },
+    { id: 'hybrid-signatures', label: 'Hybrid Signatures' },
     { id: 'ca-setup', label: 'CA Setup' },
     { id: 'hybrid-formats', label: 'Hybrid Formats' },
     { id: 'inspect-compare', label: 'Inspect & Compare' },
-    { id: 'hybrid-signatures', label: 'Hybrid Signatures' },
-    { id: 'hpke', label: 'HPKE' },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

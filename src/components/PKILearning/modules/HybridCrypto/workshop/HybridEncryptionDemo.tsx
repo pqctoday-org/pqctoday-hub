@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import { HpkeWorkshop } from './HpkeWorkshop'
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -21,6 +21,8 @@ import {
   hsm_extractKeyValue,
 } from '@/wasm/softhsm'
 import { combineHybridSecrets, HYBRID_KEM_INFO } from '../services/hybridKemCombiner'
+import { CombinerPanel, type CombinerInputs } from './CombinerPanel'
+import { stripEcPointDer } from '../services/hpkeService'
 
 // ── PKCS#11 operations exercised by this demo ────────────────────────────────
 const HYBRID_LIVE_OPERATIONS = [
@@ -39,6 +41,8 @@ interface HybridState {
   bobPrivHandle: number
   ecdhSSHandle: number
   ecdhSSBytes: Uint8Array
+  alicePubBytes: Uint8Array
+  bobPubBytes: Uint8Array
   kemPubHandle: number
   kemPrivHandle: number
   ciphertextBytes: Uint8Array
@@ -241,6 +245,7 @@ const STEPS: Step[] = [
 const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
   const hsm = useHSM()
   const stateRef = useRef<Partial<HybridState>>({})
+  const [combinerInputs, setCombinerInputs] = useState<CombinerInputs | null>(null)
   const wizard = useStepWizard({ steps: STEPS, onBack: () => {}, initialStep })
 
   const executeCurrentStep = useCallback(async (): Promise<string> => {
@@ -360,6 +365,9 @@ const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
 
         const match = toHex(ssABytes) === toHex(ssBBytes)
         stateRef.current.ecdhSSHandle = ssAHandle
+        // CKA_EC_POINT may come back DER-wrapped (04 20 ‖ 32 bytes); keep the raw 32-byte keys.
+        stateRef.current.alicePubBytes = stripEcPointDer(alicePubBytes, 32)
+        stateRef.current.bobPubBytes = stripEcPointDer(bobPubBytes, 32)
         stateRef.current.ecdhSSBytes = ssABytes
 
         hsm.registerKey(M, hSession, {
@@ -485,6 +493,16 @@ const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
           stateRef.current.ecdhSSBytes
         )
         stateRef.current.hybridKey = combined.key
+        if (stateRef.current.alicePubBytes && stateRef.current.bobPubBytes) {
+          // X-Wing view: Alice's X25519 public key is the key share (ct_X), Bob's is pk_X.
+          setCombinerInputs({
+            ssM: decapSSBytes,
+            ssX: stateRef.current.ecdhSSBytes,
+            ctX: stateRef.current.alicePubBytes,
+            pkX: stateRef.current.bobPubBytes,
+            hkdfKey: combined.key,
+          })
+        }
 
         hsm.registerKey(M, hSession, {
           handle: combined.ikmHandle,
@@ -590,6 +608,12 @@ const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
           </div>
         )}
       </div>
+
+      {combinerInputs && (
+        <div className="px-6 mt-4">
+          <CombinerPanel inputs={combinerInputs} />
+        </div>
+      )}
 
       {/* PKCS#11 call log */}
       {hsm.isReady && (

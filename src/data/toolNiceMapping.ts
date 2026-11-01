@@ -28,7 +28,7 @@ export interface ToolNiceRef {
 
 /**
  * Extract the moduleId from a tool's moduleLink (e.g. '/learn/slh-dsa' → 'slh-dsa',
- * '/learn/hybrid-crypto?tab=workshop&step=5' → 'hybrid-crypto').
+ * '/learn/hybrid-crypto?tab=workshop&step=3' → 'hybrid-crypto').
  * Returns null when moduleLink is empty or points outside /learn/.
  */
 function extractLearnModuleId(moduleLink: string): string | null {
