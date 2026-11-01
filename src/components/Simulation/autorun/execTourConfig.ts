@@ -188,6 +188,25 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
   },
 ]
 
+/** Keep the bank's authored findings separate from other sector examples. */
+export function executiveSummaryForPhase(phase: PhaseId, sector: string): string | undefined {
+  const summary = EXEC_TOUR_STAGES.find((stage) => stage.phase === phase)?.executiveSummary
+  if (sector === 'financial') return summary
+  if (phase === 'p1')
+    return 'Ask which business services and protected assets are in scope, who owns their dependencies and which inventory gaps or supplier constraints remain. Separate declared planning inputs from findings supported by evidence.'
+  if (phase === 'p5')
+    return 'Future delivery requirement: release pilot funding against agreed compatibility, performance, security and rollback criteria. Success for one service does not establish readiness across the estate. Ask what evidence would justify scaling or stopping.'
+  if (phase === 'verify-close')
+    return 'Before programme approval, define future service-specific verification, retirement and closure requirements. A recorded evidence reference is not a successful technical check. Treat delivery and handover as planned work, followed by continuing crypto-agility.'
+  return summary
+    ?.replace('the three services', 'the services in scope')
+    .replaceAll('the bank', 'the organisation')
+    .replace(
+      'The bank has not completed deployment.',
+      'This overview does not establish completed deployment.'
+    )
+}
+
 /** Concept peeks shown at the very start (threat + deadline math), before p0. */
 export const EXEC_TOUR_OPENING_CONCEPTS: readonly TourConceptId[] = ['hndl', 'mosca']
 

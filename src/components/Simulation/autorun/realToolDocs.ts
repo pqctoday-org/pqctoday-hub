@@ -782,33 +782,19 @@ export const REAL_DOC_GENERATORS: Partial<
           : '') + buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
     }
   },
-  // migration-roadmap: the tool's own teaching-default milestone set (the
-  // framework's governance-spine + two-track shape), with the external
-  // deadline rows sourced from the timeline-generated facts — the same single
-  // source Assess/Report/Sim already read — so a CSV deadline change
-  // propagates here without a code edit.
+  // Reuse the roadmap builder without assigning legal deadlines from sector alone.
   'migration-roadmap': (sector) => ({
     title: 'PQC Migration Roadmap (Two-Track)',
     data:
       buildRoadmapMarkdown(
-        sector === 'financial'
-          ? []
-          : [
-              {
-                label: 'US key-establishment migration deadline (EO, June 2026)',
-                year: TIMELINE_COUNTRY_DEADLINE_YEAR.US,
-                source: 'United States',
-              },
-              {
-                label: 'EU full PQC transition',
-                year: TIMELINE_COUNTRY_DEADLINE_YEAR.EU,
-                source: 'European Union',
-              },
-            ],
+        [],
         sector === 'financial' ? bankRoadmapMilestones() : ROADMAP_DEFAULT_MILESTONES,
         []
-      ) + (sector === 'financial' ? `\n\n${BANK_CASE_NOTE}` : ''),
+      ) +
+      '\n\nRegulatory applicability: sector and country alone do not establish an obligation. Assess jurisdiction, system scope and contracts separately; reference dates are not automatically binding programme deadlines.' +
+      (sector === 'financial' ? `\n\n${BANK_CASE_NOTE}` : ''),
   }),
+
   // Batch 3 (07192026) — remaining risk/vendor/strategy docs.
   //
   // crqc-scenario: the tool's own algorithm tables and compliance-deadline

@@ -29,7 +29,7 @@ import {
 import { PHASE_ORDER } from '@/data/frameworkPhases'
 import { SIM_TREES } from '@/simulation'
 import { countryNameFor, getScenario, type SimScenario } from './scenarioConfig'
-import { EXEC_TOUR_REVEAL_TYPES, EXEC_TOUR_STAGES } from './execTourConfig'
+import { EXEC_TOUR_REVEAL_TYPES, executiveSummaryForPhase } from './execTourConfig'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
@@ -476,7 +476,7 @@ function phaseFocusFor(phase: PhaseId, executive = false): PhaseFocus {
     name: intro?.name ?? phaseLabel(phase),
     summary:
       (executive
-        ? EXEC_TOUR_STAGES.find((stage) => stage.phase === phase)?.executiveSummary
+        ? executiveSummaryForPhase(phase, useSimulationStore.getState().sector)
         : undefined) ??
       intro?.summary ??
       '',

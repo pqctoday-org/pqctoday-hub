@@ -11,7 +11,7 @@ export function bankRiskEntries(): RiskEntry[] {
     {
       id: 'bank-portal',
       assetName: 'Customer portal — connection confidentiality',
-      currentAlgorithm: 'Illustrative classical key exchange',
+      currentAlgorithm: 'ECDH / X25519',
       threatVector: 'hndl',
       likelihood: 3,
       impact: 4,
@@ -21,7 +21,7 @@ export function bankRiskEntries(): RiskEntry[] {
     {
       id: 'bank-archive',
       assetName: 'Records archiving and retrieval service — long-lived records and recovery',
-      currentAlgorithm: 'Illustrative classical key protection',
+      currentAlgorithm: 'RSA-2048',
       threatVector: 'hndl',
       likelihood: 3,
       impact: 5,
@@ -31,7 +31,7 @@ export function bankRiskEntries(): RiskEntry[] {
     {
       id: 'bank-signing',
       assetName: 'Software signing service — release authenticity and trust',
-      currentAlgorithm: 'Illustrative classical signatures',
+      currentAlgorithm: 'ECDSA P-256',
       threatVector: 'forgery',
       likelihood: 3,
       impact: 5,

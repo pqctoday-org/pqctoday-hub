@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useMemo, useCallback, useEffect, useState } from 'react'
+import React, { useMemo, useCallback, useEffect, useState, useRef } from 'react'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 import {
   bankRoadmapMilestones,
@@ -342,6 +342,14 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
           ? 'assessment'
           : null
   const sampleBank = isAutoRunFillActive() && useSimulationStore.getState().sector === 'financial'
+  const sampleTimelineRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!sampleBank) return
+    const frame = requestAnimationFrame(() =>
+      sampleTimelineRef.current?.scrollIntoView?.({ block: 'start' })
+    )
+    return () => cancelAnimationFrame(frame)
+  }, [sampleBank])
   const seedMilestones = sampleBank
     ? bankRoadmapMilestones()
     : seedSource === 'saved'
@@ -452,10 +460,13 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   const removeMitigation = (idx: number) =>
     setMitigations((prev) => prev.filter((_, i) => i !== idx))
 
-  const yearRange = useMemo<[number, number]>(
-    () => [2025, Math.max(2036, new Date().getFullYear() + 10)],
-    []
-  )
+  const yearRange = useMemo<[number, number]>(() => {
+    if (sampleBank) {
+      const years = bankRoadmapMilestones().map((item) => item.year)
+      return [Math.min(...years), Math.max(...years)]
+    }
+    return [2025, Math.max(2036, new Date().getFullYear() + 10)]
+  }, [sampleBank])
 
   const exportMarkdown = useMemo(
     () => buildRoadmapMarkdown(selectedDeadlines, currentMilestones, mitigations),
@@ -632,12 +643,14 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         </div>
       )}
 
-      <TwoTrackRoadmapTimeline
-        milestones={currentMilestones}
-        deadlines={selectedDeadlines}
-        yearRange={yearRange}
-        onChange={setCurrentMilestones}
-      />
+      <div ref={sampleTimelineRef} data-testid="roadmap-timeline">
+        <TwoTrackRoadmapTimeline
+          milestones={currentMilestones}
+          deadlines={selectedDeadlines}
+          yearRange={yearRange}
+          onChange={setCurrentMilestones}
+        />
+      </div>
 
       {/* CSWP.39 §4.6 — Mitigation Gateway specs */}
       <div className="glass-panel p-4 space-y-3">
