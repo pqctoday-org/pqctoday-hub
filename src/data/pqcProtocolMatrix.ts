@@ -1,5 +1,5 @@
 /**
- * PQC Protocol Support Matrix — 30 protocol rows (IETF, TCG, OASIS, 3GPP, IEEE,
+ * PQC Protocol Support Matrix — 35 protocol rows (IETF, TCG, OASIS, 3GPP, IEEE,
  * ANSI/INCITS, UEFI, and vendor-published specs) × release / draft / 4 PQC
  * dimensions / OSS libs / playground.
  *
@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-10-22'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-01'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -862,10 +862,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'individual-draft',
+        stage: 'wg-document',
         stageNote:
-          'Re-checked 2026-10-17: no TLS-layer hybrid-signature document is in the RFC Editor queue. The TLS proposals (dual-certificate negotiation, composite ML-DSA in the handshake) are individual Internet-Drafts; the LAMPS composite-signature document is X.509-layer work that TLS would profile later. Was staged as RFC Editor queue.',
-        note: 'Three approaches to composite/hybrid signatures for TLS 1.3: dual-certificate negotiation (individual Internet-Draft), composite signatures from LAMPS that TLS will profile after publication, and an individual draft proposing composite ML-DSA directly in the TLS handshake. TLS profiling pending LAMPS RFC publication.',
+          'The TLS WG adopted draft-ietf-tls-composite-mldsa on 2026-10-23. The X.509-layer draft-ietf-lamps-pq-composite-sigs dependency has IESG state "RFC Ed Queue".',
+        note: 'Three approaches to composite/hybrid signatures for TLS 1.3 are documented: dual-certificate negotiation remains an individual Internet-Draft, the TLS WG has adopted composite ML-DSA for the handshake, and the LAMPS composite-signature work supplies the X.509-layer construction that TLS profiles.',
         refs: [
           {
             kind: 'draft',
@@ -878,16 +878,24 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'draft',
             id: 'draft-ietf-lamps-pq-composite-sigs',
             title:
-              'Composite ML-DSA signatures (cross-WG; X.509-layer composite to be profiled into TLS)',
+              'Composite ML-DSA signatures (dependency: X.509-layer composite signatures that TLS profiles)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
             publishedOn: '2026-04-21',
           },
           {
             kind: 'draft',
+            id: 'draft-ietf-tls-composite-mldsa',
+            title:
+              'Use of Composite ML-DSA in TLS 1.3 (TLS WG document; adopted from draft-reddy-tls-composite-mldsa)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-composite-mldsa/',
+            publishedOn: '2026-10-23',
+          },
+          {
+            kind: 'draft',
             id: 'draft-reddy-tls-composite-mldsa',
             title:
-              'Composite ML-DSA authentication for TLS 1.3 (individual draft; not yet TLS WG-adopted)',
-            url: 'https://datatracker.ietf.org/doc/draft-reddy-tls-composite-mldsa/',
+              'Earlier individual submission (dependency: adoption history for the TLS WG document)',
+            url: 'https://datatracker.ietf.org/doc/draft-reddy-tls-composite-mldsa/history/',
             publishedOn: '2026-05-14',
           },
           {
@@ -1154,7 +1162,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote: 'RFC 9935 published 2026-03',
-        note: 'Constraint: KEM certs are encryption-only — cannot self-sign, must be issued under a signature cert.',
+        note: 'Constraint: KEM certs are encryption-only — cannot self-sign, must be issued under a signature cert. A LAMPS working-group draft defines FrodoKEM for X.509, and FrodoKEM is not a NIST-standardized algorithm.',
         refs: [
           {
             kind: 'rfc',
@@ -1400,6 +1408,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote: 'RFC 9936 published 2026-03',
+        note: 'A LAMPS working-group draft defines FrodoKEM for CMS, and FrodoKEM is not a NIST-standardized algorithm.',
         refs: [
           {
             kind: 'rfc',
@@ -1559,7 +1568,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          "Corrected 2026-09-03: both previously-cited refs were the wrong document. draft-ietf-cose-hpke defines generic HPKE-COSE plumbing with no PQ algorithm registrations at all. draft-ietf-jose-hpke-pq-pqt is JOSE-only (confirmed by its own text, 'not COSE'). The actual COSE-specific PQ/PQ-T algorithm-registration document is draft-ietf-cose-hpke-pq-pqt, currently at 'I-D Exists' — pre-WG-Last-Call, so wg-document.",
+          'Two COSE WG documents cover distinct uses: draft-ietf-cose-hpke-pq-pqt registers PQ and PQ/T algorithms for HPKE, while draft-ietf-cose-pqc-kem defines direct ML-KEM use in COSE.',
         refs: [
           {
             kind: 'draft',
@@ -1568,6 +1577,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
               'COSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-hpke-pq-pqt)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke-pq-pqt/',
             publishedOn: '2026-07-21',
+          },
+          {
+            kind: 'draft',
+            id: 'draft-ietf-cose-pqc-kem',
+            title:
+              'Post-Quantum KEMs for COSE (COSE WG document; direct KEM use, distinct from the HPKE registrations)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-pqc-kem/',
+            publishedOn: '2026-10-29',
           },
         ],
       },
@@ -1642,6 +1659,92 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     playgrounds: [],
     noDeploymentReason:
       'COSE PQ standards are still in WG draft and the consumer/IoT products that would consume COSE-PQ signatures (passkeys / WebAuthn / constrained-device firmware) are themselves pre-deployment. IANA registered COSE alg IDs for ML-DSA in April 2025, but no commercial COSE-PQ product has shipped.',
+  },
+  {
+    id: 'edhoc',
+    name: 'EDHOC (lightweight authenticated key exchange)',
+    description:
+      'Ephemeral Diffie-Hellman Over COSE, renamed LAKE by its post-quantum cipher-suite work, is a compact authenticated key-exchange protocol for constrained environments.',
+    latestRelease: [
+      {
+        id: 'RFC-9528',
+        title: 'RFC 9528 — Ephemeral Diffie-Hellman Over COSE (EDHOC)',
+        url: 'https://datatracker.ietf.org/doc/rfc9528/',
+        date: '2024-03',
+      },
+    ],
+    latestDraft: [
+      {
+        id: 'draft-ietf-lake-pqsuites-01',
+        title: 'draft-ietf-lake-pqsuites-01 — Quantum-Resistant Cipher Suites for LAKE',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-lake-pqsuites/',
+        date: '2026-09-19',
+      },
+      {
+        id: 'draft-ietf-lake-authkem-edhoc-01',
+        title: 'draft-ietf-lake-authkem-edhoc-01 — KEM-based Authentication for EDHOC',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-lake-authkem-edhoc/',
+        date: '2026-09-28',
+      },
+    ],
+    dimensions: {
+      pureKem: {
+        value: 'draft',
+        stage: 'wg-document',
+        stageNote:
+          'The LAKE WG documents define ML-KEM for ephemeral key exchange and a signature-free KEM-based authentication method.',
+        note: 'ML-KEM cipher suites provide pure post-quantum key exchange; the KEM-authentication method can use ML-KEM for both key exchange and authentication.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-lake-pqsuites',
+            title: 'Quantum-Resistant Cipher Suites for LAKE (LAKE WG document)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-lake-pqsuites/',
+            publishedOn: '2026-09-19',
+          },
+          {
+            kind: 'draft',
+            id: 'draft-ietf-lake-authkem-edhoc',
+            title: 'KEM-based Authentication for EDHOC (LAKE WG document)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-lake-authkem-edhoc/',
+            publishedOn: '2026-09-28',
+          },
+        ],
+      },
+      hybridKem: {
+        value: 'none',
+        stage: 'none',
+        stageNote: 'PQ/T hybrid KEM registrations are left for future work',
+        note: 'The current LAKE WG documents register pure ML-KEM cipher suites, not a PQ/T hybrid KEM suite.',
+      },
+      pureSig: {
+        value: 'draft',
+        stage: 'wg-document',
+        stageNote: 'The LAKE WG cipher-suite document registers ML-DSA authentication',
+        note: 'The quantum-resistant cipher suites use ML-DSA-44 or ML-DSA-87 for digital signatures.',
+        refs: [
+          {
+            kind: 'draft',
+            id: 'draft-ietf-lake-pqsuites',
+            title: 'Quantum-Resistant Cipher Suites for LAKE (LAKE WG document)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-lake-pqsuites/',
+            publishedOn: '2026-09-19',
+          },
+        ],
+      },
+      hybridSig: {
+        value: 'none',
+        stage: 'none',
+        stageNote: 'PQ/T hybrid signature registrations are left for future work',
+        note: 'The current LAKE WG documents register pure ML-DSA cipher suites, not a PQ/T hybrid signature suite.',
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    liveDeployments: [],
+    noDeploymentReason:
+      'The post-quantum mechanisms are active LAKE working-group documents and are not yet published RFCs.',
   },
   {
     id: 'jose',
@@ -1737,6 +1840,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
             publishedOn: '2026-07-06',
           },
+          {
+            kind: 'draft',
+            id: 'draft-ietf-hpke-pq',
+            title:
+              'Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE (dependency: underlying HPKE KEM algorithm identifiers)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-hpke-pq/',
+            publishedOn: '2026-07-06',
+          },
         ],
       },
       hybridKem: {
@@ -1760,6 +1871,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title:
               'Use of Hybrid Public Key Encryption (HPKE) with JOSE (dependency: algorithm-agnostic plumbing, not PQ-specific)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
+            publishedOn: '2026-07-06',
+          },
+          {
+            kind: 'draft',
+            id: 'draft-ietf-hpke-pq',
+            title:
+              'Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE (dependency: underlying HPKE KEM algorithm identifiers)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-hpke-pq/',
             publishedOn: '2026-07-06',
           },
         ],
@@ -2062,7 +2181,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote:
-          'Individual submission (draft-bokovoy-kitten-pkinit-pqc-02, 2026-10-16) — not adopted by the KITTEN working group',
+          'The KITTEN working group has issued a call for adoption for draft-bokovoy-kitten-pkinit-pqc; it was not yet adopted as of the page update on 2026-10-16',
         note: "Core Kerberos (AS-REQ/AS-REP/TGS-REQ/TGS-REP without PKINIT) uses only symmetric long-term/session keys (RFC 3961 framework) — no KEM applies, and NIST/academic consensus treats symmetric crypto as already quantum-resistant (Grover gives only a quadratic speedup, already covered by AES-256/SHA-384+). PKINIT's key establishment is classical Diffie-Hellman with no PQC-safe path via existing agility mechanisms — this draft adds a new KDCKEMInfo structure carrying ML-KEM (RFC 9935 X.509 OIDs) alongside the existing DH fields. Red Hat is prototyping this under the EU-funded QARC consortium (2026–2028) against MIT krb5 + FreeIPA; no public code yet.",
         refs: [
           {
@@ -2085,7 +2204,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote:
-          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — the protocol-matrix refresh's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-02 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
+          "The KITTEN working group has issued a call for adoption for draft-bokovoy-kitten-pkinit-pqc; it was not yet adopted as of the page update on 2026-10-16 and remains at IESG state 'I-D Exists'.",
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, approved at the X.509 layer and in the RFC Editor queue since 2026-10-12 (see X.509 row). The Kerberos-side mechanism itself remains an individual draft.',
         refs: [
           {
@@ -2098,7 +2217,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'draft',
             id: 'draft-ietf-lamps-pq-composite-kem',
-            title: 'Composite ML-KEM in X.509 (optional composite mode, inherited via X.509 row)',
+            title:
+              'Composite ML-KEM in X.509 (optional composite mode; dependency: X.509-layer composite KEM used by the PKINIT draft)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
             publishedOn: '2026-03-27',
           },
@@ -2199,7 +2319,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: 'No 3GPP TS defines a PQC SUCI concealment profile yet. 3GPP SA3 runs a Rel-20 study, TR 33.703 ("Study on Transitioning to PQC in 3GPP", generation-agnostic, study target June 2026), to revise 3GPP-specific cryptographic profiles and protocols — 3GPP names the 5G-SUCI calculation in TS 33.501 as one of them; Rel-20 specifications are expected to freeze around mid-2027. TR 33.938 ("3GPP Cryptographic Inventory") surveys existing algorithm usage and does not specify ML-KEM-based SUCI concealment. ML-KEM-based SUCI schemes exist so far only in vendor whitepapers (e.g. Ericsson, Nokia).',
+        stage: 'identified',
+        note: 'No 3GPP TS defines a PQC SUCI concealment profile yet. The PCG-approved Release 20 work item "Post-quantum Cryptography Migration for SUCI" started 2026-09-08, while TR 33.703 has been under change control since 2026-06-17.',
         refs: [
           {
             kind: 'spec',
@@ -2220,7 +2341,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'experimental',
-        note: 'Same as Pure KEM — no 3GPP TS defines a hybrid X25519+ML-KEM-768 SUCI construction; the Rel-20 PQC study TR 33.703 is where such a profile would be evaluated. Vendor whitepapers discuss such combiners informally.',
+        stage: 'identified',
+        note: 'No 3GPP TS defines a hybrid SUCI construction. The PCG-approved Release 20 work item "Post-quantum Cryptography Migration for SUCI" started 2026-09-08, while TR 33.703 has been under change control since 2026-06-17.',
         refs: [
           {
             kind: 'spec',
@@ -2491,7 +2613,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'rfc-editor-queue',
         stageNote:
           'REVERTED 2026-07-27: a hand-verified apply incorrectly set this to rfc-published on the strength of RFC 9370 alone — but RFC 9370 is the shared multi-KE enabler framework both dimensions cite, not the hybrid-KEM-specific mechanism. See the note below, which already documented this exact mistake before this revert.',
-        note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding; the binding draft itself is still in the RFC Editor queue, matching Pure KEM.',
+        note: 'Same draft as Pure KEM. No standalone RFC for hybrid KEM in IKEv2 (corrects an earlier mis-encoding to "rfc"). RFC 9370 multi-KE framework + draft-ietf-ipsecme-ikev2-mlkem together define the hybrid binding; the binding draft itself is still in the RFC Editor queue, matching Pure KEM. An IPSECME working-group draft defines FrodoKEM key exchange for IKEv2, and FrodoKEM is not a NIST-standardized algorithm.',
         deploymentPosture: 'production',
         deploymentNote:
           'Cisco, Fortinet, Cloudflare, Palo Alto have shipped hybrid IKEv2 with multi-KE + ML-KEM in production while the binding draft is at IESG.',
@@ -2529,14 +2651,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'individual-draft',
-        stageNote: 'Internet-Draft (individual)',
-        note: 'PQ/T composite authentication for IKEv2 (individual submission). Replaces the prior "experimental" coarse value once the draft was filed.',
+        stage: 'wg-document',
+        stageNote:
+          'draft-ietf-ipsecme-pq-hybrid-auth-00 is an IPSECME working-group document, published 2026-10-29',
+        note: 'The IPSECME working-group document specifies composite-signature authentication for IKEv2; an earlier individual submission by overlapping authors remains listed for context.',
         refs: [
           {
             kind: 'draft',
+            id: 'draft-ietf-ipsecme-pq-hybrid-auth',
+            title: 'Use of Composite Signatures in IKEv2 (IPSECME WG document)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-pq-hybrid-auth/',
+            publishedOn: '2026-10-29',
+          },
+          {
+            kind: 'draft',
             id: 'draft-hu-ipsecme-pqt-hybrid-auth',
-            title: 'PQ/T Hybrid Authentication for IKEv2',
+            title:
+              'PQ/T Hybrid Authentication for IKEv2 (earlier individual draft by overlapping authors)',
             url: 'https://datatracker.ietf.org/doc/draft-hu-ipsecme-pqt-hybrid-auth/',
             publishedOn: '2026-04',
           },
@@ -3472,7 +3603,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'experimental',
         stageNote:
           "RFC 9964 is published, but this cell tracks FIDO adoption rather than the RFC's status: the algorithm IDs are inherited from the COSE row and no FIDO Alliance profile exists. Authenticator-side ML-DSA private keys (~5–7 KB) strain secure-element storage budgets, so 'experimental' is a judgement about deployability, not a stale reading of the datatracker.",
-        note: 'Algorithm IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
+        note: "Algorithm IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets. FIDO's Authenticator Allowed Cryptography List v1.7 (review draft, 2026-05-06) lists ML-KEM and ML-DSA as allowed algorithms, while no FIDO protocol profile for post-quantum authentication exists.",
         refs: [
           {
             kind: 'rfc',
@@ -4178,9 +4309,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: { value: 'na', note: 'No KEM dimension.' },
       pureSig: {
         value: 'experimental',
+        stage: 'identified',
         stageNote:
-          'CNCF/OpenSSF project — ML-DSA signing experimental in cosign forks; public CA still classical',
-        note: 'cosign can sign artifacts with ML-DSA in experimental/forked builds; Fulcio (CA) + Rekor (log) PQC support is not yet shipped.',
+          'The project has announced an initially opt-in PQC rollout and targets a production-ready PQC public instance for mid-2027',
+        note: 'Sigstore plans a separate, initially opt-in PQC infrastructure. The classical public instance will remain operational and supported while the PQC public instance targets production readiness in mid-2027.',
         refs: [
           {
             kind: 'spec',
@@ -4188,6 +4320,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title: 'Sigstore cosign — artifact signing',
             url: 'https://github.com/sigstore/cosign',
             publishedOn: '2026-01-01',
+          },
+          {
+            kind: 'spec',
+            id: 'sigstore/pqc-plan',
+            title: 'Post-Quantum Cryptography for Sigstore (project plan)',
+            url: 'https://blog.sigstore.dev/pqc-sigstore/',
+            publishedOn: '2026-10-02',
           },
         ],
       },
@@ -4201,13 +4340,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     playgrounds: [],
     liveDeployments: [],
     noDeploymentReason:
-      'The public Sigstore (Fulcio CA + Rekor log) issues and logs classical (ECDSA) signatures only. PQC ML-DSA signing exists in experimental cosign forks but there is no production PQC Sigstore deployment yet.',
+      'The project targets a production-ready PQC public instance for mid-2027 through an initially opt-in rollout. The classical public instance remains operational and supported during the transition.',
   },
   {
     id: 'ieee-802-11bt',
     name: 'IEEE 802.11bt (Wi-Fi PQC)',
     description:
-      'IEEE 802.11 amendment adding post-quantum AKM suites, PQC key-establishment/signature algorithms, and a PQC password-authenticated key exchange (PAKE) to the WLAN MAC layer (SAE, OWE, FILS, PASN). PAR approved Sep 2025 — pre-draft study-group stage, no technical draft text published yet.',
+      'IEEE 802.11 amendment adding post-quantum AKM suites, PQC key-establishment/signature algorithms, and a PQC password-authenticated key exchange (PAKE) to the WLAN MAC layer (SAE, OWE, FILS, PASN). Task Group BT has completed Draft 1.0 letter-ballot collection and is preparing Draft 1.1.',
     latestRelease: [],
     latestDraft: [
       {
@@ -4221,8 +4360,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
-        note: 'PAR scope covers PQC AKM suites and PQC key-establishment algorithms across SAE/OWE/FILS/PASN; no draft text published as of Jul 2026, so no specific KEM (pure vs. hybrid) has been named.',
+        stageNote:
+          'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
+        note: 'The amendment scope covers PQC AKM suites and PQC key-establishment algorithms across SAE/OWE/FILS/PASN; the public status page does not identify a specific pure KEM construction.',
         refs: [
           {
             kind: 'spec',
@@ -4235,8 +4375,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
-        note: 'Same PAR scope as pure KEM — AKM suites and key-establishment algorithms are not yet differentiated into pure vs. hybrid constructs.',
+        stageNote:
+          'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
+        note: 'The amendment scope covers AKM suites and key-establishment algorithms; the public status page does not identify a specific hybrid KEM construction.',
         refs: [
           {
             kind: 'spec',
@@ -4249,8 +4390,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
-        note: 'PAR scope covers PQC digital signature algorithms and a PQC password-authenticated key exchange (PAKE); no draft text published as of Jul 2026, so no specific signature scheme (pure vs. hybrid/composite) has been named.',
+        stageNote:
+          'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
+        note: 'The amendment scope covers PQC digital signature algorithms and a PQC password-authenticated key exchange (PAKE); the public status page does not identify a specific pure signature scheme.',
         refs: [
           {
             kind: 'spec',
@@ -4263,8 +4405,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stageNote: 'IEEE P802.11bt PAR approved Sep 10, 2025 — pre-draft study-group stage',
-        note: 'Same PAR scope as pure signature — digital signature algorithms are not yet differentiated into pure vs. hybrid/composite constructs.',
+        stageNote:
+          'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
+        note: 'The amendment scope covers digital signature algorithms; the public status page does not identify a specific hybrid or composite signature construction.',
         refs: [
           {
             kind: 'spec',
@@ -4289,7 +4432,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     playgrounds: [],
     liveDeployments: [],
     noDeploymentReason:
-      'Standard is still at the pre-draft study-group stage (PAR approved Sep 2025, IEEE 802.11 Working Group) — no chipset or AP vendor can implement PQC support before draft technical text exists.',
+      'The amendment remains a draft: Draft 1.0 entered Working Group Letter Ballot, and the editor was instructed to begin Draft 1.1 after comment collection.',
   },
   {
     id: 'fc-sp-3',
