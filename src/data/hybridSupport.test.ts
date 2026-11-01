@@ -75,6 +75,14 @@ describe('hybridSupportBadges', () => {
       'No composite signature',
     ])
   })
+
+  it('shows one TLS badge when a product is hybrid by default and has opt-in groups too', () => {
+    expect(
+      hybridSupportBadges(item({ hybridKemSupport: ['tls-default', 'tls-optin', 'api'] })).map(
+        (b) => b.label
+      )
+    ).toEqual(['Hybrid TLS (default)', 'Hybrid KEM API'])
+  })
 })
 
 describe('matchesHybridFacet', () => {

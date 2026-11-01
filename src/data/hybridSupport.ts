@@ -74,9 +74,12 @@ export interface HybridBadge {
   tone: Tone
 }
 
-/** Badges for a product's assessed hybrid support; empty when neither column is assessed. */
+/** Badges for a product's assessed hybrid support; empty when neither column is assessed.
+ *  A library that is hybrid by default and has more opt-in groups shows only the default badge. */
 export function hybridSupportBadges(product: SoftwareItem): HybridBadge[] {
-  const badges: HybridBadge[] = (product.hybridKemSupport ?? []).map((t) => ({
+  const kem = product.hybridKemSupport ?? []
+  const shown = kem.includes('tls-default') ? kem.filter((t) => t !== 'tls-optin') : kem
+  const badges: HybridBadge[] = shown.map((t) => ({
     key: `kem-${t}`,
     label: HYBRID_KEM_LABEL[t],
     tone: TOKEN_TONE[t],
