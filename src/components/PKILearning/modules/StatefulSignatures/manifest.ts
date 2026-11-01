@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'stateful-signatures',
-  contentVersion: 24,
+  contentVersion: 25,
   lm_id: 'LM-026',
   title: 'Stateful Hash Signatures',
   description:

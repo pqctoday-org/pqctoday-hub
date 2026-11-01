@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hsm-pqc',
-  contentVersion: 21,
+  contentVersion: 22,
   lm_id: 'LM-015',
   title: 'HSM & PQC Operations',
   description:

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-mgmt-modernization',
-  contentVersion: 24,
+  contentVersion: 25,
   lm_id: 'LM-052',
   title: 'Cryptographic Management Modernization',
   description:

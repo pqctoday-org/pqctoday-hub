@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'homomorphic-encryption',
   version: '1.3.0',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-01',
 
   // ORDER MATTERS (see ModuleContent.standards): the documents this module's own
   // claims come from go first. The FHE sections cite ISO/IEC 28033 for the scheme
