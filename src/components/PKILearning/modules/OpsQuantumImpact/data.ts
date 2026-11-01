@@ -39,7 +39,7 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       severity: 'high',
       timeframe: 'Planning window 2025-2028 (editorial estimate, not a regulatory date)',
       exampleScenario:
-        'Your TLS handshake alerts were tuned for classical handshakes. Hybrid ML-KEM key exchange makes handshake messages larger (about 1.1 to 1.2 KB more in each direction for X25519MLKEM768), and for IKEv2 VPNs adds an extra IKE_INTERMEDIATE round trip. After PQC migration, size- and latency-based alerts fire false positives until thresholds are re-baselined from your own measurements. Meanwhile, real performance issues are lost in the noise.',
+        "In this module's illustration, your TLS handshake alerts were tuned for classical handshakes. Hybrid ML-KEM key exchange makes handshake messages larger (about 1.1 to 1.2 KB more in each direction for X25519MLKEM768), and for IKEv2 VPNs adds an extra IKE_INTERMEDIATE round trip. After PQC migration, size- and latency-based alerts fire false positives until thresholds are re-baselined from your own measurements. Meanwhile, real performance issues are lost in the noise.",
     },
     {
       id: 'deployment-pipelines',

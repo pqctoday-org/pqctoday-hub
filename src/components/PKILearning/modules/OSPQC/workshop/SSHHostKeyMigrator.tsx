@@ -84,7 +84,7 @@ ssh-keyscan -t mldsa65 server.example.com >> ~/.ssh/known_hosts
 # Option 3: Fleet management — distribute known_hosts via Ansible:
 # ansible-playbook update-known-hosts.yml -e "new_fp=SHA256:AbCdEfGh..."`,
     output: `# Known_hosts entry format for ML-DSA-65:
-server.example.com ssh-mldsa65 AAAAB3Nza...7Kp2Q== (1,952 bytes public key)
+server.example.com ssh-mldsa65-ed25519 AAAAB3Nza...7Kp2Q== (composite key: 1,952-octet ML-DSA-65 public key plus 32-octet Ed25519 public key)
 # Compare to Ed25519 entry (32 bytes):
 server.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... (32 bytes)`,
   },

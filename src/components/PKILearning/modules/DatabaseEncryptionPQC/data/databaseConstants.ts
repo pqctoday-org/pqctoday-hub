@@ -267,16 +267,16 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     step: 2,
     title: 'PQC-Capable External KMS Setup',
     description:
-      'Configure a PQC-capable KMS (for example Thales CipherTrust; AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only) to generate ML-KEM-1024 key wrapping keys. Establish KMIP v2 connectivity from the database server.',
+      'Configure a PQC-capable KMS (AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only) to generate ML-KEM-1024 key wrapping keys. Establish KMIP v2 connectivity from the database server.',
     classicalApproach:
       'External KMS with RSA-2048/4096 TLS-wrapped KMIP connection. Key wrapping via RSA-OAEP or AES-WRAP.',
     pqcApproach:
-      'Thales CipherTrust (roadmap version) with ML-KEM-1024 key wrapping algorithm. AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but its import wrapping keys are RSA only. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
+      'Thales CipherTrust Manager (its release notes list ML-KEM for the web interface API from v2.20.0 and, as a technical preview, for the SSH interface from v2.21.0; ML-KEM-1024 key wrapping is this module’s projection, not a Thales statement). AWS KMS offers ML-DSA signing keys (GA June 2025), ML-KEM key specs and hybrid post-quantum TLS (ML-KEM key exchange) on its endpoints, but its import wrapping keys are RSA only. KMIP 3.0 object type CryptographicAlgorithm = ML-KEM.',
     downtime: 'None',
     risk: 'medium',
     tooling: [
-      'Thales CipherTrust (roadmap)',
-      'AWS KMS (ML-DSA signing keys; no ML-KEM keys)',
+      'Thales CipherTrust Manager (ML-KEM on its web interface from v2.20.0)',
+      'AWS KMS (ML-DSA signing keys and ML-KEM key specs)',
       'HashiCorp Vault 1.17+',
       'KMIP 3.0 client',
     ],

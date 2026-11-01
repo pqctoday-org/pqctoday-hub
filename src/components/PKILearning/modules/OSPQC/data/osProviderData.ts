@@ -96,7 +96,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     sshPqcStatus: '',
     pkgSigningPqc:
       'RHEL 10.2 podman-sequoia composite PQC signatures; Red Hat Certificate System 11.0 integrates ML-DSA',
-    roadmapYear: '2025 (RHEL 10.1 GA)',
+    roadmapYear: '2026-05 (RHEL 10.2 GA)',
     mlKemSupport:
       'ML-KEM GA in RHEL 10.1+ via OpenSSL 3.5 / GnuTLS / NSS; preferred by the default crypto policy',
     mlDsaSupport: 'ML-DSA GA in RHEL 10.1+ (OpenSSL/GnuTLS/NSS); ML-DSA TLS certificates supported',
@@ -111,7 +111,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'No production PQC SSH; tracking OpenSSH experimental branch',
     pkgSigningPqc: 'ML-DSA for APT package signing targeted for Ubuntu 26.04 LTS (DEP-18)',
-    roadmapYear: '2025-2026 (24.04.1 / 24.10)',
+    roadmapYear: '2026-04 (26.04 LTS release)',
     mlKemSupport: 'ML-KEM hybrid TLS in OpenSSL 3.0.x via oqsprovider or OpenSSL 3.5 native',
     mlDsaSupport: 'ML-DSA available via oqsprovider; native OpenSSL 3.5+ in Ubuntu 25.10+',
     notes:
@@ -158,7 +158,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     fipsMode: 'not-supported',
     sshPqcStatus: 'No production PQC SSH; OpenSSH experimental branch required',
     pkgSigningPqc: 'APK signing uses RSA-4096 GPG',
-    roadmapYear: '2024-11 (Alpine 3.21)',
+    roadmapYear: '2024',
     mlKemSupport: 'ML-KEM via liboqs-provider package on OpenSSL 3.3.x',
     mlDsaSupport: 'ML-DSA via liboqs-provider package on OpenSSL 3.3.x',
     notes:
