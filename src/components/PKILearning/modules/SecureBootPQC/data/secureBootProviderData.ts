@@ -110,12 +110,17 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     products: ['EDK2 CryptoPkg', 'EDK2 SecurityPkg (AuthVariableLib)'],
     pqcAlgorithm: 'ML-DSA-87',
     notes:
-      'EDK2 CryptoPkg handles ML-DSA-87 in its X.509 code; the source comment reads "Currently, only EVP_PKEY_ML_DSA_87 is supported." Accepting ML-DSA certificates in authenticated variables (the Secure Boot step) is an open pull request, edk2 PR #13365, opened on 23 October 2026 and not merged when checked.',
+      'EDK2 CryptoPkg handles ML-DSA-87 in its X.509 code; the source comment reads "Currently, only EVP_PKEY_ML_DSA_87 is supported." Accepting ML-DSA certificates in authenticated variables (the Secure Boot step) is not merged: edk2 PR #13365, opened on 23 October 2026, was closed without merging on 29 October 2026 in favour of PR #13411, which was open when checked on 31 October 2026.',
     sources: [
       {
-        label: 'edk2 pull request 13365 (open)',
+        label: 'edk2 pull request 13365 (closed, not merged)',
         url: 'https://github.com/tianocore/edk2/pull/13365',
         date: '2026-10-23',
+      },
+      {
+        label: 'edk2 pull request 13411 (open)',
+        url: 'https://github.com/tianocore/edk2/pull/13411',
+        date: '2026-10-28',
       },
       {
         label: 'edk2 CryptX509.c (master)',

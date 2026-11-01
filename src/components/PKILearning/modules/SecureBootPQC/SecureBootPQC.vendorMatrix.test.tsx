@@ -89,15 +89,19 @@ describe('Firmware vendor matrix data', () => {
     expect(byId.intel.statementDate).toBe('2024-07')
   })
 
-  it('shows TianoCore as in progress, with the ML-DSA authenticated-variable change still open', () => {
+  it('shows TianoCore as in progress, with the ML-DSA authenticated-variable change not merged', () => {
     const tiano = FIRMWARE_VENDORS.find((v) => v.id === 'tianocore')
     expect(tiano?.pqcStatus).toBe('in-progress')
     expect(VENDOR_STATUS_LABELS['in-progress'].label).toBe('In progress')
     expect(tiano?.notes).toContain('ML-DSA-87')
     expect(tiano?.notes).toContain('edk2 PR #13365')
-    expect(tiano?.notes).toContain('not merged when checked')
+    expect(tiano?.notes).toContain('closed without merging on 29 October 2026')
+    expect(tiano?.notes).toContain('PR #13411')
     expect(tiano?.sources.map((s) => s.url)).toContain(
       'https://github.com/tianocore/edk2/pull/13365'
+    )
+    expect(tiano?.sources.map((s) => s.url)).toContain(
+      'https://github.com/tianocore/edk2/pull/13411'
     )
     expect(Object.keys(VENDOR_STATUS_LABELS)).not.toContain('merged')
   })
@@ -131,7 +135,9 @@ describe('Firmware Vendor Matrix workshop', () => {
     const tiano = screen.getByRole('button', { name: /EDK2 \(EFI Development Kit II\)/ })
     expect(within(tiano).getByText('In progress')).toBeInTheDocument()
     fireEvent.click(tiano)
-    const link = screen.getByRole('link', { name: /edk2 pull request 13365 \(open\)/ })
+    const link = screen.getByRole('link', {
+      name: /edk2 pull request 13365 \(closed, not merged\)/,
+    })
     expect(link).toHaveAttribute('href', 'https://github.com/tianocore/edk2/pull/13365')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link.getAttribute('rel')).toContain('noopener')

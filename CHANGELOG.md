@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.191.0] - 2026-11-01
+
+The next part of the line-by-line reading: 35 more lesson sentences and 32 quiz questions follow their documents, including several that needed a person's decision.
+
+### Changed
+
+- **More Learn lesson sentences keep to what their documents say** [view:/learn] [persona:researcher] [persona:architect] [persona:grc] [persona:developer] [persona:cert-engineer] [persona:executive]: across 18 lessons, including Standards Bodies, Product Certification, Quantum Threats, Executive Quantum Impact, Secure Boot, Payment Card and Verification Closure, a further 35 sentences that no cited document supports were removed, rewritten to say what the source says, or marked as the lesson's own reading or advice. The Standards Bodies card for the PQUIP working group now describes what its charter says and names its published guidance document (RFC 9958); the NSA CNSA 2.0 lines say the 2030 dates are an anticipated timetable; the Quantum Threats note on IBM's Nighthawk chip follows IBM's announcement; the FIPS 140-3 Level 3 physical-security line names tamper detection and response and environmental failure protection; and the Secure Boot lesson now says the EDK2 ML-DSA pull request was closed without merging in favour of a newer one.
+- **More quiz questions stay within their sources** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect] [persona:cert-engineer]: 32 quiz questions were corrected. The IBM Kookaburra question no longer states a qubit count that no document gives. The OpenPGP question now reflects RFC 9980, which defines ML-DSA for OpenPGP only combined with Ed25519 or Ed448. The code-signing question now asks which secret most urgently needs a post-quantum plan, because NIST says signatures are not vulnerable to harvest-now-decrypt-later attacks. The EUDI Wallet question names the private services that must accept wallets and labels its calendar dates as the lesson's own reading. The memory-encryption answer no longer says every VM gets its own key, the HSM question now cites the FIPS 204 publication date and a FIPS 140-3 Level 3 certificate that lists ML-DSA, the NIST SP 800-227 answer no longer says NIST recommends hybrid key exchange, and the Linux FIPS-mode answer now follows Red Hat's own table of what its FIPS policy allows.
+
 ## [4.190.0] - 2026-10-31
 
 The next part of the line-by-line reading that could be finished safely: 25 more lesson sentences, 47 quiz questions and 19 HSM comparison notes follow their documents.
