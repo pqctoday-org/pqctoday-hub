@@ -101,7 +101,7 @@ export const PERSONA_HERO_TAGLINE: Record<string, string> = {
   researcher:
     'FIPS 203/204/205 are out, {{latestRfc}}, and ACVP vectors are live. Trace the citations and KATs end-to-end.',
   'cert-engineer':
-    'ML-KEM, ML-DSA and SLH-DSA can be CAVP-tested today; the module certificate is the long pole. Run the vectors, then trace the path.',
+    'Our expectation: ML-KEM, ML-DSA and SLH-DSA can be CAVP-tested today; the module certificate is the long pole. Run the vectors, then trace the path.',
   ops: 'Cert rotations get longer, keys get bigger, HSMs get pickier. Plan the cutover before the next renewal window.',
   curious:
     "No publicly known quantum computer can break today's encryption. But what runs the padlock icon is already changing — here's the short version.",
