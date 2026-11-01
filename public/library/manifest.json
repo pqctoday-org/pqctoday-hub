@@ -25180,17 +25180,22 @@
     {
       "refId": "BouncyCastle-Java-Release-Notes",
       "title": "Bouncy Castle Java Release Notes",
-      "url": "https://github.com/bcgit/bc-java/blob/main/docs/releasenotes.md",
+      "url": "https://raw.githubusercontent.com/bcgit/bc-java/main/docs/releasenotes.md",
       "status": "downloaded",
       "filename": "BouncyCastle-Java-Release-Notes.html",
-      "sizeBytes": 345503,
+      "sizeBytes": 835765,
       "contentType": "text/html",
-      "sha256": "7187b7cefb3a5734746a0875c8335f3e085cb70b0fba8b0a1ca59c64bfbaad97",
+      "sha256": "984d8c9e9dfab44704361f69c5730d0ffe6b598840256b2b2b98204e8265eeea",
       "artefact": "SOURCE",
-      "identity": "SKIPPED",
+      "identity": "MATCH",
       "unified": "converted",
-      "admittedAt": "2026-11-01T16:51:02.641507+00:00",
-      "admittedBy": "evidence admission"
+      "admittedAt": "2026-11-01T18:26:02.336357+00:00",
+      "admittedBy": "evidence admission",
+      "superseded_file": "_superseded-11012026/library/BouncyCastle-Java-Release-Notes.html",
+      "file": "library/BouncyCastle-Java-Release-Notes.html",
+      "replacedAt": "2026-11-01T18:26:01.825339+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "the saved page was the GitHub file viewer with no release-note text; the row now names the raw file"
     },
     {
       "refId": "Microsoft-ADCS-ML-DSA-Overview",
