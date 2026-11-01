@@ -67,4 +67,27 @@ describe('derived financial demo docs', () => {
     expect(doc.data).toMatch(/× migrate-now/) // derived delay ratio, not a hardcoded ~2×
     expect(doc.data).not.toMatch(/~2×/)
   })
+  it('does not attribute a regulatory penalty to a delay scenario that excludes it', () => {
+    expect(deriveInactionDoc('financial').data).toContain(
+      'No framework-derived fine or contract loss'
+    )
+    expect(deriveBoardDeck('financial').data).toContain(
+      'No regulatory penalty or contract-loss cost is included'
+    )
+    expect(deriveBoardDeck('financial').data).not.toContain('regulatory penalty once past')
+  })
+
+  it('keeps federal deadline scope beside the private-bank example', () => {
+    const deck = deriveBoardDeck('financial').data
+    expect(deck).toContain('specified US federal-agency')
+    expect(deck).toContain('excluding national-security systems')
+    expect(deck).toContain('do not automatically apply to a private organisation')
+  })
+
+  it('asks the board to challenge negative NPV rather than implying approval', () => {
+    const deck = deriveBoardDeck('financial').data
+    expect(deck).toMatch(/NPV -/)
+    expect(deck).toContain('negative NPV or payback beyond its evaluation horizon')
+    expect(deck).toContain('do not justify automatic approval')
+  })
 })

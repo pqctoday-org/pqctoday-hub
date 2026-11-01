@@ -13,6 +13,8 @@ import { act, renderHook } from '@testing-library/react'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSimAutoRunPlayer } from './useSimAutoRunPlayer'
+import { autoRunWalkthroughQueue } from './simAutoRun'
+import { EXEC_TOUR_STAGES } from './execTourConfig'
 import { isAutoRunFillActive, setAutoRunFill } from './autoRunFill'
 
 beforeEach(() => {
@@ -63,4 +65,29 @@ describe('auto-run cleanup (WP4)', () => {
     act(() => result.current.stop())
     expect(closeEmbed).toHaveBeenCalledTimes(1)
   })
+})
+
+describe('executive overview chapter navigation', () => {
+  it.each(['walkthrough', 'walkthrough-deep'] as const)(
+    '%s visits every chapter and disables unavailable directions',
+    (mode) => {
+      const queue = autoRunWalkthroughQueue(mode === 'walkthrough-deep')
+      const phases = EXEC_TOUR_STAGES.map((stage) => stage.phase)
+      const { result, unmount } = renderPlayer()
+      act(() => result.current.start({ mode }))
+      expect(result.current.canPrevPass).toBe(false)
+      for (const phase of phases.slice(1)) {
+        expect(result.current.canNextPass).toBe(true)
+        act(() => result.current.nextPass())
+        expect(queue[result.current.index].phase).toBe(phase)
+      }
+      expect(result.current.canNextPass).toBe(false)
+      const last = result.current.index
+      act(() => result.current.nextPass())
+      expect(result.current.index).toBe(last)
+      act(() => result.current.prevPass())
+      expect(queue[result.current.index].phase).toBe('p7')
+      unmount()
+    }
+  )
 })

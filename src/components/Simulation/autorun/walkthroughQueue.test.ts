@@ -11,15 +11,9 @@ describe('autoRunWalkthroughQueue', () => {
     expect(queue.every((it) => it.level === 1)).toBe(true)
   })
 
-  it('visits phases as a subsequence of the configured stage order (phase-major)', () => {
-    const order = EXEC_TOUR_STAGES.map((s) => s.phase)
-    const seenPhases = [...new Set(queue.map((it) => it.phase))]
-    let i = -1
-    for (const p of seenPhases) {
-      const next = order.indexOf(p, i + 1)
-      expect(next, `phase ${p} out of configured order`).toBeGreaterThan(i)
-      i = next
-    }
+  it.each([false, true])('visits every configured chapter in order (deep: %s)', (deep) => {
+    const phases = [...new Set(autoRunWalkthroughQueue(deep).map((item) => item.phase))]
+    expect(phases).toEqual(EXEC_TOUR_STAGES.map((stage) => stage.phase))
   })
 
   it('REVEAL INVARIANT: every reveal artifact type has a generating activity step in the queue', () => {
@@ -45,12 +39,20 @@ describe('autoRunWalkthroughQueue', () => {
     }
   })
 
-  it('has no duplicate steps', () => {
-    const keys = queue.map(
-      (it) =>
-        `${it.step.kind}:${it.step.moduleId ?? it.step.refId ?? it.step.artifactType ?? it.step.catalogId ?? it.step.workshopId}`
-    )
+  it('generates each document once while allowing explicit chapter revisits', () => {
+    const keys = queue
+      .filter((item) => !item.reuseArtifact)
+      .map(
+        (it) =>
+          `${it.step.kind}:${it.step.moduleId ?? it.step.refId ?? it.step.artifactType ?? it.step.catalogId ?? it.step.workshopId}`
+      )
     expect(new Set(keys).size).toBe(keys.length)
+    const revisit = queue.find((item) => item.phase === 'foundations')
+    expect(revisit?.reuseArtifact).toBe(true)
+    expect(revisit?.step.artifactType).toBe('kpi-dashboard')
+    expect(queue.findIndex((item) => item === revisit)).toBeGreaterThan(
+      queue.findIndex((item) => item.step.artifactType === 'kpi-dashboard')
+    )
   })
 })
 
@@ -58,15 +60,7 @@ describe('autoRunWalkthroughQueue(includeDeepDive=true) — Executive Overview D
   const standard = autoRunWalkthroughQueue(false)
   const deep = autoRunWalkthroughQueue(true)
 
-  // NOTE: as of this writing, only P6 carries any `deepDive` content, and P6 is
-  // configured as a 'light'-depth exec-tour stage (not 'deep') — so today the two
-  // queues happen to be IDENTICAL (deep-dive is only pulled for 'deep' stages, by
-  // design — see the plan). That's correct current behavior, not something these
-  // tests should assume away: they check the queue never SHRINKS or drops
-  // anything (>=, not >), and separately prove the underlying mechanism actually
-  // works using `autoRunDeepQueue` (deepQueue.test.ts), which walks every phase
-  // regardless of exec-tour curation.
-  it('is a superset of the standard queue (equal today, until a "deep" stage phase gets deep-dive content)', () => {
+  it('includes every standard-route resource', () => {
     expect(deep.length).toBeGreaterThanOrEqual(standard.length)
     const standardKeys = new Set(standard.map((it) => `${it.phase}:${it.step.kind}:${it.step.to}`))
     for (const key of standardKeys) {
@@ -83,7 +77,7 @@ describe('autoRunWalkthroughQueue(includeDeepDive=true) — Executive Overview D
     }
   })
 
-  it('data fact the assertions above rely on: p6 (the only phase with deepDive content) is a light stage', () => {
+  it('keeps infrastructure at the configured light depth', () => {
     // If this ever flips (p6 becomes a 'deep' stage, or a 'deep' stage phase
     // gains deepDive content), the superset test above starts asserting a real
     // inequality instead of an equality — no test change needed either way. The

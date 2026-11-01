@@ -61,10 +61,10 @@ export function SimExecWalkthroughComplete({ onClose }: { onClose: () => void })
           </div>
         </div>
         <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
-          That’s the whole post-quantum migration: securing sign-off and budget, finding and
-          prioritising your cryptography, building the roadmap, and verifying it’s done. The board
-          documents you saw generated are waiting in your Command Center. Here’s where you run it
-          for real.
+          You’ve explored the migration decisions, from the initial mandate to future verification
+          and handover. The worked-example documents are available in your Command Center for
+          further practice. Use what you learned to question assumptions, identify the capabilities
+          your production tools need, and plan how your team will demonstrate them.
         </p>
         <div className="flex flex-wrap gap-2">
           <Link to="/business" onClick={onClose}>
@@ -76,7 +76,7 @@ export function SimExecWalkthroughComplete({ onClose }: { onClose: () => void })
           <Link to="/compliance" onClick={onClose}>
             <Button variant="outline" size="sm" className="gap-1.5">
               <CalendarClock size={14} aria-hidden="true" />
-              See your deadlines
+              Review requirements
             </Button>
           </Link>
         </div>

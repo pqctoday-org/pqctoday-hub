@@ -186,6 +186,7 @@ export function SimPlayChoiceModal({
   // start() already does on every real run.
   const durations = useMemo(
     () => ({
+      walkthroughVisits: autoRunWalkthroughQueue(false).length,
       walkthroughStandard: estimatedMinutes(autoRunWalkthroughQueue(false).map((i) => i.step)),
       walkthroughDeep: estimatedMinutes(autoRunWalkthroughQueue(true).map((i) => i.step)),
       climbStandard: estimatedMinutes(autoRunQueue().map((i) => i.step)),
@@ -254,8 +255,8 @@ export function SimPlayChoiceModal({
           <div className="grid gap-3 sm:grid-cols-3">
             <PlayCard
               title="Executive Overview"
-              scope="8 curated highlights across all 9 phases — governance, risk, roadmap, key documents. No technical detail, calendar frozen."
-              deepScope="Same 8 highlights, plus each deep stage's phase surfaces its own further-reading extras — a richer board-level tour, still no technical depth."
+              scope={`${durations.walkthroughVisits} guided resource visits across the lifecycle, including Foundations — business decisions, governance, risk and sample documents. Calendar frozen.`}
+              deepScope="The executive overview plus additional reading and optional practice. Some extras contain technical detail."
               audience="Board / exec / non-technical stakeholders"
               standardMin={durations.walkthroughStandard}
               deepMin={durations.walkthroughDeep}

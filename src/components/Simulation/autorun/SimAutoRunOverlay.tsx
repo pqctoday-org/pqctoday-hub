@@ -229,8 +229,16 @@ export function SimAutoRunOverlay({
 
         <div className="flex flex-wrap items-center justify-center gap-2">
           {!player.done && (
-            <Button type="button" variant="ghost" onClick={player.prevPass} className={btn}>
-              ⏮ Prev pass
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={player.prevPass}
+              disabled={player.canPrevPass === false}
+              className={btn}
+            >
+              {player.mode === 'walkthrough' || player.mode === 'walkthrough-deep'
+                ? '⏮ Previous chapter'
+                : '⏮ Prev pass'}
             </Button>
           )}
           {player.running && !player.paused && (
@@ -244,8 +252,16 @@ export function SimAutoRunOverlay({
             </Button>
           )}
           {!player.done && (
-            <Button type="button" variant="ghost" onClick={player.nextPass} className={btn}>
-              Next pass ⏭
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={player.nextPass}
+              disabled={player.canNextPass === false}
+              className={btn}
+            >
+              {player.mode === 'walkthrough' || player.mode === 'walkthrough-deep'
+                ? 'Next chapter ⏭'
+                : 'Next pass ⏭'}
             </Button>
           )}
           {!player.done && (

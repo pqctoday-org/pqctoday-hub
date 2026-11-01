@@ -151,6 +151,8 @@ export interface SimAutoRunPlayer {
   prevPass: () => void
   /** Jump the playhead to the start of the next maturity pass (shows its intro). */
   nextPass: () => void
+  canNextPass?: boolean
+  canPrevPass?: boolean
 }
 
 // ── Program clock — paced by the SCENARIO's maturity passes (not linear). ──────
@@ -608,6 +610,7 @@ export function useSimAutoRunPlayer({
   const [caption, setCaption] = useState('')
   const [label, setLabel] = useState('')
   const [speed, setSpeed] = useState<AutoRunSpeed>('normal')
+  const [chapterStarts, setChapterStarts] = useState<number[]>([])
   const [voiceOn, setVoiceOn] = useState(false) // OFF by default (user preference); toggle in the overlay
   const [voiceName, setVoiceName] = useState('')
   const [passIntro, setPassIntro] = useState<PassIntro | null>(null)
@@ -760,9 +763,13 @@ export function useSimAutoRunPlayer({
       const starts: { level: number; start: number }[] = []
       q.forEach((it, i) => {
         const last = starts.at(-1)
-        if (!last || last.level !== it.level) starts.push({ level: it.level, start: i })
+        const changed =
+          last &&
+          (isWalkthroughMode(runMode) ? q[last.start].phase !== it.phase : last.level !== it.level)
+        if (!last || changed) starts.push({ level: it.level, start: i })
       })
       passStartsRef.current = starts
+      setChapterStarts(starts.map((chapter) => chapter.start))
       lastLevelRef.current = null
       lastSelPhaseRef.current = null
       // Reset the per-phase Set-guards + arm the one-time scenario-framing card.
@@ -921,6 +928,11 @@ export function useSimAutoRunPlayer({
 
   const prevPass = useCallback(() => {
     const cur = currentBlock()
+    if (isWalkthroughMode(modeRef.current)) {
+      const previous = passStartsRef.current.at(cur - 1)
+      if (cur > 0 && previous) jumpToIndex(previous.start)
+      return
+    }
     const curStart = passStartsRef.current.at(cur)?.start ?? 0
     const target =
       indexRef.current > curStart ? curStart : (passStartsRef.current.at(cur - 1)?.start ?? 0)
@@ -1157,7 +1169,10 @@ export function useSimAutoRunPlayer({
         if (cancelled) return
         // Beat B — complete + return to the board so the OUTPUT shows (sections
         // update, clock advances).
-        completeStepGenuine(item.step)
+        completeStepGenuine(item.step, undefined, {
+          phase: item.phase,
+          reuseArtifact: item.reuseArtifact,
+        })
         // Walkthrough: when a board document is generated, surface its "what this is" line.
         if (
           isWalkthroughMode(modeRef.current) &&
@@ -1267,6 +1282,11 @@ export function useSimAutoRunPlayer({
     [clearTimer]
   )
 
+  const chapterIndex = chapterStarts.reduce(
+    (current, start, i) => (start <= index ? i : current),
+    0
+  )
+
   return {
     running,
     paused,
@@ -1299,5 +1319,7 @@ export function useSimAutoRunPlayer({
     dismissReveal,
     prevPass,
     nextPass,
+    canNextPass: chapterIndex < chapterStarts.length - 1,
+    canPrevPass: isWalkthroughMode(mode) ? chapterIndex > 0 : index > 0,
   }
 }

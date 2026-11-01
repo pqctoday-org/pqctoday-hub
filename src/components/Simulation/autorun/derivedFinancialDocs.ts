@@ -23,7 +23,7 @@ import {
 } from '@/utils/delayCostModel'
 import { compareCostModels } from '@/utils/costModelSim'
 import { DELAY_COST_PROFILES } from '@/components/PKILearning/modules/PQCBusinessCase/data/businessCaseScenarios'
-import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
+import { ORG, CUR, type DemoDoc, type DemoSector } from './demoDocs'
 import { EO_DEADLINE_CLAUSE, PROGRAM_START_YEAR, crqcBandSentence } from '@/data/narrationFacts'
 
 interface DemoScenario {
@@ -306,16 +306,19 @@ export function deriveExplorerDoc(sector: DemoSector): DemoDoc {
 export function deriveBoardDeck(sector: DemoSector): DemoDoc {
   const f = sectorFinancials(sector)
   const { cur, roi, breach, costOfInaction, delayRatio } = f
-  const reg = REG[sector]
   return {
     title: 'Board Mandate Pitch',
     data: joinMd(
       `# Board Pitch — Securing ${ORG[sector]} Against the Quantum Threat`,
       '',
       `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) would decrypt it retroactively. ${crqcBandSentence(sector)} Quantum-enabled breach exposure is ${fmt(cur, breach.quantumSLE)} per event.`,
-      `2. **The deadlines are real:** ${EO_DEADLINE_CLAUSE}, and regulators behind ${reg} increasingly expect demonstrable migration progress.`,
+      `2. **Deadline scope:** ${EO_DEADLINE_CLAUSE}. The 2030/2031 dates concern specified US federal-agency high-value assets and high-impact systems, excluding national-security systems. They do not automatically apply to a private organisation. Establish applicable jurisdiction, system scope and contractual requirements separately.`,
       `3. **The ask:** a phased mandate of ${fmt(cur, roi.totalCost)} over ${HORIZON_YEARS} years aligned to existing refresh cycles — NPV ${fmt(cur, roi.npv ?? 0)} at ${Math.round(DISCOUNT_RATE * 100)}%, payback ${isFinite(roi.paybackMonths) ? `${Math.round(roi.paybackMonths)} months` : 'n/a'}.`,
-      `4. **The cost of waiting:** delaying ${DELAY_YEARS} years costs an extra ${fmt(cur, costOfInaction)} (${delayRatio.toFixed(1)}× migrate-now) — accumulated breach exposure, a delay premium, and regulatory penalty once past the mandate deadline.`,
+      `4. **The cost of waiting:** delaying ${DELAY_YEARS} years costs an extra ${fmt(cur, costOfInaction)} (${delayRatio.toFixed(1)}× migrate-now) — the stated exposure and delay-cost assumptions. No regulatory penalty or contract-loss cost is included.`,
+      '',
+      (roi.npv ?? 0) < 0 || roi.paybackMonths > HORIZON_YEARS * 12
+        ? 'Decision question: this scenario has negative NPV or payback beyond its evaluation horizon. Compare assumptions, scope and alternatives. Any security, legal or other non-financial justification must be established separately; these figures do not justify automatic approval.'
+        : 'Decision question: the financial result depends on the stated assumptions. Compare scope, alternatives and uncertainty before a funding decision.',
       '',
       'Figures derived from the ROI Calculator, Breach Scenario Simulator, and Cost of Inaction Analyzer — the same tools available in this workshop.'
     ),

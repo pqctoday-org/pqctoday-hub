@@ -22,7 +22,7 @@
  * co-render and the GUIDED-vs-Expert mode split that existed only to hide the
  * intel rail from beginners.
  */
-import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
+import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
 import { Pencil } from 'lucide-react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
@@ -226,7 +226,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { computeAssessment } from '@/hooks/useAssessmentEngine'
-import type { AssessmentInput } from '@/hooks/assessmentTypes'
+import { loadSampleOrganisation, SAMPLE_ORG_KEY } from './sampleOrganisation'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
@@ -306,7 +306,6 @@ const fmtMinutes = (min: number) => `about ${Math.round(min)} minutes`
 const fmtMinuteAdj = (min: number) => `${Math.round(min)}-minute`
 
 /** sourceInputKey of a result loaded from the sample organisation, not an assessment. */
-const SAMPLE_ORG_KEY = '__sample_org__'
 const SEAT_SEED_DEFAULT = 'executive'
 
 // Event-time clock at module scope so it stays out of the component render body
@@ -1162,30 +1161,8 @@ export function SimulationView() {
   // Sample-org cold start — used by the locked-screen "Watch the full migration"
   // and "Explore" buttons so the sim can be tried (and auto-run) without first
   // running a real assessment. Replaced the moment the user runs their own.
-  const loadSampleOrg = useCallback(() => {
-    const result = computeAssessment({
-      industry: 'Finance & Banking',
-      currentCrypto: ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256'],
-      dataSensitivity: ['critical', 'high'],
-      complianceRequirements: ['PCI DSS', 'GDPR'],
-      migrationStatus: 'not-started',
-      cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'],
-      dataRetention: ['10-25y', 'indefinite'],
-      systemCount: '200-plus',
-      teamSize: '11-50',
-      cryptoAgility: 'partially-abstracted',
-      infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
-      vendorDependency: 'mixed',
-      timelinePressure: 'within-2-3y',
-    } satisfies AssessmentInput)
-    useAssessmentResultStore.getState().setResult(result)
-    // Sentinel (not a real input's JSON key) so a later real assessment always
-    // reads as "different from what's stored" and overwrites this demo profile.
-    useAssessmentResultStore.setState({
-      completedAt: new Date().toISOString(),
-      sourceInputKey: SAMPLE_ORG_KEY,
-    })
-  }, [])
+  const loadSampleOrg = loadSampleOrganisation
+
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
@@ -2258,9 +2235,10 @@ export function SimulationView() {
                 data-testid="sim-landing-length"
               >
                 The Executive Overview takes {fmtMinutes(getLandingMinutes().walkthrough)}, or start
-                with the {fmtMinuteAdj(getLandingMinutes().intro)} intro. At the end you get a
-                simulation maturity score, a run grade and a sample migration roadmap you can save.
-                These describe the exercise, not verified organizational readiness.
+                with the {fmtMinuteAdj(getLandingMinutes().intro)} intro. The overview explores
+                decisions and sample documents. The full migration game adds a simulation maturity
+                score and run grade. These describe the exercise, not verified organizational
+                readiness.
               </p>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
                 “Watch the full migration” loads a sample Finance &amp; Banking · US run — pick how
@@ -2997,8 +2975,8 @@ export function SimulationView() {
               >
                 <div className="text-sm font-bold text-foreground">Executive Overview</div>
                 <p className="text-[11px] leading-snug text-muted-foreground">
-                  8 curated highlights across all 9 phases — board / exec audience, no technical
-                  detail.
+                  A guided executive tour of business decisions, including Foundations and sample
+                  documents.
                 </p>
               </Button>
               <Button
@@ -5615,6 +5593,7 @@ export function SimulationView() {
             `!isMobileViewport` is a no-op at real desktop widths (both are
             always false there), so this changes nothing above 768px. */}
         {!isMobileViewport &&
+          !playModalOpen &&
           ((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
             tourOpen) && (
             <SimTour
