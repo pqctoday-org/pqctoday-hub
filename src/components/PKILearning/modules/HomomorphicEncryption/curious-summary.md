@@ -12,4 +12,4 @@ FHE keeps data hidden from the server, but it is much slower than ordinary compu
 
 ### What's Happening
 
-The international standard for FHE (ISO/IEC 28033) is still in draft, FHE itself has no FIPS or Common Criteria approval, and it is in production mainly for private lookups. Open-source libraries such as TFHE-rs, OpenFHE and Lattigo already implement the schemes it covers.
+Standardisation of FHE is very active, for example under ISO/IEC 28033, though performance is still a concern for some applications.

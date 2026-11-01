@@ -235,8 +235,7 @@ const Step1WhyConceptsCosts: React.FC = () => (
               <li>&bull; Regulatory fines (GDPR, HIPAA, PCI DSS)</li>
               <li>&bull; Government contract eligibility (CMMC, FedRAMP)</li>
               <li>
-                &bull; Mandate dates (CNSA 2.0, ANSSI), whose legal status and applicability vary by
-                jurisdiction and sector
+                &bull; Mandate dates (CNSA 2.0, ANSSI), which are binding for national security systems in the case of CNSA 2.0 and mandatory in some certification contexts in the case of ANSSI
               </li>
               <li>&bull; Audit and remediation costs</li>
             </ul>

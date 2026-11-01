@@ -60,7 +60,7 @@ const LAYER_INFO: LayerInfo[] = [
     classicalAlgorithm:
       'AES-256-CBC or AES-256-GCM for data; RSA-2048/4096 OAEP for CMK wrapping. SQL Server Always Encrypted, Oracle TCE.',
     pqcUpgradePath:
-      'CMK wrapping algorithm: RSA-OAEP → ML-KEM-1024. Requires CMK rotation which triggers CEK re-wrapping. Data encryption (AES-256) unchanged.',
+      'CMK wrapping algorithm: RSA-OAEP → ML-KEM-1024 (not sourced in the Library). Requires CMK rotation which triggers CEK re-wrapping. Data encryption (AES-256) unchanged.',
     depth: 'Middle',
   },
   {

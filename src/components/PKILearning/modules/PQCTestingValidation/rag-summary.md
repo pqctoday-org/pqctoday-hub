@@ -37,7 +37,7 @@ PQC testing introduces challenges absent from classical cryptography assessments
 
 Key limitation: passive tools can only detect algorithms in _current_ flows. If no ML-KEM-capable connection is being made, ML-KEM support cannot be detected passively.
 
-**Tools**: CryptoNext COMPASS (commercial, NCCoE PQC migration project collaborator, NIST CAVP certified for all 3 PQC standards), pqc-flow (open source, CipherIQ), VIAVI Observer Analyzer (commercial, PQC detection in development).
+**Tools**: CryptoNext COMPASS (commercial, NCCoE PQC migration project collaborator, NIST CAVP certified for all 3 PQC standards), pqc-flow (open source, CipherIQ), VIAVI Observer Analyzer (commercial, PQC detection in development) (not sourced in the Library).
 
 **Active scanning** initiates TLS/SSH/IKEv2 connections to probe which algorithms an endpoint supports. Provides complete algorithm support matrix but generates detectable connection attempts — requires security operations coordination.
 
@@ -51,7 +51,7 @@ Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN
 
 ### Critical benchmark data (from VIAVI TeraVM + PQC-LEO):
 
-| Metric               | Classical | Hybrid PQC   | Pure PQC           |
+| Metric (not sourced in the Library) | Classical | Hybrid PQC   | Pure PQC           |
 | -------------------- | --------- | ------------ | ------------------ |
 | TLS handshake (WAN)  | 68ms      | 82ms (+21%)  | 95ms (+40%)        |
 | IKEv2 SA setup (WAN) | 240ms     | 380ms (+58%) | 12,626ms (+5,161%) |
@@ -79,7 +79,7 @@ Enterprise traffic flows through Next-Generation Firewalls (NGFWs) and Secure We
 
 ### Hardware Acceleration Gaps
 
-Most network security appliances use dedicated silicon for RSA/ECC acceleration. These chips **cannot accelerate ML-KEM or PQ signature algorithms** — devices fall back to general-purpose CPUs. Under high connection rates, this reduces appliance capacity by **50–90%** vs hardware-accelerated classical crypto. Vendors acknowledge many deployments will require new hardware.
+Most network security appliances use dedicated silicon for RSA/ECC acceleration. These chips **cannot accelerate ML-KEM or PQ signature algorithms** — devices fall back to general-purpose CPUs. Under high connection rates, this reduces appliance capacity by **50–90%** vs hardware-accelerated classical crypto. Vendors acknowledge many deployments will require new hardware (not sourced in the Library).
 
 ### Bursty Traffic Amplification
 
@@ -91,7 +91,7 @@ TLS session resumption (PSK reuse) allows returning clients to skip the expensiv
 
 ### Production-Scale KPIs (VIAVI TeraVM on Dell R6625)
 
-| KPI                | Classical (X25519) | Hybrid (X25519+ML-KEM-768) | Delta           |
+| KPI (not sourced in the Library) | Classical (X25519) | Hybrid (X25519+ML-KEM-768) | Delta           |
 | ------------------ | ------------------ | -------------------------- | --------------- |
 | Connection Rate    | 51,520 CPS         | 32,320 CPS                 | 37% drop        |
 | Client Throughput  | 7,312 Mbps         | 4,968 Mbps                 | 32% drop        |
@@ -193,7 +193,7 @@ Focus: Enterprise-wide enforcement, continuous compliance scanning, policy autom
 
 ## Tool Catalog (CSC-061)
 
-| Tool               | Category          | License     | PQC Support                                       |
+| Tool (not sourced in the Library) | Category          | License     | PQC Support                                       |
 | ------------------ | ----------------- | ----------- | ------------------------------------------------- |
 | CryptoNext COMPASS | Passive Discovery | Commercial  | ML-KEM, ML-DSA, SLH-DSA (NIST CAVP)               |
 | pqc-flow           | Passive Discovery | Open Source | ML-KEM, ML-DSA in TLS/SSH/QUIC                    |

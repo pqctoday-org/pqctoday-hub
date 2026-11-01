@@ -52,7 +52,7 @@ function ExercisesTab() {
     {
       title: 'Scenario: Multi-Vendor FIPS Validation Gap',
       prompt:
-        'Your compliance team discovered that several vendors claim "FIPS compliance" but only have FIPS 140-2 validation (not 140-3). The CMVP generally no longer accepts FIPS 140-2 submissions for new validation certificates, with an exception for vendors under contract with a CSTL before June 15, 2021 whose CSTL submitted an extension request. You need to audit your vendor portfolio and replace FIPS 140-2-only products in critical roles. Score at least 3 vendors using the Vendor Scorecard and generate contract clauses that distinguish between FIPS 140-2 and 140-3 requirements.',
+        'Your compliance team discovered that several vendors claim "FIPS compliance" but only have FIPS 140-2 validation (not 140-3). The CMVP stopped accepting FIPS 140-2 submissions for new validation certificates on April 1, 2022; before that, from September 22, 2021, only vendors under contract with a CSTL before June 15, 2021 could still submit, and only if their CSTL had submitted an extension request that the CMVP accepted. You need to audit your vendor portfolio and replace FIPS 140-2-only products in critical roles. Score at least 3 vendors using the Vendor Scorecard and generate contract clauses that distinguish between FIPS 140-2 and 140-3 requirements.',
     },
   ]
 

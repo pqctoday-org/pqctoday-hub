@@ -4,7 +4,7 @@ CI/CD pipelines heavily rely on classical cryptography, from Git commit signing 
 
 ### Why It Matters
 
-Infrastructure-as-Code (IaC) tools typically default to quantum-vulnerable settings (like RSA-2048). Furthermore, critical supply chain anchors like container image signatures—built on tools like cosign and Notation—must be migrated to algorithms like ML-DSA to prevent complete infrastructure compromise.
+Infrastructure-as-Code (IaC) tools typically default to quantum-vulnerable settings (like RSA-2048). Furthermore, critical supply chain anchors like container image signatures—built on tools like cosign and Notation—must be migrated to algorithms like ML-DSA to prevent complete infrastructure compromise (not sourced in the Library).
 
 ### The Key Takeaway
 

@@ -48,7 +48,7 @@ const ATTACK_SCENARIOS: Record<
       description:
         'A CRQC decrypts captured Kerberos PKINIT handshakes from network recordings. The RSA-encrypted pre-authentication data reveals the session key, enabling ticket forgery and full domain compromise without any credentials.',
       mitigation:
-        'Deploy Windows Server 2025 with PQC PKINIT support. Configure clients to use ML-KEM for PKINIT key exchange. Enforce PQC ciphers via Group Policy.',
+        'Deploy Windows Server 2025 with PQC PKINIT support (not sourced in the Library). Configure clients to use ML-KEM for PKINIT key exchange. Enforce PQC ciphers via Group Policy.',
     },
     {
       title: 'NTLM Credential Exposure',
@@ -85,7 +85,7 @@ const ATTACK_SCENARIOS: Record<
     {
       title: 'JWT Token Forgery via RSA Key Recovery',
       description:
-        'Microsoft Entra ID signs JWT access tokens and ID tokens with RSA-2048 keys published at the JWKS endpoint. A CRQC can recover the private signing key from collected public key material, enabling forgery of any identity token.',
+        'A CRQC could derive a private signing key from the published public key material and forge identity tokens.',
       mitigation:
         'Watch for a Microsoft announcement of post-quantum Entra token signing (we found none). Enforce short token lifetimes (15-minute access tokens) to limit replay window. Enable Continuous Access Evaluation (CAE).',
     },

@@ -75,7 +75,7 @@ export const content: ModuleContent = {
     stateManagement:
       'State must be persistent, atomic, and never cloned. Hardware Security Modules (HSMs) with non-volatile monotonic counters are the standard approach.',
     lmsVsXmss:
-      'SP 800-208 states that the hardness assumptions underlying LMS and XMSS unforgeability may be viewed as substantially similar, deserving essentially equal confidence. NSA CNSA 2.0 allows single-tree LMS and XMSS and prefers LMS with SHA-256/192; BSI recommends both families.',
+      'SP 800-208 states that the hardness assumptions underlying LMS and XMSS unforgeability may be viewed as substantially similar, deserving essentially equal confidence.',
     w4Size: '2.5 KB',
     w8Size: '1.7 KB',
   },

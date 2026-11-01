@@ -381,7 +381,7 @@ function AppMessageStep({ hsm }: { hsm: UseHSMResult }) {
     <StepCard
       index={3}
       title="Application message encryption — AES-128-GCM"
-      subtitle="MLS derives a content key and nonce from an unused generation of either the handshake or application ratchet derived for the member (RFC 9420). Messages are AES-GCM authenticated — with the epoch number, group ID, and content type bound in Additional Data."
+      subtitle="MLS derives a content key and nonce from an unused generation of either the handshake or application ratchet derived for the member (RFC 9420); messages are protected with an AEAD function, with the epoch number, group ID, and content type bound in Additional Data."
       result={result}
       onRun={handleRun}
     >

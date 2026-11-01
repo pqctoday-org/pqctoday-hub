@@ -413,9 +413,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         <p className="text-sm text-muted-foreground">
           XMSS is the signature scheme; the hash function below is one of its parameters. Pick a
           parameter set to explore tree structure and compare with LMS at equivalent security
-          levels. For XMSS, SP 800-208 approves four hash functions—SHA-256, SHA256/192,
-          SHAKE256/256, and SHAKE256/192—while RFC 8391&apos;s SHAKE-128 sets are shown for
-          comparison but are not approved for federal use.
+          levels. For XMSS, SP 800-208 approves four hash functions—SHA-256, SHA256/192, SHAKE256/256, and SHAKE256/192—while RFC 8391&apos;s SHAKE-128 sets are not approved for use by this publication.
         </p>
       </div>
 

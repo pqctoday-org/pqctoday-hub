@@ -268,8 +268,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
               </p>
               <p className="text-xs text-muted-foreground">
                 X25519+ML-KEM-768 adds about 1.2 KB to ClientHello (1,216-byte key share vs 32
-                bytes) but minimal compute overhead on modern hardware. Test WAN separately —
-                fragmentation risk increases with distance.
+                bytes) but minimal compute overhead on modern hardware. The real latency impact is path-, MTU-, and middlebox-dependent, so test the actual network paths.
               </p>
             </div>
           </div>
@@ -280,11 +279,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
                 Identify Certificate Size Impact
               </p>
               <p className="text-xs text-muted-foreground">
-                A pure ML-DSA-65 certificate chain (~17KB) exceeds the typical TCP initial
-                congestion window of 10 segments (10 × 1,460 B = 14,600 B, RFC 6928). On
-                high-latency links, this forces extra round-trips. Measure the whole chain your
-                server actually sends, not one leaf certificate, and test against your worst-case
-                latency links.
+                A pure ML-DSA-65 certificate chain (~17KB, this module's planning assumption, not a measurement) exceeds the largest initial window that RFC 6928 permits, 10 segments (at most 14,600 B), and a sender may start with a smaller one. On high-latency links, this forces extra round-trips. Measure the whole chain your server actually sends, not one leaf certificate, and test against your worst-case latency links.
               </p>
             </div>
           </div>

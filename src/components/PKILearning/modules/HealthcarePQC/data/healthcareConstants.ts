@@ -605,7 +605,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-KEM-512',
         feasible: true,
         rationale:
-          'BLE pairing can use ML-KEM-512 for key exchange. Cortex-M4 has sufficient RAM (256 KB) and compute.',
+          'BLE pairing can use ML-KEM-512 for key exchange. Cortex-M4 has sufficient RAM (256 KB) and compute (not sourced in the Library).',
       },
       {
         algorithm: 'ML-DSA-44',

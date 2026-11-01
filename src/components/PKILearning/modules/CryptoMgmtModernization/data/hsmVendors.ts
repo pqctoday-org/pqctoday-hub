@@ -111,7 +111,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
     lastVerified: '2026-09-24',
     posture: 'yellow',
     notes:
-      'Confidential-computing architecture; product rebranded from SDKMS to DSM. CMVP cert #4139 covers the SDKMS Appliance (same hardware); it is a FIPS 140-2 certificate that CMVP moved to the Historical list at sunset (checked 2026-09-24). PQC algorithms exposed via the API but not yet inside the CMVP boundary. NIST ESV Certificate E232, with E233 (Fortanix DRNG RDSEED entropy sources, 14 Mar 2025).',
+      'Confidential-computing architecture; product rebranded from SDKMS to DSM (not sourced in the Library). CMVP cert #4139 covers the SDKMS Appliance (same hardware); it is a FIPS 140-2 certificate that CMVP moved to the Historical list at sunset (not sourced in the Library). PQC algorithms exposed via the API but not yet inside the CMVP boundary (not sourced in the Library). NIST ESV Certificate E232, with E233 (Fortanix DRNG RDSEED entropy sources, 14 Mar 2025).',
   },
   {
     id: 'yubihsm2',

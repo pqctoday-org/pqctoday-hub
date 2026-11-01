@@ -392,7 +392,7 @@ export const SCAN_RESULTS: Record<string, ScanResult> = {
     ],
     riskScore: 88,
     recommendation:
-      'High priority: Migrate to IKEv2 with ML-KEM + ML-DSA authentication per draft-ietf-ipsecme-ikev2-pqc-auth.',
+      'High priority: Migrate to IKEv2 with ML-DSA authentication per draft-ietf-ipsecme-ikev2-pqc-auth, a work-in-progress Internet-Draft that covers PQC signature authentication only.',
   },
   t7: {
     targetId: 't7',

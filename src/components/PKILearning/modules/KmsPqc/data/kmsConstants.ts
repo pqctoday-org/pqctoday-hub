@@ -159,7 +159,7 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     combiner: 'HKDF-SHA-256(x25519_ss || mlkem_ss, info="hybrid-kek")',
     outputKeySize: 32,
     totalOverhead: '32 + 1,088 = 1,120 bytes ciphertext',
-    useCase: 'TLS 1.3, general purpose — recommended by NIST SP 800-227',
+    useCase: 'TLS 1.3, general purpose — X25519MLKEM768 as defined in RFC 10024, which follows the principles of NIST SP 800-227 Section 4.6',
   },
   {
     id: 'p256-mlkem768',
@@ -368,7 +368,7 @@ export const ENTERPRISE_SCENARIO = {
       framework: 'ANSSI & BSI (EU)',
       deadline: 'Transition Phase',
       requirement:
-        'European agencies strongly recommend Hybrid implementations (Classical + PQC) during the transition. ANSSI requires PQC for sensitive data by 2030.',
+        'European agencies strongly recommend Hybrid implementations (Classical + PQC) during the transition. ANSSI recommends hybrid post-quantum mitigation especially for products offering long-lasting protection of information beyond 2030.',
     },
     {
       framework: 'PCI DSS v4.0.1',
@@ -401,7 +401,7 @@ export const ENTERPRISE_SCENARIO = {
       id: 'azure-kv',
       name: 'Azure Key Vault',
       rotationFeature: 'Key Vault auto-rotation with Event Grid triggers',
-      pqcCapability: 'ML-KEM integration via SymCrypt, native PQC target 2029',
+      pqcCapability: 'ML-KEM integration via SymCrypt; Microsoft-wide goal of early quantum-safe adoption by 2029 (no Key Vault-specific date sourced)',
     },
   ],
 }
@@ -1130,7 +1130,7 @@ export const KMIP_SYNC_SCENARIO: KmipSyncStep[] = [
     action: 'activate',
     title: 'Activate Across All Providers',
     description:
-      'Orchestrator sends KMIP Activate to all backends simultaneously. Cloud providers that auto-activate acknowledge the state change.',
+      'Orchestrator sends KMIP Activate to all backends simultaneously for keys that are in the Pre-Active state; Activate applies only to Pre-Active objects, so objects that are already Active are not activated again.',
     orchestrator: 'Thales CipherTrust',
     targets: ['Primary HSM', 'AWS KMS', 'Google Cloud KMS'],
     kmipSnippet:

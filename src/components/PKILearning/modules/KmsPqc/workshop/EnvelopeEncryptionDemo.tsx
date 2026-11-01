@@ -504,7 +504,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           generatedAt: ts(),
         })
         addLine(
-          `HKDF-SHA256 (SP 800-56C / RFC 5869): derived ${wrapKeyBytes.length} B wrapping key — salt=kms-envelope-salt-v1 info="kms-envelope-v1"`
+          `HKDF-SHA256 (RFC 5869, a version of the SP 800-56C extraction-then-expansion procedure that uses HMAC for both steps): derived ${wrapKeyBytes.length} B wrapping key — salt=kms-envelope-salt-v1 info="kms-envelope-v1"`
         )
         hsm.addStepLog('── Step 4: Derive Wrapping Key (CKM_HKDF_DERIVE / SP 800-56C + RFC 5869) ─')
 
@@ -1136,7 +1136,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                     'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
                 {displayStep.step === 2 &&
                   'RSA-OAEP transports a key chosen by the sender. ML-KEM Encaps outputs a shared secret key that is ready to use; a key-derivation method may be applied if the keying material needed differs from the KEM output (SP 800-227 Sec. 4.3). ' +
-                    'OAEP (RFC 8017 §7.1) is not proven secure against adaptive chosen-ciphertext attack (CCA2), and Victor Shoup showed that no such proof exists in the general case. ' +
+                    'OAEP (RFC 8017 §7.1) as a general construction has never been proven secure against adaptive chosen-ciphertext attack (CCA2), and Victor Shoup showed that no such proof exists in the general case, but RSAES-OAEP itself was later proved CCA2-secure by Fujisaki, Okamoto, Pointcheval, and Stern. ' +
                     'Never use PKCS#1 v1.5 for key transport — it is broken by the 1998 Bleichenbacher padding oracle attack, which lets an adaptive attacker decrypt RSA ciphertexts without the private key using ~1 million queries to a validating server.'}
                 {displayStep.step === 3 &&
                   (isRSA
@@ -1416,8 +1416,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               secret is derived via HKDF from both outputs (e.g. P-256 ECDH ‖ ML-KEM-768 → HKDF →
               AES-256 KEK). This hybrid approach is available in the{' '}
               <span className="font-mono text-primary">HSM / PKCS#11 → Key Wrapping</span> tool
-              which supports P-256+ML-KEM and X25519+ML-KEM multi-algorithm key-establishment
-              combiner modes.
+              which supports P-256+ML-KEM and X25519+ML-KEM multi-algorithm key-establishment combiner modes (not sourced in the Library).
             </p>
           </div>
         </div>
