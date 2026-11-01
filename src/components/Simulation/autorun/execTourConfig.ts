@@ -194,6 +194,8 @@ export function executiveSummaryForPhase(phase: PhaseId, sector: string): string
   if (sector === 'financial') return summary
   if (phase === 'p1')
     return 'Ask which business services and protected assets are in scope, who owns their dependencies and which inventory gaps or supplier constraints remain. Separate declared planning inputs from findings supported by evidence.'
+  if (phase === 'p3')
+    return 'Prioritise the services in scope by business impact, confidentiality lifetime, signature trust and migration lead time. Ask which assumptions, inventory gaps and supplier dependencies could change the priorities.'
   if (phase === 'p5')
     return 'Future delivery requirement: release pilot funding against agreed compatibility, performance, security and rollback criteria. Success for one service does not establish readiness across the estate. Ask what evidence would justify scaling or stopping.'
   if (phase === 'verify-close')

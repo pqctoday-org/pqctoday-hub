@@ -114,7 +114,9 @@ describe('buildMarkdown', () => {
 
 describe('MigrationVerification (render smoke)', () => {
   it('renders the sections and evidence-completeness counter', () => {
-    render(<MigrationVerification />)
+    const { container } = render(<MigrationVerification />)
+    expect(container.textContent).not.toContain('Prove migration with the 5-point')
+    expect(container.textContent).toContain('Evidence recorded — review required. Filling')
     expect(
       screen.getByRole('heading', { name: /Migration Verification & Program Closure/ })
     ).toBeInTheDocument()

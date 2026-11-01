@@ -73,9 +73,15 @@ export function SimExecWalkthroughComplete({
             <>You followed the phone brief. Use the desktop overview for full resource pages. </>
           )}
           You’ve explored the migration decisions, from the initial mandate to future verification
-          and handover. The worked-example documents are available in your Command Center for
-          further practice. Use what you learned to question assumptions, identify the capabilities
-          your production tools need, and plan how your team will demonstrate them.
+          and handover.{' '}
+          {!brief && (
+            <>
+              The worked-example documents are available in your Command Center for further
+              practice.{' '}
+            </>
+          )}
+          Use what you learned to question assumptions, identify the capabilities your production
+          tools need, and plan how your team will demonstrate them.
         </p>
         <div className="flex flex-wrap gap-2">
           <Link to="/business" onClick={onClose}>

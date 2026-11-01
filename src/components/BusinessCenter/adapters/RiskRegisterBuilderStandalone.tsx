@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useMemo, useState } from 'react'
-import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { isExecutiveBankOverview } from '@/components/Simulation/autorun/autoRunFill'
 import { bankRiskEntries, BANK_CASE_NOTE } from '@/components/Simulation/autorun/executiveBankCase'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { RiskRegisterBuilder } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
@@ -118,7 +118,7 @@ function buildThreatSeed(
  * the register opens with their context, not the generic demo defaults.
  */
 export function RiskRegisterBuilderStandalone() {
-  const sampleBank = isAutoRunFillActive() && useSimulationStore.getState().sector === 'financial'
+  const sampleBank = isExecutiveBankOverview(useSimulationStore.getState().sector)
   const [sampleEntries, setSampleEntries] = useState(bankRiskEntries)
   const riskEntries = useRiskRegisterStore((s) => s.riskEntries)
   const setRiskEntries = useRiskRegisterStore((s) => s.setRiskEntries)

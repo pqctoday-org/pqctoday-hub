@@ -349,7 +349,7 @@ const MOBILE_SIGNAL_NOTES: Record<string, string> = {
   'Years to act (Mosca)':
     'Shelf life (X) + migration time (Y) against time remaining (Z). The horizon is a planning anchor, not a published date.',
   'Game funds':
-    'Illustrative game funds earned through Phase 0 activities. Separate from the USD costing lesson; no currency conversion or programme funding approval is implied.',
+    'Illustrative game units earned through Phase 0 activities. These are not currency and do not represent programme funding.',
   Turn: 'The run’s current reporting period. Recurring criteria need it to advance.',
 }
 
@@ -1951,7 +1951,8 @@ export function SimulationView() {
       const parts = [`Step ${stepsDone}/${stepsTotal} done`]
       if (level !== prev.level) parts.push(`L${prev.level} → L${level}`)
       const budgetDelta = Math.round((budgetSecured - prev.budgetSecured) * 10) / 10
-      if (budgetDelta !== 0) parts.push(`Budget ${budgetDelta > 0 ? '+' : ''}€${budgetDelta}M`)
+      if (budgetDelta !== 0)
+        parts.push(`Game funds ${budgetDelta > 0 ? '+' : ''}${budgetDelta} units`)
       setMoveReceipt(parts.join(' · '))
       // mobile-ux-layer (WS-5): "phase-cleared toast from the strip" — fires
       // the moment THIS completion is what pushed the phase over the win
@@ -2962,7 +2963,7 @@ export function SimulationView() {
               { label: 'Years to act (Mosca)', value: `${clock.yearsToHorizon.toFixed(1)}y` },
               {
                 label: 'Game funds',
-                value: `€${budgetSecured}M of €${budgetTarget}M`,
+                value: `${budgetSecured} of ${budgetTarget} game units`,
               },
               // WS-4 (sim-mobile-full-play): the phone run card had no clock
               // readout at all — a player had no idea what quarter/year the
@@ -3511,7 +3512,7 @@ export function SimulationView() {
               </span>
             </div>
             <div
-              title={`Illustrative game funds — €${budgetTarget}M game target (P0 level ${p0Level}). Separate from the USD costing lesson; not an approved programme budget.`}
+              title={`Illustrative game funds — target ${budgetTarget} game units (P0 level ${p0Level}). Game units are not currency and do not represent programme funding.`}
               className="flex flex-col gap-px px-2.5 py-1.5 text-left"
             >
               <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
@@ -3525,7 +3526,7 @@ export function SimulationView() {
                     aria-hidden="true"
                   />
                 )}
-                €{budgetSecured}M
+                {budgetSecured} game units
               </span>
             </div>
           </div>
@@ -3926,8 +3927,8 @@ export function SimulationView() {
                     activityEmbed?.artifactType === 'kpi-dashboard' && (
                       <p className="mb-3 rounded-lg border border-primary/30 p-3 text-sm text-muted-foreground">
                         Illustrative future board reporting pack. The sample indicators are for
-                        discussing reporting requirements, not the bank’s current delivery progress
-                        or measured readiness.
+                        discussing reporting requirements, not the organisation’s current delivery
+                        progress or measured readiness.
                       </p>
                     )}
                   {/* W6.1/W6.2 — explicit simulation context. An embedded hub
@@ -4417,11 +4418,11 @@ export function SimulationView() {
                               title={
                                 canAffordDelegation
                                   ? undefined
-                                  : `Needs €${delegationCostM}M — only €${availableBudgetM}M available. Do it yourself, or free up budget first.`
+                                  : `Needs ${delegationCostM} game units — only ${availableBudgetM} units available. Do it yourself, or free up budget first.`
                               }
                               className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                              Auto-complete ▸ €{delegationCostM}M
+                              Auto-complete ▸ {delegationCostM} game units
                             </Button>
                           )}
                         </div>
@@ -5792,7 +5793,7 @@ export function SimulationView() {
       {pendingConfirm === 'delegate' && (
         <SimConfirmDialog
           title={`Delegate ${phase.name} to your AI team?`}
-          description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
+          description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for ${delegationCostM} game units, drawn from your game funds. Cancel to do them yourself instead.`}
           confirmLabel="Auto-complete"
           onCancel={() => setPendingConfirm(null)}
           onConfirm={() => {

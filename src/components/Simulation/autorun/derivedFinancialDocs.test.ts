@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import {
   deriveRoiDoc,
   deriveBreachDoc,
@@ -9,6 +9,7 @@ import {
 } from './derivedFinancialDocs'
 import { costingInputsForSector } from './financialScenario'
 import { compareCostModels } from '@/utils/costModelSim'
+import { setAutoRunFill } from './autoRunFill'
 import { docFor } from './simAutoRun'
 import { bankRoadmapMilestones } from './executiveBankCase'
 import type { DemoSector } from './demoDocs'
@@ -24,6 +25,39 @@ const SECTORS: DemoSector[] = [
 ]
 
 describe('derived financial demo docs', () => {
+  beforeEach(() => setAutoRunFill(true, true))
+  afterEach(() => setAutoRunFill(false))
+
+  it.each([
+    ['financial', true, true],
+    ['financial', false, false],
+    ['healthcare', true, false],
+  ] as const)(
+    'limits the future reporting header for %s with overview %s',
+    (sector, overview, expected) => {
+      setAutoRunFill(true, overview)
+      expect(
+        docFor('kpi-dashboard', sector)!.data.includes('Illustrative future board reporting pack')
+      ).toBe(expected)
+    }
+  )
+
+  it('keeps discovery and planned closure confined to the financial overview', () => {
+    setAutoRunFill(true, false)
+    expect(docFor('program-charter', 'financial')!.data).not.toContain(
+      'Discovery and planning only'
+    )
+    expect(docFor('migration-verification', 'financial')!.data).toContain('Payment-gateway TLS')
+    setAutoRunFill(true, true)
+    expect(docFor('program-charter', 'healthcare')!.data).not.toContain(
+      'records archiving and retrieval service'
+    )
+    expect(docFor('migration-verification', 'healthcare')!.data).toContain('Patient-portal TLS')
+    expect(docFor('migration-verification', 'healthcare')!.data).toContain(
+      'Fictional completed teaching example'
+    )
+    expect(docFor('migration-verification', 'financial')!.data).toContain('Sample planning only')
+  })
   it('keeps the same three services in the sample risk register and proposed roadmap', () => {
     const risk = docFor('risk-register', 'financial')!.data
     const roadmap = docFor('migration-roadmap', 'financial')!.data

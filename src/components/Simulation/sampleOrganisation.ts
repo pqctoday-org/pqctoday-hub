@@ -24,6 +24,9 @@ export const SAMPLE_ORG_INPUT = {
 
 /** Load an explicitly fictional result without editing the learner's questionnaire. */
 export function loadSampleOrganisation(): void {
+  const current = useAssessmentResultStore.getState()
+  // A sample launch must neither replace a learner result nor restamp an existing sample.
+  if (current.lastResult) return
   useAssessmentResultStore.setState({
     lastResult: computeAssessment(SAMPLE_ORG_INPUT),
     completedAt: new Date().toISOString(),

@@ -10,9 +10,15 @@
  * tool use.
  */
 let active = false
+let executiveOverview = false
 
-export const setAutoRunFill = (v: boolean): void => {
+export const setAutoRunFill = (v: boolean, overview = false): void => {
   active = v
+  executiveOverview = v && overview
 }
 
 export const isAutoRunFillActive = (): boolean => active
+
+/** The discovery-first bank story belongs to the executive overview, not the full game. */
+export const isExecutiveBankOverview = (sector: string): boolean =>
+  active && executiveOverview && sector === 'financial'

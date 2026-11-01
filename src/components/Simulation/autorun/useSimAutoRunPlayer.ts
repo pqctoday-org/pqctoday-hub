@@ -733,7 +733,7 @@ export function useSimAutoRunPlayer({
       }
       clearTimer()
       seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
-      setAutoRunFill(true) // tools opened during the run fill their forms with demo content
+      setAutoRunFill(true, isWalkthroughMode(runMode)) // tools opened during the run fill their forms with demo content
       // The first-run tour must not block the playthrough — but permanently marking it
       // seen here (as this used to do) meant a user entering via ?run=exec or "Play all"
       // never got onboarded, even after the run ended. The consumer (SimulationView)

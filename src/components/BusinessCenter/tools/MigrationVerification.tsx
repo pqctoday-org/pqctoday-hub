@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { isExecutiveBankOverview } from '@/components/Simulation/autorun/autoRunFill'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import { plannedVerificationSample } from '@/components/Simulation/autorun/plannedVerification'
 /**
  * Migration Verification & Program Closure — the framework's 9th block
@@ -258,7 +259,8 @@ export const MigrationVerification: React.FC = () => {
   // round-trips without an undefined value reaching the UI — same pattern as
   // ROICalculator / Vendor Scorecard / Infra Modernization Planner.
   const [state, setState] = useState<VerifyState>(() => {
-    if (isAutoRunFillActive()) return plannedVerificationSample()
+    if (isExecutiveBankOverview(useSimulationStore.getState().sector))
+      return plannedVerificationSample()
     const seed = {
       records: SEED_STATE.records.map((r) => ({ ...r })),
       decommissions: SEED_STATE.decommissions.map((d) => ({ ...d })),
@@ -340,9 +342,8 @@ export const MigrationVerification: React.FC = () => {
             Migration Verification &amp; Program Closure
           </h2>
           <p className="text-sm text-muted-foreground">
-            Prove migration with the 5-point evidence standard, log classical-key decommissioning
-            per your organization's key-destruction standard, and record closure &amp; BAU handover.
-            Verification ≠ migration.
+            Practise recording evidence references, retirement decisions and closure requirements.
+            These educational prompts do not evaluate evidence or verify a deployment.
           </p>
         </div>
       </header>
@@ -353,7 +354,7 @@ export const MigrationVerification: React.FC = () => {
           Verification records · {verifiedTotal}/{state.records.length} evidence complete
         </h3>
         <p className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground">Evidence recorded — review required.</span>
+          <span className="font-medium text-foreground">Evidence recorded — review required.</span>{' '}
           Filling the five educational prompts records references. It does not test the system or
           evaluate the evidence. Different services require different technical checks.
         </p>
