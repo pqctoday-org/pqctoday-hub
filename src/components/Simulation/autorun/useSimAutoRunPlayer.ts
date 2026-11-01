@@ -548,12 +548,13 @@ function scrollBoardToTop(): void {
  *  they all mount in the one `[data-sim-embed-pane]`. Graceful: if nothing is
  *  scrollable it just dwells briefly; it bails WITHOUT advancing if the run is
  *  cancelled or the embed closes. */
-function slowScrollEmbed(opts: {
+export function slowScrollEmbed(opts: {
   speed: AutoRunSpeed
   isCancelled: () => boolean
   onDone: () => void
 }): void {
   const { speed, isCancelled, onDone } = opts
+  if (isCancelled()) return
   const noScrollDwell =
     speed === 'turbo' ? 400 : speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3000
   const finish = () => {
@@ -566,6 +567,11 @@ function slowScrollEmbed(opts: {
   const pane = document.querySelector<HTMLElement>('[data-sim-embed-pane]')
   if (!pane) {
     window.setTimeout(finish, noScrollDwell)
+    return
+  }
+  // A loading placeholder is not the resource the learner came to inspect.
+  if (pane.querySelector('[data-sim-embed-loading]')) {
+    window.setTimeout(() => slowScrollEmbed(opts), 100)
     return
   }
   // The real scroller may be the pane or a descendant — pick the most-scrollable.
