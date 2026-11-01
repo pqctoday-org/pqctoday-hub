@@ -25236,11 +25236,12 @@
       "sizeBytes": 47879,
       "contentType": "text/html",
       "sha256": "5579dc51a469ee75a7700a38608489b0aae0abdd76d7b4e67833bcfe79c5ffb2",
-      "artefact": "LANDING",
-      "identity": "SKIPPED",
-      "unified": "converted",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
       "admittedAt": "2026-11-01T16:52:22.483518+00:00",
-      "admittedBy": "evidence admission"
+      "admittedBy": "evidence admission (existing copy)",
+      "stampedAt": "2026-11-01T18:58:44.899628+00:00"
     },
     {
       "refId": "NSS-3-118-Release-Notes",
@@ -25251,11 +25252,12 @@
       "sizeBytes": 41590,
       "contentType": "text/html",
       "sha256": "4b9db1087fa41659d598184669c029f051014e3bad9be1ebccc96af321b5ad30",
-      "artefact": "LANDING",
-      "identity": "SKIPPED",
-      "unified": "converted",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
       "admittedAt": "2026-11-01T16:52:32.146781+00:00",
-      "admittedBy": "evidence admission"
+      "admittedBy": "evidence admission (existing copy)",
+      "stampedAt": "2026-11-01T18:58:44.944933+00:00"
     },
     {
       "refId": "NSS-3-105-Release-Notes",
@@ -25266,11 +25268,12 @@
       "sizeBytes": 42165,
       "contentType": "text/html",
       "sha256": "ab972f184b0940bf2a431eb839fa526c01877d45534f0b57c802fb356fc407ec",
-      "artefact": "LANDING",
-      "identity": "SKIPPED",
-      "unified": "converted",
+      "artefact": "SOURCE",
+      "identity": "MATCH",
+      "unified": "current",
       "admittedAt": "2026-11-01T16:52:42.168855+00:00",
-      "admittedBy": "evidence admission"
+      "admittedBy": "evidence admission (existing copy)",
+      "stampedAt": "2026-11-01T18:58:44.991508+00:00"
     }
   ],
   "archivedEntries": [
