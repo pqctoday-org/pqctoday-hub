@@ -28,6 +28,7 @@ export type TourConceptId =
   | 'crypto-agility'
   | 'urgency-drivers'
   | 'cbom-fields'
+  | 'inventory-confidence'
   | 'weakest-domain-maturity'
   | 'kpi-pack'
   | 'readiness'
@@ -55,6 +56,7 @@ export interface TourStage {
   revealArtifacts?: ExecutiveDocumentType[]
   /** Reuse an existing tool at the chapter where its output informs a decision. */
   revealSources?: Partial<Record<ExecutiveDocumentType, PhaseId>>
+  artifactLabels?: Partial<Record<ExecutiveDocumentType, string>>
   /** Further financial study, excluded from the standard executive route. */
   optionalArtifacts?: { type: ExecutiveDocumentType; sourcePhase: PhaseId }[]
   /** LIGHT only: the single hand-picked step to show. */
@@ -103,7 +105,7 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
       'Ask whether the inventory links cryptographic dependencies to business services and accountable owners, and whether coverage gaps are visible. A CBOM supports that traceability; a board member does not need to build algorithm records. Look for inventory import, provenance, change tracking and reporting capabilities in production tools.',
     depth: 'light',
     lightStep: { kind: 'learn', ref: 'crypto-mgmt-modernization', section: 'management-tools' },
-    conceptCards: ['cbom-fields'],
+    conceptCards: ['inventory-confidence'],
   },
   {
     phase: 'p3',
@@ -119,6 +121,9 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
     depth: 'deep',
     revealArtifacts: ['cost-model-comparison', 'migration-roadmap', 'kpi-dashboard'],
     revealSources: { 'cost-model-comparison': 'p0' },
+    artifactLabels: {
+      'cost-model-comparison': 'Compare migration cost estimates and their assumptions',
+    },
     optionalArtifacts: [
       { type: 'roi-model', sourcePhase: 'p0' },
       { type: 'breach-scenario', sourcePhase: 'p0' },
@@ -230,6 +235,13 @@ export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
     source: 'inline',
     inline:
       'A Cryptography Bill of Materials record is only useful if it answers five things per instance: which algorithm, what key size, which protocol carries it, which library implements it, and who owns it. A name and a checkbox aren’t enough to act on.',
+  },
+  'inventory-confidence': {
+    id: 'inventory-confidence',
+    title: 'Can we rely on the inventory?',
+    source: 'inline',
+    inline:
+      'Ask which business services are covered, who owns their dependencies, when the information was checked and which gaps remain. Management should explain how its tools discover changes and trace findings to services. A component list alone does not establish complete coverage or readiness.',
   },
   'weakest-domain-maturity': {
     id: 'weakest-domain-maturity',

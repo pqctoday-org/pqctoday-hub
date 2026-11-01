@@ -552,7 +552,12 @@ export function autoRunWalkthroughQueue(includeDeepDive = false): AutoRunQueueIt
         const match = sourceSteps.find(
           (s) => s.kind === 'activity' && s.artifactType === artifactType
         )
-        if (match) steps.push(match)
+        if (match)
+          steps.push(
+            stage.artifactLabels?.[artifactType]
+              ? { ...match, label: stage.artifactLabels[artifactType]! }
+              : match
+          )
       }
       if (includeDeepDive) {
         for (const { type, sourcePhase } of stage.optionalArtifacts ?? []) {
