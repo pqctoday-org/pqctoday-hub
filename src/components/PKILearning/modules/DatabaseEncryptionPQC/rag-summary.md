@@ -64,9 +64,9 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 | Scheme                      | Equality | Range   | Prefix | PQC Ready                 |
 | --------------------------- | -------- | ------- | ------ | ------------------------- |
-| MongoDB FLE 2.0             | ✓        | ✓       | ✓      | No date cited             |
-| SQL Server Always Encrypted | ✓        | Enclave | ✗      | No date cited             |
-| Oracle CSQE                 | ✓        | ✗       | ✗      | No date cited             |
+| MongoDB FLE 2.0             | ✓        | ✓       | ✓      | No PQC statement cited    |
+| SQL Server Always Encrypted | ✓        | Enclave | ✗      | No PQC statement cited    |
+| Oracle CSQE                 | ✓        | ✗       | ✗      | No PQC statement cited    |
 | pg_tde (Percona)            | ✗        | ✗       | ✗      | Not applicable (TDE only) |
 
 **MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries (not sourced in the Library). DEK wrapping uses RSA-OAEP — ML-KEM-1024 wrapping is this module's projection, not a MongoDB statement.

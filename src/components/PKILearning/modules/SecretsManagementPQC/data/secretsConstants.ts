@@ -403,7 +403,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'cloud',
     catalogName: 'AWS Secrets Manager',
     pqcAlgorithms: [
-      'Inherits AWS KMS hybrid post-quantum TLS (ML-KEM in transit); no ML-KEM key spec for at-rest CMKs',
+      'Inherits AWS KMS hybrid post-quantum TLS (ML-KEM in transit); AWS KMS also offers ML-KEM key specs (ML_KEM_512/768/1024) for key establishment',
       'ML-DSA-44/65/87 signing key specs (GA June 2025)',
     ],
     encryptionAtRest: 'AWS KMS envelope encryption (AES-256-GCM)',
@@ -413,7 +413,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'Secrets Store CSI Driver + AWS provider / External Secrets Operator',
     fipsMode: true,
     roadmapNote:
-      'No native dynamic secrets. PQC comes via the KMS endpoint hybrid ML-KEM TLS (data in transit); there is no ML-KEM CMK key type for at-rest encryption. Secrets Manager endpoints themselves support hybrid ML-KEM key agreement in non-FIPS endpoints.',
+      'No native dynamic secrets. PQC comes via the KMS endpoint hybrid ML-KEM TLS (data in transit); AWS KMS offers ML-KEM key specs (ML_KEM_512/768/1024) for key establishment. Secrets Manager endpoints themselves support hybrid ML-KEM key agreement in non-FIPS endpoints.',
   },
   {
     id: 'azure-key-vault',
@@ -422,7 +422,8 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'cloud',
     catalogName: 'Azure Managed HSM',
     pqcAlgorithms: ['None — RSA-HSM / EC-HSM / oct-HSM key types only (no NIST PQC)'],
-    encryptionAtRest: 'AES-256-CBC/GCM, RSA-OAEP-256 for key wrapping (FIPS 140-3 Level 3)',
+    encryptionAtRest:
+      'AES-256-CBC/GCM, RSA-OAEP-256 for key wrapping (FIPS 140-3 Level 3) (not sourced in the Library)',
     encryptionInTransit: 'TLS 1.3',
     envelopeEncryption: true,
     dynamicSecrets: false,
@@ -439,7 +440,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     type: 'cloud',
     catalogName: 'GCP Secret Manager',
     pqcAlgorithms: [
-      'None in Secret Manager itself; Cloud KMS offers ML-DSA/SLH-DSA signing (GA) and ML-KEM/X-Wing KEMs (Preview)',
+      'None in Secret Manager itself; Cloud KMS offers ML-DSA, SLH-DSA and ML-KEM, generally available per Google’s 28 July 2026 announcement',
     ],
     encryptionAtRest: 'Google-managed keys with AES-256, optionally Cloud KMS CMEK',
     encryptionInTransit: 'TLS 1.3 (ML-KEM hybrid via BoringSSL/Chrome TLS)',
@@ -448,7 +449,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'External Secrets Operator + GCP provider / Config Connector',
     fipsMode: false,
     roadmapNote:
-      'Cloud KMS PQC keys (ML-KEM/X-Wing in Preview) are for your own signing and key-encapsulation use.',
+      'Cloud KMS PQC keys (ML-DSA, SLH-DSA and ML-KEM, generally available) are for your own signing and key-encapsulation use.',
   },
   {
     id: 'delinea-secret-server',
@@ -549,7 +550,7 @@ jobs:
             database/creds/readonly username | DB_USER ;
             database/creds/readonly password | DB_PASS
 
-# Vault policy (ml-dsa signed JWT validation planned 2026):
+# This module's projection, not a HashiCorp statement: Vault policy (ml-dsa signed JWT validation planned 2026):
 # vault write auth/jwt/role/github-ci-role \\
 #   bound_subject="repo:org/repo:ref:refs/heads/main" \\
 #   bound_audiences="vault.example.com" \\
