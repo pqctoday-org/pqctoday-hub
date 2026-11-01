@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.192.0] - 2026-11-01
+
+The last of the line-by-line reading rows are closed: 12 more lesson statements and 12 quiz questions now follow their sources or are marked as the lesson's own advice.
+
+### Changed
+
+- **More lesson statements keep to their sources** [view:/learn] [persona:researcher] [persona:architect] [persona:grc] [persona:developer] [persona:cert-engineer] [persona:ops]: across the Secrets Management, Secure Boot, IoT, Payments, KMS, Crypto Management and MLS lessons and the implementation-attack summary, 12 statements that no document supported were rewritten to say what the source says or labelled as this lesson's own illustration or advice. The Intel Boot Guard row now also notes the paper's own statement that post-quantum cryptography is supported on both client and server platforms; the Azure Managed HSM note reflects Microsoft's current documentation; the HashiCorp Vault note follows HashiCorp's API documentation; and the IoT lesson restates what NIST IR 8547 says about devices whose signature-checking code cannot be updated.
+- **More quiz questions stay within their sources** [view:/learn/quiz] [persona:researcher] [persona:developer] [persona:architect] [persona:cert-engineer]: 12 quiz questions were corrected. The Kookaburra question now asks what IBM plans to demonstrate. The Windows SChannel question now asks which registry key sets the minimum Diffie-Hellman and RSA key lengths, because that is what Microsoft documents. The pqm4 stack question cites the benchmark figures, the Rust crate question follows the lesson's own data, the MLS update-cost explanation uses RFC 9420's own comparison, and the certificate-size, payment-timeline and policy questions label the lesson's own estimates and cite NIST IR 8547's 2030 and 2035 timeline.
+
 ## [4.191.0] - 2026-11-01
 
 The next part of the line-by-line reading: 34 more lesson sentences and 32 quiz questions follow their documents, including several that needed a person's decision.
