@@ -16,7 +16,7 @@ The Stateful Hash-Based Signatures module covers LMS (Leighton-Micali Signature)
 
 ## What the lab tests (validation)
 
-A FIPS 140-3 certificate for a module that signs with LMS or XMSS rests on four kinds of check. The Learn tab (The State Problem step) has a "What the lab tests" panel with these facts.
+The Learn tab (The State Problem step) has a "What the lab tests" panel with these facts.
 
 - Algorithm tests (NIST ACVP, under CAVP): the ACVP specification for LMS (draft of 2 October 2026) has three modes, keyGen, sigGen and sigVer, each with one test type, AFT (Algorithm Functional Test). keyGen: generate a key pair based on an approved tree structure. sigGen: generate valid signatures based on the ACVP-provided message. sigVer: determine the validity of the signature given the tree structure, key and message. A vendor registers LMS modes and LM-OTS modes by hash, tree height (for example LMS_SHA256_M24_H5 through LMS_SHA256_M32_H25) and Winternitz setting (W1, W2, W4, W8); the pair must follow SP 800-208 Section 4, "namely M = N, and the hash is the same". The CAVP prerequisites page lists "All hash functions and XOFs used." for LMS keyGen, sigGen and sigVer.
 - What ACVP does not test, in the specification's words: "ACVP does not test the inability of an implementation to export a private key. ACVP does not provide any guarantees on the inability to reuse private OTS pairs of an implementation."

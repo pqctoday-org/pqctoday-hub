@@ -96,7 +96,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
       'All RSA signatures are quantum-vulnerable: compromising the ICC key allows forging any offline transaction',
     ],
     pqcMigrationPath:
-      'Hybrid approach recommended: RSA-2048 + FN-DSA-512 dual signatures during transition. Long-term: pure FN-DSA-512 CDA when card chip capacity and terminal software support it.',
+      "This module's advice: Hybrid approach recommended: RSA-2048 + FN-DSA-512 dual signatures during transition. Long-term: pure FN-DSA-512 CDA when card chip capacity and terminal software support it.",
     prevalence: '~60% of active EMV cards (majority of new issuance)',
   },
 ]

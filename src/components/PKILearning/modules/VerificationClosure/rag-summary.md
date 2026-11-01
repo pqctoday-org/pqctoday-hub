@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module covers the end of a post-quantum migration — two jobs that are routinely neglected: decommissioning classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, final October 2026: deprecate quantum-vulnerable public-key after 2030, disallow after 2035; NCSC-UK 2028/2031/2035; ETSI), executed via the inventory→plan→execute lifecycle (ETSI TR 103 619, ETSI TR 104 016, the Dutch PQC Migration Handbook). Verification-by-observed-behaviour, the estate-scale sampling approach, and the PQC-specific closure detail are presented as practitioner guidance, with generic governance anchored to ISO/IEC 27001 and the NIST Risk Management Framework.
+This module covers the end of a post-quantum migration — two jobs that are routinely neglected: decommissioning classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, final October 2026: deprecate quantum-vulnerable public-key after 2030, disallow after 2035). Verification-by-observed-behaviour, the estate-scale sampling approach, and the PQC-specific closure detail are presented as practitioner guidance.
 
 ## Key Concepts
 

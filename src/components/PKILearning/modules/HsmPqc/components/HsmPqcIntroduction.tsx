@@ -1148,11 +1148,12 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <p className="text-xs text-muted-foreground">
                   The Manual&apos;s summary table (section 7.1.14, p. 65) gives UPDT a new
                   certificate and a new sunset date, requires the latest guidance, and requires CAVP
-                  testing and, where IG 9.3.A applies, entropy source validation (ESV) testing.
-                  Adding ML-KEM, ML-DSA or SLH-DSA changes the approved algorithms, the approved
-                  services and the self-tests, which are categories the Manual counts toward the 30%
-                  limit; whether a particular firmware release is an UPDT or an FS is decided by the
-                  CMVP on the lab&apos;s submission, not something this page can state in advance.
+                  testing and, where IG 9.3.A applies, entropy source validation (ESV) testing (not
+                  sourced in the Library). Adding ML-KEM, ML-DSA or SLH-DSA changes the approved
+                  algorithms, the approved services and the self-tests, which are categories the
+                  Manual counts toward the 30% limit; whether a particular firmware release is an
+                  UPDT or an FS is decided by the CMVP on the lab&apos;s submission, not something
+                  this page can state in advance.
                 </p>
               </div>
 
