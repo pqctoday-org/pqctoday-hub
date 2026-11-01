@@ -39,7 +39,8 @@ export type AutoRunSpeed = 'slow' | 'normal' | 'fast' | 'turbo'
 
 /** The framework explanation for the phase the board is currently focused on —
  *  drives the persistent (non-modal) banner in the overlay and the first-encounter
- *  modal. Verbatim framework text from FRAMEWORK_PHASE_INTROS. */
+ *  modal. The overview uses an executive decision lens; other modes use the
+ *  framework text from FRAMEWORK_PHASE_INTROS. */
 export interface PhaseFocus {
   phase: PhaseId
   name: string

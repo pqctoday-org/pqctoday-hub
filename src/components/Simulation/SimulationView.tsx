@@ -3136,6 +3136,11 @@ export function SimulationView() {
               )}
               {autoRunPlayer.phaseIntro && (
                 <SimPhaseIntroModal
+                  executiveSummary={
+                    isWalkthroughMode(autoRunPlayer.mode)
+                      ? autoRunPlayer.phaseIntro.summary
+                      : undefined
+                  }
                   phase={autoRunPlayer.phaseIntro.phase}
                   onBegin={autoRunPlayer.beginPhase}
                   onDismiss={autoRunPlayer.pauseAndDismissIntro}
@@ -3582,6 +3587,9 @@ export function SimulationView() {
           )}
           {autoRunPlayer.phaseIntro && (
             <SimPhaseIntroModal
+              executiveSummary={
+                isWalkthroughMode(autoRunPlayer.mode) ? autoRunPlayer.phaseIntro.summary : undefined
+              }
               phase={autoRunPlayer.phaseIntro.phase}
               onBegin={autoRunPlayer.beginPhase}
               onDismiss={autoRunPlayer.pauseAndDismissIntro}
