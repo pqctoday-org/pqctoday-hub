@@ -1630,6 +1630,10 @@
       {
         "id": "cert-formats",
         "label": "Hybrid Cert Formats"
+      },
+      {
+        "id": "crypto-apis",
+        "label": "Hybrid in Crypto APIs & HSMs"
       }
     ],
     "iam-pqc": [

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hybrid-crypto',
-  contentVersion: 35,
+  contentVersion: 36,
   lm_id: 'LM-006',
   title: 'Hybrid Cryptography',
   description:
@@ -25,6 +25,7 @@ const manifest: ModuleManifest = {
     { id: 'hpke', label: 'HPKE' },
     { id: 'composite', label: 'Hybrid Signatures' },
     { id: 'cert-formats', label: 'Hybrid Cert Formats' },
+    { id: 'crypto-apis', label: 'Hybrid in Crypto APIs & HSMs' },
   ],
   workshopSteps: [
     { id: 'key-generation', label: 'Key Generation' },

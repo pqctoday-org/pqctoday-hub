@@ -27,6 +27,7 @@ import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { Button } from '@/components/ui/button'
 import { HybridRisks, HybridPositions } from './HybridRisksAndPositions'
 import { CombinerComparison } from './CombinerComparison'
+import { HybridInCryptoApis } from './HybridInCryptoApis'
 
 interface HybridCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -1376,6 +1377,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           </p>
         </div>
       </section>
+
+      <HybridInCryptoApis />
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
