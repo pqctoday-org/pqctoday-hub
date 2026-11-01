@@ -94,7 +94,10 @@ export const useSectionAnchors = (): void => {
       const el =
         document.querySelector(`[data-section-id="${target}"]`) ??
         document.querySelector(`section[id="${CSS.escape(target)}"]`)
-      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      el?.scrollIntoView({
+        behavior: isAutoRunFillActive() ? 'instant' : 'smooth',
+        block: 'start',
+      })
     })
     return () => cancelAnimationFrame(raf)
   }, [target])
