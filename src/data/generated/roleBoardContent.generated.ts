@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11012026.csv
+ * Source: src/data/role_board_content_10302026_r1.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -2896,7 +2896,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'accent' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Module specification', value: 'new approved security functions' },
+            { label: 'Module specification', value: 'new approved functions' },
             { label: 'SSP management', value: 'new key types and seeds' },
             { label: 'Services', value: 'new approved services and their indicator' },
             { label: 'Self-tests', value: 'the IG tests for each PQC algorithm' },
