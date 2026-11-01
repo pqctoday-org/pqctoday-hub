@@ -609,9 +609,17 @@ const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
         )}
       </div>
 
-      {combinerInputs && (
+      {combinerInputs ? (
         <div className="px-6 mt-4">
           <CombinerPanel inputs={combinerInputs} />
+        </div>
+      ) : (
+        <div className="px-6 mt-4">
+          <p className="glass-panel p-4 text-xs text-muted-foreground">
+            <strong className="text-foreground">Combiner comparison.</strong> After you run Step 6,
+            this spot shows the same two shared secrets combined three ways: this demo&apos;s HKDF,
+            X-Wing (also the composite ML-KEM MLKEM768-X25519 formula), and plain concatenation.
+          </p>
         </div>
       )}
 

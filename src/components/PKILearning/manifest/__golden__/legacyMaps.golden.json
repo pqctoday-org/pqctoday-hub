@@ -3211,7 +3211,7 @@
       },
       {
         "id": "encrypt-sign",
-        "label": "Encrypt & Sign"
+        "label": "Hybrid KEM"
       },
       {
         "id": "hpke",

@@ -29,7 +29,7 @@ const manifest: ModuleManifest = {
   ],
   workshopSteps: [
     { id: 'key-generation', label: 'Key Generation' },
-    { id: 'encrypt-sign', label: 'Encrypt & Sign' },
+    { id: 'encrypt-sign', label: 'Hybrid KEM' },
     { id: 'hpke', label: 'HPKE' },
     { id: 'hybrid-signatures', label: 'Hybrid Signatures' },
     { id: 'ca-setup', label: 'CA Setup' },

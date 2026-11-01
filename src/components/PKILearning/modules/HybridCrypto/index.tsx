@@ -22,8 +22,9 @@ const PARTS: WorkshopPart[] = [
   },
   {
     id: 'encrypt-sign',
-    title: 'Step 2: Encrypt & Sign',
-    description: 'KEM encapsulation and digital signatures with hybrid algorithms.',
+    title: 'Step 2: Hybrid KEM',
+    description:
+      'X25519 ECDH plus ML-KEM-768 encapsulation, combined into one session key; compare combiners.',
     icon: Lock,
   },
   {

@@ -296,6 +296,18 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           </div>
 
           <CombinerComparison />
+
+          <p className="text-xs text-muted-foreground">
+            <Button
+              variant="link"
+              onClick={onNavigateToWorkshop}
+              className="h-auto p-0 text-primary underline font-medium text-xs align-baseline"
+            >
+              Try it in the Step 2 workshop
+            </Button>{' '}
+            — generate X25519 and ML-KEM-768 keys, run the encapsulation, then compare the HKDF,
+            X-Wing and concatenation-only combiners on the same two secrets.
+          </p>
         </div>
       </section>
 

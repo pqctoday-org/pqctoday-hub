@@ -224,7 +224,7 @@ const MATRIX: MatrixRow[] = [
   {
     name: 'wolfSSL 5.9.4',
     pure: 'ML-KEM, ML-DSA',
-    tls: 'All three groups; X25519MLKEM768 is the default key share',
+    tls: 'All three groups with hybrids built in (on by default); the default key share is a standardized hybrid when ML-KEM and X25519 or P-256 are built in',
     kemApi: NOT_OFFERED,
     sigApi: NOT_OFFERED,
     sources: [{ label: '5.9.4', refId: 'wolfSSL-5-9-4-Release' }],
