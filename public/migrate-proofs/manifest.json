@@ -24507,6 +24507,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "aws-lc",
+      "refId": "aws-lc",
+      "file": "aws-lc-339d7781.html",
+      "sizeBytes": 962629,
+      "content_type": "text/html",
+      "url": "https://github.com/aws/aws-lc/blob/v5.12.0/ssl/extensions.cc",
+      "sha256": "dc0c6c1132b187c5323a56f6f8e771e2a85dffa7f2c6fa1d40ef4991dbc66e1a",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-01T18:16:55.418218+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
