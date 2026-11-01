@@ -61,6 +61,7 @@ import {
   type SimPlayChoice,
 } from './SimPlayChoiceModal'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
+import { readOverviewBookmark, overviewResumeIndex } from './autorun/overviewResume'
 import { SimConceptPeek } from './autorun/SimConceptPeek'
 import { logEvent } from '@/utils/analytics'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
@@ -347,8 +348,8 @@ const MOBILE_SIGNAL_NOTES: Record<string, string> = {
     'Illustrative: modelled from the assessment catalogue at a default org scale, not measured for your organisation.',
   'Years to act (Mosca)':
     'Shelf life (X) + migration time (Y) against time remaining (Z). The horizon is a planning anchor, not a published date.',
-  'Budget secured':
-    'Earned by completing Phase 0 activities — a scenario figure, not real funding.',
+  'Game funds':
+    'Illustrative game funds earned through Phase 0 activities. Separate from the USD costing lesson; no currency conversion or programme funding approval is implied.',
   Turn: 'The run’s current reporting period. Recurring criteria need it to advance.',
 }
 
@@ -817,6 +818,21 @@ export function SimulationView() {
   // opens each tool inline for a peek, then returns to the board so its sections
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
   const autoRunPlayer = useSimAutoRunPlayer({ openStep: openStepPane, closeEmbed })
+  const overviewBookmark = useSimulationStore((s) => s.overviewBookmark)
+  const overviewResume = useMemo(() => {
+    const bookmark = readOverviewBookmark(overviewBookmark)
+    const mode = bookmark?.mode ?? 'walkthrough'
+    return {
+      mode,
+      saved: bookmark !== null,
+      valid:
+        overviewResumeIndex(
+          bookmark,
+          autoRunWalkthroughQueue(mode === 'walkthrough-deep'),
+          mode
+        ) !== undefined,
+    }
+  }, [overviewBookmark])
 
   // W5.5 — RESUME THE RESOURCE. The tab already survives a reload; this restores
   // what was open inside it. Runs once on mount, re-opening through `openStep`
@@ -2927,7 +2943,7 @@ export function SimulationView() {
               },
               { label: 'Years to act (Mosca)', value: `${clock.yearsToHorizon.toFixed(1)}y` },
               {
-                label: 'Budget secured',
+                label: 'Game funds',
                 value: `€${budgetSecured}M of €${budgetTarget}M`,
               },
               // WS-4 (sim-mobile-full-play): the phone run card had no clock
@@ -2970,15 +2986,39 @@ export function SimulationView() {
                 type="button"
                 variant="outline"
                 size="tile"
-                onClick={() => startFromModal('walkthrough')}
+                onClick={() => startFromModal(overviewResume.mode)}
                 className="border-primary/50 bg-primary/5"
               >
-                <div className="text-sm font-bold text-foreground">Executive Overview</div>
+                <div className="text-sm font-bold text-foreground">
+                  {overviewResume.valid
+                    ? 'Resume Executive Overview chapter'
+                    : 'Executive Overview'}
+                </div>
                 <p className="text-[11px] leading-snug text-muted-foreground">
                   A guided executive tour of business decisions, including Foundations and sample
                   documents.
                 </p>
               </Button>
+              {overviewResume.saved && (
+                <div className="space-y-1 text-[11px] text-muted-foreground">
+                  <p>
+                    {overviewResume.valid
+                      ? 'Resume restarts the current chapter.'
+                      : 'The route has changed; the overview will start from the beginning.'}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      useSimulationStore.getState().setOverviewBookmark(null)
+                      startFromModal(overviewResume.mode)
+                    }}
+                  >
+                    Restart overview from beginning
+                  </Button>
+                </div>
+              )}
               <Button
                 type="button"
                 variant="outline"
@@ -3444,11 +3484,11 @@ export function SimulationView() {
               </span>
             </div>
             <div
-              title={`Budget secured — of €${budgetTarget}M target (P0 level ${p0Level})`}
+              title={`Illustrative game funds — €${budgetTarget}M game target (P0 level ${p0Level}). Separate from the USD costing lesson; not an approved programme budget.`}
               className="flex flex-col gap-px px-2.5 py-1.5 text-left"
             >
               <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
-                Budget
+                Game funds
               </span>
               {/* a11y (2026-08-24): same text-success contrast fix as Maturity. */}
               <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">

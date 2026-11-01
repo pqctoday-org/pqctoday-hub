@@ -6,6 +6,9 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { costingInputsForSector } from '@/components/Simulation/autorun/financialScenario'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import {
   SIM_CONSTANTS,
   type CostModelInputs,
@@ -44,13 +47,15 @@ export const CostModelExplorer: React.FC = () => {
   // Restore the last-saved scenario so the tool round-trips instead of
   // resetting to defaults on every visit.
   const savedInputs = useSavedArtifactInputs<CostModelInputs>('cost-model-comparison')
-  const [inputs, setInputs] = useState<CostModelInputs>(
-    savedInputs ?? {
-      systems: 250,
-      itBudgetAnnual: 50_000_000,
-      complexity: 1.0,
-      horizonYears: 5,
-    }
+  const [inputs, setInputs] = useState<CostModelInputs>(() =>
+    isAutoRunFillActive()
+      ? costingInputsForSector(useSimulationStore.getState().sector)
+      : (savedInputs ?? {
+          systems: 250,
+          itBudgetAnnual: 50_000_000,
+          complexity: 1.0,
+          horizonYears: 5,
+        })
   )
 
   const update = <K extends keyof CostModelInputs>(key: K, value: CostModelInputs[K]) =>

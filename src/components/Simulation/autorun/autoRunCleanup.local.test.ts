@@ -91,3 +91,22 @@ describe('executive overview chapter navigation', () => {
     }
   )
 })
+
+describe('overview interruption recovery', () => {
+  it('resumes the same chapter after remount without changing the full-journey playhead', () => {
+    useSimulationStore.getState().setAutoRunResumeIndex(9)
+    const { result: firstResult, unmount: unmountFirst } = renderPlayer()
+    act(() => firstResult.current.start({ mode: 'walkthrough' }))
+    act(() => firstResult.current.nextPass())
+    act(() => firstResult.current.nextPass())
+    const index = firstResult.current.index
+    act(() => firstResult.current.stop())
+    expect(useSimulationStore.getState().overviewBookmark?.phase).toBe('p2')
+    expect(useSimulationStore.getState().autoRunResumeIndex).toBe(9)
+    unmountFirst()
+    const { result: secondResult, unmount: unmountSecond } = renderPlayer()
+    act(() => secondResult.current.start({ mode: 'walkthrough' }))
+    expect(secondResult.current.index).toBe(index)
+    unmountSecond()
+  })
+})

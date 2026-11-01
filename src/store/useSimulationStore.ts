@@ -6,6 +6,7 @@
  * world-event feed. Follows the hub persistence conventions: explicit version,
  * defensive migrate(), and an onRehydrateStorage crash guard.
  */
+import type { OverviewBookmark } from '@/components/Simulation/autorun/overviewResume'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PhaseId } from '@/data/frameworkPhases'
@@ -92,12 +93,14 @@ export interface SimulationState {
   mobilePlayOpen: boolean
   autoRunResumeIndex: number
   /** The RunMode string of the last-started climb-family run (`'climb'` or
-   *  `'climb-deep'` — walkthrough never resumes, so it's never stored here).
+   *  `'climb-deep'` — overview bookmarks are stored separately).
    *  Untyped as `RunMode` here to avoid an import cycle with the autorun hook;
    *  narrowed back to `RunMode` at the one call site that resumes with it. Lets
    *  "▶ Resume" restart the SAME mode (e.g. Extended Migration Journey) instead
    *  of silently dropping back to plain `climb`. Transient, cleared by reset(). */
   autoRunLastMode: string | null
+  /** Browser-local overview chapter; separate from the full migration playhead. */
+  overviewBookmark: OverviewBookmark | null
   /** Reference resources the player has opened (playbook completion). */
   visitedRefs: string[]
   /** Hands-on workshops the player has opened in-sim (playbook completion). */
@@ -205,6 +208,7 @@ export interface SimulationState {
   setAutoRunResumeIndex: (n: number) => void
   /** Remember which climb-family mode was last started, for "▶ Resume". */
   setAutoRunLastMode: (mode: string | null) => void
+  setOverviewBookmark: (bookmark: OverviewBookmark | null) => void
   /** Record that a reference resource was opened. */
   markRefVisited: (id: string) => void
   /** Record that a hands-on workshop was opened in-sim. */
@@ -326,6 +330,7 @@ const SEED = {
   mobilePlayOpen: false,
   autoRunResumeIndex: 0,
   autoRunLastMode: null as string | null,
+  overviewBookmark: null as OverviewBookmark | null,
   visitedRefs: [] as string[],
   visitedWorkshops: [] as string[],
   visitedScenarios: [] as string[],
@@ -530,6 +535,7 @@ export const useSimulationStore = create<SimulationState>()(
       setSel: (sel) => set({ sel }),
       setAutoRunResumeIndex: (autoRunResumeIndex) => set({ autoRunResumeIndex }),
       setAutoRunLastMode: (autoRunLastMode) => set({ autoRunLastMode }),
+      setOverviewBookmark: (overviewBookmark) => set({ overviewBookmark }),
       markRefVisited: (id) =>
         set((s) => (s.visitedRefs.includes(id) ? s : { visitedRefs: [...s.visitedRefs, id] })),
       markWorkshopVisited: (id) =>
@@ -726,6 +732,7 @@ export const useSimulationStore = create<SimulationState>()(
       // export / app snapshot.
       partialize: (s) => ({
         ...saveSlice(s),
+        overviewBookmark: s.overviewBookmark,
         // mobile-ux-layer (WS-A4): browser-local only, same reasoning as
         // tourSeen below — never part of saveSlice (see the field's own
         // comment in the state interface above).

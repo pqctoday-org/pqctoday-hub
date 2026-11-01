@@ -10,6 +10,8 @@
  * imported from each tool, not re-implemented.
  */
 import type { ExecutiveDocumentType } from '@/services/storage/types'
+import { DISCOVERY_CHARTER } from './discoveryCharter'
+import { plannedVerificationSample } from './plannedVerification'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
 import {
   deriveRoiDoc,
@@ -78,10 +80,7 @@ import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
 import { matchesIndustry } from '@/data/industryMatch'
 import { threatsData } from '@/data/threatsData'
 import { isPqcReady, isFips1403Certified } from '@/data/kpiCatalog'
-import {
-  buildMarkdown as buildMigrationVerification,
-  type VerifyState,
-} from '@/components/BusinessCenter/tools/MigrationVerification'
+import { buildMarkdown as buildMigrationVerification } from '@/components/BusinessCenter/tools/MigrationVerification'
 import {
   buildKpiTrackerMarkdown,
   type KpiTrackerMarkdownInput,
@@ -202,6 +201,7 @@ function programCharterState(sector: DemoSector): CharterState {
       'signatures by end of 2027.',
     escalationTriggers:
       'Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative.',
+    ...DISCOVERY_CHARTER,
   }
 }
 
@@ -496,68 +496,6 @@ function supplyChainMatrixSample() {
  *  confirmed (an unconfirmed one is a standing TNFL liability — the tool's
  *  own isTnflLiability logic renders that warning), closure signed off,
  *  BAU owners named. */
-function migrationVerificationState(sector: DemoSector): VerifyState {
-  const orgLabel = ORG[sector]
-  const primarySystem =
-    sector === 'healthcare'
-      ? 'Patient-portal TLS (edge)'
-      : sector === 'financial'
-        ? 'Payment-gateway TLS (edge)'
-        : 'Public web TLS (edge)'
-  return {
-    records: [
-      {
-        id: 'mv-demo-1',
-        system: primarySystem,
-        evidence: {
-          observedNegotiation: 'pcap 04-12: X25519MLKEM768 negotiated on prod edge',
-          negativeTest: 'classical-only client correctly refused (policy: no downgrade)',
-          certChainUnderPqc: 'chain re-issued, validated under hybrid trust anchors',
-          downgradeDocumented: 'fallback matrix v1.2 filed; break-glass path documented',
-          dossierLink: 'evidence/tls-edge/2026-Q2/',
-        },
-      },
-      {
-        id: 'mv-demo-2',
-        system: 'Internal mTLS service mesh',
-        evidence: {
-          observedNegotiation: 'mesh telemetry: 100% of handshakes on ML-KEM-768 (7 days)',
-          negativeTest: 'legacy sidecar image rejected at admission controller',
-          certChainUnderPqc: 'SPIFFE chain rotated to ML-DSA-65 intermediates',
-          downgradeDocumented: 'rollback runbook RB-114 (tested in staging)',
-          dossierLink: 'evidence/mesh/2026-Q2/',
-        },
-      },
-    ],
-    decommissions: [
-      {
-        id: 'mv-demo-3',
-        material: 'Legacy root CA signing key (RSA-4096)',
-        kind: 'signing-key',
-        retiredDate: '2026-05-30',
-        owner: `PKI team (${orgLabel})`,
-        // Deliberately NOT "SP 800-88 purge" (the tool's seed vocabulary):
-        // 800-88 is media-sanitization guidance, not a key-destruction
-        // standard (see the tool's own header comment + the provenance
-        // guard), and a witnessed HSM zeroization is the actually-correct
-        // practice for a root signing key.
-        method: 'Witnessed HSM zeroization ceremony (logged)',
-        confirmed: true,
-      },
-    ],
-    closure: {
-      decision: 'Program closed; posture management transitions to BAU',
-      signOffBy: 'Executive Sponsor (CISO)',
-      signOffDate: '2026-06-15',
-      bauOwners: {
-        Discovery: 'Security Engineering',
-        CBOM: 'Platform Engineering',
-        Risk: 'GRC',
-        'Vendor governance': 'Procurement + GRC',
-      },
-    },
-  }
-}
 
 /** Demo ExecutiveModuleData for the KPI tracker sample (Batch 1, 07192026).
  *  Aggregates derived from REAL data (full catalog + real threats), exactly
@@ -790,9 +728,9 @@ export const REAL_DOC_GENERATORS: Partial<
   // H2 round 2 (07192026) — the Verify-Close closure artifact, rendered by the
   // real tool's own buildMarkdown (5-point evidence table, TNFL-aware
   // decommissioning log, closure record). Was hand-typed in demoDocs before.
-  'migration-verification': (sector) => ({
+  'migration-verification': () => ({
     title: 'Migration Verification & Program Closure',
-    data: buildMigrationVerification(migrationVerificationState(sector)),
+    data: buildMigrationVerification(plannedVerificationSample()),
   }),
   // Batch 1 (07192026) — the three types that previously fell all the way
   // through to the typed PLACEHOLDER stub (no authored demo content existed).

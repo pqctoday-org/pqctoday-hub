@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { plannedVerificationSample } from '@/components/Simulation/autorun/plannedVerification'
 /**
  * Migration Verification & Program Closure — the framework's 9th block
  * (Applied Quantum v2.1 p140-144). Closes the loop a CBOM "migration status"
@@ -256,6 +258,7 @@ export const MigrationVerification: React.FC = () => {
   // round-trips without an undefined value reaching the UI — same pattern as
   // ROICalculator / Vendor Scorecard / Infra Modernization Planner.
   const [state, setState] = useState<VerifyState>(() => {
+    if (isAutoRunFillActive()) return plannedVerificationSample()
     const seed = {
       records: SEED_STATE.records.map((r) => ({ ...r })),
       decommissions: SEED_STATE.decommissions.map((d) => ({ ...d })),

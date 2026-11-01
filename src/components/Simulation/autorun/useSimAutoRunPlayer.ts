@@ -10,6 +10,7 @@
  * Controls: play / pause / resume / stop / speed / voice / previous + next phase.
  * Scenario (sandbox-lab) steps are excluded by the queue (non-gating).
  */
+import { overviewResumeIndex, overviewRouteSignature } from './overviewResume'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import type { PhaseId } from '@/data/frameworkPhases'
@@ -28,7 +29,7 @@ import {
 import { PHASE_ORDER } from '@/data/frameworkPhases'
 import { SIM_TREES } from '@/simulation'
 import { countryNameFor, getScenario, type SimScenario } from './scenarioConfig'
-import { EXEC_TOUR_REVEAL_TYPES } from './execTourConfig'
+import { EXEC_TOUR_REVEAL_TYPES, EXEC_TOUR_STAGES } from './execTourConfig'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
@@ -466,13 +467,18 @@ function phaseLabel(phase: PhaseId): string {
 /** The framework explanation for a phase — name + "what to expect" summary + exit
  *  gate, verbatim from FRAMEWORK_PHASE_INTROS (the framework SoT). Used for both the
  *  persistent banner and the first-encounter modal. */
-function phaseFocusFor(phase: PhaseId): PhaseFocus {
+function phaseFocusFor(phase: PhaseId, executive = false): PhaseFocus {
   // eslint-disable-next-line security/detect-object-injection
   const intro = FRAMEWORK_PHASE_INTROS[phase]
   return {
     phase,
     name: intro?.name ?? phaseLabel(phase),
-    summary: intro?.summary ?? '',
+    summary:
+      (executive
+        ? EXEC_TOUR_STAGES.find((stage) => stage.phase === phase)?.executiveSummary
+        : undefined) ??
+      intro?.summary ??
+      '',
     gate: intro?.gate ?? null,
   }
 }
@@ -748,13 +754,15 @@ export function useSimAutoRunPlayer({
       const remembered = usesSharedResumeIndex(runMode)
         ? useSimulationStore.getState().autoRunResumeIndex
         : 0
-      // Walkthrough and single-phase runs are short, scoped passes — always start
-      // at the top (no resume).
-      const startAt = !usesSharedResumeIndex(runMode)
-        ? 0
-        : remembered > 0 && remembered < q.length
-          ? remembered
-          : 0
+      // Overview bookmarks restart a chapter. Single-phase runs start at the top;
+      // neither mode consumes the full migration journey's index.
+      const startAt = isWalkthroughMode(runMode)
+        ? (overviewResumeIndex(useSimulationStore.getState().overviewBookmark, q, runMode) ?? 0)
+        : !usesSharedResumeIndex(runMode)
+          ? 0
+          : remembered > 0 && remembered < q.length
+            ? remembered
+            : 0
       const scenario = getScenario(useSimulationStore.getState().country)
       scenarioRef.current = scenario
       // Walkthrough freezes the calendar (a tour, not a timed run): an empty clock plan
@@ -821,6 +829,15 @@ export function useSimAutoRunPlayer({
     // saved playhead.
     if (wasLive && usesSharedResumeIndex(modeRef.current)) {
       useSimulationStore.getState().setAutoRunResumeIndex(indexRef.current)
+    }
+    if (wasLive && isWalkthroughMode(modeRef.current)) {
+      const item = queueRef.current.at(indexRef.current)
+      if (item)
+        useSimulationStore.getState().setOverviewBookmark({
+          mode: modeRef.current as 'walkthrough' | 'walkthrough-deep',
+          phase: item.phase,
+          routeSignature: overviewRouteSignature(queueRef.current),
+        })
     }
     // 09-28 (WP4.2): close the resource the run had open, so a stopped run
     // doesn't leave its pane up (and re-open it on the next load via the
@@ -1126,11 +1143,18 @@ export function useSimAutoRunPlayer({
       if (item.phase !== lastSelPhaseRef.current) {
         lastSelPhaseRef.current = item.phase
         useSimulationStore.getState().setSel(item.phase)
+        if (isWalkthroughMode(modeRef.current)) {
+          useSimulationStore.getState().setOverviewBookmark({
+            mode: modeRef.current as 'walkthrough' | 'walkthrough-deep',
+            phase: item.phase,
+            routeSignature: overviewRouteSignature(q),
+          })
+        }
         setLabel(phaseLabel(item.phase))
         // Per-phase framework explanation: update the persistent banner; on the FIRST
         // encounter of this phase show the modal (Set-guarded) and let its effect speak;
         // on later encounters just narrate the summary (deduped, suppressed on turbo).
-        const focus = phaseFocusFor(item.phase)
+        const focus = phaseFocusFor(item.phase, isWalkthroughMode(modeRef.current))
         setPhaseFocus(focus)
         if (focus.summary) {
           if (!shownPhaseModalRef.current.has(item.phase)) {
@@ -1208,6 +1232,8 @@ export function useSimAutoRunPlayer({
                   ? `${phaseLabel(item.phase)} complete.`
                   : 'Migration complete — full program maturity reached.'
             )
+            if (isWalkthroughMode(modeRef.current))
+              useSimulationStore.getState().setOverviewBookmark(null)
             setAutoRunFill(false)
             setRunning(false)
             setDone(true)

@@ -14,6 +14,7 @@
  * Phase-0 tools.
  */
 import React, { useMemo, useState } from 'react'
+import { DISCOVERY_CHARTER } from '@/components/Simulation/autorun/discoveryCharter'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { ScrollText, Info } from 'lucide-react'
@@ -257,12 +258,13 @@ export const ProgramCharter: React.FC = () => {
         sponsorName: 'Chief Information Security Officer',
         sponsorTitle: 'Executive Sponsor',
         qrpmName: 'Head of Cryptographic Engineering',
-        budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
+        budgetYear1: '',
         budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
         successCriteria:
           'Phase-0 gate passed; board KPI pack baselined (Coverage, Trust, Inventory, Vendors, Agility) with Year-1 targets; CBOM v1 at ≥70% Tier-1 coverage; two hybrid pilots (TLS, VPN) live.',
         escalationTriggers:
           'Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative.',
+        ...DISCOVERY_CHARTER,
       }
     }
     // Restore the user's last-saved charter so it round-trips across visits.

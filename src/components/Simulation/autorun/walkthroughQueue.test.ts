@@ -18,10 +18,29 @@ describe('autoRunWalkthroughQueue', () => {
 
   it('REVEAL INVARIANT: every reveal artifact type has a generating activity step in the queue', () => {
     const queueArtifacts = new Set(
-      queue.filter((it) => it.step.kind === 'activity').map((it) => it.step.artifactType)
+      autoRunWalkthroughQueue(true)
+        .filter((it) => it.step.kind === 'activity')
+        .map((it) => it.step.artifactType)
     )
     for (const t of EXEC_TOUR_REVEAL_TYPES) {
       expect(queueArtifacts.has(t), `reveal '${t}' has no generating step`).toBe(true)
+    }
+  })
+
+  it('uses discovery and risk before costing, with specialist financial models optional', () => {
+    const standard = autoRunWalkthroughQueue()
+    const indexOf = (phase: string) => standard.findIndex((item) => item.phase === phase)
+    const costing = standard.findIndex((item) => item.step.artifactType === 'cost-model-comparison')
+    expect(costing).toBeGreaterThan(indexOf('p1'))
+    expect(costing).toBeGreaterThan(indexOf('p3'))
+    expect(standard[costing].phase).toBe('p4')
+    const board = standard.findIndex((item) => item.step.artifactType === 'board-deck')
+    expect(board).toBe(standard.length - 1)
+    for (const type of ['roi-model', 'breach-scenario', 'cost-of-inaction']) {
+      expect(standard.some((item) => item.step.artifactType === type)).toBe(false)
+      const extra = autoRunWalkthroughQueue(true).find((item) => item.step.artifactType === type)
+      expect(extra?.phase).toBe('p4')
+      expect(extra?.step.optional).toBe(true)
     }
   })
 

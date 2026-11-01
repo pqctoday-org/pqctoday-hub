@@ -536,12 +536,21 @@ export function autoRunWalkthroughQueue(includeDeepDive = false): AutoRunQueueIt
     const steps: TreeStep[] = []
     if (stage.depth === 'deep') {
       for (const artifactType of stage.revealArtifacts ?? []) {
-        const match = phaseSteps.find(
+        const sourceSteps = stage.revealSources?.[artifactType]
+          ? gatingStepsForPhase(stage.revealSources[artifactType]!)
+          : phaseSteps
+        const match = sourceSteps.find(
           (s) => s.kind === 'activity' && s.artifactType === artifactType
         )
         if (match) steps.push(match)
       }
       if (includeDeepDive) {
+        for (const { type, sourcePhase } of stage.optionalArtifacts ?? []) {
+          const match = gatingStepsForPhase(sourcePhase).find(
+            (step) => step.kind === 'activity' && step.artifactType === type
+          )
+          if (match) steps.push({ ...match, optional: true })
+        }
         const tree = treeFor(stage.phase)
         for (const band of tree?.levels ?? []) {
           steps.push(...deepDiveStepsForPhaseLevel(stage.phase, band.level))
