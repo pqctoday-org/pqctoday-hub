@@ -228,7 +228,12 @@ function recordStepEvidence(
 export function completeStepGenuine(
   step: TreeStep,
   sector?: string,
-  opts: { phase?: PhaseId; origin?: EvidenceOrigin; reuseArtifact?: boolean } = {}
+  opts: {
+    phase?: PhaseId
+    origin?: EvidenceOrigin
+    reuseArtifact?: boolean
+    inspectOnly?: boolean
+  } = {}
 ): boolean {
   const sim = useSimulationStore.getState()
   const mod = useModuleStore.getState()
@@ -261,7 +266,10 @@ export function completeStepGenuine(
       return true
     case 'activity': {
       if (!step.artifactType) return false
-      if (opts.reuseArtifact && liveCompletionContext().hasArtifact(step.artifactType)) {
+      if (
+        opts.inspectOnly ||
+        (opts.reuseArtifact && liveCompletionContext().hasArtifact(step.artifactType))
+      ) {
         recordStepEvidence(step, 'artifact', step.artifactType, phase, origin, 'viewed')
         return true
       }
@@ -367,6 +375,8 @@ export interface AutoRunQueueItem {
   level: number
   /** Revisit a document in another chapter without replacing its existing example. */
   reuseArtifact?: boolean
+  /** Inspect a specialist tool's own results without filing a competing example. */
+  inspectOnly?: boolean
 }
 
 /** A deduplication key for a step based on its completion-predicate key.
@@ -559,7 +569,15 @@ export function autoRunWalkthroughQueue(includeDeepDive = false): AutoRunQueueIt
     } else if (stage.lightStep) {
       const { kind, ref } = stage.lightStep
       const match = phaseSteps.find((s) => s.kind === kind && stepRef(s) === ref)
-      if (match) steps.push(match)
+      if (match)
+        steps.push(
+          stage.lightStep.section
+            ? {
+                ...match,
+                to: `${match.to}${match.to.includes('?') ? '&' : '?'}section=${encodeURIComponent(stage.lightStep.section)}`,
+              }
+            : match
+        )
     }
     for (const step of steps) {
       const key = stepDedupeKey(step)
@@ -576,7 +594,15 @@ export function autoRunWalkthroughQueue(includeDeepDive = false): AutoRunQueueIt
         }
         seen.add(key)
       }
-      items.push({ phase: stage.phase, step, level: 1 })
+      items.push({
+        phase: stage.phase,
+        step,
+        level: 1,
+        inspectOnly:
+          (step.optional &&
+            stage.optionalArtifacts?.some((item) => item.type === step.artifactType)) ||
+          undefined,
+      })
     }
   }
   return items

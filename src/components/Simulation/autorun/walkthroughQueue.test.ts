@@ -41,7 +41,19 @@ describe('autoRunWalkthroughQueue', () => {
       const extra = autoRunWalkthroughQueue(true).find((item) => item.step.artifactType === type)
       expect(extra?.phase).toBe('p4')
       expect(extra?.step.optional).toBe(true)
+      expect(extra?.inspectOnly).toBe(true)
     }
+  })
+
+  it('keeps record construction and certificate exercises outside the executive resource route', () => {
+    const standard = autoRunWalkthroughQueue()
+    expect(standard.find((item) => item.phase === 'p2')?.step.moduleId).toBe(
+      'crypto-mgmt-modernization'
+    )
+    expect(standard.find((item) => item.phase === 'p6')?.step.refId).toBe(
+      'algorithms-protocol-matrix'
+    )
+    expect(standard.some((item) => item.step.moduleId === 'pki-workshop')).toBe(false)
   })
 
   it('contributes each light stage hand-picked step', () => {

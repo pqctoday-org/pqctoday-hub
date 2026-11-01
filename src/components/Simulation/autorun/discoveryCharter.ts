@@ -3,6 +3,8 @@ import type { CharterState } from '@/components/BusinessCenter/tools/ProgramChar
 
 /** Initial sample mandate: fund learning about the estate before approving migration. */
 export const DISCOVERY_CHARTER: Partial<CharterState> = {
+  purpose:
+    'Prepare the crypto-agile transformation by understanding confidentiality and signature-trust requirements, comparing options and establishing accountable programme governance. Assess which legal and contractual requirements apply; this sample does not establish an obligation.',
   scopeInclude:
     'Discovery and planning for the customer portal, records archiving and retrieval service, and software signing service. Identify protected assets, dependencies, owners and supplier constraints.',
   scopeExclude:
@@ -15,4 +17,6 @@ export const DISCOVERY_CHARTER: Partial<CharterState> = {
   signOffDate: '_(sample proposal — approval pending)_',
   successCriteria:
     'Named service owners, inventory coverage and gaps, retention and signature requirements, supplier blockers, prioritised options and a documented basis for the next funding decision.',
+  riskAppetiteStatement:
+    'Proposed discussion: agree acceptable confidentiality and trust exposure, service continuity requirements and escalation criteria after discovery and risk analysis. Numeric delivery targets require a scoped baseline and an explicit decision.',
 }

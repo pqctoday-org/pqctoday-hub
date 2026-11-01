@@ -11,12 +11,13 @@ export interface OverviewBookmark {
 
 export function overviewRouteSignature(queue: readonly AutoRunQueueItem[]): string {
   return JSON.stringify(
-    queue.map(({ phase, step, reuseArtifact }) => [
+    queue.map(({ phase, step, reuseArtifact, inspectOnly }) => [
       phase,
       step.kind,
       step.to,
       step.artifactType ?? '',
       reuseArtifact ?? false,
+      inspectOnly ?? false,
     ])
   )
 }

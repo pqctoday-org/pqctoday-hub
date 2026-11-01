@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo, useCallback, useEffect, useState } from 'react'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import {
+  bankRoadmapMilestones,
+  BANK_CASE_NOTE,
+} from '@/components/Simulation/autorun/executiveBankCase'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
@@ -335,8 +341,10 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         : assessmentMilestones.length > 0
           ? 'assessment'
           : null
-  const seedMilestones =
-    seedSource === 'saved'
+  const sampleBank = isAutoRunFillActive() && useSimulationStore.getState().sector === 'financial'
+  const seedMilestones = sampleBank
+    ? bankRoadmapMilestones()
+    : seedSource === 'saved'
       ? savedMilestones
       : seedSource === 'sim'
         ? simRoadmapMilestones
@@ -346,7 +354,7 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   const [currentMilestones, setCurrentMilestones] =
     React.useState<RoadmapMilestone[]>(seedMilestones)
   const [seededFrom, setSeededFrom] = React.useState<'saved' | 'sim' | 'assessment' | null>(
-    seedSource
+    sampleBank ? null : seedSource
   )
 
   // Structured output, shared by the live onOutput prop (linear wizard) and
@@ -372,11 +380,12 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
 
   // Deadlines: restore from a saved roadmap, else pre-select from bookmarked countries.
   const initialSelectedDeadlines = useMemo<ExternalDeadline[]>(() => {
+    if (sampleBank) return []
     if (Array.isArray(savedRoadmap?.selectedDeadlines)) return savedRoadmap.selectedDeadlines
     if (myTimelineCountries.length === 0) return []
     const set = new Set(myTimelineCountries.map((c) => c.toLowerCase()))
     return externalDeadlines.filter((d) => set.has(d.source.toLowerCase()))
-  }, [savedRoadmap, myTimelineCountries, externalDeadlines])
+  }, [sampleBank, savedRoadmap, myTimelineCountries, externalDeadlines])
   const [selectedDeadlines, setSelectedDeadlines] =
     React.useState<ExternalDeadline[]>(initialSelectedDeadlines)
 
@@ -434,7 +443,7 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
   }, [myProductIds])
 
   const [mitigations, setMitigations] = React.useState<MitigationGatewayRow[]>(
-    Array.isArray(savedRoadmap?.mitigations) ? savedRoadmap.mitigations : []
+    !sampleBank && Array.isArray(savedRoadmap?.mitigations) ? savedRoadmap.mitigations : []
   )
   const addMitigation = () =>
     setMitigations((prev) => [...prev, { asset: '', gatewayProductId: '', reason: '', sunset: '' }])
@@ -535,6 +544,11 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         </p>
       </div>
 
+      {sampleBank && (
+        <p className="rounded-lg border border-primary/30 p-3 text-xs text-muted-foreground">
+          {BANK_CASE_NOTE}
+        </p>
+      )}
       {/* Regulatory deadline selector */}
       {externalDeadlines.length > 0 && (
         <div className="glass-panel p-4 space-y-3">

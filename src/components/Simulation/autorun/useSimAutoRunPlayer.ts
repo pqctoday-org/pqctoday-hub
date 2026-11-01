@@ -1197,10 +1197,12 @@ export function useSimAutoRunPlayer({
         completeStepGenuine(item.step, undefined, {
           phase: item.phase,
           reuseArtifact: item.reuseArtifact,
+          inspectOnly: item.inspectOnly,
         })
         // Walkthrough: when a board document is generated, surface its "what this is" line.
         if (
           isWalkthroughMode(modeRef.current) &&
+          !item.inspectOnly &&
           item.step.kind === 'activity' &&
           item.step.artifactType &&
           EXEC_TOUR_REVEAL_TYPES.includes(item.step.artifactType)

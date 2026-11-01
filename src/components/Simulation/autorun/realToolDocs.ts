@@ -12,6 +12,7 @@
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { DISCOVERY_CHARTER } from './discoveryCharter'
 import { plannedVerificationSample } from './plannedVerification'
+import { bankRiskEntries, bankRoadmapMilestones, BANK_CASE_NOTE } from './executiveBankCase'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
 import {
   deriveRoiDoc,
@@ -756,9 +757,11 @@ export const REAL_DOC_GENERATORS: Partial<
   // risk-register: the sample IS the tool's own illustrative default entries
   // (DEFAULT_RISK_ENTRIES, shared single source with the store) — zero
   // invented data, rendered by the tool's own builder.
-  'risk-register': () => ({
+  'risk-register': (sector) => ({
     title: 'Quantum Risk Register',
-    data: buildRiskRegisterMarkdown(DEFAULT_RISK_ENTRIES),
+    data:
+      buildRiskRegisterMarkdown(sector === 'financial' ? bankRiskEntries() : DEFAULT_RISK_ENTRIES) +
+      (sector === 'financial' ? `\n\n${BANK_CASE_NOTE}` : ''),
   }),
   // kpi-dashboard: real buildDimensions pipeline over the same demo exec-data
   // as kpi-tracker (catalog/threat aggregates live; assessment-gated rows
@@ -773,7 +776,10 @@ export const REAL_DOC_GENERATORS: Partial<
     }
     return {
       title: 'PQC Governance KPI Dashboard',
-      data: buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
+      data:
+        (sector === 'financial'
+          ? "# Illustrative future board reporting pack\n\nSample indicators for discussing post-approval reporting. These figures are not the bank's current delivery progress, measured readiness or approved targets.\n\n"
+          : '') + buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
     }
   },
   // migration-roadmap: the tool's own teaching-default milestone set (the
@@ -781,24 +787,27 @@ export const REAL_DOC_GENERATORS: Partial<
   // deadline rows sourced from the timeline-generated facts — the same single
   // source Assess/Report/Sim already read — so a CSV deadline change
   // propagates here without a code edit.
-  'migration-roadmap': () => ({
+  'migration-roadmap': (sector) => ({
     title: 'PQC Migration Roadmap (Two-Track)',
-    data: buildRoadmapMarkdown(
-      [
-        {
-          label: 'US key-establishment migration deadline (EO, June 2026)',
-          year: TIMELINE_COUNTRY_DEADLINE_YEAR.US,
-          source: 'United States',
-        },
-        {
-          label: 'EU full PQC transition',
-          year: TIMELINE_COUNTRY_DEADLINE_YEAR.EU,
-          source: 'European Union',
-        },
-      ],
-      ROADMAP_DEFAULT_MILESTONES,
-      []
-    ),
+    data:
+      buildRoadmapMarkdown(
+        sector === 'financial'
+          ? []
+          : [
+              {
+                label: 'US key-establishment migration deadline (EO, June 2026)',
+                year: TIMELINE_COUNTRY_DEADLINE_YEAR.US,
+                source: 'United States',
+              },
+              {
+                label: 'EU full PQC transition',
+                year: TIMELINE_COUNTRY_DEADLINE_YEAR.EU,
+                source: 'European Union',
+              },
+            ],
+        sector === 'financial' ? bankRoadmapMilestones() : ROADMAP_DEFAULT_MILESTONES,
+        []
+      ) + (sector === 'financial' ? `\n\n${BANK_CASE_NOTE}` : ''),
   }),
   // Batch 3 (07192026) — remaining risk/vendor/strategy docs.
   //

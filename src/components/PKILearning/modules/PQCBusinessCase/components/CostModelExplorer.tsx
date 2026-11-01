@@ -485,9 +485,9 @@ export const CostModelExplorer: React.FC = () => {
       {/* Bridge to the rest of the workshop */}
       <div className="bg-muted/50 rounded-lg p-3 border border-border">
         <p className="text-xs text-muted-foreground">
-          Next, the <strong>ROI Calculator</strong> builds a defensible bottom-up estimate for your
-          own estate and cross-checks it against your assessment — one honest number you can take to
-          the board, with the humility this explorer just demonstrated.
+          The optional <strong>ROI Calculator</strong> explores how scoped costs, benefits and
+          discounting affect a scenario. Review its assumptions and sensitivity alongside these
+          ranges; agreement between estimates can reflect shared assumptions.
         </p>
       </div>
 

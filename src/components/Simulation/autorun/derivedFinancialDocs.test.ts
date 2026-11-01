@@ -10,6 +10,7 @@ import {
 import { costingInputsForSector } from './financialScenario'
 import { compareCostModels } from '@/utils/costModelSim'
 import { docFor } from './simAutoRun'
+import { bankRoadmapMilestones } from './executiveBankCase'
 import type { DemoSector } from './demoDocs'
 
 const SECTORS: DemoSector[] = [
@@ -23,6 +24,29 @@ const SECTORS: DemoSector[] = [
 ]
 
 describe('derived financial demo docs', () => {
+  it('keeps the same three services in the sample risk register and proposed roadmap', () => {
+    const risk = docFor('risk-register', 'financial')!.data
+    const roadmap = docFor('migration-roadmap', 'financial')!.data
+    for (const name of [
+      'Customer portal',
+      'Records archiving and retrieval service',
+      'Software signing service',
+    ]) {
+      expect(risk).toContain(name)
+    }
+    expect(risk).toContain('Sample assumption')
+    expect(risk).not.toContain('Customer Database Encryption')
+    expect(roadmap).toContain('customer portal pilot')
+    expect(roadmap).toContain('archiving and retrieval legacy dependencies')
+    expect(roadmap).toContain('software signing supplier')
+    expect(roadmap).not.toContain('## External Regulatory Deadlines')
+    expect(roadmap).toContain('No private-bank regulatory obligation is inferred')
+    const years = bankRoadmapMilestones().map((item) => item.year)
+    expect(Math.max(...years) - Math.min(...years) + 1).toBe(5)
+    expect(
+      bankRoadmapMilestones().every((item) => /Planned|Proposed|Sample proposal/.test(item.label))
+    ).toBe(true)
+  })
   it('carries the bank costing scope and shared-model estimates into the saved comparison', () => {
     const inputs = costingInputsForSector('financial')
     expect(inputs).toEqual({

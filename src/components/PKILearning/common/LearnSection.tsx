@@ -22,6 +22,8 @@
  */
 import React, { useEffect, useId, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
+import { useEmbedInit } from '../embeddedLearnContext'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -57,6 +59,8 @@ export const SECTION_READ_DWELL_MS = 1500
 /** Reads the deep-link target from either `#section-id` or `?section=`. */
 export const useDeepLinkTarget = (): string => {
   const location = useLocation()
+  const { initialSection } = useEmbedInit()
+  if (initialSection) return initialSection
   const fromHash = location.hash.replace(/^#/, '')
   if (fromHash) return decodeURIComponent(fromHash)
   return new URLSearchParams(location.search).get('section') ?? ''
@@ -79,8 +83,7 @@ export const useDeepLinkTarget = (): string => {
  * Call once from a module's learn tab. Safe on modules with no anchors at all.
  */
 export const useSectionAnchors = (): void => {
-  const location = useLocation()
-  const moduleId = location.pathname.replace(/^\/learn\/?/, '') || ''
+  const moduleId = useLearnModuleId()
   const markLearnSectionRead = useModuleStore((s) => s.markLearnSectionRead)
   const target = useDeepLinkTarget()
 
@@ -98,7 +101,7 @@ export const useSectionAnchors = (): void => {
 
   // Mark each section read once half of it has been on screen FOR A WHILE.
   useEffect(() => {
-    if (!moduleId) return
+    if (!moduleId || isAutoRunFillActive()) return
     // Both anchor styles. Some modules mark sections with `data-section-id`;
     // others (cbom, sbom, crypto-registry, pqc-candidates,
     // verification-closure) use a local <Section id="..."> helper that emits a
@@ -224,7 +227,7 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
   // already expanded on arrival would otherwise be marked read on load.
   useEffect(() => {
     const el = ref.current
-    if (!el || !moduleId || !isOpen || hidden) return
+    if (!el || !moduleId || !isOpen || hidden || isAutoRunFillActive()) return
     let timer: ReturnType<typeof setTimeout> | undefined
     const observer = new IntersectionObserver(
       (entries) => {

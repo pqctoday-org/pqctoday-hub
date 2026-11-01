@@ -15,6 +15,7 @@ interface EmbedLearnState {
   isEmbed: boolean
   initialTab?: string
   initialStep?: number
+  initialSection?: string
 }
 
 const EmbeddedLearnContext = createContext<EmbedLearnState>({ isEmbed: false })
@@ -23,13 +24,17 @@ export function EmbeddedLearnProvider({
   children,
   initialTab,
   initialStep,
+  initialSection,
 }: {
   children: ReactNode
   initialTab?: string
   initialStep?: number
+  initialSection?: string
 }) {
   return (
-    <EmbeddedLearnContext.Provider value={{ isEmbed: true, initialTab, initialStep }}>
+    <EmbeddedLearnContext.Provider
+      value={{ isEmbed: true, initialTab, initialStep, initialSection }}
+    >
       {children}
     </EmbeddedLearnContext.Provider>
   )
@@ -41,7 +46,11 @@ export function useEmbeddedLearn(): boolean {
 }
 
 /** Initial tab/step overrides provided by the simulation's embed params. */
-export function useEmbedInit(): { initialTab?: string; initialStep?: number } {
-  const { initialTab, initialStep } = useContext(EmbeddedLearnContext)
-  return { initialTab, initialStep }
+export function useEmbedInit(): {
+  initialTab?: string
+  initialStep?: number
+  initialSection?: string
+} {
+  const { initialTab, initialStep, initialSection } = useContext(EmbeddedLearnContext)
+  return { initialTab, initialStep, initialSection }
 }

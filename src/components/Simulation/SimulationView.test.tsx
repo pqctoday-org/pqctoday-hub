@@ -123,11 +123,12 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText('Program status')).toBeInTheDocument()
     expect(screen.getAllByText(/HNDL ·/).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/TNFL ·/).length).toBeGreaterThan(0)
-    // scoreboard + clock + budget still present on the ribbon (Budget secured
+    // scoreboard + clock + game funds still present on the ribbon (Game funds
     // also appears in the mobile fallback summary, hence getAllByText)
     expect(screen.getByText('Gov L2')).toBeInTheDocument()
     expect(screen.getByText('Q-Day')).toBeInTheDocument()
-    expect(screen.getAllByText(/Budget/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Game funds/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Separate from the USD costing lesson/).length).toBeGreaterThan(0)
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no

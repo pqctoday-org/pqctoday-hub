@@ -15,9 +15,9 @@ describe('chapter learning context', () => {
     expect(screen.getByText(summary)).toBeVisible()
     expect(screen.queryByText(/You.ll work through/)).toBeNull()
     const toggle = screen.getByText('Framework context and exit gate')
-    expect(screen.getByText(FRAMEWORK_PHASE_INTROS.p2.summary)).not.toBeVisible()
+    expect(screen.getByText(FRAMEWORK_PHASE_INTROS.p2!.summary)).not.toBeVisible()
     await userEvent.click(toggle)
-    expect(screen.getByText(FRAMEWORK_PHASE_INTROS.p2.summary)).toBeVisible()
+    expect(screen.getByText(FRAMEWORK_PHASE_INTROS.p2!.summary)).toBeVisible()
   })
 
   it('retains the activity guide for the full migration journey', () => {

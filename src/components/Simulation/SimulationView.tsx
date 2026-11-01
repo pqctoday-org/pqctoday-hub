@@ -561,6 +561,7 @@ export function SimulationView() {
     tab?: string
     /** 0-indexed workshop step (from ?step= in the tree's `to` URL). */
     step?: number
+    section?: string
   } | null>(null)
   const [activityEmbed, setActivityEmbed] = useState<{
     artifactType: ExecutiveDocumentType
@@ -687,7 +688,13 @@ export function SimulationView() {
       const learnStepStr = lp?.get('step') ?? null
       const learnStep =
         learnStepStr !== null && /^\d+$/.test(learnStepStr) ? parseInt(learnStepStr, 10) : undefined
-      setLearnEmbed({ moduleId: s.moduleId, title: s.label, tab: learnTab, step: learnStep })
+      setLearnEmbed({
+        moduleId: s.moduleId,
+        title: s.label,
+        tab: learnTab,
+        step: learnStep,
+        section: lp?.get('section') ?? undefined,
+      })
     } else if (s.kind === 'activity' && s.artifactType) {
       clearAllEmbeds()
       setActivityEmbed({ artifactType: s.artifactType, title: s.label })
@@ -2992,11 +2999,11 @@ export function SimulationView() {
                 <div className="text-sm font-bold text-foreground">
                   {overviewResume.valid
                     ? 'Resume Executive Overview chapter'
-                    : 'Executive Overview'}
+                    : 'Executive Overview — phone brief'}
                 </div>
                 <p className="text-[11px] leading-snug text-muted-foreground">
-                  A guided executive tour of business decisions, including Foundations and sample
-                  documents.
+                  Chapter summaries and sample-document notices, including Foundations. Full
+                  resource pages are available in the desktop overview.
                 </p>
               </Button>
               {overviewResume.saved && (
@@ -3104,10 +3111,14 @@ export function SimulationView() {
                 className="gap-1.5"
                 onClick={() => {
                   if (isMobileShell) mobileWatchSelSnapshot.current = sel
-                  autoRunPlayer.start({ mode: 'walkthrough' })
+                  autoRunPlayer.start({
+                    mode: isMobileViewport ? overviewResume.mode : 'walkthrough',
+                  })
                 }}
               >
-                ▶ Watch the Executive Overview
+                {isMobileViewport
+                  ? '▶ Watch the Executive Overview — phone brief'
+                  : '▶ Watch the Executive Overview'}
               </Button>
             )}
           {(autoRunPlayer.running || autoRunPlayer.done) && (
@@ -3155,7 +3166,7 @@ export function SimulationView() {
             </>
           )}
           {walkthroughDoneOpen && (
-            <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+            <SimExecWalkthroughComplete brief onClose={() => setWalkthroughDoneOpen(false)} />
           )}
           {/* mobile-ux-layer (WS-4): "End quarter" — the same real store action
               (endQuarter, wired to the desktop header's own button) the board
@@ -3899,6 +3910,15 @@ export function SimulationView() {
                 }}
               >
                 <div className="mx-auto w-full max-w-[1800px] px-4 md:px-6 lg:px-8">
+                  {autoRunPlayer.running &&
+                    isWalkthroughMode(autoRunPlayer.mode) &&
+                    activityEmbed?.artifactType === 'kpi-dashboard' && (
+                      <p className="mb-3 rounded-lg border border-primary/30 p-3 text-sm text-muted-foreground">
+                        Illustrative future board reporting pack. The sample indicators are for
+                        discussing reporting requirements, not the bank’s current delivery progress
+                        or measured readiness.
+                      </p>
+                    )}
                   {/* W6.1/W6.2 — explicit simulation context. An embedded hub
                     resource is a general tool: it does not know which run
                     opened it, which organisation the run is about, or what the
@@ -3943,6 +3963,7 @@ export function SimulationView() {
                     <EmbeddedLearnProvider
                       initialTab={learnEmbed.tab}
                       initialStep={learnEmbed.step}
+                      initialSection={learnEmbed.section}
                     >
                       {/* W2a: the completion ceremony fires INSIDE the sim too — the
                     standalone ModuleCompletionWatcher is gated !isEmbed, leaving

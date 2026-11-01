@@ -42,6 +42,8 @@ export interface TourLightStep {
   kind: StepKind
   /** The step's identifier: moduleId (learn), refId (reference), catalogId (catalog). */
   ref: string
+  /** Optional section within the existing selected Learn resource. */
+  section?: string
 }
 
 export interface TourStage {
@@ -100,7 +102,7 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
     executiveSummary:
       'Ask whether the inventory links cryptographic dependencies to business services and accountable owners, and whether coverage gaps are visible. A CBOM supports that traceability; a board member does not need to build algorithm records. Look for inventory import, provenance, change tracking and reporting capabilities in production tools.',
     depth: 'light',
-    lightStep: { kind: 'learn', ref: 'cbom' },
+    lightStep: { kind: 'learn', ref: 'crypto-mgmt-modernization', section: 'management-tools' },
     conceptCards: ['cbom-fields'],
   },
   {
@@ -157,9 +159,9 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
   {
     phase: 'p6',
     depth: 'light',
-    lightStep: { kind: 'learn', ref: 'pki-workshop' },
+    lightStep: { kind: 'reference', ref: 'algorithms-protocol-matrix' },
     executiveSummary:
-      'Future delivery requirement: identify shared certificate, key-management and trust dependencies before scaling. Ask which tool versions, platforms, lifecycle controls and rollback paths are required, how they will be tested and who owns the legacy blockers. This lesson explains capabilities; the bank has not completed deployment.',
+      'Future delivery requirement: identify shared certificate, key-management and trust dependencies before scaling. Ask which tool versions, platforms, lifecycle controls and rollback paths are required, how they will be tested and who owns the legacy blockers. Use the protocol support matrix to ask which capabilities are available and which still require confirmation. The bank has not completed deployment.',
   },
   {
     phase: 'p7',
@@ -265,9 +267,12 @@ export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
  * resolve to a tool with a description, so this is empty; add an entry only when a
  * description reads poorly at the reveal moment. Any entry must stay fact-free.
  */
-export const EXEC_TOUR_REVEAL_BLURBS: Partial<Record<ExecutiveDocumentType, string>> = {}
+export const EXEC_TOUR_REVEAL_BLURBS: Partial<Record<ExecutiveDocumentType, string>> = {
+  'kpi-dashboard':
+    'An illustrative future board reporting pack. Use it to ask how indicators will be defined and evidenced; these sample figures are not the organisation’s current delivery progress or measured readiness.',
+}
 
 /** Every artifact type the tour reveals (for the queue-builder invariant + tests). */
 export const EXEC_TOUR_REVEAL_TYPES: readonly ExecutiveDocumentType[] = EXEC_TOUR_STAGES.flatMap(
-  (s) => [...(s.revealArtifacts ?? []), ...(s.optionalArtifacts ?? []).map((item) => item.type)]
+  (s) => s.revealArtifacts ?? []
 )

@@ -90,6 +90,21 @@ describe('autorun evidence provenance (W0.5 regression)', () => {
     }
   })
 
+  it('does not replace a specialist tool result when the optional visit ends', () => {
+    const step = artifactStep()
+    const save = vi.spyOn(useModuleStore.getState(), 'addExecutiveDocument')
+    try {
+      completeStepGenuine(step, 'financial', { phase: 'p4', inspectOnly: true })
+      expect(save).not.toHaveBeenCalled()
+      const record = useSimulationStore
+        .getState()
+        .evidence.find((item) => item.resourceId === step.artifactType)
+      expect(record?.status).toBe('viewed')
+    } finally {
+      save.mockRestore()
+    }
+  })
+
   it('never overwrites a document the learner authored', () => {
     const step = artifactStep()
     useModuleStore.getState().addExecutiveDocument({
