@@ -67,8 +67,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         </div>
         <p className="text-foreground/80 leading-relaxed">
           This &ldquo;certificate bloat&rdquo; breaks constrained clients that reject chains larger
-          than 10 KB (not sourced in the Library), degrades connection setup times (especially on mobile networks), and increases
-          bandwidth costs for high-traffic servers handling millions of TLS handshakes per second.
+          than 10 KB (not sourced in the Library), degrades connection setup times (especially on
+          mobile networks), and increases bandwidth costs for high-traffic servers handling millions
+          of TLS handshakes per second.
         </p>
       </section>
 

@@ -269,8 +269,7 @@ export const FHE_PET_COMPARISON: FhePetRow[] = [
   {
     pet: 'Trusted execution environment (TEE)',
     cost: '“small but noticeable performance penalty” (UN PET Guide)',
-    trust:
-      'The hardware vendor and its attestation (not sourced in the Library)',
+    trust: 'The hardware vendor and its attestation (not sourced in the Library)',
   },
   {
     pet: 'Secure multiparty computation (MPC)',

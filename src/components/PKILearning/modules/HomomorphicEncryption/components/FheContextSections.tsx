@@ -87,9 +87,9 @@ export const FheFixedPointAndFit: React.FC = () => (
       <p className="text-xs text-muted-foreground">
         CKKS was built as &ldquo;a homomorphic encryption scheme for approximate arithmetic&rdquo;
         (Cheon, Kim, Kim &amp; Song 2017). A real value is multiplied by a scaling factor and
-        rounded to an integer polynomial before encryption, which preserves its precision despite the
-        rounding. Values must stay small compared with the ciphertext modulus, and the last bits of
-        every result carry error.
+        rounded to an integer polynomial before encryption, which preserves its precision despite
+        the rounding. Values must stay small compared with the ciphertext modulus, and the last bits
+        of every result carry error.
       </p>
     </div>
     <div>
@@ -652,7 +652,9 @@ export const FheStandardsSection: React.FC = () => (
           module&apos;s approved mode.
         </li>
         <li>
-          <strong>Cannot:</strong> that FHE is CNSA 2.0-approved (NSA lists homomorphic encryption among uses with no generally approved solutions) or Common Criteria-certified (not sourced in the Library).
+          <strong>Cannot:</strong> that FHE is CNSA 2.0-approved (NSA lists homomorphic encryption
+          among uses with no generally approved solutions) or Common Criteria-certified (not sourced
+          in the Library).
         </li>
         <li>
           <strong>Cannot yet:</strong> conformance to a published ISO/IEC FHE standard; ISO/IEC
@@ -664,7 +666,8 @@ export const FheStandardsSection: React.FC = () => (
           anonymisation guidelines (02/2026, paragraph 91) say &ldquo;encryption is, by its very
           nature, intended to be reversible and differs from anonymisation&rdquo;, and that it is
           important to assess whether those with access to the data could still decrypt it
-          &ldquo;with means reasonably likely to be used&rdquo;, even without the key today (not sourced in the Library).
+          &ldquo;with means reasonably likely to be used&rdquo;, even without the key today (not
+          sourced in the Library).
         </li>
       </ul>
       <p className="text-xs text-muted-foreground">

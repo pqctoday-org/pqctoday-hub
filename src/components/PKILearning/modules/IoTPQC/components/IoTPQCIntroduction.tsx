@@ -485,7 +485,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </Callout>
         </div>
         <p>
-          <strong>Device identity</strong> — and NIST SP 1800-36B describes birth credentials such as the IDevID as permanent.
+          <strong>Device identity</strong> — and NIST SP 1800-36B describes birth credentials such
+          as the IDevID as permanent.
         </p>
       </Section>
 

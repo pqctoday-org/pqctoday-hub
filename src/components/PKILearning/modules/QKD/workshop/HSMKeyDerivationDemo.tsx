@@ -538,13 +538,13 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               across every session, allowing cross-protocol correlation.
             </p>
             <p>
-              Counter-Mode KDF (SP 800-108) addresses this by deriving additional keying material from an existing key:{' '}
-              <code>K(i) = PRF(KI, [i] ‖ Label ‖ 0x00 ‖ Context ‖ [L])</code>. Different{' '}
-              <strong>Label</strong> values (&quot;session-key-v1&quot;, &quot;mac-key-v1&quot;)
-              produce cryptographically independent sub-keys from the same master secret. The{' '}
-              <strong>Context</strong> field (session ID below) carries per-session data. SP 800-56C
-              Rev 2 defines Context as &quot;a bit string of context-specific data&quot;, a
-              subcomponent of the FixedInfo.
+              Counter-Mode KDF (SP 800-108) addresses this by deriving additional keying material
+              from an existing key: <code>K(i) = PRF(KI, [i] ‖ Label ‖ 0x00 ‖ Context ‖ [L])</code>.
+              Different <strong>Label</strong> values (&quot;session-key-v1&quot;,
+              &quot;mac-key-v1&quot;) produce cryptographically independent sub-keys from the same
+              master secret. The <strong>Context</strong> field (session ID below) carries
+              per-session data. SP 800-56C Rev 2 defines Context as &quot;a bit string of
+              context-specific data&quot;, a subcomponent of the FixedInfo.
             </p>
             <p>
               <strong>Choosing L:</strong> L is the requested length of the derived keying material

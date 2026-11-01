@@ -322,7 +322,7 @@ export const CAPACITY_METRICS: CapacityMetric[] = [
     pqcPerUnit: 28,
     unit: 'ms',
     description:
-      'End-to-end TLS 1.3 handshake time including ML-DSA signature verification. ML-KEM key encapsulation adds ~4ms; ML-DSA verification adds ~10ms on 2024 hardware (this module\'s planning assumption, not a measurement).',
+      "End-to-end TLS 1.3 handshake time including ML-DSA signature verification. ML-KEM key encapsulation adds ~4ms; ML-DSA verification adds ~10ms on 2024 hardware (this module's planning assumption, not a measurement).",
   },
   {
     id: 'cert-chain-size',
@@ -412,7 +412,7 @@ export const ACME_LIFECYCLE_STEPS: ACMEStep[] = [
     title: 'Automatic Rotation',
     description: 'cert-manager renews certificates.',
     pqcNote:
-      'ML-DSA certificates have the same rotation logic. In this module\'s reading, shorter TTLs (30 days) are recommended for PQC transition to shorten the window in which a forged certificate would be accepted. cert-manager renewBefore: 20d achieves this.',
+      "ML-DSA certificates have the same rotation logic. In this module's reading, shorter TTLs (30 days) are recommended for PQC transition to shorten the window in which a forged certificate would be accepted. cert-manager renewBefore: 20d achieves this.",
     status: 'pqc',
   },
   {

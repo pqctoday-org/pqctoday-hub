@@ -159,7 +159,8 @@ export const HYBRID_COMBINER_MODES: HybridCombinerMode[] = [
     combiner: 'HKDF-SHA-256(x25519_ss || mlkem_ss, info="hybrid-kek")',
     outputKeySize: 32,
     totalOverhead: '32 + 1,088 = 1,120 bytes ciphertext',
-    useCase: 'TLS 1.3, general purpose — X25519MLKEM768 as defined in RFC 10024, which follows the principles of NIST SP 800-227 Section 4.6',
+    useCase:
+      'TLS 1.3, general purpose — X25519MLKEM768 as defined in RFC 10024, which follows the principles of NIST SP 800-227 Section 4.6',
   },
   {
     id: 'p256-mlkem768',
@@ -401,7 +402,8 @@ export const ENTERPRISE_SCENARIO = {
       id: 'azure-kv',
       name: 'Azure Key Vault',
       rotationFeature: 'Key Vault auto-rotation with Event Grid triggers',
-      pqcCapability: 'ML-KEM integration via SymCrypt; Microsoft-wide goal of early quantum-safe adoption by 2029 (no Key Vault-specific date sourced)',
+      pqcCapability:
+        'ML-KEM integration via SymCrypt; Microsoft-wide goal of early quantum-safe adoption by 2029 (no Key Vault-specific date sourced)',
     },
   ],
 }

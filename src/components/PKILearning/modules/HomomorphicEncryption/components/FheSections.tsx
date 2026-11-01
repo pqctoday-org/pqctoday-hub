@@ -759,16 +759,18 @@ export const FheQuantumSection: React.FC = () => (
       <p className="text-xs text-muted-foreground">
         Lattice FHE has <strong>no known quantum break</strong>. It rests on the (Ring-)Learning
         With Errors family behind ML-KEM; for a stated post-quantum level, pick parameters from the
-        HE Standard&apos;s quantum tables (common defaults target classical 128-bit security) (not sourced in the Library). FHE
-        schemes themselves are not NIST-standardized. An FHE <em>deployment</em> is a different
-        matter, because the parts around the scheme are usually still classical:
+        HE Standard&apos;s quantum tables (common defaults target classical 128-bit security) (not
+        sourced in the Library). FHE schemes themselves are not NIST-standardized. An FHE{' '}
+        <em>deployment</em> is a different matter, because the parts around the scheme are usually
+        still classical:
       </p>
       <p className="text-xs text-muted-foreground">
         The UK ICO says the security of most HE schemes rests on hard mathematical problems
         &ldquo;that are currently considered to be secure even against quantum computers&rdquo;.
-        NIST and the NSA make no such statement: the NSA&apos;s CNSA 2.0 FAQ says that neither NSA nor NIST has
-        produced standards for these areas, and it lists homomorphic encryption among
-        areas with &ldquo;no generally approved solutions&rdquo; (in its &ldquo;Future cryptographic algorithms&rdquo; section).
+        NIST and the NSA make no such statement: the NSA&apos;s CNSA 2.0 FAQ says that neither NSA
+        nor NIST has produced standards for these areas, and it lists homomorphic encryption among
+        areas with &ldquo;no generally approved solutions&rdquo; (in its &ldquo;Future cryptographic
+        algorithms&rdquo; section).
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">

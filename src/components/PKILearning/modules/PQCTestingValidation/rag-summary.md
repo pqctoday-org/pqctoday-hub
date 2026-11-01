@@ -52,12 +52,12 @@ Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN
 ### Critical benchmark data (from VIAVI TeraVM + PQC-LEO):
 
 | Metric (not sourced in the Library) | Classical | Hybrid PQC   | Pure PQC           |
-| -------------------- | --------- | ------------ | ------------------ |
-| TLS handshake (WAN)  | 68ms      | 82ms (+21%)  | 95ms (+40%)        |
-| IKEv2 SA setup (WAN) | 240ms     | 380ms (+58%) | 12,626ms (+5,161%) |
-| Certificate size     | 1.2KB     | 4.8KB        | 17.2KB             |
-| ClientHello size     | 320B      | ~1,504B      | 1,536B             |
-| Throughput (WAN)     | 100%      | 87%          | 79%                |
+| ----------------------------------- | --------- | ------------ | ------------------ |
+| TLS handshake (WAN)                 | 68ms      | 82ms (+21%)  | 95ms (+40%)        |
+| IKEv2 SA setup (WAN)                | 240ms     | 380ms (+58%) | 12,626ms (+5,161%) |
+| Certificate size                    | 1.2KB     | 4.8KB        | 17.2KB             |
+| ClientHello size                    | 320B      | ~1,504B      | 1,536B             |
+| Throughput (WAN)                    | 100%      | 87%          | 79%                |
 
 The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN gateways. Pure-PQC TLS is more manageable (1.4× overhead on WAN).
 
@@ -92,15 +92,15 @@ TLS session resumption (PSK reuse) allows returning clients to skip the expensiv
 ### Production-Scale KPIs (VIAVI TeraVM on Dell R6625)
 
 | KPI (not sourced in the Library) | Classical (X25519) | Hybrid (X25519+ML-KEM-768) | Delta           |
-| ------------------ | ------------------ | -------------------------- | --------------- |
-| Connection Rate    | 51,520 CPS         | 32,320 CPS                 | 37% drop        |
-| Client Throughput  | 7,312 Mbps         | 4,968 Mbps                 | 32% drop        |
-| Client Gets/s      | 51,520             | 32,960                     | 36% drop        |
-| Client Get Time    | 2.72ms             | 98.55ms                    | 3,523% increase |
-| Time to First Byte | 2.04ms             | 85.045ms                   | 4,069% increase |
-| Time to Last Byte  | 2.72ms             | 98.553ms                   | 3,523% increase |
-| VPN Tunnel Rate    | 17,768 tunnels/s   | 4,471 tunnels/s            | 75% drop        |
-| VPN Setup Time     | 3.422ms            | 4.28ms                     | 20% increase    |
+| -------------------------------- | ------------------ | -------------------------- | --------------- |
+| Connection Rate                  | 51,520 CPS         | 32,320 CPS                 | 37% drop        |
+| Client Throughput                | 7,312 Mbps         | 4,968 Mbps                 | 32% drop        |
+| Client Gets/s                    | 51,520             | 32,960                     | 36% drop        |
+| Client Get Time                  | 2.72ms             | 98.55ms                    | 3,523% increase |
+| Time to First Byte               | 2.04ms             | 85.045ms                   | 4,069% increase |
+| Time to Last Byte                | 2.72ms             | 98.553ms                   | 3,523% increase |
+| VPN Tunnel Rate                  | 17,768 tunnels/s   | 4,471 tunnels/s            | 75% drop        |
+| VPN Setup Time                   | 3.422ms            | 4.28ms                     | 20% increase    |
 
 These numbers represent **clean-path** overhead. Enterprise middlebox chains (NGFW, SGW, DLP proxy) multiply them by 2–3×. Bursty traffic patterns (login storms, microservice chatter) compound the impact further.
 
@@ -194,19 +194,19 @@ Focus: Enterprise-wide enforcement, continuous compliance scanning, policy autom
 ## Tool Catalog (CSC-061)
 
 | Tool (not sourced in the Library) | Category          | License     | PQC Support                                       |
-| ------------------ | ----------------- | ----------- | ------------------------------------------------- |
-| CryptoNext COMPASS | Passive Discovery | Commercial  | ML-KEM, ML-DSA, SLH-DSA (NIST CAVP)               |
-| pqc-flow           | Passive Discovery | Open Source | ML-KEM, ML-DSA in TLS/SSH/QUIC                    |
-| VIAVI Observer     | Passive Discovery | Commercial  | In development                                    |
-| pqcscan            | Active Scanning   | Open Source | Detects PQC, hybrid KEMs                          |
-| CryptoLyzer        | Active Scanning   | Open Source | Experimental PQC OID detection                    |
-| VIAVI TeraVM       | Benchmarking      | Commercial  | ML-KEM, ML-DSA, SLH-DSA                           |
-| Keysight CyPerf    | Benchmarking      | Freemium    | X25519+ML-KEM-768 hybrid                          |
-| PQC-LEO            | Benchmarking      | Open Source | All NIST PQC via OQS                              |
-| OQS Test Server    | Interop           | Open Source | All NIST KEMs + signatures                        |
-| Keysight Inspector | Side-Channel      | Commercial  | ML-DSA (prod), ML-KEM (pre-release)               |
-| ChipWhisperer      | Side-Channel      | Open Source | Community Kyber/Dilithium modules (ML-KEM/ML-DSA) |
-| CBOMkit            | Inventory         | Open Source | Crypto discovery in source code                   |
+| --------------------------------- | ----------------- | ----------- | ------------------------------------------------- |
+| CryptoNext COMPASS                | Passive Discovery | Commercial  | ML-KEM, ML-DSA, SLH-DSA (NIST CAVP)               |
+| pqc-flow                          | Passive Discovery | Open Source | ML-KEM, ML-DSA in TLS/SSH/QUIC                    |
+| VIAVI Observer                    | Passive Discovery | Commercial  | In development                                    |
+| pqcscan                           | Active Scanning   | Open Source | Detects PQC, hybrid KEMs                          |
+| CryptoLyzer                       | Active Scanning   | Open Source | Experimental PQC OID detection                    |
+| VIAVI TeraVM                      | Benchmarking      | Commercial  | ML-KEM, ML-DSA, SLH-DSA                           |
+| Keysight CyPerf                   | Benchmarking      | Freemium    | X25519+ML-KEM-768 hybrid                          |
+| PQC-LEO                           | Benchmarking      | Open Source | All NIST PQC via OQS                              |
+| OQS Test Server                   | Interop           | Open Source | All NIST KEMs + signatures                        |
+| Keysight Inspector                | Side-Channel      | Commercial  | ML-DSA (prod), ML-KEM (pre-release)               |
+| ChipWhisperer                     | Side-Channel      | Open Source | Community Kyber/Dilithium modules (ML-KEM/ML-DSA) |
+| CBOMkit                           | Inventory         | Open Source | Crypto discovery in source code                   |
 
 ---
 

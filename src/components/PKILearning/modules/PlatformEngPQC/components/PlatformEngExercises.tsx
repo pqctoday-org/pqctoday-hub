@@ -79,7 +79,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Capacity',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
       observe:
-        'With 500 certs, etcd storage grows from ~1.5 MB (classical RSA-2048 key+cert at 3KB each) to ~7 MB (ML-DSA-65 at 14KB each) — approximately a 4.7× increase (this module\'s planning assumption, not a measurement). For most clusters, this is negligible relative to total etcd capacity (default 8 GB). The storage impact is NOT a reason to delay migration. The TLS handshake latency increase (12ms → 28ms, +133%) warrants more attention in high-throughput microservice environments.',
+        "With 500 certs, etcd storage grows from ~1.5 MB (classical RSA-2048 key+cert at 3KB each) to ~7 MB (ML-DSA-65 at 14KB each) — approximately a 4.7× increase (this module's planning assumption, not a measurement). For most clusters, this is negligible relative to total etcd capacity (default 8 GB). The storage impact is NOT a reason to delay migration. The TLS handshake latency increase (12ms → 28ms, +133%) warrants more attention in high-throughput microservice environments.",
       config: { step: 4 },
     },
     {

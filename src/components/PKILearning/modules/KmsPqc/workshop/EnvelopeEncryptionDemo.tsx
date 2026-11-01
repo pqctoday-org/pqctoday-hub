@@ -1416,7 +1416,8 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               secret is derived via HKDF from both outputs (e.g. P-256 ECDH ‖ ML-KEM-768 → HKDF →
               AES-256 KEK). This hybrid approach is available in the{' '}
               <span className="font-mono text-primary">HSM / PKCS#11 → Key Wrapping</span> tool
-              which supports P-256+ML-KEM and X25519+ML-KEM multi-algorithm key-establishment combiner modes (not sourced in the Library).
+              which supports P-256+ML-KEM and X25519+ML-KEM multi-algorithm key-establishment
+              combiner modes (not sourced in the Library).
             </p>
           </div>
         </div>

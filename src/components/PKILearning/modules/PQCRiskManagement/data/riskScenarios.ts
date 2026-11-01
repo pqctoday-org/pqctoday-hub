@@ -135,7 +135,8 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'hndl',
         likelihood: 5,
         impact: 5,
-        mitigation: 'Re-encrypt Tier 1 archives immediately with AES-256 (not sourced in the Library).',
+        mitigation:
+          'Re-encrypt Tier 1 archives immediately with AES-256 (not sourced in the Library).',
       },
       {
         id: 'gov-003',
@@ -172,7 +173,8 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'forgery',
         likelihood: 3,
         impact: 5,
-        mitigation: 'Consider SLH-DSA, which is stateless and so avoids state-management complexity, but whether it fits a firmware signing role depends on the target device',
+        mitigation:
+          'Consider SLH-DSA, which is stateless and so avoids state-management complexity, but whether it fits a firmware signing role depends on the target device',
       },
       {
         id: 'iot-002',

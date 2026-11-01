@@ -73,7 +73,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Multi-Cloud',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'As of mid-2026: AWS KMS supports ML-DSA signing (ML-DSA-44/65/87) with keys and signature operations in FIPS 140-3 Level 3 validated HSMs (AWS KMS Developer Guide); Google Cloud KMS has made ML-DSA, SLH-DSA and ML-KEM generally available (Google\'s 28 July 2026 announcement). Check each provider\'s current documentation, Azure Key Vault included, for the latest.',
+        "As of mid-2026: AWS KMS supports ML-DSA signing (ML-DSA-44/65/87) with keys and signature operations in FIPS 140-3 Level 3 validated HSMs (AWS KMS Developer Guide); Google Cloud KMS has made ML-DSA, SLH-DSA and ML-KEM generally available (Google's 28 July 2026 announcement). Check each provider's current documentation, Azure Key Vault included, for the latest.",
       config: { step: 2 },
     },
     {
