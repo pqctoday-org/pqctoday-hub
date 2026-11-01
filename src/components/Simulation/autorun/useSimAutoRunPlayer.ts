@@ -480,7 +480,7 @@ function phaseFocusFor(phase: PhaseId, executive = false): PhaseFocus {
         : undefined) ??
       intro?.summary ??
       '',
-    gate: intro?.gate ?? null,
+    gate: executive ? null : (intro?.gate ?? null),
   }
 }
 

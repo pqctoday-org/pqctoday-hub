@@ -566,6 +566,7 @@ export function SimulationView() {
   const [activityEmbed, setActivityEmbed] = useState<{
     artifactType: ExecutiveDocumentType
     title: string
+    previewData?: string
   } | null>(null)
   const [assessEmbed, setAssessEmbed] = useState<{ title: string; refId?: string } | null>(null)
   const [workshopEmbed, setWorkshopEmbed] = useState<{
@@ -697,7 +698,17 @@ export function SimulationView() {
       })
     } else if (s.kind === 'activity' && s.artifactType) {
       clearAllEmbeds()
-      setActivityEmbed({ artifactType: s.artifactType, title: s.label })
+      const proposal =
+        autoRunPlayer.running &&
+        isWalkthroughMode(autoRunPlayer.mode) &&
+        s.artifactType === 'board-deck'
+          ? docFor(s.artifactType, sector)
+          : undefined
+      setActivityEmbed({
+        artifactType: s.artifactType,
+        title: s.label,
+        previewData: proposal?.data,
+      })
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       clearAllEmbeds()
       const qIdx = s.to.indexOf('?')
@@ -3978,6 +3989,14 @@ export function SimulationView() {
                         <LearnComp />
                       </Suspense>
                     </EmbeddedLearnProvider>
+                  ) : activityEmbed?.previewData ? (
+                    <div className="glass-panel p-6" data-testid="executive-proposal-preview">
+                      <p className="mb-4 text-xs text-muted-foreground">
+                        Worked-example proposal for discussion. Open Board Pitch separately to
+                        practise editing a proposal.
+                      </p>
+                      <MarkdownView content={activityEmbed.previewData} />
+                    </div>
                   ) : ActivityComp ? (
                     <Suspense fallback={<EmbedLoading />}>
                       <ActivityComp />
