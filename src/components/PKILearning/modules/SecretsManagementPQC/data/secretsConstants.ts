@@ -423,7 +423,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     catalogName: 'Azure Managed HSM',
     pqcAlgorithms: ['None — RSA-HSM / EC-HSM / oct-HSM key types only (no NIST PQC)'],
     encryptionAtRest:
-      'AES-256-CBC/GCM, RSA-OAEP-256 for key wrapping (FIPS 140-3 Level 3) (not sourced in the Library)',
+      'AES oct-HSM keys (128, 192 or 256 bits) and RSA-HSM keys (2,048, 3,072 or 4,096 bits) on FIPS 140-3 Level 3 validated hardware',
     encryptionInTransit: 'TLS 1.3',
     envelopeEncryption: true,
     dynamicSecrets: false,

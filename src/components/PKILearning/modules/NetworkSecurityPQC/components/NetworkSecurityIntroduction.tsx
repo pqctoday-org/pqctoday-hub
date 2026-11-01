@@ -447,7 +447,8 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
               NIST SP 800-207: Zero Trust Architecture
             </div>
             <p className="text-xs text-muted-foreground">
-              NIST SP 800-207 (Zero Trust Architecture, 2020) is a 2020 publication, so it predates{' '}
+              NIST SP 800-207 (Zero Trust Architecture, 2020) predates PQC guidance and says nothing
+              about it — its full text contains no mention of quantum, key encapsulation, or{' '}
               <InlineTooltip term="NIST SP 800-227">NIST SP 800-227</InlineTooltip> (2025), which
               covers KEMs generally rather than ZTNA. Read them together, not as one citing the
               other. Organizations implementing zero trust should plan PQC adoption in their ZTNA
