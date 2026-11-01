@@ -1277,7 +1277,7 @@ export const ALGORITHM_RECORD_ITEMS: readonly AlgorithmRecordItem[] = [
         ),
         validationQuote('A7879', 'row ML-DSA SigGen', 'Deterministic: Yes, No'),
       ],
-      hint: 'Open an ML-DSA SigGen row on A7879 or A7880. Each one reads "Deterministic: Yes, No".',
+      hint: 'Open an ML-DSA SigGen row on A7879 or A7880. Each one reads "Deterministic: Yes, No" (not sourced in the Library).',
     },
     approvedTable: {
       listed: true,

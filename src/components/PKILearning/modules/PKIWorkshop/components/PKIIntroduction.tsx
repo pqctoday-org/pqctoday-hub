@@ -295,10 +295,10 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           certificates as leaves in a <InlineTooltip term="Merkle Tree">Merkle tree</InlineTooltip>,
           signs only the root hash, and distributes compact <strong>inclusion proofs</strong>{' '}
           (384&ndash;736 bytes in the draft&apos;s estimates) that let any relying party verify a
-          certificate belongs to the signed batch. In landmark mode, the certificate carries no CA
-          signature at all: a hash-based proof to a subtree the client already trusts replaces the
-          two certificate signatures and the intermediate&apos;s key, and only the handshake
-          signature remains.
+          certificate belongs to the signed batch. In landmark mode, the certificate carries no
+          signatures at all: an inclusion proof to a landmark subtree, which the client already
+          trusts through predistributed log information, takes their place. It is an optional size
+          optimization that only works with an up-to-date client.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">

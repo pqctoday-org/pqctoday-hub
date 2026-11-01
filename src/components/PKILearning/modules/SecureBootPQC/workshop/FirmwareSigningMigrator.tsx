@@ -1358,7 +1358,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 : 'CKM_SHA512_RSA_PKCS'}
             ) and digest display. PQC algorithms ({pqcAlgo}) use{' '}
             {pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'SHA-256' : 'SHAKE-256 and SHAKE-128'} internally —
-            pure mode per RFC 9882/9814.
+            pure mode per RFC 9882/9814 (not sourced in the Library).
           </p>
         </div>
       ),

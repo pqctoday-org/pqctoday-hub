@@ -81,7 +81,7 @@ export const CLAIMS: DrillItem[] = [
         correct: false,
       },
     ],
-    why: 'Every real deadline belongs to someone and applies to specific systems. US national security systems follow a different schedule (CNSA 2.0), and private companies outside those scopes have no US deadline at all.',
+    why: 'Every real deadline belongs to someone and applies to specific systems. US national security systems follow a different schedule (CNSA 2.0), which reaches government suppliers through procurement requirements.',
   },
   {
     id: 'q-day',

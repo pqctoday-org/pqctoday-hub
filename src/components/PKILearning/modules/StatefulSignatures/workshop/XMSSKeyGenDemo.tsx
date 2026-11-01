@@ -604,7 +604,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               {
                 label: 'WOTS+ (w=16, fixed)',
                 value: '67 chains · ≤15 hash steps/chain',
-                body: 'XMSS fixes w=16 per RFC 8391 — the same as LMOTS W=4. Each WOTS+ chain can encode log₂(16)=4 bits of the message hash and requires at most 15 hash iterations to evaluate. 67 chains × n=32 bytes = 2,144 bytes of chain values per WOTS+ leaf. W is not user-selectable in XMSS: it is part of the parameter set name and cannot be changed without generating a new key.',
+                body: 'XMSS fixes w=16 per RFC 8391 — the same as LMOTS W=4. Each WOTS+ chain can encode log₂(16)=4 bits of the message hash and requires at most 15 hash iterations to evaluate. 67 chains × n=32 bytes = 2,144 bytes of chain values per WOTS+ leaf.',
               },
               {
                 label: 'Selected Parameter Set',

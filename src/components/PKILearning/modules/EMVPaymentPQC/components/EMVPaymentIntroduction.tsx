@@ -837,8 +837,8 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
                 occurrences of "post-quantum", "quantum", "ML-KEM", "ML-DSA" or "FIPS 203". */}
             <li>
               <strong className="text-foreground">PCI DSS alignment:</strong> this module works
-              against PCI DSS v4.0.1, the version in the standards library. It carries no
-              post-quantum requirements; a future revision is where they would first appear
+              against PCI DSS v4.0.1, the version in the standards library. It is a limited revision
+              that neither adds nor deletes requirements
             </li>
           </ul>
         </div>

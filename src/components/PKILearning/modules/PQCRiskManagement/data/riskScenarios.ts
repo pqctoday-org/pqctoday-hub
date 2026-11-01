@@ -172,8 +172,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'forgery',
         likelihood: 3,
         impact: 5,
-        mitigation:
-          'Migrate to SLH-DSA — stateless signing avoids state-management complexity on constrained ECUs',
+        mitigation: 'Migrate to SLH-DSA — stateless signing avoids state-management complexity',
       },
       {
         id: 'iot-002',

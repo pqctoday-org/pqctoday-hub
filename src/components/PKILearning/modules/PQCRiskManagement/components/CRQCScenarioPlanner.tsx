@@ -93,7 +93,7 @@ const ALGORITHMS: AlgorithmImpact[] = [
     breakYear: null,
     replacement: 'No change needed',
     notes:
-      'Grover lowers preimage resistance to \u223c2\u00b9\u00b2\u2078 (still strong). The theoretical quantum collision bound (\u223c2\u2078\u2075 via BHT) requires impractical quantum memory and is not a real-world threat. SHA-256/384/512 are quantum-safe per NIST IR 8547.',
+      'Grover lowers preimage resistance to \u223c2\u00b9\u00b2\u2078 (still strong). The theoretical quantum collision bound (\u223c2\u2078\u2075 via BHT) requires impractical quantum memory and is not a real-world threat. NIST IR 8547 lists SHA-256 collision and preimage strengths as 128 and 256 bits, respectively, and considers NIST-approved symmetric primitives with classical security of 128 bits or more likely to satisfy at least Category 1 security.',
   },
 ]
 

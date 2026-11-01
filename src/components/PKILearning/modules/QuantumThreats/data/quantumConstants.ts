@@ -606,7 +606,7 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     estimatedLogicalQubits: 0,
     qubitType: 'Superconducting',
     notes:
-      'Nov 2025 flagship NISQ processor (IBM Quantum Nighthawk and Loon announcement, 12 November 2025): 120 qubits on a square lattice with 218 tunable couplers (4 nearest neighbours). No fault-tolerant logical qubits yet; the IBM Quantum Development Roadmap targets 1,080 connected qubits via L-couplers by 2028. Launched alongside the experimental Loon chip, which demonstrated the qLDPC (bivariate-bicycle) fault-tolerant components and real-time decoding under 480 ns, anchoring IBM’s path to Starling (200 logical qubits) by 2029.',
+      'Nov 2025 flagship NISQ processor (IBM Quantum Nighthawk and Loon announcement, 12 November 2025): 120 qubits on a square lattice with 218 tunable couplers (4 nearest neighbours). No fault-tolerant logical qubits yet; IBM says Nighthawk-based systems could support up to 15,000 two-qubit gates, enabled by 1,000 or more connected qubits, by 2028. Loon, launched alongside, is an experimental processor with the key components for fault-tolerant computing, and IBM decoded errors in real time (under 480 nanoseconds) using qLDPC codes, on its path to a large-scale fault-tolerant quantum computer by 2029.',
   },
   {
     name: 'Helios',

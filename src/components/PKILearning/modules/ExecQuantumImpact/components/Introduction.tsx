@@ -135,8 +135,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
-                <strong>2030:</strong> CNSA 2.0 (NSS) requires PQC exclusively for software/firmware
-                signing and networking equipment (VPNs, routers)
+                <strong>2030:</strong> CNSA 2.0 (NSS): NSA&apos;s timetable anticipates exclusive
+                use of CNSA 2.0 for software/firmware signing and networking equipment (VPNs,
+                routers)
               </span>
             </li>
             <li className="flex items-start gap-2">

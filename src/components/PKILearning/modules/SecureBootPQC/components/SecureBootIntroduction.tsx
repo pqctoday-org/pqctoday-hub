@@ -814,10 +814,10 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         sectionId="tpm-attestation"
       >
         <p>
-          <InlineTooltip term="TPM">TPM 2.0</InlineTooltip> (ISO/IEC 11889:2015) is the hardware
-          root of trust for platform attestation in most enterprise servers and PCs. It measures
-          boot stages into PCR banks, provides Attestation Identity Keys (AIK) for remote
-          attestation, and seals secrets to specific platform states.
+          <InlineTooltip term="TPM">TPM 2.0</InlineTooltip> (ISO/IEC 11889:2015) is a cryptographic
+          module that can establish a platform&apos;s device identity, securely store keys and
+          credentials, and help measure and report system state. TCG standards are supported by
+          technologies deployed in enterprise-class clients and servers and other platforms.
         </p>
 
         <div className="bg-status-warning/5 rounded-lg p-4 border border-status-warning/20">

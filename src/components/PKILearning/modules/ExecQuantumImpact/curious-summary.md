@@ -4,7 +4,7 @@ The quantum threat is no longer solely an IT problem; it is a corporate governan
 
 ### Why It Matters
 
-Adversaries are actively executing "Harvest Now, Decrypt Later" (HNDL) attacks—stealing and storing your encrypted communications today in order to decrypt them when quantum computers mature. Simultaneously, regulators are setting binding deadlines: the NSA's CNSA 2.0 suite, which governs U.S. National Security Systems, requires software/firmware signing to use PQC exclusively by 2030, with web, cloud, and operating-system use following by 2033. Unprepared organizations face both massive data breaches and immediate regulatory or contractual penalties.
+Adversaries are actively executing "Harvest Now, Decrypt Later" (HNDL) attacks—stealing and storing your encrypted communications today in order to decrypt them when quantum computers mature. Simultaneously, regulators are setting binding deadlines: the NSA's CNSA 2.0 suite, which governs U.S. National Security Systems, has an anticipated timetable for software/firmware signing to use PQC exclusively by 2030, with web, cloud, and operating-system use following by 2033.
 
 ### The Key Takeaway
 

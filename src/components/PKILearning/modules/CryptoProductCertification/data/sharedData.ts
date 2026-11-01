@@ -480,7 +480,7 @@ export const ROUTE_DECISION_AID: RouteAid[] = [
       },
       {
         ask: 'Is it major — a new primitive changing the ST, cryptographic SFRs, key management or attack potential?',
-        then: 'Re-evaluation under EUCC, with ACM v2 constraining the cryptography.',
+        then: 'Re-evaluation under EUCC, in which ACM v2 is guidance: evaluators should check that the product preferably relies on the agreed cryptographic mechanisms.',
       },
     ],
     caveat:
