@@ -14,7 +14,7 @@ describe('bank risk presentation', () => {
     const saved = [{ ...bankRiskEntries()[0], id: 'saved', assetName: 'Saved learning exercise' }]
     useRiskRegisterStore.getState().setRiskEntries(saved)
     useSimulationStore.setState({ sector: 'financial' })
-    setAutoRunFill(true)
+    setAutoRunFill(true, true)
     render(<RiskRegisterBuilderStandalone />)
     expect(screen.getByDisplayValue('Customer portal — connection confidentiality')).toBeVisible()
     expect(

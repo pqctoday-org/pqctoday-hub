@@ -15,6 +15,9 @@ describe('simulation sample assessment', () => {
     const before = useAssessmentFormStore.getState()
     loadSampleOrganisation()
     const sample = useAssessmentResultStore.getState().lastResult
+    const timestamp = useAssessmentResultStore.getState().completedAt
+    loadSampleOrganisation()
+    expect(useAssessmentResultStore.getState().completedAt).toBe(timestamp)
     seedDemoOrg()
     seedDemoOrg()
     expect(useAssessmentResultStore.getState().sourceInputKey).toBe(SAMPLE_ORG_KEY)
@@ -35,7 +38,8 @@ describe('simulation sample assessment', () => {
     loadSampleOrganisation()
     useAssessmentResultStore.setState({ sourceInputKey: 'learner-input' })
     const before = useAssessmentResultStore.getState()
+    loadSampleOrganisation()
     seedDemoOrg()
-    expect(useAssessmentResultStore.getState()).toEqual(before)
+    expect(useAssessmentResultStore.getState()).toBe(before)
   })
 })

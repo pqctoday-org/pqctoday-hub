@@ -31,7 +31,7 @@ it('uses the bank sample plan without inheriting a saved deadline as a bank obli
       },
     },
   ]
-  setAutoRunFill(true)
+  setAutoRunFill(true, true)
   try {
     render(<RoadmapBuilder />)
     expect(screen.getByText(/No private-bank regulatory obligation is inferred/)).toBeVisible()

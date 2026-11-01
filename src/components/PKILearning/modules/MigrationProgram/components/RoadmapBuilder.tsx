@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useMemo, useCallback, useEffect, useState, useRef } from 'react'
-import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { isExecutiveBankOverview } from '@/components/Simulation/autorun/autoRunFill'
 import {
   bankRoadmapMilestones,
   BANK_CASE_NOTE,
@@ -341,7 +341,7 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
         : assessmentMilestones.length > 0
           ? 'assessment'
           : null
-  const sampleBank = isAutoRunFillActive() && useSimulationStore.getState().sector === 'financial'
+  const sampleBank = isExecutiveBankOverview(useSimulationStore.getState().sector)
   const sampleTimelineRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!sampleBank) return
