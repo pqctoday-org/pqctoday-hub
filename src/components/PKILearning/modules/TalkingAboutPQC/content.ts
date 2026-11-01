@@ -19,7 +19,7 @@ export const content: ModuleContent = {
   version: '1.0.0',
   // lastReviewed set by record_module_review.py: owner review, 1 Oct 2026,
   // clean (revisions.jsonl review_only entry). Never edit it by hand.
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-01',
 
   standards: [
     getStandard('FIPS 203'),
