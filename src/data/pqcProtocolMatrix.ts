@@ -1664,7 +1664,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'edhoc',
     name: 'EDHOC (lightweight authenticated key exchange)',
     description:
-      'Ephemeral Diffie-Hellman Over COSE, renamed LAKE by its post-quantum cipher-suite work, is a compact authenticated key-exchange protocol for constrained environments.',
+      'Ephemeral Diffie-Hellman Over COSE (EDHOC) is a compact authenticated key-exchange protocol for constrained environments; the IETF LAKE working group is adding post-quantum cipher suites and KEM-based authentication.',
     latestRelease: [
       {
         id: 'RFC-9528',
@@ -4298,7 +4298,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'sigstore',
     name: 'Sigstore',
     description:
-      'Sigstore — keyless software-supply-chain signing (cosign + Fulcio CA + Rekor transparency log). PQC is experimental: cosign forks can sign with ML-DSA, but the public Fulcio CA still issues classical certs.',
+      'Sigstore — keyless software-supply-chain signing (cosign + Fulcio CA + Rekor transparency log). PQC is at the planning stage: the project plan of 2 October 2026 targets a production-ready post-quantum public instance for mid-2027, and the public Fulcio CA still issues classical certificates.',
     latestRelease: [],
     latestDraft: [],
     dimensions: {
