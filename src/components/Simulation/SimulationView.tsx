@@ -4422,7 +4422,7 @@ export function SimulationView() {
                               }
                               className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                              Auto-complete ▸ €{delegationCostM}M
+                              Auto-complete ▸ {delegationCostM} game units
                             </Button>
                           )}
                         </div>

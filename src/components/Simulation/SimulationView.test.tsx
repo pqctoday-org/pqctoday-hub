@@ -184,6 +184,14 @@ describe('SimulationView (Mission Control)', () => {
     useAssessmentFormStore.getState().reset()
   })
 
+  it('shows the delegation button cost in game units', () => {
+    useSimulationStore.setState({ sel: 'p0', seat: 'architect', auto: [] })
+    renderPage()
+    const button = screen.getByRole('button', { name: /^Auto-complete/ })
+    expect(button).toHaveTextContent('game units')
+    expect(button).not.toHaveTextContent('€')
+  })
+
   // W2c — honest delegation: a phase auto-completed by the AI team must be flagged
   // so the maturity credit doesn't masquerade as the player's own understanding.
   it('flags an AI-delegated phase "RUN BY AI · UNVERIFIED" with a study nudge', () => {

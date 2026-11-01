@@ -28,6 +28,20 @@ describe('derived financial demo docs', () => {
   beforeEach(() => setAutoRunFill(true, true))
   afterEach(() => setAutoRunFill(false))
 
+  it.each([
+    ['financial', true, true],
+    ['financial', false, false],
+    ['healthcare', true, false],
+  ] as const)(
+    'limits the future reporting header for %s with overview %s',
+    (sector, overview, expected) => {
+      setAutoRunFill(true, overview)
+      expect(
+        docFor('kpi-dashboard', sector)!.data.includes('Illustrative future board reporting pack')
+      ).toBe(expected)
+    }
+  )
+
   it('keeps discovery and planned closure confined to the financial overview', () => {
     setAutoRunFill(true, false)
     expect(docFor('program-charter', 'financial')!.data).not.toContain(

@@ -847,7 +847,7 @@ export const REAL_DOC_GENERATORS: Partial<
     return {
       title: 'PQC Governance KPI Dashboard',
       data:
-        (sector === 'financial'
+        (isExecutiveBankOverview(sector)
           ? "# Illustrative future board reporting pack\n\nSample indicators for discussing post-approval reporting. These figures are not the organisation's current delivery progress, measured readiness or approved targets.\n\n"
           : '') + buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
     }
