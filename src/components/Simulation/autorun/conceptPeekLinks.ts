@@ -15,6 +15,7 @@ export const CONCEPT_LEARN_MODULE: Record<TourConceptId, string> = {
   'crypto-agility': 'crypto-agility',
   'urgency-drivers': 'pqc-business-case',
   'cbom-fields': 'cbom',
+  'inventory-confidence': 'crypto-mgmt-modernization',
   'weakest-domain-maturity': 'pqc-governance',
   'kpi-pack': 'pqc-governance',
   readiness: 'migration-program',

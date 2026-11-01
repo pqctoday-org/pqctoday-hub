@@ -2,8 +2,15 @@
 import { describe, it, expect } from 'vitest'
 import { conceptBody } from './SimConceptPeek'
 import { EXEC_TOUR_CONCEPTS, EXEC_TOUR_OPENING_CONCEPTS, EXEC_TOUR_STAGES } from './execTourConfig'
+import { executiveSummaryForPhase } from './execTourConfig'
 
 describe('walkthrough concept peeks', () => {
+  it('does not attribute the bank case to a different sector', () => {
+    for (const stage of EXEC_TOUR_STAGES) {
+      expect(executiveSummaryForPhase(stage.phase, 'healthcare')).not.toMatch(/\bbank\b/i)
+    }
+    expect(executiveSummaryForPhase('p1', 'financial')).toContain('fictional bank')
+  })
   it('every configured concept resolves to a non-empty body (GUIDED_DEFS keys align)', () => {
     for (const c of Object.values(EXEC_TOUR_CONCEPTS)) {
       const body = conceptBody(c)

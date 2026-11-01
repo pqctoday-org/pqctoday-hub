@@ -18,6 +18,8 @@
  * exactly like the other two cards select `climb`/`climb-deep` or
  * `walkthrough`/`walkthrough-deep`.
  */
+import { useSimulationStore } from '@/store/useSimulationStore'
+import { readOverviewBookmark, overviewResumeIndex } from './autorun/overviewResume'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Gamepad2, Play } from 'lucide-react'
@@ -76,6 +78,8 @@ interface CardProps {
   recommended: boolean
   onPlay: (deep: boolean) => void
   extra?: React.ReactNode
+  initialDeep?: boolean
+  playLabel?: (deep: boolean) => string
   firstFocusRef?: React.RefObject<HTMLButtonElement | null>
 }
 
@@ -90,8 +94,10 @@ function PlayCard({
   onPlay,
   extra,
   firstFocusRef,
+  initialDeep = false,
+  playLabel,
 }: CardProps) {
-  const [deep, setDeep] = useState(false)
+  const [deep, setDeep] = useState(initialDeep)
   // Deep-dive content is authored per phase — today only Phase 6 has any, so
   // most phases' delta rounds to 0. A checkbox that's always clickable but
   // silently adds "+0 min" reads as broken; hide it and say so instead.
@@ -147,7 +153,8 @@ function PlayCard({
           className="gap-1.5"
           onClick={() => onPlay(effectiveDeep)}
         >
-          <Play size={13} aria-hidden="true" />▶ Play
+          <Play size={13} aria-hidden="true" />
+          {playLabel?.(effectiveDeep) ?? '▶ Play'}
         </Button>
       </div>
     </div>
@@ -162,6 +169,7 @@ export function SimPlayChoiceModal({
   sectorLabel,
   onInteractive,
 }: SimPlayChoiceModalProps) {
+  const bookmark = useSimulationStore((s) => readOverviewBookmark(s.overviewBookmark))
   const reduce = useReducedMotion()
   const primaryRef = useRef<HTMLButtonElement>(null)
   const trapRef = useFocusTrap(true)
@@ -186,6 +194,7 @@ export function SimPlayChoiceModal({
   // start() already does on every real run.
   const durations = useMemo(
     () => ({
+      walkthroughVisits: autoRunWalkthroughQueue(false).length,
       walkthroughStandard: estimatedMinutes(autoRunWalkthroughQueue(false).map((i) => i.step)),
       walkthroughDeep: estimatedMinutes(autoRunWalkthroughQueue(true).map((i) => i.step)),
       climbStandard: estimatedMinutes(autoRunQueue().map((i) => i.step)),
@@ -254,8 +263,44 @@ export function SimPlayChoiceModal({
           <div className="grid gap-3 sm:grid-cols-3">
             <PlayCard
               title="Executive Overview"
-              scope="8 curated highlights across all 9 phases — governance, risk, roadmap, key documents. No technical detail, calendar frozen."
-              deepScope="Same 8 highlights, plus each deep stage's phase surfaces its own further-reading extras — a richer board-level tour, still no technical depth."
+              initialDeep={bookmark?.mode === 'walkthrough-deep'}
+              playLabel={(deep) =>
+                overviewResumeIndex(
+                  bookmark,
+                  autoRunWalkthroughQueue(deep),
+                  deep ? 'walkthrough-deep' : 'walkthrough'
+                ) !== undefined
+                  ? '▶ Resume chapter'
+                  : '▶ Play'
+              }
+              extra={
+                bookmark && (
+                  <div className="text-xs text-muted-foreground">
+                    <p>
+                      {overviewResumeIndex(
+                        bookmark,
+                        autoRunWalkthroughQueue(bookmark.mode === 'walkthrough-deep'),
+                        bookmark.mode
+                      ) !== undefined
+                        ? 'Saved overview: Resume restarts the current chapter.'
+                        : 'The overview route has changed. Start again to follow the updated chapters.'}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        useSimulationStore.getState().setOverviewBookmark(null)
+                        onStart(bookmark.mode)
+                      }}
+                    >
+                      Restart overview from beginning
+                    </Button>
+                  </div>
+                )
+              }
+              scope={`${durations.walkthroughVisits} guided resource visits across the lifecycle, including Foundations — business decisions, governance, risk and sample documents. Calendar frozen.`}
+              deepScope="The executive overview plus additional reading and optional practice. Some extras contain technical detail."
               audience="Board / exec / non-technical stakeholders"
               standardMin={durations.walkthroughStandard}
               deepMin={durations.walkthroughDeep}
@@ -265,7 +310,7 @@ export function SimPlayChoiceModal({
             />
             <PlayCard
               title="Full Migration Journey"
-              scope="Every required step, all 9 phases, genuinely completed — the real program, real artifacts, real gate-clearing."
+              scope="Every required step across the sample programme — repeated maturity passes, worked-example documents and scenario gates."
               deepScope="Full Migration Journey, plus every optional practice/reading extra along the way."
               audience="Practitioners, technical evaluators, trainers"
               standardMin={durations.climbStandard}

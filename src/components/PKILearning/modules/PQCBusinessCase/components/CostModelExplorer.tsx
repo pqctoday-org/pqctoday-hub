@@ -6,6 +6,9 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { costingInputsForSector } from '@/components/Simulation/autorun/financialScenario'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import {
   SIM_CONSTANTS,
   type CostModelInputs,
@@ -44,13 +47,15 @@ export const CostModelExplorer: React.FC = () => {
   // Restore the last-saved scenario so the tool round-trips instead of
   // resetting to defaults on every visit.
   const savedInputs = useSavedArtifactInputs<CostModelInputs>('cost-model-comparison')
-  const [inputs, setInputs] = useState<CostModelInputs>(
-    savedInputs ?? {
-      systems: 250,
-      itBudgetAnnual: 50_000_000,
-      complexity: 1.0,
-      horizonYears: 5,
-    }
+  const [inputs, setInputs] = useState<CostModelInputs>(() =>
+    isAutoRunFillActive()
+      ? costingInputsForSector(useSimulationStore.getState().sector)
+      : (savedInputs ?? {
+          systems: 250,
+          itBudgetAnnual: 50_000_000,
+          complexity: 1.0,
+          horizonYears: 5,
+        })
   )
 
   const update = <K extends keyof CostModelInputs>(key: K, value: CostModelInputs[K]) =>
@@ -480,9 +485,9 @@ export const CostModelExplorer: React.FC = () => {
       {/* Bridge to the rest of the workshop */}
       <div className="bg-muted/50 rounded-lg p-3 border border-border">
         <p className="text-xs text-muted-foreground">
-          Next, the <strong>ROI Calculator</strong> builds a defensible bottom-up estimate for your
-          own estate and cross-checks it against your assessment — one honest number you can take to
-          the board, with the humility this explorer just demonstrated.
+          The optional <strong>ROI Calculator</strong> explores how scoped costs, benefits and
+          discounting affect a scenario. Review its assumptions and sensitivity alongside these
+          ranges; agreement between estimates can reflect shared assumptions.
         </p>
       </div>
 

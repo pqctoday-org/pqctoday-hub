@@ -13,6 +13,34 @@ import { RoadmapBuilder } from './RoadmapBuilder'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import type { ExecutiveDocument } from '@/services/storage/types'
+import { setAutoRunFill } from '@/components/Simulation/autorun/autoRunFill'
+import { useSimulationStore } from '@/store/useSimulationStore'
+
+it('uses the bank sample plan without inheriting a saved deadline as a bank obligation', () => {
+  useSimulationStore.setState({ sector: 'financial' })
+  mockExecutiveDocuments = [
+    {
+      id: 'saved-other-case',
+      moduleId: 'migration-program',
+      type: 'migration-roadmap',
+      title: 'Other exercise',
+      data: '',
+      createdAt: 1,
+      inputs: {
+        selectedDeadlines: [{ label: 'Other exercise deadline', year: 2030, source: 'Other' }],
+      },
+    },
+  ]
+  setAutoRunFill(true)
+  try {
+    render(<RoadmapBuilder />)
+    expect(screen.getByText(/No private-bank regulatory obligation is inferred/)).toBeVisible()
+    expect(screen.getByText(/Regulatory deadlines \(0\//)).toBeVisible()
+    expect(screen.queryByText('Other exercise deadline')).toBeNull()
+  } finally {
+    setAutoRunFill(false)
+  }
+})
 
 // A real catalog product that matches the Mitigation Gateway section's
 // gateway-category filter (/gateway|sase|zero[\s-]?trust|tls/i), so it's a

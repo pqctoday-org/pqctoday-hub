@@ -13,6 +13,8 @@ import { act, renderHook } from '@testing-library/react'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSimAutoRunPlayer } from './useSimAutoRunPlayer'
+import { autoRunWalkthroughQueue } from './simAutoRun'
+import { EXEC_TOUR_STAGES } from './execTourConfig'
 import { isAutoRunFillActive, setAutoRunFill } from './autoRunFill'
 
 beforeEach(() => {
@@ -62,5 +64,49 @@ describe('auto-run cleanup (WP4)', () => {
     act(() => result.current.stop())
     act(() => result.current.stop())
     expect(closeEmbed).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('executive overview chapter navigation', () => {
+  it.each(['walkthrough', 'walkthrough-deep'] as const)(
+    '%s visits every chapter and disables unavailable directions',
+    (mode) => {
+      const queue = autoRunWalkthroughQueue(mode === 'walkthrough-deep')
+      const phases = EXEC_TOUR_STAGES.map((stage) => stage.phase)
+      const { result, unmount } = renderPlayer()
+      act(() => result.current.start({ mode }))
+      expect(result.current.canPrevPass).toBe(false)
+      for (const phase of phases.slice(1)) {
+        expect(result.current.canNextPass).toBe(true)
+        act(() => result.current.nextPass())
+        expect(queue[result.current.index].phase).toBe(phase)
+      }
+      expect(result.current.canNextPass).toBe(false)
+      const last = result.current.index
+      act(() => result.current.nextPass())
+      expect(result.current.index).toBe(last)
+      act(() => result.current.prevPass())
+      expect(queue[result.current.index].phase).toBe('p7')
+      unmount()
+    }
+  )
+})
+
+describe('overview interruption recovery', () => {
+  it('resumes the same chapter after remount without changing the full-journey playhead', () => {
+    useSimulationStore.getState().setAutoRunResumeIndex(9)
+    const { result: firstResult, unmount: unmountFirst } = renderPlayer()
+    act(() => firstResult.current.start({ mode: 'walkthrough' }))
+    act(() => firstResult.current.nextPass())
+    act(() => firstResult.current.nextPass())
+    const index = firstResult.current.index
+    act(() => firstResult.current.stop())
+    expect(useSimulationStore.getState().overviewBookmark?.phase).toBe('p2')
+    expect(useSimulationStore.getState().autoRunResumeIndex).toBe(9)
+    unmountFirst()
+    const { result: secondResult, unmount: unmountSecond } = renderPlayer()
+    act(() => secondResult.current.start({ mode: 'walkthrough' }))
+    expect(secondResult.current.index).toBe(index)
+    unmountSecond()
   })
 })

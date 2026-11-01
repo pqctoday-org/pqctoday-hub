@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { bankRiskEntries, BANK_CASE_NOTE } from '@/components/Simulation/autorun/executiveBankCase'
+import { useSimulationStore } from '@/store/useSimulationStore'
 import { RiskRegisterBuilder } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskRegisterBuilder'
 import {
   useRiskRegisterStore,
@@ -115,6 +118,8 @@ function buildThreatSeed(
  * the register opens with their context, not the generic demo defaults.
  */
 export function RiskRegisterBuilderStandalone() {
+  const sampleBank = isAutoRunFillActive() && useSimulationStore.getState().sector === 'financial'
+  const [sampleEntries, setSampleEntries] = useState(bankRiskEntries)
   const riskEntries = useRiskRegisterStore((s) => s.riskEntries)
   const setRiskEntries = useRiskRegisterStore((s) => s.setRiskEntries)
   const { input, result } = useAssessmentSnapshot()
@@ -162,10 +167,10 @@ export function RiskRegisterBuilderStandalone() {
   useEffect(() => {
     // Only auto-seed when the register is empty AND we have at least one
     // seed row. Otherwise let RiskRegisterBuilder's own defaults run.
-    if (riskEntries.length === 0 && fullSeed.length > 0) {
+    if (!sampleBank && riskEntries.length === 0 && fullSeed.length > 0) {
       setRiskEntries(fullSeed)
     }
-  }, [riskEntries.length, fullSeed, setRiskEntries])
+  }, [sampleBank, riskEntries.length, fullSeed, setRiskEntries])
 
   const handleClear = () => {
     setRiskEntries(DEFAULT_RISK_ENTRIES)
@@ -182,13 +187,18 @@ export function RiskRegisterBuilderStandalone() {
 
   return (
     <div className="space-y-3">
-      {seededFromAssessment && fullSeed.length > 0 && (
+      {sampleBank && (
+        <p className="rounded-lg border border-primary/30 p-3 text-xs text-muted-foreground">
+          {BANK_CASE_NOTE}
+        </p>
+      )}
+      {!sampleBank && seededFromAssessment && fullSeed.length > 0 && (
         <PreFilledBanner
           summary={`${fullSeed.length} risk entr${fullSeed.length !== 1 ? 'ies' : 'y'} seeded from ${sources.join(' + ')}.`}
           onClear={handleClear}
         />
       )}
-      {showingExamples && (
+      {!sampleBank && showingExamples && (
         <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2 text-xs text-muted-foreground">
           <span className="font-medium text-foreground">Example entries</span> — these are
           illustrative placeholders, not your data. Edit or replace them to build your own register
@@ -196,8 +206,8 @@ export function RiskRegisterBuilderStandalone() {
         </div>
       )}
       <RiskRegisterBuilder
-        riskEntries={riskEntries}
-        onRiskEntriesChange={setRiskEntries}
+        riskEntries={sampleBank ? sampleEntries : riskEntries}
+        onRiskEntriesChange={sampleBank ? setSampleEntries : setRiskEntries}
         showExampleBanner={false}
       />
     </div>

@@ -11,10 +11,58 @@
 // `aria-haspopup="listbox"`). Both failures were the test describing markup that
 // no longer existed, not a regression in the picker — verified by driving the
 // real component below, which does list Foundations.
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SimPlayChoiceModal } from './SimPlayChoiceModal'
+import { useSimulationStore } from '@/store/useSimulationStore'
+import { autoRunWalkthroughQueue } from './autorun/simAutoRun'
+import { overviewRouteSignature } from './autorun/overviewResume'
+
+beforeEach(() => useSimulationStore.getState().reset())
+
+describe('overview resume choices', () => {
+  it('offers chapter resume and an explicit restart that clears the bookmark first', async () => {
+    const user = userEvent.setup()
+    useSimulationStore.getState().setOverviewBookmark({
+      mode: 'walkthrough',
+      phase: 'p3',
+      routeSignature: overviewRouteSignature(autoRunWalkthroughQueue()),
+    })
+    const onStart = vi.fn(() => {
+      expect(useSimulationStore.getState().overviewBookmark).toBeNull()
+    })
+    render(
+      <SimPlayChoiceModal
+        onClose={vi.fn()}
+        onStart={onStart}
+        defaultCard="walkthrough"
+        defaultPhase="p0"
+      />
+    )
+    expect(screen.getByRole('button', { name: '▶ Resume chapter' })).toBeTruthy()
+    await user.click(screen.getByRole('button', { name: 'Restart overview from beginning' }))
+    expect(onStart).toHaveBeenCalledWith('walkthrough')
+  })
+
+  it('does not offer Resume for a changed resource route', () => {
+    useSimulationStore.getState().setOverviewBookmark({
+      mode: 'walkthrough',
+      phase: 'p3',
+      routeSignature: 'old-route',
+    })
+    render(
+      <SimPlayChoiceModal
+        onClose={vi.fn()}
+        onStart={vi.fn()}
+        defaultCard="walkthrough"
+        defaultPhase="p0"
+      />
+    )
+    expect(screen.queryByRole('button', { name: '▶ Resume chapter' })).toBeNull()
+    expect(screen.getByText(/overview route has changed/)).toBeTruthy()
+  })
+})
 
 /** Open the phase picker and return its option labels, in order. */
 async function openPickerOptions(user: ReturnType<typeof userEvent.setup>) {

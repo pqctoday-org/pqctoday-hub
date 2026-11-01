@@ -11,7 +11,7 @@
  * The invariant: an automated walkthrough records DEMONSTRATION evidence inside
  * the run, and leaves the learner's shared curriculum and real documents alone.
  */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { completeStepGenuine } from './simAutoRun'
@@ -71,6 +71,37 @@ describe('autorun evidence provenance (W0.5 regression)', () => {
     if (doc) {
       // If an example document is filed at all, it must carry visible provenance.
       expect(doc.title + ' ' + (doc.moduleId ?? '')).toMatch(/demo|example|sim-autorun/i)
+    }
+  })
+
+  it('revisits an applicable document without regenerating it', () => {
+    const step = artifactStep()
+    completeStepGenuine(step, 'financial', { phase: 'p0' })
+    const before = useModuleStore.getState().artifacts.executiveDocuments
+    const save = vi.spyOn(useModuleStore.getState(), 'addExecutiveDocument')
+    try {
+      expect(
+        completeStepGenuine(step, 'financial', { phase: 'foundations', reuseArtifact: true })
+      ).toBe(true)
+      expect(save).not.toHaveBeenCalled()
+      expect(useModuleStore.getState().artifacts.executiveDocuments).toEqual(before)
+    } finally {
+      save.mockRestore()
+    }
+  })
+
+  it('does not replace a specialist tool result when the optional visit ends', () => {
+    const step = artifactStep()
+    const save = vi.spyOn(useModuleStore.getState(), 'addExecutiveDocument')
+    try {
+      completeStepGenuine(step, 'financial', { phase: 'p4', inspectOnly: true })
+      expect(save).not.toHaveBeenCalled()
+      const record = useSimulationStore
+        .getState()
+        .evidence.find((item) => item.resourceId === step.artifactType)
+      expect(record?.status).toBe('viewed')
+    } finally {
+      save.mockRestore()
     }
   })
 

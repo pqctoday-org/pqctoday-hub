@@ -7,6 +7,23 @@ const s = () => useSimulationStore.getState()
 beforeEach(() => s().reset())
 
 describe('useSimulationStore', () => {
+  it('restores the overview chapter from browser storage without exporting it in a run save', async () => {
+    const bookmark = {
+      mode: 'walkthrough' as const,
+      phase: 'p4' as const,
+      routeSignature: 'sample-route',
+    }
+    s().setOverviewBookmark(bookmark)
+    const persisted = localStorage.getItem('pqc-simulation')!
+    expect(JSON.parse(persisted).state.overviewBookmark).toEqual(bookmark)
+    expect(JSON.parse(s().exportSave()).state).not.toHaveProperty('overviewBookmark')
+    s().reset()
+    expect(s().overviewBookmark).toBeNull()
+    localStorage.setItem('pqc-simulation', persisted)
+    await useSimulationStore.persist.rehydrate()
+    expect(s().overviewBookmark).toEqual(bookmark)
+  })
+
   it('seeds a coherent starting scenario', () => {
     expect(s().country).toBe('US')
     expect(s().sel).toBe('p0')

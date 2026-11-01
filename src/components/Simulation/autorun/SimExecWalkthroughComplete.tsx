@@ -11,7 +11,13 @@ import { useFocusTrap } from '@/hooks/useFocusTrap'
  * for the full climb). It confirms the program was seen end to end and points at where
  * to run it for real. No dates, no maturity score.
  */
-export function SimExecWalkthroughComplete({ onClose }: { onClose: () => void }) {
+export function SimExecWalkthroughComplete({
+  onClose,
+  brief = false,
+}: {
+  onClose: () => void
+  brief?: boolean
+}) {
   // 09-28 nav remediation (WP3.5): same modal contract as the rest of the sim —
   // dialog semantics, focus trapped and returned, Escape closes.
   const trapRef = useFocusTrap(true)
@@ -53,18 +59,23 @@ export function SimExecWalkthroughComplete({ onClose }: { onClose: () => void })
               id="sim-exec-walkthrough-complete-heading"
               className="text-lg font-semibold text-foreground"
             >
-              You’ve seen the full program
+              {brief ? 'Executive phone brief complete' : 'You’ve seen the full program'}
             </h2>
             <p className="text-xs text-muted-foreground">
-              Executive overview complete — end to end, from mandate to closure.
+              {brief
+                ? 'Chapter summaries and sample-document notices.'
+                : 'Executive overview complete — end to end, from mandate to closure.'}
             </p>
           </div>
         </div>
         <p className="mb-5 text-sm leading-relaxed text-muted-foreground">
-          That’s the whole post-quantum migration: securing sign-off and budget, finding and
-          prioritising your cryptography, building the roadmap, and verifying it’s done. The board
-          documents you saw generated are waiting in your Command Center. Here’s where you run it
-          for real.
+          {brief && (
+            <>You followed the phone brief. Use the desktop overview for full resource pages. </>
+          )}
+          You’ve explored the migration decisions, from the initial mandate to future verification
+          and handover. The worked-example documents are available in your Command Center for
+          further practice. Use what you learned to question assumptions, identify the capabilities
+          your production tools need, and plan how your team will demonstrate them.
         </p>
         <div className="flex flex-wrap gap-2">
           <Link to="/business" onClick={onClose}>
@@ -76,7 +87,7 @@ export function SimExecWalkthroughComplete({ onClose }: { onClose: () => void })
           <Link to="/compliance" onClick={onClose}>
             <Button variant="outline" size="sm" className="gap-1.5">
               <CalendarClock size={14} aria-hidden="true" />
-              See your deadlines
+              Review requirements
             </Button>
           </Link>
         </div>

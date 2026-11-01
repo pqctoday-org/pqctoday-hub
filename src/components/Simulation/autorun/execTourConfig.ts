@@ -28,6 +28,7 @@ export type TourConceptId =
   | 'crypto-agility'
   | 'urgency-drivers'
   | 'cbom-fields'
+  | 'inventory-confidence'
   | 'weakest-domain-maturity'
   | 'kpi-pack'
   | 'readiness'
@@ -42,13 +43,22 @@ export interface TourLightStep {
   kind: StepKind
   /** The step's identifier: moduleId (learn), refId (reference), catalogId (catalog). */
   ref: string
+  /** Optional section within the existing selected Learn resource. */
+  section?: string
 }
 
 export interface TourStage {
   phase: PhaseId
+  /** Executive learning objective; delivery chapters describe future requirements. */
+  executiveSummary?: string
   depth: 'deep' | 'light'
   /** DEEP only: board documents to reveal; each MUST be produced by an activity step. */
   revealArtifacts?: ExecutiveDocumentType[]
+  /** Reuse an existing tool at the chapter where its output informs a decision. */
+  revealSources?: Partial<Record<ExecutiveDocumentType, PhaseId>>
+  artifactLabels?: Partial<Record<ExecutiveDocumentType, string>>
+  /** Further financial study, excluded from the standard executive route. */
+  optionalArtifacts?: { type: ExecutiveDocumentType; sourcePhase: PhaseId }[]
   /** LIGHT only: the single hand-picked step to show. */
   lightStep?: TourLightStep
   /** Concept peeks surfaced when this phase opens (anchored to the phase boundary).
@@ -65,21 +75,11 @@ export interface TourStage {
 export const EXEC_TOUR_STAGES: readonly TourStage[] = [
   {
     phase: 'p0',
+    executiveSummary:
+      'Where do we start? Authorise discovery and planning, name an accountable sponsor and define the next decision. The sample is not asking for a full migration budget before the estate and its risks are understood.',
     depth: 'deep',
-    // Order follows the real Phase 0 activity sequence (see simTree.p0): the four
-    // financial-justification docs are Activity 0.2 (Build the Budget Structure);
-    // program-charter and board-deck are Activity 0.4 (Draft the Program Charter) —
-    // the charter formalizes the case the budget docs just built, and the board
-    // pitch follows the charter. Previously program-charter was listed first,
-    // ahead of the case that justifies it — fixed 07042026.
-    revealArtifacts: [
-      'cost-model-comparison',
-      'roi-model',
-      'breach-scenario',
-      'cost-of-inaction',
-      'program-charter',
-      'board-deck',
-    ],
+    // Begin with discovery authority. Programme estimates follow inventory and risk.
+    revealArtifacts: ['program-charter'],
     // TNFL is paired with HNDL from Activity 0.1 onward (and shown in the KPI
     // ribbon from the first screen) but wasn't in the concept system at all
     // before 07082026 — added here so it's introduced the same way HNDL/Mosca
@@ -89,21 +89,46 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
     // rather than leaving them as prose only.
     conceptCards: ['tnfl', 'urgency-drivers'],
   },
-  { phase: 'p1', depth: 'light', lightStep: { kind: 'learn', ref: 'data-asset-sensitivity' } },
+  {
+    phase: 'p1',
+    depth: 'light',
+    lightStep: { kind: 'learn', ref: 'data-asset-sensitivity' },
+    executiveSummary:
+      'For the fictional bank, examine three services: the customer portal, records archiving and retrieval, and software signing. Sample discovery finds a portal candidate for piloting, legacy dependencies in archiving and supplier dependencies in signing. These are teaching findings, not results inferred from catalogue selections.',
+  },
   // cbom-fields (07182026, completeness gap-closing): the 5-field CBOM record
   // (algorithm, key size, protocol, library, owner) was named in 2.2's `do`
   // text but never had its own peek.
   {
     phase: 'p2',
+    executiveSummary:
+      'Ask whether the inventory links cryptographic dependencies to business services and accountable owners, and whether coverage gaps are visible. A CBOM supports that traceability; a board member does not need to build algorithm records. Look for inventory import, provenance, change tracking and reporting capabilities in production tools.',
     depth: 'light',
-    lightStep: { kind: 'learn', ref: 'cbom' },
-    conceptCards: ['cbom-fields'],
+    lightStep: { kind: 'learn', ref: 'crypto-mgmt-modernization', section: 'management-tools' },
+    conceptCards: ['inventory-confidence'],
   },
-  { phase: 'p3', depth: 'deep', revealArtifacts: ['risk-register'] },
+  {
+    phase: 'p3',
+    depth: 'deep',
+    revealArtifacts: ['risk-register'],
+    executiveSummary:
+      'Prioritise the three services by business impact, confidentiality lifetime, signature trust and migration lead time. Long-lived records, customer connections and software authenticity have different exposures. Ask which assumptions and dependencies could change the priorities.',
+  },
   {
     phase: 'p4',
+    executiveSummary:
+      'Use discovery and risk findings to scope options and refine a preliminary cost range. Compare assumptions, uncertainty, supplier costs and dependencies before a five-year programme proposal. The sample annual IT budget is context, not migration funding. ROI, breach and delay models are optional further study.',
     depth: 'deep',
-    revealArtifacts: ['migration-roadmap', 'kpi-dashboard'],
+    revealArtifacts: ['cost-model-comparison', 'migration-roadmap', 'kpi-dashboard'],
+    revealSources: { 'cost-model-comparison': 'p0' },
+    artifactLabels: {
+      'cost-model-comparison': 'Compare migration cost estimates and their assumptions',
+    },
+    optionalArtifacts: [
+      { type: 'roi-model', sourcePhase: 'p0' },
+      { type: 'breach-scenario', sourcePhase: 'p0' },
+      { type: 'cost-of-inaction', sourcePhase: 'p0' },
+    ],
     conceptCards: ['two-track'],
   },
   // Foundations (WP2.4) — the spanning band was previously the only phase the
@@ -118,6 +143,8 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
   // phases' trees, so this isn't a dangling reference).
   {
     phase: 'foundations',
+    executiveSummary:
+      'Plan ownership, governance and a small board reporting pack. Ask what each measure includes, which gaps remain and how changes are tracked. Look for policy, inventory integration, reporting and crypto-agility drill capabilities; sample indicators do not prove production readiness.',
     depth: 'deep',
     revealArtifacts: ['kpi-dashboard'],
     // weakest-domain-maturity + kpi-pack (07182026, educational-value gap-closing):
@@ -128,21 +155,57 @@ export const EXEC_TOUR_STAGES: readonly TourStage[] = [
   },
   {
     phase: 'p5',
+    executiveSummary:
+      'Future delivery requirement: release pilot funding against agreed compatibility, performance, security and rollback criteria. A portal pilot does not establish that the archive or software signing service is ready. Ask what evidence would justify scaling or stopping.',
     depth: 'light',
     lightStep: { kind: 'learn', ref: 'hybrid-crypto' },
     conceptCards: ['hybrid'],
   },
-  { phase: 'p6', depth: 'light', lightStep: { kind: 'learn', ref: 'pki-workshop' } },
-  { phase: 'p7', depth: 'light', lightStep: { kind: 'learn', ref: 'vendor-risk' } },
+  {
+    phase: 'p6',
+    depth: 'light',
+    lightStep: { kind: 'reference', ref: 'algorithms-protocol-matrix' },
+    executiveSummary:
+      'Future delivery requirement: identify shared certificate, key-management and trust dependencies before scaling. Ask which tool versions, platforms, lifecycle controls and rollback paths are required, how they will be tested and who owns the legacy blockers. Use the protocol support matrix to ask which capabilities are available and which still require confirmation. The bank has not completed deployment.',
+  },
+  {
+    phase: 'p7',
+    depth: 'light',
+    lightStep: { kind: 'learn', ref: 'vendor-risk' },
+    executiveSummary:
+      'Future delivery requirement: challenge supplier claims with named products, versions, supported platforms, delivery commitments and test evidence. A catalogue label is a starting point for evaluation, not proof that the bank can deploy it. Tie unresolved dependencies to funding gates and alternatives.',
+  },
   {
     phase: 'verify-close',
+    executiveSummary:
+      'Before programme approval, define how future delivery and closure will be judged for the portal, archive and software signing service. A recorded evidence reference is not a successful technical check. Review the sample board proposal with conditional funding gates; deployment and closure remain planned work, followed by continuing crypto-agility.',
     depth: 'deep',
-    revealArtifacts: ['migration-verification'],
+    revealArtifacts: ['migration-verification', 'board-deck'],
+    revealSources: { 'board-deck': 'p0' },
     // 07-29 review G-M1 — the one lifecycle topic the tour never named:
     // what happens when an algorithm breaks AFTER the program closes.
     conceptCards: ['incident-response'],
   },
 ]
+
+/** Keep the bank's authored findings separate from other sector examples. */
+export function executiveSummaryForPhase(phase: PhaseId, sector: string): string | undefined {
+  const summary = EXEC_TOUR_STAGES.find((stage) => stage.phase === phase)?.executiveSummary
+  if (sector === 'financial') return summary
+  if (phase === 'p1')
+    return 'Ask which business services and protected assets are in scope, who owns their dependencies and which inventory gaps or supplier constraints remain. Separate declared planning inputs from findings supported by evidence.'
+  if (phase === 'p5')
+    return 'Future delivery requirement: release pilot funding against agreed compatibility, performance, security and rollback criteria. Success for one service does not establish readiness across the estate. Ask what evidence would justify scaling or stopping.'
+  if (phase === 'verify-close')
+    return 'Before programme approval, define future service-specific verification, retirement and closure requirements. A recorded evidence reference is not a successful technical check. Treat delivery and handover as planned work, followed by continuing crypto-agility.'
+  return summary
+    ?.replace('the three services', 'the services in scope')
+    .replaceAll('the bank', 'the organisation')
+    .replace(
+      'The bank has not completed deployment.',
+      'This overview does not establish completed deployment.'
+    )
+}
 
 /** Concept peeks shown at the very start (threat + deadline math), before p0. */
 export const EXEC_TOUR_OPENING_CONCEPTS: readonly TourConceptId[] = ['hndl', 'mosca']
@@ -192,6 +255,13 @@ export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
     inline:
       'A Cryptography Bill of Materials record is only useful if it answers five things per instance: which algorithm, what key size, which protocol carries it, which library implements it, and who owns it. A name and a checkbox aren’t enough to act on.',
   },
+  'inventory-confidence': {
+    id: 'inventory-confidence',
+    title: 'Can we rely on the inventory?',
+    source: 'inline',
+    inline:
+      'Ask which business services are covered, who owns their dependencies, when the information was checked and which gaps remain. Management should explain how its tools discover changes and trace findings to services. A component list alone does not establish complete coverage or readiness.',
+  },
   'weakest-domain-maturity': {
     id: 'weakest-domain-maturity',
     title: 'Maturity = your weakest domain',
@@ -228,7 +298,10 @@ export const EXEC_TOUR_CONCEPTS: Record<TourConceptId, TourConcept> = {
  * resolve to a tool with a description, so this is empty; add an entry only when a
  * description reads poorly at the reveal moment. Any entry must stay fact-free.
  */
-export const EXEC_TOUR_REVEAL_BLURBS: Partial<Record<ExecutiveDocumentType, string>> = {}
+export const EXEC_TOUR_REVEAL_BLURBS: Partial<Record<ExecutiveDocumentType, string>> = {
+  'kpi-dashboard':
+    'An illustrative future board reporting pack. Use it to ask how indicators will be defined and evidenced; these sample figures are not the organisation’s current delivery progress or measured readiness.',
+}
 
 /** Every artifact type the tour reveals (for the queue-builder invariant + tests). */
 export const EXEC_TOUR_REVEAL_TYPES: readonly ExecutiveDocumentType[] = EXEC_TOUR_STAGES.flatMap(
