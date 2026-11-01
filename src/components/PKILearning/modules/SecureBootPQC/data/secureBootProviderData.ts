@@ -188,7 +188,7 @@ export const FIRMWARE_VENDORS: FirmwareVendorStatus[] = [
     products: ['Boot Guard authenticated code module (ACM)'],
     pqcAlgorithm: 'LMS (optionally combined with RSASSA or ECDSA)',
     notes:
-      'Intel\'s white paper "Hardening Intel Trusted eXecution Technology and Intel Boot Guard" (revision 0.21, July 2024, section 7) says "ACM is supporting Leighton-Micali Signatures (LMS) for all manifests", and that the Boot Guard Key Manifest "may use LMS combined with currently supported legacy schemes RSASSA or ECDSA". The paper is dated July 2024 and names no product generation or ship date.',
+      'Intel\'s white paper "Hardening Intel Trusted eXecution Technology and Intel Boot Guard" (revision 0.21, July 2024, section 7) says "ACM is supporting Leighton-Micali Signatures (LMS) for all manifests", and that the Boot Guard Key Manifest "may use LMS combined with currently supported legacy schemes RSASSA or ECDSA". The paper is dated July 2024 and names no product generation or ship date. Its appendix table lists post-quantum cryptography as \'Supported\' for both client and server platforms.',
     sources: [
       {
         label: 'Intel white paper 824411 (revision 0.21)',

@@ -269,7 +269,8 @@ vault write transit/encrypt/ml-kem-key \\
     ciphertextExpansion: '3,309 bytes (ML-DSA-65 signature) vs 64 bytes (ECDSA signature)',
     description:
       'ML-DSA-65 signatures are 51.7x larger than ECDSA P-256 signatures. This has significant impact on JWTs, code signing payloads, TLS certificate sizes, and API response headers. Applications that embed signatures in URLs or HTTP headers require protocol changes.',
-    apiExample: `# Classical: ECDSA P-256 signing
+    apiExample: `# In this module's illustration, not Vault documentation:
+# Classical: ECDSA P-256 signing
 vault write transit/keys/ecdsa-key type=ecdsa-p256
 vault write transit/sign/ecdsa-key \\
   input=$(base64 <<< "artifact hash") \\
@@ -313,7 +314,7 @@ export const ROTATION_POLICIES: RotationPolicy[] = [
     maxTTL: '180 days',
     renewalWindow: '14 days before expiry',
     pqcConsideration:
-      'API keys with TTL > 10 years have high HNDL risk. Post-2026, reduce to 30 days as CRQC timelines compress. Ensure vault KEK uses ML-KEM-768.',
+      "This module's advice: API keys with TTL > 10 years have high HNDL risk. Post-2026, reduce to 30 days as CRQC timelines compress. Ensure vault KEK uses ML-KEM-768.",
     complianceFramework: 'PCI DSS v4.0.1 Req. 8.6.3',
     automationTool: 'Vault Dynamic Secrets + Vault Agent',
   },
@@ -429,7 +430,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
       'Azure Key Vault Provider for Secrets Store CSI Driver / External Secrets Operator',
     fipsMode: true,
     roadmapNote:
-      "Verified 2026-06-19: Managed HSM exposes only classical HSM key types (RSA-HSM/EC-HSM/oct-HSM) — no ML-KEM/ML-DSA key support and none announced. Microsoft's SymCrypt/CNG PQC lives at the OS/PKI layer (Windows Server 2025 AD CS), not in the Managed HSM crypto module. Catalog: none.",
+      "Checked on 1 November 2026 against Microsoft's Managed HSM documentation: it lists only RSA-HSM, EC-HSM and oct-HSM key types, and no ML-KEM or ML-DSA key type. Microsoft's SymCrypt and CNG post-quantum support is covered separately in its quantum-safe program roadmap. Catalog: none.",
   },
   {
     id: 'gcp-secret-manager',

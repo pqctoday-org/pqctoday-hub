@@ -172,7 +172,7 @@ vault write transit/sign/my-pqc-key \\
   input=$(base64 <<< "data") \\
   hybrid_algorithm="ecdsa-p256"`,
     notes:
-      'ML-DSA and SLH-DSA in experimental status — not recommended for production. Supports all 12 SLH-DSA parameter sets (SHA2/SHAKE variants). Hybrid signatures combine PQC + classical. KMIP server mode enables interoperability with HSMs and other KMS.',
+      "HashiCorp's transit secrets engine API documentation (checked 1 November 2026) lists ML-DSA with parameter sets 44, 65 and 87, SLH-DSA with 12 parameter sets, and hybrid signatures that combine ML-DSA with an elliptic-curve algorithm; these key types are marked Enterprise. Vault Enterprise also has a KMIP secrets engine. The documentation does not state their maturity.",
   },
   {
     id: 'thales-ciphertrust',

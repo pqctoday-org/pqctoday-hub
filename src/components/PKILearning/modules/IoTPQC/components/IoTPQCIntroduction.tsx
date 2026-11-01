@@ -341,10 +341,10 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           unchangeable bootloader code in ROM use post-quantum secure signature schemes such as
           hash-based signatures, because RSA and ECC signatures may become vulnerable to
           quantum-accelerated key extraction; a bootloader author has to weigh the product&apos;s
-          service lifetime against that risk. NIST IR 8547 (final, October 2026) makes the same
-          point for any device whose signature-checking code cannot be updated after manufacture: it
-          should be designed to require quantum-resistant signatures on the executable code if it
-          may still be in use once cryptanalytically relevant quantum computers exist.
+          service lifetime against that risk. NIST IR 8547 (October 2026) says the same for devices
+          whose signature-verification code cannot be updated after manufacture: it is important to
+          design them to require quantum-resistant signatures on the executable code if they may
+          still be in use once cryptanalytically relevant quantum computers become available.
         </p>
         <p className="text-xs text-muted-foreground">
           The boot-time side — verifying the image before it runs — is in{' '}

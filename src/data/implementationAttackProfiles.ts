@@ -68,7 +68,7 @@ export const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         status: 'yes',
         severity: 'high',
         detail:
-          'Corrupting the random-seed pointer used in polynomial sampling, with laser fault injection on an STM32H7, can give full key and message recovery for ML-KEM, with reported success rates up to 100%. A Rowhammer-based attack on the Fujisaki-Okamoto transform recovers the long-term secret key of Kyber and Saber.',
+          'Corrupting the random-seed pointer used in polynomial sampling, with laser fault injection on an STM32H7, can give full key and message recovery for ML-KEM, with reported success rates up to 100% (Valsaraj, Ravi and Bhasin, IACR ePrint 2025/2009). A Rowhammer-based attack on the Fujisaki-Okamoto transform recovers the long-term secret key of Kyber and Saber (Mondal et al., ACNS 2024, IACR ePrint 2023/1731).',
       },
       {
         category: 'rng-failure',

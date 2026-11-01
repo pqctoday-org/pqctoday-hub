@@ -63,7 +63,7 @@ const HSM_VENDOR_SCENARIOS: Omit<HsmVendorRecord, 'pqcSupport'>[] = [
     lastVerified: '2026-09-24',
     posture: 'green',
     notes:
-      'SLH-DSA coverage distinguishes nShield 5 from Luna 7. CodeSafe apps for PQC workloads. CMVP cert #5329 covers the 5s form factor; another nShield 5s entry is on the NIST CMVP Modules In Process (MIP) List (Review, 30 Jul 2026), which is not evidence of the outcome. Verify 5c cert status separately at csrc.nist.gov.',
+      "Entrust documents SLH-DSA (all twelve FIPS 205 parameter sets) in the nShield PKCS #11 API from Security World v13.9.5; the Thales Luna pages the Hub holds do not mention SLH-DSA. Entrust's PQC Option Pack (LMS) is deployed as CodeSafe machines. CMVP cert #5329 (nShield 5s, FIPS 140-3 Level 3, Active, replacing #4765) lists no PQC mechanism; another nShield 5s entry is on the NIST CMVP Modules In Process (MIP) List (Review, 30 Jul 2026), which is not evidence of the outcome. Verify 5c cert status separately at csrc.nist.gov.",
   },
   {
     id: 'utimaco-cp5',
