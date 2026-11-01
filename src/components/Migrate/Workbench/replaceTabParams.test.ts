@@ -6,13 +6,18 @@ import { NO_FACETS } from './workbenchCatalog'
 describe('replaceTabParams', () => {
   it('serializes only non-default facets, and null when all are default', () => {
     expect(serializeFacets(NO_FACETS)).toBeNull()
-    expect(serializeFacets({ population: 'all', pqc: 'available', certified: 'linked' })).toBe(
-      'pqc:available,certified:linked'
-    )
+    expect(
+      serializeFacets({ population: 'all', pqc: 'available', certified: 'linked', hybrid: 'all' })
+    ).toBe('pqc:available,certified:linked')
   })
 
   it('round-trips every facet', () => {
-    const f = { population: 'migration_baseline', pqc: 'planned', certified: 'none' } as const
+    const f = {
+      population: 'migration_baseline',
+      pqc: 'planned',
+      certified: 'none',
+      hybrid: 'kem-api',
+    } as const
     expect(parseFacets(serializeFacets(f))).toEqual(f)
   })
 
@@ -22,6 +27,10 @@ describe('replaceTabParams', () => {
       certified: 'linked',
     })
     expect(parseFacets(null)).toEqual(NO_FACETS)
+    expect(parseFacets('hybrid:tls-default,hybrid:bogus')).toEqual({
+      ...NO_FACETS,
+      hybrid: 'tls-default',
+    })
   })
 
   it('writes rq/facet, deleting them at their defaults, leaving undefined fields alone', () => {

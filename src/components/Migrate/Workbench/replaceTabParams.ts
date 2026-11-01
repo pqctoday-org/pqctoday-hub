@@ -4,7 +4,7 @@
  *
  *   ?rq=<text>                          the "Filter products…" box
  *   ?facet=pqc:available,certified:linked
- *                                       population / pqc / certified facets
+ *                                       population / pqc / certified / hybrid facets
  *                                       (only non-default facets are written)
  *
  * Deliberately NOT ?q= / ?search= / ?highlight= / ?layer= / ?cat= … — those
@@ -21,6 +21,7 @@ const FACET_VALUES: { [K in keyof ProductFacets]: ReadonlyArray<ProductFacets[K]
   population: ['pqc_relevant', 'migration_baseline'],
   pqc: ['available', 'partial', 'planned', 'none', 'unknown'],
   certified: ['linked', 'none'],
+  hybrid: ['tls-default', 'kem-api', 'sig-api'],
 }
 const FACET_KEYS = Object.keys(FACET_VALUES) as (keyof ProductFacets)[]
 

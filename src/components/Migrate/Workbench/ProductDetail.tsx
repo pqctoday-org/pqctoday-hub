@@ -32,6 +32,8 @@ import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareBu
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Pill } from './workbenchUi'
 import { productVerificationBadge } from './productStatus'
+import { HybridSupportBadges } from './HybridSupportBadges'
+import { hybridSupportBadges } from '@/data/hybridSupport'
 // ADDED 2026-08-01: migrate-catalog had 907/907 active rows carrying a
 // trusted_source_id and real revision entries in revisions.jsonl, but no
 // page on the app displayed either — TrustScoreBadge/ReviewedBadge are
@@ -106,6 +108,7 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
   const hasStageNote = cavpOnly || fipsInProgress || pqcCavpOnly
 
   const verification = productVerificationBadge(product)
+  const hasHybrid = hybridSupportBadges(product).length > 0
   // Other rows of the same product line (family_id) — releases, editions or
   // certified configurations — so five rows of one product read as one line.
   const familyMembers = product.familyId
@@ -178,6 +181,12 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
           <p className="italic text-muted-foreground">
             No PQC capability details documented for this product.
           </p>
+        )}
+        {hasHybrid && (
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5" data-testid="hybrid-support">
+            <span className="text-[11px] text-muted-foreground">Hybrid support:</span>
+            <HybridSupportBadges product={product} />
+          </div>
         )}
       </div>
 

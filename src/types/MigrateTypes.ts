@@ -168,8 +168,21 @@ export interface SoftwareItem {
   githubContributionUrl?: string
   confidenceScore?: number
   cswp39Tags?: string[]
+  /** Hybrid (classical + PQC) key exchange support, from `hybrid_kem_support`.
+   *  Undefined = not assessed; `['none']` = assessed, no hybrid KEM. */
+  hybridKemSupport?: HybridKemToken[]
+  /** Composite (classical + PQC) signature support, from `hybrid_sig_support`.
+   *  Undefined = not assessed. */
+  hybridSigSupport?: HybridSigToken
   status?: 'New' | 'Updated' | 'Deleted'
 }
+
+/** One `hybrid_kem_support` token: hybrid TLS on by default, hybrid TLS the
+ *  user must turn on, a hybrid KEM programming API, an experimental one, or none. */
+export type HybridKemToken = 'tls-default' | 'tls-optin' | 'api' | 'api-experimental' | 'none'
+
+/** A `hybrid_sig_support` value: a composite signature API, an experimental one, or none. */
+export type HybridSigToken = 'api' | 'api-experimental' | 'none'
 
 export interface MigrationStepTask {
   title: string

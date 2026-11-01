@@ -155,6 +155,27 @@ describe('applyProductFacets', () => {
     expect(run({ certified: 'none' })).toEqual(['b', 'd'])
     expect(run({ population: 'pqc_relevant', certified: 'linked' })).toEqual(['a'])
   })
+
+  describe('hybrid support facet', () => {
+    const hybridItems = [
+      { productId: 'tls', hybridKemSupport: ['tls-default', 'api'] },
+      { productId: 'optin', hybridKemSupport: ['tls-optin'], hybridSigSupport: 'none' },
+      { productId: 'exp', hybridKemSupport: ['api-experimental'], hybridSigSupport: 'api' },
+      { productId: 'sigexp', hybridKemSupport: ['none'], hybridSigSupport: 'api-experimental' },
+      { productId: 'unassessed' },
+    ] as SoftwareItem[]
+    const runHybrid = (hybrid: ProductFacets['hybrid']) =>
+      ids(applyProductFacets(hybridItems, { ...NO_FACETS, hybrid }, () => false))
+
+    it('keeps everything, unassessed products included, when the facet is off', () => {
+      expect(runHybrid('all')).toHaveLength(5)
+    })
+    it('narrows to hybrid TLS by default, hybrid KEM APIs, or composite signature APIs', () => {
+      expect(runHybrid('tls-default')).toEqual(['tls'])
+      expect(runHybrid('kem-api')).toEqual(['tls', 'exp'])
+      expect(runHybrid('sig-api')).toEqual(['exp', 'sigexp'])
+    })
+  })
 })
 
 describe('resolveProductLink (deep-link remediation PR 1)', () => {

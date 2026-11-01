@@ -61,6 +61,7 @@ import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
 import { MIGRATION_EDUCATION } from '@/data/migrationEducation'
 import { useVendorConcentrationRisks } from '@/components/Migrate/Workbench/vendorConcentrationRisk'
 import { TONE_CLASS, type Tone } from '@/data/migrateToneClass'
+import { HYBRID_FACET_LABEL, hybridSupportBadges } from '@/data/hybridSupport'
 import type {
   SoftwareItem,
   CertificationXref,
@@ -126,6 +127,7 @@ const FACET_LABELS: Record<keyof ProductFacets, FacetLabel> = {
     name: 'Certification',
     values: { linked: 'Has a certification link', none: 'No certification link' },
   },
+  hybrid: { name: 'Hybrid support', values: HYBRID_FACET_LABEL },
 }
 const FACET_KEYS = Object.keys(FACET_LABELS) as (keyof ProductFacets)[]
 
@@ -983,6 +985,11 @@ function MobileProductRow({
               </span>
             )}
             <Badge tone={pqc.tone}>{pqc.label}</Badge>
+            {hybridSupportBadges(product).map((b) => (
+              <Badge key={b.key} tone={b.tone}>
+                {b.label}
+              </Badge>
+            ))}
             {fips && <Badge tone={fips.tone}>{fips.label}</Badge>}
             <Badge tone={proof.tone} title={proof.detail}>
               {proof.label}
@@ -1162,6 +1169,15 @@ function MobileProductDetailSheet({
               <p className="text-[13px] italic text-muted-foreground">
                 No PQC capability details documented for this product.
               </p>
+            )}
+            {hybridSupportBadges(product).length > 0 && (
+              <div className="mt-1.5 flex flex-wrap gap-1.5" data-testid="hybrid-support">
+                {hybridSupportBadges(product).map((b) => (
+                  <Badge key={b.key} tone={b.tone} size="md">
+                    {b.label}
+                  </Badge>
+                ))}
+              </div>
             )}
           </div>
 

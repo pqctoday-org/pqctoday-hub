@@ -10,6 +10,7 @@ import { classifyProductDomain, DOMAINS, type DomainId } from '@/data/migrationA
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { matchesHybridFacet, type HybridFacet } from '@/data/hybridSupport'
 import { PQC_STATUS_RANK, productPqcStatus } from './productStatus'
 
 const INDEX = new Map<DomainId, SoftwareItem[]>()
@@ -98,9 +99,16 @@ export interface ProductFacets {
   population: 'all' | 'pqc_relevant' | 'migration_baseline'
   pqc: 'all' | 'available' | 'partial' | 'planned' | 'none' | 'unknown'
   certified: 'all' | 'linked' | 'none'
+  /** Hybrid KEM / composite-signature support; products not yet assessed never match. */
+  hybrid: 'all' | HybridFacet
 }
 
-export const NO_FACETS: ProductFacets = { population: 'all', pqc: 'all', certified: 'all' }
+export const NO_FACETS: ProductFacets = {
+  population: 'all',
+  pqc: 'all',
+  certified: 'all',
+  hybrid: 'all',
+}
 
 /**
  * Narrow a product list by population, canonical PQC status and whether the
@@ -125,6 +133,7 @@ export function applyProductFacets(
       if (bucket !== facets.pqc) return false
     }
     if (facets.certified !== 'all' && hasCert(p) !== (facets.certified === 'linked')) return false
+    if (facets.hybrid !== 'all' && !matchesHybridFacet(p, facets.hybrid)) return false
     return true
   })
 }

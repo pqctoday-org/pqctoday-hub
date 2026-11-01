@@ -8,6 +8,7 @@ import { Button } from '../../ui/button'
 import { Pill } from './workbenchUi'
 import { productFipsBadge, productPqcStatus, productVerificationBadge } from './productStatus'
 import { ProductDetail } from './ProductDetail'
+import { HybridSupportBadges } from './HybridSupportBadges'
 import { proofFreshness } from './proofFreshness'
 
 interface ProductRowProps {
@@ -102,6 +103,7 @@ export function ProductRow({
               </span>
             )}
             <Pill tone={pqc.tone}>{pqc.label}</Pill>
+            <HybridSupportBadges product={product} />
             {fips && <Pill tone={fips.tone}>{fips.label}</Pill>}
             <Pill tone={verification.tone} title={verification.title}>
               {verification.label}

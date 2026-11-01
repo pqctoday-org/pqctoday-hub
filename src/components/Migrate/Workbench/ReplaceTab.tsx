@@ -27,6 +27,7 @@ import {
 } from './workbenchCatalog'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
+import { HYBRID_FACET_LABEL, type HybridFacet } from '@/data/hybridSupport'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { MobileFilterDrawer } from '../MobileFilterDrawer'
 import { DeepLinkNotice } from '../../common/DeepLinkNotice'
@@ -390,6 +391,22 @@ export function ReplaceTab({
                   setFacet((f) => ({
                     ...f,
                     certified: (id === 'All' || !id ? 'all' : id) as ProductFacets['certified'],
+                  }))
+                }
+              />
+              <FilterDropdown
+                size="sm"
+                ariaLabel="Filter by hybrid support"
+                defaultLabel="Any hybrid support"
+                items={(Object.keys(HYBRID_FACET_LABEL) as HybridFacet[]).map((id) => ({
+                  id,
+                  label: HYBRID_FACET_LABEL[id],
+                }))}
+                selectedId={facets.hybrid === 'all' ? 'All' : facets.hybrid}
+                onSelect={(id) =>
+                  setFacet((f) => ({
+                    ...f,
+                    hybrid: (id === 'All' || !id ? 'all' : id) as ProductFacets['hybrid'],
                   }))
                 }
               />
