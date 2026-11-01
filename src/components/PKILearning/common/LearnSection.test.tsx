@@ -10,7 +10,8 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
-import { LearnSection, SECTION_READ_DWELL_MS } from './LearnSection'
+import { LearnSection, useSectionAnchors, SECTION_READ_DWELL_MS } from './LearnSection'
+import { setAutoRunFill } from '@/components/Simulation/autorun/autoRunFill'
 import { useModuleStore } from '@/store/useModuleStore'
 import manifest from '@/components/PKILearning/modules/EMVPaymentPQC/manifest'
 
@@ -96,6 +97,7 @@ describe('LearnSection read tracking requires dwell', () => {
   })
 
   afterEach(() => {
+    setAutoRunFill(false)
     vi.useRealTimers()
     vi.unstubAllGlobals()
   })
@@ -127,6 +129,28 @@ describe('LearnSection read tracking requires dwell', () => {
       vi.advanceTimersByTime(SECTION_READ_DWELL_MS + 50)
     })
     expect(checksFor('emv-payment-pqc')).toContain('interbank-rails')
+  })
+
+  it('does not credit automatic demonstrations as personal reading', () => {
+    setAutoRunFill(true)
+    renderAt('/learn/emv-payment-pqc?section=interbank-rails')
+    act(() => vi.advanceTimersByTime(SECTION_READ_DWELL_MS + 50))
+    expect(checksFor('emv-payment-pqc')).not.toContain('interbank-rails')
+  })
+
+  it('does not credit automatic continuous-prose demonstrations as personal reading', () => {
+    function SampleProse() {
+      useSectionAnchors()
+      return <section id="interbank-rails">Sample section</section>
+    }
+    setAutoRunFill(true)
+    render(
+      <MemoryRouter initialEntries={['/learn/emv-payment-pqc']}>
+        <SampleProse />
+      </MemoryRouter>
+    )
+    act(() => vi.advanceTimersByTime(SECTION_READ_DWELL_MS + 50))
+    expect(checksFor('emv-payment-pqc')).not.toContain('interbank-rails')
   })
 
   it('does not mark it when the reader scrolls past before the dwell elapses', () => {

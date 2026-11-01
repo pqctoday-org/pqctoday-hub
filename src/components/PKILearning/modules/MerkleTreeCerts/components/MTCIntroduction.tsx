@@ -67,8 +67,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         </div>
         <p className="text-foreground/80 leading-relaxed">
           This &ldquo;certificate bloat&rdquo; breaks constrained clients that reject chains larger
-          than 10 KB, degrades connection setup times (especially on mobile networks), and increases
-          bandwidth costs for high-traffic servers handling millions of TLS handshakes per second.
+          than 10 KB (not sourced in the Library), degrades connection setup times (especially on
+          mobile networks), and increases bandwidth costs for high-traffic servers handling millions
+          of TLS handshakes per second.
         </p>
       </section>
 
@@ -252,7 +253,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
                 &bull; Massive size reduction (63&ndash;65% standalone, 92&ndash;96% landmark for
-                ML-DSA)
+                ML-DSA) (not sourced in the Library)
               </li>
               <li>&bull; Single CA signing operation covers millions of certificates</li>
               <li>&bull; Inclusion proof is pure hash computation &mdash; fast to verify</li>

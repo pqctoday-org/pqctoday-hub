@@ -558,11 +558,11 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               <InlineTooltip term="Queryable Encryption">Queryable Encryption</InlineTooltip>
             </div>
             <p className="text-xs text-muted-foreground">
-              Equality queries are straightforward to make PQC-safe: HMAC-SHA-256 tokens are
-              quantum-safe, and DEK wrapping upgrades are independent. Range query encryption is
-              harder: structured encryption range schemes (MongoDB uses fully randomized ciphertext,
-              not order-preserving encryption) are not yet standardized for PQC; this module cites
-              no standard or date for PQC-compatible queryable encryption.
+              In this module's reading, equality queries are straightforward to make PQC-safe:
+              HMAC-SHA-256 tokens are quantum-safe, and DEK wrapping upgrades are independent. Range
+              query encryption is harder: structured encryption range schemes (MongoDB uses fully
+              randomized ciphertext, not order-preserving encryption) are not yet standardized for
+              PQC; this module cites no standard or date for PQC-compatible queryable encryption.
             </p>
           </div>
         </div>

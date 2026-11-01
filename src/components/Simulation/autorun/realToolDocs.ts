@@ -10,6 +10,10 @@
  * imported from each tool, not re-implemented.
  */
 import type { ExecutiveDocumentType } from '@/services/storage/types'
+import { isExecutiveBankOverview } from './autoRunFill'
+import { DISCOVERY_CHARTER } from './discoveryCharter'
+import { plannedVerificationSample } from './plannedVerification'
+import { bankRiskEntries, bankRoadmapMilestones, BANK_CASE_NOTE } from './executiveBankCase'
 import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
 import {
   deriveRoiDoc,
@@ -202,6 +206,7 @@ function programCharterState(sector: DemoSector): CharterState {
       'signatures by end of 2027.',
     escalationTriggers:
       'Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative.',
+    ...(isExecutiveBankOverview(sector) ? DISCOVERY_CHARTER : {}),
   }
 }
 
@@ -489,13 +494,8 @@ function supplyChainMatrixSample() {
   })
 }
 
-/** Sector-flavored sample input for the real MigrationVerification tool
- *  (H2 round 2, 07192026 — first conversion of the demoDocs-shrink wave).
- *  Shows a program at the closure gate: both Tier-1 systems fully verified
- *  against the 5-point evidence standard, the legacy signing key retired AND
- *  confirmed (an unconfirmed one is a standing TNFL liability — the tool's
- *  own isTnflLiability logic renders that warning), closure signed off,
- *  BAU owners named. */
+/** Fictional completed example retained for full-game and other-sector exercises.
+ *  The executive bank overview instead uses planned requirements. */
 function migrationVerificationState(sector: DemoSector): VerifyState {
   const orgLabel = ORG[sector]
   const primarySystem =
@@ -792,7 +792,15 @@ export const REAL_DOC_GENERATORS: Partial<
   // decommissioning log, closure record). Was hand-typed in demoDocs before.
   'migration-verification': (sector) => ({
     title: 'Migration Verification & Program Closure',
-    data: buildMigrationVerification(migrationVerificationState(sector)),
+    data:
+      (isExecutiveBankOverview(sector)
+        ? ''
+        : 'Fictional completed teaching example; not a deployment record.\n\n') +
+      buildMigrationVerification(
+        isExecutiveBankOverview(sector)
+          ? plannedVerificationSample()
+          : migrationVerificationState(sector)
+      ),
   }),
   // Batch 1 (07192026) — the three types that previously fell all the way
   // through to the typed PLACEHOLDER stub (no authored demo content existed).
@@ -818,9 +826,12 @@ export const REAL_DOC_GENERATORS: Partial<
   // risk-register: the sample IS the tool's own illustrative default entries
   // (DEFAULT_RISK_ENTRIES, shared single source with the store) — zero
   // invented data, rendered by the tool's own builder.
-  'risk-register': () => ({
+  'risk-register': (sector) => ({
     title: 'Quantum Risk Register',
-    data: buildRiskRegisterMarkdown(DEFAULT_RISK_ENTRIES),
+    data:
+      buildRiskRegisterMarkdown(
+        isExecutiveBankOverview(sector) ? bankRiskEntries() : DEFAULT_RISK_ENTRIES
+      ) + (isExecutiveBankOverview(sector) ? `\n\n${BANK_CASE_NOTE}` : ''),
   }),
   // kpi-dashboard: real buildDimensions pipeline over the same demo exec-data
   // as kpi-tracker (catalog/threat aggregates live; assessment-gated rows
@@ -835,33 +846,25 @@ export const REAL_DOC_GENERATORS: Partial<
     }
     return {
       title: 'PQC Governance KPI Dashboard',
-      data: buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
+      data:
+        (isExecutiveBankOverview(sector)
+          ? "# Illustrative future board reporting pack\n\nSample indicators for discussing post-approval reporting. These figures are not the organisation's current delivery progress, measured readiness or approved targets.\n\n"
+          : '') + buildKpiDashboardMarkdown(dimensions, 'executive', scores, {}),
     }
   },
-  // migration-roadmap: the tool's own teaching-default milestone set (the
-  // framework's governance-spine + two-track shape), with the external
-  // deadline rows sourced from the timeline-generated facts — the same single
-  // source Assess/Report/Sim already read — so a CSV deadline change
-  // propagates here without a code edit.
-  'migration-roadmap': () => ({
+  // Reuse the roadmap builder without assigning legal deadlines from sector alone.
+  'migration-roadmap': (sector) => ({
     title: 'PQC Migration Roadmap (Two-Track)',
-    data: buildRoadmapMarkdown(
-      [
-        {
-          label: 'US key-establishment migration deadline (EO, June 2026)',
-          year: TIMELINE_COUNTRY_DEADLINE_YEAR.US,
-          source: 'United States',
-        },
-        {
-          label: 'EU full PQC transition',
-          year: TIMELINE_COUNTRY_DEADLINE_YEAR.EU,
-          source: 'European Union',
-        },
-      ],
-      ROADMAP_DEFAULT_MILESTONES,
-      []
-    ),
+    data:
+      buildRoadmapMarkdown(
+        [],
+        isExecutiveBankOverview(sector) ? bankRoadmapMilestones() : ROADMAP_DEFAULT_MILESTONES,
+        []
+      ) +
+      '\n\nRegulatory applicability: sector and country alone do not establish an obligation. Assess jurisdiction, system scope and contracts separately; reference dates are not automatically binding programme deadlines.' +
+      (isExecutiveBankOverview(sector) ? `\n\n${BANK_CASE_NOTE}` : ''),
   }),
+
   // Batch 3 (07192026) — remaining risk/vendor/strategy docs.
   //
   // crqc-scenario: the tool's own algorithm tables and compliance-deadline

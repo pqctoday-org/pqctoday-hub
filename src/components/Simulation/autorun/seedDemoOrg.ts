@@ -14,6 +14,7 @@ import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/useAssessmentEngine'
+import { loadSampleOrganisation } from '../sampleOrganisation'
 
 /** The scenario the auto-run demonstrates — used both to seed and (Part 2) to scope
  *  each embedded page. */
@@ -35,32 +36,19 @@ const DEMO_PRODUCTS = [
 ]
 
 export function seedDemoOrg(): void {
-  // 1) Assessment — populate the FORM (so completeness checks pass) and the RESULT.
-  const f = useAssessmentFormStore.getState()
-  if (f.assessmentStatus !== 'complete') {
-    f.setAssessmentMode('comprehensive')
-    f.setIndustry(DEMO_SCENARIO.industry)
-    f.setCountry(DEMO_SCENARIO.country)
-    for (const a of ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256']) f.toggleCrypto(a)
-    for (const s of ['critical', 'high']) f.toggleDataSensitivity(s)
-    for (const c of ['PCI DSS', 'GDPR']) f.toggleCompliance(c)
-    f.setMigrationStatus('not-started')
-    for (const u of ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'])
-      f.toggleCryptoUseCase(u)
-    for (const r of ['10-25y', 'indefinite']) f.toggleDataRetention(r)
-    f.toggleCredentialLifetime('10-25y')
-    f.setSystemCount('200-plus')
-    f.setTeamSize('11-50')
-    f.setCryptoAgility('partially-abstracted')
-    for (const i of ['Cloud Storage', 'HSM / Hardware security modules']) f.toggleInfrastructure(i)
-    f.setVendorDependency('mixed')
-    f.setTimelinePressure('within-2-3y')
-    f.setAssessmentStatus('complete')
-    const input = useAssessmentFormStore.getState().getInput()
+  // Preserve both completed assessments and unfinished questionnaire answers.
+  const form = useAssessmentFormStore.getState()
+  if (!useAssessmentResultStore.getState().lastResult) {
+    const input = form.assessmentStatus === 'complete' ? form.getInput() : null
     if (input) {
       const result = computeAssessment(input)
-      useAssessmentResultStore.getState().setResult(result)
-      useAssessmentResultStore.getState().markComplete(result)
+      useAssessmentResultStore.setState({
+        lastResult: result,
+        completedAt: new Date().toISOString(),
+        sourceInputKey: JSON.stringify(input),
+      })
+    } else {
+      loadSampleOrganisation()
     }
   }
 

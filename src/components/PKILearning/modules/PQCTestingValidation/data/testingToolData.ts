@@ -38,7 +38,7 @@ export const TESTING_TOOLS: TestingTool[] = [
     strengths: [
       'Zero packet injection — production-safe',
       'NCCoE PQC migration project collaborator',
-      'First EU vendor with all 3 NIST PQC CAVP certifications',
+      'First EU vendor with all 3 NIST PQC CAVP certifications (not sourced in the Library)',
       '100+ IT/OT protocols',
       'Hardened appliance with PQC-secured management',
     ],

@@ -430,9 +430,10 @@ const PqcKeyTypeMapping: React.FC = () => {
         <div className="flex items-start gap-2">
           <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-foreground/80">
-            <strong>Buffer sizing alert:</strong> ML-KEM-1024 secret keys (3,168 B) are 99x larger
-            than ECDH P-256 (32 B). KMIP message buffers, TLS record sizes, and database columns
-            must be pre-configured for PQC payloads before migration.
+            <strong>Buffer sizing alert:</strong> ML-KEM-1024 secret keys (3,168 B, FIPS 203) are
+            99x larger than ECDH P-256 secret keys (32 B). This module&apos;s advice: KMIP message
+            buffers, TLS record sizes, and database columns should be sized for PQC payloads before
+            migration.
           </p>
         </div>
       </div>

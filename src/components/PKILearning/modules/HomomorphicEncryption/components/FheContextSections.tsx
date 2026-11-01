@@ -86,13 +86,10 @@ export const FheFixedPointAndFit: React.FC = () => (
       <h3 className="text-sm font-bold text-foreground mb-1">Fixed-point, not floating-point</h3>
       <p className="text-xs text-muted-foreground">
         CKKS was built as &ldquo;a homomorphic encryption scheme for approximate arithmetic&rdquo;
-        (Cheon, Kim, Kim &amp; Song 2017). A real value is multiplied by a scale, a power of two
-        (2^scale), and rounded to an integer before encryption, so every value carries a fixed
-        number of fractional bits; there is no exponent as in floating point. Lattigo describes its
-        CKKS package as providing &ldquo;fixed-point approximate arithmetic over the complex
-        numbers&rdquo;. Values must stay within the range the parameters allow, and the last bits of
-        every result are noise. TFHE, BFV and BGV compute exactly on integers (TFHE also on
-        booleans), with no approximation as long as the noise stays within bounds.
+        (Cheon, Kim, Kim &amp; Song 2017). A real value is multiplied by a scaling factor and
+        rounded to an integer polynomial before encryption, which preserves its precision despite
+        the rounding. Values must stay small compared with the ciphertext modulus, and the last bits
+        of every result carry error.
       </p>
     </div>
     <div>
@@ -180,7 +177,7 @@ export const FheUseCasesSection: React.FC = () => (
         small models and takes hours (logistic regression on 422,108 samples in about 17 hours, Han
         et al. 2019). TFHE-based tools work on small integers: Concrete ML&apos;s documentation
         states that &ldquo;FHE requires all inputs, constants, and intermediate values to be
-        integers of maximum 16 bits&rdquo;.
+        integers of maximum 16 bits&rdquo; (not sourced in the Library).
       </p>
     </div>
 
@@ -656,8 +653,8 @@ export const FheStandardsSection: React.FC = () => (
         </li>
         <li>
           <strong>Cannot:</strong> that FHE is CNSA 2.0-approved (NSA lists homomorphic encryption
-          among uses with no generally approved solutions) or Common Criteria-certified (no
-          protection profile or certified product covers it).
+          among uses with no generally approved solutions) or Common Criteria-certified (not sourced
+          in the Library).
         </li>
         <li>
           <strong>Cannot yet:</strong> conformance to a published ISO/IEC FHE standard; ISO/IEC
@@ -669,7 +666,8 @@ export const FheStandardsSection: React.FC = () => (
           anonymisation guidelines (02/2026, paragraph 91) say &ldquo;encryption is, by its very
           nature, intended to be reversible and differs from anonymisation&rdquo;, and that it is
           important to assess whether those with access to the data could still decrypt it
-          &ldquo;with means reasonably likely to be used&rdquo;, even without the key today.
+          &ldquo;with means reasonably likely to be used&rdquo;, even without the key today (not
+          sourced in the Library).
         </li>
       </ul>
       <p className="text-xs text-muted-foreground">

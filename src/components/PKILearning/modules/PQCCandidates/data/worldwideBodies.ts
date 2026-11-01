@@ -48,7 +48,7 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     stage: 'finalists',
     role: 'Chinese Association for Cryptologic Research national PQC contest, complemented by OSCCA standards work.',
     detail:
-      'CACR, a research organisation rather than a standardisation body, ran a PQC competition starting 2018 across PKE/KEM and signature tracks to encourage new designs rather than to standardise new schemes.',
+      'CACR, a research organisation rather than a standardisation body, ran a competition beginning in 2018 that covered both symmetric and asymmetric algorithms, aiming to prompt new post-quantum designs rather than to standardise new schemes.',
     url: 'https://www.cacrnet.org.cn/',
     nistRelation: 'parallel',
   },
@@ -98,7 +98,7 @@ export const WORLDWIDE_BODIES: StandardsBody[] = [
     stage: 'evaluation',
     role: 'European telecom-focused technical reports and migration guidance.',
     detail:
-      "ETSI TC CYBER's Quantum-Safe Cryptography WG publishes technical reports on PQC migration, while ETSI TS 119 312 specifies cryptographic suites for creating and validating digital signatures, electronic timestamps, and related certificates.",
+      "ETSI TC CYBER's Quantum-Safe Cryptography WG publishes technical reports on PQC migration, while ETSI TS 119 312 lists cryptographic suites for creating and validating digital signatures, electronic timestamps, and related certificates.",
     url: 'https://www.etsi.org/technologies/quantum-safe-cryptography',
     nistRelation: 'overlay',
   },

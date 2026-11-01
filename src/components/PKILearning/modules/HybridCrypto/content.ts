@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
-  version: '1.0.2',
+  version: '1.3.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-01',
 
   standards: [
     getStandard('FIPS 203'),
@@ -41,7 +41,7 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-56A'),
     getStandard('RFC 5869'),
     getStandard('RFC 8017'),
-    getStandard('RFC 9180'), // HPKE base spec — see the HPKE section + Step 7 workshop
+    getStandard('RFC 9180'), // HPKE base spec — see the HPKE section + Step 3 workshop
     getStandard('draft-ietf-hpke-pq'), // PQ/PQ-T hybrid HPKE KEM IDs (MLKEM768-X25519/P256, MLKEM1024-P384)
     getStandard('draft-ietf-cose-hpke'), // HPKE use case: COSE
     getStandard('draft-ietf-jose-hpke-encrypt'), // HPKE use case: JOSE
@@ -92,6 +92,76 @@ export const content: ModuleContent = {
     getStandard('eprint-2025-2059'), // pt-hybrid-sigs: 2059
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('RFC-6928'), // m-hybrid-crypto: wave 4c
+    // 2026-11-01: "Hybrid or Pure PQC: The Risks" and "Who Recommends Hybrid" sections
+    getStandard('ANSSI-PQC-FAQ-2025'),
+    getStandard('BSI TR-02102-1'),
+    getStandard('BSI-Hinweise-zu-aktuellen-Entwicklungen-um-Classic-McEliece'),
+    getStandard('NL-PQC-Migration-Handbook-2024'),
+    getStandard('https-nukib-gov-cz-download-publications-en-Annex-20to-20the'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('UK-NCSC-PQC-Whitepaper-2024'),
+    getStandard('CA-CCCS-ITSP-40-111'),
+    getStandard('EUCC v2.0 ACM'),
+    getStandard('ECCG-ACM-v3-Draft-2026'), // draft, not yet applicable
+    getStandard('ENISA-Hybridization-Standardisation-Status'),
+    getStandard('ETSI TS 103 744'),
+    getStandard('ETSI-TR-103-966'),
+    getStandard('RFC-10024'),
+    getStandard('draft-ietf-tls-mlkem-07'),
+    getStandard('GSMA PQ.03 PQC Guidelines'),
+    getStandard('Cloudflare-PostQuantum-Roadmap-2026'),
+    getStandard('Bernstein-MLDSA-Bugs-2026'),
+    getStandard('Analysis-of-Hybrid-Key-Establishment-and-Standalone-ML-KEM-i'),
+    // 2026-11-01: "Combiners Compared, and X-Wing" box and the Step 2 combiner panel
+    getStandard('draft-connolly-cfrg-xwing-kem-11'),
+    getStandard('draft-irtf-cfrg-concrete-hybrid-kems-04'),
+    getStandard('Hybrid-PQ-T-Key-Encapsulation-Mechanisms'),
+    // 2026-11-01: "Hybrid in Crypto APIs & HSMs" section, support matrix and PKCS#11 v3.3 box
+    getStandard('OpenJDK-JEP-496-ML-KEM'),
+    getStandard('OpenJDK-JEP-497-ML-DSA'),
+    getStandard('OpenJDK-JEP-527-PQ-Hybrid-TLS13'),
+    getStandard('OpenJDK-JEP-452-KEM-API'),
+    getStandard('OpenJDK-JEP-510-KDF-API'),
+    getStandard('Oracle-JDK-25-0-5-Release-Notes'),
+    getStandard('Oracle-JDK-27-Release-Notes'),
+    getStandard('JDK-27-Standard-Algorithm-Names'),
+    getStandard('BouncyCastle-Java-Release-Notes'),
+    getStandard('BouncyCastle-Java-1-86-Release'),
+    getStandard('BouncyCastle-Java-Specifications'),
+    getStandard('Microsoft-PQC-APIs-GA-2025'),
+    getStandard('Microsoft-Windows-PQ-Composite-Features-2026'),
+    getStandard('Microsoft-Windows-TLS13-PQC-FAQ-2026'),
+    getStandard('Microsoft-Schannel-Kestrel-PQC-GA-2026'),
+    getStandard('Microsoft-DotNet-PQC-2025'),
+    getStandard('Microsoft-DotNet-11-Libraries'),
+    getStandard('Microsoft-DotNet-11-CompositeMLDsa-Windows-Native'),
+    getStandard('Microsoft-TLS-Supported-Groups-Win11'),
+    getStandard('Microsoft-CNG-Algorithm-Identifiers'),
+    getStandard('Microsoft-ADCS-ML-DSA-Overview'),
+    getStandard('Microsoft-PQC-Windows-Insiders-Linux-2025'),
+    getStandard('Microsoft-SymCrypt-Changelog'),
+    getStandard('Microsoft-KB5099536'),
+    getStandard('OpenSSL-4-1-0-Release'),
+    getStandard('OpenSSL-3-6-Release-Notes'),
+    getStandard('OpenSSL-SSL-CTX-set1-curves-3-5'),
+    getStandard('Go-1-24-Release-Notes'),
+    getStandard('Go-1-26-Release-Notes'),
+    getStandard('Go-1-27-Release-Notes'),
+    getStandard('Go-crypto-hpke'),
+    getStandard('BoringSSL-xwing-h'),
+    getStandard('AWS-LC-v5-12-0-Release'),
+    getStandard('rustls-0-23-46-Release'),
+    getStandard('rustls-0-23-27-Release'),
+    getStandard('NSS-3-132-Release-Notes'),
+    getStandard('NSS-3-118-Release-Notes'),
+    getStandard('NSS-3-105-Release-Notes'),
+    getStandard('Firefox-132-Release-Notes'),
+    getStandard('wolfSSL-5-9-4-Release'),
+    getStandard('liboqs-0-16-0-Release'),
+    getStandard('oqs-provider-0-12-0-Release'),
+    getStandard('OASIS-PKCS11-TC-v33-Working-Header'),
+    getStandard('OASIS-PKCS11-TC-v33-Composite-KEM-Draft'),
+    getStandard('OASIS-PKCS11-TC-v33-Composite-Sig-Draft'),
   ],
 
   algorithms: [

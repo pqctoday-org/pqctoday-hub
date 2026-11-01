@@ -182,7 +182,7 @@ export const TABLE_TERM_KEY: TableTerm[] = [
     sources: [
       {
         kind: 'text',
-        text: 'Arrangement on the Recognition of Common Criteria Certificates, 2 July 2014, Annex A (glossary)',
+        text: 'Arrangement on the Recognition of Common Criteria Certificates, 2 July 2014, Annex A (glossary) (not sourced in the Library)',
       },
       { kind: 'library', ref: CORE_SOURCES.eucc, label: 'Regulation (EU) 2024/482 (EUCC)' },
     ],
@@ -357,7 +357,7 @@ export const SHORTCUTS: Shortcut[] = [
     wrong:
       'EUCC is simply the EU version of a CCRA certificate, recognized identically everywhere.',
     right:
-      'EUCC is an EU legal scheme with its own rules and levels. EUCC certificates may carry the CCRA mark if they also meet the requirements of the CCRA (CCMC-011, March 2025), but recognition depends on the scheme and the buyer.',
+      'EUCC is an EU legal scheme with its own rules and levels. EUCC certificates may carry the CCRA mark if they also meet the requirements of the CCRA (CCMC-011, March 2025), and the document proposes that all CCRA participants then mutually recognise certificates bearing that mark.',
   },
   {
     wrong:
@@ -623,7 +623,7 @@ export const CUSTOMER_APPLICABILITY: Record<AnchorCustomerId, CustomerApplicabil
       {
         scheme: 'Security IC Platform PP',
         status: 'does-not-answer',
-        note: 'BSI-CC-PP-0084-V2-2026 covers IC development and manufacturing (phases 2 and 3 of the Composite Product life cycle).',
+        note: 'BSI-CC-PP-0084-V2-2026 covers IC development and manufacturing (phases 2 and 3 of the Composite Product life cycle); the evaluation of the IC can optionally also include phase 4.',
       },
       {
         scheme: 'PCI PTS HSM',

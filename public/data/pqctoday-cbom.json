@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:3fea1beb-7803-425b-a088-63af71a91e7d",
+  "serialNumber": "urn:uuid:6f233f26-99ac-454e-bf10-34437f48337b",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-30T00:00:00.000Z",
+    "timestamp": "2026-11-01T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -2310,9 +2310,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "2e8c6279b141c815",
+      "bom-ref": "6ac644e940fd2de6",
       "name": "LibreSSL",
-      "version": "4.3.2",
+      "version": "4.4.0",
       "purl": "pkg:github/libressl/portable",
       "cpe": "cpe:2.3:a:openbsd:libressl:2.1.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
@@ -2783,9 +2783,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "dd19be4383ea9901",
+      "bom-ref": "c23a7fb6321f1f40",
       "name": "oqs-provider",
-      "version": "0.11.0",
+      "version": "0.12.0",
       "purl": "pkg:github/open-quantum-safe/oqs-provider",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -3392,9 +3392,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "648d6a6122c9ffb9",
+      "bom-ref": "dce9841441c7b2ce",
       "name": "Cloudflare CIRCL",
-      "version": "v1.6.3",
+      "version": "v1.6.5",
       "cpe": "cpe:2.3:a:cloudflare:circl:1.3.3:*:*:*:*:go:*:*",
       "manufacturer": {
         "name": "Cloudflare Inc."
@@ -6641,9 +6641,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d8562902c5f194ab",
+      "bom-ref": "8b1508cba2fbf72b",
       "name": "NSS (Mozilla)",
-      "version": "3.130",
+      "version": "3.132",
       "cpe": "cpe:2.3:a:mozilla:nss:-:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -24223,9 +24223,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "d187df81635d4266",
+      "bom-ref": "5e95344daf003a1b",
       "name": "Mozilla NSS",
-      "version": "3.119",
+      "version": "3.132",
       "cpe": "cpe:2.3:a:mozilla:nss:3.20.1:*:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",

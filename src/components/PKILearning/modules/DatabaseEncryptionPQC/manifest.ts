@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'database-encryption-pqc',
-  contentVersion: 12,
+  contentVersion: 13,
   lm_id: 'LM-023',
   title: 'Database Encryption & PQC',
   description:

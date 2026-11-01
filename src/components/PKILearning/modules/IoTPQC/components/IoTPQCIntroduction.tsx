@@ -341,10 +341,10 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           unchangeable bootloader code in ROM use post-quantum secure signature schemes such as
           hash-based signatures, because RSA and ECC signatures may become vulnerable to
           quantum-accelerated key extraction; a bootloader author has to weigh the product&apos;s
-          service lifetime against that risk. NIST IR 8547 (final, October 2026) makes the same
-          point for any device whose signature-checking code cannot be updated after manufacture: it
-          should be designed to require quantum-resistant signatures on the executable code if it
-          may still be in use once cryptanalytically relevant quantum computers exist.
+          service lifetime against that risk. NIST IR 8547 (October 2026) says the same for devices
+          whose signature-verification code cannot be updated after manufacture: it is important to
+          design them to require quantum-resistant signatures on the executable code if they may
+          still be in use once cryptanalytically relevant quantum computers become available.
         </p>
         <p className="text-xs text-muted-foreground">
           The boot-time side — verifying the image before it runs — is in{' '}
@@ -434,8 +434,7 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           Each certificate holds its subject&apos;s public key and its{' '}
           <strong>issuer&apos;s</strong> signature (RFC 5280). In a TLS or DTLS handshake the server
           sends its leaf and intermediate and may omit the trust-anchor root when peers are known to
-          possess it (RFC 8446 §4.4.2), in which case the chain on the wire carries two public keys
-          and two signatures.
+          possess it (RFC 8446 §4.4.2).
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-xs font-bold text-foreground mb-2">
@@ -486,12 +485,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </Callout>
         </div>
         <p>
-          <strong>Device identity</strong> starts at manufacture. An IEEE 802.1AR initial device
-          identifier (IDevID) is a certificate and key installed in the factory; NIST SP 1800-36B
-          shows it anchoring trusted network-layer onboarding. FIDO Device Onboard 1.1 transfers
-          ownership late, with an ownership voucher. EST-coaps (RFC 9148) enrols operational
-          certificates over CoAP. Each of these is a long-lived signature key that PQC must replace
-          — and an IDevID baked into silicon today cannot be swapped later.
+          <strong>Device identity</strong> — and NIST SP 1800-36B describes birth credentials such
+          as the IDevID as permanent.
         </p>
       </Section>
 

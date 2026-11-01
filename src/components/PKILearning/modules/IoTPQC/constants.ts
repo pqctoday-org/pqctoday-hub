@@ -580,7 +580,8 @@ export const IOT_PROTOCOLS: IoTProtocol[] = [
   {
     name: 'CoAP + DTLS 1.3 (RFC 7252, RFC 9147, RFC 7925 profile)',
     layer: 'UDP over 6LoWPAN / IPv6',
-    sizeFact: 'IPv6 minimum MTU 1,280 B; an IEEE 802.15.4 frame is 127 B.',
+    sizeFact:
+      'IPv6 minimum MTU 1,280 B; low-power radios such as IEEE 802.15.4 only support small frame sizes, e.g., 127 B.',
     publicKeyCrypto: 'ECDHE + ECDSA certificates or raw public keys (RFC 7250)',
     pqcPath: 'Hybrid or ML-KEM key share and ML-DSA certificates — every flight fragments.',
     status: 'fragment',
@@ -631,7 +632,7 @@ export const IOT_PROTOCOLS: IoTProtocol[] = [
     publicKeyCrypto:
       'ECDH P-256 provisioning with OOB authentication; 1.1 adds certificate-based provisioning (X.509 device certificates)',
     pqcPath:
-      'No PQC provisioning algorithm is defined; a FIPS 203 key would need tens of segments.',
+      'No PQC provisioning algorithm is defined (not sourced in the Library); a FIPS 203 key would need tens of segments.',
     status: 'spec-change',
   },
   {

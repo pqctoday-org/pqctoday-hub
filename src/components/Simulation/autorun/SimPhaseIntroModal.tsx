@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only AND CC-BY-4.0
 /**
  * SimPhaseIntroModal — the "what to expect" card shown the FIRST time each phase is
- * focused in the auto-run. All content is the verbatim framework summary / gate /
- * activities from `frameworkPhaseIntros.generated.ts` (extracted from
- * framework-2.1.json, the SoT) — nothing is authored here.
+ * focused in the auto-run. Full journeys use the framework summary / gate /
+ * activities. Executive overviews lead with a decision lens, with the framework
+ * context available separately.
  */
 import { useEffect, useRef } from 'react'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
@@ -17,6 +17,7 @@ export function SimPhaseIntroModal({
   onBegin,
   onDismiss,
   onStop,
+  executiveSummary,
 }: {
   phase: PhaseId
   onBegin: () => void
@@ -24,6 +25,7 @@ export function SimPhaseIntroModal({
   onDismiss: () => void
   /** "Stop play" — end the auto-run. */
   onStop: () => void
+  executiveSummary?: string
 }) {
   // eslint-disable-next-line security/detect-object-injection
   const intro = FRAMEWORK_PHASE_INTROS[phase]
@@ -79,9 +81,26 @@ export function SimPhaseIntroModal({
         </div>
 
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-4">
-          <p className="text-[13.5px] leading-relaxed text-muted-foreground">{intro.summary}</p>
+          {executiveSummary && (
+            <div className="font-mono text-[11px] font-bold uppercase tracking-wide text-primary">
+              Executive decision
+            </div>
+          )}
+          <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+            {executiveSummary ?? intro.summary}
+          </p>
 
-          {intro.gate && (
+          {executiveSummary && (
+            <details className="rounded-lg border border-border p-3 text-[12.5px] text-muted-foreground">
+              <summary className="cursor-pointer font-semibold">
+                Framework context and exit gate
+              </summary>
+              <p className="mt-2">{intro.summary}</p>
+              {intro.gate && <p className="mt-2">{intro.gate}</p>}
+            </details>
+          )}
+
+          {!executiveSummary && intro.gate && (
             <div className="rounded-lg border border-border bg-muted/40 p-3">
               <div className="font-mono text-[11px] font-bold uppercase tracking-wide text-primary">
                 Exit gate
@@ -90,7 +109,7 @@ export function SimPhaseIntroModal({
             </div>
           )}
 
-          {intro.activities.length > 0 && (
+          {!executiveSummary && intro.activities.length > 0 && (
             <div>
               <div className="font-mono text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                 You&rsquo;ll work through ({intro.activities.length})

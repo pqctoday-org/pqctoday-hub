@@ -32,7 +32,7 @@ The workshop has 4 interactive steps:
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards — final, October 2026)
 - NSM-10 (National Security Memorandum on Promoting U.S. Leadership in Quantum Computing, May 2022)
 - EO 14306 (Presidential order sustaining PQC migration, June 2025)
-- EO 14412 (Securing the Nation Against Advanced Cryptographic Attacks, signed 22 June 2026) — PQC transition for HVAs and high impact systems: key establishment by December 31, 2030
+- EO 14412 (Securing the Nation Against Advanced Cryptographic Attacks, signed 22 June 2026) — PQC transition for HVAs and high impact systems (excluding National Security Systems): key establishment by December 31, 2030
 - OMB M-26-15 (Execution of the Migration to Post-Quantum Cryptography, 24 June 2026) — implementing guidance for EO 14412
 - EU Coordinated Implementation Roadmap for PQC (v1.1, June 2025)
 - DORA (EU Digital Operational Resilience Act, enforcement January 2025)

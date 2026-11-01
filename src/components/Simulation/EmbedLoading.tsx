@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function EmbedLoading({ label = 'Loading' }: { label?: string }) {
   return (
-    <div className="sim-fade-in flex flex-col items-center gap-4 p-8">
+    <div data-sim-embed-loading className="sim-fade-in flex flex-col items-center gap-4 p-8">
       <div
         className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary"
         aria-hidden="true"

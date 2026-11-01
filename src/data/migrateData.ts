@@ -3,6 +3,7 @@ import type { SoftwareItem } from '../types/MigrateTypes'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV } from './csvUtils'
 import { vendorMap } from './vendorData'
+import { parseHybridKemSupport, parseHybridSigSupport } from './hybridSupport'
 
 // Glob import to find all matching CSV files
 const modules = import.meta.glob('./pqc_product_catalog_*.csv', {
@@ -67,6 +68,10 @@ interface RawSoftwareItem {
   github_contribution_url?: string
   confidence_score?: string
   cswp39_tags?: string
+  /** 'none' or '+'-joined tokens (tls-default, tls-optin, api, api-experimental); blank = not assessed. */
+  hybrid_kem_support?: string
+  /** 'none' | 'api' | 'api-experimental'; blank = not assessed. */
+  hybrid_sig_support?: string
   status?: string
   deprecated_at?: string
   deprecated_reason?: string
@@ -280,6 +285,8 @@ const {
             .map((s) => s.trim())
             .filter(Boolean)
         : undefined,
+      hybridKemSupport: parseHybridKemSupport(row.hybrid_kem_support),
+      hybridSigSupport: parseHybridSigSupport(row.hybrid_sig_support),
     }
   },
   true // withPrevious for status badges

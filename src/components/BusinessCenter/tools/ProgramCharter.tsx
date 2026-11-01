@@ -14,7 +14,12 @@
  * Phase-0 tools.
  */
 import React, { useMemo, useState } from 'react'
-import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
+import { useSimulationStore } from '@/store/useSimulationStore'
+import { DISCOVERY_CHARTER } from '@/components/Simulation/autorun/discoveryCharter'
+import {
+  isAutoRunFillActive,
+  isExecutiveBankOverview,
+} from '@/components/Simulation/autorun/autoRunFill'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { ScrollText, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -263,6 +268,7 @@ export const ProgramCharter: React.FC = () => {
           'Phase-0 gate passed; board KPI pack baselined (Coverage, Trust, Inventory, Vendors, Agility) with Year-1 targets; CBOM v1 at ≥70% Tier-1 coverage; two hybrid pilots (TLS, VPN) live.',
         escalationTriggers:
           'Escalate to SteerCo/Board on: a material change in CRQC timeline estimates; the program running >6 months behind the regulatory buffer; a confirmed vulnerability in a deployed PQC algorithm; a Tier-1 vendor abandoning PQC without an alternative.',
+        ...(isExecutiveBankOverview(useSimulationStore.getState().sector) ? DISCOVERY_CHARTER : {}),
       }
     }
     // Restore the user's last-saved charter so it round-trips across visits.

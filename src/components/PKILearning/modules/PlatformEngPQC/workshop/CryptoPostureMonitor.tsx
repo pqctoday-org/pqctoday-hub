@@ -546,9 +546,12 @@ const ACMETab: React.FC = () => {
           ))}
         </div>
         <p className="text-[10px] text-muted-foreground mt-3">
-          The ACME Lifecycle is fully PQC-compatible by 2027 when Let&apos;s Encrypt production ACME
-          supports ML-DSA CSRs. Until then, use internal CAs (Vault PKI, EJBCA) for ML-DSA
-          certificate issuance in production environments.
+          Let&apos;s Encrypt is targeting late 2026 for a staging environment that issues Merkle
+          Tree Certificates (MTCs) and 2027 for a production-ready environment, and it is tracking
+          ML-DSA in X.509 (RFC 9881) and TLS. Its post says the transition will take time. This
+          module&apos;s advice: until post-quantum certificates are available from Let&apos;s
+          Encrypt, use internal CAs (Vault PKI, EJBCA) for ML-DSA certificate issuance in production
+          environments.
         </p>
       </div>
     </div>

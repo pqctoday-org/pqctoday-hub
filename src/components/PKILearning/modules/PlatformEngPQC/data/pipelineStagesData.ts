@@ -130,7 +130,7 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         pqcReplacement: 'ML-DSA-65 (once the signing tool supports it)',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow:
-          '10–25 years (images remain in production and must be verifiable for compliance)',
+          "10–25 years (images remain in production and must be verifiable for compliance) (this module's planning assumption, not a measurement)",
         notes:
           'The most critical asset in the pipeline. A compromised or quantum-broken image signing key allows supply chain attacks: forged images accepted as authentic.',
       },

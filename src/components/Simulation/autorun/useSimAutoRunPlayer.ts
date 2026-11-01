@@ -10,6 +10,7 @@
  * Controls: play / pause / resume / stop / speed / voice / previous + next phase.
  * Scenario (sandbox-lab) steps are excluded by the queue (non-gating).
  */
+import { overviewResumeIndex, overviewRouteSignature } from './overviewResume'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import type { PhaseId } from '@/data/frameworkPhases'
@@ -28,7 +29,7 @@ import {
 import { PHASE_ORDER } from '@/data/frameworkPhases'
 import { SIM_TREES } from '@/simulation'
 import { countryNameFor, getScenario, type SimScenario } from './scenarioConfig'
-import { EXEC_TOUR_REVEAL_TYPES } from './execTourConfig'
+import { EXEC_TOUR_REVEAL_TYPES, executiveSummaryForPhase } from './execTourConfig'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { seedDemoOrg } from './seedDemoOrg'
 import { setAutoRunFill } from './autoRunFill'
@@ -38,7 +39,8 @@ export type AutoRunSpeed = 'slow' | 'normal' | 'fast' | 'turbo'
 
 /** The framework explanation for the phase the board is currently focused on —
  *  drives the persistent (non-modal) banner in the overlay and the first-encounter
- *  modal. Verbatim framework text from FRAMEWORK_PHASE_INTROS. */
+ *  modal. The overview uses an executive decision lens; other modes use the
+ *  framework text from FRAMEWORK_PHASE_INTROS. */
 export interface PhaseFocus {
   phase: PhaseId
   name: string
@@ -151,6 +153,8 @@ export interface SimAutoRunPlayer {
   prevPass: () => void
   /** Jump the playhead to the start of the next maturity pass (shows its intro). */
   nextPass: () => void
+  canNextPass?: boolean
+  canPrevPass?: boolean
 }
 
 // ── Program clock — paced by the SCENARIO's maturity passes (not linear). ──────
@@ -464,14 +468,19 @@ function phaseLabel(phase: PhaseId): string {
 /** The framework explanation for a phase — name + "what to expect" summary + exit
  *  gate, verbatim from FRAMEWORK_PHASE_INTROS (the framework SoT). Used for both the
  *  persistent banner and the first-encounter modal. */
-function phaseFocusFor(phase: PhaseId): PhaseFocus {
+function phaseFocusFor(phase: PhaseId, executive = false): PhaseFocus {
   // eslint-disable-next-line security/detect-object-injection
   const intro = FRAMEWORK_PHASE_INTROS[phase]
   return {
     phase,
     name: intro?.name ?? phaseLabel(phase),
-    summary: intro?.summary ?? '',
-    gate: intro?.gate ?? null,
+    summary:
+      (executive
+        ? executiveSummaryForPhase(phase, useSimulationStore.getState().sector)
+        : undefined) ??
+      intro?.summary ??
+      '',
+    gate: executive ? null : (intro?.gate ?? null),
   }
 }
 
@@ -539,12 +548,13 @@ function scrollBoardToTop(): void {
  *  they all mount in the one `[data-sim-embed-pane]`. Graceful: if nothing is
  *  scrollable it just dwells briefly; it bails WITHOUT advancing if the run is
  *  cancelled or the embed closes. */
-function slowScrollEmbed(opts: {
+export function slowScrollEmbed(opts: {
   speed: AutoRunSpeed
   isCancelled: () => boolean
   onDone: () => void
 }): void {
   const { speed, isCancelled, onDone } = opts
+  if (isCancelled()) return
   const noScrollDwell =
     speed === 'turbo' ? 400 : speed === 'slow' ? 4500 : speed === 'fast' ? 1800 : 3000
   const finish = () => {
@@ -557,6 +567,11 @@ function slowScrollEmbed(opts: {
   const pane = document.querySelector<HTMLElement>('[data-sim-embed-pane]')
   if (!pane) {
     window.setTimeout(finish, noScrollDwell)
+    return
+  }
+  // A loading placeholder is not the resource the learner came to inspect.
+  if (pane.querySelector('[data-sim-embed-loading]')) {
+    window.setTimeout(() => slowScrollEmbed(opts), 100)
     return
   }
   // The real scroller may be the pane or a descendant — pick the most-scrollable.
@@ -608,6 +623,7 @@ export function useSimAutoRunPlayer({
   const [caption, setCaption] = useState('')
   const [label, setLabel] = useState('')
   const [speed, setSpeed] = useState<AutoRunSpeed>('normal')
+  const [chapterStarts, setChapterStarts] = useState<number[]>([])
   const [voiceOn, setVoiceOn] = useState(false) // OFF by default (user preference); toggle in the overlay
   const [voiceName, setVoiceName] = useState('')
   const [passIntro, setPassIntro] = useState<PassIntro | null>(null)
@@ -717,7 +733,7 @@ export function useSimAutoRunPlayer({
       }
       clearTimer()
       seedDemoOrg() // populate the scenario context so embeds have data + a scope to filter by
-      setAutoRunFill(true) // tools opened during the run fill their forms with demo content
+      setAutoRunFill(true, isWalkthroughMode(runMode)) // tools opened during the run fill their forms with demo content
       // The first-run tour must not block the playthrough — but permanently marking it
       // seen here (as this used to do) meant a user entering via ?run=exec or "Play all"
       // never got onboarded, even after the run ended. The consumer (SimulationView)
@@ -745,13 +761,15 @@ export function useSimAutoRunPlayer({
       const remembered = usesSharedResumeIndex(runMode)
         ? useSimulationStore.getState().autoRunResumeIndex
         : 0
-      // Walkthrough and single-phase runs are short, scoped passes — always start
-      // at the top (no resume).
-      const startAt = !usesSharedResumeIndex(runMode)
-        ? 0
-        : remembered > 0 && remembered < q.length
-          ? remembered
-          : 0
+      // Overview bookmarks restart a chapter. Single-phase runs start at the top;
+      // neither mode consumes the full migration journey's index.
+      const startAt = isWalkthroughMode(runMode)
+        ? (overviewResumeIndex(useSimulationStore.getState().overviewBookmark, q, runMode) ?? 0)
+        : !usesSharedResumeIndex(runMode)
+          ? 0
+          : remembered > 0 && remembered < q.length
+            ? remembered
+            : 0
       const scenario = getScenario(useSimulationStore.getState().country)
       scenarioRef.current = scenario
       // Walkthrough freezes the calendar (a tour, not a timed run): an empty clock plan
@@ -760,9 +778,13 @@ export function useSimAutoRunPlayer({
       const starts: { level: number; start: number }[] = []
       q.forEach((it, i) => {
         const last = starts.at(-1)
-        if (!last || last.level !== it.level) starts.push({ level: it.level, start: i })
+        const changed =
+          last &&
+          (isWalkthroughMode(runMode) ? q[last.start].phase !== it.phase : last.level !== it.level)
+        if (!last || changed) starts.push({ level: it.level, start: i })
       })
       passStartsRef.current = starts
+      setChapterStarts(starts.map((chapter) => chapter.start))
       lastLevelRef.current = null
       lastSelPhaseRef.current = null
       // Reset the per-phase Set-guards + arm the one-time scenario-framing card.
@@ -814,6 +836,15 @@ export function useSimAutoRunPlayer({
     // saved playhead.
     if (wasLive && usesSharedResumeIndex(modeRef.current)) {
       useSimulationStore.getState().setAutoRunResumeIndex(indexRef.current)
+    }
+    if (wasLive && isWalkthroughMode(modeRef.current)) {
+      const item = queueRef.current.at(indexRef.current)
+      if (item)
+        useSimulationStore.getState().setOverviewBookmark({
+          mode: modeRef.current as 'walkthrough' | 'walkthrough-deep',
+          phase: item.phase,
+          routeSignature: overviewRouteSignature(queueRef.current),
+        })
     }
     // 09-28 (WP4.2): close the resource the run had open, so a stopped run
     // doesn't leave its pane up (and re-open it on the next load via the
@@ -921,6 +952,11 @@ export function useSimAutoRunPlayer({
 
   const prevPass = useCallback(() => {
     const cur = currentBlock()
+    if (isWalkthroughMode(modeRef.current)) {
+      const previous = passStartsRef.current.at(cur - 1)
+      if (cur > 0 && previous) jumpToIndex(previous.start)
+      return
+    }
     const curStart = passStartsRef.current.at(cur)?.start ?? 0
     const target =
       indexRef.current > curStart ? curStart : (passStartsRef.current.at(cur - 1)?.start ?? 0)
@@ -1114,11 +1150,18 @@ export function useSimAutoRunPlayer({
       if (item.phase !== lastSelPhaseRef.current) {
         lastSelPhaseRef.current = item.phase
         useSimulationStore.getState().setSel(item.phase)
+        if (isWalkthroughMode(modeRef.current)) {
+          useSimulationStore.getState().setOverviewBookmark({
+            mode: modeRef.current as 'walkthrough' | 'walkthrough-deep',
+            phase: item.phase,
+            routeSignature: overviewRouteSignature(q),
+          })
+        }
         setLabel(phaseLabel(item.phase))
         // Per-phase framework explanation: update the persistent banner; on the FIRST
         // encounter of this phase show the modal (Set-guarded) and let its effect speak;
         // on later encounters just narrate the summary (deduped, suppressed on turbo).
-        const focus = phaseFocusFor(item.phase)
+        const focus = phaseFocusFor(item.phase, isWalkthroughMode(modeRef.current))
         setPhaseFocus(focus)
         if (focus.summary) {
           if (!shownPhaseModalRef.current.has(item.phase)) {
@@ -1157,10 +1200,15 @@ export function useSimAutoRunPlayer({
         if (cancelled) return
         // Beat B — complete + return to the board so the OUTPUT shows (sections
         // update, clock advances).
-        completeStepGenuine(item.step)
+        completeStepGenuine(item.step, undefined, {
+          phase: item.phase,
+          reuseArtifact: item.reuseArtifact,
+          inspectOnly: item.inspectOnly,
+        })
         // Walkthrough: when a board document is generated, surface its "what this is" line.
         if (
           isWalkthroughMode(modeRef.current) &&
+          !item.inspectOnly &&
           item.step.kind === 'activity' &&
           item.step.artifactType &&
           EXEC_TOUR_REVEAL_TYPES.includes(item.step.artifactType)
@@ -1193,6 +1241,8 @@ export function useSimAutoRunPlayer({
                   ? `${phaseLabel(item.phase)} complete.`
                   : 'Migration complete — full program maturity reached.'
             )
+            if (isWalkthroughMode(modeRef.current))
+              useSimulationStore.getState().setOverviewBookmark(null)
             setAutoRunFill(false)
             setRunning(false)
             setDone(true)
@@ -1267,6 +1317,11 @@ export function useSimAutoRunPlayer({
     [clearTimer]
   )
 
+  const chapterIndex = chapterStarts.reduce(
+    (current, start, i) => (start <= index ? i : current),
+    0
+  )
+
   return {
     running,
     paused,
@@ -1299,5 +1354,7 @@ export function useSimAutoRunPlayer({
     dismissReveal,
     prevPass,
     nextPass,
+    canNextPass: chapterIndex < chapterStarts.length - 1,
+    canPrevPass: isWalkthroughMode(mode) ? chapterIndex > 0 : index > 0,
   }
 }

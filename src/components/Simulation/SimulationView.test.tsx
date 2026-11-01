@@ -123,11 +123,16 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText('Program status')).toBeInTheDocument()
     expect(screen.getAllByText(/HNDL ·/).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/TNFL ·/).length).toBeGreaterThan(0)
-    // scoreboard + clock + budget still present on the ribbon (Budget secured
+    // scoreboard + clock + game funds still present on the ribbon (Game funds
     // also appears in the mobile fallback summary, hence getAllByText)
     expect(screen.getByText('Gov L2')).toBeInTheDocument()
     expect(screen.getByText('Q-Day')).toBeInTheDocument()
-    expect(screen.getAllByText(/Budget/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Game funds/).length).toBeGreaterThan(0)
+    expect(
+      screen.getByText(/These are not currency and do not represent programme funding/)
+    ).toBeInTheDocument()
+    expect(screen.getByTitle(/Illustrative game funds/)).toHaveTextContent('game units')
+    expect(screen.getByTitle(/Illustrative game funds/)).not.toHaveTextContent('€')
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no
@@ -177,6 +182,14 @@ describe('SimulationView (Mission Control)', () => {
     expect(pill.textContent).toContain('Australia')
     expect(pill.textContent).not.toContain('Germany')
     useAssessmentFormStore.getState().reset()
+  })
+
+  it('shows the delegation button cost in game units', () => {
+    useSimulationStore.setState({ sel: 'p0', seat: 'architect', auto: [] })
+    renderPage()
+    const button = screen.getByRole('button', { name: /^Auto-complete/ })
+    expect(button).toHaveTextContent('game units')
+    expect(button).not.toHaveTextContent('€')
   })
 
   // W2c — honest delegation: a phase auto-completed by the AI team must be flagged

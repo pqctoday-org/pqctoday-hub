@@ -95,7 +95,7 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
       mti: 'SLH-DSA-SHAKE-128s (FIPS 205, stateless)',
       alternates: ['ML-DSA-44'],
       rationale:
-        'Stateless hash-based signatures eliminate state management and avoid the risk of key reuse from improper state handling on constrained devices; ML-DSA-44 (Cat 2) is the lattice fallback.',
+        'Stateless hash-based signatures need no state tracking, so key reuse from mishandled state is not a risk; ML-DSA-44 is a lattice-based alternative.',
     }
   }
 
@@ -174,7 +174,7 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
     mti: 'ML-KEM-768 (FIPS 203, NIST Cat 3)',
     alternates: ['HQC-128 (code-based, NIST alternate)'],
     rationale:
-      'ML-KEM-768 is the broadest-support PQC KEM; HQC-128 is the code-based hedge against a lattice break.',
+      'ML-KEM-768 is the default recommendation for hybrid TLS (paired with X25519); HQC-128 is the code-based hedge against a lattice break.',
   }
 }
 

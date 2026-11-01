@@ -44,7 +44,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 ### BYOK — Bring Your Own Key (65% PQC Readiness)
 
-- Customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
+- In this module's reading, customer generates key in on-prem HSM, uploads wrapped CMK to cloud KMS
 - ML-KEM-1024 wrapping for import is a design target: AWS KMS creates ML-KEM keys, but its import wrapping keys are RSA only; check Azure and Google Cloud per service
 - Cloud KMS briefly holds unwrapped CMK in HSM memory — residual exposure
 - Satisfies most regulatory BYOK requirements
@@ -69,9 +69,9 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 | Oracle CSQE                 | ✓        | ✗       | ✗      | No date cited             |
 | pg_tde (Percona)            | ✗        | ✗       | ✗      | Not applicable (TDE only) |
 
-**MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries. DEK wrapping uses RSA-OAEP — ML-KEM-1024 wrapping is this module's projection, not a MongoDB statement.
+**MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries (not sourced in the Library). DEK wrapping uses RSA-OAEP — ML-KEM-1024 wrapping is this module's projection, not a MongoDB statement.
 
-**SQL Server Always Encrypted** with secure enclaves (VBS/SGX) supports range queries inside the enclave. CMK wrapping uses RSA-OAEP (RSA-2048/4096).
+**SQL Server Always Encrypted** with secure enclaves (VBS/SGX) supports range queries inside the enclave. CMK wrapping uses RSA-OAEP (RSA-2048/4096) (not sourced in the Library).
 
 **PQC challenge**: Range-query encryption (structured encryption range schemes; MongoDB uses fully randomized ciphertext, not order-preserving encryption) is not yet standardized for PQC. Equality tokens (HMAC-SHA-256) are already quantum-safe.
 

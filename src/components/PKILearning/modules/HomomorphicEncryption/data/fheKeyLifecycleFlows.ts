@@ -390,7 +390,7 @@ export const KEY_LIFECYCLE_FLOWS: FheFlow[] = [
       'Each token makes its own share, streams its share of the key set, and returns a decryption share under its own approval, budget and audit.',
     staysSecret:
       'Each token’s share. The secret is the sum of the two shares and exists nowhere. One share alone decrypts nothing.',
-    watchOut: `It does not stop a crafted request sent to one token (it returns that token’s whole share), so the two approvals must be independent. Flooding for third parties still fails at the default parameters. More than two parties (t-of-N) is not recommended: key-recovery attacks are reported on that scheme (IACR ePrint 2026/031, a preprint). No token or board run of shared decryption exists yet.`,
+    watchOut: `It does not stop a crafted request sent to one token (it returns that token’s whole share), so the two approvals must be independent. Flooding for third parties still fails at the default parameters. More than two parties (t-of-N) is not recommended: key-recovery attacks are reported on that scheme (IACR ePrint 2026/031, a preprint) (not sourced in the Library). No token or board run of shared decryption exists yet.`,
     measured: [
       { label: 'threshold study (Mac, Lattigo prototype)', of: 'threshold' },
       { label: 'one-party baseline', of: 'sizes' },

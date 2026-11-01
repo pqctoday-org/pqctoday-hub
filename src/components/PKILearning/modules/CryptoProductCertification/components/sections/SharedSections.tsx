@@ -203,8 +203,8 @@ export const PqcImpact = () => (
         Executive Order 14412 has <strong>not</strong> changed the CMVP: §6(b) gives NIST 180 days
         to revise the program’s processes, which falls around 19 December 2026 (
         <SourceLink source={SHARED_SOURCES.eo14412} label="EO 14412" />
-        ). And no 2025–2026 draft revises FIPS 140-3 or its Level 3 requirements. The standard is
-        unchanged; the validation process is under an order to speed up.
+        The standard itself is unchanged: NIST's CMVP page lists FIPS 140-3 as published in March
+        2019, and the order concerns the validation process, which it directs NIST to speed up.
       </p>
     </Callout>
 
@@ -702,13 +702,10 @@ export const AgilityLatency = () => (
 
     <H3>The honest conclusion</H3>
     <p>
-      Recent improvements reduce avoidable friction — structured data, repeated variants, limited
-      fixes, new operational environments, reusable evidence. They do not yet give any product a
-      cross-scheme continuous-certification pipeline. NIST is furthest along in standardised
-      electronic exchange; CC and EUCC are strongest in formal evidence reuse and assurance
-      continuity; PCI handles changes through program-specific deltas with less public evidence of
-      machine-readable exchange. A major PQC addition can still need substantial re-evaluation in
-      all of them.
+      Recent improvements reduce avoidable friction for the card-payment device program: minor
+      changes that do not affect security can be handled by submitting documentation to the lab,
+      while changes that do affect security requirements still need another evaluation. NIST
+      describes its CMVP automation work as in progress.
     </p>
     <p>
       So the goal is not “the certificate never changes”. It is{' '}

@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { isExecutiveBankOverview } from '@/components/Simulation/autorun/autoRunFill'
+import { useSimulationStore } from '@/store/useSimulationStore'
+import { plannedVerificationSample } from '@/components/Simulation/autorun/plannedVerification'
 /**
  * Migration Verification & Program Closure — the framework's 9th block
  * (Applied Quantum v2.1 p140-144). Closes the loop a CBOM "migration status"
- * cannot: it forces *evidence* that migration happened, logs the
+ * cannot: it records educational evidence references, logs the
  * decommissioning of classical material, and records formal closure to BAU.
  *
  * Three sections → the framework's four named deliverables:
- *  1. Verification recorder — the 5-point evidence standard. A system is
- *     "Verified" ONLY when all five evidence fields are present; otherwise it is
- *     "Unverified (n/5)". You cannot mark a system done off a change-ticket.
+ *  1. Evidence recorder — five teaching prompts. Filled fields record references;
+ *     they do not evaluate evidence or verify a deployment.
  *  2. Decommissioning log — classical key/cert retirement per the org's own
  *     key-destruction standard (e.g. NIST SP 800-88 purge/destroy procedures —
  *     the framework names "the organization's key destruction standard," not
@@ -176,7 +178,9 @@ export function buildMarkdown(state: VerifyState): string {
   lines.push('|---|:--:|:--:|:--:|:--:|:--:|---|')
   for (const r of state.records) {
     const cell = (k: EvidenceField) => (r.evidence[k].trim() ? '✓' : '—')
-    const status = isVerified(r) ? '**Verified**' : `Unverified (${verifiedCount(r)}/5)`
+    const status = isVerified(r)
+      ? '**Evidence recorded — review required**'
+      : `Incomplete evidence (${verifiedCount(r)}/5)`
     lines.push(
       `| ${r.system || '_(unnamed)_'} | ${cell('observedNegotiation')} | ${cell('negativeTest')} | ${cell('certChainUnderPqc')} | ${cell('downgradeDocumented')} | ${cell('dossierLink')} | ${status} |`
     )
@@ -184,7 +188,7 @@ export function buildMarkdown(state: VerifyState): string {
   const verified = state.records.filter(isVerified).length
   lines.push('')
   lines.push(
-    `> ${verified}/${state.records.length} systems verified. A system is only "Verified" with all five evidence points — observed negotiation (not configuration), negative testing, cert-chain validation under PQC, documented downgrade/fallback, and evidence filed to the dossier.`
+    `> ${verified}/${state.records.length} records have all five evidence fields populated. These educational references require review; entering them does not evaluate evidence or verify a deployment.`
   )
   lines.push('')
 
@@ -255,6 +259,8 @@ export const MigrationVerification: React.FC = () => {
   // round-trips without an undefined value reaching the UI — same pattern as
   // ROICalculator / Vendor Scorecard / Infra Modernization Planner.
   const [state, setState] = useState<VerifyState>(() => {
+    if (isExecutiveBankOverview(useSimulationStore.getState().sector))
+      return plannedVerificationSample()
     const seed = {
       records: SEED_STATE.records.map((r) => ({ ...r })),
       decommissions: SEED_STATE.decommissions.map((d) => ({ ...d })),
@@ -336,9 +342,8 @@ export const MigrationVerification: React.FC = () => {
             Migration Verification &amp; Program Closure
           </h2>
           <p className="text-sm text-muted-foreground">
-            Prove migration with the 5-point evidence standard, log classical-key decommissioning
-            per your organization's key-destruction standard, and record closure &amp; BAU handover.
-            Verification ≠ migration.
+            Practise recording evidence references, retirement decisions and closure requirements.
+            These educational prompts do not evaluate evidence or verify a deployment.
           </p>
         </div>
       </header>
@@ -346,12 +351,12 @@ export const MigrationVerification: React.FC = () => {
       {/* 1 — Verification recorder */}
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">
-          Verification records · {verifiedTotal}/{state.records.length} verified
+          Verification records · {verifiedTotal}/{state.records.length} evidence complete
         </h3>
         <p className="text-xs text-muted-foreground">
-          A system is <span className="font-medium text-foreground">Verified</span> only when all
-          five evidence fields are filled — observed negotiation (not configuration), negative
-          testing, cert-chain under PQC, documented downgrade, and evidence in the dossier.
+          <span className="font-medium text-foreground">Evidence recorded — review required.</span>{' '}
+          Filling the five educational prompts records references. It does not test the system or
+          evaluate the evidence. Different services require different technical checks.
         </p>
         <div className="space-y-3">
           {state.records.map((r) => {
@@ -374,7 +379,7 @@ export const MigrationVerification: React.FC = () => {
                         : 'border-status-warning/40 bg-status-warning/10 text-status-warning'
                     }`}
                   >
-                    {done ? 'Verified' : `Unverified ${n}/5`}
+                    {done ? 'Evidence recorded — review required' : `Incomplete evidence ${n}/5`}
                   </span>
                   <Button
                     type="button"

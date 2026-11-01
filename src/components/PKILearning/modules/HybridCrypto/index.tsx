@@ -22,40 +22,41 @@ const PARTS: WorkshopPart[] = [
   },
   {
     id: 'encrypt-sign',
-    title: 'Step 2: Encrypt & Sign',
-    description: 'KEM encapsulation and digital signatures with hybrid algorithms.',
+    title: 'Step 2: Hybrid KEM',
+    description:
+      'X25519 ECDH plus ML-KEM-768 encapsulation, combined into one session key; compare combiners.',
     icon: Lock,
   },
   {
-    id: 'ca-setup',
-    title: 'Step 3: CA Setup',
-    description: 'Generate classical and PQC root CAs for the certificate sandbox.',
-    icon: Shield,
-  },
-  {
-    id: 'hybrid-formats',
-    title: 'Step 4: Hybrid Formats',
-    description: 'Generate and compare hybrid X.509 certificate approaches.',
-    icon: Layers,
-  },
-  {
-    id: 'inspect-compare',
-    title: 'Step 5: Inspect & Compare',
-    description: 'Deep-dive into certificate structures with IETF reference artifacts.',
-    icon: Search,
+    id: 'hpke',
+    title: 'Step 3: HPKE',
+    description: 'RFC 9180 Hybrid Public Key Encryption, composed from PKCS#11 v3.2 primitives.',
+    icon: LockKeyhole,
   },
   {
     id: 'hybrid-signatures',
-    title: 'Step 6: Hybrid Signatures',
+    title: 'Step 4: Hybrid Signatures',
     description:
       'Concatenation, nesting, and Silithium — from no non-separability to the SNS that Silithium targets.',
     icon: Fingerprint,
   },
   {
-    id: 'hpke',
-    title: 'Step 7: HPKE',
-    description: 'RFC 9180 Hybrid Public Key Encryption, composed from PKCS#11 v3.2 primitives.',
-    icon: LockKeyhole,
+    id: 'ca-setup',
+    title: 'Step 5: CA Setup',
+    description: 'Generate classical and PQC root CAs for the certificate sandbox.',
+    icon: Shield,
+  },
+  {
+    id: 'hybrid-formats',
+    title: 'Step 6: Hybrid Formats',
+    description: 'Generate and compare hybrid X.509 certificate approaches.',
+    icon: Layers,
+  },
+  {
+    id: 'inspect-compare',
+    title: 'Step 7: Inspect & Compare',
+    description: 'Deep-dive into certificate structures with IETF reference artifacts.',
+    icon: Search,
   },
 ]
 
@@ -80,15 +81,15 @@ export const HybridCryptoModule: FC = () => (
         case 1:
           return <HybridEncryptionDemo key={`enc-${configKey}`} />
         case 2:
-          return <HybridCASetup key={`ca-${configKey}`} />
-        case 3:
-          return <HybridCertFormats key={`formats-${configKey}`} />
-        case 4:
-          return <HybridCertInspector key={`inspect-${configKey}`} />
-        case 5:
-          return <HybridSignatures key={`hybrid-sigs-${configKey}`} />
-        case 6:
           return <HpkeWorkshop key={`hpke-${configKey}`} />
+        case 3:
+          return <HybridSignatures key={`hybrid-sigs-${configKey}`} />
+        case 4:
+          return <HybridCASetup key={`ca-${configKey}`} />
+        case 5:
+          return <HybridCertFormats key={`formats-${configKey}`} />
+        case 6:
+          return <HybridCertInspector key={`inspect-${configKey}`} />
         default:
           return null
       }

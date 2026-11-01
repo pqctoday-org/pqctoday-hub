@@ -22,7 +22,7 @@
  * co-render and the GUIDED-vs-Expert mode split that existed only to hide the
  * intel rail from beginners.
  */
-import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
+import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
 import { Pencil } from 'lucide-react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
@@ -61,6 +61,7 @@ import {
   type SimPlayChoice,
 } from './SimPlayChoiceModal'
 import { SimAutoRunOverlay } from './autorun/SimAutoRunOverlay'
+import { readOverviewBookmark, overviewResumeIndex } from './autorun/overviewResume'
 import { SimConceptPeek } from './autorun/SimConceptPeek'
 import { logEvent } from '@/utils/analytics'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
@@ -226,7 +227,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { computeAssessment } from '@/hooks/useAssessmentEngine'
-import type { AssessmentInput } from '@/hooks/assessmentTypes'
+import { loadSampleOrganisation, SAMPLE_ORG_KEY } from './sampleOrganisation'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
@@ -306,7 +307,6 @@ const fmtMinutes = (min: number) => `about ${Math.round(min)} minutes`
 const fmtMinuteAdj = (min: number) => `${Math.round(min)}-minute`
 
 /** sourceInputKey of a result loaded from the sample organisation, not an assessment. */
-const SAMPLE_ORG_KEY = '__sample_org__'
 const SEAT_SEED_DEFAULT = 'executive'
 
 // Event-time clock at module scope so it stays out of the component render body
@@ -348,8 +348,8 @@ const MOBILE_SIGNAL_NOTES: Record<string, string> = {
     'Illustrative: modelled from the assessment catalogue at a default org scale, not measured for your organisation.',
   'Years to act (Mosca)':
     'Shelf life (X) + migration time (Y) against time remaining (Z). The horizon is a planning anchor, not a published date.',
-  'Budget secured':
-    'Earned by completing Phase 0 activities — a scenario figure, not real funding.',
+  'Game funds':
+    'Illustrative game units earned through Phase 0 activities. These are not currency and do not represent programme funding.',
   Turn: 'The run’s current reporting period. Recurring criteria need it to advance.',
 }
 
@@ -561,10 +561,12 @@ export function SimulationView() {
     tab?: string
     /** 0-indexed workshop step (from ?step= in the tree's `to` URL). */
     step?: number
+    section?: string
   } | null>(null)
   const [activityEmbed, setActivityEmbed] = useState<{
     artifactType: ExecutiveDocumentType
     title: string
+    previewData?: string
   } | null>(null)
   const [assessEmbed, setAssessEmbed] = useState<{ title: string; refId?: string } | null>(null)
   const [workshopEmbed, setWorkshopEmbed] = useState<{
@@ -687,10 +689,26 @@ export function SimulationView() {
       const learnStepStr = lp?.get('step') ?? null
       const learnStep =
         learnStepStr !== null && /^\d+$/.test(learnStepStr) ? parseInt(learnStepStr, 10) : undefined
-      setLearnEmbed({ moduleId: s.moduleId, title: s.label, tab: learnTab, step: learnStep })
+      setLearnEmbed({
+        moduleId: s.moduleId,
+        title: s.label,
+        tab: learnTab,
+        step: learnStep,
+        section: lp?.get('section') ?? undefined,
+      })
     } else if (s.kind === 'activity' && s.artifactType) {
       clearAllEmbeds()
-      setActivityEmbed({ artifactType: s.artifactType, title: s.label })
+      const proposal =
+        autoRunPlayer.running &&
+        isWalkthroughMode(autoRunPlayer.mode) &&
+        s.artifactType === 'board-deck'
+          ? docFor(s.artifactType, sector)
+          : undefined
+      setActivityEmbed({
+        artifactType: s.artifactType,
+        title: s.label,
+        previewData: proposal?.data,
+      })
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       clearAllEmbeds()
       const qIdx = s.to.indexOf('?')
@@ -818,6 +836,21 @@ export function SimulationView() {
   // opens each tool inline for a peek, then returns to the board so its sections
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
   const autoRunPlayer = useSimAutoRunPlayer({ openStep: openStepPane, closeEmbed })
+  const overviewBookmark = useSimulationStore((s) => s.overviewBookmark)
+  const overviewResume = useMemo(() => {
+    const bookmark = readOverviewBookmark(overviewBookmark)
+    const mode = bookmark?.mode ?? 'walkthrough'
+    return {
+      mode,
+      saved: bookmark !== null,
+      valid:
+        overviewResumeIndex(
+          bookmark,
+          autoRunWalkthroughQueue(mode === 'walkthrough-deep'),
+          mode
+        ) !== undefined,
+    }
+  }, [overviewBookmark])
 
   // W5.5 — RESUME THE RESOURCE. The tab already survives a reload; this restores
   // what was open inside it. Runs once on mount, re-opening through `openStep`
@@ -1162,30 +1195,8 @@ export function SimulationView() {
   // Sample-org cold start — used by the locked-screen "Watch the full migration"
   // and "Explore" buttons so the sim can be tried (and auto-run) without first
   // running a real assessment. Replaced the moment the user runs their own.
-  const loadSampleOrg = useCallback(() => {
-    const result = computeAssessment({
-      industry: 'Finance & Banking',
-      currentCrypto: ['RSA-2048', 'ECDSA', 'AES-256', 'SHA-256'],
-      dataSensitivity: ['critical', 'high'],
-      complianceRequirements: ['PCI DSS', 'GDPR'],
-      migrationStatus: 'not-started',
-      cryptoUseCases: ['TLS/HTTPS', 'Data-at-rest encryption', 'Digital signatures'],
-      dataRetention: ['10-25y', 'indefinite'],
-      systemCount: '200-plus',
-      teamSize: '11-50',
-      cryptoAgility: 'partially-abstracted',
-      infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
-      vendorDependency: 'mixed',
-      timelinePressure: 'within-2-3y',
-    } satisfies AssessmentInput)
-    useAssessmentResultStore.getState().setResult(result)
-    // Sentinel (not a real input's JSON key) so a later real assessment always
-    // reads as "different from what's stored" and overwrites this demo profile.
-    useAssessmentResultStore.setState({
-      completedAt: new Date().toISOString(),
-      sourceInputKey: SAMPLE_ORG_KEY,
-    })
-  }, [])
+  const loadSampleOrg = loadSampleOrganisation
+
   // The org profile is now SOURCED FROM THE ASSESSMENT (single source of truth):
   // ORG / JURISDICTION / SECTOR dials are read-only and derive from here. SEAT
   // defaults from the persona; MODE (difficulty) stays freely editable.
@@ -1940,7 +1951,8 @@ export function SimulationView() {
       const parts = [`Step ${stepsDone}/${stepsTotal} done`]
       if (level !== prev.level) parts.push(`L${prev.level} → L${level}`)
       const budgetDelta = Math.round((budgetSecured - prev.budgetSecured) * 10) / 10
-      if (budgetDelta !== 0) parts.push(`Budget ${budgetDelta > 0 ? '+' : ''}€${budgetDelta}M`)
+      if (budgetDelta !== 0)
+        parts.push(`Game funds ${budgetDelta > 0 ? '+' : ''}${budgetDelta} units`)
       setMoveReceipt(parts.join(' · '))
       // mobile-ux-layer (WS-5): "phase-cleared toast from the strip" — fires
       // the moment THIS completion is what pushed the phase over the win
@@ -2258,9 +2270,10 @@ export function SimulationView() {
                 data-testid="sim-landing-length"
               >
                 The Executive Overview takes {fmtMinutes(getLandingMinutes().walkthrough)}, or start
-                with the {fmtMinuteAdj(getLandingMinutes().intro)} intro. At the end you get a
-                simulation maturity score, a run grade and a sample migration roadmap you can save.
-                These describe the exercise, not verified organizational readiness.
+                with the {fmtMinuteAdj(getLandingMinutes().intro)} intro. The overview explores
+                decisions and sample documents. The full migration game adds a simulation maturity
+                score and run grade. These describe the exercise, not verified organizational
+                readiness.
               </p>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
                 “Watch the full migration” loads a sample Finance &amp; Banking · US run — pick how
@@ -2949,8 +2962,8 @@ export function SimulationView() {
               },
               { label: 'Years to act (Mosca)', value: `${clock.yearsToHorizon.toFixed(1)}y` },
               {
-                label: 'Budget secured',
-                value: `€${budgetSecured}M of €${budgetTarget}M`,
+                label: 'Game funds',
+                value: `${budgetSecured} of ${budgetTarget} game units`,
               },
               // WS-4 (sim-mobile-full-play): the phone run card had no clock
               // readout at all — a player had no idea what quarter/year the
@@ -2992,15 +3005,39 @@ export function SimulationView() {
                 type="button"
                 variant="outline"
                 size="tile"
-                onClick={() => startFromModal('walkthrough')}
+                onClick={() => startFromModal(overviewResume.mode)}
                 className="border-primary/50 bg-primary/5"
               >
-                <div className="text-sm font-bold text-foreground">Executive Overview</div>
+                <div className="text-sm font-bold text-foreground">
+                  {overviewResume.valid
+                    ? 'Resume Executive Overview chapter'
+                    : 'Executive Overview — phone brief'}
+                </div>
                 <p className="text-[11px] leading-snug text-muted-foreground">
-                  8 curated highlights across all 9 phases — board / exec audience, no technical
-                  detail.
+                  Chapter summaries and sample-document notices, including Foundations. Full
+                  resource pages are available in the desktop overview.
                 </p>
               </Button>
+              {overviewResume.saved && (
+                <div className="space-y-1 text-[11px] text-muted-foreground">
+                  <p>
+                    {overviewResume.valid
+                      ? 'Resume restarts the current chapter.'
+                      : 'The route has changed; the overview will start from the beginning.'}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      useSimulationStore.getState().setOverviewBookmark(null)
+                      startFromModal(overviewResume.mode)
+                    }}
+                  >
+                    Restart overview from beginning
+                  </Button>
+                </div>
+              )}
               <Button
                 type="button"
                 variant="outline"
@@ -3086,10 +3123,14 @@ export function SimulationView() {
                 className="gap-1.5"
                 onClick={() => {
                   if (isMobileShell) mobileWatchSelSnapshot.current = sel
-                  autoRunPlayer.start({ mode: 'walkthrough' })
+                  autoRunPlayer.start({
+                    mode: isMobileViewport ? overviewResume.mode : 'walkthrough',
+                  })
                 }}
               >
-                ▶ Watch the Executive Overview
+                {isMobileViewport
+                  ? '▶ Watch the Executive Overview — phone brief'
+                  : '▶ Watch the Executive Overview'}
               </Button>
             )}
           {(autoRunPlayer.running || autoRunPlayer.done) && (
@@ -3118,6 +3159,11 @@ export function SimulationView() {
               )}
               {autoRunPlayer.phaseIntro && (
                 <SimPhaseIntroModal
+                  executiveSummary={
+                    isWalkthroughMode(autoRunPlayer.mode)
+                      ? autoRunPlayer.phaseIntro.summary
+                      : undefined
+                  }
                   phase={autoRunPlayer.phaseIntro.phase}
                   onBegin={autoRunPlayer.beginPhase}
                   onDismiss={autoRunPlayer.pauseAndDismissIntro}
@@ -3132,7 +3178,7 @@ export function SimulationView() {
             </>
           )}
           {walkthroughDoneOpen && (
-            <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+            <SimExecWalkthroughComplete brief onClose={() => setWalkthroughDoneOpen(false)} />
           )}
           {/* mobile-ux-layer (WS-4): "End quarter" — the same real store action
               (endQuarter, wired to the desktop header's own button) the board
@@ -3466,11 +3512,11 @@ export function SimulationView() {
               </span>
             </div>
             <div
-              title={`Budget secured — of €${budgetTarget}M target (P0 level ${p0Level})`}
+              title={`Illustrative game funds — target ${budgetTarget} game units (P0 level ${p0Level}). Game units are not currency and do not represent programme funding.`}
               className="flex flex-col gap-px px-2.5 py-1.5 text-left"
             >
               <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
-                Budget
+                Game funds
               </span>
               {/* a11y (2026-08-24): same text-success contrast fix as Maturity. */}
               <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">
@@ -3480,7 +3526,7 @@ export function SimulationView() {
                     aria-hidden="true"
                   />
                 )}
-                €{budgetSecured}M
+                {budgetSecured} game units
               </span>
             </div>
           </div>
@@ -3564,6 +3610,9 @@ export function SimulationView() {
           )}
           {autoRunPlayer.phaseIntro && (
             <SimPhaseIntroModal
+              executiveSummary={
+                isWalkthroughMode(autoRunPlayer.mode) ? autoRunPlayer.phaseIntro.summary : undefined
+              }
               phase={autoRunPlayer.phaseIntro.phase}
               onBegin={autoRunPlayer.beginPhase}
               onDismiss={autoRunPlayer.pauseAndDismissIntro}
@@ -3873,6 +3922,15 @@ export function SimulationView() {
                 }}
               >
                 <div className="mx-auto w-full max-w-[1800px] px-4 md:px-6 lg:px-8">
+                  {autoRunPlayer.running &&
+                    isWalkthroughMode(autoRunPlayer.mode) &&
+                    activityEmbed?.artifactType === 'kpi-dashboard' && (
+                      <p className="mb-3 rounded-lg border border-primary/30 p-3 text-sm text-muted-foreground">
+                        Illustrative future board reporting pack. The sample indicators are for
+                        discussing reporting requirements, not the organisation’s current delivery
+                        progress or measured readiness.
+                      </p>
+                    )}
                   {/* W6.1/W6.2 — explicit simulation context. An embedded hub
                     resource is a general tool: it does not know which run
                     opened it, which organisation the run is about, or what the
@@ -3917,6 +3975,7 @@ export function SimulationView() {
                     <EmbeddedLearnProvider
                       initialTab={learnEmbed.tab}
                       initialStep={learnEmbed.step}
+                      initialSection={learnEmbed.section}
                     >
                       {/* W2a: the completion ceremony fires INSIDE the sim too — the
                     standalone ModuleCompletionWatcher is gated !isEmbed, leaving
@@ -3931,6 +3990,14 @@ export function SimulationView() {
                         <LearnComp />
                       </Suspense>
                     </EmbeddedLearnProvider>
+                  ) : activityEmbed?.previewData ? (
+                    <div className="glass-panel p-6" data-testid="executive-proposal-preview">
+                      <p className="mb-4 text-xs text-muted-foreground">
+                        Worked-example proposal for discussion. Open Board Pitch separately to
+                        practise editing a proposal.
+                      </p>
+                      <MarkdownView content={activityEmbed.previewData} />
+                    </div>
                   ) : ActivityComp ? (
                     <Suspense fallback={<EmbedLoading />}>
                       <ActivityComp />
@@ -4351,11 +4418,11 @@ export function SimulationView() {
                               title={
                                 canAffordDelegation
                                   ? undefined
-                                  : `Needs €${delegationCostM}M — only €${availableBudgetM}M available. Do it yourself, or free up budget first.`
+                                  : `Needs ${delegationCostM} game units — only ${availableBudgetM} units available. Do it yourself, or free up budget first.`
                               }
                               className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                              Auto-complete ▸ €{delegationCostM}M
+                              Auto-complete ▸ {delegationCostM} game units
                             </Button>
                           )}
                         </div>
@@ -5615,6 +5682,7 @@ export function SimulationView() {
             `!isMobileViewport` is a no-op at real desktop widths (both are
             always false there), so this changes nothing above 768px. */}
         {!isMobileViewport &&
+          !playModalOpen &&
           ((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
             tourOpen) && (
             <SimTour
@@ -5725,7 +5793,7 @@ export function SimulationView() {
       {pendingConfirm === 'delegate' && (
         <SimConfirmDialog
           title={`Delegate ${phase.name} to your AI team?`}
-          description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for €${delegationCostM}M, drawn from your secured budget. Cancel to do them yourself instead.`}
+          description={`${phase.name} is run by your AI team, not your ${seatOpt.label} role. Its tasks complete automatically, flagged "RUN BY AI · UNVERIFIED" until you study what was done — for ${delegationCostM} game units, drawn from your game funds. Cancel to do them yourself instead.`}
           confirmLabel="Auto-complete"
           onCancel={() => setPendingConfirm(null)}
           onConfirm={() => {

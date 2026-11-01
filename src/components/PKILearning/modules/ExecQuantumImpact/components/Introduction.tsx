@@ -137,7 +137,7 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
               <span>
                 <strong>2030:</strong> CNSA 2.0 (NSS): NSA&apos;s timetable anticipates exclusive
                 use of CNSA 2.0 for software/firmware signing and networking equipment (VPNs,
-                routers)
+                routers) by 2030
               </span>
             </li>
             <li className="flex items-start gap-2">

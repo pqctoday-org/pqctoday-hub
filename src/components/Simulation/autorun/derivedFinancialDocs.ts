@@ -2,10 +2,9 @@
 /**
  * Exec-tour financial artifacts (ROI model, breach scenario, cost of inaction,
  * board deck) DERIVED from the same shared math the real Business Case tools
- * use, so the narrated walkthrough can never drift from what a user gets by
- * opening the tools. These override the hand-authored static docs via
- * REAL_DOC_GENERATORS. All four docs share one per-sector computation, so their
- * figures are mutually consistent.
+ * use. Inputs must be stated explicitly: the specialist models need additional
+ * assumptions beyond the executive costing comparison. The comparison and board
+ * proposal share the visible costing scenario; optional models are separate studies.
  */
 import {
   DEFAULT_COMPLIANCE_INCIDENT_RATE,
@@ -22,9 +21,10 @@ import {
   type DelayScenarioResult,
 } from '@/utils/delayCostModel'
 import { compareCostModels } from '@/utils/costModelSim'
+import { costingInputsForSector } from './financialScenario'
 import { DELAY_COST_PROFILES } from '@/components/PKILearning/modules/PQCBusinessCase/data/businessCaseScenarios'
-import { ORG, CUR, REG, type DemoDoc, type DemoSector } from './demoDocs'
-import { EO_DEADLINE_CLAUSE, PROGRAM_START_YEAR, crqcBandSentence } from '@/data/narrationFacts'
+import { ORG, CUR, type DemoDoc, type DemoSector } from './demoDocs'
+import { EO_DEADLINE_CLAUSE, PROGRAM_START_YEAR } from '@/data/narrationFacts'
 
 interface DemoScenario {
   industry: string
@@ -274,19 +274,15 @@ export function deriveInactionDoc(sector: DemoSector): DemoDoc {
 }
 
 export function deriveExplorerDoc(sector: DemoSector): DemoDoc {
-  const s = SCENARIO[sector]
-  const cur = CUR[sector]
-  const itBudget = 50_000_000
-  const c = compareCostModels(
-    { systems: s.systems, itBudgetAnnual: itBudget, complexity: 1, horizonYears: 5 },
-    { seed: 42 }
-  )
+  const inputs = costingInputsForSector(sector)
+  const cur = '$'
+  const c = compareCostModels(inputs, { seed: 42 })
   return {
     title: 'Cost Model Comparison',
     data: joinMd(
       `# Cost Model Comparison — ${ORG[sector]}`,
       '',
-      `Scenario: ${s.systems} systems, ${fmt(cur, itBudget)} IT budget, 5-year horizon.`,
+      `Fictional planning inputs: ${inputs.systems} systems, ${fmt(cur, inputs.itBudgetAnnual)} annual IT budget, ${inputs.horizonYears}-year horizon. Currency: USD. The IT budget is not the migration budget.`,
       '',
       '| Method | Estimate |',
       '|--------|----------|',
@@ -298,26 +294,32 @@ export function deriveExplorerDoc(sector: DemoSector): DemoDoc {
       '',
       `Spread across methods: ${c.spreadRatio.toFixed(1)}×. Cost of inaction (reference): ${fmt(cur, c.aleReference)}.`,
       '',
-      'Derived from the Cost Model Explorer — the point is how far the methods diverge on identical inputs; triangulate rather than trust one.'
+      'Derived from the Cost Model Explorer with the same sample inputs and seed. These estimates are preliminary teaching scenarios, not approved funding. Refine scope, supplier costs and assumptions after discovery; agreement between methods can reflect shared assumptions.'
     ),
   }
 }
 
 export function deriveBoardDeck(sector: DemoSector): DemoDoc {
-  const f = sectorFinancials(sector)
-  const { cur, roi, breach, costOfInaction, delayRatio } = f
-  const reg = REG[sector]
+  const inputs = costingInputsForSector(sector)
+  const comparison = compareCostModels(inputs, { seed: 42 })
   return {
     title: 'Board Mandate Pitch',
     data: joinMd(
-      `# Board Pitch — Securing ${ORG[sector]} Against the Quantum Threat`,
+      `# Board Proposal — ${ORG[sector]}`,
       '',
-      `1. **The threat is dated:** adversaries harvest encrypted data today; a cryptographically relevant quantum computer (CRQC) would decrypt it retroactively. ${crqcBandSentence(sector)} Quantum-enabled breach exposure is ${fmt(cur, breach.quantumSLE)} per event.`,
-      `2. **The deadlines are real:** ${EO_DEADLINE_CLAUSE}, and regulators behind ${reg} increasingly expect demonstrable migration progress.`,
-      `3. **The ask:** a phased mandate of ${fmt(cur, roi.totalCost)} over ${HORIZON_YEARS} years aligned to existing refresh cycles — NPV ${fmt(cur, roi.npv ?? 0)} at ${Math.round(DISCOUNT_RATE * 100)}%, payback ${isFinite(roi.paybackMonths) ? `${Math.round(roi.paybackMonths)} months` : 'n/a'}.`,
-      `4. **The cost of waiting:** delaying ${DELAY_YEARS} years costs an extra ${fmt(cur, costOfInaction)} (${delayRatio.toFixed(1)}× migrate-now) — accumulated breach exposure, a delay premium, and regulatory penalty once past the mandate deadline.`,
+      'Fictional learning example. The initial mandate funds discovery and planning; the programme proposal follows inventory, risk analysis and option comparison. These are proposed decisions, not approvals already obtained.',
       '',
-      'Figures derived from the ROI Calculator, Breach Scenario Simulator, and Cost of Inaction Analyzer — the same tools available in this workshop.'
+      sector === 'financial'
+        ? '1. **Scope and findings:** use the customer portal, records archiving and retrieval service, and software signing service to explain different confidentiality and trust requirements. Identify which services can pilot and which depend on legacy or supplier changes. Record unknowns rather than assuming estate-wide readiness.'
+        : '1. **Scope and findings:** identify the business services and protected assets in scope, accountable owners, inventory gaps and legacy or supplier dependencies. Establish which services can pilot rather than assuming estate-wide readiness.',
+      `2. **Preliminary costing:** ${inputs.systems} systems, ${fmt('$', inputs.itBudgetAnnual)} annual IT budget and a ${inputs.horizonYears}-year planning horizon. Currency: USD. The IT budget is not the migration budget. Cost Model Explorer gives a bottom-up teaching estimate of ${fmt('$', comparison.bottomUp)} and a budget-anchored estimate of ${fmt('$', comparison.parametric)}. Its simulated P10–P90 range is ${fmt('$', comparison.monteCarlo.p10)}–${fmt('$', comparison.monteCarlo.p90)}, conditional on that model's sample assumptions; it is not a forecast or a combined confidence interval across methods.`,
+      '3. **The ask:** consider programme approval only after reconciling scope, supplier pricing, dependencies, uncertainty and alternatives. Propose funding releases at review gates. No model output automatically becomes an approved budget.',
+      '4. **Future delivery conditions:** pilot success and rollback criteria, infrastructure capability, supplier commitments, verification requirements and ongoing crypto-agility must be planned before delivery funding is released. The sample does not claim these activities are complete.',
+      `5. **Deadline scope:** ${EO_DEADLINE_CLAUSE}. The 2030/2031 dates concern specified US federal-agency high-value assets and high-impact systems, excluding national-security systems. They do not automatically apply to a private organisation. Establish applicable jurisdiction, system scope and contractual requirements separately.`,
+      '',
+      'Optional deeper study: ROI, breach and delay models use additional assumptions. No regulatory penalty or contract-loss cost is included by default. If an ROI scenario has negative NPV or payback beyond its evaluation horizon, challenge assumptions, scope and alternatives; these figures do not justify automatic approval. Establish non-financial justifications separately.',
+      '',
+      'Sources and assumptions used: the fictional scope above and Cost Model Explorer with the shared sample inputs and seed. Refine estimates after discovery; agreement between methods can reflect shared assumptions.'
     ),
   }
 }

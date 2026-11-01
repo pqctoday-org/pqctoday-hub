@@ -455,6 +455,24 @@ describe('MigrationWorkbench (integration)', () => {
         expect(screen.queryByText(nonAvailable.softwareName)).not.toBeInTheDocument()
       })
 
+      it('the hybrid support filter writes ?facet=hybrid:… and hides products without it', () => {
+        const withoutTlsDefault = productsForDomain('tls').find(
+          (p) => !(p.hybridKemSupport ?? []).includes('tls-default')
+        )!
+        expect(withoutTlsDefault).toBeDefined()
+        const { unmount } = renderStandaloneAt('/migrate')
+        fireEvent.click(screen.getByRole('button', { name: 'Filter by hybrid support' }))
+        expect(screen.getByRole('option', { name: 'Hybrid KEM API' })).toBeInTheDocument()
+        expect(screen.getByRole('option', { name: 'Composite signature API' })).toBeInTheDocument()
+        fireEvent.click(screen.getByRole('option', { name: 'Hybrid TLS by default' }))
+        expect(search()).toContain('facet=hybrid%3Atls-default')
+        expect(screen.queryByText(withoutTlsDefault.softwareName)).not.toBeInTheDocument()
+        const reloaded = `/migrate${search()}`
+        unmount()
+        renderStandaloneAt(reloaded)
+        expect(screen.queryByText(withoutTlsDefault.softwareName)).not.toBeInTheDocument()
+      })
+
       it('typing with a link active drops the link params and writes ?rq= in one go', () => {
         renderStandaloneAt('/migrate?layer=Libraries')
         fireEvent.change(filterBox(), { target: { value: 'x' } })

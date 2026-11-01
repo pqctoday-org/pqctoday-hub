@@ -1274,7 +1274,7 @@ export const HybridCertInspector: React.FC = () => {
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
               Click any row to inspect that certificate. These certs are interoperability test
-              vectors verified by multiple implementations at IETF hackathons.
+              artifacts from IETF PQC hackathon testing.
             </p>
           </div>
         </div>

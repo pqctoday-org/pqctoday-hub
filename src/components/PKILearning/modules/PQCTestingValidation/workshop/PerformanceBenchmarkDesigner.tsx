@@ -219,7 +219,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             {selectedMetric === 'saSetupMs' && networkProfile === 'satellite' && (
               <Insight
                 label="Satellite pure-PQC renders VPN unusable"
-                text="Pure PQC SA setup exceeds 95 seconds on satellite links — effectively breaking site-to-site VPN. Hybrid stays at 7.2 seconds. For satellite links, defer pure-PQC IPSec until NIST-standard hybrid IKEv2 is mature."
+                text="Pure PQC SA setup exceeds 95 seconds on satellite links — effectively breaking site-to-site VPN. Hybrid stays at 7.2 seconds (this module's planning assumption, not a measurement). For satellite links, defer pure-PQC IPSec until NIST-standard hybrid IKEv2 is mature."
               />
             )}
             {networkProfile === 'lan' && (

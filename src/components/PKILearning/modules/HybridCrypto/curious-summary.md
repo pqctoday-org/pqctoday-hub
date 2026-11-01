@@ -6,11 +6,15 @@ Transitioning a massive network to brand-new, cutting-edge cryptographic algorit
 
 ## Why It Matters
 
-It provides the ultimate insurance policy. If an unprecedented flaw or vulnerability is unexpectedly discovered in the new quantum-safe algorithm, the classical algorithm is still fully active and protects the data against standard hackers.
+It is a hedge. If a flaw is found in the new quantum-safe algorithm or in its new code, the classical algorithm still protects the data against today's attackers, provided the two are combined soundly. The hedge has costs: two algorithms to implement, test and negotiate, larger messages, and a second transition later when the classical part is removed. For signatures, every verifier must insist on both signatures, or an attacker can strip one.
+
+## Who Recommends It
+
+Agencies disagree. France (ANSSI), Germany (BSI), the Netherlands and the EU certification group ask for hybrid during the transition. The US NSA, the UK NCSC and the Czech NÚKIB accept post-quantum algorithms on their own, and the NSA warns that hybrids add complexity that can introduce their own flaws. Canada's Cyber Centre recommends the new algorithms without saying either way.
 
 ## The Key Takeaway
 
-Enterprises should adopt a hybrid approach for TLS and network encryption (using Key Derivation Functions like HKDF) to perfectly intertwine classical and PQC secrets, providing maximum security during the transition years.
+Whether to use hybrid depends on whose rules apply to you and on what you protect. For key exchange in TLS, hybrid is already the common default on the web. For signatures and certificates the formats are newer and the advice is more divided.
 
 ## Hybrid in a Validated Module
 
@@ -18,4 +22,4 @@ A security product certified under FIPS 140-3 can offer a hybrid key exchange as
 
 ## What's Happening
 
-Major tech companies, including Google and Cloudflare, have already deployed hybrid configurations (now X25519MLKEM768, which replaced the earlier X25519Kyber768Draft00) across Chrome and their web infrastructure, proving that hybrid math can be run at scale without severe performance drops.
+Major tech companies, including Google and Cloudflare, have already deployed hybrid configurations (now X25519MLKEM768, which replaced the earlier X25519Kyber768Draft00) across Chrome and their web infrastructure, showing that hybrid key exchange runs at scale; Chrome reported about a 4% slower TLS handshake.

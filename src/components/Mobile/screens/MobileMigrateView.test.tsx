@@ -947,6 +947,21 @@ describe('MobileMigrateView', () => {
       expect(screen.queryByTestId('migrate-facet-chips')).not.toBeInTheDocument()
     })
 
+    it('?facet=hybrid:… narrows the list with the desktop filter wording on its chip', () => {
+      const tls = productsForDomain('tls')
+      const facets = { ...NO_FACETS, hybrid: 'sig-api' as const }
+      const expected = applyProductFacets(tls, facets, hasCert).length
+      renderMobile('/migrate?facet=hybrid:sig-api')
+      const chips = screen.getByTestId('migrate-facet-chips')
+      expect(
+        within(chips).getByRole('button', {
+          name: 'Remove filter Hybrid support: Composite signature API',
+        })
+      ).toBeInTheDocument()
+      const live = new RegExp(`^${expected} of ${tls.length} products match the active filters`)
+      expect(screen.getByText(live)).toBeInTheDocument()
+    })
+
     it('a filter edit keeps ?facet= and writes both', () => {
       renderMobile('/migrate?facet=certified:linked')
       fireEvent.change(screen.getByLabelText('Filter products'), { target: { value: 'IBM' } })

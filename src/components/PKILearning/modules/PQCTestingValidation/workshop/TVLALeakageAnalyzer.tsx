@@ -240,15 +240,15 @@ export const TVLALeakageAnalyzer: React.FC = () => {
           Why a fixed-vs-random test alone is not enough for PQC
         </div>
         <p className="text-xs text-muted-foreground">
-          The non-specific fixed-vs-random test flags any input-dependent difference, including
-          leakage of public data such as the ciphertext, so on its own it cannot show that secret
-          data leaks. A pass is not proof of security either: the masked ML-KEM target stays below
-          4.5 at every stage, yet first-order masking can still leak at higher orders. Add specific
-          tests on intermediate values in the stages that handle secrets: NTT/INTT (dominant
-          leakage), polynomial multiplication (nonce leakage in ML-DSA), and modular reduction
-          (q=3329 conditional subtraction). Keysight says its Inspector software supports PQC
-          validation through side-channel analysis and fault injection workflows, with ML-DSA
-          supported as a ready-to-use module.
+          In this module's reading, the non-specific fixed-vs-random test flags any input-dependent
+          difference, including leakage of public data such as the ciphertext, so on its own it
+          cannot show that secret data leaks. A pass is not proof of security either: the masked
+          ML-KEM target stays below 4.5 at every stage, yet first-order masking can still leak at
+          higher orders. Add specific tests on intermediate values in the stages that handle
+          secrets: NTT/INTT (dominant leakage), polynomial multiplication (nonce leakage in ML-DSA),
+          and modular reduction (q=3329 conditional subtraction). Keysight says its Inspector
+          software supports PQC validation through side-channel analysis and fault injection
+          workflows, with ML-DSA supported as a ready-to-use module.
         </p>
       </div>
     </div>

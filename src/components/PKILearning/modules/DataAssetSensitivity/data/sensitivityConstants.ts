@@ -578,7 +578,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     hndlImplication:
       'HNDL risk year ≈ 2027 (2034 − 7 years). Records encrypted today will be at risk from CRQC within 8 years.',
     commonMistake:
-      'Classifying as Critical because "financial data." No full PAN or CVV stored reduces impact. The 7-year retention lands this firmly at High.',
+      'Classifying as Critical because "financial data." No full PAN or CVV stored reduces impact. The 7-year retention lands this firmly at High (not sourced in the Library).',
     relevantFrameworks: ['PCI-DSS', 'GDPR'],
   },
   {
@@ -590,7 +590,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
       'Government/Defense sector; encrypted with AES-256 and RSA-4096; indefinite retention; NSA-classified.',
     correctTier: 'critical',
     explanation:
-      'Classified national security data with indefinite retention is the canonical Critical case. Even if encrypted today, adversaries recording this traffic will decrypt it post-CRQC. Operational intelligence from decades ago can still compromise ongoing missions, personnel, and national security. CNSA 2.0 expects the transition to QR algorithms for NSS to be complete by 2035 in line with NSM-10, and NSA urges NSS owners and operators to make every effort to meet that deadline.',
+      'Classified national security data with indefinite retention is the canonical Critical case. Even if encrypted today, adversaries recording this traffic will decrypt it post-CRQC. Operational intelligence from decades ago can still compromise ongoing missions, personnel, and national security. NSA anticipates that NSS will finish moving to QR algorithms by 2035, consistent with NSM-10, and it calls on vendors as well as NSS owners and operators to spare no effort in meeting that target.',
     hndlImplication: 'All historical intercepts are at risk the moment CRQC arrives.',
     commonMistake:
       'No common mistake — this is unambiguously Critical. The exercise point is understanding why indefinite retention triggers the worst HNDL exposure.',
@@ -849,7 +849,7 @@ export const CONFLICT_SCENARIOS: ConflictScenario[] = [
         framework: 'GDPR (EU)',
         prescribedTier: 'high',
         reason:
-          'Personal data including behavioral profiling requires lawful basis, data minimization, and state-of-the-art encryption. Violations of the basic processing principles and conditions for consent (Articles 5, 6, 7, and 9) carry fines up to 4% of global revenue.',
+          'Personal data including behavioral profiling requires lawful basis, data minimization, and security measures appropriate to the risk, which can include encryption. Violations of the basic processing principles and conditions for consent (Articles 5, 6, 7, and 9) can carry fines up to 20 000 000 EUR or, for an undertaking, up to 4% of total worldwide annual turnover of the preceding financial year, whichever is higher.',
       },
       {
         framework: 'CCPA / CPRA (California)',

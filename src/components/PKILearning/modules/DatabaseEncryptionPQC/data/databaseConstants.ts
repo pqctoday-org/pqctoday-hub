@@ -110,7 +110,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     fipsValidated: true,
     migrationComplexity: 'high',
     notes:
-      'ALTER SYSTEM REKEY supports online re-encryption. HYOK requires Oracle Key Vault. Column-level key wrapping uses RSA-2048 — must upgrade to ML-KEM-1024 wrapper.',
+      'ALTER SYSTEM REKEY supports online re-encryption. HYOK requires Oracle Key Vault. Column-level key wrapping uses RSA-2048 — must upgrade to ML-KEM-1024 wrapper (not sourced in the Library).',
   },
   {
     id: 'sqlserver',
@@ -470,7 +470,7 @@ export const QUERYABLE_ENCRYPTION_SCHEMES: QueryableEncryptionScheme[] = [
     queryTypes: ['equality', 'range', 'prefix'],
     pqcCompatible: false,
     encryptionScheme:
-      'Queryable Encryption with deterministic indexes + random encryption for non-indexed fields. Uses HMAC-SHA-256 for equality tokens, AES-CBC for data encryption.',
+      'Queryable Encryption with deterministic indexes + random encryption for non-indexed fields. Uses HMAC-SHA-256 for equality tokens, AES-CBC for data encryption (not sourced in the Library).',
     limitations:
       'No text search on FLE 2.0 fields. Aggregate pipelines limited on encrypted fields. Index size overhead ~2-3x. No support for multi-collection transactions on encrypted fields.',
     pqcRoadmap:

@@ -72,12 +72,12 @@ export const HybridCryptoExercises: React.FC<HybridCryptoExercisesProps> = ({
       id: 'sign-verify',
       title: '4. Classical vs PQC Sign/Verify',
       description:
-        'Sign the same message with ECDSA P-256 and ML-DSA-65, then verify both. Compare the performance and signature sizes.',
+        'In Step 1, open the signature view and run the test panel under the key table: it signs and verifies with ECDSA P-256 and with ML-DSA-65. Compare the run times with the signature sizes in the key table.',
       badge: 'Crypto',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
         'ECDSA is faster for individual operations, but ML-DSA-65 provides quantum resistance. In a composite scheme, both signatures would be generated and verified together.',
-      config: { step: 1, mode: 'signature' },
+      config: { step: 0, category: 'signature' },
     },
     {
       id: 'pqc-certificate',
@@ -88,7 +88,7 @@ export const HybridCryptoExercises: React.FC<HybridCryptoExercisesProps> = ({
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
         'The ML-DSA-65 certificate is significantly larger than ECDSA. The parsed output shows different algorithm OIDs and much larger public key and signature fields embedded in the certificate structure.',
-      config: { step: 2, algorithm: 'all' },
+      config: { step: 4, algorithm: 'all' },
     },
   ]
 

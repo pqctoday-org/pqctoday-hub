@@ -109,3 +109,40 @@ describe('ProductRow compact + extraBadges', () => {
     expect(screen.getByRole('button', { name: /collapse details/i })).toBeInTheDocument()
   })
 })
+
+describe('ProductRow hybrid support badges', () => {
+  it('shows the hybrid KEM and composite signature badges in the row and the detail', () => {
+    render(
+      <ProductRow
+        product={makeItem({
+          hybridKemSupport: ['tls-default', 'api-experimental'],
+          hybridSigSupport: 'api',
+        })}
+      />
+    )
+    expect(screen.getByText('Hybrid TLS (default)')).toBeInTheDocument()
+    expect(screen.getByText('Hybrid KEM API (experimental)')).toBeInTheDocument()
+    expect(screen.getByText('Composite signature API')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /expand details/i }))
+    const detail = screen.getByTestId('hybrid-support')
+    expect(detail).toHaveTextContent('Hybrid TLS (default)')
+    expect(detail).toHaveTextContent('Composite signature API')
+  })
+
+  it('shows the assessed "none" values', () => {
+    render(
+      <ProductRow product={makeItem({ hybridKemSupport: ['none'], hybridSigSupport: 'none' })} />
+    )
+    expect(screen.getByText('No hybrid KEM')).toBeInTheDocument()
+    expect(screen.getByText('No composite signature')).toBeInTheDocument()
+  })
+
+  it('shows nothing for a product that has not been assessed', () => {
+    render(<ProductRow product={makeItem({})} />)
+    expect(screen.queryByText(/hybrid/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/composite signature/i)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /expand details/i }))
+    expect(screen.queryByTestId('hybrid-support')).not.toBeInTheDocument()
+  })
+})

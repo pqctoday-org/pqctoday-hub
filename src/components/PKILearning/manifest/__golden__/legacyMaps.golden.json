@@ -329,7 +329,7 @@
       "id": "mls-group-messaging",
       "lm_id": "LM-054",
       "title": "MLS — Group Messaging",
-      "description": "Messaging Layer Security (RFC 9420) with TreeKEM, HPKE, and a PKCS#11-backed openmls provider. Scales group key agreement to thousands while keeping signature keys in the HSM.",
+      "description": "Messaging Layer Security (RFC 9420), which uses HPKE and provides efficient asynchronous group key establishment with forward secrecy and post-compromise security for groups from two to thousands. In this module's illustration, a PKCS#11-backed openmls provider keeps signature keys in the HSM.",
       "duration": "40 min",
       "difficulty": "intermediate",
       "frameworkPhase": "p5"
@@ -1600,12 +1600,24 @@
         "label": "Why Hybrid Cryptography?"
       },
       {
-        "id": "cert-formats",
-        "label": "Hybrid Cert Formats"
+        "id": "hybrid-risks",
+        "label": "Hybrid or Pure PQC: The Risks"
+      },
+      {
+        "id": "who-recommends",
+        "label": "Who Recommends Hybrid"
       },
       {
         "id": "kem",
         "label": "Hybrid KEM Construction"
+      },
+      {
+        "id": "kem-tls",
+        "label": "Hybrid KEMs in TLS 1.3"
+      },
+      {
+        "id": "kem-implementation",
+        "label": "Implementation & Validation"
       },
       {
         "id": "hpke",
@@ -1613,7 +1625,15 @@
       },
       {
         "id": "composite",
-        "label": "Hybrid Signature Spectrum"
+        "label": "Hybrid Signatures"
+      },
+      {
+        "id": "cert-formats",
+        "label": "Hybrid Cert Formats"
+      },
+      {
+        "id": "crypto-apis",
+        "label": "Hybrid in Crypto APIs & HSMs"
       }
     ],
     "iam-pqc": [
@@ -3191,7 +3211,15 @@
       },
       {
         "id": "encrypt-sign",
-        "label": "Encrypt & Sign"
+        "label": "Hybrid KEM"
+      },
+      {
+        "id": "hpke",
+        "label": "HPKE"
+      },
+      {
+        "id": "hybrid-signatures",
+        "label": "Hybrid Signatures"
       },
       {
         "id": "ca-setup",
@@ -3204,14 +3232,6 @@
       {
         "id": "inspect-compare",
         "label": "Inspect & Compare"
-      },
-      {
-        "id": "hybrid-signatures",
-        "label": "Hybrid Signatures"
-      },
-      {
-        "id": "hpke",
-        "label": "HPKE"
       }
     ],
     "iam-pqc": [
@@ -4294,7 +4314,7 @@
           "id": "mls-group-messaging",
           "lm_id": "LM-054",
           "title": "MLS — Group Messaging",
-          "description": "Messaging Layer Security (RFC 9420) with TreeKEM, HPKE, and a PKCS#11-backed openmls provider. Scales group key agreement to thousands while keeping signature keys in the HSM.",
+          "description": "Messaging Layer Security (RFC 9420), which uses HPKE and provides efficient asynchronous group key establishment with forward secrecy and post-compromise security for groups from two to thousands. In this module's illustration, a PKCS#11-backed openmls provider keeps signature keys in the HSM.",
           "duration": "40 min",
           "difficulty": "intermediate",
           "frameworkPhase": "p5"

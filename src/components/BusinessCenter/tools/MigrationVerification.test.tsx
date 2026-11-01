@@ -36,14 +36,14 @@ const record = (n: number): VerificationRecord => ({
   evidence: evidence(n),
 })
 
-describe('verified gate (5-point evidence standard)', () => {
+describe('evidence field completeness', () => {
   it('counts filled evidence fields', () => {
     expect(verifiedCount(record(0))).toBe(0)
     expect(verifiedCount(record(3))).toBe(3)
     expect(verifiedCount(record(5))).toBe(5)
   })
 
-  it('a system is Verified ONLY with all five evidence points', () => {
+  it('requires every reference before recording evidence as complete', () => {
     expect(isVerified(record(4))).toBe(false)
     expect(isVerified(record(5))).toBe(true)
   })
@@ -98,21 +98,25 @@ describe('buildMarkdown', () => {
     },
   }
 
-  it('emits the four deliverables and the verified/unverified + TNFL signals', () => {
+  it('exports field completeness without claiming technical verification', () => {
     const md = buildMarkdown(state)
     expect(md).toContain('## Verification records')
     expect(md).toContain('## Decommissioning log')
     expect(md).toContain('## Closure decision record')
     expect(md).toContain('## BAU handover register')
-    expect(md).toContain('**Verified**') // Web TLS (5/5)
-    expect(md).toContain('Unverified (2/5)') // Service mesh
+    expect(md).toContain('**Evidence recorded — review required**')
+    expect(md).not.toContain('**Verified**')
+    expect(md).toContain('does not evaluate evidence or verify a deployment')
+    expect(md).toContain('Incomplete evidence (2/5)')
     expect(md).toContain('⚠ TNFL liability') // unconfirmed signing key
   })
 })
 
 describe('MigrationVerification (render smoke)', () => {
-  it('renders the three sections and the verified counter', () => {
-    render(<MigrationVerification />)
+  it('renders the sections and evidence-completeness counter', () => {
+    const { container } = render(<MigrationVerification />)
+    expect(container.textContent).not.toContain('Prove migration with the 5-point')
+    expect(container.textContent).toContain('Evidence recorded — review required. Filling')
     expect(
       screen.getByRole('heading', { name: /Migration Verification & Program Closure/ })
     ).toBeInTheDocument()

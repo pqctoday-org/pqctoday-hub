@@ -34,7 +34,7 @@ export const TAKEAWAYS = {
     'The parts around the scheme (key exchange, signatures on the key set) are usually still classical and need a post-quantum fix.',
   ],
   standards: [
-    'No FHE scheme is FIPS-approved, CNSA-approved or Common Criteria-certified, and ISO/IEC 28033 is not yet published.',
+    'No FHE scheme is FIPS-approved, CNSA-approved or Common Criteria-certified, and ISO/IEC 28033 is not yet published (not sourced in the Library).',
     'What can be validated today is the conventional cryptography around FHE, not FHE itself.',
   ],
   custody: [
@@ -67,12 +67,12 @@ export const FHE_PROMISE_ROWS: FhePromiseRow[] = [
   {
     expectation: 'The data is protected',
     sourcesShow:
-      'From the server, yes: “Any entity that has only the public and the evaluation keys cannot learn anything about the encrypted data in isolation” (ICO). But whoever holds the secret key, or may ask for decryptions, decides who sees results (section 8), and “Fully Homomorphic Encryption does not provide data integrity by design, only confidentiality” (NCSC 2025).',
+      'Whoever holds the secret key, or may ask for decryptions, decides who sees results (section 8).',
   },
   {
     expectation: 'It runs at a usable speed',
     sourcesShow:
-      'At a cost. The ICO describes HE as “several thousand times slower than processing plaintext”; DARPA estimated in 2021 that it was “about a million times slower” to compute in the FHE world; NIST SP 800-226 says that in most cases secure computation “is several orders of magnitude slower than native execution” and that “its performance is improving quickly” (section 4).',
+      'At a cost. The ICO describes HE as “several thousand times slower than processing plaintext”; DARPA estimated in 2021 that it was “about a million times slower” to compute in the FHE world; NIST SP 800-226 says that in most cases secure computation “is several orders of magnitude slower than native execution” and that “its performance is improving quickly” (section 4) (not sourced in the Library).',
   },
   {
     expectation: 'Decrypted results can be shared freely',
@@ -269,8 +269,7 @@ export const FHE_PET_COMPARISON: FhePetRow[] = [
   {
     pet: 'Trusted execution environment (TEE)',
     cost: '“small but noticeable performance penalty” (UN PET Guide)',
-    trust:
-      'The hardware vendor and its attestation: the “security model of TEEs is not cryptographic in nature” (UN PET Guide), and several existing enclaves have been vulnerable to data-extraction attacks (NIST SP 800-226)',
+    trust: 'The hardware vendor and its attestation (not sourced in the Library)',
   },
   {
     pet: 'Secure multiparty computation (MPC)',
@@ -1291,4 +1290,4 @@ export const FHE_MARKET_SUMMARY: string[] = [
 ]
 
 export const FHE_MARKET_TREND =
-  'Trend 2020–2026: Gartner predicted in May 2022 that “by 2025, 60% of large organizations will use at least one PEC technique in analytics, business intelligence and/or cloud computing” (a prediction; the outcome is not confirmed). Confidential-computing estimates grew from about USD 2B for 2021 (Everest Group for the Confidential Computing Consortium) to USD 5–9B for 2023–2025 (other firms): different firms, not one series. HE stayed early-stage in the statements of Gartner (2021), the OECD (2023) and ENISA (2024).'
+  'Trend 2020–2026: Gartner predicted in May 2022 that “by 2025, 60% of large organizations will use at least one PEC technique in analytics, business intelligence and/or cloud computing” (a prediction; the outcome is not confirmed). Confidential-computing estimates grew from about USD 2B for 2021 (Everest Group for the Confidential Computing Consortium) to USD 5–9B for 2023–2025 (other firms): different firms, not one series. HE stayed early-stage in the statements of Gartner (2021), the OECD (2023) and ENISA (2024) (not sourced in the Library).'

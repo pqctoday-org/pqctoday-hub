@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'mls-group-messaging',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-01',
 
   standards: [
     getStandard('RFC 9420'),
@@ -74,7 +74,7 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     id: 'key-schedule',
     title: 'Key schedule — from group secret to keys',
     body: [
-      "The MLS key schedule (RFC 9420) takes, among its inputs, the previous epoch's init secret, the current epoch's commit secret, and the current epoch's GroupContext object and runs them through a chain of HKDF-Extract / HKDF-Expand steps to derive the encryption secret, exporter secret, and confirmation key.",
+      "The MLS key schedule (RFC 9420) takes, among its inputs, the previous epoch's init secret, the current epoch's commit secret, and the current epoch's GroupContext object and runs them through a chain of Extract / Expand steps from the KDF to derive the encryption secret, exporter secret, and confirmation key.",
       'Each AEAD application message uses a per-member, per-generation key derived from the encryption secret via a per-leaf hash ratchet. Lose any one message key, and the rest are still safe.',
       'Cryptographically the schedule is RFC 9180-style HPKE labelled extract/expand. Every Extract is one HMAC; every Expand is iterated HMAC. In our PKCS#11 provider those HMACs all run inside the HSM.',
     ],

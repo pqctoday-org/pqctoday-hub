@@ -72,7 +72,7 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
       badge: 'Tokenization',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        '5 of the 6 Visa VTS provisioning steps are quantum-vulnerable: (1) TLS enrollment uses RSA/ECDSA key exchange, (2) ID&V uses ECDSA token request signing, (3) token generation uses RSA-2048 HSM key wrapping, (4) token cryptographic key (LUK) provisioning uses RSA-2048/ECDH key agreement, (5) Secure Element provisioning uses an ECDSA device attestation certificate. Only activation confirmation is quantum-safe. Note MDES and Amex EST come out at 4 of 6 — the LUK provisioning step is where VTS differs. Priority: migrate TSP TLS and device attestation first.',
+        "In this module's illustration, most provisioning steps use quantum-vulnerable asymmetric cryptography (ECDSA or RSA); only the activation confirmation relies on symmetric cryptography. This module's advice: migrate TSP TLS and device attestation first.",
       config: { step: 3 },
     },
     {

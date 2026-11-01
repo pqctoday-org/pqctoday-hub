@@ -191,7 +191,8 @@ export const BootVerifyLatencySimulator: React.FC = () => {
             <p>
               <span className="font-bold">What the numbers say:</span> the PQC signature-plus-key
               payloads are 20-30× larger than ECDSA&apos;s 128 bytes, but at realistic SPI speeds
-              that costs only a couple of milliseconds of flash reading. Verify time is what
+              that costs only a couple of milliseconds of flash reading (this module&apos;s planning
+              assumption, not a measurement). In this module&apos;s model, verify time is what
               dominates — ML-DSA-44 (~1.4 M cycles) and LMS (~2.7 M) stay within a few times ECDSA
               P-256 (~1 M), while RSA-3072 verify in software is roughly 25 M cycles and is by far
               the slowest of the four.

@@ -44,7 +44,7 @@ const EXERCISES = [
   },
   {
     q: 'In the Workshop comparison table, what is the public key size difference between ECC P-256 and ML-KEM-768?',
-    hint: 'An ECC P-256 public key, encoded as an uncompressed point (0x04 || x || y), is 65 bytes; an ML-KEM-768 public key is 1,184 bytes — roughly 18× larger. You can also generate an ECC key in Workshop Step 3 and compare it live.',
+    hint: 'An ECC P-256 public key, encoded as an uncompressed point (0x04 || x || y), is 65 bytes. You can also generate an ECC key in Workshop Step 3 and compare it live.',
     workshopStep: 2,
   },
 ]
