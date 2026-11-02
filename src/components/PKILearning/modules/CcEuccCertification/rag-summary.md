@@ -2,7 +2,7 @@
 
 ## Overview
 
-This advanced Hardware Infrastructure module (LM-068) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_. It covers Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding post-quantum cryptography means for a certified product. Version 1 is labelled "Practitioner orientation — not laboratory training." Corrected since the PQC Today owner's last sign-off; awaiting re-sign-off. It has not been reviewed by an accredited laboratory or certification body. Facts are as of 24 September 2026.
+This advanced Hardware Infrastructure module (LM-068) is a scheme deep dive split out of LM-065 _Cryptographic Product Certification: Fundamentals_. It covers Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding post-quantum cryptography means for a certified product. Version 1 is labelled "Practitioner orientation — not laboratory training." Reviewed and signed off by the PQC Today owner on 1 November 2026. It has not been reviewed by an accredited laboratory or certification body. Facts are as of 24 September 2026.
 
 Three distinct paths cover CC evaluation criteria (`cc`), EUCC scheme rules (`eucc`) and eIDAS device/service requirements (legacy URL `eucc-eidas` retained). EUCC uses CC, while eIDAS is a separate legal context, not the next mandatory stage. FIPS 140-3 remains separate. Shared PP examples are optional reference material. Existing section-progress identifiers are preserved.
 
