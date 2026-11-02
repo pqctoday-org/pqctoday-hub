@@ -392,9 +392,9 @@ export const FIPSCompatibilityChecker: React.FC = () => {
               status: 'current',
             },
             {
-              phase: 'Phase 2 (2026-2027)',
+              phase: 'Phase 2 (no date cited)',
               description:
-                'Use dual-provider OpenSSL config on Linux: FIPS provider for regulated services, default+oqsprovider for new PQC services. Network segment separation satisfies some auditors.',
+                'This module’s advice: use dual-provider OpenSSL config on Linux: FIPS provider for regulated services, default+oqsprovider for new PQC services. Network segment separation satisfies some auditors.',
               status: 'near',
             },
             {

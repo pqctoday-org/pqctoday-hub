@@ -26,12 +26,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pci-certification',
+  lastReviewed: '2026-11-01',
+  // lastReviewed is the owner's sign-off of 1 November 2026 (moduleReviewHonesty.test.ts); the
+  // revision record backs it. The on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  // lastReviewed (the owner's sign-off of 25 October 2026, moduleReviewHonesty.test.ts) is removed:
-  // the lesson wording changed on 30 October 2026, after that sign-off. Put it back when the owner
-  // renews the sign-off; the on-page notice follows it (common/moduleReviewStatus.ts). It was
-  // never a lab or certification-body review: v1 ships as "practitioner orientation".
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-02',
 
   standards: [
     // ── PCI (public PCI SSC pages only, plan r2 D4; Document Library PDFs are not declared) ──

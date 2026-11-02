@@ -60,7 +60,7 @@ export const KEY_HIERARCHY_LEVELS: KeyHierarchyLevel[] = [
     classicalAlgorithm: 'RSA-4096 or AES-256-KW',
     pqcAlgorithm: 'ML-KEM-1024 + HKDF-SHA-256',
     hybridAlgorithm: 'RSA-4096 + ML-KEM-1024 → HKDF combiner',
-    rotationInterval: '5-15 years',
+    rotationInterval: '5-15 years (this module’s planning assumption, not a measurement)',
   },
   {
     id: 'zone-kek',
@@ -544,7 +544,7 @@ vault write transit/keys/pqc-root-kek \\
         language: 'bash',
       },
       'thales-ciphertrust': {
-        code: `# Thales CipherTrust — Create PQC key
+        code: `# Thales CipherTrust — Create PQC key (not sourced in the Library)
 curl -X POST https://ciphertrust/api/v1/vault/keys2 \\
   -H "Authorization: Bearer $TOKEN" \\
   -d '{

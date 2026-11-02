@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'arch-quantum-impact',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-01',
+  lastEdited: '2026-11-02',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,5: FIPS 203 (the ML-KEM ciphertext sizes this module quotes),

@@ -467,8 +467,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           <Callout title="Ways to send fewer bytes">
             <p>
               <strong>RFC 8879 compression</strong> saves only the structured part — PQC keys and
-              signatures are random and do not compress. <strong>C509</strong> re-encodes the
-              certificate in CBOR (same key, same signature).{' '}
+              signatures are high-entropy, which limits how much compression can help.{' '}
+              <strong>C509</strong> re-encodes the certificate in CBOR (same key, same signature).{' '}
               <strong>RFC 7250 raw public keys</strong> drop the chain but need a key pinned at
               provisioning. <strong>PSK resumption</strong> sends no certificate after the first
               handshake.
@@ -505,8 +505,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           {F.fleet.hsmHours} hours: the HSM, not the radio, sets the pace (model estimate).
         </p>
         <p>
-          Smart-meter data is a harvest-now-decrypt-later target: interval readings reveal when a
-          home is occupied, and meters stay installed.
+          Smart-meter data is a harvest-now-decrypt-later target (not sourced in the Library):
+          interval readings reveal when a home is occupied, and meters stay installed.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Callout title="Wi-SUN FAN 1.1">
@@ -557,9 +557,8 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </li>
           <li>
             <strong>Hash-based firmware protection is also in hardware.</strong> Infineon says two
-            of its OPTIGA TPMs (SLB 9672 and SLB 9673) use XMSS for firmware updates, and that a
-            PSoC Control microcontroller line supports LMS/XMSS firmware protection with a roadmap
-            toward ML-DSA and ML-KEM.
+            of its OPTIGA TPMs (SLB 9672 and SLB 9673) use XMSS for firmware updates, and that its
+            PSoC Control C3 microcontroller family accelerates post-quantum secure boot in hardware.
           </li>
           <li>
             <strong>Many deployed secure elements are ECC-only.</strong> Microchip&apos;s ATECC608B,
