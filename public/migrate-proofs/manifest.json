@@ -24760,6 +24760,51 @@
       "identity": "SKIPPED",
       "tier": "curl_cffi:chrome124",
       "superseded_file": "_superseded-11012026/migrate-proofs/Citrix-FIPS-Cryptographic-Module-2-5e283ccd.html"
+    },
+    {
+      "product_id": "Citrix-FIPS-Cryptographic-Module-2",
+      "refId": "Citrix-FIPS-Cryptographic-Module-2",
+      "file": "Citrix-FIPS-Cryptographic-Module-2-5e283ccd-9116a647.html",
+      "sizeBytes": 1239014,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=22088",
+      "sha256": "9116a647d710d3cbce5c73e2c1767e591d9e4ccd0a90984b504c27951b10c905",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-02T03:27:54.979867+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Citrix-FIPS-Cryptographic-Module-2",
+      "refId": "Citrix-FIPS-Cryptographic-Module-2",
+      "file": "Citrix-FIPS-Cryptographic-Module-2-5e283ccd-e7390844.html",
+      "sizeBytes": 1239014,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=22088",
+      "sha256": "e739084490483570e11437db05160b776ab164b72340ae21f5786ee857671d8d",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-02T03:28:01.395610+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Citrix-FIPS-Cryptographic-Module-2",
+      "refId": "Citrix-FIPS-Cryptographic-Module-2",
+      "file": "Citrix-FIPS-Cryptographic-Module-2-5e283ccd-b7160c6c.html",
+      "sizeBytes": 1239014,
+      "content_type": "text/html",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=22088",
+      "sha256": "b7160c6c17da835b144d0462ad0a478b479ed52d52f485fef60fd7b8c159383c",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-02T03:28:04.668688+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
