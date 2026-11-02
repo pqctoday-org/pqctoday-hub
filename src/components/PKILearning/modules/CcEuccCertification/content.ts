@@ -29,7 +29,7 @@ export const content: ModuleContent = {
   // lastReviewed is the owner's sign-off of 1 November 2026 (moduleReviewHonesty.test.ts); the
   // revision record backs it. The on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-02',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──
