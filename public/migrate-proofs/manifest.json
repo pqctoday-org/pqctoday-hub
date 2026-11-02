@@ -24672,6 +24672,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "google-cloud-kms-cloud-gateway",
+      "refId": "google-cloud-kms-cloud-gateway",
+      "file": "google-cloud-kms-cloud-gateway-9e836592.html",
+      "sizeBytes": 279870,
+      "content_type": "text/html",
+      "url": "https://cloud.google.com/blog/products/identity-security/future-proofing-data-integrity-quantum-safe-digital-signatures-in-cloud-kms",
+      "sha256": "8cd2342a9a7dcf58598898a2e37c960f5ca9b2b21ad8901eaa5b4f6902004c3d",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-02T02:33:57.232585+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
