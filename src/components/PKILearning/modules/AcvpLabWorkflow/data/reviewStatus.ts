@@ -13,8 +13,8 @@ import {
  * validation-lab practitioner must review it first was replaced by owner review); the sign-off
  * was reset after the 23 October corrections to the statements about the ACVP specification's
  * revision history; 24 and 25 October 2026 the owner renewed it; facts were corrected again in release
- * 4.187.0, so `lastReviewed` in content.ts is removed and the notice reads awaiting re-sign-off until the
- * owner renews it. The module is not presented as a lab training
+ * 4.187.0 and later, and the owner renewed the sign-off on 1 November 2026 (`lastReviewed` in content.ts).
+ * Until the next correction the notice reads signed off. The module is not presented as a lab training
  * resource, and the notice keeps the required validation disclaimers on every tab that teaches or
  * exercises. The sign-off and lab-review sentences are the ones the other four certification
  * modules show (common/moduleReviewStatus.ts).
