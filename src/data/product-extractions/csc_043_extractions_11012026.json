@@ -1,0 +1,52 @@
+[
+  {
+    "platform_name": "Tuta Drive",
+    "category": "Data Storage & Protection",
+    "product_name": "Tuta Drive",
+    "product_brief": "Quantum-resistant end-to-end encrypted cloud storage for confidential files, pictures, and data.",
+    "pqc_support": "Partial — press release only: claims quantum-resistant end-to-end encryption in closed beta",
+    "pqc_capability_description": "Closed-beta cloud storage solution claimed to use quantum-resistant end-to-end encryption. No PQC algorithms are named.",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "zero-knowledge architecture",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "2026-04-16",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Tuta Mail web client on mobile or desktop",
+    "target_industries": "Individuals and businesses",
+    "regulatory_status": "GDPR compliance",
+    "pqc_roadmap_details": "Continued closed-beta development and testing; public beta will provide more details and features. Planned Android and iOS apps and Linux, Windows, and macOS desktop-client inclusion.",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "PQC Support": "Tuta Drive is a secure storage solution protected with quantum-resistant end-to-end encryption",
+      "PQC Capability Description": "Tuta Drive is a secure storage solution protected with quantum-resistant end-to-end encryption",
+      "Release Date": "datepublished 2026-04-16; datemodified 2026-04-16",
+      "PQC Roadmap Details": "Once Tuta Drive is ready for public beta, we will release more details and, of course, more features for the highly anticipated Tuta Drive!"
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  }
+]

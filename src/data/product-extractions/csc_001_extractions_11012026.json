@@ -1,0 +1,54 @@
+[
+  {
+    "platform_name": "Citrix FIPS Cryptographic Module",
+    "category": "Cryptographic Libraries",
+    "product_name": "Citrix FIPS Cryptographic Module",
+    "product_brief": "Citrix FIPS Cryptographic Module provides cryptographic services for various Citrix products.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Android 15, iOS 18.4.1, iPadOS 18.3.1, Linux 6.12, MacOS Sequoia 15.2, Windows 10 Pro, Windows 11 Pro, Windows Server 2019, Windows Server 2022, Windows Server 2025, Raspbian GNU/Linux 11 (bullseye)",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "DSA, ECDSA",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "CAVP algorithm validation",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "Signature Schemes": "ECDSA SigGen (FIPS186-5)"
+    },
+    "withheld_no_excerpt": [
+      "PQC Support",
+      "Latest Version",
+      "FIPS Validated",
+      "Crypto Primitives"
+    ],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  }
+]
