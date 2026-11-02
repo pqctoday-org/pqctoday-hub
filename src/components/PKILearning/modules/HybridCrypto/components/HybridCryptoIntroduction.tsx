@@ -1379,13 +1379,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           </div>
 
           <p className="text-xs text-muted-foreground">
-            <strong>Deployment guidance:</strong> Pure PQC (ML-DSA) is ready today (RFC 9881; the
-            workshop is tested with OpenSSL 3.6.3). Pure SLH-DSA is also ready (RFC 9909). Composite
-            requires both parties to support the draft spec &mdash; best suited to closed PKI.
-            Alt-Sig works with legacy verifiers via extensions. Related Certs (RFC 9763) keeps the
-            classical certificate fully usable on its own. Watchlist: FN-DSA (planned FIPS 206, not
-            yet final) has an IETF certificate draft whose OIDs are still TBD; composite KEM will
-            enable hybrid key encapsulation in S/MIME once published.
+            <strong>Deployment guidance:</strong> This module&apos;s advice: Pure PQC (ML-DSA) is
+            ready today (RFC 9881; the workshop is tested with OpenSSL 3.6.3). Pure SLH-DSA is also
+            ready (RFC 9909). Composite requires both parties to support the draft spec &mdash; best
+            suited to closed PKI. Alt-Sig works with legacy verifiers via extensions. Related Certs
+            (RFC 9763) keeps the classical certificate fully usable on its own. Watchlist: FN-DSA
+            (planned FIPS 206, not yet final) has an IETF certificate draft whose OIDs are still
+            TBD; composite KEM will enable hybrid key encapsulation in S/MIME once published.
           </p>
         </div>
       </section>

@@ -67,7 +67,7 @@ export const SCENARIOS: Scenario[] = [
       'Certificate Chain opens with all three levels on ML-DSA-65 and a 10 KiB RAM budget. Then try each delivery mode. Finally set the root to ML-DSA-87 and the other two to ML-DSA-44.',
     badge: 'Certificates',
     observe:
-      'The full chain sends 11,122 B (leaf + intermediate; the root stays on the device) — more than the 10 KiB budget. Compression saves only 300 B (PQC keys and signatures do not compress) and C509 320 B. A raw public key needs 1,982 B, an MTC with a 20-level proof 2,892 B — each with its own trust caveat — and resumption sends nothing. With an ML-DSA-87 root the intermediate grows to 6,239 B, because it carries the root’s 4,627-byte signature.',
+      'The full chain sends 11,122 B (leaf + intermediate; the root stays on the device) — more than the 10 KiB budget. Compression saves only 300 B (PQC keys and signatures are high-entropy, which limits how much compression can help) and C509 320 B. A raw public key needs 1,982 B, an MTC with a 20-level proof 2,892 B — each with its own trust caveat — and resumption sends nothing. With an ML-DSA-87 root the intermediate grows to 6,239 B, because it carries the root’s 4,627-byte signature.',
     config: {
       step: 3,
       rootAlg: 'ml-dsa-65',

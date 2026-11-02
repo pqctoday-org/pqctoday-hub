@@ -85,7 +85,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Transciphering',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      "The client uploads data encrypted with the Kreyvium stream cipher, plus its Kreyvium key encrypted under FHE once. The server runs the keystream inside FHE and ends with FHE ciphertexts it never saw in the clear. Uploads stay at plaintext size instead of FHE size, which can be a thousand times larger or more. Use Kreyvium's 128-bit key: Trivium's 80-bit key is already below the 112-bit minimum before Grover.",
+      "The client uploads data encrypted with the Kreyvium stream cipher, plus its Kreyvium key encrypted under FHE once. The server runs the keystream inside FHE and ends with FHE ciphertexts it never saw in the clear. Uploads stay at plaintext size instead of FHE size, which can be a thousand times larger or more. Use Kreyvium's 128-bit key: Trivium's 80-bit key falls below the federal minimum of 112 bits of security strength for applying cryptographic protection before Grover.",
     paths: ['hsm-custody'],
     workshopStep: 1,
   },

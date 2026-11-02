@@ -739,7 +739,8 @@ export const FheKeysOperationsSection: React.FC = () => (
       </div>
       <p className="text-xs text-muted-foreground">
         This keeps uploads at plaintext size instead of FHE size. Use Kreyvium&apos;s 128-bit key:
-        Trivium&apos;s 80-bit key is already below the 112-bit minimum, before Grover.
+        Trivium&apos;s 80-bit key falls below the federal minimum of 112 bits of security strength
+        for applying cryptographic protection, before Grover.
       </p>
     </div>
   </div>
