@@ -8,119 +8,165 @@ source: public/vendor-roadmaps/
 # Vendor PQC Roadmap Enrichments
 
 
-## VND-001:aws_amazon_com_blogs_security_aws_post_q — Amazon Web Services Inc.
+## VND-057:blog_cloudflare_com_post_quantum_roadmap — Cloudflare Inc.
 
-- **Vendor ID**: VND-001
-- **Vendor Name**: Amazon Web Services Inc.
-- **Roadmap Title**: AWS post-quantum cryptography migration plan
-- **Roadmap URL**: https://aws.amazon.com/blogs/security/aws-post-quantum-cryptography-migration-plan/
+- **Vendor ID**: VND-057
+- **Vendor Name**: Cloudflare Inc.
+- **Roadmap Title**: Cloudflare targets 2029 for full post-quantum security
+- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-roadmap/
 - **Publish Date**: Unknown
-- **Local File**: vendor-roadmaps/VND-001_Amazon_Web_Services_Inc.html
-- **CSV Coverage Notes**: AWS PQC migration plan (blog, updated Apr 2026): PQC delivered via the shared-responsibility model -- some features transparently enabled for all customers, others opt-in -- phased rollout starting with systems communicating over untrusted networks (internet-facing first).
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; CRYSTALS-Kyber; CRYSTALS-Dilithium; SPHINCS+
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: AWS-LC; s2n; AWS Key Management Service (AWS KMS); AWS Secrets Manager; AWS Certificate Manager (ACM); Elastic Load Balancing (ELB); Amazon API Gateway; Amazon CloudFront; AWS Private CA; Amazon Trust Services
-- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; CNSA Suite 2.0; FIPS-140-3; ETSI TR 103 619
-- **Hybrid Mode Support**: Yes, "Hybrid post-quantum key agreement combines Elliptic-Curve Diffie-Hellman (ECDH), a classic key exchange algorithm, with a post-quantum key encapsulation method, such as the newly standardized ML-KEM algorithm."
-- **Current GA Status**: Planned
-- **Customer Action Required**: Ensure agility in distributing updated software versions; adopt TLS 1.3 across the organization; implement PQC options where available; consider using AWS KMS for long-lived roots of trust.
-- **Key Commitments & Quotes**: None detected
-- **Coverage Verification**: CONSISTENT The document explicitly states that PQC is delivered via the shared responsibility model with some features transparently enabled and others opt-in, and that the transition starts with systems communicating over untrusted networks.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-001_Amazon_Web_Services_Inc.html (1253.9 KB)
-- **Extraction Timestamp**: 2026-11-01T20:54:05
-
-
-## VND-017:www_futurex_com_news_futurex_announces_p — Futurex Inc.
-
-- **Vendor ID**: VND-017
-- **Vendor Name**: Futurex Inc.
-- **Roadmap Title**: Futurex Post-Quantum Hybrid Certificate Authority Solution
-- **Roadmap URL**: https://www.futurex.com/news/futurex-announces-post-quantum-hybrid-certificate-authority-solution
-- **Publish Date**: 2020-02-20
-- **Local File**: vendor-roadmaps/VND-017_Futurex_Inc..html
-- **CSV Coverage Notes**: (2026-07-01: verified publish date is 2020-02-20 (KMES Series 3 announcement), not 2026-06-05 as previously recorded; page shows a 2024-09-20 republish stamp but no new content. No more-current Futurex PQC announcement found.)
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: KMES Series 3
-- **Compliance Frameworks**: FIPS 140-2 Level 3; NIST
-- **Hybrid Mode Support**: Yes, embeds both conventional and quantum-safe algorithms within a single container
-- **Current GA Status**: GA
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "Futurex is the first company to deliver a post-quantum hybrid certificate authority offering"; "embeds both conventional and quantum-safe algorithms within a single container"; "quantum-safe algorithms can be turned on as needed"
-- **Coverage Verification**: CONSISTENT, the document explicitly states "BULVERDE, Texas, February 20, 2020" and "Last updated: September 20, 2024" with no newer PQC content.
-- **Extraction Quality**: MEDIUM
-- **Source Document**: VND-017_Futurex_Inc..html (596.5 KB)
-- **Extraction Timestamp**: 2026-11-01T20:54:37
-
-
-## VND-018:cloud_google_com_blog_products_identity_ — Google LLC
-
-- **Vendor ID**: VND-018
-- **Vendor Name**: Google LLC
-- **Roadmap Title**: Google's timeline for PQC migration
-- **Roadmap URL**: https://cloud.google.com/blog/products/identity-security/pqc-in-plaintext-google-clouds-post-quantum-cryptography-roadmap
-- **Publish Date**: Unknown
-- **Local File**: vendor/VND-018.html
+- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc.html
 - **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
-- **Target Migration Dates**: Full PQC readiness by 2029; SNDL mitigation by end of 2027; Integrity and non-repudiation by end of 2028; Foundations and key management by end of 2028
-- **Products / Services Covered**: Google Cloud API endpoints; Application and proxy load balancers; Cloud KMS; Cloud VPN; Cloud Interconnect; GCE OS Login; Cloud SDK; gCloud CLI; GKE service mesh; Cloud Storage SDK; Storage Transfer Service; BigQuery CLI; Data Transfer Service; Binary Authorization; Access Approval (AXA); Assured OSS; ALTS; Certificate Authority Service (CAS); Google Trust Service; Cloud IAM; BoringSSL; Tink; Confidential Compute; Cloud Hardware Security Module (HSM); External Key Management; Google Workspace Client-side Encryption (CSE)
-- **Compliance Frameworks**: FIPS 203; CNSA 2.0; NIST IR 8547; FIPS 140-3
-- **Hybrid Mode Support**: Yes, "implemented NIST-standardized ML-KEM (FIPS 203) in hybrid mode" and "quantum-safe hybrid key exchange ( X25519MLKEM768 )"
-- **Current GA Status**: GA (Cloud KMS PQC algorithms are generally available; API endpoints and load balancers are live)
-- **Customer Action Required**: Inventory cryptographic resources; Update development and SRE teams to use PQC-supporting software (BoringSSL, Chrome, SDKs); Validate existing application behaviors using quantum-safe APIs and load balancers
-- **Key Commitments & Quotes**: "NIST standardized PQC algorithms (ML-KEM, ML-DSA, SLH-DSA) for your encryption and signing keys are now generally available."
-- **Coverage Verification**: MISMATCH, as the document explicitly details a comprehensive roadmap with specific dates, algorithms, and product lists, contradicting the "Not specified" claim.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-018.html (338.8 KB)
-- **Extraction Timestamp**: 2026-11-01T20:54:55
-
-
-## VND-019:research_ibm_com_blog_quantum_safe_roadm — IBM Corporation
-
-- **Vendor ID**: VND-019
-- **Vendor Name**: IBM Corporation
-- **Roadmap Title**: IBM Quantum-Safe Roadmap
-- **Roadmap URL**: https://research.ibm.com/blog/quantum-safe-roadmap
-- **Publish Date**: 2023-05-10
-- **Local File**: vendor/VND-019.html
-- **CSV Coverage Notes**: IBM Quantum-Safe Roadmap (page dated 2023-05-10, unchanged) outlines crypto-agility via the IBM Quantum Safe portfolio: Explorer (code scanning / cryptographic artifact discovery), Advisor (posture & compliance analysis, CBOM), and Remediator (test/implement hybrid quantum-safe remediation). Phased path: inventory (2023), adopt NIST standards (2024), CNSA 2.0 preference (2025). Also Guardium, z/OS, OpenSSL integrations. | Milestone: IBM Quantum Safe Explorer/Advisor/Remediator for crypto inventory (CBOM), risk analysis, and hybrid quantum-safe remediation; aligned to NIST 2024 standards and 20
-- **PQC Algorithms Announced**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon
-- **Target Migration Dates**: 2023 (cryptography inventory/CBOM); 2024 (NIST standards publication); 2025 (NSA preference for quantum-safe algorithms)
-- **Products / Services Covered**: IBM Quantum Safe Explorer; IBM Quantum Safe Advisor; IBM Quantum Safe Remediator; IBM z16 mainframe; IBM Tape storage technology
-- **Compliance Frameworks**: NIST; CNSA 2.0; FIPS
-- **Hybrid Mode Support**: Yes, Remediator supports a hybrid implementation approach allowing the use of classical and quantum-safe cryptography during transition.
-- **Current GA Status**: GA (Explorer and Advisor released; first generation of Remediator released)
-- **Customer Action Required**: Complete cryptography inventory and create a CBOM; begin quantum-safe transition; use tools to analyze posture and remediate.
-- **Key Commitments & Quotes**: "in 2025, the National Security Administration (NSA) will require owners and operators of national security systems to prefer quantum-safe algorithms"
-- **Coverage Verification**: PARTIAL, as the document confirms the Explorer/Advisor/Remediator portfolio and 2023-2025 timeline but does not mention Guardium, z/OS, or OpenSSL integrations.
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-019.html (84.1 KB)
-- **Extraction Timestamp**: 2026-11-01T20:55:31
-
-
-## VND-021:www_infineon_com_promo_postquantumcrypto — Infineon Technologies AG
-
-- **Vendor ID**: VND-021
-- **Vendor Name**: Infineon Technologies AG
-- **Roadmap Title**: Infineon Post-Quantum Cryptography
-- **Roadmap URL**: https://www.infineon.com/promo/postquantumcryptography
-- **Publish Date**: 2025-10-15
-- **Local File**: vendor-roadmaps/VND-021_Infineon_Technologies_AG.html
-- **CSV Coverage Notes**: Infineon PQC hub: SLC27 security controller (TEGRION family, Integrity Guard 32) launched Oct 2025 with Common Criteria-certified PQC library (ML-KEM, ML-DSA), crypto-agility and in-field updates, hardened against fault/side-channel. PSOC Control C3 Performance Line samples by end-2025, production 2026 adding ML-DSA on-device key gen/signing and ML-KEM for TLS. Automotive MCUs upgraded for PQC; LMS support. | Milestone: SLC27 PQC-certified contactless/dual-interface security controller launched Oct 2025 with CC-certified ML-KEM + ML-DSA crypto library (TEGRION family, Integrity Guard 32); PSOC
 - **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
+- **Target Migration Dates**: 2029 for full post-quantum security; 2029 for Google's accelerated post-quantum migration timeline
 - **Products / Services Covered**: None detected
 - **Compliance Frameworks**: None detected
 - **Hybrid Mode Support**: None detected
-- **Current GA Status**: No PQC
+- **Current GA Status**: GA (Post-quantum encryption enabled for all websites and APIs in 2022)
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "We now target 2029 to be fully post-quantum (PQ) secure including, crucially, post-quantum authentication."; "enabled post-quantum encryption for all websites and APIs in 2022"; "over 65% of human traffic to Cloudflare is post-quantum encrypted"
+- **Coverage Verification**: MISMATCH — The document explicitly states a target date of 2029 for full post-quantum security, contradicting the "Not specified" claim.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-057_Cloudflare_Inc.html (501.9 KB)
+- **Extraction Timestamp**: 2026-11-01T21:07:21
+
+
+## VND-056:www_sealsq_com_investors_news_releases_s — SEALSQ Corp.
+
+- **Vendor ID**: VND-056
+- **Vendor Name**: SEALSQ Corp.
+- **Roadmap Title**: SEALSQ Announces Development of QASIC, the Quantum-Resistant ASIC, By IC'Alps
+- **Roadmap URL**: https://www.sealsq.com/investors/news-releases/sealsq-announces-development-of-qasic-the-quantum-resistant-asic-by-icalps
+- **Publish Date**: 2025-10-17
+- **Local File**: vendor-roadmaps/VND-056_SEALSQ_Corp.html
+- **CSV Coverage Notes**: SEALSQ announced development of QASIC (Quantum ASIC), a custom quantum-resistant chip line, via its recently acquired ASIC design house IC'Alps. Roadmap phases: short-term commercialization of a "PQC standard chip", mid-term custom QASIC/security-IP solutions, long-term chiplet-based Hardware Security Modules (CHSMs) and Post-Quantum HSMs. First prototype targeted for 2026. No specific PQC algorithms named in this announcement (high-level strategic release, not a technical spec). | Milestone: first PQC standard chip commercialization (short-term); first QASIC prototype expected 2026.
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: First prototype expected in 2026
+- **Products / Services Covered**: PQC standard chip; QASIC (Quantum ASIC); Security IP; Chiplet-based Hardware Security Modules (CHSMs); Post-Quantum Hardware Security Modules (HSMs); secure microcontrollers
+- **Compliance Frameworks**: ISO 9001; ISO 13485; EN 9100; Common Criteria
+- **Hybrid Mode Support**: No
+- **Current GA Status**: Planned
 - **Customer Action Required**: None detected
 - **Key Commitments & Quotes**: None detected
-- **Coverage Verification**: MISMATCH because the provided document text is a generic product navigation menu and contains no specific information regarding the SLC27, PQC algorithms, or launch dates mentioned in the claim.
-- **Extraction Quality**: LOW
-- **Source Document**: VND-021_Infineon_Technologies_AG.html (1682.4 KB)
-- **Extraction Timestamp**: 2026-11-01T20:55:59
+- **Coverage Verification**: CONSISTENT The document explicitly outlines the three-phase roadmap (short-term PQC standard chip, mid-term QASIC, long-term CHSMs) and states the first prototype is expected in 2026, matching the claim.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-056_SEALSQ_Corp.html (79.5 KB)
+- **Extraction Timestamp**: 2026-11-01T21:07:43
+
+
+## VND-057:blog_cloudflare_com_post_quantum_dnssec_ — Cloudflare Inc.
+
+- **Vendor ID**: VND-057
+- **Vendor Name**: Cloudflare Inc.
+- **Roadmap Title**: 1.1.1.1 now supports post-quantum DNSSEC
+- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-dnssec-1111/
+- **Publish Date**: 2026-09-10
+- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc_post-quantum-dnssec-1111.html
+- **CSV Coverage Notes**: Cloudflare blog (2026-09-10): 1.1.1.1 now validates DNSSEC signatures made with ML-DSA-44 (IANA DNSSEC algorithm 18, draft-westerbaan-dnssec-mldsa) by default, with a live ML-DSA-44-signed test zone (dnstest.dev). Resolver-side only: applies a local policy requiring at least one valid post-quantum path when the parent's DS RRset signals a PQ algorithm (downgrade protection). Next steps stated: ML-DSA-44 signing in Cloudflare Authoritative DNS and DS-record support in Cloudflare Registrar. Company-wide target unchanged: full post-quantum security by 2029. Second, separate row from the general 2029-roadmap announcement.
+- **PQC Algorithms Announced**: ML-DSA-44
+- **Target Migration Dates**: full post-quantum security by 2029
+- **Products / Services Covered**: 1.1.1.1; Cloudflare Authoritative DNS; Cloudflare Registrar
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: Yes, zones publish conventional and post-quantum keys and signatures together to maintain compatibility with older resolvers.
+- **Current GA Status**: GA
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: None detected
+- **Coverage Verification**: PARTIAL, the document confirms the ML-DSA-44 validation, algorithm number 18, downgrade protection policy, and next steps, but does not explicitly mention the specific test zone "dnstest.dev" or the draft name "draft-westerbaan-dnssec-mldsa".
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-057_Cloudflare_Inc_post-quantum-dnssec-1111.html (663.5 KB)
+- **Extraction Timestamp**: 2026-11-01T21:08:04
+
+
+## VND-057:developers_cloudflare_com_changelog_post — Cloudflare Inc.
+
+- **Vendor ID**: VND-057
+- **Vendor Name**: Cloudflare Inc.
+- **Roadmap Title**: Workers Web Crypto adds ML-KEM and ML-DSA support
+- **Roadmap URL**: https://developers.cloudflare.com/changelog/post/2026-09-28-webcrypto-modern-algorithms/
+- **Publish Date**: 2026
+- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc_developers_cloudflare_com_changelog_post.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM-768; ML-KEM-1024; ML-DSA-44; ML-DSA-65; ML-DSA-87
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Workers Web Crypto API
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: No
+- **Current GA Status**: GA
+- **Customer Action Required**: Turn on the webcrypto_modern_algorithms compatibility flag
+- **Key Commitments & Quotes**: "The Workers Web Crypto API now supports ML-KEM-768, ML-KEM-1024, ML-DSA-44, ML-DSA-65, and ML-DSA-87."
+- **Coverage Verification**: MISMATCH; The document explicitly details the specific algorithms and product (Workers Web Crypto API) supporting PQC, whereas the file claim is "Not specified".
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-057_Cloudflare_Inc_developers_cloudflare_com_changelog_post.html (75.0 KB)
+- **Extraction Timestamp**: 2026-11-01T21:08:29
+
+
+## VND-057:blog_cloudflare_com_post_quantum_ipsec — Cloudflare Inc.
+
+- **Vendor ID**: VND-057
+- **Vendor Name**: Cloudflare Inc.
+- **Roadmap Title**: Post-quantum encryption for Cloudflare IPsec is generally available
+- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-ipsec/
+- **Publish Date**: 2026
+- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc_blog_cloudflare_com_post_quantum_ipsec.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM
+- **Target Migration Dates**: Full post-quantum security by 2029
+- **Products / Services Covered**: Cloudflare IPsec; Cloudflare One SASE platform
+- **Compliance Frameworks**: FIPS 203; NIST SP 800 52r2; RFC 9370; RFC 8784
+- **Hybrid Mode Support**: Yes, combines classical Diffie-Hellman and ML-KEM in a single handshake.
+- **Current GA Status**: GA
+- **Customer Action Required**: Start protecting your wide-area network (WAN) against harvest-now-decrypt-later attacks today using hardware you already have.
+- **Key Commitments & Quotes**: "we’ve made post-quantum encryption in Cloudflare IPsec generally available"; "Cloudflare has moved its target for full post-quantum security forward to 2029"; "we hope the IPsec community continues to focus on the development of interoperable standards"
+- **Coverage Verification**: MISMATCH, as the document explicitly states that post-quantum encryption in Cloudflare IPsec is generally available, contradicting the "Not specified" claim.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-057_Cloudflare_Inc_blog_cloudflare_com_post_quantum_ipsec.html (283.5 KB)
+- **Extraction Timestamp**: 2026-11-01T21:08:44
+
+
+## VND-056:www_sealsq_com_investors_news_releases_s — SEALSQ Corp.
+
+- **Vendor ID**: VND-056
+- **Vendor Name**: SEALSQ Corp.
+- **Roadmap Title**: SEALSQ launches U.S.-based post-quantum root of trust for quantum-resistant PKI and device identity
+- **Roadmap URL**: https://www.sealsq.com/investors/news-releases/sealsq-launches-u.s.-based-post-quantum-root-of-trust-to-deliver-quantum-resistant-pki-and-device-identity-services-as-part-of-the-made-i-1763137515085
+- **Publish Date**: Unknown
+- **Local File**: vendor-roadmaps/VND-056_SEALSQ_Corp_www_sealsq_com_investors_news_releases_s.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: Launch of U.S.-based Post-Quantum Root of Trust on November 21, 2025
+- **Products / Services Covered**: U.S.-based Post-Quantum Root of Trust; INeS platform; Quantum Shield QS7001 PQC-enabled hardware platform; INeS IoT Security Platform
+- **Compliance Frameworks**: CNSA 2.0; NIST’s PQC standards
+- **Hybrid Mode Support**: Yes, supporting hybrid classical + PQC trust models
+- **Current GA Status**: Planned (set to go live on Friday, November 21, 2025)
+- **Customer Action Required**: Generate Post-Quantum Certificates and device identities; initiate pilot programs through the INeS IoT Security Platform
+- **Key Commitments & Quotes**: None detected
+- **Coverage Verification**: MISMATCH, as the document explicitly details the launch of a U.S.-based Post-Quantum Root of Trust and specific hardware platforms, contradicting the "Not specified" claim.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-056_SEALSQ_Corp_www_sealsq_com_investors_news_releases_s.html (79.2 KB)
+- **Extraction Timestamp**: 2026-11-01T21:09:08
+
+
+## VND-181:www_sectigo_com_resource_library_sectigo — Sectigo Ltd.
+
+- **Vendor ID**: VND-181
+- **Vendor Name**: Sectigo Ltd.
+- **Roadmap Title**: Sectigo launches Quantum Ready to discover cryptographic assets and plan PQC migration
+- **Roadmap URL**: https://www.sectigo.com/resource-library/sectigo-introduces-sectigo-quantum-ready-qspm
+- **Publish Date**: 2026
+- **Local File**: vendor-roadmaps/VND-181_Sectigo_Ltd_www_sectigo_com_resource_library_sectigo.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Sectigo Quantum Ready™; Sectigo Certificate Manager; Sectigo PQC Labs; Private PQC in Sectigo Certificate Manager
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: No
+- **Current GA Status**: GA
+- **Customer Action Required**: Join the early access program; visit https://www.sectigo.com/qspm-quantum-ready; visit https://qday.net to assess current PQC readiness
+- **Key Commitments & Quotes**: "Sectigo Quantum Ready™ helps organizations discover all cryptographic assets, prioritize quantum risk and plan PQC migrations."; "Sectigo Quantum Ready™ gives enterprises the visibility, context, and evidence needed to build a prioritized action plan for post-quantum readiness."; "We have been building toward this position for some time through practical innovations such as Sectigo PQC Labs and Private PQC in Sectigo Certificate Manager ."
+- **Coverage Verification**: MISMATCH The document explicitly details the launch of "Sectigo Quantum Ready™" and its capabilities, contradicting the claim that coverage is "Not specified".
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-181_Sectigo_Ltd_www_sectigo_com_resource_library_sectigo.html (538.3 KB)
+- **Extraction Timestamp**: 2026-11-01T21:09:36
 
 ## VND-001 — Amazon Web Services Inc.
 
@@ -1093,94 +1139,6 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: LOW
 - **Source Document**: VND-055_evolutionQ_Inc.html (38.4 KB)
 - **Extraction Timestamp**: 2026-07-12T21:05:16
-
-## VND-056 — SEALSQ Corp.
-
-- **Vendor ID**: VND-056
-- **Vendor Name**: SEALSQ Corp.
-- **Roadmap Title**: SEALSQ Announces Development of QASIC, the Quantum-Resistant ASIC, By IC'Alps
-- **Roadmap URL**: https://www.sealsq.com/investors/news-releases/sealsq-announces-development-of-qasic-the-quantum-resistant-asic-by-icalps
-- **Publish Date**: 2026-07-28
-- **Local File**: vendor-roadmaps/VND-056_SEALSQ_Corp.html
-- **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: QASIC; Catalog ICs; Custom ICs; Security IP; Chiplet-based Hardware Security Modules (CHSMs); Post-Quantum Hardware Security Modules (HSMs); secure microcontrollers
-- **Compliance Frameworks**: ISO 9001; ISO 13485; EN 9100; Common Criteria
-- **Hybrid Mode Support**: None detected
-- **Current GA Status**: Planned
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "commercialization of the first PQC standard chip on the market"; "development of custom IC solutions, the QASIC - Quantum ASIC"; "first prototype from this integrated roadmap is expected in 2026"
-- **Coverage Verification**: CONSISTENT — The document is a high-level strategic announcement regarding the acquisition and roadmap, containing no specific technical details or product versions to verify against CSV notes.
-- **Extraction Quality**: LOW
-- **Source Document**: VND-056_SEALSQ_Corp.html (79.5 KB)
-- **Extraction Timestamp**: 2026-07-27T23:27:52
-
-## VND-057:blog_cloudflare_com_post_quantum_dnssec_ — Cloudflare Inc.
-
-- **Vendor ID**: VND-057
-- **Vendor Name**: Cloudflare Inc.
-- **Roadmap Title**: 1.1.1.1 now supports post-quantum DNSSEC
-- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-dnssec-1111/
-- **Publish Date**: 2026-09-10
-- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc_post-quantum-dnssec-1111.html
-- **CSV Coverage Notes**: Cloudflare blog (2026-09-10): 1.1.1.1 now validates DNSSEC signatures made with ML-DSA-44 (IANA DNSSEC algorithm 18, draft-westerbaan-dnssec-mldsa) by default, with a live ML-DSA-44-signed test zone (dnstest.dev). Resolver-side only: applies a local policy requiring at least one valid post-quantum path when the parent's DS RRset signals a PQ algorithm (downgrade protection). Next steps stated: ML-DSA-44 signing in Cloudflare Authoritative DNS and DS-record support in Cloudflare Registrar. Company-wide target unchanged: full post-quantum security by 2029. Second, separate row from the general 2029-roadmap announcement.
-- **PQC Algorithms Announced**: ML-DSA-44
-- **Target Migration Dates**: full post-quantum security by 2029
-- **Products / Services Covered**: 1.1.1.1; Cloudflare Authoritative DNS; Cloudflare Registrar
-- **Compliance Frameworks**: NIST
-- **Hybrid Mode Support**: Yes, zones publish conventional and post-quantum keys and signatures together to maintain compatibility with older resolvers.
-- **Current GA Status**: GA
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: None detected
-- **Coverage Verification**: PARTIAL, the document confirms the ML-DSA-44 validation, algorithm number 18, downgrade protection policy, and next steps, but does not explicitly mention the specific test zone "dnstest.dev" or the draft name "draft-westerbaan-dnssec-mldsa".
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-057_Cloudflare_Inc_post-quantum-dnssec-1111.html (663.5 KB)
-- **Extraction Timestamp**: 2026-10-01T17:30:41
-
-## VND-057:blog_cloudflare_com_post_quantum_roadmap — Cloudflare Inc.
-
-- **Vendor ID**: VND-057
-- **Vendor Name**: Cloudflare Inc.
-- **Roadmap Title**: Cloudflare targets 2029 for full post-quantum security
-- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-roadmap/
-- **Publish Date**: Unknown
-- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc.html
-- **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: 2029 for full post-quantum security; 2029 for Google's accelerated post-quantum migration timeline
-- **Products / Services Covered**: None detected
-- **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: None detected
-- **Current GA Status**: GA (Post-quantum encryption enabled for all websites and APIs in 2022)
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "We now target 2029 to be fully post-quantum (PQ) secure including, crucially, post-quantum authentication."; "enabled post-quantum encryption for all websites and APIs in 2022"; "over 65% of human traffic to Cloudflare is post-quantum encrypted"
-- **Coverage Verification**: MISMATCH The document explicitly states a target date of 2029 for full post-quantum security, contradicting the "Not specified" claim.
-- **Extraction Quality**: MEDIUM
-- **Source Document**: VND-057_Cloudflare_Inc.html (501.9 KB)
-- **Extraction Timestamp**: 2026-10-01T17:30:14
-
-## VND-057:developers_cloudflare_com_changelog_post — Cloudflare Inc.
-
-- **Vendor ID**: VND-057
-- **Vendor Name**: Cloudflare Inc.
-- **Roadmap Title**: Workers Web Crypto adds ML-KEM and ML-DSA support
-- **Roadmap URL**: https://developers.cloudflare.com/changelog/post/2026-09-28-webcrypto-modern-algorithms/
-- **Publish Date**: 2026
-- **Local File**: vendor-roadmaps/VND-057_Cloudflare_Inc_developers_cloudflare_com_changelog_post.html
-- **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: ML-KEM-768; ML-KEM-1024; ML-DSA-44; ML-DSA-65; ML-DSA-87
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: Workers Web Crypto API
-- **Compliance Frameworks**: None detected
-- **Hybrid Mode Support**: No
-- **Current GA Status**: GA
-- **Customer Action Required**: Turn on the webcrypto_modern_algorithms compatibility flag
-- **Key Commitments & Quotes**: "The Workers Web Crypto API now supports ML-KEM-768, ML-KEM-1024, ML-DSA-44, ML-DSA-65, and ML-DSA-87."
-- **Coverage Verification**: MISMATCH - The document explicitly details the specific algorithms and product (Workers Web Crypto API) supporting PQC, whereas the claim states "Not specified".
-- **Extraction Quality**: HIGH
-- **Source Document**: VND-057_Cloudflare_Inc_developers_cloudflare_com_changelog_post.html (75.0 KB)
-- **Extraction Timestamp**: 2026-10-01T17:31:06
 
 ## VND-058 — HashiCorp Inc.
 
