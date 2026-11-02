@@ -851,7 +851,15 @@ export const HybridCertInspector: React.FC = () => {
                         These certificates are self-signed and generated for educational purposes
                         only. Do not use them in production environments. The exported PEM files can
                         be inspected with{' '}
-                        <code className="font-mono">openssl x509 -in cert.pem -text -noout</code>.
+                        <code className="font-mono">openssl x509 -in cert.pem -text -noout</code>,
+                        except the composite signature and composite KEM certificates: OpenSSL 3.6
+                        and 4.1 have no composite algorithms, so they print a bare OID and
+                        &ldquo;Unable to load Public Key&rdquo; (the unsigned KEM certificate also
+                        prints a bare OID, because it carries no signature). The certificates are
+                        intact. Use{' '}
+                        <code className="font-mono">openssl asn1parse -in cert.pem -i</code> to see
+                        their structure, or check them with Bouncy Castle Java (1.86 implements
+                        composite ML-DSA and, experimentally, composite ML-KEM).
                       </p>
                     </div>
                   </>
