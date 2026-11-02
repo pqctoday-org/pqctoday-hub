@@ -701,6 +701,33 @@ export const HybridCertFormats: React.FC = () => {
                   </div>
                 )}
 
+                {/* Stock OpenSSL registers no composite algorithms, so the one command people
+                    reach for first prints a bare OID and "Unable to load Public Key" for
+                    these two formats. Say so here, beside the PEM they will download. */}
+                {(fmt.id === 'composite' || fmt.id === 'composite-kem') && (
+                  <div
+                    data-testid="stock-openssl-note"
+                    className="flex items-start gap-2 rounded-lg border border-warning/20 bg-warning/10 px-3 py-2 text-[11px] text-muted-foreground"
+                  >
+                    <Info size={14} className="mt-0.5 shrink-0 text-warning" />
+                    <span>
+                      <strong className="text-foreground">
+                        Stock OpenSSL cannot read{' '}
+                        {fmt.id === 'composite' ? 'this certificate' : 'the end-entity certificate'}
+                        .
+                      </strong>{' '}
+                      OpenSSL 3.6 and 4.1 have no composite algorithms, so{' '}
+                      <code className="font-mono">openssl x509 -text</code> prints the algorithm as
+                      a bare OID and ends with &ldquo;Unable to load Public Key&rdquo;. The
+                      certificate itself is intact. To check it with another implementation, use
+                      Bouncy Castle Java (1.86 implements composite{' '}
+                      {fmt.id === 'composite' ? 'ML-DSA' : 'ML-KEM, still experimental'}); to see
+                      its structure, run{' '}
+                      <code className="font-mono">openssl asn1parse -in cert.pem -i</code>.
+                    </span>
+                  </div>
+                )}
+
                 {/* Component certs */}
                 {result.certs.map((cert, certIdx) => {
                   // Keyed by position: a CA and its end entity share a type.

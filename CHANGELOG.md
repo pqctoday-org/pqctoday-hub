@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.194.0] - 2026-11-01
+
+Four new products and three new vendor announcements join the Migrate pages, twenty catalogue products are re-read against their vendors' pages, five more lesson statements and three data rows follow their documents, and the Hybrid Certificates workshop explains why OpenSSL cannot read composite certificates.
+
+### Added
+
+- **Four new products in the Migrate catalogue** [view:/migrate] [persona:architect] [persona:developer] [persona:ops] [persona:grc]: the Citrix FIPS Cryptographic Module (its NIST validation lists ML-KEM, ML-DSA and SLH-DSA), DigiCert Quantum Central (generally available, builds a cryptographic inventory and tracks remediation), Sectigo Quantum Ready (early access) and Tuta Drive (closed beta). Each starts as "Pending Verification" until its entry is checked again.
+- **Three new vendor announcements in the roadmap lists** [view:/migrate] [persona:architect] [persona:ops] [persona:grc] [persona:executive]: Cloudflare says post-quantum encryption for Cloudflare IPsec is generally available, SEALSQ announced a U.S.-based post-quantum root of trust, and Sectigo introduced Quantum Ready.
+
+### Changed
+
+- **Twenty catalogue products were re-read against their vendors' pages** [view:/migrate] [persona:architect] [persona:developer] [persona:ops]: newer releases are now shown for TF-A (v2.15), VeraCrypt (1.26.30), GnuPG (2.5.24), Kong (3.16.0.1), Debian 12 (12.15) and U-Boot (2026.10), and Adobe Acrobat Sign and Quantinuum Quantum Origin say "No" with the reason, because the pages that had suggested otherwise do not describe those products. All twenty show "Pending Verification" until they are checked again.
+- **Five lesson statements now follow the documents that support them** [view:/learn] [persona:grc] [persona:architect] [persona:researcher] [persona:developer]: the Government and Defense lesson says Executive Order 14412 only directs a proposed rule, the SBOM lesson describes Executive Order 14028 as the order itself words it, the introduction describes NIST's choice of HQC in IR 8545's own terms, the entropy evidence lab drops an unsupported marker, and the Database Encryption lesson labels a Microsoft key-wrapping change as this lesson's projection rather than a Microsoft statement.
+- **Three data rows follow their documents** [view:/migrate] [view:/learn/quiz] [persona:architect] [persona:ops] [persona:researcher]: the Infineon PSoC entry no longer claims LMS/XMSS firmware protection or an ML-DSA/ML-KEM roadmap that nothing held supports, Google Cloud KMS says ML-DSA, SLH-DSA and ML-KEM have been generally available since 28 July 2026, and one quiz explanation states NIST SP 800-131A Rev 3's 112-bit security-strength minimum.
+
+### Fixed
+
+- **The Hybrid Certificates workshop explains why OpenSSL cannot read composite certificates** [view:/learn] [persona:developer] [persona:architect] [persona:researcher] [persona:ops]: stock OpenSSL 3.6 and 4.1 print a bare identifier and "Unable to load Public Key" for the two composite certificates (the ML-DSA-65 plus ECDSA signature certificate and the composite KEM certificate) because they have no composite algorithms. The certificates are intact; the cards and the Inspector now say so and point to `openssl asn1parse` and Bouncy Castle.
+
 ## [4.193.0] - 2026-11-01
 
 The Protocol Support Matrix catches up with the IETF's October decisions and gains a row for EDHOC, another round of lesson statements, quiz questions and data rows is corrected to follow its documents, and five certification lessons show the owner's review again.

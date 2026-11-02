@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.2',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-01',
+  lastEdited: '2026-11-02',
 
   standards: [
     getStandard('FIPS 203'),
@@ -137,7 +137,7 @@ export const timelineMilestones = [
   {
     year: '2025',
     event:
-      'NIST selects HQC as a backup KEM (IR 8545) and finalizes SP 800-227, its KEM usage guidance (not sourced in the Library)',
+      'NIST selects HQC for standardization to expand its portfolio of key-establishment algorithms (IR 8545) and finalizes SP 800-227, its KEM usage guidance',
     phase: 'Standardization',
   },
   {
