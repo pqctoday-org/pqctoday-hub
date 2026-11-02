@@ -4517,6 +4517,47 @@
     },
     {
       "type": "cryptographic-asset",
+      "bom-ref": "62808db3be500028",
+      "name": "Adobe Acrobat Sign",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Not stated. The document mentions \"built-in security\" but does not specify Post-Quantum Cryptography algorithms, implementation status, or maturity levels.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.adobe.com/sign.html"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "adobe-acrobat-sign"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Signature Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
       "bom-ref": "db8fdf32bcd6b8f0",
       "name": "DigiCert SigningHub",
       "manufacturer": {
@@ -4755,7 +4796,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Cloud encryption gateway with PQC key types. ML-KEM-768/1024 and X-Wing (Preview) for key encapsulation. ML-DSA-65 and SLH-DSA (Preview) for signing. Powered by BoringCrypto and Tink. Cloud HSM uses Marvell LiquidSecurity.",
+      "description": "Cloud encryption gateway with PQC key types. Google's 28 July 2026 announcement lists ML-DSA, SLH-DSA and ML-KEM as generally available in Cloud KMS. Cloud HSM uses Marvell LiquidSecurity.",
       "externalReferences": [
         {
           "type": "website",
@@ -5712,6 +5753,51 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "315906a3588f5746",
+      "name": "Quantinuum Quantum Origin",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "The document describes Quantum Origin as a QRNG designed to \"strengthen encryption\" and help organizations become \"post-quantum ready\" by providing provable quantum entropy for key generation. It does not state that the product implements specific Post-Quantum Cryptography (PQC) algorithms (e.g., CRYSTALS-Kyber, Dilithium) or replaces classical signature schemes with PQC primitives.",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.quantinuum.com/cybersecurity/quantumorigin"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "quantinuum-quantum-origin"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Quantum Random Number Generator (QRNG)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "Yes (NIST SP 800-90B validated April 2025 — first software QRNG to receive NIST validation)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     },
@@ -37169,6 +37255,167 @@
         {
           "name": "pqctoday:fips_validated",
           "value": "No (Oracle cites no FIPS 140-3 certificate for Jipher 20; an Oracle OpenSSL FIPS Provider is on the CMVP Modules In Process list; the FIPS status of ML-KEM and ML-DSA is not stated)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "02207d446865517f",
+      "name": "Citrix FIPS Cryptographic Module",
+      "version": "1.0.1",
+      "manufacturer": {
+        "name": "Citrix Systems Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "NIST CAVP validation A9201, first validated 23 October 2026, of version 1.0.1 of the Citrix FIPS Cryptographic Module (software), which provides cryptographic services for various Citrix products. The record lists ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer) and SLH-DSA (KeyGen, SigGen, SigVer) on Android 15, iOS 18.4.1, iPadOS 18.3.1 and Windows Server 2025 operating environments.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Citrix-FIPS-Cryptographic-Module-2"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "baf9f740bd4d5aae",
+      "name": "DigiCert Quantum Central",
+      "manufacturer": {
+        "name": "DigiCert Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "General availability; manages PQC readiness through cryptographic inventory, policy evaluation, remediation workflows, progress tracking, dashboards, API imports, and CBOM exports. No PQC algorithms are named.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "DigiCert-Quantum-Central"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "406c17519a0a3d8c",
+      "name": "Sectigo Quantum Ready",
+      "manufacturer": {
+        "name": "Sectigo Ltd."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Announced as an early-access cryptographic discovery and quantum readiness solution. It identifies cryptographic assets and dependencies, creates a CBOM, assesses PQC exposure, prioritizes risk, and supports migration planning. No PQC algorithms or production implementation are stated.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Sectigo-Quantum-Ready"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "85df761b995c2ea1",
+      "name": "Tuta Drive",
+      "manufacturer": {
+        "name": "Tuta GmbH"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Closed-beta cloud storage solution claimed to use quantum-resistant end-to-end encryption. No PQC algorithms are named.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Tuta-Drive"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Data Storage & Protection"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
         },
         {
           "name": "pqctoday:algorithm_source",
