@@ -5020,7 +5020,7 @@
               },
               {
                 "name": "reviewer-display",
-                "value": "unreviewed",
+                "value": "PQC Today maintainer",
                 "class": "trust-engine"
               },
               {
