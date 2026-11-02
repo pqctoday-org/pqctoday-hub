@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.3.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-01',
+  lastEdited: '2026-11-02',
 
   standards: [
     getStandard('FIPS 203'),

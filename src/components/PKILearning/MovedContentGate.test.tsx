@@ -23,6 +23,14 @@ const renderAt = (url: string) =>
           }
         />
         <Route path="/learn/homomorphic-encryption" element={<Where label="fhe" />} />
+        <Route
+          path="/learn/hybrid-crypto"
+          element={
+            <MovedContentGate from="hybrid-crypto">
+              <Where label="hybrid" />
+            </MovedContentGate>
+          }
+        />
       </Routes>
     </MemoryRouter>
   )
@@ -49,5 +57,21 @@ describe('MovedContentGate (confidential-computing → homomorphic-encryption)',
       '/learn/confidential-computing?tab=workshop&step=4#attestation'
     )
     expect(screen.queryByTestId('fhe')).toBeNull()
+  })
+})
+
+describe('MovedContentGate (hybrid-crypto workshop steps were reordered)', () => {
+  it('sends an old-order link to the same workshop step in the new order, once', () => {
+    renderAt('/learn/hybrid-crypto?tab=workshop&step=5')
+    expect(screen.getByTestId('hybrid')).toHaveTextContent(
+      '/learn/hybrid-crypto?tab=workshop&step=3&sv=2'
+    )
+  })
+
+  it('renders a current link as it is', () => {
+    renderAt('/learn/hybrid-crypto?tab=workshop&step=3&sv=2')
+    expect(screen.getByTestId('hybrid')).toHaveTextContent(
+      '/learn/hybrid-crypto?tab=workshop&step=3&sv=2'
+    )
   })
 })

@@ -20,7 +20,7 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 1. **Inventory & Key Hierarchy Audit** — Enumerate all encrypted databases using `sys.dm_database_encryption_keys` (SQL Server) or `V$ENCRYPTED_TABLESPACES` (Oracle). Document RSA/ECC-wrapped DEK locations. Generate CBOM.
 
-2. **PQC-Capable External KMS Setup** — Configure Thales CipherTrust 2.15+, AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
+2. **PQC-Capable External KMS Setup** — Configure AWS KMS (ML-DSA signing keys, ML-KEM key specs and hybrid post-quantum TLS on its endpoints, but RSA-only import wrapping keys), or Azure Key Vault with KMIP v2.1 connectivity. Object type: ML-KEM key (the Cryptographic Algorithm value ML-KEM is defined in KMIP 3.0, Committee Specification Draft 02, not in KMIP 2.1).
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF; this is this module's design, since FIPS 203 says the shared secret can be used directly as a key in symmetric-key cryptography), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
 
@@ -64,9 +64,9 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 | Scheme                      | Equality | Range   | Prefix | PQC Ready                 |
 | --------------------------- | -------- | ------- | ------ | ------------------------- |
-| MongoDB FLE 2.0             | ✓        | ✓       | ✓      | No date cited             |
-| SQL Server Always Encrypted | ✓        | Enclave | ✗      | No date cited             |
-| Oracle CSQE                 | ✓        | ✗       | ✗      | No date cited             |
+| MongoDB FLE 2.0             | ✓        | ✓       | ✓      | No PQC statement cited    |
+| SQL Server Always Encrypted | ✓        | Enclave | ✗      | No PQC statement cited    |
+| Oracle CSQE                 | ✓        | ✗       | ✗      | No PQC statement cited    |
 | pg_tde (Percona)            | ✗        | ✗       | ✗      | Not applicable (TDE only) |
 
 **MongoDB FLE 2.0** uses HMAC-SHA-256 tokens for equality queries (quantum-safe) and structured encryption over fully randomized ciphertext for range queries (not sourced in the Library). DEK wrapping uses RSA-OAEP — ML-KEM-1024 wrapping is this module's projection, not a MongoDB statement.
@@ -126,4 +126,4 @@ No vendor PQC dates for databases are cited in this module; any vendor date or r
 - **ML-KEM-1024 key sizes**: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.
 - **Online migration**: Oracle (`ALTER TABLESPACE REKEY`) and SQL Server (`ALTER DATABASE ENCRYPTION KEY REGENERATE`) support zero-downtime TDE re-keying.
 - **HNDL risk**: Database backups captured today with RSA-wrapped DEKs may be decryptable after a CRQC arrives. Priority: databases with long data retention (healthcare, financial records, classified).
-- **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard); ML-KEM, ML-DSA and SLH-DSA Cryptographic Algorithm values are defined in KMIP 3.0 (Committee Specification Draft 02, May 2026), which is not ratified; KMIP 2.1 has none. Thales CipherTrust 2.15+ supports PQC key types; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.
+- **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard); ML-KEM, ML-DSA and SLH-DSA Cryptographic Algorithm values are defined in KMIP 3.0 (Committee Specification Draft 02, May 2026), which is not ratified; KMIP 2.1 has none. Thales CipherTrust Manager’s release notes list ML-KEM on its web interface from v2.20.0; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.

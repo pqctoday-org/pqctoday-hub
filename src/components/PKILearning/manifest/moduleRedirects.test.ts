@@ -3,8 +3,10 @@ import { describe, it, expect } from 'vitest'
 import {
   SPLIT_MODULE_REDIRECTS,
   MOVED_CONTENT_REDIRECTS,
+  REORDERED_WORKSHOP_STEPS,
   resolveSplitRedirect,
   resolveMovedContentRedirect,
+  resolveReorderedStepRedirect,
 } from './moduleRedirects'
 import { MODULE_ID_RENAMES } from './contentVersion'
 import { MANIFESTS } from './registry'
@@ -113,5 +115,54 @@ describe('moved-content URL redirects (a module that is still live gave content 
       resolveMovedContentRedirect('confidential-computing', '?section=tee-fundamentals')
     ).toBeNull()
     expect(resolveMovedContentRedirect('hsm-pqc', '?tab=workshop&step=5')).toBeNull()
+  })
+})
+
+describe('reordered workshop steps (a module that keeps its id)', () => {
+  it('only names live modules, and every old and new index is a real step of that module', () => {
+    for (const [id, rule] of REORDERED_WORKSHOP_STEPS) {
+      const manifest = MANIFESTS.find((m) => m.id === id)
+      expect(manifest, `${id} is a live module`).toBeDefined()
+      const count = manifest?.workshopSteps?.length ?? 0
+      for (const [from, to] of rule.steps) {
+        expect(from).toBeLessThan(count)
+        expect(to).toBeLessThan(count)
+      }
+      // a reorder is a permutation: no two old steps land on the same new step
+      expect(new Set(rule.steps.values()).size).toBe(rule.steps.size)
+    }
+  })
+
+  it('maps every old Hybrid Cryptography step to the step that is the same workshop step now', () => {
+    const open = (n: number) =>
+      resolveReorderedStepRedirect('hybrid-crypto', `?tab=workshop&step=${n}`)
+    expect(open(2)).toBe('/learn/hybrid-crypto?tab=workshop&step=4&sv=2') // CA Setup
+    expect(open(3)).toBe('/learn/hybrid-crypto?tab=workshop&step=5&sv=2') // Hybrid Formats
+    expect(open(4)).toBe('/learn/hybrid-crypto?tab=workshop&step=6&sv=2') // Inspect & Compare
+    expect(open(5)).toBe('/learn/hybrid-crypto?tab=workshop&step=3&sv=2') // Hybrid Signatures
+    expect(open(6)).toBe('/learn/hybrid-crypto?tab=workshop&step=2&sv=2') // HPKE
+  })
+
+  it('marks steps that did not move so that they are not remapped later', () => {
+    expect(resolveReorderedStepRedirect('hybrid-crypto', '?tab=workshop&step=1')).toBe(
+      '/learn/hybrid-crypto?tab=workshop&step=1&sv=2'
+    )
+  })
+
+  it('leaves a current link (carrying sv) alone', () => {
+    expect(resolveReorderedStepRedirect('hybrid-crypto', '?tab=workshop&step=3&sv=2')).toBeNull()
+  })
+
+  it('leaves links without a step, on another tab, or with a bad step alone', () => {
+    expect(resolveReorderedStepRedirect('hybrid-crypto', '?tab=workshop')).toBeNull()
+    expect(resolveReorderedStepRedirect('hybrid-crypto', '?tab=learn&step=3')).toBeNull()
+    expect(resolveReorderedStepRedirect('hybrid-crypto', '?tab=workshop&step=abc')).toBeNull()
+    expect(resolveReorderedStepRedirect('pki-workshop', '?tab=workshop&step=3')).toBeNull()
+  })
+
+  it('keeps other query parameters and the hash', () => {
+    expect(
+      resolveReorderedStepRedirect('hybrid-crypto', '?tab=workshop&step=5&flow=x', '#top')
+    ).toBe('/learn/hybrid-crypto?tab=workshop&step=3&flow=x&sv=2#top')
   })
 })

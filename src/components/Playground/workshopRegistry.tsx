@@ -433,7 +433,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'HSM / PKCS#11',
     algorithms: ['EC-Schnorr', 'secp256k1', 'ML-DSA-65', 'SHA-256'],
     icon: Fingerprint,
-    moduleLink: '/learn/hybrid-crypto?tab=workshop&step=3',
+    moduleLink: '/learn/hybrid-crypto?tab=workshop&step=3&sv=2',
     keywords: [
       'hybrid',
       'signature',

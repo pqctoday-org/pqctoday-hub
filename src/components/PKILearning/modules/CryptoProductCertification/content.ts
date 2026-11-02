@@ -25,11 +25,11 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-product-certification',
-  // lastReviewed removed: facts in this module were corrected in release 4.187.0 after the owner's
-  // sign-off, so the sign-off is reset until the owner renews it (moduleReviewHonesty.test.ts). The
-  // on-page notice follows it (common/moduleReviewStatus.ts).
+  lastReviewed: '2026-11-01',
+  // lastReviewed is the owner's sign-off of 1 November 2026 (moduleReviewHonesty.test.ts); the
+  // revision record backs it. The on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-11-01',
+  lastEdited: '2026-11-02',
 
   standards: [
     // ── FIPS 140-3 / CMVP (Path A) ──

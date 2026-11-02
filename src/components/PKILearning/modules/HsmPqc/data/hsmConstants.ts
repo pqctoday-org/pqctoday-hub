@@ -753,7 +753,7 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     level: 'Level 3',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5282',
-    note: 'Hardware module. Sunset date 5/19/2031. The approved-algorithm list includes ML-KEM and ML-DSA (not sourced in the Library).',
+    note: 'Hardware module. Sunset date 5/19/2031. The approved-algorithm list includes ML-KEM and ML-DSA.',
   },
   {
     vendorId: 'sansec',

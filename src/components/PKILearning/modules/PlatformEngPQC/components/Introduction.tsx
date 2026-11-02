@@ -78,10 +78,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           defaultOpen
         >
           <p className="text-muted-foreground">
-            Every layer of the software delivery pipeline embeds classical cryptography: ECDSA P-256
-            signing keys for container images, RSA-2048 certificates for TLS sessions to Vault and
-            the Kubernetes API server, and HMAC-SHA-256 for webhook secrets. A cryptographically
-            relevant quantum computer (CRQC) running{' '}
+            In this module&apos;s illustration, every layer of the software delivery pipeline embeds
+            classical cryptography: ECDSA P-256 signing keys for container images, RSA-2048
+            certificates for TLS sessions to Vault and the Kubernetes API server, and HMAC-SHA-256
+            for webhook secrets. A cryptographically relevant quantum computer (CRQC) running{' '}
             <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip> breaks all
             public-key schemes currently used in CI/CD infrastructure.
           </p>

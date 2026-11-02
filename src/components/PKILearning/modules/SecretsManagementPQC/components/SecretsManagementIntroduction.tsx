@@ -406,7 +406,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               statusCls: 'text-status-info bg-status-info/10 border-status-info/30',
               details: [
                 'No direct PQC — relies on Cloud KMS CMEK for secret encryption',
-                'Cloud KMS PQC: ML-DSA and SLH-DSA signing GA (16 Jul 2026); ML-KEM-768/1024 and X-Wing in Preview; software protection level only',
+                'Cloud KMS PQC: ML-DSA, SLH-DSA and ML-KEM generally available (Google’s 28 July 2026 announcement)',
                 'CMEK uses a symmetric AES-256 Cloud KMS key, which is already quantum-resistant; PQC keys cannot be used as CMEK',
                 'FIPS mode not available for Secret Manager',
               ],

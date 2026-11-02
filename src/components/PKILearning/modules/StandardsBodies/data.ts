@@ -123,7 +123,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     //     "Authenticated encryption", not a PQC work item.
     keyPqcOutputs: [
       'ISO/IEC 14888-4:2024 (Digital signatures with appendix – Part 4: Stateful hash-based mechanisms)',
-      "ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers amendment; covers Classic McEliece per a BSI note; FrodoKEM and ML-KEM not confirmed against the amendment's scope text)",
+      "ISO/IEC 18033-2:2006/Amd 2:2026 (Asymmetric ciphers amendment; covers Classic McEliece and FrodoKEM, as Bouncy Castle's release notes state; ML-KEM not confirmed against the amendment's scope text)",
       'ISO/IEC 20085 (KEM reference, in development)',
     ],
     libraryRefs: [
@@ -302,7 +302,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'UK',
     founded: '2016',
     mission:
-      'UK national cybersecurity authority (part of GCHQ), providing guidance on PQC migration via a three-phase roadmap: Discovery (2025–2028), Priority Migration (2028–2031), Full Migration (2031–2035). Works with Five Eyes partners on classified PQC guidance.',
+      'UK national cybersecurity authority (part of GCHQ), providing guidance on PQC migration via a three-phase roadmap: Discovery (2025–2028), Priority Migration (2028–2031), Full Migration (2031–2035). Works with Five Eyes partners on classified PQC guidance (not sourced in the Library).',
     decisionMaking:
       'Government agency publishes whitepapers and migration timelines. Aligned with NIST algorithm recommendations.',
     keyPqcOutputs: [

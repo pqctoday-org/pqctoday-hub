@@ -60,7 +60,7 @@ export const SecureBootExercises: React.FC<SecureBootExercisesProps> = ({
       badge: 'TPM',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The EK, SRK and AIK show "Defined in TPM 2.0 v185"; the Device Identity key shows "Roadmap". Expanding the Hybrid Approach section shows the interim two-signature pattern for a TPM built to an earlier library version: an RSA TPM quote proves hardware binding and an ML-DSA software co-signature provides quantum safety. The timeline lists the March 2026 specification.',
+        'The EK, SRK and AIK show "Defined in TPM 2.0 v185"; the Device Identity key shows "Roadmap". Expanding the Hybrid Approach section shows the interim two-signature pattern for a TPM built to an earlier library version: an RSA TPM quote proves hardware binding and an ML-DSA software co-signature provides quantum safety (not sourced in the Library). The timeline lists the March 2026 specification.',
       config: { step: 2 },
     },
     {

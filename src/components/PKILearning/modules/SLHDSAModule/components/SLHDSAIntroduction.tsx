@@ -748,9 +748,10 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
             </li>
             <li>
               ACVTS testing &ldquo;is entirely black-box. The implementation is never provided to
-              NIST or the CAVP&rdquo;, and CAVP &ldquo;is not responsible for running those test
-              vectors through the implementation&rdquo;. The CASTs above are a FIPS 140-3 module
-              requirement set by CMVP guidance (IG 10.3.A), separate from the ACVP tests.
+              NIST or the CAVP in order to receive a validation certificate&rdquo;, and CAVP
+              &ldquo;is not responsible for running those test vectors through the
+              implementation&rdquo;. The CASTs above are a FIPS 140-3 module requirement set by CMVP
+              guidance (IG 10.3.A), separate from the ACVP tests.
             </li>
             <li>
               CNSA 2.0 (NSA FAQ, version 2.2, October 2026): &ldquo;While SLH-DSA is hash-based, it

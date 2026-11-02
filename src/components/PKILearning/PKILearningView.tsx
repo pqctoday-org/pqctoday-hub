@@ -14,6 +14,7 @@ import { MANIFESTS } from './manifest/registry'
 import {
   SPLIT_MODULE_REDIRECTS,
   MOVED_CONTENT_REDIRECTS,
+  REORDERED_WORKSHOP_STEPS,
   resolveSplitRedirect,
 } from './manifest/moduleRedirects'
 import { MovedContentGate } from './MovedContentGate'
@@ -216,8 +217,8 @@ export const PKILearningView: React.FC = () => {
                     key={path}
                     path={path}
                     element={
-                      MOVED_CONTENT_REDIRECTS.has(path) ? (
-                        // This module gave content to another one: old links to that content move on.
+                      MOVED_CONTENT_REDIRECTS.has(path) || REORDERED_WORKSHOP_STEPS.has(path) ? (
+                        // This module gave content to another one, or reordered its workshop steps: old links move on.
                         <MovedContentGate from={path}>
                           <Component />
                         </MovedContentGate>

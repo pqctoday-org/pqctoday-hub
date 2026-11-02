@@ -1026,9 +1026,9 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
         <p className="text-xs text-muted-foreground">
           <strong>The cost of statefulness elimination:</strong> SLH-DSA (FIPS 205, formerly
           SPHINCS+) signs with a Merkle hypertree whose path proof must be included in full —
-          producing signatures of 7–49 KB depending on the parameter set, versus 1–9 KB for LMS at
-          comparable security levels. The &quot;s&quot; variants optimize for smaller signatures;
-          the &quot;f&quot; variants optimize for faster signing at the expense of larger output.{' '}
+          producing signatures of 7–49 KB depending on the parameter set, versus 1.3–9.3 KB for LMS.
+          The &quot;s&quot; variants optimize for smaller signatures; the &quot;f&quot; variants
+          optimize for faster signing at the expense of larger output.{' '}
           {isLive
             ? 'All operations above execute via SoftHSM3 PKCS#11 v3.2.'
             : 'Enable Live WASM Mode above for real cryptographic operations.'}{' '}

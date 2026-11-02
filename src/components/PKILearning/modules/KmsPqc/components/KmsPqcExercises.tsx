@@ -51,7 +51,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Encryption',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'RSA-OAEP wraps the DEK in one step. ML-KEM requires encapsulate → KDF → AES-KW wrap.',
+        'RSA-OAEP wraps the DEK in one step. ML-KEM encapsulation uses an encapsulation key and private randomness to generate a ciphertext and a shared secret key.',
       config: { step: 1 },
     },
     {

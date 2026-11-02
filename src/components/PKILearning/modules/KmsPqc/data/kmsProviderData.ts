@@ -83,7 +83,7 @@ aws kms sign \\
       ],
     },
     envelopeEncryptionModel:
-      'KEM keys use the KEY_ENCAPSULATION purpose: you encapsulate on the client with the public key, and Cloud KMS decapsulates with the private key. PQC keys are at the SOFTWARE protection level only. Powered by BoringCrypto and Tink.',
+      'KEM keys use the KEY_ENCAPSULATION purpose: you encapsulate on the client with the public key, and Cloud KMS decapsulates with the private key. PQC keys are at the SOFTWARE protection level only. Powered by BoringCrypto and Tink (not sourced in the Library).',
     autoRotation: true,
     kmipSupport: false,
     fipsLevel: 'FIPS 140-2 Level 3 applies to classical Cloud HSM keys',

@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'stateful-signatures',
   version: '1.0.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-01',
+  lastEdited: '2026-11-02',
 
   standards: [
     getStandard('FIPS 205'), // SLH-DSA (Step 4 live demo)

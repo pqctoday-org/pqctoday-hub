@@ -72,7 +72,8 @@ const DATES: { what: string; who: string; status: string }[] = [
 const WORDS: { phrase: string; problem: string; instead: string }[] = [
   {
     phrase: '“Quantum-proof”, “unbreakable”',
-    problem: 'No cryptography is proven unbreakable, and standards bodies do not use these words.',
+    problem:
+      'No cryptography is proven unbreakable, and standards bodies do not use these words (not sourced in the Library).',
     instead: '“Uses ML-KEM (FIPS 203), NIST’s post-quantum standard, from version 5.2.”',
   },
   {

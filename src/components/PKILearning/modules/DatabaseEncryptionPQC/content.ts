@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'database-encryption-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-01',
+  lastEdited: '2026-11-02',
 
   standards: [
     getStandard('FIPS 203'),

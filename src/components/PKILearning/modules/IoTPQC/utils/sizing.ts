@@ -224,7 +224,8 @@ export function deliveredChainBytes(
       const saved = Math.round(2 * CERT_OVERHEAD_BYTES.x509 * COMPRESSIBLE_FRACTION_OF_OVERHEAD)
       return {
         bytes: x.sent - saved,
-        caveat: 'PQC keys and signatures are high-entropy and do not compress.',
+        caveat:
+          'PQC keys and signatures are high-entropy, which limits how much compression can help.',
       }
     }
     case 'c509':

@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react'
 import { logModuleTabSwitch } from '@/utils/analytics'
 import { useEmbeddedLearn } from '@/components/PKILearning/embeddedLearnContext'
+import { REORDERED_WORKSHOP_STEPS } from '@/components/PKILearning/manifest/moduleRedirects'
 
 /**
  * Parses ?tab= and ?step= from the current URL for module deep-linking.
@@ -66,6 +67,19 @@ export function useSyncDeepLink(
       url.searchParams.set('step', String(step))
     } else {
       url.searchParams.delete('step')
+    }
+
+    // A module whose workshop steps were reordered marks the numbering its links use, so an
+    // old link (no `sv`) can be told from a current one (see REORDERED_WORKSHOP_STEPS).
+    const pathParts = window.location.pathname.split('/')
+    const learnAt = pathParts.indexOf('learn')
+    const reordered = REORDERED_WORKSHOP_STEPS.get(
+      learnAt !== -1 ? (pathParts[learnAt + 1] ?? '') : ''
+    )
+    if (reordered && tab === 'workshop' && step > 0) {
+      url.searchParams.set('sv', reordered.version)
+    } else {
+      url.searchParams.delete('sv')
     }
 
     if (flow) {

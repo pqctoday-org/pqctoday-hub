@@ -125,3 +125,60 @@ export function resolveMovedContentRedirect(
   const query = params.toString()
   return `/learn/${rule.to}${query ? `?${query}` : ''}${nextHash}`
 }
+
+/**
+ * Workshop steps that were REORDERED inside a module that keeps its id.
+ *
+ * `?tab=workshop&step=<index>` is an index, so a reorder silently points an old link at
+ * a different step. The module now writes `&sv=<version>` next to the step it shows; an
+ * incoming link that names a step but carries no (or an older) `sv` uses the old order
+ * and is rewritten to the new one, once. A link without `step` is the first step in both
+ * orders and is left alone.
+ */
+interface ReorderedSteps {
+  /** Written to the URL as `sv`; bump it when the order changes again. */
+  version: string
+  /** Index in the old order → index in the order the module has now. */
+  steps: ReadonlyMap<number, number>
+}
+
+export const REORDERED_WORKSHOP_STEPS: ReadonlyMap<string, ReorderedSteps> = new Map([
+  // 2026-11-01 (4.192.0): Hybrid Cryptography workshop. Old order: Key Generation, Encrypt &
+  // Sign, CA Setup, Hybrid Formats, Inspect & Compare, Hybrid Signatures, HPKE. New order:
+  // Key Generation, Hybrid KEM, HPKE, Hybrid Signatures, CA Setup, Hybrid Formats, Inspect &
+  // Compare.
+  [
+    'hybrid-crypto',
+    {
+      version: '2',
+      steps: new Map([
+        [2, 4],
+        [3, 5],
+        [4, 6],
+        [5, 3],
+        [6, 2],
+      ]),
+    },
+  ],
+])
+
+/**
+ * Target URL (`/learn/<id>[?query][#hash]`) for an old-order workshop link of a reordered
+ * module, or null when the link needs no change (no step, another tab, or already current).
+ */
+export function resolveReorderedStepRedirect(
+  moduleId: string,
+  search: string,
+  hash = ''
+): string | null {
+  const rule = REORDERED_WORKSHOP_STEPS.get(moduleId)
+  if (!rule) return null
+  const params = new URLSearchParams(search)
+  if (params.get('tab') !== 'workshop' || !params.has('step')) return null
+  if (params.get('sv') === rule.version) return null
+  const step = Number.parseInt(params.get('step') ?? '', 10)
+  if (Number.isNaN(step)) return null
+  params.set('step', String(rule.steps.get(step) ?? step))
+  params.set('sv', rule.version)
+  return `/learn/${moduleId}?${params.toString()}${hash}`
+}

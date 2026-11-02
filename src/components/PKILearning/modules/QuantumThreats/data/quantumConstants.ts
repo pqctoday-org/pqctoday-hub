@@ -587,7 +587,7 @@ export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
     estimatedLogicalQubits: 24,
     qubitType: 'Neutral atom',
     notes:
-      'Nov 2024: created and entangled 24 logical qubits (ran computations on 28) using Microsoft’s error-correction protocols on Atom Computing’s neutral-atom array (arXiv:2411.11822) — the actual 2024 state of the art (a prior trajectory-chart value of ~10 for 2024 undercounted this). Follow-on "Magne" system targets 50 logical qubits from ~1,200 atoms in late 2026.',
+      'Nov 2024: created and entangled 24 logical qubits (ran computations on 28) using Microsoft’s error-correction protocols on Atom Computing’s neutral-atom array (arXiv:2411.11822) — the actual 2024 state of the art (a prior trajectory-chart value of ~10 for 2024 undercounted this). Follow-on "Magne" system is a 50-logical-qubit system projected to be commercially available by late 2026 or early 2027.',
   },
   {
     name: 'H2-1',
@@ -947,7 +947,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'IBM, Google',
     bestLogical: 1,
     bestPhysical: 1121,
-    note: 'Fastest gates and the largest physical-qubit chips (IBM Condor, 1,121 physical qubits per IBM’s post “IBM Quantum System Two: the era of quantum utility is here”). Requires deep cryogenics.',
+    note: 'Superconducting chips with very high physical-qubit counts (IBM Condor, 1,121 physical qubits per the IBM post “IBM Quantum System Two: the era of quantum utility is here”). Requires deep cryogenics.',
     recentProgress:
       'Google proved that making the chip bigger actually lowers errors; IBM shipped new 120-qubit processors and a test chip with the parts for error correction.',
     scaleChallenge:
@@ -958,7 +958,7 @@ export const CRQC_MODALITY_TRACKS: CrqcModalityTrack[] = [
     vendors: 'PsiQuantum, Xanadu',
     bestLogical: 12,
     bestPhysical: 12,
-    note: 'Room-temperature operation and chips manufacturable in a standard fab; fusion-based measurement architecture — PsiQuantum specifically has not yet shown a working logical qubit on its own architecture.',
+    note: 'Room-temperature operation and chips manufacturable in a standard fab.',
     recentProgress:
       'Xanadu ran 12 error-corrected “logical” qubits on a small modular chip designed to be networked into bigger machines; PsiQuantum, on a different architecture, is still making its light-based chips in an ordinary semiconductor factory, betting on mass production.',
     scaleChallenge:
