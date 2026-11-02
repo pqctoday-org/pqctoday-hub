@@ -1,0 +1,58 @@
+[
+  {
+    "platform_name": "Debian 12 (Bookworm)",
+    "category": "Operating Systems",
+    "product_name": "Debian 12 (bookworm)",
+    "product_brief": "Debian 12 is a stable operating system release with LTS until June 30, 2028.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Unknown",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Debian 12.15",
+    "release_date": "2026-07-11",
+    "fips_validated": "Unknown",
+    "primary_platforms": "64-bit PC (amd64), 64-bit ARM (AArch64), EABI ARM (armel), Hard Float ABI ARM (armhf), 32-bit PC (i386), MIPS (little endian), 64-bit MIPS (little endian), POWER Processors, IBM System z",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "Latest Version": "Debian 12.15 was released on July 11th, 2026 .",
+      "Release Date": "Debian 12.15 was released on July 11th, 2026 ."
+    },
+    "withheld_no_excerpt": [],
+    "existing_note_check": {
+      "pqc_capability_description": [
+        "FN-DSA",
+        "ML-DSA",
+        "ML-KEM",
+        "SLH-DSA"
+      ]
+    },
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  }
+]

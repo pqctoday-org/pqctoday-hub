@@ -1,0 +1,168 @@
+[
+  {
+    "platform_name": "Microsoft SignTool",
+    "category": "Code Signing and Software Integrity",
+    "product_name": "SignTool",
+    "product_brief": "Command-line tool that digitally signs, verifies, removes signatures from, and time stamps files.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "SHA1, SHA256, SHA384",
+    "key_management_model": "PFX files, cryptographic service provider (CSP) private key containers, and certificate stores",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "10.0.22621.0",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Windows SDK; Windows 11; Windows 10 with the November 2022 update",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "Latest Version": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22621.0\\x64\\signtool.exe .",
+      "Crypto Primitives": "We recommend SHA256. SHA384 and stronger validation require Windows 11 or Windows 10 with the November 2022 update."
+    },
+    "withheld_no_excerpt": [],
+    "existing_note_check": {
+      "proof_relevant_info": [
+        "ML-DSA",
+        "SLH-DSA"
+      ],
+      "pqc_capability_description": [
+        "ML-DSA",
+        "ML-KEM"
+      ]
+    },
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  },
+  {
+    "platform_name": "Notary Project",
+    "category": "Code Signing and Software Integrity",
+    "product_name": "Notation",
+    "product_brief": "Implementation of the Notary Project Specifications v1.1.0.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Unknown",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "v1.3.2",
+    "release_date": "2025-04-27",
+    "fips_validated": "Unknown",
+    "primary_platforms": "armv7",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "https://github.com/notaryproject/notation/blob/v2.0.0-alpha.1/specs/cmd/blob.md",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unit tests; E2E tests for CRL cache and OCSP",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Added support for armv7 binary release.",
+    "supply_chain_&_vendor_risk": "Dependency updates are listed.",
+    "deployment_&_migration_complexity": "v2.0.0-alpha.1 changes the default signature-storage behavior to the OCI referrers API; users can opt for the referrers tag schema with `--force-referrers-tag true`.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "Latest Version": "v1.3.2 Latest",
+      "Release Date": "2025-04-27",
+      "Authoritative Source URL": "https://github.com/notaryproject/notation/blob/v2.0.0-alpha.1/specs/cmd/blob.md"
+    },
+    "withheld_no_excerpt": [],
+    "existing_note_check": {
+      "proof_relevant_info": [
+        "ML-DSA"
+      ]
+    },
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  },
+  {
+    "platform_name": "GPG Code Signing",
+    "category": "Code Signing and Software Integrity",
+    "product_name": "GnuPG",
+    "product_brief": "Unknown",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Unknown",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Unknown",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "2.5.24",
+    "release_date": "2026-09-23",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unix systems; Linux distributions; Windows; OS X; Debian; RPM-supported OS; Android; OpenVMS; RISC OS",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "Latest Version": "GnuPG (stable) 2.5.24 2026-09-23 8233k download download",
+      "Release Date": "GnuPG (stable) 2.5.24 2026-09-23 8233k download download"
+    },
+    "withheld_no_excerpt": [],
+    "existing_note_check": {
+      "proof_relevant_info": [
+        "ML-DSA",
+        "ML-KEM"
+      ]
+    },
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  }
+]

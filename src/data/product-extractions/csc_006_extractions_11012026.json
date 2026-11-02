@@ -1,0 +1,56 @@
+[
+  {
+    "platform_name": "VeraCrypt",
+    "category": "Disk and File Encryption Software",
+    "product_name": "VeraCrypt",
+    "product_brief": "Disk and file encryption software.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Unknown",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "Argon2id, PBKDF2, HKDF, SHA-256, HMAC-SHA256, AES, ChaCha, BLAKE2b-512, BLAKE2s, Camellia, Twofish, Whirlpool",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Unknown",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "VeraCrypt 1.26.30",
+    "release_date": "2026-10-24",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Windows, Linux, macOS, BSD, FreeBSD, OpenBSD, ARM64",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Heap buffer overflow, out-of-bounds reads, excessive memory allocations, cryptographic errors on big-endian processors, alignment crashes, and screen-capture exposure are discussed.",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "QEMU test scripts",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Secure random-byte generation and system entropy gathering are mentioned.",
+    "constrained_device_&_iot_suitability": "ARM64 platform support; smart card and security-token data handling are mentioned.",
+    "supply_chain_&_vendor_risk": "Bundled zlib, LZMA SDK, libzip, and FUSE library updates are mentioned.",
+    "deployment_&_migration_complexity": "Windows feature-update preparation, boot-loader certificate migration, Rescue Disk recreation, recovery backups, and downgrade backups are discussed.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "Latest Version": "VeraCrypt 1.26.30",
+      "Release Date": "released this 24 Oct 15:12",
+      "Crypto Primitives": "Add Argon2id as an alternative memory-hard KDF for non-system volumes."
+    },
+    "withheld_no_excerpt": [],
+    "existing_note_check": {
+      "proof_relevant_info": [
+        "ML-KEM"
+      ]
+    },
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  }
+]

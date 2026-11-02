@@ -1,0 +1,53 @@
+[
+  {
+    "platform_name": "Adobe Acrobat Sign",
+    "category": "Digital Signature Software",
+    "product_name": "Unknown",
+    "product_brief": "Unknown",
+    "pqc_support": "Partial — press release only: ML-DSA and SLH-DSA-signed PDFs were exchanged between BFO and Adobe; addition to the PDF specification is underway.",
+    "pqc_capability_description": "A PDF signed with ML-DSA was exchanged between BFO and Adobe in May 2025; SLH-DSA-signed documents were exchanged soon after. Addition of both algorithms to the PDF specification is being formalized.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "RSA, ECC, ML-DSA, SLH-DSA",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Unknown",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unknown",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Addition of ML-DSA and SLH-DSA to the PDF specification is being formalized; the specification is to be finalised and published.",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "RSA, ECC, ML-DSA, SLH-DSA",
+    "authoritative_source_url": "Unknown",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Successful exchanges of ML-DSA- and SLH-DSA-signed PDF documents between vendors.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "PQC signatures may be larger and could affect performance in resource-constrained environments such as mobile devices.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "PQC integration requires changes across HSM manufacturers, CAs, PDF viewers, and validation tools; RSA- and ECC-signed PDFs remain valid.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Vendors, developers, and users must collaborate to implement and adopt the new standards.",
+    "hybrid_kem_support": "",
+    "hybrid_sig_support": "",
+    "evidence": {
+      "PQC Support": "the first PDF signed with the ML-DSA algorithm was exchanged between BFO and Adobe in May 2025, with documents signed with the SLH-DSA algorithm exchanged soon after.",
+      "PQC Capability Description": "These successful exchanges between vendors led to an agreement made at PDF Days 2025",
+      "Crypto Primitives": "Today's PDF digital signatures rely on robust cryptographic algorithms based on RSA and Elliptic Curve Cryptography (ECC)",
+      "Signature Schemes": "including two digital signature algorithms: ML-DSA (Module-Lattice-based Digital Signature Algorithm) and SLH-DSA (Stateless Hash-based Digital Signature Algorithm)",
+      "PQC Roadmap Details": "to formalize the addition of these two new post-quantum signature algorithms to the PDF specification."
+    },
+    "withheld_no_excerpt": [],
+    "_generation": {
+      "model": "automated extraction, human-reviewed",
+      "backend": "remote",
+      "generated_at": "2026-11-01"
+    }
+  }
+]
