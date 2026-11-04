@@ -1203,7 +1203,8 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
   {
     path: '/playground/tee-channel',
     title: 'TEE-HSM Secure Channel — PQC Crypto Lab | PQC Today',
-    description: 'Build a TEE-to-HSM trusted channel with ML-DSA + ML-KEM + AES wrap',
+    description:
+      'Explore sample TEE-HSM provisioning with signature verification, ML-KEM and AES key wrap',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [
