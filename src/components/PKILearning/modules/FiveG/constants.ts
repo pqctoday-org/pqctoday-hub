@@ -44,7 +44,7 @@ USIM.write('EF_SUCI_Calc_Info', {
       id: 'gen_ephemeral_key',
       title: '4. Generate Ephemeral Key Pair',
       description:
-        'Generate a fresh ephemeral key pair using the selected curve (X25519 for Profile A, P-256 for Profile B). This key pair is unique to this connection attempt and provides forward secrecy.',
+        'Generate a fresh ephemeral key pair using the selected curve (X25519 for Profile A, P-256 for Profile B). The UE key is fresh for this attempt. This does not provide forward secrecy against later compromise of the home network private key, which can be used with a captured SUCI to recover its shared secret.',
       code: `// SoftHSMv3 WASM: Generate Ephemeral Key
 // Profile A uses X25519; Profile B uses P-256
 const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
@@ -266,7 +266,7 @@ USIM.write('EF_SUCI_Calc_Info', {
       id: 'gen_ephemeral_key',
       title: '4. Generate Ephemeral Key Pair',
       description:
-        'Generate a fresh ephemeral key pair using P-256 for Profile B (NIST secp256r1). This key pair is unique to this connection attempt and provides forward secrecy.',
+        'Generate a fresh ephemeral key pair using P-256 for Profile B (NIST secp256r1). The UE key is fresh for this attempt. This does not provide forward secrecy against later compromise of the home network private key, which can be used with a captured SUCI to recover its shared secret.',
       code: `// SoftHSMv3 WASM: Generate Ephemeral Key
 // Profile B uses P-256
 const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(

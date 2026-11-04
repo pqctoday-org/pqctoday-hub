@@ -903,7 +903,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
 
           if (profile !== 'C') {
             // Profiles A/B: ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.4
-            // ECDH Z stays inside HSM; KDF computed via SubtleCrypto SHA-256.
+            // This sample reads ECDH Z into JavaScript for its SubtleCrypto SHA-256 KDF.
             // PKCS#11 v3.2 has no CKM_ANSI_X9_63_KDF mechanism — SubtleCrypto is the correct bridge.
             const zBytes = hsm_extractKeyValue(
               M,
