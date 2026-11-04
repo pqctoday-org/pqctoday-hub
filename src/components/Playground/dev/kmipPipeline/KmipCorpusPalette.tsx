@@ -30,8 +30,9 @@ export const KmipCorpusDisclosure: React.FC<{ corpus: UseKmipCorpus }> = ({ corp
         Standard.
       </span>{' '}
       {corpus.tierCounts.oasis || '…'} OASIS test transcripts + {corpus.tierCounts.pqc || '…'}{' '}
-      vendored PQC interop tests, replayed live against this tab's engine. Zero failures or skips
-      tolerated.
+      vendored PQC interop tests, replayed against this tab's engine when supported. Deprecated
+      algorithms and unsupported or unparseable cases are reported as skips, not passes. Replay
+      results do not establish product certification.
     </p>
   </div>
 )
@@ -197,6 +198,7 @@ export const KmipCorpusDetail: React.FC<{
  * conformance suite. */
 export const KmipCorpusSummaryCard: React.FC<{ corpus: UseKmipCorpus }> = ({ corpus }) => {
   const { tierCounts, ran, passed, failed, table } = corpus
+  const skipped = Object.values(corpus.results).filter((r) => r.status.startsWith('SKIP_')).length
   return (
     <Card className="p-3.5">
       <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
@@ -212,10 +214,10 @@ export const KmipCorpusSummaryCard: React.FC<{ corpus: UseKmipCorpus }> = ({ cor
           <span className="font-mono">{tierCounts.pqc || '…'}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Run so far</span>
+          <span className="text-muted-foreground">Results so far</span>
           <span className="font-mono">
             {ran.length
-              ? `${passed}/${ran.length} pass${failed > 0 ? `, ${failed} failed` : ''}`
+              ? `${passed} passed, ${failed} failed, ${skipped} skipped (${ran.length} total)`
               : 'none yet'}
           </span>
         </div>
