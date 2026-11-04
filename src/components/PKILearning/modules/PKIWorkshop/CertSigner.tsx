@@ -13,6 +13,11 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { getCryptoErrorHint } from '@/utils/cryptoErrorHint'
+import {
+  resolveSubjectKeyUsage,
+  isKeyUsageAttribute,
+  SubjectKeyUsageError,
+} from './subjectKeyUsage'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -320,45 +325,26 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       let extContent = `
 [ v3_ca ]
 `
-      // Check if basicConstraints is already provided by the profile
-      const hasBasicConstraints = attributes.some(
-        (a) => a.enabled && (a.id === 'basicConstraints' || a.label === 'basicConstraints')
+      // The selected CSR's SPKI controls subject permissions, independently of its issuer.
+      const subjectUsage = resolveSubjectKeyUsage(csr.pem, attributes)
+      const basicConstraint = attributes.find(
+        (a) =>
+          a.enabled &&
+          a.elementType === 'Extension' &&
+          [a.id, a.label, a.oid].some((v) => v === 'basicConstraints' || v === '2.5.29.19')
       )
-      if (!hasBasicConstraints) {
-        extContent += `basicConstraints = CA:FALSE\n`
-      }
+      if (!basicConstraint) extContent += `basicConstraints = CA:FALSE\n`
+      if (!subjectUsage.explicit) extContent += `keyUsage = ${subjectUsage.value}\n`
       setOutput(
         (prev) =>
           prev +
-          `  basicConstraints = CA:FALSE\n` +
-          `    Marks this as an end-entity certificate (not a CA). It cannot sign other certificates.\n\n`
-      )
-
-      // Check if keyUsage is already provided
-      const hasKeyUsage = attributes.some(
-        (a) => a.enabled && (a.id === 'keyUsage' || a.label === 'keyUsage')
-      )
-      // S3-A: For RSA keys, TLS 1.2 key exchange requires keyEncipherment in addition to digitalSignature.
-      // For ECDSA/EdDSA/PQC, digitalSignature is the correct and only value.
-      const caAlgoForKeyUsage = caKey.algorithm.toLowerCase()
-      const isRsaCaKey = caAlgoForKeyUsage.includes('rsa')
-      if (!hasKeyUsage) {
-        extContent += isRsaCaKey
-          ? `keyUsage = digitalSignature, keyEncipherment\n`
-          : `keyUsage = digitalSignature\n`
-      }
-      setOutput(
-        (prev) =>
-          prev +
-          (isRsaCaKey
-            ? `  keyUsage = digitalSignature, keyEncipherment\n` +
-              `    digitalSignature: required for TLS 1.3 (server signs the handshake transcript with its private key).\n` +
-              `    keyEncipherment: required only for TLS 1.2 RSA key exchange (client encrypts pre-master secret with server pubkey).\n` +
-              `    Note: TLS 1.3 (RFC 9846) removed RSA key exchange — keyEncipherment is a legacy value for TLS 1.2 backward compat only.\n` +
-              `\n`
-            : `  keyUsage = digitalSignature\n` +
-              `    ECDSA and PQC algorithms authenticate via signature only — key exchange uses ephemeral ECDH or KEM.\n` +
-              `    keyEncipherment is not applicable: it applies only to RSA TLS 1.2 key transport, which was removed in TLS 1.3.\n\n`)
+          `  CSR subject public key: ${subjectUsage.label} (SPKI ${subjectUsage.oid})\n` +
+          `  Saved CSR display metadata: ${artifacts.keys.find((key) => key.id === csr.keyPairId)?.algorithm || 'not supplied'}; parsed CSR controls usage.\n` +
+          `  Issuer signing key (separate role): ${caKey.algorithm}\n` +
+          `  basicConstraints = ${basicConstraint?.value ?? 'CA:FALSE'}\n` +
+          `  keyUsage = ${subjectUsage.value} (${subjectUsage.explicit ? 'explicit profile/manual value' : 'TLS-signing sample default'})\n` +
+          `    ${subjectUsage.purpose}\n` +
+          `    These checks cover supported subject-key usage, not complete profile or certificate conformance.\n\n`
       )
 
       // Sanitize attribute values for OpenSSL config/command interpolation
@@ -371,7 +357,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       attributes
         .filter((a) => a.enabled && a.elementType === 'Extension')
         .forEach((a) => {
-          extContent += `${a.label} = ${escapeConfigValue(a.value)}\n`
+          extContent += `${isKeyUsageAttribute(a) ? 'keyUsage' : a.label} = ${escapeConfigValue(a.value)}\n`
         })
 
       // Inject default TLS extensions when no profile is loaded
@@ -532,7 +518,10 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       onComplete()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      const hint = getCryptoErrorHint(errorMessage)?.summary
+      const hint =
+        error instanceof SubjectKeyUsageError
+          ? undefined
+          : getCryptoErrorHint(errorMessage)?.summary
       setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
       setIsSigning(false)
