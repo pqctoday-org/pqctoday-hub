@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { Key, PenLine, CheckCircle, Loader2, Copy, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CODE_SIGNING_ALGORITHMS } from '../constants'
@@ -66,8 +66,10 @@ interface SignatureResult {
   hash: string
   signature: string
   sigBytes: number
-  verified: boolean
-  isLive?: boolean
+  verified: boolean | null
+  isLive: boolean
+  algorithm: AlgorithmName
+  message: string
 }
 
 /** Generate realistic-looking hex string of a given byte length */
@@ -122,6 +124,9 @@ export const BinarySigning: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSigning, setIsSigning] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
+  const [operationError, setOperationError] = useState<string | null>(null)
+  const operationEpoch = useRef(0)
+  const busyRef = useRef(false)
 
   // ── Live HSM state ────────────────────────────────────────────────────────────
   const hsm = useHSM()
@@ -131,19 +136,39 @@ export const BinarySigning: React.FC = () => {
     algorithm: 'ML-DSA-65',
   })
 
+  const session = hsm.hSessionRef.current
+  useEffect(() => {
+    operationEpoch.current++
+    busyRef.current = false
+    setKeyPair(null)
+    setSignatureResult(null)
+    setOperationError(null)
+    setIsGenerating(false)
+    setIsSigning(false)
+    liveKeyRef.current = { pubHandle: 0, privHandle: 0, algorithm: 'ML-DSA-65' }
+  }, [hsm.isReady, hsm.engine, session])
+
   const algInfo = CODE_SIGNING_ALGORITHMS.pqc.find((a) => a.name === selectedAlgorithm)
 
   const dsaVariant = (name: AlgorithmName): 44 | 65 | 87 =>
     name === 'ML-DSA-44' ? 44 : name === 'ML-DSA-87' ? 87 : 65
 
   const handleGenerateKeypair = useCallback(async () => {
+    if (busyRef.current) return
+    busyRef.current = true
+    const epoch = ++operationEpoch.current
+    setOperationError(null)
     setIsGenerating(true)
     setKeyPair(null)
     setSignatureResult(null)
 
-    if (hsm.isReady && hsm.moduleRef.current) {
+    if (hsm.isReady) {
       // Live mode: real WASM key generation via C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN)
       try {
+        if (!hsm.moduleRef.current)
+          throw new Error(
+            'The sample engine session is unavailable. Enable it and generate keys again.'
+          )
         const M = hsm.moduleRef.current as unknown as SoftHSMModule
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
           M,
@@ -179,11 +204,12 @@ export const BinarySigning: React.FC = () => {
           isLive: true,
         })
       } catch (err) {
-        console.error('[BinarySigning] live keygen error:', err)
+        setOperationError(err instanceof Error ? err.message : String(err))
       }
     } else {
       // Simulation mode
       await new Promise((resolve) => setTimeout(resolve, 800))
+      if (epoch !== operationEpoch.current) return
       const keyBytes = algInfo?.keyBytes ?? 1952
       setKeyPair({
         publicKey: generateHex(keyBytes),
@@ -191,18 +217,25 @@ export const BinarySigning: React.FC = () => {
         algorithm: selectedAlgorithm,
       })
     }
-    setIsGenerating(false)
+    if (epoch === operationEpoch.current) {
+      busyRef.current = false
+      setIsGenerating(false)
+    }
   }, [selectedAlgorithm, algInfo, hsm])
 
   const handleSign = useCallback(async () => {
-    if (!keyPair || !inputText.trim()) return
-
+    if (!keyPair || !inputText.trim() || busyRef.current) return
+    busyRef.current = true
+    const epoch = ++operationEpoch.current
+    setOperationError(null)
     setIsSigning(true)
     setSignatureResult(null)
 
-    if (hsm.isReady && hsm.moduleRef.current && keyPair.isLive) {
+    if (hsm.isReady || keyPair.isLive) {
       // Live mode: real WASM hash + sign + verify
       try {
+        if (!hsm.isReady || !hsm.moduleRef.current || !keyPair.isLive)
+          throw new Error('Generate sample keys in the current engine session before signing.')
         const M = hsm.moduleRef.current as unknown as SoftHSMModule
         const hSession = hsm.hSessionRef.current
         const { pubHandle, privHandle } = liveKeyRef.current
@@ -225,22 +258,39 @@ export const BinarySigning: React.FC = () => {
           sigBytes: sig.length,
           verified,
           isLive: true,
+          algorithm: keyPair.algorithm,
+          message: inputText,
         })
       } catch (err) {
-        console.error('[BinarySigning] live sign error:', err)
+        setOperationError(err instanceof Error ? err.message : String(err))
       }
     } else {
       // Simulation mode
       await new Promise((resolve) => setTimeout(resolve, 600))
+      if (epoch !== operationEpoch.current) return
       const sigBytes = algInfo?.sigBytes ?? 3309
       const hash = simulateSha256(inputText)
       const signature = generateHex(sigBytes)
-      setSignatureResult({ hash, signature, sigBytes, verified: true })
+      setSignatureResult({
+        hash,
+        signature,
+        sigBytes,
+        verified: null,
+        isLive: false,
+        algorithm: keyPair.algorithm,
+        message: inputText,
+      })
     }
-    setIsSigning(false)
+    if (epoch === operationEpoch.current) {
+      busyRef.current = false
+      setIsSigning(false)
+    }
   }, [keyPair, inputText, algInfo, hsm])
 
   const handleReset = () => {
+    if (busyRef.current) return
+    operationEpoch.current++
+    setOperationError(null)
     setKeyPair(null)
     setSignatureResult(null)
     setInputText('Hello, Post-Quantum World!')
@@ -266,13 +316,27 @@ export const BinarySigning: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Binary Signing with ML-DSA</h3>
         <p className="text-sm text-muted-foreground">
-          Select an algorithm, generate a keypair, sign input data, and verify the signature. All
-          operations are simulated with realistic output sizes.
+          Explore the signing sequence and example output sizes in the illustrative walkthrough, or
+          generate sample keys, hash the sample message, then sign and check its signature using the
+          browser engine in live mode.
         </p>
       </div>
 
       {/* Live HSM Toggle */}
-      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} autoInit={false} />
+
+      {operationError && (
+        <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+          <p className="text-sm font-semibold">Sample operation could not complete</p>
+          <p className="text-xs">{operationError}</p>
+        </div>
+      )}
+      {!hsm.isReady && (
+        <p className="text-xs text-muted-foreground">
+          Illustrative walkthrough: displayed bytes are placeholders, not usable cryptographic keys,
+          hashes or signatures.
+        </p>
+      )}
 
       {/* Algorithm Selection */}
       <div className="glass-panel p-4">
@@ -282,7 +346,10 @@ export const BinarySigning: React.FC = () => {
             <Button
               variant="ghost"
               key={alg.name}
+              disabled={isGenerating || isSigning}
               onClick={() => {
+                operationEpoch.current++
+                setOperationError(null)
                 setSelectedAlgorithm(alg.name)
                 setKeyPair(null)
                 setSignatureResult(null)
@@ -315,7 +382,7 @@ export const BinarySigning: React.FC = () => {
             <Button
               variant="outline"
               onClick={handleGenerateKeypair}
-              disabled={isGenerating}
+              disabled={isGenerating || isSigning}
               className="text-sm"
             >
               {isGenerating ? (
@@ -330,7 +397,12 @@ export const BinarySigning: React.FC = () => {
               )}
             </Button>
             {keyPair && (
-              <Button variant="ghost" onClick={handleReset} className="text-sm">
+              <Button
+                variant="ghost"
+                onClick={handleReset}
+                disabled={isGenerating || isSigning}
+                className="text-sm"
+              >
                 <RotateCcw size={14} className="mr-1" /> Reset
               </Button>
             )}
@@ -348,7 +420,8 @@ export const BinarySigning: React.FC = () => {
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-foreground">
-                  Public Key ({keyPair.algorithm})
+                  {keyPair.isLive ? 'Public Key' : 'Example public-key display'} (
+                  {keyPair.algorithm})
                 </span>
                 <Button
                   variant="ghost"
@@ -374,7 +447,7 @@ export const BinarySigning: React.FC = () => {
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-foreground">
-                  Private Key{keyPair.isLive ? '' : ' (truncated for display)'}
+                  {keyPair.isLive ? 'Private Key' : 'Example private-key display (placeholder)'}
                 </span>
                 {!keyPair.isLive && (
                   <Button
@@ -418,7 +491,10 @@ export const BinarySigning: React.FC = () => {
               <textarea
                 id="sign-input"
                 value={inputText}
+                disabled={isSigning || isGenerating}
                 onChange={(e) => {
+                  operationEpoch.current++
+                  setOperationError(null)
                   setInputText(e.target.value)
                   setSignatureResult(null)
                 }}
@@ -430,7 +506,7 @@ export const BinarySigning: React.FC = () => {
             <Button
               variant="gradient"
               onClick={handleSign}
-              disabled={isSigning || !inputText.trim()}
+              disabled={isSigning || isGenerating || !inputText.trim()}
               className="text-sm"
             >
               {isSigning ? (
@@ -440,7 +516,9 @@ export const BinarySigning: React.FC = () => {
               ) : (
                 <>
                   <PenLine size={14} className="mr-1" />
-                  {hsm.isReady && keyPair.isLive ? 'Sign (Live WASM)' : 'Sign'}
+                  {hsm.isReady && keyPair.isLive
+                    ? 'Sign and check sample'
+                    : 'Show example signing output'}
                 </>
               )}
             </Button>
@@ -460,7 +538,9 @@ export const BinarySigning: React.FC = () => {
           <div className="space-y-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <span className="text-xs font-bold text-foreground">
-                SHA-256 Hash
+                {signatureResult.isLive
+                  ? 'SHA-256 of the sample message'
+                  : 'Illustrative digest — placeholder'}
                 {signatureResult.isLive && (
                   <span className="ml-2 text-[10px] text-status-success font-normal">
                     (C_DigestInit + C_Digest, CKM_SHA256)
@@ -474,7 +554,8 @@ export const BinarySigning: React.FC = () => {
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-foreground">
-                  Signature ({selectedAlgorithm})
+                  {signatureResult.isLive ? 'Signature' : 'Example signature display'} (
+                  {signatureResult.algorithm})
                   {signatureResult.isLive && (
                     <span className="ml-2 text-[10px] text-status-success font-normal">
                       (C_MessageSignInit + C_SignMessage)
@@ -502,30 +583,51 @@ export const BinarySigning: React.FC = () => {
             </div>
             <div
               className={`rounded-lg p-3 border ${
-                signatureResult.verified
-                  ? 'bg-success/10 border-success/30'
-                  : 'bg-destructive/10 border-destructive/30'
+                !signatureResult.isLive
+                  ? 'bg-muted/50 border-border'
+                  : signatureResult.verified
+                    ? 'bg-success/10 border-success/30'
+                    : 'bg-destructive/10 border-destructive/30'
               }`}
             >
               <div className="flex items-center gap-2">
                 <CheckCircle
                   size={16}
-                  className={signatureResult.verified ? 'text-success' : 'text-destructive'}
+                  className={
+                    !signatureResult.isLive
+                      ? 'text-muted-foreground'
+                      : signatureResult.verified
+                        ? 'text-success'
+                        : 'text-destructive'
+                  }
                 />
                 <span
-                  className={`text-sm font-bold ${signatureResult.verified ? 'text-success' : 'text-destructive'}`}
+                  className={`text-sm font-bold ${!signatureResult.isLive ? 'text-foreground' : signatureResult.verified ? 'text-success' : 'text-destructive'}`}
                 >
-                  {signatureResult.verified ? 'Signature Verified' : 'Verification Failed'}
+                  {!signatureResult.isLive
+                    ? 'Signing walkthrough completed'
+                    : signatureResult.verified
+                      ? 'Sample signature check passed'
+                      : 'Sample signature check did not pass'}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 {signatureResult.isLive
-                  ? `Verified via C_MessageVerifyInit + C_VerifyMessage (CKM_ML_DSA, PKCS#11 v3.2).`
-                  : `Verification performed using the ${selectedAlgorithm} public key against the SHA-256 hash of the input data.`}
+                  ? `Signature check executed on the sample message via C_MessageVerifyInit + C_VerifyMessage (CKM_ML_DSA, PKCS#11 v3.2). Inspect the operation log for returned errors if the check did not pass.`
+                  : 'No cryptographic signature check was executed.'}
               </p>
             </div>
           </div>
         </div>
+      )}
+
+      {signatureResult?.isLive && (
+        <p className="text-xs text-muted-foreground">
+          The SHA-256 display is a separate message fingerprint. This exercise signs and checks the
+          message, not a standardized prehash-signature profile. A passing sample does not establish
+          publisher identity, trusted release policy, timestamp validity or safe installation. Look
+          for those additional capabilities in production signing and verification tools.
+        </p>
       )}
 
       {/* Side-by-side Size Comparison */}
@@ -623,8 +725,9 @@ export const BinarySigning: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong> In live mode, all cryptographic operations execute in SoftHSM3 WASM
           — a reference PKCS#11 v3.2 implementation. Key sizes and signature sizes match the actual
-          FIPS 204 (ML-DSA) specification. In simulation mode, outputs are representative. Generated
-          keys are for educational purposes only.
+          FIPS 204 (ML-DSA) specification. In illustrative mode, the displayed bytes are
+          placeholders and no cryptographic signature check is executed. Generated keys are for
+          educational purposes only.
         </p>
       </div>
 

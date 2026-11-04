@@ -15,7 +15,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'binary-signing',
     title: 'Step 1: Binary Signing',
-    description: 'Sign a file hash with ML-DSA and verify the signature.',
+    description: 'Explore a signing walkthrough or sign and check a sample message with ML-DSA.',
     icon: PenLine,
   },
   {
