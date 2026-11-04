@@ -1167,7 +1167,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'solana-flow',
     pt_id: 'PT-021',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'Solana Transaction',
     description: 'Ed25519 keypair generation and transaction signing',
     category: 'Blockchain & Digital Assets',
