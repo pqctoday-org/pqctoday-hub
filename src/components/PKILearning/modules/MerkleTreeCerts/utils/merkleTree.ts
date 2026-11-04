@@ -98,7 +98,7 @@ export function serializeCert(cert: CertLeaf): string {
  * Build a complete binary Merkle tree from certificate leaves.
  *
  * If the number of leaves is not a power of two, the last leaf is duplicated
- * to fill the tree (standard Merkle tree padding).
+ * to fill the tree (visualization-specific padding, not RFC 9162 log construction).
  *
  * Returns the root node (with full tree linked via left/right) and a flat
  * array of all levels (levels[0] = leaves, levels[last] = [root]).
@@ -358,7 +358,7 @@ export function getConsistencyProof(
 }
 
 // ---------------------------------------------------------------------------
-// RFC 9162 §2.1.3 compressed consistency proof
+// RFC 9162 §2.1.4.1 compressed consistency proof
 // ---------------------------------------------------------------------------
 
 export interface Rfc9162ConsistencyProof {
@@ -367,7 +367,7 @@ export interface Rfc9162ConsistencyProof {
   oldRoot: string
   newRoot: string
   /**
-   * Minimal sibling-hash list per RFC 9162 §2.1.3 SubProof(m, n, b).
+   * Minimal sibling-hash list per RFC 9162 §2.1.4.1 SubProof(m, n, b).
    * Each entry is a 32-byte hash (hex-encoded) from the new tree that an
    * auditor needs — together with the old root — to recompute the new root.
    */
@@ -404,7 +404,7 @@ async function mth(leaves: string[]): Promise<string> {
 }
 
 /**
- * RFC 9162 §2.1.3 SubProof(m, D[n], b):
+ * RFC 9162 §2.1.4.1 SubProof(m, D[n], b):
  *   The minimal list of node hashes that, together with the old root (when b=true)
  *   or the current running hash (when b=false), allow reconstructing the new root.
  *
@@ -438,7 +438,7 @@ async function subProof(m: number, leaves: string[], b: boolean): Promise<string
 }
 
 /**
- * Compute the RFC 9162 §2.1.3 consistency proof between two trees.
+ * Compute the RFC 9162 §2.1.4.1 consistency proof between two trees.
  *
  * Returns the minimal set of hashes (typically O(log n)) an auditor needs
  * to verify that levels1 (old tree) is a prefix of levels2 (new tree).

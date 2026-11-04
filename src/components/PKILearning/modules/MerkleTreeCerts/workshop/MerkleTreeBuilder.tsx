@@ -184,7 +184,8 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({
         <p className="text-sm text-muted-foreground">
           Add certificate leaves, then build the tree to see SHA-256 hashes computed at each level.
           Tap (or hover, or focus with the keyboard and press Enter) on any node to see its full
-          hash.
+          hash. For non-power-of-two sample sizes, this visualization duplicates the last leaf. RFC
+          9162 logs use an unbalanced construction instead, so their roots are not interchangeable.
         </p>
       </div>
 

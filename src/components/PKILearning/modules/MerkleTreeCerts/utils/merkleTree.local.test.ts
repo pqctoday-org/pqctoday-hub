@@ -2,6 +2,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildMerkleTree,
+  sha256Hex,
+  type MerkleNode,
   getConsistencyProofRFC9162,
   verifyConsistencyProofRFC9162,
 } from './merkleTree'
@@ -84,6 +86,40 @@ describe('Merkle consistency verification', () => {
       })
     }
   }
+  it('generates the published non-power-of-two consistency paths from the reference leaves', async () => {
+    const inputs = [
+      '',
+      '00',
+      '10',
+      '2021',
+      '3031',
+      '40414243',
+      '5051525354555657',
+      '606162636465666768696a6b6c6d6e6f',
+    ]
+    const leaves = await Promise.all(
+      inputs.map(async (hex, index) => ({
+        hash: await sha256Hex(Buffer.from(hex, 'hex').toString('latin1')),
+        label: `Reference leaf ${index}`,
+        level: 0,
+        index,
+        isLeaf: true,
+      }))
+    )
+    const levels = (size: number, root: string): MerkleNode[][] => [
+      leaves.slice(0, size),
+      [{ hash: root, label: 'Published reference root', level: 1, index: 0, isLeaf: false }],
+    ]
+    for (const [oldSize, newSize, oldRoot, newRoot, proof] of referenceProofs) {
+      const result = await getConsistencyProofRFC9162(
+        levels(oldSize, oldRoot),
+        levels(newSize, newRoot)
+      )
+      expect(result.proof).toEqual(proof)
+      expect(result.valid).toBe(true)
+    }
+  })
+
   it('checks a generated demonstration proof against both roots, not just old subtree membership', async () => {
     const old = await buildMerkleTree(SAMPLE_CERTS.slice(0, 4))
     const next = await buildMerkleTree(SAMPLE_CERTS.slice(0, 8))

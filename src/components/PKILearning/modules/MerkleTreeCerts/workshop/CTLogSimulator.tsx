@@ -52,6 +52,7 @@ import {
   type ConsistencyProof,
   type CertLeaf,
 } from '../utils/merkleTree'
+import { verifySampleBatch, type BatchVerificationResult } from '../utils/batchVerification'
 import { SAMPLE_CERTS, truncateHash } from '../data/mtcConstants'
 
 // ---------------------------------------------------------------------------
@@ -65,6 +66,7 @@ interface IssuedCert extends CertLeaf {
 }
 
 interface SignedBatch {
+  signatureStatus: 'signed' | 'unsigned'
   root: string
   treeSize: number
   /** UTF-8 encoding of "MTC|<root>|<treeSize>|<ts>" — the raw message the CA signs */
@@ -298,11 +300,16 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           <div className="flex items-center gap-2">
             <TreePine size={14} className="text-accent" />
             <span className="text-xs font-bold text-foreground">
-              Signed Tree Head (STH) — {signedBatch.treeSize} cert
+              {signedBatch.signatureStatus === 'signed'
+                ? 'Signed Tree Head (STH)'
+                : 'Unsigned sample tree head'}{' '}
+              — {signedBatch.treeSize} cert
               {signedBatch.treeSize !== 1 ? 's' : ''}
             </span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20">
-              CA {signedBatch?.caAlgo ?? caAlgo} signature
+              {signedBatch.signatureStatus === 'signed'
+                ? `CA ${signedBatch.caAlgo} signature created`
+                : 'No CA signature created'}
             </span>
           </div>
           <div className="grid grid-cols-1 gap-1 text-[10px]">
@@ -312,30 +319,34 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
                 {truncateHash(signedBatch.root, 20)}
               </span>
             </div>
-            <div className="flex gap-2">
-              <span className="text-muted-foreground w-20 shrink-0">CA signature:</span>
-              <span className="font-mono text-foreground break-all">
-                {truncateHash(
-                  Array.from(signedBatch.caSig)
-                    .map((b) => b.toString(16).padStart(2, '0'))
-                    .join(''),
-                  20
-                )}
-                &hellip; ({signedBatch.caSig.length.toLocaleString()} bytes)
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <span className="text-muted-foreground w-20 shrink-0">CA pub key:</span>
-              <span className="font-mono text-foreground">
-                {truncateHash(
-                  Array.from(signedBatch.caPubKey)
-                    .map((b) => b.toString(16).padStart(2, '0'))
-                    .join(''),
-                  12
-                )}
-                &hellip; ({signedBatch.caPubKey.length.toLocaleString()} bytes)
-              </span>
-            </div>
+            {signedBatch.signatureStatus === 'signed' && (
+              <>
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-20 shrink-0">CA signature:</span>
+                  <span className="font-mono text-foreground break-all">
+                    {truncateHash(
+                      Array.from(signedBatch.caSig)
+                        .map((b) => b.toString(16).padStart(2, '0'))
+                        .join(''),
+                      20
+                    )}
+                    &hellip; ({signedBatch.caSig.length.toLocaleString()} bytes)
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-20 shrink-0">CA pub key:</span>
+                  <span className="font-mono text-foreground">
+                    {truncateHash(
+                      Array.from(signedBatch.caPubKey)
+                        .map((b) => b.toString(16).padStart(2, '0'))
+                        .join(''),
+                      12
+                    )}
+                    &hellip; ({signedBatch.caPubKey.length.toLocaleString()} bytes)
+                  </span>
+                </div>
+              </>
+            )}
             <div className="flex gap-2">
               <span className="text-muted-foreground w-20 shrink-0">Timestamp:</span>
               <span className="font-mono text-foreground">{formatTs(signedBatch.timestamp)}</span>
@@ -343,12 +354,18 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           </div>
           <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground bg-success/5 rounded p-2 border border-success/10">
             <Info size={11} className="text-success mt-0.5 shrink-0" />
-            One {signedBatch.caAlgo} signature ({signedBatch.caSig.length.toLocaleString()} B)
-            covers all {signedBatch.treeSize} certificate
-            {signedBatch.treeSize !== 1 ? 's' : ''} in this batch. Traditional PKI would require{' '}
-            {signedBatch.treeSize} × {signedBatch.caSig.length.toLocaleString()} B ={' '}
-            {(signedBatch.treeSize * signedBatch.caSig.length).toLocaleString()} bytes of CA
-            signatures.
+            {signedBatch.signatureStatus === 'signed' ? (
+              <>
+                One {signedBatch.caAlgo} signature ({signedBatch.caSig.length.toLocaleString()} B)
+                covers all {signedBatch.treeSize} certificate
+                {signedBatch.treeSize !== 1 ? 's' : ''} in this batch. Traditional PKI would require{' '}
+                {signedBatch.treeSize} × {signedBatch.caSig.length.toLocaleString()} B ={' '}
+                {(signedBatch.treeSize * signedBatch.caSig.length).toLocaleString()} bytes of CA
+                signatures.
+              </>
+            ) : (
+              'No CA signature was created for this sample root. Enable the signing engine, create a CA key and create a new batch to demonstrate signature creation and checking.'
+            )}
           </div>
         </div>
       )}
@@ -526,6 +543,11 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
         <h4 className="text-sm font-bold text-foreground mb-1">
           Consistency Proof — Log Grew Append-Only
         </h4>
+        <p className="text-xs text-muted-foreground">
+          This visualization pads batches to a power of two. Its proof sizes count padded leaves,
+          not just submitted certificates. A production RFC 9162 log uses the unpadded, ordered
+          entry list; the two tree heads must not be treated as interchangeable.
+        </p>
         <p className="text-xs text-muted-foreground">
           A CT auditor (or your browser) verifies that the log only <em>appended</em> new entries —
           it never secretly rewrote old ones. The consistency proof shows that T1&apos;s root is
@@ -818,21 +840,12 @@ interface AuditPanelProps {
   hsmReady: boolean
   hSession: number
   pubHandle: number | null
-  onVerifyBatch: (certs: IssuedCert[]) => Promise<{ valid: boolean; computedRoot: string }>
+  onVerifyBatch: (certs: IssuedCert[]) => Promise<BatchVerificationResult>
 }
 
-const AuditPanel: React.FC<AuditPanelProps> = ({
-  logCerts,
-  signedBatch,
-  hsmReady,
-  onVerifyBatch,
-}) => {
+const AuditPanel: React.FC<AuditPanelProps> = ({ logCerts, signedBatch, onVerifyBatch }) => {
   const [editedCerts, setEditedCerts] = useState<IssuedCert[]>([])
-  const [auditResult, setAuditResult] = useState<{
-    valid: boolean
-    computedRoot: string
-    sigValid: boolean
-  } | null>(null)
+  const [auditResult, setAuditResult] = useState<BatchVerificationResult | null>(null)
   const [isAuditing, setIsAuditing] = useState(false)
   const [editingIdx, setEditingIdx] = useState<number | null>(null)
   const [editValue, setEditValue] = useState('')
@@ -840,7 +853,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
   useEffect(() => {
     setEditedCerts(structuredClone(logCerts))
     setAuditResult(null)
-  }, [logCerts])
+  }, [logCerts, signedBatch])
 
   const changedIndices = editedCerts.reduce<number[]>((acc, c, i) => {
     const orig = logCerts[i]
@@ -870,7 +883,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
     setIsAuditing(true)
     try {
       const result = await onVerifyBatch(editedCerts)
-      setAuditResult({ ...result, sigValid: result.valid })
+      setAuditResult(result)
     } finally {
       setIsAuditing(false)
     }
@@ -891,26 +904,26 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
           Misissuance Audit — Detect Tampered Certificates
         </h4>
         <p className="text-xs text-muted-foreground">
-          CT monitors download the full batch and recompute the tree root. If any cert was secretly
-          replaced after the CA signed the STH, the recomputed root won&apos;t match the published
-          one — and the CA&apos;s ML-DSA signature will{' '}
-          {hsmReady ? 'fail via SoftHSMv3 C_VerifyMessage' : 'be flagged as invalid'}. Edit any cert
-          below, then re-audit.
+          Recompute the sample root to check whether these contents match the published batch.
+          Editing a certificate changes that comparison. The original signature can still be valid
+          for the original tree head; it does not authenticate the altered contents.
         </p>
         <p className="text-[10px] text-muted-foreground mt-1">
-          <strong className="text-foreground">Monitor role:</strong> An independent CT monitor
-          continuously downloads each signed batch and compares the CA&apos;s published root against
-          its own recomputation. A mismatch — even a single modified certificate — produces a
-          different root hash, invalidating the ML-DSA signature. Because the STH is <em>public</em>
-          , any monitor in the world can detect and report the discrepancy, making undetected
-          misissuance computationally infeasible.
+          This sample separately checks the published signature when the signing engine and key are
+          available. An unsigned batch or unavailable check is not a verified signature. Production
+          monitoring also needs authenticated tree heads, consistency checks and an investigation
+          process; a content mismatch alone does not establish misissuance.
         </p>
       </div>
 
       {/* Published STH */}
       {signedBatch && (
         <div className="bg-muted/50 rounded-lg p-3 border border-border text-[10px]">
-          <div className="text-muted-foreground mb-1">Published Signed Tree Head (original)</div>
+          <div className="text-muted-foreground mb-1">
+            {signedBatch.signatureStatus === 'signed'
+              ? 'Published signed sample tree head (original)'
+              : 'Published unsigned sample root (original)'}
+          </div>
           <div className="font-mono text-success break-all">
             Root: {truncateHash(signedBatch.root, 24)}
           </div>
@@ -1059,14 +1072,21 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
               : 'bg-destructive/10 border-destructive'
           }`}
         >
-          {auditResult.valid ? (
+          {auditResult.rootMatches &&
+          !auditResult.valid &&
+          auditResult.signatureState !== 'failed' ? (
+            <p role="status" className="text-sm text-warning">
+              Root and size match the sample batch; signature authentication is incomplete (
+              {auditResult.signatureState}). No verified-signature result is available. Create a new
+              signed sample batch with an available key before checking its signature.
+            </p>
+          ) : auditResult.valid ? (
             <div className="flex items-center gap-2">
               <ShieldCheck size={20} className="text-success" />
               <div>
                 <div className="text-sm font-bold text-success">Audit Passed</div>
                 <div className="text-[10px] text-muted-foreground">
-                  Recomputed root matches published STH
-                  {hsmReady ? ' · CA ML-DSA signature verified via SoftHSMv3' : ''}
+                  Recomputed root matches published STH · CA ML-DSA signature verified via SoftHSMv3
                 </div>
               </div>
             </div>
@@ -1075,10 +1095,13 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
               <div className="flex items-center gap-2">
                 <ShieldX size={20} className="text-destructive shrink-0" />
                 <div>
-                  <div className="text-sm font-bold text-destructive">Misissuance Detected!</div>
+                  <div className="text-sm font-bold text-destructive">
+                    Sample verification failed
+                  </div>
                   <div className="text-[10px] text-muted-foreground">
-                    Recomputed root diverges from published STH
-                    {hsmReady ? ' · CA ML-DSA signature invalid' : ''}
+                    {auditResult.rootMatches
+                      ? 'The CA signature check failed.'
+                      : 'The recomputed root or batch size differs from the published sample.'}
                   </div>
                 </div>
               </div>
@@ -1097,10 +1120,10 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                 </div>
               </div>
               <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground bg-destructive/5 rounded p-2 border border-destructive/20">
-                <AlertTriangle size={11} className="text-destructive mt-0.5 shrink-0" />
-                In a live deployment, this discrepancy would trigger automated alerts. The CA cannot
-                issue a valid SCT for the tampered cert because the CA&apos;s ML-DSA signature on
-                the original root hash cannot be forged.
+                <AlertTriangle size={11} className="text-destructive mt-0.5 shrink-0" />A root
+                mismatch indicates that these sample contents do not match the published batch. A
+                failed or unavailable signature check must be distinguished from that content
+                mismatch; it does not by itself establish misissuance.
               </div>
             </div>
           )}
@@ -1191,20 +1214,21 @@ export const CTLogSimulator: React.FC = () => {
       const root = levels[levels.length - 1][0].hash
       const ts = Date.now()
       const payload = await buildSignedPayload(root, certs.length, ts)
-      const caSize = CA_ALGO_SIZES[caAlgo] ?? CA_ALGO_SIZES['ML-DSA-65']
 
-      // If HSM + CA key ready, sign with ML-DSA; otherwise use a placeholder
+      // A batch stays unsigned unless the engine actually produces its signature.
       if (hsm.isReady && hsm.moduleRef.current && caKeyHandles) {
         hsm.addStepLog(`CA Signs STH — ${caAlgo} · root ${root.slice(0, 8)}…`)
         const M = hsm.moduleRef.current
         const hSession = hsm.hSessionRef.current
         const sig = hsm_signBytesMLDSA(M, hSession, caKeyHandles.privHandle, payload)
+        if (!sig.length) throw new Error('The sample signing operation returned no signature.')
         return {
           root,
+          signatureStatus: 'signed',
           treeSize: certs.length,
           signedPayload: payload,
           caSig: sig,
-          caPubKey: caPubKeyBytes ?? new Uint8Array(caSize.pubKey),
+          caPubKey: caPubKeyBytes ?? hsm_extractKeyValue(M, hSession, caKeyHandles.pubHandle),
           timestamp: ts,
           caAlgo,
         }
@@ -1212,10 +1236,11 @@ export const CTLogSimulator: React.FC = () => {
         // Simulation mode — placeholder bytes
         return {
           root,
+          signatureStatus: 'unsigned',
           treeSize: certs.length,
           signedPayload: payload,
-          caSig: new Uint8Array(caSize.sig),
-          caPubKey: new Uint8Array(caSize.pubKey),
+          caSig: new Uint8Array(),
+          caPubKey: new Uint8Array(),
           timestamp: ts,
           caAlgo,
         }
@@ -1298,32 +1323,26 @@ export const CTLogSimulator: React.FC = () => {
 
   /** Verify a (possibly tampered) cert list against the published signed batch */
   const handleVerifyBatch = useCallback(
-    async (certs: IssuedCert[]): Promise<{ valid: boolean; computedRoot: string }> => {
+    async (certs: IssuedCert[]): Promise<BatchVerificationResult> => {
       const certsForTree = certs.length === 1 ? [certs[0], certs[0]] : certs
       const result = await buildMerkleTree(certsForTree)
       const computedRoot = result.levels[result.levels.length - 1][0].hash
-
-      if (!signedBatch) return { valid: false, computedRoot }
-      if (computedRoot !== signedBatch.root) return { valid: false, computedRoot }
-
-      // If HSM + CA key available, verify ML-DSA signature
-      if (hsm.isReady && hsm.moduleRef.current && caKeyHandles) {
-        hsm.addStepLog(
-          `CA Signature Verify — ${signedBatch.caAlgo} · root ${computedRoot.slice(0, 8)}…`
-        )
-        const M = hsm.moduleRef.current
-        const hSession = hsm.hSessionRef.current
-        const sigValid = hsm_verifyBytes(
-          M,
-          hSession,
-          caKeyHandles.pubHandle,
-          signedBatch.signedPayload,
-          signedBatch.caSig
-        )
-        return { valid: sigValid, computedRoot }
-      }
-
-      return { valid: true, computedRoot }
+      const verify =
+        signedBatch && hsm.isReady && hsm.moduleRef.current && caKeyHandles
+          ? () => {
+              hsm.addStepLog(
+                `CA Signature Verify — ${signedBatch.caAlgo} · root ${computedRoot.slice(0, 8)}…`
+              )
+              return hsm_verifyBytes(
+                hsm.moduleRef.current!,
+                hsm.hSessionRef.current,
+                caKeyHandles.pubHandle,
+                signedBatch.signedPayload,
+                signedBatch.caSig
+              )
+            }
+          : undefined
+      return verifySampleBatch(computedRoot, certs.length, signedBatch, verify)
     },
     [signedBatch, hsm, caKeyHandles]
   )
