@@ -1134,23 +1134,6 @@ export const HpkeWorkshop: React.FC = () => {
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
         <LiveHSMToggle hsm={hsm} operations={HPKE_LIVE_OPERATIONS} />
       </div>
-      <p className="px-6 mb-4 text-xs text-muted-foreground">
-        The protected-key probe observes one attempted plaintext read. CKA_SENSITIVE and
-        CKA_EXTRACTABLE are distinct attributes: for secret keys, sensitive status or
-        non-extractable status restricts plaintext disclosure; CKA_EXTRACTABLE also controls whether
-        a key can be wrapped. One refused read does not establish both attribute values or test
-        wrapping. Inspect the attributes and test the relevant operations in your production tools.
-        See{' '}
-        <a
-          href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html"
-          target="_blank"
-          rel="noreferrer"
-          className="text-primary underline"
-        >
-          PKCS #11 v3.2, section 4.11
-        </a>
-        .
-      </p>
 
       <div className="px-6 mb-4">
         <h2 className="text-lg font-semibold text-gradient">HPKE (RFC 9180) over PKCS#11</h2>
@@ -1203,6 +1186,24 @@ export const HpkeWorkshop: React.FC = () => {
         </p>
       </div>
 
+      <p className="px-6 mb-4 text-xs text-muted-foreground">
+        The protected-key probe observes one attempted plaintext read. CKA_SENSITIVE and
+        CKA_EXTRACTABLE are distinct attributes: for secret keys, sensitive status or
+        non-extractable status restricts plaintext disclosure; CKA_EXTRACTABLE also controls whether
+        a key can be wrapped. One refused read does not establish both attribute values or test
+        wrapping. Inspect the attributes and test the relevant operations in your production tools.
+        See{' '}
+        <a
+          href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary underline"
+        >
+          PKCS #11 v3.2, section 4.11
+        </a>
+        .
+      </p>
+
       <div className="px-6 mb-4">
         <div className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
           PKCS#11 sequence
@@ -1220,6 +1221,7 @@ export const HpkeWorkshop: React.FC = () => {
               type="button"
               variant={engineMode === 'composed' ? 'default' : 'outline'}
               size="sm"
+              className="h-auto min-h-8 max-w-full whitespace-normal py-1 text-left"
               onClick={() => selectEngineMode('composed')}
             >
               PKCS#11 v3.2 (composed from standard pieces)
@@ -1231,6 +1233,7 @@ export const HpkeWorkshop: React.FC = () => {
               type="button"
               variant={engineMode === 'candidate' ? 'default' : 'outline'}
               size="sm"
+              className="h-auto min-h-8 max-w-full whitespace-normal py-1 text-left"
               onClick={() => selectEngineMode('candidate')}
             >
               PQCToday proposal — CKM_HPKE (single call)
@@ -1242,6 +1245,7 @@ export const HpkeWorkshop: React.FC = () => {
               type="button"
               variant={engineMode === 'v33' ? 'default' : 'outline'}
               size="sm"
+              className="h-auto min-h-8 max-w-full whitespace-normal py-1 text-left"
               disabled={compositeCkp === undefined}
               onClick={() => selectEngineMode('v33')}
             >
@@ -1265,8 +1269,8 @@ export const HpkeWorkshop: React.FC = () => {
       </div>
 
       <div className="px-6 mb-4 flex flex-wrap items-end gap-3">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 flex-1 min-w-[280px]">
-          <div>
+        <div className="grid grid-cols-2 sm:grid-cols-[minmax(15rem,1.6fr)_repeat(3,minmax(7.5rem,1fr))] gap-3 basis-full min-w-0">
+          <div className="col-span-2 sm:col-span-1">
             <div className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
               KEM
             </div>
@@ -1321,7 +1325,12 @@ export const HpkeWorkshop: React.FC = () => {
             />
           </div>
         </div>
-        <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 shrink-0">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleReset}
+          className="gap-1.5 shrink-0 ml-auto"
+        >
           <RotateCcw size={14} />
           Reset
         </Button>
