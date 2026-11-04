@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * HPKE (RFC 9180) composed from PKCS#11 v3.2 primitives.
+ * HPKE (RFC 9180) composed from PKCS#11 v3.2 primitives, plus the key-agreement helpers for the v3.3 draft composite KEM and for pure ML-KEM.
  *
  * PKCS#11 v3.2 defines no CKM_HPKE mechanism — verified against the canonical
  * v3.2 header (pqctoday-hsm/docs/refs/pkcs11t-canonical-v3.2.h has no HPKE

@@ -736,7 +736,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/learn/hybrid-crypto': {
     developer:
-      'Compare classical, PQC and hybrid key generation, run KEM encapsulation and hybrid signatures, generate the two root CAs and the hybrid X.509 formats, then the HPKE step composed from PKCS#11 v3.2 mechanisms.',
+      'Compare classical, PQC and hybrid key generation, run KEM encapsulation and hybrid signatures, generate the two root CAs and the hybrid X.509 formats, then the HPKE step, composed from PKCS#11 v3.2 mechanisms and shown beside the v3.3 draft composite KEM.',
     architect:
       'The certificate steps generate and compare the hybrid X.509 approaches with the IETF reference artifacts, and the signature-spectrum step covers concatenation, nesting and Silithium: the relying-party compatibility decision.',
     researcher:
