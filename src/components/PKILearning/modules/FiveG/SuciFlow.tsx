@@ -1713,8 +1713,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         steps={steps}
         currentStepIndex={wizard.currentStep}
         onExecute={() => {
-          if (rawSteps[wizard.currentStep].id === 'compute_shared_secret')
+          if (rawSteps[wizard.currentStep].id === 'compute_shared_secret') {
             wizard.setIsStepComplete(false)
+            wizard.setOutput(null)
+          }
           return wizard.execute(executeStep)
         }}
         output={wizard.output}
@@ -1723,7 +1725,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         isStepComplete={wizard.isStepComplete}
         onNext={wizard.handleNext}
         onBack={wizard.handleBack}
-        plainEnglishEnabled={plainEnglish}
+        plainEnglishEnabled={
+          plainEnglish &&
+          (rawSteps[wizard.currentStep].id !== 'compute_shared_secret' || wizard.isStepComplete)
+        }
         phaseLabels={SUCI_PHASE_LABELS}
         canonicalTabNames={['SoftHSM3', 'SoftHSMv3']}
         tabExplainer="SoftHSM3 runs inside your browser via WASM — it's the canonical output for this module. The OpenSSL Engine tab shows the equivalent command-line computation for cross-reference."
