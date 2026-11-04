@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
-  version: '1.3.0',
+  version: '1.4.0',
   lastReviewed: '2026-10-27',
   lastEdited: '2026-11-02',
 
@@ -117,6 +117,7 @@ export const content: ModuleContent = {
     getStandard('draft-irtf-cfrg-concrete-hybrid-kems-04'),
     getStandard('Hybrid-PQ-T-Key-Encapsulation-Mechanisms'),
     // 2026-11-01: "Hybrid in Crypto APIs & HSMs" section, support matrix and PKCS#11 v3.3 box
+    // 2026-11-03: HPKE workshop shows the v3.2, PQCToday-proposal and v3.3-draft sequences as three groups; pure ML-KEM added
     getStandard('OpenJDK-JEP-496-ML-KEM'),
     getStandard('OpenJDK-JEP-497-ML-DSA'),
     getStandard('OpenJDK-JEP-527-PQ-Hybrid-TLS13'),
@@ -200,6 +201,6 @@ export const content: ModuleContent = {
     hpkeAuthLimitation:
       'RFC 9180\'s Auth and AuthPSK modes require the KEM to expose AuthEncap/AuthDecap. Every classical DHKEM in RFC 9180 supports this; draft-ietf-hpke-pq\'s ML-KEM and PQ/T hybrid KEM entries mark the Auth column "no" — so Auth/AuthPSK stay classical-only until a future KEM adds it.',
     hpkeNoNativeMechanism:
-      'PKCS#11 v3.2 has no CKM_HPKE mechanism (checked against the canonical v3.2 header — no HPKE entry exists at all). A real HSM deployment of HPKE composes it from mechanisms the spec does define: CKM_ECDH1_DERIVE / CKM_ML_KEM for the KEM leg, CKM_HKDF_DERIVE plus C_Sign(CKM_SHA*_HMAC) for LabeledExtract/LabeledExpand, and CKM_AES_GCM / CKM_CHACHA20_POLY1305 for Seal/Open. The Step 7 workshop below does exactly that, cross-checked byte-for-byte against RFC 9180 Appendix A.',
+      'PKCS#11 v3.2 has no CKM_HPKE mechanism (checked against the canonical v3.2 header — no HPKE entry exists at all), and the v3.3 working draft has none either: the standards committee has only an open request for one. A real HSM deployment of HPKE composes it from mechanisms the spec does define: CKM_ECDH1_DERIVE / CKM_ML_KEM for the KEM leg, CKM_HKDF_DERIVE plus C_Sign(CKM_SHA*_HMAC) for LabeledExtract/LabeledExpand, and CKM_AES_GCM / CKM_CHACHA20_POLY1305 for Seal/Open. The Step 7 workshop below does exactly that, cross-checked byte-for-byte against RFC 9180 Appendix A.',
   },
 }

@@ -203,7 +203,7 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   CK_SIGN_ADDITIONAL_CONTEXT: {
     def: "Mechanism-parameter structure carrying an ML-DSA/SLH-DSA signature's optional context string and hedge preference — where CKH_HEDGE_* selects between randomized and deterministic signing.",
   },
-  // ── PKCS#11 v3.3 working draft (OASIS TC header, commit 9ef73f9) ───────────
+  // ── PKCS#11 v3.3 working draft (OASIS TC identifier database and header) ───
   CKK_COMP_SIG: {
     hex: '0x0000004d',
     def: 'Composite ML-DSA key type (v3.3 working draft). One object holds both halves: public CKA_VALUE = ML-DSA public key ‖ classical public key; private CKA_VALUE = ML-DSA seed ‖ classical private key.',
@@ -371,7 +371,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'v33-working-draft',
     label: 'PKCS#11 v3.3 (working draft)',
     cat: 'protocol',
-    def: 'The next PKCS#11 version, unpublished. Its new codepoints are approved in the OASIS TC header, but the text may change, and implementing engines still report Cryptoki 3.2.0.',
+    def: 'The next PKCS#11 version, unpublished. Its new codepoints are approved in the OASIS committee identifier database, but the text may change, and implementing engines still report Cryptoki 3.2.0.',
   },
 ]
 
