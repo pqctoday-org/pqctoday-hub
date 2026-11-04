@@ -18822,7 +18822,7 @@
         "revision": "draft-ietf-hpke-pq-05",
         "verification": {
           "date": "2026-10-01",
-          "method": "Fetched 2026-10-01 with pqctoday-priv/scripts/fetch_resilient.py from the hpkewg/hpke-pq repository at commit 6433c8fce0b8b749dfc86c1095081a88698ccfab (the generator behind draft-ietf-hpke-pq-05 Appendix A). Byte-identical to pqctoday-hsm rust/kat/hpke/hpke-pq-test-vectors.json (rust/kat/hpke/PROVENANCE.md). Before any engine code existed, an independent Node reference model (noble ML-KEM, hybrids and SHAKE256; not the hsm engine, not the `hpke` package) reproduced every in-scope value.",
+          "method": "Fetched 2026-10-01 from the hpkewg/hpke-pq repository at commit 6433c8fce0b8b749dfc86c1095081a88698ccfab (the generator behind draft-ietf-hpke-pq-05 Appendix A). Byte-identical to pqctoday-hsm rust/kat/hpke/hpke-pq-test-vectors.json (rust/kat/hpke/PROVENANCE.md). Before any engine code existed, an independent Node reference model (noble ML-KEM, hybrids and SHAKE256; not the hsm engine, not the `hpke` package) reproduced every in-scope value.",
           "result": "match",
           "evidence": [
             {
