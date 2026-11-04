@@ -7,7 +7,7 @@
  * C_Encrypt(CKM_AES_GCM) on that key handle with IV = base_nonce (sequence 0,
  * the only message in a JWE) and the JWE AAD produces the ciphertext. Open
  * mirrors it with C_DecapsulateKey + C_Decrypt. The key schedule is the
- * one-stage SHAKE256 KDF (draft-ietf-hpke-pq-04 §5), in the engine since hsm
+ * one-stage SHAKE256 KDF (draft-ietf-hpke-pq-05 §5), in the engine since hsm
  * #310. The shared secret and the AEAD key never leave the token.
  *
  * Guardrail (hsm remediation plan D3): the CK_HPKE_PARAMS built here never

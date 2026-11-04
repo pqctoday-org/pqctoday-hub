@@ -4,7 +4,7 @@
 // eda62b31) through the hub's own JS/WASM binding in ./softhsm — the
 // marshalling the JWE workshop uses, not the engine's Rust test path.
 //
-//   - draft-ietf-hpke-pq-04 Appendix A (hpkewg/hpke-pq test-vectors.json):
+//   - draft-ietf-hpke-pq-05 Appendix A (hpkewg/hpke-pq test-vectors.json):
 //     every suite whose KEM is pure ML-KEM or a PQ/T hybrid and whose KDF the
 //     engine implements (HKDF-SHA256/384/512, SHAKE256).
 //   - draft-irtf-cfrg-concrete-hybrid-kems (cfrg test-vectors.json): all 30.
@@ -109,7 +109,7 @@ describe('CKM_HPKE post-quantum suites — published-vector replay through the J
 
   const inScope = hpkePq.filter((v) => PQ_KEMS.has(v.kem_id) && ENGINE_KDFS.has(v.kdf_id))
 
-  it('covers the 7 in-scope draft-ietf-hpke-pq-04 suites', () => {
+  it('covers the 7 in-scope draft-ietf-hpke-pq-05 suites', () => {
     expect(inScope.map((v) => `${v.kem_id.toString(16)}/${v.kdf_id.toString(16)}`).sort()).toEqual([
       '40/1',
       '41/1',
@@ -125,7 +125,7 @@ describe('CKM_HPKE post-quantum suites — published-vector replay through the J
     tag: `kem 0x${v.kem_id.toString(16)} kdf 0x${v.kdf_id.toString(16)} aead 0x${v.aead_id.toString(16)}`,
     v,
   }))
-  describe.each(tagged)('hpke-pq-04 $tag', ({ v }) => {
+  describe.each(tagged)('hpke-pq-05 $tag', ({ v }) => {
     {
       it('seed import, Encap(ikmE), Decap, key schedule and every encryption match', () => {
         const params = {
