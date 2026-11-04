@@ -60,7 +60,7 @@ const show = () =>
       <TpmLearnView isWasmReady onTryInWorkbench={() => {}} />
     </MemoryRouter>
   )
-const runAll = () => fireEvent.click(screen.getByRole('button', { name: 'Run all', exact: true }))
+const runAll = () => fireEvent.click(screen.getByRole('button', { name: 'Run all' }))
 
 describe('TPM lesson runner expected refusals', () => {
   beforeEach(() => {
@@ -91,11 +91,11 @@ describe('TPM lesson runner expected refusals', () => {
     control.exec.mockResolvedValue(bytes)
     show()
     runAll()
-    await screen.findByRole('button', { name: 'Retry', exact: true })
+    await screen.findByRole('button', { name: 'Retry' })
     expect(screen.queryByText('Refused, as expected')).not.toBeInTheDocument()
     expect(screen.queryByTestId('quiz')).not.toBeInTheDocument()
     expect(control.dependent).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: 'Run', exact: true })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Run' })).toBeDisabled()
     expect(control.listener).toHaveBeenLastCalledWith(null)
   })
 
@@ -105,7 +105,7 @@ describe('TPM lesson runner expected refusals', () => {
       control.exec.mockRejectedValue(new Error(message))
       show()
       runAll()
-      await screen.findByRole('button', { name: 'Retry', exact: true })
+      await screen.findByRole('button', { name: 'Retry' })
       expect(screen.queryByText('Refused, as expected')).not.toBeInTheDocument()
       expect(control.dependent).not.toHaveBeenCalled()
       expect(control.listener).toHaveBeenLastCalledWith(null)
@@ -133,11 +133,11 @@ describe('TPM lesson runner expected refusals', () => {
     control.exec.mockResolvedValue(response(0x101))
     show()
     runAll()
-    const retry = await screen.findByRole('button', { name: 'Retry', exact: true })
+    const retry = await screen.findByRole('button', { name: 'Retry' })
     control.exec.mockResolvedValue(response(0x100))
     fireEvent.click(retry)
     await screen.findByText('Refused, as expected')
-    fireEvent.click(screen.getByRole('button', { name: 'Run', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: 'Run' }))
     await screen.findByTestId('quiz')
     expect(control.dependent).toHaveBeenCalledTimes(1)
   })
@@ -151,7 +151,7 @@ describe('TPM lesson runner expected refusals', () => {
         })
     )
     show()
-    const button = screen.getByRole('button', { name: 'Run all', exact: true })
+    const button = screen.getByRole('button', { name: 'Run all' })
     act(() => {
       button.click()
       button.click()

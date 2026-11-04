@@ -83,7 +83,7 @@ describe('TPM curriculum structure', () => {
           sent = cmd
           return new Uint8Array([0x80, 1, 0, 0, 0, 10, 0, 0, 0, 0x84])
         },
-      } as TpmLearnContext
+      } as unknown as TpmLearnContext
       await expect(step.run(ctx, [])).rejects.toBeInstanceOf(TpmObservedRefusal)
       const ciphertext = sent!.slice(29, 285)
       expect(SER.getU16(sent!, 27)).toBe(256)

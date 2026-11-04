@@ -10,7 +10,7 @@ import { SolanaFlow } from './SolanaFlow'
 const control = vi.hoisted(() => ({
   live: false,
   verify: vi.fn(),
-  jump: vi.fn<(step: number) => void>(),
+  jump: (() => {}) as (step: number) => void,
 }))
 const bytes = (hex: string) => Uint8Array.from(hex.match(/../g) ?? [], (b) => parseInt(b, 16))
 const vector = vectors.testGroups[0].tests[0]

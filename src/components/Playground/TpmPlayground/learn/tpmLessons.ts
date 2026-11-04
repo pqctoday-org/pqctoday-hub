@@ -79,13 +79,15 @@ async function execOk(ctx: TpmLearnContext, cmd: Uint8Array): Promise<Uint8Array
 
 /** A well-formed non-success response, bound to the command actually sent. */
 export class TpmObservedRefusal extends Error {
-  constructor(
-    readonly commandCode: number,
-    readonly responseCode: number,
-    readonly response: Uint8Array
-  ) {
+  readonly commandCode: number
+  readonly responseCode: number
+  readonly response: Uint8Array
+  constructor(commandCode: number, responseCode: number, response: Uint8Array) {
     const info = getRcInfo(responseCode)
     super(`${info.name} (${formatRc(responseCode)}) — ${info.description}`)
+    this.commandCode = commandCode
+    this.responseCode = responseCode
+    this.response = response
   }
 }
 
