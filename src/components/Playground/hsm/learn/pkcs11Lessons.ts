@@ -59,6 +59,7 @@ import type {
   LinearLessonBase,
 } from '@/components/Playground/learnkit/lessonTypes'
 import type { RailId } from '../railIds'
+import type { ExpectedRefusal } from './lessonRunner'
 
 const bytesEqual = (a: Uint8Array, b: Uint8Array): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i])
@@ -94,6 +95,7 @@ export interface Pkcs11LessonStep {
     results: (Pkcs11StepResult | null)[]
   ) => Promise<Pkcs11StepResult> | Pkcs11StepResult
   expect?: LessonStepExpect
+  expectedRefusal?: ExpectedRefusal
   spot?: LessonSpot
   /** True for a step whose own job is to boot the engine (the first step of
    * A1 and B1). The runner boots the engine before every other step when it
@@ -195,6 +197,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         op: 'C_GetSessionInfo (unopened handle)',
         label: 'Try the same call on a session handle nobody ever opened',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_GetSessionInfo'], returnCodes: [0xb3] },
         run: (hsm) => {
           const M = requireModule(hsm)
           // 999999 is guaranteed to not be a handle this token ever issued.
@@ -264,6 +267,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         op: 'C_GetAttributeValue (CKA_VALUE)',
         label: 'Try to read the raw key bytes anyway',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_GetAttributeValue'], returnCodes: [0x11] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle (\d+)/) ?? [])[1])
@@ -308,6 +312,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         op: 'C_GetMechanismInfo (unrecognized type)',
         label: 'Ask about a mechanism type number nothing defines',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_GetMechanismInfo'], returnCodes: [0x70] },
         run: (hsm) => {
           const M = requireModule(hsm)
           const info = hsm_getMechanismInfo(M, hsm.slotRef.current, 0x0eadbeef)
@@ -403,6 +408,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         op: 'C_DecryptInit / C_Decrypt (tampered ciphertext)',
         label: 'Flip one byte of the ciphertext and try to decrypt it',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_Decrypt'], returnCodes: [0x40, 0x42] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle (\d+)/) ?? [])[1])
@@ -629,6 +635,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         op: 'C_WrapKey (non-extractable target)',
         label: 'Try to wrap the non-extractable key',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_WrapKey'], returnCodes: [0x6a] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
@@ -787,7 +794,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       },
       {
         op: 'C_DeriveKey (ECDH, both directions)',
-        label: 'Derive the shared secret from both sides and compare',
+        label: 'Derive keys on both sides',
         spot: { rail: 'agree', target: '[data-tour="pkcs-op-agree-derive"]', algo: 'P-256' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
@@ -817,7 +824,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
             { derive: true }
           )
           return {
-            detail: `aliceSecret=${aliceSecretHandle} bobSecret=${bobSecretHandle} — two independent derivations, both real handles.`,
+            detail: `aliceSecret=${aliceSecretHandle} bobSecret=${bobSecretHandle} — two derivations returned key handles. This step does not check whether the secrets match.`,
           }
         },
       },

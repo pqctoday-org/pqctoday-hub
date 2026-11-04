@@ -67,6 +67,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
   // Shared tree built in Step 1 — passed to Step 2 so the user proves their own certificates.
   const [sharedLevels, setSharedLevels] = useState<MerkleNode[][] | null>(null)
   const [sharedCerts, setSharedCerts] = useState<CertLeaf[] | null>(null)
+  const [treeInvalidated, setTreeInvalidated] = useState(false)
   const [confirmingReset, setConfirmingReset] = useState(false)
 
   const handlePartChange = useCallback(
@@ -85,6 +86,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
     setCompletedSteps(new Set())
     setSharedLevels(null)
     setSharedCerts(null)
+    setTreeInvalidated(false)
     setConfirmingReset(false)
   }
 
@@ -186,23 +188,37 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
             </span>
           </div>
         )}
+        {(currentPart === 1 || currentPart === 2) && treeInvalidated && (
+          <p role="status">
+            Certificate entries changed—rebuild the tree in Step 1 before generating or verifying
+            another proof.
+          </p>
+        )}
         {currentPart === 0 && (
           <MerkleTreeBuilder
             key={`build-${configKey}`}
+            initialCerts={sharedCerts}
+            onTreeInvalidated={() => {
+              setSharedLevels(null)
+              setSharedCerts(null)
+              setTreeInvalidated(true)
+              setCompletedSteps((prev) => new Set([...prev].filter((step) => step > 2)))
+            }}
             onTreeBuilt={(levels, certs) => {
+              setTreeInvalidated(false)
               setSharedLevels(levels)
               setSharedCerts(certs)
             }}
           />
         )}
-        {currentPart === 1 && (
+        {currentPart === 1 && !treeInvalidated && (
           <InclusionProofGenerator
             key={`proof-${configKey}`}
             sharedLevels={sharedLevels}
             sharedCerts={sharedCerts}
           />
         )}
-        {currentPart === 2 && (
+        {currentPart === 2 && !treeInvalidated && (
           <ProofVerifier
             key={`verify-${configKey}`}
             sharedLevels={sharedLevels}

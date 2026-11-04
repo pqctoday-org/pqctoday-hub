@@ -162,14 +162,14 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
   ],
   'hedged-signing': [
     {
-      q: 'Both the hedged and deterministic signatures verified successfully, even though only the deterministic pair was byte-identical across two runs. What does that tell you about hedging?',
+      q: 'This lesson compared repeated signature bytes without verifying the signatures. What can you conclude from that comparison?',
       options: [
         'Hedging makes signatures invalid half the time',
-        'Hedging changes ONLY which bytes get produced (via injected randomness), never whether verification succeeds — it is a side-channel defense, not a correctness trade-off',
+        'The comparison shows whether the bytes repeat; signature validity still requires a separate verification check',
         'Only deterministic signatures are cryptographically valid',
       ],
       answer: 1,
-      why: 'This is precisely why v3.2 exposes hedging as an explicit, application-chosen parameter — different compliance regimes have opposite requirements here (some mandate determinism, others mandate hedging), and both must remain fully valid.',
+      why: 'Equal or different bytes alone do not establish signature validity. Verify each signature against its public key, message and context before claiming it is valid.',
     },
   ],
   'authenticated-wrap': [

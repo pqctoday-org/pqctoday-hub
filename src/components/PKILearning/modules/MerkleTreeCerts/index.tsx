@@ -57,6 +57,7 @@ export const MerkleTreeCertsModule: FC = () => {
   // Steps 2 and 3 prove and verify the learner's own Step 1 tree (same wiring as the
   // Playground's MerkleWorkshopSteps); a reset or a new exercise config starts fresh.
   const [sharedTree, setSharedTree] = useState<SharedTree | null>(null)
+  const [invalidatedFor, setInvalidatedFor] = useState<number | null>(null)
   const treeFor = useCallback(
     (configKey: number) => (sharedTree?.configKey === configKey ? sharedTree : null),
     [sharedTree]
@@ -76,12 +77,28 @@ export const MerkleTreeCertsModule: FC = () => {
       workshopParts={PARTS}
       renderWorkshopStep={(index, configKey) => {
         const tree = treeFor(configKey)
+        if ((index === 1 || index === 2) && invalidatedFor === configKey) {
+          return (
+            <p role="status">
+              Certificate entries changed—rebuild the tree in Step 1 before generating or verifying
+              another proof.
+            </p>
+          )
+        }
         switch (index) {
           case 0:
             return (
               <MerkleTreeBuilder
                 key={`build-${configKey}`}
-                onTreeBuilt={(levels, certs) => setSharedTree({ configKey, levels, certs })}
+                initialCerts={tree?.certs}
+                onTreeInvalidated={() => {
+                  setSharedTree(null)
+                  setInvalidatedFor(configKey)
+                }}
+                onTreeBuilt={(levels, certs) => {
+                  setSharedTree({ configKey, levels, certs })
+                  setInvalidatedFor(null)
+                }}
               />
             )
           case 1:

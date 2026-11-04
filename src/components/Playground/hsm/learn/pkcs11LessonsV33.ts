@@ -275,6 +275,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
         requires: 'compSig',
         label: 'Strip the ECDSA half and verify again',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_VerifyInit', 'C_Verify'], returnCodes: [0xc0, 0xc1] },
         run: (hsm) => {
           need(hsm, 'compSig', 'CKM_COMP_SIG')
           if (!sig.pub || !sig.signature) throw new Error('Run step 3 first.')
@@ -306,6 +307,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
           const v = hsm_compositeVerifyRv(M, h, sig.pub, MESSAGE, s.signature!, {
             context: CONTEXT,
           })
+          if (v.rv !== 0) throw new Error(`${v.step} → ${rvName(v.rv)}`)
           return {
             detail: `Signed the 64-byte SHA-512 pre-hash only (single-part). Verifying that signature over the full message with CKM_COMP_SIG → ${rvName(v.rv)}: both mechanisms sign the same M′.`,
           }
@@ -316,6 +318,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
         requires: 'compSigExternalHash',
         label: 'Give the external-hash mechanism a pre-hash one byte short',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_Sign'], returnCodes: [0x21] },
         run: (hsm) => {
           need(hsm, 'compSigExternalHash', 'CKM_COMP_SIG_EXTERNAL_HASH')
           if (!sig.priv) throw new Error('Run step 1 first.')
@@ -626,6 +629,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
         requires: 'externalMu',
         label: 'Give both a key handle and a TR',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_DigestInit'], returnCodes: [0x7, 0x71] },
         run: (hsm) => {
           need(hsm, 'externalMu', 'CKM_ML_DSA_EXTERNAL_MU_GEN')
           if (!mu.pub || !mu.pk) throw new Error('Run step 1 first.')

@@ -504,7 +504,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       },
     ],
     notes: [
-      'Both signatures verify correctly regardless of hedging — hedging changes ONLY which bytes get produced, never whether verification succeeds.',
+      'This sequence compares repeated signature bytes; it does not verify the signatures. A separate verification with the corresponding public key, message and context is needed to establish validity.',
       'Before v3.2 this choice was implementation-defined and invisible to the caller; now it is an explicit parameter every application can reason about.',
     ],
     whyItMatters:
@@ -598,6 +598,10 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         op: 'C_UnwrapKeyAuthenticated (tampered blob)',
         label: 'Tamper one byte of the wrapped blob and try to unwrap it',
         expect: 'refusal',
+        expectedRefusal: {
+          operations: ['C_UnwrapKeyAuthenticated'],
+          returnCodes: [0x110, 0x40, 0x42],
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
@@ -679,6 +683,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         op: 'C_EncryptInit (CKM_AES_ECB — pinned out)',
         label: 'Try a DIFFERENT, otherwise-valid mechanism on the same key',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_EncryptInit'], returnCodes: [0x68, 0x70] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle=(\d+)/) ?? [])[1])
@@ -863,6 +868,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         op: 'C_Sign (destroyed key handle)',
         label: 'Confirm the legacy key is really gone, not just unused',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_SignInit'], returnCodes: [0x60, 0x82] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const d = results[1]?.detail ?? ''
@@ -914,6 +920,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         op: 'C_WrapKey (ordinary wrapping key)',
         label: 'Try to wrap the pinned key with that ordinary wrapping key',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_WrapKey'], returnCodes: [0x69] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const d = results[0]?.detail ?? ''
@@ -929,6 +936,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         op: 'C_SetAttributeValue (CKA_TRUSTED)',
         label: 'Try to bless that same wrapping key as trusted, yourself',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_SetAttributeValue'], returnCodes: [0x10, 0x13] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
@@ -979,6 +987,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         op: 'C_Login(SO) + C_SetAttributeValue(CKA_TRUSTED=false)',
         label: 'Even as SO, try to revoke trust on an existing key',
         expect: 'refusal',
+        expectedRefusal: { operations: ['C_SetAttributeValue'], returnCodes: [0x10, 0x13] },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const trustedHandle = Number((results[3]?.detail.match(/trusted=(\d+)/) ?? [])[1])

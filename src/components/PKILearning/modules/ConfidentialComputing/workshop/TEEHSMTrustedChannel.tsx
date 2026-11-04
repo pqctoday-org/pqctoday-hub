@@ -496,6 +496,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
 
         // Step 5: Receiver side — verify signature, decapsulate, re-derive KEK, unwrap provisioning key
         const verifyOk = hsm_verify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
+        if (!verifyOk) {
+          throw new Error('Sample attestation signature verification failed; provisioning stopped.')
+        }
         const recoveredSecretHandle = hsm_decapsulate(
           M,
           hSession,
@@ -504,6 +507,12 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           768
         )
         const recoveredSecretBytes = hsm_extractKeyValue(M, hSession, recoveredSecretHandle)
+        if (
+          recoveredSecretBytes.length !== sharedSecretBytes.length ||
+          !recoveredSecretBytes.every((b, i) => b === sharedSecretBytes[i])
+        ) {
+          throw new Error('Recovered sample secret does not match; key unwrap stopped.')
+        }
         const derivableHandle2 = hsm_importGenericSecret(M, hSession, recoveredSecretBytes)
         const kekBytes2 = hsm_hkdf(
           M,

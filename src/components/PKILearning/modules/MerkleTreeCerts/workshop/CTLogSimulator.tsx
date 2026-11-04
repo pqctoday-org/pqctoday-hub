@@ -500,8 +500,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
       setProof(p)
       setRfc9162Proof(rfc)
       setConsistencySteps(steps)
-      const oldHashes = new Set(p.nodes.filter((n) => n.isOld).map((n) => n.hash))
-      setVerified(oldHashes.has(p.oldRoot))
+      setVerified(rfc.valid)
       // Animate steps
       for (let i = 0; i < steps.length; i++) {
         setAnimatedStep(i)
@@ -672,7 +671,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
           {consistencySteps.length > 0 && (
             <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
               <div className="text-xs font-bold text-foreground mb-2">
-                Verification Walk — Shared Nodes Tracing T1 Root
+                Visual Walk — Shared Nodes Tracing T1 Root
               </div>
               <div className="space-y-1.5">
                 {consistencySteps.map((step, i) => {
@@ -711,7 +710,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
           {/* Root hash comparison — key proof fact */}
           <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
             <div className="text-[10px] font-bold text-foreground">
-              Key proof fact: T1 root appears in T2 tree
+              Visual comparison of tree roots
             </div>
             <div className="grid grid-cols-1 gap-1.5 text-[10px]">
               <div className="flex gap-2">
@@ -729,8 +728,8 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
             </div>
             <p className="text-[9px] text-muted-foreground">
               Every <span className="text-success font-medium">green (shared)</span> node above
-              exists in both trees. The auditor confirms T1&apos;s root hash is present among
-              T2&apos;s shared nodes — proving no old entries were rewritten.
+              exists in both visual trees. Shared-node highlighting alone is not a consistency
+              check. The compressed-proof check below reconstructs both advertised roots.
             </p>
           </div>
 
@@ -738,7 +737,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
           {rfc9162Proof && (
             <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
               <div className="text-[10px] font-bold text-foreground">
-                RFC 9162 §2.1.3 Compressed Proof
+                RFC 9162 §2.1.4 Compressed Proof
               </div>
               <p className="text-[9px] text-muted-foreground">
                 The SubProof algorithm produces the <em>minimal</em> set of hashes needed to verify
@@ -781,7 +780,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
                 <div className="text-left">
                   <div className="text-sm font-bold text-success">Consistency Verified</div>
                   <div className="text-[10px] text-muted-foreground">
-                    T1&apos;s root is embedded in T2 — log only appended entries
+                    Both roots reconstructed from the proof for the displayed tree sizes
                   </div>
                 </div>
               </div>
@@ -791,7 +790,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
                 <div className="text-left">
                   <div className="text-sm font-bold text-destructive">Consistency Failed</div>
                   <div className="text-[10px] text-muted-foreground">
-                    T1&apos;s root not found in T2 — possible log alteration
+                    The proof did not reconstruct both advertised roots
                   </div>
                 </div>
               </div>
@@ -1246,6 +1245,7 @@ export const CTLogSimulator: React.FC = () => {
       }
 
       setIsSigning(true)
+      setSignedBatch(null)
       try {
         const updatedCerts = [...issuedCerts, cert]
         const certsForTree = updatedCerts.length === 1 ? [cert, cert] : updatedCerts
@@ -1269,6 +1269,7 @@ export const CTLogSimulator: React.FC = () => {
 
   const loadSamples = useCallback(async () => {
     setIsSigning(true)
+    setSignedBatch(null)
     try {
       const samples: IssuedCert[] = SAMPLE_CERTS.slice(0, 5).map((c, i) => ({
         ...c,
@@ -1370,6 +1371,9 @@ export const CTLogSimulator: React.FC = () => {
         ))}
       </div>
 
+      {logLevels && !signedBatch && (
+        <p role="status">Current root is unsigned—signing has not completed successfully.</p>
+      )}
       {/* Panel content */}
       <div>
         {activePanel === 'submission' && (

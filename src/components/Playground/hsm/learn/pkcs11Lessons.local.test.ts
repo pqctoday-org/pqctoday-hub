@@ -122,7 +122,7 @@ describe('PKCS#11 Learn tab lesson step specs (real wasm engine)', () => {
       } catch (e) {
         detail = e instanceof Error ? e.message : String(e)
         const newEntries = logRef.current.slice(0, logRef.current.length - logCountBefore)
-        outcome = classifyStepOutcome(step.expect, newEntries)
+        outcome = classifyStepOutcome(step.expect, newEntries, step.expectedRefusal)
       }
       expect(
         outcome === want,
@@ -171,7 +171,7 @@ describe('PKCS#11 Learn tab lesson step specs (real wasm engine)', () => {
       await tamperStep.run(hsm, [null, null, null])
     } catch {
       const newEntries = logRef.current.slice(0, logRef.current.length - logCountBefore)
-      outcome = classifyStepOutcome(tamperStep.expect, newEntries)
+      outcome = classifyStepOutcome(tamperStep.expect, newEntries, tamperStep.expectedRefusal)
     }
     expect(outcome, 'a setup crash must fail, never masquerade as a refusal').toBe('failed')
   })

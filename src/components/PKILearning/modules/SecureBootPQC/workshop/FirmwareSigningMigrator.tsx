@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { buildFirmwareUploadManifest } from './firmwareManifest'
 import {
   FileCode,
   Key,
@@ -466,9 +467,7 @@ const truncateHex = (hex: string, maxChars = 80): string => {
 
 const buildManifestString = (fileBytes: Uint8Array | null): string => {
   if (fileBytes) {
-    // Use a prefix + length + last-8-bytes fingerprint of the uploaded file
-    const tail = fileBytes.slice(-8)
-    return `file-upload:${fileBytes.length}:${toHex(tail)}`
+    return buildFirmwareUploadManifest(fileBytes)
   }
   return MOCK_MANIFEST.components.map((c) => `${c.name}:${c.size}:${c.hash}`).join('|')
 }
@@ -621,6 +620,9 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
 
   const handleFileSelect = useCallback(
     async (file: File) => {
+      setPqcVerified(null)
+      setClassicalVerified(null)
+      setFileDigestHex('')
       setUploadedFile(file)
       const buf = await file.arrayBuffer()
       const bytes = new Uint8Array(buf)
@@ -982,7 +984,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
   const sigRatio = (displayPqcSig / Math.max(displayClassicalSig, 1)).toFixed(1)
 
   // Content string being signed (computed inline for display)
-  const contentToSign = buildManifestString(fileBytes)
+  const contentToSign = useMemo(() => buildManifestString(fileBytes), [fileBytes])
 
   // PKCS#11 mechanism name for display
   const classicalMechName = classicalAlgo.startsWith('RSA')

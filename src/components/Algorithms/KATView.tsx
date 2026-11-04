@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { algorithmLaunchHref } from '@/data/algorithmLaunch'
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import {
   Shield,
   Lock,
@@ -316,6 +316,8 @@ const SLHDSATile: React.FC<{
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resultsOpen, setResultsOpen] = useState(false)
+  const variantRef = useRef(variant)
+  variantRef.current = variant
   const { ref: runButtonRef, markRunStart } = useRestoreFocusAfterRun(running)
 
   // ?kat: re-read on same-route navigation. A different variant drops the
@@ -363,6 +365,7 @@ const SLHDSATile: React.FC<{
   const done = results.length === specs.length && !running
 
   const handleRun = useCallback(async () => {
+    const runVariant = variantRef.current
     markRunStart()
     setRunning(true)
     setError(null)
@@ -378,16 +381,19 @@ const SLHDSATile: React.FC<{
         hsm.addStepLog(`Test · ${spec.useCase || spec.id}`)
         const r = await runKAT(M, hSession, spec, { advertised })
         out.push(r)
+        if (variantRef.current !== runVariant) return
         setResults([...out])
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err))
+      if (variantRef.current === runVariant)
+        setError(err instanceof Error ? err.message : String(err))
     } finally {
       setRunning(false)
     }
   }, [hsm, specs, markRunStart])
 
   const handleVariantChange = (id: string) => {
+    if (running) return
     // The dropdown's own "default" row reports 'All' — that is the default variant.
     const next = toSlhDsaVariant(id)
     setVariant(next)
@@ -416,6 +422,7 @@ const SLHDSATile: React.FC<{
           items={SLH_DSA_DROPDOWN_ITEMS}
           selectedId={variant}
           onSelect={handleVariantChange}
+          disabled={running}
           defaultLabel={DEFAULT_SLH_DSA_VARIANT}
           variant="ghost"
         />

@@ -39,47 +39,34 @@ const FIPS205_SLH_PREHASH_OPTIONS = [
   { id: 'shake256', label: 'SHAKE-256' },
 ] as const
 
-// Helper for Hex/ASCII toggle with editing
+// Text and hex are views of canonical bytes, not alternate lossy encodings.
 const EditableDataDisplay: React.FC<{
   label: string
   value: string
   onChange: (val: string) => void
+  onValidityChange?: (valid: boolean) => void
   placeholder?: string
   readOnly?: boolean
-}> = ({ label, value, onChange, placeholder, readOnly }) => {
-  const [viewMode, setViewMode] = useState<'hex' | 'ascii'>('ascii') // Default to ASCII for messages usually
-
-  const getDisplayValue = () => {
-    if (!value) return ''
-    if (viewMode === 'hex') return value
-    try {
-      let str = ''
-      for (let i = 0; i < value.length; i += 2) {
-        str += String.fromCharCode(parseInt(value.substr(i, 2), 16))
-      }
-      return str
-    } catch {
-      return 'Invalid encoding for ASCII display'
-    }
+}> = ({ label, value, onChange, onValidityChange, placeholder, readOnly }) => {
+  const [viewMode, setViewMode] = useState<'hex' | 'text'>('text')
+  const [hexDraft, setHexDraft] = useState<string | null>(null)
+  useEffect(() => {
+    setHexDraft(null)
+    onValidityChange?.(true)
+    // Reset only when canonical bytes change, not when the parent rerenders a callback.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
+  let text = ''
+  let invalidText = false
+  try {
+    if (!/^([0-9a-fA-F]{2})*$/.test(value)) throw new Error('Incomplete bytes')
+    const bytes = new Uint8Array((value.match(/.{2}/g) ?? []).map((byte) => parseInt(byte, 16)))
+    text = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+  } catch {
+    invalidText = true
   }
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const input = e.target.value
-    if (viewMode === 'hex') {
-      // Only allow hex characters
-      if (/^[0-9a-fA-F]*$/.test(input)) {
-        onChange(input)
-      }
-    } else {
-      // Convert ASCII input to Hex for storage
-      let hex = ''
-      for (let i = 0; i < input.length; i++) {
-        hex += input.charCodeAt(i).toString(16).padStart(2, '0')
-      }
-      onChange(hex)
-    }
-  }
-
+  const incompleteHex = hexDraft !== null && !/^([0-9a-fA-F]{2})*$/.test(hexDraft)
+  const displayed = viewMode === 'hex' ? (hexDraft ?? value) : text
   return (
     <div className="mb-4 p-3 bg-muted/40 rounded border border-border text-xs space-y-1 animate-fade-in focus-within:border-primary/50 transition-colors">
       <div className="flex justify-between items-center mb-2">
@@ -87,21 +74,53 @@ const EditableDataDisplay: React.FC<{
         <Button
           variant="ghost"
           type="button"
-          onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
-          aria-label={`Switch to ${viewMode === 'hex' ? 'ASCII' : 'HEX'} view`}
+          onClick={() => {
+            setViewMode((mode) => (mode === 'hex' ? 'text' : 'hex'))
+            setHexDraft(null)
+            onValidityChange?.(true)
+          }}
+          aria-label={`Switch ${label} to ${viewMode === 'hex' ? 'UTF-8 text' : 'HEX'} view`}
           className="text-[10px] flex items-center gap-1 bg-muted hover:bg-accent px-2 py-1 rounded transition-colors text-primary"
         >
-          {viewMode === 'hex' ? 'HEX' : 'ASCII'}
+          {viewMode === 'hex' ? 'HEX' : 'UTF-8'}
         </Button>
       </div>
+      {viewMode === 'text' && invalidText && (
+        <p role="status">
+          These bytes are not valid UTF-8 text. Switch to HEX to inspect or edit them; the bytes are
+          unchanged.
+        </p>
+      )}
+      {incompleteHex && (
+        <p role="alert">
+          Enter complete bytes using two hex digits each before running the operation.
+        </p>
+      )}
       {readOnly ? (
-        <div className="font-mono text-foreground break-all max-h-24 overflow-y-auto custom-scrollbar whitespace-pre-wrap">
-          {getDisplayValue() || placeholder || 'None'}
+        <div className="font-mono text-foreground break-all max-h-24 overflow-y-auto whitespace-pre-wrap">
+          {displayed || placeholder || 'None'}
         </div>
       ) : (
         <textarea
-          value={getDisplayValue()}
-          onChange={handleChange}
+          aria-label={label}
+          value={displayed}
+          readOnly={viewMode === 'text' && invalidText}
+          onChange={(event) => {
+            const input = event.target.value
+            if (viewMode === 'hex') {
+              setHexDraft(input)
+              const valid = /^([0-9a-fA-F]{2})*$/.test(input)
+              onValidityChange?.(valid)
+              if (valid) onChange(input)
+            } else {
+              onValidityChange?.(true)
+              onChange(
+                Array.from(new TextEncoder().encode(input), (byte) =>
+                  byte.toString(16).padStart(2, '0')
+                ).join('')
+              )
+            }
+          }}
           placeholder={placeholder}
           className="w-full bg-transparent border-none text-foreground font-mono text-xs resize-y min-h-[80px] focus:ring-0 p-0 placeholder:text-foreground/20 outline-none"
           spellCheck={false}
@@ -1305,8 +1324,26 @@ const SignVerifyTabSoftware: React.FC = () => {
     selectedVerifyKeyId,
     setSelectedVerifyKeyId,
   } = useKeyStoreContext()
-  const { runOperation, signature, setSignature, dataToSign, setDataToSign, verificationResult } =
-    useOperationsContext()
+  const {
+    runOperation,
+    signature,
+    setSignature,
+    dataToSign,
+    setDataToSign,
+    dataToSignBytes,
+    setDataToSignBytes,
+    verificationResult,
+    setVerificationResult,
+  } = useOperationsContext()
+  const [invalidInputs, setInvalidInputs] = useState<Record<string, boolean>>({})
+  const messageInputValid = !invalidInputs.signMessage && !invalidInputs.verifyMessage
+  const signatureInputValid = !invalidInputs.signatureOutput && !invalidInputs.signatureInput
+  const markInputValidity = (id: string) => (valid: boolean) => {
+    setInvalidInputs((previous) =>
+      previous[id] === !valid ? previous : { ...previous, [id]: !valid }
+    )
+    if (!valid) setVerificationResult(null)
+  }
 
   const isSign = (algo: string) =>
     algo.startsWith('ML-DSA') ||
@@ -1325,22 +1362,13 @@ const SignVerifyTabSoftware: React.FC = () => {
   const signPrivateKeys = keyStore.filter((k) => k.type === 'private' && isSign(k.algorithm))
   const signPublicKeys = keyStore.filter((k) => k.type === 'public' && isSign(k.algorithm))
 
-  // Helper to handle dataToSign change (stored as plain string in context, but EditableDataDisplay expects Hex for consistency if we want unified component)
-  // Wait, dataToSign is stored as a string (e.g. "Hello").
-  // But EditableDataDisplay expects value to be HEX if viewMode is HEX.
-  // Let's adapt EditableDataDisplay or wrap the state.
-
-  // Actually, let's make EditableDataDisplay handle "Text" vs "Hex" storage.
-  // But for simplicity, let's assume we convert everything to Hex for the `EditableDataDisplay` prop, and convert back.
-
-  const messageHex = (() => {
-    const bytes = new TextEncoder().encode(dataToSign)
-    return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
-  })()
-
-  const handleMessageChange = (newHex: string) => {
-    const bytes = new Uint8Array((newHex.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16)))
-    setDataToSign(new TextDecoder().decode(bytes))
+  const messageHex = Array.from(dataToSignBytes ?? new TextEncoder().encode(dataToSign), (byte) =>
+    byte.toString(16).padStart(2, '0')
+  ).join('')
+  const handleMessageChange = (hex: string) => {
+    const bytes = new Uint8Array((hex.match(/.{2}/g) ?? []).map((byte) => parseInt(byte, 16)))
+    if (setDataToSignBytes) setDataToSignBytes(bytes)
+    else setDataToSign(new TextDecoder('utf-8', { fatal: true }).decode(bytes))
   }
 
   return (
@@ -1443,9 +1471,13 @@ const SignVerifyTabSoftware: React.FC = () => {
                           Stateful signature — key updates after each sign
                         </p>
                         <p className="text-status-warning/80">
-                          LMS private keys are one-time-use: each signature advances the key state.
-                          Re-using a key state breaks security (NIST SP 800-208). The updated key is
-                          saved back to the key store automatically.
+                          LMS uses one-time signing leaves: each signature must advance the signing
+                          state. Reusing a leaf can break security (NIST SP 800-208). The working
+                          signer advances state, but saved or backup representations can lag. This
+                          educational sample does not guarantee current-state backup, rollback
+                          prevention or safe recovery. With production tools, evaluate atomic state
+                          updates, exclusive signing and recovery controls; an older backup alone
+                          cannot establish which leaves were used afterward.
                         </p>
                       </div>
                     )}
@@ -1457,6 +1489,7 @@ const SignVerifyTabSoftware: React.FC = () => {
               label="Message to Sign (Input)"
               value={messageHex}
               onChange={handleMessageChange}
+              onValidityChange={markInputValidity('signMessage')}
               placeholder="Enter message to sign..."
             />
 
@@ -1464,6 +1497,7 @@ const SignVerifyTabSoftware: React.FC = () => {
               label="Signature (Output)"
               value={signature}
               onChange={setSignature}
+              onValidityChange={markInputValidity('signatureOutput')}
               placeholder="Run Sign to generate..."
             />
 
@@ -1475,7 +1509,7 @@ const SignVerifyTabSoftware: React.FC = () => {
                   runOperation('sign')
                   logEvent('Playground', 'Sign Message')
                 }}
-                disabled={!selectedSignKeyId || loading}
+                disabled={!selectedSignKeyId || loading || !messageInputValid}
                 title={!selectedSignKeyId ? 'Select a private key to continue' : ''}
                 className="w-full py-3 rounded-lg bg-success/20 text-success border border-success/30 hover:bg-success/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
@@ -1582,6 +1616,7 @@ const SignVerifyTabSoftware: React.FC = () => {
               label="Message to Verify (Input)"
               value={messageHex}
               onChange={handleMessageChange}
+              onValidityChange={markInputValidity('verifyMessage')}
               placeholder="Enter message to verify..."
             />
 
@@ -1589,11 +1624,12 @@ const SignVerifyTabSoftware: React.FC = () => {
               label="Signature (Input)"
               value={signature}
               onChange={setSignature}
+              onValidityChange={markInputValidity('signatureInput')}
               placeholder="No Signature (Run Sign first or paste one)"
             />
 
             {/* Verification Result Display */}
-            {verificationResult !== null && (
+            {verificationResult !== null && messageInputValid && signatureInputValid && (
               <div
                 className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
                   verificationResult
@@ -1623,7 +1659,9 @@ const SignVerifyTabSoftware: React.FC = () => {
                   runOperation('verify')
                   logEvent('Playground', 'Verify Signature')
                 }}
-                disabled={!selectedVerifyKeyId || loading}
+                disabled={
+                  !selectedVerifyKeyId || loading || !messageInputValid || !signatureInputValid
+                }
                 className="w-full py-3 rounded-lg bg-warning/20 text-warning border border-warning/30 hover:bg-warning/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Verify Signature

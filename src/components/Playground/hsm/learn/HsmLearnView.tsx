@@ -109,7 +109,7 @@ function StepRow({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          {state.status === 'pending' && (
+          {(state.status === 'pending' || state.status === 'failed') && (
             <Button
               size="sm"
               variant="ghost"
@@ -118,7 +118,7 @@ function StepRow({
               title={disabled ? 'Run the previous step first' : undefined}
               className="h-7 gap-1 px-2 text-[11px]"
             >
-              <PlayCircle size={13} /> Run
+              <PlayCircle size={13} /> {state.status === 'failed' ? 'Retry' : 'Run'}
             </Button>
           )}
           {state.status === 'running' && (
@@ -207,6 +207,8 @@ function LessonRunner({
   // would see every prior step's result as null). A ref's `.current` is
   // always current, so each step genuinely sees what the previous one wrote.
   const resultsRef = useRef<(Pkcs11StepResult | null)[]>(lesson.steps.map(() => null))
+  const runningRef = useRef(false)
+  const [busy, setBusy] = useState(false)
 
   const selectLesson = (idx: number) => {
     setLessonIdx(idx)
@@ -215,7 +217,10 @@ function LessonRunner({
   }
 
   const runStep = async (i: number) => {
-    setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
+    resultsRef.current = resultsRef.current.map((r, j) => (j >= i ? null : r))
+    setStepStates((prev) =>
+      prev.map((s, j) => (j === i ? { status: 'running' } : j > i ? { status: 'pending' } : s))
+    )
     const logCountBefore = hsm.hsmLogRef.current.length
     hsm.addHsmStepLog(`${navPrefix}${lesson.n} · step ${i + 1}: ${lesson.steps[i].op}`)
     // hsmLogRef, not hsmLog: a plain state read here would be stale until
@@ -228,12 +233,29 @@ function LessonRunner({
         .slice(0, hsm.hsmLogRef.current.length - logCountBefore)
         .filter((e) => !e.isStepHeader)
         .reverse()
+    let operationStarted = false
     try {
       // Boot the engine first if this is the first step run on a fresh page
       // (the Learn tab does not auto-boot). Inside this step's log window, so
       // the boot calls show in its inline log.
       await ensureEngineForStep(hsm, lesson.steps[i])
+      operationStarted = true
       const result = await lesson.steps[i].run(hsm, resultsRef.current)
+      if (lesson.steps[i].expect === 'refusal') {
+        resultsRef.current[i] = null
+        setStepStates((prev) =>
+          prev.map((s, j) =>
+            j === i
+              ? {
+                  status: 'failed',
+                  detail: 'Unexpected success: this step required a specific refusal.',
+                  entries: stepEntries(),
+                }
+              : s
+          )
+        )
+        return 'failed' as const
+      }
       resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
       const entries = stepEntries()
       setStepStates((prev) =>
@@ -247,12 +269,16 @@ function LessonRunner({
       } catch {
         // best-effort — never fail a step over registry bookkeeping
       }
+      return 'ok' as const
     } catch (e) {
+      resultsRef.current[i] = null
       const message = e instanceof Error ? e.message : String(e)
       const entries = stepEntries()
       const outcome: StepStatus = isNotInEngine(e)
         ? 'not-in-engine'
-        : classifyStepOutcome(lesson.steps[i].expect, entries)
+        : operationStarted
+          ? classifyStepOutcome(lesson.steps[i].expect, entries, lesson.steps[i].expectedRefusal)
+          : 'failed'
       logEvent(
         'Playground',
         `${analyticsCategory} Step`,
@@ -261,14 +287,38 @@ function LessonRunner({
       setStepStates((prev) =>
         prev.map((s, j) => (j === i ? { status: outcome, detail: message, entries } : s))
       )
+      return outcome
+    }
+  }
+
+  const runSingleStep = async (i: number) => {
+    if (runningRef.current) return
+    runningRef.current = true
+    setBusy(true)
+    try {
+      await runStep(i)
+    } finally {
+      runningRef.current = false
+      setBusy(false)
     }
   }
 
   const runAll = async () => {
-    for (let i = 0; i < lesson.steps.length; i++) {
-      if (isDone(stepStates[i].status)) continue
-      // Steps are deliberately sequential — each may read prior results.
-      await runStep(i)
+    if (runningRef.current) return
+    runningRef.current = true
+    setBusy(true)
+    try {
+      const firstPending = stepStates.findIndex(
+        (s) => s.status !== 'ok' && s.status !== 'refused-ok'
+      )
+      for (let i = Math.max(0, firstPending); i < lesson.steps.length; i++) {
+        // No dependent step runs after a failed or unavailable prerequisite.
+        const outcome = await runStep(i)
+        if (outcome !== 'ok' && outcome !== 'refused-ok') break
+      }
+    } finally {
+      runningRef.current = false
+      setBusy(false)
     }
   }
 
@@ -282,6 +332,7 @@ function LessonRunner({
             key={l.id}
             variant="ghost"
             onClick={() => selectLesson(i)}
+            disabled={busy}
             className={cn(
               'flex h-auto min-h-[44px] w-full items-start justify-start gap-1.5 whitespace-normal break-words rounded-md px-2 py-1.5 text-left text-[12px] font-normal md:min-h-0',
               i === lessonIdx
@@ -322,7 +373,7 @@ function LessonRunner({
             size="sm"
             variant="outline"
             onClick={runAll}
-            disabled={allDone}
+            disabled={allDone || busy}
             className="h-7 text-[11px]"
           >
             Run all
@@ -338,8 +389,8 @@ function LessonRunner({
                 step={step}
                 index={i}
                 state={stepStates[i]}
-                onRun={() => runStep(i)}
-                disabled={stepStates[i].status === 'running' || !prevDone}
+                onRun={() => runSingleStep(i)}
+                disabled={busy || !prevDone}
                 onSpotlight={onSpotlight}
               />
             )

@@ -330,7 +330,7 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
 
   // Step 1: MAC verification FIRST (authenticate-then-decrypt per 5G spec)
   let macVerificationLine = '4. Verifying MAC...[SKIPPED — state incomplete]'
-  let macPassed = true // default allow-decrypt if we have no stored tag to check
+  let macPassed = false
   if (usedKmac !== '[Missing K_mac]' && usedCiphertext !== '[Missing Ciphertext]') {
     try {
       const macAlgo = profile === 'C' ? 'sha3-256' : 'sha256'
@@ -347,11 +347,11 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
       const storedTag = ctx.state.macTagHex ?? ''
       const macMatch =
         storedTag && recomputedTag && recomputedTag.toLowerCase() === storedTag.toLowerCase()
-      macPassed = !storedTag || !!macMatch // pass if no stored tag, or if tags match
+      macPassed = /^[a-fA-F0-9]{16}$/.test(storedTag) && !!macMatch
       macVerificationLine = `4. Verifying MAC (${profile === 'C' ? 'HMAC-SHA3-256' : 'HMAC-SHA-256'}, truncated to 8 bytes)...
    Recomputed tag: ${recomputedTag || '(computation failed)'}
-   Stored tag:     ${storedTag || '(missing — skipping check)'}
-   Result: ${macMatch ? '[OK] MAC VALID' : storedTag ? '[FAIL] MAC MISMATCH — SUCI rejected' : '[OK] (no stored tag; check skipped)'}`
+   Stored tag:     ${storedTag || '(missing)'}
+   Result: ${macPassed ? '[OK] MAC VALID' : '[FAIL] MAC missing, invalid or mismatched — SUCI rejected'}`
     } catch {
       macVerificationLine = '4. Verifying MAC...[ERROR — HMAC computation failed]'
     }
@@ -362,7 +362,7 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
   let decryptLine = '5. Decrypting MSIN...[SKIPPED — MAC not yet verified]'
   if (!macPassed) {
     decryptLine = '5. Decrypting MSIN...[ABORTED — MAC verification failed; SUCI rejected by SIDF]'
-    recoveredSupi = '[REJECTED — MAC mismatch]'
+    recoveredSupi = '[REJECTED — MAC not verified]'
   } else if (ctx.state.kEncHex && ctx.state.encryptedMSINHex) {
     try {
       const keyLen = ctx.state.kEncHex.length / 2

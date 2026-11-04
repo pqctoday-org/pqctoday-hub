@@ -329,7 +329,7 @@ export const JURISDICTION_FRAMEWORKS: JurisdictionFramework[] = [
         id: 'de-cert-1',
         category: 'Certification',
         requirement:
-          'Use BSI-approved PQC modules (BSZ scheme) for classified German government systems',
+          'Check product certification separately from approval for the intended classified use; verify the exact product, configuration and applicable BSI approval rather than treating BSZ certification as blanket authorization',
         framework: 'BSI Certification',
         csvId: 'BSI',
         commonGap: true,

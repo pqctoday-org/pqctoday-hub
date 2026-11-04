@@ -8,6 +8,11 @@ import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import type { LessonStepExpect } from '@/components/Playground/learnkit/lessonTypes'
 import type { HsmContextValue } from '../HsmContext'
 
+export interface ExpectedRefusal {
+  operations: readonly string[]
+  returnCodes: readonly number[]
+}
+
 /** The slice of HsmContextValue the boot guard reads. */
 export type EngineBootTarget = Pick<
   HsmContextValue,
@@ -75,10 +80,19 @@ export async function ensureEngineForStep(
  */
 export function classifyStepOutcome(
   expect: LessonStepExpect | undefined,
-  newEntriesThisStep: Pkcs11LogEntry[]
+  newEntriesThisStep: Pkcs11LogEntry[],
+  expectedRefusal?: ExpectedRefusal
 ): 'refused-ok' | 'failed' {
-  if (expect !== 'refusal') return 'failed'
+  if (expect !== 'refusal' || !expectedRefusal) return 'failed'
   const realCalls = newEntriesThisStep.filter((e) => !e.isStepHeader)
-  const engineRefused = realCalls.some((e) => e.ok === false && e.rvHex !== 'TRAP')
+  const failures = realCalls.filter((e) => !e.ok)
+  const engineRefused =
+    failures.length > 0 &&
+    failures.every(
+      (e) =>
+        /^0x[0-9a-f]+$/i.test(e.rvHex) &&
+        expectedRefusal.operations.includes(e.fn) &&
+        expectedRefusal.returnCodes.includes(Number(e.rvHex))
+    )
   return engineRefused ? 'refused-ok' : 'failed'
 }

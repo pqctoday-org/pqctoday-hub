@@ -86,3 +86,14 @@ describe('validateKmsPqcPolicy', () => {
     expect(r.errorMessage).toBe('Invalid JSON syntax.')
   })
 })
+
+describe('malformed policy structures', () => {
+  it.each(['null', '[]', '"text"', '{"Statement":[null]}', '{"Statement":[4]}'])(
+    'handles %s without throwing',
+    (input) => {
+      const result = validateKmsPqcPolicy(input)
+      expect(result.isComplete).toBe(false)
+      expect(result.errorMessage).toBeTruthy()
+    }
+  )
+})

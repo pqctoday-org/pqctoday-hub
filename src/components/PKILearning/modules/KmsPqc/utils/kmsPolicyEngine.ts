@@ -1,16 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
-// Grader for the AWS KMS policy lab. The lab's task is an IAM policy for the
-// people who create KMS keys: they may create ML-DSA signing keys only. Every
-// check below uses a control AWS documents:
-//   - kms:CreateKey is authorised by IAM policy (a key policy cannot govern
-//     the creation of a key that does not exist yet);
-//   - kms:KeySpec and kms:KeyUsage are KMS condition keys evaluated on
-//     CreateKey; ML-DSA keys use the specs ML_DSA_44/65/87 and SIGN_VERIFY.
-// Post-quantum TLS to the KMS endpoint is NOT something a policy can require:
-// it is a client setting, verified afterwards in CloudTrail. The grader
-// therefore rejects any condition key that claims to test a TLS cipher suite
-// or key exchange — no such AWS key exists.
+// Limited pattern checks for a sample IAM policy fragment. This is not an IAM
+// permission evaluator: other Allow/Deny statements, attached policies and
+// principal/resource context can change effective permissions. Finding the
+// patterns below does not prove ML-DSA-only key creation or validate all keys.
 
 export const ML_DSA_KEY_SPECS = ['ML_DSA_44', 'ML_DSA_65', 'ML_DSA_87'] as const
 
@@ -19,9 +12,11 @@ export interface PolicyValidationResult {
   allowsCreateKey: boolean
   restrictsKeySpecToMlDsa: boolean
   requiresSignVerify: boolean
+  /** Legacy field name: only means no TLS-like key names were detected. */
   usesOnlyRealConditionKeys: boolean
   /** Condition keys that look like TLS / cipher-suite controls AWS does not have. */
   inventedKeys: string[]
+  /** Completion of the pattern-finding exercise, not effective-policy validation. */
   isComplete: boolean
   errorMessage?: string
 }
@@ -74,8 +69,18 @@ export function validateKmsPqcPolicy(jsonString: string): PolicyValidationResult
     return result
   }
 
+  if (!policy || typeof policy !== 'object' || Array.isArray(policy)) {
+    result.errorMessage = 'Expected a JSON policy object.'
+    return result
+  }
+
   if (!Array.isArray(policy.Statement)) {
     result.errorMessage = 'The policy must contain a "Statement" array.'
+    return result
+  }
+
+  if (!policy.Statement.every((s) => s !== null && typeof s === 'object' && !Array.isArray(s))) {
+    result.errorMessage = 'Each Statement must be a JSON object.'
     return result
   }
 

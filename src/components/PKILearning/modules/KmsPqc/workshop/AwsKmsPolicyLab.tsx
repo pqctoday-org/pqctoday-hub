@@ -49,10 +49,9 @@ export const AwsKmsPolicyLab: React.FC = () => {
       <div className="text-center max-w-2xl mx-auto mb-8">
         <h2 className="text-2xl font-bold text-foreground">AWS KMS Policy Lab</h2>
         <p className="text-muted-foreground mt-2">
-          Write an IAM policy that lets your key administrators create post-quantum signing keys,
-          and nothing weaker. AWS KMS offers ML-DSA keys for signing (key specs{' '}
-          <code>ML_DSA_44</code>, <code>ML_DSA_65</code>, <code>ML_DSA_87</code>, key usage{' '}
-          <code>SIGN_VERIFY</code>).
+          Explore the structure of a sample IAM policy fragment for post-quantum signing-key
+          creation. AWS KMS offers ML-DSA keys for signing (key specs <code>ML_DSA_44</code>,{' '}
+          <code>ML_DSA_65</code>, <code>ML_DSA_87</code>, key usage <code>SIGN_VERIFY</code>).
         </p>
         <p className="text-sm text-muted-foreground mt-2">
           Your task: add an <code>Allow</code> statement for <code>kms:CreateKey</code> whose
@@ -61,6 +60,12 @@ export const AwsKmsPolicyLab: React.FC = () => {
         </p>
       </div>
 
+      <div className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
+        Educational limitation: this checks selected patterns, not all condition keys or effective
+        permissions. In production, evaluate the full policy context with your provider's policy
+        tools and test both intended access and unintended grants. A green pattern check here is not
+        an authorization guarantee.
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Editor */}
         <div className="min-w-0 glass-panel overflow-hidden flex flex-col h-[500px]">
@@ -90,25 +95,25 @@ export const AwsKmsPolicyLab: React.FC = () => {
         <div className="min-w-0 glass-panel p-6 flex flex-col justify-between h-[500px] overflow-y-auto">
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-              <Cloud size={20} /> Policy checks
+              <Cloud size={20} /> Limited structure checks
             </h3>
 
             <div className="space-y-3">
               <ValidationRow label="Valid JSON syntax" isSuccess={validation.isValidJson} />
               <ValidationRow
-                label="Allows the 'kms:CreateKey' action"
+                label="An Allow statement names kms:CreateKey"
                 isSuccess={validation.allowsCreateKey}
               />
               <ValidationRow
-                label="'kms:KeySpec' limited to ML-DSA specs"
+                label="ML-DSA KeySpec pattern found"
                 isSuccess={validation.restrictsKeySpecToMlDsa}
               />
               <ValidationRow
-                label="'kms:KeyUsage' must be SIGN_VERIFY"
+                label="SIGN_VERIFY usage pattern found"
                 isSuccess={validation.requiresSignVerify}
               />
               <ValidationRow
-                label="Uses only condition keys AWS has"
+                label="No TLS-like condition names detected (limited check)"
                 isSuccess={validation.usesOnlyRealConditionKeys}
               />
             </div>
@@ -119,11 +124,11 @@ export const AwsKmsPolicyLab: React.FC = () => {
               <div className="bg-success/10 border border-success/30 p-4 rounded-lg flex gap-3 text-success-foreground">
                 <ShieldCheck size={28} className="shrink-0 text-success" />
                 <div>
-                  <h4 className="font-bold text-md mb-1">New signing keys will be ML-DSA</h4>
+                  <h4 className="font-bold text-md mb-1">Sample patterns found</h4>
                   <p className="text-sm opacity-90">
-                    Administrators under this policy can only create ML-DSA signing keys. It does
-                    not touch existing keys, and it says nothing about how clients connect: that
-                    part is below.
+                    These structural patterns do not prove effective permissions. An additional
+                    Allow statement could permit other key creation; this checker does not evaluate
+                    the complete permission context.
                   </p>
                 </div>
               </div>
