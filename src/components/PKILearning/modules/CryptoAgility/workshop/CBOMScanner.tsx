@@ -185,7 +185,7 @@ export const CBOMScanner: React.FC = () => {
                   {vulnerableCount > 0 ? `${vulnerableCount} vuln` : 'Safe'}
                 </span>
                 <span className="text-[10px] text-muted-foreground">
-                  {layerEntries.length} asset{layerEntries.length !== 1 ? 's' : ''}
+                  {layerEntries.length} shown sample asset{layerEntries.length !== 1 ? 's' : ''}
                 </span>
               </Button>
             )
@@ -302,6 +302,8 @@ export const CBOMScanner: React.FC = () => {
             if (layerEntries.length === 0) return null
             const IconComponent = layer.icon
             const vulnCount = layerEntries.filter((e) => e.quantumStatus === 'vulnerable').length
+            const weakenedCount = layerEntries.filter((e) => e.quantumStatus === 'weakened').length
+            const safeCount = layerEntries.filter((e) => e.quantumStatus === 'safe').length
 
             return (
               <div key={layer.id}>
@@ -311,13 +313,11 @@ export const CBOMScanner: React.FC = () => {
                     {layer.label}
                   </span>
                   <span className="ml-auto text-[10px] text-muted-foreground">
-                    {vulnCount > 0 ? (
-                      <span className="text-destructive font-medium">{vulnCount} vulnerable</span>
-                    ) : (
-                      <span className="text-success font-medium">All safe</span>
-                    )}
+                    <span className="font-medium">
+                      {vulnCount} vulnerable, {weakenedCount} weakened, {safeCount} marked safe
+                    </span>
                     {' / '}
-                    {layerEntries.length} asset{layerEntries.length !== 1 ? 's' : ''}
+                    {layerEntries.length} shown sample asset{layerEntries.length !== 1 ? 's' : ''}
                   </span>
                   {(pqcCountsByLayer.get(layer.id) ?? 0) > 0 && (
                     <Link
