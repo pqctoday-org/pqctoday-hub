@@ -5306,7 +5306,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <h3 className="font-semibold text-sm flex items-center gap-2">
                 <ShieldAlert size={16} className="text-status-warning" />
-                Certificate Inspector — RSA-3072 (classical, not quantum-safe)
+                Certificate Inspector — generated sample certificate
               </h3>
               <Button
                 variant="ghost"
