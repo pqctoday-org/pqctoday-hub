@@ -64,6 +64,7 @@ import {
   hsm_generateCompositeKeyPair,
 } from '@/wasm/softhsm/v33'
 import { HpkeDiagram, type HpkeDiagramStage } from './HpkeDiagram'
+import { requireProtectedKeyReadRefusal } from '../services/protectedKeyRead'
 
 // ── PKCS#11 operations exercised by this workshop ────────────────────────────
 const HPKE_LIVE_OPERATIONS = [
@@ -820,15 +821,12 @@ export const HpkeWorkshop: React.FC = () => {
             })
           }
           hsm.addStepLog('Step 3 — Sender Encap (CKM_HPKE candidate, single call)')
-          let extractProof = 'n/a (no key handle returned)'
-          if (result.keyHandle != null) {
-            try {
-              hsm_extractKeyValue(M, hSession, result.keyHandle)
-              extractProof = '✗ unexpectedly succeeded — this should never happen'
-            } catch {
-              extractProof = '✓ CKR_ATTRIBUTE_SENSITIVE, as expected — CKA_EXTRACTABLE=false'
-            }
+          if (result.keyHandle == null) {
+            throw new Error('Protected-key read check incomplete: no AEAD key handle was returned.')
           }
+          const extractProof = requireProtectedKeyReadRefusal(() =>
+            hsm_extractKeyValue(M, hSession, result.keyHandle!)
+          )
           return `enc (${result.enc.length} B):\n${toHex(result.enc).slice(0, 96)}${result.enc.length > 48 ? '...' : ''}\n\nAEAD key: non-extractable handle #${result.keyHandle} (KeySchedule already ran INSIDE this single C_EncapsulateKey(CKM_HPKE) call — no intermediate shared_secret was ever a JS value, not even a handle)\nbase_nonce: ${result.baseNonce ? toHex(result.baseNonce) : 'n/a'}\n\nAttempted C_GetAttributeValue(CKA_VALUE) on the key handle anyway, to prove the point: ${extractProof}`
         }
         if (mode === HPKE_MODE.AUTH || mode === HPKE_MODE.AUTH_PSK) {
@@ -859,13 +857,9 @@ export const HpkeWorkshop: React.FC = () => {
               ? 'Step 3 — Sender Encap (CKM_COMP_KEM, v3.3 draft)'
               : 'Step 3 — Sender Encap (ML-KEM)'
           )
-          let extractProof: string
-          try {
+          const extractProof = requireProtectedKeyReadRefusal(() =>
             hsm_extractKeyValue(M, hSession, sharedSecretHandle)
-            extractProof = '✗ unexpectedly succeeded — this should never happen'
-          } catch {
-            extractProof = '✓ CKR_ATTRIBUTE_SENSITIVE, as expected — CKA_EXTRACTABLE=false'
-          }
+          )
           return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret: non-extractable handle #${sharedSecretHandle} (${isV33 ? 'ss_H, built inside one C_EncapsulateKey(CKM_COMP_KEM) call' : 'the ML-KEM secret'})\n\nAttempted C_GetAttributeValue(CKA_VALUE) on it anyway, to prove the point: ${extractProof}`
         }
         if (isHybrid) {
@@ -873,13 +867,9 @@ export const HpkeWorkshop: React.FC = () => {
           st.sharedSecretHandle = sharedSecretHandle
           st.enc = enc
           hsm.addStepLog('Step 3 — Sender Encap (non-extracting combiner)')
-          let extractProof: string
-          try {
+          const extractProof = requireProtectedKeyReadRefusal(() =>
             hsm_extractKeyValue(M, hSession, sharedSecretHandle)
-            extractProof = '✗ unexpectedly succeeded — this should never happen'
-          } catch {
-            extractProof = '✓ CKR_ATTRIBUTE_SENSITIVE, as expected — CKA_EXTRACTABLE=false'
-          }
+          )
           return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret: non-extractable handle #${sharedSecretHandle} (ss_H — built entirely from CKM_CONCATENATE_BASE_AND_KEY/_DATA + CKM_SHA3_256_KEY_DERIVATION; ss_PQ and ss_T were never extracted either)\n\nAttempted C_GetAttributeValue(CKA_VALUE) on it anyway, to prove the point: ${extractProof}`
         }
         const { sharedSecret, enc } = dhkemEncap(hctx, kemId, st.ekH)
@@ -1144,6 +1134,23 @@ export const HpkeWorkshop: React.FC = () => {
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
         <LiveHSMToggle hsm={hsm} operations={HPKE_LIVE_OPERATIONS} />
       </div>
+      <p className="px-6 mb-4 text-xs text-muted-foreground">
+        The protected-key probe observes one attempted plaintext read. CKA_SENSITIVE and
+        CKA_EXTRACTABLE are distinct attributes: for secret keys, sensitive status or
+        non-extractable status restricts plaintext disclosure; CKA_EXTRACTABLE also controls whether
+        a key can be wrapped. One refused read does not establish both attribute values or test
+        wrapping. Inspect the attributes and test the relevant operations in your production tools.
+        See{' '}
+        <a
+          href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary underline"
+        >
+          PKCS #11 v3.2, section 4.11
+        </a>
+        .
+      </p>
 
       <div className="px-6 mb-4">
         <h2 className="text-lg font-semibold text-gradient">HPKE (RFC 9180) over PKCS#11</h2>
