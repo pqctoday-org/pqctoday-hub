@@ -189,8 +189,8 @@ describe('EUDI Digital ID Integration', () => {
     // Step 4: Complete
     await waitFor(
       () => {
-        expect(screen.getByText(/Account Opened!/i)).toBeDefined()
-        expect(screen.getByText(/identity has been verified/i)).toBeDefined()
+        expect(screen.getByText(/Sample account opening accepted/i)).toBeDefined()
+        expect(screen.getByText(/Sample proof checks passed/i)).toBeDefined()
       },
       { timeout: 5000 }
     )
