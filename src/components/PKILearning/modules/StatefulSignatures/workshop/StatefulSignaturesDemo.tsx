@@ -32,6 +32,7 @@ import {
   hsm_extractKeyValue,
 } from '@/wasm/softhsm'
 import { StateManagementVisualizer } from './StateManagementVisualizer'
+import { tamperSampleMessage } from './tamperSampleMessage'
 import { XMSSKeyGenDemo } from './XMSSKeyGenDemo'
 
 function hexToBytes(hex: string): Uint8Array {
@@ -388,9 +389,7 @@ export function StatefulSignaturesDemo() {
       let msgBytes = new TextEncoder().encode(verifyMessage)
       let sigBytes = hexToBytes(verifySignatureHex)
       if (tamperMessage) {
-        const tmp = new Uint8Array(msgBytes)
-        tmp[4] ^= 0xff
-        msgBytes = tmp
+        msgBytes = tamperSampleMessage(msgBytes)
       }
       if (tamperSignature) {
         const tmp = new Uint8Array(sigBytes)
@@ -710,7 +709,7 @@ export function StatefulSignaturesDemo() {
                             }}
                             className="accent-primary w-3 h-3"
                           />
-                          Tamper with message — flip byte[4] before C_Verify
+                          Tamper with message — flip first byte (add 0x01 if empty)
                         </label>
                         <label className="flex items-center gap-2 text-xs cursor-pointer">
                           <input
@@ -972,7 +971,7 @@ export function StatefulSignaturesDemo() {
                             }}
                             className="accent-primary w-3 h-3"
                           />
-                          Tamper with message — flip byte[4] before C_Verify
+                          Tamper with message — flip first byte (add 0x01 if empty)
                         </label>
                         <label className="flex items-center gap-2 text-xs cursor-pointer">
                           <input

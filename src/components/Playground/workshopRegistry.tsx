@@ -402,7 +402,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'lms-hss',
     pt_id: 'PT-002',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'Stateful Hash Signatures',
     description: 'LMS and XMSS stateful signature trees using SoftHSMv3',
     category: 'HSM / PKCS#11',
