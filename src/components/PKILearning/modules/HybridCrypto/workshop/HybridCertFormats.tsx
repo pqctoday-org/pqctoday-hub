@@ -84,6 +84,10 @@ export const HybridCertFormats: React.FC = () => {
    * Which draft §6 composite profile the 'composite' format mints. Defaults to
    * the first entry, id-MLDSA65-ECDSA-P256-SHA512 — §10.4's general-use pick.
    */
+  // Owner rule: both ways are shown. 'by-hand' = PKCS#11 v3.2 (before 3.3): the
+  // browser builds M' and the HSM signs each half. 'one-call' = the v3.3 working
+  // draft: one combined key, one CKM_COMP_SIG call.
+  const [compositeSigning, setCompositeSigning] = useState<'by-hand' | 'one-call'>('by-hand')
   const [compositeOid, setCompositeOid] = useState<string>(
     COMPOSITE_PROFILE_CHOICES[0].profile.compositeOid
   )
@@ -252,14 +256,11 @@ export const HybridCertFormats: React.FC = () => {
             const chosen =
               COMPOSITE_PROFILE_CHOICES.find((c) => c.profile.compositeOid === compositeOid) ??
               COMPOSITE_PROFILE_CHOICES[0]
-            const r = await hybridCryptoService.generateCompositeCert(
-              subject,
-              M,
-              hSession,
-              track,
-              chosen.profile,
-              run
-            )
+            const generate =
+              compositeSigning === 'one-call'
+                ? hybridCryptoService.generateCompositeCertOneCall.bind(hybridCryptoService)
+                : hybridCryptoService.generateCompositeCert.bind(hybridCryptoService)
+            const r = await generate(subject, M, hSession, track, chosen.profile, run)
             const checks: VerificationCheck[] = []
             if (!r.error) {
               const v = await verifyCompositeCert(pemToDer(r.pem))
@@ -280,7 +281,7 @@ export const HybridCertFormats: React.FC = () => {
                 ? []
                 : [
                     {
-                      label: `Composite: ${chosen.profile.label.replace(/^id-/, '')}`,
+                      label: `Composite: ${chosen.profile.label.replace(/^id-/, '')}${compositeSigning === 'one-call' ? ' (one CKM_COMP_SIG call)' : ''}`,
                       pem: r.pem,
                       parsed: r.parsed,
                       type: 'pqc',
@@ -382,7 +383,7 @@ export const HybridCertFormats: React.FC = () => {
       if (!skipStateReset) setGenerating(null)
       return 'done'
     },
-    [hsm, onKeyTracked, pushHybridFiles, compositeOid, destroyFormatKeys]
+    [hsm, onKeyTracked, pushHybridFiles, compositeOid, compositeSigning, destroyFormatKeys]
   )
 
   const generateAll = useCallback(async () => {
@@ -569,6 +570,50 @@ export const HybridCertFormats: React.FC = () => {
                   . The pre-hash and the traditional hash are chosen independently — the SHA-xxx in
                   the profile name is the pre-hash, not the traditional algorithm’s hash.
                 </p>
+                <div className="pt-2 space-y-1">
+                  <div className="text-xs font-medium text-muted-foreground">
+                    How the HSM signs the certificate
+                  </div>
+                  <div
+                    className="flex flex-wrap items-start gap-3"
+                    role="group"
+                    aria-label="Composite signing way"
+                  >
+                    <div>
+                      <div className="text-[10px] text-muted-foreground mb-1">
+                        Before 3.3 (standard, today)
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={compositeSigning === 'by-hand' ? 'default' : 'outline'}
+                        disabled={generating !== null}
+                        onClick={() => setCompositeSigning('by-hand')}
+                      >
+                        Two HSM signs, M&apos; built in the browser
+                      </Button>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-muted-foreground mb-1">
+                        After 3.3 (working draft)
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={compositeSigning === 'one-call' ? 'default' : 'outline'}
+                        disabled={generating !== null}
+                        onClick={() => setCompositeSigning('one-call')}
+                      >
+                        One CKM_COMP_SIG call
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-[10px] leading-relaxed text-muted-foreground">
+                    {compositeSigning === 'one-call'
+                      ? 'One combined key object holds both halves. The HSM is handed the certificate bytes and does everything the left-hand way does by hand: it builds M\u2032, signs the ML-DSA half with its context and the traditional half, and returns both signatures. The PKCS#11 v3.3 draft is unpublished; an engine without CKM_COMP_SIG answers "Not in this engine yet".'
+                      : 'Two separate keys. The browser builds M\u2032 (prefix, label, context, hash), then asks the HSM to sign it twice, once per key, and joins the two signatures. This works on any PKCS#11 v3.2 token and shows exactly how the composite binding is made.'}
+                  </p>
+                </div>
               </div>
             )}
             <Button
