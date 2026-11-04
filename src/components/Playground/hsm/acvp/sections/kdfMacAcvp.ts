@@ -202,7 +202,7 @@ export async function runKmacAcvpSection(ctx: ClassicalSectionCtx): Promise<void
     testGroups: { tgId: number; testType: string; tests: KmacCase[] }[]
   }
   const P = f._provenance
-  // The same NIST cases, run under both numbers (owner rule: show the way that
+  // The same NIST cases, run under both numbers (show the way that
   // works today and the v3.3 draft's way side by side). The vendor rows keep the
   // ids and text they always had; the draft rows add `draft-` and say so.
   const variants = [
@@ -248,11 +248,9 @@ export async function runKmacAcvpSection(ctx: ClassicalSectionCtx): Promise<void
         }
         if (v.why) {
           // The committee-number rows exist only on an engine that advertises
-          // CKM_KMAC128. They are not emitted as skipped placeholders: the Hub's
-          // coverage model registers a row only for a mechanism a shipped engine
-          // has (the registry check refuses "exercises CKM_KMAC128, which is not a
-          // capability cell of either engine"). When an engine build with the
-          // committee's KMAC numbers ships, add registry section 35c for these ids
+          // CKM_KMAC128. They are not emitted as skipped placeholders: the coverage
+          // registry lists a row only for a mechanism a shipped engine has. When an
+          // engine build with the committee's KMAC numbers ships, register these ids
           // (kmac128-nist-draft-<tg>-<tc>-{engine}) and regenerate the evidence.
           if (v.draft) continue
           await skipRow(ctx, { id, algorithm, testCase, meta, why: v.why })

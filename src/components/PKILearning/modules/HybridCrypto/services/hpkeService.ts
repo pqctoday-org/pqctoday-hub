@@ -171,10 +171,10 @@ export const HPKE_KDF = { HKDF_SHA256: 0x0001, HKDF_SHA384: 0x0002, HKDF_SHA512:
 export type HpkeKdfId = (typeof HPKE_KDF)[keyof typeof HPKE_KDF]
 /**
  * draft-ietf-hpke-pq-05 §5: the one-stage SHAKE256 KDF (kdf_id 0x0011). Kept out of
- * HPKE_KDF on purpose: PKCS#11 v3.2 and the v3.3 draft have no standard
- * SHAKE256 key-derivation step, so only the PQCToday single-call sequence can run
- * it. kdfInfo() therefore refuses it, and the workshop offers it in that
- * sequence only.
+ * HPKE_KDF on purpose: the workshop's composed and v3.3 sequences are built from
+ * HKDF steps and do not compose this one-stage KDF from v3.2 pieces, so only the
+ * PQCToday single-call sequence runs it. kdfInfo() therefore refuses it, and the
+ * workshop offers it in that sequence only.
  */
 export const HPKE_KDF_SHAKE256 = 0x0011 as const
 

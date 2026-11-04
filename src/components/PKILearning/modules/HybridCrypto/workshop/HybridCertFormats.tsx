@@ -84,7 +84,7 @@ export const HybridCertFormats: React.FC = () => {
    * Which draft §6 composite profile the 'composite' format mints. Defaults to
    * the first entry, id-MLDSA65-ECDSA-P256-SHA512 — §10.4's general-use pick.
    */
-  // Owner rule: both ways are shown. 'by-hand' = PKCS#11 v3.2 (before 3.3): the
+  // Both ways are shown. 'by-hand' = PKCS#11 v3.2 (before 3.3): the
   // browser builds M' and the HSM signs each half. 'one-call' = the v3.3 working
   // draft: one combined key, one CKM_COMP_SIG call.
   const [compositeSigning, setCompositeSigning] = useState<'by-hand' | 'one-call'>('by-hand')
@@ -610,8 +610,8 @@ export const HybridCertFormats: React.FC = () => {
                   </div>
                   <p className="text-[10px] leading-relaxed text-muted-foreground">
                     {compositeSigning === 'one-call'
-                      ? 'One combined key object holds both halves. The HSM is handed the certificate bytes and does everything the left-hand way does by hand: it builds M\u2032, signs the ML-DSA half with its context and the traditional half, and returns both signatures. The PKCS#11 v3.3 draft is unpublished; an engine without CKM_COMP_SIG answers "Not in this engine yet".'
-                      : 'Two separate keys. The browser builds M\u2032 (prefix, label, context, hash), then asks the HSM to sign it twice, once per key, and joins the two signatures. This works on any PKCS#11 v3.2 token and shows exactly how the composite binding is made.'}
+                      ? 'One combined key object holds both halves. The HSM is handed the certificate bytes and does everything the Before 3.3 way does by hand: it builds M\u2032, signs the ML-DSA half with its context and the traditional half, and returns both signatures. The PKCS#11 v3.3 draft is unpublished; an engine without CKM_COMP_SIG answers "Not in this engine yet".'
+                      : 'Two separate keys. The browser builds M\u2032 (prefix, label, context, hash), then asks the HSM to sign it twice, once per key, and joins the two signatures. This uses only PKCS#11 v3.2 calls and shows exactly how the composite binding is made.'}
                   </p>
                 </div>
               </div>

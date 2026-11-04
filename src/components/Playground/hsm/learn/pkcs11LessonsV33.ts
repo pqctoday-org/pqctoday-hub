@@ -645,7 +645,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
       },
     ],
     notes: [
-      'The context goes into µ, so CKM_ML_DSA_EXTERNAL_MU ignores any context it is given. It still accepts the optional CK_SIGN_ADDITIONAL_CONTEXT, but only for the hedge variant (hedged or deterministic signing).',
+      'The context goes into µ, so CKM_ML_DSA_EXTERNAL_MU itself takes no context: both engines refuse a non-empty one rather than ignore it. It still accepts the optional CK_SIGN_ADDITIONAL_CONTEXT, but only for the hedge variant (hedged or deterministic signing).',
       'TR is public: it is a hash of the public key. Sending µ instead of the message saves bandwidth and keeps the message out of the HSM, but the HSM can no longer see what it signs.',
     ],
     whyItMatters:

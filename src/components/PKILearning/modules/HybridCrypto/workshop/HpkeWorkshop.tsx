@@ -102,8 +102,8 @@ const KDF_OPTIONS = [
   { id: String(HPKE_KDF.HKDF_SHA384), label: 'HKDF-SHA384' },
   { id: String(HPKE_KDF.HKDF_SHA512), label: 'HKDF-SHA512' },
 ]
-// draft-ietf-hpke-pq-05 §5. Offered in the PQCToday single-call sequence only:
-// PKCS#11 v3.2 and the v3.3 draft have no standard SHAKE256 key-derivation step.
+// draft-ietf-hpke-pq-05 §5. Offered in the PQCToday single-call sequence only: the
+// other two sequences do not build this one-stage KDF from v3.2 pieces.
 const SHAKE256_KDF_OPTION = { id: String(HPKE_KDF_SHAKE256), label: 'SHAKE256 (one-stage)' }
 const AEAD_OPTIONS = [
   { id: String(HPKE_AEAD.AES_128_GCM), label: 'AES-128-GCM' },
@@ -168,7 +168,7 @@ interface WorkshopState {
 }
 
 /**
- * The three groups the workshop shows (owner rule: both the before-3.3 and the
+ * The three groups the workshop shows (both the before-3.3 and the
  * after-3.3 way, and the PQCToday proposal kept apart because it is in neither):
  * 'composed' = PKCS#11 v3.2 standard pieces; 'candidate' = the PQCToday
  * single-call CKM_HPKE proposal; 'v33' = the PKCS#11 v3.3 draft's CKM_COMP_KEM.
@@ -226,7 +226,10 @@ export const HpkeWorkshop: React.FC = () => {
   const compositeCkp = compositeKemCkp(kemId)
   // The v3.3 draft sequence needs an engine that advertises CKM_COMP_KEM. It is
   // asked when the sequence is chosen and again in Step 1; never assumed.
-  const [v33Missing, setV33Missing] = useState(false)
+  // Remembered per engine: switching engines makes an earlier answer stale, so it
+  // only counts while the engine that gave it is still the loaded one.
+  const [v33MissingFor, setV33MissingFor] = useState<string | null>(null)
+  const v33Missing = v33MissingFor !== null && v33MissingFor === hsm.engine
 
   const v33Reason =
     info.kind === 'pq'
@@ -236,17 +239,6 @@ export const HpkeWorkshop: React.FC = () => {
         : v33Missing
           ? 'Not in this engine yet: the loaded engine does not advertise CKM_COMP_KEM.'
           : ''
-
-  const selectKem = useCallback((id: string) => {
-    const next = Number(id) as HpkeKemId
-    setKemId(next)
-    if (kemInfo(next).kind !== 'dhkem')
-      setMode((m) => (m === HPKE_MODE.AUTH || m === HPKE_MODE.AUTH_PSK ? HPKE_MODE.BASE : m))
-    // The v3.3 draft sequence exists only for the three hybrid suites.
-    setEngineMode((m) => (m === 'v33' && compositeKemCkp(next) === undefined ? 'composed' : m))
-    stateRef.current = {} as WorkshopState
-    setStage('idle')
-  }, [])
 
   const STEPS: Step[] = useMemo(
     () => [
@@ -510,6 +502,27 @@ export const HpkeWorkshop: React.FC = () => {
 
   const wizard = useStepWizard({ steps: STEPS, onBack: () => {} })
 
+  const selectKem = useCallback(
+    (id: string) => {
+      const next = Number(id) as HpkeKemId
+      setKemId(next)
+      if (kemInfo(next).kind !== 'dhkem')
+        setMode((m) => (m === HPKE_MODE.AUTH || m === HPKE_MODE.AUTH_PSK ? HPKE_MODE.BASE : m))
+      stateRef.current = {} as WorkshopState
+      setStage('idle')
+      // The v3.3 draft sequence exists only for the three hybrid suites. Dropping
+      // out of it changes the sequence, so progress and keys reset like any other
+      // sequence switch.
+      if (engineMode === 'v33' && compositeKemCkp(next) === undefined) {
+        setEngineMode('composed')
+        wizard.reset()
+        hsm.clearKeys()
+        hsm.clearLog()
+      }
+    },
+    [engineMode, wizard, hsm]
+  )
+
   const handleReset = useCallback(() => {
     stateRef.current = {} as WorkshopState
     setStage('idle')
@@ -534,12 +547,12 @@ export const HpkeWorkshop: React.FC = () => {
             advertised = false
           }
           if (!advertised) {
-            setV33Missing(true)
+            setV33MissingFor(hsm.engine)
             return
           }
         }
       }
-      setV33Missing(false)
+      setV33MissingFor(null)
       setEngineMode(next)
       setKdfId((k) => (k === HPKE_KDF_SHAKE256 && next !== 'candidate' ? HPKE_KDF.HKDF_SHA256 : k))
       stateRef.current = {} as WorkshopState
@@ -561,7 +574,7 @@ export const HpkeWorkshop: React.FC = () => {
     const st = stateRef.current
     if (kdfId === HPKE_KDF_SHAKE256 && engineMode !== 'candidate') {
       throw new Error(
-        'The SHAKE256 key derivation runs only in the PQCToday single-call sequence: PKCS#11 v3.2 and the v3.3 draft have no standard SHAKE256 key-derivation step.'
+        'The SHAKE256 key derivation runs only in the PQCToday single-call sequence: the other two sequences do not build this one-stage KDF from v3.2 pieces.'
       )
     }
 
@@ -591,10 +604,12 @@ export const HpkeWorkshop: React.FC = () => {
         }
         if (engineMode === 'v33') {
           if (compositeCkp == null) throw new Error('The v3.3 draft sequence needs a hybrid KEM.')
-          if (!hsm_detectV33Support(M, hsm.slotRef.current).compKem)
+          if (!hsm_detectV33Support(M, hsm.slotRef.current).compKem) {
+            setV33MissingFor(hsm.engine)
             throw new Error(
               'Not in this engine yet: the loaded engine does not advertise CKM_COMP_KEM.'
             )
+          }
           const kp = hsm_generateCompositeKeyPair(M, hSession, 'kem', compositeCkp)
           const ekH = hsm_extractKeyValue(M, hSession, kp.pubHandle)
           st.ekH = ekH
@@ -1311,7 +1326,7 @@ export const HpkeWorkshop: React.FC = () => {
       {engineMode !== 'candidate' && (
         <p className="px-6 -mt-2 mb-4 text-[11px] text-muted-foreground">
           The SHAKE256 key derivation (draft-ietf-hpke-pq) is offered only in the PQCToday proposal
-          sequence: PKCS#11 v3.2 and the v3.3 draft have no standard SHAKE256 key-derivation step.
+          sequence: the other two sequences here do not build this one-stage KDF from v3.2 pieces.
         </p>
       )}
       {handlePath && (

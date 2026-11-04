@@ -6,6 +6,7 @@ import type { SoftHSMModule } from '@/wasm/softhsm'
 import {
   COMPOSITE_SIG_SETS,
   hsm_compositeSign,
+  hsm_detectV33Support,
   hsm_generateCompositeKeyPair,
 } from '@/wasm/softhsm/v33'
 import {
@@ -19,6 +20,7 @@ import {
   hsm_extractRSAPublicKeyDer,
   hsm_generateMLKEMKeyPair,
   hsm_getKeyAttributes,
+  hsm_getSessionInfo,
   hsm_signBytesMLDSA,
   hsm_signBytesECDSA,
   hsm_signBytesSLHDSA,
@@ -1089,8 +1091,9 @@ export class HybridCryptoService {
    * this method computes no M' and makes no per-half call. generateCompositeCert
    * above is the way that works on PKCS#11 v3.2 and stays the explained one.
    *
-   * Throws "Not in this engine yet" (as the error string) when the loaded
-   * engine does not advertise the mechanism or the parameter set; it never
+   * Reports "Not in this engine yet" (as the error string) when the loaded
+   * engine does not advertise the mechanism, and says so before any key is
+   * made; any other key-generation failure keeps its own message. It never
    * falls back silently to the by-hand way.
    */
   async generateCompositeCertOneCall(
@@ -1113,13 +1116,18 @@ export class HybridCryptoService {
         )
       }
       await st.enter('Composite key generation (one combined key)')
+      if (!hsm_detectV33Support(M, hsm_getSessionInfo(M, hSession).slotID).compSig) {
+        throw new Error(
+          'Not in this engine yet: the loaded engine does not advertise CKM_COMP_SIG and CKM_COMP_SIG_KEY_PAIR_GEN.'
+        )
+      }
       let kp: { pubHandle: number; privHandle: number }
       try {
         kp = hsm_generateCompositeKeyPair(M, hSession, 'sig', set.ckp)
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e)
         throw new Error(
-          `Not in this engine yet: ${set.ckpName} (CKM_COMP_SIG_KEY_PAIR_GEN refused: ${msg}).`
+          `${set.ckpName}: CKM_COMP_SIG_KEY_PAIR_GEN refused the parameter set (${msg}).`
         )
       }
       if (onKey) {
