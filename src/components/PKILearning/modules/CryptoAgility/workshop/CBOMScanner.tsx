@@ -167,7 +167,7 @@ export const CBOMScanner: React.FC = () => {
                 variant="ghost"
                 key={layer.id}
                 onClick={() => setActiveLayer(isActive ? 'all' : (layer.id as LayerFilter))}
-                className={`flex flex-col items-center gap-1.5 p-2.5 rounded-lg border text-center transition-all ${
+                className={`flex h-auto flex-col items-center gap-1.5 p-2.5 rounded-lg border text-center transition-all ${
                   isActive
                     ? 'bg-card border-primary/60 shadow-sm'
                     : 'bg-muted/30 border-border hover:border-primary/30'
