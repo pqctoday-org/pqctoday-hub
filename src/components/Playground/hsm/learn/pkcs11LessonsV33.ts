@@ -5,8 +5,8 @@
 // ML-DSA external µ, CKA_KEYS_REMAINING, the renames and deprecations).
 //
 // v3.3 is an UNPUBLISHED OASIS working draft. Its codepoints are approved in
-// the TC header, and an engine that implements them still reports Cryptoki
-// 3.2.0. Every step runs real calls on the shared session, like the other
+// the committee's identifier database, and an engine that implements them
+// still reports Cryptoki 3.2.0. Every step runs real calls on the shared session, like the other
 // two tracks, and asks the engine first (C_GetMechanismList /
 // C_GetMechanismInfo): a step that needs a mechanism the loaded engine does
 // not advertise throws NotInEngineError, which the runner shows as "not in
@@ -145,7 +145,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
     blurb:
       'There is no published PKCS#11 v3.3. There is an OASIS working draft whose new codepoints are already approved. This lesson asks the engine what it actually implements.',
     setup:
-      'A token tells you its Cryptoki version in C_GetInfo, and what it can do in C_GetMechanismList. The v3.3 draft adds composite ML-DSA and ML-KEM (one key object holding a post-quantum half and a classical half), approves ML-DSA external µ, and renames the stateful-signature counter. The draft header still says version 3.2, so an engine that implements these still reports 3.2.0.',
+      'A token tells you its Cryptoki version in C_GetInfo, and what it can do in C_GetMechanismList. The v3.3 draft adds composite ML-DSA and ML-KEM (one key object holding a post-quantum half and a classical half), approves ML-DSA external µ, and renames the stateful-signature counter. The draft header still says version 3.2, so an engine that implements these still reports 3.2.0. The committee also approved identifiers for KMAC and the SHAKE functions on 27 October. This track does not cover them: the engines run KMAC with a fixed result length for C_Sign and C_Verify, and do not implement the SHAKE digest mechanisms or the extendable-output mode of KMAC, because the draft defines those only for the C_DigestXof… functions, which its header does not declare.',
     steps: [
       {
         op: 'C_GetInfo',
@@ -159,7 +159,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
       },
       {
         op: 'C_GetMechanismList / C_GetMechanismInfo',
-        label: 'Ask which of the seven v3.3 mechanisms this engine advertises',
+        label: 'Ask which of the seven composite and external-µ mechanisms this engine advertises',
         run: (hsm) => {
           const s = support(hsm)
           const have = V33_MECHANISMS.filter((m) => s.mechs[m.key].advertised).map((m) => m.name)
@@ -194,7 +194,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
     ],
     compareHeaders: ['', 'TLS hybrid group', 'Composite (v3.3)'],
     notes: [
-      'The site teaches three kinds of hybrid: TLS hybrid key-exchange groups, HPKE hybrid KEMs, and composites. Only composites have their own PKCS#11 key type (CKK_COMP_KEM, CKK_COMP_SIG); the other two are built by the caller out of ordinary keys.',
+      'The site teaches three kinds of hybrid: TLS hybrid key-exchange groups, HPKE hybrid KEMs, and composites. Only composites have their own PKCS#11 key type (CKK_COMP_KEM, CKK_COMP_SIG); the other two are built by the caller out of ordinary keys, although a composite KEM can stand in for the key-agreement step of three HPKE hybrids (lesson 3).',
       'Approved codepoints mean the numbers will not change. The chapter text around them may still change before v3.3 is published.',
     ],
     whyItMatters:
@@ -331,6 +331,7 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
       },
     ],
     notes: [
+      'Before 3.3, with ordinary v3.2 calls, a caller builds M′ itself (step 2), then signs it twice: C_Sign with CKM_ML_DSA using the label as the context, and C_Sign with the traditional algorithm (ECDSA for this set), and joins the two signatures. After 3.3, one CKM_COMP_SIG call does all of it. The certificate demo in the Hybrid Crypto module shows both ways side by side.',
       'The prefix and label make a composite signature non-separable: neither half is a valid stand-alone signature over the original message.',
       'CKM_COMP_SIG may be multi-part (C_SignUpdate), because the token hashes M as it streams. CKM_COMP_SIG_EXTERNAL_HASH is single-part only: the caller already did the hashing.',
       'The optional context travels in CK_SIGN_ADDITIONAL_CONTEXT, the same structure ML-DSA uses.',
@@ -508,7 +509,8 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
     notes: [
       'Neither combiner is wrong. TLS can concatenate because its transcript hash already binds the key shares; a composite KEM used outside TLS (CMS, certificates, an HSM) has no transcript, so it binds the classical ciphertext, the classical public key and a per-set label itself.',
       'The label makes each parameter set give a different secret even from identical component secrets, so a secret from one set cannot be replayed as another.',
-      'Steps 4 and 5 run on any engine: they use ML-KEM, X25519 and SHA3-256 directly. Steps 1-3 and 6 need CKM_COMP_KEM.',
+      'Three of the sets match a hybrid KEM that the HPKE post-quantum draft registers (MLKEM768-X25519, MLKEM768-P256, MLKEM1024-P384): they use the same labels, and the engine\'s tests show the composite secret equals the HPKE KEM secret for them. The HPKE workshop shows this as its "after 3.3" sequence. The v3.3 draft itself has no HPKE mechanism.',
+      "Steps 4 and 5 are the before-3.3 way: ordinary v3.2 pieces (ML-KEM, X25519 and SHA3-256 used directly), which run on any engine. Steps 1-3 and 6 are the draft's CKM_COMP_KEM and need an engine that has it.",
     ],
     whyItMatters:
       'Calling a TLS-style concatenation "composite KEM" gives an interoperability bug: the two sides compute different keys from the same inputs. Knowing which combiner a protocol uses is part of the integration, not a detail.',
@@ -638,13 +640,13 @@ export const V33_LESSONS: Pkcs11LessonV33[] = [
           )
           if (r.rv === 0) return { detail: 'Unexpectedly accepted — this should not happen.' }
           throw new Error(
-            `${r.step} → ${rvName(r.rv)}: exactly one of hKey and pTR. The draft does not name the code; this engine follows the v3.2 convention for inappropriate arguments.`
+            `${r.step} → ${rvName(r.rv)}: this engine refuses it. The draft says the parameters supply "a key handle or a precomputed TR" and that a TR is expected when the key handle is empty; it does not say what happens when both are given, or which error code. The refusal is this engine's choice, using the v3.2 convention for inappropriate arguments.`
           )
         },
       },
     ],
     notes: [
-      'The context goes into µ, so CKM_ML_DSA_EXTERNAL_MU itself takes no context.',
+      'The context goes into µ, so CKM_ML_DSA_EXTERNAL_MU itself takes no context: both engines refuse a non-empty one rather than ignore it. It still accepts the optional CK_SIGN_ADDITIONAL_CONTEXT, but only for the hedge variant (hedged or deterministic signing).',
       'TR is public: it is a hash of the public key. Sending µ instead of the message saves bandwidth and keeps the message out of the HSM, but the HSM can no longer see what it signs.',
     ],
     whyItMatters:

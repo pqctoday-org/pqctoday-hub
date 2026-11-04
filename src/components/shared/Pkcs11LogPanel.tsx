@@ -40,7 +40,7 @@ const LogEntryRow = ({
 
   if (entry.isStepHeader) {
     return (
-      <div className="py-1 px-1 mt-1 text-[11px] font-mono font-semibold text-primary/80 border-t border-border/50 bg-muted/20 -mx-1 rounded-sm">
+      <div className="py-1 px-1 mt-1 text-[11px] font-mono font-semibold text-primary border-t border-border/50 bg-muted/20 -mx-1 rounded-sm">
         {entry.fn}
       </div>
     )

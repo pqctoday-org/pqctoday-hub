@@ -29,6 +29,27 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.195.0] - 2026-11-04
+
+The HPKE workshop now puts the PKCS#11 v3.3 draft's one-call composite key agreement beside the standard way and our own single-call proposal, composite certificates can be signed in one call, and the v3.3 lessons say more plainly what is standard, what is only a draft, and what our engines do not do.
+
+### Added
+
+- **The HPKE workshop shows three ways to agree a key, side by side** [view:/learn] [persona:developer] [persona:architect] [persona:researcher] [persona:ops]: the standard PKCS#11 v3.2 way built from ordinary pieces, our single-call proposal (labelled as part of no standard, with a link to the open request for one), and the PKCS#11 v3.3 draft's one-call composite KEM for the three hybrid suites. Pure ML-KEM in three sizes joins the standard way, and every sequence now runs through to a decrypted message in the browser.
+- **Composite certificates can be signed in one call** [view:/playground] [persona:developer] [persona:architect] [persona:ops]: the certificate demo offers "Before 3.3" (the browser builds the signed message and the HSM signs twice) and "After 3.3" (one combined key and one signing call from the v3.3 draft). Both make a certificate that verifies, and an engine without the draft's mechanism says "Not in this engine yet" instead of failing.
+- **The KMAC test section can run the draft's own KMAC numbers** [view:/playground] [persona:developer] [persona:researcher]: when an engine offers them, the same NIST vectors also run under the PKCS#11 v3.3 draft's numbers; when it does not, one log line says why no draft rows appear.
+
+### Changed
+
+- **The PKCS#11 v3.3 lessons name the older way beside the draft's** [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: the composite signing and composite KEM lessons show what a program does before 3.3 next to the draft's single call. They say plainly that the draft has no HPKE mechanism, why our engines do not implement the draft's SHAKE mechanisms or KMAC's extendable-output mode, and that the external-µ mechanism refuses a context instead of ignoring it.
+- **The workshop's protected-key check counts only what it measured** [view:/learn] [persona:developer] [persona:ops] [persona:researcher]: a closed session or a bad handle no longer shows up as "key protected". One refused read is now described as a sample, and the page explains what one refused read does and does not show.
+- **The published HPKE test vectors carry the right draft revision** [view:/learn] [persona:researcher] [persona:developer]: they belong to draft -05, not -04, and the labels now say so.
+
+### Fixed
+
+- **The HPKE workshop fits phone and narrow screens** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: the three sequence buttons wrap, and the KEM, KDF, AEAD and mode controls no longer run off the screen or clip their labels. Choosing a different KEM now starts the run again instead of leaving it on a later step.
+- **Copy buttons in workshop output have names for screen readers** [view:/learn] [persona:developer] [persona:ops]: each says what it copies, for example "Copy enc", and the PKCS#11 call log's step headers are easier to read.
+
 ## [4.194.0] - 2026-11-01
 
 Four new products and three new vendor announcements join the Migrate pages, twenty catalogue products are re-read against their vendors' pages, five more lesson statements and three data rows follow their documents, and the Hybrid Certificates workshop explains why OpenSSL cannot read composite certificates.

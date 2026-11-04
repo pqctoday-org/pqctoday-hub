@@ -30,7 +30,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'hpke',
     title: 'Step 3: HPKE',
-    description: 'RFC 9180 Hybrid Public Key Encryption, composed from PKCS#11 v3.2 primitives.',
+    description:
+      'RFC 9180 Hybrid Public Key Encryption: composed from PKCS#11 v3.2 pieces, shown beside the v3.3 draft composite KEM and a PQCToday single-call proposal.',
     icon: LockKeyhole,
   },
   {

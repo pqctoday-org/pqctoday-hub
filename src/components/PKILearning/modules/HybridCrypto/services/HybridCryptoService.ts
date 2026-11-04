@@ -4,6 +4,12 @@ import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import {
+  COMPOSITE_SIG_SETS,
+  hsm_compositeSign,
+  hsm_detectV33Support,
+  hsm_generateCompositeKeyPair,
+} from '@/wasm/softhsm/v33'
+import {
   hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
   hsm_generateSLHDSAKeyPair,
@@ -14,6 +20,7 @@ import {
   hsm_extractRSAPublicKeyDer,
   hsm_generateMLKEMKeyPair,
   hsm_getKeyAttributes,
+  hsm_getSessionInfo,
   hsm_signBytesMLDSA,
   hsm_signBytesECDSA,
   hsm_signBytesSLHDSA,
@@ -25,6 +32,7 @@ import {
 } from '@/wasm/softhsm'
 import {
   buildCompositeCertDraft19,
+  buildCompositeCertDraft19OneCall,
   ecdsaRawSignatureToDer,
   COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
   ML_DSA_44_OID_STR,
@@ -1059,6 +1067,81 @@ export class HybridCryptoService {
         classical.publicKey,
         mldsa.compositeSignerFn,
         classical.signerFn,
+        subject
+      )
+      const pem = derToPem(derBytes, 'CERTIFICATE')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'composite', profile)
+      return { pem, parsed, timingMs: performance.now() - start }
+    } catch (e) {
+      if (e instanceof GenerationCancelledError) throw e
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: `${st.current}: ${e instanceof Error ? e.message : 'Composite certificate generation failed'}`,
+      }
+    }
+  }
+
+  /**
+   * The same composite certificate through the PKCS#11 v3.3 working draft's
+   * single-call way: ONE combined key object (CKM_COMP_SIG_KEY_PAIR_GEN) and
+   * ONE C_Sign(CKM_COMP_SIG) over the TBS bytes. The token builds
+   * M' = Prefix || Label || len(ctx) || ctx || PH(TBS) and signs both halves;
+   * this method computes no M' and makes no per-half call. generateCompositeCert
+   * above is the way that works on PKCS#11 v3.2 and stays the explained one.
+   *
+   * Reports "Not in this engine yet" (as the error string) when the loaded
+   * engine does not advertise the mechanism, and says so before any key is
+   * made; any other key-generation failure keeps its own message. It never
+   * falls back silently to the by-hand way.
+   */
+  async generateCompositeCertOneCall(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker,
+    profile: CompositeProfileDraft19 = COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
+    run?: RunContext
+  ): Promise<CertResult> {
+    const st = new Stager(run)
+    const start = performance.now()
+    const notBefore = new Date()
+    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
+    try {
+      const set = COMPOSITE_SIG_SETS.find((x) => x.oid === profile.compositeOid)
+      if (!set) {
+        throw new Error(
+          `Not in this engine yet: the v3.3 draft has no composite signature set for ${profile.label}.`
+        )
+      }
+      await st.enter('Composite key generation (one combined key)')
+      if (!hsm_detectV33Support(M, hsm_getSessionInfo(M, hSession).slotID).compSig) {
+        throw new Error(
+          'Not in this engine yet: the loaded engine does not advertise CKM_COMP_SIG and CKM_COMP_SIG_KEY_PAIR_GEN.'
+        )
+      }
+      let kp: { pubHandle: number; privHandle: number }
+      try {
+        kp = hsm_generateCompositeKeyPair(M, hSession, 'sig', set.ckp)
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e)
+        throw new Error(
+          `${set.ckpName}: CKM_COMP_SIG_KEY_PAIR_GEN refused the parameter set (${msg}).`
+        )
+      }
+      if (onKey) {
+        onKey(kp.privHandle, 'composite-sig', `${set.draftName} (Cert Gen)`, 'private')
+        onKey(kp.pubHandle, 'composite-sig', `${set.draftName} Public (Cert Gen)`, 'public')
+      }
+      // CKA_VALUE of the public object = mldsaPK || tradPK, the draft §4.1 encoding.
+      const publicValue = hsm_extractKeyValue(M, hSession, kp.pubHandle)
+
+      await st.enter('Composite certificate signing (one CKM_COMP_SIG call)')
+      const derBytes = await buildCompositeCertDraft19OneCall(
+        profile,
+        publicValue,
+        async (tbsDer) => hsm_compositeSign(M, hSession, kp.privHandle, tbsDer),
         subject
       )
       const pem = derToPem(derBytes, 'CERTIFICATE')

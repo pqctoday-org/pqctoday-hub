@@ -1141,18 +1141,82 @@ export async function buildCompositeCertDraft19(
   subject: string,
   ctx: Uint8Array = new Uint8Array(0)
 ): Promise<Uint8Array> {
-  const compositeAlgId = buildAlgId(profile.compositeOid)
-  const { validity } = buildValidity()
-  const name = buildName(subject)
-
   // CompositePublicKey per draft-19 §4.1: mldsaPK || tradPK (raw concat)
   const compositeKeyBytes = new Uint8Array(mldsaPubKey.length + classicalPubKey.length)
   compositeKeyBytes.set(mldsaPubKey, 0)
   compositeKeyBytes.set(classicalPubKey, mldsaPubKey.length)
 
+  return assembleCompositeCertDraft19(profile, compositeKeyBytes, subject, async (tbsDer) => {
+    // Compute M' per draft-19 §2.2 and §3.2 (TBS is the message M for a cert)
+    const mPrime = await buildCompositeMessageRepresentative(profile, tbsDer, ctx)
+
+    // ML-DSA signs M' with ctx = signatureLabel; traditional signs raw M'
+    const mldsaCtx = new TextEncoder().encode(profile.signatureLabel)
+    const [mldsaSig, classicalSig] = await Promise.all([
+      mldsaSign(mPrime, mldsaCtx),
+      classicalSign(mPrime),
+    ])
+
+    if (mldsaSig.length !== profile.mldsaSigBytes) {
+      throw new Error(
+        `Composite signer returned ML-DSA signature of ${mldsaSig.length} bytes; ` +
+          `profile ${profile.label} expects ${profile.mldsaSigBytes}. ` +
+          `Check ML-DSA parameter set matches OID ${profile.mldsaOid}.`
+      )
+    }
+
+    // CompositeSignatureValue per draft-19 §4.3: mldsaSig || tradSig (raw concat)
+    const compositeSignature = new Uint8Array(mldsaSig.length + classicalSig.length)
+    compositeSignature.set(mldsaSig, 0)
+    compositeSignature.set(classicalSig, mldsaSig.length)
+    return compositeSignature
+  })
+}
+
+/**
+ * The same self-signed composite certificate, signed by ONE call (PKCS#11 v3.3
+ * working draft, CKM_COMP_SIG). The token is handed the TBS bytes (the message
+ * M) and builds M' = Prefix || Label || len(ctx) || ctx || PH(M), signs both
+ * halves and returns mldsaSig || tradSig itself; nothing here computes M' or
+ * calls the halves separately. `compositePublicValue` is the combined key's
+ * CKA_VALUE, which is exactly the draft §4.1 CompositePublicKey (mldsaPK ||
+ * tradPK). The certificate context is empty, as for the by-hand builder.
+ */
+export async function buildCompositeCertDraft19OneCall(
+  profile: CompositeProfileDraft19,
+  compositePublicValue: Uint8Array,
+  compositeSign: (tbsDer: Uint8Array) => Promise<Uint8Array>,
+  subject: string
+): Promise<Uint8Array> {
+  return assembleCompositeCertDraft19(profile, compositePublicValue, subject, async (tbsDer) => {
+    const signature = await compositeSign(tbsDer)
+    if (signature.length <= profile.mldsaSigBytes) {
+      throw new Error(
+        `Composite signer returned ${signature.length} bytes; profile ${profile.label} needs the ` +
+          `${profile.mldsaSigBytes}-byte ML-DSA signature plus the traditional signature.`
+      )
+    }
+    return signature
+  })
+}
+
+/** The TBS, algorithm identifiers and wrapper shared by both signing ways. */
+async function assembleCompositeCertDraft19(
+  profile: CompositeProfileDraft19,
+  compositeKeyBytes: Uint8Array,
+  subject: string,
+  signTbs: (tbsDer: Uint8Array) => Promise<Uint8Array>
+): Promise<Uint8Array> {
+  const compositeAlgId = buildAlgId(profile.compositeOid)
+  const { validity } = buildValidity()
+  const name = buildName(subject)
+
   const compositeSPKI = new SubjectPublicKeyInfo({
     algorithm: compositeAlgId,
-    subjectPublicKey: compositeKeyBytes.buffer as ArrayBuffer,
+    subjectPublicKey: compositeKeyBytes.buffer.slice(
+      compositeKeyBytes.byteOffset,
+      compositeKeyBytes.byteOffset + compositeKeyBytes.byteLength
+    ) as ArrayBuffer,
   })
 
   const tbs = new TBSCertificate({
@@ -1167,34 +1231,12 @@ export async function buildCompositeCertDraft19(
   })
 
   const tbsDer = serializeTBS(tbs)
-
-  // Compute M' per draft-19 §2.2 and §3.2 (TBS is the message M for a cert)
-  const mPrime = await buildCompositeMessageRepresentative(profile, tbsDer, ctx)
-
-  // ML-DSA signs M' with ctx = signatureLabel; traditional signs raw M'
-  const mldsaCtx = new TextEncoder().encode(profile.signatureLabel)
-  const [mldsaSig, classicalSig] = await Promise.all([
-    mldsaSign(mPrime, mldsaCtx),
-    classicalSign(mPrime),
-  ])
-
-  if (mldsaSig.length !== profile.mldsaSigBytes) {
-    throw new Error(
-      `Composite signer returned ML-DSA signature of ${mldsaSig.length} bytes; ` +
-        `profile ${profile.label} expects ${profile.mldsaSigBytes}. ` +
-        `Check ML-DSA parameter set matches OID ${profile.mldsaOid}.`
-    )
-  }
-
-  // CompositeSignatureValue per draft-19 §4.3: mldsaSig || tradSig (raw concat)
-  const compositeSignature = new Uint8Array(mldsaSig.length + classicalSig.length)
-  compositeSignature.set(mldsaSig, 0)
-  compositeSignature.set(classicalSig, mldsaSig.length)
+  const compositeSignature = await signTbs(tbsDer)
 
   const cert = new Certificate({
     tbsCertificate: AsnConvert.parse(AsnConvert.serialize(tbs), TBSCertificate),
     signatureAlgorithm: compositeAlgId,
-    signatureValue: compositeSignature.buffer as ArrayBuffer,
+    signatureValue: Uint8Array.from(compositeSignature).buffer as ArrayBuffer,
   })
   return new Uint8Array(AsnConvert.serialize(cert))
 }
