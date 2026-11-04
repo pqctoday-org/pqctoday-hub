@@ -368,6 +368,12 @@ export const TERMS: GlossaryTerm[] = [
     def: 'ML-DSA signs µ = SHAKE256(TR ‖ 0 ‖ len(ctx) ‖ ctx ‖ M). Computing µ outside the HSM lets it sign a 64-byte value instead of the whole message; the signature is still standard ML-DSA.',
   },
   {
+    id: 'xof-digest-limit',
+    label: 'SHAKE and KMAC output length (v3.3 draft)',
+    cat: 'protocol',
+    def: 'The v3.3 draft defines CKM_SHAKE_128 and CKM_SHAKE_256 only for the C_DigestXof… functions, and the extendable-output mode of KMAC with them. Its header does not declare those functions, so the engines here do not implement the SHAKE digest mechanisms and refuse KMAC with a result length of 0. KMAC with a fixed result length works for C_Sign and C_Verify.',
+  },
+  {
     id: 'v33-working-draft',
     label: 'PKCS#11 v3.3 (working draft)',
     cat: 'protocol',
