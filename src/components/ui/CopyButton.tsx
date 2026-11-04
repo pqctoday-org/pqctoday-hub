@@ -6,10 +6,17 @@ import { Button } from '@/components/ui/button'
 interface CopyButtonProps {
   text: string
   label?: string
+  /** Name for screen readers when `label` is empty (an icon-only button). */
+  ariaLabel?: string
   className?: string
 }
 
-export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonProps) => {
+export const CopyButton = ({
+  text,
+  label = 'Copy',
+  ariaLabel,
+  className = '',
+}: CopyButtonProps) => {
   const [copied, setCopied] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -47,7 +54,7 @@ export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonP
   }
 
   // An icon-only button (label="") still needs a name for screen readers.
-  const accessibleName = label || 'Copy'
+  const accessibleName = label || ariaLabel || 'Copy'
 
   return (
     <Button

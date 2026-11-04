@@ -706,7 +706,7 @@ export const CKD_HPKE_HKDF_SHA256 = 0x0001
 export const CKD_HPKE_HKDF_SHA384 = 0x0002
 export const CKD_HPKE_HKDF_SHA512 = 0x0003
 // One-stage SHAKE256 KDF (draft-ietf-hpke-pq-05 §5; key schedule per
-// draft-ietf-hpke-hpke-03 LabeledDerive / CombineSecrets_OneStage). Base and
+// draft-ietf-hpke-hpke-06 LabeledDerive / CombineSecrets_OneStage). Base and
 // PSK modes only. Engine support since hsm #310 (eda62b31).
 export const CKD_HPKE_SHAKE256 = 0x0011
 // CK_HPKE_AEAD_TYPE — equal to RFC 9180 §7.3 aead_id.
@@ -1798,9 +1798,14 @@ export const hsm_extractKeyValue = (
 ): Uint8Array => {
   // First call: get length
   const lenTpl = buildTemplate(M, [{ type: CKA_VALUE }])
-  checkRV(M._C_GetAttributeValue(hSession, keyHandle, lenTpl.ptr, 1), 'C_GetAttributeValue(len)')
-  const len = readUlong(M, lenTpl.ptr + 8)
-  freeTemplate(M, lenTpl, 1)
+  let len: number
+  try {
+    checkRV(M._C_GetAttributeValue(hSession, keyHandle, lenTpl.ptr, 1), 'C_GetAttributeValue(len)')
+    len = readUlong(M, lenTpl.ptr + 8)
+  } finally {
+    // freed on the refusal path too: a protected key refuses here by design
+    freeTemplate(M, lenTpl, 1)
+  }
 
   // Second call: get value
   const valPtr = M._malloc(len)

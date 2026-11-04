@@ -28,6 +28,8 @@ describe('v3.3 lesson wording', () => {
     const t = TERM_BY_ID['xof-digest-limit']
     expect(t.def).toContain('CKM_SHAKE_128')
     expect(t.def).toContain('result length of 0')
+    expect(t.def).toContain('as the draft requires')
+    expect(t.def).not.toContain('the engines here refuse')
   })
 
   it('lesson 2 names the before-3.3 way (two signs) beside the one-call way', () => {

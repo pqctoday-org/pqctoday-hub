@@ -15,6 +15,12 @@ describe('CopyButton accessible name', () => {
     expect(screen.getByRole('button', { name: 'Copy hash' })).toBeInTheDocument()
   })
 
+  it('an icon-only button can be given a more specific name for screen readers', () => {
+    render(<CopyButton text="abc" label="" ariaLabel="Copy enc" />)
+    const b = screen.getByRole('button', { name: 'Copy enc' })
+    expect(b.textContent).toBe('')
+  })
+
   it('an icon-only button (empty label) is still named "Copy" and shows no visible label', () => {
     render(<CopyButton text="abc" label="" />)
     const b = screen.getByRole('button', { name: 'Copy' })
