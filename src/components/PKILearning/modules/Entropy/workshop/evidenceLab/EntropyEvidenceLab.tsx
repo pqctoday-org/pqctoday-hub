@@ -166,6 +166,15 @@ export const EntropyEvidenceLab: FC = () => {
   const [restartRun, setRestartRun] = useState<RunState>(IDLE_RUN)
   const [chosen, setChosen] = useState<Verdict | null>(null)
   const [note, setNote] = useState('')
+  const [noteDrafts, setNoteDrafts] = useState<
+    {
+      caseId: string
+      title: string
+      datasetSha256: string | null
+      track: Track | null
+      note: string
+    }[]
+  >([])
   const seqAbort = useRef<AbortController | null>(null)
   const restartAbort = useRef<AbortController | null>(null)
   const loadToken = useRef(0)
@@ -209,9 +218,26 @@ export const EntropyEvidenceLab: FC = () => {
     setChosen(null)
   }, [])
 
+  const archiveNote = useCallback(() => {
+    if (caseId && note.trim()) {
+      setNoteDrafts((previous) => [
+        ...previous,
+        {
+          caseId,
+          title: labCase?.title ?? caseId,
+          datasetSha256: seqData?.sha256 ?? null,
+          track,
+          note,
+        },
+      ])
+    }
+    setNote('')
+  }, [caseId, labCase?.title, seqData?.sha256, track, note])
+
   const selectCase = useCallback(
     (id: string) => {
       if (id === caseId || !manifest) return
+      archiveNote()
       resetRuns()
       setCaseId(id)
       setSeqData(null)
@@ -226,16 +252,17 @@ export const EntropyEvidenceLab: FC = () => {
             token === loadToken.current && setDataError(e instanceof Error ? e.message : String(e))
         )
     },
-    [caseId, manifest, resetRuns]
+    [caseId, manifest, resetRuns, archiveNote]
   )
 
   const chooseTrack = useCallback(
     (t: Track) => {
       if (t === track) return
+      archiveNote()
       resetRuns()
       setTrack(t)
     },
-    [track, resetRuns]
+    [track, resetRuns, archiveNote]
   )
 
   const runSeq = useCallback(async () => {
@@ -635,6 +662,26 @@ export const EntropyEvidenceLab: FC = () => {
         </p>
       </header>
 
+      {noteDrafts.length > 0 && (
+        <details className="rounded border border-border p-3">
+          <summary>Previous conclusion drafts ({noteDrafts.length})</summary>
+          <p className="text-sm">
+            These drafts belong to their original datasets and tracks. They are not conclusions for
+            the current case. Drafts remain available in this open lab session.
+          </p>
+          {noteDrafts.map((draft, index) => (
+            <article key={index} aria-label={`Conclusion draft ${index + 1}`} className="mt-3">
+              <h4>
+                {draft.title} — {draft.track ?? 'Track not selected'}
+              </h4>
+              <p className="break-all text-xs">
+                Dataset SHA-256: {draft.datasetSha256 ?? 'Not loaded when drafted'}
+              </p>
+              <pre className="whitespace-pre-wrap text-sm">{draft.note}</pre>
+            </article>
+          ))}
+        </details>
+      )}
       <nav aria-label="Evidence lab steps">
         <ol className="flex flex-wrap gap-1.5">
           {SCREENS.map((sc, i) => (

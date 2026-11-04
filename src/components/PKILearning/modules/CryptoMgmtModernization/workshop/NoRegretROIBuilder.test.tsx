@@ -115,4 +115,26 @@ describe('NoRegretROIBuilder', () => {
     render(<NoRegretROIBuilder />)
     expect(screen.getByText('Reset all')).toBeInTheDocument()
   })
+  it('imports zero HSMs from a library-only CBOM instead of retaining ten default HSMs', () => {
+    const cbomAssets: CbomExportItem[] = [
+      {
+        name: 'Sample library',
+        version: '1',
+        type: 'library',
+        fipsStatus: 'not-validated',
+        esvStatus: 'not-validated',
+        pqcSupport: 'unknown',
+        posture: 'yellow',
+        notes: '',
+      },
+    ]
+    render(<NoRegretROIBuilder cbomAssets={cbomAssets} />)
+    fireEvent.click(screen.getByRole('button', { name: /Pull from Step 3 CBOM/ }))
+    fireEvent.click(screen.getAllByRole('button', { name: 'Show math' })[3])
+    expect(screen.getByRole('slider', { name: 'HSM count' })).toHaveValue('0')
+    expect(screen.getByRole('slider', { name: 'Library count' })).toHaveValue('1')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'partial inventory does not establish whole-organisation counts'
+    )
+  })
 })

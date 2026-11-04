@@ -52,6 +52,34 @@ describe('TLS simulator run record', () => {
     expect(m.limitations).toEqual(TLS_RUN_LIMITATIONS)
   })
 
+  it('exports the saved run inputs when the current editor has different settings', () => {
+    const original = structuredClone(CONFIG)
+    const run = {
+      ...RUN,
+      inputs: {
+        clientConfig: original,
+        serverConfig: { ...original, verifyClient: false },
+        clientMessage: 'original request',
+        serverMessage: 'original reply',
+      },
+    }
+    const edited = { ...CONFIG, groups: ['P-256'], verifyClient: true }
+    const manifest = tlsRunManifest(
+      {
+        run,
+        clientConfig: edited,
+        serverConfig: edited,
+        toolVersion: '1',
+        startedAt: 'a',
+        finishedAt: 'b',
+      },
+      SITE
+    )
+    expect(manifest.inputs.clientGroups).toEqual(['X25519MLKEM768', 'X25519'])
+    expect(manifest.inputs.mutualTls).toBe(false)
+    expect(manifest.inputs.clientMessage).toBe('original request')
+  })
+
   it('says plainly when the key exchange was classical only', () => {
     const m = tlsRunManifest(
       {

@@ -301,23 +301,27 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
       .sort((a, b) => b.share - a.share)
   }, [outage, clm, fips, cve, ma, qDep, qIndep])
 
+  const [countsImported, setCountsImported] = useState(false)
+
   // Pull HSM + library counts from the CBOM built in Step 3.
   const hsmFromCbom = cbomAssets.filter((a) => a.type === 'hsm').length
   const libFromCbom = cbomAssets.filter((a) => a.type === 'library').length
   const canPullFromCbom = hsmFromCbom > 0 || libFromCbom > 0
   const handlePullFromCbom = () => {
+    setCountsImported(true)
     setFipsP((p) => ({
       ...p,
-      hsmCount: hsmFromCbom > 0 ? hsmFromCbom : p.hsmCount,
-      libraryCount: libFromCbom > 0 ? libFromCbom : p.libraryCount,
+      hsmCount: hsmFromCbom,
+      libraryCount: libFromCbom,
     }))
     setCveP((p) => ({
       ...p,
-      cvesPerYear: libFromCbom > 0 ? Math.max(1, Math.round(libFromCbom * 0.3)) : p.cvesPerYear,
+      cvesPerYear: libFromCbom > 0 ? Math.max(1, Math.round(libFromCbom * 0.3)) : 0,
     }))
   }
 
   const handleResetAll = () => {
+    setCountsImported(false)
     setHorizonYears(3)
     setDiscountRate(0)
     setPCrqc(1.0)
@@ -332,6 +336,13 @@ export const NoRegretROIBuilder: React.FC<NoRegretROIBuilderProps> = ({ cbomAsse
 
   return (
     <div className="space-y-6">
+      {countsImported && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Counts use only the imported sample CBOM, including zero for absent categories. A partial
+          inventory does not establish whole-organisation counts. Other rates and costs remain
+          illustrative assumptions.
+        </p>
+      )}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <p className="text-sm text-muted-foreground max-w-3xl">
           Tune your organization&apos;s assumptions. Every headline number expands into the

@@ -48,6 +48,7 @@ export const TLSSimulatorTab: React.FC = () => {
     clientMessage,
     serverMessage,
     runHistory,
+    runInputs,
   } = useTLSStore()
   const runStartedAt = useRef<string>('')
   // The record must describe THIS run: the history entry is added just after
@@ -64,8 +65,8 @@ export const TLSSimulatorTab: React.FC = () => {
     if (!lastRun) return null
     return tlsRunManifest({
       run: lastRun,
-      clientConfig,
-      serverConfig,
+      clientConfig: lastRun.inputs?.clientConfig ?? clientConfig,
+      serverConfig: lastRun.inputs?.serverConfig ?? serverConfig,
       toolVersion: TLS_SIMULATOR_VERSION,
       startedAt: runStartedAt.current || new Date(lastRun.timestamp).toISOString(),
       finishedAt: new Date(lastRun.timestamp).toISOString(),
@@ -436,7 +437,7 @@ export const TLSSimulatorTab: React.FC = () => {
         <TLSSummary
           events={results.trace || []}
           status={results.status === 'success' ? 'success' : 'failed'}
-          mTLSEnabled={serverConfig.verifyClient ?? false}
+          mTLSEnabled={(runInputs?.serverConfig ?? serverConfig).verifyClient ?? false}
         />
       )}
 

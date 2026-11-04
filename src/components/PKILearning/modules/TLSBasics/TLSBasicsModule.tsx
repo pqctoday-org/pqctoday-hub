@@ -68,6 +68,7 @@ export const TLSBasicsModule: React.FC = () => {
     setServerConfig,
     isSimulating,
     setIsSimulating,
+    runInputs,
     results,
     setResults,
     commands,
@@ -440,7 +441,7 @@ export const TLSBasicsModule: React.FC = () => {
               <TLSSummary
                 events={results.trace || []}
                 status={results.status === 'success' ? 'success' : 'failed'}
-                mTLSEnabled={serverConfig.verifyClient ?? false}
+                mTLSEnabled={(runInputs?.serverConfig ?? serverConfig).verifyClient ?? false}
               />
             )}
 
