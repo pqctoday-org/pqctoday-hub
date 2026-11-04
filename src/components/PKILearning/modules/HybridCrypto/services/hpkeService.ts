@@ -26,8 +26,8 @@
  *   RFC 9180                            https://www.rfc-editor.org/rfc/rfc9180.html
  *   draft-ietf-hpke-pq                  https://datatracker.ietf.org/doc/draft-ietf-hpke-pq/
  *   draft-irtf-cfrg-hybrid-kems-12      https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems-12
- *   draft-irtf-cfrg-concrete-hybrid-kems-03
- *                                        https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems-03
+ *   draft-irtf-cfrg-concrete-hybrid-kems-04
+ *                                        https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems-04
  *
  * PQ/T hybrid KEM note (MLKEM768-X25519 / MLKEM768-P256 / MLKEM1024-P384):
  * draft-ietf-hpke-pq defines these KEM IDs but delegates their actual
@@ -65,11 +65,19 @@
  * stays a non-extractable PKCS#11 key handle from creation to use. The
  * combiner is built as a chain of CKM_CONCATENATE_BASE_AND_KEY /
  * CKM_CONCATENATE_BASE_AND_DATA (§6.43.3/.4) + CKM_SHA3_256_KEY_DERIVATION
- * (§6.29) calls, all standard OASIS mechanisms — not vendor-defined, and not
- * PKCS#11 v3.3's still-unratified CKM_COMP_KEM, which targets a different
- * spec (draft-ietf-lamps-pq-composite-kem, LAMPS WG) with the same combiner
- * *shape* (SHA3-256 over the same 5 operands) but is not a conformant
- * substitute for this construction (draft-irtf-cfrg-hybrid-kems, CFRG WG).
+ * (§6.29) calls, all standard OASIS mechanisms — not vendor-defined.
+ *
+ * The PKCS#11 v3.3 working draft's CKM_COMP_KEM (draft-ietf-lamps-pq-composite-kem,
+ * LAMPS WG) computes this same shared secret for these three suites: same
+ * SHA3-256, same operand order, same labels, same PQ-first key and ciphertext
+ * layout. That is measured in the reference engine (30 CFRG vectors, 3 X-Wing
+ * vectors, and 30 composite ciphertexts decapsulated by the HPKE-PQ KEM code;
+ * pqctoday-hsm rust/kat/hpke/COMPOSITE-KEM-EQUIVALENCE.md), so
+ * compositeEncap/compositeDecap below offer it as a third way to do the
+ * key-agreement step. It is not a drop-in for the whole construction: its private
+ * key is a 64-byte ML-KEM seed plus the traditional key, not HPKE-PQ's
+ * 32-byte seed, and it has no KeySchedule, AEAD or Export. Both sides are
+ * drafts and can still change.
  * RFC 9180's own `secret = LabeledExtract(shared_secret, "secret", psk)`
  * puts shared_secret in the *salt* role, which lets ss_H be passed straight
  * in via CKF_HKDF_SALT_KEY (§6.62.3) — never read out. Only base_nonce and
@@ -130,6 +138,12 @@ import {
   CKM_SHA384_HMAC,
   CKM_SHA512_HMAC,
 } from '@/wasm/softhsm'
+import {
+  CKP_COMP_KEM_MLKEM1024_ECDH_P384,
+  CKP_COMP_KEM_MLKEM768_ECDH_P256,
+  CKP_COMP_KEM_MLKEM768_X25519,
+} from '@/wasm/softhsm/constants'
+import { hsm_compositeDecapsulate, hsm_compositeEncapsulate } from '@/wasm/softhsm/v33'
 
 export interface Hctx {
   M: SoftHSMModule
@@ -144,6 +158,9 @@ export const HPKE_KEM = {
   DHKEM_P521_HKDF_SHA512: 0x0012,
   DHKEM_X25519_HKDF_SHA256: 0x0020,
   DHKEM_X448_HKDF_SHA512: 0x0021,
+  MLKEM512: 0x0040,
+  MLKEM768: 0x0041,
+  MLKEM1024: 0x0042,
   MLKEM768_P256: 0x0050,
   MLKEM768_X25519: 0x647a,
   MLKEM1024_P384: 0x0051,
@@ -152,6 +169,14 @@ export type HpkeKemId = (typeof HPKE_KEM)[keyof typeof HPKE_KEM]
 
 export const HPKE_KDF = { HKDF_SHA256: 0x0001, HKDF_SHA384: 0x0002, HKDF_SHA512: 0x0003 } as const
 export type HpkeKdfId = (typeof HPKE_KDF)[keyof typeof HPKE_KDF]
+/**
+ * draft-ietf-hpke-pq-05 §5: the one-stage SHAKE256 KDF (kdf_id 0x0011). Kept out of
+ * HPKE_KDF on purpose: PKCS#11 v3.2 and the v3.3 draft have no standard
+ * SHAKE256 key-derivation step, so only the PQCToday single-call sequence can run
+ * it. kdfInfo() therefore refuses it, and the workshop offers it in that
+ * sequence only.
+ */
+export const HPKE_KDF_SHAKE256 = 0x0011 as const
 
 export const HPKE_AEAD = {
   AES_128_GCM: 0x0001,
@@ -190,7 +215,16 @@ interface HybridKemInfo {
   Npk: number
   auth: false
 }
-type KemInfo = ClassicalKemInfo | HybridKemInfo
+/** draft-ietf-hpke-pq-05 §3: ML-KEM used on its own (no traditional half). */
+interface PqKemInfo {
+  kind: 'pq'
+  pqVariant: 512 | 768 | 1024
+  Nsecret: number
+  Nenc: number
+  Npk: number
+  auth: false
+}
+type KemInfo = ClassicalKemInfo | HybridKemInfo | PqKemInfo
 
 const utf8 = (s: string) => new TextEncoder().encode(s)
 
@@ -239,6 +273,31 @@ const KEM_TABLE: Record<number, KemInfo> = {
     Npk: 56,
     auth: true,
     internalKdf: HPKE_KDF.HKDF_SHA512,
+  },
+  // FIPS 203 Table 3 sizes: ek 800 / 1184 / 1568, ciphertext 768 / 1088 / 1568.
+  [HPKE_KEM.MLKEM512]: {
+    kind: 'pq',
+    pqVariant: 512,
+    Nsecret: 32,
+    Nenc: 768,
+    Npk: 800,
+    auth: false,
+  },
+  [HPKE_KEM.MLKEM768]: {
+    kind: 'pq',
+    pqVariant: 768,
+    Nsecret: 32,
+    Nenc: 1088,
+    Npk: 1184,
+    auth: false,
+  },
+  [HPKE_KEM.MLKEM1024]: {
+    kind: 'pq',
+    pqVariant: 1024,
+    Nsecret: 32,
+    Nenc: 1568,
+    Npk: 1568,
+    auth: false,
   },
   [HPKE_KEM.MLKEM768_P256]: {
     kind: 'hybrid',
@@ -976,6 +1035,81 @@ export function hybridDecap(
   const ssTHandle = dhSecretHandle(ctx, dkTHandle, ctTPoint, ndhOf(info.curve))
 
   return hybridCombinerSecure(ctx, ssPQHandle, ssTHandle, ctT, ekT, info.label)
+}
+
+// ── Pure ML-KEM (draft-ietf-hpke-pq-05 §3) ───────────────────────────────────
+
+/**
+ * Encap(ek) for ML-KEM used on its own. No combiner: the KEM secret is the
+ * ML-KEM secret, kept as a non-extractable handle, and `enc` is the ML-KEM
+ * ciphertext. Base and PSK modes only (the draft marks Auth "no").
+ */
+export function pqEncap(
+  ctx: Hctx,
+  kemId: number,
+  ek: Uint8Array
+): { sharedSecretHandle: number; enc: Uint8Array } {
+  const info = kemInfo(kemId)
+  if (info.kind !== 'pq') throw new Error(`kem_id 0x${kemId.toString(16)} is not a pure ML-KEM`)
+  const ekHandle = importMLKEMPublic(ctx, info.pqVariant, ek)
+  const { ciphertextBytes, secretHandle } = hsm_encapsulate(
+    ctx.M,
+    ctx.hSession,
+    ekHandle,
+    info.pqVariant,
+    false
+  )
+  return { sharedSecretHandle: secretHandle, enc: ciphertextBytes }
+}
+
+/** Mirrors pqEncap: a handle to the ML-KEM secret, never bytes. */
+export function pqDecap(ctx: Hctx, kemId: number, enc: Uint8Array, dkHandle: number): number {
+  const info = kemInfo(kemId)
+  if (info.kind !== 'pq') throw new Error(`kem_id 0x${kemId.toString(16)} is not a pure ML-KEM`)
+  return hsm_decapsulate(ctx.M, ctx.hSession, dkHandle, enc, info.pqVariant, false)
+}
+
+// ── PKCS#11 v3.3 draft: the key-agreement step through CKM_COMP_KEM ──────────
+
+/**
+ * The CKP_COMP_KEM_* parameter set that equals an HPKE-PQ hybrid KEM, or
+ * undefined for every other KEM (classical DHKEM, pure ML-KEM). A function,
+ * not a table: see the note above kdfTable on top-level evaluation.
+ */
+export function compositeKemCkp(kemId: number): number | undefined {
+  switch (kemId) {
+    case HPKE_KEM.MLKEM768_X25519:
+      return CKP_COMP_KEM_MLKEM768_X25519
+    case HPKE_KEM.MLKEM768_P256:
+      return CKP_COMP_KEM_MLKEM768_ECDH_P256
+    case HPKE_KEM.MLKEM1024_P384:
+      return CKP_COMP_KEM_MLKEM1024_ECDH_P384
+    default:
+      return undefined
+  }
+}
+
+/**
+ * Encap(ek_H) in one C_EncapsulateKey(CKM_COMP_KEM) call: the ML-KEM and
+ * traditional halves, the SHA3-256 combiner and its label all happen inside
+ * the token. Returns the same two values hybridEncap does, and the secret is
+ * a protected handle (non-extractable, usable as an HKDF salt key).
+ */
+export function compositeEncap(
+  ctx: Hctx,
+  pubHandle: number
+): { sharedSecretHandle: number; enc: Uint8Array } {
+  const { ciphertext, secretHandle } = hsm_compositeEncapsulate(ctx.M, ctx.hSession, pubHandle, {
+    protectedSecret: true,
+  })
+  return { sharedSecretHandle: secretHandle, enc: ciphertext }
+}
+
+/** Mirrors compositeEncap: one C_DecapsulateKey(CKM_COMP_KEM), a handle back. */
+export function compositeDecap(ctx: Hctx, privHandle: number, enc: Uint8Array): number {
+  return hsm_compositeDecapsulate(ctx.M, ctx.hSession, privHandle, enc, {
+    protectedSecret: true,
+  })
 }
 
 function importMLKEMPublic(ctx: Hctx, variant: 512 | 768 | 1024, bytes: Uint8Array): number {

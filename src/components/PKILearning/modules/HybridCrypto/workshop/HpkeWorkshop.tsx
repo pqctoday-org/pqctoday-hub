@@ -36,6 +36,12 @@ import {
   dhkemAuthDecap,
   hybridEncap,
   hybridDecap,
+  pqEncap,
+  pqDecap,
+  compositeEncap,
+  compositeDecap,
+  compositeKemCkp,
+  HPKE_KDF_SHAKE256,
   keySchedule,
   keyScheduleSecure,
   seal,
@@ -47,12 +53,16 @@ import {
   stripEcPointDer,
   type Hctx,
   type HpkeKemId,
-  type HpkeKdfId,
   type HpkeAeadId,
   type HpkeModeId,
   type HpkeContext,
   type HpkeContextSecure,
 } from '../services/hpkeService'
+import {
+  compositeKemSet,
+  hsm_detectV33Support,
+  hsm_generateCompositeKeyPair,
+} from '@/wasm/softhsm/v33'
 import { HpkeDiagram, type HpkeDiagramStage } from './HpkeDiagram'
 
 // ── PKCS#11 operations exercised by this workshop ────────────────────────────
@@ -80,6 +90,9 @@ const HPKE_LIVE_OPERATIONS = [
 // via the 'candidate' CKM_HPKE single-call mechanism, which never lets a
 // shared secret cross the FFI boundary regardless of KEM family.
 const KEM_OPTIONS = [
+  { id: String(HPKE_KEM.MLKEM512), label: 'ML-KEM-512 (PQ only)' },
+  { id: String(HPKE_KEM.MLKEM768), label: 'ML-KEM-768 (PQ only)' },
+  { id: String(HPKE_KEM.MLKEM1024), label: 'ML-KEM-1024 (PQ only)' },
   { id: String(HPKE_KEM.MLKEM768_X25519), label: 'MLKEM768-X25519 (PQ-hybrid)' },
   { id: String(HPKE_KEM.MLKEM768_P256), label: 'MLKEM768-P256 (PQ-hybrid)' },
   { id: String(HPKE_KEM.MLKEM1024_P384), label: 'MLKEM1024-P384 (PQ-hybrid)' },
@@ -89,6 +102,9 @@ const KDF_OPTIONS = [
   { id: String(HPKE_KDF.HKDF_SHA384), label: 'HKDF-SHA384' },
   { id: String(HPKE_KDF.HKDF_SHA512), label: 'HKDF-SHA512' },
 ]
+// draft-ietf-hpke-pq-05 §5. Offered in the PQCToday single-call sequence only:
+// PKCS#11 v3.2 and the v3.3 draft have no standard SHAKE256 key-derivation step.
+const SHAKE256_KDF_OPTION = { id: String(HPKE_KDF_SHAKE256), label: 'SHAKE256 (one-stage)' }
 const AEAD_OPTIONS = [
   { id: String(HPKE_AEAD.AES_128_GCM), label: 'AES-128-GCM' },
   { id: String(HPKE_AEAD.AES_256_GCM), label: 'AES-256-GCM' },
@@ -140,6 +156,10 @@ interface WorkshopState {
   hpkeSenderPubHandle?: number
   hpkeSenderPrivHandle?: number
   hpkeSenderPkBytes?: Uint8Array
+  // ── PKCS#11 v3.3 draft path — one CKK_COMP_KEM keypair per side; Encap/Decap
+  // are one CKM_COMP_KEM call each. KeySchedule and Seal/Open stay composed.
+  v33PubHandle?: number
+  v33PrivHandle?: number
   hpkePskHandle?: number
   candidateKeyHandle?: number
   candidateBaseNonce?: Uint8Array
@@ -147,10 +167,18 @@ interface WorkshopState {
   candidateRecipientBaseNonce?: Uint8Array
 }
 
-type HpkeEngineMode = 'composed' | 'candidate'
+/**
+ * The three groups the workshop shows (owner rule: both the before-3.3 and the
+ * after-3.3 way, and the PQCToday proposal kept apart because it is in neither):
+ * 'composed' = PKCS#11 v3.2 standard pieces; 'candidate' = the PQCToday
+ * single-call CKM_HPKE proposal; 'v33' = the PKCS#11 v3.3 draft's CKM_COMP_KEM.
+ */
+type HpkeEngineMode = 'composed' | 'candidate' | 'v33'
 
 function ecCurveOf(kemId: number): 'P-256' | 'P-384' | 'P-521' | 'X25519' | 'X448' {
-  return kemInfo(kemId).curve
+  const info = kemInfo(kemId)
+  if (info.kind === 'pq') throw new Error('Pure ML-KEM has no traditional (EC) component')
+  return info.curve
 }
 
 const STEP_DIVIDER = '\n\n' + '━'.repeat(50) + '\n\n'
@@ -181,7 +209,7 @@ function extractRawPoint(
 export const HpkeWorkshop: React.FC = () => {
   const hsm = useHSM()
   const [kemId, setKemId] = useState<HpkeKemId>(HPKE_KEM.MLKEM768_X25519)
-  const [kdfId, setKdfId] = useState<HpkeKdfId>(HPKE_KDF.HKDF_SHA256)
+  const [kdfId, setKdfId] = useState<number>(HPKE_KDF.HKDF_SHA256)
   const [aeadId, setAeadId] = useState<HpkeAeadId>(HPKE_AEAD.AES_128_GCM)
   const [mode, setMode] = useState<HpkeModeId>(HPKE_MODE.BASE)
   const [stage, setStage] = useState<HpkeDiagramStage>('idle')
@@ -190,13 +218,32 @@ export const HpkeWorkshop: React.FC = () => {
 
   const info = kemInfo(kemId)
   const isHybrid = info.kind === 'hybrid'
-  const modeOptions = isHybrid ? ALL_MODE_OPTIONS.slice(0, 2) : ALL_MODE_OPTIONS
+  const isPq = info.kind === 'pq'
+  // Hybrids and pure ML-KEM keep every secret as a non-extractable handle and
+  // have no Auth modes (draft-ietf-hpke-pq marks the Auth column "no").
+  const handlePath = isHybrid || isPq
+  const modeOptions = handlePath ? ALL_MODE_OPTIONS.slice(0, 2) : ALL_MODE_OPTIONS
+  const compositeCkp = compositeKemCkp(kemId)
+  // The v3.3 draft sequence needs an engine that advertises CKM_COMP_KEM. It is
+  // asked when the sequence is chosen and again in Step 1; never assumed.
+  const [v33Missing, setV33Missing] = useState(false)
+
+  const v33Reason =
+    info.kind === 'pq'
+      ? 'Pure ML-KEM uses the same v3.2 mechanism in the v3.3 draft; the draft adds nothing for it.'
+      : info.kind === 'dhkem'
+        ? 'The v3.3 draft’s composite KEM covers the three hybrid suites only.'
+        : v33Missing
+          ? 'Not in this engine yet: the loaded engine does not advertise CKM_COMP_KEM.'
+          : ''
 
   const selectKem = useCallback((id: string) => {
     const next = Number(id) as HpkeKemId
     setKemId(next)
-    if (kemInfo(next).kind === 'hybrid')
+    if (kemInfo(next).kind !== 'dhkem')
       setMode((m) => (m === HPKE_MODE.AUTH || m === HPKE_MODE.AUTH_PSK ? HPKE_MODE.BASE : m))
+    // The v3.3 draft sequence exists only for the three hybrid suites.
+    setEngineMode((m) => (m === 'v33' && compositeKemCkp(next) === undefined ? 'composed' : m))
     stateRef.current = {} as WorkshopState
     setStage('idle')
   }, [])
@@ -209,15 +256,23 @@ export const HpkeWorkshop: React.FC = () => {
         description:
           engineMode === 'candidate'
             ? `The recipient generates one CKK_HPKE_KEM keypair in a single call — classical or hybrid shape is selected entirely by \`kemId\` (CKA_PARAMETER_SET); the engine builds ek_H = concat(ek_PQ, ek_T) internally for hybrid suites, so the caller never assembles it by hand.`
-            : isHybrid
-              ? `The recipient generates two independent keypairs — ML-KEM-${info.kind === 'hybrid' ? info.pqVariant : ''} and ${ecCurveOf(kemId)} — since this SoftHSM build cannot derive both from one seed (RFC 9180 §5.2's sanctioned "shared seed" deviation for hardware that lacks a general-purpose SHAKE256 PRG). The encapsulation key ek_H = concat(ek_PQ, ek_T) — PQ first.`
-              : `The recipient generates a ${ecCurveOf(kemId)} keypair. Its public point IS pkR — DHKEM's whole encapsulation key.`,
+            : engineMode === 'v33'
+              ? `The recipient generates one CKK_COMP_KEM keypair in a single call (CKM_COMP_KEM_KEY_PAIR_GEN, a PKCS#11 v3.3 draft mechanism). The parameter set (CKA_PARAMETER_SET) selects the ML-KEM-${info.kind === 'hybrid' ? info.pqVariant : ''} half and the ${ecCurveOf(kemId)} half; the public value is already ek_H = ek_PQ ‖ ek_T, the same bytes HPKE-PQ sends, so the caller never assembles it by hand.`
+              : info.kind === 'pq'
+                ? `The recipient generates an ML-KEM-${info.pqVariant} keypair. Its encapsulation key IS pkR: there is no traditional half and no combiner.`
+                : isHybrid
+                  ? `The recipient generates two independent keypairs — ML-KEM-${info.kind === 'hybrid' ? info.pqVariant : ''} and ${ecCurveOf(kemId)} — since this SoftHSM build cannot derive both from one seed (RFC 9180 §5.2's sanctioned "shared seed" deviation for hardware that lacks a general-purpose SHAKE256 PRG). The encapsulation key ek_H = concat(ek_PQ, ek_T) — PQ first.`
+                  : `The recipient generates a ${ecCurveOf(kemId)} keypair. Its public point IS pkR — DHKEM's whole encapsulation key.`,
         code:
           engineMode === 'candidate'
             ? `const { pubHandle, privHandle } = hsm_generateHpkeKeyPair(\n  M, s, kemId  // CKM_HPKE_KEM_KEY_PAIR_GEN\n)`
-            : isHybrid
-              ? `const mlkem = hsm_generateMLKEMKeyPair(M, s, ${info.kind === 'hybrid' ? info.pqVariant : 768})\nconst ec = hsm_generateECKeyPair(M, s, '${ecCurveOf(kemId)}', false)\nconst ekH = concat(ekPQ, ekT)  // PQ-component-first`
-              : `const { pubHandle, privHandle } = hsm_generateECKeyPair(\n  M, s, '${ecCurveOf(kemId)}', false\n)`,
+            : engineMode === 'v33'
+              ? `const { pubHandle, privHandle } = hsm_generateCompositeKeyPair(\n  M, s, 'kem', ${compositeKemSet(compositeCkp ?? 0)?.ckpName ?? 'CKP_COMP_KEM_…'}  // CKM_COMP_KEM_KEY_PAIR_GEN\n)\nconst ekH = hsm_extractKeyValue(M, s, pubHandle)  // ek_PQ ‖ ek_T`
+              : info.kind === 'pq'
+                ? `const mlkem = hsm_generateMLKEMKeyPair(M, s, ${info.pqVariant})\nconst ekH = hsm_extractKeyValue(M, s, mlkem.pubHandle)  // ML-KEM encapsulation key`
+                : isHybrid
+                  ? `const mlkem = hsm_generateMLKEMKeyPair(M, s, ${info.kind === 'hybrid' ? info.pqVariant : 768})\nconst ec = hsm_generateECKeyPair(M, s, '${ecCurveOf(kemId)}', false)\nconst ekH = concat(ekPQ, ekT)  // PQ-component-first`
+                  : `const { pubHandle, privHandle } = hsm_generateECKeyPair(\n  M, s, '${ecCurveOf(kemId)}', false\n)`,
         language: 'javascript',
         actionLabel: 'Generate Recipient Keypair',
         explanationTable: [
@@ -226,13 +281,19 @@ export const HpkeWorkshop: React.FC = () => {
             value:
               engineMode === 'candidate'
                 ? 'CKM_HPKE_KEM_KEY_PAIR_GEN (candidate)'
-                : isHybrid
-                  ? 'CKM_ML_KEM_KEY_PAIR_GEN + CKM_EC(_MONTGOMERY)_KEY_PAIR_GEN'
-                  : 'CKM_EC(_MONTGOMERY)_KEY_PAIR_GEN',
+                : engineMode === 'v33'
+                  ? 'CKM_COMP_KEM_KEY_PAIR_GEN (v3.3 draft)'
+                  : info.kind === 'pq'
+                    ? 'CKM_ML_KEM_KEY_PAIR_GEN'
+                    : isHybrid
+                      ? 'CKM_ML_KEM_KEY_PAIR_GEN + CKM_EC(_MONTGOMERY)_KEY_PAIR_GEN'
+                      : 'CKM_EC(_MONTGOMERY)_KEY_PAIR_GEN',
             description:
               engineMode === 'candidate'
-                ? 'One vendor mechanism, one CKK_HPKE_KEM object — not yet OASIS TC allocated'
-                : 'PKCS#11 v3.2 keypair generation — HPKE has no keypair mechanism of its own',
+                ? 'One vendor mechanism, one CKK_HPKE_KEM object — a PQCToday proposal, in no standard'
+                : engineMode === 'v33'
+                  ? 'One mechanism, one CKK_COMP_KEM object — in the PKCS#11 v3.3 working draft; no v3.3 document is published yet'
+                  : 'PKCS#11 v3.2 keypair generation — HPKE has no keypair mechanism of its own',
           },
           {
             label: 'kem_id',
@@ -249,7 +310,9 @@ export const HpkeWorkshop: React.FC = () => {
         code:
           engineMode === 'candidate'
             ? `const sender = hsm_generateHpkeKeyPair(M, s, kemId)\nconst psk = crypto.getRandomValues(new Uint8Array(32))`
-            : `const skS = hsm_generateECKeyPair(M, s, '${ecCurveOf(kemId)}', false)\nconst psk = crypto.getRandomValues(new Uint8Array(32))`,
+            : handlePath
+              ? `// No sender static key: ML-KEM has no Auth interface (draft-ietf-hpke-pq)\nconst psk = crypto.getRandomValues(new Uint8Array(32))`
+              : `const skS = hsm_generateECKeyPair(M, s, '${ecCurveOf(kemId)}', false)\nconst psk = crypto.getRandomValues(new Uint8Array(32))`,
         language: 'javascript',
         actionLabel: 'Provision Sender Key + PSK',
         explanationTable: [
@@ -273,17 +336,25 @@ export const HpkeWorkshop: React.FC = () => {
         description:
           engineMode === 'candidate'
             ? 'This candidate CKM_HPKE mechanism (a PQCToday vendor proposal, not yet OASIS TC allocated) fuses Encap — plus, for hybrid suites, the PQ/T combiner — AND KeySchedule into one C_EncapsulateKey call: it returns enc alongside an already-derived AEAD key handle and base_nonce. No intermediate shared_secret ever becomes a JS-visible value of ANY kind, extractable or not — unlike the composed path, which always hands back at least a handle for it.'
-            : isHybrid
-              ? 'PKCS#11 v3.2 defines no CKM_HPKE mechanism (checked against the canonical v3.2 header — no HPKE entry exists). Encap combines CKM_ML_KEM and CKM_ECDH1_DERIVE, then builds ss_H via CKM_CONCATENATE_BASE_AND_KEY/_DATA + CKM_SHA3_256_KEY_DERIVATION — ss_PQ, ss_T, and ss_H all stay non-extractable key handles, never bytes.'
-              : 'PKCS#11 v3.2 defines no CKM_HPKE mechanism (checked against the canonical v3.2 header — no HPKE entry exists). Encap is composed from CKM_ECDH1_DERIVE (classical) or CKM_ML_KEM + CKM_ECDH1_DERIVE (PQ-hybrid), then RFC 9180’s LabeledExtract/LabeledExpand built from CKM_HKDF_DERIVE and C_Sign(CKM_SHA*_HMAC).',
+            : engineMode === 'v33'
+              ? 'One C_EncapsulateKey(CKM_COMP_KEM) call (PKCS#11 v3.3 draft) does what the v3.2 sequence needs five or six calls for: the ML-KEM encapsulation, the traditional key agreement, and the SHA3-256 combiner with its label, all inside the token. It returns enc and ss_H as a protected handle. KeySchedule and Seal/Open still use the v3.2 pieces (HKDF and AEAD).'
+              : info.kind === 'pq'
+                ? 'Encap is one ML-KEM encapsulation (C_EncapsulateKey with CKM_ML_KEM). The KEM secret is the ML-KEM secret and enc is the ML-KEM ciphertext; there is no combiner. The secret stays a non-extractable handle.'
+                : isHybrid
+                  ? 'PKCS#11 v3.2 defines no CKM_HPKE mechanism (checked against the canonical v3.2 header — no HPKE entry exists). Encap combines CKM_ML_KEM and CKM_ECDH1_DERIVE, then builds ss_H via CKM_CONCATENATE_BASE_AND_KEY/_DATA + CKM_SHA3_256_KEY_DERIVATION — ss_PQ, ss_T, and ss_H all stay non-extractable key handles, never bytes.'
+                  : 'PKCS#11 v3.2 defines no CKM_HPKE mechanism (checked against the canonical v3.2 header — no HPKE entry exists). Encap is composed from CKM_ECDH1_DERIVE (classical) or CKM_ML_KEM + CKM_ECDH1_DERIVE (PQ-hybrid), then RFC 9180’s LabeledExtract/LabeledExpand built from CKM_HKDF_DERIVE and C_Sign(CKM_SHA*_HMAC).',
         code:
           engineMode === 'candidate'
             ? `const { enc, keyHandle, baseNonce } = hsm_hpkeEncapsulate(\n  M, s, pubHandle,\n  { kemId, kdfId, aeadId, mode, info${mode === HPKE_MODE.AUTH || mode === HPKE_MODE.AUTH_PSK ? ', hSenderStaticKey' : ''}${mode === HPKE_MODE.PSK || mode === HPKE_MODE.AUTH_PSK ? ', hPsk, pskId' : ''} }\n)  // CKM_HPKE — Encap + KeySchedule in ONE call`
             : mode === HPKE_MODE.AUTH || mode === HPKE_MODE.AUTH_PSK
               ? `const { sharedSecret, enc } = dhkemAuthEncap(ctx, kemId, pkR, skS, pkS)`
-              : isHybrid
-                ? `const { sharedSecretHandle, enc } = hybridEncap(ctx, kemId, ekH)`
-                : `const { sharedSecret, enc } = dhkemEncap(ctx, kemId, pkR)`,
+              : engineMode === 'v33'
+                ? `const { sharedSecretHandle, enc } = compositeEncap(ctx, pubHandle)  // C_EncapsulateKey(CKM_COMP_KEM)`
+                : info.kind === 'pq'
+                  ? `const { sharedSecretHandle, enc } = pqEncap(ctx, kemId, ekH)  // C_EncapsulateKey(CKM_ML_KEM)`
+                  : isHybrid
+                    ? `const { sharedSecretHandle, enc } = hybridEncap(ctx, kemId, ekH)`
+                    : `const { sharedSecret, enc } = dhkemEncap(ctx, kemId, pkR)`,
         language: 'javascript',
         actionLabel: 'Encapsulate',
         explanationTable:
@@ -294,7 +365,9 @@ export const HpkeWorkshop: React.FC = () => {
                   value: `${info.Nenc} bytes`,
                   description: isHybrid
                     ? 'concat(ct_PQ, ct_T) — PQ first'
-                    : 'The ephemeral DHKEM public key',
+                    : info.kind === 'pq'
+                      ? 'The ML-KEM ciphertext'
+                      : 'The ephemeral DHKEM public key',
                 },
                 {
                   label: 'keyHandle',
@@ -308,14 +381,21 @@ export const HpkeWorkshop: React.FC = () => {
                   value: `${info.Nenc} bytes`,
                   description: isHybrid
                     ? 'concat(ct_PQ, ct_T) — PQ first'
-                    : 'The ephemeral DHKEM public key',
+                    : info.kind === 'pq'
+                      ? 'The ML-KEM ciphertext'
+                      : 'The ephemeral DHKEM public key',
                 },
                 {
                   label: 'shared_secret length',
                   value: `${info.Nsecret} bytes`,
-                  description: isHybrid
-                    ? 'SHA3-256(concat(ss_PQ, ss_T, ct_T, ek_T, Label)) — draft-irtf-cfrg-concrete-hybrid-kems §4'
-                    : 'ExtractAndExpand(dh, kem_context) — RFC 9180 §4.1',
+                  description:
+                    engineMode === 'v33'
+                      ? 'SHA3-256(concat(ss_PQ, ss_T, ct_T, ek_T, Label)), computed inside the token: the same value the v3.2 chain produces for this suite'
+                      : info.kind === 'pq'
+                        ? 'The ML-KEM shared secret (FIPS 203), used as is'
+                        : isHybrid
+                          ? 'SHA3-256(concat(ss_PQ, ss_T, ct_T, ek_T, Label)) — draft-irtf-cfrg-concrete-hybrid-kems §4'
+                          : 'ExtractAndExpand(dh, kem_context) — RFC 9180 §4.1',
                 },
               ],
       },
@@ -328,13 +408,13 @@ export const HpkeWorkshop: React.FC = () => {
         description:
           engineMode === 'candidate'
             ? 'KeySchedule already ran inside Step 3’s single CKM_HPKE call — this step only Seals the demo message under the AEAD key handle Step 3 returned, with nonce = base_nonce ⊕ seq.'
-            : isHybrid
-              ? 'KeySchedule derives key/base_nonce/exporter_secret from the ss_H handle via LabeledExtract (shared_secret used as CKF_HKDF_SALT_KEY — never extracted) then three independent LabeledExpands. `key` is derived straight into a non-extractable CKK_AES/CKK_CHACHA20 handle; Seal consumes it directly.'
+            : handlePath
+              ? 'KeySchedule derives key/base_nonce/exporter_secret from the shared-secret handle (ss_H for the hybrids) via LabeledExtract (shared_secret used as CKF_HKDF_SALT_KEY — never extracted) then three independent LabeledExpands. `key` is derived straight into a non-extractable CKK_AES/CKK_CHACHA20 handle; Seal consumes it directly.'
               : 'KeySchedule derives key/base_nonce/exporter_secret from the KEM shared_secret via LabeledExtract then three independent LabeledExpands. Seal then encrypts a demo message under the chosen AEAD with nonce = base_nonce ⊕ seq.',
         code:
           engineMode === 'candidate'
             ? `const { ct } = sealHandle(hctx, keyHandle, aeadId, baseNonce, 0, aad, pt)`
-            : isHybrid
+            : handlePath
               ? `const ctx = keyScheduleSecure(hctx, mode, kemId, kdfId, aeadId, sharedSecretHandle, info, psk, pskId)\nconst { ct } = sealHandle(hctx, ctx.keyHandle, aeadId, ctx.baseNonce, 0, aad, pt)`
               : `const ctx = keySchedule(hctx, mode, kemId, kdfId, aeadId, sharedSecret, info, psk, pskId)\nconst { ct } = seal(hctx, ctx.keyBytes, aeadId, ctx.baseNonce, 0, aad, pt)`,
         language: 'javascript',
@@ -354,21 +434,29 @@ export const HpkeWorkshop: React.FC = () => {
         description:
           engineMode === 'candidate'
             ? "One C_DecapsulateKey(CKM_HPKE) call mirrors Step 3: it recovers enc's shared value, runs the recipient-side KeySchedule, and returns an already-derived AEAD key handle + base_nonce — again with no shared_secret ever surfacing as a JS value."
-            : isHybrid
-              ? "The recipient recovers ss_H independently, as its own non-extractable handle — from its own decapsulation key(s) and the sender's enc, without any secret ever crossing the wire OR ever existing as bytes on either side."
-              : "The recipient recovers the identical shared_secret independently — from its own decapsulation key(s) and the sender's enc — without any secret ever crossing the wire.",
+            : engineMode === 'v33'
+              ? "One C_DecapsulateKey(CKM_COMP_KEM) call (PKCS#11 v3.3 draft) recovers ss_H from enc as a protected handle: the mirror of Step 3. Neither side's secret is ever readable as bytes, so equality is proven by Seal/Open succeeding in Step 6."
+              : info.kind === 'pq'
+                ? 'The recipient decapsulates enc with its ML-KEM key (C_DecapsulateKey with CKM_ML_KEM) into its own non-extractable handle. No secret crosses the wire or exists as bytes on either side.'
+                : isHybrid
+                  ? "The recipient recovers ss_H independently, as its own non-extractable handle — from its own decapsulation key(s) and the sender's enc, without any secret ever crossing the wire OR ever existing as bytes on either side."
+                  : "The recipient recovers the identical shared_secret independently — from its own decapsulation key(s) and the sender's enc — without any secret ever crossing the wire.",
         code:
           engineMode === 'candidate'
             ? `const { keyHandle, baseNonce } = hsm_hpkeDecapsulate(\n  M, s, privHandle, enc,\n  { kemId, kdfId, aeadId, mode, info${mode === HPKE_MODE.AUTH || mode === HPKE_MODE.AUTH_PSK ? ', senderPk' : ''}${mode === HPKE_MODE.PSK || mode === HPKE_MODE.AUTH_PSK ? ', hPsk, pskId' : ''} }\n)  // CKM_HPKE — Decap + KeySchedule in ONE call`
             : mode === HPKE_MODE.AUTH || mode === HPKE_MODE.AUTH_PSK
               ? `const sharedSecret = dhkemAuthDecap(ctx, kemId, enc, skR, pkR, pkS)`
-              : isHybrid
-                ? `const sharedSecretHandle = hybridDecap(ctx, kemId, enc, dkPQ, dkT, ekH)`
-                : `const sharedSecret = dhkemDecap(ctx, kemId, enc, skR, pkR)`,
+              : engineMode === 'v33'
+                ? `const sharedSecretHandle = compositeDecap(ctx, privHandle, enc)  // C_DecapsulateKey(CKM_COMP_KEM)`
+                : info.kind === 'pq'
+                  ? `const sharedSecretHandle = pqDecap(ctx, kemId, enc, dkHandle)  // C_DecapsulateKey(CKM_ML_KEM)`
+                  : isHybrid
+                    ? `const sharedSecretHandle = hybridDecap(ctx, kemId, enc, dkPQ, dkT, ekH)`
+                    : `const sharedSecret = dhkemDecap(ctx, kemId, enc, skR, pkR)`,
         language: 'javascript',
         actionLabel: 'Decapsulate',
         explanationTable:
-          engineMode === 'candidate' || isHybrid
+          engineMode === 'candidate' || handlePath
             ? [
                 {
                   label: 'Verification',
@@ -397,13 +485,13 @@ export const HpkeWorkshop: React.FC = () => {
         description:
           engineMode === 'candidate'
             ? 'KeySchedule already ran inside Step 5’s single CKM_HPKE call — this step only Opens the ciphertext through the AEAD key handle Step 5 returned. AES-GCM/ChaCha20-Poly1305 authentication fails closed on any mismatch, so this succeeding is still the end-to-end correctness proof.'
-            : isHybrid
+            : handlePath
               ? "The recipient runs the same non-extracting KeySchedule and Opens the ciphertext through its own never-extracted key handle. Since neither side's shared_secret or AEAD key was ever readable as bytes, this Open succeeding IS the proof they matched — not a separate hex comparison."
               : 'The recipient runs the same KeySchedule and Opens the ciphertext. AES-GCM/ChaCha20-Poly1305 authentication fails closed on any tampering — this is what actually proves round-trip correctness, not just secret agreement.',
         code:
           engineMode === 'candidate'
             ? `const pt = openHandle(hctx, keyHandle, aeadId, baseNonce, 0, aad, ct)`
-            : isHybrid
+            : handlePath
               ? `const ctx2 = keyScheduleSecure(hctx, mode, kemId, kdfId, aeadId, recipientSharedSecretHandle, info, psk, pskId)\nconst pt = openHandle(hctx, ctx2.keyHandle, aeadId, ctx2.baseNonce, 0, aad, ct)`
               : `const ctx2 = keySchedule(hctx, mode, kemId, kdfId, aeadId, sharedSecret, info, psk, pskId)\nconst pt = open(hctx, ctx2.keyBytes, aeadId, ctx2.baseNonce, 0, aad, ct)`,
         language: 'javascript',
@@ -417,7 +505,7 @@ export const HpkeWorkshop: React.FC = () => {
         ],
       },
     ],
-    [kemId, aeadId, mode, isHybrid, info, engineMode]
+    [kemId, aeadId, mode, isHybrid, handlePath, compositeCkp, info, engineMode]
   )
 
   const wizard = useStepWizard({ steps: STEPS, onBack: () => {} })
@@ -436,7 +524,24 @@ export const HpkeWorkshop: React.FC = () => {
   // wizard's step position too, not just the workshop's own key/secret state.
   const selectEngineMode = useCallback(
     (next: HpkeEngineMode) => {
+      if (next === 'v33') {
+        const M = hsm.moduleRef.current
+        if (hsm.isReady && M) {
+          let advertised = false
+          try {
+            advertised = hsm_detectV33Support(M, hsm.slotRef.current).compKem
+          } catch {
+            advertised = false
+          }
+          if (!advertised) {
+            setV33Missing(true)
+            return
+          }
+        }
+      }
+      setV33Missing(false)
       setEngineMode(next)
+      setKdfId((k) => (k === HPKE_KDF_SHAKE256 && next !== 'candidate' ? HPKE_KDF.HKDF_SHA256 : k))
       stateRef.current = {} as WorkshopState
       setStage('idle')
       wizard.reset()
@@ -454,6 +559,11 @@ export const HpkeWorkshop: React.FC = () => {
     const hSession = hsm.hSessionRef.current
     const hctx: Hctx = { M, hSession }
     const st = stateRef.current
+    if (kdfId === HPKE_KDF_SHAKE256 && engineMode !== 'candidate') {
+      throw new Error(
+        'The SHAKE256 key derivation runs only in the PQCToday single-call sequence: PKCS#11 v3.2 and the v3.3 draft have no standard SHAKE256 key-derivation step.'
+      )
+    }
 
     switch (wizard.currentStep) {
       case 0: {
@@ -478,6 +588,64 @@ export const HpkeWorkshop: React.FC = () => {
           })
           hsm.addStepLog('Step 1 — Recipient CKK_HPKE_KEM keypair (CKM_HPKE_KEM_KEY_PAIR_GEN)')
           return `Mechanism: CKM_HPKE_KEM_KEY_PAIR_GEN (candidate)\npubHandle: #${kp.pubHandle}\nprivHandle: #${kp.privHandle}\n\nOne call regardless of classical vs. hybrid shape — the engine builds ek_H internally for hybrid suites.`
+        }
+        if (engineMode === 'v33') {
+          if (compositeCkp == null) throw new Error('The v3.3 draft sequence needs a hybrid KEM.')
+          if (!hsm_detectV33Support(M, hsm.slotRef.current).compKem)
+            throw new Error(
+              'Not in this engine yet: the loaded engine does not advertise CKM_COMP_KEM.'
+            )
+          const kp = hsm_generateCompositeKeyPair(M, hSession, 'kem', compositeCkp)
+          const ekH = hsm_extractKeyValue(M, hSession, kp.pubHandle)
+          st.ekH = ekH
+          st.v33PubHandle = kp.pubHandle
+          st.v33PrivHandle = kp.privHandle
+          hsm.registerKey(M, hSession, {
+            handle: kp.pubHandle,
+            label: 'Recipient composite KEM pubkey',
+            family: 'composite-kem',
+            role: 'public',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.registerKey(M, hSession, {
+            handle: kp.privHandle,
+            label: 'Recipient composite KEM privkey',
+            family: 'composite-kem',
+            role: 'private',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.addStepLog(
+            'Step 1 — Recipient composite KEM keypair (CKM_COMP_KEM_KEY_PAIR_GEN, v3.3 draft)'
+          )
+          return `Mechanism: CKM_COMP_KEM_KEY_PAIR_GEN (PKCS#11 v3.3 draft)\npubHandle: #${kp.pubHandle}\nprivHandle: #${kp.privHandle}\n\nek_H = ek_PQ ‖ ek_T = ${ekH.length} bytes, already in the order HPKE-PQ sends it. One call; the caller never assembles it.`
+        }
+        if (info.kind === 'pq') {
+          const mlkem = hsm_generateMLKEMKeyPair(
+            M,
+            hSession,
+            info.pqVariant,
+            true,
+            'HPKE recipient PQ'
+          )
+          const ek = hsm_extractKeyValue(M, hSession, mlkem.pubHandle)
+          st.ekH = ek
+          st.dkPQHandle = mlkem.privHandle
+          hsm.registerKey(M, hSession, {
+            handle: mlkem.pubHandle,
+            label: 'Recipient ML-KEM ek',
+            family: 'ml-kem',
+            role: 'public',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.registerKey(M, hSession, {
+            handle: mlkem.privHandle,
+            label: 'Recipient ML-KEM dk',
+            family: 'ml-kem',
+            role: 'private',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.addStepLog('Step 1 — Recipient ML-KEM keypair')
+          return `Mechanism: CKM_ML_KEM_KEY_PAIR_GEN\nek (${ek.length} B):\n${toHex(ek).slice(0, 64)}...\n\nPure ML-KEM: no traditional half, no combiner.`
         }
         if (isHybrid && info.kind === 'hybrid') {
           const mlkem = hsm_generateMLKEMKeyPair(
@@ -545,7 +713,7 @@ export const HpkeWorkshop: React.FC = () => {
 
       case 1: {
         setStage('sender-keygen')
-        if (!isHybrid) {
+        if (!handlePath) {
           if (engineMode === 'candidate') {
             const kp = hsm_generateHpkeKeyPair(M, hSession, kemId)
             st.hpkeSenderPubHandle = kp.pubHandle
@@ -605,7 +773,7 @@ export const HpkeWorkshop: React.FC = () => {
           pskLine = `PSK (32 B, out-of-band): ${toHex(psk)}\npsk_id: "${new TextDecoder().decode(DEMO_PSK_ID)}"`
         }
         hsm.addStepLog('Step 2 — Sender static key + PSK provisioning')
-        return `${isHybrid ? 'Sender static key: not used — the CG hybrid KEM has no Auth interface (ML-KEM does not support AuthEncap/AuthDecap).' : `Sender static key generated (used only in Auth/AuthPSK).`}\n${pskLine}`
+        return `${handlePath ? 'Sender static key: not used — the CG hybrid KEM has no Auth interface (ML-KEM does not support AuthEncap/AuthDecap).' : `Sender static key generated (used only in Auth/AuthPSK).`}\n${pskLine}`
       }
 
       case 2: {
@@ -662,6 +830,29 @@ export const HpkeWorkshop: React.FC = () => {
           hsm.addStepLog('Step 3 — Sender Encap')
           return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret (${sharedSecret.length} B):\n${toHex(sharedSecret)}`
         }
+        if (engineMode === 'v33' || info.kind === 'pq') {
+          const isV33 = engineMode === 'v33'
+          if (isV33 ? st.v33PubHandle == null : st.ekH == null)
+            throw new Error('Complete Step 1 first.')
+          const { sharedSecretHandle, enc } = isV33
+            ? compositeEncap(hctx, st.v33PubHandle!)
+            : pqEncap(hctx, kemId, st.ekH)
+          st.sharedSecretHandle = sharedSecretHandle
+          st.enc = enc
+          hsm.addStepLog(
+            isV33
+              ? 'Step 3 — Sender Encap (CKM_COMP_KEM, v3.3 draft)'
+              : 'Step 3 — Sender Encap (ML-KEM)'
+          )
+          let extractProof: string
+          try {
+            hsm_extractKeyValue(M, hSession, sharedSecretHandle)
+            extractProof = '✗ unexpectedly succeeded — this should never happen'
+          } catch {
+            extractProof = '✓ CKR_ATTRIBUTE_SENSITIVE, as expected — CKA_EXTRACTABLE=false'
+          }
+          return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret: non-extractable handle #${sharedSecretHandle} (${isV33 ? 'ss_H, built inside one C_EncapsulateKey(CKM_COMP_KEM) call' : 'the ML-KEM secret'})\n\nAttempted C_GetAttributeValue(CKA_VALUE) on it anyway, to prove the point: ${extractProof}`
+        }
         if (isHybrid) {
           const { sharedSecretHandle, enc } = hybridEncap(hctx, kemId, st.ekH)
           st.sharedSecretHandle = sharedSecretHandle
@@ -701,7 +892,7 @@ export const HpkeWorkshop: React.FC = () => {
           hsm.addStepLog('Step 4 — Sender Seal (KeySchedule already ran in Step 3)')
           return `Seal only — KeySchedule already ran inside Step 3's single CKM_HPKE call.\n\nciphertext (${ct.length} B):\n${toHex(ct)}`
         }
-        if (isHybrid) {
+        if (handlePath) {
           if (st.sharedSecretHandle == null) throw new Error('Complete Step 3 first.')
           const senderCtx = keyScheduleSecure(
             hctx,
@@ -798,6 +989,21 @@ export const HpkeWorkshop: React.FC = () => {
           hsm.addStepLog('Step 5 — Recipient Decap')
           return `Recipient shared_secret (${recipientSharedSecret.length} B):\n${toHex(recipientSharedSecret)}\n\nMatch vs sender: ${match ? '✓ identical' : '✗ MISMATCH'}`
         }
+        if (engineMode === 'v33' || info.kind === 'pq') {
+          const isV33 = engineMode === 'v33'
+          if (isV33 ? st.v33PrivHandle == null : st.dkPQHandle == null)
+            throw new Error('Missing recipient key state.')
+          const recipientSharedSecretHandle = isV33
+            ? compositeDecap(hctx, st.v33PrivHandle!, st.enc)
+            : pqDecap(hctx, kemId, st.enc, st.dkPQHandle!)
+          st.recipientSharedSecretHandle = recipientSharedSecretHandle
+          hsm.addStepLog(
+            isV33
+              ? 'Step 5 — Recipient Decap (CKM_COMP_KEM, v3.3 draft)'
+              : 'Step 5 — Recipient Decap (ML-KEM)'
+          )
+          return `Recipient shared_secret: non-extractable handle #${recipientSharedSecretHandle}\n\nSender's shared_secret is ALSO a non-extractable handle (#${st.sharedSecretHandle}), so neither side's bytes are readable and equality can't be hex-compared here. Step 6's Seal→Open round trip is the proof: AES-GCM/ChaCha20-Poly1305 authentication only succeeds if both sides derived byte-identical keys, entirely inside the token.`
+        }
         if (isHybrid) {
           if (st.dkPQHandle == null || st.dkTHandle == null)
             throw new Error('Missing recipient key state.')
@@ -843,7 +1049,7 @@ export const HpkeWorkshop: React.FC = () => {
           hsm.addStepLog('Step 6 — Recipient Open (KeySchedule already ran in Step 5)')
           return `Recovered plaintext: "${text}"\n\nRound-trip: ${match ? '✓ verified — sender and recipient agree end-to-end' : '✗ MISMATCH'}\n\nOpen only succeeds because sender and recipient independently derived the identical AEAD key inside two separate single-call CKM_HPKE invocations — the shared value behind it was never a JS value on either side, not even as a handle.`
         }
-        if (isHybrid) {
+        if (handlePath) {
           if (st.recipientSharedSecretHandle == null) throw new Error('Complete Steps 4–5 first.')
           const recipientCtx = keyScheduleSecure(
             hctx,
@@ -904,7 +1110,19 @@ export const HpkeWorkshop: React.FC = () => {
       default:
         throw new Error(`Unknown step index: ${wizard.currentStep}`)
     }
-  }, [hsm, wizard.currentStep, kemId, kdfId, aeadId, mode, isHybrid, info, engineMode])
+  }, [
+    hsm,
+    wizard.currentStep,
+    kemId,
+    kdfId,
+    aeadId,
+    mode,
+    isHybrid,
+    handlePath,
+    compositeCkp,
+    info,
+    engineMode,
+  ])
 
   return (
     <div className="flex flex-col h-full relative">
@@ -917,9 +1135,10 @@ export const HpkeWorkshop: React.FC = () => {
         <p className="text-sm text-muted-foreground mt-1">
           {engineMode === 'composed' ? (
             <>
-              PKCS#11 v3.2 has no CKM_HPKE mechanism — this composes HPKE&apos;s KeySchedule,
-              DHKEM/hybrid-KEM, and Seal/Open from CKM_ECDH1_DERIVE / CKM_ML_KEM / CKM_HKDF_DERIVE /
-              C_Sign(HMAC) / CKM_AES_GCM / CKM_CHACHA20_POLY1305 primitives, byte-exact against{' '}
+              PKCS#11 v3.2 has no CKM_HPKE mechanism, and the v3.3 draft has none either. This
+              composes HPKE&apos;s KeySchedule, DHKEM/hybrid-KEM, and Seal/Open from
+              CKM_ECDH1_DERIVE / CKM_ML_KEM / CKM_HKDF_DERIVE / C_Sign(HMAC) / CKM_AES_GCM /
+              CKM_CHACHA20_POLY1305 primitives, byte-exact against{' '}
               <a
                 href="/library?ref=RFC 9180"
                 className="text-primary underline"
@@ -931,13 +1150,32 @@ export const HpkeWorkshop: React.FC = () => {
               Appendix A for the classical DHKEM suites. Hybrid round trips alone do not establish
               conformance to published hybrid KEM vectors.
             </>
-          ) : (
+          ) : engineMode === 'candidate' ? (
             <>
-              A PQCToday-proposed <code className="text-xs">CKM_HPKE</code> mechanism family — not
-              yet OASIS TC allocated — that folds Encap/Decap, the PQ/T hybrid combiner, and
-              KeySchedule into a single C_EncapsulateKey/C_DecapsulateKey call each. See the{' '}
+              A PQCToday proposal, part of no standard: a <code className="text-xs">CKM_HPKE</code>{' '}
+              mechanism family that folds Encap/Decap, the PQ/T hybrid combiner, and KeySchedule
+              into a single C_EncapsulateKey/C_DecapsulateKey call each. Neither PKCS#11 v3.2 nor
+              the v3.3 draft has an HPKE mechanism; the standards committee has an{' '}
+              <a
+                href="https://github.com/oasis-tcs/pkcs11/issues/121"
+                className="text-primary underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                open request
+              </a>{' '}
+              for one, with no text yet. See the{' '}
               <span className="italic">CKM_HPKE mechanism proposal</span> in pqctoday-hsm&apos;s
               docs for the full spec and FIPS-mapping rationale.
+            </>
+          ) : (
+            <>
+              PKCS#11 v3.3 working draft (no v3.3 document is published yet). The composite KEM
+              mechanism <code className="text-xs">CKM_COMP_KEM</code> does the whole key-agreement
+              step of the three hybrid suites in one call, and for these suites it gives the same
+              shared secret as the v3.2 chain (checked in our engine against published reference
+              vectors). It is KEM-only: KeySchedule and Seal/Open still use the v3.2 pieces. This is
+              not HPKE; the draft has no HPKE mechanism.
             </>
           )}
         </p>
@@ -948,35 +1186,55 @@ export const HpkeWorkshop: React.FC = () => {
           PKCS#11 sequence
         </div>
         <div
-          className="inline-flex rounded-md border border-border overflow-hidden"
+          className="flex flex-wrap items-start gap-3"
           role="group"
           aria-label="HPKE engine mode"
         >
-          <Button
-            type="button"
-            variant={engineMode === 'composed' ? 'default' : 'ghost'}
-            size="sm"
-            className="rounded-none"
-            onClick={() => selectEngineMode('composed')}
-          >
-            PKCS#11 v3.2 (composed, ~5 calls)
-          </Button>
-          <Button
-            type="button"
-            variant={engineMode === 'candidate' ? 'default' : 'ghost'}
-            size="sm"
-            className="rounded-none border-l border-border"
-            onClick={() => selectEngineMode('candidate')}
-          >
-            vNext candidate — CKM_HPKE (single call)
-          </Button>
+          <div>
+            <div className="text-[10px] text-muted-foreground mb-1">
+              Before 3.3 (standard, today)
+            </div>
+            <Button
+              type="button"
+              variant={engineMode === 'composed' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => selectEngineMode('composed')}
+            >
+              PKCS#11 v3.2 (composed from standard pieces)
+            </Button>
+          </div>
+          <div>
+            <div className="text-[10px] text-muted-foreground mb-1">Not part of any standard</div>
+            <Button
+              type="button"
+              variant={engineMode === 'candidate' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => selectEngineMode('candidate')}
+            >
+              PQCToday proposal — CKM_HPKE (single call)
+            </Button>
+          </div>
+          <div>
+            <div className="text-[10px] text-muted-foreground mb-1">After 3.3 (working draft)</div>
+            <Button
+              type="button"
+              variant={engineMode === 'v33' ? 'default' : 'outline'}
+              size="sm"
+              disabled={compositeCkp === undefined}
+              onClick={() => selectEngineMode('v33')}
+            >
+              PKCS#11 v3.3 draft — CKM_COMP_KEM
+            </Button>
+          </div>
         </div>
+        {v33Reason && <p className="mt-1 text-[11px] text-muted-foreground">{v33Reason}</p>}
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Switching resets step progress and generated keys. Composed mode generates independent
-          component keys: its X-Wing combiner matches, but it cannot reproduce the 32-byte
-          private-seed representation or seed-based known-answer vectors. The candidate mode
-          supports that seed interface and is tested against published CFRG and HPKE vectors. For
-          browser X-Wing KATs and NIST component samples, open the{' '}
+          Switching resets step progress and generated keys. The v3.2 sequence and the v3.3 draft
+          sequence generate their keys with a random seed, so neither can replay the published
+          HPKE-PQ seed-based vectors (the engine&apos;s own tests check the composite KEM against
+          the CFRG and X-Wing vectors instead). The PQCToday proposal supports the seed interface
+          and is tested against published CFRG and HPKE vectors. For browser X-Wing KATs and NIST
+          component samples, open the{' '}
           <a className="text-primary underline" href="/playground/api-security-jwt">
             API Security &amp; JWT workshop (Step 4, HPKE-9)
           </a>
@@ -1004,9 +1262,11 @@ export const HpkeWorkshop: React.FC = () => {
               KDF
             </div>
             <FilterDropdown
-              items={KDF_OPTIONS}
+              items={
+                engineMode === 'candidate' ? [...KDF_OPTIONS, SHAKE256_KDF_OPTION] : KDF_OPTIONS
+              }
               selectedId={String(kdfId)}
-              onSelect={(id) => setKdfId(Number(id) as HpkeKdfId)}
+              onSelect={(id) => setKdfId(Number(id))}
               size="sm"
               hideDefaultOption
               ariaLabel="HPKE KDF"
@@ -1048,7 +1308,13 @@ export const HpkeWorkshop: React.FC = () => {
         Reset clears all generated keys and step progress — use it after changing KEM/KDF/AEAD/Mode
         to start a clean run with the new suite.
       </p>
-      {isHybrid && (
+      {engineMode !== 'candidate' && (
+        <p className="px-6 -mt-2 mb-4 text-[11px] text-muted-foreground">
+          The SHAKE256 key derivation (draft-ietf-hpke-pq) is offered only in the PQCToday proposal
+          sequence: PKCS#11 v3.2 and the v3.3 draft have no standard SHAKE256 key-derivation step.
+        </p>
+      )}
+      {handlePath && (
         <p className="px-6 -mt-2 mb-4 text-[11px] text-muted-foreground">
           Auth/AuthPSK are hidden for this KEM — draft-ietf-hpke-pq&apos;s ML-KEM entries mark the
           Auth column &quot;no&quot;; only classical DHKEMs support AuthEncap/AuthDecap.
