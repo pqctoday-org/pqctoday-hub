@@ -66,6 +66,14 @@ type PqcAlgo = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87' | 'SLH-DSA-SHA2-128S'
 type ClassicalAlgo = 'RSA-2048' | 'RSA-3072' | 'ECDSA-P256' | 'ECDSA-P384'
 type HashAlgo = 'SHA-256' | 'SHA-384' | 'SHA-512'
 
+// NIST SP 800-57 Part 1 Rev. 5, Table 2 (pp. 54–55): key-strength estimates.
+const CLASSICAL_KEY_STRENGTH_BITS: Record<ClassicalAlgo, number> = {
+  'RSA-2048': 112,
+  'RSA-3072': 128,
+  'ECDSA-P256': 128,
+  'ECDSA-P384': 192,
+}
+
 // ---------------------------------------------------------------------------
 // Algorithm config lookup tables
 // ---------------------------------------------------------------------------
@@ -1936,13 +1944,13 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                       change: '✓',
                     },
                     {
-                      metric: 'NIST level',
-                      classical: '~112-bit classical',
+                      metric: 'Classical key estimate / PQC category',
+                      classical: `~${CLASSICAL_KEY_STRENGTH_BITS[classicalAlgo]}-bit key estimate`,
                       pqc:
                         pqcAlgo === 'SLH-DSA-SHA2-128S'
                           ? 'NIST Level 1'
                           : MLDSA_NIST_LEVEL[pqcAlgo],
-                      change: '↑',
+                      change: 'Different measures',
                     },
                     {
                       metric: 'Standard',
@@ -1970,6 +1978,20 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                   ))}
                 </tbody>
               </table>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Classical key estimates follow{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://doi.org/10.6028/NIST.SP.800-57pt1r5"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  NIST SP 800-57 Part 1 Rev. 5, Table 2
+                </a>
+                . The complete signature scheme also depends on the selected hash and
+                implementation. PQC categories are a different comparison measure, not bit-for-bit
+                equivalents to these classical estimates.
+              </p>
             </div>
           </div>
 
@@ -2070,24 +2092,38 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             {/* Step B: UEFI NVRAM enrollment */}
             <div className="space-y-1 border-t border-border/50 pt-2">
               <p className="font-medium text-foreground">
-                Step B — Enroll cert.pem into UEFI NVRAM
+                Step B — Illustrative certificate-to-authenticated-update workflow
+              </p>
+              <p className="text-muted-foreground">
+                The certificate, EFI signature list and authenticated update are different file
+                types. The following efitools example prepares and applies an append update with
+                matching attributes. It is not executed by the Hub and does not establish PQC
+                support in a firmware or tool build.
               </p>
               <ol className="text-muted-foreground list-decimal list-inside space-y-0.5">
                 <li>
-                  Build EFI signature list:{' '}
+                  Convert the certificate to an EFI signature list:{' '}
                   <span className="font-mono">cert-to-efi-sig-list cert.pem db.esl</span>
                 </li>
                 <li>
-                  Sign the update with KEK:{' '}
+                  Sign an append update with the KEK:{' '}
                   <span className="font-mono">
-                    sbvarsign --key kek.key --cert kek.crt db.esl db.auth
+                    sign-efi-sig-list -a -k kek.key -c kek.crt db db.esl db.auth
                   </span>
                 </li>
                 <li>
                   Write <span className="font-mono">db</span> variable:{' '}
-                  <span className="font-mono">efi-updatevar -a -c db.auth db</span>
+                  <span className="font-mono">efi-updatevar -a -f db.auth db</span>
                 </li>
-                <li>Keep the legacy RSA db entry until all boot paths are re-signed</li>
+                <li>
+                  Match the variable name and append attributes when signing and applying the
+                  update; changing attributes after signing invalidates that binding.
+                </li>
+                <li>
+                  In a supported sample firmware lab, preserve required existing entries while
+                  evaluating the migration. Firmware acceptance, algorithm support and all boot
+                  paths need separate compatibility checks.
+                </li>
               </ol>
             </div>
           </div>
