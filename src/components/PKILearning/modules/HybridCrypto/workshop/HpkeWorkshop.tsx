@@ -506,22 +506,22 @@ export const HpkeWorkshop: React.FC = () => {
   const selectKem = useCallback(
     (id: string) => {
       const next = Number(id) as HpkeKemId
+      if (next === kemId) return
       setKemId(next)
       if (kemInfo(next).kind !== 'dhkem')
         setMode((m) => (m === HPKE_MODE.AUTH || m === HPKE_MODE.AUTH_PSK ? HPKE_MODE.BASE : m))
+      // The v3.3 draft sequence exists only for the three hybrid suites; dropping
+      // out of it changes the sequence too.
+      if (engineMode === 'v33' && compositeKemCkp(next) === undefined) setEngineMode('composed')
+      // A different KEM makes the keys already made, and the place reached in the
+      // run, meaningless, so progress, keys and log start again.
       stateRef.current = {} as WorkshopState
       setStage('idle')
-      // The v3.3 draft sequence exists only for the three hybrid suites. Dropping
-      // out of it changes the sequence, so progress and keys reset like any other
-      // sequence switch.
-      if (engineMode === 'v33' && compositeKemCkp(next) === undefined) {
-        setEngineMode('composed')
-        wizard.reset()
-        hsm.clearKeys()
-        hsm.clearLog()
-      }
+      wizard.reset()
+      hsm.clearKeys()
+      hsm.clearLog()
     },
-    [engineMode, wizard, hsm]
+    [kemId, engineMode, wizard, hsm]
   )
 
   const handleReset = useCallback(() => {
@@ -827,7 +827,7 @@ export const HpkeWorkshop: React.FC = () => {
           const extractProof = requireProtectedKeyReadRefusal(() =>
             hsm_extractKeyValue(M, hSession, result.keyHandle!)
           )
-          return `enc (${result.enc.length} B):\n${toHex(result.enc).slice(0, 96)}${result.enc.length > 48 ? '...' : ''}\n\nAEAD key: non-extractable handle #${result.keyHandle} (KeySchedule already ran INSIDE this single C_EncapsulateKey(CKM_HPKE) call — no intermediate shared_secret was ever a JS value, not even a handle)\nbase_nonce: ${result.baseNonce ? toHex(result.baseNonce) : 'n/a'}\n\nAttempted C_GetAttributeValue(CKA_VALUE) on the key handle anyway, to prove the point: ${extractProof}`
+          return `enc (${result.enc.length} B):\n${toHex(result.enc).slice(0, 96)}${result.enc.length > 48 ? '...' : ''}\n\nAEAD key: handle #${result.keyHandle}, created non-extractable (KeySchedule already ran INSIDE this single C_EncapsulateKey(CKM_HPKE) call — no intermediate shared_secret was ever a JS value, not even a handle)\nbase_nonce: ${result.baseNonce ? toHex(result.baseNonce) : 'n/a'}\n\nSample check, one attempted C_GetAttributeValue(CKA_VALUE) on the key handle: ${extractProof}`
         }
         if (mode === HPKE_MODE.AUTH || mode === HPKE_MODE.AUTH_PSK) {
           if (st.skSHandle == null || st.pkSBytes == null) throw new Error('Complete Step 2 first.')
@@ -860,7 +860,7 @@ export const HpkeWorkshop: React.FC = () => {
           const extractProof = requireProtectedKeyReadRefusal(() =>
             hsm_extractKeyValue(M, hSession, sharedSecretHandle)
           )
-          return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret: non-extractable handle #${sharedSecretHandle} (${isV33 ? 'ss_H, built inside one C_EncapsulateKey(CKM_COMP_KEM) call' : 'the ML-KEM secret'})\n\nAttempted C_GetAttributeValue(CKA_VALUE) on it anyway, to prove the point: ${extractProof}`
+          return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret: handle #${sharedSecretHandle}, created non-extractable (${isV33 ? 'ss_H, built inside one C_EncapsulateKey(CKM_COMP_KEM) call' : 'the ML-KEM secret'})\n\nSample check, one attempted C_GetAttributeValue(CKA_VALUE) on it: ${extractProof}`
         }
         if (isHybrid) {
           const { sharedSecretHandle, enc } = hybridEncap(hctx, kemId, st.ekH)
@@ -870,7 +870,7 @@ export const HpkeWorkshop: React.FC = () => {
           const extractProof = requireProtectedKeyReadRefusal(() =>
             hsm_extractKeyValue(M, hSession, sharedSecretHandle)
           )
-          return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret: non-extractable handle #${sharedSecretHandle} (ss_H — built entirely from CKM_CONCATENATE_BASE_AND_KEY/_DATA + CKM_SHA3_256_KEY_DERIVATION; ss_PQ and ss_T were never extracted either)\n\nAttempted C_GetAttributeValue(CKA_VALUE) on it anyway, to prove the point: ${extractProof}`
+          return `enc (${enc.length} B):\n${toHex(enc).slice(0, 96)}${enc.length > 48 ? '...' : ''}\n\nshared_secret: handle #${sharedSecretHandle}, created non-extractable (ss_H — built entirely from CKM_CONCATENATE_BASE_AND_KEY/_DATA + CKM_SHA3_256_KEY_DERIVATION; ss_PQ and ss_T were never extracted either)\n\nSample check, one attempted C_GetAttributeValue(CKA_VALUE) on it: ${extractProof}`
         }
         const { sharedSecret, enc } = dhkemEncap(hctx, kemId, st.ekH)
         st.sharedSecret = sharedSecret
@@ -1269,8 +1269,8 @@ export const HpkeWorkshop: React.FC = () => {
       </div>
 
       <div className="px-6 mb-4 flex flex-wrap items-end gap-3">
-        <div className="grid grid-cols-2 sm:grid-cols-[minmax(15rem,1.6fr)_repeat(3,minmax(7.5rem,1fr))] gap-3 basis-full min-w-0">
-          <div className="col-span-2 sm:col-span-1">
+        <div className="flex flex-wrap gap-3 basis-full min-w-0">
+          <div className="min-w-[15rem] max-w-full flex-[1.6_1_15rem]">
             <div className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
               KEM
             </div>
@@ -1283,7 +1283,7 @@ export const HpkeWorkshop: React.FC = () => {
               ariaLabel="HPKE KEM"
             />
           </div>
-          <div>
+          <div className="min-w-[7.5rem] max-w-full flex-[1_1_8rem]">
             <div className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
               KDF
             </div>
@@ -1298,7 +1298,7 @@ export const HpkeWorkshop: React.FC = () => {
               ariaLabel="HPKE KDF"
             />
           </div>
-          <div>
+          <div className="min-w-[7.5rem] max-w-full flex-[1_1_8rem]">
             <div className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
               AEAD
             </div>
@@ -1311,7 +1311,7 @@ export const HpkeWorkshop: React.FC = () => {
               ariaLabel="HPKE AEAD"
             />
           </div>
-          <div>
+          <div className="min-w-[7.5rem] max-w-full flex-[1_1_8rem]">
             <div className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
               Mode
             </div>

@@ -74,6 +74,25 @@ describe('HPKE workshop: v3.3 draft sequence and engine changes', () => {
     expect(pageText()).toContain('CKK_COMP_KEM keypair')
   })
 
+  it('a KEM change inside the composed sequence also starts the run again', () => {
+    render(<HpkeWorkshop />)
+    hsmStub.clearKeys.mockClear()
+    hsmStub.clearLog.mockClear()
+    chooseKem('ML-KEM-768 (PQ only)')
+    expect(hsmStub.clearKeys).toHaveBeenCalledTimes(1)
+    expect(hsmStub.clearLog).toHaveBeenCalledTimes(1)
+    expect(pageText()).toContain('Its encapsulation key IS pkR')
+  })
+
+  it('choosing the KEM that is already selected changes nothing', () => {
+    render(<HpkeWorkshop />)
+    hsmStub.clearKeys.mockClear()
+    hsmStub.clearLog.mockClear()
+    chooseKem('MLKEM768-X25519 (PQ-hybrid)')
+    expect(hsmStub.clearKeys).not.toHaveBeenCalled()
+    expect(hsmStub.clearLog).not.toHaveBeenCalled()
+  })
+
   it('"Not in this engine yet" is dropped when the other engine is loaded', () => {
     support.compKem = false
     const { rerender } = render(<HpkeWorkshop />)

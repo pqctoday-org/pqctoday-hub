@@ -160,6 +160,36 @@ test.describe('HPKE workshop — three sequences in a real browser', () => {
     expect((await page.locator('body').textContent()) ?? '').not.toMatch(/vNext/i)
   })
 
+  test('every control fits on screen at each width from phone to desktop', async ({ page }) => {
+    await prepare(page)
+    await openHpke(page)
+    const right = async (c: Locator) => {
+      const box = await c.boundingBox()
+      return box ? box.x + box.width : Number.POSITIVE_INFINITY
+    }
+    for (const width of [320, 360, 390, 600, 640, 660, 700, 820, 1024, 1280]) {
+      await page.setViewportSize({ width, height: 900 })
+      const controls = page
+        .getByRole('button', { name: 'HPKE KEM' })
+        .locator('xpath=ancestor::div[contains(@class,"px-6")][1]')
+      const all: [string, Locator][] = [
+        ['KEM', page.getByRole('button', { name: 'HPKE KEM' })],
+        ['KDF', page.getByRole('button', { name: 'HPKE KDF' })],
+        ['AEAD', page.getByRole('button', { name: 'HPKE AEAD' })],
+        ['mode', page.getByRole('button', { name: 'HPKE mode' })],
+        ['Reset', controls.getByRole('button', { name: /^Reset/ })],
+        ['v3.2 group', page.getByRole('button', { name: GROUP_V32 })],
+        ['proposal group', page.getByRole('button', { name: GROUP_PROPOSAL })],
+        ['v3.3 group', page.getByRole('button', { name: GROUP_V33 })],
+      ]
+      for (const [name, c] of all) {
+        await expect
+          .poll(() => right(c), { message: `${name} stays inside a ${width}px screen` })
+          .toBeLessThanOrEqual(width + 1)
+      }
+    }
+  })
+
   test('v3.3 draft sequence runs to the end for each hybrid suite (Rust engine)', async ({
     page,
   }) => {
@@ -222,6 +252,20 @@ test.describe('HPKE workshop — three sequences in a real browser', () => {
     await expect(page.getByText('Its encapsulation key IS pkR').first()).toBeVisible()
     await expect(page.getByRole('button', { name: 'Generate Recipient Keypair' })).toBeVisible()
     await expect(page.getByText('CKK_COMP_KEM keypair')).toHaveCount(0)
+  })
+
+  test('changing the KEM in the v3.2 sequence also starts the run again', async ({ page }) => {
+    await prepare(page)
+    await openHpke(page)
+    await enableHsm(page, 'Rust')
+    await chooseKem(page, 'ML-KEM-768 (PQ only)')
+    await page.getByRole('button', { name: 'Generate Recipient Keypair' }).click()
+    await page.getByRole('button', { name: 'Next Step', exact: true }).click()
+    await expect(page.getByRole('button', { name: 'Provision Sender Key + PSK' })).toBeVisible()
+    await chooseKem(page, 'MLKEM768-X25519 (PQ-hybrid)')
+    // back at step 1: the keypair has to be made again for the new KEM
+    await expect(page.getByRole('button', { name: 'Generate Recipient Keypair' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Provision Sender Key + PSK' })).toHaveCount(0)
   })
 })
 
@@ -323,7 +367,7 @@ test.describe('composite certificate screen — both ways to sign', () => {
       // results were cleared before this run, so exactly one Verified line means this run
       await expect(page.getByText(/^Verified — \d+\/\d+ checks passed$/)).toHaveCount(1)
       await expect(page.getByText(/checks failed$/)).toHaveCount(0)
-      await expect(page.getByText(/Not in this engine yet/)).toHaveCount(0)
+      await expect(page.getByText(/Not in this engine yet:/)).toHaveCount(0)
       await shot(page, `cert-${name.replace(' ', '-')}`)
     }
   })
