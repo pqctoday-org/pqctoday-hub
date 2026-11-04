@@ -16,19 +16,19 @@
     "evidence/acvp-xplat/2026-09-25-kv260-default/targets.json": "fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5",
     "evidence/acvp-xplat/2026-09-25-native/matrix.json": "2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4",
     "evidence/acvp-xplat/2026-09-25-native/targets.json": "4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18",
-    "public/data/validation/coverage-matrix.json": "209795bd148876eaff20846fa1755b8ff0d036078ee577675e9761a39cd4c526",
+    "public/data/validation/coverage-matrix.json": "63be82227b370449973e178d4c0c6da139ddb162c4c8215a2a8a87f9ec844e8a",
     "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
     "src/data/validation/native-conformance.generated.json": "9989ddbe108ebed6ba7a0b4766c92795f3d754f292ea3bd597d5d7ee0ab59425",
     "src/data/validation/open-gaps.json": "623b3aea5f6aa821c7adfb3e4a5ef0e6dde98acb6a1756d2f15762fd368f68b7",
     "src/data/validation/run-results/wasm-node-errorPathProbes.json": "b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a",
     "src/data/validation/run-results/wasm-node-katRunner.json": "f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb",
     "src/data/validation/run-results/wasm-node-useAcvpSuite.json": "88a03cd5ad6306be37e63ba523e56add1cb71dad2a1a837d0d42772de3eb768d",
-    "src/data/validation/validation-counts.generated.json": "3396a29fc05d1ff480fc272047c1498451522fad04ed6c56c789d772dbd0c9ce",
-    "src/data/validation/vector-manifest.json": "9d8a90ca8719e8e27c42cda642ab3f42f9fcbb3531cd1b6c2d182c01d87be1fc"
+    "src/data/validation/validation-counts.generated.json": "e6d9dd65951b75c94abb8eac7a67187e4c579d5122ff686fca06d16ccd0bc979",
+    "src/data/validation/vector-manifest.json": "d7d11cd28e039ff788f8f41ac9a56f352615ad56faf43bfe01ce43ac9a0399d6"
   },
   "vectors": {
     "source": "src/data/validation/validation-counts.generated.json",
-    "manifestCanonicalSha256": "e6503d3803e7e1ed239504c291f73c40e135cef795c560bc97b683d40eba0370",
+    "manifestCanonicalSha256": "7422f144b4f7cd205d7ef34b51607743b875b6d66e898a70364cb02acd03f81f",
     "nistReferenceSampleFiles": 58,
     "nistReferenceSampleCases": 1280,
     "vectorFiles": {
