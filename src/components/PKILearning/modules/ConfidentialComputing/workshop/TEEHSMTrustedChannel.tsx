@@ -88,6 +88,9 @@ const TEE_LIVE_OPERATIONS = [
   'C_CreateObject',
 ]
 
+// Preserve the local sample failure; generic crypto hints may describe an unrelated workflow.
+class SampleProvisioningCheckError extends Error {}
+
 interface ProvisioningResult {
   step: number
   purpose: HsmKeyPurpose
@@ -318,6 +321,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
     if (!hsm.moduleRef.current) return
     setLiveRunning(true)
     setLiveResults([])
+    setCompletedSteps(new Set())
     setLiveError(null)
     hsm.clearLog()
     hsm.clearKeys()
@@ -497,7 +501,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
         // Step 5: Receiver side — verify signature, decapsulate, re-derive KEK, unwrap provisioning key
         const verifyOk = hsm_verify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
         if (!verifyOk) {
-          throw new Error('Sample attestation signature verification failed; provisioning stopped.')
+          throw new SampleProvisioningCheckError(
+            'Sample attestation signature verification failed; provisioning stopped.'
+          )
         }
         const recoveredSecretHandle = hsm_decapsulate(
           M,
@@ -511,7 +517,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           recoveredSecretBytes.length !== sharedSecretBytes.length ||
           !recoveredSecretBytes.every((b, i) => b === sharedSecretBytes[i])
         ) {
-          throw new Error('Recovered sample secret does not match; key unwrap stopped.')
+          throw new SampleProvisioningCheckError(
+            'Recovered sample secret does not match; key unwrap stopped.'
+          )
         }
         const derivableHandle2 = hsm_importGenericSecret(M, hSession, recoveredSecretBytes)
         const kekBytes2 = hsm_hkdf(
@@ -614,8 +622,9 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           purpose: 'tls',
           title: 'TLS Ephemeral Key (ECDH P-256)',
           pkcs11Call: 'C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) — ephemeral',
-          detail: 'pub ≈ 65 B · priv ≈ 32 B · ECDH shared secret ≈ 32 B',
-          note: 'Classical ECDH P-256 for TLS 1.3 key exchange. The shared secret is used to derive the wrapping key. Use PQC mode to see ML-KEM-768 instead.',
+          detail:
+            'pub ≈ 65 B · priv ≈ 32 B · no peer exchange or shared-secret derivation executed here',
+          note: 'This branch generates an ECDH key pair but does not execute peer key agreement or derive its KEK from ECDH. The wrapping KEK below is generated independently. Production tools need peer key agreement and an appropriately bound key derivation.',
         })
 
         // wrapKeyHandle is a KEK, so wrap=true, unwrap=true, encrypt/decrypt=false, extractable=false
@@ -685,6 +694,11 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
 
         // Step 5: Receiver side — verify signature + unwrap provisioning key
         const verifyOk = hsm_ecdsaVerify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
+        if (!verifyOk) {
+          throw new SampleProvisioningCheckError(
+            'Sample ECDSA attestation signature verification failed; provisioning stopped.'
+          )
+        }
         const recoveredProvHandle = hsm_unwrapKeyMech(
           M,
           hSession,
@@ -707,7 +721,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'Enclave: Verify ECDSA + Unwrap Provisioning Key',
           pkcs11Call: `C_Verify(CKM_ECDSA_SHA256) → ${verifyOk ? '✓ PASS' : '✗ FAIL'}\nC_UnwrapKey(CKM_AES_KEY_WRAP) → prov key handle`,
           detail: `sig verify = ${verifyOk ? 'PASS ✓' : 'FAIL ✗'} · recovered prov key handle = 0x${recoveredProvHandle.toString(16)}`,
-          note: 'Protocol complete (classical). The enclave verified the HSM ECDSA attestation, then unwrapped the provisioning key using the ECDH-derived session KEK. Switch to PQC mode to see ML-DSA verify + ML-KEM decapsulate + HKDF key derivation.',
+          note: 'Sample sequence complete (classical). The generated ECDSA attestation message was verified before key unwrap. This sample uses an independently generated AES KEK, not an ECDH-derived session key. Production tools also need peer key agreement, KDF context binding and trusted quote, freshness and measurement-policy checks.',
         })
       }
       // Resolve the overall pending entry to success.
@@ -725,7 +739,10 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
         return next
       })
     } catch (e) {
-      const msg = translateCryptoError(e instanceof Error ? e.message : String(e))
+      const msg =
+        e instanceof SampleProvisioningCheckError
+          ? e.message
+          : translateCryptoError(e instanceof Error ? e.message : String(e))
       setLiveError(msg)
       setLogEntries((prev) => {
         const next = [...prev]
@@ -759,10 +776,14 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
 
       <ScopeTransparencyBanner
         realOps={[
-          'ML-DSA-65 attestation signing via softhsmv3 C_Sign (PKCS#11 v3.2)',
-          'ML-KEM-768 encapsulation via softhsmv3 C_EncapsulateKey',
+          pqcMode
+            ? 'ML-DSA-65 sample attestation-message signing via softhsmv3 C_Sign'
+            : 'ECDSA P-256 sample attestation-message signing via softhsmv3 C_Sign',
+          pqcMode
+            ? 'ML-KEM-768 encapsulation via softhsmv3 C_EncapsulateKey'
+            : 'EC key-pair generation; peer ECDH exchange and KEK derivation are not executed',
           'AES-256 key wrap / unwrap via softhsmv3 CKM_AES_KEY_WRAP',
-          'Mutual attestation challenge-response with real signature verification',
+          'Signature verification of a generated sample attestation message',
         ]}
         simulatedOps={[
           'TEE measurement digest generation (simulated enclave boundary)',

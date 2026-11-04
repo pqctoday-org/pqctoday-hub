@@ -3,7 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { TEEHSMTrustedChannel } from './TEEHSMTrustedChannel'
-import { hsm_verify, hsm_decapsulate, hsm_unwrapKeyMech, hsm_extractKeyValue } from '@/wasm/softhsm'
+import {
+  hsm_verify,
+  hsm_decapsulate,
+  hsm_unwrapKeyMech,
+  hsm_extractKeyValue,
+  hsm_ecdsaVerify,
+} from '@/wasm/softhsm'
 
 vi.mock('@/components/PKILearning/common/HsmCapabilityEvidence', () => ({
   HsmCapabilityEvidence: () => null,
@@ -11,7 +17,6 @@ vi.mock('@/components/PKILearning/common/HsmCapabilityEvidence', () => ({
 vi.mock('@/components/shared/LiveHSMToggle', () => ({ LiveHSMToggle: () => null }))
 vi.mock('@/components/shared/Pkcs11LogPanel', () => ({ Pkcs11LogPanel: () => null }))
 vi.mock('@/components/shared/HsmKeyInspector', () => ({ HsmKeyInspector: () => null }))
-vi.mock('@/utils/cryptoErrorHint', () => ({ translateCryptoError: (message: string) => message }))
 vi.mock('@/hooks/useHSM', () => ({
   useHSM: () => ({
     isReady: true,
@@ -26,6 +31,9 @@ vi.mock('@/hooks/useHSM', () => ({
 }))
 vi.mock('@/wasm/softhsm', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/wasm/softhsm')>()),
+  hsm_generateECKeyPair: vi.fn(() => ({ pubHandle: 11, privHandle: 12 })),
+  hsm_ecdsaSign: vi.fn(() => new Uint8Array(64)),
+  hsm_ecdsaVerify: vi.fn(() => true),
   hsm_generateMLDSAKeyPair: vi.fn(() => ({ pubHandle: 1, privHandle: 2 })),
   hsm_generateMLKEMKeyPair: vi.fn(() => ({ pubHandle: 3, privHandle: 4 })),
   hsm_generateAESKey: vi.fn(() => 5),
@@ -41,20 +49,23 @@ vi.mock('@/wasm/softhsm', async (importOriginal) => ({
   hsm_unwrapKeyMech: vi.fn(() => 10),
 }))
 
-const runPqc = () => {
+const runSample = (pqc = true) => {
   render(
     <MemoryRouter>
       <TEEHSMTrustedChannel />
     </MemoryRouter>
   )
   fireEvent.click(screen.getByRole('button', { name: 'Intel SGX + Thales Luna' }))
-  fireEvent.click(screen.getByRole('button', { name: 'PQC' }))
+  if (pqc) fireEvent.click(screen.getByRole('button', { name: 'PQC' }))
   fireEvent.click(screen.getByRole('button', { name: 'Execute (Live WASM)' }))
 }
+
+const runPqc = () => runSample(true)
 
 describe('TEE sample provisioning verification gates', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(hsm_ecdsaVerify).mockReset().mockReturnValue(true)
     vi.mocked(hsm_verify).mockReturnValue(true)
     vi.mocked(hsm_extractKeyValue).mockReturnValue(new Uint8Array(32).fill(1))
   })
@@ -67,7 +78,7 @@ describe('TEE sample provisioning verification gates', () => {
     )
     expect(hsm_decapsulate).not.toHaveBeenCalled()
     expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
-    expect(screen.queryByText(/Protocol complete/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/(?:Protocol|Sample sequence) complete/)).not.toBeInTheDocument()
   })
 
   it('stops before unwrap when recovered secrets differ, including unequal lengths', async () => {
@@ -83,5 +94,50 @@ describe('TEE sample provisioning verification gates', () => {
     runPqc()
     await waitFor(() => expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1))
     expect(await screen.findByText(/Protocol complete/)).toBeInTheDocument()
+  })
+})
+
+describe('classical TEE verification gate', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(hsm_ecdsaVerify).mockReset().mockReturnValue(true)
+  })
+
+  it('requires successful verification before classical unwrap', async () => {
+    runSample(false)
+    await waitFor(() => expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1))
+    expect(await screen.findByText(/Sample sequence complete \(classical\)/)).toBeInTheDocument()
+  })
+
+  it('blocks unwrap on an invalid classical attestation', async () => {
+    vi.mocked(hsm_ecdsaVerify).mockReturnValue(false)
+    runSample(false)
+    await screen.findAllByText(
+      /Sample ECDSA attestation signature verification failed; provisioning stopped/
+    )
+    expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
+    expect(screen.queryByText(/(?:Protocol|Sample sequence) complete/)).not.toBeInTheDocument()
+  })
+
+  it('keeps an operational verification error incomplete', async () => {
+    vi.mocked(hsm_ecdsaVerify).mockImplementation(() => {
+      throw new Error('Injected verification operation error')
+    })
+    runSample(false)
+    await screen.findAllByText(/Injected verification operation error/)
+    expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
+    expect(screen.queryByText(/(?:Protocol|Sample sequence) complete/)).not.toBeInTheDocument()
+  })
+
+  it('does not retain a successful result when a later attempt fails', async () => {
+    runSample(false)
+    await waitFor(() => expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1))
+    vi.mocked(hsm_ecdsaVerify).mockReturnValue(false)
+    fireEvent.click(screen.getByRole('button', { name: 'Execute (Live WASM)' }))
+    await screen.findAllByText(
+      /Sample ECDSA attestation signature verification failed; provisioning stopped/
+    )
+    expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1)
+    expect(screen.queryByText(/(?:Protocol|Sample sequence) complete/)).not.toBeInTheDocument()
   })
 })

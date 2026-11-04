@@ -504,9 +504,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tee-channel',
     pt_id: 'PT-006',
-    version: '1.0.2',
+    version: '1.0.3',
     name: 'TEE-HSM Secure Channel',
-    description: 'Build a TEE-to-HSM trusted channel with ML-DSA + ML-KEM + AES wrap',
+    description:
+      'Explore sample TEE-HSM provisioning with signature verification, ML-KEM and AES key wrap',
     category: 'HSM / PKCS#11',
     algorithms: ['ML-DSA', 'ML-KEM-768', 'AES Key Wrap'],
     icon: Cpu,
@@ -517,13 +518,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['architect', 'researcher'],
     intro: {
       whatYouWillDo:
-        'Open a trusted channel from an enclave to the HSM: an ML-DSA-65 attestation key, ML-KEM key agreement, and an AES key wrapped across the channel.',
+        'Inspect generated sample attestation messages and signature-gated key unwrap. PQC mode uses ML-DSA-65 and ML-KEM; classical mode uses ECDSA and an independently generated AES wrapping key.',
       workedExample:
         'Run the flow end to end; the PKCS#11 call log shows which call each algorithm makes, and the generated-keys panel shows what ended up where.',
     },
     hasOutput: true,
     outputSpec:
-      'ML-DSA attestation signature (hex) over TEE measurement digest; ML-KEM-768 encapsulated session key (1088 bytes); AES-256 wrapped channel secret verifiable by recipient HSM.',
+      'Sample signature-verification results; ML-KEM-768 encapsulation ciphertext (1,088 bytes) in PQC mode; AES-wrapped provisioning key. Production quote trust, freshness and measurement-policy checks are outside this sample.',
   },
   {
     id: 'tls-simulator',
