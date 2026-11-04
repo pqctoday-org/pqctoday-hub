@@ -24,6 +24,7 @@
  *    services/compositeCertOneCall.local.test.ts; the page does not show it.)
  */
 import { test, expect, type Locator, type Page } from '@playwright/test'
+import { injectAxe, getViolations } from 'axe-playwright'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -221,6 +222,60 @@ test.describe('HPKE workshop — three sequences in a real browser', () => {
     await expect(page.getByText('Its encapsulation key IS pkR').first()).toBeVisible()
     await expect(page.getByRole('button', { name: 'Generate Recipient Keypair' })).toBeVisible()
     await expect(page.getByText('CKK_COMP_KEM keypair')).toHaveCount(0)
+  })
+})
+
+/** axe on the screen as it is now: serious or critical WCAG 2 A/AA violations fail. */
+async function assertNoSeriousViolations(page: Page, where: string): Promise<void> {
+  await injectAxe(page)
+  const violations = await getViolations(page, undefined, {
+    runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+  })
+  const serious = violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
+  expect(
+    serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.html.slice(0, 120)) })),
+    `serious or critical accessibility violations on ${where}`
+  ).toEqual([])
+}
+
+test.describe('accessibility of the two screens this work changed', () => {
+  test.setTimeout(300_000)
+
+  test('HPKE step: no serious or critical violations, before and after a full run', async ({
+    page,
+  }) => {
+    await prepare(page)
+    await openHpke(page)
+    await enableHsm(page, 'Rust')
+    for (const size of [
+      { width: 1280, height: 900 },
+      { width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize(size)
+      await assertNoSeriousViolations(page, `HPKE step at ${size.width}px, idle`)
+    }
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await page.getByRole('button', { name: GROUP_V33 }).click()
+    await runAllSteps(page)
+    await assertNoSeriousViolations(page, 'HPKE step after a v3.3 draft run')
+  })
+
+  test('composite certificate screen: no serious or critical violations', async ({ page }) => {
+    await prepare(page)
+    await page.goto('/playground/hybrid-certs')
+    await enableHsm(page, 'Rust')
+    await assertNoSeriousViolations(page, 'the certificate screen, idle')
+    // and again once a certificate made by the one-call way is on the page
+    const oneCall = page.getByRole('button', { name: /One CKM_COMP_SIG call/ })
+    await oneCall.click()
+    await oneCall
+      .locator('xpath=ancestor::div[.//button[normalize-space()="Generate"]][1]')
+      .getByRole('button', { name: 'Generate', exact: true })
+      .click()
+    await expect(page.getByText(/^Verified — \d+\/\d+ checks passed$/)).toHaveCount(1, {
+      timeout: 120_000,
+    })
+    await assertNoSeriousViolations(page, 'the certificate screen after a one-call certificate')
   })
 })
 
