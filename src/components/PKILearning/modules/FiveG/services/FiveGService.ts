@@ -9,6 +9,7 @@ import * as EphemeralOps from './ops/EphemeralOps'
 import * as SucOps from './ops/SucOps'
 import * as AuthOps from './ops/AuthOps'
 import * as UtilsOps from './ops/UtilsOps'
+import * as ProvisionOps from './ops/ProvisionOps'
 
 export const milenage = new MilenageService()
 
@@ -274,69 +275,17 @@ export class FiveGService {
   }
 
   async personalizeUSIM(kiHex: string, opcHex: string): Promise<string> {
-    const imsi = '310260123456789'
-
-    return `═══════════════════════════════════════════════════════════════
-            USIM PERSONALIZATION (Factory)
-═══════════════════════════════════════════════════════════════
-
-Step 1: Writing Master Key to Secure Element
-  > EF_K:    ${kiHex}
-  > Status:  Written to tamper-resistant memory
-
-Step 2: Writing Derived Operator Key
-  > EF_OPc:  ${opcHex}
-  > Status:  Written (OP never stored on SIM)
-
-Step 3: Writing Subscriber Identity
-  > EF_IMSI: ${imsi}
-  > MCC: 310 (USA)
-  > MNC: 260 (T-Mobile)
-  > MSIN: 123456789
-
-Step 4: Security Configuration
-  > Transport lock: ENABLED
-  > PIN retry counter: 3
-  > PUK retry counter: 10
-
-[SUCCESS] USIM personalization complete.
-[INFO] Card ready for secure transport to MNO.`
+    return ProvisionOps.personalizeUSIM(this, kiHex, opcHex)
   }
 
   async importAtUDM(eKiHex: string, opcHex: string): Promise<string> {
-    // Simulate operator import — decrypt transport-encrypted K
-    const imsi = '310260123456789'
-
-    return `═══════════════════════════════════════════════════════════════
-            OPERATOR KEY IMPORT
-═══════════════════════════════════════════════════════════════
-
-Step 1: Receiving Encrypted Key Batch
-  > File: out_batch_2026.enc
-  > Records: 1
-
-Step 2: Decrypting eK with Transport Key (inside HSM)
-  > eK (encrypted):  ${eKiHex.substring(0, 32)}...
-  > Transport Key:   [PROTECTED — pre-shared]
-  > Decrypted K:     [PROTECTED — transient in HSM]
-
-Step 3: Storing in Encrypted Subscriber Database
-  > IMSI: ${imsi}
-  > K:    [re-encrypted and stored in subscriber DB]
-  > OPc:  ${opcHex}
-
-Step 4: Verifying Import Integrity
-  > MAC verification: PASS
-  > Key validation:   PASS
-
-[SUCCESS] Subscriber provisioning complete.
-[INFO] ${imsi} ready for 5G-AKA authentication.`
+    return ProvisionOps.importAtUDM(this, eKiHex, opcHex)
   }
 
   async encryptTransport(kiHex: string, opcHex: string) {
     // Use OpenSSL to encrypt the batch to a file
     // Input: CSV or JSON
-    const content = `IMSI: 310123456789000, K: ${kiHex}, OPc: ${opcHex} `
+    const content = `IMSI: 310260123456789, K: ${kiHex}, OPc: ${opcHex} `
     const iv = new Uint8Array(16)
     window.crypto.getRandomValues(iv)
     const key = new Uint8Array(16)
