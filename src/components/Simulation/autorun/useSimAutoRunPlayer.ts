@@ -1235,11 +1235,13 @@ export function useSimAutoRunPlayer({
           if (cancelled) return
           if (next >= q.length) {
             setCaption(
-              isWalkthroughMode(modeRef.current)
-                ? 'That’s the full program, end to end.'
-                : isPhaseMode(modeRef.current)
-                  ? `${phaseLabel(item.phase)} complete.`
-                  : 'Migration complete — full program maturity reached.'
+              modeRef.current === 'intro'
+                ? 'Short introduction complete — you have viewed selected resources on the threat and early planning.'
+                : isWalkthroughMode(modeRef.current)
+                  ? 'Executive Overview complete — an illustrative lifecycle walkthrough.'
+                  : isPhaseMode(modeRef.current)
+                    ? `${phaseLabel(item.phase)} complete.`
+                    : 'Sample journey complete — available steps and worked examples viewed; this does not establish full framework maturity.'
             )
             if (isWalkthroughMode(modeRef.current))
               useSimulationStore.getState().setOverviewBookmark(null)

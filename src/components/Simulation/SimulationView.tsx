@@ -146,6 +146,7 @@ import { pickBriefCheckQuestion } from '@/simulation/briefCheck'
 import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
 import { buildScoreboard } from '@/simulation/scoreboard'
+import { resetRunLearningWork } from '@/simulation/resetRunLearningWork'
 import { runQuarter } from '@/simulation/quarterEngine'
 import {
   buildSimRoadmapDoc,
@@ -318,22 +319,6 @@ const ARCH_PHASES = new Set<PhaseId>(['p1', 'p5', 'p6'])
 /** The active phase's four views. 'decide' is the default on every phase switch —
  *  a player should never land on another phase's Resources tab by accident. */
 type PhaseTab = 'decide' | 'progress' | 'resources' | 'signals'
-// the Learn modules + artifact types the simulation tracks (from every tree) —
-// RESET clears only these, not the player's unrelated hub progress.
-const SIM_TRACKED = (() => {
-  const modules = new Set<string>()
-  const artifacts = new Set<string>()
-  for (const tree of Object.values(SIM_TREES)) {
-    for (const band of tree?.levels ?? [])
-      for (const act of band.activities)
-        for (const s of act.steps) {
-          if (s.moduleId) modules.add(s.moduleId)
-          if (s.artifactType) artifacts.add(s.artifactType)
-        }
-  }
-  return { modules, artifacts }
-})()
-
 /** W6.4 — what each phone headline figure actually measures. Shown under the
  *  number itself, because a figure a learner cannot interrogate is a figure
  *  they can only take on trust. */
@@ -1127,8 +1112,6 @@ export function SimulationView() {
   // Read-only inspection of a generated artifact (click a completed row → drawer in view mode).
   const [viewDoc, setViewDoc] = useState<ExecutiveDocument | null>(null)
   const moduleProgress = useModuleStore((s) => s.modules)
-  const resetModuleProgress = useModuleStore((s) => s.resetModuleProgress)
-  const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const updateModuleProgress = useModuleStore((s) => s.updateModuleProgress)
   // C5-full: confirming a "choice that counts" Algorithms tab (Transition /
@@ -1211,7 +1194,7 @@ export function SimulationView() {
       if (!walkthroughCelebratedRef.current) {
         walkthroughCelebratedRef.current = true
         setWalkthroughDoneOpen(true)
-        setExecOverviewSeen(true)
+        if (autoRunPlayer.mode !== 'intro') setExecOverviewSeen(true)
       }
     } else if (!autoRunPlayer.done) {
       walkthroughCelebratedRef.current = false
@@ -1299,9 +1282,8 @@ export function SimulationView() {
     [assessSnap]
   )
   const assessDrivers = assessSnap?.result.categoryDrivers ?? null
-  // RESET clears the sim turn-state plus ONLY the sim-tracked hub progress the
-  // gating reads from (the Learn modules + artifacts referenced by the trees) —
-  // the player's other hub progress is left untouched.
+  // RESET clears run state and explicitly run-owned examples. Shared Learn
+  // progress and documents with independent or uncertain origins are preserved.
   const [pendingConfirm, setPendingConfirm] = useState<'reset' | 'start-over' | 'delegate' | null>(
     null
   )
@@ -1311,8 +1293,7 @@ export function SimulationView() {
     // driving (and demo-filling) the run being wiped. stop() owns closing its
     // resource; it is a no-op on an idle player.
     autoRunPlayer.stop()
-    for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
-    for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
+    resetRunLearningWork(useSimulationStore.getState().seed)
     reset()
   }
   // START OVER — the full reset: the game run (as RESET) PLUS the assessment
@@ -1323,8 +1304,7 @@ export function SimulationView() {
   const startOver = () => setPendingConfirm('start-over')
   const runStartOver = () => {
     autoRunPlayer.stop()
-    for (const id of SIM_TRACKED.modules) resetModuleProgress(id)
-    for (const d of docs ?? []) if (SIM_TRACKED.artifacts.has(d.type)) deleteExecutiveDocument(d.id)
+    resetRunLearningWork(useSimulationStore.getState().seed)
     reset()
     resetAssessment()
   }
@@ -1635,6 +1615,7 @@ export function SimulationView() {
   // taking the weakest of its mapped phases' earned levels (normalized per-phase so
   // a phase at its own top band counts as maxed). Overall = the weakest domain.
   const maturity = deriveMaturity(!!assessSnap, (p) => frameworkLevelOf(p))
+  const lowestDomainLevel = Math.min(...Object.values(maturity.scores))
 
   // T3.1 — sim-local readiness trend: the assessed org-readiness baseline vs the
   // projection earned by clearing framework maturity in-game. Sim-local only.
@@ -1749,16 +1730,14 @@ export function SimulationView() {
   // exposure), scenario-driven. Replaces the static, unwinnable Mosca "over by N years" gauge.
   const txStatus = transformationStatus({
     scenario: getScenario(country),
-    // Continuous (avg normalized fraction × MAX) so the headline climbs SMOOTHLY rather than
-    // sitting frozen at the weakest-domain integer until the slowest phase crosses a level.
-    // W2.3: the framework ladder, averaged — NOT scenario completion stretched
-    // to 0..4, which reported a shortened ladder as full program maturity.
-    programMaturity: LIFECYCLE.reduce((sum, p) => sum + frameworkLevelOf(p), 0) / LIFECYCLE.length,
+    // Use the same lowest-domain measure and 0–4 scale on every surface.
+    programMaturity: lowestDomainLevel,
     p0Level: levelOf('p0'),
     // Grounded: the share of vulnerable edges actually migrated (both gates), not raw P5 progress.
     migrationFraction: readiness.vulnerable ? readiness.migrated / readiness.vulnerable : 0,
     allAtTopBand: scenarioComplete,
     currentYear: year,
+    objectiveAchievedYears,
   })
   // WP2.2: the ONE program-progress object every UI surface (ribbon, the
   // TransformationStatusPanel, the run-complete ceremony) reads from — see
@@ -1828,10 +1807,21 @@ export function SimulationView() {
   // Record the program year each objective is FIRST achieved, for the ceremony's on-time
   // badges (idempotent — recordObjectiveAchieved ignores an id already set).
   const objDoneKey = txStatus.objectives.map((o) => `${o.id}:${o.done ? 1 : 0}`).join('|')
+  const previousObjectiveDone = useRef(
+    new Set(txStatus.objectives.filter((o) => o.done).map((o) => o.id))
+  )
   useEffect(() => {
     for (const o of txStatus.objectives) {
-      if (o.done && objectiveAchievedYears[o.id] == null) recordObjectiveAchieved(o.id, year)
+      if (
+        o.done &&
+        !previousObjectiveDone.current.has(o.id) &&
+        objectiveAchievedYears[o.id] == null
+      )
+        recordObjectiveAchieved(o.id, year)
     }
+    previousObjectiveDone.current = new Set(
+      txStatus.objectives.filter((o) => o.done).map((o) => o.id)
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [objDoneKey, year])
 
@@ -3178,7 +3168,11 @@ export function SimulationView() {
             </>
           )}
           {walkthroughDoneOpen && (
-            <SimExecWalkthroughComplete brief onClose={() => setWalkthroughDoneOpen(false)} />
+            <SimExecWalkthroughComplete
+              brief
+              intro={autoRunPlayer.mode === 'intro'}
+              onClose={() => setWalkthroughDoneOpen(false)}
+            />
           )}
           {/* mobile-ux-layer (WS-4): "End quarter" — the same real store action
               (endQuarter, wired to the desktop header's own button) the board
@@ -4557,10 +4551,10 @@ export function SimulationView() {
                     overall = your weakest area. */}
                           <p className="mb-2 text-sim-micro text-muted-foreground">
                             <span className="font-bold text-foreground">
-                              Program maturity: L{maturity.overall} ·{' '}
-                              {MATURITY_LEVELS[maturity.overall].name}
+                              Program maturity: L{lowestDomainLevel} / 4 ·{' '}
+                              {MATURITY_LEVELS[lowestDomainLevel].name}
                             </span>
-                            {maturity.overall < 5 && maturity.gating.length > 0 && (
+                            {lowestDomainLevel < 4 && maturity.gating.length > 0 && (
                               <>
                                 {' '}
                                 — weakest:{' '}
@@ -5711,7 +5705,10 @@ export function SimulationView() {
           />
         )}
         {walkthroughDoneOpen && (
-          <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+          <SimExecWalkthroughComplete
+            intro={autoRunPlayer.mode === 'intro'}
+            onClose={() => setWalkthroughDoneOpen(false)}
+          />
         )}
         {/* mobile-ux-layer (WS-0, D8): SimPlayChoiceModal never becomes VISIBLE
             below 768px (this whole wrapper is `hidden md:flex`), but it still
@@ -5729,6 +5726,7 @@ export function SimulationView() {
             defaultCard={defaultCard}
             defaultPhase={defaultPhase}
             sectorLabel={sectorOpt.label}
+            inputSource={ownAssessment ? 'assessment' : sampleRun ? 'sample' : 'current'}
           />
         )}
       </div>

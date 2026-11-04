@@ -15,6 +15,8 @@ function chip(onTime: OnTime): { icon: string; cls: string } {
       return { icon: '✓', cls: 'text-success' }
     case 'done-late':
       return { icon: '✓', cls: 'text-warning' }
+    case 'done-unknown':
+      return { icon: '?', cls: 'text-muted-foreground' }
     case 'late':
       return { icon: '⚠', cls: 'text-destructive' }
     default:
@@ -50,11 +52,18 @@ export function TransformationStatusPanel({ status }: { status: TransformationSt
             <div key={o.id} className="flex items-center gap-1.5 font-mono text-[11px]">
               <span className={`font-bold ${c.cls}`}>{c.icon}</span>
               <span className="text-foreground">{o.label}</span>
-              <span className="text-muted-foreground">· by {o.byYear}</span>
+              <span className="text-muted-foreground">
+                · target {o.byYear}
+                {o.onTime === 'done-unknown' ? ' · completion timing unknown' : ''}
+              </span>
             </div>
           )
         })}
       </div>
+      <p className="w-full text-xs text-muted-foreground">
+        Migration tracks and exposure are illustrative model outputs. A total migration count does
+        not establish protection of critical services.
+      </p>
 
       <div className="flex flex-1 min-w-0 md:min-w-[190px] flex-col justify-center gap-1">
         {status.tracks.map((t) => (

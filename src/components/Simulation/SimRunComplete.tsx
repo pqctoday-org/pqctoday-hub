@@ -97,6 +97,19 @@ export function SimRunComplete({
   const primaryRef = useRef<HTMLButtonElement>(null)
   const trapRef = useFocusTrap(true)
   const allMet = objectives.length > 0 && objectives.every((o) => o.done)
+  const timingUnknown = objectives.some(
+    (o) => o.done && (o.achievedYear == null || !Number.isFinite(o.achievedYear))
+  )
+  const someLate = objectives.some(
+    (o) => o.done && o.achievedYear != null && o.achievedYear > o.byYear
+  )
+  const timingSummary = !allMet
+    ? 'Scenario complete — some objectives remain incomplete.'
+    : timingUnknown
+      ? 'All objectives completed; completion timing unknown for one or more objectives.'
+      : someLate
+        ? 'All objectives completed; some were late.'
+        : 'All objectives completed on time.'
   // Top 3 — this is a closing reflection, not the full TrapInsightsPanel dashboard.
   const topTraps = readTrapTally().slice(0, 3)
 
@@ -193,7 +206,11 @@ export function SimRunComplete({
 
           <div className="mb-4 space-y-1.5 text-left">
             {objectives.map((o) => {
-              const onTime = o.done && (o.achievedYear == null || o.achievedYear <= o.byYear)
+              const onTime =
+                o.done &&
+                o.achievedYear != null &&
+                Number.isFinite(o.achievedYear) &&
+                o.achievedYear <= o.byYear
               return (
                 <div
                   key={o.id}
@@ -207,7 +224,7 @@ export function SimRunComplete({
                     {o.done
                       ? o.achievedYear != null
                         ? `✓ ${o.achievedYear}`
-                        : `✓ by ${o.byYear}`
+                        : '✓ timing unknown'
                       : `— by ${o.byYear}`}
                   </span>
                 </div>
@@ -216,11 +233,12 @@ export function SimRunComplete({
           </div>
 
           <p className="mb-4 text-xs text-muted-foreground">
-            {allMet
-              ? claimsFullFrameworkMaturity
-                ? `Critical assets protected and the migration completed on the program timeline — operating at full maturity through ${programEndYear}.`
-                : `Critical assets protected and every exercise in this scenario completed on the program timeline, through ${programEndYear}. This is the full scope the simulation currently teaches — not full framework maturity: some framework criteria have no exercise here yet (see Progress).`
-              : 'Scenario complete — some objectives finished behind their target dates.'}
+            {timingSummary}{' '}
+            {claimsFullFrameworkMaturity
+              ? `The scenario reports operating at full maturity through ${programEndYear}; this is an educational model, not evidence of deployed protection.`
+              : `This is the scope the simulation currently teaches — not full framework maturity: some framework criteria have no exercise here yet (see Progress).`}{' '}
+            Migration counts illustrate progress; they do not establish protection of critical
+            services.
           </p>
 
           {/* W7.4 — a debrief for the seat the player actually sat in. The

@@ -1006,9 +1006,11 @@ function cryptoVulnerabilityWatch(sector: DemoSector): DemoDoc {
 // ---------------------------------------------------------------------------
 function cryptoCbom(sector: DemoSector): DemoDoc {
   return {
-    title: 'Cryptographic Bill of Materials (CBOM)',
+    title: 'Illustrative CBOM summary',
     data: md(
-      `# Cryptographic Bill of Materials — ${ORG[sector]}`,
+      `# Illustrative CBOM summary — ${ORG[sector]}`,
+      '',
+      'Fictional sample components and planning counts for this scenario; no discovery of an organisation has been performed.',
       '',
       '| Component | Version | Algorithm | Key size | HNDL risk | PQC status |',
       '| --- | --- | --- | --- | --- | --- |',
@@ -1019,9 +1021,9 @@ function cryptoCbom(sector: DemoSector): DemoDoc {
       `| cosign | 2.0 | ECDSA P-256 | P-256 | No (TNFL) | Track B ${PROGRAM_START_YEAR + 1} |`,
       '| internal-tls-sidecar | 1.2.0 | TLS 1.3, ECDHE | P-256 | Yes | Wave 1 |',
       '',
-      '**Total classical assets:** 14 | **PQC-ready:** 0 | **Hybrid-capable:** 2',
+      '**Illustrative scenario totals (selected examples shown above):** Classical assets: 14 | PQC-ready: 0 | Hybrid-capable: 2',
       '',
-      `*CycloneDX CBOM v1.7 format (crypto-asset support). Generated against ${ORG[sector]} production estate.*`
+      'This is a human-readable Markdown summary, not a machine-readable CycloneDX export. In production tools, look for scoped discovery, component/version and algorithm/key-parameter relationships, provenance and a schema-valid export for the intended CycloneDX version. An inventory or catalogue entry alone does not establish deployed protection.'
     ),
   }
 }
