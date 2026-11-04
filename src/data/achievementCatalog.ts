@@ -373,8 +373,8 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   // ═══════════════════════════════════════════════════════════════
   {
     id: 'research-sourced',
-    title: 'Followed the Citation',
-    description: 'Read a claim in the Library and traced it into the Timeline',
+    title: 'Visited the References',
+    description: 'Visited the Library and Timeline to explore their references',
     category: 'cross-feature',
     rarity: 'common',
     icon: 'BookOpen',
@@ -383,13 +383,13 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   },
   {
     id: 'research-reproduced',
-    title: 'Reproduced It',
-    description: 'Ran a real cryptographic operation instead of taking the number on trust',
+    title: 'Explored a Tool',
+    description: 'Opened a Playground tool; run its sample checks to inspect the results',
     category: 'cross-feature',
     rarity: 'uncommon',
     icon: 'Microscope',
-    // Any Playground tool counts: the point of the rung is that the reader
-    // executed the primitive themselves, not which primitive it was.
+    // Existing tracking records tool visits, not execution or successful verification.
+    // Keep the stable award ID for saved progress; describe only that participation.
     condition: (s: ActivitySnapshot) => s.playgroundToolsUsed.length >= 1,
   },
   {
