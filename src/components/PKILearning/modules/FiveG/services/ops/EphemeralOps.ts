@@ -156,6 +156,27 @@ No classic Ephemeral Keypair needed.
   }
 }
 
+/** Drop only results that depend on this agreement; preserve the input keys. */
+function clearAgreementResults(ctx: FiveGService) {
+  for (const key of [
+    'sharedSecretHex',
+    'kEncHex',
+    'kMacHex',
+    'encryptedMSINHex',
+    'macTagHex',
+    'ciphertextHex',
+    'cipherFile',
+  ] as const) {
+    delete ctx.state[key]
+  }
+}
+
+function requireSharedSecret(hex: string): string {
+  if (!/^[0-9a-f]{64}$/i.test(hex))
+    throw new Error('Shared-secret derivation failed: expected 32 bytes of actual output.')
+  return hex
+}
+
 export async function computeSharedSecret(
   ctx: FiveGService,
   profile: 'A' | 'B' | 'C',
@@ -163,6 +184,7 @@ export async function computeSharedSecret(
   hnPub: string,
   pqcMode: 'hybrid' | 'pure' = 'hybrid'
 ) {
+  clearAgreementResults(ctx)
   const header = `═══════════════════════════════════════════════════════════════
               SHARED SECRET DERIVATION(ECDH)
 ═══════════════════════════════════════════════════════════════`
@@ -180,7 +202,7 @@ export async function computeSharedSecret(
       hnPqcFile = hnPub
     }
 
-    if (!hnPqcFile) return `[Error] Missing PQC Home Network Key`
+    if (!hnPqcFile) throw new Error('Missing PQC Home Network Key')
 
     let outputLog = ''
     let zEcdhHex = ''
@@ -379,6 +401,7 @@ ${finalSharedHex} `
 ${finalSharedHex} `
       }
 
+      requireSharedSecret(finalSharedHex)
       ctx.state.sharedSecretHex = finalSharedHex
       ctx.state.profile = profile
       ctx.state.ciphertextHex = ctHex
@@ -389,15 +412,15 @@ ${finalSharedHex} `
 
       return header + '\n\n' + outputLog
     } catch (e) {
-      return `[Error in Hybrid Exchange: ${e}]`
+      clearAgreementResults(ctx)
+      throw new Error(
+        `Shared-secret derivation failed: ${e instanceof Error ? e.message : String(e)}`
+      )
     }
   }
 
-  // Generic Test Vector Bypass for Shared Secret (if z is provided)
-  // We need to support z in Profile A/B vectors first?
-  // Let's assume we update the interface or just use a fallback if the command fails.
-
-  // Actually, let's just update the try block to check vectors on failure or success.
+  // Supplied vectors remain explicit test inputs. Otherwise require output
+  // from this operation; never reuse an old file or invent a secret.
 
   let sharedSecretHex = ''
   let cmd = '(Test Vector Injected - OpenSSL Bypassed)'
@@ -433,27 +456,28 @@ ${finalSharedHex} `
           { name: hnKeyFile, data: hnDerBytes },
         ])
 
+        if (execRes.error) throw new Error(execRes.error)
+
         // Read result from memory
         const outObj = execRes.files.find((f) => f.name === secretFile)
         if (outObj) {
           sharedSecretHex = bytesToHex(outObj.data)
         } else {
-          // Try fallback if file persisted (local dev)
-          sharedSecretHex = await ctx.readFileHex(secretFile)
+          throw new Error('Shared-secret output missing from this operation.')
         }
       } else {
         // Fallback to old behavior if state missing (shouldn't happen in flow)
         ctx.trackFile(secretFile)
         cmd = `openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnPub} -out ${secretFile} `
-        await openSSLService.execute(cmd)
-        sharedSecretHex = await ctx.readFileHex(secretFile)
+        const response = await openSSLService.execute(cmd)
+        if (response.error) throw new Error(response.error)
+        const output = response.files.find((file) => file.name === secretFile)
+        if (!output) throw new Error('Shared-secret output missing from this operation.')
+        sharedSecretHex = bytesToHex(output.data)
       }
     }
 
-    // Fallback if read fails (ensure user sees something)
-    if (!sharedSecretHex) {
-      sharedSecretHex = bytesToHex(window.crypto.getRandomValues(new Uint8Array(32)))
-    }
+    requireSharedSecret(sharedSecretHex)
 
     // Store in state
     ctx.state.sharedSecretHex = sharedSecretHex
@@ -467,7 +491,7 @@ Step 1: Ephemeral Public Key Input
 Step 2: Home Network Public Key Input
   > ${hnPub}
 
-Step 3: ECDH Key Agreement(Curve25519)
+Step 3: ECDH Key Agreement(${profile === 'B' ? 'P-256' : 'Curve25519'})
 > C_DeriveKey(CKM_ECDH1_DERIVE)
 
 Step 4: Output Shared Secret(Z)
@@ -476,7 +500,10 @@ ${sharedSecretHex}
 
 [SUCCESS] Shared secret(Z) established.`
   } catch (e) {
-    return `[Error deriving secret: ${e}]`
+    clearAgreementResults(ctx)
+    throw new Error(
+      `Shared-secret derivation failed: ${e instanceof Error ? e.message : String(e)}`
+    )
   }
 }
 
@@ -524,13 +551,14 @@ export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
 ═══════════════════════════════════════════════════════════════`
 
   try {
-    // 1. Get Shared Secret (Z) from state or generate placeholder
-    const z = ctx.state.sharedSecretHex
-      ? new Uint8Array(
-          ctx.state.sharedSecretHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-        )
-      : new Uint8Array(32)
-    if (!ctx.state.sharedSecretHex) window.crypto.getRandomValues(z)
+    // A missing agreement is incomplete; never manufacture a key input.
+    delete ctx.state.kEncHex
+    delete ctx.state.kMacHex
+    delete ctx.state.encryptedMSINHex
+    delete ctx.state.macTagHex
+    delete ctx.state.cipherFile
+    const secret = requireSharedSecret(ctx.state.sharedSecretHex ?? '')
+    const z = new Uint8Array(secret.match(/.{2}/g)!.map((byte) => parseInt(byte, 16)))
     const zHex = bytesToHex(z)
 
     // 2. SharedInfo = raw ephemeral public key bytes (per 3GPP TS 33.501 §C.3.4)
@@ -596,6 +624,8 @@ Step 5: Splitting Keys
 
 [SUCCESS] Protection Keys Derived via SoftHSM KDF (${hashName}).`
   } catch (e) {
-    return `[Error] KDF Failed: ${e} `
+    delete ctx.state.kEncHex
+    delete ctx.state.kMacHex
+    throw new Error(`Key derivation failed: ${e instanceof Error ? e.message : String(e)}`)
   }
 }

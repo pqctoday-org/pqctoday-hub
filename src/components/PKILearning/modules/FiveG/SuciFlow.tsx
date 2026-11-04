@@ -377,6 +377,14 @@ const Z = zKemBytes`,
     const stepData = rawSteps[wizard.currentStep]
     fiveGService.state.supi = customSupi || '310260123456789'
     fiveGService.state.profile = profile // ensure profile is always set before any step runs
+    if (stepData.id === 'compute_shared_secret') {
+      hsmHandlesRef.current.sharedSecretHandle = undefined
+      hsmHandlesRef.current.combinedZBytes = undefined
+      hsmHandlesRef.current.kemCiphertext = undefined
+      hsmHandlesRef.current.kEncBytes = undefined
+      hsmHandlesRef.current.kMacBytes = undefined
+      hsmHandlesRef.current.ciphertext = undefined
+    }
     let result: string | Record<string, string> = ''
 
     try {
@@ -1704,7 +1712,11 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         key={`${profile}-${pqcMode}`} // Force re-mount on profile or mode change
         steps={steps}
         currentStepIndex={wizard.currentStep}
-        onExecute={() => wizard.execute(executeStep)}
+        onExecute={() => {
+          if (rawSteps[wizard.currentStep].id === 'compute_shared_secret')
+            wizard.setIsStepComplete(false)
+          return wizard.execute(executeStep)
+        }}
         output={wizard.output}
         isExecuting={wizard.isExecuting}
         error={wizard.error}

@@ -122,29 +122,28 @@ describe('FiveGService', () => {
   })
 
   describe('computeSharedSecret', () => {
-    it('computes shared secret for Profile C (pure PQC)', async () => {
+    it('rejects malformed shared-secret output for Profile C (pure PQC)', async () => {
       // Force base64 read bypass mock
       vi.mocked(openSSLService.execute).mockResolvedValue({
         stdout: Buffer.from('mockdata').toString('base64'),
         stderr: '',
         files: [],
       })
-      const res = await service.computeSharedSecret('C', 'priv.key', 'pub.key', 'pure')
-      expect(res).toContain('Pure PQC Mode')
+      await expect(service.computeSharedSecret('C', 'priv.key', 'pub.key', 'pure')).rejects.toThrow(
+        /32 bytes/
+      )
     })
   })
 
   describe('deriveKeys', () => {
-    it('handles deriveKeys empty state gracefully', async () => {
-      const res = await service.deriveKeys('A')
-      expect(res).toBeDefined()
+    it('rejects key derivation without an established shared secret', async () => {
+      await expect(service.deriveKeys('A')).rejects.toThrow(/Shared-secret derivation failed/)
     })
   })
 
   describe('encryptMSIN', () => {
-    it('encrypts dummy msins', async () => {
-      const res = await service.encryptMSIN()
-      expect(res).toBeDefined()
+    it('rejects encryption without a derived key', async () => {
+      await expect(service.encryptMSIN()).rejects.toThrow(/No key derived/)
     })
   })
 

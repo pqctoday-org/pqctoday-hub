@@ -4,7 +4,8 @@ import { bytesToHex } from '@/services/crypto/FileUtils'
 import type { FiveGService } from '../FiveGService'
 
 export async function encryptMSIN(ctx: FiveGService) {
-  if (!ctx.state.kEncHex) return '[Error] No Key Derived'
+  if (!ctx.state.kEncHex)
+    throw new Error('No key derived: complete shared-secret and key derivation first.')
 
   // MSIN portion only (without MCC/MNC) per 3GPP TS 33.501
   const parsedSupi = ctx.state.supi || '310260123456789'
