@@ -23,6 +23,8 @@ import {
   getU32,
   toHex,
   TPM_CAP_HANDLES,
+  TPM_CC_Startup,
+  TPM_CC_RSA_Decrypt,
   type DemoCommandExtras,
 } from '../../../../wasm/tpmSerializer'
 import { getRcInfo } from '../tpmCommandDefs'
@@ -56,6 +58,7 @@ export interface TpmLessonStep {
   op: string
   label: string
   expect?: LessonStepExpect
+  expectedRefusal?: { commandCode: number; responseCodes: readonly number[] }
   run: (ctx: TpmLearnContext, results: (TpmStepResult | null)[]) => Promise<TpmStepResult>
 }
 
@@ -74,15 +77,34 @@ async function execOk(ctx: TpmLearnContext, cmd: Uint8Array): Promise<Uint8Array
   return resp
 }
 
-/** Execute expecting a nonzero rc; throws (for expect:'refusal') with the decoded name. */
-async function execRefused(ctx: TpmLearnContext, cmd: Uint8Array): Promise<never> {
-  const resp = await ctx.exec(cmd)
-  const { rc } = parseRespHeader(resp)
-  if (rc === 0) {
-    throw new Error('Unexpectedly succeeded — this should not happen.')
+/** A well-formed non-success response, bound to the command actually sent. */
+export class TpmObservedRefusal extends Error {
+  constructor(
+    readonly commandCode: number,
+    readonly responseCode: number,
+    readonly response: Uint8Array
+  ) {
+    const info = getRcInfo(responseCode)
+    super(`${info.name} (${formatRc(responseCode)}) — ${info.description}`)
   }
-  const info = getRcInfo(rc)
-  throw new Error(`${info.name} (${formatRc(rc)}) — ${info.description}`)
+}
+
+/** Observe a refusal; the runner separately matches the step's declared command/code pair. */
+async function execRefused(ctx: TpmLearnContext, cmd: Uint8Array): Promise<never> {
+  if (cmd.length < 10 || getU32(cmd, 2) !== cmd.length) {
+    throw new Error('Malformed TPM request — refusal not assessed.')
+  }
+  const resp = await ctx.exec(cmd)
+  const { tag, size, rc } = parseRespHeader(resp)
+  if (resp.length < 10 || size !== resp.length || (tag !== 0x8001 && tag !== 0x8002)) {
+    throw new Error('Malformed TPM response — refusal not assessed.')
+  }
+  if (rc === 0) throw new Error('Unexpected success — the required TPM refusal was not observed.')
+  // TPM error responses have the no-sessions tag and only the ten-byte header (Part 3 §6).
+  if (tag !== 0x8001 || size !== 10) {
+    throw new Error('Malformed TPM error response — refusal not assessed.')
+  }
+  throw new TpmObservedRefusal(getU32(cmd, 6), rc, resp.slice())
 }
 
 /** CreatePrimary via the demo serializer; returns the new transient handle. */
@@ -180,6 +202,7 @@ export const TPM_LESSONS: TpmLesson[] = [
         op: 'TPM2_Startup (again)',
         label: 'Break a rule on purpose: start an already-started TPM',
         expect: 'refusal',
+        expectedRefusal: { commandCode: TPM_CC_Startup, responseCodes: [0x100] },
         run: async (ctx) => {
           return execRefused(ctx, serializeDemoCommand('TPM2_Startup', ''))
         },
@@ -353,9 +376,21 @@ export const TPM_LESSONS: TpmLesson[] = [
         op: 'TPM2_RSA_Decrypt (corrupted ciphertext)',
         label: 'Classical failure mode: corrupt one byte — OAEP refuses LOUDLY',
         expect: 'refusal',
+        expectedRefusal: { commandCode: TPM_CC_RSA_Decrypt, responseCodes: [0x84] },
         run: async (ctx) => {
-          const corrupted = ctx.chain.rsaCiphertext!.slice()
-          corrupted[0] ^= 0xff
+          const original = ctx.chain.rsaCiphertext
+          if (!original || original.length !== 256) {
+            throw new Error(
+              'Generate the 256-byte sample RSA ciphertext before testing its refusal.'
+            )
+          }
+          const corrupted = original.slice()
+          // Lower one nonzero byte: the integer stays below the valid original (and modulus).
+          // Flipping the high byte can instead trigger the engine's out-of-modulus SIZE error.
+          let changed = corrupted.length - 1
+          while (changed >= 0 && corrupted[changed] === 0) changed--
+          if (changed < 0) throw new Error('Expected a nonzero sample RSA ciphertext.')
+          corrupted[changed] -= 1
           return execRefused(
             ctx,
             serializeDemoCommand('TPM2_RSA_Decrypt', 'RSA-2048-DEC', ctx.chain.handles.rsaDec, {

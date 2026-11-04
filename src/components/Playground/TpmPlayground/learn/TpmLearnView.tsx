@@ -8,7 +8,7 @@
 // completion, "try it in the workbench" chips, and the shared glossary rail.
 // The GlossaryProvider lives in TpmPlayground.tsx so the workbench's
 // Execution Log hovers share the same glossary session.
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import {
   CheckCircle2,
@@ -40,6 +40,7 @@ import { TAG_NAMES, CC_NAMES } from '../tpmWireDecode'
 import { HexPanel } from '../ExecutionLog'
 import {
   TPM_LESSONS,
+  TpmObservedRefusal,
   type TpmLearnContext,
   type TpmLessonStep,
   type TpmStepResult,
@@ -161,7 +162,7 @@ function StepRow({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          {state.status === 'pending' && (
+          {(state.status === 'pending' || state.status === 'failed') && (
             <Button
               size="sm"
               variant="ghost"
@@ -169,7 +170,7 @@ function StepRow({
               disabled={disabled}
               className="h-7 gap-1 px-2 text-[11px]"
             >
-              <PlayCircle size={13} /> Run
+              <PlayCircle size={13} /> {state.status === 'failed' ? 'Retry' : 'Run'}
             </Button>
           )}
           {state.status === 'running' && (
@@ -216,6 +217,15 @@ export function TpmLearnView({
 }) {
   const [lessonIdx, setLessonIdx] = useState(0)
   const lesson = TPM_LESSONS[lessonIdx]
+  const mountedRef = useRef(true)
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
+  const runningRef = useRef(false)
+  const [runBusy, setRunBusy] = useState(false)
   // Any panel — this one or another tab — holding the shared engine lock
   // disables run controls here too, so a queued click never looks like a
   // no-op (see useTpmBusy.ts).
@@ -252,6 +262,7 @@ export function TpmLearnView({
   })
 
   const selectLesson = (idx: number) => {
+    if (runningRef.current) return
     setLessonIdx(idx)
     setStepStates(TPM_LESSONS[idx].steps.map(() => ({ status: 'pending' })))
     resultsRef.current = TPM_LESSONS[idx].steps.map(() => null)
@@ -260,10 +271,16 @@ export function TpmLearnView({
     setStepWireLogs(TPM_LESSONS[idx].steps.map(() => []))
   }
 
-  const runStep = async (i: number) => {
-    setStepStates((prev) => prev.map((s, j) => (j === i ? { status: 'running' } : s)))
-    wireLogsRef.current[i] = []
-    setStepWireLogs((prev) => prev.map((l, j) => (j === i ? [] : l)))
+  const executeStep = async (i: number): Promise<boolean> => {
+    const step = lesson.steps[i]
+    if (!mountedRef.current) return false
+    if (resultsRef.current.slice(0, i).some((r) => r === null)) return false
+    resultsRef.current = resultsRef.current.map((r, j) => (j >= i ? null : r))
+    setStepStates((prev) =>
+      prev.map((s, j) => (j === i ? { status: 'running' } : j > i ? { status: 'pending' } : s))
+    )
+    wireLogsRef.current = wireLogsRef.current.map((l, j) => (j >= i ? [] : l))
+    setStepWireLogs((prev) => prev.map((l, j) => (j >= i ? [] : l)))
     // The step's entire command sequence — not just each individual wire
     // call — must run exclusively against the shared WASM TPM instance, or
     // another operation's commands (a different step, a different tab) can
@@ -273,19 +290,38 @@ export function TpmLearnView({
     // concurrently-running steps would otherwise capture each other's wire
     // traffic. See tpmBridge.ts's withTpmLock and the 2026-07-24 TPM
     // playground concurrency remediation.
-    await withTpmLock(async () => {
+    return withTpmLock(async () => {
       setTpmWireListener((entry) => {
         wireLogsRef.current[i] = [...wireLogsRef.current[i], entry]
       })
       try {
-        const result = await lesson.steps[i].run(makeCtx(), resultsRef.current)
+        const result = await step.run(makeCtx(), resultsRef.current)
+        if (!mountedRef.current) return false
+        if (step.expect === 'refusal') {
+          throw new Error('Unexpected success — the required TPM refusal was not observed.')
+        }
         resultsRef.current = resultsRef.current.map((r, j) => (j === i ? result : r))
         setStepStates((prev) =>
           prev.map((s, j) => (j === i ? { status: 'ok', detail: result.detail } : s))
         )
+        return true
       } catch (e) {
-        const message = e instanceof Error ? e.message : String(e)
-        const expectedRefusal = lesson.steps[i].expect === 'refusal'
+        if (!mountedRef.current) return false
+        const expected = step.expectedRefusal
+        const expectedRefusal =
+          step.expect === 'refusal' &&
+          expected !== undefined &&
+          e instanceof TpmObservedRefusal &&
+          e.commandCode === expected.commandCode &&
+          expected.responseCodes.includes(e.responseCode)
+        const rawMessage = e instanceof Error ? e.message : String(e)
+        const message =
+          e instanceof TpmObservedRefusal && !expectedRefusal
+            ? `${rawMessage} — does not match this step's declared command/refusal.`
+            : rawMessage
+        if (expectedRefusal) {
+          resultsRef.current[i] = { detail: message }
+        }
         logEvent(
           'Playground',
           'TPM Learn Step',
@@ -296,35 +332,49 @@ export function TpmLearnView({
             j === i ? { status: expectedRefusal ? 'refused-ok' : 'failed', detail: message } : s
           )
         )
+        return expectedRefusal
       } finally {
         setTpmWireListener(null)
-        setStepWireLogs((prev) => prev.map((l, j) => (j === i ? wireLogsRef.current[i] : l)))
+        if (mountedRef.current) {
+          setStepWireLogs((prev) => prev.map((l, j) => (j === i ? wireLogsRef.current[i] : l)))
+        }
       }
     })
   }
 
+  const runStep = async (i: number) => {
+    if (runningRef.current) return
+    runningRef.current = true
+    setRunBusy(true)
+    try {
+      await executeStep(i)
+    } finally {
+      runningRef.current = false
+      if (mountedRef.current) setRunBusy(false)
+    }
+  }
+
   const runAll = async () => {
-    // The WHOLE lesson run — not just each step individually — must be one
-    // exclusive operation. runStep's own withTpmLock wrap only stops two
-    // individual steps' WASM commands from truly overlapping; it does NOT
-    // stop a second, stale Run-all invocation's steps from interleaving
-    // BETWEEN this run's own steps at the queue level (A-step0, B-step0,
-    // A-step1, B-step1, ...) — and since all steps share ONE mutable
-    // `chainRef.current`, that interleaving corrupts THIS run's own chain
-    // state (e.g. a later step reads a handle a different run's step just
-    // overwrote) even though no two WASM calls ever literally overlap.
-    // Wrapping here makes runStep's nested lock calls reentrant instead,
-    // so a second Run-all invocation queues behind this ENTIRE run, not
-    // behind just its current step. Confirmed necessary by a same-tick
-    // double-click repro during the 2026-07-24 concurrency remediation —
-    // step-level locking alone still corrupted the streaming lesson.
-    await withTpmLock(async () => {
-      for (let i = 0; i < lesson.steps.length; i++) {
-        if (stepStates[i].status === 'ok' || stepStates[i].status === 'refused-ok') continue
-        // Steps are deliberately sequential — each may read prior chain state.
-        await runStep(i)
-      }
-    })
+    if (runningRef.current) return
+    runningRef.current = true
+    setRunBusy(true)
+    // Restart the sequential sample from a fresh chain; never skip a failed prerequisite.
+    resultsRef.current = lesson.steps.map(() => null)
+    chainRef.current = freshChain()
+    wireLogsRef.current = lesson.steps.map(() => [])
+    setStepWireLogs(lesson.steps.map(() => []))
+    setStepStates(lesson.steps.map(() => ({ status: 'pending' })))
+    try {
+      // Preserve the whole-lesson lock and its nested, reentrant step locks/listener lifetime.
+      await withTpmLock(async () => {
+        for (let i = 0; i < lesson.steps.length; i++) {
+          if (!(await executeStep(i))) break
+        }
+      })
+    } finally {
+      runningRef.current = false
+      if (mountedRef.current) setRunBusy(false)
+    }
   }
 
   const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
@@ -339,6 +389,7 @@ export function TpmLearnView({
                 key={l.id}
                 variant="ghost"
                 onClick={() => selectLesson(i)}
+                disabled={runBusy || tpmBusy}
                 className={cn(
                   'flex h-auto w-full items-start justify-start gap-1.5 whitespace-normal break-words rounded-md px-2 py-1.5 text-left text-[12px] font-normal',
                   i === lessonIdx
@@ -382,12 +433,17 @@ export function TpmLearnView({
                 size="sm"
                 variant="outline"
                 onClick={runAll}
-                disabled={allDone || !isWasmReady || tpmBusy}
+                disabled={allDone || !isWasmReady || tpmBusy || runBusy}
                 className="h-7 text-[11px]"
               >
                 Run all
               </Button>
             </div>
+            <p className="text-[11.5px] text-muted-foreground">
+              Run all restarts this sample lesson and stops at the first failed check. Only the
+              declared command and response code count as an expected refusal; other errors remain
+              incomplete. Retry a failed step after resolving its error.
+            </p>
             <ol className="space-y-2">
               {lesson.steps.map((step, i) => (
                 <StepRow
@@ -397,7 +453,14 @@ export function TpmLearnView({
                   state={stepStates[i]}
                   wireLogs={stepWireLogs[i]}
                   onRun={() => runStep(i)}
-                  disabled={stepStates[i].status === 'running' || !isWasmReady || tpmBusy}
+                  disabled={
+                    runBusy ||
+                    !isWasmReady ||
+                    tpmBusy ||
+                    stepStates
+                      .slice(0, i)
+                      .some((s) => s.status !== 'ok' && s.status !== 'refused-ok')
+                  }
                 />
               ))}
             </ol>
