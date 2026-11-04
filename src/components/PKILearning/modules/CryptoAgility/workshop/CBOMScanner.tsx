@@ -149,13 +149,16 @@ export const CBOMScanner: React.FC = () => {
 
       {/* Infrastructure Layer Coverage */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">Infrastructure Layer Coverage</h4>
+        <h4 className="text-sm font-bold text-foreground mb-3">
+          Sample Infrastructure Layer Coverage
+        </h4>
         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2">
           {LAYERS.map((layer) => {
             const layerEntries = SAMPLE_CBOM.filter((e) => e.infrastructureLayer === layer.id)
             const vulnerableCount = layerEntries.filter(
               (e) => e.quantumStatus === 'vulnerable'
             ).length
+            const weakenedCount = layerEntries.filter((e) => e.quantumStatus === 'weakened').length
             const isActive = activeLayer === layer.id
             const IconComponent = layer.icon
 
@@ -180,12 +183,26 @@ export const CBOMScanner: React.FC = () => {
                   {layer.id}
                 </span>
                 <span
-                  className={`text-[10px] font-bold ${vulnerableCount > 0 ? 'text-destructive' : 'text-success'}`}
+                  className={`text-[10px] font-bold ${
+                    vulnerableCount > 0
+                      ? 'text-destructive'
+                      : weakenedCount > 0
+                        ? 'text-warning'
+                        : layerEntries.length > 0
+                          ? 'text-success'
+                          : 'text-muted-foreground'
+                  }`}
                 >
-                  {vulnerableCount > 0 ? `${vulnerableCount} vuln` : 'Safe'}
+                  {vulnerableCount > 0
+                    ? `${vulnerableCount} vuln`
+                    : weakenedCount > 0
+                      ? `${weakenedCount} weakened`
+                      : layerEntries.length > 0
+                        ? 'Marked safe'
+                        : 'No entries'}
                 </span>
                 <span className="text-[10px] text-muted-foreground">
-                  {layerEntries.length} shown sample asset{layerEntries.length !== 1 ? 's' : ''}
+                  {layerEntries.length} asset{layerEntries.length !== 1 ? 's' : ''}
                 </span>
               </Button>
             )
