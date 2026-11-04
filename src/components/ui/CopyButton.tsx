@@ -46,13 +46,16 @@ export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonP
     }
   }
 
+  // An icon-only button (label="") still needs a name for screen readers.
+  const accessibleName = label || 'Copy'
+
   return (
     <Button
       variant="ghost"
       onClick={handleCopy}
       className={`inline-flex items-center gap-2 px-3 py-2 min-h-[44px] min-w-[44px] rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors ${className}`}
-      aria-label={copied ? 'Copied!' : label}
-      title={copied ? 'Copied!' : label}
+      aria-label={copied ? 'Copied!' : accessibleName}
+      title={copied ? 'Copied!' : accessibleName}
     >
       {copied ? (
         <>
