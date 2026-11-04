@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { exactTlsLaunchConfig } from './tlsLaunch'
 import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
+import { requireSampleTrustInputs } from '@/components/PKILearning/modules/TLSBasics/utils/sampleTrust'
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router'
 import { Download, ExternalLink, Loader2, Play } from 'lucide-react'
@@ -12,19 +13,7 @@ import { TLSServerPanel } from '../PKILearning/modules/TLSBasics/TLSServerPanel'
 import { TLSNegotiationResults } from '../PKILearning/modules/TLSBasics/components/TLSNegotiationResults'
 import { TLSSummary } from '../PKILearning/modules/TLSBasics/components/TLSSummary'
 import { TLSComparisonTable } from '../PKILearning/modules/TLSBasics/components/TLSComparisonTable'
-import {
-  DEFAULT_CLIENT_CERT,
-  DEFAULT_CLIENT_KEY,
-  DEFAULT_SERVER_CERT,
-  DEFAULT_SERVER_KEY,
-  DEFAULT_ROOT_CA,
-  DEFAULT_MLDSA_ROOT_CA,
-  DEFAULT_MLDSA_SERVER_CERT,
-  DEFAULT_MLDSA_CLIENT_CERT,
-  DEFAULT_MLDSA87_ROOT_CA,
-  DEFAULT_MLDSA87_SERVER_CERT,
-  DEFAULT_MLDSA87_CLIENT_CERT,
-} from '../PKILearning/modules/TLSBasics/utils/defaultCertificates'
+import { useSampleTrustDefaults } from '@/components/PKILearning/modules/TLSBasics/utils/useSampleTrustDefaults'
 import { Button } from '@/components/ui/button'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 import { LIFECYCLE_STYLES, type LifecycleLabel } from '@/utils/libraryLifecycle'
@@ -87,56 +76,7 @@ export const TLSSimulatorTab: React.FC = () => {
    * pkcs11-provider remain statically linked into openssl.wasm; the wiring
    * just isn't user-facing. */
 
-  // Initialize default certificates on first mount
-  useEffect(() => {
-    if (serverConfig.certificates.certPem && serverConfig.certificates.caPem) return
-    setServerConfig({
-      certificates: {
-        keyPem: DEFAULT_SERVER_KEY,
-        certPem: DEFAULT_SERVER_CERT,
-        caPem: DEFAULT_ROOT_CA,
-      },
-    })
-    setClientConfig({
-      certificates: {
-        keyPem: DEFAULT_CLIENT_KEY,
-        certPem: DEFAULT_CLIENT_CERT,
-        caPem: DEFAULT_ROOT_CA,
-      },
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Dynamic trust store: keep client/server CA in sync with selected certs
-  useEffect(() => {
-    if (!serverConfig.certificates.certPem || !clientConfig.certificates.certPem) return
-
-    const getRootCa = (certPem: string | undefined) => {
-      if (certPem === DEFAULT_MLDSA_SERVER_CERT || certPem === DEFAULT_MLDSA_CLIENT_CERT)
-        return DEFAULT_MLDSA_ROOT_CA
-      if (certPem === DEFAULT_MLDSA87_SERVER_CERT || certPem === DEFAULT_MLDSA87_CLIENT_CERT)
-        return DEFAULT_MLDSA87_ROOT_CA
-      return DEFAULT_ROOT_CA
-    }
-
-    const requiredClientCa = getRootCa(serverConfig.certificates.certPem)
-    if (clientConfig.certificates.caPem !== requiredClientCa) {
-      setClientConfig({ certificates: { ...clientConfig.certificates, caPem: requiredClientCa } })
-    }
-
-    const requiredServerCa = getRootCa(clientConfig.certificates.certPem)
-    if (serverConfig.certificates.caPem !== requiredServerCa) {
-      setServerConfig({ certificates: { ...serverConfig.certificates, caPem: requiredServerCa } })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    serverConfig.certificates.certPem,
-    clientConfig.certificates.certPem,
-    serverConfig.certificates.caPem,
-    clientConfig.certificates.caPem,
-    setClientConfig,
-    setServerConfig,
-  ])
+  useSampleTrustDefaults()
 
   const triggerSimulation = useCallback(async () => {
     setIsSimulating(true)
@@ -151,6 +91,7 @@ export const TLSSimulatorTab: React.FC = () => {
     ]
 
     try {
+      requireSampleTrustInputs(clientConfig, serverConfig)
       const encoder = new TextEncoder()
       const serverCertPem = serverConfig.certificates.certPem || ''
       const clientCertPem = clientConfig.certificates.certPem || ''
@@ -160,12 +101,12 @@ export const TLSSimulatorTab: React.FC = () => {
         { name: 'ssl/server.key', data: encoder.encode(serverConfig.certificates.keyPem || '') },
       ]
 
-      const clientCaPem = clientConfig.certificates.caPem || serverCertPem
+      const clientCaPem = clientConfig.certificates.caPem
       if (clientCaPem) {
         simFiles.push({ name: 'ssl/client-ca.crt', data: encoder.encode(clientCaPem) })
       }
 
-      const serverCaPem = serverConfig.certificates.caPem || clientCertPem
+      const serverCaPem = serverConfig.certificates.caPem
       if (serverCaPem && serverConfig.verifyClient) {
         simFiles.push({ name: 'ssl/server-ca.crt', data: encoder.encode(serverCaPem) })
       }

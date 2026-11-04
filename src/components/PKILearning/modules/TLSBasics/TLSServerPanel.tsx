@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Settings, FileText, Check, Shield, Key, Import, Copy, Eye } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore } from '@/store/tls-learning.store'
@@ -16,6 +16,8 @@ import {
   DEFAULT_MLDSA87_SERVER_KEY,
 } from './utils/defaultCertificates'
 import { Button } from '@/components/ui/button'
+import { initialSampleCertificateSelection } from './utils/sampleTrust'
+import { SampleTrustControls } from './components/SampleTrustControls'
 
 // TLS_AES_128_CCM_8_SHA256 is intentionally absent: its 64-bit auth tag is
 // rejected at OpenSSL's default security level, so it can never negotiate here.
@@ -118,7 +120,9 @@ export const TLSServerPanel: React.FC = () => {
     setServerMessage,
   } = useTLSStore()
   const [activeTab, setActiveTab] = useState<'ui' | 'raw'>('ui')
-  const [certSelection, setCertSelection] = useState<string>('default')
+  const [certSelection, setCertSelection] = useState<string>(() =>
+    initialSampleCertificateSelection(serverConfig, 'server')
+  )
   const [showImport, setShowImport] = useState<{ isOpen: boolean; type: 'cert' | 'key' | 'ca' }>({
     isOpen: false,
     type: 'cert',
@@ -129,7 +133,8 @@ export const TLSServerPanel: React.FC = () => {
   const isConnected = sessionStatus === 'connected'
 
   // Handle Cert Selection
-  useEffect(() => {
+  const handleCertSelection = (certSelection: string) => {
+    setCertSelection(certSelection)
     if (certSelection === 'default') {
       setServerConfig({
         certificates: {
@@ -179,8 +184,7 @@ export const TLSServerPanel: React.FC = () => {
       })
     }
     // 'custom' - user will paste/import their own
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- Controlled update: adding serverConfig.certificates would cause infinite loop
-  }, [certSelection, setServerConfig])
+  }
 
   const toggleCipher = (cipher: string) => {
     if (isConnected) return
@@ -382,7 +386,7 @@ export const TLSServerPanel: React.FC = () => {
                   label="Server Identity"
                   items={CERTS.map((c) => ({ id: c.id, label: c.label }))}
                   selectedId={certSelection}
-                  onSelect={setCertSelection}
+                  onSelect={handleCertSelection}
                   noContainer
                   className="flex-grow"
                 />
@@ -511,15 +515,18 @@ export const TLSServerPanel: React.FC = () => {
                   </div>
                   <textarea
                     id="server-ca-pem"
+                    aria-label="Server trusted sample CA"
                     className="w-full h-16 bg-card border border-border rounded p-2 text-xs font-mono"
                     placeholder="-----BEGIN CERTIFICATE-----... (CA that signed client certs)"
                     value={serverConfig.certificates.caPem || ''}
                     onChange={(e) =>
                       setServerConfig({
+                        trustSelection: 'learner-selected',
                         certificates: { ...serverConfig.certificates, caPem: e.target.value },
                       })
                     }
                   />
+                  <SampleTrustControls side="server" />
                   <p className="text-[10px] text-muted-foreground mt-1">
                     Import the Root CA that signed your client certificates.
                   </p>
@@ -820,6 +827,7 @@ export const TLSServerPanel: React.FC = () => {
           } else {
             // 'ca' type - Root CA for verifying client certs (mTLS)
             setServerConfig({
+              trustSelection: 'learner-selected',
               certificates: { ...serverConfig.certificates, caPem: content },
             })
           }

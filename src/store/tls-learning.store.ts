@@ -5,6 +5,8 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { useHistoryStore } from './useHistoryStore'
 
 export interface TLSConfig {
+  /** Missing provenance on saved configurations preserves learner choices. */
+  trustSelection?: 'sample-default' | 'learner-selected'
   cipherSuites: string[]
   groups: string[]
   signatureAlgorithms: string[]
@@ -116,6 +118,7 @@ SignatureAlgorithms = mldsa44:mldsa65:mldsa87:ecdsa_secp256r1_sha256:rsa_pss_rsa
 const V1_LEGACY_GROUPS = ['X25519', 'P-256', 'P-384']
 
 const DEFAULT_CONFIG: TLSConfig = {
+  trustSelection: 'sample-default',
   cipherSuites: [
     'TLS_AES_256_GCM_SHA384',
     'TLS_AES_128_GCM_SHA256',
