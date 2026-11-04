@@ -224,6 +224,15 @@ export async function runKmacAcvpSection(ctx: ClassicalSectionCtx): Promise<void
       numberText: ' · CKM_KMAC128 + CK_KMAC_PARAMS',
     },
   ]
+  // The draft rows are not emitted as placeholders (see below), so say once why
+  // none appear: a reader of the log would otherwise see only the vendor rows.
+  if (variants.some((v) => v.draft && v.why)) {
+    ctx.addLog(
+      eName === 'C++'
+        ? `[${eName}] KMAC (v3.3 draft number CKM_KMAC128): no draft rows. The C++ engine does not carry the draft's composite or KMAC mechanisms; the vendor-number rows run.`
+        : `[${eName}] KMAC (v3.3 draft number CKM_KMAC128): no draft rows. This engine build does not advertise it yet; the vendor-number rows run.`
+    )
+  }
   for (const v of variants) {
     for (const g of f.testGroups) {
       for (const t of g.tests) {

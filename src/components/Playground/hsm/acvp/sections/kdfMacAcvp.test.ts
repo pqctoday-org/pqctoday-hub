@@ -8,7 +8,7 @@
 // keeps its different order.
 import { describe, it, expect } from 'vitest'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
-import { pKmacDraft } from './kdfMacAcvp'
+import { pKmacDraft, runKmacAcvpSection } from './kdfMacAcvp'
 
 /** A just-enough module: a bump allocator plus the two calls the builder makes. */
 function fakeModule() {
@@ -51,5 +51,50 @@ describe('CK_KMAC_PARAMS block for CKM_KMAC128 / CKM_KMAC256', () => {
     expect(words.get(b.ptr + 8)).toBe(0)
     expect(words.get(b.ptr + 12)).toBe(0)
     expect(b.allocs).toHaveLength(1)
+  })
+})
+
+describe('KMAC section on an engine without the draft number', () => {
+  const ctxFor = (eName: string) => {
+    const logs: string[] = []
+    const rows: { id: string; status: string }[] = []
+    const ctx = {
+      M: {} as SoftHSMModule,
+      hSession: 1,
+      eName,
+      slot: 0,
+      // A non-empty list that lacks both KMAC numbers (an empty list means the probe
+      // failed, and the suite then runs everything).
+      mechs: new Set<number>([0x1050]),
+      referenceUrl: '',
+      pushResult: async (r: { id: string; status: string }) => {
+        rows.push({ id: r.id, status: r.status })
+      },
+      addLog: (m: string) => {
+        logs.push(m)
+      },
+    }
+    return { ctx, logs, rows }
+  }
+
+  it('C++: no draft rows, and one log line says why', async () => {
+    const { ctx, logs, rows } = ctxFor('C++')
+    await runKmacAcvpSection(ctx as unknown as Parameters<typeof runKmacAcvpSection>[0])
+    expect(rows.some((r) => r.id.includes('-draft-'))).toBe(false)
+    expect(rows.length).toBeGreaterThan(0)
+    expect(rows.every((r) => r.status === 'skip')).toBe(true) // the vendor rows, skipped here
+    const line = logs.filter((l) => l.includes('no draft rows'))
+    expect(line).toHaveLength(1)
+    expect(line[0]).toContain('The C++ engine does not carry the draft')
+  })
+
+  it('Rust build without the numbers: no draft rows, and the line names the build, not the engine', async () => {
+    const { ctx, logs, rows } = ctxFor('Rust')
+    await runKmacAcvpSection(ctx as unknown as Parameters<typeof runKmacAcvpSection>[0])
+    expect(rows.some((r) => r.id.includes('-draft-'))).toBe(false)
+    const line = logs.filter((l) => l.includes('no draft rows'))
+    expect(line).toHaveLength(1)
+    expect(line[0]).toContain('This engine build does not advertise it yet')
+    expect(line[0]).not.toContain('C++ engine does not carry')
   })
 })
