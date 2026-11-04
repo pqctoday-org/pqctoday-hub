@@ -742,7 +742,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.6',
+    version: '1.0.7',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -765,7 +765,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'Attestation tab produces a downloadable JSON bundle: TPM2_Quote output, PCR digest, and the AK signature — independently verifiable outside the browser session.',
+      'Attestation exports sample report bytes and an AK signature for separate inspection. Format and signature checks do not by themselves establish trusted hardware origin, freshness or an acceptable PCR policy.',
   },
   {
     id: 'rng-demo',

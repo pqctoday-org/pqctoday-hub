@@ -144,11 +144,11 @@ export const TPM_QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'Why must a Quote key be RESTRICTED?',
       options: [
         'Restricted keys are faster',
-        'A restricted signer only signs TPM-generated data — so a valid Quote signature proves the TPM produced the report, not a caller who fabricated “platform state”',
+        'With a trusted, authenticated restricted attestation key, signing restrictions help distinguish generated reports from arbitrary caller data; the sample still needs separate trust and freshness checks',
         'Unrestricted keys cannot use SHA-256',
       ],
       answer: 1,
-      why: 'That is the attestation trust argument in one attribute. The TPMS_ATTEST additionally begins with TPM_GENERATED magic, and restricted keys refuse to sign external data that could forge it.',
+      why: 'Restriction is part of an attestation design, not a complete trust decision. The public TPM_GENERATED prefix is a format marker. Evaluate the signature under an authenticated attestation key, key/credential binding, nonce freshness and the PCR policy separately; this browser sample does not establish production platform trust.',
     },
     {
       q: 'The classical AK pinned RSASSA/SHA-256 at creation and Quote used inScheme=NULL. What did NULL mean there?',
@@ -166,11 +166,11 @@ export const TPM_QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'Why is a placeholder stub that returns SUCCESS worse than one that returns an error?',
       options: [
         'It is slower',
-        'It manufactures false confidence: every downstream check passes while no real cryptography protected anything — which is why you verified the output BYTES (≠ 0xDD/0xEE), not just the return code',
+        'It can manufacture false confidence; known-placeholder checks help detect specific stubs but do not establish cryptographic correctness',
         'It uses more memory',
       ],
       answer: 1,
-      why: 'Return codes prove the plumbing ran; byte-pattern checks prove the MATH ran. The V185-017/018 detectors you ran by hand exist because this engine deliberately falls back to recognizable placeholder patterns when its crypto bridge is absent.',
+      why: 'A successful return code and the absence of a known placeholder pattern are bounded observations. Neither establishes correct cryptography. Independent verification, trusted known-answer samples and parameter checks provide additional evidence; these two detectors do not perform all of those checks.',
     },
     {
       q: 'The drift check found the engine returning a DIGEST_VERIFIED ticket where the published errata prefers a NULL ticket. What is the correct takeaway?',
