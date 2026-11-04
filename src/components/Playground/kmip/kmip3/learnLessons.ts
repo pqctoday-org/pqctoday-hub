@@ -77,6 +77,8 @@ export interface LessonStep {
    * key); 'pending': §8.1.2 async accept — OperationPending + a correlation
    * value, not a payload. Default: 'success'. */
   expect?: 'success' | 'refusal' | 'pending'
+  /** Required certificate answer, separate from successful request processing. */
+  expectValidity?: 'Valid' | 'Invalid'
 }
 
 /** Collect every UniqueIdentifier in a response tree (e.g. CreateSplitKey's
@@ -895,6 +897,7 @@ export const LESSONS: Lesson[] = [
       steps: [
         {
           op: 'Validate',
+          expectValidity: 'Valid',
           label:
             'Set up a demo CA (real ECDSA keygen + a real self-signed root cert) and Validate it',
           preRun: (engine) => {
@@ -910,6 +913,7 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Validate',
+          expectValidity: 'Invalid',
           label: 'Corrupt one hex nibble of the SAME certificate and Validate again',
           buildRaw: () => ({
             op: 'Validate',
@@ -926,6 +930,7 @@ export const LESSONS: Lesson[] = [
       steps: [
         {
           op: 'Validate',
+          expectValidity: 'Valid',
           label:
             'Set up a demo CA (real ML-DSA-65 keygen + a real self-signed root cert) and Validate it',
           preRun: (engine) => {
@@ -941,6 +946,7 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Validate',
+          expectValidity: 'Invalid',
           label: 'Corrupt one hex nibble of the SAME certificate and Validate again',
           buildRaw: () => ({
             op: 'Validate',

@@ -160,6 +160,35 @@ describe('KMIP panel completion and retry', () => {
     expect(s.runOp).toHaveBeenCalledTimes(1)
     expect(s.onDone).toHaveBeenCalledTimes(1)
   })
+  it.each([
+    ['Valid', '0x00000001', 'Success', true],
+    ['Valid', '0x00000002', 'Success', false],
+    ['Valid', '0x00000003', 'Success', false],
+    ['Valid', undefined, 'Success', false],
+    ['Valid', '0x00000001', 'OperationFailed', false],
+    ['Invalid', '0x00000002', 'Success', true],
+    ['Invalid', '0x00000001', 'Success', false],
+    ['Invalid', '0x00000003', 'Success', false],
+    ['Invalid', undefined, 'Success', false],
+    ['Invalid', '0x00000002', 'Error', false],
+  ])(
+    'requires certificate %s with returned %s / request %s',
+    async (expected, validity, status, passed) => {
+      const response = { ...result(status as string), operation: 'Validate', summary: { validity } }
+      const s = setup({
+        steps: [{ ...step(), op: 'Validate', expectValidity: expected as 'Valid' | 'Invalid' }],
+        engine: vi.fn(() => response),
+      })
+      fireEvent.click(screen.getByRole('button', { name: 'Run sample sequence' }))
+      await screen.findByRole('button', {
+        name: passed ? 'Sample sequence completed' : 'Retry sequence',
+      })
+      expect(s.onDone).toHaveBeenCalledTimes(passed ? 1 : 0)
+      expect(screen.getByText(/Expected sample validity:/)).toHaveTextContent(expected as string)
+      if (!passed)
+        expect(screen.getByRole('alert')).toHaveTextContent('Expected certificate validity')
+    }
+  )
   it('abandons an in-flight attempt when the engine changes', async () => {
     const s = setup()
     fireEvent.click(screen.getByRole('button', { name: 'Run sample sequence' }))

@@ -33,6 +33,8 @@ import {
   type LessonStep,
 } from './learnLessons'
 
+import { certificateValidity, lessonStepAchieved } from './lessonStepOutcome'
+
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
 const TONE_DOT: Record<Lesson['tone'], string> = {
@@ -60,6 +62,8 @@ function narrateStep(r: OpResult): string {
     return `Accepted as a background job — correlation value ${str(s.cv) || '(see wire)'}. Nothing computed yet.`
   if (!r.ok) return r.message ? `Refused: ${r.message}` : 'Operation failed.'
   switch (r.operation) {
+    case 'Validate':
+      return `Request status: ${r.status}. Certificate validity: ${certificateValidity(r)}.`
     case 'CreateSplitKey': {
       const n = str(s.uidsCsv) ? str(s.uidsCsv).split(',').length : 0
       return `Split into ${n} share objects — none of them is the key.`
@@ -133,6 +137,12 @@ function StepList({
                 <span className="text-[10px] text-muted-foreground">running…</span>
               )}
             </div>
+            {step.expectValidity && (
+              <p className="ml-5 mt-1 text-[11.5px] text-muted-foreground">
+                Expected sample validity: {step.expectValidity}. Completing this step means
+                observing that answer, not that every sample certificate is valid.
+              </p>
+            )}
             {run.result && (
               <div className="ml-5 mt-1">
                 <p className="text-[11.5px] text-muted-foreground">{narrateStep(run.result)}</p>
@@ -409,14 +419,7 @@ export function LessonPanel({
       // below-threshold join, reading a destroyed key) succeeds AS A LESSON
       // exactly when the engine honestly refuses; 'pending' when the async
       // accept comes back OperationPending.
-      const want = step.expect ?? 'success'
-      const achieved =
-        stored.status !== 'Skip' &&
-        (want === 'success'
-          ? stored.ok
-          : want === 'pending'
-            ? stored.status === 'OperationPending'
-            : !stored.ok && stored.status !== 'Error' && stored.status !== 'OperationPending')
+      const achieved = lessonStepAchieved(step, stored)
       setRuns((prev) =>
         prev.map((r, idx) =>
           idx === i ? { ...r, status: achieved ? 'success' : 'error', result: stored } : r
@@ -425,7 +428,7 @@ export function LessonPanel({
       onChanged()
       if (!achieved) {
         setAttemptError(
-          `Activity incomplete at step ${i + 1}: ${stored.message ?? 'Expected outcome not met.'}`
+          `Activity incomplete at step ${i + 1}: ${step.expectValidity ? `Expected certificate validity ${step.expectValidity}; received ${certificateValidity(stored)} (request ${stored.status}).` : (stored.message ?? 'Expected outcome not met.')}`
         )
         return { completed: false, executed: results.length, stoppedAt: i }
       }
