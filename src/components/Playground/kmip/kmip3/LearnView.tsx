@@ -631,6 +631,21 @@ export function LessonPanel({
         analyticsCategory="KMIP Quiz"
       />
 
+      {lesson.id === 'honesty' && (
+        <p className="text-[12px] text-muted-foreground">
+          For storage sanitization assurance, see{' '}
+          <a
+            className="text-primary underline"
+            href="https://csrc.nist.gov/pubs/sp/800/88/r2/final"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            NIST SP 800-88 Rev. 2, section 4.5
+          </a>
+          . This reference does not validate the sample engine or test memory zeroization.
+        </p>
+      )}
+
       {/* Try it in Reference */}
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-[11px] text-muted-foreground">Try it yourself in Reference:</span>

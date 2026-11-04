@@ -803,10 +803,10 @@ export const LESSONS: Lesson[] = [
     tag: 'New in 0.13',
     tone: 'warn',
     title: 'An honest HSM: claims you can check',
-    blurb: 'Destroy really scrubs, read-only refuses, Locate really filters.',
+    blurb: 'Inspect lifecycle and refusal outcomes, and understand what they do not establish.',
     setup:
-      'A Success status is only worth what the server actually did. A 2026 audit of this engine hunted precisely that gap and found 13 places where the wire said Success while nothing (or the wrong thing) happened — attributes silently dropped, Destroy that only flipped a flag while plaintext sat in the database, Locate filters accepted and ignored. Engine 0.13.0 fixed all of them, and 0.12.0\'s "honest maximum" pass emptied Query\'s advertised-but-not-implemented list. This lesson runs three of those honesty guarantees live.',
-    sideHeaders: ['The claim', 'The proof'],
+      'A Success status is only worth what the server actually did. A 2026 audit of this engine hunted precisely that gap and found 13 places where the wire said Success while nothing (or the wrong thing) happened — attributes silently dropped, Destroy that only flipped a flag while plaintext sat in the database, Locate filters accepted and ignored. Engine 0.13.0 fixed all of them, and 0.12.0\'s "honest maximum" pass emptied Query\'s advertised-but-not-implemented list. This lesson checks API outcomes. It does not measure memory zeroization or persistent-storage erasure.',
+    sideHeaders: ['The claim', 'The observed response'],
     classical: {
       algorithm: null,
       algoLabel: 'What the wire used to hide',
@@ -835,12 +835,12 @@ export const LESSONS: Lesson[] = [
         },
         {
           op: 'Destroy',
-          label: 'Destroy the key — material zeroized, storage securely deleted',
+          label: 'Request destruction of the sample key',
           buildSpec: (r) => ({ op: 'Destroy', uid: field(r, 0, 'uid') }),
         },
         {
           op: 'Get',
-          label: 'Try to Get it back — the material is genuinely gone',
+          label: 'Try Get after Destroy — observe the API refusal',
           expect: 'refusal',
           buildSpec: (r) => ({ op: 'Get', uid: field(r, 0, 'uid') }),
         },
@@ -855,8 +855,8 @@ export const LESSONS: Lesson[] = [
       },
       {
         label: 'Destroy',
-        a: 'flag flipped, bytes kept',
-        b: 'zeroized + secure_delete',
+        a: 'a lifecycle response alone',
+        b: 'Get refused; storage erasure not tested',
         same: false,
       },
       {
@@ -873,12 +873,13 @@ export const LESSONS: Lesson[] = [
       },
     ],
     notes: [
+      'A refused Get shows that this API did not return the key after Destroy. The same observation is possible when access is blocked but bytes remain. Memory zeroization and persistent-media sanitization require separate implementation and storage assurance; this sample does not test them.',
       "The Dev tab's palette, switched to Corpus, is the systematic version of this lesson: 97 of the 102 OASIS conformance tests pass against the engine's native baseline, and the in-browser replay pins its own exact breakdown — a new silent skip fails the suite rather than shrinking the pass count.",
       "The same audit fixed usage-budget honesty: once Get Usage Allocation grants part of a key's operation budget, re-setting the UsageLimits attribute is refused (§4.69) — a budget you can silently reset is not a budget.",
-      'Not every real operation gets its own walkthrough here. Identity/access (CreateUser, CreateGroup, CreateCredential, Login/Logout), lifecycle (Deactivate — a reversible state change, distinct from Destroy\'s irreversible key-material scrub; Obliterate — Destroy plus wiping the managed-object METADATA too, for when even "a key with this UID once existed" must not be provable), and policy-shaping (Set/Get Constraints, Set Defaults) are all genuinely implemented — try them directly in the Commands tab\'s Reference sub-tab. What\'s honestly NOT implemented, and never pretends to be: Notify and Put (§6.2 server-to-client push — this playground has no "client" to push to; the spec itself says delivery is by unspecified out-of-band means) and Delegated Login / Re-Provision (no handler, never corpus-required).',
+      'Not every real operation gets its own walkthrough here. Identity/access (CreateUser, CreateGroup, CreateCredential, Login/Logout), lifecycle (Deactivate — a reversible state change, distinct from Destroy, which requests key destruction; Obliterate additionally addresses managed-object metadata, without proving external copies or audit records were erased), and policy-shaping (Set/Get Constraints, Set Defaults) are all genuinely implemented — try them directly in the Commands tab\'s Reference sub-tab. What\'s honestly NOT implemented, and never pretends to be: Notify and Put (§6.2 server-to-client push — this playground has no "client" to push to; the spec itself says delivery is by unspecified out-of-band means) and Delegated Login / Re-Provision (no handler, never corpus-required).',
     ],
     whyItMatters:
-      'Compliance evidence is only as good as the server\'s honesty — "the key material SHALL be destroyed" is an auditable claim, not a status code. An engine that refuses what it cannot do, and does what it says, is the difference between a conformance REPORT and conformance.',
+      'When evaluating production tools, ask which destruction technique applies to the specific implementation, media and copies, and how its outcome is verified and validated. This sample shows an API refusal, not proof that every copy of key material was erased.',
     tryRef: ['SetAttribute', 'Destroy', 'Locate', 'GetUsageAllocation'],
   },
   {
