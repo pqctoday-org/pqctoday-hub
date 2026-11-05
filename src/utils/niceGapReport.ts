@@ -188,12 +188,9 @@ function deriveCaSignals(input: AssessmentInput, result: AssessmentResult): CaSi
   }
 
   // CA-DATASEC: data sensitivity, encryption at rest, database use cases
-  const sensitiveLevels = input.dataSensitivity ?? []
-  const highSensitivity = sensitiveLevels.some((s) =>
-    ['secret', 'top-secret', 'restricted', 'highly-sensitive'].some((kw) =>
-      s.toLowerCase().includes(kw)
-    )
-  )
+  // Unknown answers can carry smart defaults; they are not established classifications.
+  const sensitiveLevels = input.sensitivityUnknown ? [] : (input.dataSensitivity ?? [])
+  const highSensitivity = sensitiveLevels.some((s) => s === 'high' || s === 'critical')
   if (highSensitivity || sensitiveLevels.length >= 2) {
     signals.push({
       caId: 'CA-DATASEC',

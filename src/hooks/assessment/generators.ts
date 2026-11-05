@@ -14,6 +14,7 @@ import type {
 import { getMaxSensitivity, getMaxRetentionYears, getIndustryRetentionDefault } from './scoring'
 import type { Cswp39StepId } from '@/data/cswp39ZoneData'
 import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+import { formatDriver } from '@/data/driverLabels'
 
 /** Names the CRQC planning assumption used for an exposure window. Jurisdiction
  * policy milestones are deliberately excluded: they can pace migration, but
@@ -692,11 +693,11 @@ export function generateNarrative(
     unknown: 'Your migration status is unclear — this should be established as a first priority.',
   }
   parts.push(statusMsg[input.migrationStatus] || '')
-  if (input.dataRetention?.length) {
+  if (!input.retentionUnknown && input.dataRetention?.length) {
     const years = getMaxRetentionYears(input.dataRetention)
     if (years > 10) {
       parts.push(
-        `With a data retention period of ${years}+ years, your data may remain confidential beyond this site's CRQC planning anchor.`
+        `${formatDriver(`dataRetention:${input.dataRetention.join(',')}`)} (selected retention). Assess whether these lifetimes extend beyond this site's CRQC planning anchor.`
       )
     }
   }
