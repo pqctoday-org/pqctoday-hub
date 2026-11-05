@@ -392,7 +392,8 @@ export function renderAuditPreview(
   md += `Generated: ${new Date().toLocaleDateString()}\n`
   if (industry) md += `Industry: ${industry}\n`
   if (country) md += `Country: ${country}\n`
-  md += '\nChecked boxes mean selected planning topics, including suggestions from saved context; they do not establish completed controls, audited readiness or validation.\n\n---\n\n'
+  md +=
+    '\nChecked boxes mean selected planning topics, including suggestions from saved context; they do not establish completed controls, audited readiness or validation.\n\n---\n\n'
 
   let totalChecked = 0
   let totalItems = 0
@@ -439,7 +440,7 @@ export function renderAuditPreview(
   md += `**Planning topics selected: ${totalChecked}/${totalItems} (${overallPct}%)**\n\n`
   md += `**Topic-selection band: ${tier.label}**\n\n`
   md +=
-    "_Selection bands describe topic inclusion only. They do not measure control implementation, audit readiness or organizational maturity._\n"
+    '_Selection bands describe topic inclusion only. They do not measure control implementation, audit readiness or organizational maturity._\n'
 
   return md
 }
@@ -505,7 +506,9 @@ function renderAuditCsv(
 ): string {
   const sections: (string | number)[][] = []
   sections.push(['PQC Audit Planning Topics'])
-  sections.push(['Selected means included as a planning topic, not a completed or audited control.'])
+  sections.push([
+    'Selected means included as a planning topic, not a completed or audited control.',
+  ])
   sections.push(['Section', 'Review Topic', 'Selected', 'Reference'])
   for (const [sectionId, title] of Object.entries(SECTION_TITLES)) {
     const sectionData = data[sectionId] ?? {}
@@ -669,7 +672,8 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
           <p className="text-sm text-foreground/80">
             Suggested planning topics have been selected from your completed sample assessment
             {industry ? ` (${industry})` : ''}
-            {country ? ` in ${country}` : ''}. These selections do not establish that the listed controls were performed. Review the topics to include.
+            {country ? ` in ${country}` : ''}. These selections do not establish that the listed
+            controls were performed. Review the topics to include.
           </p>
         </div>
       )}
@@ -784,8 +788,9 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
               Evidence — CMVP / ACVP / ESV / CVE-scan
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Use fictional module IDs and sample run-record references in this educational template.
-              In your own tools, check the applicable scope and provenance before relying on a result.
+              Use fictional module IDs and sample run-record references in this educational
+              template. In your own tools, check the applicable scope and provenance before relying
+              on a result.
             </p>
           </div>
           <Button type="button" variant="outline" size="sm" onClick={addEvidence}>

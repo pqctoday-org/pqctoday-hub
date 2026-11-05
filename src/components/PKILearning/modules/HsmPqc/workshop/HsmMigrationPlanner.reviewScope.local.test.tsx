@@ -8,10 +8,12 @@ vi.mock('../data/hsmConstants', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../data/hsmConstants')>()
   return {
     ...actual,
-    FIRMWARE_UPGRADE_PATHS: [{
-      ...actual.FIRMWARE_UPGRADE_PATHS[0],
-      pqcAlgorithmsAdded: ['UNSUPPORTED-SAMPLE-ALGORITHM'],
-    }],
+    FIRMWARE_UPGRADE_PATHS: [
+      {
+        ...actual.FIRMWARE_UPGRADE_PATHS[0],
+        pqcAlgorithmsAdded: ['UNSUPPORTED-SAMPLE-ALGORITHM'],
+      },
+    ],
   }
 })
 
@@ -23,7 +25,9 @@ describe('Migration planning review scope', () => {
     const topics = screen.getAllByRole('button', { name: /^Review topic:/ })
     for (const topic of topics) fireEvent.click(topic)
     expect(screen.getByText('Planning review complete')).toBeInTheDocument()
-    expect(screen.getByText(/does not establish that an algorithm or module is validated/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/does not establish that an algorithm or module is validated/)
+    ).toBeInTheDocument()
     expect(screen.queryByText('Validation Complete')).not.toBeInTheDocument()
     fireEvent.click(topics[0])
     expect(screen.getByText('Planning review in progress')).toBeInTheDocument()

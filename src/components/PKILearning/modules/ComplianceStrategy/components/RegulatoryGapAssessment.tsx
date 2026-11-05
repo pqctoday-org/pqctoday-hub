@@ -78,8 +78,8 @@ export const RegulatoryGapAssessment: React.FC<RegulatoryGapAssessmentProps> = (
         <p className="text-sm font-semibold text-foreground">Implementation status: Not assessed</p>
         <p className="text-sm text-muted-foreground">
           Selecting a jurisdiction chooses catalogue topics; it does not establish that requirements
-          are met or that a control gap exists. Catalogue flags suggest topics to review, not findings
-          about the sample organization.
+          are met or that a control gap exists. Catalogue flags suggest topics to review, not
+          findings about the sample organization.
         </p>
       </div>
       {/* Summary banner */}

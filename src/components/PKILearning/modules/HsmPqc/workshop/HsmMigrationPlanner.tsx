@@ -504,7 +504,8 @@ export const HsmMigrationPlanner: React.FC = () => {
           <h4 className="text-base font-bold text-foreground">Phase 4: Validation Planning</h4>
           <p className="text-sm text-muted-foreground">
             Select the topics you have reviewed in this sample plan. These acknowledgments do not
-            perform algorithm tests, verify a module configuration or update a validation certificate.
+            perform algorithm tests, verify a module configuration or update a validation
+            certificate.
           </p>
 
           {/* Checklist */}
@@ -579,7 +580,9 @@ export const HsmMigrationPlanner: React.FC = () => {
                   className="text-center p-2 rounded bg-primary/10 border border-primary/20"
                 >
                   <span className="text-[10px] font-mono text-primary block">{alg}</span>
-                  <span className="text-[10px] text-muted-foreground">Review applicable testing</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    Review applicable testing
+                  </span>
                 </div>
               ))}
             </div>

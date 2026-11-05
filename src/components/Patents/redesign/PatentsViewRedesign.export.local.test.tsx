@@ -68,10 +68,7 @@ describe('Patents active-result CSV scope', () => {
     renderRoute('tab=search&sq=Needlefixture')
     await waitFor(() => {
       vi.mocked(downloadCsv).mockClear()
-      expect(exportRows().map((r) => r['Patent Number'])).toEqual([
-        'US99990000',
-        'US99990001',
-      ])
+      expect(exportRows().map((r) => r['Patent Number'])).toEqual(['US99990000', 'US99990001'])
     })
     const rows = exportRows()
     expect(rows.every((r) => r.Title === patentsData[0].title)).toBe(true)

@@ -6,10 +6,26 @@ import { RegulatoryGapAssessment } from './RegulatoryGapAssessment'
 
 vi.mock('../data/complianceFrameworks', () => {
   const JURISDICTION_FRAMEWORKS = ['sample-a', 'sample-b'].map((id) => ({
-    jurisdictionId: id, jurisdictionLabel: `Fictional region ${id}`, primaryFramework: 'Sample topics', secondaryFrameworks: [],
-    requirements: [{ id: `${id}-consideration`, category: 'Inventory', requirement: 'Review a sample inventory', framework: 'Teaching example', commonGap: false, effort: 'Low' }],
+    jurisdictionId: id,
+    jurisdictionLabel: `Fictional region ${id}`,
+    primaryFramework: 'Sample topics',
+    secondaryFrameworks: [],
+    requirements: [
+      {
+        id: `${id}-consideration`,
+        category: 'Inventory',
+        requirement: 'Review a sample inventory',
+        framework: 'Teaching example',
+        commonGap: false,
+        effort: 'Low',
+      },
+    ],
   }))
-  return { JURISDICTION_FRAMEWORKS, getJurisdictionFramework: (id: string) => JURISDICTION_FRAMEWORKS.find((j) => j.jurisdictionId === id) }
+  return {
+    JURISDICTION_FRAMEWORKS,
+    getJurisdictionFramework: (id: string) =>
+      JURISDICTION_FRAMEWORKS.find((j) => j.jurisdictionId === id),
+  }
 })
 
 describe('Jurisdiction selection is not a control assessment', () => {
