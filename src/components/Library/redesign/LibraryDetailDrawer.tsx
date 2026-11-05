@@ -274,7 +274,7 @@ function DrawerPanel({
                   className="mt-1 font-mono text-[11px] text-muted-foreground"
                 >
                   {documentDates && (
-                    <span title="The document's first publication date and its latest update date, as recorded in the catalog">
+                    <span title="The document's recorded first publication date and the catalog record's update date; this does not establish a later publisher edition">
                       {documentDates}
                     </span>
                   )}

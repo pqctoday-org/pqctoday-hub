@@ -118,14 +118,14 @@ describe('MobileCommunityView', () => {
     expect(link).toHaveAttribute('href', withLinkedRef!.keyResourceUrl![0])
   })
 
-  it('shows peer-reviewed alongside the profile-check date, not as a mutually exclusive state', () => {
+  it('shows recorded review metadata alongside the profile-check date, not as a mutually exclusive state', () => {
     renderView()
     const both = CURATED.find((l) => l.peerReviewed === 'yes' && l.verifiedDate)
     if (both) {
       const card = screen.getByText(both.name).closest('button')
       expect(card).not.toBeNull()
       expect(card!.textContent).toMatch(/profile checked/i)
-      expect(card!.textContent).toMatch(/peer reviewed/i)
+      expect(card!.textContent).toMatch(/review flag recorded/i)
     }
   })
 

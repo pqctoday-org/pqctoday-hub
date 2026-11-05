@@ -1211,6 +1211,11 @@ export function MobileComplianceView({
               Close
             </Button>
           </div>
+          <p className="text-[11px] text-muted-foreground">
+            These are machine-extracted candidate practices, not automatically legal requirements.
+            Verify the passage and primary source before relying on them. Sources and Practices
+            shows the recorded extraction details and their review limitations.
+          </p>
           <ul className="flex flex-col gap-1.5">
             {evrefRequirements.slice(0, EVREF_PHONE_LIMIT).map((r) => (
               <li
@@ -1240,8 +1245,12 @@ export function MobileComplianceView({
         <div className="flex flex-col gap-2.5">
           <p className="text-[10.5px] text-muted-foreground">
             {CSWP39_SOURCE_METADATA.documentLabel} · published{' '}
-            {CSWP39_SOURCE_METADATA.publicationDate} · data reviewed{' '}
+            {CSWP39_SOURCE_METADATA.publicationDate} · data extracted{' '}
             {CSWP39_SOURCE_METADATA.dataExtractedAt}
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            PQC Today synthesis — not NIST&apos;s section structure · 5-step cycle · 4-tier
+            self-check.
           </p>
           {CSWP39_STEPS.map((step) => {
             const open = openStep === step.id

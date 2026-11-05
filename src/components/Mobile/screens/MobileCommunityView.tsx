@@ -69,9 +69,8 @@ const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string
  *   the real reference is "GRI-Quantum-Threat-Timeline-2025" — citation
  *   chips below render leaders' real `keyResourceRefs` verbatim, so this
  *   class of error can't recur.
- * - "Peer reviewed" is real (`peerReviewed` field) but not mutually
- *   exclusive with a verified date — real rows carry both simultaneously.
- *   Shown alongside verification, not instead of it.
+ * - The recorded `peerReviewed` flag can coexist with a profile-check date.
+ *   Neither establishes institutional review or endorsement of the profile.
  *
  * Defaults to curated profiles only (sourceKind === 'curated'), matching
  * desktop's own default browsing set — the ~130 single-sentence auto-
@@ -308,7 +307,7 @@ export function MobileCommunityView() {
               {leader.peerReviewed === 'yes' && (
                 <>
                   <span>·</span>
-                  <span>peer reviewed</span>
+                  <span>review flag recorded</span>
                 </>
               )}
             </p>
@@ -431,10 +430,14 @@ export function MobileCommunityView() {
             {selected.vettingBody && selected.vettingBody.length > 0 && (
               <div className="border-t border-border pt-3">
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                  Vetted by
+                  Institutions in source metadata
                 </p>
                 <p className="mt-0.5 text-[11.5px] text-foreground">
                   {selected.vettingBody.join(', ')}
+                </p>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  These recorded names do not establish institutional review or endorsement of this
+                  profile.
                 </p>
               </div>
             )}

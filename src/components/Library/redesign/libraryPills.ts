@@ -125,12 +125,12 @@ function isNotLater(date: string, reference: string): boolean {
   return true
 }
 
-/** The document's own dates for display: "First published Sep 21, 2020 · updated
+/** Publication and catalog dates for display: "First published Sep 21, 2020 · record updated
  *  Aug 19, 2026". Built from the row's `initial_publication_date` and
  *  `last_update_date`, each at the precision it was recorded (`formatLibDate`, so
  *  a month-only "2020-09" reads "Sep 2020", never an invented day). A missing
  *  date drops its part; an update date that reads the same as the first
- *  publication is dropped too, since nothing was updated after it. Returns ''
+ *  publication is dropped too, preserving the existing compact-date rule. Returns ''
  *  when there is no date to show. */
 export function documentDatesText(initialPublicationDate: string, lastUpdateDate: string): string {
   const published = formatLibDate(initialPublicationDate)
@@ -138,7 +138,7 @@ export function documentDatesText(initialPublicationDate: string, lastUpdateDate
   const parts: string[] = []
   if (published) parts.push(`First published ${published}`)
   if (updated && updated !== published && !isNotLater(lastUpdateDate, initialPublicationDate)) {
-    parts.push(published ? `updated ${updated}` : `Updated ${updated}`)
+    parts.push(`Catalog record updated ${updated}`)
   }
   return parts.join(' · ')
 }
