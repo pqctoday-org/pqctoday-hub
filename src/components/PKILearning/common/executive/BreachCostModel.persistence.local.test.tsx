@@ -70,6 +70,7 @@ async function downloadMarkdown() {
 describe('Breach scenario probability persistence', () => {
   it('saves a decimal override, JSON-roundtrips, remounts and reproduces the export and computed output', async () => {
     const view = mountScenario()
+    expect(screen.queryByText(/Loaded inputs did not record/)).not.toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('Annual Breach Probability'), {
       target: { value: '17.3' },
     })
@@ -97,6 +98,7 @@ describe('Breach scenario probability persistence', () => {
   it('preserves an explicit saved zero in emitted inputs, calculated annual loss and re-saved document', async () => {
     installSaved({ selectedIndustry: 'Other', orgSizeTier: 'fortune1000', annualBreachProbPct: 0 })
     const view = mountScenario()
+    expect(screen.queryByText(/Loaded inputs did not record/)).not.toBeInTheDocument()
     expect(screen.getByLabelText('Annual Breach Probability')).toHaveValue('0')
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
     const originalDownload = await downloadMarkdown()
@@ -129,6 +131,13 @@ describe('Breach scenario probability persistence', () => {
       orgSizeTier: 'smb',
       annualBreachProbPct: ANNUAL_BREACH_PROBABILITY_PCT.smb,
     })
+    expect(screen.getByText(/Loaded inputs did not record/)).toHaveTextContent(
+      'This run started from the organization-tier default; the original value was not recovered.'
+    )
+    fireEvent.change(screen.getByLabelText('Annual Breach Probability'), {
+      target: { value: '19.2' },
+    })
+    expect(screen.getByText(/Loaded inputs did not record/)).toBeInTheDocument()
   })
 
   it('emits an override on slider edits and retains the existing tier-selection reset', () => {
@@ -142,6 +151,7 @@ describe('Breach scenario probability persistence', () => {
     fireEvent.change(screen.getByLabelText('Annual Breach Probability'), {
       target: { value: '19.2' },
     })
+    expect(screen.queryByText(/Loaded inputs did not record/)).not.toBeInTheDocument()
     expect(inputs.mock.lastCall?.[0].annualBreachProbPct).toBe(19.2)
     expect(costs.mock.lastCall?.[0].annualBreachProbPct).toBe(19.2)
     fireEvent.click(screen.getByRole('button', { name: /^SMB/ }))

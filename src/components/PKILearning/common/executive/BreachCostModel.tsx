@@ -123,6 +123,9 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   const [orgSizeTier, setOrgSizeTier] = useState<OrgSizeTier>(
     initialValues?.orgSizeTier ?? 'average'
   )
+  const [probabilityWasUnrecorded] = useState(
+    initialValues !== undefined && initialValues.annualBreachProbPct == null
+  )
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState(
     initialValues?.annualBreachProbPct ??
       ANNUAL_BREACH_PROBABILITY_PCT[initialValues?.orgSizeTier ?? 'average']
@@ -389,6 +392,12 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
                 <span className="text-sm font-mono text-primary">{annualBreachProbPct}%</span>
                 <span>50%</span>
               </div>
+              {probabilityWasUnrecorded && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Loaded inputs did not record an annual breach probability. This run started from
+                  the organization-tier default; the original value was not recovered.
+                </p>
+              )}
               <p className="text-[10px] text-muted-foreground mt-1">
                 Default reflects the selected organization size — Cyentia IRIS 2025 anchors per
                 organization size (Figures 6 and 7 of the report). The tiers sit close together
