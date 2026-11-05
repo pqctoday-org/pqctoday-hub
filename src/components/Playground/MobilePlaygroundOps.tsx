@@ -22,6 +22,8 @@ import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { useHsmContext } from './hsm/HsmContext'
 import { Button } from '../ui/button'
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities'
+import { useSettingsContext } from './contexts/SettingsContext'
+import { InteractiveExecutionNotice } from './InteractiveExecutionNotice'
 import { algorithmLaunchPhoneReason } from '@/data/algorithmLaunch'
 
 const MobilePlaygroundView = lazy(() =>
@@ -87,6 +89,7 @@ function LaunchNotice() {
 }
 
 function MobileOpsContent() {
+  const { executionMode, wasmLoaded } = useSettingsContext()
   const { hsmLog, clearHsmLog } = useHsmContext()
   const [activeTab, setActiveTab] = useState<TabId>('kem')
   const [logOpen, setLogOpen] = useState(false)
@@ -119,6 +122,7 @@ function MobileOpsContent() {
 
   return (
     <div className="flex flex-col h-full">
+      <InteractiveExecutionNotice executionMode={executionMode} wasmLoaded={wasmLoaded} />
       {/* Tab indicator dots */}
       <div className="flex items-center justify-center gap-4 py-3 border-b border-border shrink-0">
         {TABS.map((tab) => {

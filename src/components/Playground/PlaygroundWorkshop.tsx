@@ -87,6 +87,7 @@ import { logEvent, personaLabel } from '@/utils/analytics'
 import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { ToolEvidenceBadges } from './ToolEvidenceNotice'
+import { evidenceForTool } from './toolEvidence'
 
 // ---------------------------------------------------------------------------
 // Constants & small style maps
@@ -567,7 +568,7 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
               'mt-4 flex items-start gap-2.5 rounded-xl border p-3',
               tool.sandbox
                 ? 'border-status-warning/30 bg-status-warning/5'
-                : 'border-status-success/30 bg-status-success/5'
+                : 'border-border bg-muted/20'
             )}
           >
             {tool.sandbox ? (
@@ -576,12 +577,13 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
                 aria-hidden="true"
               />
             ) : (
-              <Zap className="mt-0.5 w-4 h-4 shrink-0 text-status-success" aria-hidden="true" />
+              <Zap className="mt-0.5 w-4 h-4 shrink-0 text-muted-foreground" aria-hidden="true" />
             )}
             <p className="text-[11.5px] leading-snug text-foreground/80">
               {tool.sandbox
                 ? 'Runs in an access-gated Docker container. Connect the sandbox runtime to launch it.'
-                : 'Runs instantly in your browser via WebAssembly — nothing to install or connect.'}
+                : (evidenceForTool(tool.id)?.summary ??
+                  'Inspect the tool’s execution notice and results to see what it demonstrates.')}
             </p>
           </div>
 
@@ -1540,12 +1542,13 @@ export const PlaygroundWorkshop = () => {
           />
         )}
         <h1 className="text-[26px] font-extrabold tracking-tight text-foreground">
-          Run real cryptography in your browser
+          Explore cryptographic operations and models
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground leading-relaxed">
           Pick a category on the left, jump into a full playground, or start with what fits your
-          role. The in-browser tools install nothing and run locally via WebAssembly; the Docker
-          sandbox scenarios run in an access-gated container instead, and each one is marked.
+          role. Execution badges distinguish sample cryptographic operations, protocol models,
+          calculators and simulations. Docker sandbox scenarios use a separate access-gated runtime.
+          A model or calculator is not evidence of network interoperability.
         </p>
 
         <PersonaPageNote route="/playground" className="mt-4" />
@@ -1666,8 +1669,8 @@ export const PlaygroundWorkshop = () => {
               </span>
             </p>
             <p className="mt-1 text-[12.5px] text-muted-foreground leading-snug">
-              A full KMIP 3.0 control plane + PKCS#11 HSM in WebAssembly. Flip a crypto-agility
-              policy and watch the same operations switch to PQC.
+              {evidenceForTool('cacp-kmip')?.summary} Explore how a crypto-agility policy changes
+              the modelled workflow.
             </p>
           </div>
           <ArrowRight className="w-5 h-5 shrink-0 text-primary" aria-hidden="true" />
@@ -1695,8 +1698,8 @@ export const PlaygroundWorkshop = () => {
           saying so. The graded cell is this surface. */}
       <SimplifiedViewNotice
         className="mb-4"
-        what="Some advanced tools — hardware-backed keys, ACVP test vectors and raw parameter tuning — are folded away."
-        stillReal="Everything you can open here runs genuine ML-KEM and ML-DSA in your browser."
+        what="Some linked engineering workbenches hide advanced controls until you choose Show every control."
+        stillReal="Use each tool’s execution badges and scope notice to distinguish cryptographic operations, models, calculators and demonstrations."
       />
       <div className="lg:flex lg:gap-6">
         {/* Mobile sidebar toggle — hidden on desktop */}
