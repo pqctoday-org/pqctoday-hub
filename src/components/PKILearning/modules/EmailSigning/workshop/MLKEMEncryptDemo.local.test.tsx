@@ -83,6 +83,20 @@ describe('CMS sample outcome and input attribution', () => {
     await screen.findByText('Sample plaintext recovered and matched')
     expect(screen.getByText('2.16.840.1.101.3.4.1.5')).toBeInTheDocument()
   })
+  it('uses fresh existing-interface key identifiers for each run', async () => {
+    render(<MLKEMEncryptDemo providerReady />)
+    rsa()
+    run()
+    await screen.findByText('Sample plaintext recovered and matched')
+    const firstId = state.genKey.mock.calls[0][1]
+    run()
+    await waitFor(() => expect(state.genKey).toHaveBeenCalledTimes(2))
+    await screen.findByText('Sample plaintext recovered and matched')
+    const secondId = state.genKey.mock.calls[1][1]
+    expect(secondId).not.toBe(firstId)
+    expect(state.mkCert.mock.calls[1][0].keyId).toBe(secondId)
+    expect(state.decrypt.mock.calls[1][0].recipientKeyId).toBe(secondId)
+  })
   it('retains original algorithm, mode and MIME metadata after edits', async () => {
     render(<MLKEMEncryptDemo providerReady={false} />)
     rsa()

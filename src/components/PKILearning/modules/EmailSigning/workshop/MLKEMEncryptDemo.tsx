@@ -65,10 +65,6 @@ const CIPHER_CHOICES: CmsCipher[] = [
   'chacha20-poly1305',
 ]
 
-const KEY_ID = 'bob'
-const CERT_ID = 'bob'
-const CA_KEY_ID = 'bob-ca'
-const CA_CERT_ID = 'bob-ca'
 // The CA used to issue Bob's KEM cert. ML-DSA-65 is the educational
 // default — pure PQ signature anchoring a pure PQ KEM cert.
 const CA_ALG: CmsAlg = 'ML-DSA-65'
@@ -143,6 +139,13 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
     if (!svc || runningRef.current) return
     runningRef.current = true
     const inputs = { alg, cipher, payload, useHsm }
+    // Fresh labels isolate each sample run from older token objects. Reuse the
+    // existing key/certificate API; do not select a previous algorithm by label.
+    const runId = crypto.randomUUID()
+    const keyId = `bob-${runId}`
+    const certId = keyId
+    const caKeyId = `bob-ca-${runId}`
+    const caCertId = caKeyId
     setError('')
     setResult({})
     setResult({ inputs })
@@ -160,15 +163,15 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
       if (needsCa) {
         op = beginOp(`Generating CA key (${CA_ALG})…`)
         setStage('ca-key')
-        const caK = await svc.genKey(CA_ALG, CA_KEY_ID, useHsm)
+        const caK = await svc.genKey(CA_ALG, caKeyId, useHsm)
         setResult((prev) => ({ ...prev, caKeyPem: caK.keyPem }))
         op.done()
 
         op = beginOp('Issuing CA certificate…')
         setStage('ca-cert')
         const caC = await svc.mkCert({
-          keyId: CA_KEY_ID,
-          certId: CA_CERT_ID,
+          keyId: caKeyId,
+          certId: caCertId,
           subject: '/CN=PQC Workshop CA/O=PQC Workshop/C=US',
           days: 730,
           useHsm,
@@ -181,21 +184,21 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
 
       op = beginOp(`Generating recipient key (${alg})…`)
       setStage('genkey')
-      const k = await svc.genKey(alg, KEY_ID, useHsm)
+      const k = await svc.genKey(alg, keyId, useHsm)
       setResult((prev) => ({ ...prev, keyPem: k.keyPem }))
       op.done()
 
       op = beginOp(needsCa ? 'Issuing CA-signed recipient cert…' : 'Issuing self-signed cert…')
       setStage('mkcert')
       const c = await svc.mkCert({
-        keyId: KEY_ID,
-        certId: CERT_ID,
+        keyId: keyId,
+        certId: certId,
         subject: '/CN=Bob/O=PQC Workshop/C=US',
         days: 365,
         useHsm,
         // Bob's KEM cert is issued by the CA when the alg can't self-sign;
         // RSA falls back to self-signed.
-        issuerKeyId: needsCa ? CA_KEY_ID : undefined,
+        issuerKeyId: needsCa ? caKeyId : undefined,
       })
       setResult((prev) => ({ ...prev, certPem: c.certPem }))
       op.done()
@@ -203,7 +206,7 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
       op = beginOp(`Encrypting payload (${payload.length} bytes) with ${cipher}…`)
       setStage('encrypt')
       const e = await svc.encrypt({
-        recipientCertId: CERT_ID,
+        recipientCertId: certId,
         payload: new TextEncoder().encode(payload),
         cipher,
         rsaOaep: alg === 'RSA',
@@ -255,8 +258,8 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
       setStage('decrypt')
       const d = await svc.decrypt({
         enveloped: e.enveloped,
-        recipientCertId: CERT_ID,
-        recipientKeyId: KEY_ID,
+        recipientCertId: certId,
+        recipientKeyId: keyId,
         useHsm,
       })
       setResult((prev) => ({
