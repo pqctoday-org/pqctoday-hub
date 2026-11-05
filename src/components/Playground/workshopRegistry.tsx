@@ -151,7 +151,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'cacp-kmip',
     pt_id: 'PT-033',
-    version: '1.0.6',
+    version: '1.0.7',
     name: 'KMIP Control Plane',
     description:
       'In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey a classical ECDSA-P256 key to ML-DSA-65 on the same Sign call — no server, no Docker.',

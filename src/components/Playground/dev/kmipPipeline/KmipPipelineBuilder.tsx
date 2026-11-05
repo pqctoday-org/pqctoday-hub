@@ -70,13 +70,8 @@ import {
 } from './kmipPipelineCodegen'
 import type { StepDetail } from '../pipeline/pipelineCodegen'
 import { KmipStepInspectPanel } from './KmipStepInspectPanel'
+import { KMIP_TEMPLATES, KMIP_TEMPLATE_NAMES } from './kmipPipelineTemplates'
 import {
-  KMIP_TEMPLATES,
-  KMIP_TEMPLATE_NAMES,
-  KMIP_TEMPLATE_OUTCOMES,
-} from './kmipPipelineTemplates'
-import {
-  parseRun,
   loadStore,
   saveStore,
   exportPipelineJson,
@@ -84,6 +79,15 @@ import {
   pipelineProvenanceHeader,
   type PipelineStore,
 } from '../pipeline/pipelineRun'
+
+import {
+  beginAttempt,
+  completeAttempt,
+  failAttempt,
+  attemptBinding,
+  type KmipAttempt,
+  type KmipAttemptInputs,
+} from './kmipPipelineAttempt'
 
 const STORE_KEY = 'pqctoday-hub-kmip-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-kmip-pipeline-v1'
@@ -176,7 +180,12 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   const [notice, setNotice] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
-  const [elapsedMs, setElapsedMs] = useState<number | null>(null)
+  const [attempt, setAttempt] = useState<KmipAttempt | null>(null)
+  const [templateName, setTemplateName] = useState<string | null>('Governed lifecycle')
+  const runningRef = useRef(false)
+  const [attemptEngine, setAttemptEngine] = useState<KmipEngine | null>(null)
+  const currentEngine = useRef(engine)
+  currentEngine.current = engine
   const [stepState, setStepState] = useState<
     Record<string, { status: KmipStepStatus; output: string | null; detail?: StepDetail }>
   >({})
@@ -377,6 +386,20 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     [steps, message, messageMode]
   )
   const activeCode = detached ?? generatedPy
+  const currentAttemptInputs: KmipAttemptInputs = {
+    name: pipelineName,
+    code: activeCode,
+    steps,
+    message,
+    messageMode,
+    detached: detached !== null,
+    templateName,
+  }
+  const attemptIsCurrent = Boolean(
+    attempt &&
+    attemptBinding(attempt.inputs) === attemptBinding(currentAttemptInputs) &&
+    attemptEngine === engine
+  )
   const findings = useMemo(() => validate(steps), [steps])
   const blocking = useMemo(() => findings.filter((f) => f.severity === 'error'), [findings])
 
@@ -416,15 +439,19 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
 
   const applyTemplate = (name: string) => {
     setPipelineName(name)
+    setTemplateName(name)
     setSteps(KMIP_TEMPLATES[name] ?? [])
     setStepState({})
     setRunError(null)
-    setElapsedMs(null)
     resyncToGenerated()
   }
 
   const runAll = useCallback(async () => {
-    if (!detached && blocking.length) {
+    if (runningRef.current) return
+    setRunError(null)
+    setAttempt(null)
+    setStepState({})
+    if (detached === null && blocking.length) {
       flash(`${blocking.length} problem(s) to fix before running`)
       return
     }
@@ -432,76 +459,92 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       setRunError('KMIP engine not ready yet — try again in a moment.')
       return
     }
-    if (!detached && messageError) {
+    if (detached === null && messageError) {
       setRunError(messageError)
       return
     }
+    const inputs: KmipAttemptInputs = {
+      name: pipelineName,
+      code: detached ?? emitKmipPipeline(steps, { message, messageMode }),
+      steps,
+      message,
+      messageMode,
+      detached: detached !== null,
+      templateName,
+    }
+    const started = beginAttempt(inputs)
+    runningRef.current = true
+    setAttemptEngine(engine)
     setRunning(true)
-    setRunError(null)
-    if (!detached) {
+    setAttempt(started)
+    if (!started.inputs.detached)
       setStepState(
         Object.fromEntries(
-          steps.map((s) => [s.id, { status: 'running' as KmipStepStatus, output: null }])
+          started.inputs.steps.map((step) => [
+            step.id,
+            { status: 'running' as KmipStepStatus, output: null },
+          ])
         )
       )
-    }
-    const code = detached ?? emitKmipPipeline(steps, { message, messageMode })
     const t0 = performance.now()
     try {
       const py = await bootPyRuntime()
       const table = await getCodepointTable()
       const bridge = createKmipBridge(engine, table)
       py.registerJsModule('kmip_bridge', bridge)
-      const result = await runPython(code)
-      const elapsed = performance.now() - t0
-      if (!detached) {
-        const outcome = parseRun(
-          result.stdout + (result.error ? `\n${result.error}` : ''),
-          steps,
-          result.ok ? 0 : 1
-        )
+      const result = await runPython(started.inputs.code)
+      const completed = completeAttempt(started.inputs, result, Math.round(performance.now() - t0))
+      setAttempt(completed)
+      const parsed = completed.parsed
+      if (parsed)
         setStepState(
           Object.fromEntries(
-            steps.map((s) => [
-              s.id,
+            started.inputs.steps.map((step) => [
+              step.id,
               {
-                status: outcome.status[s.id] ?? 'skipped',
-                output: outcome.text[s.id] || null,
-                detail: outcome.detail[s.id],
+                status: parsed.status[step.id] ?? 'skipped',
+                output: parsed.text[step.id] || null,
+                detail: parsed.detail[step.id],
               },
             ])
           )
         )
-        setRunError(outcome.error)
-      } else {
-        setRunError(result.ok ? null : (result.error ?? 'run failed'))
-      }
-      setElapsedMs(Math.round(elapsed))
-    } catch (e) {
-      if (!detached) setStepState({})
-      setRunError(`Could not run: ${(e as Error).message}`)
-      setElapsedMs(null)
+      else setStepState({})
+      setRunError(completed.error)
+    } catch (error) {
+      const failed = failAttempt(started.inputs, error, Math.round(performance.now() - t0))
+      setAttempt(failed)
+      setStepState({})
+      setRunError(failed.error)
     } finally {
-      // Best-effort audit-trail + keystore refresh — never lets a snapshot
-      // failure affect the run's own success/error reporting above. No
-      // session/auth lifecycle here (see keystoreObjects's own doc
-      // comment) — just re-reading the engine's current state.
       try {
-        if (engine) {
+        if (currentEngine.current === engine) {
           setAudit(engine.auditSnapshot())
           setKeystoreObjects(engine.listObjects())
         }
       } catch {
-        // best-effort
+        /* best-effort snapshot */
       }
+      runningRef.current = false
       setRunning(false)
     }
-  }, [steps, message, messageMode, messageError, detached, engine, blocking.length])
+  }, [
+    steps,
+    message,
+    messageMode,
+    messageError,
+    detached,
+    engine,
+    blocking.length,
+    pipelineName,
+    templateName,
+  ])
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault()
+        if (runningRef.current) return
         if (paletteSource === 'corpus') void corpus.runAll()
         else void runAll()
       }
@@ -540,6 +583,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       return
     }
     setPipelineName(parsed.name)
+    setTemplateName(null)
     setSteps(parsed.pipeline.steps)
     setMessage(parsed.pipeline.input)
     resyncToGenerated()
@@ -557,6 +601,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     const saved = store[name]
     if (!saved) return
     setPipelineName(name)
+    setTemplateName(null)
     setSteps(saved.steps)
     setMessage(saved.input)
     resyncToGenerated()
@@ -568,7 +613,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     if (saveStore(STORE_KEY, next)) setStore(next)
   }
   const savedKmipNames = Object.keys(store)
-  const readOnly = !detached && !editUnlocked
+  const readOnly = detached === null && !editUnlocked
   // See PkcsPipelineBuilder.tsx's identical readOnlyRef for the full
   // explanation: @monaco-editor/react's value-sync effect takes an unguarded
   // `setValue()` path while readOnly, and effect ordering can invoke a STALE
@@ -588,11 +633,12 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     else void runAll()
   }
   const headerRunIsRunning = paletteSource === 'corpus' ? corpus.running === '__all__' : running
-  const headerRunDisabled = paletteSource === 'corpus' ? !corpus.table || !!corpus.running : running
+  const headerRunDisabled =
+    running || !!corpus.running || (paletteSource === 'corpus' && !corpus.table)
   const headerRunTitle =
     paletteSource === 'corpus'
       ? 'Run every corpus test (⌘/Ctrl+Enter)'
-      : !detached && blocking.length
+      : detached === null && blocking.length
         ? `${blocking.length} problem(s) to fix first`
         : 'Run (⌘/Ctrl+Enter)'
 
@@ -611,7 +657,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             className="text-lg font-semibold bg-transparent border border-transparent focus:border-input rounded px-1.5 py-0.5 w-full max-w-md outline-none"
           />
         </div>
-        <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+        <div className="flex w-full min-w-0 max-w-full items-center gap-2 flex-wrap sm:w-auto sm:shrink-0">
           {paletteSource === 'standard' && (
             <>
               <input
@@ -653,7 +699,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             )}
             {headerRunIsRunning ? 'Running…' : 'Run'}
           </Button>
-          {paletteSource === 'standard' && <KmipSyncStatusChip detached={!!detached} />}
+          {paletteSource === 'standard' && <KmipSyncStatusChip detached={detached !== null} />}
           {/* data-tour scopes a guided-lesson `clickByText` to THIS tablist,
               distinct from any other `role="tab"` bar on the page. */}
           <TabsList data-tour="kmip-dev-view-tabs">
@@ -677,7 +723,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       {notice && (
         <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
       )}
-      {runError && (
+      {runError && (!attempt || attemptIsCurrent) && (
         <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
           ✗ {runError}
         </div>
@@ -768,12 +814,76 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       )}
       {paletteSource === 'corpus' && <KmipCorpusDisclosure corpus={corpus} />}
 
+      {paletteSource === 'standard' && attempt && (
+        <section
+          aria-label="Recorded sample attempt"
+          className="shrink-0 max-h-64 overflow-auto border-b p-3 text-xs space-y-2"
+        >
+          <p
+            className={
+              attempt.state === 'passed'
+                ? 'text-status-success'
+                : attempt.state === 'failed'
+                  ? 'text-status-error'
+                  : 'text-muted-foreground'
+            }
+          >
+            {attempt.state === 'passed'
+              ? 'Required generated sample steps completed.'
+              : attempt.state === 'script-finished'
+                ? 'Custom script finished without a reported runtime error; generated-step outcomes were not checked.'
+                : attempt.state === 'running'
+                  ? 'Sample attempt running.'
+                  : attempt.state === 'incomplete'
+                    ? 'Sample attempt incomplete.'
+                    : 'Sample attempt failed.'}
+          </p>
+          <p>
+            Attempt: {attempt.inputs.name} · {attempt.inputs.messageMode} input ·{' '}
+            {attempt.inputs.detached
+              ? 'custom code'
+              : `${attempt.inputs.steps.length} generated steps`}
+          </p>
+          {!attemptIsCurrent && (
+            <p role="status" className="text-status-warning">
+              Inputs changed—run again. This retained attempt belongs to its original code and
+              inputs; current steps have no result from it.
+            </p>
+          )}
+          {attempt.error && (
+            <p className="text-status-error whitespace-pre-wrap break-all">{attempt.error}</p>
+          )}
+          {attempt.state === 'passed' && attempt.explanation && (
+            <p>
+              <span className="text-status-success">What this sample demonstrated: </span>
+              {attempt.explanation}
+            </p>
+          )}
+          <details>
+            <summary className="cursor-pointer">Attempt code and original inputs</summary>
+            <p>
+              Template origin: {attempt.inputs.templateName ?? 'not established'}; template
+              explanations apply only to matching, unchanged generated code.
+            </p>
+            <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-all">
+              {attempt.inputs.message}
+            </pre>
+            <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-all">
+              {attempt.inputs.code}
+            </pre>
+            <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-all">
+              {[attempt.stdout, attempt.stderr].filter(Boolean).join('\n')}
+            </pre>
+          </details>
+        </section>
+      )}
+
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
       <TabsContent value="builder" className="mt-0 flex-1 min-h-0">
-        <div className="grid grid-cols-[280px_1fr_340px] gap-0 h-full overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)_340px] gap-0 h-full overflow-y-auto lg:overflow-hidden">
           {/* LEFT: palette source switch + (standard: templates/saved | corpus: category tree) */}
           <aside
-            className="border-r p-3 overflow-auto flex flex-col gap-4"
+            className="min-w-0 border-r p-3 overflow-visible lg:overflow-auto flex flex-col gap-4"
             data-tour="kmip-dev-palette"
           >
             <div>
@@ -886,7 +996,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           </aside>
 
           {/* CENTER: canvas */}
-          <main className="flex flex-col overflow-auto">
+          <main className="min-w-0 flex flex-col overflow-visible lg:overflow-auto">
             {paletteSource === 'corpus' ? (
               <div className="p-4">
                 <KmipCorpusDetail
@@ -947,7 +1057,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                 </div>
 
                 <div
-                  className={`p-4 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`}
+                  className={`p-4 flex-1 overflow-auto ${detached !== null ? 'opacity-40 pointer-events-none' : ''}`}
                   data-tour="kmip-dev-steps"
                 >
                   <div className="max-w-2xl mx-auto flex flex-col items-center gap-0">
@@ -971,7 +1081,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                           step={step}
                           index={i}
                           steps={steps}
-                          stepState={stepState[step.id]}
+                          stepState={attemptIsCurrent ? stepState[step.id] : undefined}
                           findings={findings.filter((f) => f.stepIndex === i)}
                           onDelete={() => deleteStep(step.id)}
                           onDragStart={(e) => onStepDragStart(e, i)}
@@ -999,12 +1109,6 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                       </div>
                     )}
                   </div>
-                  {elapsedMs != null && KMIP_TEMPLATE_OUTCOMES[pipelineName] && (
-                    <p className="max-w-2xl mx-auto mt-4 text-xs leading-relaxed text-muted-foreground">
-                      <span className="text-status-success">What this proved: </span>
-                      {KMIP_TEMPLATE_OUTCOMES[pipelineName]}
-                    </p>
-                  )}
                 </div>
               </>
             )}
@@ -1013,11 +1117,11 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           {/* RIGHT: corpus mode gets its own summary card; standard mode keeps
               the pipeline summary + validation cards below. */}
           {paletteSource === 'corpus' ? (
-            <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">
+            <aside className="min-w-0 border-l p-4 flex flex-col gap-3 overflow-visible lg:overflow-auto">
               <KmipCorpusSummaryCard corpus={corpus} />
             </aside>
           ) : (
-            <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">
+            <aside className="min-w-0 border-l p-4 flex flex-col gap-3 overflow-visible lg:overflow-auto">
               <Card className="p-3.5">
                 <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
                   Pipeline summary
@@ -1032,9 +1136,13 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                     <span className="font-mono">Python · pqctoday_kmip</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Last run</span>
+                    <span className="text-muted-foreground">Last attempt</span>
                     <span className="font-mono">
-                      {elapsedMs != null ? `${(elapsedMs / 1000).toFixed(2)}s` : 'not run yet'}
+                      {attempt?.elapsedMs != null
+                        ? `${(attempt.elapsedMs / 1000).toFixed(2)}s · ${attempt.state}`
+                        : running
+                          ? 'running'
+                          : 'not run yet'}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -1055,12 +1163,14 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                   Validation
                 </div>
                 <div className="flex flex-col gap-1.5 text-xs">
-                  {!detached && findings.length === 0 && (
+                  {detached === null && findings.length === 0 && (
                     <KmipValRow ok text="Every step input is bound" />
                   )}
-                  {!detached &&
+                  {detached === null &&
                     findings.map((f, i) => <KmipValRow key={i} ok={false} text={f.text} />)}
-                  {detached && <KmipValRow ok text="Custom script — builder validation skipped" />}
+                  {detached !== null && (
+                    <KmipValRow ok text="Custom script — builder validation skipped" />
+                  )}
                 </div>
               </Card>
             </aside>
@@ -1101,7 +1211,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             )}
 
             {/* Change 2 (banner) + Change 3 (the "Try to apply" action) */}
-            {detached && (
+            {detached !== null && (
               <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex flex-col gap-2">
                 <span className="text-status-warning">
                   ⚠ Custom script — edits won't appear in the Builder until resolved.

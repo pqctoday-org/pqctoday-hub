@@ -172,11 +172,11 @@ export const KMIP_TEMPLATE_NAMES = Object.keys(KMIP_TEMPLATES)
 
 export const KMIP_TEMPLATE_OUTCOMES: Record<string, string> = {
   'Governed lifecycle':
-    "A key signed before Activate is refused by the KMIP lifecycle plane — the same governed-refusal pattern the dev sandbox's real KMIP sample teaches, running against the same policy engine.",
+    'The sample observed a refused early Sign call and then ran the remaining lifecycle steps. Inspect the returned refusal reason; a refusal alone does not establish which rule caused it.',
   'ML-KEM round trip':
-    'Encapsulate and Decapsulate derive matching shared secrets through real ML-KEM-768 operations — the same FIPS 203 mechanism the dev sandbox exercises.',
+    'This sample ran ML-KEM-768 encapsulation and decapsulation. It does not compare their shared secrets, so agreement was not checked. In production tools, look for tests that check agreement and rejection behavior as well as successful operations.',
   'Policy dry-run compare':
-    'The same CreateKeyPair request evaluated under two different policies without executing anything — showing how crypto agility is a POLICY decision, not a code change.',
+    'The sample submitted the same proposed CreateKeyPair operation under two policies for inspection. Compare each dry-run decision and reason; the proposed operation was not executed by those dry-run steps.',
   'ACVP ML-KEM-768 known-answer test':
     "A real NIST ACVP test vector's own private key is imported (KMIP Register, not a fresh randomly-generated one), decapsulates the vector's own ciphertext, and the resulting shared secret matches the vector's published expected output byte-for-byte — the same standard the FIPS 203 implementation itself is validated against.",
 }
