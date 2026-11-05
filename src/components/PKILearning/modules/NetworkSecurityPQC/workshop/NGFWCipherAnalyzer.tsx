@@ -329,22 +329,28 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                 <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/30 flex items-start gap-2">
                   <Cpu size={14} className="text-status-error shrink-0 mt-0.5" />
                   <div className="text-xs text-muted-foreground">
-                    <span className="font-bold text-status-error">Hardware offload required</span>{' '}
-                    for optimal PQC performance, but not available on{' '}
-                    <em>{selectedTierData.name}</em>. Expect{' '}
-                    {Math.round((1 - analysis.effectiveFactor) * 100)}% throughput reduction.
+                    <span className="font-bold text-status-error">
+                      Modelled missing-offload warning
+                    </span>{' '}
+                    — the sample assumes offload is required but unavailable on{' '}
+                    <em>{selectedTierData.name}</em>. The illustrative calculation gives{' '}
+                    {Math.round((1 - analysis.effectiveFactor) * 100)}% throughput reduction; this
+                    is not a measured appliance result.
                   </div>
                 </div>
               )}
               {!analysis.offloadNeeded && selectedMode !== 'classical' && (
-                <div className="bg-success/5 rounded-lg p-3 border border-success/30 flex items-start gap-2">
-                  <Cpu size={14} className="text-status-success shrink-0 mt-0.5" />
+                <div className="bg-muted/50 rounded-lg p-3 border border-border flex items-start gap-2">
+                  <Cpu size={14} className="text-muted-foreground shrink-0 mt-0.5" />
                   <div className="text-xs text-muted-foreground">
-                    <span className="font-bold text-status-success">
-                      Hardware offload available
-                    </span>{' '}
-                    on {selectedTierData.name} — PQC operations accelerated by dedicated crypto
-                    ASIC.
+                    <span className="font-bold text-foreground">Modelled offload status</span> —
+                    this case does not trigger the model’s missing-offload warning. The selected
+                    sample suite marks offload as{' '}
+                    {primarySuite.hardwareOffloadRequired ? 'required' : 'not required'}. The
+                    generic hardware-offload flag for sample tier {selectedTierData.name} is{' '}
+                    {selectedTierData.supportsHardwareOffload ? 'Yes' : 'No'}. Acceleration of this
+                    selected PQC operation: Not established. These flags are model inputs, not
+                    measured or verified algorithm-specific appliance capabilities.
                   </div>
                 </div>
               )}

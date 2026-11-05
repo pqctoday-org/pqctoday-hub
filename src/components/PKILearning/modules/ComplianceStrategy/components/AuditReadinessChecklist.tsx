@@ -138,14 +138,14 @@ const TECHNICAL_ITEMS: ChecklistItem[] = [
     value: 'hybrid-deployed',
     label: 'Hybrid mode deployed',
     description:
-      'Hybrid classical+PQC configurations (e.g., X25519MLKEM768) deployed to maintain backward compatibility during transition.',
+      'Review a selected hybrid classical+PQC profile (e.g., X25519MLKEM768), peer support and fallback policy. Compatibility depends on the negotiated profile and participating implementations.',
     reference: 'NIST SP 800-227; CNSA 2.0',
   },
   {
     value: 'pqc-tested',
     label: 'PQC algorithms tested',
     description:
-      'ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) tested in representative environments.',
+      'Plan representative testing for the algorithms selected for the sample scope. FIPS 203/204/205 define ML-KEM, ML-DSA and SLH-DSA; citing them does not require every listed algorithm in every system.',
     reference: 'FIPS 203/204/205',
   },
   {
@@ -266,7 +266,7 @@ function buildSections(
   const toOptions = (items: ChecklistItem[]) =>
     items.map((i) => ({
       value: i.value,
-      label: `Review topic: ${i.label} — ${i.description} [${i.reference}]`,
+      label: `Review topic: ${i.label} — ${i.description} [Related reading: ${i.reference}]`,
     }))
 
   const industryNote = industry ? ` Tailor to ${industry} sector requirements.` : ''
@@ -391,6 +391,8 @@ export function renderAuditPreview(
   country?: string
 ): string {
   let md = '# PQC Audit Planning Topics\n\n'
+  md +=
+    'Hub-authored educational template. References are related reading, not proof that every field is a source-mandated control.\n\n'
   md += `Generated: ${new Date().toLocaleDateString()}\n`
   if (industry) md += `Industry: ${industry}\n`
   if (country) md += `Country: ${country}\n`
@@ -413,7 +415,7 @@ export function renderAuditPreview(
     let sectionChecked = 0
     for (const item of items) {
       const checked = checkedItems.includes(item.value)
-      md += `- [${checked ? 'x' : ' '}] **Review topic: ${item.label}** — ${item.description} _[${item.reference}]_\n`
+      md += `- [${checked ? 'x' : ' '}] **Review topic: ${item.label}** — ${item.description} _[Related reading: ${item.reference}]_\n`
       if (checked) {
         sectionChecked++
         totalChecked++
@@ -484,7 +486,7 @@ export function renderExceptionsAndEvidenceMd(
   }
 
   md +=
-    '## Evidence (CSWP.39 §5.1 — CAVP/CMVP as a validation prerequisite; ACVP / ESV / CVE-scan)\n\n'
+    '## Fictional reference examples\n\nThese prompts illustrate different evidence sources and their scope; recording a reference does not validate a deployment. Keep Hub sample-test results separate from this checklist.\n\n'
   if (evidence.length === 0) {
     md += '_No evidence rows documented._\n\n'
   } else {
@@ -761,11 +763,13 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
       <p className="text-sm text-muted-foreground">
         Bookmarks and assessment answers can suggest planning topics; they are not evidence that a
         control is implemented, a test passed or an audit completed. Checked boxes record topic
-        inclusion only, including any preselected suggestions.
+        inclusion only, including any preselected suggestions. This is a Hub-authored educational
+        template. References are related reading, not proof that every field is a source-mandated
+        control.
       </p>
       <ArtifactBuilder
         title="PQC Audit Planning Topics"
-        description="Select topics for a sample audit-planning discussion. A selection records topic inclusion, not completed controls or audit readiness. Use the descriptions and references to identify what to evaluate with your own tools."
+        description="Use this Hub-authored educational template to select sample planning topics. A selection records inclusion, not completed controls or audit readiness. References are related reading, not proof that every field is a source-mandated control. Identify what to evaluate with your own tools."
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-audit-readiness-checklist"
@@ -848,12 +852,12 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h3 className="text-base font-semibold text-foreground">
-              Evidence — CMVP / ACVP / ESV / CVE-scan
+              Fictional reference examples — CMVP / ACVP / ESV / CVE-scan
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Use fictional module IDs and sample run-record references in this educational
-              template. In your own tools, check the applicable scope and provenance before relying
-              on a result.
+              Use fictional identifiers to explore the scope and provenance of different evidence
+              sources. Recording a reference does not validate a deployment. Keep Hub sample-test
+              results separate from this checklist.
             </p>
           </div>
           <Button type="button" variant="outline" size="sm" onClick={addEvidence}>
