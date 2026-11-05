@@ -9,6 +9,8 @@ import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { rowsToCsv } from '@/services/export/csvExport'
+import type { ArtifactFieldEdit, ArtifactFormData } from '../../../common/executive/ArtifactBuilder'
+import { clearAuditPrefill, editAuditDraft, initializeAuditPrefill } from './auditPrefillOwnership'
 
 interface ChecklistItem {
   value: string
@@ -551,6 +553,8 @@ interface SavedAuditInputs {
   checklistData?: Record<string, Record<string, string | string[]>>
   exceptions?: ExceptionRow[]
   evidence?: EvidenceRow[]
+  prefillOwnership?: unknown
+  originalSavedInputs?: unknown
 }
 
 interface AuditReadinessChecklistProps {
@@ -566,27 +570,6 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
   const savedInputs = useSavedArtifactInputs<SavedAuditInputs>('audit-checklist')
   const [exceptions, setExceptions] = React.useState<ExceptionRow[]>(savedInputs?.exceptions ?? [])
   const [evidence, setEvidence] = React.useState<EvidenceRow[]>(savedInputs?.evidence ?? [])
-  const [seedCleared, setSeedCleared] = useState(false)
-
-  const seedSources: string[] = []
-  if (!seedCleared) {
-    if (industry) seedSources.push(`industry (${industry})`)
-    if (country) seedSources.push(`country (${country})`)
-    if (isAssessmentComplete) seedSources.push('completed assessment')
-    if (myFrameworks.length > 0)
-      seedSources.push(
-        `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
-      )
-    if (myProducts.length > 0)
-      seedSources.push(
-        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
-      )
-    if (myThreats.length > 0)
-      seedSources.push(
-        `${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`
-      )
-  }
-
   const sections = useMemo(
     () =>
       buildSections(
@@ -607,6 +590,48 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
     ]
   )
 
+  const [draft, setDraft] = useState(() => initializeAuditPrefill(sections, savedInputs))
+  const handleDataChange = React.useCallback(
+    (update: (data: ArtifactFormData) => ArtifactFormData, edit: ArtifactFieldEdit) => {
+      setDraft((previous) => editAuditDraft(previous, update, edit))
+    },
+    []
+  )
+  const handleClearPrefill = React.useCallback(
+    () => setDraft((previous) => clearAuditPrefill(previous)),
+    []
+  )
+  const hasAssessmentPrefill = draft.prefillOwnership.untouchedInserted.some(
+    (token) =>
+      (token.sectionId === 'crypto-inventory' && token.optionValue === 'systems-cataloged') ||
+      (token.sectionId === 'evidence-documentation' && token.optionValue === 'migration-plan')
+  )
+  const prefillHelpId = React.useId()
+  const saveRevision = JSON.stringify({
+    prefillOwnership: draft.prefillOwnership,
+    exceptions,
+    evidence,
+  })
+
+  const seedSources: string[] = []
+  if (!draft.prefillOwnership.cleared) {
+    if (industry) seedSources.push(`industry (${industry})`)
+    if (country) seedSources.push(`country (${country})`)
+    if (isAssessmentComplete) seedSources.push('completed assessment')
+    if (myFrameworks.length > 0)
+      seedSources.push(
+        `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+      )
+    if (myProducts.length > 0)
+      seedSources.push(
+        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+      )
+    if (myThreats.length > 0)
+      seedSources.push(
+        `${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`
+      )
+  }
+
   const handleExport = (data: Record<string, Record<string, string | string[]>>) => {
     const markdown =
       renderAuditPreview(data, industry, country) +
@@ -618,7 +643,13 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
       data: markdown,
       createdAt: Date.now(),
       moduleId: 'compliance-strategy',
-      inputs: { checklistData: data, exceptions, evidence },
+      inputs: {
+        checklistData: data,
+        exceptions,
+        evidence,
+        prefillOwnership: draft.prefillOwnership,
+        originalSavedInputs: draft.originalSavedInputs,
+      },
     })
   }
 
@@ -661,13 +692,44 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
 
   return (
     <div className="space-y-6">
-      {seedSources.length > 0 && (
-        <PreFilledBanner
-          summary={`Seeded from ${seedSources.join(' + ')}.`}
-          onClear={() => setSeedCleared(true)}
-        />
+      {(seedSources.length > 0 ||
+        draft.prefillOwnership.untouchedInserted.length > 0 ||
+        draft.prefillOwnership.inheritedOriginUnknown ||
+        draft.prefillOwnership.cleared) && (
+        <div className="space-y-2">
+          {seedSources.length > 0 && draft.prefillOwnership.untouchedInserted.length > 0 && (
+            <PreFilledBanner summary={`Planning context: ${seedSources.join(' + ')}.`} />
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleClearPrefill}
+            aria-describedby={prefillHelpId}
+          >
+            Clear untouched topic suggestions
+          </Button>
+          <p id={prefillHelpId} className="text-xs text-muted-foreground">
+            Removes only untouched topic selections recorded as inserted by prefill. Learner edits,
+            notes and source context are kept.
+          </p>
+          {draft.prefillOwnership.inheritedOriginUnknown && (
+            <p className="text-xs text-muted-foreground">
+              Loaded draft did not record supported prefill ownership. Origin-uncertain entries are
+              kept; edit selections individually.
+            </p>
+          )}
+          {draft.prefillOwnership.cleared && (
+            <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
+              {draft.lastClearCount === null
+                ? 'Untouched topic suggestions were previously cleared.'
+                : `${draft.lastClearCount} untouched topic suggestion${draft.lastClearCount === 1 ? '' : 's'} cleared.`}{' '}
+              Learner work and origin-uncertain entries were kept.
+            </p>
+          )}
+        </div>
       )}
-      {isAssessmentComplete && (
+      {isAssessmentComplete && hasAssessmentPrefill && !draft.prefillOwnership.cleared && (
         <div className="bg-status-success/10 border border-status-success/30 rounded-lg p-3">
           <p className="text-sm text-foreground/80">
             Suggested planning topics have been selected from your completed sample assessment
@@ -710,7 +772,8 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         exportFormats={['markdown', 'csv', 'pdf']}
         renderPreview={previewRenderer}
         renderCsv={csvRenderer}
-        initialData={savedInputs?.checklistData}
+        controlledForm={{ value: draft.checklistData, onChange: handleDataChange }}
+        saveRevision={saveRevision}
       />
 
       {/* Exceptions — no CSWP citation: §5.1 is standards/mandates, and the
