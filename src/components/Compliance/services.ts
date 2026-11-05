@@ -87,17 +87,11 @@ const pruneStaleCacheKeys = async (keys: CacheKeys): Promise<void> => {
  * prunes cached entries left over from an earlier publication.
  */
 export const fetchComplianceData = async (): Promise<ComplianceRecord[]> => {
-  try {
-    const records = await fetchStaticComplianceData()
-
-    const meta = await fetchComplianceMeta()
-    const cacheKeys = cacheKeysFor(publicationSignature(meta, records))
-    await pruneStaleCacheKeys(cacheKeys)
-
-    return records
-  } catch {
-    return []
-  }
+  const records = await fetchStaticComplianceData()
+  const meta = await fetchComplianceMeta()
+  const cacheKeys = cacheKeysFor(publicationSignature(meta, records))
+  await pruneStaleCacheKeys(cacheKeys)
+  return records
 }
 
 // Pure, so the phone view shares it; re-exported to keep this module's API.
