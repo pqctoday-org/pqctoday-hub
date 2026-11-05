@@ -619,7 +619,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.6',
     name: 'PQC SSH Simulator',
     description:
-      'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
+      'Compare byte sizes and timings from bundled modified OpenSSH handshake samples and modeled token-operation traces. Experimental PQC authentication requires matching peer and build support.',
     category: 'Protocol Simulations',
     algorithms: ['ML-KEM-768', 'X25519', 'ML-DSA-65', 'ssh-mldsa-65', 'PKCS#11'],
     icon: Terminal,
@@ -650,7 +650,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'SSH session ID (SHA-256, 32 bytes hex); ML-DSA-65 host key signature (3309 bytes hex); mlkem768x25519-sha256 shared secret (32 bytes hex); latency and wire-size comparison vs classical.',
+      'Algorithm identifiers, key/signature/share byte counts, operation timing and logs. Bundled OpenSSH handshake results and modeled protocol-sequence illustrations are identified separately.',
   },
 
   // ── Entropy & Random ──────────────────────────────────────────────────────

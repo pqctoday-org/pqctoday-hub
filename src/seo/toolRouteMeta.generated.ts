@@ -794,7 +794,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/pqc-ssh-sim',
     title: 'PQC SSH Simulator — PQC Crypto Lab | PQC Today',
     description:
-      'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11.',
+      'Compare byte sizes and timings from bundled modified OpenSSH handshake samples and modeled token-operation traces.',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [

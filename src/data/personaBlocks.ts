@@ -144,9 +144,9 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
     developer:
       'Pick a key exchange such as mlkem768-curve25519-sha256 (marked REAL) and a host key like ssh-mldsa-65, press Run comparison, and read the Run Log, PKCS#11 Calls and Wire Packets tabs beside the classical baseline.',
     architect:
-      'The side-by-side telemetry compares Classical (ecdsa-nistp256 + curve25519) with PQC (ML-DSA-65 + ML-KEM-768 × X25519) on packet sizes and round trips; the Host Trust & TOFU note covers what changes when host keys change algorithm.',
+      'Compare the displayed algorithm identifiers, byte counts and timing for the classical and PQC samples. Check the retained result origin: a modeled operation trace does not measure network round trips or establish authentication. The Host Trust & TOFU note explains the host-key transition context.',
     researcher:
-      'Variants marked REAL run on softhsmv3 and those marked MODEL are computed; compare an ML-DSA host key with an SLH-DSA one on the Wire Packets tab to measure the difference in the KEXINIT and signature payloads.',
+      'Inspect the retained result origin and operation log, then compare the reported signature and share byte counts across variants. Modeled packet entries illustrate a sequence; they are not captured network traffic or peer-verification results.',
   },
   '/playground/suci-flow': {
     developer:
