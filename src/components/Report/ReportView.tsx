@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
+import { flushSync } from 'react-dom'
 import { motion } from 'framer-motion'
 import { FileBarChart, ClipboardCheck, AlertCircle, ArrowRight } from 'lucide-react'
 import { ReportContent } from './ReportContent'
@@ -20,7 +21,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileReportView } from '@/components/Mobile/screens/MobileReportView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import {
-  useResolvedSharedReport,
+  useResolvedSharedReportState,
   sampleReportView,
   REPORT_LINK_PARAMS,
 } from '@/hooks/useResolvedSharedReport'
@@ -106,13 +107,52 @@ function MaturityTierChip() {
   )
 }
 
+/** Mounted only for the recipient's own report, never shared/example resolution. */
+function OwnReportProgressTracker() {
+  useWorkflowPhaseTracker('assess')
+  const assessmentStatus = useAssessmentStore((state) => state.assessmentStatus)
+  useEffect(() => {
+    if (assessmentStatus !== 'complete') return
+    useModuleStore.getState().updateModuleProgress('assess', {
+      status: 'completed',
+      completedSteps: ['assessment-completed'],
+    })
+  }, [assessmentStatus])
+  return null
+}
+
 export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false }) => {
   // simEmbed: rendered headless inside the simulation — the page chrome
   // (breadcrumb + PageHeader) is hidden so the sim's own header stays on top.
   // ReportView only reads searchParams (no writes), so no URL isolation is needed.
   const isMobileShell = useIsMobileShell()
+  // Print page widths can satisfy the phone breakpoint; keep the full report
+  // for print instead of replacing it with the phone highlights/index.
+  const [isPrinting, setIsPrinting] = useState(() =>
+    typeof window.matchMedia === 'function' ? window.matchMedia('print').matches : false
+  )
+  useEffect(() => {
+    const media = typeof window.matchMedia === 'function' ? window.matchMedia('print') : null
+    const change = (event: MediaQueryListEvent) => setIsPrinting(event.matches)
+    const before = () => flushSync(() => setIsPrinting(true))
+    const after = () => setIsPrinting(false)
+    media?.addEventListener('change', change)
+    window.addEventListener('beforeprint', before)
+    window.addEventListener('afterprint', after)
+    return () => {
+      media?.removeEventListener('change', change)
+      window.removeEventListener('beforeprint', before)
+      window.removeEventListener('afterprint', after)
+    }
+  }, [])
   const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
-  useWorkflowPhaseTracker('assess')
+  const livePersona = usePersonaStore((state) => state.selectedPersona)
+  const [searchParams] = useSearchParams()
+  const { view: linkedView, pending: linkResolutionPending } =
+    useResolvedSharedReportState(livePersona)
+  const carriesLink = REPORT_LINK_PARAMS.some((param) => searchParams.has(param))
+  const sharedLinkPending = carriesLink && linkResolutionPending
+  const linkedScope = !!linkedView || sharedLinkPending
   const input = getInput()
   // `getInput()` builds a fresh AssessmentInput on every store read, so plain
   // useMemo([input]) never hits. Key on a stable serialization instead — the
@@ -135,6 +175,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
 
   useEffect(() => {
     let cancelled = false
+    if (linkedScope) return
     if ((assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input) {
       // Re-using a previously-computed result if the inputKey is unchanged
       // (avoids re-running the pipeline on every render — same purpose the
@@ -188,7 +229,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputKey, assessmentStatus, lastResult])
+  }, [inputKey, assessmentStatus, lastResult, linkedScope])
 
   const ownResult = computeState.result
   const reportComputing = computeState.computing
@@ -198,8 +239,6 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   const [collapseToken, setCollapseToken] = useState(0)
   const handleExpandAll = useCallback(() => setExpandToken((t) => t + 1), [])
   const handleCollapseAll = useCallback(() => setCollapseToken((t) => t + 1), [])
-
-  const livePersona = usePersonaStore((s) => s.selectedPersona)
 
   // ACCURACY-0708-2: a shared/example report is an ephemeral, in-memory view
   // — decoding a `?share=` link NEVER writes into the recipient's own
@@ -214,12 +253,9 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // both so mobile stops having no shared/example resolution at all, and so
   // a same-route `?share=`/`?example=` change re-resolves instead of being
   // missed by a mount-only guard.
-  const linkedView = useResolvedSharedReport(livePersona)
   // No link and no assessment of their own: show the worked example (with a
   // "sample" banner) instead of an empty page. Never inside the simulation,
   // and never while a link is still resolving (the hook sets it in an effect).
-  const [searchParams] = useSearchParams()
-  const carriesLink = REPORT_LINK_PARAMS.some((p) => searchParams.has(p))
   const showSample = !linkedView && !simEmbed && !carriesLink && assessmentStatus === 'not-started'
   const sharedView = useMemo(
     () => linkedView ?? (showSample ? sampleReportView(livePersona) : null),
@@ -248,6 +284,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // `sharedView` — a shared/example view must not write into the
   // recipient's own persisted result/history.
   useEffect(() => {
+    if (linkedScope || sharedView) return
     if (assessmentStatus === 'not-started') {
       persistedRef.current = false
       return
@@ -279,15 +316,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         })
       }
     }
-  }, [assessmentStatus, ownResult, setResult])
-
-  useEffect(() => {
-    if (assessmentStatus !== 'complete') return
-    useModuleStore.getState().updateModuleProgress('assess', {
-      status: 'completed',
-      completedSteps: ['assessment-completed'],
-    })
-  }, [assessmentStatus])
+  }, [assessmentStatus, ownResult, setResult, linkedScope, sharedView, inputKey])
 
   // What actually renders: the sender's ephemeral snapshot when viewing a
   // shared/example link, otherwise the recipient's own live result.
@@ -307,14 +336,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // report yet there is nothing meaningful to share, so the top bar keeps
   // its generic bare-path fallback.
   useEffect(() => {
-    if (simEmbed || !result) return
+    if (simEmbed || !result || sharedLinkPending) return
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()
     setPageActions({
       title: 'PQC Assessment Report',
       url: buildReportShareUrl(result, isShared),
     })
     return () => clearPageActions()
-  }, [simEmbed, result, isShared])
+  }, [simEmbed, result, isShared, sharedLinkPending])
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before ALL desktop JSX — including the
@@ -326,11 +355,24 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // simulation via simEmbed, so simEmbed must win over isMobileShell
   // regardless of viewport width, same as Threats/Library/Compliance/
   // Migrate/Assess.
-  if (isMobileShell && !simEmbed) {
+  if (sharedLinkPending) {
+    return (
+      <div role="status" className="p-6 text-sm text-muted-foreground">
+        Opening shared report…
+      </div>
+    )
+  }
+
+  if (isMobileShell && !simEmbed && !isPrinting) {
     // sharedView resolved once above (useResolvedSharedReport), not
     // re-derived here — mobile gets the identical shared/example report a
     // desktop reader on the same link would see, instead of none at all.
-    return <MobileReportView sharedView={sharedView} />
+    return (
+      <>
+        {!sharedView && <OwnReportProgressTracker />}
+        <MobileReportView sharedView={sharedView} />
+      </>
+    )
   }
 
   // Active compute state: assessment exists, result still pending. Show
@@ -426,6 +468,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
 
   return (
     <div className="animate-fade-in">
+      {!sharedView && <OwnReportProgressTracker />}
       {!simEmbed && (
         <PageHeader
           icon={FileBarChart}
