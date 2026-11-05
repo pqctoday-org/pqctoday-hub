@@ -161,10 +161,10 @@ export function ModuleCompletionCard({
               type="button"
               variant="gradient"
               onClick={onNext}
-              className="flex w-full items-center justify-center gap-1.5"
+              className="flex h-auto min-h-11 w-full min-w-0 items-center justify-center gap-1.5 whitespace-normal"
             >
-              Next: {nextLabel}
-              <ArrowRight size={15} />
+              <span className="min-w-0 break-words">Next: {nextLabel}</span>
+              <ArrowRight size={15} className="shrink-0" />
             </Button>
           ) : (
             <Button
