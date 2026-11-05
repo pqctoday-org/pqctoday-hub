@@ -9,6 +9,9 @@ import {
   threatImpactLevel,
   IMPACT_BANDS,
   DOMAIN_THREAT_KEYWORDS,
+  buildSupplyChainMarkdown,
+  computeNoRiskDomains,
+  computeMatrixEntries,
 } from './SupplyChainRiskMatrix'
 import { DOMAINS, type DomainId } from '@/data/migrationAssets'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -278,16 +281,50 @@ describe('SupplyChainRiskMatrix', () => {
     expect(kmsBadge).toBeInTheDocument()
   })
 
-  it('shows a fully-ready, zero-threat-match domain as "No risk" instead of a fabricated nonzero score', () => {
+  it('keeps a zero model score without presenting it as absence of production risk', () => {
     render(<SupplyChainRiskMatrix variant="flat" />)
     const platformCard = screen.getByTestId('layer-card-platform')
     expect(within(platformCard).getByTitle(/Migration Gap 0\/5 × Impact 0\/5/)).toHaveTextContent(
-      'No risk'
+      'No scored gap / matched threat'
     )
     // Named as its own chip in the "not plotted" strip, not silently dropped.
     const noRiskStrip = screen.getByTestId('no-risk-strip')
     expect(within(noRiskStrip).getByText(/not plotted above/i)).toBeInTheDocument()
     expect(within(noRiskStrip).getByText(DOMAINS.platform.label)).toBeInTheDocument()
+    expect(
+      within(noRiskStrip).getByText(/does not establish absence of production risk/)
+    ).toBeInTheDocument()
+    expect(within(platformCard).getByTitle(/Migration Gap 0\/5 × Impact 0\/5/)).not.toHaveClass(
+      'text-status-success'
+    )
+  })
+
+  it('preserves zero model scores and their limits in the shared saved/exported Markdown', () => {
+    const stats = computeDomainStats(vendorsByDomain, threats, true, null)
+    const input = {
+      industry: 'Finance',
+      country: '',
+      totalProducts: 8,
+      overallPqcPct: 50,
+      pqcReadyCount: 4,
+      overallFipsPct: 0,
+      fipsValidatedCount: 0,
+      domainStats: stats,
+      matrixEntries: computeMatrixEntries(stats),
+      noRiskDomains: computeNoRiskDomains(stats),
+      hasIndustryContext: true,
+      industryContextHint: 'sample settings',
+      dependencyRelations: [],
+      cbomBuckets: { Code: [], Library: [], Application: [], File: [], Protocol: [], System: [] },
+      pipelineSources: '',
+      refreshCadence: '',
+      cmdbMapping: '',
+    }
+    const markdown = buildSupplyChainMarkdown(input)
+    expect(markdown).toContain('Score 0 (No scored gap / matched threat')
+    expect(markdown).toContain('not absence of production risk')
+    expect(markdown).not.toContain('No risk —')
+    expect(stats.find((row) => row.domainId === 'platform')?.riskScore).toBe(0)
   })
 
   it('shows an explicit not-personalized state instead of silently reusing pqcMigrationPriority when no industry is selected', () => {

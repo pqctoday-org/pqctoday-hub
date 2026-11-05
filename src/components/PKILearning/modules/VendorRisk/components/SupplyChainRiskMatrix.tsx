@@ -29,7 +29,6 @@ import {
   Info,
   CheckSquare,
   Package,
-  CheckCircle,
   GitMerge,
   Download,
   Link2,
@@ -739,6 +738,8 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
   } = input
 
   let md = '# Supply Chain PQC Risk Matrix\n\n'
+  md +=
+    'A zero score means no scored gap or matched threat under these selected catalogue/text rules, not absence of production risk. Evaluate actual inventory, versions, trust, deployment and supplier/testing evidence with your production tools.\n\n'
   md += `**Generated:** ${new Date().toLocaleDateString()}\n`
   if (industry) md += `**Industry:** ${industry}\n`
   if (country) md += `**Country:** ${country}\n`
@@ -764,7 +765,7 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
     if (stat.impact === null) {
       md += `| Migration Gap × Impact | ${stat.likelihood} × not personalized | — (select an industry to compute Impact) |\n\n`
     } else {
-      md += `| Migration Gap × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${stat.likelihood === 0 || stat.impact === 0 ? 'No risk — not plotted on grid' : matrixRiskLevel(stat.riskScore ?? 0)}) |\n\n`
+      md += `| Migration Gap × Impact | ${stat.likelihood} × ${stat.impact} | Score ${stat.riskScore} (${stat.likelihood === 0 || stat.impact === 0 ? 'No scored gap / matched threat — not plotted on grid' : matrixRiskLevel(stat.riskScore ?? 0)}) |\n\n`
     }
   }
 
@@ -779,7 +780,7 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
       md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
     }
     if (noRiskDomains.length > 0) {
-      md += `\n_No risk — not plotted (0 on at least one axis):_ ${noRiskDomains.map((s) => DOMAINS[s.domainId]?.label ?? s.domainId).join(', ')}\n`
+      md += `\n_No scored gap / matched threat — not plotted (0 on at least one axis):_ ${noRiskDomains.map((s) => DOMAINS[s.domainId]?.label ?? s.domainId).join(', ')}\n`
     }
   }
   md += '\n'
@@ -1304,6 +1305,11 @@ export const SupplyChainRiskMatrix: React.FC<{
           Supply Chain Risk Matrix (Migration Gap × Impact)
         </h2>
         <p className="text-xs text-muted-foreground mb-3">
+          A zero means no scored gap or matched threat under these selected catalogue/text rules,
+          not absence of production risk. Evaluate actual inventory, versions, trust, deployment and
+          supplier/testing evidence with your production tools.
+        </p>
+        <p className="text-xs text-muted-foreground mb-3">
           Each migration domain plotted by <strong>migration gap</strong> (share of the domain not
           yet PQC-ready) × <strong>impact</strong> (the severity-weighted count of this
           industry&apos;s supply-chain-relevant threats naming this domain — Critical threats weigh
@@ -1365,22 +1371,22 @@ export const SupplyChainRiskMatrix: React.FC<{
             {noRiskDomains.length > 0 && (
               <div
                 data-testid="no-risk-strip"
-                className="mt-2 flex items-start gap-2 rounded-lg border border-status-success/30 bg-status-success/5 p-2 text-xs text-muted-foreground"
+                className="mt-2 flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-2 text-xs text-muted-foreground"
               >
-                <CheckCircle size={13} className="mt-0.5 shrink-0 text-status-success" />
+                <Info size={13} className="mt-0.5 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
                   <p>
                     <strong className="text-foreground">
                       {noRiskDomains.length} domain{noRiskDomains.length !== 1 ? 's' : ''}
                     </strong>{' '}
-                    not plotted above — zero on at least one axis, not enough matrix room for a true
-                    &quot;no risk&quot; cell:
+                    not plotted above — zero on at least one axis means no scored gap or matched
+                    threat under this model. It does not establish absence of production risk:
                   </p>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {noRiskDomains.map((s) => (
                       <span
                         key={s.domainId}
-                        className="rounded-full border border-status-success/20 bg-background px-2 py-0.5 font-medium text-status-success"
+                        className="rounded-full border border-border bg-background px-2 py-0.5 font-medium text-muted-foreground"
                       >
                         {DOMAINS[s.domainId]?.label ?? s.domainId}
                       </span>
@@ -1431,10 +1437,10 @@ export const SupplyChainRiskMatrix: React.FC<{
               </span>
             ) : stat.likelihood === 0 || stat.impact === 0 ? (
               <span
-                className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-status-success/10 text-status-success border-status-success/20"
+                className="text-xs px-2 py-0.5 rounded-full border font-medium shrink-0 bg-muted text-muted-foreground border-border"
                 title={`Migration Gap ${stat.likelihood}/5 × Impact ${stat.impact}/5 — not plotted on the grid above`}
               >
-                No risk
+                No scored gap / matched threat
               </span>
             ) : (
               <span

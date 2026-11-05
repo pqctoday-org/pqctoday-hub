@@ -3,9 +3,15 @@
 import React, { useState, useMemo } from 'react'
 import { Plane, Plus, X, AlertTriangle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { AIRCRAFT_TYPES, getInteropStatus, INTEROP_COLORS, INTEROP_LABELS } from '../data/fleetData'
+import { AIRCRAFT_TYPES, getInteropStatus, INTEROP_COLORS } from '../data/fleetData'
 import { GENERATION_COLORS } from '../data/aerospaceConstants'
 import { Button } from '@/components/ui/button'
+
+const PLANNING_LABELS = {
+  pqc: 'Native upgrade candidates',
+  gateway: 'Gateway / retrofit planning case',
+  legacy: 'Legacy planning case',
+} as const
 
 const aircraftItems = AIRCRAFT_TYPES.map((a) => ({ id: a.id, label: a.name }))
 
@@ -124,7 +130,13 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
       {/* Interoperability Matrix */}
       {fleetAircraft.length >= 2 && (
         <div className="glass-panel p-4 space-y-3">
-          <h3 className="text-sm font-bold text-foreground">Crypto Interoperability Matrix</h3>
+          <h3 className="text-sm font-bold text-foreground">Sample Upgrade-Category Matrix</h3>
+          <p className="text-xs text-muted-foreground">
+            These pair labels use the profiles&apos; declared upgrade categories, independently of
+            the deployment slider. They are planning assumptions, not tested interoperability or
+            evidence that any connection is protected. Evaluate both endpoints, the protocol and
+            fallback behavior with your production testing tools.
+          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -161,7 +173,7 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
                           <span
                             className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${INTEROP_COLORS[status]}`}
                           >
-                            {INTEROP_LABELS[status]}
+                            {PLANNING_LABELS[status]}
                           </span>
                         </td>
                       )
@@ -173,13 +185,15 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
           </div>
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-success/30" /> Both PQC-capable
+              <span className="w-3 h-3 rounded bg-status-success/30" /> Both labelled native-upgrade
+              candidates
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-warning/30" /> Gateway required
+              <span className="w-3 h-3 rounded bg-status-warning/30" /> Gateway / retrofit
+              considered
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-status-error/30" /> Legacy (unprotected)
+              <span className="w-3 h-3 rounded bg-status-error/30" /> Legacy category in sample
             </span>
           </div>
         </div>
@@ -217,23 +231,24 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
             <div className="text-lg font-bold text-status-success">
               {fleetStats.protectedLinksPct}%
             </div>
-            <div className="text-muted-foreground">PQC-Protected Links</div>
+            <div className="text-muted-foreground">Hypothetical aircraft deployment share</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-status-error">{fleetStats.unprotectedPct}%</div>
-            <div className="text-muted-foreground">Unprotected Links</div>
+            <div className="text-muted-foreground">Other sample aircraft</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-status-warning">{fleetStats.gatewayPct}%</div>
-            <div className="text-muted-foreground">Gateway-Only</div>
+            <div className="text-muted-foreground">Gateway-only classification share</div>
           </div>
         </div>
 
         {fleetStats.unprotectedPct > 50 && (
           <div className="flex items-start gap-2 text-xs text-status-warning">
             <AlertTriangle size={14} className="shrink-0 mt-0.5" />
-            Over half of fleet data links remain quantum-vulnerable. Ground-side PQC gateways at ATC
-            centers and airline ops centers are essential to protect legacy aircraft communication.
+            More than half of the sample aircraft are outside this hypothetical deployment share.
+            Aircraft counts do not measure protected links or traffic. A ground gateway can protect
+            an onward ground channel; it does not protect an unchanged aircraft-to-ground hop.
           </div>
         )}
       </div>
