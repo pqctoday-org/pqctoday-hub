@@ -23,7 +23,7 @@ interface LiveHSMToggleProps {
   hsm: UseHSMResult
   /** Standard PKCS#11 v3.2 C_* function names this step calls (shown to user) */
   operations: string[]
-  /** If true (default), automatically starts the HSM without requiring user click. */
+  /** If true (default), starts the HSM when the saved mode is enabled. */
   autoInit?: boolean
   className?: string
   /**
@@ -48,15 +48,13 @@ export const LiveHSMToggle = ({
 }: LiveHSMToggleProps) => {
   const { liveHsmEnabled, setLiveHsm } = useHSMMode()
 
-  // Auto-initialize when mounting
+  // The enabled default starts automatically. An explicit Disable is saved
+  // in the existing mode store and must not be undone when finalize returns idle.
   useEffect(() => {
-    if (autoInit && hsm.phase === 'idle') {
+    if (autoInit && liveHsmEnabled && hsm.phase === 'idle') {
       void hsm.initialize()
-      if (!liveHsmEnabled) {
-        setLiveHsm(true)
-      }
     }
-  }, [autoInit, hsm, liveHsmEnabled, setLiveHsm])
+  }, [autoInit, hsm, liveHsmEnabled])
 
   const handleEnable = () => {
     setLiveHsm(true)
@@ -199,7 +197,7 @@ export const LiveHSMToggle = ({
             )}
           </div>
         </div>
-        {!autoInit && (
+        {(!autoInit || !liveHsmEnabled) && (
           <Button
             variant="outline"
             size="sm"
