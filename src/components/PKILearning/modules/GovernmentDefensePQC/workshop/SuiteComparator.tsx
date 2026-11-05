@@ -12,14 +12,30 @@ import { ShieldCheck, RefreshCw, CheckCircle2 } from 'lucide-react'
 import { SUITE_COMPARISON } from '../data/cnsaData'
 import { Button } from '@/components/ui/button'
 
+// Comparison of this authored table's explicit option text, not a generic
+// algorithm-identity matcher or an eligibility check for a deployed system.
+function changeKind(row: { cnsa1: string; cnsa2: string }) {
+  const before = row.cnsa1.trim()
+  const after = row.cnsa2.trim()
+  if (!before || !after) return 'unassessed'
+  if (before === after) return 'retained'
+  if (after.split(/\s+or\s+/).some((option) => option.trim() === before)) return 'expanded'
+  return 'replaced'
+}
+
 export const SuiteComparator = () => {
   const [selected, setSelected] = useState(SUITE_COMPARISON[0].purpose)
   const row = SUITE_COMPARISON.find((r) => r.purpose === selected) ?? SUITE_COMPARISON[0]
 
-  const { replaced, unchanged } = useMemo(() => {
-    const replaced = SUITE_COMPARISON.filter((r) => r.cnsa1 !== r.cnsa2)
-    return { replaced, unchanged: SUITE_COMPARISON.length - replaced.length }
+  const { replaced, retained, unassessed } = useMemo(() => {
+    return {
+      replaced: SUITE_COMPARISON.filter((r) => changeKind(r) === 'replaced').length,
+      retained: SUITE_COMPARISON.filter((r) => ['retained', 'expanded'].includes(changeKind(r)))
+        .length,
+      unassessed: SUITE_COMPARISON.filter((r) => changeKind(r) === 'unassessed').length,
+    }
   }, [])
+  const selectedChange = changeKind(row)
 
   return (
     <div className="space-y-6">
@@ -31,25 +47,32 @@ export const SuiteComparator = () => {
           <div>
             <h3 className="text-lg font-bold text-gradient">CNSA 1.0 → 2.0 Comparator</h3>
             <p className="text-sm text-muted-foreground">
-              What the suite revision actually changes, line by line.
+              Compare the listed options in this teaching table. Confirm the applicable profile,
+              version and configuration in the official guidance before making a deployment
+              decision.
             </p>
           </div>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="p-4 rounded-lg bg-status-warning/10 border border-status-warning/30">
-            <p className="text-2xl font-bold text-status-warning">{replaced.length}</p>
+            <p className="text-2xl font-bold text-status-warning">{replaced}</p>
             <p className="text-sm text-muted-foreground">
-              lines replaced — every public-key purpose in the suite
+              purposes with replaced options in this comparison
             </p>
           </div>
           <div className="p-4 rounded-lg bg-status-success/10 border border-status-success/30">
-            <p className="text-2xl font-bold text-status-success">{unchanged}</p>
+            <p className="text-2xl font-bold text-status-success">{retained}</p>
             <p className="text-sm text-muted-foreground">
-              lines essentially unchanged — the symmetric primitives survive
+              purposes retaining an existing option, including expanded choices
             </p>
           </div>
         </div>
+        {unassessed > 0 && (
+          <p className="text-sm text-muted-foreground">
+            {unassessed} purpose(s) not assessed: option text is missing.
+          </p>
+        )}
 
         <div className="flex flex-wrap gap-1.5">
           {SUITE_COMPARISON.map((r) => (
@@ -76,7 +99,7 @@ export const SuiteComparator = () => {
           </div>
           <div
             className={`p-4 rounded-lg border ${
-              row.cnsa1 === row.cnsa2
+              selectedChange === 'retained' || selectedChange === 'expanded'
                 ? 'bg-status-success/10 border-status-success/30'
                 : 'bg-primary/10 border-primary/30'
             }`}
@@ -84,13 +107,19 @@ export const SuiteComparator = () => {
             <p className="text-xs uppercase tracking-wide text-muted-foreground">CNSA 2.0</p>
             <p className="mt-1 font-mono text-sm text-foreground">{row.cnsa2}</p>
             <p className="mt-2 inline-flex items-center gap-1 text-xs">
-              {row.cnsa1 === row.cnsa2 ? (
+              {selectedChange === 'retained' || selectedChange === 'expanded' ? (
                 <>
-                  <CheckCircle2 size={12} className="text-status-success" /> no migration needed
+                  <CheckCircle2 size={12} className="text-status-success" />{' '}
+                  {selectedChange === 'expanded'
+                    ? 'existing option retained; additional option listed'
+                    : 'listed option retained; deployment changes are not assessed'}
                 </>
               ) : (
                 <>
-                  <RefreshCw size={12} className="text-primary" /> replacement required
+                  <RefreshCw size={12} className="text-primary" />{' '}
+                  {selectedChange === 'unassessed'
+                    ? 'comparison not assessed'
+                    : 'different algorithm option(s) listed'}
                 </>
               )}
             </p>
