@@ -30,7 +30,7 @@ const PARTS: WorkshopPart[] = [
     id: 'patient-privacy-mapper',
     title: 'Step 3: Patient Privacy Mapper',
     description:
-      'Map healthcare data categories to their true lifecycle duration and calculate HNDL windows for pediatric, genomic, and mental health records.',
+      'Explore HNDL windows using sample planning lifetimes for pediatric, genomic, and mental health records.',
     icon: HeartPulse,
   },
   {

@@ -59,7 +59,6 @@ function priorityTextColor(priority: number): string {
 }
 
 function formatRetention(years: number): string {
-  if (years >= 100) return 'Lifetime'
   return `${years} years`
 }
 
@@ -342,6 +341,13 @@ export const PatientPrivacyMapper: React.FC = () => {
         </p>
       </div>
 
+      <p className="text-sm text-muted-foreground">
+        The displayed lifetimes are sample planning assumptions, not universal retention or
+        confidentiality requirements. In particular, the genomic example uses 100 years to explore a
+        long confidentiality lifetime; establish the applicable requirements and planning assumptions
+        for each use case before using your own tools.
+      </p>
+
       {/* ── Data Category Selector ──────────────────────────────────────────── */}
       <div className="glass-panel p-4">
         <div className="flex items-center justify-between mb-3">
@@ -379,7 +385,7 @@ export const PatientPrivacyMapper: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="glass-panel p-3 text-center">
             <p className="text-2xl font-bold text-primary">{aggregateStats.avgRetention}y</p>
-            <p className="text-[10px] text-muted-foreground">Avg True Retention</p>
+            <p className="text-[10px] text-muted-foreground">Avg Sample Lifetime</p>
           </div>
           <div className="glass-panel p-3 text-center">
             <p className="text-2xl font-bold text-status-error">{aggregateStats.criticalCount}</p>
@@ -443,7 +449,7 @@ export const PatientPrivacyMapper: React.FC = () => {
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-primary/30 border border-primary" />
-              <span className="text-muted-foreground">True Retention</span>
+              <span className="text-muted-foreground">Sample Planning Lifetime</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-status-error/20 border border-status-error/40" />
