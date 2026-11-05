@@ -10,8 +10,7 @@ function openBuilder() {
   fireEvent.click(screen.getByRole('button', { name: 'Exception Request Builder' }))
 }
 function answerAll() {
-  for (const button of screen.getAllByRole('button', { name: '—', exact: true }))
-    fireEvent.click(button)
+  for (const button of screen.getAllByRole('button', { name: '—' })) fireEvent.click(button)
 }
 describe('exception risk assessment requires explicit criterion ratings', () => {
   it('does not label an empty request low risk', () => {
@@ -26,7 +25,7 @@ describe('exception risk assessment requires explicit criterion ratings', () => 
   })
   it('keeps a partially answered request unassessed', () => {
     openBuilder()
-    fireEvent.click(screen.getAllByRole('button', { name: '—', exact: true })[0])
+    fireEvent.click(screen.getAllByRole('button', { name: '—' })[0])
     expect(screen.getByText('Not assessed')).toBeInTheDocument()
     expect(
       screen.getByText((text) =>
@@ -44,13 +43,11 @@ describe('exception risk assessment requires explicit criterion ratings', () => 
   it('preserves explicit no ratings as zero and withdraws the score if a rating clears', () => {
     openBuilder()
     answerAll()
-    for (const button of screen.getAllByRole('button', { name: 'Yes', exact: true }))
-      fireEvent.click(button)
-    for (const button of screen.getAllByRole('button', { name: 'Partial', exact: true }))
-      fireEvent.click(button)
+    for (const button of screen.getAllByRole('button', { name: 'Yes' })) fireEvent.click(button)
+    for (const button of screen.getAllByRole('button', { name: 'Partial' })) fireEvent.click(button)
     expect(screen.getByText('0')).toBeInTheDocument()
     expect(screen.getByText('Low Risk — Team Lead Approval')).toBeInTheDocument()
-    fireEvent.click(screen.getAllByRole('button', { name: 'No', exact: true })[0])
+    fireEvent.click(screen.getAllByRole('button', { name: 'No' })[0])
     expect(screen.getByText('Not assessed')).toBeInTheDocument()
     expect(screen.getByText(/1 unanswered criterion/)).toBeInTheDocument()
     expect(screen.queryByText(/Low Risk/)).not.toBeInTheDocument()
