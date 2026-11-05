@@ -44,7 +44,7 @@ The **Overall Score** is the weighted average of the KPI sliders below, using th
 per-persona weights in the Weight column (they sum to 100%). Each KPI is a 0–100
 measure; the weighted average is rounded to a whole number. A combined score is
 withheld until at least 70% of the weight of the KPIs that can be scored has
-entered or calculated sample values; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing.
+entered or calculated sample values; KPIs marked data unavailable are left out of that total. Missing rows remain visible and never improve the result by disappearing. This 70% coverage threshold is a Hub worksheet display rule, not a NIST-prescribed maturity or readiness criterion.
 
 The KPI set follows the Applied Quantum framework's Board-Level KPI Pack —
 Coverage, Trust, Inventory, Vendors, and Agility, each with year-1/2/3 targets

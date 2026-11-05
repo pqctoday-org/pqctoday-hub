@@ -163,7 +163,7 @@ export function buildKpiTrackerMarkdown({
 
   md += '\n---\n\n'
   md +=
-    '*Aligned to NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
+    '*Related reading: NIST CSWP 39 §6.5 (Maturity Assessment for Crypto Agility). This worksheet uses Hub teaching weights and coverage rules; that section does not prescribe its scoring method. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
 
   return md
 }
@@ -593,8 +593,9 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
           {scoredCount} of {dimensions.length}
         </strong>{' '}
         here. The combined score is withheld until at least 70% of the weight of the KPIs that can
-        be scored has values. That coverage threshold is a display rule, not proof of readiness.
-        Weights are the per-persona defaults unless you have edited them.
+        be scored has values. That 70% coverage threshold is a Hub worksheet display rule, not a
+        NIST-prescribed maturity criterion or proof of readiness. Weights are the per-persona
+        defaults unless you have edited them.
       </p>
 
       <ExportableArtifact
