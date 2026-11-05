@@ -151,13 +151,19 @@ export const DatabaseMigrationReadiness: React.FC = () => {
   return (
     <div className="space-y-6">
       <VendorCoverageNotice migrateLayer="Database" className="mb-2" />
-      {/* Readiness score */}
+      <p className="text-sm text-muted-foreground">
+        Checking these sample planning items records your review; it does not test database or
+        provider compatibility or establish migration readiness. With your own tools, evaluate
+        supported versions, confidentiality requirements, dependencies and representative workload
+        tests.
+      </p>
+      {/* Sample checklist coverage */}
       <div className="glass-panel p-5">
         <div className="flex items-center justify-between gap-4 mb-3">
           <div>
-            <div className="text-sm font-bold text-foreground">Fleet Readiness Score</div>
+            <div className="text-sm font-bold text-foreground">Sample Checklist Coverage</div>
             <div className="text-xs text-muted-foreground">
-              {checkedCount} of {totalItems} items complete
+              {checkedCount} of {totalItems} items reviewed
             </div>
           </div>
           <div className={`text-3xl font-bold ${scoreColor}`}>{score}%</div>
@@ -171,7 +177,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
         {score === 100 && (
           <div className="mt-3 flex items-center gap-2 text-status-success text-sm font-bold">
             <CheckCircle size={16} />
-            Ready for PQC migration
+            Sample checklist reviewed — technical readiness not assessed
           </div>
         )}
       </div>
@@ -244,7 +250,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle size={16} className="text-status-error" />
             <div className="text-sm font-bold text-status-error">
-              Critical Gaps ({uncheckedCritical.length})
+              Critical sample items not yet reviewed ({uncheckedCritical.length})
             </div>
           </div>
           <ul className="space-y-1.5">
@@ -263,6 +269,11 @@ export const DatabaseMigrationReadiness: React.FC = () => {
         <div className="text-sm font-bold text-foreground mb-3">
           Database Fleet Migration Complexity
         </div>
+        <p className="text-xs text-muted-foreground mb-3">
+          These prompts follow the sample complexity categories. Complexity alone does not determine
+          security risk or migration priority; consider confidentiality lifetime, dependencies and
+          test evidence.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -275,7 +286,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                   PQC Status
                 </th>
                 <th className="text-left py-2 px-2 text-muted-foreground font-medium">
-                  Recommended Action
+                  Illustrative Planning Prompt
                 </th>
               </tr>
             </thead>
@@ -284,12 +295,12 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                 const complexity = COMPLEXITY_LABELS[db.migrationComplexity]
                 const action =
                   db.migrationComplexity === 'very-high'
-                    ? 'Prioritize — engage Oracle/vendor PS team'
+                    ? 'Explore vendor-supported migration options'
                     : db.migrationComplexity === 'high'
-                      ? 'Plan now — external KMS + firmware upgrade required'
+                      ? 'Evaluate KMS and firmware dependencies'
                       : db.migrationComplexity === 'medium'
-                        ? 'Schedule within 18 months'
-                        : 'Low risk — address after critical systems'
+                        ? 'Illustrative 18-month planning example — not a deadline'
+                        : 'Lower implementation complexity — risk and priority not assessed'
                 return (
                   <tr key={db.id} className="border-b border-border/50">
                     <td className="py-2 px-2 font-medium text-foreground">{db.vendor}</td>
