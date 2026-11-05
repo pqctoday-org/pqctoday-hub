@@ -406,6 +406,8 @@ export class CMSSigningService {
     recipientCertId: string
     payload: Uint8Array
     cipher?: CmsCipher
+    /** Explicit SHA-256/MGF1-SHA-256 OAEP sample profile; empty label. */
+    rsaOaep?: boolean
   }): Promise<EncryptResult> {
     await this.readyPromise
     return this.request('CMS_ENCRYPT_RESULT', { type: 'CMS_ENCRYPT', ...opts }, (msg) => ({

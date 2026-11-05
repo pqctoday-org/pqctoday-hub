@@ -1342,7 +1342,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'email-signing',
     pt_id: 'PT-031',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'S/MIME & CMS Workshop',
     description:
       'Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt. Toggle routes signing key through softhsmv3 PKCS#11.',

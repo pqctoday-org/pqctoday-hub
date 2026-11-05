@@ -1,19 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-/**
- * MLKEMEncryptDemo — Phase 4 end-to-end CMS encrypt + decrypt using
- * ML-KEM-768 (or RSA / X25519 fallback) recipients.
- *
- * Pipeline (all four commands run inside the OpenSSL WASM worker, no
- * network, no external tools):
- *   1. openssl genpkey -algorithm ML-KEM-768 -out bob.key
- *   2. openssl req -new -x509 -key bob.key -out bob.crt -subj /CN=Bob
- *   3. openssl cms -encrypt -aes-256-gcm -in payload bob.crt -out enveloped.p7m
- *   4. openssl cms -decrypt -recip bob.crt -inkey bob.key -in enveloped.p7m
- *
- * The encrypt step produces CMS AuthEnvelopedData. With an ML-KEM
- * recipient cert, OpenSSL 3.5+ emits KEMRecipientInfo (RFC 9629) with a
- * key-encryption key derived from the ML-KEM shared secret (this demo:
- * HKDF-SHA256) that wraps a random content-encryption key.
+/** Browser CMS sample: inspect the produced container and recipient parameters.
+ * GCM and CBC demonstrate different content-protection properties.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -40,12 +27,22 @@ import {
   type CmsAlg,
   type CmsCipher,
 } from '../services/CMSSigningService'
+import { inspectCmsEnvelope, type CmsEnvelopeInspection } from '../services/cmsEnvelopeInspection'
 import { smimeEnvelopeEncrypted } from '../services/smimeMultipart'
 
 type Stage =
   'idle' | 'ca-key' | 'ca-cert' | 'genkey' | 'mkcert' | 'encrypt' | 'decrypt' | 'done' | 'error'
 
+interface RunInputs {
+  alg: CmsAlg
+  cipher: CmsCipher
+  payload: string
+  useHsm: boolean
+}
+
 interface StageResult {
+  inputs?: RunInputs
+  inspection?: CmsEnvelopeInspection
   caKeyPem?: string
   caCertPem?: string
   keyPem?: string
@@ -57,10 +54,8 @@ interface StageResult {
 }
 
 const DEFAULT_PAYLOAD =
-  'Confidential workshop message — encrypted in-browser with ML-KEM-768.\n' +
-  'CMS AuthEnvelopedData wraps a random AES-256-GCM content-encryption key\n' +
-  'under a key-encryption key derived from the ML-KEM shared secret with a\n' +
-  'key derivation function (RFC 9629; this demo uses HKDF-SHA256).\n'
+  'Fictional workshop message. Inspect the generated CMS container and recipient parameters.\n' +
+  'Encryption and successful decryption do not establish sender identity.\n'
 
 const KEM_ALG_CHOICES: CmsAlg[] = ['ML-KEM-768', 'ML-KEM-512', 'ML-KEM-1024', 'RSA', 'X25519']
 const CIPHER_CHOICES: CmsCipher[] = [
@@ -84,6 +79,7 @@ interface MLKEMEncryptDemoProps {
 }
 
 export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
+  const runningRef = useRef(false)
   const serviceRef = useRef<CMSSigningService | null>(null)
   const [alg, setAlg] = useState<CmsAlg>('ML-KEM-768')
   const [cipher, setCipher] = useState<CmsCipher>('aes-256-gcm')
@@ -144,15 +140,22 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
 
   const run = async () => {
     const svc = serviceRef.current
-    if (!svc) return
+    if (!svc || runningRef.current) return
+    runningRef.current = true
+    const inputs = { alg, cipher, payload, useHsm }
     setError('')
     setResult({})
+    setResult({ inputs })
     setLogEntries([])
     let op = beginOp('Starting…')
     try {
+      if (cipher === 'chacha20-poly1305')
+        throw new Error(
+          'ChaCha20-Poly1305 CMS encryption is unavailable in this bundled build. Choose AES-GCM or AES-CBC; no sample was encrypted.'
+        )
       // KEM-only keys (ML-KEM-*, X25519) can't self-sign a cert, so we
       // mint an ML-DSA-65 CA first and issue Bob's KEM cert against it.
-      // RSA can self-sign (it has both PSS sign and OAEP encrypt) — skip
+      // RSA can self-sign; transport padding is set explicitly below. Skip
       // the CA dance in that case.
       if (needsCa) {
         op = beginOp(`Generating CA key (${CA_ALG})…`)
@@ -203,8 +206,49 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
         recipientCertId: CERT_ID,
         payload: new TextEncoder().encode(payload),
         cipher,
+        rsaOaep: alg === 'RSA',
       })
-      setResult((prev) => ({ ...prev, enveloped: e.enveloped }))
+      const inspection = inspectCmsEnvelope(e.enveloped)
+      const expectedCipher = {
+        'aes-256-gcm': '2.16.840.1.101.3.4.1.46',
+        'aes-128-gcm': '2.16.840.1.101.3.4.1.6',
+        'aes-256-cbc': '2.16.840.1.101.3.4.1.42',
+      }[cipher]
+      if (
+        inspection.cipherOid !== expectedCipher ||
+        inspection.contentType !==
+          (cipher === 'aes-256-cbc' ? 'EnvelopedData' : 'AuthEnvelopedData')
+      ) {
+        throw new Error('CMS output does not match the selected content-encryption profile')
+      }
+      if (
+        alg === 'RSA' &&
+        (inspection.recipient !== 'RSA-OAEP' ||
+          inspection.oaepHashOid !== '2.16.840.1.101.3.4.2.1' ||
+          inspection.mgfHashOid !== '2.16.840.1.101.3.4.2.1' ||
+          inspection.oaepLabelHex !== '')
+      ) {
+        throw new Error(
+          'CMS output does not match the explicit OAEP SHA-256/MGF1-SHA-256 sample profile'
+        )
+      }
+      const kemOids: Partial<Record<CmsAlg, string>> = {
+        'ML-KEM-512': '2.16.840.1.101.3.4.4.1',
+        'ML-KEM-768': '2.16.840.1.101.3.4.4.2',
+        'ML-KEM-1024': '2.16.840.1.101.3.4.4.3',
+      }
+      if (
+        alg.startsWith('ML-KEM') &&
+        (inspection.recipientOid !== kemOids[alg] ||
+          inspection.kdfOid !== '1.2.840.113549.1.9.16.3.28' ||
+          inspection.wrapOid !==
+            (cipher === 'aes-128-gcm' ? '2.16.840.1.101.3.4.1.5' : '2.16.840.1.101.3.4.1.45'))
+      ) {
+        throw new Error(
+          'CMS recipient does not match the selected ML-KEM / HKDF-SHA256 / AES-wrap sample profile'
+        )
+      }
+      setResult((prev) => ({ ...prev, enveloped: e.enveloped, inspection }))
       op.done(`Enveloped — ${e.enveloped.length} bytes (.p7m)`)
 
       op = beginOp('Decrypting via recipient key…')
@@ -221,13 +265,25 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
         decryptPayload: d.payload,
         decryptStderr: d.stderrTail,
       }))
-      op.done(d.ok ? 'Decrypt OK' : 'Decrypt completed (see result)')
+      if (!d.ok) throw new Error(d.stderrTail || 'Sample decryption failed')
+      const expected = new TextEncoder().encode(payload)
+      if (
+        !d.payload ||
+        d.payload.length !== expected.length ||
+        d.payload.some((byte, i) => byte !== expected[i])
+      ) {
+        setResult((prev) => ({ ...prev, decryptOk: false }))
+        throw new Error('Recovered sample bytes do not match the original payload')
+      }
+      op.done('Sample plaintext recovered and matched')
 
       setStage('done')
     } catch (err) {
       op.fail(err)
       setError(err instanceof Error ? err.message : String(err))
       setStage('error')
+    } finally {
+      runningRef.current = false
     }
   }
 
@@ -246,6 +302,15 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
     envBytes: result.enveloped?.length ?? 0,
   }
 
+  const displayed = result.inputs ?? { alg, cipher, payload, useHsm }
+  const displayedNeedsCa = isKemOnlyAlg(displayed.alg)
+  const stale = Boolean(
+    result.inputs &&
+    (alg !== displayed.alg ||
+      cipher !== displayed.cipher ||
+      payload !== displayed.payload ||
+      useHsm !== displayed.useHsm)
+  )
   const busy = stage !== 'idle' && stage !== 'done' && stage !== 'error'
 
   return (
@@ -260,34 +325,42 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
           <code className="rounded bg-muted px-1 py-0.5 text-xs">req -x509</code> →{' '}
           <code className="rounded bg-muted px-1 py-0.5 text-xs">cms -encrypt</code> →{' '}
           <code className="rounded bg-muted px-1 py-0.5 text-xs">cms -decrypt</code> pipeline. With
-          an ML-KEM recipient cert, OpenSSL emits CMS <strong>AuthEnvelopedData</strong> with
-          KEMRecipientInfo per RFC 9629 + RFC 9936.
+          AES-GCM, inspect AuthEnvelopedData; with AES-CBC, inspect EnvelopedData. ML-KEM recipients
+          use KEMRecipientInfo (RFC 9629 / RFC 9936). GCM checks authenticated encryption; CBC alone
+          does not. Neither identifies the sender. The RSA sample uses OAEP SHA-256 and MGF1-SHA-256
+          with an empty label.
         </p>
       </header>
 
       <div className="glass-panel space-y-3 p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground">KEM algorithm</span>
-            <div className={busy ? 'pointer-events-none opacity-50' : ''}>
+            <span className="text-xs font-medium text-muted-foreground">Recipient algorithm</span>
+            <fieldset disabled={busy}>
               <FilterDropdown
                 items={KEM_ALG_CHOICES}
                 selectedId={alg}
-                onSelect={(id) => setAlg(id as CmsAlg)}
+                onSelect={(id) => {
+                  if (!runningRef.current && KEM_ALG_CHOICES.includes(id as CmsAlg))
+                    setAlg(id as CmsAlg)
+                }}
                 size="sm"
               />
-            </div>
+            </fieldset>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-muted-foreground">CEK cipher</span>
-            <div className={busy ? 'pointer-events-none opacity-50' : ''}>
+            <fieldset disabled={busy}>
               <FilterDropdown
                 items={CIPHER_CHOICES}
                 selectedId={cipher}
-                onSelect={(id) => setCipher(id as CmsCipher)}
+                onSelect={(id) => {
+                  if (!runningRef.current && CIPHER_CHOICES.includes(id as CmsCipher))
+                    setCipher(id as CmsCipher)
+                }}
                 size="sm"
               />
-            </div>
+            </fieldset>
           </div>
           <label
             className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
@@ -345,6 +418,11 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
           />
         </label>
 
+        {stale && (
+          <p role="status" className="text-sm text-status-warning">
+            Inputs changed—run again. Retained outputs below belong to the original inputs.
+          </p>
+        )}
         {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
 
         {error && <ErrorAlert message={error} onRetry={run} />}
@@ -352,7 +430,7 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
 
       {(stage !== 'idle' || result.keyPem || result.caKeyPem) && (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {needsCa && (
+          {displayedNeedsCa && (
             <>
               <StageCard
                 icon={<KeyIcon size={14} />}
@@ -361,7 +439,8 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
                 running={stage === 'ca-key'}
               >
                 <p className="text-[11px] italic">
-                  {alg} can't self-sign — a PQ signing CA issues Bob's cert (RFC 9935 path).
+                  {displayed.alg} can't self-sign — a PQ signing CA issues Bob's cert (RFC 9935
+                  path).
                 </p>
               </StageCard>
               <StageCard
@@ -381,27 +460,27 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
             done={Boolean(result.keyPem)}
             running={stage === 'genkey'}
           >
-            {result.keyPem ? <KVRow label="Algorithm" value={alg} /> : null}
+            {result.keyPem ? <KVRow label="Algorithm" value={displayed.alg} /> : null}
             {result.keyPem ? (
-              <KVRow label="Mode" value={useHsm ? 'HSM (pkcs11:)' : 'Software (PEM)'} />
+              <KVRow label="Mode" value={displayed.useHsm ? 'HSM (pkcs11:)' : 'Software (PEM)'} />
             ) : null}
             {result.keyPem ? (
               <KVRow
                 label="Private key"
-                value={useHsm ? 'resident in softhsmv3' : `${sizes.keyBytes} chars (PEM)`}
+                value={displayed.useHsm ? 'resident in softhsmv3' : `${sizes.keyBytes} chars (PEM)`}
               />
             ) : null}
           </StageCard>
 
           <StageCard
             icon={<ShieldCheck size={14} />}
-            title={needsCa ? "Bob's KEM cert (CA-issued)" : "Bob's self-signed cert"}
+            title={displayedNeedsCa ? "Bob's KEM cert (CA-issued)" : "Bob's self-signed cert"}
             done={Boolean(result.certPem)}
             running={stage === 'mkcert'}
           >
             {result.certPem ? <KVRow label="Subject" value="/CN=Bob/O=PQC Workshop/C=US" /> : null}
             {result.certPem ? (
-              <KVRow label="Issuer" value={needsCa ? '/CN=PQC Workshop CA' : 'self'} />
+              <KVRow label="Issuer" value={displayedNeedsCa ? '/CN=PQC Workshop CA' : 'self'} />
             ) : null}
             {result.certPem ? <KVRow label="Validity" value="365 days" /> : null}
             {result.certPem ? (
@@ -411,12 +490,32 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
 
           <StageCard
             icon={<Lock size={14} />}
-            title="CMS AuthEnvelopedData (.p7m)"
+            title={`CMS ${result.inspection?.contentType ?? 'container (not inspected)'} (.p7m)`}
             done={Boolean(result.enveloped)}
             running={stage === 'encrypt'}
           >
-            {result.enveloped ? <KVRow label="Recipient" value={alg} /> : null}
-            {result.enveloped ? <KVRow label="CEK cipher" value={cipher} /> : null}
+            {result.enveloped ? <KVRow label="Recipient" value={displayed.alg} /> : null}
+            {result.enveloped ? <KVRow label="CEK cipher" value={displayed.cipher} /> : null}
+            {result.inspection ? (
+              <>
+                <KVRow label="Content type OID" value={result.inspection.contentTypeOid} />
+                <KVRow label="Cipher OID" value={result.inspection.cipherOid} />
+                <KVRow label="Recipient format" value={result.inspection.recipient} />
+                <KVRow label="Recipient algorithm OID" value={result.inspection.recipientOid} />
+                {result.inspection.oaepHashOid && (
+                  <KVRow label="OAEP hash OID" value={result.inspection.oaepHashOid} />
+                )}
+                {result.inspection.mgfHashOid && (
+                  <KVRow label="MGF1 hash OID" value={result.inspection.mgfHashOid} />
+                )}
+                {result.inspection.kdfOid && (
+                  <KVRow label="KDF OID" value={result.inspection.kdfOid} />
+                )}
+                {result.inspection.wrapOid && (
+                  <KVRow label="Key wrap OID" value={result.inspection.wrapOid} />
+                )}
+              </>
+            ) : null}
             {result.enveloped ? <KVRow label="Size" value={`${sizes.envBytes} bytes`} /> : null}
             {result.enveloped && (
               <details className="mt-2">
@@ -424,9 +523,13 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
                   Show S/MIME envelope (.eml)
                 </summary>
                 <pre className="mt-1 max-h-48 max-w-full overflow-auto whitespace-pre-wrap break-all rounded bg-muted/30 p-1.5 font-mono text-[10px] leading-tight">
-                  {smimeEnvelopeEncrypted(result.enveloped, {
-                    subject: 'PQC workshop encrypted message',
-                  })}
+                  {smimeEnvelopeEncrypted(
+                    result.enveloped,
+                    {
+                      subject: 'PQC workshop encrypted message',
+                    },
+                    result.inspection?.contentType
+                  )}
                 </pre>
               </details>
             )}
@@ -435,14 +538,14 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
           <StageCard
             icon={<Unlock size={14} />}
             title="Decrypt"
-            done={stage === 'done'}
+            done={stage === 'done' && result.decryptOk === true}
             running={stage === 'decrypt'}
           >
             {result.decryptOk === true && (
               <>
                 <div className="flex items-center gap-1.5 text-xs text-status-success">
                   <CheckCircle2 size={14} />
-                  Plaintext recovered via {useHsm ? 'HSM' : 'software'} key
+                  Plaintext recovered via {displayed.useHsm ? 'HSM' : 'software'} key
                 </div>
                 <KVRow
                   label="Payload"
@@ -482,9 +585,9 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
 
       <p className="text-[11px] text-muted-foreground">
         <Mail size={11} className="mr-1 inline" />
-        The S/MIME envelope shown is the same shape an actual mail client (Thunderbird, Apple Mail)
-        would attach. PQ-aware mail clients haven't shipped ML-KEM yet, so the artifact is
-        inspection-only inside this workshop.
+        This sample MIME wrapper uses the inspected CMS content type (RFC 8551). Compatibility
+        depends on the recipient client's exact CMS algorithms and version; passing this workshop
+        does not establish mail-client support or sender identity.
       </p>
     </div>
   )
@@ -514,7 +617,7 @@ function StageCard({
     <RefreshCw size={12} className="animate-spin text-primary" />
   ) : null
   return (
-    <div className={`space-y-1.5 rounded-md border p-3 ${tone}`}>
+    <div className={`min-w-0 space-y-1.5 rounded-md border p-3 ${tone}`}>
       <div className="flex items-center justify-between text-xs font-semibold text-foreground">
         <span className="flex items-center gap-1.5">
           {icon}
@@ -529,9 +632,9 @@ function StageCard({
 
 function KVRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-2">
+    <div className="flex min-w-0 justify-between gap-2">
       <span className="text-muted-foreground">{label}</span>
-      <span className="font-mono text-foreground">{value}</span>
+      <span className="min-w-0 break-all text-right font-mono text-foreground">{value}</span>
     </div>
   )
 }
