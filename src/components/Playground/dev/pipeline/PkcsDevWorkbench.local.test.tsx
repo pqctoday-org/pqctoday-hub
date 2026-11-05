@@ -220,4 +220,18 @@ describe('PKCS developer sample run records', () => {
     state.moduleRef.current = oldModule
     state.rawModuleRef.current = oldRaw
   })
+  it('clears previous successful badges while a repeated run is pending', async () => {
+    render(<PkcsDevWorkbench />)
+    run()
+    await record().findByText('Required sample steps completed.')
+    expect(screen.getAllByText('✓ ran').length).toBeGreaterThan(0)
+    let reject!: (reason: Error) => void
+    state.run.mockImplementation(() => new Promise((_resolve, r) => (reject = r)))
+    run()
+    await waitFor(() => expect(state.run).toHaveBeenCalledTimes(2))
+    expect(screen.queryByText('✓ ran')).not.toBeInTheDocument()
+    await act(async () => reject(new Error('interrupted sample')))
+    await record().findByText('Sample attempt failed.')
+    expect(screen.queryByText('· running')).not.toBeInTheDocument()
+  })
 })

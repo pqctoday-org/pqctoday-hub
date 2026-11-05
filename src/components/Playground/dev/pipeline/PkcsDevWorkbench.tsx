@@ -432,6 +432,8 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
     runningRef.current = true
     setRunning(true)
     setRunError(null)
+    if (!inputs.detached)
+      setPipeline((prev) => prev.map((step) => ({ ...step, status: 'running', output: null })))
     const t0 = performance.now()
     try {
       const py = await bootPyRuntime()
@@ -483,8 +485,11 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
       if (
         currentBinding.current === attemptBinding(started.inputs) &&
         moduleRef.current === runModule
-      )
+      ) {
         setRunError(failed.error)
+        if (!inputs.detached)
+          setPipeline((prev) => prev.map((step) => ({ ...step, status: 'idle', output: null })))
+      }
     } finally {
       runningRef.current = false
       setRunning(false)
