@@ -278,7 +278,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
           {/* Palette */}
           <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[10vh] px-4 pointer-events-none">
-            <FocusLock returnFocus>
+            <FocusLock returnFocus className="w-full min-w-0 max-w-2xl">
               <motion.div
                 initial={{ opacity: 0, scale: 0.96, y: -12 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -315,7 +315,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     // threshold; bumping only for isMobileShell keeps
                     // desktop's rendered output untouched (Rule 1) since this
                     // is a shared component, not one under Mobile/.
-                    className={`flex-1 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none ${isMobileShell ? 'text-base' : 'text-sm'}`}
+                    className={`min-w-0 flex-1 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none ${isMobileShell ? 'text-base' : 'text-sm'}`}
                   />
                   {loading && (
                     <div
@@ -537,7 +537,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between px-4 py-2 border-t border-border shrink-0 text-[10px] text-muted-foreground gap-4">
+                <div className="flex flex-wrap items-center justify-between px-4 py-2 border-t border-border shrink-0 text-[10px] text-muted-foreground gap-x-4 gap-y-2">
                   <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1">
                       <ChevronUp size={11} aria-hidden="true" />
