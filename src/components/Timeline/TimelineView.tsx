@@ -794,8 +794,9 @@ export const TimelineView = () => {
               <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/20 px-3 py-2">
                 <CalendarPlus size={14} className="shrink-0 text-primary" aria-hidden="true" />
                 <p className="flex-1 text-xs leading-snug text-muted-foreground">
-                  Put these phases in your own calendar as all-day windows — the corpus records
-                  years, not dates, and the export says so on every entry.
+                  Export bounded phases as all-day year windows and open-ended phases as labelled
+                  one-day planning reminders. Source precision and reminder placeholders are
+                  explained in each entry.
                 </p>
                 <Button variant="outline" size="sm" onClick={handleExportIcs} className="text-xs">
                   Export {mobileGanttData.length} matching as .ics
