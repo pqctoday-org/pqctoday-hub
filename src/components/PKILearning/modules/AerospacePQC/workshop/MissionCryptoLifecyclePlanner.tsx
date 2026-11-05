@@ -91,8 +91,9 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
   const endOfLife = launchYear + serviceLife
   const designPhaseStart = launchYear - 3
   const designPhaseEnd = launchYear - 1
-  const crqcIntersects = endOfLife > crqcYear
-  const yearsExposed = crqcIntersects ? endOfLife - crqcYear : 0
+  const overlapStart = Math.max(launchYear, crqcYear)
+  const yearsExposed = Math.max(0, endOfLife - overlapStart)
+  const crqcIntersects = yearsExposed > 0
 
   // Lifecycle phases
   const phases = useMemo(() => {
@@ -141,10 +142,10 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
     // Add CRQC intersection marker
     if (crqcIntersects) {
       result.push({
-        name: 'CRQC Exposure Window',
-        start: crqcYear,
+        name: 'Modeled Operational Overlap',
+        start: overlapStart,
         end: endOfLife,
-        crypto: `${yearsExposed} years of operation after CRQC emergence. All non-PQC crypto is broken. HNDL attacks on historical data become real-time decryption.`,
+        crypto: `${yearsExposed} operational years overlap the assumed CRQC scenario. Assess quantum-vulnerable public-key authentication and key establishment separately from symmetric encryption. Captured-data exposure depends on the protocol and required confidentiality lifetime.`,
         color: 'bg-status-error/20 border-status-error/40',
         critical: true,
       })
@@ -156,15 +157,16 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
     designPhaseEnd,
     launchYear,
     endOfLife,
-    crqcYear,
+    overlapStart,
     crqcIntersects,
     yearsExposed,
     platform.segment,
   ])
 
-  const timelineStart = designPhaseStart
+  const timelineStart = Math.min(designPhaseStart, crqcYear)
   const timelineEnd = Math.max(endOfLife, crqcYear + 5)
   const timelineSpan = timelineEnd - timelineStart
+  const tickCount = Math.min(timelineSpan + 1, 12)
 
   // Segment cadence info
   const segmentCadence = SEGMENT_CADENCES.find((s) => s.segment === platform.segment)
@@ -172,6 +174,11 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
   return (
     <div className="space-y-6">
       <UnresolvedEstimatesNotice detail="workshopExample" />
+      <p className="text-xs text-muted-foreground">
+        This illustrative timing model compares mission operation with an assumed CRQC year; it does
+        not assess deployed cryptography. The sample algorithm decision window starts three years
+        before launch or delivery and is not a prescribed deadline.
+      </p>
       {/* Configuration */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
@@ -229,7 +236,7 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
             htmlFor="mission-crqc"
             className="text-xs font-medium text-muted-foreground mb-1 block"
           >
-            CRQC Estimate
+            Assumed CRQC Year
           </label>
           <input
             id="mission-crqc"
@@ -270,10 +277,19 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
 
         {/* Year axis */}
         <div className="relative">
-          <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
-            {Array.from({ length: Math.min(timelineSpan + 1, 12) }, (_, i) => {
-              const year = timelineStart + Math.round((i / 11) * timelineSpan)
-              return <span key={i}>{year}</span>
+          <div
+            role="list"
+            aria-label="Illustrative lifecycle year axis"
+            className="flex justify-between text-[10px] text-muted-foreground mb-1"
+          >
+            {Array.from({ length: tickCount }, (_, i) => {
+              const year =
+                timelineStart + Math.round((i / Math.max(1, tickCount - 1)) * timelineSpan)
+              return (
+                <span role="listitem" key={i}>
+                  {year}
+                </span>
+              )
             })}
           </div>
 
@@ -308,7 +324,7 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
             }}
           >
             <div className="absolute -top-5 -left-8 text-[10px] font-bold text-status-error whitespace-nowrap">
-              CRQC {crqcYear}
+              Assumed CRQC {crqcYear}
             </div>
           </div>
         </div>
@@ -335,7 +351,7 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
       {/* Readiness Assessment */}
       <div className="glass-panel p-4 space-y-3">
         <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-          <ShieldCheck size={16} className="text-primary" /> Mission PQC Readiness
+          <ShieldCheck size={16} className="text-primary" /> Illustrative Mission Timing
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
@@ -346,15 +362,15 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
             <div
               className={`text-lg font-bold ${crqcIntersects ? 'text-status-error' : 'text-status-success'}`}
             >
-              {crqcIntersects ? `${yearsExposed} yr exposed` : 'Safe'}
+              {crqcIntersects ? `${yearsExposed} yr modeled overlap` : 'No operational overlap'}
             </div>
-            <div className="text-muted-foreground">CRQC Overlap</div>
+            <div className="text-muted-foreground">Operational Scenario Overlap</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-foreground">
               {designPhaseStart}&ndash;{designPhaseStart + 1}
             </div>
-            <div className="text-muted-foreground">Algorithm Decision Window</div>
+            <div className="text-muted-foreground">Sample Algorithm Decision Window</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
             <div
@@ -362,7 +378,7 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
             >
               {designPhaseStart <= CURRENT_YEAR ? 'NOW' : `${designPhaseStart - CURRENT_YEAR} yr`}
             </div>
-            <div className="text-muted-foreground">Until Decision Deadline</div>
+            <div className="text-muted-foreground">Until Sample Decision Window</div>
           </div>
         </div>
 
@@ -370,12 +386,13 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
           <div className="flex items-start gap-2 text-xs bg-status-error/10 rounded-lg p-3 border border-status-error/20">
             <AlertTriangle size={14} className="text-status-error shrink-0 mt-0.5" />
             <div>
-              <strong className="text-foreground">Critical:</strong>{' '}
+              <strong className="text-foreground">Modeled overlap:</strong>{' '}
               <span className="text-muted-foreground">
-                This platform will operate for {yearsExposed} years after CRQC emergence ({crqcYear}
-                ). Without PQC from {platform.segment === 'space' ? 'launch' : 'delivery'}, all
-                command authentication and data encryption will be quantum-vulnerable during this
-                window. HNDL attacks on data harvested before CRQC will also become decryptable.
+                Under the assumed CRQC year ({crqcYear}), {yearsExposed} operational years overlap
+                this scenario. Assess quantum-vulnerable public-key command authentication and key
+                establishment. This timing model does not establish that all cryptography is broken;
+                symmetric encryption needs its own algorithm and key-strength assessment. Retained
+                data may need confidentiality beyond the mission lifetime.
               </span>
             </div>
           </div>
@@ -385,12 +402,13 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
           <div className="flex items-start gap-2 text-xs bg-status-success/10 rounded-lg p-3 border border-status-success/20">
             <ShieldCheck size={14} className="text-status-success shrink-0 mt-0.5" />
             <div>
-              <strong className="text-foreground">Low Risk:</strong>{' '}
+              <strong className="text-foreground">No operational overlap:</strong>{' '}
               <span className="text-muted-foreground">
-                This platform retires before the estimated CRQC date. However, HNDL attacks on
-                harvested communications remain a threat — any sensitive data transmitted with
-                classical crypto can be decrypted once CRQC emerges, even after the platform is
-                decommissioned.
+                The platform ends operation at or before the selected CRQC year. This is not a
+                safety determination: pre-launch provisioning, retained-data confidentiality and
+                signature or trust lifetimes still need separate assessment. HNDL exposure depends
+                on the protocol and key establishment, and how long captured data needs
+                confidentiality.
               </span>
             </div>
           </div>
