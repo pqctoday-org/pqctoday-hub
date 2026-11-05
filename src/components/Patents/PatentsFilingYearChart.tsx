@@ -114,7 +114,7 @@ export function PatentsFilingYearChart({
       </p>
       {data.length > 0 ? (
         <ResponsiveContainer width="100%" height={140}>
-          <BarChart data={data} margin={{ top: 6, right: 4, bottom: 0, left: -18 }}>
+          <BarChart data={data} margin={{ top: 6, right: 4, bottom: 0, left: 0 }}>
             <XAxis
               dataKey="year"
               tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }}
