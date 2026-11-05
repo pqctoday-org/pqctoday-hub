@@ -13,54 +13,55 @@ enrichment_method: automated extraction, human-reviewed
 - **Publication Date**: 2025-02
 - **Last Updated**: Not specified
 - **Document Status**: Final
-- **Main Topic**: None detected
-- **PQC Algorithms Covered**: None detected
+- **Main Topic**: Release notes for Go 1.24 covering language, toolchain, runtime and standard library changes, including new ML-KEM, X25519MLKEM768 TLS support and FIPS 140-3 compliance mechanisms.
+- **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
 - **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
+- **PQC Products Mentioned**: Go Cryptographic Module; crypto/mlkem package; crypto/tls package
+- **Protocols Covered**: TLS; Encrypted Client Hello (ECH); X.509
+- **Infrastructure Layers**: PKI; Cryptographic library
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3; FIPS 203; FIPS 202; CMVP
+- **Classical Algorithms Referenced**: RSA; ECDSA; AES; AES-GCM; SHA-1; SHA-3; SHA-256; SHA-512; MD5; HKDF; PBKDF2; X25519
+- **Key Takeaways**: Go 1.24 adds a crypto/mlkem package implementing ML-KEM-768 and ML-KEM-1024; crypto/tls now supports and enables by default the hybrid X25519MLKEM768 key exchange, with GODEBUG tlsmlkem=0 to revert; Go Cryptographic Module v1.0.0 facilitates FIPS 140-3 compliance and is under CMVP-accredited laboratory testing; the experimental X25519Kyber768Draft00 exchange and the tlskyber GODEBUG setting were removed; RSA keys under 1024 bits and SHA-1 certificate signatures are now rejected
+- **Security Levels & Parameters**: ML-KEM-768; ML-KEM-1024; RSA minimum 1024-bit key; 2048-bit RSA test key
+- **Hybrid & Transition Approaches**: Hybrid X25519MLKEM768 key exchange enabled by default in crypto/tls; GODEBUG tlsmlkem=0 to revert the default; removal of the experimental X25519Kyber768Draft00 key exchange
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "The new crypto/mlkem package implements ML-KEM-768 and ML-KEM-1024."
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "The new post-quantum X25519MLKEM768 key exchange mechanism is now supported and is enabled by default" (crypto/tls)
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
-- **Implementation Attack Surface**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3; X.509
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "The new post-quantum X25519MLKEM768 key exchange mechanism is now supported" (crypto/tls); X.509: crypto/x509 section covering certificate verification and RSA key parsing changes
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Runtime changes decreased CPU overheads by 2–3% on average; crypto/cipher NewCTR with crypto/aes several times faster on amd64 and arm64; crypto/rand Read on Linux 6.11+ via vDSO is several times faster; RSA public and private key operations up to two times faster on wasm
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: Go 1.24; Go 1.22.6 or later for bootstrap; GOFIPS140 environment variable to select the Go Cryptographic Module version; fips140 GODEBUG setting to enable FIPS 140-3 mode at runtime
+- **Relevant PQC Today Features**: Algorithms; Compliance; hybrid-crypto; tls-basics
+- **Implementation Attack Surface**: crypto/subtle WithDataIndependentTiming for constant-time execution via the arm64 PSTATE.DIT bit; unauthenticated OFB/CFB modes deprecated because they enable active attacks; insecure RSA keys under 1024 bits now rejected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
+- **Testing & Validation Methods**: Go Cryptographic Module v1.0.0 under test with a CMVP-accredited laboratory
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
+- **QRNG & Entropy Sources**: crypto/rand Read now guaranteed not to fail; uses getrandom via vDSO on Linux 6.11+ and arc4random_buf on OpenBSD
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
+- **Deployment & Migration Complexity**: GODEBUG settings to revert behavior (tlsmlkem=0, rsa1024min=0, x509sha1 removed, x509usepolicies=0, x509rsacrt=0); buggy TLS servers may time out during handshake with large post-quantum records
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Extraction Note**: No source text available
-- **Source Document**: Go-1-24-Release-Notes.html (82,634 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-11-04T21:35:26
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: Go-1-24-Release-Notes.html (82,634 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-04T23:13:58
 - **Evidence SHA-256**: d35c2d52a864b3474451e28fb89bae013edba4adcc1fa7164796267c0e4ec4e7
 - **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: d35c2d52a864b347
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
 
 ---
 
@@ -72,54 +73,55 @@ enrichment_method: automated extraction, human-reviewed
 - **Publication Date**: 2026-02
 - **Last Updated**: Not specified
 - **Document Status**: Released
-- **Main Topic**: None detected
-- **PQC Algorithms Covered**: None detected
+- **Main Topic**: Release notes for Go 1.26 covering language changes, toolchain, runtime (new garbage collector), and standard library updates including post-quantum crypto additions (crypto/hpke, crypto/mlkem, hybrid TLS key exchanges).
+- **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: Vlad Saioc (Uber) contributed the goroutine leak profile work (not PQC-related)
+- **PQC Products Mentioned**: Go crypto/hpke package; Go crypto/mlkem package; Go crypto/mlkem/mlkemtest package; Go crypto/tls package
+- **Protocols Covered**: TLS 1.2; TLS 1.3; HPKE; QUIC
 - **Infrastructure Layers**: None detected
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: RSA; ECDSA; ECDH; Ed25519; DSA; SHA-3; SHAKE; 3DES; SHA-256 (not named); OAEP
+- **Key Takeaways**: Hybrid SecP256r1MLKEM768 and SecP384r1MLKEM1024 key exchanges are now enabled by default in crypto/tls; New crypto/hpke package supports RFC 9180 HPKE including post-quantum hybrid KEMs; crypto/mlkem encapsulation and decapsulation are about 18% faster; Crypto key generation functions now ignore the random parameter and always use secure randomness; Legacy TLS settings (RSA key exchange, TLS 1.0 server default, 3DES) will be removed in Go 1.27
+- **Security Levels & Parameters**: ML-KEM-768 (DecapsulationKey768); ML-KEM-1024 (DecapsulationKey1024); SecP256r1MLKEM768; SecP384r1MLKEM1024; TLS 1.2 minimum default planned
+- **Hybrid & Transition Approaches**: Hybrid SecP256r1MLKEM768 and SecP384r1MLKEM1024 TLS key exchanges enabled by default; HPKE with post-quantum hybrid KEMs; opt-out via Config.CurvePreferences or tlssecpmlkem=0 GODEBUG
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: DecapsulationKey768.Encapsulator and DecapsulationKey1024.Encapsulator methods implement the new crypto.Decapsulator interface (crypto/mlkem) (paraphrase — not found verbatim in the document)
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: The hybrid SecP256r1MLKEM768 and SecP384r1MLKEM1024 post-quantum key exchanges are now enabled by default (crypto/tls) (paraphrase — not found verbatim in the document)
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
-- **Implementation Attack Surface**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: hybrid SecP256r1MLKEM768 and SecP384r1MLKEM1024 post-quantum key exchanges are now enabled by default (crypto/tls) (paraphrase — not found verbatim in the document)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: ML-KEM encapsulation and decapsulation approximately 18% faster; Green Tea GC reduces GC overhead 10-40%; cgo call overhead reduced ~30%
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: Go 1.26; Go 1.24.6 or later for bootstrap; GOFIPS140 to select FIPS 140-3 module; GODEBUG tlssecpmlkem=0 to disable hybrid PQ key exchange
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; tls-basics; Migrate
+- **Implementation Attack Surface**: Heap base address randomization (cgo exploit hardening); runtime/secret package for erasing secret temporaries (forward secrecy); data independent timing via crypto/subtle.WithDataIndependentTiming
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
+- **Testing & Validation Methods**: Known-answer tests via crypto/mlkem/mlkemtest derandomized encapsulation; testing/cryptotest.SetGlobalRandom for deterministic testing
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
+- **QRNG & Entropy Sources**: Secure source of cryptographically random bytes used by default in crypto key generation functions; crypto/rand
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
+- **Deployment & Migration Complexity**: Legacy GODEBUG settings (tlsunsafeekm, tlsrsakex, tls10server, tls3des, x509keypairleaf) removed in Go 1.27; cryptocustomrand=1 temporarily restores old behavior; hybrid PQ key exchange can be disabled via GODEBUG
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Extraction Note**: No source text available
-- **Source Document**: Go-1-26-Release-Notes.html (69,379 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-11-04T21:35:26
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: Go-1-26-Release-Notes.html (69,379 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-04T23:13:59
 - **Evidence SHA-256**: 38617801f91842dc51bb50c895de2bcb59394c7cb6594e11490be5e2eb2621e1
 - **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 38617801f91842dc
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
 
 ---
 
@@ -131,36 +133,36 @@ enrichment_method: automated extraction, human-reviewed
 - **Publication Date**: 2026-08
 - **Last Updated**: Not specified
 - **Document Status**: Released
-- **Main Topic**: None detected
-- **PQC Algorithms Covered**: None detected
+- **Main Topic**: Release notes for Go 1.27 covering language, toolchain, runtime and standard library changes, including a new crypto/mldsa package adding ML-DSA support and ML-DSA signatures in crypto/tls and crypto/x509.
+- **PQC Algorithms Covered**: ML-DSA; ML-KEM
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: Vlad Saioc (Uber) — contributed the goroutine leak profile work (not PQC-related)
+- **PQC Products Mentioned**: Go crypto/mldsa package; Go crypto/tls; Go crypto/x509
+- **Protocols Covered**: TLS 1.3; X.509; QUIC; HTTP/2
+- **Infrastructure Layers**: PKI
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: ECDSA
+- **Key Takeaways**: Go 1.27 adds a native crypto/mldsa package implementing FIPS 204 ML-DSA; crypto/x509 now handles ML-DSA private keys, public keys and signatures; crypto/tls supports ML-DSA signatures in TLS 1.3 via MLDSA44, MLDSA65 and MLDSA87 SignatureScheme values; MLKEM1024 key exchange can be enabled through Config.CurvePreferences; Hybrid PQ key exchanges can be explicitly enabled even when tlsmlkem=0 or tlssecpmlkem=0 is set
+- **Security Levels & Parameters**: MLDSA44; MLDSA65; MLDSA87; MLKEM1024
+- **Hybrid & Transition Approaches**: Post-quantum hybrid key exchanges can be explicitly enabled in Config.CurvePreferences regardless of tlsmlkem=0 or tlssecpmlkem=0 GODEBUG options
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "The MLKEM1024 key exchange is now supported. It can be enabled by adding it to Config.CurvePreferences." (crypto/tls)
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "Post-quantum hybrid key exchanges can now be explicitly enabled in Config.CurvePreferences" (crypto/tls)
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "crypto/tls now supports ML-DSA signatures in TLS 1.3, with the new MLDSA44, MLDSA65, and MLDSA87 SignatureScheme values."
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3; X.509
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "crypto/tls now supports ML-DSA signatures in TLS 1.3"; X.509: "crypto/x509 now supports ML-DSA private keys, public keys, and signatures."
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: Go 1.27; GOEXPERIMENT=simd for the experimental simd packages
+- **Relevant PQC Today Features**: Algorithms; tls-basics; pki-certificates; hybrid-crypto
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -168,17 +170,18 @@ enrichment_method: automated extraction, human-reviewed
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
+- **Deployment & Migration Complexity**: Backward-compatibility handling via GODEBUG settings and GOEXPERIMENT opt-outs; removal of several legacy GODEBUG settings
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Extraction Note**: No source text available
-- **Source Document**: Go-1-27-Release-Notes.html (65,794 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-11-04T21:35:27
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: Go-1-27-Release-Notes.html (65,794 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-04T23:13:59
 - **Evidence SHA-256**: a4c56ba584ac26614537ac40bf07aa638314decdacf32ea96acb60dbfe57393e
 - **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: a4c56ba584ac2661
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
 
 ---
 
@@ -76267,24 +76270,24 @@ enrichment_method: automated extraction, human-reviewed
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: None detected
+- **Main Topic**: The Update Framework (TUF) specification defining roles, metadata, repository layout and client workflows for securing software update systems against known attacks.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NYU, University of Lincoln, Tor Project, National Science Foundation, GENI, CNCF
+- **Leaders Contributions Mentioned**: Justin Cappos (editor; with Justin Samuel identified security flaws in popular Linux package managers; core ideas of TUF); Trishank Karthik Kuppusamy (editor); Joshua Lock (editor); Marina Moore (editor); Lukas Pühringer (editor); Nick Mathewson, Sebastian Hahn, Roger Dingledine, Martin Peck (authors of Thandy, the Tor application updater that influenced TUF)
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
+- **Protocols Covered**: TUF; HTTP; SSL/TLS (optional use)
+- **Infrastructure Layers**: PKI; Key Management; Software update systems; Repository mirrors
 - **Standardization Bodies**: None detected
 - **Compliance Frameworks Referenced**: None detected
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
+- **Key Takeaways**: Use multiple keys with threshold signatures per role to limit key-compromise impact; Keep root keys offline and never use online keys for roles clients ultimately trust for installable files; Use snapshot and timestamp metadata to prevent mix-and-match, rollback and freeze attacks; Support consistent snapshots and signed metadata so clients detect when they cannot update; Document wireline formats in a POUF to enable interoperable implementations
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
 - **Pure PQC Signature Support**: No
 - **Pure PQC Signature Evidence**: None detected
@@ -76292,28 +76295,30 @@ enrichment_method: automated extraction, human-reviewed
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
+- **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: Trusted root keys shipped with the client for each configured repository; Networking and crypto support on the client platform; Metadata format (e.g. JSON) and optionally a POUF document
+- **Relevant PQC Today Features**: Migrate; code-signing; crypto-agility; Threats
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
+- **Supply Chain & Vendor Risk**: Software update system attacks (arbitrary installation, extraneous dependencies, malicious mirrors); Roles with threshold trust and delegation to limit key compromise; Repository mirrors with minimal trust
+- **Deployment & Migration Complexity**: Key rotation and migration of root keys; Consistent snapshots; Integration with existing software update systems
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: TUF-Specification-v1-0-37.html (248,698 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-11-04T21:09:57
+- **Source Document**: TUF-Specification-v1-0-37.html (248,698 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-04T23:13:58
+- **Evidence SHA-256**: f20fda0dda7128f3b9cc1f12f3d90301b0f6e163576ba285bfe485d1671e8def
 - **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: f20fda0dda7128f3
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
 
 ---
 
@@ -85542,21 +85547,21 @@ enrichment_method: automated extraction, human-reviewed
 - **Publication Date**: 2024-07-08
 - **Last Updated**: 2026-09-15
 - **Document Status**: Internet-Draft (Working Group Document)
-- **Main Topic**: None detected
+- **Main Topic**: Defines a new OpenPGP packet and algorithm (algorithm ID 0) for persistent symmetric keys, used for AEAD-based session key encryption and AEAD authentication-tag "symmetric signatures", for long-term storage and improved quantum resistance.
 - **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
+- **Quantum Threats Addressed**: Attacks on quantum computers against the asymmetric algorithms of RFC 9580 (Shor); future compromise of existing messages encrypted with classical algorithms
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF OpenPGP Working Group
+- **Leaders Contributions Mentioned**: D. Huigens (editor); Dan Ristea (Proton AG) wrote the initial version of the draft; Dr Philipp Jovanovic (University College London) provided guidance; feedback from Andrew Gallagher, Heiko Schäfer, Justus Winter, Falko Strenzke, Daniel Kahn Gillmor, Lara Bruseghini
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
+- **Protocols Covered**: OpenPGP
+- **Infrastructure Layers**: Key Management; Long-term data storage and archival
+- **Standardization Bodies**: IETF
 - **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
+- **Classical Algorithms Referenced**: AES-128; AES-192; AES-256; Camellia-128; Camellia-192; Camellia-256; SHA-512; HKDF; OCB; GCM
+- **Key Takeaways**: Persistent symmetric keys let existing classically encrypted messages be protected against future quantum attacks by symmetrically re-encrypting the session key; AEAD authentication tags serve as a symmetric counterpart to digital signatures for long-term attestations; Persistent Symmetric Keys MUST NOT include subkeys, User IDs or Attributes, and cannot yield a Transferable Public Key; Encrypted key material MUST use AEAD (S2K usage octet 253) to bind it to the fingerprint; Only AES or Camellia (or equally strong future ciphers) may be used with persistent symmetric keys
+- **Security Levels & Parameters**: 32-octet random seed for key fingerprint; 32-octet salt; AES-128/192/256 and Camellia-128/192/256 permitted; M-bit key and N-bit IV derived via HKDF-SHA512
+- **Hybrid & Transition Approaches**: Re-encrypting session keys of existing classically encrypted messages with persistent symmetric keys; Persistent symmetric keys may be concatenated with asymmetric Transferable Secret Keys in one sequence
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: No
@@ -85565,30 +85570,32 @@ enrichment_method: automated extraction, human-reviewed
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
+- **PQC Heatmap Protocols Covered**: OpenPGP
+- **PQC Heatmap Protocols Evidence**: OpenPGP: "This document defines a new packet and algorithm for the OpenPGP standard (RFC 9580)"
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: 32-octet seed; 32-octet salt; HKDF derives M+N bits (key size plus AEAD nonce size); test key material 16 bytes (AES-128); stated benefits of improved performance and smaller keys, no measured values
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: RFC 9580 OpenPGP support; AEAD support (S2K usage octet 253); HKDF (RFC 5869) with SHA-512 (RFC 6234); Persistent Symmetric Key Packet (Type ID 40) support; IANA registry updates
+- **Relevant PQC Today Features**: Algorithms; email-signing; crypto-agility; data-asset-sensitivity
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
+- **Testing & Validation Methods**: Test vectors (non-normative examples: Transferable Secret Key, V6 and V3 encrypted messages, detached signature)
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
+- **QRNG & Entropy Sources**: Salt MUST be securely generated (per RFC 9580 Section 13.10); random 32-octet seed
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
+- **Deployment & Migration Complexity**: Symmetric re-encryption of existing messages' session keys for long-term storage; Persistent Symmetric Keys cannot be extracted into public keys and are excluded from CERTS output
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: draft-ietf-openpgp-persistent-symmetric-keys.txt (24,798 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-11-04T21:09:27
+- **Math Family**: Symmetric
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-openpgp-persistent-symmetric-keys.txt (24,798 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-04T23:13:57
+- **Evidence SHA-256**: 5684e757f5a1778d8b519acad56a39b0f370b264ce779c3984f28e84857a9d24
 - **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: 5684e757f5a1778d
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
 
 ---
 
