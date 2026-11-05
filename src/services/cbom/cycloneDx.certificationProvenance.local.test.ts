@@ -27,6 +27,29 @@ const parseValid = (json: string) => {
   return doc
 }
 
+describe('unassessed execution environment', () => {
+  it.each(['library', 'device', 'file'] as const)(
+    'does not infer environment from %s component type',
+    (type) => {
+      const input: CbomComponentInput = {
+        type,
+        name: 'Fictional sample',
+        bomRef: 'sample',
+        algorithms: [{ canonical: 'ML-KEM', primitive: 'kem', parameterSet: 'ML-KEM-768' }],
+      }
+      const doc = parseValid(buildCbomDocument([input]).json)
+      expect(doc.components[1].cryptoProperties.algorithmProperties).toEqual({
+        primitive: 'kem',
+        algorithmFamily: 'ML-KEM',
+        executionEnvironment: 'unknown',
+        parameterSetIdentifier: 'ML-KEM-768',
+        cryptoFunctions: ['encapsulate', 'decapsulate'],
+      })
+      expect(doc.components[1]['bom-ref']).toBe('sample#ML-KEM-768')
+    }
+  )
+})
+
 describe('certificate association is not CPE identity evidence', () => {
   it.each([undefined, 'cpe:2.3:a:sample:family:*:*:*:*:*:*:*:*'])(
     'retains linkless/duplicate records with CPE %s without invented confidence',

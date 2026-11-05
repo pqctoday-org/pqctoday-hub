@@ -116,7 +116,7 @@ describe('full-catalog CBOM validity (CycloneDX 1.6 enums + uniqueness)', () => 
         expect(c.cryptoProperties?.assetType).toBe('algorithm')
         const ap = c.cryptoProperties!.algorithmProperties
         expect(VALID_PRIMITIVES.has(ap.primitive)).toBe(true)
-        expect(ap.executionEnvironment).toBe('software-plain-ram')
+        expect(ap.executionEnvironment).toBe('unknown')
         for (const fn of ap.cryptoFunctions) expect(VALID_FUNCTIONS.has(fn)).toBe(true)
       }
     }

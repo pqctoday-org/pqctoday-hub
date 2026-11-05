@@ -424,7 +424,8 @@ export function buildCbomDocument(
           algorithmProperties: {
             primitive: algo.primitive,
             ...(algorithmFamily ? { algorithmFamily } : {}),
-            executionEnvironment: 'software-plain-ram',
+            // The input describes algorithms, not an observed execution environment.
+            executionEnvironment: 'unknown',
             ...(parameterSetIdentifier ? { parameterSetIdentifier } : {}),
             ...(algo.ellipticCurve ? { ellipticCurve: algo.ellipticCurve } : {}),
             ...(algo.securityCategory ? { nistQuantumSecurityLevel: algo.securityCategory } : {}),
