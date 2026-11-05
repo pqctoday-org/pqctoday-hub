@@ -72,10 +72,15 @@ import type { StepDetail } from '../pipeline/pipelineCodegen'
 import { KmipStepInspectPanel } from './KmipStepInspectPanel'
 import { KMIP_TEMPLATES, KMIP_TEMPLATE_NAMES } from './kmipPipelineTemplates'
 import {
+  exportKmipPipeline,
+  importKmipPipeline,
+  restoreKmipPipeline,
+  snapshotKmipPipeline,
+  type RestoredKmipPipeline,
+} from './kmipPipelinePersistence'
+import {
   loadStore,
   saveStore,
-  exportPipelineJson,
-  importPipelineJson,
   pipelineProvenanceHeader,
   type PipelineStore,
 } from '../pipeline/pipelineRun'
@@ -90,7 +95,6 @@ import {
 } from './kmipPipelineAttempt'
 
 const STORE_KEY = 'pqctoday-hub-kmip-pipelines-v1'
-const EXPORT_SCHEMA = 'pqctoday-hub-kmip-pipeline-v1'
 const PALETTE_SOURCE_KEY = 'pqctoday-hub-kmip-palette-source-v1'
 
 const STATUS_STYLE: Record<KmipStepStatus, { cls: string; label: string } | null> = {
@@ -171,6 +175,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   // hex digits), so the field is cleared to avoid emitting whichever
   // reading of the old value the learner didn't intend.
   const [messageMode, setMessageMode] = useState<KmipMessageMode>('text')
+  const [legacyInputNeedsMode, setLegacyInputNeedsMode] = useState(false)
   const isValidHex = /^[0-9a-fA-F]*$/.test(message) && message.length % 2 === 0
   const messageError =
     messageMode === 'hex' && message !== '' && !isValidHex
@@ -448,6 +453,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
 
   const runAll = useCallback(async () => {
     if (runningRef.current) return
+    if (legacyInputNeedsMode) {
+      flash('Choose Text or Hex to confirm this older pipeline’s saved input before running.')
+      return
+    }
     setRunError(null)
     setAttempt(null)
     setStepState({})
@@ -532,6 +541,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     steps,
     message,
     messageMode,
+    legacyInputNeedsMode,
     messageError,
     detached,
     engine,
@@ -571,27 +581,38 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     )
   const exportJson = () =>
     downloadFile(
-      exportPipelineJson<KmipStep>(EXPORT_SCHEMA, pipelineName, { steps, input: message }),
+      exportKmipPipeline(pipelineName, snapshotKmipPipeline(steps, message, messageMode, detached)),
       `${slug}.json`,
       'application/json'
     )
+  const restoreSavedPipeline = (saved: RestoredKmipPipeline) => {
+    setSteps(saved.steps)
+    setMessage(saved.input)
+    setMessageMode(saved.messageMode ?? 'text')
+    setLegacyInputNeedsMode(saved.legacy)
+    setDetached(saved.customCode)
+    setEditUnlocked(saved.customCode !== null)
+    setApplyMsg(null)
+    setActiveView(saved.customCode !== null ? 'code' : 'builder')
+    setStepState({})
+  }
   const importJson = async (file: File) => {
     const text = await file.text()
-    const parsed = importPipelineJson<KmipStep>(EXPORT_SCHEMA, text)
+    const parsed = importKmipPipeline(text)
     if (!parsed) {
       flash('Not a valid KMIP pipeline export file')
       return
     }
     setPipelineName(parsed.name)
     setTemplateName(null)
-    setSteps(parsed.pipeline.steps)
-    setMessage(parsed.pipeline.input)
-    resyncToGenerated()
-    setStepState({})
+    restoreSavedPipeline(parsed.pipeline)
     flash(`Imported "${parsed.name}"`)
   }
   const savePipeline = () => {
-    const next = { ...store, [pipelineName]: { steps, input: message } }
+    const next = {
+      ...store,
+      [pipelineName]: snapshotKmipPipeline(steps, message, messageMode, detached),
+    }
     if (saveStore(STORE_KEY, next)) {
       setStore(next)
       flash(`Saved "${pipelineName}"`)
@@ -600,12 +621,14 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   const loadPipeline = (name: string) => {
     const saved = store[name]
     if (!saved) return
+    const restored = restoreKmipPipeline(saved)
+    if (!restored) {
+      flash('This saved KMIP pipeline has unsupported or malformed settings; it was not loaded.')
+      return
+    }
     setPipelineName(name)
     setTemplateName(null)
-    setSteps(saved.steps)
-    setMessage(saved.input)
-    resyncToGenerated()
-    setStepState({})
+    restoreSavedPipeline(restored)
   }
   const deleteSaved = (name: string) => {
     const next = { ...store }
@@ -634,7 +657,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   }
   const headerRunIsRunning = paletteSource === 'corpus' ? corpus.running === '__all__' : running
   const headerRunDisabled =
-    running || !!corpus.running || (paletteSource === 'corpus' && !corpus.table)
+    running ||
+    !!corpus.running ||
+    (paletteSource === 'standard' && legacyInputNeedsMode) ||
+    (paletteSource === 'corpus' && !corpus.table)
   const headerRunTitle =
     paletteSource === 'corpus'
       ? 'Run every corpus test (⌘/Ctrl+Enter)'
@@ -663,6 +689,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               <input
                 ref={fileInputRef}
                 type="file"
+                aria-label="Import KMIP pipeline JSON"
                 accept="application/json"
                 className="hidden"
                 onChange={(e) => {
@@ -674,13 +701,28 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
                 <Upload className="h-3.5 w-3.5 mr-1" /> Import
               </Button>
-              <Button variant="outline" size="sm" onClick={exportJson}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportJson}
+                disabled={legacyInputNeedsMode}
+              >
                 <Download className="h-3.5 w-3.5 mr-1" /> Export JSON
               </Button>
-              <Button variant="outline" size="sm" onClick={exportPy}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportPy}
+                disabled={legacyInputNeedsMode}
+              >
                 <Download className="h-3.5 w-3.5 mr-1" /> Export .py
               </Button>
-              <Button variant="outline" size="sm" onClick={savePipeline}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={savePipeline}
+                disabled={legacyInputNeedsMode}
+              >
                 <Save className="h-3.5 w-3.5 mr-1" /> Save
               </Button>
             </>
@@ -722,6 +764,16 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           switch tabs. */}
       {notice && (
         <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
+      )}
+      {legacyInputNeedsMode && paletteSource === 'standard' && (
+        <p
+          role="status"
+          className="border-b bg-status-warning/5 px-4 py-3 text-xs text-status-warning"
+        >
+          Older saved pipelines did not record message mode or custom edits. Only their saved
+          builder steps are available. Choose Text or Hex to confirm the saved input before running,
+          saving or exporting; its characters will be kept for that choice.
+        </p>
       )}
       {runError && (!attempt || attemptIsCurrent) && (
         <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
@@ -1025,12 +1077,16 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                       {(['text', 'hex'] as const).map((m) => (
                         <Button
                           key={m}
-                          variant={messageMode === m ? 'secondary' : 'outline'}
+                          variant={
+                            !legacyInputNeedsMode && messageMode === m ? 'secondary' : 'outline'
+                          }
+                          aria-pressed={!legacyInputNeedsMode && messageMode === m}
                           size="sm"
                           className="h-6 px-2 text-[10px] uppercase"
                           onClick={() => {
                             setMessageMode(m)
-                            setMessage('')
+                            if (!legacyInputNeedsMode) setMessage('')
+                            setLegacyInputNeedsMode(false)
                           }}
                         >
                           {m}
@@ -1266,7 +1322,13 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               </div>
             </div>
             <div className="p-3 border-t">
-              <Button variant="outline" size="sm" className="w-full" onClick={exportPy}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={exportPy}
+                disabled={legacyInputNeedsMode}
+              >
                 <Download className="h-3.5 w-3.5 mr-1" /> Download as .py
               </Button>
             </div>
