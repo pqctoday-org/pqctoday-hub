@@ -457,7 +457,7 @@ function PatentResultCard({
           {/* Number + assignee */}
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <span className="text-[10px] font-mono text-muted-foreground shrink-0">
-              US {patent.patentNumber}
+              {patent.patentNumber}
             </span>
             {patent.assignee && (
               <span className="text-[10px] font-medium text-secondary truncate max-w-[200px]">
@@ -531,7 +531,7 @@ function PatentResultCard({
 
         <div className="flex items-center gap-1 shrink-0">
           <a
-            href={`https://patents.google.com/patent/US${patent.patentNumber}`}
+            href={`https://patents.google.com/patent/${patent.patentNumber}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

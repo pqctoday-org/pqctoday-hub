@@ -141,7 +141,12 @@ export const ProviderSetup: React.FC = () => {
     .map((tokens) => ({ tokens, label: `${tokens / 1024}K` }))
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6">
+    <div
+      className="flex-1 overflow-y-auto p-4 md:p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+      role="region"
+      aria-label="AI assistant setup"
+      tabIndex={0}
+    >
       <div className="max-w-2xl w-full mx-auto space-y-6">
         {/* Title */}
         <div className="text-center space-y-2">
@@ -179,7 +184,7 @@ export const ProviderSetup: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto">
+            <div className="glass-panel rounded-xl p-5 space-y-4 border border-border">
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 rounded-full bg-status-success/20 flex items-center justify-center">
                   <Shield size={18} className="text-status-success" />
@@ -509,7 +514,7 @@ export const ProviderSetup: React.FC = () => {
 
           {/* Gemini (Cloud) Card */}
           <div
-            className={`glass-panel rounded-xl p-5 space-y-4 border-2 border-primary/40 max-h-[80vh] overflow-y-auto ${
+            className={`glass-panel rounded-xl p-5 space-y-4 border-2 border-primary/40 ${
               airplaneMode ? 'opacity-50 pointer-events-none' : ''
             }`}
             aria-disabled={airplaneMode}
