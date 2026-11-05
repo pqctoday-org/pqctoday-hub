@@ -714,9 +714,11 @@ export function QuarterReport({
                     {report.effects.setbackQuarters > 1 ? 's' : ''} of rework lost
                   </div>
                 )}
-                {report.effects.budgetCostM && <div>💸 −€{report.effects.budgetCostM}M budget</div>}
+                {report.effects.budgetCostM && (
+                  <div>💸 −{report.effects.budgetCostM} game units</div>
+                )}
                 {report.effects.budgetCreditM && (
-                  <div>💰 +€{report.effects.budgetCreditM}M budget</div>
+                  <div>💰 +{report.effects.budgetCreditM} game units</div>
                 )}
               </div>
             </div>
