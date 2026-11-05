@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { WalletInstance } from '../../types'
@@ -55,6 +55,8 @@ const QES_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
   'C_SignInit',
   'C_Sign',
+  'C_VerifyInit',
+  'C_Verify',
 ]
 
 interface QESProviderComponentProps {
@@ -70,11 +72,33 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
 }) => {
   const [step, setStep] = useState<'UPLOAD' | 'PID_CHECK' | 'AUTH' | 'SIGN' | 'COMPLETE'>('UPLOAD')
   const [loading, setLoading] = useState(false)
-  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog, clearLogs } =
     useDigitalIDLogs()
   const [docName, setDocName] = useState('Contract.pdf')
   const [docHash, setDocHash] = useState('')
   const [selectedAlg, setSelectedAlg] = useState<QesAlgorithmOption>(QES_ALGORITHM_OPTIONS[0])
+  const [error, setError] = useState('')
+  const runId = useRef(0)
+  const busy = useRef(false)
+  const invalidateRun = useCallback(() => {
+    runId.current++
+  }, [])
+  useEffect(() => {
+    runId.current++
+    busy.current = false
+    setLoading(false)
+    setStep('UPLOAD')
+    setDocHash('')
+    setError('')
+    clearLogs()
+    return invalidateRun
+  }, [hsm.isReady, clearLogs, invalidateRun])
+  const resetInputs = () => {
+    runId.current++
+    setDocHash('')
+    setError('')
+    clearLogs()
+  }
 
   const getCryptoProvider = (): CryptoProvider => {
     const ossl = new OpenSSLCryptoProvider()
@@ -92,95 +116,116 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
   const pidCredential = wallet.credentials.find((c) => c.type.includes('PersonIdentificationData'))
 
   const handleUpload = async () => {
+    if (busy.current) return
     if (!docName.trim()) {
-      addLog('Error: Please enter a document name.')
+      setError('Please enter a sample document name.')
       return
     }
-
-    setStep('PID_CHECK')
-    addLog('Verifying identity via PID presentation (required for QES)...')
-
+    if (selectedAlg.algorithm === 'EdDSA' && !hsm.isReady) {
+      setError(
+        'Enable Live HSM for this Ed25519 sample. The OpenSSL-only path does not support this selection here.'
+      )
+      return
+    }
+    setError('')
     if (!pidCredential) {
-      addLog('ERROR: No valid PID found. Identity verification required for QES.')
+      setStep('PID_CHECK')
       return
     }
-
-    await new Promise((r) => setTimeout(r, 800))
-    addLog('PID verified. Proceeding with document preparation...')
-    setStep('AUTH')
-    addLog(`Document selected: ${docName}`)
-    addLog('Calculating SHA-256 hash of document (simulated content)...')
-
+    const id = ++runId.current
+    busy.current = true
+    setLoading(true)
+    addLog('Sample PID presence checked; identity and trust validation are simulated.')
     try {
-      const fileContent = `Content of ${docName} - ${Date.now()}`
       const provider = getCryptoProvider()
-      const hash = await provider.sha256Hash(fileContent, addOpenSSLLog)
+      const trace = (message: string) => {
+        if (runId.current === id) addOpenSSLLog(message)
+      }
+      const hash = await provider.sha256Hash(`Content of ${docName} - ${Date.now()}`, trace)
+      if (runId.current !== id) return
       setDocHash(hash)
-      addLog(`Hash calculated: ${hash.substring(0, 16)}...`)
-    } catch (e) {
-      addLog(`Error hashing document: ${e}`)
+      addLog(`Sample content hash calculated: ${hash.substring(0, 16)}...`)
+      setStep('AUTH')
+    } catch (error) {
+      if (runId.current === id) setError(`Sample hashing failed: ${String(error)}`)
+    } finally {
+      if (runId.current === id) {
+        busy.current = false
+        setLoading(false)
+      }
     }
   }
 
   const handleAuth = async () => {
+    if (busy.current) return
+    const id = ++runId.current
+    busy.current = true
     setLoading(true)
-    addLog('Connecting to QTSP (CSC API)...')
-    addLog('Requesting authorization for Remote Signing...')
-
-    // Mock CSC Auth delay
-    await new Promise((r) => setTimeout(r, 1000))
-    addLog('Authorization SUCCESS. Access Token granted.')
-    setLoading(false)
-    setStep('SIGN')
+    addLog(
+      'Simulated CSC authorization; no QTSP is contacted and sole-control assurance is not tested.'
+    )
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    if (runId.current === id) {
+      busy.current = false
+      setLoading(false)
+      setStep('SIGN')
+    }
   }
 
   const handleSign = async () => {
+    if (busy.current) return
+    const id = ++runId.current
+    busy.current = true
     setLoading(true)
-    addLog('Requesting QES signature on hash...')
-
-    await new Promise((r) => setTimeout(r, 800))
-
-    const provider = getCryptoProvider()
-    addLog(
-      `Remote HSM: Generating ${selectedAlg.label} signing key for QES (${selectedAlg.description})...`
-    )
-
-    if (hsm.isReady) {
-      hsm.addStepLog('✒️ The Qualified Electronic Signature (QES) Key')
+    setError('')
+    const algorithm = selectedAlg
+    const hash = docHash
+    const trace = (message: string) => {
+      if (runId.current === id) addOpenSSLLog(message)
     }
-    const key = await provider.generateKeyPair(
-      selectedAlg.algorithm,
-      selectedAlg.curve,
-      addOpenSSLLog
-    )
-
-    addLog('Sole Control Assurance: Validated.')
-
-    // EUDI ARF Qualified Certificate Issue
-    let identName = 'Citizen'
-    if (pidCredential && pidCredential.credentialSubject) {
-      const subject = pidCredential.credentialSubject as Record<string, unknown>
-      if (subject.family_name && typeof subject.family_name === 'string') {
-        identName = subject.family_name
+    try {
+      if (!hash) throw new Error('Prepare the sample document again before signing')
+      if (algorithm.algorithm === 'EdDSA' && !hsm.isReady)
+        throw new Error('Enable Live HSM for Ed25519')
+      const provider = getCryptoProvider()
+      addLog(`Generating sample ${algorithm.label} signing key...`)
+      const key = await provider.generateKeyPair(algorithm.algorithm, algorithm.curve, trace)
+      if (runId.current !== id) return
+      if (key.algorithm !== algorithm.algorithm || key.curve !== algorithm.curve)
+        throw new Error('Generated key does not match the selected algorithm')
+      let identName = 'Citizen'
+      const familyName = pidCredential?.credentialSubject?.family_name
+      if (typeof familyName === 'string') identName = familyName
+      const cert = await generateX509Certificate(
+        key,
+        provider,
+        `/CN=${identName} (Sample Signing)`,
+        trace
+      )
+      if (runId.current !== id) return
+      addOpenSSLLog(cert)
+      const signature = await provider.signData(key, hash, trace)
+      if (runId.current !== id) return
+      const valid = await provider.verifySignature(key, signature, hash, trace)
+      if (runId.current !== id) return
+      if (!valid) throw new Error('Sample signature verification failed')
+      addLog(`Sample test passed: ${algorithm.label}; document-hash signature verified.`)
+      addLog(`Sample signature: ${signature}`)
+      addLog(
+        'The self-signed certificate and simulated authorization do not establish qualified-signature status.'
+      )
+      setStep('COMPLETE')
+    } catch (error) {
+      if (runId.current === id) {
+        setError(`Sample signing incomplete: ${String(error)}`)
+        addLog('Sample signing incomplete; no successful result recorded.')
+      }
+    } finally {
+      if (runId.current === id) {
+        busy.current = false
+        setLoading(false)
       }
     }
-    addLog(`Generating Qualified Certificate (X.509) for ${identName}...`)
-    const qesCert = await generateX509Certificate(
-      key,
-      provider,
-      `/CN=${identName} (Qualified Electronic Signature)/C=EU`,
-      addOpenSSLLog
-    )
-    addLog(`QTSA successfully issued Qualified Certificate.`)
-    addOpenSSLLog(qesCert)
-
-    const sig = await provider.signData(key, docHash, addOpenSSLLog)
-
-    addLog(`Signed document hash: ${sig.substring(0, 40)}...`)
-
-    addLog('Signature returned by QTSP.')
-    setLoading(false)
-    setStep('COMPLETE')
   }
 
   return (
@@ -190,16 +235,23 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
           <FileSignature className="w-6 h-6" />
           Qualified Trust Service Provider (QES)
         </CardTitle>
-        <CardDescription>Sign documents legally using Remote HSM and CSC API</CardDescription>
+        <CardDescription>
+          Explore sample document signing with simulated CSC authorization
+        </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
         <LiveHSMToggle
           hsm={hsm}
           operations={QES_LIVE_OPERATIONS}
           className="mb-4"
-          preventDisable={wallet.keys.some(isHsmBackedKey)}
+          preventDisable={loading || wallet.keys.some(isHsmBackedKey)}
           preventDisableReason="Disable is locked while your wallet holds HSM-backed keys — Reset the workshop to release them."
         />
+        {error && (
+          <p role="alert" className="mb-4 text-sm text-destructive">
+            {error}
+          </p>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="space-y-6 lg:col-span-2">
             {step === 'UPLOAD' && (
@@ -216,7 +268,9 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                       Qualified Trust Service Provider (QTSP)
                     </InlineTooltip>
                     . Your signing key never leaves the HSM. The QTSP ensures Sole Control Assurance
-                    (SCAL2) — only you can authorize signature operations on your key.
+                    (SCAL2) — only you can authorize signature operations on your key. This exercise
+                    uses local sample keys and simulated authorization; it does not test those
+                    production assurances.
                   </p>
                 </div>
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center bg-muted/5">
@@ -225,7 +279,11 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                   <Input
                     type="text"
                     value={docName}
-                    onChange={(e) => setDocName(e.target.value)}
+                    onChange={(e) => {
+                      resetInputs()
+                      setDocName(e.target.value)
+                    }}
+                    disabled={loading}
                     className="text-center"
                     placeholder="e.g. Contract.pdf"
                   />
@@ -236,16 +294,25 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                 <div className="space-y-1">
                   <Label className="text-sm">Signature Algorithm</Label>
                   <FilterDropdown
+                    disabled={loading}
                     items={QES_ALGORITHM_OPTIONS.map((o) => o.label)}
                     selectedId={selectedAlg.label}
                     onSelect={(label) => {
                       const match = QES_ALGORITHM_OPTIONS.find((o) => o.label === label)
-                      if (match) setSelectedAlg(match)
+                      if (match) {
+                        resetInputs()
+                        setSelectedAlg(match)
+                      }
                     }}
                   />
                   <p className="text-xs text-muted-foreground">{selectedAlg.description}</p>
                 </div>
-                <Button variant="ghost" onClick={handleUpload} className="w-full">
+                <Button
+                  variant="ghost"
+                  onClick={handleUpload}
+                  disabled={loading}
+                  className="w-full"
+                >
                   Proceed to Sign
                 </Button>
               </div>
@@ -271,7 +338,9 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                   <h4 className="font-bold flex items-center gap-2">
                     <Lock className="w-4 h-4" /> Authorization Required
                   </h4>
-                  <p className="text-sm mt-1">Authorize the QTSP to access your signing key.</p>
+                  <p className="text-sm mt-1">
+                    Continue the simulated authorization; this does not contact a QTSP.
+                  </p>
                 </div>
                 <Button variant="ghost" onClick={handleAuth} disabled={loading} className="w-full">
                   {loading && <Loader2 className="animate-spin mr-2" />} Authorize Access
@@ -286,7 +355,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
                   {docHash || 'Calculating...'}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
-                  <PenTool className="w-4 h-4" /> Ready to apply Qualified Electronic Signature
+                  <PenTool className="w-4 h-4" /> Ready to sign the sample document hash
                 </div>
                 <Button variant="ghost" onClick={handleSign} disabled={loading} className="w-full">
                   {loading && <Loader2 className="animate-spin mr-2" />} Sign Document
@@ -297,9 +366,10 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
             {step === 'COMPLETE' && (
               <div className="bg-success/5 p-6 rounded-lg text-center border border-success/30">
                 <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-success">Signed Successfully!</h2>
+                <h2 className="text-2xl font-bold text-success">Sample Signature Checked</h2>
                 <p className="text-success mt-2">
-                  The document has been signed with a Qualified Electronic Signature.
+                  The selected algorithm signed the sample document hash and its signature check
+                  passed. This demonstration does not establish legal QES status.
                 </p>
                 <Button
                   onClick={onBack}

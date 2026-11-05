@@ -1,15 +1,24 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { AsnConvert } from '@peculiar/asn1-schema'
+import { SubjectPublicKeyInfo } from '@peculiar/asn1-x509'
+import { hsm_getPublicKeyInfo } from '@/wasm/softhsm/objects'
 import type { CryptoProvider } from './crypto-provider'
 import type { CryptoKey, KeyAlgorithm, KeyCurve } from '../types'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import {
   hsm_generateECKeyPair,
+  hsm_generateEdDSAKeyPair,
   hsm_extractECPoint,
   hsm_digest,
   CKM_ECDSA_SHA256,
   CKM_ECDSA_SHA384,
 } from '@/wasm/softhsm'
-import { hsm_ecdsaSign, hsm_ecdsaVerify } from '@/wasm/softhsm/classical'
+import {
+  hsm_ecdsaSign,
+  hsm_ecdsaVerify,
+  hsm_eddsaSign,
+  hsm_eddsaVerify,
+} from '@/wasm/softhsm/classical'
 
 export const bytesToBase64 = (bytes: Uint8Array): string => {
   const binString = Array.from(bytes, (x) => String.fromCodePoint(x)).join('')
@@ -59,17 +68,45 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _onLog?: (log: string) => void
   ): Promise<CryptoKey> {
-    const safeCurve = curve === 'Ed25519' ? 'P-256' : curve
-    const { pubHandle, privHandle } = hsm_generateECKeyPair(
-      this.module,
-      this.hSession,
-      safeCurve as 'P-256' | 'P-384',
-      false,
-      'sign'
-    )
+    assertSigningSelection(alg, curve)
+    const { pubHandle, privHandle } =
+      alg === 'EdDSA'
+        ? hsm_generateEdDSAKeyPair(this.module, this.hSession, 'Ed25519', false)
+        : hsm_generateECKeyPair(
+            this.module,
+            this.hSession,
+            curve as 'P-256' | 'P-384',
+            false,
+            'sign'
+          )
 
-    // Extract public curve points format (simulated PEM/Hex string for the UI)
-    const pubPoint = hsm_extractECPoint(this.module, this.hSession, pubHandle)
+    // Preserve the existing EC DER-point representation. Ed25519 stores its raw
+    // 32-byte public key, decoded from the engine's actual SPKI (RFC 8410).
+    let pubPoint: Uint8Array
+    try {
+      if (alg === 'EdDSA') {
+        const spki = AsnConvert.parse(
+          hsm_getPublicKeyInfo(this.module, this.hSession, pubHandle),
+          SubjectPublicKeyInfo
+        )
+        if (
+          spki.algorithm.algorithm !== '1.3.101.112' ||
+          spki.algorithm.parameters !== undefined ||
+          spki.subjectPublicKey.byteLength !== 32
+        ) {
+          throw new Error('Engine public key does not match the selected Ed25519 algorithm')
+        }
+        pubPoint = new Uint8Array(spki.subjectPublicKey)
+      } else {
+        pubPoint = hsm_extractECPoint(this.module, this.hSession, pubHandle)
+      }
+    } catch (error) {
+      // These keys were never registered or returned to a caller. Do not retain
+      // an orphan pair after a failed public-key representation check.
+      this.module._C_DestroyObject(this.hSession, privHandle)
+      this.module._C_DestroyObject(this.hSession, pubHandle)
+      throw error
+    }
     const pubHex = Array.from(pubPoint)
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('')
@@ -80,7 +117,7 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     this.keyRegistry.addKey({
       handle: pubHandle,
       label: `DigitalID Key (${curve})`,
-      family: 'ecdsa',
+      family: alg === 'EdDSA' ? 'eddsa' : 'ecdsa',
       role: 'public',
       generatedAt: ts,
     })
@@ -88,7 +125,7 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     this.keyRegistry.addKey({
       handle: privHandle,
       label: `DigitalID Key (${curve})`,
-      family: 'ecdsa',
+      family: alg === 'EdDSA' ? 'eddsa' : 'ecdsa',
       role: 'private',
       generatedAt: ts,
     })
@@ -100,7 +137,10 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
       curve: curve,
       publicKey: pubHex,
       privateKey: `[PKCS#11 handle: ${privHandle}]`, // SoftHSM handles
-      meta: { pubHandle },
+      meta: {
+        pubHandle,
+        publicKeyFormat: alg === 'EdDSA' ? 'raw-ed25519-hex' : 'der-ec-point-hex',
+      },
       created: ts,
       usage: 'SIGN',
       status: 'ACTIVE',
@@ -126,10 +166,13 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _onLog?: (log: string) => void
   ): Promise<Uint8Array> {
+    assertSigningSelection(key.algorithm, key.curve)
     if (!key.privateKey || !key.privateKey.startsWith('[PKCS#11 handle:')) {
       throw new Error('SoftHSMCryptoProvider requires a PKCS#11 handle in the privateKey field')
     }
-    const privHandle = parseInt(key.privateKey.match(/handle:\s*(\d+)/)?.[1] || '0', 10)
+    const privHandle = Number(key.privateKey.match(/^\[PKCS#11 handle: (\d+)\]$/)?.[1])
+    requireHandle(privHandle, 'private')
+    if (key.algorithm === 'EdDSA') return hsm_eddsaSign(this.module, this.hSession, privHandle, tbs)
 
     const mechanism = key.curve === 'P-384' ? CKM_ECDSA_SHA384 : CKM_ECDSA_SHA256
     const sigBytes = hsm_ecdsaSign(this.module, this.hSession, privHandle, tbs, mechanism)
@@ -144,6 +187,7 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _onLog?: (log: string) => void
   ): Promise<boolean> {
+    assertSigningSelection(key.algorithm, key.curve)
     const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
     const sigBytes = base64ToBytes(signature.replace(/-/g, '+').replace(/_/g, '/'))
 
@@ -156,6 +200,9 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
       )
     }
 
+    requireHandle(pubHandle, 'public')
+    if (key.algorithm === 'EdDSA')
+      return hsm_eddsaVerify(this.module, this.hSession, pubHandle, dataBytes, sigBytes, true)
     const mechanism = key.curve === 'P-384' ? CKM_ECDSA_SHA384 : CKM_ECDSA_SHA256
     return hsm_ecdsaVerify(this.module, this.hSession, pubHandle, dataBytes, sigBytes, mechanism)
   }
@@ -166,4 +213,24 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     const hashBytes = hsm_digest(this.module, this.hSession, dataBytes)
     return toBase64Url(hashBytes)
   }
+}
+
+/** Exact supported algorithm/curve pairs; never substitute a different algorithm. */
+export function assertSigningSelection(
+  algorithm: string | undefined,
+  curve: string | undefined
+): void {
+  if (!(
+    (algorithm === 'ES256' && curve === 'P-256') ||
+    (algorithm === 'ES384' && curve === 'P-384') ||
+    (algorithm === 'EdDSA' && curve === 'Ed25519')
+  )) {
+    throw new Error(
+      `Unsupported Digital ID signing selection: ${algorithm ?? 'missing algorithm'} / ${curve ?? 'missing curve'}`
+    )
+  }
+}
+function requireHandle(handle: number, role: string): void {
+  if (!Number.isSafeInteger(handle) || handle <= 0)
+    throw new Error(`Missing or invalid ${role} key handle`)
 }
