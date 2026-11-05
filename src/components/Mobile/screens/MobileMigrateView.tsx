@@ -25,7 +25,7 @@ import {
   type DomainId,
   type ReplaceAsset,
 } from '@/data/migrationAssets'
-import { softwareData, vendorMap } from '@/data/migrateData'
+import { softwareData, softwareMetadata, vendorMap } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId, enrichmentForRoadmap } from '@/data/vendorRoadmapEnrichmentData'
 import { getCertsForProduct } from '@/data/certificationXrefData'
@@ -901,6 +901,7 @@ export function MobileMigrateView() {
 
       {tab === 'plan' && (
         <MobilePlanTab
+          plan={plan}
           posture={posture}
           choice={choice}
           chooseProduct={chooseProduct}
@@ -1245,6 +1246,7 @@ function MobileProductDetailSheet({
 }
 
 function MobilePlanTab({
+  plan,
   posture,
   choice,
   chooseProduct,
@@ -1253,6 +1255,7 @@ function MobilePlanTab({
   onGoToReplace,
   onSelectProduct,
 }: {
+  plan: string[]
   posture: ReturnType<typeof useMigrationPlan>
   choice: Record<string, string[]>
   chooseProduct: (assetId: string, productName: string) => void
@@ -1511,9 +1514,11 @@ function MobilePlanTab({
         size="sm"
         onClick={() =>
           downloadPlanCbom({
-            planIds: posture.plannedAssets.map((a) => a.id),
+            planIds: plan,
             choice,
             timestamp: new Date().toISOString(),
+            products: softwareData,
+            catalogSnapshot: softwareMetadata?.filename,
           })
         }
         className="h-9 self-end text-[11.5px]"
