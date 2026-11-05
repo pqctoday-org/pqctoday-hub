@@ -15,7 +15,7 @@ import {
 
 const fmt = (value: number) => value.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
-const perOperation = (tps: number) => {
+const completionInterval = (tps: number) => {
   const seconds = 1 / tps
   if (seconds >= 1) return `${seconds.toFixed(2)} s`
   if (seconds >= 0.001) return `${(seconds * 1000).toFixed(2)} ms`
@@ -135,7 +135,7 @@ export const CommonPlatformResults: React.FC = () => {
               <th className="py-2 pr-2">Platform</th>
               <th className="py-2 pr-2">CPU / worker setup</th>
               <th className="py-2 pr-2 text-right">TPS</th>
-              <th className="py-2 pr-2 text-right">Time / operation</th>
+              <th className="py-2 pr-2 text-right">Completion interval (1/TPS)</th>
               <th className="py-2 text-right">Whole ÷ one worker</th>
             </tr>
           </thead>
@@ -153,7 +153,7 @@ export const CommonPlatformResults: React.FC = () => {
                   </td>
                   <td className="py-2 pr-2 text-muted-foreground">{platform.cpu}</td>
                   <td className="py-2 pr-2 text-right font-mono font-bold">{fmt(tps)}</td>
-                  <td className="py-2 pr-2 text-right font-mono">{perOperation(tps)}</td>
+                  <td className="py-2 pr-2 text-right font-mono">{completionInterval(tps)}</td>
                   <td
                     className="py-2 text-right font-mono"
                     title="Measured whole-platform throughput divided by one-worker throughput"
@@ -175,7 +175,9 @@ export const CommonPlatformResults: React.FC = () => {
           <p className="text-muted-foreground">
             One worker is the closest available per-worker view. Whole-platform throughput is a
             measured service-capacity result, not a promise of linear scaling or identical cores.
-            The Ventuno Q and Apple systems are heterogeneous; the X1 exposes virtual CPUs.
+            The reciprocal 1/TPS is the mean interval between completions across that measurement,
+            not a measured single-operation latency or a p50/p95/p99 latency percentile. The Ventuno
+            Q and Apple systems are heterogeneous; the X1 exposes virtual CPUs.
           </p>
         </div>
         <div className="rounded-lg border border-success/30 bg-success/5 p-3 space-y-1">
