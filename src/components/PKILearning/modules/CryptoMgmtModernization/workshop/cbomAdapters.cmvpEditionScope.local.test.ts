@@ -30,9 +30,13 @@ describe('CBOM source association without inferred FIPS edition', () => {
       const doc = JSON.parse(buildCbomDocument([input]).json)
       const component = doc.components.find((item: { type: string }) => item.type === type)
       expect(component.description).toBe(notes)
-      expect(component.evidence.identity[0].methods[0].value).toBe(
-        `CMVP catalogue association ${certId}`
+      const references = component.properties.find(
+        (property: { name: string }) => property.name === 'pqctoday:certificateReferences'
       )
+      expect(JSON.parse(references.value)).toEqual([
+        { certType: 'CMVP catalogue association', certId },
+      ])
+      expect(component.evidence).toBeUndefined()
       expect(JSON.stringify(component)).not.toContain('FIPS 140-3 CMVP')
     }
   )
