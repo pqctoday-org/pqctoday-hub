@@ -38,7 +38,7 @@ function RevisionsSummary() {
 
   return (
     <p className="text-sm text-foreground">
-      <span className="font-semibold">{summary.count}</span> reviewed update
+      <span className="font-semibold">{summary.count}</span> logged update
       {summary.count !== 1 ? 's' : ''} in the last 30 days
       {summary.topDomains && <span className="text-muted-foreground"> — {summary.topDomains}</span>}
     </p>
@@ -58,16 +58,18 @@ export function RevisionsView() {
           <h1 className="text-gradient text-2xl font-bold">Content Revisions</h1>
         </div>
         <p className="text-sm text-muted-foreground">
-          Every correction to our compliance, vendor, and migration data is reviewed, logged, and
-          shown here — this is how we keep the data you rely on trustworthy and auditable. See our{' '}
+          This feed shows recorded changes to Hub content and data. Entries show the authorship,
+          reviewer and approval-method metadata available for each change; missing metadata does not
+          establish review. See our{' '}
           <Link to="/editorial-independence" className="text-primary hover:underline">
             editorial-independence policy
           </Link>{' '}
           for how changes are approved.
         </p>
         <p className="text-sm text-muted-foreground">
-          In plain terms: if a fact on this site turned out to be wrong or out of date, what
-          changed, who reviewed it, and why is recorded below — nothing gets corrected silently.
+          Use each record to inspect what changed and the references supplied. A named reviewer,
+          recorded approval method or source link alone does not establish an independent human
+          review or confirm that the changed claim is accurate.
         </p>
         <RevisionsSummary />
       </header>

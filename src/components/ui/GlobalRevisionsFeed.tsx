@@ -1,4 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  revisionAuthorshipLabel,
+  revisionReviewLabel,
+  hasCommitReference,
+  nonCommitReferenceLabel,
+} from './revisionProvenance'
 import { useMemo, useState } from 'react'
 import { GitMerge, Bot, Filter, X } from 'lucide-react'
 import { useNavigate } from 'react-router'
@@ -171,16 +177,22 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
     <div className="flex max-sm:flex-col items-start gap-3 py-3 border-b border-border last:border-0">
       <div className="mt-0.5 shrink-0">
         {r.authored_by_llm ? (
-          <Bot className="w-4 h-4 text-accent" aria-label="LLM-authored" />
+          <Bot
+            className="w-4 h-4 text-accent"
+            aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
+          />
         ) : (
-          <GitMerge className="w-4 h-4 text-status-success" aria-label="Human-reviewed" />
+          <GitMerge
+            className="w-4 h-4 text-muted-foreground"
+            aria-label={revisionAuthorshipLabel(r.authored_by_llm)}
+          />
         )}
       </div>
       {/* max-sm:w-full: in the phone column layout items-start sized this to its
           content, and long draft names in the chips ran past 390 px. */}
       <div className="min-w-0 flex-1 max-sm:w-full [overflow-wrap:anywhere]">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-sm font-medium text-foreground">{r.reviewer_display}</span>
+          <span className="text-sm font-medium text-foreground">{revisionReviewLabel(r)}</span>
           <span className="text-xs text-muted-foreground capitalize">{r.domain}</span>
           <span className="text-xs text-muted-foreground">{r.change_type.replace(/_/g, ' ')}</span>
           <BypassChip revision={r} />
@@ -189,7 +201,7 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
         {r.record_ids && r.record_ids.length > 0 && (
           <EntityChips ids={r.record_ids} domain={r.domain} />
         )}
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex flex-wrap items-center gap-2 mt-1">
           {r.pr_number > 0 ? (
             <a
               href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
@@ -199,23 +211,21 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
             >
               PR #{r.pr_number}
             </a>
-          ) : r.merge_sha === 'baseline' ? (
-            <span
-              className="text-xs text-muted-foreground italic"
-              title="Recorded before this module/tool had a tracked PR or commit — no git object to link to."
-            >
-              Initial import
-            </span>
-          ) : r.merge_sha ? (
+          ) : hasCommitReference(r.merge_sha) ? (
             <a
               href={`https://github.com/pqctoday-org/pqctoday-hub/commit/${r.merge_sha}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-primary hover:underline font-mono"
+              title="Recorded Git reference; commit availability is not checked here."
             >
               {r.merge_sha.slice(0, 7)}
             </a>
-          ) : null}
+          ) : (
+            <span className="text-xs text-muted-foreground break-words [overflow-wrap:anywhere]">
+              {nonCommitReferenceLabel(r.merge_sha)}
+            </span>
+          )}
           {offlineSuffix && <span className="text-xs text-muted-foreground">{offlineSuffix}</span>}
         </div>
       </div>
