@@ -148,7 +148,7 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
     ],
   },
   {
-    title: 'Decommission Plan (CSWP.39 §4.6)',
+    title: 'Hub Lifecycle Planning (related reading: CSWP.39 §4.6)',
     items: [
       {
         id: 'decom-record-mitigation',
@@ -163,7 +163,7 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
       {
         id: 'decom-sunset-date',
         label:
-          'Set a mandatory sunset date — CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them',
+          'Hub planning prompt: record an appropriate gateway review/exit or sunset plan; CSWP.39 §4.6 describes gateway architecture and does not prescribe a sunset date',
         critical: true,
       },
       {
@@ -278,13 +278,12 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
         <div>
           <h2 className="text-base font-semibold text-foreground">Methodology</h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Grounded in NIST CSWP.39 §4 — Crypto Agility in System Implementations, which covers how
-            agility is achieved at each layer touched by a rollout: crypto-library APIs, the OS
-            kernel, service mesh, embedded/RTOS, and hardware. The Decommission Plan section below
-            applies §4.6: a crypto gateway restores agility at the network boundary for legacy
-            systems that cannot be modified directly, but the legacy component's own cryptography
-            stays in place — so every gateway entry needs a planned sunset date rather than standing
-            in as the migration itself.
+            Related reading: NIST CSWP.39 §4 discusses system implementations; §4.6 describes an
+            external gateway that can help provide crypto agility when legacy components cannot be
+            changed directly. The lifecycle checklist below is a Hub planning example. Its
+            review/exit prompt and critical-item labels are teaching choices, not a sunset rule
+            prescribed by NIST. A gateway can change the architecture while embedded legacy
+            cryptography remains unchanged.
           </p>
         </div>
       </div>

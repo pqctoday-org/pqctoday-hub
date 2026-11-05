@@ -129,10 +129,10 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        CSWP.39 §5 step 5 + §4.6 — the Implement step requires deciding between{' '}
-        <strong>Migration</strong> (algorithm replacement) and <strong>Mitigation</strong> (crypto
-        gateway / bump-in-the-wire). Answer 5 crypto-agility questions about a specific asset to get
-        a CSWP.39-grounded recommendation.
+        Use this Hub teaching decision tree to discuss <strong>Migration</strong> (algorithm
+        replacement) and <strong>Mitigation</strong> (crypto gateway / bump-in-the-wire). These five
+        questions are Hub guidance, not a NIST assessment. NIST CSWP.39 §4.6 is related reading on
+        gateway architecture for legacy systems.
       </p>
 
       {/* Phase 1: Asset selection */}
@@ -325,7 +325,7 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
                   <li>Configure approved cipher suites and TLS 1.3; validate with testssl.sh</li>
                   <li>Add the legacy system + gateway to CBOM under "mitigated" status</li>
                   <li>
-                    Create a decommission ticket for the legacy system — target sunset {sunsetYear}
+                    Discuss a legacy-system exit plan — illustrative Hub sunset year {sunsetYear}
                   </li>
                   <li>
                     Schedule annual review: if the system becomes modifiable, run this wizard again
@@ -335,16 +335,18 @@ export const MitigateMigrateWizard: React.FC<MitigateMigrateWizardProps> = ({ cb
               <div className="bg-status-warning/20 rounded p-3 border border-status-warning/40 flex items-start gap-2">
                 <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
                 <p className="text-xs text-foreground/80">
-                  <strong>This is not a permanent solution.</strong> The gateway buys time — it does
-                  not confer crypto agility on the legacy system. CSWP.39 §4.6 requires a sunset
-                  date paired with every mitigate decision. Suggested sunset:{' '}
-                  <strong>{sunsetYear}</strong>. The gateway itself must also be planned for
-                  algorithm migration.
+                  <strong>Plan for continued cryptographic change.</strong> A gateway can help
+                  provide system-level crypto agility while leaving embedded legacy cryptography
+                  unchanged. Review/exit planning is Hub guidance; §4.6 does not prescribe a sunset
+                  date. Existing illustrative Hub sunset year: <strong>{sunsetYear}</strong>. This
+                  is a planning example, not a NIST deadline or a feasibility assessment. The
+                  gateway also needs an update strategy.
                 </p>
               </div>
               <p className="text-xs text-muted-foreground border-t border-border pt-3">
-                Reference: NIST CSWP.39 §4.6 — &ldquo;Crypto gateway / bump-in-the-wire for systems
-                where direct modification is infeasible.&rdquo;
+                Related reading: NIST CSWP.39 §4.6 describes performing cryptographic functions
+                externally when direct legacy-code changes are not feasible. This is a paraphrase,
+                not a quotation or a source requirement for a sunset date.
               </p>
             </div>
           )}

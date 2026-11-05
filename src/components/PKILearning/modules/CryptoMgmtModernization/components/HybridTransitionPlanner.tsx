@@ -153,7 +153,7 @@ function watchOutsForTarget(targetState: TargetState, bandwidthBudget: string): 
       'Hash-based signatures (SLH-DSA, LMS, XMSS) are an option for the most conservative deployments.',
     ],
     'crypto-gateway': [
-      'Gateway is a mitigation, not a migration — set a mandatory sunset date (CSWP-39 §4.6).',
+      'Hub planning prompt: review the gateway lifecycle and choose any exit/sunset criteria appropriate to the example. CSWP-39 §4.6 does not prescribe a sunset date.',
       'Gateway becomes a single point of failure and a high-value target; harden accordingly.',
       'Plaintext or re-encrypted traffic between gateway and legacy peer must stay inside trusted boundary.',
     ],
@@ -176,7 +176,7 @@ function rationaleForTarget(targetState: TargetState): string {
     case 'pure-PQC':
       return 'Pure-PQC is the preferred long-term target — CSWP-39 §3.2.4 names this end-state directly in Fig.1; choose it when the system has the crypto-agility to swap algorithms again later if needed.'
     case 'crypto-gateway':
-      return 'Where crypto-agility is absent and the protocol cannot be upgraded in place, CSWP-39 §4.6 recommends a crypto gateway as a time-limited mitigation with a mandatory sunset.'
+      return 'CSWP-39 §4.6 describes an external crypto gateway that can help provide system-level crypto agility when direct legacy modifications are not feasible. Review/exit planning here is Hub guidance, not a sunset requirement from that section.'
   }
 }
 
