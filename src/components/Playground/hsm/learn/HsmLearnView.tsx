@@ -103,7 +103,7 @@ function StepRow({
     <li className="rounded-lg border border-border bg-background/40 p-3">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[11px] font-mono text-muted-foreground">{step.op}</p>
+          <p className="text-[11px] font-mono text-muted-foreground max-lg:[overflow-wrap:anywhere]">{step.op}</p>
           <p className="text-[13px] font-medium text-foreground">
             {index + 1}. {step.label}
           </p>
@@ -156,7 +156,7 @@ function StepRow({
       {state.detail && (
         <p
           className={cn(
-            'mt-2 border-l-2 py-1.5 pl-2.5 text-[11.5px] leading-snug',
+            'mt-2 border-l-2 py-1.5 pl-2.5 text-[11.5px] leading-snug max-lg:[overflow-wrap:anywhere]',
             state.status === 'failed'
               ? 'border-destructive/60 bg-destructive/5 text-destructive'
               : 'border-primary/60 bg-muted/30 text-muted-foreground'
@@ -535,7 +535,7 @@ export function HsmLearnView({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1 space-y-4">
           <div
-            className="flex items-center gap-1 border-b border-border"
+            className="flex max-w-full items-center gap-1 overflow-x-auto border-b border-border"
             role="tablist"
             aria-label="PKCS#11 learning tracks"
           >
@@ -553,7 +553,7 @@ export function HsmLearnView({
                 aria-selected={track === t.id}
                 onClick={() => setTrack(t.id)}
                 className={cn(
-                  '-mb-px h-auto rounded-none border-b-2 px-3 py-2 text-[12.5px] font-medium transition-colors hover:bg-transparent',
+                  '-mb-px h-auto shrink-0 rounded-none border-b-2 px-3 py-2 text-[12.5px] font-medium transition-colors hover:bg-transparent',
                   track === t.id
                     ? 'border-primary font-semibold text-foreground'
                     : 'border-transparent text-muted-foreground hover:text-foreground'
